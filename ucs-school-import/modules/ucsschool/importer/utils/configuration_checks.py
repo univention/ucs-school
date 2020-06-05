@@ -69,19 +69,19 @@ from ..exceptions import UcsSchoolImportFatalError
 from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 
 try:
-	from typing import List, Type
-	from ..configuration import ReadOnlyDict
+    from typing import List, Type
+    from ..configuration import ReadOnlyDict
 except ImportError:
-	pass
+    pass
 
 
-__all__ = ['ConfigurationChecks']
+__all__ = ["ConfigurationChecks"]
 
-CONFIG_CHECKS_CODE_DIR = '/usr/share/ucs-school-import/checks'
+CONFIG_CHECKS_CODE_DIR = "/usr/share/ucs-school-import/checks"
 
 
 class ConfigurationChecks(object):
-	"""
+    """
 	Base class for configuration checks.
 
 	Provides the configuration singleton in :py:attr:`self.config`, a
@@ -92,29 +92,32 @@ class ConfigurationChecks(object):
 	alphanumerical order. Failing tests should raise a
 	py:exception:`ucsschool.importer.exceptions.InitialisationError` exception.
 	"""
-	def __init__(self, config):  # type: (ReadOnlyDict) -> None
-		self.config = config
-		try:
-			self.lo, po = get_readonly_connection()
-		except UcsSchoolImportFatalError:
-			self.lo, po = get_unprivileged_connection()
-		self.logger = logging.getLogger(__name__)
+
+    def __init__(self, config):  # type: (ReadOnlyDict) -> None
+        self.config = config
+        try:
+            self.lo, po = get_readonly_connection()
+        except UcsSchoolImportFatalError:
+            self.lo, po = get_unprivileged_connection()
+        self.logger = logging.getLogger(__name__)
 
 
 def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
-	def is_module_in_config(kls):  # type: (Type[object]) -> bool
-		return kls.__module__ in config.get('configuration_checks', [])
+    def is_module_in_config(kls):  # type: (Type[object]) -> bool
+        return kls.__module__ in config.get("configuration_checks", [])
 
-	logger = logging.getLogger(__name__)
-	loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, logger, is_module_in_config)
-	config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
-	disabled_checks = config.get("disabled_checks", [])
-	for kls in config_check_classes:
-		cc = kls(config)
-		test_methods = inspect.getmembers(cc, lambda x: inspect.ismethod(x) and x.func_name.startswith('test_'))
-		test_methods.sort(key=itemgetter(0))
-		for name, method in test_methods:
-			if name in disabled_checks:
-				logger.warning("Skipping configuration check %r.", name)
-				continue
-			method()
+    logger = logging.getLogger(__name__)
+    loader = PyHooksLoader(CONFIG_CHECKS_CODE_DIR, ConfigurationChecks, logger, is_module_in_config)
+    config_check_classes = loader.get_hook_classes()  # type: List[Type[ConfigurationChecks]]
+    disabled_checks = config.get("disabled_checks", [])
+    for kls in config_check_classes:
+        cc = kls(config)
+        test_methods = inspect.getmembers(
+            cc, lambda x: inspect.ismethod(x) and x.func_name.startswith("test_")
+        )
+        test_methods.sort(key=itemgetter(0))
+        for name, method in test_methods:
+            if name in disabled_checks:
+                logger.warning("Skipping configuration check %r.", name)
+                continue
+            method()

@@ -54,191 +54,199 @@ from univention.config_registry import ConfigRegistry
 import univention.debug as ud
 
 try:
-	from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
+    from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
 except ImportError:
-	pass
+    pass
 
 
 # "global" translation for ucsschool.lib.models
-_ = Translation('python-ucs-school').translate
-LOGGING_CONFIG_PATH = '/etc/ucsschool/logging.yaml'
+_ = Translation("python-ucs-school").translate
+LOGGING_CONFIG_PATH = "/etc/ucsschool/logging.yaml"
 
 
 class NotInstalled(Exception):
-	"""
+    """
 	Raised by `get_package_version()` when the requested package is not
 	installed.
 	"""
-	pass
+
+    pass
 
 
 class UnknownPackage(Exception):
-	"""
+    """
 	Raised by `get_package_version()` when the requested package is not
 	known in the Debian package cache.
 	"""
-	pass
+
+    pass
 
 
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
-	with open(path, 'r') as fp:
-		config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
-	return config
+    with open(path, "r") as fp:
+        config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
+    return config
 
 
 def _ucr():  # type: () -> ConfigRegistry
-	ucr = ConfigRegistry()
-	ucr.load()
-	return ucr
+    ucr = ConfigRegistry()
+    ucr.load()
+    return ucr
 
 
 _logging_config = lazy_object_proxy.Proxy(_load_logging_config)
-CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['cmdline'])
-FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config['file'])
-LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config['date'])
-LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config['colors'])
+CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])
+FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])
+LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])
+LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])
 
 _handler_cache = dict()
 _pw_length_cache = dict()
 ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for ucsschool.lib.models
-ucr_username_max_length = lazy_object_proxy.Proxy(lambda: int(ucr.get("ucsschool/username/max_length", 20)))  # type: int
+ucr_username_max_length = lazy_object_proxy.Proxy(
+    lambda: int(ucr.get("ucsschool/username/max_length", 20))
+)  # type: int
 
 
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
-	def replace_password(obj, attr):
-		ori = getattr(obj, attr)
-		if isinstance(ori, collections.Mapping) and isinstance(ori.get('password'), string_types):
-			# don't change original record arguments as it would change the objects being logged
-			new_dict = copy.deepcopy(ori)
-			new_dict['password'] = '*' * 8
-			setattr(obj, attr, new_dict)
+    def replace_password(obj, attr):
+        ori = getattr(obj, attr)
+        if isinstance(ori, collections.Mapping) and isinstance(ori.get("password"), string_types):
+            # don't change original record arguments as it would change the objects being logged
+            new_dict = copy.deepcopy(ori)
+            new_dict["password"] = "*" * 8
+            setattr(obj, attr, new_dict)
 
-	# check args
-	if isinstance(record.args, tuple):
-		# multiple arguments
-		for index, arg in enumerate(record.args):
-			# cannot call replace_password() to replace single arg, because a tuple is not mutable,
-			# -> have to replace all of record.args
-			if isinstance(arg, collections.Mapping) and isinstance(arg.get('password'), string_types):
-				# don't change original record arguments as it would change the objects being logged
-				args = copy.deepcopy(record.args)
-				args[index]['password'] = '*' * 8
-				record.args = args
-	else:
-		# one argument
-		replace_password(record, 'args')
-	# check msg
-	replace_password(record, 'msg')
-	return record
+    # check args
+    if isinstance(record.args, tuple):
+        # multiple arguments
+        for index, arg in enumerate(record.args):
+            # cannot call replace_password() to replace single arg, because a tuple is not mutable,
+            # -> have to replace all of record.args
+            if isinstance(arg, collections.Mapping) and isinstance(arg.get("password"), string_types):
+                # don't change original record arguments as it would change the objects being logged
+                args = copy.deepcopy(record.args)
+                args[index]["password"] = "*" * 8
+                record.args = args
+    else:
+        # one argument
+        replace_password(record, "args")
+    # check msg
+    replace_password(record, "msg")
+    return record
 
 
 class UniFileHandler(TimedRotatingFileHandler):
-	"""
+    """
 	TimedRotatingFileHandler that can set file permissions and removes
 	password entries from from dicts in args.
 	"""
-	def __init__(
-			self,
-			filename,  # type: AnyStr
-			when='h',  # type: Optional[AnyStr]
-			interval=1,  # type: Optional[int]
-			backupCount=0,  # type: Optional[int]
-			encoding=None,  # type: Optional[AnyStr]
-			delay=False,  # type: Optional[bool]
-			utc=False,  # type: Optional[bool]
-			fuid=None,  # type: Optional[int]
-			fgid=None,  # type: Optional[int]
-			fmode=None  # type: Optional[int]
-	):
-		# type: (...) -> None
-		self._fuid = fuid or os.geteuid()
-		self._fgid = fgid or os.getegid()
-		self._fmode = fmode or 0o600
-		super(UniFileHandler, self).__init__(filename, when, interval, backupCount, encoding, delay, utc)
 
-	def _open(self):
-		"""set file permissions on log file"""
-		stream = super(UniFileHandler, self)._open()
-		file_stat = os.fstat(stream.fileno())
-		if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:
-			os.fchown(stream.fileno(), self._fuid, self._fgid)
-		if file_stat.st_mode != self._fmode:
-			os.fchmod(stream.fileno(), self._fmode)
-		return stream
+    def __init__(
+        self,
+        filename,  # type: AnyStr
+        when="h",  # type: Optional[AnyStr]
+        interval=1,  # type: Optional[int]
+        backupCount=0,  # type: Optional[int]
+        encoding=None,  # type: Optional[AnyStr]
+        delay=False,  # type: Optional[bool]
+        utc=False,  # type: Optional[bool]
+        fuid=None,  # type: Optional[int]
+        fgid=None,  # type: Optional[int]
+        fmode=None,  # type: Optional[int]
+    ):
+        # type: (...) -> None
+        self._fuid = fuid or os.geteuid()
+        self._fgid = fgid or os.getegid()
+        self._fmode = fmode or 0o600
+        super(UniFileHandler, self).__init__(filename, when, interval, backupCount, encoding, delay, utc)
 
-	def emit(self, record):
-		"""remove password from from dicts in args"""
-		_remove_password_from_log_record(record)
-		super(UniFileHandler, self).emit(record)
+    def _open(self):
+        """set file permissions on log file"""
+        stream = super(UniFileHandler, self)._open()
+        file_stat = os.fstat(stream.fileno())
+        if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:
+            os.fchown(stream.fileno(), self._fuid, self._fgid)
+        if file_stat.st_mode != self._fmode:
+            os.fchmod(stream.fileno(), self._fmode)
+        return stream
+
+    def emit(self, record):
+        """remove password from from dicts in args"""
+        _remove_password_from_log_record(record)
+        super(UniFileHandler, self).emit(record)
 
 
 class UniStreamHandler(colorlog.StreamHandler):
-	"""
+    """
 	Colorizing console stream handler that removes password entries from from
 	dicts in args.
 	"""
-	def __init__(
-			self,
-			stream=None,  # type: file
-			fuid=None,  # type: Optional[int]
-			fgid=None,  # type: Optional[int]
-			fmode=None  # type: Optional[int]
-	):
-		# type: (...) -> None
-		"""
+
+    def __init__(
+        self,
+        stream=None,  # type: file
+        fuid=None,  # type: Optional[int]
+        fgid=None,  # type: Optional[int]
+        fmode=None,  # type: Optional[int]
+    ):
+        # type: (...) -> None
+        """
 		`fuid`, `fgid` and `fmode` are here only for similarity of interface
 		to UniFileHandler and are ignored.
 		"""
-		super(UniStreamHandler, self).__init__(stream)
+        super(UniStreamHandler, self).__init__(stream)
 
-	def emit(self, record):
-		"""remove password from from dicts in args"""
-		_remove_password_from_log_record(record)
-		super(UniStreamHandler, self).emit(record)
+    def emit(self, record):
+        """remove password from from dicts in args"""
+        _remove_password_from_log_record(record)
+        super(UniStreamHandler, self).emit(record)
 
 
 class ModuleHandler(logging.Handler):
-	"""Adapter: use Python logging but emit through univention debug"""
-	LOGGING_TO_UDEBUG = dict(
-		CRITICAL=ud.ERROR,
-		ERROR=ud.ERROR,
-		WARN=ud.WARN,
-		WARNING=ud.WARN,
-		INFO=ud.PROCESS,
-		DEBUG=ud.INFO,
-		NOTSET=ud.INFO
-	)
+    """Adapter: use Python logging but emit through univention debug"""
 
-	def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
-		# type: (Optional[int], Optional[int]) -> None
-		self._udebug_facility = udebug_facility
-		super(ModuleHandler, self).__init__(level)
+    LOGGING_TO_UDEBUG = dict(
+        CRITICAL=ud.ERROR,
+        ERROR=ud.ERROR,
+        WARN=ud.WARN,
+        WARNING=ud.WARN,
+        INFO=ud.PROCESS,
+        DEBUG=ud.INFO,
+        NOTSET=ud.INFO,
+    )
 
-	def emit(self, record):
-		"""log to univention debug, remove password from dicts in args"""
-		_remove_password_from_log_record(record)
-		msg = self.format(record)
-		if isinstance(msg, unicode):
-			msg = msg.encode("utf-8")
-		udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
-		ud.debug(self._udebug_facility, udebug_level, msg)
+    def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
+        # type: (Optional[int], Optional[int]) -> None
+        self._udebug_facility = udebug_facility
+        super(ModuleHandler, self).__init__(level)
+
+    def emit(self, record):
+        """log to univention debug, remove password from dicts in args"""
+        _remove_password_from_log_record(record)
+        msg = self.format(record)
+        if isinstance(msg, unicode):
+            msg = msg.encode("utf-8")
+        udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
+        ud.debug(self._udebug_facility, udebug_level, msg)
 
 
 class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
-	"""
+    """
 	Subclass of :py:class:`colorlog.TTYColoredFormatter` that will force
 	colorization on, in case UCSSCHOOL_FORCE_COLOR_TERM is found in env.
 	"""
-	def color(self, log_colors, level_name):
-		if os.environ and 'UCSSCHOOL_FORCE_COLOR_TERM' in os.environ:
-			return colorlog.ColoredFormatter.color(self, log_colors, level_name)
-		else:
-			return super(UCSTTYColoredFormatter, self).color(log_colors, level_name)
+
+    def color(self, log_colors, level_name):
+        if os.environ and "UCSSCHOOL_FORCE_COLOR_TERM" in os.environ:
+            return colorlog.ColoredFormatter.color(self, log_colors, level_name)
+        else:
+            return super(UCSTTYColoredFormatter, self).color(log_colors, level_name)
 
 
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
-	# type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
-	"""
+    # type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
+    """
 	Outputs all log messages of the models code to a stream (default: "stderr")::
 
 		from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
@@ -246,143 +254,145 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
 		# or:
 		add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
 	"""
-	logger = logging.getLogger(name or 'ucsschool')
-	if logger.level < logging.DEBUG:
-		# Must set this higher than NOTSET or the root loggers level (WARN)
-		# will be used.
-		logger.setLevel(logging.DEBUG)
-	if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
-		logger.addHandler(get_stream_handler(level, stream=stream, fmt=log_format))
-	return logger
+    logger = logging.getLogger(name or "ucsschool")
+    if logger.level < logging.DEBUG:
+        # Must set this higher than NOTSET or the root loggers level (WARN)
+        # will be used.
+        logger.setLevel(logging.DEBUG)
+    if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
+        logger.addHandler(get_stream_handler(level, stream=stream, fmt=log_format))
+    return logger
 
 
 def add_module_logger_to_schoollib():
-	# type: () -> None
-	logger = logging.getLogger('ucsschool')
-	if logger.level < logging.DEBUG:
-		# Must set this higher than NOTSET or the root loggers level (WARN)
-		# will be used.
-		logger.setLevel(logging.DEBUG)
-	if not any(handler.name in ('ucsschool_mem_handler', 'ucsschool_mod_handler') for handler in logger.handlers):
-		module_handler = ModuleHandler(udebug_facility=ud.MODULE)
-		module_handler.setLevel(logging.DEBUG)
-		module_handler.set_name('ucsschool_mod_handler')
-		memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
-		memory_handler.setLevel(logging.DEBUG)
-		memory_handler.set_name('ucsschool_mem_handler')
-		logger.addHandler(memory_handler)
-	else:
-		logger.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
+    # type: () -> None
+    logger = logging.getLogger("ucsschool")
+    if logger.level < logging.DEBUG:
+        # Must set this higher than NOTSET or the root loggers level (WARN)
+        # will be used.
+        logger.setLevel(logging.DEBUG)
+    if not any(
+        handler.name in ("ucsschool_mem_handler", "ucsschool_mod_handler") for handler in logger.handlers
+    ):
+        module_handler = ModuleHandler(udebug_facility=ud.MODULE)
+        module_handler.setLevel(logging.DEBUG)
+        module_handler.set_name("ucsschool_mod_handler")
+        memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
+        memory_handler.setLevel(logging.DEBUG)
+        memory_handler.set_name("ucsschool_mem_handler")
+        logger.addHandler(memory_handler)
+    else:
+        logger.info("add_module_logger_to_schoollib() should only be called once! Skipping...")
 
 
-def create_passwd(length=8, dn=None, specials='$%&*-+=:.?'):
-	# type: (Optional[int], Optional[AnyStr], Optional[AnyStr]) -> AnyStr
-	assert length > 0
+def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
+    # type: (Optional[int], Optional[AnyStr], Optional[AnyStr]) -> AnyStr
+    assert length > 0
 
-	if dn:
-		# get dn pw policy
-		if not _pw_length_cache.get(dn):
-			try:
-				results, policies = policy_result(dn)
-				_pw_length_cache[dn] = int(results.get('univentionPWLength', ['8'])[0])
-			except Exception:
-				pass
-		length = _pw_length_cache.get(dn, length)
+    if dn:
+        # get dn pw policy
+        if not _pw_length_cache.get(dn):
+            try:
+                results, policies = policy_result(dn)
+                _pw_length_cache[dn] = int(results.get("univentionPWLength", ["8"])[0])
+            except Exception:
+                pass
+        length = _pw_length_cache.get(dn, length)
 
-		# get ou pw policy
-		ou = 'ou=' + dn[dn.find('ou=') + 3:]
-		if not _pw_length_cache.get(ou):
-			try:
-				results, policies = policy_result(ou)
-				_pw_length_cache[ou] = int(results.get('univentionPWLength', ['8'])[0])
-			except Exception:
-				pass
-		length = _pw_length_cache.get(ou, length)
+        # get ou pw policy
+        ou = "ou=" + dn[dn.find("ou=") + 3 :]
+        if not _pw_length_cache.get(ou):
+            try:
+                results, policies = policy_result(ou)
+                _pw_length_cache[ou] = int(results.get("univentionPWLength", ["8"])[0])
+            except Exception:
+                pass
+        length = _pw_length_cache.get(ou, length)
 
-	pw = list()
-	specials_allowed = length / 5  # 20% specials in a password is enough
-	specials = list(specials) if specials else []
-	lowercase = list(string.lowercase)
-	for char in ('i', 'l', 'o'):
-		# remove chars that are easy to mistake for one another
-		lowercase.remove(char)
-	uppercase = list(string.uppercase)
-	for char in ('I', 'L', 'O'):
-		uppercase.remove(char)
-	digits = list(string.digits)
-	for char in ('0', '1'):
-		digits.remove(char)
+    pw = list()
+    specials_allowed = length / 5  # 20% specials in a password is enough
+    specials = list(specials) if specials else []
+    lowercase = list(string.lowercase)
+    for char in ("i", "l", "o"):
+        # remove chars that are easy to mistake for one another
+        lowercase.remove(char)
+    uppercase = list(string.uppercase)
+    for char in ("I", "L", "O"):
+        uppercase.remove(char)
+    digits = list(string.digits)
+    for char in ("0", "1"):
+        digits.remove(char)
 
-	# password will start with a letter (prepended at end of function)
-	length -= 1
+    # password will start with a letter (prepended at end of function)
+    length -= 1
 
-	# one symbol from each character class, MS requirement:
-	# https://technet.microsoft.com/en-us/library/cc786468(v=ws.10).aspx
-	if length >= 3:
-		pw.append(choice(lowercase))
-		pw.append(choice(uppercase))
-		pw.append(choice(digits))
-		length -= 3
-	if specials and length and specials_allowed:
-		pw.append(choice(specials))
-		specials_allowed -= 1
-		length -= 1
+    # one symbol from each character class, MS requirement:
+    # https://technet.microsoft.com/en-us/library/cc786468(v=ws.10).aspx
+    if length >= 3:
+        pw.append(choice(lowercase))
+        pw.append(choice(uppercase))
+        pw.append(choice(digits))
+        length -= 3
+    if specials and length and specials_allowed:
+        pw.append(choice(specials))
+        specials_allowed -= 1
+        length -= 1
 
-	# fill up with random chars (but not more than 20% specials)
-	for _x in range(length):
-		char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
-		if char in specials:
-			specials_allowed -= 1
-		pw.append(char)
+    # fill up with random chars (but not more than 20% specials)
+    for _x in range(length):
+        char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
+        if char in specials:
+            specials_allowed -= 1
+        pw.append(char)
 
-	shuffle(pw)
-	pw = [choice(lowercase + uppercase)] + pw  # start with a letter
-	return ''.join(pw)
+    shuffle(pw)
+    pw = [choice(lowercase + uppercase)] + pw  # start with a letter
+    return "".join(pw)
 
 
 def flatten(list_of_lists):  # type: (List[List[Any]]) -> List[Any]
-	# return [item for sublist in list_of_lists for item in sublist]
-	# => does not work well for strings in list
-	ret = []
-	for sublist in list_of_lists:
-		if isinstance(sublist, (list, tuple)):
-			ret.extend(flatten(sublist))
-		else:
-			ret.append(sublist)
-	return ret
+    # return [item for sublist in list_of_lists for item in sublist]
+    # => does not work well for strings in list
+    ret = []
+    for sublist in list_of_lists:
+        if isinstance(sublist, (list, tuple)):
+            ret.extend(flatten(sublist))
+        else:
+            ret.append(sublist)
+    return ret
 
 
 def loglevel_int2str(level):  # type: (Union[int, str]) -> str
-	"""Convert numeric loglevel to string name."""
-	if isinstance(level, int):
-		return logging.getLevelName(level)
-	else:
-		return level
+    """Convert numeric loglevel to string name."""
+    if isinstance(level, int):
+        return logging.getLevelName(level)
+    else:
+        return level
 
 
 def nearest_known_loglevel(level):
-	"""
+    """
 	Get loglevel nearest to those known in `CMDLINE_LOG_FORMATS` and
 	`FILE_LOG_FORMATS`.
 	"""
-	# TODO: smarter algo than just looking at highest and lowest
-	if level in FILE_LOG_FORMATS:
-		return level
-	if isinstance(level, int):
-		int_level = level
-	else:
-		int_level = logging._levelNames.get(level, 10)
-	if int_level <= logging.DEBUG:
-		return logging.DEBUG
-	elif int_level >= logging.CRITICAL:
-		return logging.CRITICAL
-	else:
-		return logging.INFO
+    # TODO: smarter algo than just looking at highest and lowest
+    if level in FILE_LOG_FORMATS:
+        return level
+    if isinstance(level, int):
+        int_level = level
+    else:
+        int_level = logging._levelNames.get(level, 10)
+    if int_level <= logging.DEBUG:
+        return logging.DEBUG
+    elif int_level >= logging.CRITICAL:
+        return logging.CRITICAL
+    else:
+        return logging.INFO
 
 
 def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None):
-	# type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
-	"""
+    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
+    """
 	Create a colored stream handler, usually for the console.
 
 	:param level: log level
@@ -395,22 +405,24 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 	:return: a handler
 	:rtype: logging.Handler
 	"""
-	fmt = '%(log_color)s{}'.format(fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))])
-	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-	formatter_kwargs = {'fmt': fmt, 'datefmt': datefmt}
-	fmt_cls = fmt_cls or UCSTTYColoredFormatter
-	if issubclass(fmt_cls, colorlog.ColoredFormatter):
-		formatter_kwargs['log_colors'] = LOG_COLORS
-	formatter = fmt_cls(**formatter_kwargs)
-	handler = UniStreamHandler(stream=stream)
-	handler.setFormatter(formatter)
-	handler.setLevel(level)
-	return handler
+    fmt = "%(log_color)s{}".format(
+        fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
+    )
+    datefmt = datefmt or str(LOG_DATETIME_FORMAT)
+    formatter_kwargs = {"fmt": fmt, "datefmt": datefmt}
+    fmt_cls = fmt_cls or UCSTTYColoredFormatter
+    if issubclass(fmt_cls, colorlog.ColoredFormatter):
+        formatter_kwargs["log_colors"] = LOG_COLORS
+    formatter = fmt_cls(**formatter_kwargs)
+    handler = UniStreamHandler(stream=stream)
+    handler.setFormatter(formatter)
+    handler.setLevel(level)
+    return handler
 
 
 def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None):
-	# type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler
-	"""
+    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler
+    """
 	Create a :py:class:`UniFileHandler` (TimedRotatingFileHandler) for logging
 	to a file.
 
@@ -426,24 +438,24 @@ def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None
 	:return: a handler
 	:rtype: logging.Handler
 	"""
-	fmt = fmt or FILE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
-	datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-	formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
-	handler = UniFileHandler(filename, when="D", backupCount=10000000, fuid=uid, fgid=gid, fmode=mode)
-	handler.setFormatter(formatter)
-	handler.setLevel(level)
-	return handler
+    fmt = fmt or FILE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
+    datefmt = datefmt or str(LOG_DATETIME_FORMAT)
+    formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
+    handler = UniFileHandler(filename, when="D", backupCount=10000000, fuid=uid, fgid=gid, fmode=mode)
+    handler.setFormatter(formatter)
+    handler.setLevel(level)
+    return handler
 
 
 def get_logger(
-		name,  # type: AnyStr
-		level="INFO",  # type: Optional[AnyStr]
-		target=sys.stdout,  # type: Optional[file]
-		handler_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
-		formatter_kwargs=None  # type: Optional[Dict[AnyStr, Any]]
+    name,  # type: AnyStr
+    level="INFO",  # type: Optional[AnyStr]
+    target=sys.stdout,  # type: Optional[file]
+    handler_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
+    formatter_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
 ):
-	# type: (...) -> logging.Logger
-	"""
+    # type: (...) -> logging.Logger
+    """
 	Get a logger object below the ucsschool root logger.
 
 	.. deprecated:: 4.4 v2
@@ -476,71 +488,71 @@ def get_logger(
 		logging.Formatter.
 	:return: a python logging object
 	"""
-	if not name:
-		name = "noname"
-	if isinstance(target, file) or hasattr(target, "write"):
-		# file like object
-		filename = target.name
-	else:
-		filename = target
-	cache_key = "{}-{}".format(name, filename)
-	_logger = logging.getLogger("ucsschool.{}".format(name))
+    if not name:
+        name = "noname"
+    if isinstance(target, file) or hasattr(target, "write"):
+        # file like object
+        filename = target.name
+    else:
+        filename = target
+    cache_key = "{}-{}".format(name, filename)
+    _logger = logging.getLogger("ucsschool.{}".format(name))
 
-	if cache_key in _handler_cache and getattr(logging, level) >= _handler_cache[cache_key].level:
-		return _logger
+    if cache_key in _handler_cache and getattr(logging, level) >= _handler_cache[cache_key].level:
+        return _logger
 
-	# The logger objects level must be the lowest of all handlers, or handlers
-	# with a higher level will not be able to log anything.
-	if getattr(logging, level) < _logger.level:
-		_logger.setLevel(level)
+    # The logger objects level must be the lowest of all handlers, or handlers
+    # with a higher level will not be able to log anything.
+    if getattr(logging, level) < _logger.level:
+        _logger.setLevel(level)
 
-	if not isinstance(handler_kwargs, dict):
-		handler_kwargs = dict()
-	if not isinstance(formatter_kwargs, dict):
-		formatter_kwargs = dict()
+    if not isinstance(handler_kwargs, dict):
+        handler_kwargs = dict()
+    if not isinstance(formatter_kwargs, dict):
+        formatter_kwargs = dict()
 
-	if isinstance(target, file) or hasattr(target, "write"):
-		handler_defaults = dict(cls=UniStreamHandler, stream=target)
-		fmt = '%(log_color)s{}'.format(CMDLINE_LOG_FORMATS[level])
-		fmt_cls = colorlog.TTYColoredFormatter
-	else:
-		handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
-		fmt = FILE_LOG_FORMATS[level]
-		fmt_cls = logging.Formatter
-	handler_defaults.update(handler_kwargs)
-	fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
-	fmt_kwargs.update(formatter_kwargs)
-	if issubclass(fmt_cls, colorlog.ColoredFormatter):
-		fmt_kwargs['log_colors'] = LOG_COLORS
+    if isinstance(target, file) or hasattr(target, "write"):
+        handler_defaults = dict(cls=UniStreamHandler, stream=target)
+        fmt = "%(log_color)s{}".format(CMDLINE_LOG_FORMATS[level])
+        fmt_cls = colorlog.TTYColoredFormatter
+    else:
+        handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
+        fmt = FILE_LOG_FORMATS[level]
+        fmt_cls = logging.Formatter
+    handler_defaults.update(handler_kwargs)
+    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
+    fmt_kwargs.update(formatter_kwargs)
+    if issubclass(fmt_cls, colorlog.ColoredFormatter):
+        fmt_kwargs["log_colors"] = LOG_COLORS
 
-	if _logger.level == logging.NOTSET:
-		# fresh logger
-		_logger.setLevel(level)
+    if _logger.level == logging.NOTSET:
+        # fresh logger
+        _logger.setLevel(level)
 
-	if cache_key in _handler_cache:
-		# Check if loglevel from this request is lower than the one used in
-		# the cached loggers handler. We do only lower level, never raise it.
-		if getattr(logging, level) < _handler_cache[cache_key].level:
-			handler = _handler_cache[cache_key]
-			handler.setLevel(level)
-			formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
-			handler.setFormatter(formatter)
-	else:
-		# Create handler and formatter from scratch.
-		handler = handler_defaults.pop("cls")(**handler_defaults)
-		handler.set_name("ucsschool.{}".format(name))
-		handler.setLevel(level)
-		formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
-		handler.setFormatter(formatter)
-		_logger.addHandler(handler)
-		_handler_cache[cache_key] = handler
-	_logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
-	return _logger
+    if cache_key in _handler_cache:
+        # Check if loglevel from this request is lower than the one used in
+        # the cached loggers handler. We do only lower level, never raise it.
+        if getattr(logging, level) < _handler_cache[cache_key].level:
+            handler = _handler_cache[cache_key]
+            handler.setLevel(level)
+            formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
+            handler.setFormatter(formatter)
+    else:
+        # Create handler and formatter from scratch.
+        handler = handler_defaults.pop("cls")(**handler_defaults)
+        handler.set_name("ucsschool.{}".format(name))
+        handler.setLevel(level)
+        formatter = fmt_kwargs.pop("cls")(**fmt_kwargs)
+        handler.setFormatter(formatter)
+        _logger.addHandler(handler)
+        _handler_cache[cache_key] = handler
+    _logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
+    return _logger
 
 
 def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
-	# type: (Sequence[str], Optional[bool], Optional[bool], **Any) -> Tuple[int, str, str]
-	"""
+    # type: (Sequence[str], Optional[bool], Optional[bool], **Any) -> Tuple[int, str, str]
+    """
 	Execute command.
 
 	:param list(str) cmd: command line as list of strings
@@ -554,25 +566,27 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
 		code was != 0
 	:raises OSError: if cmd[0] does not exist: "No such file or directory"
 	"""
-	assert all(isinstance(arg, string_types) for arg in cmd)
-	kwargs["stdout"] = kwargs.get("stdout", subprocess.PIPE)
-	kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
-	process = subprocess.Popen(cmd, **kwargs)
-	stdout, stderr = process.communicate()
-	if log:
-		logger = logging.getLogger(__name__)
-		if stdout:
-			logger.info(stdout)
-		if stderr:
-			logger.error(stderr)
-	if raise_exc and process.returncode:
-		raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd, output=stderr or stdout)
-	return process.returncode, stdout, stderr
+    assert all(isinstance(arg, string_types) for arg in cmd)
+    kwargs["stdout"] = kwargs.get("stdout", subprocess.PIPE)
+    kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
+    process = subprocess.Popen(cmd, **kwargs)
+    stdout, stderr = process.communicate()
+    if log:
+        logger = logging.getLogger(__name__)
+        if stdout:
+            logger.info(stdout)
+        if stderr:
+            logger.error(stderr)
+    if raise_exc and process.returncode:
+        raise subprocess.CalledProcessError(
+            returncode=process.returncode, cmd=cmd, output=stderr or stdout
+        )
+    return process.returncode, stdout, stderr
 
 
 @contextmanager
 def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
-	"""
+    """
 	Stops univention-directory-notifier while in a block and starts it in the
 	end. Service if stopped/started by /etc/init.d.
 
@@ -586,65 +600,72 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
 	:param bool strict: raise RuntimeError if stopping fails
 	:raises RuntimeError: if stopping failed and ``strict=True``
 	"""
-	service_name = 'univention-directory-notifier'
-	logger = logging.getLogger(__name__)
+    service_name = "univention-directory-notifier"
+    logger = logging.getLogger(__name__)
 
-	def _run(args):
-		returncode, stdout, stderr = exec_cmd(args, log=True)
-		return returncode == 0
+    def _run(args):
+        returncode, stdout, stderr = exec_cmd(args, log=True)
+        return returncode == 0
 
-	notifier_running = False
-	logger.info('Stopping %s', service_name)
-	for process in process_iter():
-		try:
-			if process.name() == service_name:
-				notifier_running = True
-				break
-		except (IOError, NoSuchProcess):
-			pass
-	if not notifier_running:
-		logger.warning('%s is not running! Skipping', service_name)
-	else:
-		if _run(['/etc/init.d/%s' % service_name, 'stop']):
-			logger.info('%s stopped', service_name)
-		else:
-			logger.error('Failed to stop %s...', service_name)
-			if strict:
-				raise RuntimeError('Failed to stop %s, but this seems to be very important (strict=True was specified)' % service_name)
-			else:
-				logger.warning('In the end, will try to start it nonetheless')
-	try:
-		yield
-	finally:
-		logger.info('Starting %s', service_name)
-		if not notifier_running:
-			logger.warning('Notifier was not running! Skipping')
-		else:
-			start_disabled = ucr.is_false('notifier/autostart', False)
-			command = ['/etc/init.d/%s' % service_name, 'start']
-			if not start_disabled and _run(command):
-				logger.info('%s started', service_name)
-			else:
-				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command))  # correct: shlex... unnecessary
+    notifier_running = False
+    logger.info("Stopping %s", service_name)
+    for process in process_iter():
+        try:
+            if process.name() == service_name:
+                notifier_running = True
+                break
+        except (IOError, NoSuchProcess):
+            pass
+    if not notifier_running:
+        logger.warning("%s is not running! Skipping", service_name)
+    else:
+        if _run(["/etc/init.d/%s" % service_name, "stop"]):
+            logger.info("%s stopped", service_name)
+        else:
+            logger.error("Failed to stop %s...", service_name)
+            if strict:
+                raise RuntimeError(
+                    "Failed to stop %s, but this seems to be very important (strict=True was specified)"
+                    % service_name
+                )
+            else:
+                logger.warning("In the end, will try to start it nonetheless")
+    try:
+        yield
+    finally:
+        logger.info("Starting %s", service_name)
+        if not notifier_running:
+            logger.warning("Notifier was not running! Skipping")
+        else:
+            start_disabled = ucr.is_false("notifier/autostart", False)
+            command = ["/etc/init.d/%s" % service_name, "start"]
+            if not start_disabled and _run(command):
+                logger.info("%s started", service_name)
+            else:
+                logger.error(
+                    'Failed to start %s... Bad news! Better run "%s" manually!',
+                    service_name,
+                    " ".join(command),
+                )  # correct: shlex... unnecessary
 
 
 def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> None
-	with open(path, 'w') as fp:
-		ruamel.yaml.dump(
-			{
-				'date': str(LOG_DATETIME_FORMAT),
-				'cmdline': collections.OrderedDict(CMDLINE_LOG_FORMATS),
-				'colors': collections.OrderedDict(LOG_COLORS),
-				'file': collections.OrderedDict(FILE_LOG_FORMATS),
-			},
-			fp,
-			ruamel.yaml.RoundTripDumper,
-			indent=4
-		)
+    with open(path, "w") as fp:
+        ruamel.yaml.dump(
+            {
+                "date": str(LOG_DATETIME_FORMAT),
+                "cmdline": collections.OrderedDict(CMDLINE_LOG_FORMATS),
+                "colors": collections.OrderedDict(LOG_COLORS),
+                "file": collections.OrderedDict(FILE_LOG_FORMATS),
+            },
+            fp,
+            ruamel.yaml.RoundTripDumper,
+            indent=4,
+        )
 
 
-def get_package_version(package_name):   # type: (str) -> str
-	"""
+def get_package_version(package_name):  # type: (str) -> str
+    """
 	Retrieve the version of the Debian package `package_name` from the
 	Debian package cache.
 
@@ -654,11 +675,11 @@ def get_package_version(package_name):   # type: (str) -> str
 	:raises NotInstalled: if the package is not installed
 	:raises UnknownPackage: if the package is unknown
 	"""
-	cache = apt.cache.Cache()
-	try:
-		package = cache[package_name]
-	except KeyError:
-		raise UnknownPackage("Debian package {!r} not in package cache.".format(package_name))
-	if not package:
-		raise NotInstalled("Debian package {!r} ist not installed.".format(package_name))
-	return package.installed.version
+    cache = apt.cache.Cache()
+    try:
+        package = cache[package_name]
+    except KeyError:
+        raise UnknownPackage("Debian package {!r} not in package cache.".format(package_name))
+    if not package:
+        raise NotInstalled("Debian package {!r} ist not installed.".format(package_name))
+    return package.installed.version

@@ -33,11 +33,10 @@ import univention.debug as ud
 
 
 class schoolAdminGroup(simpleHook):
+    def hook_open(self, module):
+        ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolAdminGroup: _open called")
 
-	def hook_open(self, module):
-		ud.debug(ud.ADMIN, ud.ALL, 'admin.hook.schoolAdminGroup: _open called')
-
-		objectClass = module.oldattr.get('objectClass', [])
-		name = 'ucsschoolAdministratorGroup'
-		if name in objectClass and name not in module.options:
-			module.options.append(name)
+        objectClass = module.oldattr.get("objectClass", [])
+        name = "ucsschoolAdministratorGroup"
+        if name in objectClass and name not in module.options:
+            module.options.append(name)

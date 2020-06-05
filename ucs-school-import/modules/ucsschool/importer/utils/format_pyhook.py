@@ -38,7 +38,7 @@ from ucsschool.lib.pyhooks import PyHook
 
 
 class FormatPyHook(PyHook):
-	"""
+    """
 	Format hook base class
 
 	The base class' :py:meth:`__init__()` provides a logger instance:
@@ -49,22 +49,23 @@ class FormatPyHook(PyHook):
 	priority numbers run before those with lower priorities. None disables
 	a function.
 	"""
-	priority = {
-		'patch_fields_staff': None,
-		'patch_fields_student': None,
-		'patch_fields_teacher': None,
-		'patch_fields_teacher_and_staff': None,
-	}
-	# The hook will be run only for property names in this list.
-	properties = ()
 
-	def __init__(self, *args, **kwargs):
-		super(FormatPyHook, self).__init__(*args, **kwargs)
-		self.logger = logging.getLogger(__name__)
-		"""Python logging instance"""
+    priority = {
+        "patch_fields_staff": None,
+        "patch_fields_student": None,
+        "patch_fields_teacher": None,
+        "patch_fields_teacher_and_staff": None,
+    }
+    # The hook will be run only for property names in this list.
+    properties = ()
 
-	def patch_fields_staff(self, property_name, fields):
-		"""
+    def __init__(self, *args, **kwargs):
+        super(FormatPyHook, self).__init__(*args, **kwargs)
+        self.logger = logging.getLogger(__name__)
+        """Python logging instance"""
+
+    def patch_fields_staff(self, property_name, fields):
+        """
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
@@ -73,10 +74,10 @@ class FormatPyHook(PyHook):
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
-		return fields
+        return fields
 
-	def patch_fields_student(self, property_name, fields):
-		"""
+    def patch_fields_student(self, property_name, fields):
+        """
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
@@ -85,10 +86,10 @@ class FormatPyHook(PyHook):
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
-		return fields
+        return fields
 
-	def patch_fields_teacher(self, property_name, fields):
-		"""
+    def patch_fields_teacher(self, property_name, fields):
+        """
 		Run code before formatting an property using a schema in
 		format_from_scheme().
 
@@ -97,10 +98,10 @@ class FormatPyHook(PyHook):
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
-		return fields
+        return fields
 
-	def patch_fields_teacher_and_staff(self, property_name, fields):
-		"""
+    def patch_fields_teacher_and_staff(self, property_name, fields):
+        """
 		Run code before formatting a property using a schema in
 		format_from_scheme().
 
@@ -109,4 +110,4 @@ class FormatPyHook(PyHook):
 		:return: fields dictionary that be used by format_from_scheme()
 		:rtype: dict
 		"""
-		return fields
+        return fields

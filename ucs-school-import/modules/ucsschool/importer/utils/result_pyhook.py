@@ -33,15 +33,16 @@ Base class for all Python based Result-Pyhooks.
 """
 
 from .import_pyhook import ImportPyHook
+
 try:
-	import typing
-	from ..mass_import.user_import import UserImportData
+    import typing
+    from ..mass_import.user_import import UserImportData
 except ImportError:
-	pass
+    pass
 
 
 class ResultPyHook(ImportPyHook):
-	"""
+    """
 	Hook that is called after import has finished.
 
 	The base class' :py:meth:`__init__()` provides the following attributes:
@@ -62,12 +63,13 @@ class ResultPyHook(ImportPyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	priority = {
-		'user_result': None,
-	}
 
-	def user_result(self, user_import_data):  # type: (UserImportData) -> None
-		"""
+    priority = {
+        "user_result": None,
+    }
+
+    def user_result(self, user_import_data):  # type: (UserImportData) -> None
+        """
 		Run code after user import has finished. Relevant data from the
 		UserImport class is passed to this hook, so result summaries etc are
 		possible.
@@ -75,4 +77,4 @@ class ResultPyHook(ImportPyHook):
 		:param UserImportData user_import_data: relevant data from the UserImport class
 		:return: None
 		"""
-		return None
+        return None

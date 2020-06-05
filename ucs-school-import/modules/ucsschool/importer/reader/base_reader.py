@@ -41,63 +41,69 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.import_pyhook import run_import_pyhooks
 
 try:
-	from typing import Dict, List
+    from typing import Dict, List
 except ImportError:
-	pass
+    pass
 
 
 class BaseReader(object):
-	"""
+    """
 	Base class of all input readers.
 
 	Subclasses must override get_roles(), map() and read().
 	"""
 
-	def __init__(self, filename, header_lines=0, **kwargs):
-		"""
+    def __init__(self, filename, header_lines=0, **kwargs):
+        """
 		:param str filename: Path to file with user data.
 		:param int header_lines: Number of lines before the actual data starts.
 		:param dict kwargs: optional parameters for use in derived classes
 		"""
-		self.config = Configuration()
-		self.logger = logging.getLogger(__name__)
-		self.lo, self.position = get_readonly_connection() if self.config['dry_run'] else get_admin_connection()
-		self.filename = filename
-		self.header_lines = header_lines
-		self.import_users = self.read()
-		self.factory = Factory()
-		self.ucr = self.factory.make_ucr()
-		self.entry_count = 0    # line/node in input data
-		self.input_data = None  # input data, as raw as possible/sensible
+        self.config = Configuration()
+        self.logger = logging.getLogger(__name__)
+        self.lo, self.position = (
+            get_readonly_connection() if self.config["dry_run"] else get_admin_connection()
+        )
+        self.filename = filename
+        self.header_lines = header_lines
+        self.import_users = self.read()
+        self.factory = Factory()
+        self.ucr = self.factory.make_ucr()
+        self.entry_count = 0  # line/node in input data
+        self.input_data = None  # input data, as raw as possible/sensible
 
-	def __iter__(self):
-		return self
+    def __iter__(self):
+        return self
 
-	def next(self):
-		"""
+    def next(self):
+        """
 		Generates ImportUsers from input data.
 
 		:return: ImportUser
 		:rtype: ImportUser
 		"""
-		while True:
-			input_dict = self.import_users.next()
-			self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
-			try:
-				run_import_pyhooks(PostReadPyHook, 'entry_read', self.entry_count, self.input_data, input_dict)
-				break
-			except UcsSchoolImportSkipImportRecord as exc:
-				self.logger.info("Skipping input line %d as requested by PostReadPyHook: %s", self.entry_count, exc)
+        while True:
+            input_dict = self.import_users.next()
+            self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
+            try:
+                run_import_pyhooks(
+                    PostReadPyHook, "entry_read", self.entry_count, self.input_data, input_dict
+                )
+                break
+            except UcsSchoolImportSkipImportRecord as exc:
+                self.logger.info(
+                    "Skipping input line %d as requested by PostReadPyHook: %s", self.entry_count, exc
+                )
 
-		cur_user_roles = self.get_roles(input_dict)
-		cur_import_user = self.map(input_dict, cur_user_roles)
-		cur_import_user.entry_count = self.entry_count
-		cur_import_user.input_data = self.input_data
-		cur_import_user.prepare_uids()
-		return cur_import_user
+        cur_user_roles = self.get_roles(input_dict)
+        cur_import_user = self.map(input_dict, cur_user_roles)
+        cur_import_user.entry_count = self.entry_count
+        cur_import_user.input_data = self.input_data
+        cur_import_user.prepare_uids()
+        return cur_import_user
 
-	def get_roles(self, input_data):
-		"""
+    def get_roles(self, input_data):
+        """
 		IMPLEMENT ME
 		Detect the ucsschool.lib.roles from the input data.
 
@@ -105,10 +111,10 @@ class BaseReader(object):
 		:return: [ucsschool.lib.roles, ..]
 		:rtype: list(str)
 		"""
-		raise NotImplementedError()
+        raise NotImplementedError()
 
-	def map(self, input_data, cur_user_roles):
-		"""
+    def map(self, input_data, cur_user_roles):
+        """
 		IMPLEMENT ME
 		Creates a ImportUser object from a users dict (self.cur_entry). Data
 		will not be	modified, just copied.
@@ -119,10 +125,10 @@ class BaseReader(object):
 		:return: ImportUser
 		:rtype: ImportUser
 		"""
-		raise NotImplementedError()
+        raise NotImplementedError()
 
-	def read(self, *args, **kwargs):
-		"""
+    def read(self, *args, **kwargs):
+        """
 		IMPLEMENT ME
 		Generator that returns dicts of read users
 		Sets self.entry_count and self.input_data on each read.
@@ -132,10 +138,10 @@ class BaseReader(object):
 		:return: iter([user, ...])
 		:rtype: Iterator
 		"""
-		raise NotImplementedError()
+        raise NotImplementedError()
 
-	def get_data_mapping(self, input_data):
-		"""
+    def get_data_mapping(self, input_data):
+        """
 		IMPLEMENT ME
 		Create a mapping from the configured input mapping to the actual
 		input data. This is configuration and input format specific. See
@@ -147,4 +153,4 @@ class BaseReader(object):
 		:return: key->input_data-value mapping
 		:rtype: dict
 		"""
-		return {}
+        return {}

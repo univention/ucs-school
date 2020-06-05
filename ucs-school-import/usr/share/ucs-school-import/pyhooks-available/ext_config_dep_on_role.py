@@ -57,23 +57,25 @@ import pprint
 from ucsschool.lib.roles import supported_roles
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.utils.config_pyhook import ConfigPyHook
+
 try:
-	from typing import Any, Dict, List
+    from typing import Any, Dict, List
 except ImportError:
-	pass
+    pass
 
 
 class ExtendConfigByRole(ConfigPyHook):
-	"""
+    """
 	Config hooks that changes the configuration depending on the user role.
 	"""
-	priority = {
-		'post_config_files_read': 10,
-	}
 
-	def post_config_files_read(self, config, used_conffiles, used_kwargs):
-		# type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict
-		"""
+    priority = {
+        "post_config_files_read": 10,
+    }
+
+    def post_config_files_read(self, config, used_conffiles, used_kwargs):
+        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict
+        """
 		Hook that runs after reading the configuration files `used_conffiles`
 		and applying the command line arguments `used_kwargs`. Resulting
 		configuration is `config`, which can be manipulated and must be
@@ -86,25 +88,25 @@ class ExtendConfigByRole(ConfigPyHook):
 		:return: config dict
 		:rtype ReadOnlyDict
 		"""
-		if not self.preconditions_met(config, used_conffiles, used_kwargs):
-			return config
+        if not self.preconditions_met(config, used_conffiles, used_kwargs):
+            return config
 
-		user_role = config['user_role']
-		include_file = config['include']['by_role'][user_role]
-		self.logger.debug('Reading %r...', include_file)
-		try:
-			with open(include_file, 'r') as fp:
-				include_config = json.load(fp)
-		except (IOError, ValueError) as exc:
-			self.logger.exception('Reading include file %r: %s', include_file, exc)
-			raise ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2]
-		self.logger.info('Updating configuration with:\n%s', pprint.pformat(include_config))
-		config.update(include_config)
-		return config
+        user_role = config["user_role"]
+        include_file = config["include"]["by_role"][user_role]
+        self.logger.debug("Reading %r...", include_file)
+        try:
+            with open(include_file, "r") as fp:
+                include_config = json.load(fp)
+        except (IOError, ValueError) as exc:
+            self.logger.exception("Reading include file %r: %s", include_file, exc)
+            raise ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2]
+        self.logger.info("Updating configuration with:\n%s", pprint.pformat(include_config))
+        config.update(include_config)
+        return config
 
-	def preconditions_met(self, config, used_conffiles, used_kwargs):
-		# type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> bool
-		"""
+    def preconditions_met(self, config, used_conffiles, used_kwargs):
+        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> bool
+        """
 		Verify preconditions for using the hook.
 
 		:param ReadOnlyDict config: configuration that will be used by the
@@ -114,16 +116,18 @@ class ExtendConfigByRole(ConfigPyHook):
 		:return: whether the hook can run
 		:rtype bool
 		"""
-		if 'by_role' not in config.get('include', {}):
-			self.logger.error('Exiting hook: missing section "include:by_role".')
-			return False
-		if config.get('user_role') is None:
-			self.logger.error('Exiting hook: hook requires a fixed role but "user_role" is None.')
-			return False
-		if config['user_role'] not in list(supported_roles) + ['student']:
-			self.logger.error('Exiting hook: unknown role %r.', config['user_role'])
-			return False
-		if config['user_role'] not in config['include']['by_role']:
-			self.logger.warning('No value for role %r in section "include:by_role", ignoring.', config['user_role'])
-			return False
-		return True
+        if "by_role" not in config.get("include", {}):
+            self.logger.error('Exiting hook: missing section "include:by_role".')
+            return False
+        if config.get("user_role") is None:
+            self.logger.error('Exiting hook: hook requires a fixed role but "user_role" is None.')
+            return False
+        if config["user_role"] not in list(supported_roles) + ["student"]:
+            self.logger.error("Exiting hook: unknown role %r.", config["user_role"])
+            return False
+        if config["user_role"] not in config["include"]["by_role"]:
+            self.logger.warning(
+                'No value for role %r in section "include:by_role", ignoring.', config["user_role"]
+            )
+            return False
+        return True

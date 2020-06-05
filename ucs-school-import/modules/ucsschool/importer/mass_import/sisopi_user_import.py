@@ -41,14 +41,14 @@ from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 
 try:
-	from typing import Optional, Union
-	from ..models.import_user import ImportUser
+    from typing import Optional, Union
+    from ..models.import_user import ImportUser
 except ImportError:
-	pass
+    pass
 
 
 class SingleSourcePartialUserImport(UserImport):
-	"""
+    """
 	Currently used by MassImport like this:
 
 	1. read_input()
@@ -74,15 +74,17 @@ class SingleSourcePartialUserImport(UserImport):
 	  domain.
 	"""
 
-	def __init__(self, dry_run=True):
-		"""
+    def __init__(self, dry_run=True):
+        """
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		"""
-		super(SingleSourcePartialUserImport, self).__init__(dry_run)
-		self.limbo_ou = self.config.get('limbo_ou')
+        super(SingleSourcePartialUserImport, self).__init__(dry_run)
+        self.limbo_ou = self.config.get("limbo_ou")
 
-	def prepare_imported_user(self, imported_user, old_user):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
-		"""
+    def prepare_imported_user(
+        self, imported_user, old_user
+    ):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
+        """
 		Prepare attributes of ``imported_user`` object. Optionally save existing
 		user (``old_user``) object reference in ``imported_user.old_user``.
 		Sets ``imported_user.action`` according to ``is_new_user``.
@@ -98,51 +100,65 @@ class SingleSourcePartialUserImport(UserImport):
 		:return: ImportUser object with attributes prepared
 		:rtype: ImportUser
 		"""
-		# security check
-		if (
-				imported_user.school and imported_user.school != self.config['school'] or
-				imported_user.schools and imported_user.schools not in (self.config['school'], [self.config['school']])
-		):
-			raise InvalidSchools(
-				'In the SingleSourcePartialImport scenario it is not allowed to import into any other school that the '
-				'one configured ({!r}). Found school={!r} schools={!r}.'.format(
-					self.config['school'], imported_user.school, imported_user.schools),
-				entry_count=imported_user.entry_count,
-				input=imported_user.input_data,
-				import_user=imported_user
-			)
+        # security check
+        if (
+            imported_user.school
+            and imported_user.school != self.config["school"]
+            or imported_user.schools
+            and imported_user.schools not in (self.config["school"], [self.config["school"]])
+        ):
+            raise InvalidSchools(
+                "In the SingleSourcePartialImport scenario it is not allowed to import into any other school that the "
+                "one configured ({!r}). Found school={!r} schools={!r}.".format(
+                    self.config["school"], imported_user.school, imported_user.schools
+                ),
+                entry_count=imported_user.entry_count,
+                input=imported_user.input_data,
+                import_user=imported_user,
+            )
 
-		if old_user:
-			imported_user.old_user = copy.deepcopy(old_user)
-			if old_user.school == self.limbo_ou:
-				self.logger.info(
-					'User %r is in limbo school %r, moving to %r.', old_user, self.limbo_ou, self.config['school']
-				)
-				imported_user.school = self.config['school']
-				imported_user.schools = [self.config['school']]
-				imported_user.reactivate()
-			else:
-				self.logger.debug(
-					'config["school"]=%r config["limbo_ou"]=%r imported_user.school=%r imported_user.schools=%r '
-					'old_user.school=%r old_user.schools=%r', self.config['school'], self.limbo_ou,
-					imported_user.school, imported_user.schools, old_user.school, old_user.schools)
-				if (
-						imported_user.school and imported_user.school != old_user.school or
-						self.config['school'] not in old_user.schools
-				):
-					self.logger.info(
-						"User %r exists in other school(s). Adding %r to 'schools', not moving.",
-						old_user, self.config['school']
-					)
-				imported_user.school = old_user.school
-				imported_user.schools = old_user.schools
-				if self.config['school'] not in old_user.schools:
-					imported_user.schools.append(self.config['school'])
+        if old_user:
+            imported_user.old_user = copy.deepcopy(old_user)
+            if old_user.school == self.limbo_ou:
+                self.logger.info(
+                    "User %r is in limbo school %r, moving to %r.",
+                    old_user,
+                    self.limbo_ou,
+                    self.config["school"],
+                )
+                imported_user.school = self.config["school"]
+                imported_user.schools = [self.config["school"]]
+                imported_user.reactivate()
+            else:
+                self.logger.debug(
+                    'config["school"]=%r config["limbo_ou"]=%r imported_user.school=%r imported_user.schools=%r '
+                    "old_user.school=%r old_user.schools=%r",
+                    self.config["school"],
+                    self.limbo_ou,
+                    imported_user.school,
+                    imported_user.schools,
+                    old_user.school,
+                    old_user.schools,
+                )
+                if (
+                    imported_user.school
+                    and imported_user.school != old_user.school
+                    or self.config["school"] not in old_user.schools
+                ):
+                    self.logger.info(
+                        "User %r exists in other school(s). Adding %r to 'schools', not moving.",
+                        old_user,
+                        self.config["school"],
+                    )
+                imported_user.school = old_user.school
+                imported_user.schools = old_user.schools
+                if self.config["school"] not in old_user.schools:
+                    imported_user.schools.append(self.config["school"])
 
-		return super(SingleSourcePartialUserImport, self).prepare_imported_user(imported_user, old_user)
+        return super(SingleSourcePartialUserImport, self).prepare_imported_user(imported_user, old_user)
 
-	def get_existing_users_search_filter(self):
-		"""
+    def get_existing_users_search_filter(self):
+        """
 		Create LDAP filter with which to find existing users.
 
 		In the case of SingleSourcePartialImport, we look at::
@@ -152,14 +168,14 @@ class SingleSourcePartialUserImport(UserImport):
 		:return: LDAP filter
 		:rtype: str
 		"""
-		oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
-		return filter_format(
-			"(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*)(ucsschoolSchool=%s))".format(oc_filter),
-			(self.config["source_uid"], self.config['school'])
-		)
+        oc_filter = self.factory.make_import_user([]).get_ldap_filter_for_user_role()
+        return filter_format(
+            "(&{}(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*)(ucsschoolSchool=%s))".format(oc_filter),
+            (self.config["source_uid"], self.config["school"]),
+        )
 
-	def do_delete(self, user):
-		"""
+    def do_delete(self, user):
+        """
 		Delete or deactivate a user.
 
 		In the case of SingleSourcePartialImport:
@@ -172,48 +188,51 @@ class SingleSourcePartialUserImport(UserImport):
 		:return: whether the deletion worked
 		:rtype: bool
 		"""
-		modified = False
+        modified = False
 
-		self.logger.info('Removing %r from school %r...', user, self.config['school'])
-		user.schools.remove(self.config['school'])
+        self.logger.info("Removing %r from school %r...", user, self.config["school"])
+        user.schools.remove(self.config["school"])
 
-		if user.schools:
-			self.logger.info('User is still member of school(s) %r.', user.schools)
-			if user.school == self.config['school']:
-				imported_user = copy.deepcopy(user)
-				imported_user.school = sorted(user.schools)[0]
-				self.logger.info('User will be moved to school %r.', imported_user.school)
-				user = self.school_move(imported_user, user)
-				user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
-				# no modify() required, because the move takes care of it
-			else:
-				# perform user.modify() to remove user from school
-				modified = True
-		else:
-			self.logger.info('Moving %r to limbo school %r.', user, self.limbo_ou)
-			imported_user = copy.deepcopy(user)
-			imported_user.school = self.limbo_ou
-			imported_user.schools = [self.limbo_ou]
-			imported_user.school_classes = {}
-			user = self.school_move(imported_user, user)
-			user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
-			modified |= self.deactivate_user_now(user)
+        if user.schools:
+            self.logger.info("User is still member of school(s) %r.", user.schools)
+            if user.school == self.config["school"]:
+                imported_user = copy.deepcopy(user)
+                imported_user.school = sorted(user.schools)[0]
+                self.logger.info("User will be moved to school %r.", imported_user.school)
+                user = self.school_move(imported_user, user)
+                user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
+                # no modify() required, because the move takes care of it
+            else:
+                # perform user.modify() to remove user from school
+                modified = True
+        else:
+            self.logger.info("Moving %r to limbo school %r.", user, self.limbo_ou)
+            imported_user = copy.deepcopy(user)
+            imported_user.school = self.limbo_ou
+            imported_user.schools = [self.limbo_ou]
+            imported_user.school_classes = {}
+            user = self.school_move(imported_user, user)
+            user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
+            modified |= self.deactivate_user_now(user)
 
-		if self.dry_run:
-			user.call_hooks('pre', 'remove')
-			self.logger.info('Dry-run: not expiring, deactivating or setting the purge timestamp for %s.', user)
-			user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
-			if self.errors:
-				raise UserValidationError(
-					'ValidationError when deleting {}.'.format(user),
-					validation_error=ValidationError(user.errors.copy()))
-			success = True
-			user.call_hooks('post', 'remove')
-		elif modified:
-			success = user.modify(lo=self.connection)
-		else:
-			# not a dry_run, but user was not modified, because user was not deactivated
-			success = True
+        if self.dry_run:
+            user.call_hooks("pre", "remove")
+            self.logger.info(
+                "Dry-run: not expiring, deactivating or setting the purge timestamp for %s.", user
+            )
+            user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
+            if self.errors:
+                raise UserValidationError(
+                    "ValidationError when deleting {}.".format(user),
+                    validation_error=ValidationError(user.errors.copy()),
+                )
+            success = True
+            user.call_hooks("post", "remove")
+        elif modified:
+            success = user.modify(lo=self.connection)
+        else:
+            # not a dry_run, but user was not modified, because user was not deactivated
+            success = True
 
-		user.invalidate_all_caches()
-		return success
+        user.invalidate_all_caches()
+        return success

@@ -37,7 +37,7 @@ from .import_pyhook import ImportPyHook
 
 
 class UserPyHook(ImportPyHook):
-	"""
+    """
 	Base class for Python based user import hooks.
 
 	An example is provided in /usr/share/doc/ucs-school-import/hook_example.py
@@ -60,19 +60,20 @@ class UserPyHook(ImportPyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	priority = {
-		"pre_create": None,
-		"post_create": None,
-		"pre_modify": None,
-		"post_modify": None,
-		"pre_move": None,
-		"post_move": None,
-		"pre_remove": None,
-		"post_remove": None,
-	}
 
-	def pre_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    priority = {
+        "pre_create": None,
+        "post_create": None,
+        "pre_modify": None,
+        "post_modify": None,
+        "pre_move": None,
+        "post_move": None,
+        "pre_remove": None,
+        "post_remove": None,
+    }
+
+    def pre_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code before creating a user.
 
 		* The user does not exist in LDAP, yet.
@@ -84,8 +85,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def post_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code after creating a user.
 
 		* The hook is only executed if adding the user succeeded.
@@ -97,8 +98,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def pre_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code before modifying a user.
 
 		* `user` will be a :py:class:`ImportUser`, loaded from LDAP.
@@ -108,8 +109,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def post_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code after modifying a user.
 
 		* The hook is only executed if modifying the user succeeded.
@@ -122,8 +123,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def pre_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code before changing a users primary school (position).
 
 		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
@@ -133,8 +134,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def post_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code after changing a users primary school (position).
 
 		* The hook is only executed if moving the user succeeded.
@@ -146,8 +147,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def pre_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def pre_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code before deleting a user.
 
 		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
@@ -157,8 +158,8 @@ class UserPyHook(ImportPyHook):
 		:return: None
 		"""
 
-	def post_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
-		"""
+    def post_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+        """
 		Run code after deleting a user.
 
 		* The hook is only executed if the deleting the user succeeded.

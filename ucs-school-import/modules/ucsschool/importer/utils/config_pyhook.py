@@ -35,15 +35,15 @@ Base class for configuration hooks.
 from .import_pyhook import ImportPyHook
 
 try:
-	from typing import Any, Dict, List, Optional
-	import univention.admin.uldap.access
-	from ..configuration import ReadOnlyDict
+    from typing import Any, Dict, List, Optional
+    import univention.admin.uldap.access
+    from ..configuration import ReadOnlyDict
 except ImportError:
-	pass
+    pass
 
 
 class ConfigPyHook(ImportPyHook):
-	"""
+    """
 	Hook to manipulate the configuration after reading the configuration files
 	and applying the command line arguments.
 
@@ -65,13 +65,14 @@ class ConfigPyHook(ImportPyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	priority = {
-		'post_config_files_read': None,
-	}
 
-	def post_config_files_read(self, config, used_conffiles, used_kwargs):
-		# type: (ReadOnlyDict, List[str], Dict[str, Any]) -> ReadOnlyDict
-		"""
+    priority = {
+        "post_config_files_read": None,
+    }
+
+    def post_config_files_read(self, config, used_conffiles, used_kwargs):
+        # type: (ReadOnlyDict, List[str], Dict[str, Any]) -> ReadOnlyDict
+        """
 		Hook that runs after reading the configuration files `used_conffiles`
 		and applying the command line arguments `used_kwargs`. Resulting
 		configuration is `config`, which can be manipulated and must be
@@ -84,4 +85,4 @@ class ConfigPyHook(ImportPyHook):
 		:return: config dict
 		:rtype ReadOnlyDict
 		"""
-		return config
+        return config

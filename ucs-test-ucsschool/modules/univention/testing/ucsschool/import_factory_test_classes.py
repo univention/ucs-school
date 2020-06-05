@@ -55,90 +55,87 @@ logger = get_ucsschool_logger()
 
 
 class NullImport(MassImport):
-	"""
+    """
 	This MassImport does not import users.
 	"""
 
-	def import_users(self):
-		self.logger.info("*** NullImport.import_users()")
-		self.logger.info("------ NOT importing users. ------")
+    def import_users(self):
+        self.logger.info("*** NullImport.import_users()")
+        self.logger.info("------ NOT importing users. ------")
 
 
 class UniventionPasswordExporter(NewUserPasswordCsvExporter):
-	"""
+    """
 	Export password table as if all passwords were 'univention'.
 	"""
 
-	def serialize(self, user):
-		logger.info("*** UniventionPasswordExporter.serialize()")
-		res = super(UniventionPasswordExporter, self).serialize(user)
-		res["password"] = "univention"
-		return res
+    def serialize(self, user):
+        logger.info("*** UniventionPasswordExporter.serialize()")
+        res = super(UniventionPasswordExporter, self).serialize(user)
+        res["password"] = "univention"
+        return res
 
 
 class AnonymizeResultExporter(UserImportCsvResultExporter):
-	"""
+    """
 	Export import job results with wrong names and birthday.
 	"""
 
-	def serialize(self, obj):
-		logger.info("*** AnonymizeResultExporter.serialize()")
-		res = super(AnonymizeResultExporter, self).serialize(obj)
-		res.update(dict(
-			firstname="s3cr31",
-			lastname="S3cr3t",
-			birthday="1970-01-01"
-		))
-		return res
+    def serialize(self, obj):
+        logger.info("*** AnonymizeResultExporter.serialize()")
+        res = super(AnonymizeResultExporter, self).serialize(obj)
+        res.update(dict(firstname="s3cr31", lastname="S3cr3t", birthday="1970-01-01"))
+        return res
 
 
 class BirthdayUserImport(UserImport):
-	"""
+    """
 	Prevent deletion of users on their birthday.
 	"""
 
-	def do_delete(self, user):
-		self.logger.info("*** BirthdayUserImport.do_delete() user.birthday=%r", user.birthday)
-		if user.birthday == time.strftime("%Y-%m-%d"):
-			self.logger.info("Not deleting user %s on its birthday!", user)
-			return True
-		else:
-			return super(BirthdayUserImport, self).do_delete(user)
+    def do_delete(self, user):
+        self.logger.info("*** BirthdayUserImport.do_delete() user.birthday=%r", user.birthday)
+        if user.birthday == time.strftime("%Y-%m-%d"):
+            self.logger.info("Not deleting user %s on its birthday!", user)
+            return True
+        else:
+            return super(BirthdayUserImport, self).do_delete(user)
 
 
 class FooUsernameHandler(UsernameHandler):
-	"""
+    """
 	Adds [FOO] modifier. Always appends "foo" to a username -> works only once per username!
 	"""
-	@property
-	def counter_variable_to_function(self):
-		res = super(FooUsernameHandler, self).counter_variable_to_function
-		res["[FOO]"] = self.foo_counter
-		return res
 
-	def foo_counter(self, name_base):
-		logger.info("*** FooUsernameHandler.foo_counter")
-		return "foo"
+    @property
+    def counter_variable_to_function(self):
+        res = super(FooUsernameHandler, self).counter_variable_to_function
+        res["[FOO]"] = self.foo_counter
+        return res
+
+    def foo_counter(self, name_base):
+        logger.info("*** FooUsernameHandler.foo_counter")
+        return "foo"
 
 
 class JsonWriter(BaseWriter):
-	"""
+    """
 	Crude JSON writer
 	"""
 
-	def __init__(self, *arg, **kwargs):
-		logger.info("*** JsonWrite.__init()")
-		self._filename = None
-		self._mode = None
-		self._objects = list()
-		super(JsonWriter, self).__init__()
+    def __init__(self, *arg, **kwargs):
+        logger.info("*** JsonWrite.__init()")
+        self._filename = None
+        self._mode = None
+        self._objects = list()
+        super(JsonWriter, self).__init__()
 
-	def open(self, filename, mode="wb"):
-		self._filename = filename
-		self._mode = mode
-		return tempfile.SpooledTemporaryFile()
+    def open(self, filename, mode="wb"):
+        self._filename = filename
+        self._mode = mode
+        return tempfile.SpooledTemporaryFile()
 
-	def write_obj(self, obj):
-		self._objects.append(obj)
-		with codecs.open(self._filename, self._mode, encoding='utf-8') as fp:
-			json.dump(self._objects, fp, ensure_ascii=False)
+    def write_obj(self, obj):
+        self._objects.append(obj)
+        with codecs.open(self._filename, self._mode, encoding="utf-8") as fp:
+            json.dump(self._objects, fp, ensure_ascii=False)

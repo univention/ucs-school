@@ -34,16 +34,17 @@ Base class for all Python based pre-read hooks.
 
 from .import_pyhook import ImportPyHook
 from ..configuration import Configuration
+
 try:
-	import typing
-	from ..configuration import ReadOnlyDict
-	import univention.admin.uldap.access
+    import typing
+    from ..configuration import ReadOnlyDict
+    import univention.admin.uldap.access
 except ImportError:
-	pass
+    pass
 
 
 class PreReadPyHook(ImportPyHook):
-	"""
+    """
 	Hook that is called before starting to read the input file.
 
 	The base class' :py:meth:`__init__()` provides the following attributes:
@@ -65,19 +66,20 @@ class PreReadPyHook(ImportPyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	priority = {
-		'pre_read': None,
-	}
 
-	def __init__(self, lo=None, dry_run=False, *args, **kwargs):
-		# type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
-		super(PreReadPyHook, self).__init__(lo, dry_run, *args, **kwargs)
-		self.config = Configuration()  # type: ReadOnlyDict
+    priority = {
+        "pre_read": None,
+    }
 
-	def pre_read(self):  # type: () -> None
-		"""
+    def __init__(self, lo=None, dry_run=False, *args, **kwargs):
+        # type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
+        super(PreReadPyHook, self).__init__(lo, dry_run, *args, **kwargs)
+        self.config = Configuration()  # type: ReadOnlyDict
+
+    def pre_read(self):  # type: () -> None
+        """
 		Run code before starting to read the input file.
 
 		:return: None
 		"""
-		return None
+        return None

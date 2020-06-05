@@ -55,14 +55,24 @@ import pprint
 
 from ..configuration import setup_configuration as _setup_configuration
 from ..factory import setup_factory as _setup_factory
-from ..models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
+from ..models.import_user import (
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    ImportUser,
+)
 from .ldap_connection import (
-	get_admin_connection as _get_admin_connection,
-	get_machine_connection as _get_machine_connection,
-	get_unprivileged_connection as _get_unprivileged_connection)
+    get_admin_connection as _get_admin_connection,
+    get_machine_connection as _get_machine_connection,
+    get_unprivileged_connection as _get_unprivileged_connection,
+)
 from ..exceptions import UcsSchoolImportFatalError as _UcsSchoolImportFatalError
 from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
-from ucsschool.lib.models.utils import get_stream_handler as _get_stream_handler, UniStreamHandler as _UniStreamHandler
+from ucsschool.lib.models.utils import (
+    get_stream_handler as _get_stream_handler,
+    UniStreamHandler as _UniStreamHandler,
+)
 from ucsschool.lib.models import *  # noqa
 
 assert ImportStaff
@@ -72,37 +82,37 @@ assert ImportTeachersAndStaff
 assert ImportUser
 
 _config_args = {
-	"disabled_checks": ["test_00_required_config_keys"],
-	"dry_run": False,
-	"source_uid": "TestDB",
-	"verbose": True
+    "disabled_checks": ["test_00_required_config_keys"],
+    "dry_run": False,
+    "source_uid": "TestDB",
+    "verbose": True,
 }
 try:
-	with open(os.path.expanduser("~/.import_shell_args"), "rb") as fp:
-		_config_args.update(json.load(fp))
+    with open(os.path.expanduser("~/.import_shell_args"), "rb") as fp:
+        _config_args.update(json.load(fp))
 except IOError as exc:
-	pass
+    pass
 
-logger = logging.getLogger('ucsschool')
+logger = logging.getLogger("ucsschool")
 logger.setLevel(logging.DEBUG)
 if not any(isinstance(handler, _UniStreamHandler) for handler in logger.handlers):
-	logger.addHandler(_get_stream_handler('DEBUG'))
+    logger.addHandler(_get_stream_handler("DEBUG"))
 
 _ui = _UserImportCommandLine()
 _config_files = _ui.configuration_files
 if os.path.exists(os.path.expanduser("~/.import_shell_config")):
-	_config_files.append(os.path.expanduser("~/.import_shell_config"))
+    _config_files.append(os.path.expanduser("~/.import_shell_config"))
 
 config = _setup_configuration(_config_files, **_config_args)
 _ui.setup_logging(config["verbose"], config["logfile"])
 factory = _setup_factory(config["factory"])
 try:
-	lo, _po = _get_admin_connection()
+    lo, _po = _get_admin_connection()
 except _UcsSchoolImportFatalError:
-	try:
-		lo, _po = _get_machine_connection()
-	except _UcsSchoolImportFatalError:
-		lo, _po = _get_unprivileged_connection()
+    try:
+        lo, _po = _get_machine_connection()
+    except _UcsSchoolImportFatalError:
+        lo, _po = _get_unprivileged_connection()
 
 logger.info("------ UCS@school import tool configured ------")
 logger.info("Used configuration files: %s.", config.conffiles)

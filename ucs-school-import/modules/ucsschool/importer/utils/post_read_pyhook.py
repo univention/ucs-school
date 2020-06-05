@@ -37,7 +37,7 @@ from .import_pyhook import ImportPyHook
 
 
 class PostReadPyHook(ImportPyHook):
-	"""
+    """
 	Hook that is called directly after data has been read from CSV/...
 
 	The base class' :py:meth:`__init__()` provides the following attributes:
@@ -58,13 +58,14 @@ class PostReadPyHook(ImportPyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	priority = {
-		'entry_read': None,
-		'all_entries_read': None,
-	}
 
-	def entry_read(self, entry_count, input_data, input_dict):
-		"""
+    priority = {
+        "entry_read": None,
+        "all_entries_read": None,
+    }
+
+    def entry_read(self, entry_count, input_data, input_dict):
+        """
 		Run code after an entry has been read and saved in
 		input_data and input_dict. This hook may alter input_data
 		and input_dict to modify the input data. This function may
@@ -78,10 +79,10 @@ class PostReadPyHook(ImportPyHook):
 		:return: None
 		:raises UcsSchoolImportSkipImportRecord: if an entry (e.g. a CSV line) should be skipped
 		"""
-		return None
+        return None
 
-	def all_entries_read(self, imported_users, errors):
-		"""
+    def all_entries_read(self, imported_users, errors):
+        """
 		Run code after all entries have been read. ImportUser objects for all
 		lines are passed to the hook. Also errors are passed. Please note that
 		the "entry_read" hook method may skip one or several input records, so
@@ -92,4 +93,4 @@ class PostReadPyHook(ImportPyHook):
 		:param list[Exception] errors: list of exceptions that are caught during processing the input records
 		:return: None
 		"""
-		return None
+        return None

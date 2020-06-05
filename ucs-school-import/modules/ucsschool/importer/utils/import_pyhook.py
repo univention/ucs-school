@@ -37,18 +37,20 @@ import logging
 from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
+
 try:
-	from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
-	import univention.admin.uldap.access
-	ImportPyHookTV = TypeVar('ImportPyHookTV', bound='ImportPyHook')
+    from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+    import univention.admin.uldap.access
+
+    ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
 except ImportError:
-	pass
+    pass
 
 __import_pyhook_loader_instance = None
 
 
 class ImportPyHook(PyHook):
-	"""
+    """
 	Base class for Python based import hooks.
 
 	* self.dry_run     # whether hook is executed during a dry-run (1)
@@ -67,51 +69,56 @@ class ImportPyHook(PyHook):
 	(2) Read-write cn=admin connection in a real run, read-only cn=admin
 	connection during a dry-run.
 	"""
-	supports_dry_run = False  # if True hook will be executed during a dry-run
 
-	def __init__(self, lo=None, dry_run=None, *args, **kwargs):
-		# type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
-		"""
+    supports_dry_run = False  # if True hook will be executed during a dry-run
+
+    def __init__(self, lo=None, dry_run=None, *args, **kwargs):
+        # type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
+        """
 		:param univention.admin.uldap.access lo: optional LDAP connection object
 		:param bool dry_run: whether hook is executed during a dry-run
 		"""
-		super(ImportPyHook, self).__init__(*args, **kwargs)
-		if dry_run is None:
-			from ..configuration import Configuration
-			try:
-				config = Configuration()
-				self.dry_run = config['dry_run']
-				"""Whether this is a dry-run"""
-			except InitialisationError:
-				self.dry_run = False
-		else:
-			self.dry_run = dry_run
-		if lo is None:
-			self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]  # type: univention.admin.uldap.access
-			"""LDAP connection object"""
-		else:
-			self.lo = lo  # reuse LDAP object
-			"""LDAP connection object"""
-		self.logger = logging.getLogger(__name__)  # type: logging.Logger
-		"""Python logging instance"""
+        super(ImportPyHook, self).__init__(*args, **kwargs)
+        if dry_run is None:
+            from ..configuration import Configuration
+
+            try:
+                config = Configuration()
+                self.dry_run = config["dry_run"]
+                """Whether this is a dry-run"""
+            except InitialisationError:
+                self.dry_run = False
+        else:
+            self.dry_run = dry_run
+        if lo is None:
+            self.lo = (
+                get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
+            )  # type: univention.admin.uldap.access
+            """LDAP connection object"""
+        else:
+            self.lo = lo  # reuse LDAP object
+            """LDAP connection object"""
+        self.logger = logging.getLogger(__name__)  # type: logging.Logger
+        """Python logging instance"""
 
 
 class ImportPyHookLoader(object):
-	"""
+    """
 	Load and initialize hooks.
 
 	If hooks should be instantiated with arguments, use :py:meth:`init_hook()`
 	before :py:meth:`call_hook()`.
 	"""
-	_pyhook_obj_cache = {}  # type: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[[...], Any]]]]
 
-	def __init__(self, pyhooks_base_path):
-		self.pyhooks_base_path = pyhooks_base_path
-		self.logger = logging.getLogger(__name__)  # type: logging.Logger
+    _pyhook_obj_cache = {}  # type: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[[...], Any]]]]
 
-	def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
-		# type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
-		"""
+    def __init__(self, pyhooks_base_path):
+        self.pyhooks_base_path = pyhooks_base_path
+        self.logger = logging.getLogger(__name__)  # type: logging.Logger
+
+    def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
+        # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+        """
 		Load and initialize hook class `hook_cls`.
 
 		:param tuple args: arguments to pass to __init__ of hooks
@@ -120,16 +127,16 @@ class ImportPyHookLoader(object):
 			hook objects, sorted by method priority
 		:rtype: dict[str, list[callable]]
 		"""
-		# The PyHook objects themselves are already cached by PyHooksLoader, but we don't want to initialize a
-		# PyHooksLoader each time we run a hook, so we'll keep a dict linking directly to all PyHooksLoader caches.
-		if hook_cls not in self._pyhook_obj_cache:
-			pyhooks_loader = PyHooksLoader(self.pyhooks_base_path, hook_cls, self.logger, filter_func)
-			self._pyhook_obj_cache[hook_cls] = pyhooks_loader.get_hook_objects(*args, **kwargs)
-		return self._pyhook_obj_cache[hook_cls]
+        # The PyHook objects themselves are already cached by PyHooksLoader, but we don't want to initialize a
+        # PyHooksLoader each time we run a hook, so we'll keep a dict linking directly to all PyHooksLoader caches.
+        if hook_cls not in self._pyhook_obj_cache:
+            pyhooks_loader = PyHooksLoader(self.pyhooks_base_path, hook_cls, self.logger, filter_func)
+            self._pyhook_obj_cache[hook_cls] = pyhooks_loader.get_hook_objects(*args, **kwargs)
+        return self._pyhook_obj_cache[hook_cls]
 
-	def call_hooks(self, hook_cls, func_name, *args, **kwargs):
-		# type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
-		"""
+    def call_hooks(self, hook_cls, func_name, *args, **kwargs):
+        # type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
+        """
 		Run hooks with name `func_name` from class `hook_cls`.
 
 		:param hook_cls: class object - load and run hooks that are a
@@ -140,18 +147,18 @@ class ImportPyHookLoader(object):
 		:return: list of when all executed hooks returned
 		:rtype: list
 		"""
-		hooks = self.init_hook(hook_cls)
+        hooks = self.init_hook(hook_cls)
 
-		res = []
-		for func in hooks.get(func_name, []):
-			self.logger.info("Running %s %s hook %s ...", self.__class__.__name__, func_name, func)
-			res.append(func(*args, **kwargs))
-		return res
+        res = []
+        for func in hooks.get(func_name, []):
+            self.logger.info("Running %s %s hook %s ...", self.__class__.__name__, func_name, func)
+            res.append(func(*args, **kwargs))
+        return res
 
 
 def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
-	# type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
-	"""
+    # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+    """
 	Retrieve (and initialize subclasses of :py:class:`hook_cls`, if not yet
 	done) pyhooks of type `hook_cls`. Results are cached.
 
@@ -173,25 +180,26 @@ def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
 		hook objects, sorted by method priority
 	:rtype: dict[str, list[callable]]
 	"""
-	global __import_pyhook_loader_instance
-	if not __import_pyhook_loader_instance:
-		from ..configuration import Configuration
-		try:
-			config = Configuration()
-			path = config.get('hooks_dir_pyhook', '/usr/share/ucs-school-import/pyhooks')
-			if 'dry_run' not in kwargs:
-				kwargs['dry_run'] = config['dry_run']
-		except InitialisationError:
-			path = '/usr/share/ucs-school-import/pyhooks'
+    global __import_pyhook_loader_instance
+    if not __import_pyhook_loader_instance:
+        from ..configuration import Configuration
 
-		__import_pyhook_loader_instance = ImportPyHookLoader(path)
+        try:
+            config = Configuration()
+            path = config.get("hooks_dir_pyhook", "/usr/share/ucs-school-import/pyhooks")
+            if "dry_run" not in kwargs:
+                kwargs["dry_run"] = config["dry_run"]
+        except InitialisationError:
+            path = "/usr/share/ucs-school-import/pyhooks"
 
-	return __import_pyhook_loader_instance.init_hook(hook_cls, filter_func, *args, **kwargs)
+        __import_pyhook_loader_instance = ImportPyHookLoader(path)
+
+    return __import_pyhook_loader_instance.init_hook(hook_cls, filter_func, *args, **kwargs)
 
 
 def run_import_pyhooks(hook_cls, func_name, *args, **kwargs):
-	# type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
-	"""
+    # type: (Type[ImportPyHookTV], str, *Any, **Any) -> List[Any]
+    """
 	Execute method `func_name` of subclasses of `hook_cls`, load and
 	initialize if required.
 
@@ -206,5 +214,5 @@ def run_import_pyhooks(hook_cls, func_name, *args, **kwargs):
 	:return: list of when all executed hooks returned
 	:rtype: list
 	"""
-	get_import_pyhooks(hook_cls)
-	return __import_pyhook_loader_instance.call_hooks(hook_cls, func_name, *args, **kwargs)
+    get_import_pyhooks(hook_cls)
+    return __import_pyhook_loader_instance.call_hooks(hook_cls, func_name, *args, **kwargs)

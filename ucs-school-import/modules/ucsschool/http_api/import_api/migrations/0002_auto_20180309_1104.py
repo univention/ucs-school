@@ -9,23 +9,41 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('import_api', '0001_initial'),
+        ("import_api", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userimportjob',
-            name='log_file',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='userimportjob_log_file', to='import_api.Logfile'),
+            model_name="userimportjob",
+            name="log_file",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="userimportjob_log_file",
+                to="import_api.Logfile",
+            ),
         ),
         migrations.AlterField(
-            model_name='userimportjob',
-            name='password_file',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='userimportjob_password_file', to='import_api.PasswordsFile'),
+            model_name="userimportjob",
+            name="password_file",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="userimportjob_password_file",
+                to="import_api.PasswordsFile",
+            ),
         ),
         migrations.AlterField(
-            model_name='userimportjob',
-            name='summary_file',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='userimportjob_summary_file', to='import_api.SummaryFile'),
+            model_name="userimportjob",
+            name="summary_file",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="userimportjob_summary_file",
+                to="import_api.SummaryFile",
+            ),
         ),
     ]

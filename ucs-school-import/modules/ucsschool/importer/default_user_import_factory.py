@@ -36,30 +36,33 @@ import logging
 from ucsschool.lib.models.utils import ucr
 from .factory import load_class
 from .exceptions import InitialisationError
+
 try:
-	from typing import Any, Iterable, Optional, TypeVar
-	from .models.import_user import ImportUser
-	ImportUserTV = TypeVar('ImportUserTV', bound=ImportUser)
+    from typing import Any, Iterable, Optional, TypeVar
+    from .models.import_user import ImportUser
+
+    ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
 except ImportError:
-	pass
+    pass
 
 
 class DefaultUserImportFactory(object):
-	"""
+    """
 	Default implementation of the Abstract Factory.
 
 	Subclass this and store the fully dotted class name in `config["factory"]`
 	to make the importer code use your classes.
 	"""
 
-	def __init__(self):  # type: () -> None
-		from .configuration import Configuration
-		self.config = Configuration()
-		self.logger = logging.getLogger(__name__)
-		self.load_methods_from_config()
+    def __init__(self):  # type: () -> None
+        from .configuration import Configuration
 
-	def load_methods_from_config(self):  # type: () -> None
-		"""
+        self.config = Configuration()
+        self.logger = logging.getLogger(__name__)
+        self.load_methods_from_config()
+
+    def load_methods_from_config(self):  # type: () -> None
+        """
 		Overwrite the methods in this class with constructors or methods from
 		the configuration file.
 
@@ -68,82 +71,96 @@ class DefaultUserImportFactory(object):
 		* Please update the documentation if classes/methods are added.
 		* Take care to honor the signature of the methods, this cannot be checked.
 		"""
-		classes = {
-			"reader": "ucsschool.importer.reader.base_reader.BaseReader",
-			"mass_importer": "ucsschool.importer.mass_import.mass_import.MassImport",
-			"password_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
-			"result_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
-			"user_importer": "ucsschool.importer.mass_import.user_import.UserImport",
-			"unique_email_handler": "ucsschool.importer.utils.username_handler.EmailHandler",
-			"username_handler": "ucsschool.importer.utils.username_handler.UsernameHandler",
-			"user_writer": "ucsschool.importer.writer.base_writer.BaseWriter"
-		}
-		methods = ["import_user"]
+        classes = {
+            "reader": "ucsschool.importer.reader.base_reader.BaseReader",
+            "mass_importer": "ucsschool.importer.mass_import.mass_import.MassImport",
+            "password_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
+            "result_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
+            "user_importer": "ucsschool.importer.mass_import.user_import.UserImport",
+            "unique_email_handler": "ucsschool.importer.utils.username_handler.EmailHandler",
+            "username_handler": "ucsschool.importer.utils.username_handler.UsernameHandler",
+            "user_writer": "ucsschool.importer.writer.base_writer.BaseWriter",
+        }
+        methods = ["import_user"]
 
-		for k, v in classes.items():
-			if k not in self.config["classes"]:
-				continue
-			make_name = "make_{}".format(k)
-			if not hasattr(self, make_name):
-				self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
-				continue
-			try:
-				klass = load_class(self.config["classes"][k])
-			except (AttributeError, ImportError, ValueError) as exc:
-				self.logger.exception("Cannot load class %r, ignoring: %s", self.config["classes"][k], exc)
-				continue
-			try:
-				super_klass = load_class(v)
-			except (AttributeError, ImportError, ValueError) as exc:
-				self.logger.exception("Loading super class %r: %s", v, exc)
-				raise InitialisationError("Cannot load super class '{}'.".format(v))
-			if not issubclass(klass, super_klass):
-				self.logger.error("Class %s.%s is not a subclass of %s.%s, ignoring.", klass.__module__, klass.__name__, super_klass.__module__, super_klass.__name__)
-				continue
-			setattr(self, make_name, klass)
-			self.logger.info("%s.%s is now %s.", self.__class__.__name__, make_name, klass)
+        for k, v in classes.items():
+            if k not in self.config["classes"]:
+                continue
+            make_name = "make_{}".format(k)
+            if not hasattr(self, make_name):
+                self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
+                continue
+            try:
+                klass = load_class(self.config["classes"][k])
+            except (AttributeError, ImportError, ValueError) as exc:
+                self.logger.exception(
+                    "Cannot load class %r, ignoring: %s", self.config["classes"][k], exc
+                )
+                continue
+            try:
+                super_klass = load_class(v)
+            except (AttributeError, ImportError, ValueError) as exc:
+                self.logger.exception("Loading super class %r: %s", v, exc)
+                raise InitialisationError("Cannot load super class '{}'.".format(v))
+            if not issubclass(klass, super_klass):
+                self.logger.error(
+                    "Class %s.%s is not a subclass of %s.%s, ignoring.",
+                    klass.__module__,
+                    klass.__name__,
+                    super_klass.__module__,
+                    super_klass.__name__,
+                )
+                continue
+            setattr(self, make_name, klass)
+            self.logger.info("%s.%s is now %s.", self.__class__.__name__, make_name, klass)
 
-		for k in methods:
-			if k not in self.config["classes"]:
-				continue
-			make_name = "make_{}".format(k)
-			if not hasattr(self, make_name):
-				self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
-				continue
-			try:
-				kla, dot, meth = self.config["classes"][k].rpartition(".")
-				klass = load_class(kla)
-			except (AttributeError, ImportError, ValueError) as exc:
-				self.logger.exception("Cannot load class %r, ignoring: %s", self.config["classes"][k], exc)
-				continue
-			try:
-				method = getattr(klass, meth)
-			except AttributeError as exc:
-				self.logger.exception("Class %r has no method %r, ignoring: %s", klass, meth, exc)
-				continue
-			setattr(self, make_name, method)
-			self.logger.info("%s.%s is now %s.%s", self.__class__.__name__, make_name, klass, meth)
+        for k in methods:
+            if k not in self.config["classes"]:
+                continue
+            make_name = "make_{}".format(k)
+            if not hasattr(self, make_name):
+                self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
+                continue
+            try:
+                kla, dot, meth = self.config["classes"][k].rpartition(".")
+                klass = load_class(kla)
+            except (AttributeError, ImportError, ValueError) as exc:
+                self.logger.exception(
+                    "Cannot load class %r, ignoring: %s", self.config["classes"][k], exc
+                )
+                continue
+            try:
+                method = getattr(klass, meth)
+            except AttributeError as exc:
+                self.logger.exception("Class %r has no method %r, ignoring: %s", klass, meth, exc)
+                continue
+            setattr(self, make_name, method)
+            self.logger.info("%s.%s is now %s.%s", self.__class__.__name__, make_name, klass, meth)
 
-	def make_reader(self, **kwargs):  # type: (**Any) -> ucsschool.importer.reader.csv_reader.CsvReader
-		"""
+    def make_reader(self, **kwargs):  # type: (**Any) -> ucsschool.importer.reader.csv_reader.CsvReader
+        """
 		Creates an input data reader.
 
 		:param dict kwarg: passed to the reader constructor
 		:return: a reader object
 		:rtype: BaseReader
 		"""
-		from .reader.csv_reader import CsvReader
-		if self.config["input"]["type"] == "csv":
-			kwargs.update(dict(
-				filename=self.config["input"]["filename"],
-				header_lines=self.config["csv"]["header_lines"]))
-			return CsvReader(**kwargs)
-		else:
-			raise NotImplementedError()
+        from .reader.csv_reader import CsvReader
 
-	def make_import_user(self, cur_user_roles, *arg, **kwargs):
-		# type: (Iterable, *Any, **Any) -> ImportUserTV
-		"""
+        if self.config["input"]["type"] == "csv":
+            kwargs.update(
+                dict(
+                    filename=self.config["input"]["filename"],
+                    header_lines=self.config["csv"]["header_lines"],
+                )
+            )
+            return CsvReader(**kwargs)
+        else:
+            raise NotImplementedError()
+
+    def make_import_user(self, cur_user_roles, *arg, **kwargs):
+        # type: (Iterable, *Any, **Any) -> ImportUserTV
+        """
 		Creates a ImportUser [of specific type], depending on its roles.
 
 		:param cur_user_roles: [ucsschool.lib.roles, ..]
@@ -153,36 +170,43 @@ class DefaultUserImportFactory(object):
 		:return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles` was empty
 		:rtype: ImportUser
 		"""
-		from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-		from .models.import_user import ImportStaff, ImportStudent, ImportTeacher, \
-			ImportTeachersAndStaff, ImportUser
-		if not cur_user_roles:
-			return ImportUser(*arg, **kwargs)
-		if role_pupil in cur_user_roles:
-			return ImportStudent(*arg, **kwargs)
-		if role_teacher in cur_user_roles:
-			if role_staff in cur_user_roles:
-				return ImportTeachersAndStaff(*arg, **kwargs)
-			else:
-				return ImportTeacher(*arg, **kwargs)
-		else:
-			return ImportStaff(*arg, **kwargs)
+        from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+        from .models.import_user import (
+            ImportStaff,
+            ImportStudent,
+            ImportTeacher,
+            ImportTeachersAndStaff,
+            ImportUser,
+        )
 
-	def make_mass_importer(self, dry_run=True):
-		# type: (Optional[bool]) -> ucsschool.importer.mass_import.mass_import.MassImport
-		"""
+        if not cur_user_roles:
+            return ImportUser(*arg, **kwargs)
+        if role_pupil in cur_user_roles:
+            return ImportStudent(*arg, **kwargs)
+        if role_teacher in cur_user_roles:
+            if role_staff in cur_user_roles:
+                return ImportTeachersAndStaff(*arg, **kwargs)
+            else:
+                return ImportTeacher(*arg, **kwargs)
+        else:
+            return ImportStaff(*arg, **kwargs)
+
+    def make_mass_importer(self, dry_run=True):
+        # type: (Optional[bool]) -> ucsschool.importer.mass_import.mass_import.MassImport
+        """
 		Creates a MassImport object.
 
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: a :py:class:`MassImport` object
 		:rtype: MassImport
 		"""
-		from .mass_import.mass_import import MassImport
-		return MassImport(dry_run=dry_run)
+        from .mass_import.mass_import import MassImport
 
-	def make_password_exporter(self, *arg, **kwargs):
-		# type: (*Any, **Any) -> ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
-		"""
+        return MassImport(dry_run=dry_run)
+
+    def make_password_exporter(self, *arg, **kwargs):
+        # type: (*Any, **Any) -> ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
+        """
 		Creates a ResultExporter object that can dump passwords to disk.
 
 		:param tuple arg: passed to constructor of created class
@@ -190,12 +214,13 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ResultExporter` object
 		:rtype: NewUserPasswordCsvExporter
 		"""
-		from .writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
-		return NewUserPasswordCsvExporter(*arg, **kwargs)
+        from .writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 
-	def make_result_exporter(self, *arg, **kwargs):
-		# type: (*Any, **Any) -> ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
-		"""
+        return NewUserPasswordCsvExporter(*arg, **kwargs)
+
+    def make_result_exporter(self, *arg, **kwargs):
+        # type: (*Any, **Any) -> ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
+        """
 		Creates a ResultExporter object.
 
 		:param tuple arg: passed to constructor of created class
@@ -203,33 +228,35 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ResultExporter` object
 		:rtype: UserImportCsvResultExporter
 		"""
-		from .writer.user_import_csv_result_exporter import UserImportCsvResultExporter
-		return UserImportCsvResultExporter(*arg, **kwargs)
+        from .writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 
-	def make_user_importer(self, dry_run=True):
-		# type: (Optional[bool]) -> ucsschool.importer.mass_import.user_import.UserImport
-		"""
+        return UserImportCsvResultExporter(*arg, **kwargs)
+
+    def make_user_importer(self, dry_run=True):
+        # type: (Optional[bool]) -> ucsschool.importer.mass_import.user_import.UserImport
+        """
 		Creates a user importer.
 
 		:param bool dry_run: set to False to actually commit changes to LDAP
 		:return: a :py:class:`UserImport` object
 		:rtype: UserImport
 		"""
-		from .mass_import.user_import import UserImport
-		return UserImport(dry_run=dry_run)
+        from .mass_import.user_import import UserImport
 
-	def make_ucr(self):  # type: () -> univention.config_registry.ConfigRegistry
-		"""
+        return UserImport(dry_run=dry_run)
+
+    def make_ucr(self):  # type: () -> univention.config_registry.ConfigRegistry
+        """
 		Get a initialized UCR instance.
 
 		:return: ConfigRegistry object
 		:rtype: univention.config_registry.ConfigRegistry
 		"""
-		return ucr
+        return ucr
 
-	def make_unique_email_handler(self, max_length=254, dry_run=True):
-		# type: (Optional[int], Optional[bool]) -> ucsschool.importer.utils.username_handler.EmailHandler
-		"""
+    def make_unique_email_handler(self, max_length=254, dry_run=True):
+        # type: (Optional[int], Optional[bool]) -> ucsschool.importer.utils.username_handler.EmailHandler
+        """
 		Get a EmailHandler instance.
 
 		:param int max_length: created email adresses must not be longer than this
@@ -237,12 +264,13 @@ class DefaultUserImportFactory(object):
 		:return: an :py:class:`EmailHandler` object
 		:rtype: EmailHandler
 		"""
-		from .utils.username_handler import EmailHandler
-		return EmailHandler(max_length, dry_run)
+        from .utils.username_handler import EmailHandler
 
-	def make_username_handler(self, max_length, dry_run=True):
-		# type: (int, Optional[bool]) -> ucsschool.importer.utils.username_handler.UsernameHandler
-		"""
+        return EmailHandler(max_length, dry_run)
+
+    def make_username_handler(self, max_length, dry_run=True):
+        # type: (int, Optional[bool]) -> ucsschool.importer.utils.username_handler.UsernameHandler
+        """
 		Get a UsernameHandler instance.
 
 		:param int max_length: created usernames must not be longer than this
@@ -250,12 +278,13 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`UsernameHandler` object
 		:rtype: UsernameHandler
 		"""
-		from .utils.username_handler import UsernameHandler
-		return UsernameHandler(max_length, dry_run)
+        from .utils.username_handler import UsernameHandler
 
-	def make_user_writer(self, *arg, **kwargs):
-		# type: (*Any, **Any) -> ucsschool.importer.writer.csv_writer.CsvWriter
-		"""
+        return UsernameHandler(max_length, dry_run)
+
+    def make_user_writer(self, *arg, **kwargs):
+        # type: (*Any, **Any) -> ucsschool.importer.writer.csv_writer.CsvWriter
+        """
 		Creates a user writer object.
 
 		:param tuple arg: passed to constructor of created class
@@ -263,5 +292,6 @@ class DefaultUserImportFactory(object):
 		:return: a :py:class:`ucsschool.importer.writer.BaseWriter` object
 		:rtype: CsvWriter
 		"""
-		from .writer.csv_writer import CsvWriter
-		return CsvWriter(*arg, **kwargs)
+        from .writer.csv_writer import CsvWriter
+
+        return CsvWriter(*arg, **kwargs)

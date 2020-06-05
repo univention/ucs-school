@@ -59,23 +59,25 @@ import datetime
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
+
 try:
-	import typing
+    import typing
 except ImportError:
-	pass
+    pass
 
 
 class ModifyCsvHeader(PreReadPyHook):
-	"""
+    """
 	Hook is called before starting to read the input file to change the header
 	of the CSV input file.
 	"""
-	priority = {
-		'pre_read': 1000,
-	}
 
-	def pre_read(self):  # type: () -> None
-		"""
+    priority = {
+        "pre_read": 1000,
+    }
+
+    def pre_read(self):  # type: () -> None
+        """
 		* get mapping from the configuration file (csv:header_swap)
 		* backup original CSV file to {input:filename}.$date.bak.csv
 		* rewrite original CSV file with new header, trying to keep encoding
@@ -83,34 +85,34 @@ class ModifyCsvHeader(PreReadPyHook):
 
 		:return: None
 		"""
-		header_swap = self.config['csv'].get('header_swap')
-		if not header_swap:
-			raise ConfigurationError('Missing configuration in csv:header_swap.')
+        header_swap = self.config["csv"].get("header_swap")
+        if not header_swap:
+            raise ConfigurationError("Missing configuration in csv:header_swap.")
 
-		# make backup of original file
-		ori_file_name = self.config['input']['filename']
-		_fn = ori_file_name[:-4] if ori_file_name.endswith('.csv') else ori_file_name
-		backup_file_name = '{}.ori.{:%Y-%m-%d_%H:%M:%S}.csv'.format(_fn, datetime.datetime.now())
-		self.logger.info('Copying %r to %r...', ori_file_name, backup_file_name)
-		shutil.copy2(ori_file_name, backup_file_name)
+        # make backup of original file
+        ori_file_name = self.config["input"]["filename"]
+        _fn = ori_file_name[:-4] if ori_file_name.endswith(".csv") else ori_file_name
+        backup_file_name = "{}.ori.{:%Y-%m-%d_%H:%M:%S}.csv".format(_fn, datetime.datetime.now())
+        self.logger.info("Copying %r to %r...", ori_file_name, backup_file_name)
+        shutil.copy2(ori_file_name, backup_file_name)
 
-		# get encoding and CSV dialect
-		encoding = CsvReader.get_encoding(backup_file_name)
-		with open(backup_file_name, 'r') as fp:
-			dialect = csv.Sniffer().sniff(fp.read())
+        # get encoding and CSV dialect
+        encoding = CsvReader.get_encoding(backup_file_name)
+        with open(backup_file_name, "r") as fp:
+            dialect = csv.Sniffer().sniff(fp.read())
 
-		# rewrite CSV with different headers
-		self.logger.info('Rewriting %r...', ori_file_name)
-		with open(backup_file_name, 'r') as fpr, open(ori_file_name, 'w') as fpw:
-			fpre = codecs.getreader(encoding)(fpr)
-			encoder = codecs.getincrementalencoder(encoding)()
-			writer = csv.writer(fpw, dialect=dialect)
-			header_swapped = False
-			for row in csv.reader(fpre, dialect=dialect):
-				if not header_swapped:
-					header_swapped = True
-					self.logger.info('Original header: %r', row)
-					row = [header_swap.get(value, value) for value in row]
-					self.logger.info('New header:      %r', row)
-				writer.writerow([encoder.encode(r) for r in row])
-		self.logger.info('Done rewriting CSV file.')
+        # rewrite CSV with different headers
+        self.logger.info("Rewriting %r...", ori_file_name)
+        with open(backup_file_name, "r") as fpr, open(ori_file_name, "w") as fpw:
+            fpre = codecs.getreader(encoding)(fpr)
+            encoder = codecs.getincrementalencoder(encoding)()
+            writer = csv.writer(fpw, dialect=dialect)
+            header_swapped = False
+            for row in csv.reader(fpre, dialect=dialect):
+                if not header_swapped:
+                    header_swapped = True
+                    self.logger.info("Original header: %r", row)
+                    row = [header_swap.get(value, value) for value in row]
+                    self.logger.info("New header:      %r", row)
+                writer.writerow([encoder.encode(r) for r in row])
+        self.logger.info("Done rewriting CSV file.")

@@ -39,22 +39,40 @@ from ucsschool.lib.roles import role_pupil
 
 
 class UserImportCsvResultExporter(ResultExporter):
-	"""
+    """
 	Export the results of the user import to a CSV file.
 	"""
-	field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname", "birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")
 
-	def __init__(self, *arg, **kwargs):
-		"""
+    field_names = (
+        "line",
+        "success",
+        "error",
+        "action",
+        "role",
+        "username",
+        "schools",
+        "firstname",
+        "lastname",
+        "birthday",
+        "email",
+        "disabled",
+        "classes",
+        "source_uid",
+        "record_uid",
+        "error_msg",
+    )
+
+    def __init__(self, *arg, **kwargs):
+        """
 		:param tuple arg: ignored
 		:param dict kwargs: ignored
 		"""
-		super(UserImportCsvResultExporter, self).__init__(*arg, **kwargs)
-		self.factory = Factory()
-		self.a_user = self.factory.make_import_user([])
+        super(UserImportCsvResultExporter, self).__init__(*arg, **kwargs)
+        self.factory = Factory()
+        self.a_user = self.factory.make_import_user([])
 
-	def get_iter(self, user_import):
-		"""
+    def get_iter(self, user_import):
+        """
 		Iterator over all ImportUsers and errors of the user import.
 		First errors, then added, modified and deleted users.
 
@@ -62,68 +80,74 @@ class UserImportCsvResultExporter(ResultExporter):
 		:return: iterator over both ImportUsers and UcsSchoolImportError objects
 		:rtype: Iterator(ImportUsers or UcsSchoolImportError)
 		"""
-		def exc_count(exc):
-			if exc.import_user:
-				entry_count = exc.import_user.entry_count
-			else:
-				entry_count = 0
-			return max(exc.entry_count, entry_count)
 
-		li = sorted(user_import.errors, key=exc_count)
-		for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
-			tmp = list()
-			map(tmp.extend, [u for u in users.values() if u])
-			li.extend(tmp)
-		li.sort(key=lambda x: int(x['entry_count']) if isinstance(x, dict) else int(x.entry_count))
-		return li
+        def exc_count(exc):
+            if exc.import_user:
+                entry_count = exc.import_user.entry_count
+            else:
+                entry_count = 0
+            return max(exc.entry_count, entry_count)
 
-	def get_writer(self):
-		"""
+        li = sorted(user_import.errors, key=exc_count)
+        for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
+            tmp = list()
+            map(tmp.extend, [u for u in users.values() if u])
+            li.extend(tmp)
+        li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
+        return li
+
+    def get_writer(self):
+        """
 		Object that will write the data to disk/network in the desired format.
 
 		:return: an object that knows how to write data
 		"""
-		return self.factory.make_user_writer(field_names=self.field_names)
+        return self.factory.make_user_writer(field_names=self.field_names)
 
-	def serialize(self, obj):
-		"""
+    def serialize(self, obj):
+        """
 		Make a dict of attr_name->strings from an import object.
 
 		:param obj: object to serialize
 		:return: mapping attr_name->strings that will be used to write the output file
 		:rtype: dict
 		"""
-		from ..models.import_user import ImportUser
-		is_error = False
-		if isinstance(obj, ImportUser):
-			user = obj
-		elif isinstance(obj, UcsSchoolImportError):
-			user = obj.import_user
-			is_error = True
-		elif isinstance(obj, dict):
-			user = self.a_user.from_dict(obj)
-		else:
-			raise TypeError("Expected ImportUser, UcsSchoolImportError or dict but got {}. Repr: {}".format(type(obj), repr(obj)))
-		if not user:
-			# error during reading of input data
-			user = self.factory.make_import_user([role_pupil])  # set some role
-			user.roles = []  # remove role
+        from ..models.import_user import ImportUser
 
-		return dict(
-			line=getattr(user, "entry_count", 0),
-			success=int(not is_error),
-			error=int(is_error),
-			action=user.action,
-			role=user.role_sting if user.roles else "",
-			username=user.name,
-			schools=" ".join(user.schools) if user.schools else user.school,
-			firstname=user.firstname,
-			lastname=user.lastname,
-			birthday=user.birthday,
-			email=user.email,
-			disabled="0" if user.disabled == "0" else "1",
-			classes=user.school_classes_as_str,
-			source_uid=user.source_uid,
-			record_uid=user.record_uid,
-			error_msg=str(obj) if is_error else ""
-		)
+        is_error = False
+        if isinstance(obj, ImportUser):
+            user = obj
+        elif isinstance(obj, UcsSchoolImportError):
+            user = obj.import_user
+            is_error = True
+        elif isinstance(obj, dict):
+            user = self.a_user.from_dict(obj)
+        else:
+            raise TypeError(
+                "Expected ImportUser, UcsSchoolImportError or dict but got {}. Repr: {}".format(
+                    type(obj), repr(obj)
+                )
+            )
+        if not user:
+            # error during reading of input data
+            user = self.factory.make_import_user([role_pupil])  # set some role
+            user.roles = []  # remove role
+
+        return dict(
+            line=getattr(user, "entry_count", 0),
+            success=int(not is_error),
+            error=int(is_error),
+            action=user.action,
+            role=user.role_sting if user.roles else "",
+            username=user.name,
+            schools=" ".join(user.schools) if user.schools else user.school,
+            firstname=user.firstname,
+            lastname=user.lastname,
+            birthday=user.birthday,
+            email=user.email,
+            disabled="0" if user.disabled == "0" else "1",
+            classes=user.school_classes_as_str,
+            source_uid=user.source_uid,
+            record_uid=user.record_uid,
+            error_msg=str(obj) if is_error else "",
+        )

@@ -40,8 +40,19 @@ from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 
 
-def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base=None):
-	"""
+def create_ou(
+    ou_name,
+    display_name,
+    edu_name,
+    admin_name,
+    share_name,
+    lo,
+    baseDN,
+    hostname,
+    is_single_master,
+    alter_dhcpd_base=None,
+):
+    """
 	Create a ucsschool OU.
 
 	:param str ou_name: name for the OU
@@ -58,52 +69,63 @@ def create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseD
 	:raises ValueError: on validation errors
 	:raises uidAlreadyUsed:
 	"""
-	if not edu_name and is_single_master:
-		edu_name = hostname
-	elif not edu_name and not is_single_master:
-		edu_name = 'dc{}-01'.format(ou_name)
+    if not edu_name and is_single_master:
+        edu_name = hostname
+    elif not edu_name and not is_single_master:
+        edu_name = "dc{}-01".format(ou_name)
 
-	if display_name is None:
-		display_name = ou_name
+    if display_name is None:
+        display_name = ou_name
 
-	logger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
 
-	new_school = School(name=ou_name, dc_name=edu_name, dc_name_administrative=admin_name,
-						display_name=display_name, alter_dhcpd_base=alter_dhcpd_base)
+    new_school = School(
+        name=ou_name,
+        dc_name=edu_name,
+        dc_name_administrative=admin_name,
+        display_name=display_name,
+        alter_dhcpd_base=alter_dhcpd_base,
+    )
 
-	# TODO: Reevaluate this validation after CNAME changes are implemented
-	share_dn = ''
-	if share_name is None:
-		share_name = edu_name
-	objects = lo.searchDn(filter=filter_format('(&(objectClass=univentionHost)(cn=%s))', (share_name,)), base=baseDN)
-	if not objects:
-		if share_name == 'dc{}-01'.format(ou_name) or (edu_name and share_name == edu_name):
-			share_dn = filter_format('cn=%s,cn=dc,cn=server,cn=computers,%s', (share_name, new_school.dn))
-		else:
-			logger.warn(
-				'WARNING: share file server name %r not found! Using %r as share file server.',
-				share_name, ucr.get('hostname'))
-			share_dn = ucr.get('ldap/hostdn')
-	else:
-		share_dn = objects[0]
+    # TODO: Reevaluate this validation after CNAME changes are implemented
+    share_dn = ""
+    if share_name is None:
+        share_name = edu_name
+    objects = lo.searchDn(
+        filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
+    )
+    if not objects:
+        if share_name == "dc{}-01".format(ou_name) or (edu_name and share_name == edu_name):
+            share_dn = filter_format(
+                "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
+            )
+        else:
+            logger.warn(
+                "WARNING: share file server name %r not found! Using %r as share file server.",
+                share_name,
+                ucr.get("hostname"),
+            )
+            share_dn = ucr.get("ldap/hostdn")
+    else:
+        share_dn = objects[0]
 
-	new_school.class_share_file_server = share_dn
-	new_school.home_share_file_server = share_dn
+    new_school.class_share_file_server = share_dn
+    new_school.home_share_file_server = share_dn
 
-	new_school.validate(lo)
-	if len(new_school.warnings) > 0:
-		logger.warn('The following fields reported warnings during validation:')
-		for key, value in new_school.warnings.items():
-			logger.warn('%s: %s', key, value)
-	if len(new_school.errors) > 0:
-		error_str = 'The following fields reported errors during validation:\n'
-		for key, value in new_school.errors.items():
-			error_str += '{}: {}\n'.format(key, value)
-		raise ValueError(error_str)
+    new_school.validate(lo)
+    if len(new_school.warnings) > 0:
+        logger.warn("The following fields reported warnings during validation:")
+        for key, value in new_school.warnings.items():
+            logger.warn("%s: %s", key, value)
+    if len(new_school.errors) > 0:
+        error_str = "The following fields reported errors during validation:\n"
+        for key, value in new_school.errors.items():
+            error_str += "{}: {}\n".format(key, value)
+        raise ValueError(error_str)
 
-	res = new_school.create(lo)
-	if res:
-		logger.info('OU %r created successfully.', new_school.name)
-	else:
-		logger.error('Error creating OU %r.', new_school.name)
-	return res
+    res = new_school.create(lo)
+    if res:
+        logger.info("OU %r created successfully.", new_school.name)
+    else:
+        logger.error("Error creating OU %r.", new_school.name)
+    return res
