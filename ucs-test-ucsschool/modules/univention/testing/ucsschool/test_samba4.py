@@ -1,15 +1,15 @@
-from sys import exit
 from os import getenv
+from subprocess import PIPE, Popen
+from sys import exit
 from time import sleep
+
 from samba.param import LoadParm
-from subprocess import Popen, PIPE
 
 from ucsschool.lib import schoolldap
-from univention.testing import utils
-from univention.lib.umc import ConnectionError, HTTPError
-
-from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
+from univention.lib.umc import ConnectionError, HTTPError
+from univention.testing import utils
+from univention.testing.codes import TestCodes
 from univention.testing.umc import Client
 
 

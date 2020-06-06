@@ -33,12 +33,13 @@ Base class of all input readers.
 """
 
 import logging
-from ..exceptions import UcsSchoolImportSkipImportRecord
+
 from ..configuration import Configuration
+from ..exceptions import UcsSchoolImportSkipImportRecord
 from ..factory import Factory
-from ..utils.post_read_pyhook import PostReadPyHook
-from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.import_pyhook import run_import_pyhooks
+from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
     from typing import Dict, List

@@ -34,11 +34,13 @@ WSGI
 """
 
 from __future__ import unicode_literals
+
 import os
+
+from django.core.wsgi import get_wsgi_application  # noqa
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 
-from django.core.wsgi import get_wsgi_application  # noqa
 
 _application = get_wsgi_application()
 

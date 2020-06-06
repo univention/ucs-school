@@ -34,13 +34,14 @@ servers to the OU object.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
 import optparse
-import univention.config_registry
-import univention.admin.uldap
+import sys
+
+import univention.admin.config
 import univention.admin.modules
 import univention.admin.objects
-import univention.admin.config
+import univention.admin.uldap
+import univention.config_registry
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()

@@ -1,6 +1,5 @@
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
 
-
 SPLIT_FIRSTNAME_SPACE = 0
 SPLIT_FIRSTNAME_DASH = 0
 SPLIT_LASTNAME_SPACE = -1

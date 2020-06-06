@@ -106,4 +106,3 @@ msgstr ""
 #: umc/python/schoolexam/__init__.py:376 umc/python/schoolexam/__init__.py:539
 msgid "finished..."
 msgstr "terminé..."
-

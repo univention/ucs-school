@@ -32,29 +32,28 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
-from urlparse import urlparse
-import univention.config_registry
 
+from urlparse import urlparse
+
+import ucsschool.lib.internetrules as rules
+import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
+import univention.config_registry
+from ucsschool.lib.models import Group
+from ucsschool.lib.school_umc_base import LDAP_Filter, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
+from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import (
-    StringSanitizer,
-    DictSanitizer,
-    ListSanitizer,
-    ChoicesSanitizer,
-    IntegerSanitizer,
     BooleanSanitizer,
+    ChoicesSanitizer,
+    DictSanitizer,
+    IntegerSanitizer,
+    ListSanitizer,
+    StringSanitizer,
 )
-from univention.management.console.log import MODULE
-
-import univention.admin.modules as udm_modules
-import univention.admin.objects as udm_objects
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, LDAP_Filter, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models import Group
-import ucsschool.lib.internetrules as rules
 
 _ = Translation("ucs-school-umc-internetrules").translate
 

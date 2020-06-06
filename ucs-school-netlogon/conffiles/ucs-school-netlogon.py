@@ -31,10 +31,12 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import univention.uldap
-import sys
+
 import os
 import stat
+import sys
+
+import univention.uldap
 
 logging = ">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
 

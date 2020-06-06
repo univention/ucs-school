@@ -1,9 +1,9 @@
-import cStringIO
 import smtplib
+
+import cStringIO
 
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from univention.config_registry import ConfigRegistry
-
 
 ucr = ConfigRegistry()
 ucr.load()

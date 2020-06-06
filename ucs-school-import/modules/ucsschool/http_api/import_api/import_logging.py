@@ -34,9 +34,10 @@ Logging configuration for the HTTP API
 """
 
 from __future__ import absolute_import, unicode_literals
-import logging
-from django.conf import settings
 
+import logging
+
+from django.conf import settings
 
 FILE_HANDLER_NAME = "http_api.log"
 

@@ -32,8 +32,8 @@
 Diverse helper functions.
 """
 
-import pwd
 import grp
+import pwd
 
 
 def get_wsgi_user_group():

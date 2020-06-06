@@ -34,12 +34,13 @@ structures of UCS@school 4.1 R2.
 # <http://www.gnu.org/licenses/>.
 
 import optparse
-import ldap
-import sys
 import pprint
+import sys
 
-from univention.admin import uldap, uexceptions
+import ldap
+
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.admin import uexceptions, uldap
 
 ldap_errors = (
     ldap.LDAPError,

@@ -27,11 +27,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sqlite3
 import os
+import sqlite3
 import stat
-import univention.config_registry
 
+import univention.config_registry
 
 FN_NETLOGON_USER_QUEUE = "/var/spool/ucs-school-netlogon-user-logonscripts/user_queue.sqlite"
 

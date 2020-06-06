@@ -33,7 +33,9 @@ Base class for all Python based format hooks.
 """
 
 from __future__ import absolute_import
+
 import logging
+
 from ucsschool.lib.pyhooks import PyHook
 
 

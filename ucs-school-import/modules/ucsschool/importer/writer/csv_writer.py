@@ -32,8 +32,8 @@
 Write the result of a user import job to a CSV file.
 """
 
-from csv import DictWriter, excel, QUOTE_ALL
 import os
+from csv import QUOTE_ALL, DictWriter, excel
 from stat import S_IRUSR, S_IWUSR
 
 from .base_writer import BaseWriter

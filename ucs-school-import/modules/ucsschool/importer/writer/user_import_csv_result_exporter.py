@@ -32,10 +32,11 @@
 Write the result of a user import job to a CSV file.
 """
 
-from ..factory import Factory
-from ..exceptions import UcsSchoolImportError
-from .result_exporter import ResultExporter
 from ucsschool.lib.roles import role_pupil
+
+from ..exceptions import UcsSchoolImportError
+from ..factory import Factory
+from .result_exporter import ResultExporter
 
 
 class UserImportCsvResultExporter(ResultExporter):

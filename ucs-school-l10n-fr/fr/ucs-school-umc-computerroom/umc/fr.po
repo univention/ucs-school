@@ -20,5 +20,3 @@ msgstr "Salle informatique"
 
 msgid "Control students' computers during a lesson"
 msgstr "Contrôler les ordinateurs des étudiants pendant un cours"
-
-

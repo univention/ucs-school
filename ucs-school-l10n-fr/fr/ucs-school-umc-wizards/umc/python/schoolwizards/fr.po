@@ -50,4 +50,3 @@ msgstr "Échec de la suppression de l'utilisateur de l'école."
 #, python-format
 msgid "The %s %r does not exists or might have been removed in the meanwhile."
 msgstr "%s %r n'existe pas ou a été supprimé entre temps."
-

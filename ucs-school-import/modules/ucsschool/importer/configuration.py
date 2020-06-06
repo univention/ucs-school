@@ -35,12 +35,15 @@ Configuration classes.
 
 import json
 import logging
+
 from six import string_types
+
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
+
 from .exceptions import InitialisationError, ReadOnlyConfiguration
+from .utils.config_pyhook import ConfigPyHook
 from .utils.configuration_checks import run_configuration_checks
 from .utils.import_pyhook import run_import_pyhooks
-from .utils.config_pyhook import ConfigPyHook
 
 try:
     from typing import Any, Dict, List, Optional, Type

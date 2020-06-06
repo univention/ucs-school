@@ -34,6 +34,7 @@ Django manage.py command to check if a specified superuser account already exist
 """
 
 from __future__ import unicode_literals
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 

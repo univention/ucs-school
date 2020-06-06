@@ -40,21 +40,24 @@ Celery tasks
 #
 
 from __future__ import unicode_literals
-import time
+
 import logging
+import time
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.exceptions import ObjectDoesNotExist
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+
 from ucsschool.importer.exceptions import (
     InitialisationError,
     UcsSchoolImportError,
     UcsSchoolImportFatalError,
 )
-from .models import UserImportJob, Logfile, PasswordsFile, SummaryFile
-from .constants import JOB_STARTED, JOB_FINISHED, JOB_ABORTED, JOB_SCHEDULED
-from .http_api_import_frontend import HttpApiImportFrontend
 
+from .constants import JOB_ABORTED, JOB_FINISHED, JOB_SCHEDULED, JOB_STARTED
+from .http_api_import_frontend import HttpApiImportFrontend
+from .models import Logfile, PasswordsFile, SummaryFile, UserImportJob
 
 logger = get_task_logger(__name__)
 logger.level = logging.DEBUG

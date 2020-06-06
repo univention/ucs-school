@@ -37,10 +37,10 @@
 
 from __future__ import absolute_import
 
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-from univention.lib.i18n import Translation
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 

@@ -32,20 +32,19 @@ Tool to create lots of test users.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
 import datetime
 import logging
 import os.path
-from argparse import ArgumentParser, REMAINDER
 import subprocess
+import sys
+from argparse import REMAINDER, ArgumentParser
 
-from ucsschool.lib.models.utils import get_stream_handler
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import (
     HttpApiTestUserCsvExporter,
     TestUserCsvExporter,
 )
-
+from ucsschool.lib.models.utils import get_stream_handler
 
 CONF_FILE_CMDLINE = "/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json"
 CONF_FILE_HTTP = "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json"

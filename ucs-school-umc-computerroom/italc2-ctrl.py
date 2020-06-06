@@ -32,13 +32,18 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
+
+import getpass
 import inspect
+import optparse
 import os
 import sys
+
 import notifier
 import notifier.signals
-import optparse
-import getpass
+
+import ucsschool.lib.schoolldap as usl
+import univention.config_registry as ucr
 
 try:
     from univention.management.console.modules.computerroom import italc2
@@ -47,8 +52,6 @@ except ImportError:
     sys.path.insert(0, os.path.join(script_dir, "umc/python/computerroom"))
     import italc2
 
-import ucsschool.lib.schoolldap as usl
-import univention.config_registry as ucr
 
 italcManager = None
 

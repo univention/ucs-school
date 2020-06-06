@@ -26,4 +26,3 @@ msgstr "Réinitialiser les mots de passe des comptes étudiants"
 
 msgid "Reset passwords of teacher accounts"
 msgstr "Réinitialiser les mots de passe des comptes enseignants"
-

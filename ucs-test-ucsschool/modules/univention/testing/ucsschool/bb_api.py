@@ -34,31 +34,34 @@ Test base code.
 """
 
 from __future__ import unicode_literals
-import os
-import re
-import sys
-import json
-import pprint
-import time
-import logging
-import random
-import shutil
+
 import datetime
+import json
+import logging
+import os
+import pprint
+import random
+import re
+import shutil
 import subprocess
-import requests
+import sys
+import time
 from unittest import TestCase
 
-try:
-    from urlparse import urljoin  # py2
-except ImportError:
-    from urllib.parse import urljoin  # py3
+import requests
 from six import reraise as raise_
+
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
-from univention.config_registry import handler_set
-from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.utils import exec_cmd, get_stream_handler, ucr
+from ucsschool.importer.configuration import (
+    Configuration,
+    setup_configuration as _setup_configuration,
+)
+from ucsschool.importer.exceptions import UcsSchoolImportError
+from ucsschool.importer.factory import setup_factory as _setup_factory
+from ucsschool.importer.frontend.user_import_cmdline import (
+    UserImportCommandLine as _UserImportCommandLine,
+)
 from ucsschool.importer.models.import_user import (
     ImportStaff,
     ImportStudent,
@@ -66,12 +69,15 @@ from ucsschool.importer.models.import_user import (
     ImportTeachersAndStaff,
     ImportUser,
 )
-from ucsschool.importer.exceptions import UcsSchoolImportError
-from ucsschool.importer.configuration import setup_configuration as _setup_configuration, Configuration
-from ucsschool.importer.factory import setup_factory as _setup_factory
-from ucsschool.importer.frontend.user_import_cmdline import (
-    UserImportCommandLine as _UserImportCommandLine,
-)
+from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.utils import exec_cmd, get_stream_handler, ucr
+from univention.config_registry import handler_set
+from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
+
+try:
+    from urlparse import urljoin  # py2
+except ImportError:
+    from urllib.parse import urljoin  # py3
 
 try:
     from typing import Any, Dict, List, Optional, Text, Tuple

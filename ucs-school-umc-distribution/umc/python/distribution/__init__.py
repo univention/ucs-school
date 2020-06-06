@@ -32,31 +32,29 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import shutil
 import sys
 import tempfile
-import shutil
 from datetime import datetime, timedelta
+
 from six import reraise as raise_
 
+import univention.admin.uexceptions as udm_exceptions
+from ucsschool.lib.models.user import User
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
+from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import file_upload, sanitize, simple_response
-from univention.management.console.modules.sanitizers import (
-    StringSanitizer,
-    ListSanitizer,
-    DictSanitizer,
-    PatternSanitizer,
-    ChoicesSanitizer,
-)
-from univention.management.console.log import MODULE
-
 from univention.management.console.modules.distribution import util
-
-import univention.admin.uexceptions as udm_exceptions
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, Display
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models.user import User
+from univention.management.console.modules.sanitizers import (
+    ChoicesSanitizer,
+    DictSanitizer,
+    ListSanitizer,
+    PatternSanitizer,
+    StringSanitizer,
+)
 
 _ = Translation("ucs-school-umc-distribution").translate
 

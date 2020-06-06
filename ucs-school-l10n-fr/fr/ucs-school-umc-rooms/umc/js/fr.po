@@ -126,4 +126,3 @@ msgstr "Suppression de la salle réussie"
 #: umc/js/schoolrooms/DetailPage.js:113
 msgid "Verbose description of the current group"
 msgstr "Description détaillée du groupe actuel"
-

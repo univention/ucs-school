@@ -34,14 +34,16 @@ Django settings for the UCS@school import HTTP API.
 """
 
 from __future__ import unicode_literals
+
+import logging
 import os
 import re
 import stat
-import logging
-from univention.config_registry import ConfigRegistry
-from django.conf import global_settings
-from ucsschool.lib.models.utils import CMDLINE_LOG_FORMATS, LOG_DATETIME_FORMAT
 
+from django.conf import global_settings
+
+from ucsschool.lib.models.utils import CMDLINE_LOG_FORMATS, LOG_DATETIME_FORMAT
+from univention.config_registry import ConfigRegistry
 
 ucr = ConfigRegistry()
 ucr.load()

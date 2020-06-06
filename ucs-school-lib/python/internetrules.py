@@ -31,11 +31,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
+
+import univention.config_registry
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-import univention.config_registry
-
-import re
 
 # regular expression to match UCR variables for filter properties
 _regFilterNames = re.compile(

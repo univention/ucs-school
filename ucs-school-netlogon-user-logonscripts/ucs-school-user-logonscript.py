@@ -28,17 +28,20 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
-import ldap
+
 import os
-import signal
 import shutil
+import signal
 import subprocess
-from ldap.filter import filter_format
+
+import ldap
 import listener
-import univention.debug
+from ldap.filter import filter_format
+
 import univention.admin.modules
+import univention.debug
+from ucsschool.netlogon import SqliteQueue, get_netlogon_path_list
 from univention.admin.uldap import getMachineConnection
-from ucsschool.netlogon import get_netlogon_path_list, SqliteQueue
 
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")

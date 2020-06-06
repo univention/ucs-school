@@ -61,10 +61,13 @@ Then add a configuration entry to ``/var/lib/ucs-school-import/configs/user_impo
 """
 
 from __future__ import absolute_import
+
 import inspect
 import logging
 from operator import itemgetter
+
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
+
 from ..exceptions import UcsSchoolImportFatalError
 from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 

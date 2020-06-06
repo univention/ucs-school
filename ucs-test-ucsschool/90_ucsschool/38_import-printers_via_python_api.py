@@ -8,9 +8,9 @@
 ## packages:
 ##   - ucs-school-import
 
-from univention.testing.ucsschool.importprinters import import_printers_basics
 import sys
 
+from univention.testing.ucsschool.importprinters import import_printers_basics
 
 if __name__ == "__main__":
     # Not yet implemented

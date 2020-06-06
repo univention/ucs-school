@@ -33,6 +33,7 @@
 import re
 
 from ldap.dn import explode_dn
+
 from univention.config_registry import ConfigRegistry
 
 try:

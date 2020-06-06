@@ -7,14 +7,15 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.umc import Client, ClientSaml
-from univention.testing.ucs_samba import wait_for_s4connector
 import glob
 import os
 import re
 import subprocess
+
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_s4connector
+from univention.testing.umc import Client, ClientSaml
 
 
 class StartFail(Exception):

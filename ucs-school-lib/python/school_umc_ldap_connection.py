@@ -33,12 +33,12 @@
 import inspect
 from functools import wraps
 
-from univention.management.console.log import MODULE
-from univention.management.console.ldap import (
-    get_machine_connection,
+from univention.management.console.ldap import (  # , reset_cache as reset_connection_cache
     get_admin_connection,
+    get_machine_connection,
     get_user_connection,
-)  # , reset_cache as reset_connection_cache
+)
+from univention.management.console.log import MODULE
 from univention.management.console.protocol.message import Message
 
 __bind_callback = None

@@ -35,52 +35,55 @@ UMC module delivering backend services for ucs-school-umc-exam
 """
 
 import datetime
-import os.path
-import traceback
-import re
-import os
-from ldap.filter import filter_format
-from collections import defaultdict
 import logging
+import os
+import os.path
+import re
+import traceback
+from collections import defaultdict
 from typing import Dict, List, Tuple
 
+from ldap.filter import filter_format
 from six import iteritems
-from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, DNSanitizer, ListSanitizer
-from ucsschool.lib.school_umc_base import SchoolBaseModule
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
-from ucsschool.lib.roles import (
-    role_teacher_computer,
-    role_exam_user,
-    context_type_exam,
-    create_ucsschool_role_string,
-    get_role_info,
-)
+
+import univention.admin.modules
+import univention.admin.uexceptions
+import univention.udm
+from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
+from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
 from ucsschool.lib.models import (
-    School,
     ComputerRoom,
-    Student,
     ExamStudent,
     MultipleObjectsError,
+    School,
     SchoolComputer,
+    Student,
 )
 from ucsschool.lib.models.utils import (
-    add_module_logger_to_schoollib,
-    get_package_version,
     ModuleHandler,
     NotInstalled,
     UnknownPackage,
+    add_module_logger_to_schoollib,
+    get_package_version,
 )
-from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
-from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
-
-import univention.admin.uexceptions
-import univention.admin.modules
-import univention.udm
-
+from ucsschool.lib.roles import (
+    context_type_exam,
+    create_ucsschool_role_string,
+    get_role_info,
+    role_exam_user,
+    role_teacher_computer,
+)
+from ucsschool.lib.school_umc_base import SchoolBaseModule
+from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, LDAP_Connection
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import (
+    DNSanitizer,
+    ListSanitizer,
+    StringSanitizer,
+)
 
 _ = Translation("ucs-school-umc-exam-master").translate
 univention.admin.modules.update()

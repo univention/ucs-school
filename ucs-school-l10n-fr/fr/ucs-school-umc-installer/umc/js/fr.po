@@ -427,4 +427,3 @@ msgstr "Attention :"
 #, javascript-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Les groupes de travail peuvent être créés et gérés avec %s."
-

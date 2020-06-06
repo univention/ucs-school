@@ -559,4 +559,3 @@ msgstr "{0} éteints / mal configurés"
 #: umc/js/computerroom.js:1182
 msgid "{time} minutes"
 msgstr "{time} minutes"
-

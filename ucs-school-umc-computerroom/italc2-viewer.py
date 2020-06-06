@@ -32,20 +32,19 @@
 # <http://www.gnu.org/licenses/>.
 
 import inspect
+import optparse
 import os
 import sys
+
+import italc2
 import notifier
-import optparse
+from PyQt4 import QtCore, QtGui
+
+import ucsschool.lib.schoolldap as usl
+import univention.config_registry as ucr
 
 script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
 sys.path.insert(0, os.path.join(script_dir, "umc/python/computerroom"))
-
-import italc2
-import ucsschool.lib.schoolldap as usl
-
-import univention.config_registry as ucr
-
-from PyQt4 import QtCore, QtGui
 
 
 class ViewerApp(QtGui.QApplication):

@@ -7,8 +7,9 @@
 ## packages:
 ##   - ucs-school-import
 
-from univention.testing.ucsschool.importnetworks import import_networks_basics
 import sys
+
+from univention.testing.ucsschool.importnetworks import import_networks_basics
 
 if __name__ == "__main__":
     # Not yet implemented

@@ -5,11 +5,15 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 import univention.testing.strings as uts
-import univention.testing.utils as utils
-from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_school_class,
+    role_school_class_share,
+)
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
-from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
+from univention.testing.umc import Client
 
 
 class GetFail(Exception):

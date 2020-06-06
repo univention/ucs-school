@@ -50,13 +50,14 @@
 # proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER whitelist-blacklist-pass
 
 from __future__ import print_function
+
 import os
 import re
+import shutil
 import socket
 import subprocess
 import tempfile
 import time
-import shutil
 
 PATH_LOG = "/var/log/univention/ucs-school-webproxy.log"
 DIR_ETC = "/etc/squidguard"

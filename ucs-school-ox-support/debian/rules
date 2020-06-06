@@ -35,4 +35,3 @@ override_dh_auto_test:
 
 %:
 	dh $@ --with python_support
-

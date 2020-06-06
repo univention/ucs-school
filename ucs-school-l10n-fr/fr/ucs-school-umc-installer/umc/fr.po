@@ -24,4 +24,3 @@ msgstr ""
 
 msgid "UCS@school configuration wizard"
 msgstr "Assistant de configuration de UCS@school"
-

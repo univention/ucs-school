@@ -37,27 +37,23 @@ import tempfile
 import threading
 import time
 
-from univention.lib.i18n import Translation
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-
-from univention.admin.uexceptions import noObject
-
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models import User, ComputerRoom, MultipleObjectsError
-
+import ldap
 import notifier
 import notifier.signals
 import notifier.threads
-
+import sip
+import wakeonlan
+from ldap.dn import explode_dn
+from ldap.filter import filter_format
 from PyQt4.QtCore import QObject, pyqtSlot
 
-import wakeonlan
 import italc
-import ldap
-import sip
-from ldap.filter import filter_format
-from ldap.dn import explode_dn
+from ucsschool.lib.models import ComputerRoom, MultipleObjectsError, User
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from univention.admin.uexceptions import noObject
+from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
 
 _ = Translation("ucs-school-umc-computerroom").translate
 

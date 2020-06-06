@@ -52,7 +52,6 @@ mailDomains = {}
 
 import codecs
 import copy
-import ipaddr
 import optparse
 import os
 import re
@@ -63,35 +62,39 @@ import tempfile
 import time
 import traceback
 
+import ipaddr
+import ldap
+import ldap.filter
+
+import univention.admin.config
+import univention.admin.modules
+import univention.admin.objects
+import univention.admin.uexceptions
+import univention.admin.uldap
+import univention.config_registry
 import univention.debug
+import univention.lib.policy_result
+from ucsschool.lib.models.utils import (
+    add_stream_logger_to_schoollib,
+    create_passwd,
+    stopped_notifier,
+)
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_dc_slave_admin,
+    role_dc_slave_edu,
+    role_pupil,
+    role_school_admin_group,
+    role_school_class,
+    role_school_class_share,
+    role_staff,
+    role_student,
+    role_teacher,
+)
+from ucsschool.lib.roleshares import roleshare_home_subdir
 
 univention.debug.init("/var/log/univention/ucs-school-import.log", 1, 0)
 univention.debug.set_level(univention.debug.MAIN, 4)
-
-import ldap
-import ldap.filter
-import univention.admin.uldap
-import univention.admin.uexceptions
-import univention.admin.modules
-import univention.admin.objects
-import univention.admin.config
-import univention.config_registry
-import univention.lib.policy_result
-from ucsschool.lib.roles import (
-    create_ucsschool_role_string,
-    role_pupil,
-    role_teacher,
-    role_staff,
-    role_student,
-    role_school_class,
-    role_school_class_share,
-    role_school_admin_group,
-    role_dc_slave_admin,
-    role_dc_slave_edu,
-)
-from ucsschool.lib.roleshares import roleshare_home_subdir
-from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_schoollib
-from ucsschool.lib.models.utils import create_passwd
 
 
 ldap_errors = (

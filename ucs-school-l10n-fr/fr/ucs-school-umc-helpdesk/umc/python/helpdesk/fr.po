@@ -49,4 +49,3 @@ msgstr ""
 "électronique de l'équipe d'aide n'a pas été configurée. Elle "
 "doit être configurée par un administrateur à l'aide de la variable UCR "
 "« ucsschool/helpdesk/recipient »."
-

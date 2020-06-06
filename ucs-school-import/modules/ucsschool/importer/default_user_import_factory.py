@@ -33,9 +33,11 @@ Default implementation of the Abstract Factory.
 """
 
 import logging
+
 from ucsschool.lib.models.utils import ucr
-from .factory import load_class
+
 from .exceptions import InitialisationError
+from .factory import load_class
 
 try:
     from typing import Any, Iterable, Optional, TypeVar

@@ -9,5 +9,3 @@ Description[de]=Name des Windows Druckertreiber für den PDF Drucker.
 Description[en]=Name of the windows printer driver for the pdf printer.
 Type=str
 Categories=ucsschool-printermoderation
-
-

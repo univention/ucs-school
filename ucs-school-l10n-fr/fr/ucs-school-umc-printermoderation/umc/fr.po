@@ -19,4 +19,3 @@ msgstr "Modérer les tâches d'impression des étudiants"
 
 msgid "Moderate printers"
 msgstr "Modérer les imprimantes"
-

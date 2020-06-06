@@ -1,6 +1,7 @@
-from univention.admin.syntax import UDM_Objects, select
 import re
+
 import univention.admin.localization
+from univention.admin.syntax import UDM_Objects, select
 
 translation = univention.admin.localization.translation("univention-admin-syntax-ucsschool_import")
 # The underscore function is already in use at this point -> use a different name

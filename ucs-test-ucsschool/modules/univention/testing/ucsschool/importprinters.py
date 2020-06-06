@@ -6,9 +6,9 @@ import subprocess
 import tempfile
 
 import univention.config_registry
-import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
+import univention.testing.utils as utils
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"

@@ -32,9 +32,9 @@
 Legacy command line frontend for user import.
 """
 
-import sys
 import os
 import os.path
+import sys
 from argparse import ArgumentParser
 
 from ..frontend.parse_user_import_cmdline import ParseUserImportCmdline

@@ -1,9 +1,10 @@
 # start 65ucsschool
 
 @!@
+import os
 # -*- coding: utf-8 -*-
 import re
-import os
+
 from univention.lib.misc import custom_groupname
 
 aclset = """

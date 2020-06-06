@@ -431,4 +431,3 @@ msgstr "Utilisateur"
 #: umc/js/schoolexam.js:238
 msgid "Web access profile"
 msgstr "Profil d'accès au Web"
-

@@ -34,37 +34,40 @@ Django Views
 """
 
 from __future__ import unicode_literals
+
 import logging
+
+import lazy_object_proxy
+from django.db.models import Q
+from django.http import Http404
+from django_filters import CharFilter, MultipleChoiceFilter
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from ldap.filter import filter_format
+from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.exceptions import ParseError
+from rest_framework.filters import BaseFilterBackend, OrderingFilter
+from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
+
+from .models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
+from .serializers import (
+    LogFileSerializer,
+    PasswordFileSerializer,
+    RoleSerializer,
+    SchoolSerializer,
+    SummarySerializer,
+    UserImportJobCreationValidator,
+    UserImportJobSerializer,
+)
 
 try:
     from urllib2 import urlparse
 except ImportError:
     from urllib import parse as urlparse  # Python3
-from ldap.filter import filter_format
-import lazy_object_proxy
-from django.db.models import Q
-from django.http import Http404
-from rest_framework import status
-from rest_framework.reverse import reverse
-from rest_framework import mixins, viewsets
-from rest_framework.response import Response
-from rest_framework.exceptions import ParseError
-from rest_framework.decorators import detail_route
-from rest_framework.filters import BaseFilterBackend, OrderingFilter
-from rest_framework.permissions import BasePermission, IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-from django_filters import CharFilter, MultipleChoiceFilter
-from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
-from .models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
-from .serializers import (
-    UserImportJobCreationValidator,
-    UserImportJobSerializer,
-    LogFileSerializer,
-    PasswordFileSerializer,
-    RoleSerializer,
-    SummarySerializer,
-    SchoolSerializer,
-)
 
 
 logger = lazy_object_proxy.Proxy(lambda: logging.Logger(__name__))  # type: logging.Logger

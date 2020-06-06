@@ -22,4 +22,3 @@ msgstr ""
 
 msgid "Selective UDM"
 msgstr "UDM sélectif"
-

@@ -32,23 +32,25 @@
 Representation of a user read from a file.
 """
 
-import re
 import datetime
+import re
 import string
 from collections import defaultdict, namedtuple
+
+import lazy_object_proxy
 from ldap.filter import filter_format
 from six import iteritems, string_types
-import lazy_object_proxy
-from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
+
+from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
+from ucsschool.lib.models.base import NoObject, WrongObjectType
+from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
+from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_teacher
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
-from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_teacher, role_staff
-from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
-from ucsschool.lib.models.base import NoObject, WrongObjectType
-from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
-from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
+from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
+
 from ..configuration import Configuration
-from ..factory import Factory
 from ..exceptions import (
     BadPassword,
     EmptyFormatResultError,
@@ -59,10 +61,10 @@ from ..exceptions import (
     InvalidEmail,
     InvalidSchoolClasses,
     InvalidSchools,
-    MissingUid,
     MissingMailDomain,
     MissingMandatoryAttribute,
     MissingSchoolName,
+    MissingUid,
     NotSupportedError,
     NoUsernameAtAll,
     UDMError,
@@ -74,12 +76,12 @@ from ..exceptions import (
     UsernameToLong,
     UserValidationError,
 )
-from ..utils.user_pyhook import UserPyHook
+from ..factory import Factory
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
+from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
-
 
 try:
     from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union

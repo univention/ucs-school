@@ -1,25 +1,4 @@
 # -*- coding: utf-8 -*-
-from univention.testing.ucsschool.importcomputers import (
-    Windows,
-    MacOS,
-    IPManagedClient,
-    random_mac,
-    random_ip,
-)
-from univention.testing.ucsschool.internetrule import InternetRule
-from univention.testing.ucsschool.simplecurl import SimpleCurl
-from univention.testing.ucsschool.workgroup import Workgroup
-from ucsschool.lib.models import IPComputer as IPComputerLib
-from ucsschool.lib.models import MacComputer as MacComputerLib
-from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-from ucsschool.lib.roles import (
-    create_ucsschool_role_string,
-    role_ip_computer,
-    role_mac_computer,
-    role_win_computer,
-)
-from univention.testing.umc import Client
-from univention.lib.umc import ConnectionError
 import copy
 import datetime
 import itertools
@@ -29,11 +8,35 @@ import subprocess
 import tempfile
 import time
 from functools import wraps
+
 import univention.lib.atjobs as ula
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from ucsschool.lib.models import (
+    IPComputer as IPComputerLib,
+    MacComputer as MacComputerLib,
+    WindowsComputer as WindowsComputerLib,
+)
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_ip_computer,
+    role_mac_computer,
+    role_win_computer,
+)
+from univention.lib.umc import ConnectionError
+from univention.testing.ucsschool.importcomputers import (
+    IPManagedClient,
+    MacOS,
+    Windows,
+    random_ip,
+    random_mac,
+)
+from univention.testing.ucsschool.internetrule import InternetRule
+from univention.testing.ucsschool.simplecurl import SimpleCurl
+from univention.testing.ucsschool.workgroup import Workgroup
+from univention.testing.umc import Client
 
 
 class GetFail(Exception):

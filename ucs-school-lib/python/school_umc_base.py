@@ -30,21 +30,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.admin.filter import conjunction, parse
-from univention.admin.uexceptions import noObject
-
-import univention.admin.modules as udm_modules
-
-from univention.lib.i18n import Translation
-
 import re
+
 from ldap.filter import escape_filter_chars, filter_format
 
+import univention.admin.modules as udm_modules
+from univention.admin.filter import conjunction, parse
+from univention.admin.uexceptions import noObject
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
+
 from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 
 try:

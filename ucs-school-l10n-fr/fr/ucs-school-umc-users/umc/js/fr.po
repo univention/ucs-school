@@ -120,4 +120,3 @@ msgstr "enseignants"
 #: umc/js/schoolusers.js:300
 msgid "user has to change password on next login"
 msgstr "l'utilisateur doit modifier son mot de passe à sa prochaine connexion"
-

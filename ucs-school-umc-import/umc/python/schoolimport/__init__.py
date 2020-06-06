@@ -36,30 +36,28 @@ import time
 
 import notifier.threads
 
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import (
-    simple_response,
-    file_upload,
-    require_password,
-    sanitize,
-    allow_get_request,
-)
-from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.management.console.modules.mixins import ProgressMixin
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule
-from ucsschool.http_api.import_api.constants import JOB_ABORTED, JOB_FINISHED
 from ucsschool.http_api.client import (
     Client,
     ConnectionError,
-    PermissionError,
     ObjectNotFound,
+    PermissionError,
     ServerError,
 )
-
+from ucsschool.http_api.import_api.constants import JOB_ABORTED, JOB_FINISHED
+from ucsschool.lib.school_umc_base import SchoolBaseModule
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import (
+    allow_get_request,
+    file_upload,
+    require_password,
+    sanitize,
+    simple_response,
+)
+from univention.management.console.modules.mixins import ProgressMixin
+from univention.management.console.modules.sanitizers import StringSanitizer
 
 _ = Translation("ucs-school-umc-import").translate
 CACHE_IMPORT_FILES = "/var/cache/ucs-school-umc-import/"

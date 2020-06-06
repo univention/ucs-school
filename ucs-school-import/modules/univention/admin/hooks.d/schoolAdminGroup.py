@@ -28,8 +28,8 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
-from univention.admin.hook import simpleHook
 import univention.debug as ud
+from univention.admin.hook import simpleHook
 
 
 class schoolAdminGroup(simpleHook):

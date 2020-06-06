@@ -49,4 +49,3 @@ override_dh_fixperms:
 	dh_fixperms
 	chmod 755 debian/ucs-school-umc-computerroom/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules
 	chmod 755 debian/ucs-school-umc-computerroom/usr/share/pyshared/univention/management/console/modules/computerroom/wakeonlan.py
-

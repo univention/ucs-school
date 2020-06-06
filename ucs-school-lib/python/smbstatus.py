@@ -32,8 +32,8 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
-import sys
 import subprocess
+import sys
 
 import univention.debug as ud
 

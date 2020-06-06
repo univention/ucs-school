@@ -141,4 +141,3 @@ msgstr "Le projet indiqué n'existe pas : %s"
 #, python-format
 msgid "The specified time needs to lie in the future for: %s"
 msgstr "L'heure indiquée doit se situer dans le futur pour : %s"
-

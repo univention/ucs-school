@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import ipaddr
 import os
 import random
 import string
 import subprocess
 import tempfile
 
+import ipaddr
+
 import univention.config_registry
-import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing.ucsschool.importou import get_school_base
+import univention.testing.utils as utils
 from univention.testing.ucsschool.importcomputers import random_ip
+from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
 

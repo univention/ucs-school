@@ -30,11 +30,14 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from functools import partial
 import inspect
 import logging
+from functools import partial
+
 import lazy_object_proxy
+
 import univention.admin.modules as udm_modules
+
 from .attributes import Attribute
 
 

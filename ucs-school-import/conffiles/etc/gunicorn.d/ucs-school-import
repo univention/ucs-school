@@ -6,6 +6,7 @@
 #
 
 from multiprocessing import cpu_count
+
 from univention.config_registry import ConfigRegistry
 
 _ucr = ConfigRegistry()

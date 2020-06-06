@@ -8,12 +8,11 @@
 
 import pytest
 
-from ucsschool.lib.models.user import User
+import univention.testing.strings as uts
 from ucsschool.lib.models.group import SchoolClass
-
+from ucsschool.lib.models.user import User
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
-import univention.testing.strings as uts
 from univention.testing.utils import wait_for_listener_replication
 
 

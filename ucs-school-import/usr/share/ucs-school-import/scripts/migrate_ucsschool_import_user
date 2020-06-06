@@ -35,19 +35,21 @@ UMC module "Benutzer-Import").
 """
 
 from __future__ import absolute_import, print_function
+
+import argparse
+import codecs
 import csv
+import logging
 import os
 import sys
-import argparse
-import logging
-import codecs
-import attr
 
 from ldap.filter import filter_format
+
+import attr
 import univention.admin.uldap
-from univention.config_registry import ConfigRegistry
-from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
 from ucsschool.importer.reader.csv_reader import CsvReader
+from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
+from univention.config_registry import ConfigRegistry
 
 try:
     from typing import Optional

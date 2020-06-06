@@ -20,4 +20,3 @@ msgstr "Démarrer l'examen"
 
 msgid "Starts a new exam for a specified computer room"
 msgstr "Démarre un nouvel examen pour la salle informatique indiquée"
-

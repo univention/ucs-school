@@ -33,16 +33,20 @@ Create historically unique usernames/email addresses.
 """
 
 from __future__ import absolute_import
+
+import logging
 import re
 import string
-import logging
-from six import string_types
+
 import lazy_object_proxy
 from ldap.dn import escape_dn_chars
+from six import string_types
+
 from univention.admin.uexceptions import noObject, objectExists
-from .ldap_connection import get_admin_connection, get_unprivileged_connection
+
 from ..configuration import Configuration
-from ..exceptions import BadValueStored, FormatError, NoValueStored, NameKeyExists
+from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStored
+from .ldap_connection import get_admin_connection, get_unprivileged_connection
 
 try:
     from typing import Callable, Dict, Optional

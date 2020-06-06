@@ -33,24 +33,25 @@
 Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
 """
 
+import datetime
+import logging
+import pprint
 import re
 import sys
-import pprint
-import logging
-import datetime
 from argparse import ArgumentParser
+
 from ldap.filter import filter_format
+
+from ucsschool.importer.factory import setup_factory
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
+from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.lib.models.utils import UniStreamHandler, ucr
 
 try:
     from typing import List
     from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
     pass
-
-from ucsschool.lib.models.utils import ucr, UniStreamHandler
-from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
-from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
 
 
 def parse_cmdline():

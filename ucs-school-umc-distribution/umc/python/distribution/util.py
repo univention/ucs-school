@@ -31,26 +31,24 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import errno
+import itertools
+import json
 import os
 import re
-import json
-import errno
 import shutil
-import itertools
 import traceback
-from pipes import quote
 from datetime import datetime
+from pipes import quote
+
 from six import iteritems, string_types
 
+import ucsschool.lib.models
+import univention.admin.uexceptions as udm_exceptions
 from univention.lib import atjobs
 from univention.lib.i18n import Translation
-from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-
-# import univention.admin.modules as udm_modules
-import univention.admin.uexceptions as udm_exceptions
-
-import ucsschool.lib.models
+from univention.management.console.log import MODULE
 
 _ = Translation("ucs-school-umc-distribution").translate
 

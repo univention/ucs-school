@@ -39,4 +39,3 @@ msgstr "Écoles"
 
 msgid "Users (schools)"
 msgstr "Utilisateurs (écoles)"
-

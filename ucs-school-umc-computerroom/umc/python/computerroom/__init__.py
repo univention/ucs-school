@@ -31,59 +31,59 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
-import fcntl
-import signal
-import psutil
-import inspect
 import datetime
-import urlparse
+import fcntl
 import importlib
-import traceback
-import subprocess
+import inspect
 import itertools
-from random import Random
+import os
+import signal
+import subprocess
+import traceback
 from pipes import quote
+from random import Random
 
-from ipaddr import IPAddress
 import ldap
+import psutil
+import urlparse
+from ipaddr import IPAddress
 from ldap.filter import filter_format
+from notifier.nf_qt import _exit
 
-from univention.management.console.config import ucr
-from univention.config_registry.frontend import ucr_update
-
-from univention.config_registry import handler_set, handler_unset
-from univention.lib.i18n import Translation
-from univention.lib import atjobs
-
-from univention.management.console.modules.sanitizers import (
-    ListSanitizer,
-    Sanitizer,
-    StringSanitizer,
-    ChoicesSanitizer,
-    BooleanSanitizer,
-    DNSanitizer,
-)
-from univention.management.console.modules.decorators import sanitize, simple_response, allow_get_request
-from univention.management.console.modules import UMC_Error
-from univention.management.console.log import MODULE
-
+import ucsschool.lib.internetrules as internetrules
 import univention.admin.uexceptions as udm_exceptions
-from univention.admin.syntax import gid
-from univention.admin.uldap import getMachineConnection
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
+from ucsschool.lib.models import ComputerRoom, School, User
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
-import ucsschool.lib.internetrules as internetrules
-from ucsschool.lib.models import School, ComputerRoom, User
+from univention.admin.syntax import gid
+from univention.admin.uldap import getMachineConnection
+from univention.config_registry import handler_set, handler_unset
+from univention.config_registry.frontend import ucr_update
+from univention.lib import atjobs
+from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import (
+    allow_get_request,
+    sanitize,
+    simple_response,
+)
+from univention.management.console.modules.sanitizers import (
+    BooleanSanitizer,
+    ChoicesSanitizer,
+    DNSanitizer,
+    ListSanitizer,
+    Sanitizer,
+    StringSanitizer,
+)
+
+from .italc2 import ITALC_Error, ITALC_Manager
 
 # import univention.management.console.modules.schoolexam.util as exam_util
 
-from .italc2 import ITALC_Manager, ITALC_Error
-
-from notifier.nf_qt import _exit
 
 _ = Translation("ucs-school-umc-computerroom").translate
 

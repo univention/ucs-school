@@ -8,15 +8,17 @@
 ## packages:
 ##   - ucs-school-import
 
+import datetime
 import os
 import shutil
-import datetime
+
 import pytest
-import univention.testing.udm
-import univention.testing.ucr
+
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+import univention.testing.ucr
 import univention.testing.ucsschool.importou as eio
+import univention.testing.udm
+import univention.testing.utils as utils
 
 HOOKS_DIR = "/usr/share/ucs-school-import/hooks/ou_create_post.d"
 BACKUP_DIR = "/usr/share/ucs-school-import/hooks/ou_create_post.d.bak.{}".format(

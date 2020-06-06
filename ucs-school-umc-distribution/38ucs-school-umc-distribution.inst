@@ -61,5 +61,3 @@ umc_policy_append "ucsschool-umc-teachers-default" "distribution-teacher"
 joinscript_save_current_version
 
 exit 0
-
-

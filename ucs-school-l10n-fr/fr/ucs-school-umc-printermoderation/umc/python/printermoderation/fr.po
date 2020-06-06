@@ -45,4 +45,3 @@ msgstr "Aucun droit d'impression"
 #: umc/python/printermoderation/__init__.py:250
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
-

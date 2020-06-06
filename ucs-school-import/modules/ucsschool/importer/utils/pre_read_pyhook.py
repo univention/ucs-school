@@ -32,8 +32,8 @@
 Base class for all Python based pre-read hooks.
 """
 
-from .import_pyhook import ImportPyHook
 from ..configuration import Configuration
+from .import_pyhook import ImportPyHook
 
 try:
     import typing

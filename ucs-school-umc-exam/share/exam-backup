@@ -30,9 +30,10 @@
 
 import logging
 import os
+
 from ucsschool.lib.models.utils import get_stream_handler
-from univention.management.console.modules.schoolexam import util
 from univention.config_registry import ConfigRegistry
+from univention.management.console.modules.schoolexam import util
 
 
 def main():

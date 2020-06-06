@@ -7,15 +7,17 @@
 ## packages:
 ##   - ucs-school-master
 
-import os
 import imp
+import os
 from io import StringIO
-from mock import call, patch
+
 import pytest
+from mock import call, patch
+
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 from univention.admin.handlers import simpleLdap
 from univention.admin.uldap import getAdminConnection
-import univention.testing.ucr as ucr_test
-import univention.testing.strings as uts
 
 try:
     unic = unicode

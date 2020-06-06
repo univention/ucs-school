@@ -43,12 +43,13 @@
 # WARNING: is is not (yet) checked if the group memberships match to the ucsschoolRole attribute!
 
 from __future__ import absolute_import
+
 from ldap.filter import filter_format
 
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-from univention.lib.i18n import Translation
 
 _ = Translation("univention-management-console-module-diagnostic").translate
 

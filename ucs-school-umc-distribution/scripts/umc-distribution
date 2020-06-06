@@ -30,13 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import inspect
 import os
 import sys
-import inspect
 from optparse import OptionParser
 
-import univention.debug as ud
 import univention.config_registry
+import univention.debug as ud
 import univention.management.console.modules.distribution.util as util
 
 configRegistry = univention.config_registry.ConfigRegistry()

@@ -30,24 +30,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from time import time, strptime
 from calendar import timegm
 from math import ceil
+from time import strptime, time
 
+import univention.admin.uexceptions as udm_exceptions
+from ucsschool.lib.models import User
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import USER_WRITE, LDAP_Connection
+from univention.admin.handlers.users.user import unmapPasswordExpiry
+from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, BooleanSanitizer
-
-from univention.admin.handlers.users.user import unmapPasswordExpiry
-import univention.admin.uexceptions as udm_exceptions
-
-from univention.lib.i18n import Translation
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_WRITE
-from ucsschool.lib.models import User
-
+from univention.management.console.modules.sanitizers import BooleanSanitizer, StringSanitizer
 
 _ = Translation("ucs-school-umc-schoolusers").translate
 

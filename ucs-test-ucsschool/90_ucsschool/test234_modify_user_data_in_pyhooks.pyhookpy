@@ -1,5 +1,6 @@
-from ucsschool.importer.utils.user_pyhook import UserPyHook
 import time
+
+from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 
 class InputDataTestHook(UserPyHook):

@@ -30,15 +30,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.lib import locking
-
-from univention.management.console.log import MODULE
-from univention.lib.i18n import Translation
-
-import ConfigParser
 import datetime
 import re
 import shutil
+
+import ConfigParser
+
+from univention.lib import locking
+from univention.lib.i18n import Translation
+from univention.management.console.log import MODULE
 
 LESSONS_FILE = "/var/lib/ucs-school-lib/lessons.ini"
 LESSONS_BACKUP = "/var/lib/ucs-school-lib/lessons.bak"

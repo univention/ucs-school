@@ -33,8 +33,11 @@ Base class for all Python based import hooks.
 """
 
 from __future__ import absolute_import
+
 import logging
+
 from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
+
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 

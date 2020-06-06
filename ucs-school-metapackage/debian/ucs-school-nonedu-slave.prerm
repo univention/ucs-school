@@ -35,4 +35,3 @@ univention-config-registry unset \
 #DEBHELPER#
 
 exit 0
-

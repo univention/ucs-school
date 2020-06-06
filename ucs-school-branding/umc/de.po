@@ -35,4 +35,3 @@ msgstr ""
 #: umc/app.js:495
 msgid "umcUserInfo"
 msgstr ""
-

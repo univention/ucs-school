@@ -30,21 +30,21 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import ipaddr
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
-import ipaddr
 
 from .attributes import (
-    DHCPServiceName,
     Attribute,
-    DHCPSubnetName,
-    DHCPSubnetMask,
     BroadcastAddress,
-    DHCPServiceAttribute,
     DHCPServerName,
+    DHCPServiceAttribute,
+    DHCPServiceName,
+    DHCPSubnetMask,
+    DHCPSubnetName,
 )
 from .base import UCSSchoolHelperAbstractClass
-from .utils import ucr, _
+from .utils import _, ucr
 
 try:
     from typing import Any, List, Optional

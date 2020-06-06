@@ -32,11 +32,12 @@
 Diverse helper functions.
 """
 
+import grp
 import os
 import os.path
 import pwd
-import grp
 from contextlib import contextmanager
+
 import univention.admin.modules
 
 

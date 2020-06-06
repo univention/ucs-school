@@ -46,4 +46,3 @@ msgstr "L'utilisateur %s n'est pas un étudiant."
 #, python-format
 msgid "User %s is not a teacher."
 msgstr "L'utilisateur %s n'est pas un professeur."
-

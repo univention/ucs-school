@@ -4,10 +4,12 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+import os
+import time
+
 import pycurl
 import StringIO
-import time
-import os
+
 import univention.testing.utils as utils
 
 

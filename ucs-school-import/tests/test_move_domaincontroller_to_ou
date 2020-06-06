@@ -80,4 +80,3 @@ echo "EXITCODE: $?"
 echo "TEST: successful move"
 ./move_domaincontroller_to_ou --dcname dctest7-01 --ou test7
 echo "EXITCODE: $?"
-

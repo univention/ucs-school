@@ -4,12 +4,12 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
-import univention.testing.utils as utils
-from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 from univention.lib.umc import BadRequest
 from univention.testing.ucsschool.importusers import Person
+from univention.testing.umc import Client
 
 
 class GetFail(Exception):

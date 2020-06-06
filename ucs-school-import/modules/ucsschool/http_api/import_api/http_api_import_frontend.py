@@ -34,16 +34,20 @@ UCS@school import frontend class
 """
 
 from __future__ import unicode_literals
-import os
-import stat
+
 import errno
-import shutil
+import os
 import pprint
-from django.conf import settings
+import shutil
+import stat
+
 from celery.states import STARTED as CELERY_STATES_STARTED
+from django.conf import settings
+
+from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.factory import load_class
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
-from ucsschool.importer.exceptions import InitialisationError
+
 from .utils import get_wsgi_uid_gid
 
 

@@ -32,27 +32,25 @@
 # <http://www.gnu.org/licenses/>.
 
 from ldap.filter import filter_format
-from univention.lib.i18n import Translation
 
+import univention.admin.uexceptions as udm_exceptions
+from ucsschool.lib.models import SchoolClass, Teacher, TeachersAndStaff, User, WorkGroup
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import (
+    MACHINE_WRITE,
+    USER_READ,
+    USER_WRITE,
+    LDAP_Connection,
+)
+from univention.lib.i18n import Translation
+from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import (
-    ListSanitizer,
     DictSanitizer,
+    ListSanitizer,
     StringSanitizer,
 )
-from univention.management.console.log import MODULE
-
-import univention.admin.uexceptions as udm_exceptions
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import (
-    LDAP_Connection,
-    USER_READ,
-    USER_WRITE,
-    MACHINE_WRITE,
-)
-from ucsschool.lib.models import User, Teacher, TeachersAndStaff, SchoolClass, WorkGroup
 
 _ = Translation("ucs-school-umc-groups").translate
 

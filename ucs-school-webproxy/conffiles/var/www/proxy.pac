@@ -4,6 +4,7 @@ function FindProxyForURL(url, host) {
 @!@
 import json
 
+
 def print_parent_proxy_or_direct(var):
 	if configRegistry.is_true(var, False):
 		print '            return %s;' % (json.dumps("PROXY %s:%s" % (configRegistry.get('squid/parent/host'), configRegistry.get('squid/parent/port'))),)

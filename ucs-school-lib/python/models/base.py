@@ -31,27 +31,27 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-from copy import deepcopy
-import tempfile
 import subprocess
-from six import iteritems
+import tempfile
+from copy import deepcopy
 
 import ldap
 from ldap import explode_dn
-from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
+from ldap.filter import escape_filter_chars
+from six import iteritems
 
-import univention.admin.uldap as udm_uldap
-from univention.admin.uexceptions import noObject
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+import univention.admin.uldap as udm_uldap
 from univention.admin.filter import conjunction, expression
+from univention.admin.uexceptions import noObject
 
-from ..schoolldap import SchoolSearchBase
-from .meta import UCSSchoolHelperMetaClass
-from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
-from .utils import ucr, _
 from ..roles import create_ucsschool_role_string
+from ..schoolldap import SchoolSearchBase
+from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
+from .meta import UCSSchoolHelperMetaClass
+from .utils import _, ucr
 
 try:
     from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union

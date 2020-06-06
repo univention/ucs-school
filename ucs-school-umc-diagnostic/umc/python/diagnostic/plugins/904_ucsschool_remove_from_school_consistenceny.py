@@ -38,11 +38,11 @@
 
 from __future__ import absolute_import
 
+from ucsschool.lib.roles import role_school_class
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-from univention.lib.i18n import Translation
-from ucsschool.lib.roles import role_school_class
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 title = _("UCS@school Group Consistency")

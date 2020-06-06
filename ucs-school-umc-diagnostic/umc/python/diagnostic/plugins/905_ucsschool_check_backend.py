@@ -36,11 +36,11 @@
 
 from __future__ import absolute_import
 
+import subprocess
+
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Problem
-from univention.lib.i18n import Translation
-
-import subprocess
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 title = _("UCS@school Check if Samba4 is installed")

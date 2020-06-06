@@ -31,9 +31,9 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
-from univention.management.console.config import ucr
 
 import univention.management.console.modules.distribution.util as distribution
+from univention.management.console.config import ucr
 
 distribution.DISTRIBUTION_DATA_PATH = ucr.get(
     "ucsschool/exam/cache", "/var/lib/ucs-school-umc-schoolexam"

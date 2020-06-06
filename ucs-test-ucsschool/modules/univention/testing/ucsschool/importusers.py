@@ -1,30 +1,32 @@
 # -*- coding: utf-8 -*-
 
-import ldap
 import os
-import smbpasswd
 import string
 import subprocess
 import tempfile
+
+import ldap
+import smbpasswd
 from ldap.filter import filter_format
+
+import ucsschool.lib.models.utils
+import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucr
-import univention.testing.utils as utils
 import univention.testing.udm as udm_test
-from univention.testing.decorators import SetTimeout
+import univention.testing.utils as utils
 import univention.uldap
-import univention.config_registry
-from ucsschool.lib.models import Student as StudentLib
-from ucsschool.lib.models import Teacher as TeacherLib
-from ucsschool.lib.models import Staff as StaffLib
-from ucsschool.lib.models import TeachersAndStaff as TeachersAndStaffLib
-from ucsschool.lib.models import School as SchoolLib
-from ucsschool.lib.roles import role_student, role_teacher, role_staff, create_ucsschool_role_string
-import ucsschool.lib.models.utils
-
-from univention.testing.ucsschool.importou import remove_ou, create_ou_cli, get_school_base
+from ucsschool.lib.models import (
+    School as SchoolLib,
+    Staff as StaffLib,
+    Student as StudentLib,
+    Teacher as TeacherLib,
+    TeachersAndStaff as TeachersAndStaffLib,
+)
+from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
+from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
-
+from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
 
 utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)

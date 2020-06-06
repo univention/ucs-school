@@ -34,15 +34,19 @@ Database / Resource models
 """
 
 from __future__ import unicode_literals
+
 import codecs
 import logging
-from ldap.filter import escape_filter_chars
-from django.db import models
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from ldap.filter import escape_filter_chars
+
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
+
 from .constants import (
     JOB_ABORTED,
     JOB_CHOICES,

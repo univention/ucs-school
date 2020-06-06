@@ -34,19 +34,23 @@ Model/HTTP-API Serializers
 """
 
 from __future__ import unicode_literals
-import os
+
+import collections
 import datetime
 import logging
-import collections
+import os
+
 import lazy_object_proxy
-from ldap.filter import filter_format
 from django.conf import settings
 from django.contrib.auth.models import User
+from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from ldap.filter import filter_format
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, PermissionDenied
-from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from ucsschool.lib.models.utils import ucr
+
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
+from ucsschool.lib.models.utils import ucr
+
 from .models import (
     JOB_NEW,
     JOB_SCHEDULED,

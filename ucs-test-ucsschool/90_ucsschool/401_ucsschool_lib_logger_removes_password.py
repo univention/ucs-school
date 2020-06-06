@@ -6,11 +6,13 @@
 ## packages:
 ##   - python-ucs-school
 
-import os
 import logging
+import os
 import tempfile
-from logging import CRITICAL, ERROR, WARN, WARNING, INFO, DEBUG, NOTSET
+from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARN, WARNING
+
 import pytest
+
 import univention.testing.strings as uts
 from ucsschool.lib.models.utils import get_file_handler
 

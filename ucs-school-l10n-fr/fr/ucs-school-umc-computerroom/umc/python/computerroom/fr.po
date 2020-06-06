@@ -44,4 +44,3 @@ msgstr ""
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Nom distingué de salle invalide : %s"
-

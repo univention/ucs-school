@@ -236,4 +236,3 @@ msgstr ""
 #: umc/python/schoolinstaller/__init__.py:641
 msgid "finished..."
 msgstr "terminé..."
-

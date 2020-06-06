@@ -30,25 +30,26 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.debug
-import univention.uldap
-
-import sys
+import copy
+import logging
+import optparse
 import os
 import pwd
 import re
-import time
-import copy
 import shutil
-import ldap
-import optparse
-import logging
 import signal
-import traceback
 import stat
-from univention.config_registry import ConfigRegistry
+import sys
+import time
+import traceback
+
+import ldap
 from ldap.filter import filter_format
+
+import univention.debug
+import univention.uldap
 from ucsschool.netlogon import SqliteQueue
+from univention.config_registry import ConfigRegistry
 
 
 class Log(object):

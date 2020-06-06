@@ -36,7 +36,9 @@ Single source database, partial import user import class.
 import copy
 
 from ldap.filter import filter_format
+
 from ucsschool.lib.models.attributes import ValidationError
+
 from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 

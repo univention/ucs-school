@@ -30,25 +30,23 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer
-
-from univention.lib.i18n import Translation
-from univention.admin.handlers.users.user import object as User
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models import School
-
+import smtplib
 import traceback
+
+import ldap
 import notifier
 import notifier.popen
 
-import smtplib
-import ldap
+from ucsschool.lib.models import School
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from univention.admin.handlers.users.user import object as User
+from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 
 _ = Translation("ucs-school-umc-helpdesk").translate
 

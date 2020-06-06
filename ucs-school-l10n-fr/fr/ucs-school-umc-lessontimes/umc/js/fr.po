@@ -44,4 +44,3 @@ msgstr ""
 "L'horaire du cours est utilisé en interne par le module de salle "
 "informatique pour la durée de la session par défaut. Il est conseillé de "
 "définir une heure de fin de cours juste avant le début du cours suivant."
-

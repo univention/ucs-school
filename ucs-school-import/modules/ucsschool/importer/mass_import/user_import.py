@@ -33,32 +33,34 @@
 Default user import class.
 """
 
-import sys
 import copy
-import logging
-from collections import defaultdict
 import datetime
+import logging
+import sys
+from collections import defaultdict
 
-from six import reraise
 from ldap.filter import filter_format
-from ucsschool.lib.models.base import NoObject, WrongObjectType
+from six import reraise
+
 from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.lib.models.base import NoObject, WrongObjectType
+
+from ..configuration import Configuration
 from ..exceptions import (
-    UcsSchoolImportError,
     CreationError,
     DeletionError,
     ModificationError,
     MoveError,
     TooManyErrors,
+    UcsSchoolImportError,
     UnknownAction,
     UserValidationError,
     WrongUserType,
 )
 from ..factory import Factory
-from ..configuration import Configuration
+from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.post_read_pyhook import PostReadPyHook
-from ..utils.import_pyhook import run_import_pyhooks
 
 try:
     from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union

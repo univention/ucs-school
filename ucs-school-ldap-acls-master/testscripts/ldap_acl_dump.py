@@ -30,10 +30,12 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import sys
-import ldif
+
 import argparse
 import subprocess
+import sys
+
+import ldif
 
 import univention.admin.uldap
 

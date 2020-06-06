@@ -36,12 +36,13 @@ add your own checks.
 """
 
 
-import string
 import re
-from ucsschool.lib.models.utils import ucr, ucr_username_max_length
+import string
+
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
+from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 
 
 class DefaultConfigurationChecks(ConfigurationChecks):

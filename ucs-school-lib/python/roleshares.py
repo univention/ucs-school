@@ -33,16 +33,22 @@
 
 import os
 import sys
-import univention.config_registry
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.models import Group, School
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
+
+import univention.admin.modules as udm_modules
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
+import univention.config_registry
+from ucsschool.lib.i18n import ucs_school_name_i18n
+from ucsschool.lib.models import Group, School
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+from ucsschool.lib.school_umc_ldap_connection import (
+    MACHINE_READ,
+    USER_READ,
+    USER_WRITE,
+    LDAP_Connection,
+)
 from univention.admincli.admin import _2utf8
 from univention.lib.misc import custom_groupname
-import univention.admin.modules as udm_modules
 
 try:
     from typing import Optional

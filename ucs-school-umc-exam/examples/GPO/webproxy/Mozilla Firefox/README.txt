@@ -6,4 +6,3 @@ See e.g. http://docs.univention.de/en/ucsschool.html for installation and config
 See also the README.txt in the examples/GPO directory for general instructions.
 
 TODO: german translation of admx/de-DE/*.adml
-

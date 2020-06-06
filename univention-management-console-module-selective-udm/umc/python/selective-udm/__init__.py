@@ -32,26 +32,25 @@
 # <http://www.gnu.org/licenses/>.
 
 import base64
+
 import ldap.filter
 
-from univention.lib.i18n import Translation
-import univention.config_registry
 import univention.admin.config
+import univention.admin.handlers.computers.windows
+import univention.admin.handlers.users.user
 import univention.admin.modules
 import univention.admin.objects
-import univention.admin.uldap
 import univention.admin.uexceptions
-import univention.admin.handlers.users.user
-import univention.admin.handlers.computers.windows
-
-from univention.management.console.log import MODULE
-from univention.management.console.base import UMC_Error
-from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.management.console.modules.decorators import sanitize
+import univention.admin.uldap
+import univention.config_registry
 from ucsschool.lib.school_umc_base import SchoolBaseModule
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, ADMIN_WRITE, USER_READ
-
+from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, LDAP_Connection
+from univention.lib.i18n import Translation
+from univention.management.console.base import UMC_Error
 from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 
 univention.admin.modules.update()
 

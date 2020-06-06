@@ -36,4 +36,3 @@ oLink.Save
 ' Set Readonly-Flag on Folder
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objFolder = objFSO.GetFolder(FolderPath)
-

@@ -60,4 +60,3 @@ univention-config-registry set \
 #DEBHELPER#
 
 exit 0
-

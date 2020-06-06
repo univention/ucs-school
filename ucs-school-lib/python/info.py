@@ -32,9 +32,11 @@
 # <http://www.gnu.org/licenses/>.
 
 from collections import namedtuple
+
 from ldap.filter import filter_format
-from univention.config_registry import ConfigRegistry
+
 import univention.uldap  # import for mypy
+from univention.config_registry import ConfigRegistry
 
 ucr = ConfigRegistry()
 ucr.load()

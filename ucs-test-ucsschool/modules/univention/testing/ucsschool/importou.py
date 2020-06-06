@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 
 import os
-import stat
 import random
-import subprocess
+import stat
 import string
+import subprocess
+
 from six import string_types
 
-import univention.testing.utils as utils
-import univention.testing.strings as uts
-import univention.testing.udm
-import univention.testing.ucr
-from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
-
-import univention.uldap
-import univention.admin.uldap
-import univention.admin.modules
-import univention.admin.filter
-import univention.config_registry
-from univention.config_registry.interfaces import Interfaces
-
-from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
-from ucsschool.lib.models import School, User, DHCPServer
-from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
+import univention.admin.filter
+import univention.admin.modules
+import univention.admin.uldap
+import univention.config_registry
+import univention.testing.strings as uts
+import univention.testing.ucr
+import univention.testing.udm
+import univention.testing.utils as utils
+import univention.uldap
+from ucsschool.lib.models import DHCPServer, School, User
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
+from univention.config_registry.interfaces import Interfaces
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 univention.admin.modules.update()
 add_stream_logger_to_schoollib()

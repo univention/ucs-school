@@ -32,24 +32,25 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
+import logging
 import os
 import pprint
-import logging
-from datetime import datetime
 import sys
+from datetime import datetime
 
 import six
 
 from ucsschool.lib.models.utils import (
-    get_stream_handler,
-    get_file_handler,
     UniFileHandler,
     UniStreamHandler,
+    get_file_handler,
+    get_stream_handler,
 )
-from .parse_user_import_cmdline import ParseUserImportCmdline
+
 from ..configuration import Configuration, setup_configuration
-from ..factory import setup_factory
 from ..exceptions import InitialisationError
+from ..factory import setup_factory
+from .parse_user_import_cmdline import ParseUserImportCmdline
 
 try:
     from typing import List

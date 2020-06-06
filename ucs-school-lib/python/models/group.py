@@ -34,13 +34,13 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from .attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users, Roles
+from ..roles import role_computer_room, role_school_class, role_workgroup
+from .attributes import Attribute, Description, GroupName, Hosts, Roles, SchoolClassName, Users
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .misc import OU, Container
-from .share import ClassShare, WorkGroupShare
 from .policy import UMCPolicy
-from .utils import ucr, _
-from ..roles import role_computer_room, role_school_class, role_workgroup
+from .share import ClassShare, WorkGroupShare
+from .utils import _, ucr
 
 
 class _MayHaveSchoolPrefix(object):

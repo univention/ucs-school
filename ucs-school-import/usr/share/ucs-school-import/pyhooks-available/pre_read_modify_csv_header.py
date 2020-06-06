@@ -52,10 +52,11 @@ Example::
 	header 2 after : "ID","Nachname,"Vorname","Schulen"
 """
 
-import csv
 import codecs
-import shutil
+import csv
 import datetime
+import shutil
+
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook

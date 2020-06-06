@@ -1,5 +1,6 @@
-from univention.testing.ucsschool.computerroom import run_commands
 import tempfile
+
+from univention.testing.ucsschool.computerroom import run_commands
 
 
 class TestFail(Exception):

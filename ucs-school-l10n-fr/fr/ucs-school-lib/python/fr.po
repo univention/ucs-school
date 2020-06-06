@@ -363,4 +363,3 @@ msgstr "Système Windows"
 #: python/models/computer.py:161
 msgid "Zone"
 msgstr "Zone"
-

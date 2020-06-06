@@ -33,54 +33,54 @@ Attach ucsschool role strings to all supported UCS@school objects and central
 server objects.
 """
 
-import re
-import sys
 import argparse
 import logging
+import re
+import sys
 
 import ldap
 from ldap.filter import filter_format
 from six import string_types
+
 import univention.admin.uldap
-from univention.config_registry import ConfigRegistry
-from univention.admin.uexceptions import ldapError
 from ucsschool.lib.models import (
     AnyComputer,
     BasicGroup,
     ClassShare,
-    WorkGroupShare,
     ComputerRoom,
+    IPComputer,
+    MacComputer,
     School,
     SchoolClass,
     SchoolDCSlave,
-    User,
-    WorkGroup,
     SchoolGroup,
-    MacComputer,
+    User,
     WindowsComputer,
-    IPComputer,
+    WorkGroup,
+    WorkGroupShare,
 )
+from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
+    role_dc_backup,
+    role_dc_master,
+    role_dc_slave,
     role_dc_slave_admin,
     role_dc_slave_edu,
-    role_dc_master,
     role_memberserver,
-    role_dc_backup,
     role_memberserver_admin,
     role_memberserver_edu,
-    role_dc_slave,
-    role_single_master,
     role_school,
     role_school_admin,
     role_school_admin_group,
     role_school_domain_group,
-    role_school_teacher_group,
-    role_school_student_group,
     role_school_staff_group,
+    role_school_student_group,
+    role_school_teacher_group,
+    role_single_master,
 )
-from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
-
+from univention.admin.uexceptions import ldapError
+from univention.config_registry import ConfigRegistry
 
 LOG_FILE = "/var/log/univention/ucsschool-roles-migration.log"
 

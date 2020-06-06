@@ -30,13 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.admin.uexceptions import objectExists
-import univention.admin.uldap as udm_uldap
 import univention.admin.modules as udm_modules
+import univention.admin.uldap as udm_uldap
+from univention.admin.uexceptions import objectExists
 
 from .attributes import ContainerPath
 from .base import UCSSchoolHelperAbstractClass
-from .utils import ucr, _
+from .utils import _, ucr
 
 
 class MailDomain(UCSSchoolHelperAbstractClass):

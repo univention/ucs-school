@@ -30,11 +30,13 @@
 # <http://www.gnu.org/licenses/>.
 
 __package__ = ""  # workaround for PEP 366
-import listener
-import commands
 import os
-import time
 import shutil
+import time
+
+import commands
+import listener
+
 import univention.debug
 
 hostname = listener.baseConfig["hostname"]

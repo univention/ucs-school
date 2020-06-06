@@ -33,9 +33,11 @@ Legacy mass import class.
 """
 
 import copy
+
 from univention.admin.uexceptions import noObject
-from ..mass_import.user_import import UserImport
+
 from ..exceptions import CreationError, DeletionError, UnknownAction
+from ..mass_import.user_import import UserImport
 
 
 class LegacyUserImport(UserImport):

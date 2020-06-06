@@ -557,4 +557,3 @@ msgstr "{itemSchool} : créer un nouveau {itemType}"
 #: umc/js/schoolwizards/Wizard.js:61
 msgid "{itemSchool}: edit {itemType} {itemName}"
 msgstr "{itemSchool} : modifier {itemType} {itemName}"
-

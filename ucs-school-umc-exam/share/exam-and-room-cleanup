@@ -28,23 +28,24 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-import sys
-import os
 import grp
-import shutil
-import traceback
 import optparse
-import univention.debug as ud
-import univention.config_registry
-import univention.uldap
-import univention.admin.uldap
-from ucsschool.lib.schoolldap import SchoolSearchBase
-from ucsschool.lib.models import School
-from univention.lib.umc import Client, ConnectionError, HTTPError
-from univention.admin.uexceptions import noObject
-from ldap.filter import escape_filter_chars
-from ldap import LDAPError
+import os
+import shutil
+import sys
+import traceback
 
+from ldap import LDAPError
+from ldap.filter import escape_filter_chars
+
+import univention.admin.uldap
+import univention.config_registry
+import univention.debug as ud
+import univention.uldap
+from ucsschool.lib.models import School
+from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.admin.uexceptions import noObject
+from univention.lib.umc import Client, ConnectionError, HTTPError
 
 LOGFILE = "/var/log/univention/ucs-school-exam-cleanup.log"
 

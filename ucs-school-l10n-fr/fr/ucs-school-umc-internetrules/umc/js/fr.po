@@ -267,4 +267,3 @@ msgstr "activé"
 #: umc/js/internetrules/AdminPage.js:114
 msgid "whitelist"
 msgstr "liste blanche"
-

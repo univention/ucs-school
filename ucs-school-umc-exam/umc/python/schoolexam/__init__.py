@@ -31,59 +31,58 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import datetime
+import logging
 import os
-import tempfile
 import shutil
+import subprocess
+import tempfile
 import time
 import traceback
-import subprocess
-import datetime
 from itertools import chain
-import logging
 
 import ldap
 import notifier
+from ldap.filter import filter_format
 from six import iteritems
 
-
-from ldap.filter import filter_format
-
-from univention.admin.uexceptions import noObject
 import univention.debug
-
-from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import simple_response, file_upload, sanitize
-from univention.management.console.modules.sanitizers import (
-    StringSanitizer,
-    DictSanitizer,
-    ListSanitizer,
-    DNSanitizer,
-    PatternSanitizer,
-    ChoicesSanitizer,
-)
-from univention.management.console.modules.schoolexam import util
-from univention.management.console.modules import computerroom
-from univention.management.console.modules.distribution import compare_dn
-
-from univention.lib.i18n import Translation
-from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
-from univention.lib.misc import custom_groupname
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer, Display
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.schoolldap import SchoolSearchBase
 from ucsschool.lib import internetrules
-from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
-from ucsschool.lib.roles import (
-    create_ucsschool_role_string,
-    role_exam_user,
-    context_type_exam,
-    get_role_info,
+from ucsschool.lib.models.utils import (
+    ModuleHandler,
+    NotInstalled,
+    UnknownPackage,
+    get_package_version,
 )
-from ucsschool.lib.models.utils import get_package_version, ModuleHandler, NotInstalled, UnknownPackage
+from ucsschool.lib.roles import (
+    context_type_exam,
+    create_ucsschool_role_string,
+    get_role_info,
+    role_exam_user,
+)
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.lib.schoolldap import SchoolSearchBase
+from ucsschool.lib.schoollessons import SchoolLessons
+from univention.admin.uexceptions import noObject
+from univention.lib.i18n import Translation
+from univention.lib.misc import custom_groupname
+from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
+from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_Error, computerroom
+from univention.management.console.modules.decorators import file_upload, sanitize, simple_response
+from univention.management.console.modules.distribution import compare_dn
+from univention.management.console.modules.sanitizers import (
+    ChoicesSanitizer,
+    DictSanitizer,
+    DNSanitizer,
+    ListSanitizer,
+    PatternSanitizer,
+    StringSanitizer,
+)
+from univention.management.console.modules.schoolexam import util
 
 try:
     from typing import Any, Dict, List, Optional, Pattern

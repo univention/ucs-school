@@ -4,9 +4,10 @@
 ## tags: [ucsschool]
 ## exposure: safe
 
-import univention.testing.utils as utils
-import univention.config_registry
 import sys
+
+import univention.config_registry
+import univention.testing.utils as utils
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()

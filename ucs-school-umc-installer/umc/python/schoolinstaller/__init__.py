@@ -30,40 +30,38 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import threading
-import os.path
-import os
-import socket
-import re
-import tempfile
+import errno
+import fcntl
+import filecmp
 import glob
+import os
+import os.path
+import re
+import select
+import socket
 import subprocess
+import tempfile
+import threading
 import traceback
 import urllib
-import filecmp
-import fcntl
-import select
-import errno
 
+import dns.exception
+import dns.resolver
+import ldap
 import notifier
 import notifier.threads
-import dns.resolver
-import dns.exception
-import ldap
-
-from univention.lib.package_manager import PackageManager
-from univention.lib.umc import Client, ConnectionError, HTTPError, Forbidden
-from univention.admin.uexceptions import noObject
-from univention.management.console.base import Base, UMC_Error
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.ldap import get_machine_connection
-from univention.management.console.modules.decorators import simple_response, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, ChoicesSanitizer
 
 from ucsschool.lib.models import School, SchoolDCSlave
-
+from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
+from univention.lib.package_manager import PackageManager
+from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
+from univention.management.console.base import Base, UMC_Error
+from univention.management.console.config import ucr
+from univention.management.console.ldap import get_machine_connection
+from univention.management.console.log import MODULE
+from univention.management.console.modules.decorators import sanitize, simple_response
+from univention.management.console.modules.sanitizers import ChoicesSanitizer, StringSanitizer
 
 _ = Translation("ucs-school-umc-installer").translate
 os.umask(0o022)  # switch back to default umask

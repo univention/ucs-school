@@ -7,14 +7,16 @@ All the operations related to internet rules
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from .randomdomain import RandomDomain
-from univention.testing.umc import Client
 import random
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
-import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.umc import Client
+
+from .randomdomain import RandomDomain
 
 
 class InternetRule(object):

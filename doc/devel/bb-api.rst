@@ -137,4 +137,3 @@ Some examples (to validate and format the output use ``| python -m json.tool``):
 	$ curl --insecure -H "Authorization: Token $TOKEN" -H "Content-Type: application/json" -X GET https://127.0.0.1/api-bb/schools/DEMOSCHOOL/
 	$ curl --insecure -H "Authorization: Token $TOKEN" -H "Content-Type: application/json" -X GET https://127.0.0.1/api-bb/users/
 	$ curl --insecure -H "Authorization: Token $TOKEN" -H "Content-Type: application/json" -X GET https://127.0.0.1/api-bb/users/demo_student/
-

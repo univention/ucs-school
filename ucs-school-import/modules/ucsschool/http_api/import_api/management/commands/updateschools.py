@@ -34,7 +34,9 @@ Django manage.py command to update one/some/all School object(s).
 """
 
 from __future__ import unicode_literals
+
 from django.core.management.base import BaseCommand, CommandError
+
 from ucsschool.http_api.import_api.models import School
 
 

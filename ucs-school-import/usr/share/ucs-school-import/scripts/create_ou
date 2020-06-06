@@ -30,14 +30,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import optparse
-import sys
 import csv
 import logging
-from univention.admin.uexceptions import uidAlreadyUsed
-from univention.admin.uldap import getAdminConnection
+import optparse
+import sys
+
 from ucsschool.lib.create_ou import create_ou
 from ucsschool.lib.models.utils import get_stream_handler, ucr
+from univention.admin.uexceptions import uidAlreadyUsed
+from univention.admin.uldap import getAdminConnection
 
 
 def main():

@@ -32,8 +32,9 @@
 Base class for result exporters.
 """
 
-import stat
 import os.path
+import stat
+
 from ..utils.utils import mkdir_p
 
 

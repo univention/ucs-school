@@ -8,10 +8,10 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
+from ucsschool.lib.roles import create_ucsschool_role_string, role_workgroup
 from univention.lib.umc import HTTPError
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
-from ucsschool.lib.roles import create_ucsschool_role_string, role_workgroup
 
 
 class Workgroup(object):

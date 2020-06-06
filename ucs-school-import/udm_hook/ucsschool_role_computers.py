@@ -32,7 +32,9 @@ and central memberserver objects.
 """
 
 import inspect
+
 from six import iteritems
+
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
 
 try:

@@ -25,4 +25,3 @@ msgstr "Définir et gérer des règles Internet"
 
 msgid "Define internet rules"
 msgstr "Définir des règles Internet"
-

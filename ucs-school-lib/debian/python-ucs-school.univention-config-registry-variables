@@ -3,4 +3,3 @@ Description[de]=Diese Variable steuert, ob neue UCS@school-Freigaben automatisch
 Description[en]=This variable controls if new UCS@school shares are automatically exported via NFS, too (Default: no)
 Type=bool
 Categories=ucsschool-base
-

@@ -33,13 +33,15 @@
 Class to create lots of test users.
 """
 from __future__ import absolute_import
+
 import gzip
 import json
+import logging
 import random
 import string
-import logging
 
 from ucsschool.lib.models.utils import ucr
+
 from ..models.import_user import ImportUser
 
 TEST_DATA_FILE = "/usr/share/doc/ucs-school-import/test_data.json.gz"

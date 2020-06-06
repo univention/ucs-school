@@ -32,8 +32,9 @@
 Default command line frontend for import.
 """
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
+
 from six import string_types
 
 try:

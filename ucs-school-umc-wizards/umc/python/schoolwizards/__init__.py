@@ -31,41 +31,44 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import re
 import functools
+import re
 
-from univention.lib.i18n import Translation
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.base import UMC_Error
-from univention.management.console.modules.decorators import simple_response, sanitize
-from univention.management.console.modules.sanitizers import (
-    StringSanitizer,
-    DictSanitizer,
-    DNSanitizer,
-    ChoicesSanitizer,
-)
-from univention.admin.uexceptions import base as uldapBaseException, noObject
 import univention.admin.modules as udm_modules
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE, ADMIN_WRITE
 from ucsschool.lib.models import (
-    SchoolClass,
+    IPComputer,
+    MacComputer,
     School,
-    User,
+    SchoolClass,
+    SchoolComputer,
+    Staff,
     Student,
     Teacher,
-    Staff,
     TeachersAndStaff,
-    SchoolComputer,
-    WindowsComputer,
-    MacComputer,
-    IPComputer,
     UCCComputer,
+    User,
+    WindowsComputer,
 )
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
-
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import (
+    ADMIN_WRITE,
+    USER_READ,
+    USER_WRITE,
+    LDAP_Connection,
+)
+from univention.admin.uexceptions import base as uldapBaseException, noObject
+from univention.lib.i18n import Translation
+from univention.management.console.base import UMC_Error
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules.decorators import sanitize, simple_response
+from univention.management.console.modules.sanitizers import (
+    ChoicesSanitizer,
+    DictSanitizer,
+    DNSanitizer,
+    StringSanitizer,
+)
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
 _ = Translation("ucs-school-umc-wizards").translate

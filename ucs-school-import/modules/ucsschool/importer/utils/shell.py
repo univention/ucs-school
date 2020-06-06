@@ -48,13 +48,22 @@ Module to ease interactive use of import system.
 """
 
 from __future__ import absolute_import
+
 import json
 import logging
 import os.path
 import pprint
 
+from ucsschool.lib.models import *  # noqa
+from ucsschool.lib.models.utils import (
+    UniStreamHandler as _UniStreamHandler,
+    get_stream_handler as _get_stream_handler,
+)
+
 from ..configuration import setup_configuration as _setup_configuration
+from ..exceptions import UcsSchoolImportFatalError as _UcsSchoolImportFatalError
 from ..factory import setup_factory as _setup_factory
+from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
 from ..models.import_user import (
     ImportStaff,
     ImportStudent,
@@ -67,13 +76,6 @@ from .ldap_connection import (
     get_machine_connection as _get_machine_connection,
     get_unprivileged_connection as _get_unprivileged_connection,
 )
-from ..exceptions import UcsSchoolImportFatalError as _UcsSchoolImportFatalError
-from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
-from ucsschool.lib.models.utils import (
-    get_stream_handler as _get_stream_handler,
-    UniStreamHandler as _UniStreamHandler,
-)
-from ucsschool.lib.models import *  # noqa
 
 assert ImportStaff
 assert ImportStudent

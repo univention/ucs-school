@@ -212,4 +212,3 @@ msgstr "Description détaillée du groupe"
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:51
 msgid "Workgroup"
 msgstr "Groupe de travail"
-

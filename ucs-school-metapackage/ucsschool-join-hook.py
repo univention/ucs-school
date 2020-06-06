@@ -29,14 +29,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import optparse
+import json
 import logging
+import optparse
+import os
 import subprocess
 import sys
-import os
-import json
 from collections import namedtuple
+
 from ldap.filter import filter_format
+
 import univention.admin
 from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.package_manager import PackageManager

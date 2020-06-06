@@ -32,12 +32,14 @@
 # <http://www.gnu.org/licenses/>.
 
 import sys
+
 from six.moves import input
-from ucsschool.lib.school_umc_ldap_connection import set_credentials, LDAP_Connection, MACHINE_READ
-from ucsschool.lib.roleshares import create_roleshares
-import univention.config_registry
-from univention.admincli.admin import _2utf8
+
 import univention.admin.modules as udm_modules
+import univention.config_registry
+from ucsschool.lib.roleshares import create_roleshares
+from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection, set_credentials
+from univention.admincli.admin import _2utf8
 
 udm_modules.update()
 

@@ -35,7 +35,9 @@ Used by create_ou script and customer single user HTTP API.
 """
 
 import logging
+
 from ldap.filter import filter_format
+
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 

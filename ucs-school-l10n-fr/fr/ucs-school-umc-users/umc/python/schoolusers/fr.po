@@ -18,4 +18,3 @@ msgstr ""
 #: umc/python/schoolusers/__init__.py:114
 msgid "permission denied"
 msgstr "droit refusé"
-

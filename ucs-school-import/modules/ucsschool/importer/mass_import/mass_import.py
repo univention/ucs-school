@@ -35,14 +35,15 @@ Default mass import class.
 import datetime
 import logging
 
+from ucsschool.lib.models.utils import stopped_notifier
+
+from ..configuration import Configuration
 from ..exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
 from ..factory import Factory
-from ..configuration import Configuration
+from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.pre_read_pyhook import PreReadPyHook
 from ..utils.result_pyhook import ResultPyHook
-from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.utils import nullcontext
-from ucsschool.lib.models.utils import stopped_notifier
 
 try:
     from typing import Any, Optional, Type, TypeVar

@@ -36,27 +36,25 @@ import glob
 import os
 import stat
 import subprocess
+
 import cups
-
-from univention.lib.i18n import Translation
-
-from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.management.console.modules.decorators import (
-    sanitize,
-    simple_response,
-    require_password,
-    allow_get_request,
-)
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, Display, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models import School, User
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_errors
+from ucsschool.lib.models import School, User
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import (
+    allow_get_request,
+    require_password,
+    sanitize,
+    simple_response,
+)
+from univention.management.console.modules.sanitizers import StringSanitizer
 
 DISTRIBUTION_DATA_PATH = "/var/lib/ucs-school-umc-distribution"
 DISTRIBUTION_CMD = "/usr/lib/ucs-school-umc-distribution/umc-distribution"

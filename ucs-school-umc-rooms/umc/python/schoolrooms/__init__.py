@@ -35,21 +35,18 @@ try:
     from typing import List
 except ImportError:
     pass
-from univention.lib.i18n import Translation
-from univention.management.console.modules.sanitizers import (
-    StringSanitizer,
-    StringSanitizer as DNSanitizer,
-    DictSanitizer,
-    ListSanitizer,
-)
-from univention.management.console.modules.decorators import sanitize
-
 import univention.admin.uexceptions as udm_exceptions
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, LDAP_Filter, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, USER_READ, USER_WRITE
 from ucsschool.lib.models import ComputerRoom, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
+from ucsschool.lib.school_umc_base import LDAP_Filter, SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import USER_READ, USER_WRITE, LDAP_Connection
+from univention.lib.i18n import Translation
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import (
+    DictSanitizer,
+    ListSanitizer,
+    StringSanitizer as DNSanitizer,
+)
 
 _ = Translation("ucs-school-umc-rooms").translate
 

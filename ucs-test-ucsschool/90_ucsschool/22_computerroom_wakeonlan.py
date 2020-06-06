@@ -6,17 +6,16 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom, tshark]
 
-import time
 import re
-
-import subprocess
 import socket
+import subprocess
+import time
 
-from univention.management.console.modules import computerroom
-from univention.testing.ucsschool.computerroom import UmcComputer
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from univention.management.console.modules import computerroom
+from univention.testing.ucsschool.computerroom import UmcComputer
 
 
 def main():

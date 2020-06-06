@@ -32,9 +32,10 @@
 CSV reader for CSV files using the legacy import format.
 """
 
-from ..reader.csv_reader import CsvReader
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
 from ..exceptions import NoRole, UnknownRole
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ..reader.csv_reader import CsvReader
 
 
 class LegacyCsvReader(CsvReader):

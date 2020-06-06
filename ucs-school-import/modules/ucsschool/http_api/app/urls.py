@@ -34,13 +34,13 @@ URLs
 """
 
 from __future__ import unicode_literals
-from django.conf.urls import url, include
+
+from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework import routers
 
 # from rest_framework.documentation import include_docs_urls  # DRF >= 3.6.0
 from ..import_api import views
-
 
 router = routers.DefaultRouter()
 router.register(r"roles", views.RoleViewSet)

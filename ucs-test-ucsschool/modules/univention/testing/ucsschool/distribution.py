@@ -7,12 +7,13 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.testing.umc import Client
 import os
 import time
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
+from univention.testing.umc import Client
 
 
 class Distribution(object):

@@ -32,6 +32,8 @@
 Factory implementation for import using CSV in legacy format.
 """
 
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
 from ..default_user_import_factory import DefaultUserImportFactory
 from .legacy_csv_reader import LegacyCsvReader
 from .legacy_import_user import (
@@ -41,9 +43,8 @@ from .legacy_import_user import (
     LegacyImportTeachersAndStaff,
     LegacyImportUser,
 )
-from .legacy_user_import import LegacyUserImport
 from .legacy_new_user_password_csv_exporter import LegacyNewUserPasswordCsvExporter
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from .legacy_user_import import LegacyUserImport
 
 
 class LegacyCsvUserImportFactory(DefaultUserImportFactory):

@@ -17,4 +17,3 @@ msgstr ""
 #: umc/python/selective-udm/__init__.py:89
 msgid "Could not determine schoolOU."
 msgstr "Impossible de déterminer « schoolOU »."
-

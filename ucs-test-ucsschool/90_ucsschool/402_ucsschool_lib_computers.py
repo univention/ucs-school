@@ -8,9 +8,9 @@
 ##   - python-ucs-school
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.admin.uldap import getAdminConnection
-from univention.testing.ucsschool.importcomputers import ImportFile, ComputerImport
 from ucsschool.lib.models import SchoolComputer
+from univention.admin.uldap import getAdminConnection
+from univention.testing.ucsschool.importcomputers import ComputerImport, ImportFile
 
 
 def test_lookup(ou_name):

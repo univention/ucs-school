@@ -9,7 +9,9 @@
 
 import datetime
 import random
+
 import pytest
+
 from ucsschool.importer.utils.shell import *  # initialize import framework
 
 

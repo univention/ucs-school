@@ -20,5 +20,3 @@ msgstr "Contacter l'équipe d'aide"
 
 msgid "Contacting helpdesk"
 msgstr "Contact du centre d'aide"
-
-

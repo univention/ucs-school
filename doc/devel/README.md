@@ -202,5 +202,3 @@ Ganz klares `Jein`. Das Exam-Modul auf dem Slave wendet sich an den Master, um d
 - Er muss in allen `Domain Users $OU`-Gruppen enthalten sein.
 - Er muss für alle OUs Einträge in den Attributen `ucsschoolSchool` und `ucsschoolRole` haben.
 - Er muss z.B. als Schüler in beiden Gruppen `schueler-$OU` enthalten sein.
-
-

@@ -30,13 +30,15 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
-import listener
+
 import os
 import shutil
 import time
-from psutil import disk_partitions
-import univention.debug
 
+import listener
+from psutil import disk_partitions
+
+import univention.debug
 
 name = "remove-old-homedirs"
 description = "moves directories of removed users away from home"

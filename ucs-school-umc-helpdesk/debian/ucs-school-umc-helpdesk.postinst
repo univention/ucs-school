@@ -41,4 +41,3 @@ stop_udm_cli_server
 call_joinscript 38ucs-school-umc-helpdesk.inst || true
 
 exit 0
-

@@ -32,10 +32,10 @@
 
 import sys
 from distutils.version import LooseVersion
+
 from univention.appcenter.actions import get_action
 from univention.appcenter.app_cache import Apps
 from univention.appcenter.ucr import ucr_get, ucr_is_true
-
 
 if len(sys.argv) < 2 or sys.argv[-1] == "-v":
     print("Usage: {} [-v] <app name>".format(sys.argv[0]))

@@ -33,10 +33,10 @@
 UCS@school UDM-hook to prevent invalid combinations of user options
 """
 
-from univention.admin.hook import simpleHook
+import univention.admin.localization
 import univention.admin.modules
 import univention.admin.uexceptions
-import univention.admin.localization
+from univention.admin.hook import simpleHook
 
 translation = univention.admin.localization.translation("univention-admin-hooks-ucsschool_user_options")
 _ = translation.translate

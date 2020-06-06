@@ -30,8 +30,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
+from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 from ldap.filter import escape_filter_chars
+
+from univention.admin.filter import conjunction, expression, parse
+from univention.admin.uexceptions import nextFreeIp
+
+from ..roles import (
+    create_ucsschool_role_string,
+    role_ip_computer,
+    role_mac_computer,
+    role_teacher_computer,
+    role_win_computer,
+)
+from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, Roles, SubnetMask
+from .base import MultipleObjectsError, RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .dhcp import AnyDHCPService, DHCPServer
+from .group import BasicGroup
+from .network import Network
+from .utils import _, ucr
 
 try:
     from typing import Any, Dict, List, Optional, Type
@@ -39,25 +56,6 @@ try:
     from .base import SuperOrdinateType, UdmObject
 except ImportError:
     pass
-
-from univention.admin.filter import conjunction, expression, parse
-from univention.admin.uexceptions import nextFreeIp
-
-from .attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute, Roles
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, MultipleObjectsError
-
-from ..roles import (
-    role_ip_computer,
-    role_mac_computer,
-    role_win_computer,
-    create_ucsschool_role_string,
-    role_teacher_computer,
-)
-
-from .dhcp import DHCPServer, AnyDHCPService
-from .network import Network
-from .group import BasicGroup
-from .utils import ucr, _
 
 
 class AnyComputer(UCSSchoolHelperAbstractClass):

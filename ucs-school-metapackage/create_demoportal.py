@@ -28,17 +28,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.ldap import get_admin_connection
-from univention.admin.uldap import position
-from ucsschool.lib.models import School, Student, Teacher, Staff, SchoolClass, ucr
-import univention.admin.modules as modules
-import sys
-import os
-import subprocess
 import base64
 import json
-import string
+import os
 import random
+import string
+import subprocess
+import sys
+
+import univention.admin.modules as modules
+from ucsschool.lib.models import School, SchoolClass, Staff, Student, Teacher, ucr
+from univention.admin.uldap import position
+from univention.management.console.ldap import get_admin_connection
 
 lo, pos = get_admin_connection()
 modules.update()

@@ -30,18 +30,20 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import csv
 import re
 import sys
-import csv
-import ldap
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-from ldap.filter import filter_format, escape_filter_chars
-from univention.admin.uldap import getMachineConnection, getAdminConnection
-from univention.admin.uexceptions import base as UDMError, noObject
-from univention.management.console.config import ucr
+
+import ldap
+from ldap.filter import escape_filter_chars, filter_format
+
 import univention.admin.handlers.groups.group
 import univention.admin.handlers.users.user
 import univention.admin.objects
+from univention.admin.uexceptions import base as UDMError, noObject
+from univention.admin.uldap import getAdminConnection, getMachineConnection
+from univention.management.console.config import ucr
 
 
 class Problem(Exception):

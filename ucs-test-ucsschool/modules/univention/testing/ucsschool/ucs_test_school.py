@@ -36,53 +36,52 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
-import os
-import sys
 import json
-import ldap
-import random
 import logging
-import tempfile
+import os
+import random
 import subprocess
-import lazy_object_proxy
-from ldap import LDAPError
+import sys
+import tempfile
 from collections import defaultdict
 
-import univention.testing.utils as utils
-import univention.testing.ucr
-import univention.testing.strings as uts
-import univention.testing.udm as udm_test
+import lazy_object_proxy
+import ldap
+from ldap import LDAPError
 
 import univention.admin.uldap as udm_uldap
-from univention.admin.uexceptions import noObject
-
+import univention.testing.strings as uts
+import univention.testing.ucr
+import univention.testing.udm as udm_test
+import univention.testing.utils as utils
+from ucsschool.lib.models import (
+    School,
+    SchoolClass,
+    Staff,
+    Student,
+    Teacher,
+    TeachersAndStaff,
+    User,
+    WorkGroup,
+)
+from ucsschool.lib.models.computer import SchoolComputer
+from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.utils import (
+    UniStreamHandler,
+    add_stream_logger_to_schoollib,
+    get_stream_handler,
+)
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_computer_room,
     role_school_admin,
     role_school_class,
-    role_student,
     role_staff,
+    role_student,
     role_teacher,
     role_workgroup,
 )
-from ucsschool.lib.models import (
-    School,
-    User,
-    Student,
-    Teacher,
-    TeachersAndStaff,
-    Staff,
-    SchoolClass,
-    WorkGroup,
-)
-from ucsschool.lib.models.utils import (
-    add_stream_logger_to_schoollib,
-    get_stream_handler,
-    UniStreamHandler,
-)
-from ucsschool.lib.models.group import ComputerRoom
-from ucsschool.lib.models.computer import SchoolComputer
+from univention.admin.uexceptions import noObject
 
 try:
     from typing import Dict, List, Optional, Set, Tuple

@@ -32,20 +32,27 @@
 CSV reader for CSV files using the new import format.
 """
 
-from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
+from csv import Error as CsvError, Sniffer, reader as csv_reader
 
-from six import reraise, string_types
 import magic
+from six import reraise, string_types
 
-from ..contrib.csv import DictReader
-from .base_reader import BaseReader
-from ..exceptions import ConfigurationError, InitialisationError, NoRole, UnknownRole, UnknownProperty
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
+from ucsschool.lib.models.user import Staff
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
+from ..contrib.csv import DictReader
+from ..exceptions import (
+    ConfigurationError,
+    InitialisationError,
+    NoRole,
+    UnknownProperty,
+    UnknownRole,
+)
+from .base_reader import BaseReader
 
 try:
     from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union

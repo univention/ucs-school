@@ -18,4 +18,3 @@ if [ ! "$connector_s4_mapping_group_syncmode" = "write" ]; then
 fi
 
 exit $RETVAL
-

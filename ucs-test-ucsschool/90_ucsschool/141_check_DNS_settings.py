@@ -8,8 +8,9 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 
 from ldap.filter import filter_format
-from univention.testing.ucr import UCSTestConfigRegistry
+
 import univention.testing.utils as utils
+from univention.testing.ucr import UCSTestConfigRegistry
 
 
 def main():

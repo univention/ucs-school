@@ -161,4 +161,3 @@ call_joinscript 98univention-samba4slavepdc-dns.inst
 #DEBHELPER#
 
 exit 0
-

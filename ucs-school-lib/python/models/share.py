@@ -32,13 +32,14 @@
 
 import os.path
 
-from .attributes import Roles, ShareName, SchoolClassAttribute
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from .utils import ucr, _
-from ..roles import role_school_class_share, role_workgroup_share
+from ldap.filter import filter_format
 
 from univention.udm import UDM
-from ldap.filter import filter_format
+
+from ..roles import role_school_class_share, role_workgroup_share
+from .attributes import Roles, SchoolClassAttribute, ShareName
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .utils import _, ucr
 
 
 class Share(UCSSchoolHelperAbstractClass):

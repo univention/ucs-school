@@ -20,4 +20,3 @@ msgstr "Configurer l'horaire de cours par défaut"
 
 msgid "Lesson times"
 msgstr "Horaires de cours"
-

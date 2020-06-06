@@ -17,4 +17,3 @@ The order in which (hook) code is executed during an import job:
 
 .. image:: import-pyhooks.svg
    :alt: Hook execution sequence.
-

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
-import time
+import os
 import tempfile
+import time
+
 import univention.testing.utils as utils
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 

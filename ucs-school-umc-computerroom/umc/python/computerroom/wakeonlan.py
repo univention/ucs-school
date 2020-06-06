@@ -32,9 +32,10 @@
 
 from __future__ import absolute_import
 
-import netifaces
-import socket
 import argparse
+import socket
+
+import netifaces
 
 try:
     from typing import Optional, Iterable, Set

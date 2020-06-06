@@ -19,4 +19,3 @@ msgstr "Gérer les salles et leurs ordinateurs associés"
 
 msgid "Room management"
 msgstr "Gestion des salles"
-

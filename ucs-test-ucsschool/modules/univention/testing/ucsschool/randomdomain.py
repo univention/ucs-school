@@ -5,6 +5,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 import random
+
 import univention.testing.strings as uts
 
 

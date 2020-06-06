@@ -9,4 +9,3 @@ http://www.microsoft.com/en-us/download/details.aspx?id=6243
 
 There are also updated standard Windows ADMX templates updated for Windows 8 / Windows Server 2012:
 http://www.microsoft.com/de-de/download/details.aspx?id=36991
-

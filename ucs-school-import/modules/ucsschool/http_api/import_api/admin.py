@@ -34,10 +34,12 @@ Django Admin
 """
 
 from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from djcelery.models import TaskMeta
+
 from .models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
 
 

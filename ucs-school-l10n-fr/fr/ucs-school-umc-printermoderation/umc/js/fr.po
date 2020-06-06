@@ -139,4 +139,3 @@ msgstr "Afficher"
 #: umc/js/printermoderation.js:85
 msgid "View the print job."
 msgstr "Afficher la tâche d'impression."
-

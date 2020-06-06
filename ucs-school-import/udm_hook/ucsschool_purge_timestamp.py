@@ -28,8 +28,9 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import datetime
+import re
+
 from univention.admin.hook import simpleHook
 
 

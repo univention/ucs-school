@@ -1,6 +1,6 @@
 import os.path
-from ucsschool.importer.utils.user_pyhook import UserPyHook
 
+from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 LOG_PATH = '/tmp/test235_%CLASSNAME%'
 

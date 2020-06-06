@@ -37,19 +37,18 @@ Classes to test subclassing / factory code of import script
 
 from __future__ import absolute_import
 
-import time
-import json
 import codecs
+import json
 import tempfile
+import time
 
 from ucsschool.importer.mass_import.mass_import import MassImport
-from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
-from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.writer.base_writer import BaseWriter
+from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
+from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
-
 
 logger = get_ucsschool_logger()
 

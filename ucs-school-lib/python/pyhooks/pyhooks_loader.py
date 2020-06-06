@@ -36,9 +36,10 @@ Loader for Python based hooks.
 import imp
 import inspect
 import logging
-from os import listdir
 import os.path
 from collections import defaultdict
+from os import listdir
+
 from six import iteritems
 
 try:

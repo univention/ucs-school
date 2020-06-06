@@ -30,17 +30,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import utils
+
 import univention.admin.modules as udm_modules
 
-udm_modules.update()
-
-from .school import *
-from .user import *
-from .group import *
 from .computer import *
 from .dhcp import *
+from .group import *
+from .misc import *
 from .network import *
 from .policy import *
-from .misc import *
+from .school import *
 from .share import *
-import utils
+from .user import *
+
+udm_modules.update()

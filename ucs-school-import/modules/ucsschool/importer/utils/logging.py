@@ -32,8 +32,10 @@ Central place to get logger for import.
 """
 
 from __future__ import absolute_import
+
 import logging
-from ucsschool.lib.models.utils import get_file_handler, UniFileHandler, UniStreamHandler
+
+from ucsschool.lib.models.utils import UniFileHandler, UniStreamHandler, get_file_handler
 
 try:
     from typing import Optional

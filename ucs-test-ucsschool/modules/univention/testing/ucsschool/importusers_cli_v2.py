@@ -1,32 +1,34 @@
 # -*- coding: utf-8 -*-
 
-import tempfile
-import json
-import shutil
-import logging
 import copy
-import sys
-import random
 import csv
-import os
-import subprocess
-import time
-import re
-import pprint
-import traceback
 import datetime
+import json
+import logging
+import os
+import pprint
+import random
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+import traceback
 from collections import Mapping
+
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
-from univention.admin.uexceptions import noObject, ldapError
+
+import univention.testing.strings as uts
+import univention.testing.ucr
+import univention.testing.ucsschool.ucs_test_school as utu
+import univention.testing.udm
+import univention.testing.utils as utils
+from univention.admin.uexceptions import ldapError, noObject
+from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
-import univention.testing.ucr
-import univention.testing.udm
-import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
-from univention.testing.ucs_samba import wait_for_drs_replication
 
 try:
     from univention.testing.ucs_samba import DRSReplicationFailed

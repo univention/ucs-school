@@ -34,8 +34,19 @@ HTTP API Client
 """
 
 from __future__ import absolute_import, unicode_literals
+
 import copy
+import inspect
+import logging
 import os.path
+
+import dateutil.parser
+import magic
+import requests
+from six import string_types
+
+from ucsschool.lib.models.utils import get_stream_handler
+from univention.config_registry import ConfigRegistry
 
 try:
     from urlparse import urljoin, urlparse, parse_qs
@@ -43,15 +54,7 @@ try:
 except ImportError:
     # Python 3
     from urllib.parse import urljoin, quote as url_quote, urlparse, parse_qs
-import logging
-import inspect
-import dateutil.parser
-from six import string_types
 
-import requests
-import magic
-from univention.config_registry import ConfigRegistry
-from ucsschool.lib.models.utils import get_stream_handler
 
 try:
     from typing import Any, AnyStr, Callable, Dict, List, Union

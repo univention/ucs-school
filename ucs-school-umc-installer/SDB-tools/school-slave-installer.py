@@ -29,21 +29,23 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import print_function
-import tempfile
-import json
-import subprocess
+
 import getpass
-import sys
+import json
+import os
+import re
 import socket
+import subprocess
+import sys
+import tempfile
 import time
 import traceback
-import re
-import os
 from optparse import OptionParser
+
 from ldap.filter import filter_format
+
 import univention.admin.uldap
 import univention.lib.umc
-
 from univention.config_registry import ConfigRegistry
 
 ucr = ConfigRegistry()

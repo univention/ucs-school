@@ -32,26 +32,27 @@
 # <http://www.gnu.org/licenses/>.
 
 __package__ = ""  # workaround for PEP 366
+
+import imp
+import os
+import subprocess
+import sys
+import traceback
+
+import ldap
 import listener
-import univention.debug as ud
+
 import univention.admin.uexceptions as udm_errors
-import univention.uldap
 import univention.config_registry
+import univention.debug as ud
+import univention.uldap
+from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection
+from ucsschool.lib.schoolldap import SchoolSearchBase
 
 # import s4-connector listener module code, but don't generate pyc file
-import os
-import sys
-import ldap
-
 sys.dont_write_bytecode = True
-import imp
-
 s4_connector_listener_path = "/usr/lib/univention-directory-listener/system/s4-connector.py"
 s4_connector_listener = imp.load_source("s4_connector", s4_connector_listener_path)
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection, MACHINE_READ
-from ucsschool.lib.schoolldap import SchoolSearchBase
-import traceback
-import subprocess
 
 # Listener registration data
 name = "ucsschool-s4-branch-site"

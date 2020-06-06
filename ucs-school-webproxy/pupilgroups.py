@@ -35,10 +35,9 @@ from __future__ import absolute_import
 import ldap
 import listener
 
-import univention.debug
 import univention.admin.uldap
 import univention.config_registry
-
+import univention.debug
 from ucsschool.lib.models import School
 from univention.config_registry.frontend import ucr_update
 

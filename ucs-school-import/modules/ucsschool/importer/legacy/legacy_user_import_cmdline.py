@@ -33,10 +33,11 @@
 UCS@school legacy import tool cmdline frontend.
 """
 
+from ucsschool.lib.models.utils import stopped_notifier
+
 from ..frontend.user_import_cmdline import UserImportCommandLine
 from ..utils.utils import nullcontext
 from .legacy_user_import_parse_cmdline import LegacyUserImportParseUserImportCmdline
-from ucsschool.lib.models.utils import stopped_notifier
 
 
 class LegacyUserImportCommandLine(UserImportCommandLine):

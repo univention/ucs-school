@@ -34,6 +34,7 @@ Create LDAP connections for import.
 """
 
 from univention.admin import uldap
+
 from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 try:

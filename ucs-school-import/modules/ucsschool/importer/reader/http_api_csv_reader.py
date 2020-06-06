@@ -32,9 +32,10 @@
 CSV reader for CSV files created for HTTP-API import.
 """
 
+from ucsschool.lib.models.user import Staff
+
 from ..configuration import Configuration
 from .csv_reader import CsvReader
-from ucsschool.lib.models.user import Staff
 
 
 class HttpApiCsvReader(CsvReader):

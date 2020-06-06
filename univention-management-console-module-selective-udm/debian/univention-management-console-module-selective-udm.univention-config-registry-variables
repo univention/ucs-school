@@ -3,4 +3,3 @@ Description[de]=Komma separierte Liste von Gruppen, denen es erlaubt ist neue Wi
 Description[en]=Comma-separated list of groups which are allowed to join new Windows clients at a school (default: Domain Admins)
 Type=str
 Categories=ucsschool
-

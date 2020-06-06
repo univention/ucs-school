@@ -4,26 +4,24 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from univention.testing.ucsschool.importcomputers import random_ip
-from univention.testing.ucsschool.importou import (
-    DCNotFound,
-    DCMembership,
-    DhcpdLDAPBase,
-    TYPE_DC_ADMINISTRATIVE,
-)
-from univention.testing.ucsschool.importou import (
-    get_ou_base,
-    verify_dc,
-    get_school_ou_from_dn,
-    TYPE_DC_EDUCATIONAL,
-)
-from univention.testing.umc import Client
-from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
+from univention.testing.ucsschool.importcomputers import random_ip
+from univention.testing.ucsschool.importou import (
+    TYPE_DC_ADMINISTRATIVE,
+    TYPE_DC_EDUCATIONAL,
+    DCMembership,
+    DCNotFound,
+    DhcpdLDAPBase,
+    get_ou_base,
+    get_school_ou_from_dn,
+    verify_dc,
+)
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
+from univention.testing.umc import Client
 
 
 class GetFail(Exception):

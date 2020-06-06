@@ -35,24 +35,24 @@
 # Via a "fix" button, the faulty object can be corrected.
 
 from __future__ import absolute_import
-from ldap.filter import filter_format
-import ldap
-from univention.admin.uexceptions import ldapError
 
-from univention.management.console.config import ucr
-from univention.management.console.modules.diagnostic import Critical, ProblemFixed, MODULE
-from univention.admin.uldap import getAdminConnection
+import ldap
+from ldap.filter import filter_format
+
 from ucsschool.lib.models import AnyComputer
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
-    role_win_computer,
-    role_mac_computer,
     role_ip_computer,
-    role_ubuntu_computer,
     role_linux_computer,
+    role_mac_computer,
+    role_ubuntu_computer,
+    role_win_computer,
 )
-
+from univention.admin.uexceptions import ldapError
+from univention.admin.uldap import getAdminConnection
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.modules.diagnostic import MODULE, Critical, ProblemFixed
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 

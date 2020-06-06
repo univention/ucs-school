@@ -51,13 +51,15 @@ If the `user_role` configuration value is `staff` or `teacher_and_staff`,
 nothing will be done.
 """
 
-import sys
 import json
 import pprint
+import sys
+
 from six import reraise
-from ucsschool.lib.roles import supported_roles
+
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.utils.config_pyhook import ConfigPyHook
+from ucsschool.lib.roles import supported_roles
 
 try:
     from typing import Any, Dict, List

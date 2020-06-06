@@ -1,6 +1,5 @@
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 
-
 RESULTFILE = '/tmp/test241result.txt'
 
 
