@@ -54,6 +54,7 @@ nothing will be done.
 import sys
 import json
 import pprint
+from six import reraise
 from ucsschool.lib.roles import supported_roles
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.utils.config_pyhook import ConfigPyHook
@@ -99,7 +100,7 @@ class ExtendConfigByRole(ConfigPyHook):
                 include_config = json.load(fp)
         except (IOError, ValueError) as exc:
             self.logger.exception("Reading include file %r: %s", include_file, exc)
-            raise ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2]
+            reraise(ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2])
         self.logger.info("Updating configuration with:\n%s", pprint.pformat(include_config))
         config.update(include_config)
         return config

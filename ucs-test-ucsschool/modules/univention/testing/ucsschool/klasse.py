@@ -79,8 +79,8 @@ class Klasse(object):
                 "options": None,
             }
         ]
-        print "Creating class %s in school %s" % (self.name, self.school)
-        print "param = %s" % (param,)
+        print("Creating class %s in school %s" % (self.name, self.school))
+        print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/add", param, flavor).result
         if not reqResult[0]:
             raise CreateFail("Unable to create class (%r)" % (param,))
@@ -166,8 +166,8 @@ class Klasse(object):
                 "options": None,
             }
         ]
-        print "Editing class %s in school %s" % (self.name, self.school)
-        print "param = %s" % (param,)
+        print("Editing class %s in school %s" % (self.name, self.school))
+        print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/put", param, flavor).result
         if not reqResult[0]:
             raise EditFail("Unable to edit class (%s) with the parameters (%r)" % (self.name, param))

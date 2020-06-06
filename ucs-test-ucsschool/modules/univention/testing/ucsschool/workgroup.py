@@ -87,14 +87,14 @@ class Workgroup(object):
             ]
             for entry in exception_strings:
                 if expect_creation_fails_due_to_duplicated_name and entry in str(exc.message):
-                    print ("Fail : %s" % (exc))
+                    print("Fail : %s" % (exc))
                     break
             else:
-                print ("Exception: '%s' '%s' '%r'" % (str(exc), type(exc), exc))
+                print("Exception: '%s' '%s' '%r'" % (str(exc), type(exc), exc))
                 raise
 
     def _create(self):
-        print "Creating workgroup %s in school %s" % (self.name, self.school)
+        print("Creating workgroup %s in school %s" % (self.name, self.school))
         flavor = "workgroup-admin"
         param = [
             {
@@ -113,7 +113,7 @@ class Workgroup(object):
 
     def remove(self, options=None):
         """Removing a Workgroup from ldap"""
-        print "Removing group %s from ldap" % (self.name)
+        print("Removing group %s from ldap" % (self.name))
         groupdn = self.dn()
         flavor = "workgroup-admin"
         removingParam = [{"object": [groupdn], "options": options}]
@@ -129,14 +129,14 @@ class Workgroup(object):
 		:param options:
 		:type options: None
 		"""
-        print "Adding members  %r to group %s" % (memberListdn, self.name)
+        print("Adding members  %r to group %s" % (memberListdn, self.name))
         groupdn = self.dn()
         currentMembers = sorted(self.ulConnection.getAttr(groupdn, "uniqueMember"))
         for member in memberListdn:
             if member not in currentMembers:
                 currentMembers.append(member)
             else:
-                print ("member", member, "already exist in the group")
+                print("member", member, "already exist in the group")
         self.set_members(currentMembers)
 
     def removeMembers(self, memberListdn, options=None):
@@ -146,7 +146,7 @@ class Workgroup(object):
 		:param options:
 		:type options: None
 		"""
-        print "Removing members  %r from group %s" % (memberListdn, self.name)
+        print("Removing members  %r from group %s" % (memberListdn, self.name))
         groupdn = self.dn()
         currentMembers = sorted(self.ulConnection.getAttr(groupdn, "uniqueMember"))
         for member in memberListdn:
@@ -159,7 +159,7 @@ class Workgroup(object):
 		:param new_members: list of the new members
 		:type new_members: list
 		"""
-        print "Setting members	%r from group %s" % (new_members, self.name)
+        print("Setting members	%r from group %s" % (new_members, self.name))
         flavor = "workgroup-admin"
         groupdn = self.dn()
         creationParam = [
@@ -183,7 +183,7 @@ class Workgroup(object):
 
     def verify_ldap_attributes(self):
         """checking group attributes in ldap"""
-        print "Checking the attributes for group %s in ldap" % (self.name,)
+        print("Checking the attributes for group %s in ldap" % (self.name,))
         members = []
         if self.members:
             for member in self.members:
@@ -198,7 +198,7 @@ class Workgroup(object):
 
     def verify_exists(self, group_should_exist, share_should_exist):
         """check for group and file share objects existance in ldap"""
-        print "Checking if group %s and its share object exist in ldap" % (self.name,)
+        print("Checking if group %s and its share object exist in ldap" % (self.name,))
         groupdn = self.dn()
         utils.verify_ldap_object(groupdn, should_exist=group_should_exist)
         ucsschool = UCSTestSchool()

@@ -165,7 +165,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print repr(args)
+    print(repr(args))
     send_wol_packet(
         args.mac_address,
         blacklisted_interfaces=args.blacklisted_interfaces,

@@ -145,7 +145,7 @@ def move_dir(src, dst, listener):
     listener.setuid(0)
     try:
         shutil.move(src, dst)
-    except Exception, e:
+    except Exception as e:
         ret = str(e)
     finally:
         listener.unsetuid()

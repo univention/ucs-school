@@ -130,11 +130,11 @@ if __name__ == "__main__":
     )
 
     app = ViewerApp(sys.argv)
-    print app.quitOnLastWindowClosed()
+    print(app.quitOnLastWindowClosed())
     app.lastWindowClosed.connect(app.quit, QtCore.Qt.DirectConnection)
     imageViewer = ImageViewer(options)
     imageViewer.show()
 
     notifier.loop()
 
-    print "finished"
+    print("finished")

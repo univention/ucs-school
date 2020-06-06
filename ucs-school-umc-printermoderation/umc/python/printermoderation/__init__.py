@@ -280,7 +280,8 @@ class Instance(SchoolBaseModule):
             raise UMC_Error(
                 _("Failed to connect to print server %(printserver)s.") % {"printserver": spoolhost}
             )
-        except cups.IPPError as (errno, description):
+        except cups.IPPError as xxx_todo_changeme:
+            (errno, description) = xxx_todo_changeme.args
             IPP_AUTHENTICATION_CANCELED = 4096
             description = {
                 cups.IPP_NOT_AUTHORIZED: _("No permission to print"),

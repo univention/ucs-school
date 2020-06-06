@@ -36,7 +36,7 @@ from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
 import sys
 
-from six import string_types
+from six import reraise, string_types
 import magic
 
 from ..contrib.csv import DictReader
@@ -143,11 +143,15 @@ class CsvReader(BaseReader):
             try:
                 dialect = self.get_dialect(fp)
             except CsvError as exc:
-                raise InitialisationError, InitialisationError(
-                    "Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(
-                        exc
-                    )
-                ), sys.exc_info()[2]
+                reraise(
+                    InitialisationError,
+                    InitialisationError(
+                        "Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(
+                            exc
+                        )
+                    ),
+                    sys.exc_info()[2],
+                )
             fp.seek(0)
             encoding = self.get_encoding(fp)
             self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
