@@ -5,4 +5,4 @@ repos:
     rev: 19.10b0
     hooks:
     -   id: black
-        entry: black -l 105 -t py27 --check
+        entry: black --config .black --check

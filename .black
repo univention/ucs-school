@@ -1,0 +1,3 @@
+[tool.black]
+line-length = 105
+target-version = ['py27']
