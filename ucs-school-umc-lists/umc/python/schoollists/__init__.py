@@ -36,6 +36,7 @@ import StringIO
 from ldap.dn import explode_dn
 
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize
 
@@ -59,17 +60,28 @@ class Instance(SchoolBaseModule):
 		group = request.options['group']
 		separator = request.options['separator']
 		csvfile = StringIO.StringIO()
-		fieldnames = [_('Firstname'), _('Lastname'), _('Class'), _('Username')]
+		# after setting ucr: update-python-modules -f; pkill -f console-module; pkill -f univention-cli-server
+		_fieldnames = ucr.get('ucsschool/umc/lists/class/attributes', '') or 'firstname Firstname,lastname Lastname,Class Class,displayName Username'
+		fieldnames = []
+		attribs = []
+		for field in _fieldnames.split(","):
+			attr, display = field.split()
+			fieldnames.append(display)
+			attribs.append(attr)
 		writer = csv.writer(csvfile, delimiter=str(separator))
 		writer.writerow(fieldnames)
 		for student in self.students(ldap_user_read, school, group):
-			class_display_name = student.school_classes[school][0].split('-', 1)[1]
-			writer.writerow([
-				student.firstname,
-				student.lastname,
-				class_display_name,
-				student.name,
-			])
+			row = []
+			for attr in attribs:
+				if attr != 'Class':
+					value = student.get_udm_object(ldap_user_read)[attr]
+					# impractical example groups
+					if type(value) is list:
+						value = " ".join(value)
+					row.append(value)
+				else:
+					row.append(student.school_classes[school][0].split('-', 1)[1])
+			writer.writerow(row)
 		csvfile.seek(0)
 		filename = explode_dn(group)[0].split('=')[1] + '.csv'
 		result = {'filename': filename, 'csv': csvfile.read()}
