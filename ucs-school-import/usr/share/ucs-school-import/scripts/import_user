@@ -38,9 +38,9 @@ from ucsschool.importer.legacy.legacy_user_import_cmdline import LegacyUserImpor
 
 
 def main():
-	ui = LegacyUserImportCommandLine()
-	return ui.main()
+    ui = LegacyUserImportCommandLine()
+    return ui.main()
 
 
 if __name__ == "__main__":
-	sys.exit(main())
+    sys.exit(main())

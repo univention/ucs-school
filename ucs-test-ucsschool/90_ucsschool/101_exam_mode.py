@@ -8,93 +8,108 @@
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
-from unittest import main, TestCase
-from univention.testing.ucsschool.computerroom import Room, Computers
-from univention.testing.ucsschool.exam import Exam, ExamSaml, get_s4_rejected, wait_replications_check_rejected_uniqueMember
+from unittest import TestCase, main
+
+import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
-import univention.testing.strings as uts
 from ucsschool.lib.models import Student
+from univention.testing.ucsschool.computerroom import Computers, Room
+from univention.testing.ucsschool.exam import (
+    Exam,
+    ExamSaml,
+    get_s4_rejected,
+    wait_replications_check_rejected_uniqueMember,
+)
 
 
 class TestExamMode(TestCase):
+    def __test_exam_mode(self, Exam=Exam):
+        with univention.testing.udm.UCSTestUDM() as udm:
+            with utu.UCSTestSchool() as schoolenv:
+                with ucr_test.UCSTestConfigRegistry() as ucr:
+                    open_ldap_co = schoolenv.open_ldap_connection()
+                    ucr.load()
 
-	def __test_exam_mode(self, Exam=Exam):
-		with univention.testing.udm.UCSTestUDM() as udm:
-			with utu.UCSTestSchool() as schoolenv:
-				with ucr_test.UCSTestConfigRegistry() as ucr:
-					open_ldap_co = schoolenv.open_ldap_connection()
-					ucr.load()
+                    print " ** Initial Status"
+                    existing_rejects = get_s4_rejected()
 
-					print ' ** Initial Status'
-					existing_rejects = get_s4_rejected()
+                    if ucr.is_true("ucsschool/singlemaster"):
+                        edudc = None
+                    else:
+                        edudc = ucr.get("hostname")
+                    school, oudn = schoolenv.create_ou(name_edudc=edudc)
+                    klasse_dn = udm.create_object(
+                        "groups/group",
+                        name="%s-AA1" % school,
+                        position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
+                    )
 
-					if ucr.is_true('ucsschool/singlemaster'):
-						edudc = None
-					else:
-						edudc = ucr.get('hostname')
-					school, oudn = schoolenv.create_ou(name_edudc=edudc)
-					klasse_dn = udm.create_object('groups/group', name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
+                    tea, teadn = schoolenv.create_user(school, is_teacher=True)
+                    stu, studn = schoolenv.create_user(school)
+                    student2 = Student(
+                        name=uts.random_username(),
+                        school=school,
+                        firstname=uts.random_name(),
+                        lastname=uts.random_name(),
+                    )
+                    student2.position = "cn=users,%s" % ucr["ldap/base"]
+                    student2.create(open_ldap_co)
 
-					tea, teadn = schoolenv.create_user(school, is_teacher=True)
-					stu, studn = schoolenv.create_user(school)
-					student2 = Student(
-						name=uts.random_username(),
-						school=school,
-						firstname=uts.random_name(),
-						lastname=uts.random_name())
-					student2.position = "cn=users,%s" % ucr['ldap/base']
-					student2.create(open_ldap_co)
+                    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
+                    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
+                    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
-					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
-					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
-					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [student2.dn]})
+                    print " ** After Creating users and classes"
+                    wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-					print ' ** After Creating users and classes'
-					wait_replications_check_rejected_uniqueMember(existing_rejects)
+                    # importing random computers
+                    computers = Computers(open_ldap_co, school, 2, 0, 0)
+                    created_computers = computers.create()
+                    created_computers_dn = computers.get_dns(created_computers)
 
-					# importing random computers
-					computers = Computers(open_ldap_co, school, 2, 0, 0)
-					created_computers = computers.create()
-					created_computers_dn = computers.get_dns(created_computers)
+                    # setting 2 computer rooms contain the created computers
+                    room1 = Room(school, host_members=created_computers_dn[0])
+                    room2 = Room(school, host_members=created_computers_dn[1])
 
-					# setting 2 computer rooms contain the created computers
-					room1 = Room(school, host_members=created_computers_dn[0])
-					room2 = Room(school, host_members=created_computers_dn[1])
+                    # Creating the rooms
+                    for room in [room1, room2]:
+                        schoolenv.create_computerroom(
+                            school,
+                            name=room.name,
+                            description=room.description,
+                            host_members=room.host_members,
+                        )
 
-					# Creating the rooms
-					for room in [room1, room2]:
-						schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
+                    current_time = datetime.now()
+                    chosen_time = current_time + timedelta(hours=2)
 
-					current_time = datetime.now()
-					chosen_time = current_time + timedelta(hours=2)
+                    print " ** After creating the rooms"
+                    wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-					print ' ** After creating the rooms'
-					wait_replications_check_rejected_uniqueMember(existing_rejects)
+                    exam = Exam(
+                        school=school,
+                        room=room2.dn,  # room dn
+                        examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+                        recipients=[klasse_dn],  # list of classes dns
+                    )
 
-					exam = Exam(
-						school=school,
-						room=room2.dn,  # room dn
-						examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-						recipients=[klasse_dn]  # list of classes dns
-					)
+                    exam.start()
+                    print " ** After starting the exam"
+                    wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-					exam.start()
-					print ' ** After starting the exam'
-					wait_replications_check_rejected_uniqueMember(existing_rejects)
+                    exam.finish()
+                    print " ** After finishing the exam"
+                    wait_replications_check_rejected_uniqueMember(existing_rejects)
+                    student2.remove(open_ldap_co)
 
-					exam.finish()
-					print ' ** After finishing the exam'
-					wait_replications_check_rejected_uniqueMember(existing_rejects)
-					student2.remove(open_ldap_co)
+    def test_saml_login(self):
+        self.__test_exam_mode(Exam=ExamSaml)
 
-	def test_saml_login(self):
-		self.__test_exam_mode(Exam=ExamSaml)
-
-	def test_classic_login(self):
-		self.__test_exam_mode()
+    def test_classic_login(self):
+        self.__test_exam_mode()
 
 
-if __name__ == '__main__':
-	main(verbosity=2)
+if __name__ == "__main__":
+    main(verbosity=2)

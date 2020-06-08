@@ -9,81 +9,88 @@
 ## bugs: [41572]
 import os
 import os.path
-import sys
 import shutil
+import sys
 
+import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.strings as uts
 import univention.testing.utils as utils
-
-from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger
+from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS
+from ucsschool.importer.utils.shell import (
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    logger,
+)
 
 TESTHOOKSOURCE = CONFIG = os.path.join(os.path.dirname(__file__), "testpyhookpy")
 TESTHOOKTARGET = "/usr/share/ucs-school-import/pyhooks/bdaytest.py"
 
-logger.info('*** Copying %r to %r...', TESTHOOKSOURCE, TESTHOOKTARGET)
+logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 sys.path.append("/usr/share/ucs-school-import/pyhooks/")
-from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS
 
 
 def cleanup():
-	for ext in ["", "c", "o"]:
-		try:
-			os.remove("{}{}".format(TESTHOOKTARGET, ext))
-			logger.info('*** Deleted %s%s...', TESTHOOKTARGET, ext)
-		except OSError:
-			logger.warn("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
+    for ext in ["", "c", "o"]:
+        try:
+            os.remove("{}{}".format(TESTHOOKTARGET, ext))
+            logger.info("*** Deleted %s%s...", TESTHOOKTARGET, ext)
+        except OSError:
+            logger.warn("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
 def main():
-	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-		with utu.UCSTestSchool() as schoolenv:
-			(ou_name, ou_dn), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get('hostname'))
-			lo = schoolenv.open_ldap_connection(admin=True)
-			for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
-				username = uts.random_username()
-				kwargs = dict(
-					school=ou_name,
-					schools=[ou_name],
-					name=username,
-					firstname=uts.random_name(),
-					lastname=uts.random_name(),
-					school_classes=dict(),
-					record_uid=uts.random_name(),
-				)
-				logger.info('*** Creating %r in %r...', kls.__name__, ou_name)
-				kwargs["birthday"] = PRE_ACTION_BIRTHDAYS["pre_create"]
-				user = kls(**kwargs)
-				user.prepare_all(True)
-				user.create(lo)
-				user = kls.get_all(lo, ou_name, "uid={}".format(username))[0]
-				if user.birthday != BIRTHDAYS["post_create"]:
-					utils.fail("Birthday should have been %r." % BIRTHDAYS["post_create"])
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+        with utu.UCSTestSchool() as schoolenv:
+            (ou_name, ou_dn), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(
+                2, name_edudc=ucr.get("hostname")
+            )
+            lo = schoolenv.open_ldap_connection(admin=True)
+            for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+                username = uts.random_username()
+                kwargs = dict(
+                    school=ou_name,
+                    schools=[ou_name],
+                    name=username,
+                    firstname=uts.random_name(),
+                    lastname=uts.random_name(),
+                    school_classes=dict(),
+                    record_uid=uts.random_name(),
+                )
+                logger.info("*** Creating %r in %r...", kls.__name__, ou_name)
+                kwargs["birthday"] = PRE_ACTION_BIRTHDAYS["pre_create"]
+                user = kls(**kwargs)
+                user.prepare_all(True)
+                user.create(lo)
+                user = kls.get_all(lo, ou_name, "uid={}".format(username))[0]
+                if user.birthday != BIRTHDAYS["post_create"]:
+                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_create"])
 
-				logger.info('*** Modifying %r...', kls.__name__)
-				user.birthday = PRE_ACTION_BIRTHDAYS["pre_modify"]
-				user.modify(lo)
-				user = kls.from_dn(user.dn, ou_name, lo)
-				if user.birthday != BIRTHDAYS["post_modify"]:
-					utils.fail("Birthday should have been %r." % BIRTHDAYS["post_modify"])
+                logger.info("*** Modifying %r...", kls.__name__)
+                user.birthday = PRE_ACTION_BIRTHDAYS["pre_modify"]
+                user.modify(lo)
+                user = kls.from_dn(user.dn, ou_name, lo)
+                if user.birthday != BIRTHDAYS["post_modify"]:
+                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_modify"])
 
-				logger.info('*** Moving %r to %r...', kls.__name__, ou_name2)
-				user.birthday = PRE_ACTION_BIRTHDAYS["pre_move"]
-				user.change_school(ou_name2, lo)
-				user = kls.from_dn(user.dn, ou_name2, lo)
-				if user.birthday != BIRTHDAYS["post_move"]:
-					utils.fail("Birthday should have been %r." % BIRTHDAYS["post_move"])
+                logger.info("*** Moving %r to %r...", kls.__name__, ou_name2)
+                user.birthday = PRE_ACTION_BIRTHDAYS["pre_move"]
+                user.change_school(ou_name2, lo)
+                user = kls.from_dn(user.dn, ou_name2, lo)
+                if user.birthday != BIRTHDAYS["post_move"]:
+                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_move"])
 
-				logger.info('*** Deleting %r...', kls.__name__)
-				user.birthday = PRE_ACTION_BIRTHDAYS["pre_remove"]
-				user.remove(lo)
-			logger.info("Test was successful.\n\n\n")
+                logger.info("*** Deleting %r...", kls.__name__)
+                user.birthday = PRE_ACTION_BIRTHDAYS["pre_remove"]
+                user.remove(lo)
+            logger.info("Test was successful.\n\n\n")
 
 
-if __name__ == '__main__':
-	try:
-		main()
-	finally:
-		cleanup()
+if __name__ == "__main__":
+    try:
+        main()
+    finally:
+        cleanup()

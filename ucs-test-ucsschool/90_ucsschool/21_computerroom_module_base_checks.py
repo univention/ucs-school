@@ -5,51 +5,53 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
-from univention.testing.ucsschool.computerroom import Room, Computers
-from univention.testing.umc import Client
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.computerroom import Computers, Room
+from univention.testing.umc import Client
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			tea1, tea1_dn = schoolenv.create_user(school, is_teacher=True)
-			tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
-			open_ldap_co = schoolenv.open_ldap_connection()
+    with utu.UCSTestSchool() as schoolenv:
+        with ucr_test.UCSTestConfigRegistry() as ucr:
+            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+            tea1, tea1_dn = schoolenv.create_user(school, is_teacher=True)
+            tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
+            open_ldap_co = schoolenv.open_ldap_connection()
 
-			print 'importing random 9 computers'
-			computers = Computers(open_ldap_co, school, 3, 3, 3)
-			created_computers = computers.create()
-			created_computers_dn = computers.get_dns(created_computers)
+            print "importing random 9 computers"
+            computers = Computers(open_ldap_co, school, 3, 3, 3)
+            created_computers = computers.create()
+            created_computers_dn = computers.get_dns(created_computers)
 
-			print 'setting an empty computer room'
-			room1 = Room(school)
-			print 'setting 2 computer rooms contain the created computers'
-			room2 = Room(school, host_members=created_computers_dn[0:4])
-			room3 = Room(school, host_members=created_computers_dn[4:9])
+            print "setting an empty computer room"
+            room1 = Room(school)
+            print "setting 2 computer rooms contain the created computers"
+            room2 = Room(school, host_members=created_computers_dn[0:4])
+            room3 = Room(school, host_members=created_computers_dn[4:9])
 
-			print 'Creating the rooms'
-			for room in [room1, room2, room3]:
-				schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
+            print "Creating the rooms"
+            for room in [room1, room2, room3]:
+                schoolenv.create_computerroom(
+                    school, name=room.name, description=room.description, host_members=room.host_members
+                )
 
-			print 'Checking empty room properties'
-			client1 = Client(None, tea1, 'univention')
-			room1.checK_room_aquire(client1, 'EMPTY_ROOM')
-			room1.check_room_user(client1, None)
+            print "Checking empty room properties"
+            client1 = Client(None, tea1, "univention")
+            room1.checK_room_aquire(client1, "EMPTY_ROOM")
+            room1.check_room_user(client1, None)
 
-			print 'Checking non-empty room properties'
-			client2 = Client(None, tea2, 'univention')
-			room2.checK_room_aquire(client2, 'OK')
-			room2.check_room_user(client1, tea2)
-			room2.check_room_computers(client2, created_computers_dn[0:4])
+            print "Checking non-empty room properties"
+            client2 = Client(None, tea2, "univention")
+            room2.checK_room_aquire(client2, "OK")
+            room2.check_room_user(client1, tea2)
+            room2.check_room_computers(client2, created_computers_dn[0:4])
 
-			print 'switching room for tea2'
-			room3.checK_room_aquire(client2, 'OK')
-			room3.check_room_user(client1, tea2)
-			room3.check_room_computers(client2, created_computers_dn[4:9])
+            print "switching room for tea2"
+            room3.checK_room_aquire(client2, "OK")
+            room3.check_room_user(client1, tea2)
+            room3.check_room_computers(client2, created_computers_dn[4:9])
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

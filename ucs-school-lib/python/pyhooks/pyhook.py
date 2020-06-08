@@ -33,16 +33,16 @@ Base class for all Python based hooks.
 
 
 class PyHook(object):
-	"""
-	Base class for all Python based hooks.
+    """
+    Base class for all Python based hooks.
 
-	Do not use this class directly, use one of its subclasses like UserPyHook.
-	"""
+    Do not use this class directly, use one of its subclasses like UserPyHook.
+    """
 
-	# If multiple hook classes are found, hook functions with higher
-	# priorities run before those with lower priorities. None disables
-	# a function.
-	priority = {}
+    # If multiple hook classes are found, hook functions with higher
+    # priorities run before those with lower priorities. None disables
+    # a function.
+    priority = {}
 
-	def __init__(self, *arg, **kwargs):
-		pass
+    def __init__(self, *arg, **kwargs):
+        pass

@@ -10,12 +10,18 @@ from univention.testing.ucr import UCSTestConfigRegistry
 
 
 def main():
-	with UCSTestConfigRegistry() as ucr:
-		ucrv_forward = ucr.get('dns/nameserver/registration/forward_zone')
-		assert ucr.is_false(value=ucrv_forward), "The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'." % (ucrv_forward,)
-		ucrv_reverse = ucr.get('dns/nameserver/registration/reverse_zone')
-		assert ucr.is_false(value=ucrv_reverse), "The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'." % (ucrv_reverse,)
+    with UCSTestConfigRegistry() as ucr:
+        ucrv_forward = ucr.get("dns/nameserver/registration/forward_zone")
+        assert ucr.is_false(value=ucrv_forward), (
+            "The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set to 'no'."
+            % (ucrv_forward,)
+        )
+        ucrv_reverse = ucr.get("dns/nameserver/registration/reverse_zone")
+        assert ucr.is_false(value=ucrv_reverse), (
+            "The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set to 'no'."
+            % (ucrv_reverse,)
+        )
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

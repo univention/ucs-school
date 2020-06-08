@@ -8,12 +8,12 @@
 ## packages:
 ##   - ucs-school-import
 
-from univention.testing.ucsschool.importprinters import import_printers_basics
 import sys
 
+from univention.testing.ucsschool.importprinters import import_printers_basics
 
-if __name__ == '__main__':
-	# Not yet implemented
-	sys.exit(137)
+if __name__ == "__main__":
+    # Not yet implemented
+    sys.exit(137)
 
-	import_printers_basics(use_cli_api=False, use_python_api=True)
+    import_printers_basics(use_cli_api=False, use_python_api=True)

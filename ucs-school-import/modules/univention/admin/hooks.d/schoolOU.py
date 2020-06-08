@@ -28,66 +28,65 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
-from univention.admin.hook import simpleHook
 import univention.debug as ud
+from univention.admin.hook import simpleHook
 
-OBJECTCLASS_SCHOOLOU = 'ucsschoolOrganizationalUnit'
-OPTION_SCHOOLOU = 'UCSschool-School-OU'
-ATTRIBUTE_LIST = ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer', 'displayName')
+OBJECTCLASS_SCHOOLOU = "ucsschoolOrganizationalUnit"
+OPTION_SCHOOLOU = "UCSschool-School-OU"
+ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer", "displayName")
 
 
 class schoolOU(simpleHook):
+    def hook_open(self, module):
+        ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU: _open called")
 
-	def hook_open(self, module):
-		ud.debug(ud.ADMIN, ud.ALL, 'admin.hook.schoolOU: _open called')
+        objectClass = module.oldattr.get("objectClass", [])
 
-		objectClass = module.oldattr.get('objectClass', [])
+        # FIXME: handlers.contains.ou.object does not have options
+        if not hasattr(module, "options"):
+            module.options = []
 
-		# FIXME: handlers.contains.ou.object does not have options
-		if not hasattr(module, 'options'):
-			module.options = []
+        if OBJECTCLASS_SCHOOLOU in objectClass and OPTION_SCHOOLOU not in module.options:
+            module.options.append(OPTION_SCHOOLOU)
 
-		if OBJECTCLASS_SCHOOLOU in objectClass and OPTION_SCHOOLOU not in module.options:
-			module.options.append(OPTION_SCHOOLOU)
+    def hook_ldap_modlist(self, module, ml=None):
+        """Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or disabled."""
+        ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU.modlist called")
 
-	def hook_ldap_modlist(self, module, ml=None):
-		"""Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or disabled."""
-		ud.debug(ud.ADMIN, ud.ALL, 'admin.hook.schoolOU.modlist called')
+        if ml is None:
+            ml = []
 
-		if ml is None:
-			ml = []
+        # compute new accumulated objectClass
+        old_ocs = module.oldattr.get("objectClass", [])
+        ocs = set(old_ocs)
 
-		# compute new accumulated objectClass
-		old_ocs = module.oldattr.get('objectClass', [])
-		ocs = set(old_ocs)
+        is_school = OPTION_SCHOOLOU in module.options
 
-		is_school = OPTION_SCHOOLOU in module.options
+        for modification in ml[:]:
+            attr, remove_val, add_val = modification
 
-		for modification in ml[:]:
-			attr, remove_val, add_val = modification
+            if attr == "objectClass":
+                if not isinstance(remove_val, list):
+                    remove_val = set([remove_val])
+                ocs -= set(remove_val)
 
-			if attr == 'objectClass':
-				if not isinstance(remove_val, list):
-					remove_val = set([remove_val])
-				ocs -= set(remove_val)
+                if not isinstance(add_val, list):
+                    add_val = set([add_val])
+                    add_val.discard("")
+                ocs |= set(add_val)
 
-				if not isinstance(add_val, list):
-					add_val = set([add_val])
-					add_val.discard('')
-				ocs |= set(add_val)
+                ml.remove(modification)
 
-				ml.remove(modification)
+            elif not is_school and attr in ATTRIBUTE_LIST:
+                ml.remove(modification)
 
-			elif not is_school and attr in ATTRIBUTE_LIST:
-				ml.remove(modification)
+        if is_school:
+            ocs.add(OBJECTCLASS_SCHOOLOU)
+        else:
+            ocs.discard(OBJECTCLASS_SCHOOLOU)
+            for attr in ATTRIBUTE_LIST:
+                ml.append((attr, module.oldattr.get(attr, ""), ""))
 
-		if is_school:
-			ocs.add(OBJECTCLASS_SCHOOLOU)
-		else:
-			ocs.discard(OBJECTCLASS_SCHOOLOU)
-			for attr in ATTRIBUTE_LIST:
-				ml.append((attr, module.oldattr.get(attr, ''), ''))
+        ml.append(("objectClass", old_ocs, list(ocs)))
 
-		ml.append(('objectClass', old_ocs, list(ocs)))
-
-		return ml
+        return ml

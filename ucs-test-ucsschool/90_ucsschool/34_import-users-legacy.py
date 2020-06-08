@@ -8,176 +8,187 @@
 ##   - ucs-school-import
 ## bugs: [41934, 42288]
 
-import shutil
 import logging
-import sys
-import subprocess
-import tempfile
 import random
+import shutil
+import subprocess
+import sys
+import tempfile
 import time
 
-import univention.testing.ucr
 import univention.testing.strings as uts
+import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 
 
 class Bunch(object):
-	"""
-	>>> y = Bunch(foo=42, bar='TEST')
-	>>> print repr(y.foo), repr(y.bar)
-	42 'TEST'
+    """
+    >>> y = Bunch(foo=42, bar='TEST')
+    >>> print repr(y.foo), repr(y.bar)
+    42 'TEST'
 
-	>>> x = Bunch()
-	>>> x.a = 4
-	>>> print x.a
-	4
-	"""
+    >>> x = Bunch()
+    >>> x.a = 4
+    >>> print x.a
+    4
+    """
 
-	def __init__(self, **kwds):
-		self.__dict__.update(kwds)
+    def __init__(self, **kwds):
+        self.__dict__.update(kwds)
 
-	def __str__(self):
-		result = []
-		for key, value in self.__dict__.iteritems():
-			result.append('%s=%r' % (key, value))
-		return 'Bunch(' + ', '.join(result) + ')'
+    def __str__(self):
+        result = []
+        for key, value in self.__dict__.iteritems():
+            result.append("%s=%r" % (key, value))
+        return "Bunch(" + ", ".join(result) + ")"
 
-	def __repr__(self):
-		return str(self)
+    def __repr__(self):
+        return str(self)
 
 
 class CLI_Legacy_Import_Tester(object):
-	ucr = univention.testing.ucr.UCSTestConfigRegistry()
-	line = 'A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s			%(email)s	%(teacher)s	1	%(staff)s\n'
+    ucr = univention.testing.ucr.UCSTestConfigRegistry()
+    line = "A	%(username)s	%(lastname)s	%(firstname)s	%(ou)s			%(email)s	%(teacher)s	1	%(staff)s\n"
 
-	def __init__(self):
-		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users-legacy.', dir='/tmp/')
-		self.log = logging.getLogger('main')
-		self.ucr.load()
-		self.ou_A = Bunch()
-		self.lo = None
-		try:
-			self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
-		except (AttributeError, IndexError):
-			self.maildomain = self.ucr["domainname"]
+    def __init__(self):
+        self.tmpdir = tempfile.mkdtemp(prefix="34_import-users-legacy.", dir="/tmp/")
+        self.log = logging.getLogger("main")
+        self.ucr.load()
+        self.ou_A = Bunch()
+        self.lo = None
+        try:
+            self.maildomain = self.ucr["mail/hosteddomains"].split()[0]
+        except (AttributeError, IndexError):
+            self.maildomain = self.ucr["domainname"]
 
-	def create_user_data(self, ou, is_teacher, is_staff, user_data=None):
-		data = {
-			'username': uts.random_string(),
-			'firstname': uts.random_string(),
-			'lastname': uts.random_string(),
-			'ou': ou,
-			'teacher': '1' if is_teacher else '0',
-			'staff': '1' if is_staff else '0',
-			'email': '{}@{}'.format(uts.random_name(), self.ucr['mail/hosteddomains'].split()[-1])
-		}
-		if user_data:
-			data.update(user_data)
-		self.log.debug('user data=%r', data)
-		return data
+    def create_user_data(self, ou, is_teacher, is_staff, user_data=None):
+        data = {
+            "username": uts.random_string(),
+            "firstname": uts.random_string(),
+            "lastname": uts.random_string(),
+            "ou": ou,
+            "teacher": "1" if is_teacher else "0",
+            "staff": "1" if is_staff else "0",
+            "email": "{}@{}".format(uts.random_name(), self.ucr["mail/hosteddomains"].split()[-1]),
+        }
+        if user_data:
+            data.update(user_data)
+        self.log.debug("user data=%r", data)
+        return data
 
-	def cleanup(self):
-		self.log.info('Purging %r', self.tmpdir)
-		shutil.rmtree(self.tmpdir, ignore_errors=True)
+    def cleanup(self):
+        self.log.info("Purging %r", self.tmpdir)
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
 
-	def run_import(self, fn, fail_on_error=True):
-		cmd = ['/usr/share/ucs-school-import/scripts/import_user', fn]
-		sys.stdout.flush()
-		sys.stderr.flush()
-		exitcode = subprocess.call(cmd)
-		self.log.info('Import process exited with exit code %r', exitcode)
-		if fail_on_error and exitcode:
-			self.log.error('Import failed with exit code %r', exitcode)
-			utils.fail('Import failed with exit code %r' % (exitcode,))
-		return exitcode
+    def run_import(self, fn, fail_on_error=True):
+        cmd = ["/usr/share/ucs-school-import/scripts/import_user", fn]
+        sys.stdout.flush()
+        sys.stderr.flush()
+        exitcode = subprocess.call(cmd)
+        self.log.info("Import process exited with exit code %r", exitcode)
+        if fail_on_error and exitcode:
+            self.log.error("Import failed with exit code %r", exitcode)
+            utils.fail("Import failed with exit code %r" % (exitcode,))
+        return exitcode
 
-	def test_import_users_with_empty_class(self):
-		"""
-		Bug #42288: Import users with empty class
-		"""
-		self.log.info('*** Importing users without specifying class')
-		fn = tempfile.mkstemp(prefix='empty_class.', dir=self.tmpdir)[1]
-		with open(fn, 'w') as fd:
-			fd.write(self.line % self.create_user_data(self.ou_A.name, False, False))
-			fd.write(self.line % self.create_user_data(self.ou_A.name, True, False))
-			fd.write(self.line % self.create_user_data(self.ou_A.name, False, True))
-			fd.write(self.line % self.create_user_data(self.ou_A.name, True, True))
-		self.run_import(fn)
-		self.log.info('*** import_users_with_empty_class WAS SUCCESSFUL\n')
+    def test_import_users_with_empty_class(self):
+        """
+        Bug #42288: Import users with empty class
+        """
+        self.log.info("*** Importing users without specifying class")
+        fn = tempfile.mkstemp(prefix="empty_class.", dir=self.tmpdir)[1]
+        with open(fn, "w") as fd:
+            fd.write(self.line % self.create_user_data(self.ou_A.name, False, False))
+            fd.write(self.line % self.create_user_data(self.ou_A.name, True, False))
+            fd.write(self.line % self.create_user_data(self.ou_A.name, False, True))
+            fd.write(self.line % self.create_user_data(self.ou_A.name, True, True))
+        self.run_import(fn)
+        self.log.info("*** import_users_with_empty_class WAS SUCCESSFUL\n")
 
-	def test_no_name_normalization(self):
-		"""
-		Bug #41934: Import users with umlauts in given name and family name.
-		They should not be normalized to ASCII.
-		"""
-		umlauts = u'äöüßáàñ'
+    def test_no_name_normalization(self):
+        """
+        Bug #41934: Import users with umlauts in given name and family name.
+        They should not be normalized to ASCII.
+        """
+        umlauts = u"äöüßáàñ"
 
-		def names_with_umlauts():
-			fn = list(uts.random_string() + umlauts)
-			random.shuffle(fn)
-			ln = list(uts.random_string() + umlauts)
-			random.shuffle(ln)
-			return dict(
-				firstname=u''.join(fn),
-				lastname=u''.join(ln)
-			)
+        def names_with_umlauts():
+            fn = list(uts.random_string() + umlauts)
+            random.shuffle(fn)
+            ln = list(uts.random_string() + umlauts)
+            random.shuffle(ln)
+            return dict(firstname=u"".join(fn), lastname=u"".join(ln))
 
-		self.log.info('*** Importing users with umlauts in given name and family name')
-		users = [
-			self.create_user_data(self.ou_A.name, False, False, names_with_umlauts()),
-			self.create_user_data(self.ou_A.name, True, False, names_with_umlauts()),
-			self.create_user_data(self.ou_A.name, False, True, names_with_umlauts()),
-			self.create_user_data(self.ou_A.name, True, True, names_with_umlauts())
-		]
-		fn = tempfile.mkstemp(prefix='no_normalization.', dir=self.tmpdir)[1]
-		with open(fn, 'w') as fd:
-			fd.writelines([self.line % user for user in users])
-		self.run_import(fn)
-		for user in users:
-			dn = self.lo.searchDn(filter='uid={}'.format(user['username']), base='cn=users,{}'.format(self.ou_A.dn))
-			if not dn:
-				utils.fail('Could not find user with "uid={}" below "cn=users,{}".'.format(user['username'], self.ou_A.dn))
-			utils.verify_ldap_object(
-				dn[0],
-				expected_attr={'givenName': [user['firstname'].encode('utf-8')], 'sn': [user['lastname'].encode('utf-8')]},
-				strict=False,
-				should_exist=True)
-		self.log.info('*** test_no_name_normalization WAS SUCCESSFUL\n')
+        self.log.info("*** Importing users with umlauts in given name and family name")
+        users = [
+            self.create_user_data(self.ou_A.name, False, False, names_with_umlauts()),
+            self.create_user_data(self.ou_A.name, True, False, names_with_umlauts()),
+            self.create_user_data(self.ou_A.name, False, True, names_with_umlauts()),
+            self.create_user_data(self.ou_A.name, True, True, names_with_umlauts()),
+        ]
+        fn = tempfile.mkstemp(prefix="no_normalization.", dir=self.tmpdir)[1]
+        with open(fn, "w") as fd:
+            fd.writelines([self.line % user for user in users])
+        self.run_import(fn)
+        for user in users:
+            dn = self.lo.searchDn(
+                filter="uid={}".format(user["username"]), base="cn=users,{}".format(self.ou_A.dn)
+            )
+            if not dn:
+                utils.fail(
+                    'Could not find user with "uid={}" below "cn=users,{}".'.format(
+                        user["username"], self.ou_A.dn
+                    )
+                )
+            utils.verify_ldap_object(
+                dn[0],
+                expected_attr={
+                    "givenName": [user["firstname"].encode("utf-8")],
+                    "sn": [user["lastname"].encode("utf-8")],
+                },
+                strict=False,
+                should_exist=True,
+            )
+        self.log.info("*** test_no_name_normalization WAS SUCCESSFUL\n")
 
-	def run(self):
-		try:
-			with utu.UCSTestSchool() as schoolenv:
-				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get('hostname'))
-				self.lo = schoolenv.open_ldap_connection(admin=True)
-				if self.maildomain not in self.ucr.get('mail/hosteddomains', '').split():
-					self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
-					schoolenv.udm.create_object(
-						'mail/domain',
-						position='cn=domain,cn=mail,{}'.format(self.ucr['ldap/base']),
-						name=self.maildomain,
-						wait_for_replication=True
-					)
-				self.ucr.load()
-				timeout = 30
-				while not self.ucr.get('mail/hosteddomains', ''):
-					timeout -= 1
-					if timeout < 1:
-						utils.fail('UCRV mail/hosteddomains empty 300s after creating mail/domain.')
-					time.sleep(10)
-					self.ucr.load()
+    def run(self):
+        try:
+            with utu.UCSTestSchool() as schoolenv:
+                self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get("hostname"))
+                self.lo = schoolenv.open_ldap_connection(admin=True)
+                if self.maildomain not in self.ucr.get("mail/hosteddomains", "").split():
+                    self.log.info("\n\n*** Creating mail domain %r...\n", self.maildomain)
+                    schoolenv.udm.create_object(
+                        "mail/domain",
+                        position="cn=domain,cn=mail,{}".format(self.ucr["ldap/base"]),
+                        name=self.maildomain,
+                        wait_for_replication=True,
+                    )
+                self.ucr.load()
+                timeout = 30
+                while not self.ucr.get("mail/hosteddomains", ""):
+                    timeout -= 1
+                    if timeout < 1:
+                        utils.fail("UCRV mail/hosteddomains empty 300s after creating mail/domain.")
+                    time.sleep(10)
+                    self.ucr.load()
 
-				self.test_import_users_with_empty_class()
-				self.test_no_name_normalization()
-		finally:
-			self.cleanup()
+                self.test_import_users_with_empty_class()
+                self.test_no_name_normalization()
+        finally:
+            self.cleanup()
 
 
 def main():
-	logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(levelname)s: %(funcName)s:%(lineno)d: %(message)s')
-	tester = CLI_Legacy_Import_Tester()
-	tester.run()
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=logging.DEBUG,
+        format="%(levelname)s: %(funcName)s:%(lineno)d: %(message)s",
+    )
+    tester = CLI_Legacy_Import_Tester()
+    tester.run()
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

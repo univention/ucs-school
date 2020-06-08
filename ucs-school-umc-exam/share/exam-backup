@@ -30,37 +30,41 @@
 
 import logging
 import os
+
 from ucsschool.lib.models.utils import get_stream_handler
-from univention.management.console.modules.schoolexam import util
 from univention.config_registry import ConfigRegistry
+from univention.management.console.modules.schoolexam import util
 
 
 def main():
-	logger = logging.getLogger(__name__)
-	logger.setLevel('INFO')
-	logger.addHandler(get_stream_handler('INFO'))
+    logger = logging.getLogger(__name__)
+    logger.setLevel("INFO")
+    logger.addHandler(get_stream_handler("INFO"))
 
-	logger.info('Starting exam backup process.')
+    logger.info("Starting exam backup process.")
 
-	ucr = ConfigRegistry()
-	ucr.load()
+    ucr = ConfigRegistry()
+    ucr.load()
 
-	compress = ucr.is_true('ucsschool/exam/backup/compress', True)
-	try:
-		limit = max((int(ucr.get('ucsschool/exam/backup/limit', 40)), 1))
-	except ValueError:
-		logger.error('ucsschool/exam/backup/limit does not contain a valid number. Falling back to default')
-		limit = 40
+    compress = ucr.is_true("ucsschool/exam/backup/compress", True)
+    try:
+        limit = max((int(ucr.get("ucsschool/exam/backup/limit", 40)), 1))
+    except ValueError:
+        logger.error(
+            "ucsschool/exam/backup/limit does not contain a valid number. Falling back to default"
+        )
+        limit = 40
 
-	util.distribution.POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = '-Zwischenergebnisse'
+    util.distribution.POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = "-Zwischenergebnisse"
 
-	for project in util.distribution.Project.list(only_distributed=True):
-		if project.num_results < limit:
-			project.collect(readOnly=True, compress=compress)
-		else:
-			logger.warning('Results for %s were not collected. The limit has been reached.', project.name)
+    for project in util.distribution.Project.list(only_distributed=True):
+        if project.num_results < limit:
+            project.collect(readOnly=True, compress=compress)
+        else:
+            logger.warning(
+                "Results for %s were not collected. The limit has been reached.", project.name
+            )
 
 
-
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

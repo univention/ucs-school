@@ -32,141 +32,151 @@
 
 import os.path
 
-from .attributes import Roles, ShareName, SchoolClassAttribute
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
-from .utils import ucr, _
-from ..roles import role_school_class_share, role_workgroup_share
+from ldap.filter import filter_format
 
 from univention.udm import UDM
-from ldap.filter import filter_format
+
+from ..roles import role_school_class_share, role_workgroup_share
+from .attributes import Roles, SchoolClassAttribute, ShareName
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .utils import _, ucr
 
 
 class Share(UCSSchoolHelperAbstractClass):
-	name = ShareName(_('Name'))
-	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
+    name = ShareName(_("Name"))
+    school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
 
-	@classmethod
-	def from_school_group(cls, school_group):
-		return cls(name=school_group.name, school=school_group.school, school_group=school_group)
-	from_school_class = from_school_group  # legacy
+    @classmethod
+    def from_school_group(cls, school_group):
+        return cls(name=school_group.name, school=school_group.school, school_group=school_group)
 
-	@classmethod
-	def get_container(cls, school):
-		return cls.get_search_base(school).shares
+    from_school_class = from_school_group  # legacy
 
-	def do_create(self, udm_obj, lo):
-		gid = self.school_group.get_udm_object(lo)['gidNumber']
-		udm_obj['host'] = self.get_server_fqdn(lo)
-		udm_obj['path'] = self.get_share_path()
-		udm_obj['writeable'] = '1'
-		udm_obj['sambaWriteable'] = '1'
-		udm_obj['sambaBrowseable'] = '1'
-		udm_obj['sambaForceGroup'] = '+%s' % self.name
-		udm_obj['sambaCreateMode'] = '0770'
-		udm_obj['sambaDirectoryMode'] = '0770'
-		udm_obj['owner'] = '0'
-		udm_obj['group'] = gid
-		udm_obj['directorymode'] = '0770'
-		if ucr.is_false('ucsschool/default/share/nfs', True):
-			try:
-				udm_obj.options.remove('nfs')  # deactivate NFS
-			except ValueError:
-				pass
-		self.logger.info('Creating share on "%s"', udm_obj['host'])
-		return super(Share, self).do_create(udm_obj, lo)
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).shares
 
-	def get_share_path(self):
-		if ucr.is_true('ucsschool/import/roleshare', True):
-			return '/home/%s/groups/%s' % (self.school_group.school, self.name)
-		else:
-			return '/home/groups/%s' % self.name
+    def do_create(self, udm_obj, lo):
+        gid = self.school_group.get_udm_object(lo)["gidNumber"]
+        udm_obj["host"] = self.get_server_fqdn(lo)
+        udm_obj["path"] = self.get_share_path()
+        udm_obj["writeable"] = "1"
+        udm_obj["sambaWriteable"] = "1"
+        udm_obj["sambaBrowseable"] = "1"
+        udm_obj["sambaForceGroup"] = "+%s" % self.name
+        udm_obj["sambaCreateMode"] = "0770"
+        udm_obj["sambaDirectoryMode"] = "0770"
+        udm_obj["owner"] = "0"
+        udm_obj["group"] = gid
+        udm_obj["directorymode"] = "0770"
+        if ucr.is_false("ucsschool/default/share/nfs", True):
+            try:
+                udm_obj.options.remove("nfs")  # deactivate NFS
+            except ValueError:
+                pass
+        self.logger.info('Creating share on "%s"', udm_obj["host"])
+        return super(Share, self).do_create(udm_obj, lo)
 
-	def do_modify(self, udm_obj, lo):
-		old_name = self.get_name_from_dn(self.old_dn)
-		if old_name != self.name:
-			head, tail = os.path.split(udm_obj['path'])
-			tail = self.name
-			udm_obj['path'] = os.path.join(head, tail)
-			if udm_obj['sambaName'] == old_name:
-				udm_obj['sambaName'] = self.name
-			if udm_obj['sambaForceGroup'] == '+%s' % old_name:
-				udm_obj['sambaForceGroup'] = '+%s' % self.name
-		return super(Share, self).do_modify(udm_obj, lo)
+    def get_share_path(self):
+        if ucr.is_true("ucsschool/import/roleshare", True):
+            return "/home/%s/groups/%s" % (self.school_group.school, self.name)
+        else:
+            return "/home/groups/%s" % self.name
 
-	def get_server_fqdn(self, lo):
-		domainname = ucr.get('domainname')
-		school = self.get_school_obj(lo)
-		school_dn = school.dn
+    def do_modify(self, udm_obj, lo):
+        old_name = self.get_name_from_dn(self.old_dn)
+        if old_name != self.name:
+            head, tail = os.path.split(udm_obj["path"])
+            tail = self.name
+            udm_obj["path"] = os.path.join(head, tail)
+            if udm_obj["sambaName"] == old_name:
+                udm_obj["sambaName"] = self.name
+            if udm_obj["sambaForceGroup"] == "+%s" % old_name:
+                udm_obj["sambaForceGroup"] = "+%s" % self.name
+        return super(Share, self).do_modify(udm_obj, lo)
 
-		# fetch serverfqdn from OU
-		result = lo.get(school_dn, ['ucsschoolClassShareFileServer'])
-		if result:
-			server_domain_name = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
-			if server_domain_name:
-				server_domain_name = server_domain_name['associatedDomain'][0]
-			else:
-				server_domain_name = domainname
-			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
-			if result:
-				return '%s.%s' % (result['cn'][0], server_domain_name)
+    def get_server_fqdn(self, lo):
+        domainname = ucr.get("domainname")
+        school = self.get_school_obj(lo)
+        school_dn = school.dn
 
-		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
-		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
-		alternative_server_dn = None
-		if len(ou_attr_ldap_access_write) > 0:
-			alternative_server_dn = ou_attr_ldap_access_write['univentionLDAPAccessWrite'][0]
-			if len(ou_attr_ldap_access_write) > 1:
-				self.logger.warning('more than one corresponding univentionLDAPAccessWrite found at ou=%s', self.school)
+        # fetch serverfqdn from OU
+        result = lo.get(school_dn, ["ucsschoolClassShareFileServer"])
+        if result:
+            server_domain_name = lo.get(result["ucsschoolClassShareFileServer"][0], ["associatedDomain"])
+            if server_domain_name:
+                server_domain_name = server_domain_name["associatedDomain"][0]
+            else:
+                server_domain_name = domainname
+            result = lo.get(result["ucsschoolClassShareFileServer"][0], ["cn"])
+            if result:
+                return "%s.%s" % (result["cn"][0], server_domain_name)
 
-		# build fqdn of alternative server and set serverfqdn
-		if alternative_server_dn:
-			alternative_server_attr = lo.get(alternative_server_dn, ['uid'])
-			if len(alternative_server_attr) > 0:
-				alternative_server_uid = alternative_server_attr['uid'][0]
-				alternative_server_uid = alternative_server_uid.replace('$', '')
-				if len(alternative_server_uid) > 0:
-					return '%s.%s' % (alternative_server_uid, domainname)
+        # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+        ou_attr_ldap_access_write = lo.get(school_dn, ["univentionLDAPAccessWrite"])
+        alternative_server_dn = None
+        if len(ou_attr_ldap_access_write) > 0:
+            alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
+            if len(ou_attr_ldap_access_write) > 1:
+                self.logger.warning(
+                    "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school
+                )
 
-		# fallback
-		return '%s.%s' % (school.get_dc_name_fallback(), domainname)
+        # build fqdn of alternative server and set serverfqdn
+        if alternative_server_dn:
+            alternative_server_attr = lo.get(alternative_server_dn, ["uid"])
+            if len(alternative_server_attr) > 0:
+                alternative_server_uid = alternative_server_attr["uid"][0]
+                alternative_server_uid = alternative_server_uid.replace("$", "")
+                if len(alternative_server_uid) > 0:
+                    return "%s.%s" % (alternative_server_uid, domainname)
 
-	class Meta:
-		udm_module = 'shares/share'
+        # fallback
+        return "%s.%s" % (school.get_dc_name_fallback(), domainname)
+
+    class Meta:
+        udm_module = "shares/share"
 
 
 class WorkGroupShare(RoleSupportMixin, Share):
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	default_roles = [role_workgroup_share]
-	_school_in_name_prefix = True
+    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
+    default_roles = [role_workgroup_share]
+    _school_in_name_prefix = True
 
-	'''
-	This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
-	If at some point a lookup is implemented that uses the role attribute which is reliable this code can be removed.
-	Bug #48428
-	'''
-	@classmethod
-	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
-		shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
-		filtered_shares = []
-		search_base = cls.get_search_base(school)
-		for share in shares:
-			groups = UDM(lo).version(1).get('groups/group').search(filter_format('name=%s', [share.name]), base=search_base.groups)
-			if any((search_base.isWorkgroup(g.dn) for g in groups)):
-				filtered_shares.append(share)
-		return filtered_shares
+    """
+    This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
+    If at some point a lookup is implemented that uses the role attribute which is reliable this code can be removed.
+    Bug #48428
+    """
+
+    @classmethod
+    def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+        shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
+        filtered_shares = []
+        search_base = cls.get_search_base(school)
+        for share in shares:
+            groups = (
+                UDM(lo)
+                .version(1)
+                .get("groups/group")
+                .search(filter_format("name=%s", [share.name]), base=search_base.groups)
+            )
+            if any((search_base.isWorkgroup(g.dn) for g in groups)):
+                filtered_shares.append(share)
+        return filtered_shares
 
 
 class ClassShare(RoleSupportMixin, Share):
-	ucsschool_roles = Roles(_('Roles'), aka=['Roles'])
-	default_roles = [role_school_class_share]
-	_school_in_name_prefix = True
+    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
+    default_roles = [role_school_class_share]
+    _school_in_name_prefix = True
 
-	@classmethod
-	def get_container(cls, school):
-		return cls.get_search_base(school).classShares
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).classShares
 
-	def get_share_path(self):
-		if ucr.is_true('ucsschool/import/roleshare', True):
-			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
-		else:
-			return '/home/groups/klassen/%s' % self.name
+    def get_share_path(self):
+        if ucr.is_true("ucsschool/import/roleshare", True):
+            return "/home/%s/groups/klassen/%s" % (self.school_group.school, self.name)
+        else:
+            return "/home/groups/klassen/%s" % self.name

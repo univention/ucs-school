@@ -4,27 +4,27 @@
 ## tags: [ucsschool]
 ## exposure: safe
 
-import univention.testing.utils as utils
-import univention.config_registry
 import sys
+
+import univention.config_registry
+import univention.testing.utils as utils
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()
 
 role_packages = {
-	'dc_master': 'ucs-school-master',
-	'dc_slave_edu': 'ucs-school-slave',
-	'dc_slave': 'ucs-school-central-slave',
-	'dc_backup': 'ucs-school-backup',
+    "dc_master": "ucs-school-master",
+    "dc_slave_edu": "ucs-school-slave",
+    "dc_slave": "ucs-school-central-slave",
+    "dc_backup": "ucs-school-backup",
 }
 
 # get my role and check role package
 lo = utils.get_ldap_connection()
-role = lo.get(ucr['ldap/hostdn']).get('ucsschoolRole')[0]
-role = role.split(':', 1)[0]
+role = lo.get(ucr["ldap/hostdn"]).get("ucsschoolRole")[0]
+role = role.split(":", 1)[0]
 package = role_packages[role]
 if not utils.package_installed(package):
-	utils.fail('{} is not installed for role {}!'.format(package, role))
+    utils.fail("{} is not installed for role {}!".format(package, role))
 
 sys.exit(0)
-

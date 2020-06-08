@@ -32,50 +32,46 @@
 # <http://www.gnu.org/licenses/>.
 
 import csv
+
 import StringIO
 from ldap.dn import explode_dn
 
-from univention.lib.i18n import Translation
-from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
-from univention.management.console.modules.decorators import sanitize
-
+from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models.user import User
+from univention.lib.i18n import Translation
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 
-_ = Translation('ucs-school-umc-lists').translate
+_ = Translation("ucs-school-umc-lists").translate
 
 
 class Instance(SchoolBaseModule):
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        group=DNSanitizer(required=True, minimum=1),
+        separator=StringSanitizer(required=True),
+    )
+    @LDAP_Connection()
+    def csv_list(self, request, ldap_user_read=None, ldap_position=None):
+        school = request.options["school"]
+        group = request.options["group"]
+        separator = request.options["separator"]
+        csvfile = StringIO.StringIO()
+        fieldnames = [_("Firstname"), _("Lastname"), _("Class"), _("Username")]
+        writer = csv.writer(csvfile, delimiter=str(separator))
+        writer.writerow(fieldnames)
+        for student in self.students(ldap_user_read, school, group):
+            class_display_name = student.school_classes[school][0].split("-", 1)[1]
+            writer.writerow(
+                [student.firstname, student.lastname, class_display_name, student.name,]
+            )
+        csvfile.seek(0)
+        filename = explode_dn(group)[0].split("=")[1] + ".csv"
+        result = {"filename": filename, "csv": csvfile.read()}
+        csvfile.close()
+        self.finished(request.id, result)
 
-	@sanitize(
-		school=SchoolSanitizer(required=True),
-		group=DNSanitizer(required=True, minimum=1),
-		separator=StringSanitizer(required=True),
-	)
-	@LDAP_Connection()
-	def csv_list(self, request, ldap_user_read=None, ldap_position=None):
-		school = request.options['school']
-		group = request.options['group']
-		separator = request.options['separator']
-		csvfile = StringIO.StringIO()
-		fieldnames = [_('Firstname'), _('Lastname'), _('Class'), _('Username')]
-		writer = csv.writer(csvfile, delimiter=str(separator))
-		writer.writerow(fieldnames)
-		for student in self.students(ldap_user_read, school, group):
-			class_display_name = student.school_classes[school][0].split('-', 1)[1]
-			writer.writerow([
-				student.firstname,
-				student.lastname,
-				class_display_name,
-				student.name,
-			])
-		csvfile.seek(0)
-		filename = explode_dn(group)[0].split('=')[1] + '.csv'
-		result = {'filename': filename, 'csv': csvfile.read()}
-		csvfile.close()
-		self.finished(request.id, result)
-
-	def students(self, lo, school, group):
-		for user in self._users(lo, school, group=group, user_type='student'):
-			yield User.from_udm_obj(user, school, lo)
+    def students(self, lo, school, group):
+        for user in self._users(lo, school, group=group, user_type="student"):
+            yield User.from_udm_obj(user, school, lo)

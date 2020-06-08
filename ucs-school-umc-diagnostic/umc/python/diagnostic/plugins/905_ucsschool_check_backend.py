@@ -36,36 +36,40 @@
 
 from __future__ import absolute_import
 
-from univention.management.console.config import ucr
-from univention.management.console.modules.diagnostic import Problem
-from univention.lib.i18n import Translation
-
 import subprocess
 
-_ = Translation('ucs-school-umc-diagnostic').translate
-title = _('UCS@school Check if Samba4 is installed')
-description = '\n'.join([
-	_('UCS@school: Test that checks if the host role is a master, slave or backup DC, samba4 is installed.'),
-])
+from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.modules.diagnostic import Problem
+
+_ = Translation("ucs-school-umc-diagnostic").translate
+title = _("UCS@school Check if Samba4 is installed")
+description = "\n".join(
+    [
+        _(
+            "UCS@school: Test that checks if the host role is a master, slave or backup DC, samba4 is installed."
+        ),
+    ]
+)
 
 
-SERVER_ROLES = ['domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave']
+SERVER_ROLES = ["domaincontroller_master", "domaincontroller_backup", "domaincontroller_slave"]
 
 
 def run(_umc_instance):
-	if ucr.get('server/role') not in SERVER_ROLES:
-		return
-	cmd = ['/usr/bin/dpkg-query', '-W', '-f', '${Status},${Version}', 'samba']
-	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-	stdout, stderr = p.communicate()
-	installed, version = stdout.split(',')
-	is_installed = 'ok installed' in installed
-	is_correct_version = ':4.' in version
-	if ucr.get('dns/backend') != 'samba4' or not is_installed:
-		raise Problem('Samba4 is not installed correctly on this server.')
-	elif not is_correct_version:
-		raise Problem('Samba is installed but outdated.')
+    if ucr.get("server/role") not in SERVER_ROLES:
+        return
+    cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    installed, version = stdout.split(",")
+    is_installed = "ok installed" in installed
+    is_correct_version = ":4." in version
+    if ucr.get("dns/backend") != "samba4" or not is_installed:
+        raise Problem("Samba4 is not installed correctly on this server.")
+    elif not is_correct_version:
+        raise Problem("Samba is installed but outdated.")
 
 
-if __name__ == '__main__':
-	run(None)
+if __name__ == "__main__":
+    run(None)

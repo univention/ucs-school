@@ -10,5 +10,5 @@
 
 import univention.testing.ucsschool.importou as eio
 
-if __name__ == '__main__':
-	eio.import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False)
+if __name__ == "__main__":
+    eio.import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False)

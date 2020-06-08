@@ -7,19 +7,20 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
-import re
 import os
-import time
+import re
 import subprocess
+import time
 from multiprocessing import Pool
+
 import ldif
 
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 try:
-	from typing import Dict, List, Optional, Set
+    from typing import Dict, List, Optional, Set
 except ImportError:
-	pass
+    pass
 
 # OUTPUT of "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"
 # ==> PLEASE NOTE THAT BINARY VALUES (LIKE "KRB5KEY") MAY CONTAIN LINEBREAKS THAT MAKE PARSING HARDER!
@@ -90,131 +91,152 @@ except ImportError:
 
 
 def normalize_permission(perms):
-	level_to_priv = {
-		'none': '0',
-		'disclose': 'd',
-		'auth': 'xd',
-		'compare': 'cxd',
-		'search': 'scxd',
-		'read': 'rscxd',
-		'write': 'wrscxd',
-		'add': 'arscxd',
-		'delete': 'zrscxd',
-		'manage': 'mwrscxd',
-	}
-	if not perms.startswith('='):
-		perms = '=%s' % level_to_priv[perms.split('(', 1)[0]]
-	return perms
+    level_to_priv = {
+        "none": "0",
+        "disclose": "d",
+        "auth": "xd",
+        "compare": "cxd",
+        "search": "scxd",
+        "read": "rscxd",
+        "write": "wrscxd",
+        "add": "arscxd",
+        "delete": "zrscxd",
+        "manage": "mwrscxd",
+    }
+    if not perms.startswith("="):
+        perms = "=%s" % level_to_priv[perms.split("(", 1)[0]]
+    return perms
 
 
 def run_one_test(args):
-	result_dir, thread_id, binddn, dn_list = args
-	try:
-		output = open(os.path.join(result_dir, 'dn%02d.ldif' % (thread_id,)), 'wb')
-		time_start = time.time()
-		writer = ldif.LDIFWriter(output)
+    result_dir, thread_id, binddn, dn_list = args
+    try:
+        output = open(os.path.join(result_dir, "dn%02d.ldif" % (thread_id,)), "wb")
+        time_start = time.time()
+        writer = ldif.LDIFWriter(output)
 
-		len_dn_list = len(dn_list)
-		for j, dn in enumerate(dn_list):
-			if j % 50 == 0:
-				logger.debug('Process %02d (pid %d): %05d/%05d', thread_id, os.getpid(), j, len_dn_list)
-				for handler in logger.handlers:
-					handler.flush()
-			entry = {}  # type: Dict[str, Set[str]]
-			cmd = ['slapacl', '-d0', '-D', binddn, '-b', dn]
-			process = subprocess.Popen(cmd, stderr=subprocess.PIPE)
-			_, stderr = process.communicate()
-			for line in re.findall('^(?:[a-zA-Z0-9]+=.*?: .*?=[a-z0]+[)]?|entry: .*?|children: .*?)$', stderr, re.DOTALL | re.MULTILINE):
-				attr, value = line.rsplit(': ', 1)
-				attr = attr.split('=', 1)[0]
-				if attr not in ('authcDN',):  # ignore some attributes
-					entry.setdefault(attr, set()).add(normalize_permission(value.strip()))
-			writer.unparse(dn, entry)
-		msg = '*** Runtime for parse_acls(Process %02d - pid %d): %fs' % (thread_id, os.getpid(), time.time() - time_start,)
-	except Exception:
-		logger.exception('TRACEBACK IN PROCESS %d (%s):', thread_id, binddn)
-		raise
-	return msg
+        len_dn_list = len(dn_list)
+        for j, dn in enumerate(dn_list):
+            if j % 50 == 0:
+                logger.debug("Process %02d (pid %d): %05d/%05d", thread_id, os.getpid(), j, len_dn_list)
+                for handler in logger.handlers:
+                    handler.flush()
+            entry = {}  # type: Dict[str, Set[str]]
+            cmd = ["slapacl", "-d0", "-D", binddn, "-b", dn]
+            process = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+            _, stderr = process.communicate()
+            for line in re.findall(
+                "^(?:[a-zA-Z0-9]+=.*?: .*?=[a-z0]+[)]?|entry: .*?|children: .*?)$",
+                stderr,
+                re.DOTALL | re.MULTILINE,
+            ):
+                attr, value = line.rsplit(": ", 1)
+                attr = attr.split("=", 1)[0]
+                if attr not in ("authcDN",):  # ignore some attributes
+                    entry.setdefault(attr, set()).add(normalize_permission(value.strip()))
+            writer.unparse(dn, entry)
+        msg = "*** Runtime for parse_acls(Process %02d - pid %d): %fs" % (
+            thread_id,
+            os.getpid(),
+            time.time() - time_start,
+        )
+    except Exception:
+        logger.exception("TRACEBACK IN PROCESS %d (%s):", thread_id, binddn)
+        raise
+    return msg
 
 
 class LDAPDiffCheck(AutoMultiSchoolEnv):
-	def __init__(self):  # type: () -> None
-		super(LDAPDiffCheck, self).__init__()
-		self.dn_list = None  # type: Optional[List[str]]
+    def __init__(self):  # type: () -> None
+        super(LDAPDiffCheck, self).__init__()
+        self.dn_list = None  # type: Optional[List[str]]
 
-	def collect_dns(self, valid_ou_names=None):
-		valid_ous = valid_ou_names or [',ou=%s' % (x,) for x in [self.schoolA.name, self.schoolB.name, self.schoolC.name, 'Domain Controllers']]
-		self.dn_list = [dn for dn in self.lo.searchDn() if (
-			(not dn.startswith('ou=') and (',ou=' not in dn)) or    # accept all NON-OU objects
-			(any([x in dn for x in valid_ous])))]                   # and all objects of "valid" OUs to get comparable results
+    def collect_dns(self, valid_ou_names=None):
+        valid_ous = valid_ou_names or [
+            ",ou=%s" % (x,)
+            for x in [self.schoolA.name, self.schoolB.name, self.schoolC.name, "Domain Controllers"]
+        ]
+        self.dn_list = [
+            dn
+            for dn in self.lo.searchDn()
+            if (
+                (not dn.startswith("ou=") and (",ou=" not in dn))
+                or (any([x in dn for x in valid_ous]))  # accept all NON-OU objects
+            )
+        ]  # and all objects of "valid" OUs to get comparable results
 
-	def run_all_tests(self, result_dir):
-		os.makedirs(result_dir)
+    def run_all_tests(self, result_dir):
+        os.makedirs(result_dir)
 
-		pool = Pool()  # uses NUMBER_OF_CPUS worker processes by default
+        pool = Pool()  # uses NUMBER_OF_CPUS worker processes by default
 
-		work_items = [(result_dir, i, binddn, self.dn_list) for i, binddn in enumerate([
-			'cn=admin,%(ldap/base)s' % self.ucr,
-			self.generic.master.dn,
-			self.generic.backup.dn,
-			self.generic.slave.dn,
-			self.generic.member.dn,
-			self.generic.winclient.dn,
-			'uid=Administrator,cn=users,%(ldap/base)s' % self.ucr,
-			self.generic.domain_user.dn,
-			self.schoolA.schoolserver.dn,
-			self.schoolB.schoolserver.dn,
-			self.schoolC.schoolserver.dn,
-			self.schoolA.winclient.dn,
-			self.schoolB.winclient.dn,
-			self.schoolC.winclient.dn,
-			self.schoolA.teacher.dn,
-			self.schoolB.teacher.dn,
-			self.schoolC.teacher.dn,
-			self.schoolA.student.dn,
-			self.schoolB.student.dn,
-			self.schoolC.student.dn,
-			self.schoolA.teacher_staff.dn,
-			self.schoolB.teacher_staff.dn,
-			self.schoolC.teacher_staff.dn,
-			self.schoolA.staff.dn,
-			self.schoolB.staff.dn,
-			self.schoolC.staff.dn,
-			self.schoolA.admin1.dn,
-			self.schoolB.admin1.dn,
-			self.schoolC.admin1.dn,
-		])]
-		for result_dir, i, binddn, _ in work_items:
-			with open(os.path.join(result_dir, 'dn.txt'), 'a+') as fd:
-				fd.write('%02d ==> %s\n' % (i, binddn))
+        work_items = [
+            (result_dir, i, binddn, self.dn_list)
+            for i, binddn in enumerate(
+                [
+                    "cn=admin,%(ldap/base)s" % self.ucr,
+                    self.generic.master.dn,
+                    self.generic.backup.dn,
+                    self.generic.slave.dn,
+                    self.generic.member.dn,
+                    self.generic.winclient.dn,
+                    "uid=Administrator,cn=users,%(ldap/base)s" % self.ucr,
+                    self.generic.domain_user.dn,
+                    self.schoolA.schoolserver.dn,
+                    self.schoolB.schoolserver.dn,
+                    self.schoolC.schoolserver.dn,
+                    self.schoolA.winclient.dn,
+                    self.schoolB.winclient.dn,
+                    self.schoolC.winclient.dn,
+                    self.schoolA.teacher.dn,
+                    self.schoolB.teacher.dn,
+                    self.schoolC.teacher.dn,
+                    self.schoolA.student.dn,
+                    self.schoolB.student.dn,
+                    self.schoolC.student.dn,
+                    self.schoolA.teacher_staff.dn,
+                    self.schoolB.teacher_staff.dn,
+                    self.schoolC.teacher_staff.dn,
+                    self.schoolA.staff.dn,
+                    self.schoolB.staff.dn,
+                    self.schoolC.staff.dn,
+                    self.schoolA.admin1.dn,
+                    self.schoolB.admin1.dn,
+                    self.schoolC.admin1.dn,
+                ]
+            )
+        ]
+        for result_dir, i, binddn, _ in work_items:
+            with open(os.path.join(result_dir, "dn.txt"), "a+") as fd:
+                fd.write("%02d ==> %s\n" % (i, binddn))
 
-		results = pool.imap_unordered(run_one_test, work_items)
-		logger.info('DONE')
-		logger.info(repr(results))
-		for result in results:
-			logger.info(result)
+        results = pool.imap_unordered(run_one_test, work_items)
+        logger.info("DONE")
+        logger.info(repr(results))
+        for result in results:
+            logger.info(result)
 
 
 def main():
-	with LDAPDiffCheck() as test_suite:
-		test_suite.collect_dns()
+    with LDAPDiffCheck() as test_suite:
+        test_suite.collect_dns()
 
-		testdir = '/var/log/univention/78_ldap_acls_dump.{}'.format(int(time.time()))
-		test_suite.create_multi_env_global_objects()
-		test_suite.create_multi_env_school_objects()
-		test_suite.run_all_tests(testdir)
+        testdir = "/var/log/univention/78_ldap_acls_dump.{}".format(int(time.time()))
+        test_suite.create_multi_env_global_objects()
+        test_suite.create_multi_env_school_objects()
+        test_suite.run_all_tests(testdir)
 
-		logger.info('Use following command for diff:')
-		logger.info('./78_ldap_acls_dump.diff')
+        logger.info("Use following command for diff:")
+        logger.info("./78_ldap_acls_dump.diff")
 
-		# for debugging purposes
-		if os.path.exists('/tmp/78_ldap_acls_dump.debug'):
-			fn = '/tmp/78_ldap_acls_dump.continue'
-			logger.info('=== DEBUGGING MODE ===')
-			logger.info('Waiting for cleanup until %r exists...', fn)
-			while not os.path.exists(fn):
-				time.sleep(1)
+        # for debugging purposes
+        if os.path.exists("/tmp/78_ldap_acls_dump.debug"):
+            fn = "/tmp/78_ldap_acls_dump.continue"
+            logger.info("=== DEBUGGING MODE ===")
+            logger.info("Waiting for cleanup until %r exists...", fn)
+            while not os.path.exists(fn):
+                time.sleep(1)
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()
