@@ -21,27 +21,50 @@ charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ß
 
 
 def main():
-	with univention.testing.udm.UCSTestUDM() as udm:
-		print '*** Stopping existing UDM CLI server'
-		udm.stop_cli_server()
+    with univention.testing.udm.UCSTestUDM() as udm:
+        print "*** Stopping existing UDM CLI server"
+        udm.stop_cli_server()
 
-		print '*** Creating OU and set random display name without UCS@school option'
-		ou_name = uts.random_name()
-		ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
-		dn = udm.create_object('container/ou', position=ucr.get('ldap/base'), name=ou_name, displayName=ou_displayName)
-		utils.verify_ldap_object(dn, expected_attr={'ou': [ou_name], 'displayName': [ou_displayName]}, strict=True, should_exist=True)
+        print "*** Creating OU and set random display name without UCS@school option"
+        ou_name = uts.random_name()
+        ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
+        dn = udm.create_object(
+            "container/ou", position=ucr.get("ldap/base"), name=ou_name, displayName=ou_displayName
+        )
+        utils.verify_ldap_object(
+            dn,
+            expected_attr={"ou": [ou_name], "displayName": [ou_displayName]},
+            strict=True,
+            should_exist=True,
+        )
 
-		print '*** Creating OU and set random display name with UCS@school option'
-		ou_name = uts.random_name()
-		ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
-		dn = udm.create_object('container/ou', position=ucr.get('ldap/base'), name=ou_name, displayName=ou_displayName, options=['UCSschool-School-OU'])
-		utils.verify_ldap_object(dn, expected_attr={'ou': [ou_name], 'displayName': [ou_displayName]}, strict=True, should_exist=True)
+        print "*** Creating OU and set random display name with UCS@school option"
+        ou_name = uts.random_name()
+        ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
+        dn = udm.create_object(
+            "container/ou",
+            position=ucr.get("ldap/base"),
+            name=ou_name,
+            displayName=ou_displayName,
+            options=["UCSschool-School-OU"],
+        )
+        utils.verify_ldap_object(
+            dn,
+            expected_attr={"ou": [ou_name], "displayName": [ou_displayName]},
+            strict=True,
+            should_exist=True,
+        )
 
-		print '*** Change displayName to new random value'
-		ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
-		dn = udm.modify_object('container/ou', dn=dn, displayName=ou_displayName)
-		utils.verify_ldap_object(dn, expected_attr={'ou': [ou_name], 'displayName': [ou_displayName]}, strict=True, should_exist=True)
+        print "*** Change displayName to new random value"
+        ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
+        dn = udm.modify_object("container/ou", dn=dn, displayName=ou_displayName)
+        utils.verify_ldap_object(
+            dn,
+            expected_attr={"ou": [ou_name], "displayName": [ou_displayName]},
+            strict=True,
+            should_exist=True,
+        )
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

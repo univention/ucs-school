@@ -10,8 +10,8 @@
 from univention.testing.ucsschool.importnetworks import import_networks_basics
 import sys
 
-if __name__ == '__main__':
-	# Not yet implemented
-	sys.exit(137)
+if __name__ == "__main__":
+    # Not yet implemented
+    sys.exit(137)
 
-	import_networks_basics(use_cli_api=False, use_python_api=True)
+    import_networks_basics(use_cli_api=False, use_python_api=True)

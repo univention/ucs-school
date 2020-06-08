@@ -10,5 +10,5 @@
 
 from univention.testing.ucsschool.importusers import import_users_basics
 
-if __name__ == '__main__':
-	import_users_basics(use_cli_api=False, use_python_api=True)
+if __name__ == "__main__":
+    import_users_basics(use_cli_api=False, use_python_api=True)

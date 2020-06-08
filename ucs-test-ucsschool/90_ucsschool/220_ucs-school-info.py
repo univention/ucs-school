@@ -14,18 +14,19 @@ import univention.testing.utils as utils
 
 
 def main():
-	with ucr_test.UCSTestConfigRegistry() as ucr:
-		lo = getMachineConnection()
-		for dn, ou_attrs in lo.search(
-			base=ucr['ldap/base'],
-			filter='(objectClass=ucsschoolOrganizationalUnit)',
-			scope='one',
-			attr=['ou']
-		):
-			cmd = ['ucs-school-info', '-a', ou_attrs['ou'][0]]
-			exitcode = subprocess.call(cmd)
-			if exitcode:
-				utils.fail('"%s" returned with non-zero exitcode! (%s)' % (' '.join(cmd)), dn)
+    with ucr_test.UCSTestConfigRegistry() as ucr:
+        lo = getMachineConnection()
+        for dn, ou_attrs in lo.search(
+            base=ucr["ldap/base"],
+            filter="(objectClass=ucsschoolOrganizationalUnit)",
+            scope="one",
+            attr=["ou"],
+        ):
+            cmd = ["ucs-school-info", "-a", ou_attrs["ou"][0]]
+            exitcode = subprocess.call(cmd)
+            if exitcode:
+                utils.fail('"%s" returned with non-zero exitcode! (%s)' % (" ".join(cmd)), dn)
 
-if __name__ == '__main__':
-	main()
+
+if __name__ == "__main__":
+    main()

@@ -13,29 +13,38 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 
-from ucsschool.importer.utils.shell import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, logger, config
+from ucsschool.importer.utils.shell import (
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    logger,
+    config,
+)
 
 
 def main():
-	if not isinstance(config, dict) or not isinstance(config["verbose"], bool):
-		utils.fail("Import configuration has not been not setup.")
-	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-		with utu.UCSTestSchool() as schoolenv:
-			ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			lo = schoolenv.open_ldap_connection(admin=True)
-			for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
-				user = kls(
-					name=uts.random_username(),
-					school=ou_name,
-					firstname=uts.random_name(),
-					lastname=uts.random_name(),
-					record_uid = uts.random_name(),
-				)
-				user.prepare_all(True)
-				user.create(lo)
-				utils.verify_ldap_object(user.dn, expected_attr={"uid": [user.name]}, strict=False, should_exist=True)
-			logger.info("Test was successful.\n\n\n")
+    if not isinstance(config, dict) or not isinstance(config["verbose"], bool):
+        utils.fail("Import configuration has not been not setup.")
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+        with utu.UCSTestSchool() as schoolenv:
+            ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+            lo = schoolenv.open_ldap_connection(admin=True)
+            for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+                user = kls(
+                    name=uts.random_username(),
+                    school=ou_name,
+                    firstname=uts.random_name(),
+                    lastname=uts.random_name(),
+                    record_uid=uts.random_name(),
+                )
+                user.prepare_all(True)
+                user.create(lo)
+                utils.verify_ldap_object(
+                    user.dn, expected_attr={"uid": [user.name]}, strict=False, should_exist=True
+                )
+            logger.info("Test was successful.\n\n\n")
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

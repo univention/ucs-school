@@ -13,14 +13,14 @@ import univention.testing.utils as utils
 
 
 def main():
-	with UCSTestConfigRegistry() as ucr:
-		lo = utils.get_ldap_connection()
-		zone_name = '%s.%s.' % (ucr.get('hostname'), ucr.get('domainname'))
-		print 'Searching for DNS zones with nsRecord=%r' % (zone_name,)
-		zones = lo.search(filter_format('nSRecord=%s', (zone_name,)))
+    with UCSTestConfigRegistry() as ucr:
+        lo = utils.get_ldap_connection()
+        zone_name = "%s.%s." % (ucr.get("hostname"), ucr.get("domainname"))
+        print "Searching for DNS zones with nsRecord=%r" % (zone_name,)
+        zones = lo.search(filter_format("nSRecord=%s", (zone_name,)))
 
-		assert not zones, "A school server is listed as DNS server, which it must not be: %r" % (zones,)
+        assert not zones, "A school server is listed as DNS server, which it must not be: %r" % (zones,)
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

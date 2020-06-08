@@ -12,22 +12,30 @@ from ucsschool.lib.models import School, Share
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		nfs_shares = list()
-		for school in School.get_all(schoolenv.lo):
-			for share in Share.get_all(schoolenv.lo, school.name):
-				share_udm = share.get_udm_object(schoolenv.lo)
-				if "nfs" in share_udm.options:
-					if share.name in ["Marktplatz", "iTALC-Installation"]:
-						print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))
-					else:
-						nfs_shares.append((school.name, share.name))
+    with utu.UCSTestSchool() as schoolenv:
+        nfs_shares = list()
+        for school in School.get_all(schoolenv.lo):
+            for share in Share.get_all(schoolenv.lo, school.name):
+                share_udm = share.get_udm_object(schoolenv.lo)
+                if "nfs" in share_udm.options:
+                    if share.name in ["Marktplatz", "iTALC-Installation"]:
+                        print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))
+                    else:
+                        nfs_shares.append((school.name, share.name))
 
-		if nfs_shares:
-			utils.fail("Found NFS shares:\n* {}".format("\n* ".join(["school: %r share: %r" % nfs_share for nfs_share in nfs_shares])))
-		else:
-			print("*** No shares found in schools {}.".format(", ".join(s.name for s in School.get_all(schoolenv.lo))))
+        if nfs_shares:
+            utils.fail(
+                "Found NFS shares:\n* {}".format(
+                    "\n* ".join(["school: %r share: %r" % nfs_share for nfs_share in nfs_shares])
+                )
+            )
+        else:
+            print(
+                "*** No shares found in schools {}.".format(
+                    ", ".join(s.name for s in School.get_all(schoolenv.lo))
+                )
+            )
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()
