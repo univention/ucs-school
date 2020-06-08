@@ -9,5 +9,5 @@
 
 from univention.testing.ucsschool.importgroups import import_groups_basics
 
-if __name__ == '__main__':
-	import_groups_basics(use_cli_api=False, use_python_api=True)
+if __name__ == "__main__":
+    import_groups_basics(use_cli_api=False, use_python_api=True)

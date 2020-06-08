@@ -5,101 +5,102 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
-from univention.testing.ucsschool.workgroup import Workgroup
-from univention.testing.umc import Client
 import time
+
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool.workgroup import Workgroup
+from univention.testing.umc import Client
 
 
 def main():
-	ucr = ucr_test.UCSTestConfigRegistry()
-	ucr.load()
-	host = ucr.get('hostname')
-	with utu.UCSTestSchool() as schoolenv:
-		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
-		tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
-		stu, studn = schoolenv.create_user(schoolName)
-		memberListdn = [teadn, studn]
+    ucr = ucr_test.UCSTestConfigRegistry()
+    ucr.load()
+    host = ucr.get("hostname")
+    with utu.UCSTestSchool() as schoolenv:
+        schoolName, oudn = schoolenv.create_ou(name_edudc=host)
+        tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
+        stu, studn = schoolenv.create_user(schoolName)
+        memberListdn = [teadn, studn]
 
-		account = utils.UCSTestDomainAdminCredentials()
-		admin = account.username
-		passwd = account.bindpw
+        account = utils.UCSTestDomainAdminCredentials()
+        admin = account.username
+        passwd = account.bindpw
 
-		utils.wait_for_replication_and_postrun()
+        utils.wait_for_replication_and_postrun()
 
-		for user in [tea]:
-			connection = Client(host)
-			connection.authenticate(user, passwd)
-			# 1 creating empty workgroup
-			emptyGroup = Workgroup(schoolName, connection=connection)
-			emptyGroup.create()
-			# 2 checking the created workgroup and its file share object in ldap
-			# import pdb; pdb.set_trace()
-			utils.wait_for_replication()
-			emptyGroup.verify_exists(group_should_exist=True, share_should_exist=True)
+        for user in [tea]:
+            connection = Client(host)
+            connection.authenticate(user, passwd)
+            # 1 creating empty workgroup
+            emptyGroup = Workgroup(schoolName, connection=connection)
+            emptyGroup.create()
+            # 2 checking the created workgroup and its file share object in ldap
+            # import pdb; pdb.set_trace()
+            utils.wait_for_replication()
+            emptyGroup.verify_exists(group_should_exist=True, share_should_exist=True)
 
-			# 3 creating unempty workgroup
-			group = Workgroup(schoolName, connection=connection, members=memberListdn)
-			group.create()
+            # 3 creating unempty workgroup
+            group = Workgroup(schoolName, connection=connection, members=memberListdn)
+            group.create()
 
-			# 4 checking the created workgroup and its file share object in ldap
-			group.verify_exists(group_should_exist=True, share_should_exist=True)
+            # 4 checking the created workgroup and its file share object in ldap
+            group.verify_exists(group_should_exist=True, share_should_exist=True)
 
-			# 5 checking if the atrriputes for the group is correct in ldap
-			group.verify_ldap_attributes()
+            # 5 checking if the atrriputes for the group is correct in ldap
+            group.verify_ldap_attributes()
 
-			# 6 should fail: creating a new working group with a duplicate name
-			group2 = Workgroup(schoolName, name=group.name, connection=connection)
-			group2.create(expect_creation_fails_due_to_duplicated_name=True)
+            # 6 should fail: creating a new working group with a duplicate name
+            group2 = Workgroup(schoolName, name=group.name, connection=connection)
+            group2.create(expect_creation_fails_due_to_duplicated_name=True)
 
-			# 7 add members to group
-			emptyGroup.addMembers(memberListdn)
+            # 7 add members to group
+            emptyGroup.addMembers(memberListdn)
 
-			# 8 checking if the atrriputes for the emptygroup is correct in ldap
-			emptyGroup.verify_ldap_attributes()
+            # 8 checking if the atrriputes for the emptygroup is correct in ldap
+            emptyGroup.verify_ldap_attributes()
 
-			# 9 remove members from a group
-			group.removeMembers([memberListdn[0]])
+            # 9 remove members from a group
+            group.removeMembers([memberListdn[0]])
 
-			# 10 checking if the atrriputes for the group is correct in ldap
-			for wait in xrange(30):
-				try:
-					group.verify_ldap_attributes()
-				except Exception as e:
-					if group.dn() in str(e):
-						print ':::::::%r::::::' % wait
-						print str(e)
-						time.sleep(1)
-					else:
-						raise
-				else:
-					break
+            # 10 checking if the atrriputes for the group is correct in ldap
+            for wait in xrange(30):
+                try:
+                    group.verify_ldap_attributes()
+                except Exception as e:
+                    if group.dn() in str(e):
+                        print ":::::::%r::::::" % wait
+                        print str(e)
+                        time.sleep(1)
+                    else:
+                        raise
+                else:
+                    break
 
-			# 11 Change the members of a group
-			group.set_members([memberListdn[0]])
+            # 11 Change the members of a group
+            group.set_members([memberListdn[0]])
 
-			# 11 checking if the atrriputes for the group is correct in ldap
-			for wait in xrange(30):
-				try:
-					group.verify_ldap_attributes()
-				except Exception as e:
-					if group.dn() in str(e):
-						print ':::::::%r::::::' % wait
-						print str(e)
-						time.sleep(1)
-					else:
-						raise
-				else:
-					break
+            # 11 checking if the atrriputes for the group is correct in ldap
+            for wait in xrange(30):
+                try:
+                    group.verify_ldap_attributes()
+                except Exception as e:
+                    if group.dn() in str(e):
+                        print ":::::::%r::::::" % wait
+                        print str(e)
+                        time.sleep(1)
+                    else:
+                        raise
+                else:
+                    break
 
-			# 12 remove the group
-			group.remove()
+            # 12 remove the group
+            group.remove()
 
-			# 13 check if the object is removed from ldap
-			group.verify_exists(group_should_exist=False, share_should_exist=False)
+            # 13 check if the object is removed from ldap
+            group.verify_exists(group_should_exist=False, share_should_exist=False)
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

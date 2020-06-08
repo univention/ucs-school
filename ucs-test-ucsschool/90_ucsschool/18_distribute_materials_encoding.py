@@ -8,57 +8,69 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
-from univention.testing.ucsschool.distribution import Distribution
-from univention.testing.ucsschool.workgroup import Workgroup
-from univention.testing.umc import Client
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool.distribution import Distribution
+from univention.testing.ucsschool.workgroup import Workgroup
+from univention.testing.umc import Client
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			host = ucr.get('hostname')
-			connection = Client(host)
+    with utu.UCSTestSchool() as schoolenv:
+        with ucr_test.UCSTestConfigRegistry() as ucr:
+            host = ucr.get("hostname")
+            connection = Client(host)
 
-			# Create ou, teacher, student, group
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			tea, teadn = schoolenv.create_user(school, is_teacher=True)
-			stu, studn = schoolenv.create_user(school)
-			group = Workgroup(school, members=[studn])
-			group.create()
-			utils.wait_for_replication_and_postrun()
+            # Create ou, teacher, student, group
+            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+            tea, teadn = schoolenv.create_user(school, is_teacher=True)
+            stu, studn = schoolenv.create_user(school)
+            group = Workgroup(school, members=[studn])
+            group.create()
+            utils.wait_for_replication_and_postrun()
 
-			filename1 = "%s%s%s%s" % (
-				u'\xc4'.encode('UTF-8'),  # Ä
-				uts.random_name_special_characters(3),
-				u'\u2192'.encode('UTF-8'),  # →
-				uts.random_name_special_characters(3),
-			)
-			filename2 = "%s%s" % (u'\xc4'.encode('UTF-8'), uts.random_name_special_characters(6), )
-			filename3 = "%s%s%s" % (uts.random_name_special_characters(3), u'\xc4'.encode('ISO8859-1'), uts.random_name_special_characters(3), )
-			filename4 = uts.random_name()
+            filename1 = "%s%s%s%s" % (
+                u"\xc4".encode("UTF-8"),  # Ä
+                uts.random_name_special_characters(3),
+                u"\u2192".encode("UTF-8"),  # →
+                uts.random_name_special_characters(3),
+            )
+            filename2 = "%s%s" % (u"\xc4".encode("UTF-8"), uts.random_name_special_characters(6),)
+            filename3 = "%s%s%s" % (
+                uts.random_name_special_characters(3),
+                u"\xc4".encode("ISO8859-1"),
+                uts.random_name_special_characters(3),
+            )
+            filename4 = uts.random_name()
 
-			files = [(filename1, 'utf-8')]
-			files.append((filename2, 'utf-8'))
-			files.append((filename3, 'iso8859-1'))
-			files.append((filename4, 'utf-8'))
+            files = [(filename1, "utf-8")]
+            files.append((filename2, "utf-8"))
+            files.append((filename3, "iso8859-1"))
+            files.append((filename4, "utf-8"))
 
-			connection.authenticate(tea, 'univention')
-			# Create new project
-			project = Distribution(school, sender=tea, connection=connection, files=files, ucr=ucr, recipients=[group], flavor='teacher')
-			project.add()
-			project.check_add()
-			project.distribute()
-			project.check_distribute([stu])
-			project.collect()
-			project.check_collect([stu])
+            connection.authenticate(tea, "univention")
+            # Create new project
+            project = Distribution(
+                school,
+                sender=tea,
+                connection=connection,
+                files=files,
+                ucr=ucr,
+                recipients=[group],
+                flavor="teacher",
+            )
+            project.add()
+            project.check_add()
+            project.distribute()
+            project.check_distribute([stu])
+            project.collect()
+            project.check_collect([stu])
 
-			project.remove()
-			project.check_remove()
+            project.remove()
+            project.check_remove()
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

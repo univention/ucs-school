@@ -36,6 +36,6 @@ Django settings file that gets its content from
 
 import imp
 
-info = imp.find_module('settings', ['/etc/ucsschool-import'])
-res = imp.load_module('settings', *info)
+info = imp.find_module("settings", ["/etc/ucsschool-import"])
+res = imp.load_module("settings", *info)
 globals().update(dict((k, v) for k, v in res.__dict__.items() if k == k.upper()))

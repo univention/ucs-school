@@ -40,114 +40,114 @@ from sys import stdout
 from time import strftime
 
 RECV_BUFFER_SIZE = 128
-RELOAD_SOCKET_PATH = '/var/run/univention-reload-service.socket'
+RELOAD_SOCKET_PATH = "/var/run/univention-reload-service.socket"
 
 CLOCK_MONOTONIC = 1  # see <linux/time.h>
 
 
 class timespec(Structure):
-	_fields_ = [
-		('tv_sec', c_long, ),
-		('tv_nsec', c_long, ),
-	]
+    _fields_ = [
+        ("tv_sec", c_long,),
+        ("tv_nsec", c_long,),
+    ]
 
 
-librt = CDLL('librt.so.1', use_errno=True)
+librt = CDLL("librt.so.1", use_errno=True)
 clock_gettime = librt.clock_gettime
 clock_gettime.restype = c_int
 clock_gettime.argtypes = [c_int, POINTER(timespec)]
 
 
 def monotonic_time():
-	t = timespec()
-	if clock_gettime(CLOCK_MONOTONIC, byref(t)):
-		errno_ = get_errno()
-		raise OSError(errno_, strerror(errno_))
-	return t.tv_sec + t.tv_nsec * 1e-9
+    t = timespec()
+    if clock_gettime(CLOCK_MONOTONIC, byref(t)):
+        errno_ = get_errno()
+        raise OSError(errno_, strerror(errno_))
+    return t.tv_sec + t.tv_nsec * 1e-9
 
 
 def timestamp():
-	return strftime('%Y-%m-%d %H:%M:%S%z')
+    return strftime("%Y-%m-%d %H:%M:%S%z")
 
 
 def log(message):
-	stdout.write("%s %s\n" % (timestamp(), message, ))
-	stdout.flush()
+    stdout.write("%s %s\n" % (timestamp(), message,))
+    stdout.flush()
 
 
 def reload_squid():
-	log('Reloading %r now' % (reload_squid.name, ))
-	reload_squid.last = monotonic_time()
-	call(('/etc/init.d/squid', 'reload', ))
+    log("Reloading %r now" % (reload_squid.name,))
+    reload_squid.last = monotonic_time()
+    call(("/etc/init.d/squid", "reload",))
 
 
-reload_squid.name = 'squid'
+reload_squid.name = "squid"
 reload_squid.delay = 15.0
-reload_squid.last = float('-inf')
+reload_squid.last = float("-inf")
 
 QUEUE = {}  # reloader → when-to-reload
 
 
 def queue(reloader):
-	now = monotonic_time()
-	if reloader not in QUEUE:
-		when = max(reloader.last + reloader.delay, now)
-		log('Reloading %r in %f s' % (reloader.name, when - now, ))
-		QUEUE[reloader] = when
+    now = monotonic_time()
+    if reloader not in QUEUE:
+        when = max(reloader.last + reloader.delay, now)
+        log("Reloading %r in %f s" % (reloader.name, when - now,))
+        QUEUE[reloader] = when
 
 
 def process_queue():
-	now = monotonic_time()
-	for reloader, when in QUEUE.items():
-		if when <= now:
-			reloader()
-			del QUEUE[reloader]
+    now = monotonic_time()
+    for reloader, when in QUEUE.items():
+        if when <= now:
+            reloader()
+            del QUEUE[reloader]
 
 
 def handle(message):
-	message = tuple(message.split(' '))
-	if message == ('reload', 'squid', ):
-		queue(reload_squid)
-	else:
-		log("Command not implemented %r!" % (message, ))
+    message = tuple(message.split(" "))
+    if message == ("reload", "squid",):
+        queue(reload_squid)
+    else:
+        log("Command not implemented %r!" % (message,))
 
 
 def time_to_next():
-	if not QUEUE:
-		return None  # no timeout
-	now = monotonic_time()
-	next = min(QUEUE.values())
-	return max(next - now, 0.1)  # minimal delay 100 ms to not busy-wait
+    if not QUEUE:
+        return None  # no timeout
+    now = monotonic_time()
+    next = min(QUEUE.values())
+    return max(next - now, 0.1)  # minimal delay 100 ms to not busy-wait
 
 
 def create_socket(socket_path):
-	try:
-		unlink(socket_path)
-	except OSError as oserror:
-		if oserror.errno != ENOENT:
-			raise
-	sock = socket(AF_UNIX, SOCK_DGRAM)
-	oldmask = umask(0o177)  # create the socket as srw-------, so that only root can access it
-	try:
-		sock.bind(socket_path)
-	finally:
-		umask(oldmask)
-	return sock
+    try:
+        unlink(socket_path)
+    except OSError as oserror:
+        if oserror.errno != ENOENT:
+            raise
+    sock = socket(AF_UNIX, SOCK_DGRAM)
+    oldmask = umask(0o177)  # create the socket as srw-------, so that only root can access it
+    try:
+        sock.bind(socket_path)
+    finally:
+        umask(oldmask)
+    return sock
 
 
 def main():
-	log('Starting')
-	sock = create_socket(RELOAD_SOCKET_PATH)
-	while True:
-		process_queue()
-		sock.settimeout(time_to_next())
-		try:
-			message = sock.recv(RECV_BUFFER_SIZE)
-		except timeout:
-			pass
-		else:
-			handle(message)
+    log("Starting")
+    sock = create_socket(RELOAD_SOCKET_PATH)
+    while True:
+        process_queue()
+        sock.settimeout(time_to_next())
+        try:
+            message = sock.recv(RECV_BUFFER_SIZE)
+        except timeout:
+            pass
+        else:
+            handle(message)
 
 
 if __name__ == "__main__":
-	main()
+    main()

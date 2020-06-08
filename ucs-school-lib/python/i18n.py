@@ -31,24 +31,24 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 
 ucs_school_l10n_languages_de = {
-	role_pupil: 'schueler',
-	role_teacher: 'lehrer',
-	role_staff: 'mitarbeiter',
+    role_pupil: "schueler",
+    role_teacher: "lehrer",
+    role_staff: "mitarbeiter",
 }
 
 ucs_school_l10n_languages = {
-	'de': ucs_school_l10n_languages_de,
+    "de": ucs_school_l10n_languages_de,
 }
 
 
-def ucs_school_name_i18n(name, lang='de'):
-	'''i18n function for localization of UCS@school standard names'''
+def ucs_school_name_i18n(name, lang="de"):
+    """i18n function for localization of UCS@school standard names"""
 
-	# return _(name)		## this would be simple..
-	if lang in ucs_school_l10n_languages:
-		return ucs_school_l10n_languages[lang].get(name, name)
-	else:
-		return name
+    # return _(name)		## this would be simple..
+    if lang in ucs_school_l10n_languages:
+        return ucs_school_l10n_languages[lang].get(name, name)
+    else:
+        return name

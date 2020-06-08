@@ -30,19 +30,21 @@
 # <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
-import listener
+
 import os
 import shutil
 import time
+
+import listener
 from psutil import disk_partitions
+
 import univention.debug
 
-
-name = 'remove-old-homedirs'
-description = 'moves directories of removed users away from home'
-filter = '(objectClass=ucsschoolType)'
+name = "remove-old-homedirs"
+description = "moves directories of removed users away from home"
+filter = "(objectClass=ucsschoolType)"
 attributes = ["posixAccount"]
-modrdn = '1'
+modrdn = "1"
 
 DEFAUL_FS = "ext2/ext3:ext2:ext3:ext4:xfs:btrfs"
 TARGET_BLACKLIST = ["/", "/boot", "/sys", "/proc", "/etc", "/dev"]
@@ -53,118 +55,120 @@ exam_remove = listener.configRegistry.is_true("ucsschool/exam/user/homedir/autor
 
 
 def check_target_dir(dir):
-	"""either returns "" if everything is ok, or returns an error message"""
-	if not dir:
-		return "targetdir is not set"
+    """either returns "" if everything is ok, or returns an error message"""
+    if not dir:
+        return "targetdir is not set"
 
-	# check target blacklist
-	dir = dir.rstrip("/")
-	if not dir or dir in TARGET_BLACKLIST:
-		return "%s as target dir is invalid" % dir
+    # check target blacklist
+    dir = dir.rstrip("/")
+    if not dir or dir in TARGET_BLACKLIST:
+        return "%s as target dir is invalid" % dir
 
-	if os.path.exists(dir) and not os.path.isdir(dir):
-		return "%s is not a directory" % dir
+    if os.path.exists(dir) and not os.path.isdir(dir):
+        return "%s is not a directory" % dir
 
-	# create directory
-	if not os.path.isdir(dir):
-		listener.setuid(0)
-		try:
-			os.makedirs(dir)
-		except EnvironmentError as exc:
-			return "failed to create target directory %s: %s" % (dir, exc)
-		finally:
-			listener.unsetuid()
+    # create directory
+    if not os.path.isdir(dir):
+        listener.setuid(0)
+        try:
+            os.makedirs(dir)
+        except EnvironmentError as exc:
+            return "failed to create target directory %s: %s" % (dir, exc)
+        finally:
+            listener.unsetuid()
 
-	# check fs
-	ret = check_filesystem(dir)
-	if ret:
-		return ret
+    # check fs
+    ret = check_filesystem(dir)
+    if ret:
+        return ret
 
-	return ""
+    return ""
 
 
 def check_source_dir(dir):
-	"""either returns "" if everything is ok, or returns an error message"""
-	if not os.path.exists(dir):
-		return "%s does not exist" % dir
-	if not os.path.isdir(dir):
-		return "%s is not a directory" % dir
+    """either returns "" if everything is ok, or returns an error message"""
+    if not os.path.exists(dir):
+        return "%s does not exist" % dir
+    if not os.path.isdir(dir):
+        return "%s is not a directory" % dir
 
-	# check fs
-	ret = check_filesystem(dir)
-	if ret:
-		return ret
+    # check fs
+    ret = check_filesystem(dir)
+    if ret:
+        return ret
 
-	return ""
+    return ""
 
 
 def check_filesystem(dir):
-	"""either returns "" if everything is ok, or returns an error message"""
-	partitions = [(p[1], p[2]) for p in disk_partitions(True)]
-	partitions.sort(key=lambda x: len(x[0]), reverse=True)
-	path = os.path.realpath(os.path.abspath(dir))
-	for k, v in partitions:
-		if path.startswith(k):
-			if v in fs_types:
-				return ""
-			else:
-				break
-	return "%s is not on a known filesystem" % dir
+    """either returns "" if everything is ok, or returns an error message"""
+    partitions = [(p[1], p[2]) for p in disk_partitions(True)]
+    partitions.sort(key=lambda x: len(x[0]), reverse=True)
+    path = os.path.realpath(os.path.abspath(dir))
+    for k, v in partitions:
+        if path.startswith(k):
+            if v in fs_types:
+                return ""
+            else:
+                break
+    return "%s is not on a known filesystem" % dir
 
 
 # move directory
 def move_dir(src, dst, listener):
-	"""either returns "" if everything is ok, or returns an error message"""
-	newName = os.path.basename(src) + ".%s" % int(time.time())
-	dst = os.path.join(dst, newName)
-	ret = ""
+    """either returns "" if everything is ok, or returns an error message"""
+    newName = os.path.basename(src) + ".%s" % int(time.time())
+    dst = os.path.join(dst, newName)
+    ret = ""
 
-	listener.setuid(0)
-	try:
-		shutil.move(src, dst)
-	except EnvironmentError as exc:
-		ret = str(exc)
-	finally:
-		listener.unsetuid()
-	warn("moved %s to %s." % (src, dst))
+    listener.setuid(0)
+    try:
+        shutil.move(src, dst)
+    except EnvironmentError as exc:
+        ret = str(exc)
+    finally:
+        listener.unsetuid()
+    warn("moved %s to %s." % (src, dst))
 
-	return ret
+    return ret
 
 
 def warn(msg):
-	univention.debug.debug(
-		univention.debug.LISTENER,
-		univention.debug.WARN,
-		"remove-old-homedirs: {}".format(msg)
-	)
+    univention.debug.debug(
+        univention.debug.LISTENER, univention.debug.WARN, "remove-old-homedirs: {}".format(msg)
+    )
 
 
 def handler(dn, new, old, command):
-	if old and not new and command != "r":  # user was deleted or moved to another OU
-		uid = old["uid"][0]
-		if not exam_remove and 'ucsschoolExam' in old['objectClass']:
-			warn("ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to False.".format(uid))
-			return
+    if old and not new and command != "r":  # user was deleted or moved to another OU
+        uid = old["uid"][0]
+        if not exam_remove and "ucsschoolExam" in old["objectClass"]:
+            warn(
+                "ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to False.".format(
+                    uid
+                )
+            )
+            return
 
-		home_dir = old.get("homeDirectory", [None])[0]
-		if not home_dir:
-			warn("not removing home of user %s: homeDirectory not set" % uid)
-			return
+        home_dir = old.get("homeDirectory", [None])[0]
+        if not home_dir:
+            warn("not removing home of user %s: homeDirectory not set" % uid)
+            return
 
-		# check if target directory is okay
-		ret = check_target_dir(target_dir)
-		if ret:
-			warn("not removing home of user %s: %s" % (uid, ret))
-			return
+        # check if target directory is okay
+        ret = check_target_dir(target_dir)
+        if ret:
+            warn("not removing home of user %s: %s" % (uid, ret))
+            return
 
-		# check source (home) directory
-		ret = check_source_dir(home_dir)
-		if ret:
-			warn("not removing home of user %s: %s" % (uid, ret))
-			return
+        # check source (home) directory
+        ret = check_source_dir(home_dir)
+        if ret:
+            warn("not removing home of user %s: %s" % (uid, ret))
+            return
 
-		# move it
-		ret = move_dir(home_dir, target_dir, listener)
-		if ret:
-			warn("failed to move home of user %s from %s to %s: %s" % (uid, home_dir, target_dir, ret))
-		return
+        # move it
+        ret = move_dir(home_dir, target_dir, listener)
+        if ret:
+            warn("failed to move home of user %s from %s to %s: %s" % (uid, home_dir, target_dir, ret))
+        return

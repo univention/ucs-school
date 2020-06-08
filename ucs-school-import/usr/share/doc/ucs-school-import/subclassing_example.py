@@ -40,22 +40,22 @@
 #
 
 import datetime
+
 from ucsschool.importer.mass_import.user_import import UserImport
 
 
 class MyUserImport(UserImport):
+    def do_delete(self, user):
+        """
+        Delete or deactivate a user.
+        IMPLEMENTME to add or change a deletion variant.
 
-	def do_delete(self, user):
-		"""
-		Delete or deactivate a user.
-		IMPLEMENTME to add or change a deletion variant.
-
-		:param ImportUser user: user object
-		:return: whether the deletion worked
-		:rtype: bool
-		"""
-		if user.birthday == datetime.datetime.now().strftime("%Y-%m-%d"):
-			self.logger.info("Not deleting user %s on its birthday!", user)
-			return True
-		else:
-			return super(MyUserImport, self).do_delete(user)
+        :param ImportUser user: user object
+        :return: whether the deletion worked
+        :rtype: bool
+        """
+        if user.birthday == datetime.datetime.now().strftime("%Y-%m-%d"):
+            self.logger.info("Not deleting user %s on its birthday!", user)
+            return True
+        else:
+            return super(MyUserImport, self).do_delete(user)

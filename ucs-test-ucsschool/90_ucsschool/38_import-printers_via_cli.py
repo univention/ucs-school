@@ -9,5 +9,5 @@
 
 from univention.testing.ucsschool.importprinters import import_printers_basics
 
-if __name__ == '__main__':
-	import_printers_basics(use_cli_api=True, use_python_api=False)
+if __name__ == "__main__":
+    import_printers_basics(use_cli_api=True, use_python_api=False)

@@ -33,10 +33,10 @@
 Constants
 """
 
-JOB_NEW = 'New'
-JOB_SCHEDULED = 'Scheduled'
-JOB_STARTED = 'Started'
-JOB_ABORTED = 'Aborted'
-JOB_FINISHED = 'Finished'
+JOB_NEW = "New"
+JOB_SCHEDULED = "Scheduled"
+JOB_STARTED = "Started"
+JOB_ABORTED = "Aborted"
+JOB_FINISHED = "Finished"
 JOB_STATES = (JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_ABORTED, JOB_FINISHED)
 JOB_CHOICES = zip(JOB_STATES, JOB_STATES)

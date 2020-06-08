@@ -31,125 +31,135 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.admin.layout import Tab
-import univention.admin.syntax
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.localization
-
+import univention.admin.syntax
 import univention.debug
+from univention.admin.layout import Tab
 
-translation = univention.admin.localization.translation('univention.admin.handlers.settings.helpdesk')
+translation = univention.admin.localization.translation("univention.admin.handlers.settings.helpdesk")
 _ = translation.translate
 
-module = 'settings/console_helpdesk'
-operations = ['add', 'edit', 'remove', 'search', 'move']
-superordinate = 'settings/cn'
+module = "settings/console_helpdesk"
+operations = ["add", "edit", "remove", "search", "move"]
+superordinate = "settings/cn"
 
 childs = 0
-short_description = _('Settings: Console Helpdesk')
-long_description = _('Settings for Univention Console Helpdesk Module')
-options = {
-}
+short_description = _("Settings: Console Helpdesk")
+long_description = _("Settings for Univention Console Helpdesk Module")
+options = {}
 
-default_containers = ['cn=config,cn=console,cn=univention']
+default_containers = ["cn=config,cn=console,cn=univention"]
 
 
 property_descriptions = {
-	'name': univention.admin.property(
-		short_description=_('Name'),
-		long_description=_('Name of Console-Helpdesk-Settings-Object'),
-		syntax=univention.admin.syntax.string_numbers_letters_dots,
-		multivalue=False,
-		options=[],
-		required=True,
-		may_change=False,
-		identifies=True
-	),
-	'description': univention.admin.property(
-		short_description=_('Description'),
-		long_description=_('Description'),
-		syntax=univention.admin.syntax.string,
-		multivalue=False,
-		options=[],
-		dontsearch=True,
-		required=False,
-		may_change=True,
-		identifies=False,
-	),
-	'category': univention.admin.property(
-		short_description=_('Category'),
-		long_description=_('Helpdesk Category'),
-		syntax=univention.admin.syntax.string,
-		multivalue=True,
-		options=[],
-		required=False,
-		may_change=True,
-		identifies=False
-	),
+    "name": univention.admin.property(
+        short_description=_("Name"),
+        long_description=_("Name of Console-Helpdesk-Settings-Object"),
+        syntax=univention.admin.syntax.string_numbers_letters_dots,
+        multivalue=False,
+        options=[],
+        required=True,
+        may_change=False,
+        identifies=True,
+    ),
+    "description": univention.admin.property(
+        short_description=_("Description"),
+        long_description=_("Description"),
+        syntax=univention.admin.syntax.string,
+        multivalue=False,
+        options=[],
+        dontsearch=True,
+        required=False,
+        may_change=True,
+        identifies=False,
+    ),
+    "category": univention.admin.property(
+        short_description=_("Category"),
+        long_description=_("Helpdesk Category"),
+        syntax=univention.admin.syntax.string,
+        multivalue=True,
+        options=[],
+        required=False,
+        may_change=True,
+        identifies=False,
+    ),
 }
 
 
 layout = [
-	Tab(_('General'), _('Basic Values'), layout=[
-		'description',
-		'category',
-	]),
+    Tab(_("General"), _("Basic Values"), layout=["description", "category",]),
 ]
 
 mapping = univention.admin.mapping.mapping()
 
-mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
-mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
-mapping.register('category', 'univentionUMCHelpdeskCategory')
+mapping.register("name", "cn", None, univention.admin.mapping.ListToString)
+mapping.register("description", "description", None, univention.admin.mapping.ListToString)
+mapping.register("category", "univentionUMCHelpdeskCategory")
 
 
 class object(univention.admin.handlers.simpleLdap):
-	module = module
+    module = module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=[]):
-		global mapping
-		global property_descriptions
+    def __init__(self, co, lo, position, dn="", superordinate=None, attributes=[]):
+        global mapping
+        global property_descriptions
 
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
+        self.co = co
+        self.lo = lo
+        self.dn = dn
+        self.position = position
+        self._exists = 0
+        self.mapping = mapping
+        self.descriptions = property_descriptions
 
-		super(object, self).__init__(co, lo, position, dn, superordinate, attributes)
+        super(object, self).__init__(co, lo, position, dn, superordinate, attributes)
 
-	def exists(self):
-		return self._exists
+    def exists(self):
+        return self._exists
 
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (mapping.mapName('name'), mapping.mapValue('name', self.info['name']), self.position.getDn())
+    def _ldap_pre_create(self):
+        self.dn = "%s=%s,%s" % (
+            mapping.mapName("name"),
+            mapping.mapValue("name", self.info["name"]),
+            self.position.getDn(),
+        )
 
-	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'univentionUMCHelpdeskClass'])]
+    def _ldap_addlist(self):
+        return [("objectClass", ["top", "univentionUMCHelpdeskClass"])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(
+    co,
+    lo,
+    filter_s,
+    base="",
+    superordinate=None,
+    scope="sub",
+    unique=False,
+    required=False,
+    timeout=-1,
+    sizelimit=0,
+):
 
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression('objectClass', 'univentionUMCHelpdeskClass')
-	])
+    filter = univention.admin.filter.conjunction(
+        "&", [univention.admin.filter.expression("objectClass", "univentionUMCHelpdeskClass")]
+    )
 
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
+    if filter_s:
+        filter_p = univention.admin.filter.parse(filter_s)
+        univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
+        filter.expressions.append(filter_p)
 
-	res = []
-	try:
-		for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
-			res.append(object(co, lo, None, dn))
-	except:
-		pass
-	return res
+    res = []
+    try:
+        for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
+            res.append(object(co, lo, None, dn))
+    except:
+        pass
+    return res
 
 
 def identify(dn, attr, canonical=0):
-	return 'univentionUMCHelpdeskClass' in attr.get('objectClass', [])
+    return "univentionUMCHelpdeskClass" in attr.get("objectClass", [])

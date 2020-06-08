@@ -6,52 +6,53 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-from univention.testing.ucsschool.computerroom import UmcComputer
-from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 import time
+
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.ucsschool.computerroom import UmcComputer
+from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+    with utu.UCSTestSchool() as schoolenv:
+        with ucr_test.UCSTestConfigRegistry() as ucr:
+            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-			pcs = []
-			for computer_type in ['windows', 'macos', 'ipmanagedclient']:
-				pc = UmcComputer(school, computer_type)
-				pc.create()
-				pc.check_get()
-				pc.verify_ldap(True)
-				pcs.append(pc)
+            pcs = []
+            for computer_type in ["windows", "macos", "ipmanagedclient"]:
+                pc = UmcComputer(school, computer_type)
+                pc.create()
+                pc.check_get()
+                pc.verify_ldap(True)
+                pcs.append(pc)
 
-			pcs[0].check_query({x.name for x in pcs})
+            pcs[0].check_query({x.name for x in pcs})
 
-			new_attrs = {
-				'ip_address': random_ip(),
-				'mac_address': random_mac(),
-				'subnet_mask': '255.255.0.0',
-				'inventory_number': '5'
-			}
-			for pc in pcs:
-				pc.edit(**new_attrs)
-				pc.check_get()
-				pc.verify_ldap(True)
-				pc.remove()
-				for wait in xrange(30):
-					try:
-						pc.verify_ldap(False)
-					except Exception as e:
-						if pc.dn() in str(e):
-							print ':::::::%r::::::' % wait
-							print str(e)
-							time.sleep(1)
-						else:
-							raise
-					else:
-						break
+            new_attrs = {
+                "ip_address": random_ip(),
+                "mac_address": random_mac(),
+                "subnet_mask": "255.255.0.0",
+                "inventory_number": "5",
+            }
+            for pc in pcs:
+                pc.edit(**new_attrs)
+                pc.check_get()
+                pc.verify_ldap(True)
+                pc.remove()
+                for wait in xrange(30):
+                    try:
+                        pc.verify_ldap(False)
+                    except Exception as e:
+                        if pc.dn() in str(e):
+                            print ":::::::%r::::::" % wait
+                            print str(e)
+                            time.sleep(1)
+                        else:
+                            raise
+                    else:
+                        break
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

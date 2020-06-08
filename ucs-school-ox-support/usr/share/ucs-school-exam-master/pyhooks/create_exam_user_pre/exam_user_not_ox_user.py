@@ -36,16 +36,16 @@ from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 
 
 class NoOXExamUserPyHook(ExamUserPyHook):
-	priority = {
-		"pre_create": 10,
-	}
+    priority = {
+        "pre_create": 10,
+    }
 
-	def pre_create(self, user_dn, al):
-		"""
-		Deactivate OX user flag.
-		"""
-		for num, (k, v) in enumerate(al):
-			if k == 'isOxUser' and v == ['OK']:
-				al[num] = (k, ['Not'])
-				break
-		return al
+    def pre_create(self, user_dn, al):
+        """
+        Deactivate OX user flag.
+        """
+        for num, (k, v) in enumerate(al):
+            if k == "isOxUser" and v == ["OK"]:
+                al[num] = (k, ["Not"])
+                break
+        return al

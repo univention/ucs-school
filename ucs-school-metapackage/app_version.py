@@ -32,50 +32,52 @@
 
 import sys
 from distutils.version import LooseVersion
+
 from univention.appcenter.actions import get_action
 from univention.appcenter.app_cache import Apps
 from univention.appcenter.ucr import ucr_get, ucr_is_true
 
-
-if len(sys.argv) < 2 or sys.argv[-1] == '-v':
-	print('Usage: {} [-v] <app name>'.format(sys.argv[0]))
-	sys.exit(2)
+if len(sys.argv) < 2 or sys.argv[-1] == "-v":
+    print("Usage: {} [-v] <app name>".format(sys.argv[0]))
+    sys.exit(2)
 app_name = sys.argv[-1]
 
-hostname_master = ucr_get('ldap/master').split('.')[0]
+hostname_master = ucr_get("ldap/master").split(".")[0]
 app = Apps().find(app_name)
 if app is None:
-	print('Unknown app "{}".'.format(app_name))
-	sys.exit(2)
-domain = get_action('domain')
+    print('Unknown app "{}".'.format(app_name))
+    sys.exit(2)
+domain = get_action("domain")
 info = domain.to_dict([app])[0]
 
 if not app.is_installed():
-	print('App "{}" is not installed on this host.'.format(app_name))
-	sys.exit(2)
+    print('App "{}" is not installed on this host.'.format(app_name))
+    sys.exit(2)
 
 try:
-	master_version = info['installations'][hostname_master]['version']
-	if master_version is None:
-		raise KeyError
+    master_version = info["installations"][hostname_master]["version"]
+    if master_version is None:
+        raise KeyError
 except KeyError:
-	print('App "{}" is not installed on DC master.'.format(app_name))
-	sys.exit(2)
+    print('App "{}" is not installed on DC master.'.format(app_name))
+    sys.exit(2)
 
 ret = LooseVersion(app.version) > LooseVersion(master_version)
 
-if '-v' in sys.argv:
-	print('Version of app "{}" on this host: "{}"'.format(app_name, app.version))
-	print('Version of app "{}" on DC master: "{}"'.format(app_name, master_version))
-	if ret:
-		print('Error: local version of app "{}" higher than DC masters versions!'.format(app_name))
-	else:
-		print('OK: local version of app "{}" is lower or equal to that of the DC master.'.format(app_name))
+if "-v" in sys.argv:
+    print('Version of app "{}" on this host: "{}"'.format(app_name, app.version))
+    print('Version of app "{}" on DC master: "{}"'.format(app_name, master_version))
+    if ret:
+        print('Error: local version of app "{}" higher than DC masters versions!'.format(app_name))
+    else:
+        print(
+            'OK: local version of app "{}" is lower or equal to that of the DC master.'.format(app_name)
+        )
 
-ucrv = 'ucsschool/join/ignore-version-mismatch/{}/{}'.format(master_version, app.version)
+ucrv = "ucsschool/join/ignore-version-mismatch/{}/{}".format(master_version, app.version)
 if ucr_is_true(ucrv):
-	if '-v' in sys.argv:
-		print('Ignoring version mismatch, because "{}" is set.'.format(ucrv))
-	sys.exit(0)
+    if "-v" in sys.argv:
+        print('Ignoring version mismatch, because "{}" is set.'.format(ucrv))
+    sys.exit(0)
 
 sys.exit(int(ret))

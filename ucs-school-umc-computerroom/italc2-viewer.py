@@ -32,109 +32,108 @@
 # <http://www.gnu.org/licenses/>.
 
 import inspect
+import optparse
 import os
 import sys
-import notifier
-import optparse
-
-script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
-sys.path.insert(0, os.path.join(script_dir, 'umc/python/computerroom'))
 
 import italc2
-import ucsschool.lib.schoolldap as usl
+import notifier
+from PyQt4 import QtCore, QtGui
 
+import ucsschool.lib.schoolldap as usl
 import univention.config_registry as ucr
 
-from PyQt4 import QtCore, QtGui
+script_dir = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())))
+sys.path.insert(0, os.path.join(script_dir, "umc/python/computerroom"))
 
 
 class ViewerApp(QtGui.QApplication):
-
-	def recvQuit(self, mmsg, data=None):
-		self.quit()
+    def recvQuit(self, mmsg, data=None):
+        self.quit()
 
 
 class ImageViewer(QtGui.QMainWindow):
+    def __init__(self, options):
+        super(ImageViewer, self).__init__()
 
-	def __init__(self, options):
-		super(ImageViewer, self).__init__()
+        self.printer = QtGui.QPrinter()
+        self.scaleFactor = 0.0
 
-		self.printer = QtGui.QPrinter()
-		self.scaleFactor = 0.0
+        self.imageLabel = QtGui.QLabel()
+        self.imageLabel.setBackgroundRole(QtGui.QPalette.Base)
+        self.imageLabel.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+        self.imageLabel.setScaledContents(True)
 
-		self.imageLabel = QtGui.QLabel()
-		self.imageLabel.setBackgroundRole(QtGui.QPalette.Base)
-		self.imageLabel.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
-		self.imageLabel.setScaledContents(True)
+        self.scrollArea = QtGui.QScrollArea()
+        self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
+        self.scrollArea.setWidget(self.imageLabel)
+        self.setCentralWidget(self.scrollArea)
+        self.scrollArea.setWidgetResizable(True)
 
-		self.scrollArea = QtGui.QScrollArea()
-		self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
-		self.scrollArea.setWidget(self.imageLabel)
-		self.setCentralWidget(self.scrollArea)
-		self.scrollArea.setWidgetResizable(True)
+        self.setWindowTitle("Image Viewer")
+        self.resize(500, 400)
 
-		self.setWindowTitle("Image Viewer")
-		self.resize(500, 400)
+        self.italcManager = italc2.ITALC_Manager()
+        self.italcManager.school = options.school
+        self.italcManager.room = options.room
+        self.computer = self.italcManager[options.computer]
+        self._timer = notifier.timer_add(500, self.updateScreenshot)
 
-		self.italcManager = italc2.ITALC_Manager()
-		self.italcManager.school = options.school
-		self.italcManager.room = options.room
-		self.computer = self.italcManager[options.computer]
-		self._timer = notifier.timer_add(500, self.updateScreenshot)
+    def updateScreenshot(self, dummy):
+        if not self.computer.screenshotQImage.isNull():
+            self.open(image=self.computer.screenshotQImage)
+        return True
 
-	def updateScreenshot(self, dummy):
-		if not self.computer.screenshotQImage.isNull():
-			self.open(image=self.computer.screenshotQImage)
-		return True
+    def open(self, fileName=None, image=None):
+        if fileName:
+            image = QtGui.QImage(fileName)
+        if image.isNull():
+            QtGui.QMessageBox.information(self, "Image Viewer", "Cannot load %s." % fileName)
+            return
 
-	def open(self, fileName=None, image=None):
-		if fileName:
-			image = QtGui.QImage(fileName)
-		if image.isNull():
-			QtGui.QMessageBox.information(self, "Image Viewer", "Cannot load %s." % fileName)
-			return
+        self.imageLabel.setPixmap(QtGui.QPixmap.fromImage(image))
+        self.scaleFactor = 1.0
+        self.resize(image.width(), image.height())
 
-		self.imageLabel.setPixmap(QtGui.QPixmap.fromImage(image))
-		self.scaleFactor = 1.0
-		self.resize(image.width(), image.height())
+    def scaleImage(self, factor):
+        self.scaleFactor *= factor
+        self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())
 
-	def scaleImage(self, factor):
-		self.scaleFactor *= factor
-		self.imageLabel.resize(self.scaleFactor * self.imageLabel.pixmap().size())
+        self.adjustScrollBar(self.scrollArea.horizontalScrollBar(), factor)
+        self.adjustScrollBar(self.scrollArea.verticalScrollBar(), factor)
 
-		self.adjustScrollBar(self.scrollArea.horizontalScrollBar(), factor)
-		self.adjustScrollBar(self.scrollArea.verticalScrollBar(), factor)
+        self.zoomInAct.setEnabled(self.scaleFactor < 3.0)
+        self.zoomOutAct.setEnabled(self.scaleFactor > 0.333)
 
-		self.zoomInAct.setEnabled(self.scaleFactor < 3.0)
-		self.zoomOutAct.setEnabled(self.scaleFactor > 0.333)
-
-	def adjustScrollBar(self, scrollBar, factor):
-		scrollBar.setValue(int(factor * scrollBar.value() + ((factor - 1) * scrollBar.pageStep() / 2)))
+    def adjustScrollBar(self, scrollBar, factor):
+        scrollBar.setValue(int(factor * scrollBar.value() + ((factor - 1) * scrollBar.pageStep() / 2)))
 
 
-if __name__ == '__main__':
-	global imageviewer
-	config = ucr.ConfigRegistry()
-	config.load()
+if __name__ == "__main__":
+    global imageviewer
+    config = ucr.ConfigRegistry()
+    config.load()
 
-	notifier.init(notifier.QT)
+    notifier.init(notifier.QT)
 
-	parser = optparse.OptionParser()
-	parser.add_option('-s', '--school', dest='school', default='711')
-	parser.add_option('-r', '--room', dest='room', default='room01')
-	parser.add_option('-c', '--computer', dest='computer', default='WIN7PRO')
-	parser.add_option('-u', '--username', dest='username', default='Administrator')
-	parser.add_option('-p', '--password', dest='password', default='univention')
-	options, args = parser.parse_args()
+    parser = optparse.OptionParser()
+    parser.add_option("-s", "--school", dest="school", default="711")
+    parser.add_option("-r", "--room", dest="room", default="room01")
+    parser.add_option("-c", "--computer", dest="computer", default="WIN7PRO")
+    parser.add_option("-u", "--username", dest="username", default="Administrator")
+    parser.add_option("-p", "--password", dest="password", default="univention")
+    options, args = parser.parse_args()
 
-	usl.set_credentials('uid=%s,cn=users,%s' % (options.username, config.get('ldap/base')), options.password)
+    usl.set_credentials(
+        "uid=%s,cn=users,%s" % (options.username, config.get("ldap/base")), options.password
+    )
 
-	app = ViewerApp(sys.argv)
-	print app.quitOnLastWindowClosed()
-	app.lastWindowClosed.connect(app.quit, QtCore.Qt.DirectConnection)
-	imageViewer = ImageViewer(options)
-	imageViewer.show()
+    app = ViewerApp(sys.argv)
+    print app.quitOnLastWindowClosed()
+    app.lastWindowClosed.connect(app.quit, QtCore.Qt.DirectConnection)
+    imageViewer = ImageViewer(options)
+    imageViewer.show()
 
-	notifier.loop()
+    notifier.loop()
 
-	print 'finished'
+    print "finished"

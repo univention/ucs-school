@@ -9,23 +9,25 @@
 
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from univention.config_registry import handler_set, handler_unset
+from univention.testing import utils
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
-		for should_exist, variable in [(False, None), (True, 'yes'), (False, 'no')]:
-			if variable is None:
-				handler_unset(['ucsschool/import/generate/share/marktplatz'])
-			else:
-				handler_set(['ucsschool/import/generate/share/marktplatz=%s' % (variable,)])
+    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
+        for should_exist, variable in [(False, None), (True, "yes"), (False, "no")]:
+            if variable is None:
+                handler_unset(["ucsschool/import/generate/share/marktplatz"])
+            else:
+                handler_set(["ucsschool/import/generate/share/marktplatz=%s" % (variable,)])
 
-			print '### Creating school. Expecting Marktplatz to exists = %r' % (should_exist,)
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'), use_cache=False)
-			utils.wait_for_replication()
-			utils.verify_ldap_object('cn=Marktplatz,cn=shares,%s' % (oudn,), strict=True, should_exist=should_exist)
+            print "### Creating school. Expecting Marktplatz to exists = %r" % (should_exist,)
+            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"), use_cache=False)
+            utils.wait_for_replication()
+            utils.verify_ldap_object(
+                "cn=Marktplatz,cn=shares,%s" % (oudn,), strict=True, should_exist=should_exist
+            )
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

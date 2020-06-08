@@ -8,9 +8,9 @@ import univention.testing.ucsschool.ucs_test_school as utu
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		schoolenv.delete_test_ous()
+    with utu.UCSTestSchool() as schoolenv:
+        schoolenv.delete_test_ous()
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

@@ -41,62 +41,84 @@
 from __future__ import absolute_import
 
 from ldap import NO_SUCH_OBJECT
+
+from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-from univention.lib.i18n import Translation
-_ = Translation('ucs-school-umc-diagnostic').translate
 
-title = _('UCS@school OU Consistency')
-description = '\n'.join([
-	_('UCS@school stores information about schools within the LDAP objects. One of these objects is the school OU object.'),
-	_('Inconsistencies in these OU object can trigger erratic behaviour of the UCS@school import.'),
-])
+_ = Translation("ucs-school-umc-diagnostic").translate
+
+title = _("UCS@school OU Consistency")
+description = "\n".join(
+    [
+        _(
+            "UCS@school stores information about schools within the LDAP objects. One of these objects is the school OU object."
+        ),
+        _("Inconsistencies in these OU object can trigger erratic behaviour of the UCS@school import."),
+    ]
+)
 
 
 def run(_umc_instance):
-	if ucr.get('server/role') != 'domaincontroller_master':
-		return
+    if ucr.get("server/role") != "domaincontroller_master":
+        return
 
-	problematic_objects = {}  # type: Dict[str, List[str]]
+    problematic_objects = {}  # type: Dict[str, List[str]]
 
-	lo = getAdminConnection()
+    lo = getAdminConnection()
 
-	ou_list = lo.search(filter='ou=*', base=ucr.get('ldap/base'), scope='one')
-	for (ou_dn, ou_attrs) in ou_list:
-		if 'ucsschoolOrganizationalUnit' not in ou_attrs.get('objectClass', []):
-			continue
+    ou_list = lo.search(filter="ou=*", base=ucr.get("ldap/base"), scope="one")
+    for (ou_dn, ou_attrs) in ou_list:
+        if "ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass", []):
+            continue
 
-		ucsschoolRoles = ou_attrs.get('ucsschoolRole', [])
-		if not ucsschoolRoles:
-			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole is not set'))
-		if ucsschoolRoles and not any(x == 'school:school:{}'.format(ou_attrs.get('ou')[0]) for x in ucsschoolRoles):
-			problematic_objects.setdefault(ou_dn, []).append(_('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get('ou')[0]))
+        ucsschoolRoles = ou_attrs.get("ucsschoolRole", [])
+        if not ucsschoolRoles:
+            problematic_objects.setdefault(ou_dn, []).append(_("ucsschoolRole is not set"))
+        if ucsschoolRoles and not any(
+            x == "school:school:{}".format(ou_attrs.get("ou")[0]) for x in ucsschoolRoles
+        ):
+            problematic_objects.setdefault(ou_dn, []).append(
+                _('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get("ou")[0])
+            )
 
-		if not ou_attrs.get('displayName', [None])[0]:
-			problematic_objects.setdefault(ou_dn, []).append(_('displayName is not set'))
+        if not ou_attrs.get("displayName", [None])[0]:
+            problematic_objects.setdefault(ou_dn, []).append(_("displayName is not set"))
 
-		for attr_name in ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer'):
-			value = ou_attrs.get(attr_name, [None])[0]
-			if not value:
-				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set').format(attr_name))
-			try:
-				lo.search(base=value, scope='base')
-			except NO_SUCH_OBJECT:
-				problematic_objects.setdefault(ou_dn, []).append(_('{0} contains invalid value: {1!r}').format(attr_name, value))
-			if ucr.is_true('ucsschool/singlemaster', False) and value != ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!
-				problematic_objects.setdefault(ou_dn, []).append(_('{0} is not set to master in a UCS@school single server environment').format(attr_name))
-			if not ucr.is_true('ucsschool/singlemaster', False) and value == ucr.get('ldap/hostdn'):  # WARNING: this line expects that check is performed on the DC master!
-				problematic_objects.setdefault(ou_dn, []).append(_('{0} is set to master in a UCS@school multi server environment').format(attr_name))
+        for attr_name in ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer"):
+            value = ou_attrs.get(attr_name, [None])[0]
+            if not value:
+                problematic_objects.setdefault(ou_dn, []).append(_("{0} is not set").format(attr_name))
+            try:
+                lo.search(base=value, scope="base")
+            except NO_SUCH_OBJECT:
+                problematic_objects.setdefault(ou_dn, []).append(
+                    _("{0} contains invalid value: {1!r}").format(attr_name, value)
+                )
+            if ucr.is_true("ucsschool/singlemaster", False) and value != ucr.get(
+                "ldap/hostdn"
+            ):  # WARNING: this line expects that check is performed on the DC master!
+                problematic_objects.setdefault(ou_dn, []).append(
+                    _("{0} is not set to master in a UCS@school single server environment").format(
+                        attr_name
+                    )
+                )
+            if not ucr.is_true("ucsschool/singlemaster", False) and value == ucr.get(
+                "ldap/hostdn"
+            ):  # WARNING: this line expects that check is performed on the DC master!
+                problematic_objects.setdefault(ou_dn, []).append(
+                    _("{0} is set to master in a UCS@school multi server environment").format(attr_name)
+                )
 
-	if problematic_objects:
-		details = '\n\n' + _('The following problems were found:')
-		for dn, problems in problematic_objects.items():
-			details += '\n\n  {}'.format(dn)
-			for problem in problems:
-				details += '\n&nbsp;&nbsp;&nbsp;- {}'.format(problem)
-		raise Warning(description + details)
+    if problematic_objects:
+        details = "\n\n" + _("The following problems were found:")
+        for dn, problems in problematic_objects.items():
+            details += "\n\n  {}".format(dn)
+            for problem in problems:
+                details += "\n&nbsp;&nbsp;&nbsp;- {}".format(problem)
+        raise Warning(description + details)
 
 
-if __name__ == '__main__':
-	run(None)
+if __name__ == "__main__":
+    run(None)

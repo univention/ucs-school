@@ -39,5 +39,5 @@ from django.apps import AppConfig
 
 
 class HttpApiConfig(AppConfig):
-    name = 'import_api'
-    verbose_name = 'UCS@school import API'
+    name = "import_api"
+    verbose_name = "UCS@school import API"

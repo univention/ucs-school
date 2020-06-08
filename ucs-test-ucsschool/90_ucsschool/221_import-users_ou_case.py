@@ -10,64 +10,72 @@
 
 import random
 import string
+
 import univention.testing.strings as uts
-from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
 from univention.testing.ucsschool.importusers import Person
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
 
 
 class Test(CLI_Import_v2_Tester):
-	def test(self):
-		for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
-			while not any(c in string.letters for c in ori_ou.name):
-				# test won't work: only digits -> upper case == lower case
-				self.log.warn('OU does not contain any letters, creating new one.')
-				ori_ou.name, ori_ou.dn = self.schoolenv.create_ou(name_edudc=self.ucr.get('hostname'), use_cache=False)
+    def test(self):
+        for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
+            while not any(c in string.letters for c in ori_ou.name):
+                # test won't work: only digits -> upper case == lower case
+                self.log.warn("OU does not contain any letters, creating new one.")
+                ori_ou.name, ori_ou.dn = self.schoolenv.create_ou(
+                    name_edudc=self.ucr.get("hostname"), use_cache=False
+                )
 
-			role = random.choice(('student', 'teacher', 'staff', 'teacher_and_staff'))
-			self.log.info('*** Importing a new single user with role %r and ori_ou=(%r, %r)', role, ori_ou.name, ori_ou.dn)
+            role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
+            self.log.info(
+                "*** Importing a new single user with role %r and ori_ou=(%r, %r)",
+                role,
+                ori_ou.name,
+                ori_ou.dn,
+            )
 
-			person = Person(ori_ou.name, role)
-			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'source_uid-%s' % (uts.random_string(),)
-			record_uid = '%s;%s;%s' % (person.firstname, person.lastname, person.mail)
-			config = {
-				'source_uid': source_uid,
-				'input:filename': fn_csv,
-				'user_role': role,
-			}
-			fn_config = self.create_config_json(values=config)
-			self.save_ldap_status()
-			self.run_import(['-c', fn_config])
-			self.check_new_and_removed_users(1, 0)
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
-			person.verify()
-			self.log.info('*** OK - import is functional. Trying with bad OU name now.')
+            person = Person(ori_ou.name, role)
+            fn_csv = self.create_csv_file(person_list=[person])
+            source_uid = "source_uid-%s" % (uts.random_string(),)
+            record_uid = "%s;%s;%s" % (person.firstname, person.lastname, person.mail)
+            config = {
+                "source_uid": source_uid,
+                "input:filename": fn_csv,
+                "user_role": role,
+            }
+            fn_config = self.create_config_json(values=config)
+            self.save_ldap_status()
+            self.run_import(["-c", fn_config])
+            self.check_new_and_removed_users(1, 0)
+            new_users = [x for x in self.diff_ldap_status().new if x.startswith("uid=")]
+            person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
+            person.verify()
+            self.log.info("*** OK - import is functional. Trying with bad OU name now.")
 
-			ou = ori_ou.name
-			while ou == ori_ou.name:
-				index = random.choice(range(len(ou)))
-				func = random.choice((str.lower, str.upper))
-				ou = list(ou)
-				ou[index] = func(ou[index])
-				ou = ''.join(ou)
-			self.log.info('*** original OU=%r modified OU=%r', ori_ou.name, ou)
+            ou = ori_ou.name
+            while ou == ori_ou.name:
+                index = random.choice(range(len(ou)))
+                func = random.choice((str.lower, str.upper))
+                ou = list(ou)
+                ou[index] = func(ou[index])
+                ou = "".join(ou)
+            self.log.info("*** original OU=%r modified OU=%r", ori_ou.name, ou)
 
-			person = Person(ou, role)
-			fn_csv = self.create_csv_file(person_list=[person])
-			source_uid = 'source_uid-%s' % (uts.random_string(),)
-			config = {
-				'source_uid': source_uid,
-				'input:filename': fn_csv,
-				'user_role': role,
-			}
-			fn_config = self.create_config_json(values=config)
-			try:
-				self.run_import(['-c', fn_config])
-				self.fail('Import ran with bad OU.')
-			except ImportException:
-				self.log.info('*** OK - import stopped.')
+            person = Person(ou, role)
+            fn_csv = self.create_csv_file(person_list=[person])
+            source_uid = "source_uid-%s" % (uts.random_string(),)
+            config = {
+                "source_uid": source_uid,
+                "input:filename": fn_csv,
+                "user_role": role,
+            }
+            fn_config = self.create_config_json(values=config)
+            try:
+                self.run_import(["-c", fn_config])
+                self.fail("Import ran with bad OU.")
+            except ImportException:
+                self.log.info("*** OK - import stopped.")
 
 
-if __name__ == '__main__':
-	Test().run()
+if __name__ == "__main__":
+    Test().run()

@@ -32,75 +32,86 @@
 # <http://www.gnu.org/licenses/>.
 
 import sys
+
 from six.moves import input
-from ucsschool.lib.school_umc_ldap_connection import set_credentials, LDAP_Connection, MACHINE_READ
-from ucsschool.lib.roleshares import create_roleshares
-import univention.config_registry
-from univention.admincli.admin import _2utf8
+
 import univention.admin.modules as udm_modules
+import univention.config_registry
+from ucsschool.lib.roleshares import create_roleshares
+from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection, set_credentials
+from univention.admincli.admin import _2utf8
+
 udm_modules.update()
 
 
 @LDAP_Connection(MACHINE_READ)
 def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=None):
-	if not ucr:
-		ucr = univention.config_registry.ConfigRegistry()
-		ucr.load()
+    if not ucr:
+        ucr = univention.config_registry.ConfigRegistry()
+        ucr.load()
 
-	ldap_filter = '(username=%s)' % (username,)
-	try:
-		udm_obj = udm_modules.lookup('users/user', None, ldap_machine_read, scope='sub', base=ucr.get('ldap/base'), filter=str(ldap_filter))[0]
-	except IndexError:
-		return None
-	else:
-		return _2utf8(udm_obj.dn)
+    ldap_filter = "(username=%s)" % (username,)
+    try:
+        udm_obj = udm_modules.lookup(
+            "users/user",
+            None,
+            ldap_machine_read,
+            scope="sub",
+            base=ucr.get("ldap/base"),
+            filter=str(ldap_filter),
+        )[0]
+    except IndexError:
+        return None
+    else:
+        return _2utf8(udm_obj.dn)
 
 
-if __name__ == '__main__':
-	from optparse import OptionParser
-	parser = OptionParser()
-	parser.add_option('--create', dest='roleshares', action='append', help='create role share')
-	parser.add_option('--school', dest='schools', action='append', help='select school')
-	parser.add_option('--binddn', dest='binddn', help='udm binddn')
-	parser.add_option('--bindpwd', dest='bindpwd', help='udm bindpwd')
-	parser.add_option('--bindpwdfile', dest='bindpwdfile', help='udm bindpwdfile')
-	(opts, args) = parser.parse_args()
+if __name__ == "__main__":
+    from optparse import OptionParser
 
-	if not opts.roleshares:
-		print('Required option missing: --create')
-		sys.exit(2)
+    parser = OptionParser()
+    parser.add_option("--create", dest="roleshares", action="append", help="create role share")
+    parser.add_option("--school", dest="schools", action="append", help="select school")
+    parser.add_option("--binddn", dest="binddn", help="udm binddn")
+    parser.add_option("--bindpwd", dest="bindpwd", help="udm bindpwd")
+    parser.add_option("--bindpwdfile", dest="bindpwdfile", help="udm bindpwdfile")
+    (opts, args) = parser.parse_args()
 
-	ucr = univention.config_registry.ConfigRegistry()
-	ucr.load()
+    if not opts.roleshares:
+        print("Required option missing: --create")
+        sys.exit(2)
 
-	if opts.binddn and opts.bindpwd:
-		binddn = opts.binddn
-		password = opts.bindpwd
-	elif opts.binddn and opts.bindpwdfile:
-		binddn = opts.binddn
-		with open(opts.bindpwdfile, 'r') as fp:
-			password = fp.read()
-	elif ucr['server/role'] in ('domaincontroller_master', 'domaincontroller_backup'):
-		try:
-			with open('/etc/ldap.secret', 'r') as fp:
-				password = fp.read()
-			binddn = "cn=admin,{}".format(ucr['ldap/base'])
-			print('Using cn=admin account')
-		except IOError as exc:
-			print('Cannot read /etc/ldap.secret: {}'.format(exc))
-			sys.exit(1)
-	else:
-		username = input("Administrator name: ")
-		if opts.bindpwd:
-			password = opts.bindpwd
-		else:
-			password = input("Password: ")
+    ucr = univention.config_registry.ConfigRegistry()
+    ucr.load()
 
-		binddn = dn_from_username(username, ucr)
-		if not binddn:
-			print('User not found')
-			sys.exit(1)
+    if opts.binddn and opts.bindpwd:
+        binddn = opts.binddn
+        password = opts.bindpwd
+    elif opts.binddn and opts.bindpwdfile:
+        binddn = opts.binddn
+        with open(opts.bindpwdfile, "r") as fp:
+            password = fp.read()
+    elif ucr["server/role"] in ("domaincontroller_master", "domaincontroller_backup"):
+        try:
+            with open("/etc/ldap.secret", "r") as fp:
+                password = fp.read()
+            binddn = "cn=admin,{}".format(ucr["ldap/base"])
+            print("Using cn=admin account")
+        except IOError as exc:
+            print("Cannot read /etc/ldap.secret: {}".format(exc))
+            sys.exit(1)
+    else:
+        username = input("Administrator name: ")
+        if opts.bindpwd:
+            password = opts.bindpwd
+        else:
+            password = input("Password: ")
 
-	set_credentials(binddn, password)  # for @LDAP_Connection(USER_*)
+        binddn = dn_from_username(username, ucr)
+        if not binddn:
+            print("User not found")
+            sys.exit(1)
 
-	create_roleshares(opts.roleshares, opts.schools, ucr)
+    set_credentials(binddn, password)  # for @LDAP_Connection(USER_*)
+
+    create_roleshares(opts.roleshares, opts.schools, ucr)

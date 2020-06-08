@@ -9,5 +9,5 @@
 
 from univention.testing.ucsschool.importnetworks import import_networks_basics
 
-if __name__ == '__main__':
-	import_networks_basics(use_cli_api=True, use_python_api=False)
+if __name__ == "__main__":
+    import_networks_basics(use_cli_api=True, use_python_api=False)

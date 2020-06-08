@@ -34,20 +34,17 @@ Django manage.py command to check if a specified superuser account already exist
 """
 
 from __future__ import unicode_literals
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-	def add_arguments(self, parser):
-		parser.add_argument(
-			'username',
-			type=str,
-			help='Username to check if is superuser.'
-		)
+    def add_arguments(self, parser):
+        parser.add_argument("username", type=str, help="Username to check if is superuser.")
 
-	def handle(self, *args, **options):
-		UserModel = get_user_model()
-		username = options['username']
-		if not UserModel._default_manager.filter(username=username, is_superuser=True).exists():
-			raise CommandError('User {!r} does not exist or is not a superuser.'.format(username))
+    def handle(self, *args, **options):
+        UserModel = get_user_model()
+        username = options["username"]
+        if not UserModel._default_manager.filter(username=username, is_superuser=True).exists():
+            raise CommandError("User {!r} does not exist or is not a superuser.".format(username))
