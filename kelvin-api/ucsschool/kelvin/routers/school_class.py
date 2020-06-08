@@ -28,7 +28,7 @@
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, HttpUrl, validator
+from pydantic import BaseModel, Field, HttpUrl, validator, root_validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -47,6 +47,15 @@ from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, udm_ctx
 router = APIRouter()
 
 
+def check_name(value: str) -> str:
+    """
+    The SchoolClass.name is checked in check_name2.
+    This function is reused as a pass-through validator,
+    root_validator can't be reused this way.
+    """
+    return value
+
+
 class SchoolClassCreateModel(UcsSchoolBaseModel):
     description: str = None
     users: List[HttpUrl] = None
@@ -54,18 +63,18 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
     class Config(UcsSchoolBaseModel.Config):
         lib_class = SchoolClass
 
-    @validator("name", "school", always=True, whole=True)
-    def check_name(cls, value: str, values: Dict[str, Any], config, field, **kwargs) -> str:
+    _validate_name = validator('name', allow_reuse=True)(check_name)
+
+    @root_validator
+    def check_name2(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         """
         Validate 'OU-name' to prevent 'must be at least 2 characters long'
         error when checking a class name with just one char.
         """
-        if field.name != "name":
-            # validator will be executed for both fields, but we want to check only "name"
-            return value
-        class_name = f"{values['school']}-{values['name']}"
+        school = values['school'].split('/')[-1]
+        class_name = f"{school}-{values['name']}"
         cls.Config.lib_class.name.validate(class_name)
-        return value
+        return values
 
     @classmethod
     async def _from_lib_model_kwargs(
@@ -105,6 +114,19 @@ class SchoolClassPatchDocument(BaseModel):
         None, title="Roles of this object. Don't change if unsure."
     )
     users: List[HttpUrl] = None
+
+    _validate_name = validator('name', allow_reuse=True)(check_name)
+
+    @root_validator
+    def check_name2(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate 'OU-name' to prevent 'must be at least 2 characters long'
+        error when checking a class name with just one char.
+        """
+        school = values['school'].split('/')[-1]
+        class_name = f"{school}-{values['name']}"
+        cls.Config.lib_class.name.validate(class_name)
+        return values
 
     async def to_modify_kwargs(self, school, request: Request) -> Dict[str, Any]:
         res = {}
