@@ -37,6 +37,7 @@ from ldap.dn import explode_dn
 
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize
 
@@ -60,22 +61,20 @@ class Instance(SchoolBaseModule):
 		group = request.options['group']
 		separator = request.options['separator']
 		csvfile = StringIO.StringIO()
-		# after setting ucr: update-python-modules -f; pkill -f console-module; pkill -f univention-cli-server
-		_fieldnames = ucr.get('ucsschool/umc/lists/class/attributes', '') or 'firstname Firstname,lastname Lastname,Class Class,displayName Username'
-		fieldnames = []
-		attribs = []
-		for field in _fieldnames.split(","):
-			attr, display = field.split()
-			fieldnames.append(display)
-			attribs.append(attr)
+		default = 'firstname Firstname,lastname Lastname,Class Class,displayName Username'
+		ucr_value = ucr.get('ucsschool/umc/lists/class/attributes', '') or default
+		attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
 		writer = csv.writer(csvfile, delimiter=str(separator))
 		writer.writerow(fieldnames)
 		for student in self.students(ldap_user_read, school, group):
 			row = []
-			for attr in attribs:
+			for attr in attributes:
 				if attr != 'Class':
-					value = student.get_udm_object(ldap_user_read)[attr]
-					# impractical example groups
+					try:
+						value = student.get_udm_object(ldap_user_read)[attr]
+					except KeyError:
+						raise UMC_Error(_('{!r} is not a valid UDM-property. '
+						                  'Please change the value of UCR ucsschool/umc/lists/class/attributes.').format(attr))
 					if type(value) is list:
 						value = " ".join(value)
 					row.append(value)
