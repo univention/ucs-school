@@ -61,7 +61,7 @@ class Instance(SchoolBaseModule):
 		group = request.options['group']
 		separator = request.options['separator']
 		csvfile = StringIO.StringIO()
-		default = 'firstname Firstname,lastname Lastname,Class Class,displayName Username'
+		default = 'firstname Firstname,lastname Lastname,Class Class,username Username'
 		ucr_value = ucr.get('ucsschool/umc/lists/class/attributes', '') or default
 		attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
 		writer = csv.writer(csvfile, delimiter=str(separator))
