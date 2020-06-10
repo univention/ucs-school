@@ -29,7 +29,23 @@ Container unterhalb von `cn=groups,ou=SCHULE,dc=example,dc=com` sowie darin enth
 #### Hat es einen technischen Grund, dass UCS@school User nicht direktes Mitglied von Domain Users sind?
 Bei 30k-60k User in einer Gruppe dauert eine einzelne LDAP-Änderung an einer Gruppe (nur *einen* User aufnehmen oder entfernen) gerne mal 5 Sekunden. Dadurch dauert dann z.B. die Aufnahme von 5.000 neuen Usern zum Schuljahreswechsel viel zu lange.
 
+#### Leere Arbeitsgruppen/Klassengruppen finden bzw. löschen (funktioniert erst ab UCS@school 4.4)
 
+Leere Klassen finden:
+
+    univention-ldapsearch -LLL -o ldif-wrap=no '(&(ucsschoolRole=school_class:school:*)(!(uniqueMember=*)))' dn | sed -nre 's/dn: //p'
+
+Leere Klassen alle automatisch löschen lassen:
+
+    univention-ldapsearch -LLL -o ldif-wrap=no '(&(ucsschoolRole=school_class:school:*)(!(uniqueMember=*)))' dn | sed -nre 's/dn: //p' | ldapdelete -D "cn=admin,$(ucr get ldap/base)" -y /etc/ldap.secret -f /dev/stdin
+
+Leere Arbeitsgruppen finden:
+
+    univention-ldapsearch -LLL -o ldif-wrap=no '(&(ucsschoolRole=workgroup:school:*)(!(uniqueMember=*)))' dn | sed -nre 's/dn: //p'
+
+Leere Arbeitsgruppen alle automatisch löschen lassen:
+
+    univention-ldapsearch -LLL -o ldif-wrap=no '(&(ucsschoolRole=workgroup:school:*)(!(uniqueMember=*)))' dn | sed -nre 's/dn: //p' | ldapdelete -D "cn=admin,$(ucr get ldap/base)" -y /etc/ldap.secret -f /dev/stdin
 
 
 
