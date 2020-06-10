@@ -30,10 +30,15 @@ import random
 import string
 import pytest
 import requests
+from pydantic import ValidationError
 
 from udm_rest_client import UDM
 from ucsschool.lib.models.utils import ucr
 from udm_rest_client.exceptions import CreateError
+from ucsschool.kelvin.routers.school_class import SchoolClass
+
+lower_case_chars = f"{string.ascii_lowercase}"
+digits = "".join(str(i) for i in range(10))
 
 
 def random_names(name_lengths: list, chars: str) -> List:
@@ -43,21 +48,28 @@ def random_names(name_lengths: list, chars: str) -> List:
     return names
 
 
+@pytest.mark.parametrize("name", random_names(random.choices(range(1, 33), k=100),
+                                              f"{lower_case_chars}{digits}"))
+@pytest.mark.asyncio
+async def test_schoolclass_module(name):
+    try:
+        SchoolClass(name=name, school='DEMOSCHOOL')
+    except ValidationError as e:
+        raise e
+
+
 @pytest.mark.asyncio
 async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
     school_name = "DEMOSCHOOL"
     attrs = {
         "school": school_name,
     }
-    # gid: (?u)^\w([\w -.’]*\w)?$
     names = []
     names.append('1a')
     names.append('1-a')
     name_lengths = random.sample(range(1, 33), 3) + [1]*3
-    chars = f"{string.ascii_lowercase}"
-    names.extend(random_names(name_lengths, chars))
-    my_digits = "".join(str(i) for i in range(10))
-    names.extend(random_names(name_lengths, my_digits))
+    names.extend(random_names(name_lengths, lower_case_chars))
+    names.extend(random_names(name_lengths, digits))
 
     async with UDM(**udm_kwargs) as udm:
         group_mod = udm.get('groups/group')
@@ -81,5 +93,6 @@ async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
         assert response.status_code == 200
         # make sure all classes were created.
         assert set([r['name'] for r in json_resp if r['name'] in names]) == set(names)
+
 
 
