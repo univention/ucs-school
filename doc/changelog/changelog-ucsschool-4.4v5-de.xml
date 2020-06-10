@@ -234,7 +234,52 @@ feedback@univention.de
 					<!-- END ucs-school-umc-exam 9.0.1-40A~4.4.0.202005042218 -->
 <!-- CHANGELOG:2020-05-05:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-06-10" lang="en">
+					<title>Released on 2020-06-10:</title>
+					<!-- START ucs-school-import 17.0.35A~4.4.0.202005051459 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.35A~4.4.0.202005051459</emphasis>:
+						<itemizedlist>
+							<listitem><para>When ucsschool/import/generate/user/attributes/no-overwrite-by-schema was an empty string, the import would not recognize it as unset and assume all attributes should be overwritten - including uid and mailPrimaryAddress. This fix ensures that uid and mailPrimaryAddress will not be overwritten in that case (<u:bug>51003</u:bug>).</para></listitem>
+
+							<listitem><para>Schemes in user import configurations now get checked for valid format (<u:bug>50894</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.35A~4.4.0.202005051459 -->
+					<!-- START ucs-school-ldap-acls-master 17.0.4-4A~4.4.0.202005041233 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.4-4A~4.4.0.202005041233</emphasis>:
+						<itemizedlist>
+							<listitem><para>The access to sensitive user data is now more restricted (<u:bug>50669</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.4-4A~4.4.0.202005041233 -->
+					<!-- START ucs-school-lib 12.1.14A~4.4.0.202005121819 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.14A~4.4.0.202005121819</emphasis>:
+						<itemizedlist>
+							<listitem><para>Improved error message when importing an invalid class name (<u:bug>51190</u:bug>).</para></listitem>
+
+							<listitem><para>When a school was deleted in the UMC, groups that belonged to that school did still remain. This fix ensures that those groups will be removed as well (<u:bug>47155</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.14A~4.4.0.202005121819 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-20A~4.4.0.202006031054 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-20A~4.4.0.202006031054</emphasis>:
+						<itemizedlist>
+							<listitem><para>Users can now set the UCR-V <envar>ucsschool/umc/computerroom/wakeonlan/target_nets</envar> to send WoL signals to multiple alternative broadcast ips instead of the default 255.255.255.255 (<u:bug>51074</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-20A~4.4.0.202006031054 -->
+<!-- CHANGELOG:2020-06-10:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
