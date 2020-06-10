@@ -57,6 +57,7 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection()
 	def csv_list(self, request, ldap_user_read=None, ldap_position=None):
+		ucr.load()
 		school = request.options['school']
 		group = request.options['group']
 		separator = request.options['separator']

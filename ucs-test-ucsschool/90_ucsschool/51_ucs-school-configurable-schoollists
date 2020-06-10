@@ -16,14 +16,26 @@ from ucsschool.lib.models import Student
 import univention.config_registry
 
 
-def random_properties(udm_user, n=5):
-	# i take n random properties, which are already set.
+def random_properties(udm_user, klass_name, n=5):
+	"""
+		Choose n random properties, which are already set.
+		Always add pseudo-attribute 'Class'
+
+	"""
 	udm_properties = []
+	expected_values = []
 	while len(udm_properties) < n:
 		key = random.choice(udm_user.keys())
-		if udm_user[key]:
+		value = udm_user.get(key)
+		if value:
 			udm_properties.append(key)
-	return udm_properties
+			if type(value) is list:
+				value = ' '.join(udm_user.get(key))
+			expected_values.append(value)
+	udm_properties.append('Class')
+	expected_values.append(klass_name)
+	column_names = [value.upper() for value in udm_properties]
+	return expected_values, udm_properties, column_names
 
 
 def main():
@@ -45,45 +57,42 @@ def main():
 		)
 		klass_name = class_name.split('-', 1)[1]
 		udm_user = Student.from_dn(student_dn, school_name, schoolenv.lo).get_udm_object(schoolenv.lo)
-		udm_properties = random_properties(udm_user)
+		cases = [random_properties(udm_user, klass_name) for _ in range(5)]
+		# Mess up one udm-property to get an error.
+		_udm_properties = cases[-1][1]
+		_udm_properties[0] = "{}-false".format(_udm_properties[0])
+		expected_error = _udm_properties[0]
 
-		# default_udm_properties = ['firstname', 'lastname', 'username']
-		# udm_properties = default_udm_properties
+		for expected_values, udm_properties, column_names in cases:
 
-		expected_values = []
-		for key in udm_properties:
-			value = udm_user.get(key)
-			if type(value) is list:
-				value = " ".join(udm_user.get(key))
-			expected_values.append(value)
+			ucr_value = ",".join([" ".join(pair) for pair in zip(udm_properties, column_names)])
+			print('## Set {}={}'.format(ucrv_name, ucr_value))
+			univention.config_registry.handler_set(['{}={}'.format(ucrv_name, ucr_value)])
+			schoolenv.ucr.load()
 
-		udm_properties.append('Class')
-		expected_values.append(klass_name)
-		column_names = [value.upper() for value in udm_properties]
-		ucr_value = ",".join([" ".join(pair) for pair in zip(udm_properties, column_names)])
-		print('Set {}={}'.format(ucrv_name, ucr_value))
-		univention.config_registry.handler_set(['{}={}'.format(ucrv_name, ucr_value)])
-		schoolenv.ucr.load()
-
-		account = utils.UCSTestDomainAdminCredentials()
-		connection = Client(host, language='en_US')
-		connection.authenticate(account.username, account.bindpw)
-		expected_error = "'displayNames' is not a valid UDM-property. Please change the value of UCR ucsschool/umc/lists/class/attributes."
-		expected_class_list = {
-			u'csv': u'{fieldnames_string}\r\n{expected_values}\r\n'.format(
-				fieldnames_string=",".join(column_names),
-				expected_values=",".join(expected_values)
-			),
-			u'filename': u'{}.csv'.format(class_name),
-		}
-		options = {'school': school_name, 'group': class_dn, 'separator': ','}
-		try:
-			class_list = connection.umc_command('schoollists/csvlist', options).result
-		except HTTPError as exc:
-			assert exc.message == expected_error
-		print('Expected: {}'.format(expected_class_list))
-		print('Received: {}'.format(class_list))
-		assert class_list == expected_class_list
+			account = utils.UCSTestDomainAdminCredentials()
+			connection = Client(host, language='en_US')
+			connection.authenticate(account.username, account.bindpw)
+			expected_class_list = {
+				u'csv': u'{fieldnames_string}\r\n{expected_values}\r\n'.format(
+					fieldnames_string=",".join(column_names),
+					expected_values=",".join(expected_values)
+				),
+				u'filename': u'{}.csv'.format(class_name),
+			}
+			options = {'school': school_name, 'group': class_dn, 'separator': ','}
+			try:
+				class_list = connection.umc_command('schoollists/csvlist', options).result
+			except HTTPError as exc:
+				assert expected_error in exc.message
+				print('The failed UMC request failed was expected.')
+				continue
+			print('Expected: {}'.format(expected_class_list))
+			print('Received: {}'.format(class_list))
+			# Multi-values are returned in "", replacing them was the easiest way.
+			class_list['csv'] = class_list['csv'].replace('"', '')
+			assert class_list == expected_class_list
+			univention.config_registry.handler_unset([ucrv_name])
 
 
 if __name__ == '__main__':
