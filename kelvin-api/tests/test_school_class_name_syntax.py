@@ -70,6 +70,8 @@ async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
     name_lengths = random.sample(range(1, 33), 3) + [1]*3
     names.extend(random_names(name_lengths, lower_case_chars))
     names.extend(random_names(name_lengths, digits))
+    class_names = names
+    names = [f"DEMOSCHOOL-{name}" for name in names]
 
     async with UDM(**udm_kwargs) as udm:
         group_mod = udm.get('groups/group')
@@ -92,7 +94,9 @@ async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
         json_resp = response.json()
         assert response.status_code == 200
         # make sure all classes were created.
-        assert set([r['name'] for r in json_resp if r['name'] in names]) == set(names)
+        expected = set(class_names)
+        received = set([r['name'] for r in json_resp if r['name'] in class_names])
+        assert expected == received
 
 
 
