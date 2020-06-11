@@ -28,7 +28,7 @@
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, root_validator, validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -37,7 +37,6 @@ from starlette.status import (
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
-
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError
 
@@ -47,12 +46,34 @@ from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, udm_ctx
 router = APIRouter()
 
 
+def check_name(value: str) -> str:
+    """
+    The SchoolClass.name is checked in check_name2.
+    This function is reused as a pass-through validator,
+    root_validator can't be reused this way.
+    """
+    return value
+
+
 class SchoolClassCreateModel(UcsSchoolBaseModel):
     description: str = None
     users: List[HttpUrl] = None
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = SchoolClass
+
+    _validate_name = validator("name", allow_reuse=True)(check_name)
+
+    @root_validator
+    def check_name2(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate 'OU-name' to prevent 'must be at least 2 characters long'
+        error when checking a class name with just one char.
+        """
+        school = values["school"].split("/")[-1]
+        class_name = f"{school}-{values['name']}"
+        cls.Config.lib_class.name.validate(class_name)
+        return values
 
     @classmethod
     async def _from_lib_model_kwargs(
@@ -92,6 +113,20 @@ class SchoolClassPatchDocument(BaseModel):
         None, title="Roles of this object. Don't change if unsure."
     )
     users: List[HttpUrl] = None
+
+    class Config(UcsSchoolBaseModel.Config):
+        lib_class = SchoolClass
+
+    @validator("name")
+    def check_name(cls, value: str) -> str:
+        """
+        At this point we know `school` is valid, but
+        we don't have it in the values. Thus we use
+        the dummy school name DEMOSCHOOL.
+        """
+        class_name = f"DEMOSCHOOL-{value}"
+        cls.Config.lib_class.name.validate(class_name)
+        return value
 
     async def to_modify_kwargs(self, school, request: Request) -> Dict[str, Any]:
         res = {}
