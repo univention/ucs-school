@@ -24,14 +24,15 @@ The following libs have to be installed on a Debian Buster system::
 
 	$ apt install python3.7 python3.7-dev libldap2-dev libsasl2-dev virtualenv
 
-When working on a UCS 4.4, install Python 3.7 from source::
+When working on a UCS 4.4, install Python 3.8 from source::
 
 	$ univention-install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev  libncursesw5-dev xz-utils tk-dev
-	$ wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz
-	$ tar xzf Python-3.7.4.tgz
-	$ cd Python-3.7.4
+	$ wget https://www.python.org/ftp/python/3.8.2/Python-3.8.2.tgz
+	$ tar xzf Python-3.8.2.tgz
+	$ cd Python-3.8.2
+	$ export CFLAGS="-march=native -pipe"
 	$ ./configure --enable-optimizations --with-ensurepip=install
-	$ make -j $(nproc)
+	$ nice make -j $(nproc)
 	# zzz ~1h...
 	$ make altinstall
 
@@ -41,7 +42,7 @@ LDAP and SASL libs are also needed::
 
 Development can be done on any Linux distro using ``virtualenv``::
 
-	$ python3.7 -m venv ~/virtenvs/schoollib
+	$ python3.8 -m venv ~/virtenvs/schoollib
 	$ . ~/virtenvs/schoollib/bin/activate
 
 	$ cd $UCS-REPO
@@ -109,7 +110,7 @@ Once we have a UCS\@school HTTP-API, tests can be started from the UCS side.
 
 Performance
 ^^^^^^^^^^^
-To run the performance tests, install Python 3.7 on UCS (see above for instructions) and execute::
+To run the performance tests, install Python 3.7 or 3.8 on UCS (see above for instructions) and execute::
 
 	$ export ldap_hostdn="Administrator"
 	$ export ldap_machine_password="univention"
