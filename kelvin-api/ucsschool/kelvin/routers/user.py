@@ -34,7 +34,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Typ
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl, root_validator
+from pydantic import HttpUrl, SecretStr, root_validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -138,6 +138,7 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 class UserCreateModel(UserBaseModel):
     name: str = None
+    password: SecretStr = None
     school: HttpUrl = None
     schools: List[HttpUrl] = []
 
@@ -152,6 +153,8 @@ class UserCreateModel(UserBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
+        if isinstance(kwargs["password"], SecretStr):
+            kwargs["password"] = kwargs["password"].get_secret_value()
         kwargs["school"] = (
             url_to_name(request, "school", self.unscheme_and_unquote(self.school))
             if self.school
@@ -226,6 +229,7 @@ class UserPatchModel(BasePatchModel):
     birthday: datetime.date = None
     disabled: bool = None
     email: str = None
+    password: SecretStr = None
     record_uid: str = None
     school: HttpUrl = None
     schools: List[HttpUrl] = None
@@ -271,6 +275,8 @@ class UserPatchModel(BasePatchModel):
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"Non-object/dict value in {key!r} property.",
                     )
+            elif key == "password" and isinstance(value, SecretStr):
+                kwargs[key] = value.get_secret_value()
         return kwargs
 
 
