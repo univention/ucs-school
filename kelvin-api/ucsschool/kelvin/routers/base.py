@@ -25,7 +25,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import logging
 import re
+from functools import lru_cache
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
@@ -42,6 +44,11 @@ from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
 school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 async def get_lib_obj(
