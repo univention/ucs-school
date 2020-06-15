@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lists\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2020-06-09 13:44+0200\n"
+"POT-Creation-Date: 2020-06-15 15:27+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: packages@univention.de\n"
 "Language-Team: Univention\n"
@@ -12,22 +12,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoollists/__init__.py:76
+#: python/schoollists/__init__.py:89
 msgid ""
 "{!r} is not a valid UDM-property. Please change the value of UCR ucsschool/"
 "umc/lists/class/attributes."
 msgstr ""
 "{!r} ist keine valide UDM-Property. Bitte ändern sie den Wert der UCR ucsschool/"
 "umc/lists/class/attributes."
-
-#~ msgid "Class"
-#~ msgstr "Klasse"
-
-#~ msgid "Firstname"
-#~ msgstr "Vorname"
-
-#~ msgid "Lastname"
-#~ msgstr "Nachname"
-
-#~ msgid "Username"
-#~ msgstr "Benutzername"

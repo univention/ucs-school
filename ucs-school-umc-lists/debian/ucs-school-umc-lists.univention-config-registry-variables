@@ -1,5 +1,5 @@
 [ucsschool/umc/lists/class/attributes]
-Description[de]=Eine Komma-separierte Liste von UDM-Attributen und Spaltennamen, die für Klassenlisten verwendet werden sollen (Default: firstname Firstname,lastname Lastname,Class Class,username Username)
+Description[de]=Eine komma-separierte Liste von UDM-Attributen und Spaltennamen, die für Klassenlisten verwendet werden sollen (Default: firstname Firstname,lastname Lastname,Class Class,username Username)
 Description[en]=A comma-separated list of udm-attributes and column-names, which are used to create class lists (Default: firstname Firstname,lastname Lastname,Class Class,username Username)
 Type=str
 Categories=management-umc

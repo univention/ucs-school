@@ -38,56 +38,72 @@ from ldap.dn import explode_dn
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
+from univention.management.console.modules.sanitizers import (
+    DNSanitizer,
+    StringSanitizer,
+)
 from univention.management.console.modules.decorators import sanitize
 
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.models.user import User
 
-_ = Translation('ucs-school-umc-lists').translate
+_ = Translation("ucs-school-umc-lists").translate
+
+
+def write_classlist_csv(fieldnames, students, filename, separator):
+    csvfile = StringIO.StringIO()
+    writer = csv.writer(csvfile, delimiter=str(separator))
+    writer.writerow(fieldnames)
+    for row in students:
+        writer.writerow(row)
+    csvfile.seek(0)
+    result = {"filename": filename, "csv": csvfile.read()}
+    csvfile.close()
+    return result
 
 
 class Instance(SchoolBaseModule):
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        group=DNSanitizer(required=True, minimum=1),
+        separator=StringSanitizer(required=True),
+    )
+    @LDAP_Connection()
+    def csv_list(self, request, ldap_user_read=None, ldap_position=None):
+        ucr.load()
+        school = request.options["school"]
+        group = request.options["group"]
+        separator = request.options["separator"]
 
-	@sanitize(
-		school=SchoolSanitizer(required=True),
-		group=DNSanitizer(required=True, minimum=1),
-		separator=StringSanitizer(required=True),
-	)
-	@LDAP_Connection()
-	def csv_list(self, request, ldap_user_read=None, ldap_position=None):
-		ucr.load()
-		school = request.options['school']
-		group = request.options['group']
-		separator = request.options['separator']
-		csvfile = StringIO.StringIO()
-		default = 'firstname Firstname,lastname Lastname,Class Class,username Username'
-		ucr_value = ucr.get('ucsschool/umc/lists/class/attributes', '') or default
-		attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
-		writer = csv.writer(csvfile, delimiter=str(separator))
-		writer.writerow(fieldnames)
-		for student in self.students(ldap_user_read, school, group):
-			row = []
-			for attr in attributes:
-				if attr != 'Class':
-					try:
-						value = student.get_udm_object(ldap_user_read)[attr]
-					except KeyError:
-						raise UMC_Error(_('{!r} is not a valid UDM-property. '
-						                  'Please change the value of UCR ucsschool/umc/lists/class/attributes.').format(attr))
-					if type(value) is list:
-						value = " ".join(value)
-					row.append(value)
-				else:
-					row.append(student.school_classes[school][0].split('-', 1)[1])
-			writer.writerow(row)
-		csvfile.seek(0)
-		filename = explode_dn(group)[0].split('=')[1] + '.csv'
-		result = {'filename': filename, 'csv': csvfile.read()}
-		csvfile.close()
-		self.finished(request.id, result)
+        default = "firstname Firstname,lastname Lastname,Class Class,username Username"
+        ucr_value = ucr.get("ucsschool/umc/lists/class/attributes", "") or default
+        attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
+        rows = []
+        for student in self.students(ldap_user_read, school, group):
+            row = []
+            student_udm_obj = student.get_udm_object(ldap_user_read)
+            for attr in attributes:
+                if attr != "Class":
+                    try:
+                        value = student_udm_obj[attr]
+                    except KeyError:
+                        raise UMC_Error(
+                            _(
+                                "{!r} is not a valid UDM-property. Please change the value of UCR ucsschool/umc/lists/class/attributes."
+                            ).format(attr)
+                        )
+                    if type(value) is list:
+                        value = " ".join(value)
+                    row.append(value)
+                else:
+                    row.append(student.school_classes[school][0].split("-", 1)[1])
+            rows.append(row)
 
-	def students(self, lo, school, group):
-		for user in self._users(lo, school, group=group, user_type='student'):
-			yield User.from_udm_obj(user, school, lo)
+        filename = explode_dn(group)[0].split("=")[1] + ".csv"
+        result = write_classlist_csv(fieldnames, rows, filename, separator)
+        self.finished(request.id, result)
+
+    def students(self, lo, school, group):
+        for user in self._users(lo, school, group=group, user_type="student"):
+            yield User.from_udm_obj(user, school, lo)
