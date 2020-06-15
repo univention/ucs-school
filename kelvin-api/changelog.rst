@@ -5,7 +5,7 @@
 Changelog
 ---------
 
-v1.1.1 (2020-06-12)
+v1.1.1 (2020-06-15)
 ...................
 * modified the validation SchoolClass.name to allow short class names like ``1``
 * fixed password attribute not being handled
