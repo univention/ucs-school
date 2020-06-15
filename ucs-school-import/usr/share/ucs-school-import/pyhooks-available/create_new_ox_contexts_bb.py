@@ -1,75 +1,69 @@
-from univention.udm import UDM
-
 from ucsschool.importer.utils.user_pyhook import UserPyHook
-from univention.config_registry import ConfigRegistry
-from univention.udm.exceptions import CreateError
+from ucsschool.lib.models.utils import ucr
+from univention.udm import UDM, CreateError
 
-ucr = ConfigRegistry()
-ucr.load()
-DEFAULT_HOSTNAME = ""
-DEFAULT_OXDBSERVER = ""
-DEFAULT_OXINTEGRATIONVERSION = ""
-
-CONTEXT_IDS = []
 DEFAULT_CONTEXT_ID = "10"
 
 
-def set_default_values(contexts):
-    global DEFAULT_OXINTEGRATIONVERSION, DEFAULT_HOSTNAME, DEFAULT_OXDBSERVER
-    for context in contexts:
-        if DEFAULT_CONTEXT_ID == context.props.contextid:
-            DEFAULT_OXINTEGRATIONVERSION = context.props.oxintegrationversion
-            DEFAULT_HOSTNAME = context.props.hostname
-            DEFAULT_OXDBSERVER = context.props.oxDBServer
-
-
 class CreateNewContexts(UserPyHook):
-    supports_dry_run = False
+    supports_dry_run = True
 
     priority = {
         "pre_create": 1,
-        "post_create": None,
         "pre_modify": 1,
-        "post_modify": None,
-        "pre_move": None,
-        "post_move": None,
-        "pre_remove": None,
-        "post_remove": None,
     }
 
+    def __init__(self, *args, **kwargs):
+        super(CreateNewContexts, self).__init__(*args, **kwargs)
+        self.existing_contexts = set()
+        self.default_context = None
+        udm = UDM(self.lo).version(0)
+        self.oxcontext_mod = udm.get("oxmail/oxcontext")
+
     def _check_context(self, user):
-        udm = UDM(self.lo).version(1)
-        mod = udm.get("oxmail/oxcontext")
-        if not CONTEXT_IDS:
-            global CONTEXT_IDS
-            contexts = mod.search()
-            set_default_values(contexts)
-            CONTEXT_IDS = [context["oxContextIDNum"][0] for _, context in contexts]
+        ctx_id = user.udm_properties.get("oxContext", "")
+        if not ctx_id:
+            self.logger.info("No OX context set for user %r.", user)
+            return
+        self.logger.info("User %r has OX context %r.", user, ctx_id)
 
-        if not self.dry_run:
-            ci = user.udm_properties.get("oxContext", "")
-            if ci and ci not in CONTEXT_IDS:
-                try:
-                    ox_context = mod.new()
-                    ox_context.position = "cn=open-xchange,{}".format(
-                        ucr.get("ldap/base")
-                    )
-                    ox_context.props.name = "context{}".format(ci)
-                    ox_context.props.contextid = ci
-                    ox_context.props.hostname = DEFAULT_HOSTNAME
-                    ox_context.props.oxintegrationversion = DEFAULT_OXINTEGRATIONVERSION
-                    ox_context.props.oxDBServer = DEFAULT_OXDBSERVER
-                    ox_context.save()
-                    self.logger.info("Created UDM object for OX-context {}.".format(ci))
-                except CreateError:
-                    global CONTEXT_IDS
-                    self.logger.info("OX-context {} already exists.".format(ci))
-                    CONTEXT_IDS.append(ci)
+        if not self.existing_contexts:
+            for context_obj in self.oxcontext_mod.search():
+                if DEFAULT_CONTEXT_ID == context_obj.props.contextid:
+                    self.default_context = context_obj
+                self.existing_contexts.add(context_obj.props.contextid)
 
-    def pre_create(self, user):
-        self.logger.info("Running a post_create hook for %s.", user)
-        self._check_context(user)
+        if ctx_id in self.existing_contexts:
+            self.logger.info("OX context %r exists.", ctx_id)
+            return
+        else:
+            self.logger.info("OX context %r does not exists, creating...", ctx_id)
 
-    def pre_modify(self, user):
-        self.logger.debug("Running a post_modify hook for %s.", user)
-        self._check_context(user)
+        ox_context = self.oxcontext_mod.new()
+        ox_context.position = "cn=open-xchange,{}".format(ucr["ldap/base"])
+        ox_context.props.name = "context{}".format(ctx_id)
+        ox_context.props.contextid = ctx_id
+        for prop in (
+            "hostname",
+            "oxDBServer",
+            "oxQuota",
+            "oxadmindaemonversion",
+            "oxintegrationversion",
+            "oxgroupwareversion",
+            "oxguiversion",
+        ):
+            val = getattr(self.default_context.props, prop)
+            setattr(ox_context.props, prop, val)
+
+        if self.dry_run:
+            self.logger.info("Dry-run: skipping creation of OX context {!r}.".format(ctx_id))
+            return
+        try:
+            ox_context.save()
+            self.logger.info("Created UDM object for OX-context {!r}.".format(ctx_id))
+        except CreateError:
+            self.logger.info("OX-context {!r} already exists.".format(ctx_id))
+        self.existing_contexts.add(ctx_id)
+
+    pre_create = _check_context
+    pre_modify = _check_context
