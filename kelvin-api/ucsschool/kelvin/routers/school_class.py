@@ -25,6 +25,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import logging
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -34,15 +35,23 @@ from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from ucsschool.lib.models.group import SchoolClass
-from udm_rest_client import UDM, APICommunicationError
+from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, udm_ctx
+from .base import (
+    APIAttributesMixin,
+    UcsSchoolBaseModel,
+    get_lib_obj,
+    get_logger,
+    udm_ctx,
+)
 
 router = APIRouter()
 
@@ -194,7 +203,10 @@ async def get(
 
 @router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolClassModel)
 async def create(
-    school_class: SchoolClassCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
+    school_class: SchoolClassCreateModel,
+    request: Request,
+    udm: UDM = Depends(udm_ctx),
+    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -212,7 +224,12 @@ async def create(
             status_code=HTTP_409_CONFLICT, detail="School class exists."
         )
     else:
-        await sc.create(udm)
+        try:
+            await sc.create(udm)
+        except (LibValidationError, CreateError) as exc:
+            error_msg = f"Failed to create school class {sc!r}: {exc}"
+            logger.exception(error_msg)
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
@@ -225,6 +242,7 @@ async def partial_update(
     school_class: SchoolClassPatchDocument,
     request: Request,
     udm: UDM = Depends(udm_ctx),
+    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
@@ -236,7 +254,18 @@ async def partial_update(
             setattr(sc_current, attr, new_value)
             changed = True
     if changed:
-        await sc_current.modify(udm)
+        try:
+            await sc_current.modify(udm)
+        except (LibValidationError, ModifyError) as exc:
+            logger.warning(
+                "Error modifying school class %r with %r: %s",
+                sc_current,
+                await request.json(),
+                exc,
+            )
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+            ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
@@ -249,6 +278,7 @@ async def complete_update(
     school_class: SchoolClassCreateModel,
     request: Request,
     udm: UDM = Depends(udm_ctx),
+    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     if school != url_to_name(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)
@@ -269,7 +299,18 @@ async def complete_update(
             setattr(sc_current, attr, new_value)
             changed = True
     if changed:
-        await sc_current.modify(udm)
+        try:
+            await sc_current.modify(udm)
+        except (LibValidationError, ModifyError) as exc:
+            logger.warning(
+                "Error modifying school class %r with %r: %s",
+                sc_current,
+                await request.json(),
+                exc,
+            )
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+            ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 

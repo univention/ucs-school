@@ -40,10 +40,18 @@ from .ldap_access import udm_kwargs
 
 
 def name_from_dn(dn):
+    """Return first part of DN as name."""
     return explode_dn(dn, 1)[0]
 
 
 def url_to_name(request: Request, obj_type: str, url: Union[str, HttpUrl]) -> str:
+    """
+    Convert URL to object name.
+
+    https://.../kelvin/v1/schools/DEMOSCHOOL => DEMOSCHOOL
+    https://.../kelvin/v1/users/demo_student => demo_student
+    https://.../kelvin/v1/roles/student => student
+    """
     if not url:
         return url
     if isinstance(url, HttpUrl):
@@ -75,8 +83,8 @@ def url_to_name(request: Request, obj_type: str, url: Union[str, HttpUrl]) -> st
 
 async def url_to_dn(request: Request, obj_type: str, url: str) -> str:
     """
-    Guess object ID (e.g. school name or username) from last part of URL, then
-    optionally get object from UDM HTTP API to retrieve DN.
+    Guess object ID (e.g. school name or username) from last part of URL. If
+    object is user, search object with UDM HTTP API to retrieve DN.
     """
     name = url_to_name(request, obj_type, url)
     if obj_type == "school":

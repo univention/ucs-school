@@ -127,7 +127,7 @@ class UserFactory(factory.Factory):
     )
     email = None
     description = factory.Faker("text", max_nb_chars=50)
-    password = factory.Faker("password")
+    password = factory.Faker("password", length=20)
     disabled = False
     school_classes = factory.Dict({})
 
@@ -259,7 +259,7 @@ def create_random_user_data(url_fragment, new_school_class):
     async def _create_random_user_data(**kwargs) -> UserCreateModel:
         f_name = fake.first_name()
         l_name = fake.last_name()
-        name = f"test.{f_name}.{l_name}"[:15].rstrip(".")
+        name = f"test.{f_name[:8]}{fake.pyint(10, 99)}.{l_name}"[:15].rstrip(".")
         domainname = env_or_ucr("domainname")
         if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
             school_classes = {}
@@ -267,7 +267,7 @@ def create_random_user_data(url_fragment, new_school_class):
             sc_dn, sc_attr = await new_school_class()
             school_classes = {"DEMOSCHOOL": ["DEMOSCHOOL-Democlass", sc_attr["name"]]}
         data = dict(
-            email=f"{name}mail@{domainname}".lower(),
+            email=f"{name}mail{fake.pyint()}@{domainname}".lower(),
             record_uid=name,
             source_uid="Kelvin",
             birthday=fake.date(),
@@ -279,10 +279,13 @@ def create_random_user_data(url_fragment, new_school_class):
             school=f"{url_fragment}/schools/DEMOSCHOOL",
             schools=[f"{url_fragment}/schools/DEMOSCHOOL"],
             school_classes=school_classes,
+            password=fake.password(length=20),
         )
         for key, value in kwargs.items():
             data[key] = value
-        return UserCreateModel(**data)
+        res = UserCreateModel(**data)
+        res.password = res.password.get_secret_value()
+        return res
 
     return _create_random_user_data
 
@@ -313,7 +316,10 @@ def create_random_users(
                     data=user_data.json(),
                 )
                 assert response.status_code == 201, f"{response.__dict__}"
-                print(f"Created user {user_data.name!r} ({user_data.roles!r}).")
+                print(
+                    f"Created user {user_data.name!r} ({user_data.roles!r}) "
+                    f"with {user_data.dict()!r}."
+                )
                 users.append(user_data)
                 schedule_delete_user(user_data.name)
         return users

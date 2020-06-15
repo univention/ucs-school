@@ -34,7 +34,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Typ
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl, root_validator
+from pydantic import HttpUrl, SecretStr, root_validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -54,7 +54,14 @@ from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from ucsschool.lib.models.school import School
-from udm_rest_client import UDM, APICommunicationError, MoveError, UdmObject
+from udm_rest_client import (
+    UDM,
+    APICommunicationError,
+    CreateError,
+    ModifyError,
+    MoveError,
+    UdmObject,
+)
 from univention.admin.filter import conjunction, expression
 
 from ..exceptions import UnknownUDMProperty
@@ -65,16 +72,12 @@ from .base import (
     BasePatchModel,
     UcsSchoolBaseModel,
     get_lib_obj,
+    get_logger,
     udm_ctx,
 )
 from .role import SchoolUserRole
 
 router = APIRouter()
-
-
-@lru_cache(maxsize=1)
-def get_logger() -> logging.Logger:
-    return logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
@@ -135,6 +138,7 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 class UserCreateModel(UserBaseModel):
     name: str = None
+    password: SecretStr = None
     school: HttpUrl = None
     schools: List[HttpUrl] = []
 
@@ -149,6 +153,8 @@ class UserCreateModel(UserBaseModel):
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
+        if isinstance(kwargs["password"], SecretStr):
+            kwargs["password"] = kwargs["password"].get_secret_value()
         kwargs["school"] = (
             url_to_name(request, "school", self.unscheme_and_unquote(self.school))
             if self.school
@@ -223,6 +229,7 @@ class UserPatchModel(BasePatchModel):
     birthday: datetime.date = None
     disabled: bool = None
     email: str = None
+    password: SecretStr = None
     record_uid: str = None
     school: HttpUrl = None
     schools: List[HttpUrl] = None
@@ -268,6 +275,8 @@ class UserPatchModel(BasePatchModel):
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"Non-object/dict value in {key!r} property.",
                     )
+            elif key == "password" and isinstance(value, SecretStr):
+                kwargs[key] = value.get_secret_value()
         return kwargs
 
 
@@ -549,7 +558,7 @@ async def create(
         await user.validate(udm, validate_unlikely_changes=True, check_username=True)
         logger.info("Going to create %s with %r...", user, user.to_dict())
         res = await user.create(udm)
-    except (UcsSchoolImportError, LibValidationError) as exc:
+    except (CreateError, LibValidationError, UcsSchoolImportError) as exc:
         error_msg = f"Failed to create {user!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
@@ -583,9 +592,9 @@ async def change_school(
     user.schools = new_schools
     try:
         await user.change_school(new_school, udm)
-    except MoveError as exc:
+    except (LibValidationError, MoveError) as exc:
         error_msg = (
-            f"Moving {user!r} from OU {user.school!r} to OU " f"{new_school!r}: {exc}"
+            f"Moving {user!r} from OU {user.school!r} to OU {new_school!r}: {exc}"
         )
         logger.exception(error_msg)
         raise HTTPException(
@@ -602,7 +611,14 @@ async def rename_user(
     logger.info("Renaming %r to %r...", user, new_name)
     old_name = user.name
     user.name = new_name
-    res = await user.move(udm, force=True)
+    try:
+        res = await user.move(udm, force=True)
+    except (LibValidationError, ModifyError, MoveError) as exc:
+        error_msg = f"Renaming {user!r} from {old_name!r} to {user.name!r}: {exc}"
+        logger.exception(error_msg)
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+        )
     if not res:
         user.name = old_name
         error_msg = f"Failed to rename {user!r} to {new_name!r}: {user.errors!r}"
@@ -671,7 +687,7 @@ async def partial_update(
     if changed:
         try:
             await user_current.modify(udm)
-        except UcsSchoolImportError as exc:
+        except (LibValidationError, ModifyError, UcsSchoolImportError) as exc:
             logger.warning(
                 "Error modifying user %r with %r: %s",
                 user_current,
@@ -679,7 +695,7 @@ async def partial_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc),
+                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
@@ -748,7 +764,18 @@ async def complete_update(
             setattr(user_current, attr, new_value)
             changed = True
     if changed:
-        await user_current.modify(udm)
+        try:
+            await user_current.modify(udm)
+        except (LibValidationError, ModifyError, UcsSchoolImportError) as exc:
+            logger.warning(
+                "Error modifying user %r with %r: %s",
+                user_current,
+                await request.json(),
+                exc,
+            )
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+            ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
 

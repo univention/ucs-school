@@ -31,10 +31,13 @@ from urllib.parse import SplitResult, urlsplit
 
 import pytest
 import requests
+from faker import Faker
+from ldap3.core.exceptions import LDAPBindError
 from ldap.filter import filter_format
 from pydantic import HttpUrl
 
 import ucsschool.kelvin.constants
+import ucsschool.kelvin.ldap_access
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import UserCreateModel, UserModel
@@ -46,6 +49,7 @@ pytestmark = pytest.mark.skipif(
     reason="Must run inside Docker container started by appcenter.",
 )
 
+fake = Faker()
 MAPPED_UDM_PROPERTIES = [
     "title",
     "description",
@@ -162,12 +166,30 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
                     assert int(ldap_obj[k][0].decode("utf-8")) == v
 
 
+async def check_password(bind_dn: str, bind_pw: str) -> None:
+    ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
+    search_kwargs = {
+        "filter_s": f"({bind_dn.split(',')[0]})",
+        "attributes": ["uid"],
+        "bind_dn": bind_dn,
+        "bind_pw": bind_pw,
+        "raise_on_bind_error": True,
+    }
+    print(f"Testing login (making LDAP search) with: {search_kwargs!r}")
+    results = await ldap_access.search(**search_kwargs)
+    print(f"Login success.")
+    assert len(results) == 1
+    result = results[0]
+    expected_uid = bind_dn.split(",")[0].split("=")[1]
+    assert expected_uid == result["uid"].value
+
+
 @pytest.mark.asyncio
 async def test_search_no_filter(
     auth_header, url_fragment, create_random_users, udm_kwargs
 ):
     users = await create_random_users(
-        {"student": 2, "teacher": 2, "staff": 2, "teacher_and_staff": 2}
+        {"student": 2, "teacher": 2, "staff": 2, "teacher_and_staff": 2}, disabled=False
     )
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL")
@@ -428,27 +450,33 @@ async def test_create(
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
-        assert len(lib_users) == 0
-        schedule_delete_user(r_user.name)
-        response = requests.post(
-            f"{url_fragment}/users/",
-            headers={"Content-Type": "application/json", **auth_header},
-            data=data,
-        )
-        assert response.status_code == 201, f"{response.__dict__!r}"
-        response_json = response.json()
-        api_user = UserModel(**response_json)
+    assert len(lib_users) == 0
+    schedule_delete_user(r_user.name)
+    response = requests.post(
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        data=data,
+    )
+    assert response.status_code == 201, f"{response.__dict__!r}"
+    response_json = response.json()
+    api_user = UserModel(**response_json)
+    async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
-        assert api_user.udm_properties["title"] == title
-        assert set(api_user.udm_properties["phone"]) == set(phone)
         udm_props = (await lib_users[0].get_udm_object(udm)).props
-        assert udm_props.title == title
-        assert set(udm_props.phone) == set(phone)
-        await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    assert api_user.udm_properties["title"] == title
+    assert set(api_user.udm_properties["phone"]) == set(phone)
+    assert udm_props.title == title
+    assert set(udm_props.phone) == set(phone)
+    await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
+    json_resp = response.json()
+    compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    if r_user.disabled:
+        with pytest.raises(LDAPBindError):
+            await check_password(response_json["dn"], r_user.password)
+    else:
+        await check_password(response_json["dn"], r_user.password)
 
 
 @pytest.mark.asyncio
@@ -474,24 +502,30 @@ async def test_create_without_username(
     )
     r_user.name = ""
     data = r_user.json()
-    print(f"POST data={data!r}")
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
-        assert len(lib_users) == 0
-        schedule_delete_user(expected_name)
-        response = requests.post(
-            f"{url_fragment}/users/",
-            headers={"Content-Type": "application/json", **auth_header},
-            data=data,
-        )
-        assert response.status_code == 201, f"{response.__dict__!r}"
-        response_json = response.json()
-        api_user = UserModel(**response_json)
-        assert api_user.name == expected_name
+    assert len(lib_users) == 0
+    schedule_delete_user(expected_name)
+    print(f"POST data={data!r}")
+    response = requests.post(
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        data=data,
+    )
+    assert response.status_code == 201, f"{response.__dict__!r}"
+    response_json = response.json()
+    api_user = UserModel(**response_json)
+    assert api_user.name == expected_name
+    async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
-        assert len(lib_users) == 1
-        assert isinstance(lib_users[0], role.klass)
+    assert len(lib_users) == 1
+    assert isinstance(lib_users[0], role.klass)
+    if r_user.disabled:
+        with pytest.raises(LDAPBindError):
+            await check_password(response_json["dn"], r_user.password)
+    else:
+        await check_password(response_json["dn"], r_user.password)
 
 
 @pytest.mark.asyncio
@@ -515,7 +549,7 @@ async def test_create_minimal_attrs(
     else:
         roles = [role.name]
     r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], disabled=False
     )
     data = r_user.dict()
     for attr in (
@@ -529,24 +563,26 @@ async def test_create_minimal_attrs(
         "udm_properties",
     ):
         del data[attr]
-    print(f"POST data={data!r}")
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
-        assert len(lib_users) == 0
-        schedule_delete_user(expected_name)
-        response = requests.post(
-            f"{url_fragment}/users/",
-            headers={"Content-Type": "application/json", **auth_header},
-            json=data,
-        )
-        assert response.status_code == 201, f"{response.__dict__!r}"
-        response_json = response.json()
-        api_user = UserModel(**response_json)
-        assert api_user.name == expected_name
+    assert len(lib_users) == 0
+    schedule_delete_user(expected_name)
+    print(f"POST data={data!r}")
+    response = requests.post(
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        json=data,
+    )
+    assert response.status_code == 201, f"{response.__dict__!r}"
+    response_json = response.json()
+    api_user = UserModel(**response_json)
+    assert api_user.name == expected_name
+    async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
-        assert len(lib_users) == 1
-        assert isinstance(lib_users[0], role.klass)
+    assert len(lib_users) == 1
+    assert isinstance(lib_users[0], role.klass)
+    await check_password(response_json["dn"], r_user.password)
 
 
 @pytest.mark.asyncio
@@ -570,28 +606,28 @@ async def test_create_requires_school_or_schools(
     else:
         roles = [role.name]
     r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], disabled=False
     )
     data = r_user.dict()
     data["birthday"] = data["birthday"].isoformat()
     del data["school"]
     del data["schools"]
-    print(f"POST data={data!r}")
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
-        assert len(lib_users) == 0
-        schedule_delete_user(expected_name)
-        response = requests.post(
-            f"{url_fragment}/users/",
-            headers={"Content-Type": "application/json", **auth_header},
-            json=data,
-        )
-        assert response.status_code == 422, f"{response.__dict__!r}"
-        print(f"response.content={response.content!r}")
-        response_json = response.json()
-        print(f"response_json={response_json!r}")
-        assert "At least one of" in response_json["detail"][0]["msg"]
+    assert len(lib_users) == 0
+    schedule_delete_user(expected_name)
+    print(f"POST data={data!r}")
+    response = requests.post(
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        json=data,
+    )
+    assert response.status_code == 422, f"{response.__dict__!r}"
+    print(f"response.content={response.content!r}")
+    response_json = response.json()
+    print(f"response_json={response_json!r}")
+    assert "At least one of" in response_json["detail"][0]["msg"]
 
 
 @pytest.mark.asyncio
@@ -606,8 +642,15 @@ async def test_put(
     udm_kwargs,
     role: Role,
 ):
-    user = (await create_random_users({role.name: 1}))[0]
-    new_user_data = (await create_random_user_data(roles=user.roles)).dict()
+    user = (await create_random_users({role.name: 1}, disabled=False))[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+    assert len(lib_users) == 1
+    await check_password(lib_users[0].dn, user.password)
+    print("OK: can login with old password")
+    new_user_data = (
+        await create_random_user_data(roles=user.roles, disabled=False)
+    ).dict()
     del new_user_data["name"]
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
@@ -615,6 +658,8 @@ async def test_put(
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
     modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
+    modified_user.password = modified_user.password.get_secret_value()
+    print(f"PUT modified_user={modified_user.dict()!r}.")
     response = requests.put(
         f"{url_fragment}/users/{user.name}",
         headers=auth_header,
@@ -632,8 +677,9 @@ async def test_put(
         assert udm_props.title == title
         assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    json_resp = response.json()
+    compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    await check_password(lib_users[0].dn, modified_user.password)
 
 
 @pytest.mark.asyncio
@@ -650,8 +696,15 @@ async def test_patch(
     role: Role,
     null_value: str,
 ):
-    user = (await create_random_users({role.name: 1}))[0]
-    new_user_data = (await create_random_user_data(roles=user.roles)).dict()
+    user = (await create_random_users({role.name: 1}, disabled=False))[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+    await check_password(lib_users[0].dn, user.password)
+    print("OK: can login with old password")
+    new_user_data = (
+        await create_random_user_data(roles=user.roles, disabled=False)
+    ).dict()
     del new_user_data["name"]
     del new_user_data["record_uid"]
     del new_user_data["source_uid"]
@@ -664,6 +717,8 @@ async def test_patch(
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
     new_user_data[null_value] = None
+    new_user_data["password"] = fake.password(length=20)
+    print(f"PATCH new_user_data={new_user_data!r}.")
     response = requests.patch(
         f"{url_fragment}/users/{user.name}", headers=auth_header, json=new_user_data,
     )
@@ -679,8 +734,9 @@ async def test_patch(
         assert udm_props.title == title
         assert set(udm_props.phone) == set(phone)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-        json_resp = response.json()
-        compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    json_resp = response.json()
+    compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
+    await check_password(lib_users[0].dn, new_user_data["password"])
 
 
 @pytest.mark.asyncio
@@ -691,14 +747,15 @@ async def test_delete(
     r_user = (await create_random_users({role.name: 1}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
-        assert len(lib_users) == 1
-        assert isinstance(lib_users[0], role.klass)
-        response = requests.delete(
-            f"{url_fragment}/users/{r_user.name}", headers=auth_header,
-        )
-        assert response.status_code == 204, response.reason
+    assert len(lib_users) == 1
+    assert isinstance(lib_users[0], role.klass)
+    response = requests.delete(
+        f"{url_fragment}/users/{r_user.name}", headers=auth_header,
+    )
+    assert response.status_code == 204, response.reason
+    async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
-        assert len(lib_users) == 0
+    assert len(lib_users) == 0
 
 
 def test_delete_non_existent(auth_header, url_fragment, random_name):
@@ -848,3 +905,94 @@ async def test_school_change(
         else:
             roles = {f"{role.name}:school:{school2_attr['name']}"}
         assert set(lib_users[0].ucsschool_roles) == roles
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("http_method", ("patch", "put"))
+async def test_change_disable(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    random_name,
+    import_config,
+    udm_kwargs,
+    role: Role,
+    http_method: str,
+):
+    user = (await create_random_users({role.name: 1}, disabled=False))[0]
+    assert user.disabled is False
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+    # delete password, so PUT with complete user data will not produce
+    # 'Password has been used before. Please choose a different one.'
+    password = user.password
+    user.password = None
+    await check_password(lib_users[0].dn, password)
+
+    user.disabled = True
+    if http_method == "patch":
+        response = requests.patch(
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json={"disabled": user.disabled},
+        )
+    else:
+        response = requests.put(
+            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+        )
+    assert response.status_code == 200, response.reason
+    with pytest.raises(LDAPBindError):
+        await check_password(lib_users[0].dn, password)
+
+    user.disabled = False
+    if http_method == "patch":
+        response = requests.patch(
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json={"disabled": user.disabled},
+        )
+    else:
+        response = requests.put(
+            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+        )
+    assert response.status_code == 200, response.reason
+    await check_password(lib_users[0].dn, password)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("http_method", ("patch", "put"))
+async def test_change_password(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    random_name,
+    import_config,
+    udm_kwargs,
+    role: Role,
+    http_method: str,
+):
+    user = (await create_random_users({role.name: 1}, disabled=False))[0]
+    assert user.disabled is False
+    old_password = user.password
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+    await check_password(lib_users[0].dn, old_password)
+    print("OK: can login with old password")
+    user.password = fake.password(length=20)
+    assert user.password != old_password
+    if http_method == "patch":
+        response = requests.patch(
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json={"password": user.password},
+        )
+    else:
+        response = requests.put(
+            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+        )
+    assert response.status_code == 200, response.reason
+    await check_password(lib_users[0].dn, user.password)

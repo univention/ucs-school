@@ -25,7 +25,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import logging
 import re
+from functools import lru_cache
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
@@ -42,6 +44,11 @@ from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
 school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
+
+
+@lru_cache(maxsize=1)
+def get_logger() -> logging.Logger:
+    return logging.getLogger(__name__)
 
 
 async def get_lib_obj(
@@ -81,12 +88,17 @@ class LibModelHelperMixin(BaseModel):
 
     @staticmethod
     def scheme_and_quote(url: str) -> str:
+        """Add 's' to scheme (http) and quote characters for HTTP URL."""
         up: ParseResult = urlparse(url)
         replaced = up._replace(scheme="https", path=quote(up.path))
         return replaced.geturl()
 
     @staticmethod
     def unscheme_and_unquote(url: str) -> str:
+        """
+        Remove 's' from https and replace '%xx' escapes with their
+        single-character equivalents.
+        """
         up: ParseResult = urlparse(url)
         replaced = up._replace(scheme="http", path=unquote(up.path))
         return replaced.geturl()
@@ -95,6 +107,9 @@ class LibModelHelperMixin(BaseModel):
     async def from_lib_model(
         cls, obj: UCSSchoolModel, request: Request, udm: UDM
     ) -> "LibModelHelperMixin":
+        """
+        Get the Kelvin object corresponding to the ucsschool.lib object `obj`.
+        """
         kwargs = await cls._from_lib_model_kwargs(obj, request, udm)
         return cls(**kwargs)
 
@@ -102,6 +117,13 @@ class LibModelHelperMixin(BaseModel):
     async def _from_lib_model_kwargs(
         cls, obj: UCSSchoolModel, request: Request, udm: UDM
     ) -> Dict[str, Any]:
+        """
+        Get ucsschool.lib object data as dict that can be used to create a
+        Kelvin object.
+
+        kwargs = kelvin_object._from_lib_model_kwargs(LibObject)
+        kelvin_object = KelvinClass(**kwargs)
+        """
         kwargs = obj.to_dict()
         if "objectType" in kwargs:
             del kwargs["objectType"]
@@ -113,10 +135,18 @@ class LibModelHelperMixin(BaseModel):
         return kwargs
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
+        """Get the corresponding ucsschool.lib object to this Kelvin object."""
         kwargs = await self._as_lib_model_kwargs(request)
         return self.Config.lib_class(**kwargs)
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
+        """
+        Get object data as dict that can be used to create the ucsschool.lib
+        object corresponding to this Kelvin object.
+
+        kwargs = kelvin_object._as_lib_model_kwargs()
+        lib_object = LibClass(**kwargs)
+        """
         kwargs = self.dict()
         if "dn" in kwargs:
             del kwargs["dn"]

@@ -144,12 +144,13 @@ def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> lo
 		# multiple arguments
 		for index, arg in enumerate(record.args):
 			# cannot call replace_password() to replace single arg, because a tuple is not mutable,
-			# -> have to replace all of record.args
+			# -> have to replace record.args with new tuple
 			if isinstance(arg, collections.abc.Mapping) and isinstance(arg.get('password'), string_types):
 				# don't change original record arguments as it would change the objects being logged
-				args = copy.deepcopy(record.args)
+				args = list(record.args)
+				args[index] = copy.deepcopy(record.args[index])
 				args[index]['password'] = '*' * 8
-				record.args = args
+				record.args = tuple(args)
 	else:
 		# one argument
 		replace_password(record, 'args')
