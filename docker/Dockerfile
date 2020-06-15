@@ -76,7 +76,7 @@ RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
     python3.7 -m venv --system-site-packages /kelvin/venv && \
 	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile --upgrade pip && \
 	# build ujson from source https://github.com/esnme/ultrajson/issues/326
-	/kelvin/venv/bin/python3 -m pip install git+git://github.com/esnme/ultrajson.git && \
+	/kelvin/venv/bin/python3 -m pip install git+git://github.com/esnme/ultrajson.git@2.0.3 && \
 	# python-debian for UCR
 	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile python-debian && \
 	# install pre-build openapi-client-udm package, not yet built against app host
@@ -98,6 +98,7 @@ COPY univention-lib-slim/ /tmp/univention-lib-slim
 COPY univention-directory-manager-modules-slim/ /tmp/univention-directory-manager-modules-slim
 RUN /kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/simple/ univention-config-registry && \
     ln -sv /usr/bin/univention-config-registry /usr/bin/ucr && \
+    mkdir -p /etc/univention && \
 	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile /tmp/univention-lib-slim && \
 	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
 	rm -rf /tmp/*

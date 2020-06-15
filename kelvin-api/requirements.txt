@@ -12,6 +12,6 @@ pyjwt
 python-multipart
 ucs-school-lib
 udm-rest-client>=0.4.0
-ujson
+ujson==2.0.3
 univention-config-registry
 uvicorn
