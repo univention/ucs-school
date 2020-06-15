@@ -7,17 +7,17 @@ Changelog
 
 v1.1.1 (2020-06-15)
 ...................
-* modified the validation SchoolClass.name to allow short class names like ``1``
-* fixed password attribute not being handled
+* The validation of the ``name`` attribute of the ``SchoolClass`` resource has been fixed to allow short class names like ``1``.
+* The ``password`` attribute of the ``User`` resource has been fixed.
 
 v1.1.0 (2020-04-15)
 ...................
-* update UDM REST API Python Client lib to version ``0.4.0``, so it can handle authorized access to the UDM REST API OpenAPI schema
+* The UDM REST API Python Client library has been updated to version ``0.4.0``, so it can handle authorized access to the UDM REST API OpenAPI schema.
 
 v1.0.1 (2020-02-17)
 ...................
-* extended ucsschool lib to allow for context types other than school in ucsschool roles
+* The ucsschool lib has been extended to allow for context types other than ``school`` in ``ucsschool_roles`` attribute of most resources.
 
 v1.0.0 (2020-01-20)
 ...................
-* initial release
+* Initial release.
