@@ -244,7 +244,7 @@ class UserPatchModel(BasePatchModel):
                 if not isinstance(value, list) or value == []:
                     raise HTTPException(
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail=f"No or empty list of school URLs in 'schools' property.",
+                        detail="No or empty list of school URLs in 'schools' property.",
                     )
                 kwargs["schools"] = [
                     url_to_name(
@@ -256,7 +256,7 @@ class UserPatchModel(BasePatchModel):
                 if not value:
                     raise HTTPException(
                         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail=f"No school URL in 'school' property.",
+                        detail="No school URL in 'school' property.",
                     )
                 kwargs["school"] = url_to_name(
                     request, "school", UserCreateModel.unscheme_and_unquote(value)

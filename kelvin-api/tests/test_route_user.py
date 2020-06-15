@@ -177,7 +177,7 @@ async def check_password(bind_dn: str, bind_pw: str) -> None:
     }
     print(f"Testing login (making LDAP search) with: {search_kwargs!r}")
     results = await ldap_access.search(**search_kwargs)
-    print(f"Login success.")
+    print("Login success.")
     assert len(results) == 1
     result = results[0]
     expected_uid = bind_dn.split(",")[0].split("=")[1]
