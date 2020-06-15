@@ -33,6 +33,7 @@ import pytest
 import requests
 from pydantic import ValidationError
 
+import ucsschool.kelvin.constants
 from ucsschool.kelvin.routers.school_class import SchoolClass
 from ucsschool.lib.models.utils import ucr
 from udm_rest_client import UDM
@@ -40,6 +41,12 @@ from udm_rest_client.exceptions import CreateError
 
 lower_case_chars = f"{string.ascii_lowercase}"
 digits = "".join(str(i) for i in range(10))
+
+
+must_run_in_container = pytest.mark.skipif(
+    not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
+    reason="Must run inside Docker container started by appcenter.",
+)
 
 
 def random_names(name_lengths: list, chars: str) -> List:
@@ -61,6 +68,7 @@ async def test_schoolclass_module(name):
         raise e
 
 
+@must_run_in_container
 @pytest.mark.asyncio
 async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
     school_name = "DEMOSCHOOL"
