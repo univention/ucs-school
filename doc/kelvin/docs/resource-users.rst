@@ -18,7 +18,7 @@ To list the same UDM objects run::
 
 Resource representation
 -----------------------
-The following JSON is an example User resource in the `UCS\@school Kelvin REST API`::
+The following JSON is an example User resource in the *UCS\@school Kelvin REST API*::
 
     {
         "dn": "uid=demo_student,cn=schueler,cn=users,ou=DEMOSCHOOL,dc=uni,dc=ven",
@@ -54,7 +54,7 @@ The following JSON is an example User resource in the `UCS\@school Kelvin REST A
     }
 
 
-.. csv-table:: Property description
+.. csv-table:: Attribute description
    :header: "name", "value", "Description", "Notes"
    :widths: 8, 5, 50, 18
    :escape: '
@@ -66,7 +66,7 @@ The following JSON is an example User resource in the `UCS\@school Kelvin REST A
     "lastname", "string", "The users family name.", ""
     "birthday", "date", "The users birthday in ISO 8601 format: ``YYYY-MM-DD``.", ""
     "disabled", "boolean", "Whether the user should be deactivated.", ""
-    "email", "string", "The users email address (``mailPrimaryAddress``), used only when the emails domain is hosted on UCS, not to be confused with the `contact` property ``e-mail``.", ""
+    "email", "string", "The users email address (``mailPrimaryAddress``), used only when the emails domain is hosted on UCS, not to be confused with the *contact* attribute ``e-mail``.", ""
     "roles", "list", "The users UCS\@school roles. A list of URLs in the ``roles`` resource.", "read only, but required when creating"
     "school", "string", "School (OU) the user belongs to. A URL in the ``schools`` resource.", "required for creation when ``schools`` is not set"
     "schools", "list", "List of schools (OUs) the user belongs to. A list of URLs in the ``schools`` resource.", "required for creation when ``school`` is not set"
@@ -76,6 +76,8 @@ The following JSON is an example User resource in the `UCS\@school Kelvin REST A
     "ucsschool_roles", "list", "List of roles the user has in to each school. Format is ``ROLE:CONTEXT_TYPE:CONTEXT``, for example: ``['"'teacher:school:gym1'"', '"'school_admin:school:school2'"']``.", "auto-managed by system, setting and changing discouraged"
     "udm_properties", "nested object", "Object with UDM properties. For example: ``{'"'street'"': '"'Luise Av.'"', '"'phone'"': ['"'+49 30 321654987'"', '"'123 456 789'"']}``", "Must be configured, see below."
 
+The ``password`` attribute is not listed, because it cannot be retrieved, it can only be *set* when creating or modifying a user.
+UCS systems never store or send clear text passwords.
 
 school[s]
 ^^^^^^^^^
@@ -145,7 +147,7 @@ To search for users with usernames that contain ``Brian``, append ``?name=*Brian
 resource. The search is case-insensitive. The URL would be: ``https://<fqdn>/ucsschool/kelvin/v1/users/?name=%2ABrian%2A``
 
 The Users resource supports searching for all attributes and to combine those.
-To search for users that are both `staff` and `teacher` with usernames that start with ``demo``, birthday on the 3rd of february, have a lastname that ends with `sam` and are enrolled in school ``demoschool``, the URL is: ``https://<fqdn>/ucsschool/kelvin/v1/users/?school=demoschool&name=demo%2A&birthday=2001-02-03&lastname=%2Asam&roles=staff&roles=teacher``
+To search for users that are both ``staff`` and ``teacher`` with usernames that start with ``demo``, birthday on the 3rd of february, have a lastname that ends with ``sam`` and are enrolled in school ``demoschool``, the URL is: ``https://<fqdn>/ucsschool/kelvin/v1/users/?school=demoschool&name=demo%2A&birthday=2001-02-03&lastname=%2Asam&roles=staff&roles=teacher``
 
 The user in the example response is working in two schools as both staff and teacher::
 
@@ -215,7 +217,7 @@ The response body will be similar to the following (shortened)::
 
 Create
 ------
-When creating a user, a number of attributes must be set, unless formatted from a template (see `Handbuch zur CLI-Import-Schnittstelle`, section `Formatierungsschema`_):
+When creating a user, a number of attributes must be set, unless formatted from a template (see *Handbuch zur CLI-Import-Schnittstelle*, section `Formatierungsschema`_):
 
 * ``name``
 * ``firstname``
@@ -236,6 +238,7 @@ As an example, with the following being the content of ``/tmp/create_user.json``
         "disabled": true,
         "email": null,
         "record_uid": "bob23",
+        "password": "s3cr3t.s3cr3t.s3cr3t",
         "roles": ["https://<fqdn>/ucsschool/kelvin/v1/roles/teacher"],
         "schools": ["https://<fqdn>/ucsschool/kelvin/v1/schools/DEMOSCHOOL"],
         "source_uid": "Reggae DB",
@@ -290,11 +293,14 @@ Response body::
         }
     }
 
+The ``password`` attribute is missing in the response, because UCS systems never stores or sends clear text passwords.
+
 Modify / Move
 -------------
 
 It is possible to perform complete and partial updates of existing user objects.
 The ``PUT`` method expects a JSON object with all user attributes set.
+The ``password`` attribute should *not* be sent repeatedly, as most password policies forbid reusing the same password.
 The ``PATCH`` method will update only those attributes sent in the request.
 Both methods return a complete Users resource in the response body, exactly as a ``GET`` request would.
 
@@ -402,7 +408,7 @@ A move will only happen, when the new value for ``school`` is not in ``schools``
 
 When using ``PATCH`` and changing only ``school``, ``schools`` may be updated to contain the new value of ``school``.
 
-While changing the ``name`` attribute is technically also a move, the objects `position` in the LDAP tree will not change - only its name.
+While changing the ``name`` attribute is technically also a move, the objects *position* in the LDAP tree will not change - only its name.
 
 Delete
 ------
