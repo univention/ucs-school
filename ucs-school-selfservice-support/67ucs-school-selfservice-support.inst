@@ -38,10 +38,25 @@ VERSION=1
 
 joinscript_init
 
+eval $(ucr shell ldap/base server/role)
+
 for OU in $(univention-ldapsearch -LLL objectClass=ucsschoolOrganizationalUnit ou | sed -nre 's/^ou: //p');
 do
 	/usr/share/ucs-school-lib/modify_ucr_list umc/self-service/passwordreset/whitelist/groups add , "Domain Users $OU"
 done
+
+if [ "$server_role" == "domaincontroller_master" ] || [ "$server_role" == "domaincontroller_backup" ];
+then
+	udm policies/registry create "$@" \
+		--position "cn=policies,$ldap_base" \
+		--set name="send_self_service_invitation" \
+		--append registry="umc/self-service/invitation/enabled false" \
+		--ignore_exists || die
+
+	udm container/dc modify "$@" \
+		--dn "$ldap_base" \
+		--policy-reference "cn=send_self_service_invitation,cn=policies,$ldap_base" || die
+fi
 
 joinscript_save_current_version
 exit 0
