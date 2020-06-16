@@ -106,7 +106,7 @@ def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
         try:
             udm_properties[prop] = udm_obj.props[prop]
         except KeyError:
-            raise UnknownUDMProperty("Unknown UDM property {prop!r}.")
+            raise UnknownUDMProperty(f"Unknown UDM property {prop!r}.")
     return udm_properties
 
 

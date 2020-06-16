@@ -37,6 +37,7 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
+    role_school_admin,
     role_staff,
     role_student,
     role_teacher,
@@ -49,6 +50,7 @@ _roles_to_class = {}
 
 
 class SchoolUserRole(str, Enum):
+    school_admin = "school_admin"
     staff = "staff"
     student = "student"
     teacher = "teacher"
@@ -61,6 +63,8 @@ class SchoolUserRole(str, Enum):
             return cls.teacher
         if role_staff in lib_role:
             return cls.staff
+        if role_school_admin in lib_role:
+            return cls.school_admin
         else:  # Should never happen and throws exception
             return cls(lib_role)
 
@@ -88,6 +92,8 @@ class SchoolUserRole(str, Enum):
             return create_ucsschool_role_string(role_student, school)
         elif self.value == self.teacher:
             return create_ucsschool_role_string(role_teacher, school)
+        elif self.value == self.school_admin:
+            return create_ucsschool_role_string(role_school_admin, school)
 
     def to_url(self, request: Request) -> HttpUrl:
         url = request.url_for("get", role_name=self.value)
