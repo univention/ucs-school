@@ -30,7 +30,7 @@
 MACHINE_USER="$HOSTNAME\$"
 MACHINE_PASSWORD=$(cat /etc/machine.secret)
 
-if [ "$1" = "upgrade" ] ; then
+if [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
   echo "Building OpenAPI client library using host ${DOCKER_HOST_NAME}..."
   . /kelvin/venv/bin/activate
   update_openapi_client \
