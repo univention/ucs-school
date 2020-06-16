@@ -6,21 +6,24 @@
 ## packages: [ucs-school-umc-groups]
 
 import random
-from univention.testing.umc import Client
+
+import univention.config_registry
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-import univention.testing.strings as uts
 from univention.lib.umc import HTTPError
+from univention.testing.umc import Client
+
 from ucsschool.lib.models import Student
-import univention.config_registry
 
 
 def random_properties(udm_user, klass_name, n=5):
     """
-		Choose n random properties, which are already set.
-		Always add pseudo-attribute 'Class'
+    Choose n random properties, which are already set.
+    Always add pseudo-attribute 'Class'
 
-	"""
+    """
     udm_properties = []
     expected_values = []
     while len(udm_properties) < n:
@@ -38,9 +41,8 @@ def random_properties(udm_user, klass_name, n=5):
 
 
 def main():
-
-    with utu.UCSTestSchool() as schoolenv:
-        host = schoolenv.ucr.get("hostname")
+    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
+        host = ucr.get("hostname")
         ucrv_name = "ucsschool/umc/lists/class/attributes"
         school_name, oudn = schoolenv.create_ou()
         class_name, class_dn = schoolenv.create_school_class(school_name)
@@ -99,7 +101,6 @@ def main():
             # Multi-values are returned in "", replacing them was the easiest way.
             class_list["csv"] = class_list["csv"].replace('"', "")
             assert class_list == expected_class_list
-            univention.config_registry.handler_unset([ucrv_name])
 
 
 if __name__ == "__main__":

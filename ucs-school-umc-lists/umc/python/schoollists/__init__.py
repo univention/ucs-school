@@ -71,7 +71,6 @@ class Instance(SchoolBaseModule):
     )
     @LDAP_Connection()
     def csv_list(self, request, ldap_user_read=None, ldap_position=None):
-        ucr.load()
         school = request.options["school"]
         group = request.options["group"]
         separator = request.options["separator"]
@@ -84,20 +83,21 @@ class Instance(SchoolBaseModule):
             row = []
             student_udm_obj = student.get_udm_object(ldap_user_read)
             for attr in attributes:
-                if attr != "Class":
+                if attr == "Class":
+                    row.append(student.school_classes[school][0].split("-", 1)[1])
+                else:
                     try:
                         value = student_udm_obj[attr]
                     except KeyError:
                         raise UMC_Error(
                             _(
-                                "{!r} is not a valid UDM-property. Please change the value of UCR ucsschool/umc/lists/class/attributes."
+                                "{!r} is not a valid UDM-property. Please change the value of UCR "
+                                "ucsschool/umc/lists/class/attributes."
                             ).format(attr)
                         )
                     if type(value) is list:
                         value = " ".join(value)
                     row.append(value)
-                else:
-                    row.append(student.school_classes[school][0].split("-", 1)[1])
             rows.append(row)
 
         filename = explode_dn(group)[0].split("=")[1] + ".csv"

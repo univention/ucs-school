@@ -5,10 +5,13 @@
 ## tags: [apptest, ucsschool,unit-test, ucs-school-umc-list]
 ## bugs: [51363]
 
-import pytest
 import random
+
 import univention.testing.strings as uts
-from univention.management.console.modules.schoollists import write_classlist_csv
+from univention.management.console.modules.schoollists import \
+    write_classlist_csv
+
+import pytest
 
 
 def random_ucr_values(n):
@@ -24,10 +27,12 @@ def random_ucr_values(n):
 
 
 def user_values(num_attributes, school_class):
+    students = []
     for _ in range(10):
         values = [uts.random_string() for _ in range(num_attributes)]
         values.append(school_class)
-        yield values
+        students.append(values)
+    return students
 
 
 @pytest.mark.parametrize("ucr_value", random_ucr_values(50))
@@ -35,9 +40,20 @@ def user_values(num_attributes, school_class):
 @pytest.mark.parametrize("group", [uts.random_name() for _ in range(5)])
 def test_write_csv(ucr_value, separator, group):
     school_class = "DEMOSCHOOL-{}".format(group)
-    default = "firstname Firstname,lastname Lastname,Class Class,username Username"
+    default = "firstname Firstname,lastname Lastname,username Username"
     ucr_value = ucr_value or default
     attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
     students = user_values(len(attributes), school_class)
+    attributes, fieldnames = list(attributes), list(fieldnames)
+    fieldnames.append("Class")
+    attributes.append("Class")
     filename = "{}.csv".format(group)
-    write_classlist_csv(fieldnames, students, filename, separator)
+    result = write_classlist_csv(fieldnames, students, filename, separator)
+    assert result["filename"] == filename
+    lines = result["csv"].strip().split("\n")
+    header = lines[0]
+    assert separator.join(fieldnames) == header.strip()
+    body = lines[1:]
+    assert len(body) == len(students)
+    for i, line in enumerate(body):
+        assert separator.join(students[i]) == line.strip()
