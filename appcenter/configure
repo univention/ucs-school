@@ -41,6 +41,16 @@ if [ "$1" = "upgrade" ] ; then
     --password "$MACHINE_PASSWORD" \
     "$DOCKER_HOST_NAME" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
 
+  echo "Adding UCS certificate to certifi store..."
+  CERTIFI_STORE="$(python -m certifi)"
+  UCS_CERT="/usr/local/share/ca-certificates/ucs.crt"
+  while IFS= read -r line; do
+    if ! grep -q -- "$line" "$CERTIFI_STORE"; then
+      cat "$UCS_CERT" >> "$CERTIFI_STORE"
+      break
+    fi
+  done < "$UCS_CERT"
+
   echo "Restating UCS@school Kelvin REST API server..."
   /etc/init.d/ucsschool-kelvin-rest-api restart
 fi
