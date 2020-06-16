@@ -7,6 +7,9 @@
     <li>
 		The "password" attribute of the "User" resource has been fixed.
     </li>
+    <li>
+		The signatures of the "UserPyHook" methods have been adapted to be able to "await" async methods.
+    </li>
 </ul>
 <h2>v1.1.0 (2020-04-15)</h2>
 <ul>

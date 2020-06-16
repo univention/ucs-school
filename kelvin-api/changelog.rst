@@ -9,6 +9,7 @@ v1.1.1 (2020-06-15)
 ...................
 * The validation of the ``name`` attribute of the ``SchoolClass`` resource has been fixed to allow short class names like ``1``.
 * The ``password`` attribute of the ``User`` resource has been fixed.
+* The signatures of the ``UserPyHook`` methods have been adapted to be able to ``await`` async methods.
 
 v1.1.0 (2020-04-15)
 ...................
