@@ -33,9 +33,6 @@
 Base class for all Python based User hooks.
 """
 
-import univention.admin.uldap
-from udm_rest_client import UDM
-
 from .import_pyhook import ImportPyHook
 
 
@@ -87,23 +84,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		"post_remove": None,
 	}
 
-	def __init__(
-		self,
-		lo: univention.admin.uldap.access = None,
-		dry_run: bool = None,
-		udm: UDM = None,
-		*args,
-		**kwargs,
-	) -> None:
-		"""
-		:param univention.admin.uldap.access lo: optional LDAP connection object
-		:param bool dry_run: whether hook is executed during a dry-run (always False)
-		:param UDM udm: UDM REST Client instance
-		"""
-		super(UserPyHook, self).__init__(lo, dry_run, *args, **kwargs)
-		self.udm = udm
-
-	def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before creating a user.
 
@@ -116,7 +97,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after creating a user.
 
@@ -129,7 +110,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before modifying a user.
 
@@ -140,7 +121,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after modifying a user.
 
@@ -154,7 +135,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before changing a users primary school (position).
 
@@ -165,7 +146,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after changing a users primary school (position).
 
@@ -178,7 +159,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code before deleting a user.
 
@@ -189,7 +170,7 @@ class UserPyHook(ImportPyHook, KelvinUserHook):
 		:return: None
 		"""
 
-	def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+	async def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
 		"""
 		Run code after deleting a user.
 

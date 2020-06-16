@@ -35,6 +35,7 @@ Base class for all Python based import hooks.
 from __future__ import absolute_import
 import logging
 from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
+from udm_rest_client import UDM
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 try:
@@ -51,29 +52,34 @@ class ImportPyHook(PyHook):
 	"""
 	Base class for Python based import hooks.
 
-	* self.dry_run     # whether hook is executed during a dry-run (1)
-	* self.lo          # LDAP connection object (2)
+	* self.dry_run     # always ``False`` in the context of the Kelvin API
+	* self.lo          # LDAP connection object (1)
 	* self.logger      # Python logging instance
+	* self.udm         # UDM REST Client instance (2)
 
 	If multiple hook classes are found, hook functions with higher
 	priority numbers run before those with lower priorities. None disables
 	a function (no need to remove it / comment it out).
 
-	(1) Hooks are only executed during dry-runs, if the class attribute
-	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` must not modify LDAP objects.
-	Therefore the LDAP connection object self.lo will be a read-only connection
-	during a dry-run.
-	(2) Read-write cn=admin connection in a real run, read-only cn=admin
-	connection during a dry-run.
+	(1) Read-write cn=admin LDAP connection, attention: LDAP attributes
+		returned by get() and search() are now ``bytes`´, not ``str``
+	(2) Read-write cn=admin UDM REST API connection, see
+		https://udm-rest-client.readthedocs.io/en/latest/
 	"""
 	supports_dry_run = False  # if True hook will be executed during a dry-run
 
-	def __init__(self, lo=None, dry_run=None, *args, **kwargs):
-		# type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
+	def __init__(
+		self,
+		lo: univention.admin.uldap.access = None,
+		dry_run: bool = None,
+		udm: UDM = None,
+		*args,
+		**kwargs,
+	) -> None:
 		"""
 		:param univention.admin.uldap.access lo: optional LDAP connection object
 		:param bool dry_run: whether hook is executed during a dry-run
+		:param UDM udm: UDM REST Client instance
 		"""
 		super(ImportPyHook, self).__init__(*args, **kwargs)
 		if dry_run is None:
@@ -94,6 +100,8 @@ class ImportPyHook(PyHook):
 			"""LDAP connection object"""
 		self.logger = logging.getLogger(__name__)  # type: logging.Logger
 		"""Python logging instance"""
+		self.udm = udm
+		"""udm_rest_client.UDM instance"""
 
 
 class ImportPyHookLoader(object):
