@@ -37,7 +37,7 @@ from __future__ import absolute_import
 
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
-from univention.management.console.modules.diagnostic import Problem
+from univention.management.console.modules.diagnostic import Critical
 from univention.uldap import getAdminConnection
 
 _ = Translation("ucs-school-umc-diagnostic").translate
@@ -63,9 +63,8 @@ DC_BACKUP = "domaincontroller_backup"
 
 def run(_umc_instance):
     server_role = ucr.get("server/role")
-    if server_role != DC_MASTER or server_role != DC_BACKUP:
+    if server_role != DC_MASTER and server_role != DC_BACKUP:
         return
-
     lo = getAdminConnection()
     all_ids = {}  # Structure: {sourceUID: {recordUID: dn}}
     for dn, attrs in lo.search(
@@ -73,7 +72,7 @@ def run(_umc_instance):
     ):
         try:
             other_dn = all_ids[attrs[UCSSCHOOLSOURCEUID][0]][attrs[UCSSCHOOLRECORDUID][0]]
-            raise Problem("User with DN={!r} has same suid+ruid as {!r}".format(dn, other_dn))
+            raise Critical("User with DN={!r} has same suid+ruid as {!r}".format(dn, other_dn))
         except KeyError:
             all_ids.setdefault(attrs[UCSSCHOOLSOURCEUID][0], {})[attrs[UCSSCHOOLRECORDUID][0]] = dn
 
