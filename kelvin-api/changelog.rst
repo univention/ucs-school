@@ -10,6 +10,9 @@ v1.1.1 (2020-06-15)
 * The validation of the ``name`` attribute of the ``SchoolClass`` resource has been fixed to allow short class names like ``1``.
 * The ``password`` attribute of the ``User`` resource has been fixed.
 * The signatures of the ``UserPyHook`` methods have been adapted to be able to ``await`` async methods.
+* The UCS CA is now added to the ``certifi`` SSL certification store.
+* Support for the ``school_admin`` role was added.
+
 
 v1.1.0 (2020-04-15)
 ...................

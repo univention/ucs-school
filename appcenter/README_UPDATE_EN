@@ -10,6 +10,12 @@
     <li>
 		The signatures of the "UserPyHook" methods have been adapted to be able to "await" async methods.
     </li>
+    <li>
+        The UCS CA is now added to the ``certifi`` SSL certification store.
+    </li>
+    <li>
+        Support for the ``school_admin`` role was added.
+    </li>
 </ul>
 <h2>v1.1.0 (2020-04-15)</h2>
 <ul>
