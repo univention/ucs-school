@@ -32,21 +32,18 @@
 # <http://www.gnu.org/licenses/>.
 
 import csv
+
 import StringIO
 from ldap.dn import explode_dn
 
+from ucsschool.lib.models.user import User
+from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.sanitizers import (
-    DNSanitizer,
-    StringSanitizer,
-)
 from univention.management.console.modules.decorators import sanitize
-
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
-from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
-from ucsschool.lib.models.user import User
+from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 
 _ = Translation("ucs-school-umc-lists").translate
 

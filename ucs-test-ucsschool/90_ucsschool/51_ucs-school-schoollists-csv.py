@@ -7,22 +7,17 @@
 
 import random
 
-import univention.testing.strings as uts
-from univention.management.console.modules.schoollists import \
-    write_classlist_csv
-
 import pytest
+
+import univention.testing.strings as uts
+from univention.management.console.modules.schoollists import write_classlist_csv
 
 
 def random_ucr_values(n):
     values = []
     for _ in range(n):
         u = random.randint(0, 10)
-        values.append(
-            ",".join(
-                ["{} {}".format(uts.random_name(), uts.random_name()) for _ in range(u)]
-            )
-        )
+        values.append(",".join(["{} {}".format(uts.random_name(), uts.random_name()) for _ in range(u)]))
     return values
 
 

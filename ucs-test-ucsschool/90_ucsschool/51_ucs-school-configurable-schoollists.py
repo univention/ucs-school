@@ -12,10 +12,9 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from ucsschool.lib.models import Student
 from univention.lib.umc import HTTPError
 from univention.testing.umc import Client
-
-from ucsschool.lib.models import Student
 
 
 def random_properties(udm_user, klass_name, n=5):
@@ -57,9 +56,7 @@ def main():
             mailaddress=student_mailaddress,
         )
         klass_name = class_name.split("-", 1)[1]
-        udm_user = Student.from_dn(
-            student_dn, school_name, schoolenv.lo
-        ).get_udm_object(schoolenv.lo)
+        udm_user = Student.from_dn(student_dn, school_name, schoolenv.lo).get_udm_object(schoolenv.lo)
         cases = [random_properties(udm_user, klass_name) for _ in range(5)]
         # Mess up one udm-property to get an error.
         _udm_properties = cases[-1][1]
@@ -67,14 +64,9 @@ def main():
         expected_error = _udm_properties[0]
 
         for expected_values, udm_properties, column_names in cases:
-
-            ucr_value = ",".join(
-                [" ".join(pair) for pair in zip(udm_properties, column_names)]
-            )
+            ucr_value = ",".join([" ".join(pair) for pair in zip(udm_properties, column_names)])
             print("## Set {}={}".format(ucrv_name, ucr_value))
-            univention.config_registry.handler_set(
-                ["{}={}".format(ucrv_name, ucr_value)]
-            )
+            univention.config_registry.handler_set(["{}={}".format(ucrv_name, ucr_value)])
             schoolenv.ucr.load()
 
             account = utils.UCSTestDomainAdminCredentials()
@@ -82,16 +74,13 @@ def main():
             connection.authenticate(account.username, account.bindpw)
             expected_class_list = {
                 u"csv": u"{fieldnames_string}\r\n{expected_values}\r\n".format(
-                    fieldnames_string=",".join(column_names),
-                    expected_values=",".join(expected_values),
+                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values),
                 ),
                 u"filename": u"{}.csv".format(class_name),
             }
             options = {"school": school_name, "group": class_dn, "separator": ","}
             try:
-                class_list = connection.umc_command(
-                    "schoollists/csvlist", options
-                ).result
+                class_list = connection.umc_command("schoollists/csvlist", options).result
             except HTTPError as exc:
                 assert expected_error in exc.message
                 print("The failed UMC request failed was expected.")
