@@ -393,4 +393,16 @@
             konfiguriert werden. In der Standardkonfiguration wird die Prüfung alle 5 Sekunden durchgeführt. Wird der Wert der Variable auf 0 gesetzt, wird die Prüfung abgeschaltet.
         </para>
     </section>
+    <section id="school:setup:generic:configureclasslists">
+        <title>Konfiguration des Klassenlisten-Moduls</title>
+        <para>
+            Über das UMC-Modul <guimenu>Klassenlisten</guimenu> können Listen mit Schülerdaten einer ausgewählten Klasse exportiert werden. In der Standardkonfiguration
+            werden die UDM Attribute <literal>firstname, lastname, username</literal> sowie die ausgewählte Klasse angezeigt.
+            Mit der &ucsUCRV; <envar>ucsschool/umc/lists/class/attributes</envar> können die angezeigten Attribute angepasst werden.
+            Die Variable beschreibt eine Zuordnung der anzuzeigenden UDM Attribute zu den angezeigten Spaltennamen.
+            Dabei sind die Zuordnung durch Kommata zu trennen, z.B.
+            <literal>firstname Vorname,lastname Nachname,Class Klasse,username Username</literal>. Für <literal>Class</literal> wird dabei
+            die ausgewählte Klasse eingesetzt.
+        </para>
+    </section>
 </chapter>

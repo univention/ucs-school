@@ -40,10 +40,24 @@ from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
 
 _ = Translation("ucs-school-umc-lists").translate
+
+
+def write_classlist_csv(fieldnames, students, filename, separator):
+    csvfile = StringIO.StringIO()
+    writer = csv.writer(csvfile, delimiter=str(separator))
+    writer.writerow(fieldnames)
+    for row in students:
+        writer.writerow(row)
+    csvfile.seek(0)
+    result = {"filename": filename, "csv": csvfile.read()}
+    csvfile.close()
+    return result
 
 
 class Instance(SchoolBaseModule):
@@ -57,19 +71,33 @@ class Instance(SchoolBaseModule):
         school = request.options["school"]
         group = request.options["group"]
         separator = request.options["separator"]
-        csvfile = StringIO.StringIO()
-        fieldnames = [_("Firstname"), _("Lastname"), _("Class"), _("Username")]
-        writer = csv.writer(csvfile, delimiter=str(separator))
-        writer.writerow(fieldnames)
+        default = "firstname Firstname,lastname Lastname,Class Class,username Username"
+        ucr_value = ucr.get("ucsschool/umc/lists/class/attributes", "") or default
+        attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
+        rows = []
         for student in self.students(ldap_user_read, school, group):
-            class_display_name = student.school_classes[school][0].split("-", 1)[1]
-            writer.writerow(
-                [student.firstname, student.lastname, class_display_name, student.name,]
-            )
-        csvfile.seek(0)
+            row = []
+            student_udm_obj = student.get_udm_object(ldap_user_read)
+            for attr in attributes:
+                if attr == "Class":
+                    row.append(student.school_classes[school][0].split("-", 1)[1])
+                else:
+                    try:
+                        value = student_udm_obj[attr]
+                    except KeyError:
+                        raise UMC_Error(
+                            _(
+                                "{!r} is not a valid UDM-property. Please change the value of UCR "
+                                "ucsschool/umc/lists/class/attributes."
+                            ).format(attr)
+                        )
+                    if type(value) is list:
+                        value = " ".join(value)
+                    row.append(value)
+            rows.append(row)
+
         filename = explode_dn(group)[0].split("=")[1] + ".csv"
-        result = {"filename": filename, "csv": csvfile.read()}
-        csvfile.close()
+        result = write_classlist_csv(fieldnames, rows, filename, separator)
         self.finished(request.id, result)
 
     def students(self, lo, school, group):
