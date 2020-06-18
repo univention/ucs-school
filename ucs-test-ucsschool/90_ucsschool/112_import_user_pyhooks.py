@@ -16,7 +16,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS
 from ucsschool.importer.utils.shell import (
     ImportStaff,
     ImportStudent,
@@ -31,6 +30,7 @@ TESTHOOKTARGET = "/usr/share/ucs-school-import/pyhooks/bdaytest.py"
 logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 sys.path.append("/usr/share/ucs-school-import/pyhooks/")
+from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS
 
 
 def cleanup():
