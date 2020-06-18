@@ -30,7 +30,7 @@ TESTHOOKTARGET = "/usr/share/ucs-school-import/pyhooks/bdaytest.py"
 logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 sys.path.append("/usr/share/ucs-school-import/pyhooks/")
-from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS
+from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS  # noqa: E402
 
 
 def cleanup():
