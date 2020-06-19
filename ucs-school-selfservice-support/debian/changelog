@@ -1,3 +1,9 @@
+ucs-school-selfservice-support (3.0.0-2) unstable; urgency=medium
+
+  * Bug #51245: Added quotation marks around eval 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 19 Jun 2020 16:10:18 +0200
+
 ucs-school-selfservice-support (3.0.0-1) unstable; urgency=medium
 
   * Bug #51245: disable selfservice-invitation feature by default

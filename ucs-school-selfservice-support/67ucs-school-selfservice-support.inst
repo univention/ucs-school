@@ -38,7 +38,7 @@ VERSION=1
 
 joinscript_init
 
-eval $(ucr shell ldap/base server/role)
+eval "$(ucr shell ldap/base server/role)"
 
 for OU in $(univention-ldapsearch -LLL objectClass=ucsschoolOrganizationalUnit ou | sed -nre 's/^ou: //p');
 do
