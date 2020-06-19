@@ -83,6 +83,6 @@ class ConfigPyHook(ImportPyHook):
         :param list used_conffiles: configuration files read and applied
         :param dict used_kwargs: command line options read and applied
         :return: config dict
-        :rtype ReadOnlyDict
+        :rtype: ReadOnlyDict
         """
         return config

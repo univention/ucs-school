@@ -87,7 +87,7 @@ class ExtendConfigByRole(ConfigPyHook):
         :param list used_conffiles: configuration files read and applied
         :param dict used_kwargs: command line options read and applied
         :return: config dict
-        :rtype ReadOnlyDict
+        :rtype: ReadOnlyDict
         """
         if not self.preconditions_met(config, used_conffiles, used_kwargs):
             return config
@@ -115,7 +115,7 @@ class ExtendConfigByRole(ConfigPyHook):
         :param list used_conffiles: configuration files read and applied
         :param dict used_kwargs: command line options read and applied
         :return: whether the hook can run
-        :rtype bool
+        :rtype: bool
         """
         if "by_role" not in config.get("include", {}):
             self.logger.error('Exiting hook: missing section "include:by_role".')
