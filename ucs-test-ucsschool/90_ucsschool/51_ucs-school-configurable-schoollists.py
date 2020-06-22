@@ -43,7 +43,7 @@ def main():
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
         host = ucr.get("hostname")
         ucrv_name = "ucsschool/umc/lists/class/attributes"
-        school_name, oudn = schoolenv.create_ou()
+        school_name, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         class_name, class_dn = schoolenv.create_school_class(school_name)
         student_firstname = uts.random_string()
         student_lastname = uts.random_string()
