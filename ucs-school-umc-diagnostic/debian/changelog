@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-11) unstable; urgency=medium
+
+  * Bug #51542: added diagnostic module to check empty recordUIDs
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Wed, 24 Jun 2020 10:14:58 +0200
+
 ucs-school-umc-diagnostic (1.0.0-10) unstable; urgency=medium
 
   * Bug #50503: added diagnostic module to check backend
