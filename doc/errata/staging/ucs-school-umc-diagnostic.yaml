@@ -5,7 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
 fix: 1.0.0-11A~4.4.0.202006241019
 desc: |
-  * In UCS we can switch backends for DNS by UCRV dns/backend from samba4 to ldap. This variable must be set to "samba4" in UCS@school systems with the role dc master, dc slave and dc backup. This fix adds a diagnostic module which checks if the UCRV of dns/backend is set correctly. (Bug #50503).
-
-  * Users that are considered for user-imports, might have a sourceUID but no recordUID set. However, this will most likely lead to problems in the future and should be avoided. This fix adds a diagnostic module which detects users with a sourceUID but no recordUID set. (Bug #51542)
+ * In UCS we can switch backends for DNS by UCRV dns/backend from samba4 to ldap. This variable must be set to "samba4" in UCS@school systems with the role dc master, dc slave and dc backup. This fix adds a diagnostic module which checks if the UCRV of dns/backend is set correctly (Bug #50503).
+ * Users that are considered for user-imports, might have a sourceUID but no recordUID set. However, this will most likely lead to problems in the future and should be avoided. This fix adds a diagnostic module which detects users with a sourceUID but no recordUID set (Bug #51542).
 bug: [50503, 51542]
