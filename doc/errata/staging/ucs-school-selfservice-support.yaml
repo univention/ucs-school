@@ -4,6 +4,6 @@ version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-selfservice-support
 fix: 3.0.0-1A~4.4.0.202006151942
-desc: 
-  * Under circumstances, when a user was created, the user would receive an invitation email for resetting her/his password. This feature is mostly not desired in UCS@school and, thus, is now disabled by default. It can be reenabled via a new UCRV policy as described <ulink url="https://help.univention.com/t/how-to-re-enable-self-service-invitation-feature/15195">here</ulink> (Bug #51245).
+desc: |
+ * Under circumstances, when a user was created, the user would receive an invitation email for resetting her/his password. This feature is mostly not desired in UCS@school and, thus, is now disabled by default. It can be reenabled via a new UCRV policy as described <ulink url="https://help.univention.com/t/how-to-re-enable-self-service-invitation-feature/15195">here</ulink> (Bug #51245).
 bug: [51245]
