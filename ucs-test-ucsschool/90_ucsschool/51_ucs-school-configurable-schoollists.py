@@ -45,16 +45,7 @@ def main():
         ucrv_name = "ucsschool/umc/lists/class/attributes"
         school_name, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         class_name, class_dn = schoolenv.create_school_class(school_name)
-        student_firstname = uts.random_string()
-        student_lastname = uts.random_string()
-        student_mailaddress = "{}@{}".format(student_firstname, host)
-        student, student_dn = schoolenv.create_user(
-            school_name,
-            classes=class_name,
-            firstname=student_firstname,
-            lastname=student_lastname,
-            mailaddress=student_mailaddress,
-        )
+        student, student_dn = schoolenv.create_user(school_name, classes=class_name)
         klass_name = class_name.split("-", 1)[1]
         udm_user = Student.from_dn(student_dn, school_name, schoolenv.lo).get_udm_object(schoolenv.lo)
         cases = [random_properties(udm_user, klass_name) for _ in range(5)]
