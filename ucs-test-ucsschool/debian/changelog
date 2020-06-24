@@ -1,4 +1,4 @@
-ucs-test-ucsschool (6.0.115ubuntu1) unstable; urgency=medium
+ucs-test-ucsschool (6.0.116) unstable; urgency=medium
 
   * Bug #50773: remove specific email in user creation
 
