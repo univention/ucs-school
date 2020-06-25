@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-12) unstable; urgency=medium
+
+  * Bug #51494: added diagnostic module to check suid-ruid-uniqueness
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 25 Jun 2020 12:19:52 +0200
+
 ucs-school-umc-diagnostic (1.0.0-11) unstable; urgency=medium
 
   * Bug #51542: added diagnostic module to check empty recordUIDs
