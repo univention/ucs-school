@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-diagnostic
+fix: 1.0.0-12A~4.4.0.202006251224
+desc: |
+  * Users that are considered for user-imports, must have a unique sourceUID-recordUID combination. This fix adds a diagnostic module, which checks that those combinations do not have any duplicates. (Bug #51494).
+bug: [51494]
