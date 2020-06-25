@@ -278,7 +278,41 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-20A~4.4.0.202006031054 -->
 <!-- CHANGELOG:2020-06-10:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-06-24" lang="en">
+					<title>Released on 2020-06-24:</title>
+					<!-- START ucs-school-import 17.0.36A~4.4.0.202006191705 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.36A~4.4.0.202006191705</emphasis>:
+						<itemizedlist>
+							<listitem><para>Deactivated hooks for the creation of new OX contexts, when set on a user, were added (<u:bug>51536</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.36A~4.4.0.202006191705 -->
+					<!-- START ucs-school-umc-diagnostic 1.0.0-11A~4.4.0.202006241019 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-11A~4.4.0.202006241019</emphasis>:
+						<itemizedlist>
+							<listitem><para>In UCS we can switch backends for DNS by UCRV dns/backend from samba4 to ldap. This variable must be set to samba4 in UCS@school systems with the role dc master, dc slave and dc backup. This fix adds a diagnostic module which checks if the UCRV of dns/backend is set correctly (<u:bug>50503</u:bug>).</para></listitem>
+
+							<listitem><para>Users that are considered for user-imports, might have a sourceUID but no recordUID set. However, this will most likely lead to problems in the future and should be avoided. This fix adds a diagnostic module which detects users with a sourceUID but no recordUID set (<u:bug>51542</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-diagnostic 1.0.0-11A~4.4.0.202006241019 -->
+					<!-- START ucs-school-umc-lists 2.0.0-6A~4.4.0.202006170938 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lists</emphasis> in version <emphasis>2.0.0-6A~4.4.0.202006170938</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCR-V <envar>ucsschool/umc/lists/class/attributes</envar> was added to set the displayed UDM properties and the column names in the csv file, which is downloaded in the UMC classlists module (<u:bug>50773</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lists 2.0.0-6A~4.4.0.202006170938 -->
+<!-- CHANGELOG:2020-06-24:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
