@@ -22,7 +22,7 @@ def main():
     logger = utu.get_ucsschool_logger()
     target_broadcast_ips = ["255.255.255.255", "10.200.47.254"]
     t_shark_timeout = 10
-    t_shark_duration = t_shark_timeout * 3
+    t_shark_duration = t_shark_timeout * 5
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
         school, _ = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         computer = UmcComputer(school, "windows")
@@ -45,7 +45,7 @@ def main():
             stdout=subprocess.PIPE,
             close_fds=True,
         )
-        logger.info("Wait for tshark to get ready (...)")
+        logger.info("Wait {}s for tshark to get ready (...)".format(t_shark_timeout))
         time.sleep(t_shark_timeout)
         logger.info(
             "Send WoL signals to {} to broadcast-ips {}".format(mac_address, target_broadcast_ips)
@@ -69,17 +69,15 @@ def main():
         # payload = bytes(bytearray.fromhex(payload_hex))
         assert computer.mac_address in stdout
         for b_ip in target_broadcast_ips:
-            successful_send = re.match(
-                r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(server_ip, b_ip, mac_address),
-                stdout,
-                re.DOTALL,
-            )
+            regex = r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(server_ip, b_ip, mac_address)
+            successful_send = re.match(regex, str(stdout), re.DOTALL)
             if successful_send:
                 logger.info("Packages were successfully sent to {}".format(b_ip))
-            elif "{}".format(b_ip) in stdout:
+            elif b_ip in str(stdout):
                 logger.info("Could not send WoL signal to {}".format(b_ip))
                 logger.info("This is the expected behaviour, since it is not reachable.")
             else:
+                logger.info("tshark output was\n{}".format(stdout))
                 utils.fail("Did not succeed to send WoL to {}".format(b_ip))
 
 
