@@ -5,14 +5,14 @@ Type=bool
 Categories=management-umc
 
 [ucsschool/passwordreset/password-change-on-next-login]
-Description[de]=Definiert, ob die Checkbox, die einen Passwortwechel bei der nächsten Anmeldung erzwingt, standardmäßig eingeschaltet ist.
-Description[en]=Defines if the checkbox which requires a password change on next login is checked by default.
+Description[de]=Wenn eingeschaltet, wird im UCS@school Modul Passwörter der Wert der Checkbox 'Benutzer muss das Passwort bei der nächsten Anmeldung ändern' standardmäßig eingeschaltet.
+Description[en]=If enabled, the value of the checkbox 'User has to change password on next login' in the UCS@school passwords module is checked by default.
 Type=bool
 Categories=management-umc
 
 [ucsschool/passwordreset/force-password-change-on-next-login]
-Description[de]=Wenn eingeschaltet, wird das Ändern des Checkboxwertes aus ucsschool/passwordreset/password-change-on-next-login durch Benutzer verhindert.
-Description[en]=If enabled, prevents users from changing the checkbox value set in ucsschool/passwordreset/password-change-on-next-login.
+Description[de]=Wenn eingeschaltet, wird im UCS@school UMC-Modul Passwörter das Ändern des Checkbox-Werts 'Benutzer muss das Passwort bei der nächsten Anmeldung ändern' verhindert.
+Description[en]=If enabled, it is not possible to change the checkbox value of 'User has to change password on next login' in the UCS@school passwords module.
 Type=bool
 Categories=management-umc
 
