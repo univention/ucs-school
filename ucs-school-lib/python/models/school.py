@@ -284,11 +284,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name_fallback(self, administrative=False):
         if administrative:
-            return (
-                "dc%sv-01" % self.name.lower()
-            )  # this is the naming convention, a trailing v for Verwaltungsnetz DCs
+            # this is the naming convention, a trailing v for Verwaltungsnetz DC
+            # convention changed with Bug #51274
+            return "dcv%s" % self.name.lower()
         else:
-            return "dc%s-01" % self.name.lower()
+            return "dc%s" % self.name.lower()
 
     def get_dc_name(self, administrative=False):
         if ucr.is_true("ucsschool/singlemaster", False):

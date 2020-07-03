@@ -288,8 +288,8 @@ class School(object):
             dc_dn = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (dc, ou_base)
             dc_name = dc
         else:
-            dc_dn = "cn=dc%s-01,cn=dc,cn=server,cn=computers,%s" % (ou, ou_base)
-            dc_name = "dc%s-01" % ou
+            dc_dn = "cn=dc%s,cn=dc,cn=server,cn=computers,%s" % (ou, ou_base)
+            dc_name = "dc%s" % ou
 
         homesharefileserver_dn = dc_dn
         if homesharefileserver:

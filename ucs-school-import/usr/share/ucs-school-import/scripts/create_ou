@@ -49,7 +49,7 @@ def main():
     Arguments:
     <ou_name>               name of ou that shall be created or verified
     <educational_dc_name>   hostname of the educational DC for specified OU
-                            (if dc_name is not specified "dc<ou_name>-01" will be
+                            (if dc_name is not specified "dc<ou_name>" will be
                         used as the default for the domaincontroller name)
     <administrative_dc_name>    hostname of the administrative DC for the specified OU"""
     parser = optparse.OptionParser(usage=usage)

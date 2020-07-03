@@ -190,8 +190,8 @@ class DCName(Attribute):
             if not regex.match(value):
                 raise ValueError(_("Invalid Domain Controller name"))
             if ucr.is_true("ucsschool/singlemaster", False):
-                if len(value) > 12:
-                    raise ValueError(_("A valid NetBIOS hostname can not be longer than 12 characters."))
+                if len(value) > 13:
+                    raise ValueError(_("A valid NetBIOS hostname can not be longer than 13 characters."))
                 if sum([len(value), 1, len(ucr.get("domainname", ""))]) > 63:
                     raise ValueError(
                         _("The length of fully qualified domain name is greater than 63 characters.")

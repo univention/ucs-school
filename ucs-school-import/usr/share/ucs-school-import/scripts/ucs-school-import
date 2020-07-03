@@ -1394,7 +1394,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
             gid = gids["gidNumber"][0]
 
         # set default server
-        serverfqdn = "dc%s-01.%s" % (schoolNr.lower(), domainname)
+        serverfqdn = "dc%s.%s" % (schoolNr.lower(), domainname)
 
         # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
         ou_dn = getDN(schoolNr, basedn=base)
