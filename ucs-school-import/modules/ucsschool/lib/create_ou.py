@@ -74,7 +74,13 @@ def create_ou(
     if not edu_name and is_single_master:
         edu_name = hostname
     elif not edu_name and not is_single_master:
-        edu_name = "dc{}-01".format(ou_name)
+        edu_name = "dc{}".format(ou_name)
+        test_admin_name = "dcv{}".format(ou_name)
+        max_hostname_length = 13
+        if len(edu_name) > max_hostname_length or len(test_admin_name) > max_hostname_length:
+            raise ValueError(
+                "Automatically generated hostnames are too long (>13 characters). Please pass the desired hostname(s) as parameters."
+            )
 
     if display_name is None:
         display_name = ou_name
