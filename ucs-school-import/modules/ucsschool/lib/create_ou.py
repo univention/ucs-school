@@ -41,6 +41,8 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 
+MAX_HOSTNAME_LENGTH = 13
+
 
 def create_ou(
     ou_name,
@@ -71,10 +73,33 @@ def create_ou(
     :raises ValueError: on validation errors
     :raises uidAlreadyUsed:
     """
-    if not edu_name and is_single_master:
-        edu_name = hostname
-    elif not edu_name and not is_single_master:
-        edu_name = "dc{}-01".format(ou_name)
+    is_edu_name_generated = False
+    if not edu_name:
+        is_edu_name_generated = True
+        if is_single_master:
+            edu_name = hostname
+        else:
+            edu_name = "dc{}".format(ou_name)
+
+    if admin_name and len(admin_name) > MAX_HOSTNAME_LENGTH:
+        raise ValueError(
+            "The specified hostname for the administrative DC is too long (>{} characters).".format(
+                MAX_HOSTNAME_LENGTH
+            )
+        )
+
+    if len(edu_name) > MAX_HOSTNAME_LENGTH:
+        if is_edu_name_generated:
+            raise ValueError(
+                "Automatically generated hostname for the educational DC is too long (>{} characters). "
+                "Please pass the desired hostname(s) as parameters.".format(MAX_HOSTNAME_LENGTH)
+            )
+        else:
+            raise ValueError(
+                "The specified hostname for the educational DC is too long (>{} characters). ".format(
+                    MAX_HOSTNAME_LENGTH
+                )
+            )
 
     if display_name is None:
         display_name = ou_name
@@ -97,7 +122,7 @@ def create_ou(
         filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
     )
     if not objects:
-        if share_name == "dc{}-01".format(ou_name) or (edu_name and share_name == edu_name):
+        if share_name == "dc{}".format(ou_name) or (edu_name and share_name == edu_name):
             share_dn = filter_format(
                 "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
             )
