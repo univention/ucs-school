@@ -103,7 +103,7 @@ def create_ou(
         filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
     )
     if not objects:
-        if share_name == "dc{}-01".format(ou_name) or (edu_name and share_name == edu_name):
+        if share_name == "dc{}".format(ou_name) or (edu_name and share_name == edu_name):
             share_dn = filter_format(
                 "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
             )
