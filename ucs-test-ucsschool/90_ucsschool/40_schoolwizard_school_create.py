@@ -42,7 +42,7 @@ def main():
         msg = "new random OU, no DC specified"
         logger.info("---------------------------[%s]---------------------------", msg)
         ou_name = uts.random_string()
-        dc_name = "dc%s-01" % ou_name
+        dc_name = "dc%s" % ou_name
         testschool._cleanup_ou_names.add(ou_name)
         schoolwizards_schools_create(ou_name)
         dc_dn = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (dc_name, testschool.get_ou_base_dn(ou_name))
