@@ -39,6 +39,8 @@ add your own checks.
 import re
 import string
 
+from six import iteritems, string_types
+
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
@@ -132,39 +134,71 @@ class DefaultConfigurationChecks(ConfigurationChecks):
             )
 
     def test_scheme_valid_format(self):
-        # If a '[' or a ']' appears in a "scheme" field, it should be in one of these contexts
+        """
+        Check validity of "scheme" entries.
+
+        Known entries:
+        * scheme:record_uid -> str
+        * scheme:username -> dict: {
+        *   default -> str
+        *   staff, student, teacher, teacher_and_staff -> str
+        *   allow_rename -> bool # depricated!
+        * }
+        * scheme:<udm_attribute_name> -> str
+        """
         factory = setup_factory(self.config["factory"])
         username_handler = factory.make_username_handler(15)
+        # If a '[' or a ']' appears in a "scheme" field, it should be in one of these
+        # contexts:
         counters = username_handler.counter_variable_to_function.keys()
         counters_str = [r"\[{}\]".format(counter[1:-1]) for counter in counters]
         scheme_allowed_occurences = [r"\[\d\]", r"\[\d*:\d*\]"] + counters_str
         scheme_allowed_occurences_regex = re.compile("|".join(scheme_allowed_occurences))
 
-        def iterate_config(dictionary):
-            for scheme_field in dictionary.values():
-                if isinstance(scheme_field, dict):
-                    iterate_config(scheme_field)
-                else:
-                    # Check if '<' and '>' symbols occure equal times
-                    if scheme_field.count("<") != scheme_field.count(">"):
-                        raise InitialisationError(
-                            "The numbers of '<' and '>' symbols are not identical."
-                        )
-                    # Check if on each '<' symbol a '>' symbol follows
-                    start = 0
-                    while True:
-                        opening = scheme_field.find("<", start)
-                        if opening == -1:
-                            break
-                        closing = scheme_field.find(">", start)
-                        if closing < opening:
-                            raise InitialisationError("'<' and '>' are in wrong order.")
-                        start = closing + 1
-                    # remove allowed usages of '[..]' and check if any remain
-                    rest = scheme_allowed_occurences_regex.sub("", scheme_field)
-                    if any(symbol in rest for symbol in ["[", "]"]):
-                        raise InitialisationError(
-                            "Erroneous use of square brackets in schema {!r}".format(scheme_field)
-                        )
+        def check_scheme(scheme):
+            """
+            Check if '<' and '>' symbols occure equal times and if counter names in
+            '[', ']' are correct.
+            """
+            if scheme.count("<") != scheme.count(">"):
+                raise InitialisationError("The numbers of '<' and '>' symbols are not identical.")
+            # Check if on each '<' symbol a '>' symbol follows
+            start = 0
+            while True:
+                opening = scheme.find("<", start)
+                if opening == -1:
+                    break
+                closing = scheme.find(">", start)
+                if closing < opening:
+                    raise InitialisationError("'<' and '>' are in wrong order.")
+                start = closing + 1
+            # remove allowed usages of '[..]' and check if any remain
+            rest = scheme_allowed_occurences_regex.sub("", scheme)
+            if any(symbol in rest for symbol in ["[", "]"]):
+                raise InitialisationError(
+                    "Erroneous use of square brackets in schema {!r}".format(scheme)
+                )
 
-        iterate_config(self.config["scheme"])
+        for name, value in iteritems(self.config["scheme"]):
+            if name == "username":
+                if not isinstance(value, dict):
+                    raise InitialisationError("Value of 'scheme:username' must be a dict/object.")
+                for k, v in iteritems(value):
+                    if k == "allow_rename":
+                        raise InitialisationError(
+                            "Deprecated configuration key 'scheme:username:allow_rename'."
+                        )
+                    elif k in ("default", "staff", "student", "teacher", "teacher_and_staff"):
+                        if not isinstance(v, string_types):
+                            raise InitialisationError(
+                                "Value of 'scheme:username:{}' must be a string.".format(k)
+                            )
+                        check_scheme(v)
+                    else:
+                        raise InitialisationError(
+                            "Unknown configuration key 'scheme:username:{}'.".format(k)
+                        )
+            else:
+                if not isinstance(value, string_types):
+                    raise InitialisationError("Value of 'scheme:{}' must be a string.".format(name))
+                check_scheme(value)
