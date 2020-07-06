@@ -1,3 +1,9 @@
+ucs-school-import (17.0.37) unstable; urgency=low
+
+  * Bug #51545: make schema checking code more robust
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jul 2020 11:33:48 +0200
+
 ucs-school-import (17.0.36) unstable; urgency=low
 
   * Bug #51536: add OX context creation hooks to pyhooks-available

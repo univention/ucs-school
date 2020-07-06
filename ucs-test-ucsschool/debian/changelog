@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.119) unstable; urgency=low
+
+  * Bug #51545: test schema checking code
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jul 2020 11:34:10 +0200
+
 ucs-test-ucsschool (6.0.118) unstable; urgency=medium
 
   * Bug #51074: retry multiple times before giving up
