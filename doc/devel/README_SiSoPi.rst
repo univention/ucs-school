@@ -8,11 +8,11 @@ Implemented in Bug 47447: https://forge.univention.org/bugzilla/show_bug.cgi?id=
 Requirements
 ------------
 
-* A single source database exists that knows all users and has globally unique recordUIDs them.
-* OU spanning user accounts are used (a user can be member of multiple schools).
+* A single source database exists, that knows all users and has globally unique recordUIDs for them.
+* OU spanning user accounts (a user can be member of multiple schools).
 * The source database exports separate CSV files per school and user type.
 * Each school imports its users separately at a time and order of their choosing.
-* As imports are done in random order, it is possible that to move a user from one school to another,it is first removed in one school and imported at the other school at a later time. The user account must not be deleting in the meantime.
+* As imports are done in random order, it is possible that to move a user from one school to another, it is first removed in one school and imported at the other school at a later time. The user account must not be deleted in the meantime.
 
 Implementation
 --------------
@@ -100,6 +100,9 @@ It will however be moved to the ``limbo`` OU instead::
 
 Test: create in two schools, delete in one
 ------------------------------------------
+Create another OU ``SchuleEins``::
+
+    /usr/share/ucs-school-import/scripts/create_ou SchuleEins
 
 First reset the unique username counter::
 
