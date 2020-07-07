@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix:
+fix: 17.0.38A~4.4.0.202007071447
 desc: |
  * The code checking schemas in the import configuration is now more robust (Bug #51545).
  * An error, when a user changes a school in the SiSoPi scenario, was fixed (Bug #51418).
