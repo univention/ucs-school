@@ -13,6 +13,7 @@ import copy
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
+from ucsschool.lib.models import SchoolClass
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
@@ -64,7 +65,20 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("limbo_ou", self.limbo_ou_name)
         self.log.info("*** Created limbo OU %r.", self.limbo_ou_name)
 
-        for num, role in enumerate(("staff", "student", "teacher", "teacher_and_staff"), start=1):
+        class_A_dn, class_A_name = self.udm.create_group(
+            position=SchoolClass.get_container(self.ou_A.name),
+            name="{}-{}".format(self.ou_A.name, uts.random_groupname()),
+        )
+        class_B_dn, class_B_name = self.udm.create_group(
+            position=SchoolClass.get_container(self.ou_B.name),
+            name="{}-{}".format(self.ou_B.name, uts.random_groupname()),
+        )
+        class_C_dn, class_C_name = self.udm.create_group(
+            position=SchoolClass.get_container(self.ou_C.name),
+            name="{}-{}".format(self.ou_C.name, uts.random_groupname()),
+        )
+
+        for num, role in enumerate(("student", "staff", "teacher", "teacher_and_staff"), start=1):
             config.update_entry("user_role", role)
 
             self.log.info(
@@ -73,6 +87,8 @@ class Test(CLI_Import_v2_Tester):
             config.update_entry("school", self.ou_A.name)
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
+            if role != "staff":
+                person.update(school_classes={self.ou_A.name: [class_A_name]})
             self._import_and_verify(config, person)
             self.log.info("OK: create (A) succeeded.")
 
@@ -81,6 +97,10 @@ class Test(CLI_Import_v2_Tester):
             )
             config.update_entry("school", self.ou_B.name)
             person.update(school=self.ou_A.name, schools=[self.ou_A.name, self.ou_B.name])
+            if role != "staff":
+                person.update(
+                    school_classes={self.ou_A.name: [class_A_name], self.ou_B.name: [class_B_name],}
+                )
             self._import_and_verify(config, person)
             self.log.info("OK: create (A -> A+B) succeeded.")
 
@@ -99,6 +119,14 @@ class Test(CLI_Import_v2_Tester):
             person.update(
                 school=self.ou_A.name, schools=[self.ou_A.name, self.ou_B.name, self.ou_C.name]
             )
+            if role != "staff":
+                person.update(
+                    school_classes={
+                        self.ou_A.name: [class_A_name],
+                        self.ou_B.name: [class_B_name],
+                        self.ou_C.name: [class_C_name],
+                    }
+                )
             self._import_and_verify(config, person)
             self.log.info("OK: create (A+B -> A+B+C) succeeded.")
 
@@ -115,6 +143,10 @@ class Test(CLI_Import_v2_Tester):
             )
             config.update_entry("school", self.ou_B.name)
             person.update(school=self.ou_A.name, schools=[self.ou_A.name, self.ou_C.name])
+            if role != "staff":
+                person.update(
+                    school_classes={self.ou_A.name: [class_A_name], self.ou_C.name: [class_C_name],}
+                )
             self._import_and_verify(config, person, delete=True)
             self.log.info("OK: deletion (A+B+C -> A+C) succeeded.")
 
@@ -123,6 +155,8 @@ class Test(CLI_Import_v2_Tester):
             )
             config.update_entry("school", self.ou_A.name)
             person.update(school=self.ou_C.name, schools=[self.ou_C.name], school_classes={})
+            if role != "staff":
+                person.update(school_classes={self.ou_C.name: [class_C_name]})
             self._import_and_verify(config, person, delete=True)
             self.log.info("OK: deletion (A+C -> C) succeeded.")
 
@@ -131,6 +165,9 @@ class Test(CLI_Import_v2_Tester):
             )
             config.update_entry("school", self.ou_C.name)
             person.update(school=self.limbo_ou_name, schools=[self.limbo_ou_name])
+            person.update(
+                school=self.limbo_ou_name, schools=[self.limbo_ou_name], school_classes={},
+            )
             person.set_inactive()
             self._import_and_verify(config, person, delete=True)
             self.log.info("OK: deletion (C -> limbo) succeeded.")

@@ -207,6 +207,8 @@ class SingleSourcePartialUserImport(UserImport):
             else:
                 # perform user.modify() to remove user from school
                 modified = True
+                # must not have school classes of removed school anymore, when user.validate() runs
+                user.school_classes.pop(self.config["school"], None)
         else:
             self.logger.info("Moving %r to limbo school %r.", user, self.limbo_ou)
             imported_user = copy.deepcopy(user)
