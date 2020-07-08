@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.3-2) unstable; urgency=medium
+
+  * Bug #50626: enable 3 new policies in ucs@school sync
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 08 Jul 2020 17:18:57 +0200
+
 ucs-school-metapackage (12.0.3-1) unstable; urgency=low
 
   * Bug #50500: add Recommends to ucs-school-(single)master for ucs-school-umc-diagnostic
