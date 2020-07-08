@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=4
+VERSION=5
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -145,6 +145,13 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 4 ] ; then
 	else
 		echo "ERROR: cannot update LDAP indices (ldap server not running?) - stopping here"
 		exit 1
+	fi
+fi
+
+# trust slave KRB tickets on dc master (Bug #51418)
+if [ $JS_LAST_EXECUTED_VERSION -lt 5 ]; then
+	if samba-tool spn list "ucs-sso" | grep -q 'no servicePrincipalName'; then
+		samba-tool spn add "HTTP/ucs-sso.$(hostname -d)" "ucs-sso" || die
 	fi
 fi
 
