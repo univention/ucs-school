@@ -21,8 +21,8 @@ from univention.testing.ucsschool.computerroom import UmcComputer
 def main():
     logger = utu.get_ucsschool_logger()
     target_broadcast_ips = ["255.255.255.255", "10.200.47.254"]
+    tshark_duration = 15
     max_iterations = 10
-    t_shark_duration = max_iterations * 5
     hostname = socket.gethostname()
     server_ip = socket.gethostbyname(hostname)
     proc = subprocess.Popen(
@@ -30,8 +30,6 @@ def main():
             "tshark",
             "-i",
             "any",
-            "-a",
-            "duration:{}".format(t_shark_duration),
             "src",
             "host",
             server_ip,
@@ -39,14 +37,21 @@ def main():
         stdout=subprocess.PIPE,
         close_fds=True,
     )
-    time.sleep(1)
+
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
         school, _ = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         computer = UmcComputer(school, "windows")
         computer.create()
         mac_address = computer.mac_address
+        regexes = {}
+        for j, b_ip in enumerate(target_broadcast_ips):
+            regexes[b_ip] = r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(
+                server_ip, b_ip, mac_address
+            )
+
         for i in range(max_iterations):
-            wol_received = [True for _ in range(len(target_broadcast_ips))]
+            start = time.time()
+            wol_received = {b_ip: False for b_ip in target_broadcast_ips}
             logger.info(
                 "Send WoL signals to {} to broadcast-ips {}".format(
                     mac_address, target_broadcast_ips
@@ -62,37 +67,30 @@ def main():
                 # A more extensive test would have multiple machines with
                 # different broadcast-ips. We decided this would produce too much overhead.
                 pass
-            stdout, stderr = proc.communicate()
-            # I simply check if a WoL signal was sent. Alternatively, we
-            # can search for the expected payload. tshark must then have the argument -x.
-            # addr = re.sub(r'[.:-]', '', mac_address)
-            # payload_hex = 'FFFFFFFFFFFF' + (addr * 16).encode()
-            # payload = bytes(bytearray.fromhex(payload_hex))
-            assert computer.mac_address in stdout
-            for j, b_ip in enumerate(target_broadcast_ips):
-                regex = r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(
-                    server_ip, b_ip, mac_address
-                )
-                successful_send = re.match(regex, str(stdout), re.DOTALL)
-                if successful_send:
-                    logger.info("Packages were successfully sent to {}".format(b_ip))
-                elif b_ip in str(stdout):
-                    logger.info("Could not send WoL signal to {}".format(b_ip))
+            while True:
+                line = proc.stdout.readline()
+                if line == '' and proc.poll() is not None:
+                    break
+                different_sub_net = [ele for ele in target_broadcast_ips if ele in str(line)]
+                if computer.mac_address in line:
+                    for b_ip, regex in regexes.items():
+                        successful_send = re.match(regex, str(line), re.DOTALL)
+                        if successful_send:
+                            logger.info("Packages were successfully sent to {}".format(b_ip))
+                            wol_received[b_ip] = True
+                elif different_sub_net:
+                    wol_received[different_sub_net[0]] = True
+                    logger.info("Could not send WoL signal to {}".format(different_sub_net))
                     logger.info(
                         "This is the expected behaviour, since it is not reachable."
                     )
-                else:
-                    wol_received[j] = False
-                    logger.info("tshark output was\n{}".format(stdout))
-                    logger.info(
-                        "Did not succeed to send WoL to {} in iteration {}/{}".format(
-                            b_ip, j, max_iterations
-                        )
-                    )
+                if all(wol_received.values()) or (time.time() - start > tshark_duration):
                     break
-            if all(wol_received):
+            if all(wol_received.values()) or (time.time() - start > tshark_duration):
                 break
-        if not all(wol_received):
+
+        proc.terminate()
+        if not all(wol_received.values()):
             utils.fail(
                 "Did not succeed to send WoL all of the following addresses {}".format(
                     target_broadcast_ips
