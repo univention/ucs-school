@@ -426,7 +426,7 @@ class Client(object):
         if not self._resource_urls:
             self._resource_urls = self.call_api("get", ".")
             for resource, url in self._resource_urls.items():
-                if not url.startswith(self.base_url):
+                if not url.lower().startswith(self.base_url.lower()):
                     raise IllegalURLError(
                         "URL {!r} for resource {!r} from API root does not start with {!r}.".format(
                             url, resource, self.base_url
