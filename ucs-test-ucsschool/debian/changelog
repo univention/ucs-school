@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.121) unstable; urgency=medium
+
+  * Bug #50626:  test wireless gpo replication
+
+ -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Thu, 09 Jul 2020 09:48:24 +0200
+
 ucs-test-ucsschool (6.0.120) unstable; urgency=low
 
   * Bug #51418: test school class removal in SiSoPi scenario
