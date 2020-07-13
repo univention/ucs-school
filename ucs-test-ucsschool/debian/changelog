@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.123) unstable; urgency=medium
+
+  * Bug #51074: skip wakeonlan
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 13 Jul 2020 16:16:47 +0200
+
 ucs-test-ucsschool (6.0.122) unstable; urgency=medium
 
   * Bug #51074: wakeonlan test iterate over tshark output

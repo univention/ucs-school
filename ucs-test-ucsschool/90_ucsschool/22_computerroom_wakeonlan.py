@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: send wol signal to multiple broadcast-ips
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [SKIP-UCSSCHOOL,apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom, tshark]
 
