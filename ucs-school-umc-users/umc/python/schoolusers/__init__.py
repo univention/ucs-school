@@ -44,6 +44,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import BooleanSanitizer, StringSanitizer
+from univention.management.console.config import ucr
 
 _ = Translation("ucs-school-umc-schoolusers").translate
 
@@ -73,6 +74,9 @@ class Instance(SchoolBaseModule):
         klass = request.options.get("class")
         if klass in (None, "None"):
             klass = None
+        default = "givenName, sn, shadowLastChange, shadowMax, uid"
+        ucr_value = ucr.get("ucsschool/umc/user/udm_attributes", "") or default
+        udm_attributes = ucr_value.split(",")
         result = [
             {
                 "id": dn,
@@ -85,7 +89,7 @@ class Instance(SchoolBaseModule):
                 group=klass,
                 user_type=request.flavor,
                 pattern=request.options.get("pattern", ""),
-                attr=["givenName", "sn", "shadowLastChange", "shadowMax", "uid"],
+                attr=udm_attributes,
             )
         ]
         self.finished(request.id, result)

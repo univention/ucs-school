@@ -405,4 +405,12 @@
             die ausgewählte Klasse eingesetzt.
         </para>
     </section>
+        <section id="school:setup:generic:configureschoolusers">
+        <title>Konfiguration des Schul User-Moduls</title>
+        <para>
+            Im UMC-Module <guimenu>Benutzer (Schulen)</guimenu> werden standardmäßig die Werte <literal>givenName, sn, shadowLastChange, shadowMax, uid</literal>
+            der Benutzer angezeigt. Mit der &ucsUCRV; <envar>ucsschool/umc/user/udm_attributes</envar> können die Werte angepasst werden.
+            Die UDM-Attribute sind durch Komma zu trennen.
+        </para>
+    </section>
 </chapter>

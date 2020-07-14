@@ -21,3 +21,9 @@ Description[de]=Definiert ob bei jeder Änderung der Schule oder Klasse die List
 Description[en]=Defines if the list of users should be reloaded automatically after a change in the school or class selection.
 Type=bool
 Categories=management-umc
+
+[ucsschool/umc/user/udm_attributes]
+Description[de]=Eine durch Komma getrennte Liste von UDM Attributen, die ein Benutzer bei der Nutzung des Benutzer (Schulen) Moduls im Frontend angezeigt bekommt (Default: givenName, sn, shadowLastChange, shadowMax, uid)
+Description[en]=A comma separated list of UDM attributes that a user is shown in the frontend of the users (school) module (Default: givenName, sn, shadowLastChange, shadowMax, uid)
+Type=str
+Categories=management-umc
