@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
-fix: 12.0.3-2A~4.4.0.202007081729
+fix: 12.0.3-3A~4.4.0.202007141115
 desc: |
  * Wireless GPOs are now synchronized to school servers. Only wireless GPOs created <emphasis>after</emphasis> this update are synchronized. (Bug #50626).
  * Kerberos tickets, which are deployed by school servers, are now trusted by the domain controller master. (Bug #51078).
