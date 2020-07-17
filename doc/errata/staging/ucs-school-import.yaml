@@ -7,4 +7,5 @@ fix: 17.0.38A~4.4.0.202007071447
 desc: |
  * The code checking schemas in the import configuration is now more robust (Bug #51545).
  * An error, when a user changes a school in the SiSoPi scenario, was fixed (Bug #51418).
-bug: [51545, 51418]
+ * A bug that was triggered when using an address for the API root that does not start with the case of the base_url has been fixed (Bug #51606).
+bug: [51545, 51418, 51606]

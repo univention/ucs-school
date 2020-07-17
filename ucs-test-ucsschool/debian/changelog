@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.124) unstable; urgency=medium
+
+  * Bug #51606: test for not matching hosts fqdn 
+
+ -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Fri, 17 Jul 2020 16:34:31 +0200
+
 ucs-test-ucsschool (6.0.123) unstable; urgency=medium
 
   * Bug #51074: skip wakeonlan
