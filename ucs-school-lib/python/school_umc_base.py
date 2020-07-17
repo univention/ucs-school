@@ -309,7 +309,13 @@ class SchoolBaseModule(Base):
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
                     )
-                    ldap_objs = ldap_connection.search(search_filter, base=userdn, attr=attr)
+                    try:
+                        ldap_objs = ldap_connection.search(search_filter, base=userdn,
+                                                           attr=attr)
+                    except Exception:
+                        raise Exception("User with DN: {}\n is broken."
+                                        "Please make sure to add the user to it's mandatory school-groups."
+                                        "For more information visit https://help.univention.com/t/how-an-ucs-school-user-should-look-like/15630".format(userdn))
                     if len(ldap_objs) == 1:
                         users.append(ldap_objs[0])
                     # else:
