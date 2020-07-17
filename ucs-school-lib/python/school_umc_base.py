@@ -309,7 +309,13 @@ class SchoolBaseModule(Base):
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
                     )
-                    ldap_objs = ldap_connection.search(search_filter, base=userdn, attr=attr)
+                    try:
+                        ldap_objs = ldap_connection.search(search_filter, base=userdn,
+                                                           attr=attr)
+                    except noObject:
+                        raise noObject("User with DN: {} was not found in the group {}."
+                                       " Please make sure it is a valid UCS@school user and is member of all necessary groups."
+                                       " For more information visit https://help.univention.com/t/how-an-ucs-school-user-should-look-like/15630".format(userdn, group))
                     if len(ldap_objs) == 1:
                         users.append(ldap_objs[0])
                     # else:
