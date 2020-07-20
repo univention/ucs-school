@@ -37,7 +37,7 @@ class ChangeTeachersError(Exception):
 class TestSchoolTeacherAssignmentDomainAdmin(object):
     @pytest.fixture(scope="class")
     def client(self):
-        return Client.get_test_connection()
+        return Client.get_test_connection(timeout=5)
 
     def __school_class_teachers(self, schoolClass):
         return [
