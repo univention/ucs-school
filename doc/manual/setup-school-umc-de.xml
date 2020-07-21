@@ -402,13 +402,6 @@ cd /usr/share/ucs-school-import/scripts/
 				<guimenu>Gerät mit IP-Adresse</guimenu> für z.B. Netzwerkdrucker mit eigener IP-Adresse
 			  </para>
 			</listitem>
-			<listitem>
-			  <para>
-				<guimenu>Univention Corporate Client</guimenu> ist nur verfügbar, wenn über das
-				Univention App Center die Applikation <emphasis>Univention Corporate Client</emphasis> installiert
-				wurde - siehe dazu auch <xref linkend="school:ucc:general"/>.
-			  </para>
-			</listitem>
 		  </itemizedlist>
 		</para>
 		<para>
