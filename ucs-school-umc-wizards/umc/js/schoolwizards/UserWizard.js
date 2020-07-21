@@ -38,11 +38,13 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiInput",
+	"umc/widgets/CheckBox",
+	"umc/widgets/DateBox",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, PasswordInputBox, Wizard, utils, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, CheckBox, DateBox, PasswordInputBox, Wizard, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -95,6 +97,16 @@ define([
 					name: 'schools',
 					label: _('Schools'),
 					initialValue: [this.selectedSchool],
+					disabled: true,
+					subtypes: [{
+						type: TextBox,
+					}]
+				}, {
+					type: MultiInput,
+					name: 'ucsschool_roles',
+					label: _('UCS@school roles'),
+					initialValue: [],
+					disabled: true,
 					subtypes: [{
 						type: TextBox,
 					}]
@@ -103,6 +115,16 @@ define([
 					name: 'firstname',
 					label: _('Firstname'),
 					required: true
+				}, {
+					type: CheckBox,
+					name: 'disabled',
+					label: _('Disabled'),
+					required: true
+				}, {
+					type: DateBox,
+					name: 'birthday',
+					label: _('Birthday'),
+					required: false
 				}, {
 					type: TextBox,
 					name: 'lastname',
@@ -154,10 +176,12 @@ define([
 				}],
 				layout: [
 					['firstname', 'lastname'],
-					['name'],
+					['disabled'],
+					['name', 'birthday'],
 					['school_classes', 'newClass'],
 					['email'],
-					['password']
+					['password'],
+					['schools', 'ucsschool_roles'],
 				]
 			};
 		},

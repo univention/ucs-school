@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2019-02-22 16:05+0000\n"
+"POT-Creation-Date: 2020-07-21 10:29+0200\n"
 "PO-Revision-Date: 2016-11-17 17:04+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,40 +12,40 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:212
-#: umc/python/schoolwizards/__init__.py:361
+#: umc/python/schoolwizards/__init__.py:245
+#: umc/python/schoolwizards/__init__.py:402
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
 
-#: umc/python/schoolwizards/__init__.py:260
+#: umc/python/schoolwizards/__init__.py:293
 #, python-format
 msgid "\"%s\" does not exist!"
 msgstr "\"%s\" existiert nicht!"
 
-#: umc/python/schoolwizards/SchoolImport.py:115
+#: umc/python/schoolwizards/SchoolImport.py:145
 msgid "Could not create class"
 msgstr "Die Klasse konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/SchoolImport.py:129
+#: umc/python/schoolwizards/SchoolImport.py:166
 msgid "Could not create computer"
 msgstr "Der Rechner konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/SchoolImport.py:105
+#: umc/python/schoolwizards/SchoolImport.py:130
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/SchoolImport.py:71
-#: umc/python/schoolwizards/SchoolImport.py:89
+#: umc/python/schoolwizards/SchoolImport.py:72
+#: umc/python/schoolwizards/SchoolImport.py:92
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:316
+#: umc/python/schoolwizards/__init__.py:354
 msgid "Failed to remove user from school."
 msgstr "Konnte den Benutzer nicht aus der Schule entfernen."
 
-#: umc/python/schoolwizards/__init__.py:108
-#: umc/python/schoolwizards/__init__.py:309
+#: umc/python/schoolwizards/__init__.py:126
+#: umc/python/schoolwizards/__init__.py:342
 #, python-format
 msgid "The %s %r does not exists or might have been removed in the meanwhile."
 msgstr "%s %r existiert nicht oder wurde in der Zwischenzeit gelöscht."
