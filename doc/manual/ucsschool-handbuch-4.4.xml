@@ -55,13 +55,11 @@ feedback@univention.de
   <xi:include href="proxy-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="radius-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="schoolexam-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-  <xi:include href="ucc-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="import-hooks-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="performance-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
   <bibliography id="bibliography">
 	<bibliomixed id="ucs-handbuch"/>
-	<bibliomixed id="ucc-handbuch"/>
 	<bibliomixed id="ucs-school-teacher"/>
 	<bibliomixed id="ucs-school-scenario"/>
 	<bibliomixed id="ucs-performance-guide"/>
