@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 
+desc: |
+ * If an UCS@school group has invalid members, an error containing the user and group dn as well as a link to a help article (https://help.univention.com/t/how-an-ucs-school-user-should-look-like/15630), is raised. (Bug #50625).
+bug: [50625]

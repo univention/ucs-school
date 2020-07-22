@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.15) unstable; urgency=medium
+
+  * Bug #50625: raise error with user & group for broken school groups & link
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 22 Jul 2020 13:14:28 +0200
+
 ucs-school-lib (12.1.14) unstable; urgency=medium
 
   * Bug #47155: override remove_without_hooks
