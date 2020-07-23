@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.16) unstable; urgency=medium
+
+  * Bug #51717: Fix hidden error that occured after code reformat and import reorder
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 23 Jul 2020 10:35:12 +0200
+
 ucs-school-lib (12.1.15) unstable; urgency=medium
 
   * Bug #50625: raise error with user & group for broken school groups & link
