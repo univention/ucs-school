@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-9) unstable; urgency=low
+
+  * Bug #51691: Add optional fields to user wizard and make visibility configurable
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 23 Jul 2020 14:49:01 +0100
+
 ucs-school-umc-wizards (11.0.0-8) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
