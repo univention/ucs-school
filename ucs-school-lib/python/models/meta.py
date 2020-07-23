@@ -40,6 +40,9 @@ import univention.admin.modules as udm_modules
 
 from .attributes import Attribute
 
+# load UDM modules see Bug #51717
+udm_modules.update()
+
 
 class UCSSchoolHelperOptions(object):
     def __init__(self, klass, meta=None):
