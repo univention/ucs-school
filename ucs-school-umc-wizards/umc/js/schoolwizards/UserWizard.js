@@ -52,20 +52,28 @@ define([
 		_examUserPrefix: 'exam-',
 		_maxUsernameLength: 15,
 		_checkMaxUsernameLength: "true",
+		_optionalVisibleFields: [],
+
+		_isOptionalFieldVisible: function(fieldName) {
+			return array.indexOf(this._optionalVisibleFields, fieldName) > -1;
+		},
 
 		loadVariables: function() {
 			return tools.ucr([
 				'ucsschool/ldap/default/userprefix/exam',
 				'ucsschool/ldap/check/username/lengthlimit',
-				'ucsschool/username/max_length'
+				'ucsschool/username/max_length',
+				'ucsschool/wizards/schoolwizards/users/optional_visible_fields'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
 				this._checkMaxUsernameLength = result['ucsschool/ldap/check/username/lengthlimit'] || "true";
 				this._maxUsernameLengthUcr = result['ucsschool/username/max_length'] || 20;
 				this._maxUsernameLength = this._maxUsernameLengthUcr - this._examUserPrefix.length;
+				var optionalVisibleFieldsStr = result['ucsschool/wizards/schoolwizards/users/optional_visible_fields'] || '';
+				this._optionalVisibleFields = optionalVisibleFieldsStr.split(' ');
 			}));
-        },
+		},
 
 		getGeneralPage: function() {
 			var page = this.inherited(arguments);
@@ -208,6 +216,10 @@ define([
 			if (currentPage === 'general') {
 				var classBox = this.getWidget('item', 'school_classes');
 				var newClassButton = this.getPage('item')._form.getButton('newClass');
+				array.forEach(['schools', 'ucsschool_roles', 'birthday', 'disabled', 'password', 'email'], function(fieldName) {
+					var optionalWidget = this.getWidget('item', fieldName);
+					optionalWidget.set('visible', this._isOptionalFieldVisible(fieldName));
+				}, this)
 				if (!this.hasClassWidget()) {
 					classBox.set('value', null);
 					classBox.set('required', false);
