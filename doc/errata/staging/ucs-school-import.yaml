@@ -5,7 +5,8 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.39A~4.4.0.202007171700
 desc: |
+ * Republish code of version 17.0.36: Deactivated hooks for the creation of new OX contexts, when set on a user, were added (Bug #51536).
  * The code checking schemas in the import configuration is now more robust (Bug #51545).
  * An error, when a user changes a school in the SiSoPi scenario, was fixed (Bug #51418).
  * A bug that was triggered when using an address for the API root that does not start with the case of the base_url has been fixed (Bug #51606).
-bug: [51545, 51418, 51606]
+bug: [51545, 51418, 51606, 51536]
