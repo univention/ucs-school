@@ -2,6 +2,62 @@
 
 @!@
 # -*- coding: utf-8 -*-
+import re
+import os
+from univention.lib.misc import custom_groupname
+
+aclset = """
+# Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
+access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember.expand="cn=DC Backup Hosts,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+"""
+
+def replace_ucr_variables(template):
+	variable_token = re.compile('@[$]@')
+	replacements = {
+		'STAFF2EDU': '# ' if configRegistry.is_true('ucsschool/ldap/replicate_staff_to_edu', False) else '',
+		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
+		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
+		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
+		'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
+		'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
+		'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),
+		'GRPADMINS': configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-'),
+		'EXAM': configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers'),
+		'DOMAIN_ADMINS': custom_groupname('Domain Admins'),
+		'SCHOOLOUATTRS': '@top,@organizationalUnit,@ucsschoolOrganizationalUnit,@univentionObject,@univentionPolicyReference',  # FIXME: extended attributes which adds object classes doesn't work
+		# FIXME: the following rules aren't enough but we need to support extended attributes/options
+		'CONTAINERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!SambaSamAccount',
+		'USERATTRS': 'cn,objectClass,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixGroup',
+		'GROUPATTRS': 'cn,objectClass,description,!univentionShare,!univentionShareNFS,!univentionShareSamba,!posixAccount,!SambaSamAccount',
+		'DHCPSERVICEATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'DHCPATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
+		'MSGPO_MSPRINT_CONTAINER': '@univentionObject,@organizationalRole',
+		'MSWMI_FILTER': '@univentionObject,@organizationalRole'
+	}
+
+	# enable objectclasses only if corresponding LDAP schema is present (Bug #41725)
+	if os.path.exists('/var/lib/univention-ldap/local-schema/mswmi.schema'):
+		replacements['MSWMI_FILTER'] += ',@msWMISom'
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
+		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msGPOContainer'
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msprintconnectionpolicy.schema'):
+		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msPrintConnectionPolicy'
+
+	while True:
+		i = variable_token.finditer(template)
+		try:
+			start = i.next()
+			end = i.next()
+			name = template[start.end():end.start()]
+
+			template = template[:start.start()] + replacements.get(name, '') + template[end.end():]
+		except StopIteration:
+			break
+
+	return template
 
 aclset = '''
 # grant at least read access to school slave controllers to operational attributes, if not limited later on
@@ -126,7 +182,8 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 
 access to filter="(|(objectClass=ucsschoolAdministrator)(&(univentionObjectType=users/user)(!(objectClass=ucsschoolType))))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
-	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" +0 break
+	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
 	by * +0 break
 
 access to filter="(|(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
@@ -144,7 +201,7 @@ access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPasswo
 '''
 
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
-	print aclset
+	print replace_ucr_variables(aclset)
 else:
 	print '# no ACL required on domaincontroller_slave'
 @!@
