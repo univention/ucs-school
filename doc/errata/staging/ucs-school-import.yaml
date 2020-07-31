@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 
+fix: 17.0.40A~4.4.0.202007310854
 desc: |
  * A new import hook was added to set sambahome, profilepath, homedrive & scriptpath for staff members. The values are set by the same methods as those of the teachers.  (Bug #51724).
 bug: [51724]
