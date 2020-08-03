@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.125) unstable; urgency=medium
+
+  * Bug #51661: Add test for Domain Admins creating non school users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 03 Aug 2020 13:43:22 +0200
+
 ucs-test-ucsschool (6.0.124) unstable; urgency=medium
 
   * Bug #51606: test for not matching hosts fqdn 
