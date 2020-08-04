@@ -1,4 +1,17 @@
 <h1>Changelog</h1>
+<h2>v1.1.2 (2020-08-05)</h2>
+<ul>
+    <li>
+        Die folgenden UCR Variablen werden nun über das Joinscript in den Kelvin Docker Container kopiert:
+        ucsschool/import/set/netlogon/script/path
+        ucsschool/import/set/homedrive
+        ucsschool/import/set/sambahome
+        ucsschool/singlemaster
+        ucsschool/import/set/serverprofile/path
+        Nachdem eine dieser Variablen auf dem Host geändert worden ist, muss das Joinscript 50ucsschool-kelvin-rest-api
+        manuell ausgeführt werden, um die Änderungen in Kelvin zu übertragen.
+    </li>
+</ul>
 <h2>v1.1.1 (2020-06-15)</h2>
 <ul>
     <li>

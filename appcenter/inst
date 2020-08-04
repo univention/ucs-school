@@ -33,7 +33,7 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=2
+VERSION=3
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
@@ -49,6 +49,12 @@ KELVIN_IMPORTUSER_HOOKS_README="${KELVIN_IMPORTUSER_HOOKS_PATH}/README.txt"
 
 
 main () {
+    docker exec $appcenter_apps_ucsschool_kelvin_rest_api_container venv/bin/univention-config-registry set \
+    ucsschool/import/set/netlogon/script/path="$(ucr get ucsschool/import/set/netlogon/script/path)" \
+    ucsschool/import/set/homedrive="$(ucr get ucsschool/import/set/homedrive)" \
+    ucsschool/import/set/sambahome="$(ucr get ucsschool/import/set/sambahome)" \
+    ucsschool/singlemaster="$(ucr get ucsschool/singlemaster)" \
+    ucsschool/import/set/serverprofile/path="$(ucr get ucsschool/import/set/serverprofile/path)"
     if ! [ -e "$TOKEN_SIGN_SECRET_FILE" ]; then
         echo "Storing token key in $TOKEN_SIGN_SECRET_FILE."
         touch "$TOKEN_SIGN_SECRET_FILE"
@@ -168,8 +174,7 @@ check_openapi_client_knows_ucssschool() {
 
 
 joinscript_init
-
-eval $(ucr shell ldap/base appcenter/apps/ucsschool-kelvin-rest-api/hostdn)
+eval $(ucr shell ldap/base appcenter/apps/ucsschool-kelvin-rest-api/hostdn appcenter/apps/ucsschool-kelvin-rest-api/container)
 
 main "$@"
 check_openapi_client_knows_ucssschool

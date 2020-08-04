@@ -1,4 +1,17 @@
 <h1>Changelog</h1>
+<h2>v1.1.2 (2020-08-05)</h2>
+<ul>
+    <li>
+        The following UCR variables are now copied into the Kelvin App Container via the joinscript:
+        ucsschool/import/set/netlogon/script/path
+        ucsschool/import/set/homedrive
+        ucsschool/import/set/sambahome
+        ucsschool/singlemaster
+        ucsschool/import/set/serverprofile/path
+        To sync the variables after they are changed on the host system the joinscript 50ucsschool-kelvin-rest-api
+        has to be executed manually.
+    </li>
+</ul>
 <h2>v1.1.1 (2020-06-15)</h2>
 <ul>
     <li>
