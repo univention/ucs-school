@@ -24,49 +24,26 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-from ucsschool.importer.models.import_user import ImportStaff, ImportUser
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.lib.models import Staff
 
 
 class UserStaffPyHook(UserPyHook):
     priority = {
-        "pre_create": 0,
-        "post_create": 1,
-        "pre_modify": 0,
-        "post_modify": 0,
-        "pre_remove": 0,
-        "post_remove": 0,
+        "pre_create": 1000,
+        "post_create": None,
+        "pre_modify": 1000,
+        "post_modify": None,
+        "pre_remove": None,
+        "post_remove": None,
     }
 
     async def pre_create(self, user: ImportUser) -> None:
-        pass
+        if isinstance(user, Staff):
+            user.udm_properties["sambahome"] = await super(Staff, user).get_samba_home_path(self.lo)
+            user.udm_properties["profilepath"] = await super(Staff, user).get_profile_path(self.lo)
+            user.udm_properties["scriptpath"] = super(Staff, user).get_samba_netlogon_script_path()
+            user.udm_properties["homedrive"] = super(Staff, user).get_samba_home_drive()
 
-    async def post_create(self, user: ImportUser) -> None:
-        if isinstance(user, ImportStaff):
-            udm_obj = await user.get_udm_object(self.udm)
-            samba_home = await super(Staff, user).get_samba_home_path(self.udm)
-            if samba_home:
-                udm_obj.props.sambahome = samba_home
-            profile_path = await super(Staff, user).get_profile_path(self.udm)
-            if profile_path:
-                udm_obj.props.profilepath = profile_path
-            home_drive = super(Staff, user).get_samba_home_drive()
-            if home_drive:
-                udm_obj.props.homedrive = home_drive
-            script_path = super(Staff, user).get_samba_netlogon_script_path()
-            if script_path:
-                udm_obj.props.scriptpath = script_path
-            await user.modify(self.udm)
-
-    async def pre_modify(self, user: ImportUser) -> None:
-        pass
-
-    async def post_modify(self, user: ImportUser) -> None:
-        pass
-
-    async def pre_remove(self, user: ImportUser) -> None:
-        pass
-
-    async def post_remove(self, user: ImportUser) -> None:
-        pass
+    pre_modify = pre_create  # this is for the case of a school change

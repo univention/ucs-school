@@ -24,49 +24,26 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-from ucsschool.importer.models.import_user import ImportStaff, ImportUser
+
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.lib.models import Staff
 
 
 class UserStaffPyHook(UserPyHook):
     priority = {
-        "pre_create": 0,
-        "post_create": 1,
-        "pre_modify": 0,
-        "post_modify": 0,
-        "pre_remove": 0,
-        "post_remove": 0,
+        "pre_create": 1000,
+        "post_create": None,
+        "pre_modify": 1000,
+        "post_modify": None,
+        "pre_remove": None,
+        "post_remove": None,
     }
 
     def pre_create(self, user):
-        pass
+        if isinstance(user, Staff):
+            user.udm_properties["sambahome"] = super(Staff, user).get_samba_home_path(self.lo)
+            user.udm_properties["profilepath"] = super(Staff, user).get_profile_path(self.lo)
+            user.udm_properties["scriptpath"] = super(Staff, user).get_samba_netlogon_script_path()
+            user.udm_properties["homedrive"] = super(Staff, user).get_samba_home_drive()
 
-    def post_create(self, user):
-        if isinstance(user, ImportStaff):
-            udm_obj = user.get_udm_object(self.lo)
-            samba_home = super(Staff, user).get_samba_home_path(self.lo)
-            if samba_home:
-                udm_obj["sambahome"] = samba_home
-            profile_path = super(Staff, user).get_profile_path(self.lo)
-            if profile_path:
-                udm_obj["profilepath"] = profile_path
-            home_drive = super(Staff, user).get_samba_home_drive()
-            if home_drive:
-                udm_obj["homedrive"] = home_drive
-            script_path = super(Staff, user).get_samba_netlogon_script_path()
-            if script_path:
-                udm_obj["scriptpath"] = script_path
-            udm_obj.modify(self.lo)
-
-    def pre_modify(self, user):
-        pass
-
-    def post_modify(self, user):
-        pass
-
-    def pre_remove(self, user):
-        pass
-
-    def post_remove(self, user):
-        pass
+    pre_modify = pre_create  # this is for the case of a school change
