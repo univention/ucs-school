@@ -24,6 +24,26 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
+##############################################################################
+#
+# This hook requires the follopwing UCR variables to be set inside the Kelvin
+# API Docker container:
+#
+#   ucsschool/import/set/netlogon/script/path
+#   ucsschool/import/set/homedrive
+#   ucsschool/import/set/sambahome
+#   ucsschool/singlemaster
+#   ucsschool/import/set/serverprofile/path
+#
+# This will be done automatically upon installation of the Kelvin API app.
+# When the variables are changed in the DC master, the variables have to be
+# updated in the Kelvin API Docker container aswel. To do so rerun the Kelvin
+# apps join script:
+#    univention-run-join-scripts --run-scripts --force 50ucsschool-kelvin-rest-api.inst
+#
+###############################################################################
+
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.lib.models import Staff

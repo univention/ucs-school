@@ -1,8 +1,9 @@
-ucs-school-import (17.0.41) unstable; urgency=low
+ucs-school-import (17.0.42) unstable; urgency=low
 
   * Bug #51724: run hook at pre-create and pre-modify steps
+  * Bug #51724: add note about UCRVs in Kelvin to hook
 
- -- Daniel Troeder <troeder@univention.de>  Tue, 11 Aug 2020 12:44:05 +0200
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Aug 2020 12:55:39 +0200
 
 ucs-school-import (17.0.40) unstable; urgency=medium
 
