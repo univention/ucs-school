@@ -73,7 +73,7 @@ RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
     sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh && \
     mkdir -pv /kelvin/openapi-generator/build /kelvin/openapi-generator/jar && \
     mv /tmp/openapi-generator-cli-*.jar /kelvin/openapi-generator/jar && \
-    python3.8 -m venv --system-site-packages /kelvin/venv && \
+    python3 -m venv --system-site-packages /kelvin/venv && \
 	/kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile --upgrade pip && \
 	# build ujson from source https://github.com/esnme/ultrajson/issues/326
 	/kelvin/venv/bin/python3 -m pip install git+git://github.com/esnme/ultrajson.git@2.0.3 && \
