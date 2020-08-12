@@ -293,7 +293,7 @@ def all_query_params(
             yield param, values
 
 
-def search_query_params_to_ldap_filter(  # noqa: C901
+def search_query_params_to_udm_filter(  # noqa: C901
     query_params: Iterable[Tuple[str, Any]],
     user_class: Type[ImportUser],
     accepted_properties: Set[str],
@@ -339,8 +339,7 @@ async def search(
     request: Request,
     school: str = Query(
         None,
-        description="List only users that are members of the school (OU) with "
-        "this name (not URL), exact match only.",
+        description="List only users that are members of matching school(s) (OUs).",
     ),
     username: str = Query(
         None, alias="name", description="List users with this username.", title="name",
@@ -367,8 +366,6 @@ async def search(
 
     All parameters are optional and (unless noted) support the use of ``*``
     for wildcard searches.
-
-    Limiting the **school**s to search in, greatly reduces the execution time.
 
     - **school**: list users enlisted in matching school(s) (name of OU, not
         URL)
@@ -431,34 +428,25 @@ async def search(
     user_class = SchoolUserRole.get_lib_class(roles)
 
     if school:
-        school_filter = f"(ou={escape_filter_chars(school)})".replace(r"\2a", "*")
+        school_pattern = escape_filter_chars(school).replace(r"\2a", "*")
+        school_filter = f"(ucsschoolSchool={school_pattern})"
     else:
-        school_filter = None
+        school_filter = ""
 
     query_params = all_query_params(request.query_params, locals(), _known_args)
-    filter_str = search_query_params_to_ldap_filter(
-        query_params, user_class, accepted_properties
+    filter_str = (
+        search_query_params_to_udm_filter(query_params, user_class, accepted_properties)
+        or ""
     )
-    logger.debug(
-        "Looking for %r with school_filter=%r and filter_str=%r",
-        user_class.__name__,
-        school_filter,
-        filter_str,
-    )
+    if school_filter or filter_str:
+        udm_filter = f"(&{user_class.type_filter}{school_filter}{filter_str})"
+    else:
+        udm_filter = user_class.type_filter
+    logger.debug("Looking for %r with filter %r...", user_class.__name__, udm_filter)
+    users: List[ImportUser] = []
     try:
-        schools = await School.get_all(udm, school_filter)
-        if not schools:
-            raise HTTPException(
-                status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"Unknown school {school!r}.",
-            )
-        user_dns = set()
-        users = []
-        for s in schools:
-            for user in await user_class.get_all(udm, s.name, filter_str):
-                if user.dn not in user_dns:  # deduplicate ou overlapping users
-                    users.append(user)
-                    user_dns.add(user.dn)
+        async for udm_obj in udm.get("users/user").search(udm_filter):
+            users.append(await user_class.from_udm_obj(udm_obj, None, udm))
     except APICommunicationError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.reason)
     users.sort(key=attrgetter("name"))
