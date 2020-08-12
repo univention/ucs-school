@@ -37,6 +37,7 @@ from pydantic import BaseModel, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND
 
+import psutil
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
 
@@ -48,7 +49,13 @@ school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
 
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
-    return logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
+    if psutil.Process().terminal():
+        _handler = logging.StreamHandler()
+        _handler.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(_handler)
+    return logger
 
 
 async def get_lib_obj(

@@ -17,6 +17,7 @@ py3-jwt
 py3-ldap3
 py3-msgpack
 py3-packaging
+py3-psutil
 py3-pytest
 py3-pytest-runner
 py3-requests
