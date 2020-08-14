@@ -26,16 +26,7 @@ def main():
     hostname = socket.gethostname()
     server_ip = socket.gethostbyname(hostname)
     proc = subprocess.Popen(
-        [
-            "tshark",
-            "-i",
-            "any",
-            "src",
-            "host",
-            server_ip,
-        ],
-        stdout=subprocess.PIPE,
-        close_fds=True,
+        ["tshark", "-i", "any", "src", "host", server_ip,], stdout=subprocess.PIPE, close_fds=True,
     )
 
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
@@ -53,9 +44,7 @@ def main():
             start = time.time()
             wol_received = {b_ip: False for b_ip in target_broadcast_ips}
             logger.info(
-                "Send WoL signals to {} to broadcast-ips {}".format(
-                    mac_address, target_broadcast_ips
-                )
+                "Send WoL signals to {} to broadcast-ips {}".format(mac_address, target_broadcast_ips)
             )
             try:
                 computerroom.wakeonlan.send_wol_packet(
@@ -69,7 +58,7 @@ def main():
                 pass
             while True:
                 line = proc.stdout.readline()
-                if line == '' and proc.poll() is not None:
+                if line == "" and proc.poll() is not None:
                     break
                 different_sub_net = [ele for ele in target_broadcast_ips if ele in str(line)]
                 if computer.mac_address in line:
@@ -81,9 +70,7 @@ def main():
                 elif different_sub_net:
                     wol_received[different_sub_net[0]] = True
                     logger.info("Could not send WoL signal to {}".format(different_sub_net))
-                    logger.info(
-                        "This is the expected behaviour, since it is not reachable."
-                    )
+                    logger.info("This is the expected behaviour, since it is not reachable.")
                 if all(wol_received.values()) or (time.time() - start > tshark_duration):
                     break
             if all(wol_received.values()) or (time.time() - start > tshark_duration):
