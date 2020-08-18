@@ -46,3 +46,9 @@ Description[en]=Specifies additional options for the script exam-and-room-cleanu
 Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup. Standardmäßig werden alle Aktionen bis auf das Bereinigen der Exam-Benutzer deaktiviert, da diese auf den DC Slaves laufen: "--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup".
 Type=string
 Categories=ucsschool-exam
+
+[ucsschool/exam/cron/cleanup-master/remove-disabled-examusers]
+Description[en]=Specifies the point in time when the script exam-and-room-cleanup is called by cron to delete all disabled exam-users (disabled by default; example: "30 3 * * *")
+Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-and-room-cleanup automatisch durch cron gestartet wird und alle deaktivierte Klassenarbeits-User gelöscht werden (standardmäßig deaktiviert; Beispiel: "30 3 * * *")
+Type=string
+Categories=ucsschool-exam
