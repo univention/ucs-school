@@ -165,6 +165,9 @@ class ExamCleanupHelper(object):
                     if self.options.dryrun:
                         ud.debug(ud.MAIN, ud.PROCESS, "dry-run: skipping removal")
                         continue
+                    if user["disabled"] == "0" and self.options.only_deactivated_exam_user_removal:
+                        ud.debug(ud.MAIN, ud.PROCESS, "skipping removal of active student")
+                        continue
                     user.open()
                     user.remove()
         except Exception:
@@ -352,6 +355,13 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
         default=False,
         action="store_true",
         help="do not remove all existing exam users (only on DC master / DC backup)",
+    )
+    parser.add_option(
+        "--only-deactivated-exam-user-removal",
+        dest="only_deactivated_exam_user_removal",
+        default=False,
+        action="store_true",
+        help="do not remove exam users, which are active (only on DC master / DC backup)",
     )
     parser.add_option(
         "--skip-exam-computer-removal",
