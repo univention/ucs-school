@@ -9,3 +9,11 @@ if configRegistry.get('server/role') == 'domaincontroller_master':
 else:
 	print '# Skipping exam-and-room-cleanup on domaincontroller_backup.'
 @!@
+# if enabled, all exam deactivated users are cleaned up
+@!@
+interval = configRegistry.get('ucsschool/exam/cron/cleanup-master/remove-disabled-examusers', '# 30 3 * * 0')
+if configRegistry.get('server/role') == 'domaincontroller_master':
+	print '%s root /usr/share/ucs-school-exam-master/exam-and-room-cleanup --skip-exam-shutdown --skip-exam-computer-removal --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup --only-deactivated-exam-user-removal' % (interval, )
+else:
+	print '# Skipping exam-and-room-cleanup on domaincontroller_backup.'
+@!@
