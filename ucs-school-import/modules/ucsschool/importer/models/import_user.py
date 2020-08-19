@@ -112,8 +112,8 @@ class ImportUser(User):
         user = factory.make_import_user(roles)
     """
 
-    source_uid = SourceUID("SourceUID")
-    record_uid = RecordUID("RecordUID")
+    source_uid = SourceUID("SourceUID", required=True, unlikely_to_change=True)
+    record_uid = RecordUID("RecordUID", required=True, unlikely_to_change=True)
 
     config = lazy_object_proxy.Proxy(lambda: Configuration())  # type: ReadOnlyDict
     no_overwrite_attributes = lazy_object_proxy.Proxy(
