@@ -244,6 +244,10 @@ class SchoolClassAttribute(Attribute):
     pass
 
 
+class WorkgroupAttribute(Attribute):
+    pass
+
+
 class Description(Attribute):
     udm_name = "description"
 
