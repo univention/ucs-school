@@ -299,7 +299,7 @@ class UCSSchoolHelperAbstractClass(object):
             setattr(self, key, kwargs.get(key, default))
         self.__position = None
         self.old_dn = None
-        self.old_dn = self.dn
+        self.old_dn = self.dn  # type: str
         self.errors = {}  # type: Dict[str, List[str]]
         self.warnings = {}  # type: Dict[str, List[str]]
 
