@@ -37,3 +37,13 @@ def admin_password(ucr):
     """Password of the Admin account"""
     ret = os.environ.get("UCS_TEST_ADMIN_PASSWORD")
     return ret or ucr.get("tests/domainadmin/pwd", "univention")
+
+
+@pytest.fixture(scope="session")
+def ucr_hostname(ucr):
+    return ucr["hostname"]
+
+
+@pytest.fixture(scope="session")
+def ucr_ldap_base(ucr):
+    return ucr["ldap/base"]
