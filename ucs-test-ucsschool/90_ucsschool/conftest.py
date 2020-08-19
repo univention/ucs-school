@@ -40,6 +40,11 @@ def admin_password(ucr):
 
 
 @pytest.fixture(scope="session")
+def ucr_domainname(ucr):
+    return ucr["domainname"]
+
+
+@pytest.fixture(scope="session")
 def ucr_hostname(ucr):
     return ucr["hostname"]
 
