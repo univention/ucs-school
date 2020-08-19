@@ -146,7 +146,8 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 	if python -m ucsschool.lib.models list MarketplaceShare --name Marktplatz --school "$ou" | grep MarketplaceShare; then
 		echo "MarketplaceShare exists."
 	else
-		python -m ucsschool.lib.models create MarketplaceShare --name Marktplatz --school "$ou" || return $?
+		python -m ucsschool.lib.models --debug create MarketplaceShare --name Marktplatz --school "$ou" || return $?
+		python -m ucsschool.lib.models list MarketplaceShare --school "$ou"
   fi
 	echo "$(date) $(basename $0) (52marktplatz_create): done - added new share Markplatz for server ${dcname}"
 }
