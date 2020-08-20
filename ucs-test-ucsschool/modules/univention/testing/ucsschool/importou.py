@@ -76,11 +76,14 @@ def create_mail_domain(ucr, udm):
         except (AttributeError, IndexError):
             maildomain = ucr["domainname"]
 
-        print ("\n\n*** Creating mail domain %r...\n", maildomain)
-
-        udm.create_object(
-            "mail/domain", position="cn=domain,cn=mail,{}".format(ucr["ldap/base"]), name=maildomain
-        )
+        print ("\n\n*** Creating mail domain {!r}...\n".format(maildomain))
+        try:
+            udm.create_object(
+                "mail/domain", position="cn=domain,cn=mail,{}".format(ucr["ldap/base"]), name=maildomain
+            )
+        except univention.testing.udm.UCSTestUDM_CreateUDMObjectFailed as exc:
+            if "Object exists" in str(exc):
+                print ("\n\n*** Mail domain {!r} exists.\n".format(maildomain))
 
 
 def remove_ou(ou_name):
