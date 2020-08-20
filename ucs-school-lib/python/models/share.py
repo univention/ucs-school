@@ -173,20 +173,19 @@ class WorkGroupShare(RoleSupportMixin, GroupShare):
     default_roles = [role_workgroup_share]
     _school_in_name_prefix = True
 
-    """
-    This method was overwritten to identify WorkGroupShares and distinct them
-    from other shares of the school.
-    If at some point a lookup is implemented that uses the role attribute
-    which is reliable this code can be removed.
-    Bug #48428
-    """
-
     @classmethod
     def get_container(cls, school):
         return cls.get_search_base(school).shares
 
     @classmethod
     def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+        """
+        This method was overwritten to identify WorkGroupShares and distinct them
+        from other shares of the school.
+        If at some point a lookup is implemented that uses the role attribute
+        which is reliable this code can be removed.
+        Bug #48428
+        """
         shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
         filtered_shares = []
         search_base = cls.get_search_base(school)
