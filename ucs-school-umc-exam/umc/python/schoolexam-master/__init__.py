@@ -81,6 +81,8 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import DNSanitizer, ListSanitizer, StringSanitizer
 
+from .utils import get_blacklist_set, replace_user_values
+
 _ = Translation("ucs-school-umc-exam-master").translate
 univention.admin.modules.update()
 
@@ -348,112 +350,86 @@ class Instance(SchoolBaseModule):
             if not exam_user_description:
                 exam_user_description = _("Exam for user %s") % user_orig["username"]
 
-            def getBlacklistSet(ucrvar):
-                """
-                >>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
-                set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
-                """
-                return set(
-                    [
-                        x.replace("||", "|")
-                        for x in re.split("(?<![|])[|](?![|])", ucr.get(ucrvar, ""))
-                        if x
-                    ]
-                )
+            def _override_ucsschool_school(attr_key, old_value):
+                # for backwards compatibility with UCS@school < 4.1R2 school might not be set
+                # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+                if school and exam:
+                    return user.schools
+                elif school:
+                    return [school]
+                return old_value
 
-            blacklisted_attributes = getBlacklistSet("ucsschool/exam/user/ldap/blacklist")
-
-            # Now create the addlist, fixing up attributes as we go
-            al = []
-            foundUniventionObjectFlag = False
-            for (key, value) in user_orig.oldattr.items():
-                # ignore blacklisted attributes
-                if key in blacklisted_attributes:
-                    continue
-                if key == "sambaUserWorkstations":  # special handling for this attribute
-                    continue
-                # ignore blacklisted attribute values
-                keyBlacklist = getBlacklistSet("ucsschool/exam/user/ldap/blacklist/%s" % key)
-                value = [x for x in value if x not in keyBlacklist]
-                if not value:
-                    continue
-                # handle special cases
-                if key == "uid":
-                    value = [exam_user_uid]
-                elif key == "objectClass":
-                    value += ["ucsschoolExam"]
-                elif (
-                    key == "ucsschoolSchool" and school
-                ):  # for backwards compatibility with UCS@school < 4.1R2 school might not be set
-                    if (
-                        exam
-                    ):  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
-                        value = user.schools
-                    else:
-                        value = [school]
-                elif (
-                    key == "ucsschoolRole" and exam
-                ):  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
-                    value = [create_ucsschool_role_string(role_exam_user, s) for s in user.schools]
-                    value.append(
+            def _override_ucsschool_role(attr_key, old_value):
+                # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+                if exam:
+                    roles = [create_ucsschool_role_string(role_exam_user, s) for s in user.schools]
+                    roles.append(
                         create_ucsschool_role_string(
                             role_exam_user, "{}-{}".format(exam, school), context_type_exam
                         )
                     )
-                elif key == "homeDirectory":
-                    user_orig_homeDirectory = value[0]
-                    _tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
-                    if len(_tmp_split_path) != 2:
-                        english_error_detail = "Failed parsing homeDirectory of original user: %s" % (
-                            user_orig_homeDirectory,
-                        )
-                        message = _("ERROR: Creation of exam user account failed\n%s") % (
-                            english_error_detail,
-                        )
-                        raise UMC_Error(message)
-                    exam_user_unixhome = "%s.%s" % (
-                        exam_user_uid,
-                        datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
-                    )
-                    value = [os.path.join(_tmp_split_path[0], "exam-homes", exam_user_unixhome)]
-                elif key == "sambaHomePath":
-                    user_orig_sambaHomePath = value[0]
-                    value = [user_orig_sambaHomePath.replace(user_orig["username"], exam_user_uid)]
-                elif key == "krb5PrincipalName":
-                    user_orig_krb5PrincipalName = value[0]
-                    value = [
-                        "%s%s"
-                        % (
-                            exam_user_uid,
-                            user_orig_krb5PrincipalName[user_orig_krb5PrincipalName.find("@") :],
-                        )
-                    ]
-                elif key == "uidNumber":
-                    value = [uidNum]
-                elif key == "sambaSID":
-                    value = [userSid]
-                elif key == "description":
-                    value = [exam_user_description]
-                    exam_user_description = None  # that's done
-                elif key == "univentionObjectFlag":
-                    foundUniventionObjectFlag = True
-                    if "temporary" not in value:
-                        value += ["temporary"]
-                al.append((key, value))
-                if room:
-                    if room not in self._room_host_cache:
-                        self._room_host_cache[room] = room.get_computers(ldap_admin_write)
-                    al.append(
-                        (
-                            "sambaUserWorkstations",
-                            ",".join([c.name for c in self._room_host_cache[room]]),
-                        )
-                    )
+                    return roles
+                return old_value
 
-            if not foundUniventionObjectFlag and "univentionObjectFlag" not in blacklisted_attributes:
+            def _override_home_directory(attr_key, old_value):
+                user_orig_home_directory = old_value[0]
+                _tmp_split_path = user_orig_home_directory.rsplit(os.path.sep, 1)
+                if len(_tmp_split_path) != 2:
+                    english_error_detail = "Failed parsing homeDirectory of original user: %s" % (
+                        user_orig_home_directory,
+                    )
+                    message = _("ERROR: Creation of exam user account failed\n%s") % (
+                        english_error_detail,
+                    )
+                    raise UMC_Error(message)
+                exam_user_unix_home = "%s.%s" % (
+                    exam_user_uid,
+                    datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
+                )
+                return [os.path.join(_tmp_split_path[0], "exam-homes", exam_user_unix_home)]
+
+            blacklisted_keys = get_blacklist_set("ucsschool/exam/user/ldap/blacklist", ucr)
+            blacklisted_keys.add("sambaUserWorkstations")
+
+            # Now create the addlist, fixing up attributes as we go
+            al = replace_user_values(
+                user_orig.oldattr.items(),
+                {
+                    "uid": [exam_user_uid],
+                    "objectClass": lambda k, ov: ov + ["ucsschoolExam"],
+                    "ucsschoolSchool": _override_ucsschool_school,
+                    "ucsschoolRole": _override_ucsschool_role,
+                    "homeDirectory": _override_home_directory,
+                    "sambaHomePath": lambda k, ov: [ov[0].replace(user_orig["username"], exam_user_uid)],
+                    "krb5PrincipalName": lambda k, ov: [
+                        "%s%s" % (exam_user_uid, ov[0][ov[0].find("@") :],)
+                    ],
+                    "uidNumber": [uidNum],
+                    "sambaSID": [userSid],
+                    "description": [exam_user_description],
+                    "univentionObjectFlag": lambda k, ov: ov
+                    if "temporary" in ov
+                    else ov + ["temporary"],
+                },
+                blacklisted_keys,
+                ucr,
+            )
+            if room:
+                if room not in self._room_host_cache:
+                    self._room_host_cache[room] = room.get_computers(ldap_admin_write)
+                al.append(
+                    ("sambaUserWorkstations", ",".join([c.name for c in self._room_host_cache[room]]),)
+                )
+
+            special_keys = [key for (key, value) in al if key in ("univentionObjectFlag", "description")]
+
+            if (
+                "univentionObjectFlag" not in special_keys
+                and "univentionObjectFlag" not in blacklisted_keys
+            ):
                 al.append(("univentionObjectFlag", ["temporary"]))
 
-            if exam_user_description and "description" not in blacklisted_attributes:
+            if "description" not in special_keys and "description" not in blacklisted_keys:
                 al.append(("description", [exam_user_description]))
 
             # call hook scripts
