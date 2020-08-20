@@ -648,23 +648,23 @@ class Instance(SchoolBaseModule):
                     role for role in user.ucsschool_roles if get_role_info(role)[1] == context_type_exam
                 ]
                 if len(exam_roles) < 2:
-                    user.remove(ldap_admin_write)
-                    logger.info("Exam user was removed: %r", user)
+                    user.disabled = True
+                    logger.info("Exam user was disabled: %r", user)
                 else:
                     logger.warn(
                         "remove_exam_user() User %r will not be removed as he currently participates in another exam.",
                         user.dn,
                     )
-                    try:
-                        user.ucsschool_roles.remove(exam_role)
-                    except ValueError as exc:
-                        raise UMC_Error(
-                            _('Could not remove exam role "%s" from %s: %s') % exam_role, userdn, exc
-                        )
-                    user.modify(ldap_admin_write)
+                try:
+                    user.ucsschool_roles.remove(exam_role)
+                except ValueError as exc:
+                    raise UMC_Error(
+                        _('Could not remove exam role "%s" from %s: %s') % exam_role, userdn, exc
+                    )
+                user.modify(ldap_admin_write)
             except univention.admin.uexceptions.ldapError as exc:
                 raise UMC_Error(
-                    _("Could not remove exam user %(userdn)r: %(exc)s") % {"userdn": userdn, "exc": exc}
+                    _("Could not disable exam user %(userdn)r: %(exc)s") % {"userdn": userdn, "exc": exc}
                 )
         else:  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
             try:
