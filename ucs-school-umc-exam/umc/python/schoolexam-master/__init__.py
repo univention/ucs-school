@@ -264,6 +264,7 @@ class Instance(SchoolBaseModule):
             pass  # we need to create the exam user
         else:
             logger.warning("The exam account does already exist for: %r", exam_user_uid)
+            exam_user.disabled = False
             if school not in exam_user.schools:
                 exam_user.schools.append(school)
             role_str = create_ucsschool_role_string(
