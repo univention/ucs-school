@@ -26,14 +26,18 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_marketplace_s
 
 
 @pytest.fixture(scope="session")
-def exp_ldap_attr(ucr_domainname):
+def exp_ldap_attr(ucr_domainname, ucr_hostname, ucr_is_singlemaster):
     def _func(ou_name):  # type: (str) -> Dict[str, List[str]]
+        if ucr_is_singlemaster:
+            share_host = ["{}.{}".format(ucr_hostname, ucr_domainname)]
+        else:
+            share_host = ["dc{}-01.{}".format(ou_name, ucr_domainname)]
         return {
             "objectClass": ["univentionShareSamba"],
             "univentionSharePath": ["/home/{}/groups/Marktplatz".format(ou_name)],
             "ucsschoolRole": [create_ucsschool_role_string(role_marketplace_share, ou_name)],
             "univentionShareSambaDirectorySecurityMode": ["0777"],
-            "univentionShareHost": ["dc{}-01.{}".format(ou_name, ucr_domainname)],
+            "univentionShareHost": share_host,
         }
 
     return _func

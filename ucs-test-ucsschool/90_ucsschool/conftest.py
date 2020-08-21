@@ -50,5 +50,10 @@ def ucr_hostname(ucr):
 
 
 @pytest.fixture(scope="session")
+def ucr_is_singlemaster(ucr):
+    return ucr.is_true("ucsschool/singlemaster", False)
+
+
+@pytest.fixture(scope="session")
 def ucr_ldap_base(ucr):
     return ucr["ldap/base"]

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.128) unstable; urgency=medium
+
+  * Bug #51301: Fix test for singleserver environments
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 21 Aug 2020 12:44:09 +0200
+
 ucs-test-ucsschool (6.0.127) unstable; urgency=low
 
   * Bug #51301: make tests silent when no errors happen
