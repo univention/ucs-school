@@ -1,3 +1,11 @@
+ucs-test-ucsschool (6.0.127) unstable; urgency=low
+
+  * Bug #51301: make tests silent when no errors happen
+  * Bug #51301: add test for ucsschool.lib.model.share.MarketplaceShare
+  * Bug #51301: add test for ucsschool.lib cli
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:07:21 +0200
+
 ucs-test-ucsschool (6.0.126) unstable; urgency=low
 
   * Bug #51301: handle existing mail domains in OU tests

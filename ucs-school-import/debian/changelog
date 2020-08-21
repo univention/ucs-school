@@ -1,3 +1,11 @@
+ucs-school-import (17.0.43) unstable; urgency=low
+
+  * Bug #51301: use new ucsschool.lib cli to create Markplatz share
+  * Bug #51301: be more verbose in ou-post-create hook
+  * Bug #51301: set ucsschoolRole on all existing Marktplatz shares
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:06:25 +0200
+
 ucs-school-import (17.0.42) unstable; urgency=low
 
   * Bug #51724: run hook at pre-create and pre-modify steps

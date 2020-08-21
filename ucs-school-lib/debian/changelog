@@ -1,3 +1,11 @@
+ucs-school-lib (12.1.17) unstable; urgency=low
+
+  * Bug #51301: remove useless shebangs
+  * Bug #51301: add new ucsschool.lib model MarketplaceShare
+  * Bug #51301: add cli to create/list/modify/delete ucsschool objects
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:05:25 +0200
+
 ucs-school-lib (12.1.16) unstable; urgency=medium
 
   * Bug #51717: Fix hidden error that occured after code reformat and import reorder
