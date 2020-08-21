@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -242,6 +241,10 @@ class SchoolClassesAttribute(Attribute):
 
 
 class SchoolClassAttribute(Attribute):
+    pass
+
+
+class WorkgroupAttribute(Attribute):
     pass
 
 

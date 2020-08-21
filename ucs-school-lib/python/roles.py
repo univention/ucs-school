@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school lib
@@ -63,6 +62,7 @@ role_ip_computer = "ip_computer"
 role_linux_computer = "linux_computer"
 role_ubuntu_computer = "ubuntu_computer"
 role_exam_user = "exam_user"
+role_marketplace_share = "marketplace_share"
 role_memberserver = "memberserver"
 role_memberserver_admin = "memberserver_admin"
 role_memberserver_edu = "memberserver_edu"
@@ -91,6 +91,7 @@ all_roles = (
     role_dc_slave_admin,
     role_dc_slave_edu,
     role_exam_user,
+    role_marketplace_share,
     role_memberserver,
     role_memberserver_admin,
     role_memberserver_edu,

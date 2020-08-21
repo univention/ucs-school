@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -30,45 +29,52 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import grp
 import os.path
 
 from ldap.filter import filter_format
+from six import iteritems
 
+from univention.lib.misc import custom_groupname
 from univention.udm import UDM
 
-from ..roles import role_school_class_share, role_workgroup_share
-from .attributes import Roles, SchoolClassAttribute, ShareName
+from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
+from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import _, ucr
+
+try:
+    from typing import Any, Optional
+except ImportError:
+    pass
 
 
 class Share(UCSSchoolHelperAbstractClass):
     name = ShareName(_("Name"))
-    school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
 
-    @classmethod
-    def from_school_group(cls, school_group):
-        return cls(name=school_group.name, school=school_group.school, school_group=school_group)
-
-    from_school_class = from_school_group  # legacy
+    create_defaults = {
+        "writeable": "1",
+        "sambaWriteable": "1",
+        "sambaBrowseable": "1",
+        "sambaForceGroup": "+{name}",
+        "sambaCreateMode": "0770",
+        "sambaDirectoryMode": "0770",
+        "owner": "0",
+        "group": "0",
+        "directorymode": "0770",
+    }
 
     @classmethod
     def get_container(cls, school):
         return cls.get_search_base(school).shares
 
     def do_create(self, udm_obj, lo):
-        gid = self.school_group.get_udm_object(lo)["gidNumber"]
+        for k, v in iteritems(self.create_defaults):
+            udm_obj[k] = v
         udm_obj["host"] = self.get_server_fqdn(lo)
         udm_obj["path"] = self.get_share_path()
-        udm_obj["writeable"] = "1"
-        udm_obj["sambaWriteable"] = "1"
-        udm_obj["sambaBrowseable"] = "1"
-        udm_obj["sambaForceGroup"] = "+%s" % self.name
-        udm_obj["sambaCreateMode"] = "0770"
-        udm_obj["sambaDirectoryMode"] = "0770"
-        udm_obj["owner"] = "0"
-        udm_obj["group"] = gid
-        udm_obj["directorymode"] = "0770"
+        udm_obj["sambaForceGroup"] = self.create_defaults["sambaForceGroup"].format(name=self.name)
+        udm_obj["group"] = self.get_gid_number(lo)
         if ucr.is_false("ucsschool/default/share/nfs", True):
             try:
                 udm_obj.options.remove("nfs")  # deactivate NFS
@@ -77,9 +83,15 @@ class Share(UCSSchoolHelperAbstractClass):
         self.logger.info('Creating share on "%s"', udm_obj["host"])
         return super(Share, self).do_create(udm_obj, lo)
 
-    def get_share_path(self):
+    def get_gid_number(self, lo):
+        raise NotImplementedError()
+
+    def get_share_path(self, school=None):
+        raise NotImplementedError()
+
+    def _get_share_path(self, school):
         if ucr.is_true("ucsschool/import/roleshare", True):
-            return "/home/%s/groups/%s" % (self.school_group.school, self.name)
+            return "/home/%s/groups/%s" % (school, self.name)
         else:
             return "/home/groups/%s" % self.name
 
@@ -138,19 +150,42 @@ class Share(UCSSchoolHelperAbstractClass):
         udm_module = "shares/share"
 
 
-class WorkGroupShare(RoleSupportMixin, Share):
+class GroupShare(Share):
+    school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
+
+    @classmethod
+    def from_school_group(cls, school_group):
+        return cls(name=school_group.name, school=school_group.school, school_group=school_group)
+
+    from_school_class = from_school_group  # legacy
+
+    def get_gid_number(self, lo):
+        return self.school_group.get_udm_object(lo)["gidNumber"]
+
+    def get_share_path(self, school=None):
+        school = school or self.school_group.school
+        return self._get_share_path(school)
+
+
+class WorkGroupShare(RoleSupportMixin, GroupShare):
+    school_group = WorkgroupAttribute(_("Work group"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_workgroup_share]
     _school_in_name_prefix = True
 
-    """
-    This method was overwritten to identify WorkGroupShares and distinct them from other shares of the school.
-    If at some point a lookup is implemented that uses the role attribute which is reliable this code can be removed.
-    Bug #48428
-    """
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).shares
 
     @classmethod
     def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+        """
+        This method was overwritten to identify WorkGroupShares and distinct them
+        from other shares of the school.
+        If at some point a lookup is implemented that uses the role attribute
+        which is reliable this code can be removed.
+        Bug #48428
+        """
         shares = super(WorkGroupShare, cls).get_all(lo, school, filter_str, easy_filter, superordinate)
         filtered_shares = []
         search_base = cls.get_search_base(school)
@@ -166,7 +201,8 @@ class WorkGroupShare(RoleSupportMixin, Share):
         return filtered_shares
 
 
-class ClassShare(RoleSupportMixin, Share):
+class ClassShare(RoleSupportMixin, GroupShare):
+    school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_school_class_share]
     _school_in_name_prefix = True
@@ -175,8 +211,52 @@ class ClassShare(RoleSupportMixin, Share):
     def get_container(cls, school):
         return cls.get_search_base(school).classShares
 
-    def get_share_path(self):
-        if ucr.is_true("ucsschool/import/roleshare", True):
-            return "/home/%s/groups/klassen/%s" % (self.school_group.school, self.name)
+    @classmethod
+    def get_group_class(cls):
+        # prevent import loop
+        from .group import ClassShare  # isort:skip
+
+        return ClassShare
+
+
+class MarketplaceShare(RoleSupportMixin, Share):
+    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
+    default_roles = [role_marketplace_share]
+    _school_in_name_prefix = False
+
+    def __init__(
+        self, name="Marktplatz", school=None, **kwargs
+    ):  # type: (Optional[str], Optional[str], **Any) -> None
+        if name != "Marktplatz":
+            raise ValueError("Name of market place must be 'Marktplatz'.")
+        super(MarketplaceShare, self).__init__(name, school, **kwargs)
+
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).shares
+
+    @classmethod
+    def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
+        # ignore all filter arguments, there is only one Marktplatz share per school
+        return super(MarketplaceShare, cls).get_all(lo, school, filter_str="cn=Marktplatz")
+
+    def get_gid_number(self, lo):
+        group_name = ucr.get("ucsschool/import/generate/share/marktplatz/group") or custom_groupname(
+            "Domain Users"
+        )
+        group_entry = grp.getgrnam(group_name)
+        return str(group_entry.gr_gid)
+
+    def get_share_path(self, school=None):
+        path = ucr.get("ucsschool/import/generate/share/marktplatz/sharepath")
+        if path:
+            return path
         else:
-            return "/home/groups/klassen/%s" % self.name
+            school = school or self.school
+            return super(MarketplaceShare, self)._get_share_path(school)
+
+    def do_create(self, udm_obj, lo):
+        self.create_defaults["directorymode"] = (
+            ucr.get("ucsschool/import/generate/share/marktplatz/permissions") or "0777"
+        )
+        return super(MarketplaceShare, self).do_create(udm_obj, lo)
