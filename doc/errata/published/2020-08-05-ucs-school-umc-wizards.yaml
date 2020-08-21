@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-wizards
+fix: 11.0.0-9A~4.4.0.202007231451
+desc: |
+ * Add optional fields to user wizard and make visibility configurable via <envar>ucsschool/wizards/schoolwizards/users/optional_visible_fields</envar> (Bug #51691).
+bug: [51691]

@@ -61,6 +61,29 @@ def replace_ucr_variables(template):
 
 
 aclset += """
+
+# prevent unauthorized access to user password data as described in Bug #50669
+
+access to filter="(|(objectClass=ucsschoolAdministrator)(&(univentionObjectType=users/user)(!(objectClass=ucsschoolType))))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by * +0 break
+
+access to filter="(|(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
+	by set="user/objectClass & [ucsschoolAdministrator]" +0 break
+	by set="user/objectClass & ([ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by * +0 break
+
+access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
+	by self +0 break
+	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher])" +0 break
+	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff])" none
+	by * +0 break
+
 # DC Slaves need write access to the members of the group Domain Computers
 access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="uniqueMember,memberUid"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write

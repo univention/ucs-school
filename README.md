@@ -1,4 +1,5 @@
 [![Code Health](https://landscape.io/github/univention/ucs-school/4.3/landscape.svg?style=flat)](https://landscape.io/github/univention/ucs-school/4.3)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # UCS@school
 

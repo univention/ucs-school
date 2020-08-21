@@ -1,0 +1,4 @@
+[tool.black]
+line-length = 105
+target-version = ['py27']
+exclude = 'venv/|doc/doc-common/'

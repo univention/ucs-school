@@ -34,230 +34,229 @@ All exceptions raised by code in ucsschool.importer.
 
 
 class UcsSchoolImportError(Exception):
-	is_fatal = False
-	# If is_countable is set to False, the exception is displayed to
-	# the user, but is not included in the evaluation of tolerate_errors.
-	is_countable = True
+    is_fatal = False
+    # If is_countable is set to False, the exception is displayed to
+    # the user, but is not included in the evaluation of tolerate_errors.
+    is_countable = True
 
-	def __init__(self, *args, **kwargs):
-		self.entry_count = kwargs.pop("entry_count", 0)
-		self.input = kwargs.pop("input", None)
-		self.import_user = kwargs.pop("import_user", None)
-		super(UcsSchoolImportError, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self.entry_count = kwargs.pop("entry_count", 0)
+        self.input = kwargs.pop("input", None)
+        self.import_user = kwargs.pop("import_user", None)
+        super(UcsSchoolImportError, self).__init__(*args, **kwargs)
 
 
 class UcsSchoolImportFatalError(UcsSchoolImportError):
-	is_fatal = True
+    is_fatal = True
 
 
 class UcsSchoolImportSkipImportRecord(UcsSchoolImportError):
-	is_countable = False
+    is_countable = False
 
 
 class BadPassword(UcsSchoolImportError):
-	pass
+    pass
 
 
 class BadValueStored(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class ConfigurationError(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class CreationError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class DeletionError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class FormatError(UcsSchoolImportError):
-
-	def __init__(self, msg, scheme, data, *args, **kwargs):
-		super(FormatError, self).__init__(msg, *args, **kwargs)
-		self.scheme = scheme
-		self.data = data
+    def __init__(self, msg, scheme, data, *args, **kwargs):
+        super(FormatError, self).__init__(msg, *args, **kwargs)
+        self.scheme = scheme
+        self.data = data
 
 
 class EmptyFormatResultError(FormatError):
-	pass
+    pass
 
 
 class EmptyMandatoryAttribute(UcsSchoolImportError):
-
-	def __init__(self, msg, attr_name, *args, **kwargs):
-		super(EmptyMandatoryAttribute, self).__init__(msg, *args, **kwargs)
-		self.attr_name = attr_name
+    def __init__(self, msg, attr_name, *args, **kwargs):
+        super(EmptyMandatoryAttribute, self).__init__(msg, *args, **kwargs)
+        self.attr_name = attr_name
 
 
 class InitialisationError(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class InvalidBirthday(UcsSchoolImportError):
-	pass
+    pass
 
 
 class InvalidClassName(UcsSchoolImportError):
-	pass
+    pass
 
 
 class InvalidEmail(UcsSchoolImportError):
-	pass
+    pass
 
 
 class InvalidSchoolClasses(UcsSchoolImportError):
-	pass
+    pass
 
 
 class InvalidSchools(UcsSchoolImportError):
-	pass
+    pass
 
 
 class LDAPWriteAccessDenied(UcsSchoolImportFatalError):
-	def __init__(self, msg=None, *args, **kwargs):
-		msg = msg or 'Tried to write using a read only connection (during a dry-run?).'
-		super(LDAPWriteAccessDenied, self).__init__(msg, *args, **kwargs)
+    def __init__(self, msg=None, *args, **kwargs):
+        msg = msg or "Tried to write using a read only connection (during a dry-run?)."
+        super(LDAPWriteAccessDenied, self).__init__(msg, *args, **kwargs)
 
 
 class MissingMandatoryAttribute(UcsSchoolImportError):
-
-	def __init__(self, msg, mandatory_attributes, *args, **kwargs):
-		super(MissingMandatoryAttribute, self).__init__(msg, *args, **kwargs)
-		self.mandatory_attributes = mandatory_attributes
+    def __init__(self, msg, mandatory_attributes, *args, **kwargs):
+        super(MissingMandatoryAttribute, self).__init__(msg, *args, **kwargs)
+        self.mandatory_attributes = mandatory_attributes
 
 
 class MissingMailDomain(UcsSchoolImportError):
-	pass
+    pass
 
 
 class MissingSchoolName(UcsSchoolImportError):
-	pass
+    pass
 
 
 class MissingUid(UcsSchoolImportError):
-	pass
+    pass
 
 
 class ModificationError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class MoveError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class NameKeyExists(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class NoRole(UcsSchoolImportError):
-	pass
+    pass
 
 
 class NotSupportedError(UcsSchoolImportError):
-	pass
+    pass
 
 
 NoUsername = MissingUid
 
 
 class NoUsernameAtAll(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class NoValueStored(UcsSchoolImportFatalError):
-	pass
+    pass
 
 
 class ReadOnlyConfiguration(UcsSchoolImportFatalError):
-
-	def __init__(self, *args, **kwargs):
-		super(ReadOnlyConfiguration, self).__init__("Changing the configuration is not allowed.", *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ReadOnlyConfiguration, self).__init__(
+            "Changing the configuration is not allowed.", *args, **kwargs
+        )
 
 
 class TooManyErrors(UcsSchoolImportFatalError):
-
-	def __init__(self, msg, errors, *args, **kwargs):
-		super(TooManyErrors, self).__init__(msg, *args, **kwargs)
-		self.errors = errors
+    def __init__(self, msg, errors, *args, **kwargs):
+        super(TooManyErrors, self).__init__(msg, *args, **kwargs)
+        self.errors = errors
 
 
 ToManyErrors = TooManyErrors
 
 
 class UDMError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class UDMValueError(UDMError):
-	pass
+    pass
 
 
 class UnknownAction(UcsSchoolImportError):
-	pass
+    pass
 
 
 UnkownAction = UnknownAction
 
 
 class UnknownDisabledSetting(UcsSchoolImportError):
-	pass
+    pass
 
 
 UnkownDisabledSetting = UnknownDisabledSetting
 
 
 class UnknownProperty(UcsSchoolImportError):
-	pass
+    pass
 
 
 class UnknownRole(UcsSchoolImportError):
-	pass
+    pass
 
 
 UnkownRole = UnknownRole
 
 
 class UnknownSchoolName(UcsSchoolImportError):
-	pass
+    pass
 
 
 UnkownSchoolName = UnknownSchoolName
 
 
 class UniqueIdError(UcsSchoolImportError):
-	pass
+    pass
 
 
 class UsernameKeyExists(NameKeyExists):
-	"""
-	Deprecated. Please use NameKeyExists.
-	"""
-	pass
+    """
+    Deprecated. Please use NameKeyExists.
+    """
+
+    pass
 
 
 class UsernameToLong(UcsSchoolImportError):
-	pass
+    pass
 
 
 class UserValidationError(UcsSchoolImportError):
-	"""
-	Wraps ucsschool.lib.models.attributes.ValidationError
-	"""
+    """
+    Wraps ucsschool.lib.models.attributes.ValidationError
+    """
 
-	def __init__(self, msg, validation_error, *args, **kwargs):
-		super(UserValidationError, self).__init__(msg, *args, **kwargs)
-		self.validation_error = validation_error
+    def __init__(self, msg, validation_error, *args, **kwargs):
+        super(UserValidationError, self).__init__(msg, *args, **kwargs)
+        self.validation_error = validation_error
 
-	def __str__(self):
-		return '{} {!r}'.format(self.message, self.validation_error)
+    def __str__(self):
+        return "{} {!r}".format(self.message, self.validation_error)
 
 
 class WrongUserType(UcsSchoolImportError):
-	"""Wraps ucsschool.lib.models.base.WrongObjectType"""
-	def __init__(self, msg, *args, **kwargs):
-		super(WrongUserType, self).__init__(msg, *args, **kwargs)
+    """Wraps ucsschool.lib.models.base.WrongObjectType"""
+
+    def __init__(self, msg, *args, **kwargs):
+        super(WrongUserType, self).__init__(msg, *args, **kwargs)

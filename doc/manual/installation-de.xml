@@ -403,7 +403,6 @@ ucs-school-netlogon
 ucs-school-netlogon-user-logonscripts
 ucs-school-old-homedirs
 ucs-school-old-sharedirs
-ucs-school-ucc-integration
 ucs-school-webproxy
 univention-squid-kerberos
 		</programlisting>
@@ -413,7 +412,7 @@ apt-get unmarkauto <replaceable>PAKETNAME</replaceable>
 		</programlisting>
 	  </para>
 	  <para>
-		Richtlinien, die (ggf. automatisch von &ucsUAS;) an Container der Schul-OUs verknüpft wurden, sollten auf ihre Einstellungen hin überprüft werden. Dies betrifft unter anderem die DHCP-DNS-Einstellungen sowie die Einstellungen für UCC-Systeme (siehe auch <xref linkend="school:ucc:configuration"/>).
+		Richtlinien, die (ggf. automatisch von &ucsUAS;) an Container der Schul-OUs verknüpft wurden, sollten auf ihre Einstellungen hin überprüft werden. Dies betrifft unter anderem die DHCP-DNS-Einstellungen.
 	  </para>
 	  <para>
 		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem DC Master neu gestartet werden:

@@ -383,12 +383,26 @@
             UCR-Variablen <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces</envar> und
             <envar>ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes</envar> festgelegt
             werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>tun docker</literal>.
+            Wenn sich die Zielrechner in einem anderen Netzwerk befinden, können über die UCR-Variable <envar>ucsschool/umc/computerroom/wakeonlan/target_nets</envar>
+            die Subnetze angepasst werden, an die Pakete gesendet werden. Dabei sind die einzelnen Werte durch Leerzeichen zu trennen, z.B. <literal>255.255.255.255 10.200.18.255</literal>.
         </para>
         <para>
             Ab Version 4.4v4 prüft das Computerraum-Modul von UCS@school in der Standardeinstellung regelmäßig, ob alle gesperrten Rechner weiterhin noch gesperrt sind,
             um z.B. Rechner nach deren Neustart wieder in den gesperrten Zustand zu versetzen.
             Das Intervall, in dem die Überprüfung läuft, kann durch die &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/screenlock/interval</envar>
             konfiguriert werden. In der Standardkonfiguration wird die Prüfung alle 5 Sekunden durchgeführt. Wird der Wert der Variable auf 0 gesetzt, wird die Prüfung abgeschaltet.
+        </para>
+    </section>
+    <section id="school:setup:generic:configureclasslists">
+        <title>Konfiguration des Klassenlisten-Moduls</title>
+        <para>
+            Über das UMC-Modul <guimenu>Klassenlisten</guimenu> können Listen mit Schülerdaten einer ausgewählten Klasse exportiert werden. In der Standardkonfiguration
+            werden die UDM Attribute <literal>firstname, lastname, username</literal> sowie die ausgewählte Klasse angezeigt.
+            Mit der &ucsUCRV; <envar>ucsschool/umc/lists/class/attributes</envar> können die angezeigten Attribute angepasst werden.
+            Die Variable beschreibt eine Zuordnung der anzuzeigenden UDM Attribute zu den angezeigten Spaltennamen.
+            Dabei sind die Zuordnung durch Kommata zu trennen, z.B.
+            <literal>firstname Vorname,lastname Nachname,Class Klasse,username Username</literal>. Für <literal>Class</literal> wird dabei
+            die ausgewählte Klasse eingesetzt.
         </para>
     </section>
 </chapter>

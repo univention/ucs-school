@@ -38,45 +38,48 @@ from ..writer.result_exporter import ResultExporter
 
 
 class NewUserPasswordCsvExporter(ResultExporter):
-	"""
-	Export passwords of new users to a CSV file.
-	"""
-	field_names = ("username", "password", "role", "lastname", "firstname", "schools", "classes")
+    """
+    Export passwords of new users to a CSV file.
+    """
 
-	def __init__(self, *arg, **kwargs):
-		super(NewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)
-		self.factory = Factory()
-		self.a_user = self.factory.make_import_user([])
+    field_names = ("username", "password", "role", "lastname", "firstname", "schools", "classes")
 
-	def get_iter(self, user_import):
-		"""
-		Return only the new users.
-		"""
-		li = list()
-		map(li.extend, user_import.added_users.values())
-		li.sort(key=lambda x: int(x['entry_count']) if isinstance(x, dict) else int(x.entry_count))
-		return li
+    def __init__(self, *arg, **kwargs):
+        super(NewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)
+        self.factory = Factory()
+        self.a_user = self.factory.make_import_user([])
 
-	def get_writer(self):
-		"""
-		Use the user result csv writer.
-		"""
-		return self.factory.make_user_writer(field_names=self.field_names)
+    def get_iter(self, user_import):
+        """
+        Return only the new users.
+        """
+        li = list()
+        map(li.extend, user_import.added_users.values())
+        li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
+        return li
 
-	def serialize(self, user):
-		if isinstance(user, ImportUser):
-			pass
-		elif isinstance(user, dict):
-			user = self.a_user.from_dict(user)
-		else:
-			raise TypeError("Expected ImportUser or dict but got {}. Repr: {}".format(type(user), repr(user)))
+    def get_writer(self):
+        """
+        Use the user result csv writer.
+        """
+        return self.factory.make_user_writer(field_names=self.field_names)
 
-		return dict(
-			username=user.name,
-			password=user.password,
-			role=user.role_sting,
-			lastname=user.lastname,
-			firstname=user.firstname,
-			schools=",".join(user.schools),
-			classes=user.school_classes_as_str,
-		)
+    def serialize(self, user):
+        if isinstance(user, ImportUser):
+            pass
+        elif isinstance(user, dict):
+            user = self.a_user.from_dict(user)
+        else:
+            raise TypeError(
+                "Expected ImportUser or dict but got {}. Repr: {}".format(type(user), repr(user))
+            )
+
+        return dict(
+            username=user.name,
+            password=user.password,
+            role=user.role_sting,
+            lastname=user.lastname,
+            firstname=user.firstname,
+            schools=",".join(user.schools),
+            classes=user.school_classes_as_str,
+        )

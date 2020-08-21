@@ -38,11 +38,13 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiInput",
+	"umc/widgets/CheckBox",
+	"umc/widgets/DateBox",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, PasswordInputBox, Wizard, utils, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, CheckBox, DateBox, PasswordInputBox, Wizard, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -50,20 +52,28 @@ define([
 		_examUserPrefix: 'exam-',
 		_maxUsernameLength: 15,
 		_checkMaxUsernameLength: "true",
+		_optionalVisibleFields: [],
+
+		_isOptionalFieldVisible: function(fieldName) {
+			return array.indexOf(this._optionalVisibleFields, fieldName) > -1;
+		},
 
 		loadVariables: function() {
 			return tools.ucr([
 				'ucsschool/ldap/default/userprefix/exam',
 				'ucsschool/ldap/check/username/lengthlimit',
-				'ucsschool/username/max_length'
+				'ucsschool/username/max_length',
+				'ucsschool/wizards/schoolwizards/users/optional_visible_fields'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
 				this._checkMaxUsernameLength = result['ucsschool/ldap/check/username/lengthlimit'] || "true";
 				this._maxUsernameLengthUcr = result['ucsschool/username/max_length'] || 20;
 				this._maxUsernameLength = this._maxUsernameLengthUcr - this._examUserPrefix.length;
+				var optionalVisibleFieldsStr = result['ucsschool/wizards/schoolwizards/users/optional_visible_fields'] || '';
+				this._optionalVisibleFields = optionalVisibleFieldsStr.split(' ');
 			}));
-        },
+		},
 
 		getGeneralPage: function() {
 			var page = this.inherited(arguments);
@@ -95,6 +105,16 @@ define([
 					name: 'schools',
 					label: _('Schools'),
 					initialValue: [this.selectedSchool],
+					disabled: true,
+					subtypes: [{
+						type: TextBox,
+					}]
+				}, {
+					type: MultiInput,
+					name: 'ucsschool_roles',
+					label: _('UCS@school roles'),
+					initialValue: [],
+					disabled: true,
 					subtypes: [{
 						type: TextBox,
 					}]
@@ -103,6 +123,16 @@ define([
 					name: 'firstname',
 					label: _('Firstname'),
 					required: true
+				}, {
+					type: CheckBox,
+					name: 'disabled',
+					label: _('Disabled'),
+					required: true
+				}, {
+					type: DateBox,
+					name: 'birthday',
+					label: _('Birthday'),
+					required: false
 				}, {
 					type: TextBox,
 					name: 'lastname',
@@ -154,10 +184,12 @@ define([
 				}],
 				layout: [
 					['firstname', 'lastname'],
-					['name'],
+					['disabled'],
+					['name', 'birthday'],
 					['school_classes', 'newClass'],
 					['email'],
-					['password']
+					['password'],
+					['schools', 'ucsschool_roles'],
 				]
 			};
 		},
@@ -184,6 +216,10 @@ define([
 			if (currentPage === 'general') {
 				var classBox = this.getWidget('item', 'school_classes');
 				var newClassButton = this.getPage('item')._form.getButton('newClass');
+				array.forEach(['schools', 'ucsschool_roles', 'birthday', 'disabled', 'password', 'email'], function(fieldName) {
+					var optionalWidget = this.getWidget('item', fieldName);
+					optionalWidget.set('visible', this._isOptionalFieldVisible(fieldName));
+				}, this)
 				if (!this.hasClassWidget()) {
 					classBox.set('value', null);
 					classBox.set('required', false);

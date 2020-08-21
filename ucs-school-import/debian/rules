@@ -77,5 +77,8 @@ override_dh_auto_test:
 	dh_auto_test
 	ucslint
 
+override_dh_pysupport:
+	dh_pysupport --exclude=pyhooks-available
+
 %:
 	dh $@ --with python_support --with systemd

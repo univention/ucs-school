@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.36A~4.4.0.202006191705
+desc: |
+ * Deactivated hooks for the creation of new OX contexts, when set on a user, were added (Bug #51536).
+bug: [51536]

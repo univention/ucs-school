@@ -1,3 +1,35 @@
+ucs-school-lib (12.1.17) unstable; urgency=low
+
+  * Bug #51301: remove useless shebangs
+  * Bug #51301: add new ucsschool.lib model MarketplaceShare
+  * Bug #51301: add cli to create/list/modify/delete ucsschool objects
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:05:25 +0200
+
+ucs-school-lib (12.1.16) unstable; urgency=medium
+
+  * Bug #51717: Fix hidden error that occured after code reformat and import reorder
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 23 Jul 2020 10:35:12 +0200
+
+ucs-school-lib (12.1.15) unstable; urgency=medium
+
+  * Bug #50625: raise error with user & group for broken school groups & link
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 22 Jul 2020 13:14:28 +0200
+
+ucs-school-lib (12.1.14) unstable; urgency=medium
+
+  * Bug #47155: override remove_without_hooks
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Tue, 12 May 2020 18:15:51 +0200
+
+ucs-school-lib (12.1.13) unstable; urgency=medium
+
+  * Bug #51190: revert wrong fix
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 30 Apr 2020 12:17:40 +0200
+
 ucs-school-lib (12.1.12) unstable; urgency=medium
 
   * Bug #45683: added class name syntax check

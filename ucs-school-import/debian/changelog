@@ -1,3 +1,67 @@
+ucs-school-import (17.0.44) unstable; urgency=low
+
+  * Bug #51301: use ucsschool.lib cli -> depend on new version
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:12:28 +0200
+
+ucs-school-import (17.0.43) unstable; urgency=low
+
+  * Bug #51301: use new ucsschool.lib cli to create Markplatz share
+  * Bug #51301: be more verbose in ou-post-create hook
+  * Bug #51301: set ucsschoolRole on all existing Marktplatz shares
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:06:25 +0200
+
+ucs-school-import (17.0.42) unstable; urgency=low
+
+  * Bug #51724: run hook at pre-create and pre-modify steps
+  * Bug #51724: add note about UCRVs in Kelvin to hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Aug 2020 12:55:39 +0200
+
+ucs-school-import (17.0.40) unstable; urgency=medium
+
+  * Bug #51724: Import hook for staff homedrives
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 31 Jul 2020 08:44:06 +0200
+
+ucs-school-import (17.0.39) unstable; urgency=medium
+
+  * Bug #51606: add case insensitive validation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 17 Jul 2020 16:32:54 +0200
+
+ucs-school-import (17.0.38) unstable; urgency=low
+
+  * Bug #51418: add missing school class removal, when user is removed from
+    school in the SiSoPi scenario
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Jul 2020 14:43:43 +0200
+
+ucs-school-import (17.0.37) unstable; urgency=low
+
+  * Bug #51545: make schema checking code more robust
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jul 2020 11:33:48 +0200
+
+ucs-school-import (17.0.36) unstable; urgency=low
+
+  * Bug #51536: add OX context creation hooks to pyhooks-available
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 19 Jun 2020 16:49:07 +0200
+
+ucs-school-import (17.0.35) unstable; urgency=low
+
+  * Bug #50894: include custom username counter variables in schema test
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 May 2020 14:57:40 +0200
+
+ucs-school-import (17.0.34) unstable; urgency=medium
+
+  * Bug #51190: fixed missing import
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 30 Apr 2020 11:32:04 +0200
+
 ucs-school-import (17.0.33) unstable; urgency=medium
 
   * Bug #50894: added config check function

@@ -1,0 +1,33 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: computerroom module settings checks
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_base1]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+## bugs: [40785]
+
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool.ucs_test_school as utu
+from univention.config_registry import handler_set, handler_unset
+from univention.testing import utils
+
+
+def main():
+    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
+        for should_exist, variable in [(False, None), (True, "yes"), (False, "no")]:
+            if variable is None:
+                handler_unset(["ucsschool/import/generate/share/marktplatz"])
+            else:
+                handler_set(["ucsschool/import/generate/share/marktplatz=%s" % (variable,)])
+
+            print "### Creating school. Expecting Marktplatz to exists = %r" % (should_exist,)
+            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"), use_cache=False)
+            utils.wait_for_replication()
+            utils.verify_ldap_object(
+                "cn=Marktplatz,cn=shares,%s" % (oudn,), strict=True, should_exist=should_exist
+            )
+
+
+if __name__ == "__main__":
+    main()

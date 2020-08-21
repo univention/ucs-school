@@ -1,3 +1,138 @@
+ucs-test-ucsschool (6.0.128) unstable; urgency=medium
+
+  * Bug #51301: Fix test for singleserver environments
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 21 Aug 2020 12:44:09 +0200
+
+ucs-test-ucsschool (6.0.127) unstable; urgency=low
+
+  * Bug #51301: make tests silent when no errors happen
+  * Bug #51301: add test for ucsschool.lib.model.share.MarketplaceShare
+  * Bug #51301: add test for ucsschool.lib cli
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:07:21 +0200
+
+ucs-test-ucsschool (6.0.126) unstable; urgency=low
+
+  * Bug #51301: handle existing mail domains in OU tests
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 20 Aug 2020 15:58:36 +0200
+
+ucs-test-ucsschool (6.0.125) unstable; urgency=medium
+
+  * Bug #51661: Add test for Domain Admins creating non school users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 03 Aug 2020 13:43:22 +0200
+
+ucs-test-ucsschool (6.0.124) unstable; urgency=medium
+
+  * Bug #51606: test for not matching hosts fqdn 
+
+ -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Fri, 17 Jul 2020 16:34:31 +0200
+
+ucs-test-ucsschool (6.0.123) unstable; urgency=medium
+
+  * Bug #51074: skip wakeonlan
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 13 Jul 2020 16:16:47 +0200
+
+ucs-test-ucsschool (6.0.122) unstable; urgency=medium
+
+  * Bug #51074: wakeonlan test iterate over tshark output
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 09 Jul 2020 12:34:45 +0200
+
+ucs-test-ucsschool (6.0.121) unstable; urgency=medium
+
+  * Bug #50626:  test wireless gpo replication
+
+ -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Thu, 09 Jul 2020 09:48:24 +0200
+
+ucs-test-ucsschool (6.0.120) unstable; urgency=low
+
+  * Bug #51418: test school class removal in SiSoPi scenario
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Jul 2020 14:44:28 +0200
+
+ucs-test-ucsschool (6.0.119) unstable; urgency=low
+
+  * Bug #51545: test schema checking code
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jul 2020 11:34:10 +0200
+
+ucs-test-ucsschool (6.0.118) unstable; urgency=medium
+
+  * Bug #51074: retry multiple times before giving up
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 29 Jun 2020 15:47:35 +0200
+
+ucs-test-ucsschool (6.0.117) unstable; urgency=medium
+
+  * Bug #51074: timeout & print tshark output if test fails
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 26 Jun 2020 13:30:12 +0200
+
+ucs-test-ucsschool (6.0.116) unstable; urgency=medium
+
+  * Bug #50773: remove specific email in user creation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 24 Jun 2020 09:39:10 +0200
+
+ucs-test-ucsschool (6.0.115) unstable; urgency=medium
+
+  * Bug #50773: Fix school creation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Jun 2020 09:01:00 +0200
+
+ucs-test-ucsschool (6.0.114) unstable; urgency=medium
+
+  * Bug #51459: exclude ucs-test 112 import user pyhooks from isort
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 19 Jun 2020 09:30:54 +0200
+
+ucs-test-ucsschool (6.0.113) unstable; urgency=medium
+
+  * Bug #50773: unit-test & integration-test for classlists download
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Jun 2020 09:42:46 +0200
+
+ucs-test-ucsschool (6.0.112) unstable; urgency=medium
+
+  * Bug #51074: ucs-test Send WoL to alternative broadcast ips 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 04 Jun 2020 13:51:10 +0200
+
+ucs-test-ucsschool (6.0.111) unstable; urgency=low
+
+  * Bug #51369: update Python path
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 03 Jun 2020 09:35:57 +0200
+
+ucs-test-ucsschool (6.0.110) unstable; urgency=medium
+
+  * Bug #47155: ou-DC/Member-Verwaltungsnetz and ouadmins in
+    School.ldap_verify are now tested against should_exist=must_exist
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 13 May 2020 16:33:17 +0200
+
+ucs-test-ucsschool (6.0.109) unstable; urgency=low
+
+  * Bug #48138: fix birthday format test for single digit years
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 May 2020 10:43:57 +0200
+
+ucs-test-ucsschool (6.0.108) unstable; urgency=low
+
+  * Bug #50669: Exclude staff from changing student password data
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 04 May 2020 10:37:05 +0100
+
+ucs-test-ucsschool (6.0.107) unstable; urgency=low
+
+  * Bug #50669: added tests for user password data restrictions
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Sun, 03 May 2020 15:45:50 +0100
+
 ucs-test-ucsschool (6.0.106) unstable; urgency=low
 
   * Bug #50500: added tests for diagnostic module 900-903

@@ -311,6 +311,10 @@ msgstr ""
 msgid "School class"
 msgstr "Schulklasse"
 
+#: models/share.py:46
+msgid "Work group"
+msgstr "Arbeitsgruppe"
+
 #: models/user.py:62
 msgid "Username"
 msgstr "Benutzername"

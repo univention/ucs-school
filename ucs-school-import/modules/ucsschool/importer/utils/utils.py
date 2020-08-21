@@ -32,53 +32,54 @@
 Diverse helper functions.
 """
 
+import grp
 import os
 import os.path
 import pwd
-import grp
 from contextlib import contextmanager
+
 import univention.admin.modules
 
 
 def mkdir_p(dir_name, user, group, mode):
-	"""
-	Recursively create directories (like "mkdir -p").
+    """
+    Recursively create directories (like "mkdir -p").
 
-	:param str dir_name: path to create
-	:param str user: username of owner of new directories
-	:param str group: group name for ownership of new directories
-	:param octal mode: permission bits to set for new directories
-	:returns: None
-	:rtype: None
-	"""
-	if not dir_name:
-		return
+    :param str dir_name: path to create
+    :param str user: username of owner of new directories
+    :param str group: group name for ownership of new directories
+    :param octal mode: permission bits to set for new directories
+    :returns: None
+    :rtype: None
+    """
+    if not dir_name:
+        return
 
-	uid = pwd.getpwnam(user).pw_uid
-	gid = grp.getgrnam(group).gr_gid
-	parent = os.path.dirname(dir_name)
+    uid = pwd.getpwnam(user).pw_uid
+    gid = grp.getgrnam(group).gr_gid
+    parent = os.path.dirname(dir_name)
 
-	if not os.path.exists(parent):
-		mkdir_p(parent, user, group, mode)
+    if not os.path.exists(parent):
+        mkdir_p(parent, user, group, mode)
 
-	if not os.path.exists(dir_name):
-		os.mkdir(dir_name, mode)
-		os.chown(dir_name, uid, gid)
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name, mode)
+        os.chown(dir_name, uid, gid)
 
 
 def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
-	"""
-	Get the name of the LDAP attribute, a UDM property is mapped to.
+    """
+    Get the name of the LDAP attribute, a UDM property is mapped to.
 
-	:param str udm_prop: name of UDM property
-	:param str udm_type: name of UDM module (e.g. 'users/user')
-	:returns: name of LDAP attribute or empty str if no mapping was found
-	:rtype: str
-	"""
-	return univention.admin.modules.get(udm_type).mapping.mapName(udm_prop)
+    :param str udm_prop: name of UDM property
+    :param str udm_type: name of UDM module (e.g. 'users/user')
+    :returns: name of LDAP attribute or empty str if no mapping was found
+    :rtype: str
+    """
+    return univention.admin.modules.get(udm_type).mapping.mapName(udm_prop)
 
 
 @contextmanager
 def nullcontext():
-	"""Context manager that does nothing."""
-	yield None
+    """Context manager that does nothing."""
+    yield None
