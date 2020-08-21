@@ -1,3 +1,9 @@
+ucs-school-import (17.0.44) unstable; urgency=low
+
+  * Bug #51301: use ucsschool.lib cli -> depend on new version
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:12:28 +0200
+
 ucs-school-import (17.0.43) unstable; urgency=low
 
   * Bug #51301: use new ucsschool.lib cli to create Markplatz share
