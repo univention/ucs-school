@@ -97,7 +97,6 @@ all_roles = (
     role_exam_user,
     role_marketplace_share,
     role_memberserver,
-    role_marktplatz_share,
     role_memberserver_admin,
     role_memberserver_edu,
     role_school,

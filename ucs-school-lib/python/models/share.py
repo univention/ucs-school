@@ -143,6 +143,21 @@ class SetNTACLsMixin(object):
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
         return res  # ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
 
+    def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+        # Deny change of permission for folder, subfolder and files.
+        # and take ownership by students.
+        try:
+            udm_obj["appendACL"] = self.get_nt_acls(lo)
+        except NoSID as exc:
+            self.logger.warning("Not setting NTACLs for %s: %s", self.__class__.__name__, exc)
+            return
+        udm_obj["sambaInheritOwner"] = "1"
+        udm_obj["sambaInheritPermissions"] = "1"
+
+    def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+        self.set_nt_acls(udm_obj, lo)
+        return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
+
 
 class Share(UCSSchoolHelperAbstractClass):
     name = ShareName(_("Name"))
@@ -262,7 +277,7 @@ class GroupShare(Share):
         return self._get_share_path(school)
 
 
-class WorkGroupShare(RoleSupportMixin, GroupShare):
+class WorkGroupShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
     school_group = WorkgroupAttribute(_("Work group"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_workgroup_share]
@@ -296,12 +311,11 @@ class WorkGroupShare(RoleSupportMixin, GroupShare):
         return filtered_shares
 
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
-        res = self.get_aces_work_group(lo)
-        # res.extend(self.get_aces_class_group(lo))
-        return res
+        return self.get_aces_work_group(lo)
 
 
-class ClassShare(RoleSupportMixin, Share):
+class ClassShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
+    school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_school_class_share]
     _school_in_name_prefix = True
@@ -317,8 +331,11 @@ class ClassShare(RoleSupportMixin, Share):
 
         return ClassShare
 
+    def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+        return self.get_aces_class_group(lo)
 
-class MarketplaceShare(RoleSupportMixin, Share):
+
+class MarketplaceShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False
@@ -359,3 +376,9 @@ class MarketplaceShare(RoleSupportMixin, Share):
             ucr.get("ucsschool/import/generate/share/marktplatz/permissions") or "0777"
         )
         return super(MarketplaceShare, self).do_create(udm_obj, lo)
+
+    def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
+        return self.get_aces_market_place(lo)
+
+    class Meta(Share.Meta):
+        udm_filter = "(&(univentionObjectType=shares/share)(cn=Marktplatz))"
