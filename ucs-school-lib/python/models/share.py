@@ -63,6 +63,10 @@ class Share(UCSSchoolHelperAbstractClass):
         "group": "0",
         "directorymode": "0770",
     }
+    paths = {
+        "no_roleshare": "/home/groups/{name}",
+        "roleshare": "/home/{ou}/groups/{name}",
+    }
 
     @classmethod
     def get_container(cls, school):
@@ -87,13 +91,12 @@ class Share(UCSSchoolHelperAbstractClass):
         raise NotImplementedError()
 
     def get_share_path(self, school=None):
-        raise NotImplementedError()
-
-    def _get_share_path(self, school):
+        school = school or self.school
         if ucr.is_true("ucsschool/import/roleshare", True):
-            return "/home/%s/groups/%s" % (school, self.name)
+            path_template = self.paths["roleshare"]
         else:
-            return "/home/groups/%s" % self.name
+            path_template = self.paths["no_roleshare"]
+        return path_template.format(ou=school, name=self.name)
 
     def do_modify(self, udm_obj, lo):
         old_name = self.get_name_from_dn(self.old_dn)
@@ -164,7 +167,7 @@ class GroupShare(Share):
 
     def get_share_path(self, school=None):
         school = school or self.school_group.school
-        return self._get_share_path(school)
+        return super(GroupShare, self).get_share_path(school)
 
 
 class WorkGroupShare(RoleSupportMixin, GroupShare):
@@ -206,6 +209,10 @@ class ClassShare(RoleSupportMixin, GroupShare):
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_school_class_share]
     _school_in_name_prefix = True
+    paths = {
+        "no_roleshare": "/home/groups/klassen/{name}",
+        "roleshare": "/home/{ou}/groups/klassen/{name}",
+    }
 
     @classmethod
     def get_container(cls, school):
@@ -253,7 +260,7 @@ class MarketplaceShare(RoleSupportMixin, Share):
             return path
         else:
             school = school or self.school
-            return super(MarketplaceShare, self)._get_share_path(school)
+            return super(MarketplaceShare, self).get_share_path(school)
 
     def do_create(self, udm_obj, lo):
         self.create_defaults["directorymode"] = (
