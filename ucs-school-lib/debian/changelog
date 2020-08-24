@@ -1,3 +1,10 @@
+ucs-school-lib (12.1.18) unstable; urgency=low
+
+  * Bug #51301: fix MarketplaceShare path calculation
+  * Bug #51301: generally simplify share path calculation
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 24 Aug 2020 16:46:36 +0200
+
 ucs-school-lib (12.1.17) unstable; urgency=low
 
   * Bug #51301: remove useless shebangs
