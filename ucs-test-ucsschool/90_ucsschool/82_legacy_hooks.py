@@ -22,6 +22,7 @@ from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLin
 from ucsschool.lib.models import Group, School
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 
 try:
@@ -53,6 +54,7 @@ EXPECTED_CLASSES = [
     "DNSReverseZone",
     "ExamStudent",
     "Group",
+    "GroupShare",
     "ImportStaff",
     "ImportStudent",
     "ImportTeacher",
@@ -66,6 +68,7 @@ EXPECTED_CLASSES = [
     "LegacyImportUser",
     "MacComputer",
     "MailDomain",
+    "MarketplaceShare",
     "Network",
     "OU",
     "Policy",
@@ -235,7 +238,7 @@ class TestLegacyHooks(TestCase):
             [m.__name__ for m in self.models],
             EXPECTED_CLASSES,
             "Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}".format(
-                EXPECTED_CLASSES, self.models
+                EXPECTED_CLASSES, [m.__name__ for m in self.models]
             ),
         )
 
@@ -535,4 +538,10 @@ class TestLegacyHooks(TestCase):
 
 
 if __name__ == "__main__":
+    # ensure pristine import config
+    cli_tester = CLI_Import_v2_Tester()
+    cli_tester.ou_A = cli_tester.ou_B = cli_tester.ou_C = None
+    cli_tester.check_for_non_empty_config()
+    cli_tester.check_for_non_empty_pyhooks()
+
     main(verbosity=2)
