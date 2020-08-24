@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.share.MarketplaceShare
+## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
