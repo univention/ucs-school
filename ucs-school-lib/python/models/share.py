@@ -102,6 +102,9 @@ class SetNTACLsMixin(object):
             group_dn = self.school_group.dn
         else:
             path = self.get_share_path()
+            # todo please double check! if this is true we can also use self.name
+            # wasn't this supposed to be different from schoolclasses?
+            path = os.path.join(path, self.name)
             group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
             group_dn = "cn={},cn=schueler,{}".format(group_name, search_base.groups)
@@ -143,7 +146,7 @@ class SetNTACLsMixin(object):
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
-        return res  # ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
+        return res
 
     def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
         # Deny change of permission for folder, subfolder and files.
@@ -156,9 +159,9 @@ class SetNTACLsMixin(object):
         udm_obj["sambaInheritOwner"] = "1"
         udm_obj["sambaInheritPermissions"] = "1"
 
-    def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-        self.set_nt_acls(udm_obj, lo)
-        return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
+    # def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
+    #     self.set_nt_acls(udm_obj, lo)
+    #     return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
 
 
 class Share(UCSSchoolHelperAbstractClass):
@@ -265,7 +268,7 @@ class Share(UCSSchoolHelperAbstractClass):
         udm_module = "shares/share"
 
 
-class GroupShare(Share):
+class GroupShare(Share, SetNTACLsMixin):
     school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
 
     @classmethod
@@ -281,8 +284,12 @@ class GroupShare(Share):
         school = school or self.school or self.school_group.school
         return super(GroupShare, self).get_share_path(school)
 
+    def do_create(self, udm_obj, lo):
+        self.set_nt_acls(udm_obj, lo)
+        return super(GroupShare, self).do_create(udm_obj, lo)
 
-class WorkGroupShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
+
+class WorkGroupShare(RoleSupportMixin, GroupShare):
     school_group = WorkgroupAttribute(_("Work group"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_workgroup_share]
@@ -319,7 +326,7 @@ class WorkGroupShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
         return self.get_aces_work_group(lo)
 
 
-class ClassShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
+class ClassShare(RoleSupportMixin, GroupShare):
     school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_school_class_share]
@@ -344,7 +351,7 @@ class ClassShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
         return self.get_aces_class_group(lo)
 
 
-class MarketplaceShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
+class MarketplaceShare(RoleSupportMixin, GroupShare):
     # todo check: required=False
     school_group = MarketplaceAttribute(_("Marketplace"), required=False, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
@@ -386,6 +393,8 @@ class MarketplaceShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
         self.create_defaults["directorymode"] = (
             ucr.get("ucsschool/import/generate/share/marktplatz/permissions") or "0777"
         )
+        # todo remove
+        self.set_nt_acls(udm_obj, lo)
         return super(MarketplaceShare, self).do_create(udm_obj, lo)
 
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]

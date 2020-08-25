@@ -46,8 +46,8 @@ def exp_ldap_attr(ucr_domainname, ucr_hostname, ucr_is_singlemaster):
 
 def test_get_all(exp_ldap_attr, ucr_hostname):
     with utu.UCSTestSchool() as schoolenv:
-        # todo remove use_cache=False (my vm has a non-func ou)
-        ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
+        # if failing (dirty vm) add use_cache=False for testing purposes.
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
         objs = MarketplaceShare.get_all(schoolenv.lo, ou_name)
         assert len(objs) == 1
         obj = objs[0]
