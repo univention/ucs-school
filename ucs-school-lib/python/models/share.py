@@ -39,7 +39,7 @@ from univention.lib.misc import custom_groupname
 from univention.udm import UDM
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
-from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
+from .attributes import MarketplaceAttribute, Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
@@ -104,7 +104,7 @@ class SetNTACLsMixin(object):
             path = self.get_share_path()
             group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
-            group_dn = "cn={},cn=schueler,{}".format(group_name, search_base.groups())
+            group_dn = "cn={},cn=schueler,{}".format(group_name, search_base.groups)
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -118,7 +118,7 @@ class SetNTACLsMixin(object):
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
-        domain_users_dn = "cn=Domain Users %s,%s" % (self.school.name.lower(), search_base.groups())
+        domain_users_dn = "cn=Domain Users %s,%s" % (self.school.lower(), search_base.groups)
         try:
             samba_sid = lo.get(domain_users_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -132,10 +132,12 @@ class SetNTACLsMixin(object):
             group_dn = self.school_group.dn
         else:
             path = self.get_share_path()
+            # todo please double check!
+            path = os.path.join(path, self.name)
             group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
-            # please double check: are assigned teachers in cn=schueler,cn=schueler?
-            group_dn = "cn={},cn=klassen,cn=schueler,{}".format(group_name, search_base.groups())
+            # todo please double check: are assigned teachers in cn=schueler,cn=schueler?
+            group_dn = "cn={},cn=klassen,cn=schueler,{}".format(group_name, search_base.groups)
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -276,7 +278,7 @@ class GroupShare(Share):
         return self.school_group.get_udm_object(lo)["gidNumber"]
 
     def get_share_path(self, school=None):
-        school = school or self.school_group.school
+        school = school or self.school or self.school_group.school
         return super(GroupShare, self).get_share_path(school)
 
 
@@ -343,6 +345,8 @@ class ClassShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
 
 
 class MarketplaceShare(RoleSupportMixin, GroupShare, SetNTACLsMixin):
+    # todo check: required=False
+    school_group = MarketplaceAttribute(_("Marketplace"), required=False, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False
