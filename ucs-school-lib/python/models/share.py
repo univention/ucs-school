@@ -77,7 +77,11 @@ class Share(UCSSchoolHelperAbstractClass):
             udm_obj[k] = v
         udm_obj["host"] = self.get_server_fqdn(lo)
         udm_obj["path"] = self.get_share_path()
-        udm_obj["sambaForceGroup"] = self.create_defaults["sambaForceGroup"].format(name=self.name)
+        try:
+            udm_obj["sambaForceGroup"] = self.create_defaults["sambaForceGroup"].format(name=self.name)
+        except KeyError:
+            # MarketplaceShare doesn't set this
+            pass
         udm_obj["group"] = self.get_gid_number(lo)
         if ucr.is_false("ucsschool/default/share/nfs", True):
             try:
@@ -266,4 +270,7 @@ class MarketplaceShare(RoleSupportMixin, Share):
         self.create_defaults["directorymode"] = (
             ucr.get("ucsschool/import/generate/share/marktplatz/permissions") or "0777"
         )
+        self.create_defaults.pop("sambaForceGroup", None)
+        self.create_defaults.pop("sambaCreateMode", None)
+        self.create_defaults.pop("sambaDirectoryMode", None)
         return super(MarketplaceShare, self).do_create(udm_obj, lo)

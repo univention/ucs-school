@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.19) unstable; urgency=low
+
+  * Bug #51301: fix MarketplaceShare sambaForceGroup property
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 26 Aug 2020 09:54:57 +0200
+
 ucs-school-lib (12.1.18) unstable; urgency=low
 
   * Bug #51301: fix MarketplaceShare path calculation
