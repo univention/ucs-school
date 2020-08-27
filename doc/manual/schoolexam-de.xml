@@ -188,6 +188,27 @@
 				Wenn diese Funktionalität aktiviert wird, sollte dabei dringend der Bedarf an Speicherplatz berücksichtigt werden, der hier anfällt. Sollte beispielsweise eine Klasse von 25 Schülern eine 45 Minuten dauernde Klassenarbeit schreiben und es werden dabei alle 5 Minuten ungefähr 10MB pro Schülerin oder Schüler gesichert, so fallen dabei ungefähr 2.2 GB an Daten an.
 			</simpara>
 		</note>
+		<para>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/cron/cleanup-master</envar>
+						definiert den Zeitpunkt, an dem das Skript <command>exam-and-room-cleanup</command> automatisch durch cron gestartet wird (standardmäßig deaktiviert; Beispiel: "30 3 * * *")					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/cron/cleanup-master/options</envar>
+						definiert zusätzliche Optionen für das Skript <command>exam-and-room-cleanup</command>. Standardmäßig werden alle Aktionen bis auf das Bereinigen der Exam-Benutzer deaktiviert, da diese auf den DC Slaves laufen: "--skip-exam-shutdown --skip-ucr-cleanup --skip-exam-cleanup --skip-room-cleanup".
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/cron/cleanup-master/remove-disabled-examusers</envar>
+						definiert den Zeitpunkt, an dem das Skript <command>exam-and-room-cleanup</command> automatisch durch cron gestartet wird und alle deaktivierte Klassenarbeits-User gelöscht werden (standardmäßig deaktiviert; Beispiel: "30 3 * * *")
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</para>
 	</section>
 
 	<section id="school:exam:gpo">
