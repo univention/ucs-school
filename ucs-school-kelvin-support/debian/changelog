@@ -1,0 +1,5 @@
+ucs-school-kelvin-support (1.0.0) unstable; urgency=low
+
+  * Bug #51828: Initial Release.
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 27 Aug 2020 14:56:12 +0200

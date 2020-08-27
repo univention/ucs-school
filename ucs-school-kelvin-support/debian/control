@@ -1,0 +1,12 @@
+Source: ucs-school-kelvin-support
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 9.0.0), ucslint
+Standards-Version: 3.8.2
+
+Package: ucs-school-kelvin-support
+Architecture: all
+Depends: shell-univention-lib,
+ univention-join,
+Description: UCS@school package for Kelvin API support.
