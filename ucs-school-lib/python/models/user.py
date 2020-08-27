@@ -38,10 +38,18 @@ from six import iteritems
 
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as syntax
+from univention.admin import uldap
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
+from ..roles import (
+    create_ucsschool_role_string,
+    role_exam_user,
+    role_pupil,
+    role_staff,
+    role_student,
+    role_teacher,
+)
 from .attributes import (
     Birthday,
     Disabled,
@@ -254,17 +262,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         obj.school_classes = cls.get_school_classes(udm_obj, obj)
         return obj
 
-    def do_create(self, udm_obj, lo):
-        if not self.schools:
-            self.schools = [self.school]
-        self.set_default_options(udm_obj)
-        self.create_mail_domain(lo)
-        password_created = False
-        if not self.password:
-            self.logger.debug("No password given. Generating random one")
-            old_password = self.password  # None or ''
-            self.password = create_passwd(dn=self.dn)
-            password_created = True
+    def _set_udm_attributes(self, udm_obj, lo):
         udm_obj["primaryGroup"] = self.primary_group_dn(lo)
         udm_obj["groups"] = self.groups_used(lo)
         subdir = self.get_roleshare_home_subdir()
@@ -287,10 +285,30 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         script_path = self.get_samba_netlogon_script_path()
         if script_path is not None:
             udm_obj["scriptpath"] = script_path
+
+    def _handle_unset_password(self):  # type: () -> bool
+        """
+        If no password is set, this function generates a random password for the user.
+
+        :return: True if password was generated, otherwise False
+        """
+        if not self.password:
+            self.logger.debug("No password given. Generating random one")
+            self.password = create_passwd(dn=self.dn)
+            return True
+        return False
+
+    def do_create(self, udm_obj, lo):
+        if not self.schools:
+            self.schools = [self.school]
+        self.set_default_options(udm_obj)
+        self.create_mail_domain(lo)
+        password_created = self._handle_unset_password()
+        self._set_udm_attributes(udm_obj, lo)
         success = super(User, self).do_create(udm_obj, lo)
         if password_created:
             # to not show up in host_hooks
-            self.password = old_password
+            self.password = ""
         return success
 
     def do_modify(self, udm_obj, lo):
@@ -763,6 +781,7 @@ class ExamStudent(Student):
     type_filter = "(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))"
     default_roles = [role_exam_user]
     default_options = ("ucsschoolExam",)
+    original_user = None
 
     @classmethod
     def get_container(cls, school):
@@ -777,3 +796,78 @@ class ExamStudent(Student):
             cls.get_container(school),
         )
         return cls.from_dn(dn, school, lo)
+
+    @classmethod
+    def create_from_student(
+        cls, lo, orig_user, exam=None, school=None, room=None
+    ):  # type: (uldap.access, Student, Optional[str], Optional[str], Optional[str]) -> ExamStudent
+        exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
+        exam_user = ExamStudent(
+            name="{}{}".format(exam_user_prefix, orig_user.name),
+            firstname=orig_user.firstname,
+            lastname=orig_user.lastname,
+            schools=orig_user.schools,
+            school=orig_user.school,
+        )
+        exam_user.original_user = orig_user
+
+        exam_user.schools = orig_user.schools
+        if school and school not in exam_user.schools:
+            exam_user.schools.append(school)
+        exam_user.create(lo)
+
+    def get_roleshare_home_subdir(self):
+        return os.path.join(super(Student, self).get_roleshare_home_subdir(), "exam-homes")
+
+    def do_create(self, udm_obj, lo):
+        orig_udm = self.original_user.get_udm_object(lo)
+        if not self.schools:
+            self.schools = [self.school]
+        self.set_default_options(udm_obj)
+        self.create_mail_domain(lo)
+        password_created = self._handle_unset_password()
+        self._set_udm_attributes(udm_obj, lo)
+        self._set_udm_from_original_user(udm_obj, lo)
+        udm_obj["description"] = "Exam user for {}".format(orig_udm["username"])
+        if "temporary" not in udm_obj["objectFlag"]:
+            udm_obj["objectFlag"].append("temporary")
+        success = super(User, self).do_create(udm_obj, lo)
+        if password_created:
+            self.password = ""
+        return success
+
+    def _set_udm_from_original_user(self, udm_obj, lo):
+        udm_attribute_blacklist = set(ucr.get("ucsschool/exam/user/udm/denylist", "").split(","))
+        udm_attribute_blacklist.update(
+            {
+                "homedrive",
+                "objectFlag",
+                "school",
+                "profilepath",
+                "sambahome",
+                "homeShare",
+                "groups",
+                "ucsschoolSourceUID",
+                "primaryGroup",
+                "sambaUserWorkstations",
+                "username",
+                "gidNumber",
+                "uidNumber",
+                "ucsschoolRecordUID",
+                "unixhome",
+                "ucsschoolRole",
+                "passwordexpiry",
+                "unlockTime",
+                "lockedTime",
+                "sambaRID",
+            }
+        )
+        orig_udm = self.original_user.get_udm_object(lo)
+        for attr_name, value in orig_udm.items():
+            if attr_name not in udm_attribute_blacklist:
+                value_blacklist = set(ucr.get("ucsschool/exam/user/udm/blacklist/%s", "").split(","))
+                if type(value) == list:
+                    value = [entry for entry in value if entry not in value_blacklist]
+                elif value in value_blacklist:
+                    value = None
+                udm_obj[attr_name] = value if value else udm_obj[attr_name]
