@@ -1,0 +1,115 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+#
+# UCS@school Diagnosis Module
+#
+# Copyright 2019-2020 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+#
+# This module checks if the UCS@school admin accounts are correctly configured:
+# - get all user objects with an objectclass ucsschoolAdministrator
+# - check if this user is member of admins-school group for each school it is registered as an ucsschoolAdministrator
+# - check that each member of an admins-school group is a ucsschoolAdministrator
+
+from __future__ import absolute_import
+
+from univention.lib.i18n import Translation
+from univention.management.console.modules.diagnostic import Warning
+from univention.uldap import getAdminConnection
+
+_ = Translation("ucs-school-umc-diagnostic").translate
+
+title = _("UCS@school Check admin accounts")
+description = "\n".join(
+    [
+        _("UCS@school Administrators are configured with an objectclass 'ucsschoolAdministrator'."),
+        _("An administrator of a school should be a member of the respective admins-school group."),
+    ]
+)
+
+
+def run(_umc_instance):
+    problematic_objects = {}  # type: Dict[str, List[str]]
+    lo = getAdminConnection()
+
+    user_filter = "(&(univentionObjectType=users/user)(objectClass=ucsschoolAdministrator))"
+
+    # search for admin objects with object class ucsschoolAdministrator
+    admins = []  # type: List[Dict[str, List[str]]]
+    admins_dn = []
+    for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool"]):
+        admins_dn.append(dn)
+        try:
+            admin = {"dn": dn, "schools": attr["ucsschoolSchool"]}
+            admins.append(admin)
+        except KeyError:
+            continue
+
+    group_filter = "(&(univentionObjectType=groups/group)(cn=admins-*)(uniqueMember=*))"
+    groups = lo.search(filter=group_filter, attr=["uniqueMember", "ucsschoolSchool"])
+
+    # check if each group member is a ucsschoolAdministrator
+    for dn, attr in groups:
+        for member in attr["uniqueMember"]:
+            if member not in admins_dn:
+                problematic_objects.setdefault(member, []).append(
+                    _(
+                        "is member of group {} but is not registered as a ucsschoolAdministrator.".format(
+                            dn
+                        )
+                    )
+                )
+
+    # check if found admins are member in admins-ou group
+    for admin in admins:
+        for dn, attr in groups:
+            if attr["ucsschoolSchool"][0] in admin["schools"]:
+                if admin["dn"] in attr["uniqueMember"]:
+                    admin["schools"].remove(attr["ucsschoolSchool"][0])
+                if not admin["schools"]:
+                    break
+        if admin["schools"]:
+            problematic_objects.setdefault(admin["dn"], []).append(
+                _(
+                    "is registered as admin but no member of the following schools: {}".format(
+                        admin["schools"]
+                    )
+                )
+            )
+
+    if problematic_objects:
+        details = "\n\n" + _("The following problems were found:")
+        for dn, problems in problematic_objects.items():
+            details += "\n\n  {}".format(dn)
+            for problem in problems:
+                details += "\n&nbsp;&nbsp;&nbsp;- {}".format(problem)
+        raise Warning(description + details)
+
+
+if __name__ == "__main__":
+    run(None)
