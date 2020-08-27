@@ -189,7 +189,7 @@
 			</simpara>
 		</note>
 		<para>
-			Das Skript <command>exam-and-room-cleanup</command> dient zur Bereinigung der Homeverzeichnisse und dem Löschen von Klassenarbeitsbenutzern. Damit kann beispielsweise fehlgeschlagenen Klassenarbeiten aufgeräumt werden.
+			Das Skript <command>exam-and-room-cleanup</command> dient zur Bereinigung der Homeverzeichnisse und dem Löschen von Klassenarbeitsbenutzern. Damit kann beispielsweise nach fehlgeschlagenen Klassenarbeiten aufgeräumt werden.
 			Der automatische Aufruf und dessen Optionen können über die folgenden &ucsUCRV;n konfiguriert werden:
 			<itemizedlist>
 				<listitem>
