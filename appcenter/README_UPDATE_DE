@@ -1,4 +1,10 @@
 <h1>Changelog</h1>
+<h2>v1.2.0 (2020-08-27)</h2>
+<ul>
+    <li>
+        The UCS@school Kelvin REST API now supports creating exam users.
+    </li>
+</ul>
 <h2>v1.1.2 (2020-08-05)</h2>
 <ul>
     <li>
