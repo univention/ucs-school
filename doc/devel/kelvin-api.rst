@@ -29,7 +29,7 @@ Optionally sync not yet commited changes from your local git repo to the server:
 	$ cd $UCSSCHOOL-GIT
 	$ git checkout feature/kelvin
 	$ make -C kelvin-api clean
-	$ rsync -avn --delete ./ root@docker:ucsschool-kelvin/ucsschool/ --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__  --exclude '*.egg-info' --exclude '*.eggs'
+	$ rsync -avn --delete ./ root@docker.knut.univention.de:ucsschool-kelvin/ucsschool/ --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__  --exclude '*.egg-info' --exclude '*.eggs'
 	# check output, changes should be only recent commits and your changes
 	# if OK: remove '-n' from rsync cmdline
 
