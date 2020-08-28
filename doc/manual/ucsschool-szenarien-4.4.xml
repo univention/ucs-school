@@ -476,7 +476,7 @@ feedback@univention.de
 		<title>Konzeptionelle Voraussetzungen</title>
 		<para>
 			Die folgenden Empfehlungen bauen auf Erfahrungen auf, die sich in
-			diversen Projekten bewährt haben.  Sie sind jedoch nicht zwingend
+			diversen Projekten bewährt haben. Nicht alle sind zwingend
 			umzusetzen und Abweichungen sind jederzeit möglich.
 		</para>
 		<section id="concepts_network">
@@ -492,10 +492,10 @@ feedback@univention.de
 			</para>
 			<para>
 				Für den Aufbau einer Umgebung mit mehreren Schulen empfehlen wir
-				die Verwendung des privaten Klasse-A Netzes,
+				die Verwendung des privaten Netzes
 				<code>10.0.0.0/8</code>. Dieses wird für die Schulen in viele
 				Subnetze unterteilt. Für jede Schule wird ein
-				Klasse-B Netz reserviert, das Platz für 65.536 IP-Adressen
+				<code>/16</code>-Netz reserviert, das Platz für 65.536 IP-Adressen
 				bietet und nach Bedarf in weitere Subnetze unterteilt wird.
 			</para>
 			<para>
@@ -638,9 +638,9 @@ feedback@univention.de
 				<para>
 					In diesem Beispiel werden evtl. vorhandene Server und
 					Endgeräte im selben Netz betrieben. Dieses Modell richtet
-					sich an kleine Schulen mit wenigen Rechnern.  Bei Bedarf
+					sich an kleine Schulen mit wenigen Endgeräten. Bei Bedarf
 					können weitere Subnetze ergänzt werden, da das für die
-					Schule reservierte Klasse-B Netz nur zu einem kleinen Teil
+					Schule reservierte <code>/16</code>-Netz nur zu einem kleinen Teil
 					ausgeschöpft wurde.
 				</para>
 			</section>
