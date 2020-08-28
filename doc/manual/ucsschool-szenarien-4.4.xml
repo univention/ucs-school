@@ -397,8 +397,8 @@ feedback@univention.de
 			<para>
 				<itemizedlist mark="whitesquare">
 					<listitem><para>Kann mit dem verfügbaren Internetzugang ein VPN betrieben werden?</para></listitem>
-					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs und mehreren SSIDs unterstützen?</para></listitem>
-					<listitem><para>Wie können die Access Points zentral konfiguriert werden? Ist eine Management Software vorhanden?</para></listitem>
+					<listitem><para>Sind professionelle Access Points vorhanden, die VLANs, mehrere SSIDs sowie RADIUS bzw. IEEE 802.1X unterstützen?</para></listitem>
+					<listitem><para>Wie können die Access Points zentral konfiguriert werden? Ist eine Management Software oder ein WLAN-Controller vorhanden?</para></listitem>
 					<listitem><para>Wo wird der RADIUS-Service betrieben?  <!-- Siehe <xref linkend="additional-services_radius" />  --></para></listitem>
 					<listitem><para>Wie greifen die mobilen Geräte auf das Internet zu, zum Beispiel direkt oder über einen transparenten Proxy?</para></listitem>
 					<listitem><para>Wie hoch sind die notwendigen Investitionen, um die Betriebsbereitschaft für das WLAN herzustellen?</para></listitem>
@@ -424,7 +424,7 @@ feedback@univention.de
 				anderem auch in diesem Dokument erfasst sind.  Im Rahmen des
 				Workshops sollten direkt die zentralen Systeme und eine
 				Demo-Schule installiert werden, die in der folgenden Zeit als
-				Referenz verwendet werden kann.
+				Referenz und Test- bzw. Demo-Umgebung verwendet werden kann.
 			</para>
 		</section>
 		<section id="preparations_info">
@@ -443,7 +443,7 @@ feedback@univention.de
 		<section id="preparations_school-selection">
 			<title>Planung des Rollout</title>
 			<para>
-				Ziel ist es, den Rollout der IT-Infrastruktur mit erfolgreichen Projekten
+				Ziel ist es, den Rollout der IT-Infrastruktur mit erfolgreichen Meilensteinen
 				zu beginnen.  Dafür gilt es, die am besten geeigneten Schulen zu
 				identifizieren und diese als erste auszustatten.  In vielen
 				Projekten haben wir die Erfahrung gemacht, dass Schulen, die die
@@ -454,6 +454,7 @@ feedback@univention.de
 					<listitem><para>Konkreter Bedarf nach einer Lösung</para></listitem>
 					<listitem><para>Geringer Migrationsaufwand von bestehenden Lösungen</para></listitem>
 					<listitem><para>Wenige Sonderfälle</para></listitem>
+					<listitem><para>Motivierte Schulleitung und IT-Verantwortliche an der Schule</para></listitem>
 				</itemizedlist>
 				Sind diese Schulen erfolgreich ausgestattet worden, so können
 				sie als Referenz für anderen Schulen dienen.  Schrittweise
@@ -463,8 +464,8 @@ feedback@univention.de
 		<section id="preparations_training">
 			<title>Schulung der Lehrkräfte</title>
 			<para>
-				Die Lehrkräfte sollten im Umgang mit den Rechnern und den
-				pädagogischen Funktionen der in der
+				Die Lehrkräfte sollten im Umgang mit den Rechnern, den
+				pädagogischen Funktionen und den weiteren Webdiensten der in der
 				Schule genutzten Anwendungen geschult
 				werden. Auch dazu sollten wiederkehrende
 				Termine angeboten werden.
