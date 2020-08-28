@@ -19,12 +19,12 @@
 		<legalnotice>
 			<literallayout>
 Version 4.4
-Stand: 02. September 2019
+Stand: 28. August 2020
 			</literallayout>
 
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2019
+(c) 2002-2020
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -51,15 +51,15 @@ feedback@univention.de
 			IT-Infrastruktur mit einem einheitlichen Identity-Management
 			aufzubauen. Weitere IT-Dienste können integriert und anschließend
 			zentral über das UCS Management verwaltet und schulübergreifend für
-			den Zugriff über unterschiedlichste Geräte  zur Verfügung gestellt
-			werden. Damit  werden Schulträger und Ministerien in die Lage
-			versetzt,  aktuelle Anforderungen aus Medienentwicklungsplänen und
+			den Zugriff über unterschiedlichste Geräte zur Verfügung gestellt
+			werden. Damit werden Schulträger und Ministerien in die Lage
+			versetzt, aktuelle Anforderungen aus Medienentwicklungsplänen und
 			von Schulen effizient und sicher zu erfüllen.
 		</para>
 		<para>
 			Mit diesem Whitepaper möchten wir Ihnen eine Anleitung an die Hand
 			geben, um typische Szenarien für den Einsatz von &ucsUAS;
-			effizient aufzubauen.  Wir greifen dabei auf langjährige Erfahrungen
+			effizient aufzubauen. Wir greifen dabei auf langjährige Erfahrungen
 			zurück, die Univention in diversen Projekten mit Schulträgern beim
 			erfolgreichen Einsatz von &ucsUAS; gewonnen hat.
 		</para>
@@ -86,7 +86,7 @@ feedback@univention.de
 			und <xref linkend="setup-checklist" /> vorgesehen.  Die Kapitel
 			geben einen Überblick zu den üblichen Einsatzszenarien und bieten
 			Checklisten mit Fragen, deren Beantwortung die Einführung von
-			&ucsUAS; erleichtert.  Die Checklisten verweisen darüberhinaus auf
+			&ucsUAS; erleichtert. Die Checklisten verweisen darüberhinaus auf
 			die weiterführenden technischen Themen in diesem Dokument, die
 			erprobte Lösungen aus der Praxis aufzeigen.
 		</para>
@@ -111,7 +111,7 @@ feedback@univention.de
 			&ucsUAS; häufig eingesetzt wird. In diesem Dokument sind diese
 			Szenarien in ihrem Umfang klar voneinander abgegrenzt. In der Praxis
 			ist diese strikte Trennung nur selten der Fall und es treten in der
-			Regel gemischte Formen auf  . Die Umsetzung eines bestimmten in
+			Regel gemischte Formen auf. Die Umsetzung eines bestimmten in
 			diesem Papier beschriebenen Szenarios schließt somit nicht aus, dass
 			Sie im Laufe der Zeit weitere Szenarien auf Basis der bestehenden
 			Umgebung umsetzen können.
@@ -142,7 +142,7 @@ feedback@univention.de
 					<listitem><para><emphasis>&ucsUAS; as a Service</emphasis>:
 							Univention liefert Software und Support und
 							übernimmt Betrieb, Updates und Backup im eigenen
-							Rechenzentrum.  Kunden können sofort starten, ohne
+							Rechenzentrum. Kunden können sofort starten, ohne
 							Investitionen in Hardware oder Software tätigen zu
 							müssen.</para></listitem>
 				</orderedlist>
@@ -162,7 +162,7 @@ feedback@univention.de
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern und Ministerien, eine
 				effiziente Bildungscloud für ihre Schulen aufzubauen. Die
-				Instanzen von Univention Corporate Server werden zentral in
+				Instanzen von &ucsUCS; werden zentral in
 				einem Rechenzentrum betrieben und stellen das Identity- und
 				Access-Management zur Verfügung. An dieses werden
 				unterschiedliche IT-Angebote angebunden, die von den Schulen
