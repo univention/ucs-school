@@ -39,6 +39,7 @@ from six import iteritems
 
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as syntax
+from univention.admin import uldap
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError, valueMayNotChange
 
@@ -78,7 +79,7 @@ from .school import School
 from .utils import _, create_passwd, ucr
 
 try:
-    from typing import Dict, List, Optional
+    from typing import Dict, List, Optional, Tuple, Any
     from .base import UdmObject
 except ImportError:
     pass
@@ -799,6 +800,16 @@ class ExamStudent(Student):
     def create_from_student(
         cls, lo, orig_user, exam=None, school=None, room=None
     ):  # type: (uldap.access, Student, Optional[str], Optional[str], Optional[str]) -> ExamStudent
+        """
+        This function creates an ExamStudent object from the given student. Most of the data is cloned from the original
+        user. If an ExamUser for the given student already exists, it is reused and updated.
+
+        :param lo: The ldap connection to use for executing the operations
+        :param orig_user: The original Student object to create the ExamUser object from
+        :param exam: If given, the correct roles are set
+        :param school: If given, the correct roles are set
+        :param room: If given, the sambaUserWorkstations are extended by the workstations in this room.
+        """
         exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         exam_user_name = "{}{}".format(exam_user_prefix, orig_user.name)
         found_users = ExamStudent.get_all(
@@ -834,12 +845,20 @@ class ExamStudent(Student):
             elif len(found_computer_rooms) == 1:
                 computer_room = found_computer_rooms[0]
                 modify_list += exam_user._get_samba_workstations(lo, computer_room)
-        if exam:
+        if exam and school:
             modify_list += exam_user._get_ucsschool_role_strings(lo, exam, school)
         lo.modify(exam_user.dn, modify_list)
         return exam_user
 
     def remove_from_exam(self, lo, exam, school):  # type: (uldap.access, str, str) -> None
+        """
+        Removes an Exam User from an exam. If this is the last exam, the user is removed from,
+        it will be deactivated and its sambaUserWorkspace restrictions reset to None.
+
+        :param lo: The ldap access to execute the operations with
+        :param exam: The name of the exam the student shall be removed from
+        :param school: The name of the school the exam is written at
+        """
         current_exam_role_string = create_ucsschool_role_string(
             role_exam_user, "{}-{}".format(exam, school), context_type_exam
         )
@@ -917,7 +936,10 @@ class ExamStudent(Student):
         if "temporary" not in udm_obj["objectFlag"]:
             udm_obj["objectFlag"].append("temporary")
 
-    def _get_password_from_original_user(self, lo):
+    def _get_password_from_original_user(self, lo):  # type: (uldap.access) -> List[Tuple[str, Any, Any]]
+        """
+        Creates the ldap modification list for setting the password data as in the original user
+        """
         password_attributes = [
             "krb5KeyVersionNumber",
             "userPassword",
@@ -932,7 +954,12 @@ class ExamStudent(Student):
             modify_list.append((attr_name, old_password_data[attr_name], orig_password_data[attr_name]))
         return modify_list
 
-    def _get_samba_workstations(self, lo, room_name):  # type: (uldap.access, ComputerRoom) -> Any
+    def _get_samba_workstations(
+        self, lo, room_name
+    ):  # type: (uldap.access, ComputerRoom) -> List[Tuple[str, Any, Any]]
+        """
+        Creates the ldap modification list for adding the correct sambaUserWorkstations
+        """
         current_samba_workstations = lo.get(self.dn, attr=["sambaUserWorkstations"]).get(
             "sambaUserWorkstations", []
         )
@@ -947,7 +974,12 @@ class ExamStudent(Student):
             )
         ]
 
-    def _get_ucsschool_role_strings(self, lo, exam, school):  # type: (uldap.acces, str, str) -> Any
+    def _get_ucsschool_role_strings(
+        self, lo, exam, school
+    ):  # type: (uldap.acces, str, str) -> List[Tuple[str, Any, Any]]
+        """
+        Creates the ldap modification list for adding the new ucsschool roles
+        """
         current_ucsschool_roles = lo.get(self.dn, attr=["ucsschoolRole"]).get("ucsschoolRole", [])
         return [
             (
@@ -962,5 +994,5 @@ class ExamStudent(Student):
             )
         ]
 
-    def get_roleshare_home_subdir(self):
+    def get_roleshare_home_subdir(self):  # type: () -> str
         return os.path.join(super(Student, self).get_roleshare_home_subdir(), "exam-homes")
