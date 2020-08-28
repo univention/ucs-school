@@ -1047,11 +1047,11 @@ feedback@univention.de
 				Entwicklung der Belegung des Festplattenplatzes.  Solche
 				Informationen sind für den Betrieb einer umfangreichen
 				IT-Infrastruktur erforderlich.  Um diese Informationen zu
-				erfassen, kann zum Beispiel <systemitem
-					class="service">Munin</systemitem> verwendet werden, dessen
+				erfassen, kann zum Beispiel das <systemitem
+					class="service">UCS Dashboard</systemitem> verwendet werden, dessen
 				<ulink
-					url="http://wiki.univention.de/index.php?title=Cool_Solution_-_Install_and_integration_of_Munin">Einrichtung</ulink>
-				für &ucsUCS; dokumentiert ist.
+					url="https://docs.software-univention.de/handbuch-4.4.html#dashboard::general">Einrichtung</ulink>
+				im &ucsUCS; Handbuch dokumentiert ist.
 			</para>
 		</section>
 		<section id="concepts_backup">
@@ -1774,21 +1774,19 @@ feedback@univention.de
 							<emphasis>Domänenbeitritt</emphasis> geprüft
 							werden.</para></listitem>
 					<listitem><para>Damit <systemitem
-								class="service">Icinga</systemitem> und
-							<systemitem class="service">Munin</systemitem>
-							lauffähig sind, muss sichergestellt sein, dass die
+								class="service">Nagios</systemitem> 
+							lauffähig ist, muss sichergestellt sein, dass die
 							globale &ucsUCR;-Richtlinie
 							<property>ucsschool-ucr-settings</property> auf alle
 							anderen Systeme wirkt.  Dies kann überprüft werden,
 							in dem die Werte der &ucsUCR;-Variablen
-							<envar>nagios/client/allowedhosts</envar> und
-							<envar>munin/node/allowedhosts</envar> auf den
-							anderen Servern gesetzt werden.  Sollten trotzdem
+							<envar>nagios/client/allowedhosts</envar> 
+							auf den
+							anderen Servern abgerufen werden.  Sollten trotzdem
 							keine Statusinformationen über einen Server
 							angezeigt werden, so müssen ggf. die Dienste
-							<command>univention-directory-listener</command>,
-							<command>nagios-nrpe-server</command> und
-							<command>munin-node</command> neu gestartet
+							<command>univention-directory-listener</command> und
+							<command>nagios-nrpe-server</command> neu gestartet
 							werden.</para></listitem>
 				</itemizedlist>
 			</para>
@@ -1827,8 +1825,8 @@ feedback@univention.de
 							&ucsMaster; umgeleitet werden sollen, ist die
 							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
-							<literal>root@ucsrz01.schulen.example.org</literal>
-							zu stellen.  <literal>schulen.example.org</literal>
+							<literal>root@ucsrz01.example.org</literal>
+							zu stellen.  <literal>example.org</literal>
 							muss durch den tatsächlichen Domänennamen ersetzt
 							werden.
 						</para>
@@ -1936,11 +1934,6 @@ feedback@univention.de
 								<entry><envar>nagios/client/allowedhosts</envar></entry>
 								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20]</literal></entry>
 								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Nagios</systemitem> oder <systemitem class="service">Icinga</systemitem>, auf den <systemitem class="service">NRPE-Dienst</systemitem> der übrigen Systeme.</entry>
-							</row>
-							<row>
-								<entry><envar>munin/node/allowedhosts</envar></entry>
-								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20/32]</literal></entry>
-								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Munin</systemitem>, auf die <systemitem class="service">Munin Nodes</systemitem> der übrigen Systeme (Achtung CIDR Notation!).</entry>
 							</row>
 							<row>
 								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
