@@ -1193,7 +1193,8 @@ feedback@univention.de
 			Zuweisung von mehr als den vorhandenen Ressourcen
 			(Überprovisionierung) wird abgeraten.  Für den Speicherplatz sollten
 			mindestens SAS-Festplatten mit 10.000 Umdrehungen pro Minute zum
-			Einsatz kommen.
+			Einsatz kommen, idealerweise aber SSD-Festplatten (mindestens für die
+			I/O-intensiven Dienste wie OpenLDAP und Samba unter <filename>/var/lib/</filename>.)
 		</para>
 		<para>
 			Die genannten Werte sind die Minimalanforderungen für die oben
