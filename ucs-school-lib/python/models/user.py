@@ -38,11 +38,11 @@ from six import iteritems
 
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as syntax
-from univention.admin import uldap
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError, valueMayNotChange
 
 from ..roles import (
+    context_type_exam,
     create_ucsschool_role_string,
     role_exam_user,
     role_pupil,
@@ -62,9 +62,15 @@ from .attributes import (
     Schools,
     Username,
 )
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
+from .base import (
+    MultipleObjectsError,
+    RoleSupportMixin,
+    UCSSchoolHelperAbstractClass,
+    UnknownModel,
+    WrongModel,
+)
 from .computer import AnyComputer
-from .group import Group, SchoolClass, SchoolGroup, WorkGroup
+from .group import ComputerRoom, Group, SchoolClass, SchoolGroup, WorkGroup
 from .misc import MailDomain
 from .school import School
 from .utils import _, create_passwd, ucr
@@ -262,7 +268,17 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         obj.school_classes = cls.get_school_classes(udm_obj, obj)
         return obj
 
-    def _set_udm_attributes(self, udm_obj, lo):
+    def do_create(self, udm_obj, lo):
+        if not self.schools:
+            self.schools = [self.school]
+        self.set_default_options(udm_obj)
+        self.create_mail_domain(lo)
+        password_created = False
+        if not self.password:
+            self.logger.debug("No password given. Generating random one")
+            old_password = self.password  # None or ''
+            self.password = create_passwd(dn=self.dn)
+            password_created = True
         udm_obj["primaryGroup"] = self.primary_group_dn(lo)
         udm_obj["groups"] = self.groups_used(lo)
         subdir = self.get_roleshare_home_subdir()
@@ -285,30 +301,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         script_path = self.get_samba_netlogon_script_path()
         if script_path is not None:
             udm_obj["scriptpath"] = script_path
-
-    def _handle_unset_password(self):  # type: () -> bool
-        """
-        If no password is set, this function generates a random password for the user.
-
-        :return: True if password was generated, otherwise False
-        """
-        if not self.password:
-            self.logger.debug("No password given. Generating random one")
-            self.password = create_passwd(dn=self.dn)
-            return True
-        return False
-
-    def do_create(self, udm_obj, lo):
-        if not self.schools:
-            self.schools = [self.school]
-        self.set_default_options(udm_obj)
-        self.create_mail_domain(lo)
-        password_created = self._handle_unset_password()
-        self._set_udm_attributes(udm_obj, lo)
         success = super(User, self).do_create(udm_obj, lo)
         if password_created:
             # to not show up in host_hooks
-            self.password = ""
+            self.password = old_password
         return success
 
     def do_modify(self, udm_obj, lo):
@@ -781,7 +777,7 @@ class ExamStudent(Student):
     type_filter = "(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))"
     default_roles = [role_exam_user]
     default_options = ("ucsschoolExam",)
-    original_user = None
+    original_user_udm = None
 
     @classmethod
     def get_container(cls, school):
@@ -802,27 +798,48 @@ class ExamStudent(Student):
         cls, lo, orig_user, exam=None, school=None, room=None
     ):  # type: (uldap.access, Student, Optional[str], Optional[str], Optional[str]) -> ExamStudent
         exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
-        exam_user = ExamStudent(
-            name="{}{}".format(exam_user_prefix, orig_user.name),
-            firstname=orig_user.firstname,
-            lastname=orig_user.lastname,
-            schools=orig_user.schools,
-            school=orig_user.school,
+        exam_user_name = "{}{}".format(exam_user_prefix, orig_user.name)
+        found_users = ExamStudent.get_all(
+            lo, orig_user.school, filter_str=filter_format("username=%s", [exam_user_name])
         )
-        exam_user.original_user = orig_user
-
+        if len(found_users) == 1:
+            exam_user = found_users[0]
+        elif len(found_users) > 1:
+            raise MultipleObjectsError(
+                "Found more than one exam user with username {}".format(exam_user_name)
+            )
+        else:
+            exam_user = ExamStudent(
+                name=exam_user_name,
+                firstname=orig_user.firstname,
+                lastname=orig_user.lastname,
+                school=orig_user.school,
+            )
+        exam_user.original_user_udm = orig_user.get_udm_object(lo)
         exam_user.schools = orig_user.schools
-        if school and school not in exam_user.schools:
-            exam_user.schools.append(school)
-        exam_user.create(lo)
-        exam_user._sync_password_from_original_user(lo)
+        if len(found_users) > 0:
+            exam_user.modify(lo)
+        else:
+            exam_user.create(lo)
+        modify_list = exam_user._get_password_from_original_user(lo)
+        if room:
+            found_computer_rooms = ComputerRoom.get_all(
+                lo, school, filter_str=filter_format("name=%s-%s", [school, room])
+            )
+            if len(found_computer_rooms) > 1:
+                raise MultipleObjectsError("Found more than one ComputerRoom with name {}".format(room))
+            elif len(found_computer_rooms) == 1:
+                computer_room = found_computer_rooms[0]
+                modify_list += exam_user._get_samba_workstations(lo, computer_room)
+        if exam:
+            modify_list += exam_user._get_ucsschool_role_strings(lo, exam, school)
+        lo.modify(exam_user.dn, modify_list)
         return exam_user
 
-    def get_roleshare_home_subdir(self):
-        return os.path.join(super(Student, self).get_roleshare_home_subdir(), "exam-homes")
-
-    def _set_udm_attributes(self, udm_obj, lo):
-        super(ExamStudent, self)._set_udm_attributes(udm_obj, lo)
+    def _alter_udm_obj(self, udm_obj):
+        super(ExamStudent, self)._alter_udm_obj(udm_obj)
+        if not self.original_user_udm:
+            return
         udm_attribute_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist", "").split(","))
         udm_attribute_denylist.update(
             {
@@ -843,16 +860,16 @@ class ExamStudent(Student):
                 "unixhome",
                 "ucsschoolRole",
                 "sambaRID",
+                "password",
             }
         )
-        orig_udm = self.original_user.get_udm_object(lo)
         options_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist/options", "").split(","))
         udm_obj.options = [
             option
-            for option in set(orig_udm.options + udm_obj.options)
+            for option in set(self.original_user_udm.options + udm_obj.options)
             if option not in options_denylist
         ]
-        for attr_name, value in orig_udm.items():
+        for attr_name, value in self.original_user_udm.items():
             if attr_name not in udm_attribute_denylist:
                 value_denylist = set(
                     ucr.get("ucsschool/exam/user/udm/denylist/{}".format(attr_name), "").split(",")
@@ -870,11 +887,11 @@ class ExamStudent(Student):
                                 attr_name, exc
                             )
                         )
-        udm_obj["description"] = "Exam user for {}".format(orig_udm["username"])
+        udm_obj["description"] = "Exam user for {}".format(self.original_user_udm["username"])
         if "temporary" not in udm_obj["objectFlag"]:
             udm_obj["objectFlag"].append("temporary")
 
-    def _sync_password_from_original_user(self, lo):
+    def _get_password_from_original_user(self, lo):
         password_attributes = [
             "krb5KeyVersionNumber",
             "userPassword",
@@ -883,8 +900,41 @@ class ExamStudent(Student):
             "krb5Key",
         ]
         old_password_data = lo.get(self.dn, attr=password_attributes)
-        orig_password_data = lo.get(self.original_user.dn, attr=password_attributes)
+        orig_password_data = lo.get(self.original_user_udm.dn, attr=password_attributes)
         modify_list = list()
         for attr_name in password_attributes:
             modify_list.append((attr_name, old_password_data[attr_name], orig_password_data[attr_name]))
-        lo.modify(self.dn, modify_list)
+        return modify_list
+
+    def _get_samba_workstations(self, lo, room_name):  # type: (uldap.access, ComputerRoom) -> Any
+        current_samba_workstations = lo.get(self.dn, attr=["sambaUserWorkstations"]).get(
+            "sambaUserWorkstations", []
+        )
+        new_samba_workstations = [computer.name for computer in room_name.get_computers(lo)]
+        if len(current_samba_workstations) > 0:
+            new_samba_workstations += current_samba_workstations[0].split(",")
+        return [
+            (
+                "sambaUserWorkstations",
+                current_samba_workstations,
+                [",".join(set(new_samba_workstations))],
+            )
+        ]
+
+    def _get_ucsschool_role_strings(self, lo, exam, school):  # type: (uldap.acces, str, str) -> Any
+        current_ucsschool_roles = lo.get(self.dn, attr=["ucsschoolRole"]).get("ucsschoolRole", [])
+        return [
+            (
+                "ucsschoolRole",
+                current_ucsschool_roles,
+                current_ucsschool_roles
+                + [
+                    create_ucsschool_role_string(
+                        role_exam_user, "{}-{}".format(exam, school), context_type_exam
+                    )
+                ],
+            )
+        ]
+
+    def get_roleshare_home_subdir(self):
+        return os.path.join(super(Student, self).get_roleshare_home_subdir(), "exam-homes")
