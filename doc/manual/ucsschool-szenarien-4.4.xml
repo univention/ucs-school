@@ -325,7 +325,7 @@ feedback@univention.de
 					<listitem><para>Welche administrativen Aufgaben sollen durch die Schulen übernommen werden, zum Beispiel Passwörter zurücksetzen?</para></listitem>
 					<listitem><para>Wie werden Schulen mit den neuen Lösungen w.z.B. &ucsUAS; vertraut gemacht?  Siehe <xref linkend="preparations_training" />.</para></listitem>
 					<listitem><para>Wie und bei wem melden Schulen Probleme?  Siehe <xref linkend="concepts_support" />.</para></listitem>
-					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen?  Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
+					<listitem><para>Wie wird die Qualität des erbrachten IT-Angebots gemessen? Welches sind die entscheidenden Parameter, um dies zu messen?</para></listitem>
 					<listitem><para>Wie wird sichergestellt, dass die zukünftigen Anforderungen der Schulen erfasst und von der Gesamtinfrastruktur erfüllt werden?</para></listitem>
 					<listitem><para>Wer ist verantwortlich für die Pflege von Informationen in der Schulverwaltungssoftware und wie können diese Daten importiert werden?</para></listitem>
 				</itemizedlist>
@@ -342,7 +342,7 @@ feedback@univention.de
 							<itemizedlist mark="whitesquare">
 								<listitem><para>Installation der UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
 								<listitem><para>Welche Basiskonfigurationen sollen vorgenommen werden? Siehe <xref linkend="base-configuration" /></para></listitem>
-								<listitem><para>Wie erfolgt der Import von Benutzer-, Rechner- und Netzdaten: <xref linkend="import" /></para></listitem>
+								<listitem><para>Wie erfolgt der Import von Benutzer-, Rechner- und Netzdaten? Siehe <xref linkend="import" /></para></listitem>
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Welche VPN-Lösung wird eingesetzt (nicht in allen Szenarien notwendig)?  Siehe <xref linkend="infrastructure-and_hardware-requirements_infrastructure_vpn" /></para></listitem>
@@ -354,6 +354,13 @@ feedback@univention.de
 							</itemizedlist>
 					</listitem>
 					<listitem><para>Soll die Schulen zukünftig über einen zentralen Proxy auf das Internet zugreifen?  <!-- Siehe <xref linkend="additional-services_proxy" /> --></para></listitem>
+					<listitem><para>Wie erfolgt der Zugriff auf zentral bereitgestellte Webdienste (Portal, Self-Service ...) aus dem Internet?</para>
+							<itemizedlist mark="whitesquare">
+								<listitem><para>Stellt der Rechenzentrumsbetreiber Loadbalancer und Reverse-Proxy als Dienst bereit?</para></listitem>
+								<listitem><para>Welche externen Domänennamen sollen für den Zugriff auf die Webdienste verwendet werden?</para></listitem>
+								<listitem><para>Ist sichergestellt, dass zu den Domänennamen passende SSL/TLS-Zertifikate vorhanden sind und diese regelmäßig erneuert werden?</para></listitem>
+							</itemizedlist>
+					</listitem>
 				</itemizedlist>
 			</para>
 		</section>
