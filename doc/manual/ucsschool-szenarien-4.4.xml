@@ -1756,7 +1756,7 @@ feedback@univention.de
 							zu starten.</para></listitem>
 					<listitem><para>Nach Abschluss der Installation ist über das
 							Univention App Center die App
-							<systemitem class="service">Icinga</systemitem>, zu
+							<systemitem class="service">Nagios</systemitem>, zu
 							installieren.</para></listitem>
 					<listitem><para>Es ist empfohlen, das Monitoring des
 							aktuellen Zustands der Umgebung um die Speicherung
@@ -1933,7 +1933,7 @@ feedback@univention.de
 							<row>
 								<entry><envar>nagios/client/allowedhosts</envar></entry>
 								<entry><literal>[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20]</literal></entry>
-								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Nagios</systemitem> oder <systemitem class="service">Icinga</systemitem>, auf den <systemitem class="service">NRPE-Dienst</systemitem> der übrigen Systeme.</entry>
+								<entry>Erlaubt den Zugriff des Monitoring-Servers, <systemitem class="service">Nagios</systemitem>, auf den <systemitem class="service">NRPE-Dienst</systemitem> der übrigen Systeme.</entry>
 							</row>
 							<row>
 								<entry><envar>ucsschool/helpdesk/recipient</envar></entry>
