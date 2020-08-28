@@ -1524,11 +1524,19 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Je nach System und verwendeten Diensten sollte die Auslagerung auf einem
+						Ist die Verfügbarkeit von performanten Festplatten (bspw. SSDs) begrenzt und reicht nicht
+						für das gesamte System aus, so sollte zumindest <filename class="directory">/var/lib</filename> als eigene
+						Partition auf performanten Festplatten angelegt werden.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Je nach System und verwendeten Diensten (bspw. für Schulserver mit lokalen Benutzerdaten) sollte die Auslagerung auf einem
 						eigenen Dateisystem auch für den Pfad
 						<filename class="directory">/home</filename> erfolgen.
 					</para>
 				</listitem>
+				
 			</itemizedlist>
 		</para>
 		<section id="installation_master">
@@ -1539,7 +1547,7 @@ feedback@univention.de
 			<para>
 				<itemizedlist>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
-							entsprechend dem Netzkonzept.</para></listitem>
+							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als Externer DNS-Server bzw. DNS-Forwarder
 							ist die IP-Adresse des DNS-Servers des
 							Internetproviders einzutragen.
@@ -1548,7 +1556,7 @@ feedback@univention.de
 							&ucsMaster; zu installieren: <option>Erstellen einer
 								neuen &ucsUCS;-Domäne</option></para></listitem>
 					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
-					eine LDAP-Basis vorgeschlagen. Diese sollte nur in Ausnahmefällen
+					eine LDAP-Basis vorgeschlagen. Diese sollte entsprechend des Namenskonzeptes
 					geändert werden.</para></listitem>
 					<listitem>
 						<para><emphasis>für Szenario <link
@@ -1614,17 +1622,17 @@ feedback@univention.de
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
-					<listitem><para>Nach Abschluss der Installation
-							ist über das Univention App Center die
-							<package>&ucsUAS;</package> App zu
-							installieren.</para></listitem>
+					<listitem><para>Während des Domänenbeitritts wird die
+							<package>&ucsUAS;</package> App automatisch installiert. 
+							Die ist über das Univention App Center zu prüfen.
+							</para></listitem>
 					<listitem><para>Im Anschluss an die Installation der
 							<package>&ucsUAS;</package> App ist in der &ucsUMC;
 							in der Kategorie
-							<emphasis>Schuladministration</emphasis> der
+							<emphasis>Schuladministration</emphasis> zu prüfen, dass
+							der 
 							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
-							zu starten und der Assistent bis zum
-							Ende auszuführen.</para></listitem>
+							erfolgreich abgeschlossen wurde.</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1643,6 +1651,9 @@ feedback@univention.de
 				<itemizedlist>
 					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
+							Namen für den Schulserver auf dem &ucsMaster; entsprechend der Beschreibung in <xref linkend="import_schools" /> angelegt wurde.
+							</para></listitem>
 					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
 							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
@@ -1657,28 +1668,18 @@ feedback@univention.de
 							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							&ucsSlave; auszuwählen.</para></listitem>
-					<listitem><para>Das installierte System ist abschließend bis
+							&ucsSlave; und die Installation als edukativer Schulserver auszuwählen.</para></listitem>
+					<listitem><para>Das installierte System wird automatisch bis
 							zum letzten verfügbaren Errata-Update zu
-							aktualisieren.  Anschließend ist der Domänenbeitritt
-							zu starten.</para></listitem>
-					<listitem><para>Nach Abschluss der Installation ist über das
-							Univention App Center die App
-							<package>&ucsUAS;</package> zu
-							installieren.</para></listitem>
-					<listitem><para>Im Anschluss an die Installation der
-							<package>&ucsUAS;</package> App ist in der &ucsUMC;
-							in der Kategorie
-							<emphasis>Schuladministration</emphasis> der
-							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
-							zu starten und der Assistent bis zum
-							Ende auszuführen.</para></listitem>
+							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
 							<emphasis>Domäne</emphasis> mit dem Modul
 							<emphasis>Domänenbeitritt</emphasis> geprüft
 							werden.</para></listitem>
+					<listitem><para>Soll der Schulserver auch als DHCP-Server fungieren (empfohlen) muss noch die App
+							"DHCP-Server" über das Univention App Center installiert werden.</para></listitem>
 				</itemizedlist>
 				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
 				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:slave">&ucsUAS;
@@ -1686,7 +1687,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_slave">
-			<title>Installation eines &ucsSlave; für RADIUS, Groupware,
+			<title>Installation eines zentralen &ucsSlave; für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
@@ -1708,18 +1709,19 @@ feedback@univention.de
 							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							&ucsSlave; auszuwählen.</para></listitem>
+							&ucsSlave; auszuwählen und zu bestätigen, dass es sich um einen
+							zentralen &ucsSlave; handelt und explizit nicht um einen Schulserver.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
-							aktualisieren.  Anschließend ist der Domänenbeitritt
+							aktualisieren. Falls noch nicht erfolgt, ist der Domänenbeitritt
 							zu starten.</para></listitem>
 					<listitem><para>Nach Abschluss der Installation ist über das
 							Univention App Center die gewünschte App, zum
 							Beispiel <package>RADIUS</package>, zu
 							installieren.</para></listitem>
-					<listitem><para>Die App <package>&ucsUAS;</package> darf
+					<listitem><para>Die App <package>&ucsUAS;</package> soll hier
 							<emphasis role="strong">nicht</emphasis> installiert
-							werden!</para></listitem>
+							werden</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1730,7 +1732,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_member">
-			<title>Installation eines &ucsMember; für Monitoring</title>
+			<title>Installation eines zentralen &ucsMember; für Monitoring</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
@@ -1769,7 +1771,7 @@ feedback@univention.de
 							finden.</para></listitem>
 					<listitem><para>Die App <package>&ucsUAS;</package> darf
 							<emphasis role="strong">nicht</emphasis> installiert
-							werden!</para></listitem>
+							werden</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
