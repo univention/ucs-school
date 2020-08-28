@@ -167,7 +167,7 @@ feedback@univention.de
 				Access-Management zur Verfügung. An dieses werden
 				unterschiedliche IT-Angebote angebunden, die von den Schulen
 				benötigt werden. Zum Beispiel E-Mail und Groupware-Lösungen oder
-				Lernmanagement-Systeme. Lehrkräfte und Schüler können alle
+				Lernmanagement-Systeme. Lehrkräfte und Schüler*innen können alle
 				angeschlossenen Angebote mit einem  einzigen persönlichen
 				Benutzerkonto und Passwort nutzen. Die Angebote können dabei
 				sowohl vor Ort in den Schulen als auch von unterwegs oder von zu
@@ -177,7 +177,7 @@ feedback@univention.de
 				Merkmale:
 				<itemizedlist mark="bullet">
 					<listitem><para>Unabhängigkeit von der jeweiligen IT-Ausstattung der Schulen</para></listitem>
-					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler</para></listitem>
+					<listitem><para>Bereitstellung orts- und zeitunabhängiger IT-Angebote für Lehrkräfte und Schüler*innen</para></listitem>
 					<listitem><para>Effizienter Betrieb durch zentrale Administration</para></listitem>
 					<listitem><para>Integration beliebiger IT-Angebote oder vorkonfigurierter Angebote aus dem Univention App Center</para></listitem>
 					<listitem><para>Senkung des Aufkommens im Helpdesk durch Self-Service für vergessene Passwörter</para></listitem>
@@ -200,7 +200,7 @@ feedback@univention.de
 			<para>
 				Dieses Szenario ermöglicht es Schulträgern, den Zugang zum WLAN
 				in ihren Schulen zentral zu steuern und den Zugang nur bekannten
-				Lehrkräften und Schülern zu gewähren. Dazu wird Univention
+				Lehrkräften und Schüler*innen zu gewähren. Dazu wird Univention
 				Corporate Server zentral in einem Rechenzentrum betrieben und
 				dient als Identity- und Access-Management. Die Schulen sind mit
 				diesem Rechenzentrum beispielsweise mittels eines VPN-Zugangs
@@ -761,29 +761,55 @@ feedback@univention.de
 					ist.
 				</para>
 				<para>
-					Wird vom Betreiber (z.B. Stadt, Landkreis oder Bundesland) bereits eine DNS-Domäne verwendet
-					(z.B. <systemitem class="domainname">example.com</systemitem>), empfehlen wir,
-					als Domänennamen für &ucsUAS; eine Subdomäne zu verwenden:
+					In bisherigen Projekten hat es sich als sinnvoll erwiesen, einen bislang nicht verwendeten
+					Domänennamen sowohl für den Zugriff aus dem Internet als auch für die Benennung der internen
+					UCS-Domäne zu verwenden.
 				</para>
 				<para>
-					Beispiel: <systemitem class="domainname">schulen.example.com</systemitem>
+					Wird beispielsweise <systemitem class="domainname">example.org</systemitem> als Domänenname ausgewählt,
+					muss auch &ucsUCS; mit diesem Domänennamen installiert werden. Zudem muss sichergestellt sein, dass die
+					öffentliche Internet-Domain <systemitem class="domainname">example.org</systemitem> vom Betreiber bei einem
+					Domain-Name-Registrar registriert wurde und dass weitere öffentliche Subdomains angelegt werden können.
 				</para>
+				<note>
+					<para>
+						Mit dem hier empfohlenen Vorgehen wird ein sog. Split-DNS-Szenario eingerichtet. Die von &ucsUCS; für interne
+						Funktionen bereitgestellten DNS-Dienste lösen Hostnamen auf internen IP-Adressen auf,
+						während öffentliche DNS-Server die selben Hostnamen auf die öffentlichen IP-Adressen auflösen müssen.
+					</para>
+				</note>
+				<itemizedlist>
+					<listitem>
+						<para>
+							Beispiel für die Hauptdomain (auch interne UCS-Domain): <systemitem class="domainname">example.org</systemitem>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Beispiel für das Portal (Zugriff von außen): <systemitem class="domainname">portal.example.org</systemitem>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Beispiel für eine Anwendung wie bspw Webmail (Zugriff von außen): <systemitem class="domainname">mail.example.org</systemitem>
+						</para>
+					</listitem>
+				</itemizedlist>
 				<para>
 					Bei der Wahl des Domänennamens sind einige Punkte zu beachten:
 					<itemizedlist>
 						<listitem>
 							<para>
 								Es ist wichtig, dass die DNS-Domäne vom Betreiber
-								verwaltet wird.  Es muss unter allen Umständen
-								sichergestellt werden, dass der gewählte Domänenname für &ucsUAS;
-								im öffentlichen Internet noch nicht verwendet wurde oder zukünftig wird.
+								verwaltet wird. Es muss sichergestellt werden, dass der gewählte Domänenname für &ucsUAS;
+								im öffentlichen Internet noch nicht verwendet wird.
 							</para>
 						</listitem>
 						<listitem>
 							<para>
-								Wenn die Verwendung einer öffentlichen
+								Für den nicht empfohlenen Fall, dass die Verwendung einer öffentlichen
 								DNS-Domäne nicht möglich ist und stattdessen
-								eine selbst gewählter Name verwendet wird, so
+								eine selbst gewählter, interner DNS-Name verwendet wird, so
 								sind folgende Regeln zu beachten:
 								<itemizedlist>
 									<listitem>
@@ -823,10 +849,10 @@ feedback@univention.de
 						</listitem>
 						<listitem>
 							<para>
-								Dem Domänennamen für &ucsUAS; werden die Namen der Rechner und Server vorangestellt,
+								Im internen Netz werden dem Domänennamen für &ucsUAS; die Namen der Rechner und Server vorangestellt,
 								um für diese Systeme einen voll qualifizierten DNS-Namen (FQDN) zu bilden. Zum Beispiel
-								ist der Rechner	<systemitem	class="domainname">ucszen01</systemitem> somit unter dem FQDN
-								<systemitem	class="domainname">ucszen01.schulen.example.com</systemitem> zu erreichen.
+								ist der Rechner	<systemitem	class="domainname">ucsrz01</systemitem> somit intern unter dem FQDN
+								<systemitem	class="domainname">ucsrz01.example.org</systemitem> zu erreichen.
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -834,13 +860,13 @@ feedback@univention.de
 				<para>
 					Es besteht die Möglichkeit den Namen der Samba-/Active
 					Directory-Domäne unabhängig von dem eigentlichen
-					Domänennamen zu definieren.  Dies ermöglicht es, dass
+					Domänennamen zu definieren. Dies ermöglicht es, dass
 					Benutzer eine andere Domäne bei Anmeldung an Windows
-					Rechnern verwenden können, zum Beispiel wird statt <systemitem
-						class="domainname">SCHULEN\benutzername</systemitem> nun
+					Rechnern verwenden können. Soll zum Beispiel statt <systemitem
+						class="domainname">EXAMLPE\benutzername</systemitem> nun
 					<systemitem
 						class="domainname">SCHULTRÄGER\benutzername</systemitem>
-					verwendet.  Um dies zu erreichen, ist auf dem
+					angezeigt werden, ist auf dem
 					&ucsUAS;-Server vor der Installation von &ucsUAS; der
 					gewünschte <systemitem
 						class="domainname">NetBIOS-Domänenname</systemitem> in
@@ -857,17 +883,20 @@ feedback@univention.de
 					Zentrale Server:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="systemname">[System][Standort][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiel: System UCS, Standort Zentral, erstes System: <systemitem class="systemname">ucszen01</systemitem></para></listitem>
+						<listitem><para>Beispiel: System UCS, Standort Rechenzentrum, erstes System: <systemitem class="systemname">ucsrz01</systemitem></para></listitem>
 						<listitem><para>Weitere Beispiele:
 								<itemizedlist>
-									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucszen01</systemitem></para></listitem>
-									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucszen02</systemitem>, <systemitem class="systemname">ucszen03</systemitem></para></listitem>
-									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucszen04</systemitem></para></listitem>
-									<listitem><para>&ucsMember;: <systemitem class="systemname">ucszen05</systemitem></para></listitem>
+									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsrz01</systemitem></para></listitem>
+									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsrz02</systemitem>, <systemitem class="systemname">ucsrz03</systemitem></para></listitem>
+									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucsrz04</systemitem></para></listitem>
+									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsrz05</systemitem></para></listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
 					</itemizedlist>
+				</para>
+				<para>
+					Der Name darf eine Länge von 13 Zeichen nicht überschreiten und sollte nicht mit einer Ziffer beginnen.
 				</para>
 			</section>
 			<section id="concepts_names_clients-and-servers">
@@ -878,28 +907,31 @@ feedback@univention.de
 				<para>
 					Rechner:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Betriebssystem][Gebäude/Etage/Raum][Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiele: <systemitem class="service">042win033-001</systemitem>, <systemitem class="service">042win033-002</systemitem>, <systemitem class="service">011mac001-011</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Betriebssystem]-[Kurzbezeichnung Schule]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">win-042-001</systemitem>, <systemitem class="service">win-042-002</systemitem>, <systemitem class="service">mac-042-001</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Netzgeräte, wie Router, Switches, USV, Drucker:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Kurzbezeichnung Schule][Gerätetyp][Gebäude/Etage/Raum]-[Laufnummer]</systemitem></para></listitem>
-						<listitem><para>Beispiele: <systemitem class="service">042rou001-001</systemitem>, <systemitem class="service">042swi002-003</systemitem>, <systemitem class="service">011usv000-001</systemitem>, <systemitem class="service">012dru002-012</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Gerätetyp]-[Kurzbezeichnung Schule]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Beispiele: <systemitem class="service">rou-042-001</systemitem>, <systemitem class="service">swi-042-003</systemitem>, <systemitem class="service">usv-042-001</systemitem>, <systemitem class="service">dru-042-012</systemitem></para></listitem>
 					</itemizedlist>
 				</para>
 				<para>
 					Schulserver:
 					<itemizedlist>
-						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung][Kurzbezeichnung Schule]-[Laufnummer]</systemitem></para></listitem>
+						<listitem><para>Schema: <systemitem class="systemname">[Rollenbezeichnung]-[Kurzbezeichnung Schule]-[Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiele:
 								<itemizedlist>
-									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu042-01</systemitem></para></listitem>
-									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">sadm042-01</systemitem></para></listitem>
+									<listitem><para>Edukativer Schulserver: <systemitem class="service">sedu-042-01</systemitem></para></listitem>
+									<listitem><para>Schulserver Schulverwaltung: <systemitem class="service">sadm-042-01</systemitem></para></listitem>
 								</itemizedlist>
 						</para></listitem>
 					</itemizedlist>
+				</para>
+				<para>
+					Der Name darf eine Länge von 13 Zeichen nicht überschreiten und sollte nicht mit einer Ziffer beginnen.
 				</para>
 			</section>
 			<section id="concepts_names_user-classes">
@@ -909,24 +941,24 @@ feedback@univention.de
 				</para>
 				<para>
 					Benutzerkonten und Klassen hängen in &ucsUAS; sehr eng
-					zusammen.  So werden beim Import von Benutzerkonten
+					zusammen. So werden beim Import von Benutzerkonten
 					ebenfalls die Klassen angegeben, zu denen die jeweiligen
-					Konten gehören.  Das heißt sowohl beim Import von Klassen,
+					Konten gehören. Das heißt sowohl beim Import von Klassen,
 					also auch beim Import von Benutzerkonten müssen die gleichen
 					Bezeichnungen für Klassen verwendet werden und es ist
 					deshalb hilfreich, ein einheitliches Schema zu spezifizieren.
 				</para>
 				<para>
 					Bei Benutzerkonten ergibt sich darüber hinaus die
-					Herausforderung, dass sich die Benutzernamen ggf. ändern,
-					zum Beispiel aufgrund der Behebung von Tippfehlern, Heirat
-					oder Scheidung.  In der Praxis hat sich nicht bewährt,
-					unveränderliche Daten, wie Personal- oder Schülernummern als
-					Benutzernamen zu verwenden, da diese unpersönlich und schwer
-					zu merken sind.
+					Herausforderung, dass sich die Benutzernamen ändern können,
+					zum Beispiel aufgrund von Heirat, Scheidung, im Rahmen einer
+					Namens- oder Personenstandsänderung oder zur Behebung von Tippfehlern.
+					In der Praxis hat sich nicht bewährt, unveränderliche Daten
+					wie Personal- oder Schülernummern als Benutzernamen zu verwenden,
+					da diese unpersönlich und schwer zu merken sind.
 				</para>
 				<para>
-					Die Änderung von Benutzernamen stellt eine große
+					Die Änderung von Benutzernamen stellt also eine
 					Herausforderung im Betrieb dar, weil die an &ucsUAS;
 					angeschlossenen Subsysteme ggf. den Benutzernamen als identifizierendes Merkmal (also zur
 					Zuordnung von Daten zu Benutzerkonten) verwenden. Beispiele für
@@ -938,12 +970,12 @@ feedback@univention.de
 					vor der Einführung eines neuen Subsystems darauf geachtet
 					wird, dass die Zuordnung von Daten zu Benutzerkonten über ein
 					unveränderliches Merkmal geschieht, zum Beispiel die
-					Personalnummer.  Gleichzeitig muss sichergestellt werden,
+					Personalnummer. Gleichzeitig muss sichergestellt werden,
 					dass die Anmeldung am Subsystem jedoch über den einfach zu
 					merkenden Benutzernamen erfolgt.
 				</para>
 				<para>
-					Schüler:
+					Schüler*innen:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[Vorname][1. Buchstabe Nachname][Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiel: Mary Selig → <systemitem class="username">marys</systemitem></para></listitem>
@@ -951,7 +983,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Lehrkräfte und Mitarbeiter:
+					Lehrkräfte und Mitarbeiter*innen:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="username">[1. Buchstabe Vorname][Nachname][Laufnummer]</systemitem></para></listitem>
 						<listitem><para>Beispiel: <wordasword>Mareike Müller</wordasword> → <systemitem class="username">mmueller</systemitem></para></listitem>
@@ -965,7 +997,7 @@ feedback@univention.de
 						zur CLI-Import-Schnittstelle</ulink>.
 				</para>
 				<para>
-					Klassenname müssen mit der Kurzbezeichnung der Schule als
+					Klassenname müssen mit der Kurzbezeichnung der Schule (hier im Beispiel 042 und 011) als
 					Präfix beginnen:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="groupname">[Kurzbezeichnung Schule]-[Klasse]</systemitem></para></listitem>
@@ -982,7 +1014,7 @@ feedback@univention.de
 					Folgende Konventionen haben sich in allen Szenarien bewährt:
 					<itemizedlist>
 						<listitem><para>Alle Objektnamen sollten durchgängig Kleinbuchstaben verwenden.</para></listitem>
-						<listitem><para>Die Länge von Objektnamen sollte 15 Zeichen nicht überschreiten. Dies ist insbesondere wichtig für Benutzernamen.</para></listitem>
+						<listitem><para>Sofern nicht anders angegeben, sollte die Länge von Objektnamen 15 Zeichen nicht überschreiten. Dies ist insbesondere wichtig für Benutzernamen.</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
@@ -1105,7 +1137,7 @@ feedback@univention.de
 				dass ein Helpdesk aufgebaut wird, der Fragen aus den Schulen
 				direkt annehmen kann.  Abhängig von der gewünschten <link
 					linkend="scenario-0">Servicestufe</link> kann es darüber
-				hinaus notwendig sein, ein Team von technischen Mitarbeitern zu
+				hinaus notwendig sein, ein Team von technischen Mitarbeiter*innen zu
 				schulen, die den Betrieb der Umgebung durchführen.
 			</para>
 			<para>
@@ -1338,7 +1370,7 @@ feedback@univention.de
 				<para>
 					Für die Einführung von WLAN in Schulen gehen wir hier davon
 					aus, dass die gesamte Schule mit WLAN ausgestattet werden
-					soll und alle Schüler mit mindestens einem mobilen Endgerät
+					soll und alle Schüler*innen mit mindestens einem mobilen Endgerät
 					im WLAN aktiv sein werden, auch wenn dies nicht sofort
 					realisiert werden kann.
 				</para>
@@ -1367,7 +1399,7 @@ feedback@univention.de
 					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
 					insbesondere bei der Einführung von WLAN und Bring Your Own
-					Device (BYOD) zu beachten, da Lehrkräfte und Schüler ggf.
+					Device (BYOD) zu beachten, da Lehrkräfte und Schüler*innen ggf.
 					mehr als ein Gerät pro Person mitbringen werden.
 				</para>
 			</section>
@@ -1795,8 +1827,8 @@ feedback@univention.de
 							&ucsMaster; umgeleitet werden sollen, ist die
 							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
-							<literal>root@ucszen01.schulen.example.com</literal>
-							zu stellen.  <literal>schulen.example.com</literal>
+							<literal>root@ucsrz01.schulen.example.org</literal>
+							zu stellen.  <literal>schulen.example.org</literal>
 							muss durch den tatsächlichen Domänennamen ersetzt
 							werden.
 						</para>
