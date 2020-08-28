@@ -36,7 +36,7 @@ VERSION=1
 joinscript_init
 
 # nothing to do (yet)
-echo "BYE BYE"
+
 joinscript_remove_script_from_status_file ucs-school-kelvin-support
 
 exit 0

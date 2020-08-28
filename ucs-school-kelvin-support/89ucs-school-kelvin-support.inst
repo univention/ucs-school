@@ -32,26 +32,54 @@
 VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
+
 joinscript_init
 
+KELVIN_APP_ID="ucsschool-kelvin-rest-api"
 EXPECTED_KELVIN_APP_VERSION=1.2.0
 
 # Check version of Kelvin API (Bug #51828)
-if [ "$(ucr get server/role)" = "domaincontroller_master" ]; then
-  FOUND_KELVIN_APP_VERSION="$(univention-app get "ucsschool-kelvin-rest-api" version --values-only)"
+check_kelvin_api_app_version() {
+  if [ "$(ucr get server/role)" = "domaincontroller_master" ]; then
+    FOUND_KELVIN_APP_VERSION="$(univention-app get  --values-only "$KELVIN_APP_ID" version)"
 
-  echo "Checking version of Kelvin API app (expecting ${EXPECTED_KELVIN_APP_VERSION} or newer)..."
-  if [ "$FOUND_KELVIN_APP_VERSION" "<" "$EXPECTED_KELVIN_APP_VERSION" ]; then
-		echo "****************************************************************************"
-		echo "The version of the UCS@school Kelvin REST API app found is ${FOUND_KELVIN_APP_VERSION}."
-		echo "Please update the UCS@school Kelvin REST API app to at least ${EXPECTED_KELVIN_APP_VERSION}."
-		echo "****************************************************************************"
-    exit 1
-  else
-    echo "OK: Found Kelvin API app version ${FOUND_KELVIN_APP_VERSION}."
+    echo "Checking version of Kelvin API app (expecting ${EXPECTED_KELVIN_APP_VERSION} or newer)..."
+    if [ "$FOUND_KELVIN_APP_VERSION" "<" "$EXPECTED_KELVIN_APP_VERSION" ]; then
+      echo "****************************************************************************"
+      echo "The version of the UCS@school Kelvin REST API app found is ${FOUND_KELVIN_APP_VERSION}."
+      echo "Please update the UCS@school Kelvin REST API app to at least ${EXPECTED_KELVIN_APP_VERSION}."
+      echo "****************************************************************************"
+      exit 1
+    else
+      echo "OK: Found Kelvin API app version ${FOUND_KELVIN_APP_VERSION}."
+    fi
   fi
-fi
+}
+
+# (Re)run part of the Kelvin API apps join script
+check_openapi_client_knows_ucssschool() {
+  local APP_ID="$KELVIN_APP_ID"  # so the below code is not changed and can easily be compared & updated
+
+  # Code copied from the join script ($kelvin-app-repo/appcenter/inst):
+  if ! univention-app status "$APP_ID" >/dev/null; then
+    echo "Docker container of Kelvin API is not running."
+    exit 1
+  fi
+
+  if ! univention-app shell "$APP_ID" "$@" /kelvin/venv/bin/python3 -c "import sys; from openapi_client_udm import UsersUserOptions; sys.exit(0 if 'ucsschool_administrator' in UsersUserOptions.openapi_types else 1)"; then
+    echo "Building OpenAPI client library in Docker container..."
+    MACHINE_USER="$(ucr get appcenter/apps/$APP_ID/hostdn | cut -d ',' -f 1 | cut -d '=' -f 2)\$"
+    MACHINE_PASSWORD_FILE="$(docker inspect --format='{{.GraphDriver.Data.MergedDir}}' "$(ucr get appcenter/apps/$APP_ID/container)")/etc/machine.secret"
+    MACHINE_PASSWORD="$(<"$MACHINE_PASSWORD_FILE")"
+    univention-app shell "$APP_ID" "$@" /bin/sh -c ". /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure --username \"$MACHINE_USER\" --password \"$MACHINE_PASSWORD\" \"\$DOCKER_HOST_NAME\" && /etc/init.d/ucsschool-kelvin-rest-api restart || exit 1"
+  else
+    echo "OK: OpenAPI client library knows UCS@school types."
+  fi
+}
+
+
+check_kelvin_api_app_version
+check_openapi_client_knows_ucssschool "$@"
 
 joinscript_save_current_version
-
-exit 0
+exit $?
