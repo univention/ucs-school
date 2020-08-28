@@ -44,6 +44,7 @@ from univention.admin.uexceptions import noObject, valueError, valueMayNotChange
 from ..roles import (
     context_type_exam,
     create_ucsschool_role_string,
+    get_role_info,
     role_exam_user,
     role_pupil,
     role_staff,
@@ -816,6 +817,7 @@ class ExamStudent(Student):
                 school=orig_user.school,
             )
         exam_user.original_user_udm = orig_user.get_udm_object(lo)
+        exam_user.disabled = False
         exam_user.schools = orig_user.schools
         if len(found_users) > 0:
             exam_user.modify(lo)
@@ -835,6 +837,23 @@ class ExamStudent(Student):
             modify_list += exam_user._get_ucsschool_role_strings(lo, exam, school)
         lo.modify(exam_user.dn, modify_list)
         return exam_user
+
+    def remove_from_exam(self, lo, exam, school):  # type: (uldap.access, str, str) -> None
+        current_exam_role_string = create_ucsschool_role_string(
+            role_exam_user, "{}-{}".format(exam, school), context_type_exam
+        )
+        remaining_roles = [
+            role_str for role_str in self.ucsschool_roles if role_str != current_exam_role_string
+        ]
+        self.ucsschool_roles = remaining_roles
+        if not any((get_role_info(role_str)[1] == context_type_exam for role_str in remaining_roles)):
+            udm_obj = self.get_udm_object(lo)
+            udm_obj["disabled"] = "1"
+            udm_obj["sambaUserWorkstations"] = [""]
+            udm_obj[
+                "ucsschoolRole"
+            ] = self.ucsschool_roles  # We do that here, since we only modify the udm object
+            udm_obj.modify()
 
     def _alter_udm_obj(self, udm_obj):
         super(ExamStudent, self)._alter_udm_obj(udm_obj)
@@ -861,6 +880,7 @@ class ExamStudent(Student):
                 "ucsschoolRole",
                 "sambaRID",
                 "password",
+                "disabled",
             }
         )
         options_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist/options", "").split(","))
