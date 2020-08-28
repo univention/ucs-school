@@ -1294,11 +1294,9 @@ feedback@univention.de
 				<para>
 					Für weitere IT-Angebote können keine Minimalanforderungen
 					genannt werden, da diese sowohl von der Anzahl der
-					parallelen Benutzer als auch von dem IT-Angebot selbst
-					abhängig sind.  Eine Abstimmung mit dem Hersteller ist
-					insbesondere bei Angeboten notwendig, die von allen
-					Personen, die ein Benutzerkonto in der Umgebung haben,
-					genutzt werden.
+					parallelen Benutzer als auch von der Anwendung selbst
+					abhängig sind.  Eine Abstimmung mit dem jeweiligen Hersteller ist
+					in aller Regel notwendig.
 				</para>
 			</section>
 		</section>
@@ -1308,6 +1306,9 @@ feedback@univention.de
 				<title>Schulserver</title>
 				<para>
 					<emphasis>für Szenario <link linkend="scenario-3">3</link> und <link linkend="scenario-4">4</link></emphasis>
+				</para>
+				<para>
+					Auch hier spielt vor allem die Anzahl gleichzeitig aktiver Benutzerkonten und Endgeräte eine Rolle.
 				</para>
 				<para>
 					Minimale Systemvoraussetzungen für
@@ -1353,7 +1354,7 @@ feedback@univention.de
 				</para>
 				<para>
 					Die Schulen sollten über eine strukturierte Verkabelung
-					im Schulgebäude verfügen.  Dies schließt ein, dass möglichst
+					im Schulgebäude verfügen. Dies schließt ein, das möglichst
 					nur Switches und Netzkomponenten mit Management-Funktion
 					verwendet werden.  Damit werden Probleme vermieden, die
 					durch fehlerhafte Verkabelung entstehen und es wird möglich,
@@ -1395,14 +1396,14 @@ feedback@univention.de
 				<para>
 					Die Schulen sollten über zuverlässige Internetzugänge
 					verfügen, die maximal 1x pro Nacht getrennt werden.  Die
-					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s
+					Geschwindigkeit des Zugangs sollte mindestens 16 MBit/s
 					betragen.  Ausschlaggebend für die notwendige
 					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
 					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
 					0,3 MBit/s pro aktivem Gerät ausgegangen werden.  Dies ist
 					insbesondere bei der Einführung von WLAN und Bring Your Own
 					Device (BYOD) zu beachten, da Lehrkräfte und Schüler*innen ggf.
-					mehr als ein Gerät pro Person mitbringen werden.
+					über mehr als ein Gerät pro Person verfügen werden.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_infrastructure_bandwidth">
@@ -1442,7 +1443,7 @@ feedback@univention.de
 									<entry>Schultyp</entry>
 									<entry>Typische Anzahl Clients</entry>
 									<entry>Typische Netznutzung</entry>
-									<entry>Nötige Bandbreite</entry>
+									<entry>Mindestens nötige Bandbreite</entry>
 								</row>
 							</thead>
 							<tbody>
