@@ -1093,6 +1093,8 @@ feedback@univention.de
 							Beinhaltet das Root-Zertifikat der internen
 							Zertifizierungsstelle und alle
 							Rechner-Zertifikate</para></listitem>
+					<listitem><para><filename>/etc/*.secret</filename> auf
+							allen Systemen</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
@@ -1142,8 +1144,7 @@ feedback@univention.de
 			</para>
 			<para>
 				Neben passenden Werkzeugen zur Kommunikation und Fernwartung,
-				zum Beispiel ein Ticket-System wie
-				<application>KIX</application> aus dem Univention App Center,
+				zum Beispiel ein Ticket-System,
 				müssen auch die Support- und Eskalationswege definiert und
 				abgestimmt werden.  Im Folgenden ein Beispiel für
 				Eskalationswege:
