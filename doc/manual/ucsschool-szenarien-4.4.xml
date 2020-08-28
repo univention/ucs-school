@@ -1921,6 +1921,21 @@ feedback@univention.de
 								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen der &ucsUAS;-Module. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
 							</row>
 							<row>
+								<entry><envar>ucsschool/assign-teachers/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen des &ucsUAS;-Moduls zum Zuweisen von Lehrkräften. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/assign-classes/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen des &ucsUAS;-Moduls zum Zuweisen von Klassen. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
+								<entry><envar>ucsschool/workgroups/autosearch</envar></entry>
+								<entry><literal>false</literal></entry>
+								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen des &ucsUAS;-Moduls zum Bearbeiten von Arbeitsgruppen. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
+							</row>
+							<row>
 								<entry><envar>ucsschool/passwordreset/autosearch</envar></entry>
 								<entry><literal>false</literal></entry>
 								<entry>Deaktiviert die automatische Suche nach allen Objekten beim Öffnen des &ucsUAS;-Moduls zum Zurücksetzen von Passwörtern. Dies beschleunigt das Arbeiten mit vielen LDAP-Objekten.</entry>
@@ -1933,6 +1948,11 @@ feedback@univention.de
 							<row>
 								<entry><envar>samba4/sysvol/sync/from_downstream</envar></entry>
 								<entry><literal>false</literal></entry>
+								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern. Dies beugt Problemen mit der Replikation vor.</entry>
+							</row>
+							<row>
+								<entry><envar>samba4/sysvol/sync/from_upstream/delete</envar></entry>
+								<entry><literal>true</literal></entry>
 								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern. Dies beugt Problemen mit der Replikation vor.</entry>
 							</row>
 							<row>
