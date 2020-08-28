@@ -1556,7 +1556,23 @@ feedback@univention.de
 								neuen &ucsUCS;-Domäne</option></para></listitem>
 					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
 					eine LDAP-Basis vorgeschlagen. Diese sollte entsprechend des Namenskonzeptes
+<<<<<<< HEAD
 					angepasst werden.</para></listitem>
+=======
+					geändert werden.</para></listitem>
+					<listitem>
+						<para><emphasis>für Szenario <link
+									linkend="scenario-3">3</link> und <link
+									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
+							verwalten zu können, ist die Software-Komponente <package>Active Directory kompatibler
+							Domänen-Controller</package> bei der Installation auszuwählen. Sollen in der &ucsUAS;-Domäne
+							mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
+							um Möglichkeiten zur Performanceoptimierung zu besprechen.
+						</para>
+					</listitem>
+>>>>>>> 7dfd8160f... Bug #49319: ucsschool scenarios: Update Chapter 7 - Installation
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1643,6 +1659,53 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 		</section>
+<<<<<<< HEAD
+=======
+		<section id="installation_schulserver">
+			<title>Installation eines &ucsSlave; als Schulserver </title>
+			<para>
+				<emphasis>für Szenario 3</emphasis>
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+							alle verfügbaren Updates installiert wurden.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
+							Namen für den Schulserver auf dem &ucsMaster; entsprechend der Beschreibung in <xref linkend="import_schools" /> angelegt wurde.
+							</para></listitem>
+					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
+							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
+							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
+					<listitem><para>Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.</para></listitem>
+					<listitem><para>Als DNS-Server sind die IP-Adressen des
+							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							DNS-Forwarder wird beim Domänenbeitritt automatisch
+							vom &ucsMaster; übernommen und braucht somit nicht
+							eingetragen zu werden.</para></listitem>
+					<listitem><para>Die folgende Option ist auszuwählen, um den
+							&ucsSlave; als Mitglied der Domäne zu installieren:
+							<option>Einer bestehenden &ucsUCS;-Domäne
+								beitreten</option>.  Anschließend ist die Rolle
+							&ucsSlave; und die Installation als edukativer Schulserver auszuwählen.</para></listitem>
+					<listitem><para>Das installierte System wird automatisch bis
+							zum letzten verfügbaren Errata-Update zu
+							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.</para></listitem>
+					<listitem><para>Abschließend ist zu prüfen, ob alle
+							Joinskripte erfolgreich ausgeführt wurden.  Dies
+							kann in der &ucsUMC; in der Kategorie
+							<emphasis>Domäne</emphasis> mit dem Modul
+							<emphasis>Domänenbeitritt</emphasis> geprüft
+							werden.</para></listitem>
+					<listitem><para>Soll der Schulserver auch als DHCP-Server fungieren (empfohlen) muss noch die App
+							"DHCP-Server" über das Univention App Center installiert werden.</para></listitem>
+				</itemizedlist>
+				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
+				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:slave">&ucsUAS;
+				Handbuch für Administratoren</ulink>.
+			</para>
+		</section>
+>>>>>>> 7dfd8160f... Bug #49319: ucsschool scenarios: Update Chapter 7 - Installation
 		<section id="installation_slave">
 			<title>Installation eines zentralen &ucsSlave; für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
