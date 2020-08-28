@@ -40,7 +40,7 @@ import univention.admin.modules as udm_modules
 import univention.admin.syntax as syntax
 from univention.admin import uldap
 from univention.admin.filter import conjunction, parse
-from univention.admin.uexceptions import noObject, valueError
+from univention.admin.uexceptions import noObject, valueError, valueMayNotChange
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -815,30 +815,16 @@ class ExamStudent(Student):
         if school and school not in exam_user.schools:
             exam_user.schools.append(school)
         exam_user.create(lo)
+        exam_user._sync_password_from_original_user(lo)
+        return exam_user
 
     def get_roleshare_home_subdir(self):
         return os.path.join(super(Student, self).get_roleshare_home_subdir(), "exam-homes")
 
-    def do_create(self, udm_obj, lo):
-        orig_udm = self.original_user.get_udm_object(lo)
-        if not self.schools:
-            self.schools = [self.school]
-        self.set_default_options(udm_obj)
-        self.create_mail_domain(lo)
-        password_created = self._handle_unset_password()
-        self._set_udm_attributes(udm_obj, lo)
-        self._set_udm_from_original_user(udm_obj, lo)
-        udm_obj["description"] = "Exam user for {}".format(orig_udm["username"])
-        if "temporary" not in udm_obj["objectFlag"]:
-            udm_obj["objectFlag"].append("temporary")
-        success = super(User, self).do_create(udm_obj, lo)
-        if password_created:
-            self.password = ""
-        return success
-
-    def _set_udm_from_original_user(self, udm_obj, lo):
-        udm_attribute_blacklist = set(ucr.get("ucsschool/exam/user/udm/denylist", "").split(","))
-        udm_attribute_blacklist.update(
+    def _set_udm_attributes(self, udm_obj, lo):
+        super(ExamStudent, self)._set_udm_attributes(udm_obj, lo)
+        udm_attribute_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist", "").split(","))
+        udm_attribute_denylist.update(
             {
                 "homedrive",
                 "objectFlag",
@@ -856,18 +842,49 @@ class ExamStudent(Student):
                 "ucsschoolRecordUID",
                 "unixhome",
                 "ucsschoolRole",
-                "passwordexpiry",
-                "unlockTime",
-                "lockedTime",
                 "sambaRID",
             }
         )
         orig_udm = self.original_user.get_udm_object(lo)
+        options_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist/options", "").split(","))
+        udm_obj.options = [
+            option
+            for option in set(orig_udm.options + udm_obj.options)
+            if option not in options_denylist
+        ]
         for attr_name, value in orig_udm.items():
-            if attr_name not in udm_attribute_blacklist:
-                value_blacklist = set(ucr.get("ucsschool/exam/user/udm/blacklist/%s", "").split(","))
+            if attr_name not in udm_attribute_denylist:
+                value_denylist = set(
+                    ucr.get("ucsschool/exam/user/udm/denylist/{}".format(attr_name), "").split(",")
+                )
                 if type(value) == list:
-                    value = [entry for entry in value if entry not in value_blacklist]
-                elif value in value_blacklist:
+                    value = [entry for entry in value if entry not in value_denylist]
+                elif value in value_denylist:
                     value = None
-                udm_obj[attr_name] = value if value else udm_obj[attr_name]
+                if value and value != udm_obj[attr_name]:
+                    try:
+                        udm_obj[attr_name] = value
+                    except valueMayNotChange as exc:
+                        self.logger.warning(
+                            "{} could not be copied from Student to ExamStudent, because of {}".format(
+                                attr_name, exc
+                            )
+                        )
+        udm_obj["description"] = "Exam user for {}".format(orig_udm["username"])
+        if "temporary" not in udm_obj["objectFlag"]:
+            udm_obj["objectFlag"].append("temporary")
+
+    def _sync_password_from_original_user(self, lo):
+        password_attributes = [
+            "krb5KeyVersionNumber",
+            "userPassword",
+            "sambaNTPassword",
+            "sambaPwdLastSet",
+            "krb5Key",
+        ]
+        old_password_data = lo.get(self.dn, attr=password_attributes)
+        orig_password_data = lo.get(self.original_user.dn, attr=password_attributes)
+        modify_list = list()
+        for attr_name in password_attributes:
+            modify_list.append((attr_name, old_password_data[attr_name], orig_password_data[attr_name]))
+        lo.modify(self.dn, modify_list)
