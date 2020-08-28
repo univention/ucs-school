@@ -31,6 +31,7 @@
 
 import os.path
 from collections import Mapping
+from datetime import datetime
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -854,9 +855,14 @@ class ExamStudent(Student):
                 "ucsschoolRole"
             ] = self.ucsschool_roles  # We do that here, since we only modify the udm object
             udm_obj.modify()
+            udm_obj.open()
 
     def _alter_udm_obj(self, udm_obj):
         super(ExamStudent, self)._alter_udm_obj(udm_obj)
+        if udm_obj.oldinfo.get("disabled", "1") == "1":
+            udm_obj["unixhome"] = "{}.{}".format(
+                udm_obj["unixhome"].rsplit(".", 1)[0], datetime.now().strftime("%Y%m%d-%H%M%S")
+            )
         if not self.original_user_udm:
             return
         udm_attribute_denylist = set(ucr.get("ucsschool/exam/user/udm/denylist", "").split(","))
