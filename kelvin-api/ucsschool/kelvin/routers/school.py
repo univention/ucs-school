@@ -29,13 +29,15 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Security
 from ldap.filter import escape_filter_chars
 from starlette.requests import Request
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
 
+from ..constants import OAUTH2_SCOPES
+from ..token_auth import get_current_active_user
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 
 router = APIRouter()
@@ -100,7 +102,13 @@ class SchoolModel(SchoolCreateModel, APIAttributesMixin):
         return cls._dn2name[dn]
 
 
-@router.get("/", response_model=List[SchoolModel])
+@router.get(
+    "/",
+    response_model=List[SchoolModel],
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school"]["read"])])
+    ],
+)
 async def search(
     request: Request,
     name_filter: str = Query(
@@ -132,7 +140,13 @@ async def search(
     ]
 
 
-@router.get("/{school_name}", response_model=SchoolModel)
+@router.get(
+    "/{school_name}",
+    response_model=SchoolModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school"]["read"])])
+    ],
+)
 async def get(
     request: Request,
     school_name: str = Query(

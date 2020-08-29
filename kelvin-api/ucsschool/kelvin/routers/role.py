@@ -29,7 +29,7 @@ from enum import Enum
 from typing import List, Type
 from urllib.parse import ParseResult, urlparse
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Security
 from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
 
@@ -42,8 +42,9 @@ from ucsschool.lib.roles import (
     role_student,
     role_teacher,
 )
-
+from ..constants import OAUTH2_SCOPES
 from ..import_config import init_ucs_school_import_framework
+from ..token_auth import get_current_active_user
 
 router = APIRouter()
 _roles_to_class = {}
@@ -108,7 +109,13 @@ class RoleModel(BaseModel):
     url: HttpUrl
 
 
-@router.get("/", response_model=List[RoleModel])
+@router.get(
+    "/",
+    response_model=List[RoleModel],
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["role"]["read"])])
+    ],
+)
 async def search(request: Request,) -> List[RoleModel]:
     """
     List all available roles.
@@ -123,7 +130,13 @@ async def search(request: Request,) -> List[RoleModel]:
     ]
 
 
-@router.get("/{role_name}", response_model=RoleModel)
+@router.get(
+    "/{role_name}",
+    response_model=RoleModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["role"]["read"])])
+    ],
+)
 async def get(
     request: Request,
     role_name: SchoolUserRole = Query(..., alias="name", title="name",),

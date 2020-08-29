@@ -28,19 +28,19 @@
 # <http://www.gnu.org/licenses/>.
 
 from datetime import datetime, timedelta
+from typing import Dict, List
 
 import aiofiles
 import jwt
 import lazy_object_proxy
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Security, status
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jwt import PyJWTError
-from pydantic import BaseModel
-from starlette.status import HTTP_401_UNAUTHORIZED
+from pydantic import BaseModel, ValidationError
 
 from ucsschool.lib.models.utils import ucr
-
 from .constants import (
+    OAUTH2_SCOPES,
     TOKEN_HASH_ALGORITHM,
     TOKEN_SIGN_SECRET_FILE,
     UCRV_TOKEN_TTL,
@@ -48,7 +48,15 @@ from .constants import (
 )
 from .ldap_access import LDAPAccess, LdapUser
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=URL_TOKEN_BASE)
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=URL_TOKEN_BASE,
+    scopes=dict(
+        (f"{scope.model}:{scope.operation}", scope.description)
+        for op, scopes in OAUTH2_SCOPES.items()
+        for scope in scopes.values()
+    ),
+)
 _secret_key = ""
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 
@@ -60,6 +68,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: str = None
+    scopes: List[str] = []
 
 
 async def get_secret_key() -> str:
@@ -89,11 +98,17 @@ async def create_access_token(*, data: dict, expires_delta: timedelta = None) ->
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> LdapUser:
+async def get_current_user(
+    security_scopes: SecurityScopes, token: str = Depends(oauth2_scheme)
+) -> LdapUser:
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = f"Bearer"
     credentials_exception = HTTPException(
-        status_code=HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"WWW-Authenticate": authenticate_value},
     )
     try:
         payload = jwt.decode(
@@ -102,20 +117,34 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> LdapUser:
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
-    except PyJWTError:
+        token_scopes = payload.get("scopes", [])
+        token_data = TokenData(scopes=token_scopes, username=username)
+    except (PyJWTError, ValidationError):
         raise credentials_exception
     user = await ldap_auth_instance.get_user(
         username=token_data.username, school_only=False
     )
     if user is None:
         raise credentials_exception
+    if set(security_scopes.scopes) - set(token_data.scopes):
+        logger.info(
+            "Scopes required: %r scopes in token: %r",
+            security_scopes.scopes,
+            token_data.scopes,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not enough permissions",
+            headers={"WWW-Authenticate": authenticate_value},
+        )
     return user
 
 
 async def get_current_active_user(
-    current_user: LdapUser = Depends(get_current_user),
+    current_user: LdapUser = Security(get_current_user),
 ) -> LdapUser:
     if current_user.disabled:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user"
+        )
     return current_user

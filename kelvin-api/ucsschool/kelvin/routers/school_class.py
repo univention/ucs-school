@@ -28,7 +28,7 @@
 import logging
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Security, status
 from pydantic import BaseModel, Field, HttpUrl, root_validator, validator
 from starlette.requests import Request
 
@@ -36,6 +36,8 @@ from ucsschool.lib.models.attributes import ValidationError as LibValidationErro
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
+from ..constants import OAUTH2_SCOPES
+from ..token_auth import get_current_active_user
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from .base import (
     APIAttributesMixin,
@@ -148,7 +150,13 @@ class SchoolClassPatchDocument(BaseModel):
         return res
 
 
-@router.get("/", response_model=List[SchoolClassModel])
+@router.get(
+    "/",
+    response_model=List[SchoolClassModel],
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])])
+    ],
+)
 async def search(
     request: Request,
     school: str = Query(
@@ -185,9 +193,15 @@ async def search(
     return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
-@router.get("/{school}/{class_name}", response_model=SchoolClassModel)
+@router.get(
+    "/{school}/{class_name}",
+    response_model=SchoolClassModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])])
+    ],
+)
 async def get(
-    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx)
+    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
     sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     return await SchoolClassModel.from_lib_model(sc, request, udm)
@@ -197,6 +211,9 @@ async def get(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=SchoolClassModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["create"])])
+    ],
 )
 async def create(
     school_class: SchoolClassCreateModel,
@@ -235,6 +252,9 @@ async def create(
     "/{school}/{class_name}",
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["update"])])
+    ],
 )
 async def partial_update(
     class_name: str,
@@ -273,6 +293,9 @@ async def partial_update(
     "/{school}/{class_name}",
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["update"])])
+    ],
 )
 async def complete_update(
     class_name: str,
@@ -319,6 +342,9 @@ async def complete_update(
 @router.delete(
     "/{school}/{class_name}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["delete"])])
+    ],
 )
 async def delete(
     class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx),
