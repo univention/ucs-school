@@ -32,7 +32,7 @@ from functools import lru_cache
 from operator import attrgetter
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Security, status
 from ldap.filter import escape_filter_chars
 from pydantic import HttpUrl, SecretStr, root_validator
 from starlette.requests import Request
@@ -54,8 +54,10 @@ from udm_rest_client import (
 )
 from univention.admin.filter import conjunction, expression
 
+from ..constants import OAUTH2_SCOPES
 from ..exceptions import UnknownUDMProperty
 from ..import_config import get_import_config, init_ucs_school_import_framework
+from ..token_auth import get_current_active_user
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -324,7 +326,13 @@ def search_query_params_to_udm_filter(  # noqa: C901
         return None
 
 
-@router.get("/", response_model=List[UserModel])  # noqa: C901
+@router.get(
+    "/",
+    response_model=List[UserModel],
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["read"])])
+    ],
+)  # noqa: C901
 async def search(
     request: Request,
     school: str = Query(
@@ -443,7 +451,13 @@ async def search(
     return [await UserModel.from_lib_model(user, request, udm) for user in users]
 
 
-@router.get("/{username}", response_model=UserModel)
+@router.get(
+    "/{username}",
+    response_model=UserModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["read"])])
+    ],
+)
 async def get(
     username: str,
     request: Request,
@@ -472,6 +486,9 @@ async def get(
     "/",
     status_code=status.HTTP_201_CREATED,
     response_model=UserModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["create"])])
+    ],
 )
 async def create(
     user: UserCreateModel,
@@ -618,6 +635,9 @@ async def rename_user(
     "/{username}",
     status_code=status.HTTP_200_OK,
     response_model=UserModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["update"])])
+    ],
 )
 async def partial_update(
     username: str,
@@ -690,6 +710,9 @@ async def partial_update(
     "/{username}",
     status_code=status.HTTP_200_OK,
     response_model=UserModel,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["update"])])
+    ],
 )
 async def complete_update(
     username: str,
@@ -772,6 +795,9 @@ async def complete_update(
 @router.delete(
     "/{username}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["user"]["delete"])])
+    ],
 )
 async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) -> None:
     """

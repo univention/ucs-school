@@ -27,9 +27,19 @@
 
 import logging
 from pathlib import Path
+from typing import NamedTuple
 
 import lazy_object_proxy
 import pkg_resources
+
+
+class Oauth2Scope(NamedTuple):
+    model: str
+    operation: str
+    description: str
+
+    def __str__(self):
+        return f"{self.model}:{self.operation}"
 
 
 def _app_version() -> str:
@@ -68,6 +78,70 @@ IMPORT_CONFIG_FILE_USER = Path("/var/lib/ucs-school-import/configs/kelvin.json")
 KELVIN_IMPORTUSER_HOOKS_PATH = Path("/var/lib/ucs-school-import/kelvin-hooks")
 LOG_FILE_PATH = Path("/var/log/univention/ucsschool-kelvin-rest-api/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
+OAUTH2_SCOPES = {
+    "role": {
+        "create": Oauth2Scope(
+            model="role", operation="create", description="Create role objects.",
+        ),
+        "read": Oauth2Scope(
+            model="role", operation="read", description="Read role objects."
+        ),
+        "update": Oauth2Scope(
+            model="role", operation="update", description="Modify role objects.",
+        ),
+        "delete": Oauth2Scope(
+            model="role", operation="delete", description="Delete role objects.",
+        ),
+    },
+    "school": {
+        "create": Oauth2Scope(
+            model="school", operation="create", description="Create school objects.",
+        ),
+        "read": Oauth2Scope(
+            model="school", operation="read", description="Read school objects."
+        ),
+        "update": Oauth2Scope(
+            model="school", operation="update", description="Modify school objects.",
+        ),
+        "delete": Oauth2Scope(
+            model="school", operation="delete", description="Delete school objects.",
+        ),
+    },
+    "school_class": {
+        "create": Oauth2Scope(
+            model="school_class",
+            operation="create",
+            description="Create school class objects.",
+        ),
+        "read": Oauth2Scope(
+            model="school_class", operation="read", description="Read school class objects."
+        ),
+        "update": Oauth2Scope(
+            model="school_class",
+            operation="update",
+            description="Modify school class objects.",
+        ),
+        "delete": Oauth2Scope(
+            model="school_class",
+            operation="delete",
+            description="Delete school class objects.",
+        ),
+    },
+    "user": {
+        "create": Oauth2Scope(
+            model="user", operation="create", description="Create user objects.",
+        ),
+        "read": Oauth2Scope(
+            model="user", operation="read", description="Read user objects."
+        ),
+        "update": Oauth2Scope(
+            model="user", operation="update", description="Modify user objects.",
+        ),
+        "delete": Oauth2Scope(
+            model="user", operation="delete", description="Delete user objects.",
+        ),
+    },
+}
 STATIC_FILES_PATH = Path("/kelvin/kelvin-api/static")
 STATIC_FILE_CHANGELOG = STATIC_FILES_PATH / "changelog.html"
 STATIC_FILE_README = STATIC_FILES_PATH / "readme.html"

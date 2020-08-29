@@ -126,6 +126,7 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     logger: logging.Logger = Depends(get_logger),
 ):
+    logger.info("Scopes requested: %r", form_data.scopes)
     user = await ldap_auth_instance.check_auth_and_get_user(
         form_data.username, form_data.password
     )
@@ -136,7 +137,8 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=get_token_ttl())
     access_token = await create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username, "scopes": form_data.scopes},
+        expires_delta=access_token_expires,
     )
     logger.debug("User %r retrieved access_token.", user.username)
     return {"access_token": access_token, "token_type": "bearer"}
@@ -155,10 +157,7 @@ async def get_readme():
 
 
 app.include_router(
-    school_class.router,
-    prefix=f"{URL_API_PREFIX}/classes",
-    tags=["classes"],
-    dependencies=[Depends(get_current_active_user)],
+    school_class.router, prefix=f"{URL_API_PREFIX}/classes", tags=["classes"],
 )
 # app.include_router(
 #     computer_room.router,
