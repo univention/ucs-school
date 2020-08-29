@@ -32,19 +32,10 @@ from functools import lru_cache
 from operator import attrgetter
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from ldap.filter import escape_filter_chars
 from pydantic import HttpUrl, SecretStr, root_validator
 from starlette.requests import Request
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
-    HTTP_409_CONFLICT,
-    HTTP_422_UNPROCESSABLE_ENTITY,
-)
 
 from ucsschool.importer.configuration import ReadOnlyDict
 from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
@@ -53,7 +44,6 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
-from ucsschool.lib.models.school import School
 from udm_rest_client import (
     UDM,
     APICommunicationError,
@@ -243,7 +233,7 @@ class UserPatchModel(BasePatchModel):
             if key == "schools":
                 if not isinstance(value, list) or value == []:
                     raise HTTPException(
-                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="No or empty list of school URLs in 'schools' property.",
                     )
                 kwargs["schools"] = [
@@ -255,7 +245,7 @@ class UserPatchModel(BasePatchModel):
             elif key == "school":
                 if not value:
                     raise HTTPException(
-                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="No school URL in 'school' property.",
                     )
                 kwargs["school"] = url_to_name(
@@ -266,13 +256,13 @@ class UserPatchModel(BasePatchModel):
             elif key == "disabled":
                 if not isinstance(value, bool):
                     raise HTTPException(
-                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="Non-boolean value in 'disabled' property.",
                     )
             elif key in ("school_classes", "udm_properties"):
                 if not isinstance(value, dict):
                     raise HTTPException(
-                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"Non-object/dict value in {key!r} property.",
                     )
             elif key == "password" and isinstance(value, SecretStr):
@@ -422,7 +412,7 @@ async def search(
         {SchoolUserRole.staff, SchoolUserRole.teacher},
     ):
         raise HTTPException(
-            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Unknown value for 'roles' property: {roles!r}",
         )
     user_class = SchoolUserRole.get_lib_class(roles)
@@ -471,14 +461,18 @@ async def get(
         break
     else:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
     user = await get_import_user(udm, udm_obj.dn)
     return await UserModel.from_lib_model(user, request, udm)
 
 
-@router.post("/", status_code=HTTP_201_CREATED, response_model=UserModel)
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserModel,
+)
 async def create(
     user: UserCreateModel,
     request: Request,
@@ -529,7 +523,9 @@ async def create(
     )
     user = await user.as_lib_model(request)
     if await user.exists(udm):
-        raise HTTPException(status_code=HTTP_409_CONFLICT, detail="School user exists.")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="School user exists."
+        )
 
     try:
         user.prepare_uids()
@@ -538,7 +534,7 @@ async def create(
         user = await user_importer.determine_add_modify_action(user)
         if user.action != "A":
             raise HTTPException(
-                status_code=HTTP_409_CONFLICT,
+                status_code=status.HTTP_409_CONFLICT,
                 detail=f"School user exists (name={user.name!r}, "
                 f"record_uid={user.record_uid!r}, "
                 f"source_uid={user.source_uid!r}).",
@@ -549,14 +545,14 @@ async def create(
     except (CreateError, LibValidationError, UcsSchoolImportError) as exc:
         error_msg = f"Failed to create {user!r}: {exc}"
         logger.exception(error_msg)
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
 
     if res:
         logger.info("Success creating %r.", user)
     else:
         error_msg = f"Error creating {user!r}: {user.errors!r}"
         logger.error(error_msg)
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
 
     return await UserModel.from_lib_model(user, request, udm)
 
@@ -570,7 +566,7 @@ async def change_school(
 ) -> ImportUser:
     if new_school not in (new_schools or user.schools):
         raise HTTPException(
-            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"New 'school' {new_school!r} not in current or future 'schools'.",
         )
     if new_school == user.school:
@@ -586,7 +582,7 @@ async def change_school(
         )
         logger.exception(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg,
         )
     return await get_import_user(udm, user.dn)
 
@@ -605,21 +601,23 @@ async def rename_user(
         error_msg = f"Renaming {user!r} from {old_name!r} to {user.name!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg,
         )
     if not res:
         user.name = old_name
         error_msg = f"Failed to rename {user!r} to {new_name!r}: {user.errors!r}"
         logger.error(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg,
         )
     user = await get_import_user(udm, user.dn)
     return user
 
 
 @router.patch(  # noqa: C901
-    "/{username}", status_code=HTTP_200_OK, response_model=UserModel
+    "/{username}",
+    status_code=status.HTTP_200_OK,
+    response_model=UserModel,
 )
 async def partial_update(
     username: str,
@@ -642,7 +640,7 @@ async def partial_update(
         break
     else:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
     to_change = await user.to_modify_kwargs(request)
@@ -683,12 +681,16 @@ async def partial_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
-@router.put("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
+@router.put(
+    "/{username}",
+    status_code=status.HTTP_200_OK,
+    response_model=UserModel,
+)
 async def complete_update(
     username: str,
     user: UserCreateModel,
@@ -711,7 +713,7 @@ async def complete_update(
         break
     else:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
     user.Config.lib_class = SchoolUserRole.get_lib_class(
@@ -762,12 +764,15 @@ async def complete_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
-@router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{username}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) -> None:
     """
     Delete a school user
@@ -778,7 +783,7 @@ async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) 
         break
     else:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No User with username {username!r} found.",
         )
     user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)

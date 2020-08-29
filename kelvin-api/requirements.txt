@@ -2,7 +2,7 @@ aiofiles
 async-lru
 async-property
 diskcache
-fastapi==0.45.0
+fastapi==0.61.0
 lazy-object-proxy
 ldap3
 psutil
