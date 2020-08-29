@@ -26,7 +26,6 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
-from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Query, Security
@@ -43,9 +42,7 @@ from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 router = APIRouter()
 
 
-@lru_cache(maxsize=1)
-def get_logger() -> logging.Logger:
-    return logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class SchoolCreateModel(LibModelHelperMixin):
@@ -118,7 +115,6 @@ async def search(
         "inexact search. (optional)",
         title="name",
     ),
-    logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
 ) -> List[SchoolModel]:
     """

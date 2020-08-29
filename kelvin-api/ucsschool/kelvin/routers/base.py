@@ -25,9 +25,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import logging
 import re
-from functools import lru_cache
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
@@ -36,26 +34,13 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel, HttpUrl, validator
 from starlette.requests import Request
 
-import psutil
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
 
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
-
 school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
-
-
-@lru_cache(maxsize=1)
-def get_logger() -> logging.Logger:
-    logger = logging.getLogger(__name__)
-    if psutil.Process().terminal():
-        _handler = logging.StreamHandler()
-        _handler.setLevel(logging.DEBUG)
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(_handler)
-    return logger
 
 
 async def get_lib_obj(

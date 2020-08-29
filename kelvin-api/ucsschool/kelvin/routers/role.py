@@ -42,6 +42,7 @@ from ucsschool.lib.roles import (
     role_student,
     role_teacher,
 )
+
 from ..constants import OAUTH2_SCOPES
 from ..import_config import init_ucs_school_import_framework
 from ..token_auth import get_current_active_user

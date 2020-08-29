@@ -64,11 +64,11 @@ from .base import (
     BasePatchModel,
     UcsSchoolBaseModel,
     get_lib_obj,
-    get_logger,
     udm_ctx,
 )
 from .role import SchoolUserRole
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -355,7 +355,6 @@ async def search(
     firstname: str = Query(None),
     lastname: str = Query(None),
     roles: List[SchoolUserRole] = Query(None),
-    logger: logging.Logger = Depends(get_logger),
     accepted_properties: Set[str] = Depends(accepted_udm_properties),
     udm: UDM = Depends(udm_ctx),
 ) -> List[UserModel]:
@@ -459,10 +458,7 @@ async def search(
     ],
 )
 async def get(
-    username: str,
-    request: Request,
-    logger: logging.Logger = Depends(get_logger),
-    udm: UDM = Depends(udm_ctx),
+    username: str, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Fetch a specific school user.
@@ -491,10 +487,7 @@ async def get(
     ],
 )
 async def create(
-    user: UserCreateModel,
-    request: Request,
-    logger: logging.Logger = Depends(get_logger),
-    udm: UDM = Depends(udm_ctx),
+    user: UserCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Create a school user with all the information:
@@ -640,11 +633,7 @@ async def rename_user(
     ],
 )
 async def partial_update(
-    username: str,
-    user: UserPatchModel,
-    request: Request,
-    logger: logging.Logger = Depends(get_logger),
-    udm: UDM = Depends(udm_ctx),
+    username: str, user: UserPatchModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Patch a school user with partial information
@@ -715,11 +704,7 @@ async def partial_update(
     ],
 )
 async def complete_update(
-    username: str,
-    user: UserCreateModel,
-    request: Request,
-    logger: logging.Logger = Depends(get_logger),
-    udm: UDM = Depends(udm_ctx),
+    username: str, user: UserCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
     """
     Update a school user with all the information:
