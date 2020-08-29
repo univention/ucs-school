@@ -39,14 +39,9 @@ from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 from ..constants import OAUTH2_SCOPES
 from ..token_auth import get_current_active_user
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import (
-    APIAttributesMixin,
-    UcsSchoolBaseModel,
-    get_lib_obj,
-    get_logger,
-    udm_ctx,
-)
+from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, udm_ctx
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -219,7 +214,6 @@ async def create(
     school_class: SchoolClassCreateModel,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -262,7 +256,6 @@ async def partial_update(
     school_class: SchoolClassPatchDocument,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
@@ -303,7 +296,6 @@ async def complete_update(
     school_class: SchoolClassCreateModel,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    logger: logging.Logger = Depends(get_logger),
 ) -> SchoolClassModel:
     if school != url_to_name(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)

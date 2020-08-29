@@ -28,10 +28,11 @@
 import logging
 import os
 from datetime import timedelta
-from functools import lru_cache
+from pathlib import Path
 
 import aiofiles
 import lazy_object_proxy
+import psutil
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.requests import Request
@@ -74,11 +75,7 @@ app = FastAPI(
     openapi_url=f"{URL_API_PREFIX}/openapi.json",
     default_response_class=UJSONResponse,
 )
-
-
-@lru_cache(maxsize=1)
-def get_logger() -> logging.Logger:
-    return logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @app.on_event("startup")
@@ -86,6 +83,9 @@ def setup_logging() -> None:
     min_level = env_or_ucr("ucsschool/kelvin/log_level")
     if min_level not in ("DEBUG", "INFO", "WARNING", "ERROR"):
         min_level = logging.ERROR
+    if psutil.Process().terminal():
+        # when running from terminal always print DEBUG messages
+        min_level = logging.DEBUG
     min_level = logging._checkLevel(min_level)
     abs_min_level = min_level
     for name, default_level in DEFAULT_LOG_LEVELS.items():
@@ -93,23 +93,35 @@ def setup_logging() -> None:
         logger.setLevel(min(default_level, min_level))
         abs_min_level = min(min_level, logger.level)
 
-    file_handler = get_file_handler(abs_min_level, str(LOG_FILE_PATH))
+    if LOG_FILE_PATH.parent.exists():
+        # UCS
+        log_path = LOG_FILE_PATH
+    else:
+        # dev machine
+        log_path = Path.cwd() / "log"
+        print(f"*** Logging to '{log_path!s}'. ***")
+    file_handler = get_file_handler(abs_min_level, str(log_path))
     logger = logging.getLogger("uvicorn.access")
     logger.addHandler(file_handler)
     logger = logging.getLogger()
     logger.setLevel(abs_min_level)
     logger.addHandler(file_handler)
 
+    if psutil.Process().terminal():
+        # when running from terminal print log messages to it
+        _handler = logging.StreamHandler()
+        _handler.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(_handler)
+
 
 @app.on_event("startup")
 def log_startup():
-    logger = get_logger()
     logger.info("Application starting up...")
 
 
 @app.on_event("startup")
 def log_environment():
-    logger = get_logger()
     for key in ("ldap/base", "ldap/hostdn", "ldap/master", "ldap/master/port"):
         key_upper = key.replace("/", "_").upper()
         logger.info(
@@ -125,7 +137,6 @@ def configure_import():
 
 @app.on_event("shutdown")
 def log_shutdown():
-    logger = get_logger()
     logger.info("Application shutting down...")
 
 
@@ -146,11 +157,10 @@ async def school_lib_validation_exception_handler(
 
 
 @app.post(URL_TOKEN_BASE, response_model=Token)
-async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    logger: logging.Logger = Depends(get_logger),
-):
-    logger.info("Scopes requested: %r", form_data.scopes)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),):
+    logger.info(
+        "Token request: username=%r scopes=%r", form_data.username, form_data.scopes
+    )
     user = await ldap_auth_instance.check_auth_and_get_user(
         form_data.username, form_data.password
     )
