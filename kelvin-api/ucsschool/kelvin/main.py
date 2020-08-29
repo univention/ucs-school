@@ -26,6 +26,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
+import os
 from datetime import timedelta
 from functools import lru_cache
 
@@ -39,7 +40,7 @@ from starlette.staticfiles import StaticFiles
 
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
-from ucsschool.lib.models.utils import env_or_ucr, get_file_handler
+from ucsschool.lib.models.utils import env_or_ucr, get_file_handler, ucr
 
 from .constants import (
     APP_VERSION,
@@ -101,8 +102,31 @@ def setup_logging() -> None:
 
 
 @app.on_event("startup")
+def log_startup():
+    logger = get_logger()
+    logger.info("Application starting up...")
+
+
+@app.on_event("startup")
+def log_environment():
+    logger = get_logger()
+    for key in ("ldap/base", "ldap/hostdn", "ldap/master", "ldap/master/port"):
+        key_upper = key.replace("/", "_").upper()
+        logger.info(
+            "Environment value for %r: %r", key_upper, os.environ.get(key_upper)
+        )
+        logger.info("UCR value         for %r: %r", key, ucr.get(key))
+
+
+@app.on_event("startup")
 def configure_import():
     get_import_config()
+
+
+@app.on_event("shutdown")
+def log_shutdown():
+    logger = get_logger()
+    logger.info("Application shutting down...")
 
 
 @app.exception_handler(NoObject)
