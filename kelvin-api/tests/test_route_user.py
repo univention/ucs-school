@@ -186,7 +186,7 @@ async def check_password(bind_dn: str, bind_pw: str) -> None:
 
 @pytest.mark.asyncio
 async def test_search_no_filter(
-    auth_header, url_fragment, create_random_users, udm_kwargs
+    auth_header_custom_scope, url_fragment, create_random_users, udm_kwargs
 ):
     users = await create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teacher_and_staff": 2}, disabled=False
@@ -194,6 +194,7 @@ async def test_search_no_filter(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL")
         assert {u.name for u in users}.issubset(u.name for u in lib_users)
+        auth_header = auth_header_custom_scope(resources=["user"], operations=["read"])
         response = requests.get(
             f"{url_fragment}/users",
             headers=auth_header,
@@ -230,7 +231,7 @@ async def test_search_no_filter(
     ),
 )
 async def test_search_filter(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     udm_kwargs,
@@ -284,6 +285,7 @@ async def test_search_filter(
             params = [(filter_param, pv) for pv in param_value]
         else:
             params = {filter_param: param_value}
+        auth_header = auth_header_custom_scope(resources=["user"], operations=["read"])
         response = requests.get(
             f"{url_fragment}/users", headers=auth_header, params=params,
         )
@@ -304,7 +306,7 @@ async def test_search_filter(
     "filter_param", MAPPED_UDM_PROPERTIES,
 )
 async def test_search_filter_udm_properties(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     import_config,
@@ -345,6 +347,7 @@ async def test_search_filter_udm_properties(
                 == create_kwargs["udm_properties"][filter_param]
             )
         params = {filter_param: filter_value}
+        auth_header = auth_header_custom_scope(resources=["user"], operations=["read"])
         response = requests.get(
             f"{url_fragment}/users", headers=auth_header, params=params,
         )
@@ -370,7 +373,7 @@ async def test_search_filter_udm_properties(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_get(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     random_name,
@@ -392,6 +395,7 @@ async def test_get(
         lib_users = await ImportUser.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
+        auth_header = auth_header_custom_scope(resources=["user"], operations=["read"])
         response = requests.get(
             f"{url_fragment}/users/{user.name}", headers=auth_header
         )
@@ -411,11 +415,16 @@ async def test_get(
 
 @pytest.mark.asyncio
 async def test_get_empty_udm_properties_are_returned(
-    auth_header, url_fragment, create_random_users, import_config, udm_kwargs,
+    auth_header_custom_scope,
+    url_fragment,
+    create_random_users,
+    import_config,
+    udm_kwargs,
 ):
     role: Role = random.choice(USER_ROLES)
     create_kwargs = {"udm_properties": {}}
     user = (await create_random_users({role.name: 1}, **create_kwargs))[0]
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["read"])
     response = requests.get(f"{url_fragment}/users/{user.name}", headers=auth_header)
     assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
@@ -426,7 +435,7 @@ async def test_get_empty_udm_properties_are_returned(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_create(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_user_data,
     random_name,
@@ -452,6 +461,7 @@ async def test_create(
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
     schedule_delete_user(r_user.name)
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["create"])
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -482,7 +492,7 @@ async def test_create(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_create_without_username(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_user_data,
     random_name,
@@ -508,6 +518,7 @@ async def test_create_without_username(
     assert len(lib_users) == 0
     schedule_delete_user(expected_name)
     print(f"POST data={data!r}")
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["create"])
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -532,7 +543,7 @@ async def test_create_without_username(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("no_school_s", ("school", "schools"))
 async def test_create_minimal_attrs(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_user_data,
     random_name,
@@ -569,6 +580,7 @@ async def test_create_minimal_attrs(
     assert len(lib_users) == 0
     schedule_delete_user(expected_name)
     print(f"POST data={data!r}")
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["create"])
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -589,7 +601,7 @@ async def test_create_minimal_attrs(
 @pytest.mark.parametrize("role", [random.choice(USER_ROLES)], ids=role_id)
 @pytest.mark.parametrize("no_school_s", ("school", "schools"))
 async def test_create_requires_school_or_schools(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_user_data,
     random_name,
@@ -618,6 +630,7 @@ async def test_create_requires_school_or_schools(
     assert len(lib_users) == 0
     schedule_delete_user(expected_name)
     print(f"POST data={data!r}")
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["create"])
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -633,7 +646,7 @@ async def test_create_requires_school_or_schools(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_put(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     create_random_user_data,
@@ -660,6 +673,7 @@ async def test_put(
     modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
     modified_user.password = modified_user.password.get_secret_value()
     print(f"PUT modified_user={modified_user.dict()!r}.")
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["update"])
     response = requests.put(
         f"{url_fragment}/users/{user.name}",
         headers=auth_header,
@@ -686,7 +700,7 @@ async def test_put(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("null_value", ("birthday", "email"))
 async def test_patch(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     create_random_user_data,
@@ -719,6 +733,7 @@ async def test_patch(
     new_user_data[null_value] = None
     new_user_data["password"] = fake.password(length=20)
     print(f"PATCH new_user_data={new_user_data!r}.")
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["update"])
     response = requests.patch(
         f"{url_fragment}/users/{user.name}", headers=auth_header, json=new_user_data,
     )
@@ -742,13 +757,14 @@ async def test_patch(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_delete(
-    auth_header, url_fragment, create_random_users, udm_kwargs, role: Role
+    auth_header_custom_scope, url_fragment, create_random_users, udm_kwargs, role: Role
 ):
     r_user = (await create_random_users({role.name: 1}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 1
     assert isinstance(lib_users[0], role.klass)
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["delete"])
     response = requests.delete(
         f"{url_fragment}/users/{r_user.name}", headers=auth_header,
     )
@@ -758,7 +774,8 @@ async def test_delete(
     assert len(lib_users) == 0
 
 
-def test_delete_non_existent(auth_header, url_fragment, random_name):
+def test_delete_non_existent(auth_header_custom_scope, url_fragment, random_name):
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["delete"])
     response = requests.delete(
         f"{url_fragment}/users/{random_name}", headers=auth_header,
     )
@@ -769,7 +786,7 @@ def test_delete_non_existent(auth_header, url_fragment, random_name):
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("method", ("patch", "put"))
 async def test_rename(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     create_random_user_data,
@@ -780,6 +797,7 @@ async def test_rename(
     method: str,
     schedule_delete_user,
 ):
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["update"])
     if method == "patch":
         user = (await create_random_users({role.name: 1}))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
@@ -821,7 +839,7 @@ async def test_rename(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("method", ("patch", "put"))
 async def test_school_change(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     create_random_schools,
@@ -857,6 +875,9 @@ async def test_school_change(
         _url: SplitResult = urlsplit(url)
         new_school_url = HttpUrl(
             url, path=_url.path, scheme=_url.scheme, host=_url.netloc
+        )
+        auth_header = auth_header_custom_scope(
+            resources=["user"], operations=["update"]
         )
         if method == "patch":
             patch_data = dict(school=new_school_url, schools=[new_school_url])
@@ -911,7 +932,7 @@ async def test_school_change(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("http_method", ("patch", "put"))
 async def test_change_disable(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     random_name,
@@ -932,6 +953,7 @@ async def test_change_disable(
     await check_password(lib_users[0].dn, password)
 
     user.disabled = True
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["update"])
     if http_method == "patch":
         response = requests.patch(
             f"{url_fragment}/users/{user.name}",
@@ -965,7 +987,7 @@ async def test_change_disable(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 @pytest.mark.parametrize("http_method", ("patch", "put"))
 async def test_change_password(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     create_random_users,
     random_name,
@@ -984,6 +1006,7 @@ async def test_change_password(
     print("OK: can login with old password")
     user.password = fake.password(length=20)
     assert user.password != old_password
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["update"])
     if http_method == "patch":
         response = requests.patch(
             f"{url_fragment}/users/{user.name}",

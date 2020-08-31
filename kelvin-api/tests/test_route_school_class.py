@@ -33,6 +33,7 @@ from faker import Faker
 from ldap.filter import filter_format
 
 import ucsschool.kelvin.constants
+from ucsschool.kelvin.constants import OAUTH2_SCOPES
 from ucsschool.kelvin.routers.school_class import SchoolClassModel
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
@@ -126,7 +127,9 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):
 
 
 @pytest.mark.asyncio
-async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
+async def test_search(
+    auth_header_custom_scope, url_fragment, udm_kwargs, new_school_class
+):
     sc1_dn, sc1_attr = await new_school_class()
     sc2_dn, sc2_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
@@ -135,6 +138,9 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
         )
     assert sc1_dn in [c.dn for c in lib_classes]
     assert sc2_dn in [c.dn for c in lib_classes]
+    auth_header = auth_header_custom_scope(
+        resources=["school_class"], operations=["read"]
+    )
     response = requests.get(
         f"{url_fragment}/classes", headers=auth_header, params={"school": "DEMOSCHOOL"},
     )
@@ -153,7 +159,9 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
 
 
 @pytest.mark.asyncio
-async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
+async def test_get(
+    auth_header_custom_scope, url_fragment, udm_kwargs, new_school_class
+):
     sc1_dn, sc1_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         lib_obj: SchoolClass = await SchoolClass.from_dn(
@@ -161,6 +169,9 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
         )
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
+    auth_header = auth_header_custom_scope(
+        resources=["school_class"], operations=["read"]
+    )
     response = requests.get(url, headers=auth_header,)
     json_resp = response.json()
     assert response.status_code == 200
@@ -170,7 +181,9 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
 
 
 @pytest.mark.asyncio
-async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_obj):
+async def test_create(
+    auth_header_custom_scope, url_fragment, udm_kwargs, new_school_class_obj
+):
     lib_obj: SchoolClass = new_school_class_obj()
     attrs = {
         "name": lib_obj.name[len(lib_obj.school) + 1 :],  # noqa: E203
@@ -180,6 +193,9 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
     }
     async with UDM(**udm_kwargs) as udm:
         assert await lib_obj.exists(udm) is False
+        auth_header = auth_header_custom_scope(
+            resources=["school_class"], operations=["create"]
+        )
         response = requests.post(
             f"{url_fragment}/classes/",
             headers={"Content-Type": "application/json", **auth_header},
@@ -279,8 +295,15 @@ async def change_operation(
 
 @pytest.mark.asyncio
 async def test_put(
-    auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
+    auth_header_custom_scope,
+    url_fragment,
+    udm_kwargs,
+    new_school_class,
+    create_random_users,
 ):
+    auth_header = auth_header_custom_scope(
+        resources=["school_class"], operations=["update"]
+    )
     await change_operation(
         auth_header,
         url_fragment,
@@ -293,8 +316,15 @@ async def test_put(
 
 @pytest.mark.asyncio
 async def test_patch(
-    auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
+    auth_header_custom_scope,
+    url_fragment,
+    udm_kwargs,
+    new_school_class,
+    create_random_users,
 ):
+    auth_header = auth_header_custom_scope(
+        resources=["school_class"], operations=["update"]
+    )
     await change_operation(
         auth_header,
         url_fragment,
@@ -306,7 +336,9 @@ async def test_patch(
 
 
 @pytest.mark.asyncio
-async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
+async def test_delete(
+    auth_header_custom_scope, url_fragment, udm_kwargs, new_school_class
+):
     sc1_dn, sc1_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         lib_obj: SchoolClass = await SchoolClass.from_dn(
@@ -315,6 +347,9 @@ async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
         assert await lib_obj.exists(udm) is True
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
+    auth_header = auth_header_custom_scope(
+        resources=["school_class"], operations=["delete"]
+    )
     response = requests.delete(url, headers=auth_header,)
     assert response.status_code == 204
     async with UDM(**udm_kwargs) as udm:

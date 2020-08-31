@@ -48,6 +48,7 @@ import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
+from ucsschool.kelvin.constants import OAUTH2_SCOPES
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
 from udm_rest_client import UDM, NoObject
@@ -151,17 +152,50 @@ def url_fragment():
 
 
 @pytest.fixture(scope="session")
-def auth_header(url_fragment):
+def auth_header_custom():
+    def _func(url: str, headers: Dict[str, str], data: Dict[str, str]):
+        response = requests.post(url, headers=headers, data=data,)
+        assert response.status_code == 200, f"{response.__dict__!r}"
+        response_json = response.json()
+        auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
+        return auth_header
+
+    return _func
+
+
+@pytest.fixture(scope="session")
+def auth_header(auth_header_custom, url_fragment):
     url = url_fragment.replace("v1", "token")
-    response = requests.post(
-        url,
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-        data=dict(username="Administrator", password="univention"),
-    )
-    assert response.status_code == 200, f"{response.__dict__!r}"
-    response_json = response.json()
-    auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
-    return auth_header
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    scopes = [
+        f"{scope.resource}:{scope.operation}"
+        for op, scopes in OAUTH2_SCOPES.items()
+        for scope in scopes.values()
+    ]
+    data = dict(username="Administrator", password="univention", scope=" ".join(scopes))
+    return auth_header_custom(url=url, headers=headers, data=data)
+
+
+@pytest.fixture(scope="session")
+def auth_header_custom_scope(auth_header_custom, url_fragment):
+    def _func(resources: List[str], operations: List[str]):
+        url = url_fragment.replace("v1", "token")
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        scopes = []
+        for resource in resources:
+            scopes.extend(
+                [
+                    f"{sc.resource}:{sc.operation}"
+                    for op, sc in OAUTH2_SCOPES[resource].items()
+                    if op in operations
+                ]
+            )
+        data = dict(
+            username="Administrator", password="univention", scope=" ".join(scopes)
+        )
+        return auth_header_custom(url=url, headers=headers, data=data)
+
+    return _func
 
 
 @pytest.fixture
