@@ -70,7 +70,7 @@ async def test_schoolclass_module(name):
 
 @must_run_in_container
 @pytest.mark.asyncio
-async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
+async def test_check_class_name(auth_header_custom_scope, url_fragment, udm_kwargs):
     school_name = "DEMOSCHOOL"
     attrs = {
         "school": school_name,
@@ -97,6 +97,9 @@ async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
             except CreateError:
                 # obj already exists, that's ok.
                 pass
+        auth_header = auth_header_custom_scope(
+            resources=["school_class"], operations=["read"]
+        )
         response = requests.get(
             f"{url_fragment}/classes/",
             headers={"Content-Type": "application/json", **auth_header},

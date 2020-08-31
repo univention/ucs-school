@@ -228,7 +228,7 @@ def bday_id(bday: datetime.date) -> str:
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_format_pyhook(
-    auth_header,
+    auth_header_custom_scope,
     url_fragment,
     udm_kwargs,
     create_random_user_data,
@@ -257,6 +257,7 @@ async def test_format_pyhook(
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
     schedule_delete_user(r_user.name)
+    auth_header = auth_header_custom_scope(resources=["user"], operations=["create"])
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
