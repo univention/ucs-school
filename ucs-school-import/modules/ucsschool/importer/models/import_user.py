@@ -1546,7 +1546,7 @@ class ImportUser(User):
         return super(ImportUser, self).get_school_class_objs()
 
     @classmethod
-    def attribute_udm_names(cls):
+    def attribute_udm_names(cls):  # type: () -> Dict[str, str]
         if not cls._attribute_udm_names:
             cls._attribute_udm_names = dict(
                 (attr.udm_name, name) for name, attr in cls._attributes.items() if attr.udm_name
