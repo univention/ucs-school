@@ -32,9 +32,11 @@ Diverse helper functions.
 """
 
 import logging
+import os.path
 import pprint
 import sys
-from typing import List
+from pathlib import Path
+from typing import Any, Dict, List
 
 from six import reraise as raise_
 
@@ -49,7 +51,11 @@ from ucsschool.importer.frontend.user_import_cmdline import (
     UserImportCommandLine as _UserImportCommandLine,
 )
 
-from .constants import IMPORT_CONFIG_FILE_DEFAULT, IMPORT_CONFIG_FILE_USER
+from .constants import (
+    IMPORT_CONFIG_FILE_DEFAULT,
+    IMPORT_CONFIG_FILE_USER,
+    KELVIN_IMPORTUSER_HOOKS_PATH,
+)
 
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
@@ -84,6 +90,10 @@ def init_ucs_school_import_framework(**config_kwargs) -> ReadOnlyDict:
     _config_args.update(config_kwargs)
     _ui = KelvinUserImportCommandLine()
     _config_files = _ui.configuration_files
+
+    # Detect and setup developer env. Changes _config_files and _config_args!
+    setup_dev_configs(_config_files, _config_args)
+
     try:
         config = _setup_configuration(_config_files, **_config_args)
         if "mapped_udm_properties" not in config.get("configuration_checks", []):
@@ -125,3 +135,79 @@ def get_import_config() -> ReadOnlyDict:
         return Configuration()
     else:
         return init_ucs_school_import_framework()
+
+
+def setup_dev_configs(config_files: List[str], config_args: Dict[str, Any]) -> None:
+    """
+    Detect and setup developer environment
+
+    * only works if CWD is in git repo .../ucsschool[features/kelvin]/kelvin-api
+    * changes config_files and config_args !
+    """
+    if Path("/usr/share/ucs-school-import").exists():
+        return
+    local_share_path = Path.cwd().absolute().parent / "ucs-school-import"
+    if not local_share_path.exists():
+        logger.warning(
+            "*** Directory 'ucs-school-import' not found below CWD. Cannot setup dev env."
+        )
+        return
+
+    import ucsschool.importer.utils.configuration_checks  # isort:skip
+
+    local_var_path = Path.cwd().absolute() / "dev"
+    Path(local_var_path).mkdir(exist_ok=True, parents=True)
+    logger.warning(
+        "*** Using '%s' instead of '/usr/share/ucs-school-import'.", local_share_path,
+    )
+    logger.warning(
+        "*** Using '%s' as root of paths below '/var/' etc.", local_var_path,
+    )
+    # Kelvin hooks
+    local_kelvin_hooks_path = local_var_path / str(KELVIN_IMPORTUSER_HOOKS_PATH).lstrip(
+        "/"
+    )
+    logger.warning(
+        "*** Setting config 'hooks_dir_pyhook' to '%s'.", local_kelvin_hooks_path,
+    )
+    Path(local_kelvin_hooks_path).mkdir(exist_ok=True, parents=True)
+    config_args["hooks_dir_pyhook"] = local_kelvin_hooks_path
+    # Kelvin config checks
+    local_config_checks_dir = local_var_path / str(
+        ucsschool.importer.utils.configuration_checks.CONFIG_CHECKS_CODE_DIR
+    ).lstrip("/")
+    logger.warning(
+        "*** Setting config checks code dir to '%s'.", local_config_checks_dir
+    )
+    Path(local_config_checks_dir).mkdir(exist_ok=True, parents=True)
+    ucsschool.importer.utils.configuration_checks.CONFIG_CHECKS_CODE_DIR = (
+        local_config_checks_dir
+    )
+    # Import configuration paths
+    new_paths = []
+    for path_s in config_files:
+        if path_s.endswith("kelvin_defaults.json"):
+            local_kelvin_path = str(Path.cwd().absolute())
+            new_path = os.path.join(local_kelvin_path, path_s.lstrip("/"))
+            logger.warning("*** %r -> %r", path_s, new_path)
+            new_paths.append(new_path)
+        elif path_s.startswith("/usr/share/ucs-school-import"):
+            new_path = os.path.join(local_share_path, path_s.lstrip("/"))
+            logger.warning("*** %r -> %r", path_s, new_path)
+            new_paths.append(new_path)
+        elif path_s.startswith("/var/lib/ucs-school-import/configs"):
+            conf_dir = local_var_path / "var/lib/ucs-school-import/configs"
+            conf_dir.mkdir(exist_ok=True, parents=True)
+            new_path = conf_dir / Path(path_s).name
+            logger.warning("*** %r -> '%s'", path_s, new_path)
+            if not new_path.exists():
+                new_path.write_text("{}")
+                logger.warning("*** Created new config file '%s'.", new_path)
+            new_paths.append(str(new_path))
+        else:
+            logger.warning("*** Keeping unknown path %r.", path_s)
+            new_paths.append(path_s)
+    logger.warning("*** OLD config files: %r", config_files)
+    config_files.clear()
+    config_files.extend(new_paths)
+    logger.warning("*** NEW config files: %r", config_files)

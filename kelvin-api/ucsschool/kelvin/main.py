@@ -27,8 +27,8 @@
 
 import logging
 import os
+import sys
 from datetime import timedelta
-from pathlib import Path
 
 import aiofiles
 import lazy_object_proxy
@@ -41,7 +41,13 @@ from starlette.staticfiles import StaticFiles
 
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
-from ucsschool.lib.models.utils import env_or_ucr, get_file_handler, ucr
+from ucsschool.lib.models.utils import (
+    env_or_ucr,
+    get_file_handler,
+    try_current_path,
+    try_dev_path,
+    ucr,
+)
 
 from .constants import (
     APP_VERSION,
@@ -93,14 +99,7 @@ def setup_logging() -> None:
         logger.setLevel(min(default_level, min_level))
         abs_min_level = min(min_level, logger.level)
 
-    if LOG_FILE_PATH.parent.exists():
-        # UCS
-        log_path = LOG_FILE_PATH
-    else:
-        # dev machine
-        log_path = Path.cwd() / "log"
-        print(f"*** Logging to '{log_path!s}'. ***")
-    file_handler = get_file_handler(abs_min_level, str(log_path))
+    file_handler = get_file_handler(abs_min_level, str(try_dev_path(LOG_FILE_PATH)))
     logger = logging.getLogger("uvicorn.access")
     logger.addHandler(file_handler)
     logger = logging.getLogger()
@@ -128,6 +127,12 @@ def log_environment():
             "Environment value for %r: %r", key_upper, os.environ.get(key_upper)
         )
         logger.info("UCR value         for %r: %r", key, ucr.get(key))
+    logger.info(
+        "Environment value for %r: %r",
+        "DOCKER_HOST_NAME",
+        os.environ.get("DOCKER_HOST_NAME"),
+    )
+    logger.info("Command line: %r", sys.argv)
 
 
 @app.on_event("startup")
@@ -169,12 +174,18 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
         )
-    access_token_expires = timedelta(minutes=get_token_ttl())
+    ttl = get_token_ttl()
+    access_token_expires = timedelta(minutes=ttl)
     access_token = await create_access_token(
         data={"sub": user.username, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    logger.debug("User %r retrieved access_token.", user.username)
+    logger.info(
+        "User %r retrieved access_token for %r minutes with scopes=%r.",
+        user.username,
+        ttl,
+        form_data.scopes,
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -237,6 +248,6 @@ app.include_router(
 )
 app.mount(
     f"{URL_API_PREFIX}/static",
-    StaticFiles(directory=str(STATIC_FILES_PATH)),
+    StaticFiles(directory=str(try_current_path(STATIC_FILES_PATH))),
     name="static",
 )

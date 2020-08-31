@@ -149,7 +149,9 @@ class SchoolClassPatchDocument(BaseModel):
     "/",
     response_model=List[SchoolClassModel],
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])])
+        Security(
+            get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])]
+        )
     ],
 )
 async def search(
@@ -192,7 +194,9 @@ async def search(
     "/{school}/{class_name}",
     response_model=SchoolClassModel,
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])])
+        Security(
+            get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["read"])]
+        )
     ],
 )
 async def get(
@@ -207,13 +211,14 @@ async def get(
     status_code=status.HTTP_201_CREATED,
     response_model=SchoolClassModel,
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["create"])])
+        Security(
+            get_current_active_user,
+            scopes=[str(OAUTH2_SCOPES["school_class"]["create"])],
+        )
     ],
 )
 async def create(
-    school_class: SchoolClassCreateModel,
-    request: Request,
-    udm: UDM = Depends(udm_ctx),
+    school_class: SchoolClassCreateModel, request: Request, udm: UDM = Depends(udm_ctx),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -247,7 +252,10 @@ async def create(
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["update"])])
+        Security(
+            get_current_active_user,
+            scopes=[str(OAUTH2_SCOPES["school_class"]["update"])],
+        )
     ],
 )
 async def partial_update(
@@ -287,7 +295,10 @@ async def partial_update(
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["update"])])
+        Security(
+            get_current_active_user,
+            scopes=[str(OAUTH2_SCOPES["school_class"]["update"])],
+        )
     ],
 )
 async def complete_update(
@@ -335,7 +346,10 @@ async def complete_update(
     "/{school}/{class_name}",
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[
-        Security(get_current_active_user, scopes=[str(OAUTH2_SCOPES["school_class"]["delete"])])
+        Security(
+            get_current_active_user,
+            scopes=[str(OAUTH2_SCOPES["school_class"]["delete"])],
+        )
     ],
 )
 async def delete(

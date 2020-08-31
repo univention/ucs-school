@@ -32,7 +32,6 @@ import random
 import shutil
 import subprocess
 import time
-from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
 from typing import Any, Callable, Dict, List, Tuple
@@ -51,8 +50,8 @@ from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.constants import OAUTH2_SCOPES
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import UserCreateModel
+from ucsschool.lib.models.utils import env_or_ucr, get_dev_path, try_dev_path
 from udm_rest_client import UDM, NoObject
-from univention.config_registry import ConfigRegistry
 
 # handle RuntimeError: Directory '/kelvin/kelvin-api/static' does not exist
 with patch("ucsschool.kelvin.constants.STATIC_FILES_PATH", "/tmp"):
@@ -63,14 +62,28 @@ APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
-IMPORT_CONFIG = {
-    "active": Path("/var/lib/ucs-school-import/configs/user_import.json"),
-    "bak": Path(
-        "/var/lib/ucs-school-import/configs/user_import.json.bak.{}".format(
-            datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        )
-    ),
-}
+_active_import_config_path = Path("/var/lib/ucs-school-import/configs/user_import.json")
+_bak_import_config_pathPath = Path(
+    f"/var/lib/ucs-school-import/configs/user_import.json.bak.{datetime.datetime.now():%Y-%m-%d_%H:%M}"
+)
+if _active_import_config_path.exists():
+    IMPORT_CONFIG = {
+        "active": _active_import_config_path,
+        "bak": _bak_import_config_pathPath,
+    }
+else:
+    new_active_import_config_path = get_dev_path(_active_import_config_path)
+    new_active_import_config_path.parent.mkdir(exist_ok=True, parents=True)
+    print(
+        f"*** '{_active_import_config_path!s}' -> '{new_active_import_config_path!s}'"
+    )
+    if not new_active_import_config_path.exists():
+        new_active_import_config_path.write_text("{}")
+        print(f"*** Created new file '{new_active_import_config_path!s}'.")
+    IMPORT_CONFIG = {
+        "active": new_active_import_config_path,
+        "bak": get_dev_path(_bak_import_config_pathPath),
+    }
 MAPPED_UDM_PROPERTIES = (
     "title",
     "description",
@@ -82,21 +95,6 @@ MAPPED_UDM_PROPERTIES = (
 )  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
 
 fake = Faker()
-
-
-@lru_cache(maxsize=1)
-def ucr() -> ConfigRegistry:
-    ucr = ConfigRegistry()
-    ucr.load()
-    return ucr
-
-
-@lru_cache(maxsize=32)
-def env_or_ucr(key: str) -> str:
-    try:
-        return os.environ[key.replace("/", "_").upper()]
-    except KeyError:
-        return ucr()[key]
 
 
 @pytest.fixture(scope="session")
@@ -135,7 +133,7 @@ class UserFactory(factory.Factory):
 
 @pytest.fixture(scope="session")
 def udm_kwargs() -> Dict[str, Any]:
-    with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
+    with open(try_dev_path(CN_ADMIN_PASSWORD_FILE), "r") as fp:
         cn_admin_password = fp.read().strip()
     host = env_or_ucr("ldap/master")
     return {
@@ -462,7 +460,15 @@ async def create_random_schools(udm_kwargs):
 
 def restart_kelvin_api_server() -> None:
     print("Restarting Kelvin API server...")
-    subprocess.call(["/etc/init.d/ucsschool-kelvin-rest-api", "restart"])
+    init_script = Path("/etc/init.d/ucsschool-kelvin-rest-api")
+    kelvin_python_module = Path.cwd() / "ucsschool/kelvin/urls.py"
+    if init_script.exists():
+        subprocess.call([str(init_script), "restart"])
+    elif kelvin_python_module.exists():
+        # if uvicorn was started with '--reload', it will restart itself now
+        kelvin_python_module.touch()
+    else:
+        raise RuntimeError("Don't know how to restart server.")
     while True:
         time.sleep(0.5)
         response = requests.get(
@@ -486,7 +492,7 @@ def restart_kelvin_api_server_session():
 @pytest.fixture(scope="session")  # noqa: C901
 def add_to_import_config(restart_kelvin_api_server_session):
     def _func(**kwargs) -> None:
-        if not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists():
+        if not try_dev_path(ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE).exists():
             # not in Docker container
             return
         if IMPORT_CONFIG["active"].exists():

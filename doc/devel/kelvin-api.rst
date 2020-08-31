@@ -118,9 +118,9 @@ Auto-reload of API server during development
 
 The API server can be configured to reload itself, whenever a referenced Python module is changed::
 
-    $ univention-app shell ucsschool-kelvin-rest-api
-    $ export DEV=1
-    $ /etc/init.d/ucsschool-kelvin-rest-api restart
+	$ univention-app shell ucsschool-kelvin-rest-api
+	$ export DEV=1
+	$ /etc/init.d/ucsschool-kelvin-rest-api restart
 
 Installation on developer PC
 ----------------------------
@@ -133,39 +133,63 @@ Install the kelvin-api package::
 	$ cd $UCSSCHOOL-GIT/kelvin-api
 	$ make install
 
-Create directory for log file::
-
-	$ sudo mkdir -p /var/log/univention/ucs-school-kelvin/
-	$ sudo chown $USER /var/log/univention/ucs-school-kelvin/
-
-Make sure UCR is setup::
-
-	$ for ucrv in ldap/base ldap/server/name ldap/hostdn ldap/server/port; do grep $ucrv /etc/univention/base.conf || echo "Error: missing $ucrv" || break; done
-
-Create admin group on the UCS@school host::
-
-	$ udm groups/group create --ignore_exists \
-		--position "cn=groups,$(ucr get ldap/base)" \
-		--set name="ucsschool-kelvin-rest-api-admins" \
-		--set description="Users that are allowed to connect to the UCS@school Kelvin REST API." \
-		--append "users=uid=Administrator,cn=users,$(ucr get ldap/base)"
-
-Create secret key file for token signing::
-
-	$ sudo mkdir -p /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/
-	$ sudo chown $USER /var/lib/univention-appcenter/apps/ucs-school-kelvin-api/conf/
-	$ openssl rand -hex 32 > /var/lib/univention-appcenter/apps/ucsschool-kelvin/conf/tokens.secret
-
 Running it on developer PC
 --------------------------
 
-No Apache configuration yet, for now just start the ASGI server directly::
+The ASGI server can be started directly. For the API to actually work a few environment variables need to be setup and a few files are required to be copied from a working app installation.
 
-	$ uvicorn ucsschool.kelvin.main:app --reload
+First get the root path of the Kelvin container and a few environment values::
 
-Then open http://127.0.0.1:8000/kelvin/api/v1/docs in your browser.
+	$ ssh <UCS-HOST>
+	$ docker inspect --format='{{.GraphDriver.Data.MergedDir}}' "$(ucr get appcenter/apps/ucsschool-kelvin-rest-api/container)"
+	# -> /var/lib/docker/overlay/41d1f8...3a520efa8/merged
+	$ univention-app shell ucsschool-kelvin-rest-api ash -c "set | grep LDAP_"
+	# -> LDAP_BASE='dc=uni,dc=dtr'
+	# -> LDAP_HOSTDN='cn=ucssc-67054494,cn=memberserver,cn=computers,dc=uni,dc=dtr'
+	# -> LDAP_MASTER='m150.uni.dtr'
+	# ...
 
-...
+Then create and fill the ``dev`` directory with file required by the Kelvin API server::
+
+	$ cd $UCSSCHOOL-GIT/kelvin-api
+	$ mkdir -p \
+		dev/etc/univention \
+		dev/usr/local/share/ca-certificates \
+		dev/usr/share/ucs-school-import/checks \
+		dev/var/lib/ucs-school-import/configs \
+		dev/var/lib/ucs-school-import/kelvin-hooks \
+		dev/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf \
+		dev/var/log/univention/ucsschool-kelvin-rest-api
+	$ scp <UCS-HOST>:/var/lib/docker/overlay/41d...fa8/merged/etc/machine.secret dev/etc/
+	$ scp <UCS-HOST>:/etc/univention/base*.conf dev/etc/univention
+	$ scp <UCS-HOST>:/usr/local/share/ca-certificates/ucsCA.crt dev/usr/local/share/ca-certificates/ucs.crt
+	$ scp <UCS-HOST>:/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf/*.secret dev/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf/
+
+Now the Kelvin API can be started... Almost: Until Bug #51154 has not been fixed, a few environment variables are required. ::
+
+	$ export LDAP_BASE=dc=uni,dc=dtr
+	$ export LDAP_MASTER=m150.uni.dtr
+	$ export LDAP_HOSTDN=cn=ucssc-67054494,cn=memberserver,cn=computers,dc=uni,dc=dtr
+
+The Kelvin API can now be started like this::
+
+	$ uvicorn --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app
+
+To have it reload automatically in case a Python module of the Kelvin API was changed, run instead::
+
+	$ uvicorn --host 0.0.0.0 --port 8911 --reload ucsschool.kelvin.main:app
+
+If you want it to reload also if a Python module in another directory was changed, run::
+
+	$ uvicorn --host 0.0.0.0 --port 8911 --reload --reload-dir ../ucs-school-lib/ --reload-dir ../ucs-school-import/ --reload-dir ucsschool/kelvin/ ucsschool.kelvin.main:app
+
+The OpenAPI frontend can be found at: http://127.0.0.1:8911/kelvin/api/v1/docs
+
+When the Kelvin API is running locally, the tests require the address::
+
+	$ export DOCKER_HOST_NAME=127.0.0.1:8911
+	$ python -m pytest -l -v tests/
+
 
 TODOs
 -----

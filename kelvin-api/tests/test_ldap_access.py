@@ -74,7 +74,9 @@ async def test_udm_kwargs_fake(temp_file_func, random_name):
     assert udm_kwargs["password"] == txt1
     host = ucsschool.lib.models.utils.env_or_ucr("ldap/master")
     assert udm_kwargs["url"] == f"https://{host}/univention/udm/"
-    assert udm_kwargs["ssl_ca_cert"] == ucsschool.kelvin.constants.UCS_SSL_CA_CERT
+    assert udm_kwargs["ssl_ca_cert"] == ucsschool.lib.models.utils.try_dev_path(
+        ucsschool.kelvin.constants.UCS_SSL_CA_CERT
+    )
 
 
 @must_run_in_container
