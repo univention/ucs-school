@@ -55,7 +55,7 @@ from .constants import (
 )
 from .import_config import get_import_config
 from .ldap_access import LDAPAccess
-from .routers import role, school, school_class, user
+from .routers import exam_user, role, school, school_class, user
 from .token_auth import (
     Token,
     create_access_token,
@@ -205,6 +205,12 @@ app.include_router(
 #     tags=["computers"],
 #     dependencies=[Depends(get_current_active_user)],
 # )
+app.include_router(
+    exam_user.router,
+    prefix=f"{URL_API_PREFIX}/exam_users",
+    tags=["exam_users"],
+    dependencies=[Depends(get_current_active_user)],
+)
 app.include_router(
     role.router,
     prefix=f"{URL_API_PREFIX}/roles",
