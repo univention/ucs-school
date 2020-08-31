@@ -174,12 +174,18 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
         )
-    access_token_expires = timedelta(minutes=get_token_ttl())
+    ttl = get_token_ttl()
+    access_token_expires = timedelta(minutes=ttl)
     access_token = await create_access_token(
         data={"sub": user.username, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    logger.debug("User %r retrieved access_token.", user.username)
+    logger.info(
+        "User %r retrieved access_token for %r minutes with scopes=%r.",
+        user.username,
+        ttl,
+        form_data.scopes,
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
