@@ -48,11 +48,10 @@ from .constants import (
 )
 from .ldap_access import LDAPAccess, LdapUser
 
-
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=URL_TOKEN_BASE,
     scopes=dict(
-        (f"{scope.model}:{scope.operation}", scope.description)
+        (f"{scope.resource}:{scope.operation}", scope.description)
         for op, scopes in OAUTH2_SCOPES.items()
         for scope in scopes.values()
     ),
