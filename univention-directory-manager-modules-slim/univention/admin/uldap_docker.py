@@ -47,6 +47,8 @@ try:
 	from typing import Any, Dict, List, Optional, Set, Tuple, Union  # noqa
 except ImportError:
 	pass
+from ucsschool.lib.models.utils import try_dev_path
+
 
 logger = logging.getLogger(__name__)
 basestring = unicode = str
@@ -55,6 +57,7 @@ APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
+
 
 def parentDn(dn, base=''):
 	# type: (str, str) -> Optional[str]
@@ -97,7 +100,7 @@ def getAdminConnection(start_tls=2, decode_ignorelist=[], reconnect=True):
 	:return: A LDAP access object.
 	:rtype: univention.uldap.access
 	"""
-	bindpw = open(CN_ADMIN_PASSWORD_FILE).read().rstrip('\n')
+	bindpw = open(try_dev_path(CN_ADMIN_PASSWORD_FILE)).read().rstrip('\n')
 	port = int(environ.get('LDAP_MASTER_PORT', '7389'))
 	return access(host=environ['LDAP_MASTER'], port=port, base=environ['LDAP_BASE'], binddn='cn=admin,' + environ['LDAP_BASE'], bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 
@@ -117,7 +120,7 @@ def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, se
 	:rtype: univention.uldap.access
 	"""
 
-	bindpw = open(secret_file).read().rstrip('\n')
+	bindpw = open(try_dev_path(secret_file)).read().rstrip('\n')
 
 	if ldap_master:
 		# Connect to DC Master

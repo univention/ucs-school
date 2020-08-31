@@ -68,9 +68,17 @@ def _load_logging_config():  # type: () -> Dict[str, Dict[str, str]]
 
 
 def _ucr():  # type: () -> ConfigRegistry
-	ucr = ConfigRegistry()
-	ucr.load()
-	return ucr
+	ucr_base_path = Path("/etc/univention")
+	if not (ucr_base_path / "base.conf").exists():
+		# dev machine
+		logger = logging.getLogger(__name__)
+		base_dir = try_dev_path(ucr_base_path)
+		base_dir.mkdir(exist_ok=True, parents=True)
+		logger.warning("*** Using custom UCR base directory '%s'.", base_dir)
+		ConfigRegistry.PREFIX = str(base_dir)
+	ucr_ = ConfigRegistry()
+	ucr_.load()
+	return ucr_
 
 
 def env_or_ucr(key: str) -> str:
@@ -494,3 +502,42 @@ def udm_rest_client_cn_admin_kwargs():  # type: () -> Dict[str, str]
 				"ssl_ca_cert": UCS_SSL_CA_CERT,
 			}
 	return _udm_kwargs
+
+
+def get_dev_path(path: Union[str, Path], dev_path: Path = None) -> Union[str, Path]:
+	"""Return `path` below `$CWD/dev` (or `dev_path`)."""
+	dev_dir = dev_path or Path.cwd().absolute() / "dev"
+	new_path = dev_dir / str(path).lstrip("/")
+	return str(new_path) if isinstance(path, str) else new_path
+
+
+def try_dev_path(path: Union[str, Path], dev_path: Path = None) -> Union[str, Path]:
+	"""
+	If the dir/file `path` exists in `$CWD/dev/$path`, return that, else the
+	original `path`.
+
+	:param Path path: dir/file to look for
+	:param Path dev_path: use this instead of `$CWD/dev`
+	"""
+	dev_path = get_dev_path(path, dev_path)
+	if os.path.exists(str(dev_path)):
+		return str(dev_path) if isinstance(path, str) else dev_path
+	else:
+		return path
+
+
+def try_current_path(path: Union[str, Path]) -> Union[str, Path]:
+	"""
+	If the dir/file `path` exists _directly_ in `$CWD`, return that, else the
+	original `path`.
+
+	:param Path path: dir/file to look for
+	"""
+	if isinstance(path, str):
+		basename = os.path.basename(path)
+	else:
+		basename = path.name
+	if (local_path := Path.cwd() / basename).exists():
+		return str(local_path) if isinstance(path, str) else local_path
+	else:
+		return path

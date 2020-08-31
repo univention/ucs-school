@@ -28,7 +28,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import List
 
 import aiofiles
 import jwt
@@ -38,7 +38,8 @@ from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jwt import PyJWTError
 from pydantic import BaseModel, ValidationError
 
-from ucsschool.lib.models.utils import ucr
+from ucsschool.lib.models.utils import try_dev_path, ucr
+
 from .constants import (
     OAUTH2_SCOPES,
     TOKEN_HASH_ALGORITHM,
@@ -74,7 +75,7 @@ async def get_secret_key() -> str:
     global _secret_key
 
     if not _secret_key:
-        async with aiofiles.open(TOKEN_SIGN_SECRET_FILE, "r") as fp:
+        async with aiofiles.open(try_dev_path(TOKEN_SIGN_SECRET_FILE), "r") as fp:
             key = await fp.read()
         _secret_key = key.strip()
     return _secret_key
