@@ -27,19 +27,19 @@
 
 import logging
 from pathlib import Path
-from typing import NamedTuple
+from typing import Dict, NamedTuple
 
 import lazy_object_proxy
 import pkg_resources
 
 
 class Oauth2Scope(NamedTuple):
-    model: str
+    resource: str
     operation: str
     description: str
 
     def __str__(self):
-        return f"{self.model}:{self.operation}"
+        return f"{self.resource}:{self.operation}"
 
 
 def _app_version() -> str:
@@ -78,67 +78,83 @@ IMPORT_CONFIG_FILE_USER = Path("/var/lib/ucs-school-import/configs/kelvin.json")
 KELVIN_IMPORTUSER_HOOKS_PATH = Path("/var/lib/ucs-school-import/kelvin-hooks")
 LOG_FILE_PATH = Path("/var/log/univention/ucsschool-kelvin-rest-api/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
-OAUTH2_SCOPES = {
-    "role": {
+OAUTH2_SCOPES: Dict[str, Dict[str, Oauth2Scope]] = {
+    "exam_user": {
         "create": Oauth2Scope(
-            model="role", operation="create", description="Create role objects.",
+            resource="user", operation="create", description="Create user objects.",
         ),
         "read": Oauth2Scope(
-            model="role", operation="read", description="Read role objects."
+            resource="user", operation="read", description="Read user objects."
         ),
         "update": Oauth2Scope(
-            model="role", operation="update", description="Modify role objects.",
+            resource="user", operation="update", description="Modify user objects.",
         ),
         "delete": Oauth2Scope(
-            model="role", operation="delete", description="Delete role objects.",
+            resource="user", operation="delete", description="Delete user objects.",
+        ),
+    },
+    "role": {
+        "create": Oauth2Scope(
+            resource="role", operation="create", description="Create role objects.",
+        ),
+        "read": Oauth2Scope(
+            resource="role", operation="read", description="Read role objects."
+        ),
+        "update": Oauth2Scope(
+            resource="role", operation="update", description="Modify role objects.",
+        ),
+        "delete": Oauth2Scope(
+            resource="role", operation="delete", description="Delete role objects.",
         ),
     },
     "school": {
         "create": Oauth2Scope(
-            model="school", operation="create", description="Create school objects.",
+            resource="school", operation="create", description="Create school objects.",
         ),
         "read": Oauth2Scope(
-            model="school", operation="read", description="Read school objects."
+            resource="school", operation="read", description="Read school objects."
         ),
         "update": Oauth2Scope(
-            model="school", operation="update", description="Modify school objects.",
+            resource="school", operation="update", description="Modify school objects.",
         ),
         "delete": Oauth2Scope(
-            model="school", operation="delete", description="Delete school objects.",
+            resource="school", operation="delete", description="Delete school objects.",
         ),
     },
     "school_class": {
         "create": Oauth2Scope(
-            model="school_class",
+            resource="school_class",
             operation="create",
             description="Create school class objects.",
         ),
         "read": Oauth2Scope(
-            model="school_class", operation="read", description="Read school class objects."
+            resource="school_class",
+            operation="read",
+            description="Read school class objects.",
         ),
         "update": Oauth2Scope(
-            model="school_class",
+            resource="school_class",
             operation="update",
             description="Modify school class objects.",
         ),
         "delete": Oauth2Scope(
-            model="school_class",
+            resource="school_class",
             operation="delete",
             description="Delete school class objects.",
         ),
     },
     "user": {
         "create": Oauth2Scope(
-            model="user", operation="create", description="Create user objects.",
+            resource="user", operation="create", description="Create user objects.",
         ),
         "read": Oauth2Scope(
-            model="user", operation="read", description="Read user objects."
+            resource="user", operation="read", description="Read user objects."
         ),
         "update": Oauth2Scope(
-            model="user", operation="update", description="Modify user objects.",
+            resource="user", operation="update", description="Modify user objects.",
         ),
         "delete": Oauth2Scope(
-            model="user", operation="delete", description="Delete user objects.",
+            resource="user", operation="delete", description="Delete user objects.",
         ),
     },
 }
