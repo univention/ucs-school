@@ -68,6 +68,15 @@ class SetNTACLsMixin(object):
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
         return []
 
+    def get_ou_admin_full_control(self, lo):  # type: (LoType) -> List[str]
+        search_base = self.get_search_base(self.school)
+        admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(self.school, search_base.schoolDN)
+        try:
+            samba_sid = lo.get(admin_dn)["sambaSID"][0]
+        except (IndexError, KeyError):
+            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(samba_sid))
+        return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
+
     def get_aces_deny_students_change_permissions(self, lo):  # type: (LoType) -> List[str]
         """
         Get the schueler-ou sid to deny all students the
@@ -113,6 +122,7 @@ class SetNTACLsMixin(object):
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
     def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
@@ -127,6 +137,7 @@ class SetNTACLsMixin(object):
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(domain_users_dn))
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
     def get_aces_class_group(self, lo):  # type: (LoType) -> List[str]
@@ -146,6 +157,7 @@ class SetNTACLsMixin(object):
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
     def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
