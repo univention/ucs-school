@@ -196,7 +196,7 @@ class UserImport(object):
                             user.validate(
                                 self.connection, validate_unlikely_changes=True, check_username=True
                             )
-                            if self.errors:
+                            if user.errors:
                                 raise ValidationError(user.errors.copy())
                             user.call_hooks("pre", "create")
                             self.logger.info("Dry-run: skipping user.create() for %s.", user)
@@ -211,7 +211,7 @@ class UserImport(object):
                             user.validate(
                                 self.connection, validate_unlikely_changes=True, check_username=False
                             )
-                            if self.errors:
+                            if user.errors:
                                 raise ValidationError(user.errors.copy())
                             user.call_hooks("pre", "modify")
                             self.logger.info("Dry-run: skipping user.modify() for %s.", user)
@@ -229,6 +229,8 @@ class UserImport(object):
                             action_str.lower(), user, user.source_uid, user.record_uid, exc
                         ),
                         validation_error=exc,
+                        entry_count=user.entry_count,
+                        input=user.input_data,
                         import_user=user,
                     ), sys.exc_info()[2]
 
@@ -514,12 +516,15 @@ class UserImport(object):
         if self.dry_run:
             user.check_schools(lo=self.connection, additional_schools=[imported_user.school])
             user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
-            if self.errors:
+            if user.errors:
                 raise UserValidationError(
                     "ValidationError when moving {} from {!r} to {!r}.".format(
                         user, user.school, imported_user.school
                     ),
                     validation_error=ValidationError(user.errors.copy()),
+                    entry_count=imported_user.entry_count,
+                    input=imported_user.input_data,
+                    import_user=imported_user,
                 )
             user.call_hooks("pre", "move")
             self.logger.info(
@@ -590,10 +595,13 @@ class UserImport(object):
                 "Dry-run: not expiring, deactivating or setting the purge timestamp for %s.", user
             )
             user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
-            if self.errors:
+            if user.errors:
                 raise UserValidationError(
                     "ValidationError when deleting {}.".format(user),
                     validation_error=ValidationError(user.errors.copy()),
+                    entry_count=user.entry_count,
+                    input=user.input_data,
+                    import_user=user,
                 )
             success = True
             user.call_hooks("post", "remove")
