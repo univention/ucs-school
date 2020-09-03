@@ -69,8 +69,9 @@ class SetNTACLsMixin(object):
         return []
 
     def get_ou_admin_full_control(self, lo):  # type: (LoType) -> List[str]
-        search_base = self.get_search_base(self.school)
-        admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(self.school, search_base.schoolDN)
+        admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(
+            self.school.lower(), ucr.get("ldap/base")
+        )
         try:
             samba_sid = lo.get(admin_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -89,10 +90,8 @@ class SetNTACLsMixin(object):
         D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
         RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
         WD/ WRITE_DAC ~ write security permissions
-        To make sure, puplis can edit folders&files in subfolders, they need to inherit edit 0x001301bf.
-        At this point, everyone is allowed to do everything WD -> 0x001f01ff. This is needed
-        to allow teachers and ou-admins file access and the permissions to change the permissions etc.
-        We need to replace this by the groups to make this more secure.
+        To make sure, puplis can edit folders&files in subfolders, they need to inherit edit
+        or full control, since they are denied first.
         For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
         """
         search_base = self.get_search_base(self.school)
@@ -106,6 +105,11 @@ class SetNTACLsMixin(object):
         return ["(D;OICI;WOWD;;;{})".format(samba_sid)]
 
     def get_aces_work_group(self, lo):
+        """
+            ACE: deny schueler to change permissions & take ownership
+            ACE: allow workgroup-members to read/write/modify
+            ACE: allow ou-admins full control
+        """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
             group_dn = self.school_group.dn
@@ -127,7 +131,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
         """
-        TODO: explain ACE
+            ACE: deny schueler to change permissions & take ownership
+            ACE: allow Domain Users to read/write/modify
+            ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
@@ -141,6 +147,11 @@ class SetNTACLsMixin(object):
         return res
 
     def get_aces_class_group(self, lo):  # type: (LoType) -> List[str]
+        """
+            ACE: deny schueler to change permissions & take ownership
+            ACE: allow class-members to read/write/modify
+            ACE: allow ou-admins full control
+        """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
             group_dn = self.school_group.dn
@@ -150,7 +161,6 @@ class SetNTACLsMixin(object):
             path = os.path.join(path, self.name)
             group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
-            # todo please double check: are assigned teachers in cn=schueler,cn=schueler?
             group_dn = "cn={},cn=klassen,cn=schueler,{}".format(group_name, search_base.groups)
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
@@ -161,8 +171,6 @@ class SetNTACLsMixin(object):
         return res
 
     def set_nt_acls(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-        # Deny change of permission for folder, subfolder and files.
-        # and take ownership by students.
         try:
             udm_obj["appendACL"] = self.get_nt_acls(lo)
         except NoSID as exc:
@@ -171,6 +179,7 @@ class SetNTACLsMixin(object):
         udm_obj["sambaInheritOwner"] = "1"
         udm_obj["sambaInheritPermissions"] = "1"
 
+    # comment for qa: i moved this one level down (two for marketplace share)
     # def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
     #     self.set_nt_acls(udm_obj, lo)
     #     return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
@@ -368,7 +377,7 @@ class ClassShare(RoleSupportMixin, GroupShare):
 
 
 class MarketplaceShare(RoleSupportMixin, GroupShare):
-    # todo check: required=False
+    # todo qa check: required=False
     school_group = MarketplaceAttribute(_("Marketplace"), required=False, internal=True)
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
@@ -412,7 +421,6 @@ class MarketplaceShare(RoleSupportMixin, GroupShare):
         self.create_defaults.pop("sambaForceGroup", None)
         self.create_defaults.pop("sambaCreateMode", None)
         self.create_defaults.pop("sambaDirectoryMode", None)
-        # todo remove
         self.set_nt_acls(udm_obj, lo)
         return super(MarketplaceShare, self).do_create(udm_obj, lo)
 
