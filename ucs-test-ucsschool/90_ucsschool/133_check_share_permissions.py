@@ -113,8 +113,8 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
 
         work_group_share = "//{}/{}".format(ucr_hostname, workgroup_shares[0].name)
         work_group_folder = uts.random_string()
-        new_work_group_share_folder = "{} {}".format(work_group_share, work_group_folder)
-        new_work_group_folder = os.path.join(workgroup_path, work_group_folder)
+        new_workgroup_share_folder = "{} {}".format(work_group_share, work_group_folder)
+        new_workgroup_folder = os.path.join(workgroup_path, work_group_folder)
 
         marketplace_share = "//{}/Marktplatz".format(ucr_hostname)
         marketplace_folder = uts.random_string()
@@ -131,11 +131,11 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=workgroup_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=marketplace_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_klasse_folder)
-            check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_work_group_folder)
+            check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_workgroup_folder)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_marketplace_folder_path)
 
         cases = [(student_name, False), (teacher_name, True), (admin_name, True)]
         for user_name, allowed in cases:
             change_smbcacls_acls(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
-            change_smbcacls_acls(file=new_work_group_share_folder, user_name=user_name, allowed=allowed)
+            change_smbcacls_acls(file=new_workgroup_share_folder, user_name=user_name, allowed=allowed)
             change_smbcacls_acls(file=marketplace_share_folder, user_name=user_name, allowed=allowed)
