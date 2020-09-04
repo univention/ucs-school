@@ -222,8 +222,8 @@ def run_import_pyhooks(hook_cls, func_name, *args, **kwargs):
     :rtype: list
     """
     func = None
-    if "filter_func" in kwargs:
-        func = kwargs.pop("filter_func")
+    if "supports_dry_run" in kwargs:
+        func = kwargs.pop("supports_dry_run")
 
     get_import_pyhooks(hook_cls, func)
     return __import_pyhook_loader_instance.call_hooks(hook_cls, func_name, *args, **kwargs)
