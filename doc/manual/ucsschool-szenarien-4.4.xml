@@ -855,23 +855,22 @@ feedback@univention.de
 								<systemitem	class="domainname">ucsrz01.example.org</systemitem> zu erreichen.
 							</para>
 						</listitem>
+						<listitem>
+							<para>
+								In UCS@school werden im mindestens im Falle der Schulserver auch Samba Active Directory Domaincontroller betrieben.
+								Aus Gründen der Abwärtskompatibilität wird dabei auch immer ein NetBIOS- bzw. Legacy-Domain-Name erstellt. Im Falle von
+								<systemitem	class="domainname">example.org</systemitem> als DNS-Domänenname würde automatisch 
+								<systemitem class="domainname">EXAMPLE</systemitem> als NetBIOS-Domänenname gewählt. Der NetBIOS-Domänenname
+								ist auf 15 Zeichen begrenzt. Dies kann zu Situationen führen, in denen der NetBIOS-Domänenname ungünstig abgeschnitten wird.
+								Wählt man bspw. <systemitem	class="domainname">schulen-musterstadt.de</systemitem> als DNS-Domänenname, würde der automatisch
+								abgeleitete NetBIOS-Domänenname <systemitem	class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist bspw. beim Anmeldebildschirm
+								an Windows-Clients der Domäne zu sehen.
+								Möchte man nun lieber <systemitem	class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen, so ist auf dem &ucsUAS;-Server vor der Installation von &ucsUAS; der
+								gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> in der &ucsUCR;-Variablen <envar>windows/domain</envar> zu setzen. Dies kann auch über eine
+								&ucsUCR;-Richtlinie umgesetzt werden (vgl. <xref linkend="base-configuration_globale-ucr" />).
+							</para>
+						</listitem>
 					</itemizedlist>
-				</para>
-				<para>
-					Es besteht die Möglichkeit den Namen der Samba-/Active
-					Directory-Domäne unabhängig von dem eigentlichen
-					Domänennamen zu definieren. Dies ermöglicht es, dass
-					Benutzer eine andere Domäne bei Anmeldung an Windows
-					Rechnern verwenden können. Soll zum Beispiel statt <systemitem
-						class="domainname">EXAMLPE\benutzername</systemitem> nun
-					<systemitem
-						class="domainname">SCHULTRÄGER\benutzername</systemitem>
-					angezeigt werden, ist auf dem
-					&ucsUAS;-Server vor der Installation von &ucsUAS; der
-					gewünschte <systemitem
-						class="domainname">NetBIOS-Domänenname</systemitem> in
-					der &ucsUCR;-Variablen <envar>windows/domain</envar> zu
-					setzen.
 				</para>
 			</section>
 			<section id="concepts_names_servers">
