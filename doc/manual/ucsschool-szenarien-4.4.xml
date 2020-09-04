@@ -1763,7 +1763,7 @@ feedback@univention.de
 					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
-							Namen für den Schulserver auf dem &ucsMaster; entsprechend der Beschreibung in <xref linkend="import_schools" /> angelegt wurde.
+							Namen für den Schulserver sowie die Netzwerke auf dem &ucsMaster; entsprechend der Beschreibung in <xref linkend="import_schools" /> angelegt bzw. importiert wurden.
 							</para></listitem>
 					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
