@@ -54,6 +54,10 @@ class NoSID(Exception):
     pass
 
 
+class NoSchoolGroup(Exception):
+    pass
+
+
 class SetNTACLsMixin(object):
     """
     Mixin for setting NTACLs of UCS@school Share (sub)classes. For example to
@@ -109,8 +113,7 @@ class SetNTACLsMixin(object):
         if self.school_group:
             group_dn = self.school_group.dn
         else:
-            search_base = self.get_search_base(self.school)
-            group_dn = "cn={},cn=schueler,{}".format(self.name, search_base.groups)
+            raise NoSchoolGroup("No schoolgroup set.")
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -146,8 +149,7 @@ class SetNTACLsMixin(object):
         if self.school_group:
             group_dn = self.school_group.dn
         else:
-            search_base = self.get_search_base(self.school)
-            group_dn = "cn={},cn=klassen,cn=schueler,{}".format(self.school, search_base.groups)
+            raise NoSchoolGroup("No schoolgroup set.")
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):

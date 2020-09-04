@@ -12,15 +12,14 @@ import re
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
+from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd
-from univention.testing.ucsschool.klasse import Klasse
-from univention.testing.ucsschool.workgroup import Workgroup
 
 
 def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str, bool) -> bool
     rv, stdout, stderr = exec_cmd(
-        ["samba-tool", "ntacl", "get", "--as-sddl", path], log=True, raise_exc=True
+        ["samba-tool", "ntacl", "get", "--as-sddl", path], log=False, raise_exc=True
     )
     if stderr and allowed:
         utils.fail("Error during samba-tool execution {}".format(stderr))
@@ -56,7 +55,7 @@ def check_create_folder(share, username, dir_name):  # type: (str, str, str) -> 
         this is to make sure the folder is usable.
     """
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}'".format(username, share, dir_name)
-    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)
+    rv, stdout, stderr = exec_cmd(cmd, log=False, raise_exc=True, shell=True)
     if stderr:
         utils.fail("Failed to create folder inside of share.")
     return dir_name
@@ -83,28 +82,30 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
             school, classes=klasse_name, is_teacher=False, is_staff=False
         )
         admin_name, admin_group_dn = schoolenv.create_school_admin(school)
-        klasse = Klasse(school=school, name=klasse_name)
-        klasse.create()
-        workgroup = Workgroup(school=school, members=[teacher_dn, student_dn])
-        workgroup.create()
+        klasse = SchoolClass(school=school, name=klasse_name)
+        klasse.create(schoolenv.lo)
+        workgroup_name = "{}-{}".format(school, uts.random_string())
+        workgroup = WorkGroup(school=school, users=[teacher_dn, student_dn], name=workgroup_name)
+        workgroup.create(schoolenv.lo)
 
         utils.wait_for_listener_replication()
         klasse_share = ClassShare.from_school_class(klasse)
         klasse_path = klasse_share.get_share_path()
-
+        assert os.path.isdir(klasse_path)
         workgroup_share = WorkGroupShare.from_school_group(workgroup)
         workgroup_path = workgroup_share.get_share_path()
-        workgroup_path = "/home/{0}/groups/{0}-{1}".format(school, workgroup_share.name)
+        assert os.path.isdir(workgroup_path)
         marketplace_shares = MarketplaceShare.get_all(schoolenv.lo, school=school)
         assert len(marketplace_shares) == 1
         marketplace_path = marketplace_shares[0].get_share_path()
+        assert os.path.isdir(marketplace_path)
 
         klasse_share = "//{}/{}".format(ucr_hostname, klasse_share.name)
         klasse_folder = uts.random_string()
         new_klasse_share_folder = "{} {}".format(klasse_share, klasse_folder)
         new_klasse_folder = os.path.join(klasse_path, klasse_folder)
 
-        work_group_share = "//{}/{}-{}".format(ucr_hostname, school, workgroup_share.name)
+        work_group_share = "//{}/{}".format(ucr_hostname, workgroup_share.name)
         work_group_folder = uts.random_string()
         new_workgroup_share_folder = "{} {}".format(work_group_share, work_group_folder)
         new_workgroup_folder = os.path.join(workgroup_path, work_group_folder)
@@ -120,7 +121,6 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
 
         cases = [(schueler_group_sid, False), (lehrer_group_sid, True), (admin_group_sid, True)]
         for sid, allowed in cases:
-
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=klasse_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=workgroup_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=marketplace_path)
