@@ -857,7 +857,7 @@ feedback@univention.de
 						</listitem>
 						<listitem>
 							<para>
-								In UCS@school werden im mindestens im Falle der Schulserver auch Samba Active Directory Domaincontroller betrieben.
+								In UCS@school werden mindestens im Falle der Schulserver auch Samba Active Directory Domaincontroller betrieben.
 								Aus Gründen der Abwärtskompatibilität wird dabei auch immer ein NetBIOS- bzw. Legacy-Domain-Name erstellt. Im Falle von
 								<systemitem	class="domainname">example.org</systemitem> als DNS-Domänenname würde automatisch 
 								<systemitem class="domainname">EXAMPLE</systemitem> als NetBIOS-Domänenname gewählt. Der NetBIOS-Domänenname
@@ -1549,26 +1549,14 @@ feedback@univention.de
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als Externer DNS-Server bzw. DNS-Forwarder
 							ist die IP-Adresse des DNS-Servers des
-							Internetproviders einzutragen.
+							Internetproviders oder des Rechenzentrum-Betreibers einzutragen.
 					</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
 							&ucsMaster; zu installieren: <option>Erstellen einer
 								neuen &ucsUCS;-Domäne</option></para></listitem>
 					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
 					eine LDAP-Basis vorgeschlagen. Diese sollte entsprechend des Namenskonzeptes
-					geändert werden.</para></listitem>
-					<listitem>
-						<para><emphasis>für Szenario <link
-									linkend="scenario-3">3</link> und <link
-									linkend="scenario-4">4</link></emphasis></para>
-						<para>
-							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
-							verwalten zu können, ist die Software-Komponente <package>Active Directory kompatibler
-							Domänen-Controller</package> bei der Installation auszuwählen. Sollen in der &ucsUAS;-Domäne
-							mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
-							um Möglichkeiten zur Performanceoptimierung zu besprechen.
-						</para>
-					</listitem>
+					angepasst werden.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1584,6 +1572,20 @@ feedback@univention.de
 							zu starten und die Option &quot;Multi-Server
 							Umgebung&quot; zu wählen und der Assistent bis zum
 							Ende auszuführen.</para></listitem>
+					<listitem>
+						<para><emphasis>für Szenario <link
+									linkend="scenario-3">3</link> und <link
+									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
+							verwalten zu können, muss zudem über das Univention App Center die App 
+							<package>Active Directory kompatibler Domänen-Controller</package> installiert werden.
+							Soll der NetBIOS-Domänenname nicht automatisch erzeugt werden, ist dieser vor der Installation
+							explizit zu konfigurieren (vgl. <xref linkend="concepts_names_domain" />).
+							Sollen in der &ucsUAS;-Domäne mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
+							um Möglichkeiten zur Performanceoptimierung zu besprechen.
+						</para>
+					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
