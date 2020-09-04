@@ -39,17 +39,12 @@ from univention.lib.misc import custom_groupname
 from univention.udm import UDM
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
-from .attributes import MarketplaceAttribute, Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
+from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
 try:
-    from typing import Any, Optional
-except ImportError:
-    pass
-
-try:
-    from typing import List
+    from typing import Any, Optional, List
     from .base import LoType, UdmObject
 except ImportError:
     pass
@@ -114,13 +109,8 @@ class SetNTACLsMixin(object):
         if self.school_group:
             group_dn = self.school_group.dn
         else:
-            path = self.get_share_path()
-            # todo please double check! if this is true we can also use self.name
-            # wasn't this supposed to be different from schoolclasses?
-            path = os.path.join(path, self.name)
-            group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
-            group_dn = "cn={},cn=schueler,{}".format(group_name, search_base.groups)
+            group_dn = "cn={},cn=schueler,{}".format(self.name, search_base.groups)
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -156,12 +146,8 @@ class SetNTACLsMixin(object):
         if self.school_group:
             group_dn = self.school_group.dn
         else:
-            path = self.get_share_path()
-            # todo please double check!
-            path = os.path.join(path, self.name)
-            group_name = os.path.split(os.path.dirname(path))[-1]
             search_base = self.get_search_base(self.school)
-            group_dn = "cn={},cn=klassen,cn=schueler,{}".format(group_name, search_base.groups)
+            group_dn = "cn={},cn=klassen,cn=schueler,{}".format(self.school, search_base.groups)
         try:
             samba_sid = lo.get(group_dn)["sambaSID"][0]
         except (IndexError, KeyError):
@@ -178,11 +164,6 @@ class SetNTACLsMixin(object):
             return
         udm_obj["sambaInheritOwner"] = "1"
         udm_obj["sambaInheritPermissions"] = "1"
-
-    # comment for qa: i moved this one level down (two for marketplace share)
-    # def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-    #     self.set_nt_acls(udm_obj, lo)
-    #     return super(SetNTACLsMixin, self).do_create(udm_obj, lo)
 
 
 class Share(UCSSchoolHelperAbstractClass):
@@ -306,7 +287,7 @@ class GroupShare(Share, SetNTACLsMixin):
         return self.school_group.get_udm_object(lo)["gidNumber"]
 
     def get_share_path(self, school=None):
-        school = school or self.school or self.school_group.school
+        school = school or self.school_group.school
         return super(GroupShare, self).get_share_path(school)
 
     def do_create(self, udm_obj, lo):
@@ -376,9 +357,7 @@ class ClassShare(RoleSupportMixin, GroupShare):
         return self.get_aces_class_group(lo)
 
 
-class MarketplaceShare(RoleSupportMixin, GroupShare):
-    # todo qa check: required=False
-    school_group = MarketplaceAttribute(_("Marketplace"), required=False, internal=True)
+class MarketplaceShare(RoleSupportMixin, Share, SetNTACLsMixin):
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False

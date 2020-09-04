@@ -31,6 +31,7 @@
 import logging
 
 import univention.admin.uldap
+from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import get_stream_handler
@@ -52,9 +53,14 @@ def main():
         logger.info(
             "%02d / %02d: Checking shares of school %r...", school_num, len(schools), school.name
         )
-
-        class_shares = sorted(ClassShare.get_all(lo, school=school.name), key=lambda x: x.name)
-        work_group_shares = sorted(WorkGroupShare.get_all(lo, school=school.name), key=lambda x: x.name)
+        school_classes = SchoolClass.get_all(lo, school=school.name)
+        class_shares = sorted(
+            [ClassShare.from_school_class(c) for c in school_classes], key=lambda x: x.name
+        )
+        work_groups = WorkGroup.get_all(lo, school=school.name)
+        work_group_shares = sorted(
+            [WorkGroupShare.from_school_class(w) for w in work_groups], key=lambda x: x.name
+        )
         all_shares = [("class share", share) for share in class_shares] + [
             ("work group share", share) for share in work_group_shares
         ]

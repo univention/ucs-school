@@ -248,10 +248,6 @@ class WorkgroupAttribute(Attribute):
     pass
 
 
-class MarketplaceAttribute(Attribute):
-    pass
-
-
 class Description(Attribute):
     udm_name = "description"
 
