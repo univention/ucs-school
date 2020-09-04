@@ -40,14 +40,13 @@ from ucsschool.lib.models.utils import stopped_notifier
 from ..configuration import Configuration
 from ..exceptions import UcsSchoolImportError, UcsSchoolImportFatalError
 from ..factory import Factory
-from ..utils.import_pyhook import run_import_pyhooks
+from ..utils.import_pyhook import ImportPyHook, pyhook_supports_dry_run, run_import_pyhooks
 from ..utils.pre_read_pyhook import PreReadPyHook
 from ..utils.result_pyhook import ResultPyHook
 from ..utils.utils import nullcontext
 
 try:
     from typing import Any, Optional, Type, TypeVar
-    from ..utils.import_pyhook import ImportPyHook
 
     ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
 except ImportError:
@@ -113,9 +112,10 @@ class MassImport(object):
         self.logger.info("------ Importing users... ------")
         user_import = self.factory.make_user_importer(self.dry_run)
         exc = None
+        filter_func = pyhook_supports_dry_run if self.dry_run else None
         try:
             user_import.progress_report(description="Running pre-read hooks: 0%.", percentage=0)
-            run_import_pyhooks(PreReadPyHook, "pre_read")
+            run_import_pyhooks(PreReadPyHook, "pre_read", filter_func=filter_func)
             user_import.progress_report(description="Analyzing data: 1%.", percentage=1)
             imported_users = user_import.read_input()
             users_to_delete = user_import.detect_users_to_delete()
@@ -140,7 +140,7 @@ class MassImport(object):
             self.logger.info("------ Writing user import summary to %s... ------", uis)
             self.result_exporter.dump(user_import, uis)
         result_data = user_import.get_result_data()
-        run_import_pyhooks(ResultPyHook, "user_result", result_data)
+        run_import_pyhooks(ResultPyHook, "user_result", result_data, filter_func=filter_func)
         self.logger.info("------ Importing users done. ------")
         if exc:
             raise exc

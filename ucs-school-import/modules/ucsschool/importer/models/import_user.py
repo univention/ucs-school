@@ -78,7 +78,7 @@ from ..exceptions import (
 )
 from ..factory import Factory
 from ..utils.format_pyhook import FormatPyHook
-from ..utils.import_pyhook import get_import_pyhooks
+from ..utils.import_pyhook import get_import_pyhooks, pyhook_supports_dry_run
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
@@ -212,10 +212,6 @@ class ImportUser(User):
         else:
             return super(ImportUser, self).build_hook_line(hook_time, func_name)
 
-    @staticmethod
-    def _pyhook_supports_dry_run(kls):
-        return bool(getattr(kls, "supports_dry_run", False))
-
     def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
         """
         Runs PyHooks, then ucs-school-libs fork hooks.
@@ -242,7 +238,7 @@ class ImportUser(User):
         self.in_hook = True
         hooks = get_import_pyhooks(
             UserPyHook,
-            self._pyhook_supports_dry_run if self.config["dry_run"] else None,
+            pyhook_supports_dry_run if self.config["dry_run"] else None,
             lo=self.lo,
             dry_run=self.config["dry_run"],
         )  # result is cached on the lib side

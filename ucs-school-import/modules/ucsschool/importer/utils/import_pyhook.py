@@ -159,6 +159,10 @@ class ImportPyHookLoader(object):
         return res
 
 
+def pyhook_supports_dry_run(kls):
+    return bool(getattr(kls, "supports_dry_run", False))
+
+
 def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
     # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
     """
@@ -217,5 +221,9 @@ def run_import_pyhooks(hook_cls, func_name, *args, **kwargs):
     :return: list of when all executed hooks returned
     :rtype: list
     """
-    get_import_pyhooks(hook_cls)
+    func = None
+    if "filter_func" in kwargs:
+        func = kwargs.pop("filter_func")
+
+    get_import_pyhooks(hook_cls, func)
     return __import_pyhook_loader_instance.call_hooks(hook_cls, func_name, *args, **kwargs)
