@@ -67,14 +67,18 @@ class SetNTACLsMixin(object):
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
         return []
 
+    @staticmethod
+    def get_groups_samba_sid(lo, dn):  # type: (LoType, str) -> str
+        try:
+            return lo.get(dn)["sambaSID"][0]
+        except (IndexError, KeyError):
+            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(dn))
+
     def get_ou_admin_full_control(self, lo):  # type: (LoType) -> List[str]
         admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(
             self.school.lower(), ucr.get("ldap/base")
         )
-        try:
-            samba_sid = lo.get(admin_dn)["sambaSID"][0]
-        except (IndexError, KeyError):
-            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(samba_sid))
+        samba_sid = self.get_groups_samba_sid(lo, admin_dn)
         return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
 
     def get_aces_deny_students_change_permissions(self, lo):  # type: (LoType) -> List[str]
@@ -97,13 +101,10 @@ class SetNTACLsMixin(object):
         student_group_dn = "cn={}{},cn=groups,{}".format(
             search_base.group_prefix_students, self.school, search_base.schoolDN
         )
-        try:
-            samba_sid = lo.get(student_group_dn)["sambaSID"][0]
-        except (IndexError, KeyError):
-            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(student_group_dn))
+        samba_sid = self.get_groups_samba_sid(lo, student_group_dn)
         return ["(D;OICI;WOWD;;;{})".format(samba_sid)]
 
-    def get_aces_work_group(self, lo):
+    def get_aces_work_group(self, lo):  # type: (LoType) -> List[str]
         """
             ACE: deny schueler to change permissions & take ownership
             ACE: allow workgroup-members to read/write/modify
@@ -114,10 +115,7 @@ class SetNTACLsMixin(object):
             group_dn = self.school_group.dn
         else:
             raise NoSchoolGroup("No schoolgroup set.")
-        try:
-            samba_sid = lo.get(group_dn)["sambaSID"][0]
-        except (IndexError, KeyError):
-            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
+        samba_sid = self.get_groups_samba_sid(lo, group_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
         res.extend(self.get_ou_admin_full_control(lo))
         return res
@@ -131,10 +129,7 @@ class SetNTACLsMixin(object):
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
         domain_users_dn = "cn=Domain Users %s,%s" % (self.school.lower(), search_base.groups)
-        try:
-            samba_sid = lo.get(domain_users_dn)["sambaSID"][0]
-        except (IndexError, KeyError):
-            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(domain_users_dn))
+        samba_sid = self.get_groups_samba_sid(lo, domain_users_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
         res.extend(self.get_ou_admin_full_control(lo))
         return res
@@ -150,10 +145,7 @@ class SetNTACLsMixin(object):
             group_dn = self.school_group.dn
         else:
             raise NoSchoolGroup("No schoolgroup set.")
-        try:
-            samba_sid = lo.get(group_dn)["sambaSID"][0]
-        except (IndexError, KeyError):
-            raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(group_dn))
+        samba_sid = self.get_groups_samba_sid(lo, group_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
         res.extend(self.get_ou_admin_full_control(lo))
         return res
