@@ -57,10 +57,12 @@ def main():
         class_shares = sorted(
             [ClassShare.from_school_class(c) for c in school_classes], key=lambda x: x.name
         )
+        class_shares = filter(lambda x: x.exists(lo), class_shares)
         work_groups = WorkGroup.get_all(lo, school=school.name)
         work_group_shares = sorted(
             [WorkGroupShare.from_school_class(w) for w in work_groups], key=lambda x: x.name
         )
+        work_group_shares = filter(lambda x: x.exists(lo), work_group_shares)
         all_shares = [("class share", share) for share in class_shares] + [
             ("work group share", share) for share in work_group_shares
         ]
