@@ -269,7 +269,7 @@ class Share(UCSSchoolHelperAbstractClass):
         udm_module = "shares/share"
 
 
-class GroupShare(Share, SetNTACLsMixin):
+class GroupShare(SetNTACLsMixin, Share):
     school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
 
     @classmethod
@@ -356,7 +356,7 @@ class ClassShare(RoleSupportMixin, GroupShare):
         return self.get_aces_class_group(lo)
 
 
-class MarketplaceShare(RoleSupportMixin, Share, SetNTACLsMixin):
+class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
     ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False
