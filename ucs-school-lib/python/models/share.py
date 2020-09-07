@@ -40,7 +40,7 @@ from univention.udm import UDM
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
 from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
+from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectType
 from .utils import _, ucr
 
 try:
@@ -279,6 +279,10 @@ class GroupShare(Share, SetNTACLsMixin):
 
     @classmethod
     def from_school_group(cls, school_group):
+        from .group import Group  # isort:skip  # prevent cyclic import
+
+        if not isinstance(school_group, Group):
+            raise WrongObjectType(dn=getattr(school_group, "dn", "<no 'dn' attribute>"), cls=Group)
         return cls(name=school_group.name, school=school_group.school, school_group=school_group)
 
     from_school_class = from_school_group  # legacy
