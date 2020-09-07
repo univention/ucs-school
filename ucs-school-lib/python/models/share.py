@@ -62,6 +62,13 @@ class SetNTACLsMixin(object):
     """
     Mixin for setting NTACLs of UCS@school Share (sub)classes. For example to
     to prevent students from changing the permissions in a share (Bug #42182).
+
+    D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
+    RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
+    WD/ WRITE_DAC ~ write security permissions
+    To make sure, students can edit folders&files in subfolders, they need to inherit edit
+    or full control, since they are denied first.
+    For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
     """
 
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
@@ -90,12 +97,6 @@ class SetNTACLsMixin(object):
         Sets NT ACLs to disallow students to deny students to change the permission of
         folders, subfolder and files or to take ownership of them as well as
         displaying them (RC).
-        D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
-        RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
-        WD/ WRITE_DAC ~ write security permissions
-        To make sure, puplis can edit folders&files in subfolders, they need to inherit edit
-        or full control, since they are denied first.
-        For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
         """
         search_base = self.get_search_base(self.school)
         student_group_dn = "cn={}{},cn=groups,{}".format(
