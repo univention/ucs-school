@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.130) unstable; urgency=low
+
+  * Bug #27547: fix test being skipped
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 07 Sep 2020 17:23:00 +0200
+
 ucs-test-ucsschool (6.0.129) unstable; urgency=low
 
   * Bug #51301: fix tests and make them more robust and debuggable

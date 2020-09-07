@@ -1,13 +1,8 @@
 #!/usr/share/ucs-test/runner python
-## desc: ucs-school-printermoderatoion-find-printer-in-ou-check
-## roles:
-##  - domaincontroller_master
-##  - domaincontroller_backup
-##  - domaincontroller_slave
-##  - memberserver
-## tags: [SKIP-UCSSCHOOL, apptest,ucsschool,ucsschool_base1]
+## desc: ucs-school-printermoderation-find-printer-in-ou-check
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [ucs-school-umc-printermoderation]
+## packages: [ucs-school-umc-printermoderation, ucs-school-import]
 
 import socket
 import subprocess
