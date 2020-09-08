@@ -34,7 +34,7 @@ import univention.admin.uldap
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
-from ucsschool.lib.models.utils import get_stream_handler
+from ucsschool.lib.models.utils import get_stream_handler, ucr
 
 
 def main():
@@ -46,7 +46,6 @@ def main():
     logger.info("Setting NTACLs on class and work group shares...")
 
     lo, po = univention.admin.uldap.getAdminConnection()
-
     schools = sorted(School.get_all(lo), key=lambda x: x.name)
 
     for school_num, school in enumerate(schools, start=1):
@@ -70,6 +69,8 @@ def main():
         market_place = MarketplaceShare.get_all(lo, school.name, "name=Marktplatz")
         if market_place:
             all_shares.append(("market place", market_place[0]))
+        fqdn = "{}.{}".format(ucr["hostname"], ucr["domainname"])
+        all_shares = filter(lambda x: x[1].get_udm_object(lo)["host"] == fqdn, all_shares)
 
         for share_num, (share_type, share) in enumerate(all_shares):
             share_udm = share.get_udm_object(lo)
