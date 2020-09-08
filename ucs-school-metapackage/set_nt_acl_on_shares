@@ -29,6 +29,8 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
+import optparse
+import sys
 
 import univention.admin.uldap
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
@@ -37,15 +39,31 @@ from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupSh
 from ucsschool.lib.models.utils import get_stream_handler, ucr
 
 
-def main():
+def get_lo(options):
+    if ucr.get("server/role") == "domaincontroller_master":
+        lo, po = univention.admin.uldap.getAdminConnection()
+    elif ucr.get("server/role") == "domaincontroller_slave":
+        options.bindpw = open(options.bindpwdfile, "r").read()
+        try:
+            lo = univention.admin.uldap.access(
+                port=int(ucr.get("ldap/master/port", "7389")),
+                base=ucr.get("ldap/base"),
+                binddn=options.binddn,
+                bindpw=options.bindpw,
+            )
+        except univention.admin.uexceptions.authFail:
+            sys.exit(5)
+    return lo
+
+
+def main(options):
     logger = logging.getLogger("ucsschool")
     log_level = logging.INFO
     logger.setLevel(log_level)
     logger.addHandler(get_stream_handler(log_level))
 
+    lo = get_lo(options)
     logger.info("Setting NTACLs on class and work group shares...")
-
-    lo, po = univention.admin.uldap.getAdminConnection()
     schools = sorted(School.get_all(lo), key=lambda x: x.name)
 
     for school_num, school in enumerate(schools, start=1):
@@ -96,4 +114,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = optparse.OptionParser()
+    parser.add_option("--binddn", dest="binddn", action="store", default=None, help="LDAP binddn")
+    parser.add_option(
+        "--bindpwdfile", dest="bindpwdfile", action="store", default=None, help="path to password file"
+    )
+    (options, args) = parser.parse_args()
+    main(options)
