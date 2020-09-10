@@ -1,3 +1,9 @@
+ucs-school-lib (12.1.20) unstable; urgency=medium
+
+  * Bug #42182: add custom nt acls in share
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 10 Sep 2020 15:25:30 +0200
+
 ucs-school-lib (12.1.19) unstable; urgency=low
 
   * Bug #51301: fix MarketplaceShare sambaForceGroup property

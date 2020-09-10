@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.3-4) unstable; urgency=medium
+
+  * Bug #42182: run set_nt_acl_on_shares in joinscript
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 10 Sep 2020 15:28:07 +0200
+
 ucs-school-metapackage (12.0.3-3) unstable; urgency=medium
 
   * Bug #51078: trust krb tickets deployed by slave on master
