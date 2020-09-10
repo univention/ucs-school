@@ -112,7 +112,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-wizards 11.0.0-9A~4.4.0.202007231451 -->
 <!-- CHANGELOG:2020-08-05:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-09-10" lang="en">
+					<title>Released on 2020-09-10:</title>
+					<!-- START ucs-school-import 17.0.44A~4.4.0.202008211121 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.44A~4.4.0.202008211121</emphasis>:
+						<itemizedlist>
+							<listitem><para>A new import hook was added to set sambahome, profilepath, homedrive and scriptpath for staff members. Without it, those values will be empty for staff users. The values are set to the same values as those of the teachers (<u:bug>51724</u:bug>).</para></listitem>
+
+							<listitem><para>The <literal>ucsschool_role</literal> property of all <emphasis>Marktplatz</emphasis> shares is now set to <literal>marketplace_share:school:$OU</literal> (<u:bug>51301</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.44A~4.4.0.202008211121 -->
+					<!-- START ucs-school-lib 12.1.19A~4.4.0.202008261000 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.1.19A~4.4.0.202008261000</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: the "Marktplatz" share is now created by a new software model (<u:bug>51301</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.1.19A~4.4.0.202008261000 -->
+<!-- CHANGELOG:2020-09-10:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
