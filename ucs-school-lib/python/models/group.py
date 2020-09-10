@@ -250,6 +250,11 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
             return  # is a workgroup
         return cls
 
+    def validate(self, lo, validate_unlikely_changes=False):
+        super(SchoolClass, self).validate(lo, validate_unlikely_changes)
+        if not self.name.startswith("{}-".format(self.school)):
+            raise ValueError("Missing school prefix in name: {!r}.".format(self))
+
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
     default_roles = [role_workgroup]
