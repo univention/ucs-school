@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-metapackage
+fix: 12.0.3-4A~4.4.0.202009101543
+desc: |
+ * On servers with the role of DC master in single server environments or DC slaves, the script set_nt_acl_on_shares is executed during the joinscript. Permissions are set so that students can no longer change folder permissions or take over class, workgroup, and marketplace shares. Since the script uses a current univention samba4 version, it must first be updated to version UCS 4.4-5 errata789 (Bug #42182).
+bug: [42182]

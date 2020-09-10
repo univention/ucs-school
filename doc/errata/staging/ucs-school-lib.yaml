@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.1.20A~4.4.0.202009101541
+desc: |
+ * Class Shares, Workgroup Shares, and Marketplace Shares are created in such a way that students can no longer change folder permissions or take ownership. Teachers assigned to the class and OU-admins still can change permissions and take ownership. The permissions are added to the Windows NT ACLs, which set in the share folder (Bug #42182).
+bug: [42182]
