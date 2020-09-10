@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=9
+VERSION=10
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -245,6 +245,11 @@ done
 univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 
 systemctl try-restart univention-s4-connector.service || true
+
+# Set NTACLs on class and work group shares (Bug #42182)
+if [ $JS_LAST_EXECUTED_VERSION -lt 10 ]; then
+  /usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
+fi
 
 joinscript_save_current_version
 
