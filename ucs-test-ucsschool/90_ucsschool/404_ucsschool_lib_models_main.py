@@ -141,7 +141,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
         school_classes = {}  # type: Dict[str, List[Tuple[str, str]]]
         for ou in (ou_name, ou_name2):
             for _ in range(3):
-                school_class_name = "{}-{}".format(ou_name, uts.random_username())
+                school_class_name = "{}-{}".format(ou, uts.random_username())
                 cmd = [
                     "python",
                     "-m",
