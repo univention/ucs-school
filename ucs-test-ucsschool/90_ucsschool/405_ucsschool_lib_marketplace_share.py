@@ -46,7 +46,7 @@ def exp_ldap_attr(ucr_domainname, ucr_hostname, ucr_is_singlemaster):
 
 def test_get_all(exp_ldap_attr, ucr_hostname):
     with utu.UCSTestSchool() as schoolenv:
-        ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
+        ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
         objs = MarketplaceShare.get_all(schoolenv.lo, ou_name)
         assert len(objs) == 1
         obj = objs[0]
