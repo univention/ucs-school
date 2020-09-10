@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=7
+VERSION=8
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -201,6 +201,11 @@ if len(portals) == 1:
 		portal.props.displayName['en_US'] = portal.props.displayName['en_US'].replace('UCS@School', 'UCS@school')
 	portal.save()
 END
+fi
+
+# Set NTACLs on class and work group shares (Bug #42182)
+if [ $JS_LAST_EXECUTED_VERSION -lt 8 ]; then
+  /usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
 fi
 
 joinscript_save_current_version

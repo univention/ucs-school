@@ -52,12 +52,16 @@ Description: UCS@school meta package for UCS DC Master System (multi server envi
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
+# TODO: cleanup required: univention-samba (w/o '4') is not supported anymore on DCs
+# TODO: cleanup required: univention-samba-slave-pdc is not supported anymore on DCs
+# TODO: cleanup required: in ucs-school-singlemaster we should depend on univention-samba4 (>= 8.0.0-32)
+
 Package: ucs-school-slave
 Architecture: all
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-slave (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
- univention-samba4 (>= 7.0.2-27) | univention-samba (>= 6.0.27-1),
+ univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
  ucs-school-s4-branch-site | univention-samba,
  ucs-school-netlogon-user-logonscripts,
@@ -118,7 +122,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  ucs-school-old-sharedirs,
  ucs-school-info,
  ucs-school-umc-installer,
- univention-s4-connector (>= 6.0.128-24) | univention-samba,
+ univention-s4-connector (>= 6.0.128-24) | univention-samba (>= 13.0.0-11),
  univention-management-console (>= 4.0.231-1),
  univention-management-console-frontend (>= 1.0.320-1),
  univention-management-console-web-server (>= 1.0.320-1),
@@ -165,9 +169,9 @@ Architecture: all
 Depends: univention-config,
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
- univention-samba4 (>= 7.0.2-27) | univention-samba (>= 6.0.27-1),
+ univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
- ucs-school-s4-branch-site | univention-samba
+ ucs-school-s4-branch-site | univention-samba,
 Description: UCS@school meta package for non-educational Slave servers
  .
  This package is part of Univention Corporate Server (UCS),
