@@ -1759,6 +1759,13 @@ feedback@univention.de
 				<emphasis>für Szenario 3</emphasis>
 			</para>
 			<para>
+				Vor der Installation des Schulservers muss die zugehörige Schule mitsamt dem Namen für den Schulserver 
+				auf dem &ucsMaster; angelegt werden. Es ist zudem absolut empfehlenswert auch die der Schule zugehörigen
+				Netzwerke vorab zu importieren.
+				Bitte fahren Sie zunächst mit dem <xref linkend="import" /> fort, importieren zunächst mindestens Schulen und Netzwerke und kommen
+				dann zu diesem Abschnitt für die Installation des Schulservers zurück.
+			</para>
+			<para>
 				<itemizedlist>
 					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
@@ -1778,10 +1785,13 @@ feedback@univention.de
 					<listitem><para>Die folgende Option ist auszuwählen, um den
 							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
-								beitreten</option>.  Anschließend ist die Rolle
-							&ucsSlave; und die Installation als edukativer Schulserver auszuwählen.</para></listitem>
+								beitreten</option>. Anschließend ist die Rolle
+							&ucsSlave; auszuwählen.</para></listitem>
+					<listitem><para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername 
+							mit dem Namen des Schulservers übereinstimmt, der beim Anlegen der Schule angegeben wurde.
+							</para></listitem>
 					<listitem><para>Das installierte System wird automatisch bis
-							zum letzten verfügbaren Errata-Update zu
+							zum letzten verfügbaren Errata-Update 
 							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
@@ -1789,7 +1799,7 @@ feedback@univention.de
 							<emphasis>Domäne</emphasis> mit dem Modul
 							<emphasis>Domänenbeitritt</emphasis> geprüft
 							werden.</para></listitem>
-					<listitem><para>Soll der Schulserver auch als DHCP-Server fungieren (empfohlen) muss noch die App
+					<listitem><para>Soll der Schulserver auch als DHCP-Server fungieren (empfohlen), muss noch die App
 							"DHCP-Server" über das Univention App Center installiert werden.</para></listitem>
 				</itemizedlist>
 				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
