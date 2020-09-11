@@ -791,7 +791,7 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<para>
-							Beispiel für eine Anwendung wie bspw Webmail (Zugriff von außen): <systemitem class="domainname">mail.example.org</systemitem>
+							Beispiel für eine Anwendung wie bspw. Webmail (Zugriff von außen): <systemitem class="domainname">mail.example.org</systemitem>
 						</para>
 					</listitem>
 				</itemizedlist>
@@ -809,7 +809,7 @@ feedback@univention.de
 							<para>
 								Für den nicht empfohlenen Fall, dass die Verwendung einer öffentlichen
 								DNS-Domäne nicht möglich ist und stattdessen
-								eine selbst gewählter, interner DNS-Name verwendet wird, so
+								ein selbstgewählter, interner DNS-Name verwendet wird, so
 								sind folgende Regeln zu beachten:
 								<itemizedlist>
 									<listitem>
@@ -865,9 +865,9 @@ feedback@univention.de
 								Wählt man bspw. <systemitem	class="domainname">schulen-musterstadt.de</systemitem> als DNS-Domänenname, würde der automatisch
 								abgeleitete NetBIOS-Domänenname <systemitem	class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist bspw. beim Anmeldebildschirm
 								an Windows-Clients der Domäne zu sehen.
-								Möchte man nun lieber <systemitem	class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen, so ist auf dem &ucsUAS;-Server vor der Installation von &ucsUAS; der
-								gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> in der &ucsUCR;-Variablen <envar>windows/domain</envar> zu setzen. Dies kann auch über eine
-								&ucsUCR;-Richtlinie umgesetzt werden (vgl. <xref linkend="base-configuration_globale-ucr" />).
+								Möchte man nun lieber <systemitem	class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen, so ist auf dem &ucsUAS;-Server 
+								bereits während der Installation der gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> zu setzen (vgl.
+								<ulink url="https://help.univention.com/t/how-to-define-netbios-domain-in-installer/6390">How to define the NetBIOS name during installation</ulink>).
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -1013,7 +1013,7 @@ feedback@univention.de
 					Folgende Konventionen haben sich in allen Szenarien bewährt:
 					<itemizedlist>
 						<listitem><para>Alle Objektnamen sollten durchgängig Kleinbuchstaben verwenden.</para></listitem>
-						<listitem><para>Sofern nicht anders angegeben, sollte die Länge von Objektnamen 15 Zeichen nicht überschreiten. Dies ist insbesondere wichtig für Benutzernamen.</para></listitem>
+						<listitem><para>Sofern nicht anders angegeben, sollte die Länge von Objektnamen 15 Zeichen nicht überschreiten. Dies ist insbesondere wichtig für Benutzernamen von Schüler*innen.</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
@@ -1101,10 +1101,9 @@ feedback@univention.de
 				<itemizedlist>
 					<listitem><para><filename>/var/univention-backup</filename>:
 							Nächtliche Sicherung der &ucsUCR;.  Die Sicherung
-							der OpenLDAP- und Samba-Datenbanken braucht
-							normalerweise nicht gesichert zu werden, da diese
-							beim erneuten Domänenbeitritt des Schulservers vom
-							&ucsMaster; oder &ucsBackup; repliziert
+							der OpenLDAP- und Samba-Datenbanken muss nicht zwingend
+							gesichert werden, da diese beim erneuten Domänenbeitritt
+							des Schulservers vom &ucsMaster; oder &ucsBackup; repliziert
 							werden</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
@@ -1424,14 +1423,14 @@ feedback@univention.de
 					Die nötigen Bandbreiten im lokalen Schulnetz können je
 					nach Anwendungsfall stark schwanken.  Die folgende
 					Tabelle gibt einen groben Überblick über Richtwerte nach
-					Schultyp.  Die benötigte Bandbreite liegt zwischen 1-3
+					Schultyp.  Die benötigte Bandbreite liegt zwischen 2-5
 					MBit/s für schuleigene Geräte. Dabei ist zu beachten, dass
 					z.B. zum Schulstundenbeginn oder zum Pausenbeginn mit
 					Lastspitzen zu rechnen ist.
 				</para>
 				<para>
 					<table id="table_infrastructure-and_hardware-requirements_infrastructure_internet">
-						<title>Grobe Richtwerte für die Anbindung nach Schultyp</title>
+						<title>Minimalanforderungen für die Anbindung nach Schultyp</title>
 						<tgroup cols="4">
 							<colspec colnum="1" colname="cidr" colwidth="1.25*"/>
 							<colspec colnum="2" colname="range" colwidth="1*"/>
@@ -1449,20 +1448,20 @@ feedback@univention.de
 								<row>
 									<entry>Grundschulen</entry>
 									<entry>~20 Clients</entry>
-									<entry>Geringe Netznutzung (~1 MBit/s)</entry>
-									<entry>20 MBit/s</entry>
+									<entry>Geringe Netznutzung (~2 MBit/s)</entry>
+									<entry>40 MBit/s</entry>
 								</row>
 								<row>
 									<entry>Weiterführende Schulen</entry>
 									<entry>~90 Clients</entry>
-									<entry>Mittlere Netznutzung (~2 MBit/s)</entry>
-									<entry>180 MBit/s</entry>
+									<entry>Mittlere Netznutzung (~3 MBit/s)</entry>
+									<entry>270 MBit/s</entry>
 								</row>
 								<row>
 									<entry>Berufsschulen</entry>
 									<entry>~300 Clients</entry>
-									<entry>Hohe Netznutzung (>3 MBit/s)</entry>
-									<entry>1 GBit/s</entry>
+									<entry>Hohe Netznutzung (>5 MBit/s)</entry>
+									<entry>1,5 GBit/s</entry>
 								</row>
 							</tbody>
 						</tgroup>
@@ -1774,7 +1773,7 @@ feedback@univention.de
 							</para></listitem>
 					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
-							aufgrund von übermäßig viele Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
+							aufgrund von übermäßig vielen Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server sind die IP-Adressen des
@@ -1789,6 +1788,8 @@ feedback@univention.de
 							&ucsSlave; auszuwählen.</para></listitem>
 					<listitem><para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername 
 							mit dem Namen des Schulservers übereinstimmt, der beim Anlegen der Schule angegeben wurde.
+							Dies muss der Fall sein, damit der Server im weiteren Verlauf als (edukativer) Schulserver
+							eingerichtet werden kann und explizit nicht als zentraler &ucsSlave;.
 							</para></listitem>
 					<listitem><para>Das installierte System wird automatisch bis
 							zum letzten verfügbaren Errata-Update 
@@ -2370,7 +2371,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 			<para>
 				<itemizedlist>
 					<listitem>
-						<para>>
+						<para>
 							Die CSV-Datei <filename>printers.csv</filename> ist
 							auf dem &ucsMaster; in folgendem Verzeichnis
 							abzulegen:
