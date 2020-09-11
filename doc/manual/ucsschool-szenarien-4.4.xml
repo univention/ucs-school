@@ -664,50 +664,50 @@ feedback@univention.de
 							</thead>
 							<tbody>
 								<row>
-									<entry><code>10.2.1.0/24</code></entry>
+									<entry><code>10.42.1.0/24</code></entry>
 									<entry><code>-</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für Server und Netzgeräte, statische IP-Adressen</entry>
 								</row>
 								<row>
-									<entry><code>10.2.2.0/24</code></entry>
-									<entry><code>10.2.2.10-10.2.2.250</code></entry>
+									<entry><code>10.42.2.0/24</code></entry>
+									<entry><code>10.42.2.10-10.42.2.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für Schulverwaltung, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.4.0/24</code></entry>
-									<entry><code>10.2.4.10-10.2.4.250</code></entry>
+									<entry><code>10.42.4.0/24</code></entry>
+									<entry><code>10.42.4.10-10.42.4.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 1, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.6.0/24</code></entry>
-									<entry><code>10.2.6.10-10.2.6.250</code></entry>
+									<entry><code>10.42.6.0/24</code></entry>
+									<entry><code>10.42.6.10-10.42.6.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 2, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.8.0/24</code></entry>
-									<entry><code>10.2.8.10-10.2.8.250</code></entry>
+									<entry><code>10.42.8.0/24</code></entry>
+									<entry><code>10.42.8.10-10.42.8.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 3, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.10.0/24</code></entry>
-									<entry><code>10.2.10.10-10.2.10.250</code></entry>
+									<entry><code>10.42.10.0/24</code></entry>
+									<entry><code>10.42.10.10-10.42.10.250</code></entry>
 									<entry><code>254</code></entry>
 									<entry>Netz für edukativen Bereich 4, erweiterbar auf /23 (510 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.128.0/20</code></entry>
-									<entry><code>10.2.128.100-10.2.143.250</code></entry>
+									<entry><code>10.42.128.0/20</code></entry>
+									<entry><code>10.42.128.100-10.42.143.250</code></entry>
 									<entry><code>4094</code></entry>
 									<entry>Gäste WLAN / BYOD, erweiterbar auf /18 (16382 IP-Adressen)</entry>
 								</row>
 								<row>
-									<entry><code>10.2.192.0/20</code></entry>
-									<entry><code>10.2.192.100-10.2.207.250</code></entry>
+									<entry><code>10.42.192.0/20</code></entry>
+									<entry><code>10.42.192.100-10.42.207.250</code></entry>
 									<entry><code>4094</code></entry>
 									<entry>Schuleigenes WLAN mit RADIUS-Authentifizierung, erweiterbar auf /18 (16382 IP-Adressen)</entry>
 								</row>
