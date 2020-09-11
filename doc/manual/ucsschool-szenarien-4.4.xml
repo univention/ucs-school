@@ -2109,6 +2109,11 @@ feedback@univention.de
 							<emphasis>Schulen</emphasis> ausfüllen.
 						</para>
 						<para>
+							Die Spalten für "Schulkürzel", "Schulname" und "Server Pädagogik" sind Pflichtfelder. 
+							Die Spalte "Server Verwaltung" ist optional und die Spalte "Server Fileshare" sollte
+							nur in ganz bestimmten Fällen ausgefüllt werden und verbleibt i.d.R. leer.
+						</para>
+						<para>
 							<figure id="fig-import-schools">
 								<title>Tabelle: Schulen</title>
 								<mediaobject>
@@ -2122,8 +2127,8 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<para>
-							Export der Tabelle ins CSV-Format mit Tabulator als
-							Trennzeichen für Felder und ohne Trennzeichen für Texte.
+							Export der Tabelle ins CSV-Format mit Komma als
+							Trennzeichen für Felder.
 						</para>
 						<para>
 							<figure id="fig-import-schools-save-as">
@@ -2153,7 +2158,7 @@ feedback@univention.de
 							Die CSV-Datei <filename>schulen.csv</filename> ist
 							auf dem &ucsMaster; in folgendem Verzeichnis
 							abzulegen:
-							<filename>/usr/local/ucsschool/import_data/</filename>
+							<filename>/usr/local/ucsschool/import_data/</filename>. Das Verzeichnis muss ggf. zuerst angelegt werden: <filename>mkdir -p /usr/local/ucsschool/import_data</filename>
 						</para>
 					</listitem>
 					<listitem>
@@ -2184,6 +2189,17 @@ univention-install dos2unix
 								]]>
 							</programlisting>
 						</para>
+						<para>
+							Alternativ kann die Datei auf dem &ucsMaster; mit dem Editor <filename>Vim</filename> geöffnet und dieser zum konvertieren verwendet werden:
+							<programlisting>
+								<![CDATA[
+vim schulen.csv
+# In der Vim Befehlszeile:
+:set ff=unix
+:wq
+								]]>
+							</programlisting>
+						</para>
 					</listitem>
 					<listitem>
 						<para>
@@ -2200,45 +2216,11 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
 					</listitem>
 					<listitem>
 						<para>
-							Zum automatisierten Einlesen aller Schulen ist
-							einmalig ein Skript zu erstellen.  Dazu sind
-							folgende Befehle auszuführen, um das Skript
-							anzulegen:
-							<programlisting>
-								<![CDATA[
-mkdir -p /usr/local/bin/ucsschool/helper_scripts/
-touch /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
-chmod a+x /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
-nano /usr/local/bin/ucsschool/helper_scripts/import_schools.sh
-								]]>
-							</programlisting>
-						</para>
-						<para>
-							Der folgende Programmtext ist zu kopieren und
-							einzufügen.  Abschließend ist mit den Tastenkürzeln
-							<command>Strg-O</command> und
-							<command>Strg-X</command> die Datei zu speichern.
-							<programlisting>
-								<![CDATA[
-#!/bin/bash
-IFS=$'\t'
-while read schoolid fullname serveredu serveradm; do
-/usr/share/ucs-school-import/scripts/create_ou \
-    --displayName="${fullname}" "${schoolid}" \
-    "${serveredu}" "${serveradm}"
-done < "$1"
-								]]>
-							</programlisting>
-						</para>
-					</listitem>
-					<listitem>
-						<para>
 							Der Import kann abschließend mit folgendem
 							Befehl ausgeführt werden:
 							<programlisting>
 								<![CDATA[
-/usr/local/bin/ucsschool/helper_scripts/import_schools.sh \
-    /usr/local/ucsschool/import_data/schulen.csv
+/usr/share/ucs-school-import/scripts/create_ou --infile=/usr/local/ucsschool/import_data/schulen.csv
 								]]>
 							</programlisting>
 						</para>
