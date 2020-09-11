@@ -2246,7 +2246,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
 				ist das Datenformat für den Import beschrieben.  In der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
 				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
-				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
@@ -2309,7 +2309,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Rechner</emphasis> vorhanden, die
-				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
@@ -2365,7 +2365,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 				beschrieben.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
-				verwendet werden kann.  Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
