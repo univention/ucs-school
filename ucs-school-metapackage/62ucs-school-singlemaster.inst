@@ -206,6 +206,7 @@ fi
 # Set NTACLs on class and work group shares (Bug #42182)
 if [ $JS_LAST_EXECUTED_VERSION -lt 8 ]; then
   /usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
+  univention-directory-listener-ctrl resync samba-shares
 fi
 
 joinscript_save_current_version

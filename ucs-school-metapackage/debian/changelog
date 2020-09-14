@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.3-5) unstable; urgency=medium
+
+  * Bug #42182: resync samba-shares in slave joinscript 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Sep 2020 14:51:18 +0200
+
 ucs-school-metapackage (12.0.3-4) unstable; urgency=medium
 
   * Bug #42182: run set_nt_acl_on_shares in joinscript
