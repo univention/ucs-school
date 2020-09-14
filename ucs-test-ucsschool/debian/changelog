@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.132) unstable; urgency=medium
+
+  * Bug #42182: ucs-test 36: create schoolclass with prefix
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Sep 2020 13:58:00 +0200
+
 ucs-test-ucsschool (6.0.131) unstable; urgency=medium
 
   * Bug #42182: add test to check class, workgroup & marketplaceshare access
