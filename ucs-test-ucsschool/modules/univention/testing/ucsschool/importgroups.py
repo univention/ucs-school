@@ -33,7 +33,7 @@ cn_pupils = configRegistry.get("ucsschool/ldap/default/container/pupils", "schue
 
 class Group:
     def __init__(self, school):
-        self.name = uts.random_name()
+        self.name = "{}-{}".format(school, uts.random_name())
         self.description = uts.random_name()
         self.school = school
         self.mode = "A"
@@ -147,7 +147,7 @@ class ImportFile:
             school_obj.create(lo)
 
         for grp in self.group_import.groups:
-            kwargs = {"school": grp.school, "name": "{}-{}".format(grp.school, grp.name), "description": grp.description}
+            kwargs = {"school": grp.school, "name": grp.name, "description": grp.description}
             if grp.mode == "A":
                 GroupLib(**kwargs).create(lo)
             elif grp.mode == "M":
