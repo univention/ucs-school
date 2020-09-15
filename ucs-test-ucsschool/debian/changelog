@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.133) unstable; urgency=medium
+
+  * Bug #42182: ucs-test 36: use school prefix also in dn 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Sep 2020 17:00:01 +0200
+
 ucs-test-ucsschool (6.0.132) unstable; urgency=medium
 
   * Bug #42182: ucs-test 36: create schoolclass with prefix
