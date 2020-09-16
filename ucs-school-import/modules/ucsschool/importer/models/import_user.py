@@ -194,7 +194,7 @@ class ImportUser(User):
         self.lo = kwargs.pop("lo", None)  # type: LoType
         super(ImportUser, self).__init__(name, school, **kwargs)
 
-    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> int
+    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> str
         """
         Recreate original input data for hook creation.
 
