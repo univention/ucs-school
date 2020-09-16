@@ -30,6 +30,7 @@ settings_connector = {
     "connector/s4/mapping/msgpwl": "yes",
     "connector/s4/mapping/msgpipsec": "yes",
     "connector/s4/mapping/msgpsi": "yes",
+    "connector/s4/mapping/domainpolicy": "yes",
     "connector/s4/mapping/wmifilter": "yes",
     "connector/s4/mapping/gpo": "true",
     "connector/s4/mapping/dns/ignorelist": "_ldap._tcp.Default-First-Site-Name._site",
