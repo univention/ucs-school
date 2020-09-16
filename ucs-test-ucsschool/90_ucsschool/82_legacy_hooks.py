@@ -19,7 +19,7 @@ import univention.testing.strings as uts
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
-from ucsschool.lib.models import Group, School
+from ucsschool.lib.models import Group, School, SchoolClass, WorkGroup
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
@@ -286,6 +286,8 @@ class TestLegacyHooks(TestCase):
             obj.name,
             self.ou_name,
         )
+        if isinstance(obj, SchoolClass) or isinstance(obj, WorkGroup):
+            obj.name = "{}-{}".format(self.ou_name, uts.random_username())
         obj.create(self.lo)
         with open(RESULTFILE, "r") as fp:
             txt = fp.read()
