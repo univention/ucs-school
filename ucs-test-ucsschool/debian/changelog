@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.134) unstable; urgency=medium
+
+  * Bug #42182: ucs-test 133: don't raise exception if exec_cmd fails
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 16 Sep 2020 10:21:39 +0200
+
 ucs-test-ucsschool (6.0.133) unstable; urgency=medium
 
   * Bug #42182: ucs-test 36: use school prefix also in dn 

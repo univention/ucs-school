@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
-## desc: Test if share-access don"t leave permission change open for class members.
+## desc: Test if share-access don't leave permission change open for class members.
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_base1,mysharetest]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: []
 ## bugs: [42182]
@@ -19,10 +19,8 @@ from ucsschool.lib.models.utils import exec_cmd
 
 def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str, bool) -> bool
     rv, stdout, stderr = exec_cmd(
-        ["samba-tool", "ntacl", "get", "--as-sddl", path], log=False, raise_exc=True
+        ["samba-tool", "ntacl", "get", "--as-sddl", path], log=True, raise_exc=True
     )
-    if stderr and allowed:
-        utils.fail("Error during samba-tool execution {}".format(stderr))
     if re.match(r".*?(D;OICI.*?;.*?WOWD[^)]+{}).*".format(sid), stdout):
         if allowed:
             utils.fail("The permissions of share {} can not be changed for {}.".format(path, sid))
@@ -37,7 +35,7 @@ def change_smbcacls_acls(file, user_name, allowed):  # type: (str, str, bool) ->
     """
     new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
     cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(file, user_name, new_acl)
-    rv, stdout, stderr = exec_cmd(cmd, log=False, raise_exc=False, shell=True)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
     if not allowed and "NT_STATUS_ACCESS_DENIED" not in stdout:
         utils.fail(
             "Expected NT_STATUS_ACCESS_DENIED, user could change the permissions: {}".format(stdout)
@@ -55,7 +53,7 @@ def check_create_folder(share, username, dir_name):  # type: (str, str, str) -> 
         this is to make sure the folder is usable.
     """
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}'".format(username, share, dir_name)
-    rv, stdout, stderr = exec_cmd(cmd, log=False, raise_exc=True, shell=True)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
     if stderr:
         utils.fail("Failed to create folder inside of share.")
     return dir_name
