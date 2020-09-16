@@ -34,7 +34,17 @@ from ldap.dn import str2dn
 from univention.admin.uexceptions import noObject
 
 from ..roles import role_computer_room, role_school_class, role_workgroup
-from .attributes import Attribute, Description, GroupName, Hosts, Roles, SchoolClassName, Users
+from .attributes import (
+    Attribute,
+    Description,
+    Email,
+    GroupName,
+    Groups,
+    Hosts,
+    Roles,
+    SchoolClassName,
+    Users,
+)
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .misc import OU, Container
 from .policy import UMCPolicy
@@ -267,6 +277,15 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
     default_roles = [role_workgroup]
     ShareClass = WorkGroupShare
+    email = Email(
+        _("Email"), udm_name="mailAddress", aka=["Email", "E-Mail"], unlikely_to_change=True
+    )  # type: str
+    allowed_email_senders_users = Users(
+        _("Users that are allowed to send e-mails to the group"), udm_name="allowedEmailUsers",
+    )  # type: List[str]
+    allowed_email_senders_groups = Groups(
+        _("Groups that are allowed to send e-mails to the group"), udm_name="allowedEmailGroups",
+    )  # type: List[str]
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
