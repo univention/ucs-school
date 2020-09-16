@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.135) unstable; urgency=medium
+
+  * Bug #42182: ucs-test 80 and 82: create school group with prefix
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 16 Sep 2020 16:21:21 +0200
+
 ucs-test-ucsschool (6.0.134) unstable; urgency=medium
 
   * Bug #42182: ucs-test 133: don't raise exception if exec_cmd fails
