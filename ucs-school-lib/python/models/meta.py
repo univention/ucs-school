@@ -34,10 +34,17 @@ import logging
 from functools import partial
 
 import lazy_object_proxy
+from six import iteritems
 
 import univention.admin.modules as udm_modules
 
 from .attributes import Attribute
+
+try:
+    from typing import Any, Dict
+except ImportError:
+    pass
+
 
 # load UDM modules see Bug #51717
 udm_modules.update()
@@ -49,6 +56,7 @@ class UCSSchoolHelperOptions(object):
         self.set_from_meta_object(meta, "udm_filter", "")
         self.set_from_meta_object(meta, "name_is_unique", False)
         self.set_from_meta_object(meta, "allow_school_change", False)
+        self.set_from_meta_object(meta, "ignore_meta", False)
         udm_module_short = None
         if self.udm_module:
             udm_module_short = self.udm_module.split("/")[1]
@@ -62,7 +70,7 @@ class UCSSchoolHelperOptions(object):
                 # happens when the udm_module is not in the standard package
                 #   i.e. computers/ucc
                 return
-            for key, attr in klass._attributes.iteritems():
+            for key, attr in iteritems(klass._attributes):
                 # sanity checks whether we specified everything correctly
                 if attr.udm_name and not attr.extended:
                     # extended? only available after module_init(lo)
@@ -94,17 +102,34 @@ class UCSSchoolHelperOptions(object):
 class UCSSchoolHelperMetaClass(type):
     def __new__(mcs, cls_name, bases, attrs):
         attributes = {}
-        meta = attrs.get("Meta")
-        for base in bases:
+        meta = None
+
+        def scan_class_attributes(class_attrs):  # type: (Dict[str, Any]) -> None
+            # side effect: changes "attributes" dict from function scope
+            for name, value in iteritems(class_attrs):
+                if name in attributes:
+                    # allows to remove an attribute from a subclass
+                    # hierarchie should better have been architectured differently (e.g. using mixins)
+                    del attributes[name]
+                if isinstance(value, Attribute):
+                    attributes[name] = value
+
+        # collect attributes and "Meta" (_meta) from all base classes in the
+        # order from most basic to most special
+        for base in reversed(bases):
+            if hasattr(base, "_meta") and not getattr(base._meta, "ignore_meta", False):
+                meta = base._meta
+            # works for classes inheriting from UCSSchoolHelperAbstractClass:
             if hasattr(base, "_attributes"):
                 attributes.update(base._attributes)
-            if meta is None and hasattr(base, "_meta"):
-                meta = base._meta
-        for name, value in attrs.iteritems():
-            if name in attributes:
-                del attributes[name]
-            if isinstance(value, Attribute):
-                attributes[name] = value
+            # works also for mixins:
+            scan_class_attributes(vars(base))
+
+        # attributes and "Meta" of top class (the one currently being created)
+        # is read last, as it's the "most special"
+        meta = attrs.get("Meta") or meta
+        scan_class_attributes(attrs)
+
         cls = super(UCSSchoolHelperMetaClass, mcs).__new__(mcs, cls_name, bases, dict(attrs))
         cls._attributes = attributes
         cls._meta = UCSSchoolHelperOptions(cls, meta)
