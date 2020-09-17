@@ -15,3 +15,9 @@ Description[de]=De-/Aktiviert die automatische Suche beim öffnen des Modul "Arb
 Description[en]=De-/activates the automatic search when opening the module "Manage workgroups".
 Type=bool
 Categories=management-umc
+
+[ucsschool/workgroups/mailaddress]
+Description[de]=Definiert ein Schema, nach dem die Emailadresse einer Arbeitsgruppe berechnet wird. Wenn diese Variable gesetzt ist, wird das Feature in der UMC angezeigt. Default: <empty>, Beispiel: {ou}-{name}@example.com
+Description[en]=Defines a pattern, with which the email address of a workgroup is calculated. If this value is set, the feature is activated in the UMC. Default: <empty>, Example: {ou}-{name}@example.com
+Type=str
+Categories=management-umc
