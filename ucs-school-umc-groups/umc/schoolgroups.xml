@@ -28,5 +28,6 @@
 	<command name="schoolgroups/schools" function="schools"></command>
 	<command name="schoolgroups/classes" function="classes"></command>
 	<command name="schoolgroups/users" function="users"></command>
+	<command name="schoolgroups/groups" function="groups"></command>
 	</module>
 </umc>

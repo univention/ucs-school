@@ -151,6 +151,10 @@ define([
 			this._form.getWidget('name').set('disabled', disable);
 		},
 
+		setupEditMode: function() {
+
+		},
+
 		_setSchoolAttr: function(school) {
 			this._form.getWidget('school').set('value', school);
 		},
