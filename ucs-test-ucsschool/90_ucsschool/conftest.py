@@ -5,10 +5,10 @@ import pytest
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models.misc import MailDomain
+import univention.testing.udm as udm_test
 
 try:
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Tuple
     from ucsschool.lib.models.base import LoType
 except ImportError:
     pass
@@ -53,13 +53,42 @@ def admin_password(ucr):
     return ret or ucr.get("tests/domainadmin/pwd", "univention")
 
 
+@pytest.fixture
+def schoolenv():
+    with utu.UCSTestSchool() as _schoolenv:
+        yield _schoolenv
+
+
+@pytest.fixture
+def create_ou(schoolenv, ucr_hostname):
+    def _func(**kwargs):  # type: (**Any) -> Tuple[str, str]
+        kwargs["name_edudc"] = kwargs.get("name_edudc") or ucr_hostname
+        return schoolenv.create_ou(**kwargs)
+
+    return _func
+
+
+@pytest.fixture
+def lo(schoolenv):
+    return schoolenv.lo
+
+
 @pytest.fixture(scope="session")
-def mail_domain(ucr_domainname, ucr):
+def udm_session():
+    with udm_test.UCSTestUDM() as udm:
+        yield udm
+
+
+@pytest.fixture(scope="session")
+def mail_domain(udm_session, ucr_domainname, ucr, ucr_ldap_base):
     if ucr_domainname not in ucr.get("mail/hosteddomains", "").split():
-        with utu.UCSTestSchool() as schoolenv:
-            MailDomain(name=ucr_domainname).create(schoolenv.lo)
-            yield ucr_domainname
-    yield ucr_domainname
+        udm_session.create_object(
+            "mail/domain",
+            set={"name": ucr_domainname},
+            position="cn=domain,cn=mail,{}".format(ucr_ldap_base),
+        )
+
+    return ucr_domainname
 
 
 @pytest.fixture(scope="session")
