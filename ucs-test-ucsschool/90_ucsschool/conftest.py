@@ -82,11 +82,14 @@ def udm_session():
 @pytest.fixture(scope="session")
 def mail_domain(udm_session, ucr_domainname, ucr, ucr_ldap_base):
     if ucr_domainname not in ucr.get("mail/hosteddomains", "").split():
-        udm_session.create_object(
-            "mail/domain",
-            set={"name": ucr_domainname},
-            position="cn=domain,cn=mail,{}".format(ucr_ldap_base),
-        )
+        try:
+            udm_session.create_object(
+                "mail/domain",
+                set={"name": ucr_domainname},
+                position="cn=domain,cn=mail,{}".format(ucr_ldap_base),
+            )
+        except udm_test.UCSTestUDM_CreateUDMObjectFailed as exc:
+            print(exc)
 
     return ucr_domainname
 
