@@ -1,3 +1,10 @@
+ucs-school-lib (12.1.21) unstable; urgency=low
+
+  * Bug #52035: map email related UDM group properties in WorkGroup
+  * Bug #52035: allow to create a school class without a share
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 Sep 2020 11:52:10 +0200
+
 ucs-school-lib (12.1.20) unstable; urgency=medium
 
   * Bug #42182: add custom nt acls in share
