@@ -52,6 +52,7 @@ define([
 		_detailPage: null,
 		standbyOpacity: 1,
 		helpText: '',
+		mailAddressPattern: '',
 		autosearchVariable: '',
 		autoSearch: true,
 		DetailPage: null,
@@ -59,8 +60,9 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyDuring(tools.ucr([this.autosearchVariable])).then(lang.hitch(this, function(vars) {
+			this.standbyDuring(tools.ucr([this.autosearchVariable, 'ucsschool/workgroups/mailaddress'])).then(lang.hitch(this, function(vars) {
 				this.autoSearch = tools.isTrue(vars[this.autosearchVariable] || this.autoSearch);
+				this.mailAddressPattern = vars['ucsschool/workgroups/mailaddress'] || '';
 				this.renderSearchForm();
 			}));
 		},
@@ -135,7 +137,8 @@ define([
 				headerText: this.detailPageHeaderText,
 				helpText: this.detailPageHelpText,
 				schools: this._searchForm.getWidget('school').getAllItems(),
-				umcpCommand: lang.hitch(this.moduleStore, 'umcpCommand')
+				umcpCommand: lang.hitch(this.moduleStore, 'umcpCommand'),
+				mailAddressPattern: this.mailAddressPattern
 			});
 			this.addChild(detailPage);
 
@@ -169,6 +172,7 @@ define([
 			var detailPage = this.createDetailPage();
 			detailPage.set('school', this._searchForm.getWidget('school').get('value'));
 			detailPage.disableFields(true);
+			detailPage.setupEditMode();
 			this.selectChild(detailPage);
 			detailPage.load(ids[0]);
 		}
