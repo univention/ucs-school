@@ -890,7 +890,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 				Folgendes Beispiel zeigt wie der Import von drei Schülern an zwei Schulen konfiguriert werden kann.
 				Die Schulverwaltungssoftware hat folgendes CSV produziert (anderes Beispiel <ulink url="user_new_example.csv">hier zum Download</ulink>, UTF-16, <wordasword>tab-getrennt</wordasword>):
 				<programlisting>
-"Schulen","Vorname","Nachname","Klassen","Mailadresse","phone"
+"Schulen","Vorname","Nachname","Klassen","Mailadresse","Telefonnumer"
 "schule1,schule2","Anton","Meyer","schule1-1A,schule2-2B","anton@schule.local",""
 "schule1,schule2","Bea","Schmidt","schule1-2B,schule2-1A","bea@schule.local","0421-1234567890"
 "schule2","Daniel","Krause","schule2-1A","daniel@schule.local",""
@@ -917,7 +917,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
             "Nachname": "lastname",
             "Klassen": "school_classes",
             "Mailadresse": "email",
-            "phone": "phone"
+            "Telefonnumer": "phone"
         }
     }
 }
@@ -930,7 +930,7 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 [..]
 2016-06-28 17:47:25 DEBUG base_reader.next:73  Input 3: ['schule1', 'Bea', 'Schmidt', 'schule1-2B,schule2-1A',
 'bea@schule.local', 'Sch\xc3\xbclerin mit Telefon', '0421-1234567890'] -> {u'Schulen': u'schule1',
-u'Vorname': u'Bea', u'phone': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A',
+u'Vorname': u'Bea', u'Telefonnumer': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A',
 u'Mailadresse': u'bea@schule.local'}
 				</programlisting>
 			</para>
@@ -949,7 +949,7 @@ u'Mailadresse': u'bea@schule.local'}
 					</listitem>
 					<listitem>
 						<simpara>
-							<literal>{u'Schulen': u'schule1', u'Vorname': u'Bea', u'phone': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A', u'Mailadresse': u'bea@schule.local'}</literal>: Die Zuordnung von Daten zu den Schlüsseln aus der CSV-Kopfzeile.
+							<literal>{u'Schulen': u'schule1', u'Vorname': u'Bea', u'Telefonnumer': u'0421-1234567890', u'Nachname': u'Schmidt', u'Klassen': u'schule1-2B,schule2-1A', u'Mailadresse': u'bea@schule.local'}</literal>: Die Zuordnung von Daten zu den Schlüsseln aus der CSV-Kopfzeile.
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -1061,14 +1061,14 @@ udm users/user
 {
     "scheme": {
         "email": "&lt;firstname&gt;[0].&lt;lastname&gt;@&lt;maildomain&gt;",
-        "record_uid": "&lt;email&gt;",
-        "phone": "+49-&lt;phone&gt;[1:]"
+        "record_uid": "&lt;email&gt;"
     }
 }
 				</programlisting>
 			</para>
 			<para>
-				Sollen Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), so kann dies mit Hilfe von <wordasword>Format-Hooks</wordasword> geschehen. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
+				Die Verwendung von selbst referenzierenden Attributen, z.B. zur Voranstellung von Ländervorwahlen ist nicht möglich.
+				Um dies zu erreich, sowie wenn Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden sollen (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), können <wordasword>Format-Hooks</wordasword> geschrieben werden. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
 			</para>
 		</section>
 
