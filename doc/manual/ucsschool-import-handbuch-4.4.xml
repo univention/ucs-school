@@ -1056,7 +1056,7 @@ udm users/user
 				Darüber hinaus können Schemata für beliebige &ucsUDM; Attribute (mit dem Namen des Attributs als Schlüssel) hinterlegt werden.
 			</para>
 			<para>
-				Im folgenden Beispiel würde allen aus den Eingabedaten übernommenen Telefonnummern die Ländervorwahl vorangestellt (und die führende 0 der Städtevorwahl entfernt), sowie die E-Mail-Adresse aus Vor- und Nachname berechnet:
+				Im folgenden Beispiel werden die E-Mail-Adresse aus Vor- und Nachname berechnet und die <property>email</property> wird als <property>record_uid</property> gesetzt:
 				<programlisting>
 {
     "scheme": {
@@ -1068,7 +1068,27 @@ udm users/user
 			</para>
 			<para>
 				Die Verwendung von selbst referenzierenden Attributen, z.B. zur Voranstellung von Ländervorwahlen ist nicht möglich.
-				Um dies zu erreich, sowie wenn Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden sollen (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), können <wordasword>Format-Hooks</wordasword> geschrieben werden. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
+				Um dies zu erreichen, sowie wenn Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden sollen (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), können <wordasword>Format-Hooks</wordasword> geschrieben werden. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
+			</para>
+			<para>
+				Im Folgenden wird die Berechnung der von <property>email</property> und <property>record_uid</property> anhand der oben angeführten Schemata illustriert.
+			<programlisting>
+"Schulen","Vorname","Nachname","Klassen","Telefonnumer"
+"schule1","Bea","Schmidt","schule1-1A","0421-1234567890"
+			</programlisting>
+			<programlisting>
+2020-07-09 15:28:34 INFO  user_import.create_and_modify_users:141  ------ Creating / modifying users... ------
+[..]
+2020-07-09 15:28:34 INFO  user_import.create_and_modify_users:186  Adding ImportStudent(name='B.Schmidt',
+school='schule1', dn='uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr', old_dn=None) (source_uid:NewDB
+record_uid:b.schmidt@schule.local) attributes={'$dn$': 'uid=B.Schmidt,cn=schueler,cn=users,ou=schule1,dc=uni,dc=dtr',
+'display_name': 'Bea Schmidt', <property>'record_uid'</property>: u'b.schmidt@schule.local', 'firstname': 'Bea',
+'lastname': 'Schmidt', 'type_name': 'Student', 'school': 'schule1', <property>'name'</property>: 'B.Schmidt',
+'disabled': '0', 'email': u'b.schmidt@schule.local', 'birthday': None, 'type': 'importStudent', 'schools': ['schule1'],
+'password': 'xxxxxxxxxx', 'source_uid': u'NewDB', <property>'school_classes'</property>: {'schule1': ['schule1-2B']},
+			'objectType': 'users/user'} <property>udm_properties</property>={u<property>'phone'</property>: [u'0421-1234567890'],
+'overridePWHistory': '1', 'overridePWLength': '1'}...
+				</programlisting>
 			</para>
 		</section>
 
