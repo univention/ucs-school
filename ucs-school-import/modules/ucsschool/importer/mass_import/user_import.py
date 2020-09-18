@@ -57,7 +57,7 @@ from ..exceptions import (
     WrongUserType,
 )
 from ..factory import Factory
-from ..utils.import_pyhook import run_import_pyhooks
+from ..utils.import_pyhook import pyhook_supports_dry_run, run_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.post_read_pyhook import PostReadPyHook
 
@@ -116,7 +116,14 @@ class UserImport(object):
                 self.logger.info("Done reading %d. user: %s", num, import_user)
                 self.imported_users.append(import_user)
             except StopIteration:
-                run_import_pyhooks(PostReadPyHook, "all_entries_read", self.imported_users, self.errors)
+                filter_func = pyhook_supports_dry_run if self.dry_run else None
+                run_import_pyhooks(
+                    PostReadPyHook,
+                    "post_read",
+                    self.imported_users,
+                    self.errors,
+                    supports_dry_run=filter_func,
+                )
                 break
             except UcsSchoolImportError as exc:
                 self.logger.exception("Error reading %d. user: %s", num, exc)
