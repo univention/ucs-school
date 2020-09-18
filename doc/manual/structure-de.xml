@@ -137,7 +137,7 @@
 				übertragen.
 			</para>
 			<para>
-				In &ucsUAS; werden schulübergreifenden Benutzerkonten unterstützt.
+				In &ucsUAS; werden schulübergreifende Benutzerkonten unterstützt.
 				Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal an seiner primären Schule.
 				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
 				repliziert: sein Benutzerobjekt und die Standardgruppen.
