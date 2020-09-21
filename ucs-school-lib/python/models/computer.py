@@ -51,7 +51,9 @@ from .utils import _, ucr
 
 try:
     from typing import Any, Dict, List, Optional, Type
+
     from univention.admin.uldap import access as LoType
+
     from .base import SuperOrdinateType, UdmObject
 except ImportError:
     pass

@@ -53,7 +53,8 @@ from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
 
 try:
-    from typing import Any, Iterable, Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+    from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+
     import univention.admin.handlers.simpleLdap
     from univention.admin.uldap import access as LoType, position as PoType
 
@@ -249,8 +250,8 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def invalidate_all_caches(cls):  # type: () -> None
-        from ucsschool.lib.models.user import User
         from ucsschool.lib.models.network import Network
+        from ucsschool.lib.models.user import User
         from ucsschool.lib.models.utils import _pw_length_cache
 
         cls._cache.clear()

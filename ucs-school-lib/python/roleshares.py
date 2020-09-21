@@ -46,6 +46,7 @@ from univention.lib.misc import custom_groupname
 
 try:
     from typing import Optional
+
     from univention.config_registry import ConfigRegistry
 except ImportError:
     pass

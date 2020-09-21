@@ -31,14 +31,16 @@
 # <http://www.gnu.org/licenses/>.
 
 
+import sys
+from optparse import OptionParser
+
+import ipaddr
+
+import univention.admin.config
+import univention.admin.modules
 import univention.admin.objects
 import univention.admin.uldap
-import univention.admin.modules
-import univention.admin.config
-import sys
 from univention.config_registry import ConfigRegistry
-from optparse import OptionParser
-import ipaddr
 
 baseDN = None
 co = None

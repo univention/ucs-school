@@ -10,6 +10,7 @@ from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 try:
     from typing import Dict, Optional, Tuple
+
     from ucsschool.http_api.client import Client, ResourceRepresentation
 except ImportError:
     pass

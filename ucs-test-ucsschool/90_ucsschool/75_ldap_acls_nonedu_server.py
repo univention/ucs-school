@@ -7,9 +7,9 @@
 ## packages: [ucs-school-ldap-acls-master]
 ## bugs: [41818,48924]
 
+import attr
 from ldap.filter import filter_format
 
-import attr
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu

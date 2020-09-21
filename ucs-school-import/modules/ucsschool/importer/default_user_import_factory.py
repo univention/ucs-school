@@ -41,6 +41,7 @@ from .factory import load_class
 
 try:
     from typing import Any, Iterable, Optional, TypeVar
+
     from .models.import_user import ImportUser
 
     ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
@@ -172,7 +173,8 @@ class DefaultUserImportFactory(object):
         :return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles` was empty
         :rtype: ImportUser
         """
-        from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+        from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+
         from .models.import_user import (
             ImportStaff,
             ImportStudent,

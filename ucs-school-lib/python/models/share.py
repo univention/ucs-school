@@ -44,7 +44,8 @@ from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectTyp
 from .utils import _, ucr
 
 try:
-    from typing import Any, Optional, List
+    from typing import Any, List, Optional
+
     from .base import LoType, UdmObject
 except ImportError:
     pass

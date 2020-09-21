@@ -17,6 +17,7 @@ import subprocess
 import tempfile
 
 import attr
+
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.utils as utils
