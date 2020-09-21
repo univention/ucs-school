@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/timothycrosley/isort
-    rev: 4.3.21
+    rev: 5.5.3
     hooks:
     -   id: isort
         entry: isort -c

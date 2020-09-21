@@ -49,8 +49,9 @@ from ..exceptions import ConfigurationError, InitialisationError, NoRole, Unknow
 from .base_reader import BaseReader
 
 try:
-    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
     from csv import Dialect
+    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
+
     from ..models.import_user import ImportUser
 except ImportError:
     pass

@@ -49,6 +49,7 @@ from ucsschool.lib.models.utils import UniStreamHandler, ucr
 
 try:
     from typing import List
+
     from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
     pass

@@ -44,6 +44,7 @@ from .user_import import UserImport
 
 try:
     from typing import Optional, Union
+
     from ..models.import_user import ImportUser
 except ImportError:
     pass

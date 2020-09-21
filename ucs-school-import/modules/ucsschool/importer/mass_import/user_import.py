@@ -63,9 +63,10 @@ from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
     from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
-    from ..models.import_user import ImportUser
+
     from ..configuration import ReadOnlyDict
     from ..exceptions import UcsSchoolImportError
+    from ..models.import_user import ImportUser
 except ImportError:
     pass
 

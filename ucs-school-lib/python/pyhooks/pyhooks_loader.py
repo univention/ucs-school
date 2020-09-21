@@ -43,8 +43,9 @@ from os import listdir
 from six import iteritems
 
 try:
-    from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
     import logging.Logger
+    from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+
     from ucsschool.lib.pyhooks import PyHook
 
     PyHookTV = TypeVar("PyHookTV", bound=PyHook)

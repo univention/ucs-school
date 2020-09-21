@@ -49,11 +49,12 @@ from ucsschool.lib.models.utils import get_stream_handler
 from univention.config_registry import ConfigRegistry
 
 try:
-    from urlparse import urljoin, urlparse, parse_qs
     from urllib import quote as url_quote
+
+    from urlparse import parse_qs, urljoin, urlparse
 except ImportError:
     # Python 3
-    from urllib.parse import urljoin, quote as url_quote, urlparse, parse_qs
+    from urllib.parse import parse_qs, quote as url_quote, urljoin, urlparse
 
 try:
     from typing import Any, AnyStr, Callable, Dict, List, Union

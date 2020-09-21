@@ -43,6 +43,7 @@ from .ldap_connection import get_admin_connection, get_readonly_connection
 
 try:
     from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+
     import univention.admin.uldap.access
 
     ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")

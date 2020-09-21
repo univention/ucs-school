@@ -37,8 +37,9 @@ from univention.config_registry import ConfigRegistry
 
 try:
     from typing import Any, Dict, List, Optional, Tuple
-    from univention.admin.uldap import access as LoType
+
     from univention.admin.handlers import simpleLdap as UdmObject
+    from univention.admin.uldap import access as LoType
 except ImportError:
     pass
 

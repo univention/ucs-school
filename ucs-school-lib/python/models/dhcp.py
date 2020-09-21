@@ -47,7 +47,9 @@ from .utils import _, ucr
 
 try:
     from typing import Any, List, Optional
+
     from univention.admin.uldap import access as LoType
+
     from .base import UdmObject
 except ImportError:
     pass

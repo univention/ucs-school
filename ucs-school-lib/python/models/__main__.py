@@ -33,10 +33,10 @@ import logging
 import sys
 from operator import attrgetter
 
+import click
 from ldap.filter import escape_filter_chars
 from six import iteritems, itervalues
 
-import click
 import univention.admin.modules as udm_modules
 from ucsschool.lib.models.base import (
     MultipleObjectsError,
@@ -53,6 +53,7 @@ from univention.admin.uldap import access as LoType, getAdminConnection, positio
 
 try:
     from typing import Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
+
     import univention.admin.handlers.simpleLdap
     from ucsschool.lib.models.base import UCSSchoolModel
 except ImportError:

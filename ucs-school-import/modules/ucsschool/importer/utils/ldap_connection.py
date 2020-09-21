@@ -39,8 +39,9 @@ from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 try:
     from typing import Tuple
-    from univention.admin.uldap import access as LoType, position as PoType
+
     import univention.admin.handlers
+    from univention.admin.uldap import access as LoType, position as PoType
 
     UdmObjectType = univention.admin.handlers.simpleLdap
 except ImportError:

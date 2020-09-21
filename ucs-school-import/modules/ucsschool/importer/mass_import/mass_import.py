@@ -47,6 +47,7 @@ from ..utils.utils import nullcontext
 
 try:
     from typing import Any, Optional, Type, TypeVar
+
     from ..utils.import_pyhook import ImportPyHook
 
     ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)

@@ -63,6 +63,7 @@ from .utils import _, create_passwd, ucr
 
 try:
     from typing import Dict, List, Optional
+
     from .base import UdmObject
 except ImportError:
     pass

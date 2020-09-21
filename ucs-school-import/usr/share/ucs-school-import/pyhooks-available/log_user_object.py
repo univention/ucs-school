@@ -27,6 +27,7 @@
 
 try:
     from typing import Any, List, Tuple
+
     from ucsschool.importer.models.import_user import ImportUser
 except ImportError:
     pass

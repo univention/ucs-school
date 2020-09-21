@@ -37,8 +37,10 @@ from .import_pyhook import ImportPyHook
 
 try:
     import typing
-    from ..configuration import ReadOnlyDict
+
     import univention.admin.uldap.access
+
+    from ..configuration import ReadOnlyDict
 except ImportError:
     pass
 

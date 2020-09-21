@@ -73,6 +73,7 @@ from .ldap_connection import get_readonly_connection, get_unprivileged_connectio
 
 try:
     from typing import List, Type
+
     from ..configuration import ReadOnlyDict
 except ImportError:
     pass

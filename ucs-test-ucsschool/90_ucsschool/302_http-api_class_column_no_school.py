@@ -28,6 +28,7 @@ from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
 try:
     from typing import List
+
     from ucsschool.http_api.client import ResourceRepresentation
 except ImportError:
     pass

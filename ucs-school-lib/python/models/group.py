@@ -53,7 +53,8 @@ from .utils import _, ucr
 
 try:
     from typing import Any, Dict, Generator, List, Optional, Type
-    from .base import UdmObject, LoType
+
+    from .base import LoType, UdmObject
 except ImportError:
     pass
 

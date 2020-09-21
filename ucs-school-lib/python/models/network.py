@@ -98,7 +98,6 @@ class Network(UCSSchoolHelperAbstractClass):
         # TODO:
         # if iprange:
         # 	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
-
         # TODO: this is a DHCPServer created when school is created (not implemented yet)
         udm_obj["dhcpEntryZone"] = "cn=%s,cn=dhcp,%s" % (self.school, School.cache(self.school).dn)
         udm_obj["dnsEntryZoneForward"] = "zoneName=%s,cn=dns,%s" % (
