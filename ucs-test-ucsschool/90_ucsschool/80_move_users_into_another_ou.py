@@ -71,8 +71,9 @@ def main():
         grp2_name = uts.random_username()
         two_klasses = "{0}-{1},{0}-{2}".format(a, grp1_name, grp2_name)
         group_name = "{}-{}".format(a, uts.random_username())
-        workgroup_dn, workgroup_name = udm.create_group(position="cn=schueler,cn=groups,%s" % (a_dn,),
-                                                        name=group_name)
+        workgroup_dn, workgroup_name = udm.create_group(
+            position="cn=schueler,cn=groups,%s" % (a_dn,), name=group_name
+        )
         global_group_dn, global_group_name = udm.create_group()
 
         users = [
