@@ -3,11 +3,12 @@
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: []
+## packages: [ucs-school-import]
 ## bugs: [42182]
 
 import os
 import re
+import tempfile
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -117,8 +118,8 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
         check_create_folder(username=teacher_name, share=work_group_share, dir_name=work_group_folder)
         check_create_folder(username=admin_name, share=marketplace_share, dir_name=marketplace_folder)
 
-        cases = [(schueler_group_sid, False), (lehrer_group_sid, True), (admin_group_sid, True)]
-        for sid, allowed in cases:
+        nt_acl_cases = [(schueler_group_sid, False), (lehrer_group_sid, True), (admin_group_sid, True)]
+        for sid, allowed in nt_acl_cases:
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=klasse_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=workgroup_path)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=marketplace_path)
@@ -126,8 +127,31 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_workgroup_folder)
             check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=new_marketplace_folder_path)
 
-        cases = [(student_name, False), (teacher_name, True), (admin_name, True)]
-        for user_name, allowed in cases:
+        smbcacls_cases = [(student_name, False), (teacher_name, True), (admin_name, True)]
+        for user_name, allowed in smbcacls_cases:
             change_smbcacls_acls(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
             change_smbcacls_acls(file=new_workgroup_share_folder, user_name=user_name, allowed=allowed)
             change_smbcacls_acls(file=marketplace_share_folder, user_name=user_name, allowed=allowed)
+
+        # rename class and check if the permissions are still the same.
+        new_class_name = "{}-{}".format(school, uts.random_string())
+        klasse_share = "//{}/{}".format(ucr_hostname, new_class_name)
+        new_klasse_share_folder = "{} {}".format(klasse_share, klasse_folder)
+        with tempfile.NamedTemporaryFile(suffix=".import", dir="/tmp/") as fp:
+            fp.write("{}\t{}".format(klasse.name, new_class_name))
+            fp.flush()
+            fp.seek(0)
+            cmd = ["/usr/share/ucs-school-import/scripts/rename_class", fp.name]
+            rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
+            if rv == 0:
+                utils.wait_for_replication_and_postrun()
+            klasse = SchoolClass.get_all(
+                school=school, lo=schoolenv.lo, filter_str="name={}".format(new_class_name)
+            )
+            assert len(klasse) == 1
+            klasse_share = ClassShare.from_school_class(klasse[0])
+            klasse_path = klasse_share.get_share_path()
+            for sid, allowed in nt_acl_cases:
+                check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=klasse_path)
+            for user_name, allowed in smbcacls_cases:
+                change_smbcacls_acls(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
