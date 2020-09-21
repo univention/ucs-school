@@ -1,3 +1,11 @@
+ucs-school-import (17.0.45) unstable; urgency=low
+
+  * Bug #51941: add user import hook to pyhooks-available that logs users
+    current attributes before and/or after create/modify/move/delete
+    operations.
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Sep 2020 08:48:26 +0200
+
 ucs-school-import (17.0.44) unstable; urgency=low
 
   * Bug #51301: use ucsschool.lib cli -> depend on new version
