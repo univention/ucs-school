@@ -616,7 +616,9 @@ feedback@univention.de
 		<para>
 		  Das Anlegen einer Arbeitsgruppe legt automatisch auch einen Datenbereich auf dem Schulserver
 		  (Dateifreigabe) an, auf den alle Mitglieder der Arbeitsgruppe Zugriff erhalten. Der Name der
-		  Dateifreigabe ist identisch mit dem gewählten Namen der Arbeitsgruppe.
+		  Dateifreigabe ist identisch mit dem gewählten Namen der Arbeitsgruppe. Diese Funktion lässt
+		  sich über das Deaktivieren der Option <guimenu>Freigabe erstellen</guimenu> abschalten. Diese
+		  Entscheidung kann nach Erstellung der Arbeitsgruppe nicht mehr geändert werden.
 		</para>
 		<para>
 		  Nach einem Klick auf <guimenu>Arbeitsgruppen verwalten</guimenu> wird eine Liste aller
@@ -634,7 +636,7 @@ feedback@univention.de
 		  werden; optional kann eine <guimenu>Beschreibung</guimenu> hinterlegt werden.
 		</para>
 		<para>
-		  Eine bestehende Arbeitsgruppe kann durch Klick auf das Minus-Symbol gelöscht werden.
+		  Eine bestehende Arbeitsgruppe kann durch Auswahl und die Option <guimenu>Löschen</guimenu> gelöscht werden.
 		</para>
 		<para>
 		  <figure id="select-workgroup">
@@ -671,6 +673,35 @@ feedback@univention.de
 		  Benutzer können aus der Arbeitsgruppe entfernt werden, indem das Auswahlkästchens vor dem
 		  zu entfernenden Benutzer aktiviert und und anschließend auf <guimenu>Entfernen</guimenu> geklickt
 		  wird.
+		</para>
+		<para>
+		  Ab &ucsUAS; 4.4v7 können Email-Adressen für Arbeitsgruppen aktiviert und verwaltet werden, sollte dieses Feature
+		  von einem Administrator eingerichtet worden sein. Dazu muss die Option <guimenu>Email-Adresse aktivieren</guimenu>
+		  aktiviert werden. Dadurch werden weitere Eingabefelder freigeschaltet. Die Email-Adresse wird nur lesend angezeigt,
+		  da sie automatisch über ein zuvor konfiguriertes Muster zusammengesetzt wird.
+		</para>
+		<para>
+		  <figure id="manage-ag-emails">
+			<title>Konfiguration der Email-Adresse für eine Arbeitsgruppe</title>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/workgroup_3_manage_email.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Die beiden letzten Eingabefelder können dazu genutzt werden, die Nutzer und Gruppen zu beschränken, die Emails
+		  an diese Arbeitsgruppe senden dürfen. Sind beide Eingabefelder leer, so ist diese Email-Adresse unbeschränkt.
+		  Wurde jedoch in mindestens eines dieser Felder ein Benutzer oder eine Gruppe eingetragen, werden alle Emails von
+		  Absendern, die sich nicht in einer dieser Listen befinden, abgelehnt. Das Eingabefeld wird analog zum schon
+		  zuvor beschriebenen Eingabefeld <guimenu>Mitglieder</guimenu> genutzt.
+		</para>
+		<para>
+		  Die Email-Adresse einer Arbeitsgruppe kan jederzeit über den <guimenu>Bearbeiten</guimenu> Dialog wieder
+		  deaktiviert werden. Dabei gehen sowohl die Email-Adresse, als auch die konfigurierten Absenderlimitierungen
+		  verloren.
+		</para>
+		<para>
+		  Es kann vorkommen, dass das Feature zur Aktivierung von Email-Adressen nicht aktiviert ist, die Arbeitsgruppe
+		  aber von einer anderen Quelle eine Email-Adresse zugeordnet bekommen hat. In diesem Fall erscheinen bei Bearbeiten
+		  der Arbeitsgruppe alle hier beschriebenen Eingabefelder, bis auf die Möglichkeit die Email-Adresse zu deaktivieren.
 		</para>
 	  </section>
 
