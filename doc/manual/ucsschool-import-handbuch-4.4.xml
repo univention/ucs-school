@@ -1071,7 +1071,8 @@ udm users/user
 				Um dies zu erreichen, sowie wenn Attribute in modifizierter Form für die Erzeugung weiterer Attribute verwendet werden sollen (z.B. nur der erste Teil eines Doppelnamens für eine E-Mail-Adresse), können <wordasword>Format-Hooks</wordasword> geschrieben werden. Ihre Erstellung und Verwendung wird in  <xref linkend="extending:hooks:formathooks"/> beschrieben.
 			</para>
 			<para>
-				Im Folgenden wird die Berechnung von <property>email</property> und <property>record_uid</property> mittels der oben angeführten Schemata illustriert.
+				Zur Illustration wird gezeigt, wie aus den oben angeführten Schemata für <property>email</property> und <property>record_uid</property>
+				der entsprechende Wert berechnet wird, wenn folgende Beispiel CSV-Datei als Eingabe verwendet wird:
 			<programlisting>
 "Schulen","Vorname","Nachname","Klassen","Telefonnumer"
 "schule1","Bea","Schmidt","schule1-1A","0421-1234567890"
