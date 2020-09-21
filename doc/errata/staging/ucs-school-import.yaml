@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.45A~4.4.0.202009210850
+desc: |
+ * The new user import hook <filename>log_user_object.py</filename> was added to <filename class="directory">/usr/share/ucs-school-import/pyhooks-available</filename>. When activated, it will log each users current attributes before and/or after create/modify/move/delete operations.
+bug: [51941]
