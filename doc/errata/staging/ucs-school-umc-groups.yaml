@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-groups
-fix: 9.0.0-4A~4.4.0.202009210951
+fix: 9.0.0-5A~4.4.0.202009211139
 desc: |
  * It is now possible to manage email addresses on UCS@school workgroups if configured by an Administrator (Bug #52050).
 bug: [52050]
