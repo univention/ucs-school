@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.137) unstable; urgency=low
+
+  * Bug #52050: extend workgroup UMC tests for email addresses
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 21 Sep 2020 09:48:12 +0200
+
 ucs-test-ucsschool (6.0.136) unstable; urgency=low
 
   * Bug #52035: test CRUD operations on WorkGroup

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (9.0.0-4) unstable; urgency=low
+
+  * Bug #52050: Add email address configuration to workgroup UMC module
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 21 Sep 2020 09:49:23 +0100
+
 ucs-school-umc-groups (9.0.0-3) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
