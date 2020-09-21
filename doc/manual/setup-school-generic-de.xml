@@ -405,4 +405,15 @@
             die ausgewählte Klasse eingesetzt.
         </para>
     </section>
+    <section id="school:setup:generic:configureworkgroupemails">
+        <title>Konfiguration von Email-Adressen für Arbeitsgruppen</title>
+        <para>
+            Ab &ucsUAS; 4.4v7 ist es möglich die Aktivierung von Email-Adressen für Arbeitsgruppen über das Modul <guimenu>Arbeitsgruppen verwalten</guimenu>
+            zu erlauben. Um dieses Feature zu aktivieren, muss die &ucsUCRV; <envar>ucsschool/workgroups/mailaddress</envar> gesetzt werden. Der eingetragene
+            Wert bestimmt das Muster, nach dem die Email-Adresse einer Arbeitsgruppe berechnet wird. Es stehen zwei Platzhalter-Werte zur Verfügung:
+            <envar>{ou}</envar> und <envar>{name}</envar>. Ist der Wert der &ucsUCRV; beispielsweise <envar>{ou}-{name}@schule-univention.de</envar>, so wird
+            für eine Arbeitsgruppe mit dem Namen <literal>AG1</literal> an der Schule <literal>DEMOSCHOOL</literal> die Email-Adresse
+            <literal>DEMOSCHOOL-AG1@schule-univention.de</literal> berechnet.
+        </para>
+    </section>
 </chapter>

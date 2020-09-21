@@ -34,7 +34,16 @@
 from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
-from ucsschool.lib.models import SchoolClass, Teacher, TeachersAndStaff, User, WorkGroup
+from ucsschool.lib.models import (
+    GroupShare,
+    SchoolClass,
+    SchoolGroup,
+    Teacher,
+    TeachersAndStaff,
+    User,
+    WorkGroup,
+)
+from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import (
     MACHINE_WRITE,
@@ -73,6 +82,18 @@ def get_group_class(request):
 
 
 class Instance(SchoolBaseModule):
+    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @LDAP_Connection()
+    def groups(self, request, ldap_user_read=None):
+        school = request.options["school"]
+        result = self._groups(
+            ldap_user_read,
+            school,
+            SchoolGroup.get_container(school),
+            pattern=request.options.get("pattern", None),
+        )
+        self.finished(request.id, result)
+
     @sanitize(
         school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""),
     )
@@ -130,6 +151,9 @@ class Instance(SchoolBaseModule):
 
         result = group.to_dict()
 
+        if request.flavor == "workgroup-admin":
+            result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
+
         if request.flavor == "teacher":
             schools = group.schools
             classes = []
@@ -144,6 +168,18 @@ class Instance(SchoolBaseModule):
             self.finished(request.id, [result])
             return
         result["members"] = self._filter_members(request, group, result.pop("users", []), ldap_user_read)
+
+        result["allowed_email_senders_groups"] = [
+            {"id": dn, "label": dn.split(",")[0][3:]} for dn in result["allowed_email_senders_groups"]
+        ]
+        umc_users = list()
+        for user_dn in result["allowed_email_senders_users"]:
+            user = User.from_dn(user_dn, None, ldap_user_read)
+            umc_users.append({"id": user_dn, "label": Display.user(user.get_udm_object(ldap_user_read))})
+        result["allowed_email_senders_users"] = umc_users
+        if result["email"]:
+            result["create_email"] = True
+            result["email_exists"] = True
 
         self.finished(request.id, [result,])
 
@@ -276,6 +312,14 @@ class Instance(SchoolBaseModule):
             users.append(user.dn)
 
         group_from_ldap.users = list(set(users) - removed_members)
+        if group_from_umc.get("create_email", False):
+            group_from_ldap.email = group_from_umc["email"]
+            group_from_ldap.allowed_email_senders_groups = group_from_umc["allowed_email_senders_groups"]
+            group_from_ldap.allowed_email_senders_users = group_from_umc["allowed_email_senders_users"]
+        else:
+            group_from_ldap.email = ""
+            group_from_ldap.allowed_email_senders_groups = []
+            group_from_ldap.allowed_email_senders_users = []
         try:
             success = group_from_ldap.modify(ldap_machine_write)
             MODULE.info("Modified, group has now members: %s" % (group_from_ldap.users,))
@@ -295,15 +339,28 @@ class Instance(SchoolBaseModule):
             group = group["object"]
             break
         try:
-            grp = {}
-            grp["school"] = group["school"]
-            grp["name"] = "%(school)s-%(name)s" % group
-            grp["description"] = group["description"]
-            grp["users"] = group["members"]
-
+            grp = {
+                "school": group["school"],
+                "name": "%(school)s-%(name)s" % group,
+                "description": group["description"],
+                "users": group["members"],
+                "create_share": group.get("create_share", True),
+            }
+            if group.get("create_email", False):
+                grp["email"] = group.get("email", "")
+                grp["allowed_email_senders_groups"] = group.get("allowed_email_senders_groups", [])
+                grp["allowed_email_senders_users"] = group.get("allowed_email_senders_users", [])
             grp = WorkGroup(**grp)
-
-            success = grp.create(ldap_user_write)
+            try:
+                success = grp.create(ldap_user_write)
+            except ValidationError as exc:
+                raise UMC_Error(
+                    _(
+                        "One or more errors during validation of the group occured:\n{}".format(
+                            exc.message
+                        )
+                    )
+                )
             if not success and grp.exists(ldap_user_read):
                 raise UMC_Error(_("The workgroup %r already exists!") % grp.name)
         except udm_exceptions.base as exc:
