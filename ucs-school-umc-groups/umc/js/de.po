@@ -138,12 +138,12 @@ msgstr "Name"
 msgid ""
 "Restrict permission to send emails to this group to the following groups"
 msgstr ""
-"Beschränke das Recht Emails and diese Gruppe zu versenden auf die folgenden Benutzer"
+"Beschränke das Recht, Emails and diese Gruppe zu versenden, auf die folgenden Benutzer"
 
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:119
 msgid "Restrict permission to send emails to this group to the following users"
 msgstr ""
-"Beschränke das Rech Emails an diese Gruppe zu versenden auf die folgenden Gruppen"
+"Beschränke das Recht, Emails an diese Gruppe zu versenden, auf die folgenden Gruppen"
 
 #: umc/js/schoolgroups/DetailPage.js:60
 msgid "Save changes"
