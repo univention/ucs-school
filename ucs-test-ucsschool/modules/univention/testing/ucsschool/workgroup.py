@@ -41,9 +41,19 @@ class Workgroup(object):
         name=None,
         description=None,
         members=None,
+        create_share=True,
+        create_email=False,
+        email="",
+        allowed_email_senders_groups=[],
+        allowed_email_senders_users=[],
     ):
         self.school = school
         self.name = name if name else uts.random_string()
+        self.create_share = create_share
+        self.email = email
+        self.create_email = create_email
+        self.allowed_email_senders_groups = allowed_email_senders_groups
+        self.allowed_email_senders_users = allowed_email_senders_users
         self.description = description if description else uts.random_string()
         self.members = members if members else []
         self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
@@ -103,6 +113,11 @@ class Workgroup(object):
                     "school": self.school,
                     "members": self.members,
                     "description": self.description,
+                    "create_share": self.create_share,
+                    "create_email": self.create_email,
+                    "allowed_email_senders_users": self.allowed_email_senders_users,
+                    "allowed_email_senders_groups": self.allowed_email_senders_groups,
+                    "email": self.email,
                 }
             }
         ]
@@ -154,6 +169,38 @@ class Workgroup(object):
                 currentMembers.remove(member)
         self.set_members(currentMembers)
 
+    def deactivate_email(self):
+        """
+        Deactivates the email address for the workgroup via UMC
+        """
+        print ("Deactivating email for the workgroup {}".format(self.dn()))
+        flavor = "workgroup-admin"
+        group_dn = self.dn()
+        self.create_email = False
+        creationParam = [
+            {
+                "object": {
+                    "$dn$": group_dn,
+                    "school": self.school,
+                    "create_email": self.create_email,
+                    "email": self.email,
+                    "allowed_email_senders_users": self.allowed_email_senders_users,
+                    "allowed_email_senders_groups": self.allowed_email_senders_groups,
+                    "name": self.name,
+                    "description": self.description,
+                    "members": self.members,
+                },
+            }
+        ]
+        requestResult = self.client.umc_command("schoolgroups/put", creationParam, flavor).result
+        if not requestResult:
+            utils.fail("Email address failed to be deactivated")
+        else:
+            self.email = ""
+            self.allowed_email_senders_groups = []
+            self.allowed_email_senders_users = []
+        utils.wait_for_replication()
+
     def set_members(self, new_members, options=None):
         """Set members for workgroup\n
         :param new_members: list of the new members
@@ -167,6 +214,10 @@ class Workgroup(object):
                 "object": {
                     "$dn$": groupdn,
                     "school": self.school,
+                    "create_email": self.create_email,
+                    "email": self.email,
+                    "allowed_email_senders_users": self.allowed_email_senders_users,
+                    "allowed_email_senders_groups": self.allowed_email_senders_groups,
                     "name": self.name,
                     "description": self.description,
                     "members": new_members,
@@ -192,8 +243,13 @@ class Workgroup(object):
         expected_attr = {
             "memberUid": members,
             "description": [self.description],
+            "ucsschoolRole": [create_ucsschool_role_string(role_workgroup, self.school)],
+            "mailPrimaryAddress": [self.email] if self.create_email else [],
+            "univentionAllowedEmailUsers": self.allowed_email_senders_users if self.create_email else [],
+            "univentionAllowedEmailGroups": self.allowed_email_senders_groups
+            if self.create_email
+            else [],
         }
-        expected_attr["ucsschoolRole"] = [create_ucsschool_role_string(role_workgroup, self.school)]
         utils.verify_ldap_object(self.dn(), expected_attr=expected_attr)
 
     def verify_exists(self, group_should_exist, share_should_exist):

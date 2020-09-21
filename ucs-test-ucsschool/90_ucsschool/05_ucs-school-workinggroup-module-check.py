@@ -22,6 +22,7 @@ def main():
         schoolName, oudn = schoolenv.create_ou(name_edudc=host)
         tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
         stu, studn = schoolenv.create_user(schoolName)
+        klass, klassdn = schoolenv.create_school_class(schoolName)
         memberListdn = [teadn, studn]
 
         account = utils.UCSTestDomainAdminCredentials()
@@ -100,6 +101,26 @@ def main():
 
             # 13 check if the object is removed from ldap
             group.verify_exists(group_should_exist=False, share_should_exist=False)
+
+            # 14 Check group without share
+            no_share_group = Workgroup(schoolName, create_share=False, connection=connection)
+            no_share_group.create()
+            no_share_group.verify_exists(group_should_exist=True, share_should_exist=False)
+            no_share_group.verify_ldap_attributes()
+
+            # 15 group with email
+            email_group = Workgroup(
+                schoolName,
+                create_email=True,
+                allowed_email_senders_users=[teadn],
+                allowed_email_senders_groups=[klassdn],
+            )
+            email_group.email = "{}-{}@example.com".format(email_group.name, schoolName)
+            email_group.create()
+            email_group.verify_exists(group_should_exist=True, share_should_exist=True)
+            email_group.verify_ldap_attributes()
+            email_group.deactivate_email()
+            email_group.verify_ldap_attributes()
 
 
 if __name__ == "__main__":
