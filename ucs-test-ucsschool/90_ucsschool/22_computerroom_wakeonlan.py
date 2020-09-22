@@ -11,7 +11,6 @@ import socket
 import subprocess
 import time
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.management.console.modules import computerroom
@@ -29,8 +28,8 @@ def main():
         ["tshark", "-i", "any", "src", "host", server_ip,], stdout=subprocess.PIPE, close_fds=True,
     )
 
-    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
-        school, _ = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    with utu.UCSTestSchool() as schoolenv:
+        school, _ = schoolenv.create_ou(name_edudc=hostname)
         computer = UmcComputer(school, "windows")
         computer.create()
         mac_address = computer.mac_address
