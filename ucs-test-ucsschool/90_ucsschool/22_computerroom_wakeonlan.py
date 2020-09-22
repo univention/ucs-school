@@ -11,11 +11,19 @@ import socket
 import subprocess
 import time
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.management.console.modules import computerroom
 from univention.testing.ucsschool.computerroom import UmcComputer
+
+
+def process_output(proc):
+    # read lines while proc writes to stdout
+    while True:
+        line = proc.stdout.readline()
+        if line == "" and proc.poll() is not None:
+            break
+        yield line
 
 
 def main():
@@ -29,11 +37,12 @@ def main():
         ["tshark", "-i", "any", "src", "host", server_ip], stdout=subprocess.PIPE, close_fds=True
     )
 
-    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
-        school, _ = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    with utu.UCSTestSchool() as schoolenv:
+        school, _ = schoolenv.create_ou(name_edudc=None)
         computer = UmcComputer(school, "windows")
         computer.create()
         mac_address = computer.mac_address
+        # We expect these messages when sending a WoL signal to a computer.
         regexes = {}
         for j, b_ip in enumerate(target_broadcast_ips):
             regexes[b_ip] = r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(
@@ -42,6 +51,7 @@ def main():
 
         for i in range(max_iterations):
             start = time.time()
+            # time & max_iteration laufen auseinander
             wol_received = {b_ip: False for b_ip in target_broadcast_ips}
             logger.info(
                 "Send WoL signals to {} to broadcast-ips {}".format(mac_address, target_broadcast_ips)
@@ -56,11 +66,8 @@ def main():
                 # A more extensive test would have multiple machines with
                 # different broadcast-ips. We decided this would produce too much overhead.
                 pass
-            while True:
-                line = proc.stdout.readline()
-                if line == "" and proc.poll() is not None:
-                    break
-                different_sub_net = [ele for ele in target_broadcast_ips if ele in str(line)]
+            for line in process_output(proc):
+                different_sub_net = [_ip for _ip in target_broadcast_ips if _ip in str(line)]
                 if computer.mac_address in line:
                     for b_ip, regex in regexes.items():
                         successful_send = re.match(regex, str(line), re.DOTALL)
@@ -76,7 +83,6 @@ def main():
             if all(wol_received.values()) or (time.time() - start > tshark_duration):
                 break
 
-        proc.terminate()
         if not all(wol_received.values()):
             utils.fail(
                 "Did not succeed to send WoL all of the following addresses {}".format(
