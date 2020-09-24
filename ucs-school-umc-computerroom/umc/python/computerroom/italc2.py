@@ -89,7 +89,7 @@ class UserInfo(object):
 
 class UserMap(dict):
 
-    USER_REGEX = re.compile(r"(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$")
+    USER_REGEX = re.compile(r"(?P<username>.*?)(\((?P<realname>.*)\))?$")
 
     def __getitem__(self, user):
         if user not in self:
