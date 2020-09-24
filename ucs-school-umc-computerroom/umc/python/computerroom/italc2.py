@@ -89,22 +89,25 @@ class UserInfo(object):
 
 class UserMap(dict):
 
-    USER_REGEX = re.compile(r"(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$")
+    USER_REGEX = re.compile(r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$")
 
     def __getitem__(self, user):
         if user not in self:
             self._read_user(user)
         return dict.__getitem__(self, user)
 
-    @LDAP_Connection()
-    def _read_user(self, userstr, ldap_user_read=None):
+    def validate_userstr(self, userstr):
         match = self.USER_REGEX.match(userstr)
         if not match or not userstr:
             raise AttributeError('invalid key "%s"' % userstr)
         username = match.groupdict()["username"]
         if not username:
             raise AttributeError("username missing: %s" % userstr)
+        return username
 
+    @LDAP_Connection()
+    def _read_user(self, userstr, ldap_user_read=None):
+        username = self.validate_userstr(userstr)
         lo = ldap_user_read
         try:
             userobj = User.get_only_udm_obj(lo, filter_format("uid=%s", (username,)))
