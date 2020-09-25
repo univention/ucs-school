@@ -9,6 +9,7 @@
 import os
 import re
 import tempfile
+import time
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -90,14 +91,24 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
         utils.wait_for_listener_replication()
         klasse_share = ClassShare.from_school_class(klasse)
         klasse_path = klasse_share.get_share_path()
-        assert os.path.isdir(klasse_path)
         workgroup_share = WorkGroupShare.from_school_group(workgroup)
         workgroup_path = workgroup_share.get_share_path()
-        assert os.path.isdir(workgroup_path)
         marketplace_shares = MarketplaceShare.get_all(schoolenv.lo, school=school)
         assert len(marketplace_shares) == 1
         marketplace_path = marketplace_shares[0].get_share_path()
-        assert os.path.isdir(marketplace_path)
+
+        ready = False
+        for i in range(50):
+            ready = all(
+                [
+                    os.path.isdir(klasse_path),
+                    os.path.isdir(workgroup_path),
+                    os.path.isdir(marketplace_path),
+                ]
+            )
+            if not ready:
+                time.sleep(1)
+        assert ready
 
         klasse_share = "//{}/{}".format(ucr_hostname, klasse_share.name)
         klasse_folder = uts.random_string()
