@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-users
-fix: 
+fix: 15.0.0-6A~4.4.0.202009250913
 desc: |
  * The UCR-V descriptions of <envar>ucsschool/passwordreset/password-change-on-next-login</envar> and <envar>ucsschool/passwordreset/force-password-change-on-next-login</envar> were changed to make it clearer that they refer to the UCS@school password reset module (Bug #50834).
 bug: [50834]
