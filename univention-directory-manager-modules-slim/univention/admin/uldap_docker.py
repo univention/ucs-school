@@ -140,7 +140,6 @@ def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, se
 	:return: A LDAP access object.
 	:rtype: univention.uldap.access
 	"""
-
 	bindpw = open(try_dev_path(secret_file)).read().rstrip('\n')
 	base_dn = env_or_ucr('ldap/base')
 	host_dn = env_or_ucr('ldap/hostdn')
@@ -149,11 +148,10 @@ def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, se
 	if ldap_master:
 		# Connect to DC Master
 		host = env_or_ucr('ldap/master')
-		return access(host=host, port=port, base=base_dn, binddn=host_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 	else:
 		# Connect to ldap/server/name
 		host = env_or_ucr('ldap/server/name')
-		return access(host=host, port=port, base=base_dn, binddn=host_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
+	return access(host=host, port=port, base=base_dn, binddn=host_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 
 
 def _fix_reconnect_handling(func):
