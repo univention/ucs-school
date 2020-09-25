@@ -48,6 +48,7 @@ from univention.config_registry import ConfigRegistry
 
 ucr = ConfigRegistry()
 ucr.load()
+SLAVE_INSTALLER_LOG = "/var/log/univention/ucs-school-slave-installer.log"
 
 
 def is_valid_ou_name(name):
@@ -75,7 +76,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
     if options.server_type:
         params["server_type"] = options.server_type
 
-    fd = open("/var/log/univention/ucsschool-slave-installer.log", "a")
+    fd = open(SLAVE_INSTALLER_LOG, "a")
     fd.write("-" * 80 + "\n")
     fd.write(time.ctime() + "\n")
     fd.write("Starting configuration of UCS@school ... this might take a while ...\n")
@@ -147,7 +148,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
 
 
 def install_app(options):  # type: (Any) -> None
-    fd = open("/var/log/univention/ucsschool-slave-installer.log", "a")
+    fd = open(SLAVE_INSTALLER_LOG, "a")
     fd.write("-" * 80 + "\n")
     fd.write(time.ctime() + "\n")
 
@@ -203,7 +204,7 @@ def install_app(options):  # type: (Any) -> None
 
 
 def fatal(exitcode, msg):
-    with open("/var/log/univention/ucsschool-slave-installer.log", "a") as fd:
+    with open(SLAVE_INSTALLER_LOG, "a") as fd:
         print >> sys.stderr, msg
         print >> fd, msg
     sys.exit(exitcode)
@@ -336,7 +337,7 @@ def main():  # type: () -> None
     print
     print "During package installation and configuration, a detailed log"
     print "is written to the following files:"
-    print "- /var/log/univention/ucsschool-slave-installer.log"
+    print "- %s" % (SLAVE_INSTALLER_LOG,)
     print "- /var/log/univention/management-console-module-schoolinstaller.log"
     print
     install_app(options)
