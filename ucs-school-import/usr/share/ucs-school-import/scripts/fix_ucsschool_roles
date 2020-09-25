@@ -48,7 +48,7 @@ from ucsschool.lib.roles import (
 )
 from univention.config_registry import ConfigRegistry
 
-LOG_FILE = "/var/log/univention/ucsschool-roles-migration.log"
+LOG_FILE = "/var/log/univention/ucs-school-roles-migration.log"
 LOG_DEBUG_FMT = "%(asctime)s %(levelname)-5s %(funcName)s:%(lineno)d  %(message)s"
 LOG_INFO_FMT = "%(message)s"
 LOG_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
