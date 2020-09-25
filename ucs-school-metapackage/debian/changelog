@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.3-6) unstable; urgency=medium
+
+  * Bug #52049: Enable s4-connector synchronization of container
+    "CN=Default Domain Policy,CN=System"
+
+ -- Erik Damrose <damrose@univention.de>  Fri, 25 Sep 2020 10:57:25 +0200
+
 ucs-school-metapackage (12.0.3-5) unstable; urgency=medium
 
   * Bug #42182: resync samba-shares in slave joinscript 
