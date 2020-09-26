@@ -1,4 +1,4 @@
-ucs-school-ldap-acls-master (17.0.4-5) unstable; urgency=low
+ucs-school-ldap-acls-master (17.0.4-6) unstable; urgency=low
 
   * Bug #51661: Fix LDAP ACLs for Domain Admins creating non school users
 

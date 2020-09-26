@@ -36,6 +36,8 @@ def replace_ucr_variables(template):
 		'DHCPATTRS': 'cn,!posixGroup,!posixAccount,!SambaSamAccount,!univentionShare,!univentionShareNFS,!univentionShareSamba',
 		'MSGPO_MSPRINT_CONTAINER': '@univentionObject,@organizationalRole',
 		'MSWMI_FILTER': '@univentionObject,@organizationalRole'
+		'MSGPIPSEC': '@msgpipsec'
+		'DOMAINPOLICY': '@n_domainpolicy'
 	}
 
 	# enable objectclasses only if corresponding LDAP schema is present (Bug #41725)
@@ -44,6 +46,8 @@ def replace_ucr_variables(template):
 	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpo.schema'):
 		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msGPOContainer'
 	if os.path.exists('/var/lib/univention-ldap/local-schema/msprintconnectionpolicy.schema'):
+		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msPrintConnectionPolicy'
+	if os.path.exists('/var/lib/univention-ldap/local-schema/msgpipsec.schema'):
 		replacements['MSGPO_MSPRINT_CONTAINER'] += ',@msPrintConnectionPolicy'
 
 	while True:
@@ -110,6 +114,30 @@ access to dn.base="cn=WMIPolicy,cn=system,@%@ldap/base@%@" attrs=children
 
 # Slave DCs can read and write policy containers for MS WMI filter objects (part 2)
 access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@$@MSWMI_FILTER@$@
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+# Slave DCs can read and write IP Security containers (part 1)
+access to dn.base="cn=IP Security,cn=system,@%@ldap/base@%@" attrs=children
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+# Slave DCs can read and write policy containers for IP Security objects (part 2)
+access to dn.children="cn=IP Security,cn=system,@%@ldap/base@%@" filter="(|(objectClass=ipsecBase)(objectClass=ipsecPolicy))"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+# Slave DCs can read and write domain policy containers (part 1)
+access to dn.base="cn=Default Domain Policy,cn=system,@%@ldap/base@%@" attrs=children
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+# Slave DCs can read and write policy containers for domain policy objects (part 2)
+access to dn.children="cn=Default Domain Policy,cn=system,@%@ldap/base@%@" filter="(objectClass=domainpolicy)"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
