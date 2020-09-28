@@ -190,7 +190,7 @@ class ExamCleanupHelper(object):
                     if self.options.dryrun:
                         ud.debug(ud.MAIN, ud.PROCESS, "dry-run: skipping removal")
                         continue
-                    self.restore_original_usesr(user.dn)
+                    self.restore_original_user(user.dn)
                     user.open()
                     user.remove()
         except Exception:
