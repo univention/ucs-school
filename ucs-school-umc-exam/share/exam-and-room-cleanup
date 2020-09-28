@@ -36,7 +36,7 @@ import sys
 import traceback
 
 from ldap import LDAPError
-from ldap.filter import escape_filter_chars
+from ldap.filter import escape_filter_chars, filter_format
 
 import univention.admin.uldap
 import univention.config_registry
@@ -131,6 +131,30 @@ class ExamCleanupHelper(object):
                 )
                 continue
 
+    def restore_original_user(self, dn):
+        user_uid = dn.split(",")[0][len("uid={}".format(self.exam_prefix)) :]
+        mod_user = univention.udm.UDM(self.lo, 1).get("users/user")
+        search_result = list(mod_user.search(filter_format("uid=%s", [user_uid])))
+        if len(search_result) == 1:
+            try:
+                orig_udm = search_result[0]
+                new_value = [ws.lstrip("$") for ws in orig_udm.props.sambaUserWorkstations]
+                orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if ws]
+                orig_udm.save()
+                ud.debug(
+                    ud.MAIN, ud.PROCESS, "Original user access has been restored for %r." % (orig_udm,)
+                )
+            except univention.admin.uexceptions.noObject:
+                ud.debug(
+                    ud.MAIN, ud.ERROR, "Exam student %r not found." % (dn[len(self.exam_prefix) :],)
+                )
+        elif len(search_result) == 0:
+            ud.debug(
+                ud.MAIN,
+                ud.ERROR,
+                "Exam student %r not found.\n%s" % (dn[len(self.exam_prefix) :], traceback.format_exc()),
+            )
+
     def remove_exam_user(self):
         if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup",):
             ud.debug(ud.MAIN, ud.INFO, "Skipping remove_exam_user: system/role does not match")
@@ -160,11 +184,13 @@ class ExamCleanupHelper(object):
                 except noObject:
                     # no exam users container in this OU
                     continue
+
                 for user in userlist:
                     ud.debug(ud.MAIN, ud.PROCESS, "Removing exam user %r" % (user.dn,))
                     if self.options.dryrun:
                         ud.debug(ud.MAIN, ud.PROCESS, "dry-run: skipping removal")
                         continue
+                    self.restore_original_user(user.dn)
                     user.open()
                     user.remove()
         except Exception:
