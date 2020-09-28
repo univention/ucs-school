@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix:
+fix: 9.0.1-41A~4.4.0.202009281152
 desc: |
  * If an exam failed, the values of sambaUserWorkstations of the original users remain with a prepended dollar sign. The script <code>exam-and-room-cleanup</code>, which can be used to clean up failed exams, now restores the users original values. (Bug #50636).
 bug: [50636]
