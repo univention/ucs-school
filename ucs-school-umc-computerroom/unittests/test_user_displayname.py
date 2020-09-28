@@ -39,7 +39,7 @@ from univention.management.console.modules.computerroom.italc2 import UserMap
 user_map = UserMap()
 
 
-def random_display_name(n):  # type: (int) -> str
+def random_user_str(n):  # type: (int) -> str
     enclosing = [
         ("[", "]"),
         ("{", "}"),
@@ -56,9 +56,9 @@ def random_display_name(n):  # type: (int) -> str
         yield "{0} ({1})".format(uts.random_string(), uts.random_string())
 
 
-@pytest.mark.parametrize("display_name", random_display_name(100))
-def test_usermap_regex(display_name):
-    user_map.validate_userstr(display_name)
+@pytest.mark.parametrize("user_str", random_user_str(100))
+def test_usermap_regex(user_str):
+    user_map.validate_userstr(user_str)
 
 
 def test_username_missing():
@@ -71,6 +71,6 @@ def test_username_missing():
         ("", ""),
     ]:
         a, b = enclosing
-        display_name = "{0} {1}{2}{3}".format(uts.random_username(), a, uts.random_username(), b)
+        user_str = "{0} {1}{2}{3}".format(uts.random_username(), a, uts.random_username(), b)
         with pytest.raises(AttributeError):
-            user_map.validate_userstr(display_name)
+            user_map.validate_userstr(user_str)
