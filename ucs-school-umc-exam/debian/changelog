@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-41) unstable; urgency=medium
+
+  * Bug #50636: restore original sambaUserWorkstations in cleanup script
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 28 Sep 2020 11:36:33 +0200
+
 ucs-school-umc-exam (9.0.1-40) unstable; urgency=low
 
   * Bug #51199: safely handle not-yet-updated master missing new UMC function

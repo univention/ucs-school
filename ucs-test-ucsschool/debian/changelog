@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.141) unstable; urgency=medium
+
+  * Bug #50636: add test for exam-and-room-cleanup script 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 28 Sep 2020 11:39:00 +0200
+
 ucs-test-ucsschool (6.0.140) unstable; urgency=medium
 
   * Bug #42182: make ucs-test 133 more robust
