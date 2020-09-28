@@ -103,16 +103,11 @@ class UserMap(dict):
         username = match.groupdict()["username"]
         if not username:
             raise AttributeError("username missing: %s" % userstr)
+        return username
 
     @LDAP_Connection()
     def _read_user(self, userstr, ldap_user_read=None):
-        self.validate_userstr(userstr)
-        if not match or not userstr:
-            raise AttributeError('invalid key "%s"' % userstr)
-        username = match.groupdict()["username"]
-        if not username:
-            raise AttributeError("username missing: %s" % userstr)
-
+        username = self.validate_userstr(userstr)
         lo = ldap_user_read
         try:
             userobj = User.get_only_udm_obj(lo, filter_format("uid=%s", (username,)))
