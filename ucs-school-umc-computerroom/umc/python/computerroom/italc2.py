@@ -89,16 +89,24 @@ class UserInfo(object):
 
 class UserMap(dict):
 
-    USER_REGEX = re.compile(r"(?P<username>.*?)(\((?P<realname>.*)\))?$")
+    USER_REGEX = re.compile(r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$")
 
     def __getitem__(self, user):
         if user not in self:
             self._read_user(user)
         return dict.__getitem__(self, user)
 
+    def validate_userstr(self, userstr):
+        match = self.USER_REGEX.match(userstr)
+        if not match or not userstr:
+            raise AttributeError('invalid key "%s"' % userstr)
+        username = match.groupdict()["username"]
+        if not username:
+            raise AttributeError("username missing: %s" % userstr)
+
     @LDAP_Connection()
     def _read_user(self, userstr, ldap_user_read=None):
-        match = self.USER_REGEX.match(userstr)
+        self.validate_userstr(userstr)
         if not match or not userstr:
             raise AttributeError('invalid key "%s"' % userstr)
         username = match.groupdict()["username"]
