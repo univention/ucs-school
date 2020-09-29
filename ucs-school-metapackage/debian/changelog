@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.3-7) unstable; urgency=medium
+
+  * Bug #52049: do not sync msgpipsec, msgpsi and domainpolicy
+    just msgpwl
+
+ -- Felix Botner <botner@univention.de>  Tue, 29 Sep 2020 12:17:55 +0200
+
 ucs-school-metapackage (12.0.3-6) unstable; urgency=medium
 
   * Bug #52049: Enable s4-connector synchronization of container
