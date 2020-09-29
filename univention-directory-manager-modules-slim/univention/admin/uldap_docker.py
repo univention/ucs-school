@@ -141,14 +141,15 @@ def getMachineConnection(start_tls=2, decode_ignorelist=[], ldap_master=True, se
 	bindpw = open(secret_file).read().rstrip('\n')
 	base_dn = env_or_ucr('ldap/base')
 	host_dn = env_or_ucr('ldap/hostdn')
-	port = int(env_or_ucr('ldap/master/port', '7389'))
 
 	if ldap_master:
 		# Connect to DC Master
 		host = env_or_ucr('ldap/master')
+		port = int(env_or_ucr('ldap/master/port', '7389'))
 	else:
 		# Connect to ldap/server/name
 		host = env_or_ucr('ldap/server/name')
+		port = int(env_or_ucr('ldap/server/port', '7389'))
 	return access(host=host, port=port, base=base_dn, binddn=host_dn, bindpw=bindpw, start_tls=start_tls, decode_ignorelist=decode_ignorelist, reconnect=reconnect)
 
 
