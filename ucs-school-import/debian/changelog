@@ -1,3 +1,9 @@
+ucs-school-import (17.0.46) unstable; urgency=low
+
+  * Bug #51938: only run example result hook if not in dry-run (or forced)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 29 Sep 2020 10:37:37 +0200
+
 ucs-school-import (17.0.45) unstable; urgency=low
 
   * Bug #51941: add user import hook to pyhooks-available that logs users
