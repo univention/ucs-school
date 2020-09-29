@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.142) unstable; urgency=medium
+
+  * Bug #52039: add unit-test for italc usernames
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 29 Sep 2020 10:44:56 +0200
+
 ucs-test-ucsschool (6.0.141) unstable; urgency=medium
 
   * Bug #50636: add test for exam-and-room-cleanup script 
