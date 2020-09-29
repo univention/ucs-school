@@ -153,6 +153,20 @@ class Instance(SchoolBaseModule):
 
         if request.flavor == "workgroup-admin":
             result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
+            result["allowed_email_senders_groups"] = [
+                {"id": dn, "label": dn.split(",")[0][3:]}
+                for dn in result["allowed_email_senders_groups"]
+            ]
+            umc_users = list()
+            for user_dn in result["allowed_email_senders_users"]:
+                user = User.from_dn(user_dn, None, ldap_user_read)
+                umc_users.append(
+                    {"id": user_dn, "label": Display.user(user.get_udm_object(ldap_user_read))}
+                )
+            result["allowed_email_senders_users"] = umc_users
+            if result["email"]:
+                result["create_email"] = True
+                result["email_exists"] = True
 
         if request.flavor == "teacher":
             schools = group.schools
@@ -168,18 +182,6 @@ class Instance(SchoolBaseModule):
             self.finished(request.id, [result])
             return
         result["members"] = self._filter_members(request, group, result.pop("users", []), ldap_user_read)
-
-        result["allowed_email_senders_groups"] = [
-            {"id": dn, "label": dn.split(",")[0][3:]} for dn in result["allowed_email_senders_groups"]
-        ]
-        umc_users = list()
-        for user_dn in result["allowed_email_senders_users"]:
-            user = User.from_dn(user_dn, None, ldap_user_read)
-            umc_users.append({"id": user_dn, "label": Display.user(user.get_udm_object(ldap_user_read))})
-        result["allowed_email_senders_users"] = umc_users
-        if result["email"]:
-            result["create_email"] = True
-            result["email_exists"] = True
 
         self.finished(request.id, [result,])
 

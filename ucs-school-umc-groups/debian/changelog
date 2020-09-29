@@ -1,3 +1,9 @@
+ucs-school-umc-groups (9.0.0-6) unstable; urgency=low
+
+  * Bug #52050: Fix wrong indentation
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 29 Sep 2020 11:01:02 +0100
+
 ucs-school-umc-groups (9.0.0-5) unstable; urgency=low
 
   * Bug #52050: Fix Typo in translation
