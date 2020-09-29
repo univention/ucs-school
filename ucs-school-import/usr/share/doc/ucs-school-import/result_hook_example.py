@@ -5,6 +5,9 @@ import cStringIO
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from univention.config_registry import ConfigRegistry
 
+# Set this to True, if emails should also be sent when a dry-run is executed:
+SEND_AFTER_DRY_RUN = False
+
 ucr = ConfigRegistry()
 ucr.load()
 
@@ -17,8 +20,13 @@ class MailResultHook(ResultPyHook):
     priority = {
         "user_result": 1,
     }
+    supports_dry_run = True
 
     def user_result(self, user_import_data):
+        if self.dry_run and not SEND_AFTER_DRY_RUN:
+            self.logger.info("Not sending result email in dry-run.")
+            return
+
         msg = cStringIO.StringIO()
         msg.write("From: {}\n".format(from_address))
         msg.write("To: {}\r\n\r\n".format(", ".join(to_addresses)))
