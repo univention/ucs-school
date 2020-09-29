@@ -16,8 +16,6 @@ def main():
     with utu.UCSTestSchool() as schoolenv:
         values_set = [
             schoolenv.ucr.is_true("connector/s4/mapping/msgpwl", False),
-            schoolenv.ucr.is_true("connector/s4/mapping/msgpipsec", False),
-            schoolenv.ucr.is_true("connector/s4/mapping/msgpsi", False),
         ]
         if not all(values_set):
             utils.fail(

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.143) unstable; urgency=medium
+
+  * Bug #52049: do not sync/check msgpipsec and msgpsi
+
+ -- Felix Botner <botner@univention.de>  Tue, 29 Sep 2020 12:22:05 +0200
+
 ucs-test-ucsschool (6.0.142) unstable; urgency=medium
 
   * Bug #52039: add unit-test for italc usernames
