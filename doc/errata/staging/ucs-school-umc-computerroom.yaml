@@ -2,7 +2,7 @@ product: ucsschool
 release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerrom
+src: ucs-school-umc-computerroom
 fix:
 desc: |
 * An error was thrown when exiting an exam with a user with a displayName that contains parentheses. After this fix, displayNames with parentheses will not cause an error (Bug # 52039).
