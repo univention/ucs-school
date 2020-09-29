@@ -5,6 +5,12 @@
 Changelog
 ---------
 
+v1.2.0 (2020-10-??)
+...................
+* Update Docker image base to Alpine 3.12, updating Python to 3.8 (Bug #51768).
+* Improve user resource search speed: find all matching users with one lookup (Bug #51813).
+* Add fallback for retrieving LDAP connection settings from UCR if environment variables are not available (Bug #51154).
+
 v1.1.1 (2020-06-15)
 ...................
 * The validation of the ``name`` attribute of the ``SchoolClass`` resource has been fixed to allow short class names like ``1``.
