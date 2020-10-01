@@ -63,10 +63,10 @@ def run(_umc_instance):
     admins = []  # type: List[Dict[str, List[str]]]
     admins_dn = []
     for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool"]):
+        admins_dn.append(dn)
         try:
             admin = {"dn": dn, "schools": attr["ucsschoolSchool"]}
             admins.append(admin)
-            admins_dn.append(dn)
         except KeyError:
             problematic_objects.setdefault(dn, []).append(
                 _("is registered as school admin but has no corresponding school set.")
