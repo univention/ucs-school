@@ -17,8 +17,10 @@ import univention.testing.utils as utils
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd
+from univention.testing.decorators import SetTimeout
 
 
+@SetTimeout
 def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str, bool) -> bool
     rv, stdout, stderr = exec_cmd(
         ["samba-tool", "ntacl", "get", "--as-sddl", path], log=True, raise_exc=True

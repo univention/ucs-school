@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.144) unstable; urgency=medium
+
+  * Bug #42182: add timeout to make share permissions test more robust 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 01 Oct 2020 09:53:45 +0200
+
 ucs-test-ucsschool (6.0.143) unstable; urgency=medium
 
   * Bug #52049: do not sync/check msgpipsec and msgpsi
