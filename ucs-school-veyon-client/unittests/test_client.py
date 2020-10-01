@@ -1,0 +1,222 @@
+#!/usr/bin/py.test
+# -*- coding: iso-8859-15 -*-
+#
+# Univention Management Console
+#  module: Internet Rules Module
+#
+# Copyright 2012-2020 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import calendar
+from datetime import datetime
+
+import pytest
+import requests
+from requests import ConnectionError, Response
+
+from ucsschool.veyon_client.client import VeyonClient
+from ucsschool.veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
+
+
+def monkey_get(*args, **kwargs):
+    response = Response()
+    url_parts = args[0].split("/")
+    domain = url_parts[0]
+    method = url_parts[1]
+    if domain in ["unreachable"]:
+        raise ConnectionError()
+    elif domain in "user_info":
+        response.status_code = 200
+        response._content = b'{ "login":"LOGIN", "fullname":"FULLNAME", "session":"SESSION" }'
+    elif domain in ["get_feature"]:
+        response.status_code = 200
+        feature = url_parts[2]
+        if feature == "REBOOT":
+            response._content = b'{"active":false}'
+        elif feature == "SCREEN_LOCK":
+            response._content = b'{"active":true}'
+    elif domain == "encoding_error":
+        response.status_code = 500
+        response._content = b'{"error":{"code":10,"message":"Framebuffer encoding error"}}'
+    elif method in ["framebuffer"]:
+        params = kwargs.get("params")
+        if params["format"] == "gif":
+            response.status_code = 400
+            response._content = b'{"error":{"code":9,"message":"Unsupported image format"}}'
+        else:
+            response.status_code = 200
+            response._content = b"{}-{}-{}".format(
+                params["format"], params["compression"], params["quality"]
+            )
+    else:
+        raise RuntimeError("Unexpected url for monkeypatch get: {}".format(args[0]))
+    return response
+
+
+def monkey_post(*args, **kwargs):
+    response = Response()
+    url_parts = args[0].split("/")
+    domain = url_parts[0]
+    method = url_parts[1]
+    if domain in ["wrong_credentials"]:
+        response.status_code = 400
+        response._content = b'{"error":{"code":4,"message":"Invalid credentials"}}'
+    elif domain in ["invalid_feature"]:
+        response.status_code = 400
+        response._content = b'{"error":{"code":3,"message":"Invalid feature"}}'
+    elif domain in ["wrong_method"]:
+        response.status_code = 400
+        response._content = b'{"error":{"code":5,"message":"Authentication method not available"}}'
+    elif (
+        domain
+        in [
+            "create_session",
+            "framebuffer",
+            "encoding_error",
+            "invalid_feature",
+            "get_feature",
+            "user_info",
+        ]
+        and method == "authentication"
+    ):
+        response.status_code = 200
+        response._content = b'{"connection-uid":"42", "validuntil": 0}'
+    else:
+        raise RuntimeError("Unexpected url for monkeypatch post: {}".format(args[0]))
+    return response
+
+
+def test_connection_error_on_unreachable_url(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    with pytest.raises(ConnectionError):
+        client = VeyonClient("unreachable", {})
+        client.ping()
+
+
+def test_authentication_method_not_available(monkeypatch):
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("wrong_method", {}, auth_method=AuthenticationMethod.AUTH_KEYS)
+    with pytest.raises(VeyonError) as exc:
+        client._create_session("localhost")
+    assert exc.value.code == 5
+
+
+def test_wrong_credentials(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("wrong_credentials", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    with pytest.raises(VeyonError) as exc:
+        client._create_session("localhost")
+    assert exc.value.code == 4
+
+
+def test_create_session(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("create_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    assert client._create_session("localhost") == VeyonSession("42", 0)
+
+
+def test_reuse_session():
+    client = VeyonClient("reuse_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    time = datetime.now()
+    client._session_cache["localhost"] = VeyonSession(
+        "99", calendar.timegm(time.replace(time.year + 1).timetuple())
+    )
+    assert client.get_connection_uid() == "99"
+
+
+def test_second_host(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("create_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    time = datetime.now()
+    client._session_cache["localhost"] = VeyonSession(
+        "99", calendar.timegm(time.replace(time.year + 1).timetuple())
+    )
+    assert client._create_session("other_host") == VeyonSession("42", 0)
+
+
+@pytest.mark.parametrize("screenshot_format,compression,quality", [("png", 6, 80), ("jpeg", 1, 20)])
+def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    assert client.get_screenshot(
+        screenshot_format=screenshot_format, quality=quality, compression=compression
+    ) == "{}-{}-{}".format(screenshot_format, compression, quality)
+
+
+def test_wrong_image_format(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    with pytest.raises(VeyonError) as exc:
+        client.get_screenshot(screenshot_format="gif")
+    assert exc.value.code == 9
+
+
+def test_encoding_error(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("encoding_error", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    with pytest.raises(VeyonError) as exc:
+        client.get_screenshot()
+    assert exc.value.code == 10
+
+
+def test_invalid_feature(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    with pytest.raises(VeyonError) as exc:
+        client.set_feature("NON_EXISTENT_FEATURE")
+    assert exc.value.code == 3
+
+
+def test_invalid_feature_status(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    with pytest.raises(VeyonError) as exc:
+        client.get_feature_status("NON_EXISTENT_FEATURE")
+    assert exc.value.code == 3
+
+
+@pytest.mark.parametrize("feature,expected", [("REBOOT", False), ("SCREEN_LOCK", True)])
+def test_get_feature_status(monkeypatch, feature, expected):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("get_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    assert client.get_feature_status(feature) == expected
+
+
+def test_get_user_info(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("user_info", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    assert client.get_user_info() == VeyonUser("LOGIN", "FULLNAME", "SESSION")
