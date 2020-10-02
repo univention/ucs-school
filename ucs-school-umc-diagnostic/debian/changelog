@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-13) unstable; urgency=medium
+
+  * Bug #45332: added diagnostic module to check school admin accounts
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Fri, 02 Oct 2020 16:55:58 +0200
+
 ucs-school-umc-diagnostic (1.0.0-12) unstable; urgency=medium
 
   * Bug #51494: added diagnostic module to check suid-ruid-uniqueness
