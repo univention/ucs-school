@@ -68,9 +68,6 @@ def run(_umc_instance):
             admin = {"dn": dn, "schools": attr["ucsschoolSchool"]}
             admins.append(admin)
         except KeyError:
-            problematic_objects.setdefault(dn, []).append(
-                _("is registered as school admin but has no corresponding school set.")
-            )
             continue
 
     group_filter = "(&(univentionObjectType=groups/group)(cn=admins-*)(uniqueMember=*))"
@@ -99,7 +96,7 @@ def run(_umc_instance):
         if admin["schools"]:
             problematic_objects.setdefault(admin["dn"], []).append(
                 _(
-                    "is registered as admin but no admin group member of the following schools: {}".format(
+                    "is registered as admin but no member of the following schools: {}".format(
                         admin["schools"]
                     )
                 )
