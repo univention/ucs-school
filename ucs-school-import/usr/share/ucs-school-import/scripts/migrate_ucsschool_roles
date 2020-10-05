@@ -82,7 +82,7 @@ from ucsschool.lib.roles import (
 from univention.admin.uexceptions import ldapError
 from univention.config_registry import ConfigRegistry
 
-LOG_FILE = "/var/log/univention/ucs-school-roles-migration.log"
+LOG_FILE = "/var/log/univention/ucsschool-roles-migration.log"
 
 ucr = ConfigRegistry()
 ucr.load()
