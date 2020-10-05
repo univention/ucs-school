@@ -31,14 +31,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.config_registry import ConfigRegistry, handler_set, handler_unset
-from optparse import OptionParser
 import os
 import subprocess
-from univention.management.console.modules.computerroom import reset_room_settings
+from optparse import OptionParser
+
+import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.group import ComputerRoom
 from univention.admin.uldap import getMachineConnection
-import univention.admin.uexceptions as udm_exceptions
+from univention.config_registry import ConfigRegistry, handler_set, handler_unset
+from univention.management.console.modules.computerroom import reset_room_settings
 
 
 def deactivate_rules(roomDN):

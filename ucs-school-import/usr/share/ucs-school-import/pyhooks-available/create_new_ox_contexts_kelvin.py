@@ -1,6 +1,7 @@
+from udm_rest_client import UDM, CreateError
+
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 from ucsschool.lib.models.utils import ucr
-from udm_rest_client import UDM, CreateError
 
 DEFAULT_CONTEXT_ID = "10"
 

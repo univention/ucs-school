@@ -9,6 +9,7 @@ import univention.testing.udm as udm_test
 
 try:
     from typing import Any, Dict, Optional, Tuple
+
     from ucsschool.lib.models.base import LoType
 except ImportError:
     pass

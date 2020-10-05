@@ -36,6 +36,7 @@ from .import_pyhook import ImportPyHook
 
 try:
     import typing
+
     from ..mass_import.user_import import UserImportData
 except ImportError:
     pass

@@ -38,7 +38,7 @@ import socket
 import netifaces
 
 try:
-    from typing import Optional, Iterable, Set
+    from typing import Iterable, Optional, Set
 except ImportError:
     pass
 

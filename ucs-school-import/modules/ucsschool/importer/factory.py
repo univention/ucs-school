@@ -39,6 +39,7 @@ from .exceptions import InitialisationError
 
 try:
     from typing import Optional, Type
+
     from .default_user_import_factory import DefaultUserImportFactory
 except ImportError:
     pass

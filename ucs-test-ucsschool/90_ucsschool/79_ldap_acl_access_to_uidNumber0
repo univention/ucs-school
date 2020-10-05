@@ -10,17 +10,19 @@
 ##  - ucs-test-ldap
 ## exposure: dangerous
 
-import ldap.filter
-import sys
 import imp
+import sys
+
+import ldap.filter
+
 ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
 
 import univention.admin.uldap
+from univention.testing.strings import random_name
+from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.udm import UCSTestUDM
-from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.utils import get_ldap_connection
-from univention.testing.strings import random_name
 
 PASSWORD = 'univention'
 

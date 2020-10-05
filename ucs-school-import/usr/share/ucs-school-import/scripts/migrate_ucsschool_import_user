@@ -43,9 +43,9 @@ import logging
 import os
 import sys
 
+import attr
 from ldap.filter import filter_format
 
-import attr
 import univention.admin.uldap
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
@@ -53,6 +53,7 @@ from univention.config_registry import ConfigRegistry
 
 try:
     from typing import Optional
+
     from univention.admin.uldap import access as LoType, position as PoType
 except ImportError:
     pass

@@ -85,12 +85,14 @@ from ..utils.utils import get_ldap_mapping_for_udm_property
 
 try:
     from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
+
+    from univention.config_registry import ConfigRegistry
+
     from ..configuration import ReadOnlyDict
     from ..default_user_import_factory import DefaultUserImportFactory
-    from ..utils.username_handler import UsernameHandler
     from ..reader.base_reader import BaseReader
     from ..utils.ldap_connection import LoType, UdmObjectType
-    from univention.config_registry import ConfigRegistry
+    from ..utils.username_handler import UsernameHandler
 except ImportError:
     pass
 

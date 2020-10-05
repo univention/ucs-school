@@ -38,6 +38,8 @@ from six import iteritems
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
 
 try:
+    from ucsschool.lib.models import School
+    from ucsschool.lib.models.utils import ucr
     from ucsschool.lib.roles import (
         create_ucsschool_role_string,
         role_ip_computer,
@@ -47,8 +49,6 @@ try:
         role_ubuntu_computer,
         role_win_computer,
     )
-    from ucsschool.lib.models import School
-    from ucsschool.lib.models.utils import ucr
 
     _NO_SCHOOL_LIB = False
 except ImportError:

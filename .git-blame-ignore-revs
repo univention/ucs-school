@@ -1,1 +1,2 @@
 fa7002fe # 08.06.2020 - major code reformat with black and isort
+1328d983 # 21.09.2020 - Bug #52119: upgrade to isort version 5
