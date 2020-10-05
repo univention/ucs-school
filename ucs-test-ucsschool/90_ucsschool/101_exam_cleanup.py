@@ -25,6 +25,7 @@ from univention.testing.ucsschool.exam import (
 
 try:
     from typing import List
+
     from univention.admin.uldap import access as LoType
 except ImportError:
     pass
