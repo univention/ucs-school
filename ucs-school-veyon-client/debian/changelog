@@ -1,0 +1,5 @@
+ucs-school-veyon-client (1.0.0-0) unstable; urgency=medium
+
+  * Bug #52183: Implement first version of veyon client
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 05 Oct 2020 10:50:22 +0200
