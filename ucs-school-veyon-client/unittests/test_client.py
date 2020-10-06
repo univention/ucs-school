@@ -38,8 +38,8 @@ import pytest
 import requests
 from requests import ConnectionError, Response
 
-from ucsschool.veyon_client.client import VeyonClient
-from ucsschool.veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
+from veyon_client.client import VeyonClient
+from veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
 
 
 def monkey_get(*args, **kwargs):
