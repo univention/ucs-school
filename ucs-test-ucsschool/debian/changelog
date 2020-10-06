@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.145) unstable; urgency=low
+
+  * Bug #52191: don't cache OUs for specific (randomized) hosts
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 06 Oct 2020 16:43:20 +0200
+
 ucs-test-ucsschool (6.0.144) unstable; urgency=medium
 
   * Bug #42182: add timeout to make share permissions test more robust 

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/py.test
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the class assignment umc module
 ## exposure: dangerous
@@ -21,9 +21,9 @@ def schoolenv():
     with UCSTestSchool() as schoolenv:
         hostname = schoolenv.ucr["hostname"]
 
-        schoolenv.school = schoolenv.create_ou(name_edudc=hostname)
+        schoolenv.school = schoolenv.create_ou(name_edudc=hostname, use_cache=False)
         schoolenv.schools = [schoolenv.school] + schoolenv.create_multiple_ous(
-            2, name_edudc=uts.random_name(), name_share_file_server=hostname
+            2, name_edudc=uts.random_name(), name_share_file_server=hostname, use_cache=False
         )
         schoolenv.school_classes = dict()
         client = Client.get_test_connection(hostname=schoolenv.ucr["ldap/master"])
@@ -61,14 +61,16 @@ class __TestSchoolClassAssignment(object):
             ]
         return all_school_classes
 
-    def __test_class_assignment(self, primary_school, secondary_schools, old_class, new_classes):
+    def __test_class_assignment(
+        self, schoolenv, primary_school, secondary_schools, old_class, new_classes
+    ):
         print(primary_school)
         print(old_class)
         print(secondary_schools)
-        _, teacher_dn = self.schoolenv.create_teacher(
+        _, teacher_dn = schoolenv.create_teacher(
             primary_school, classes=old_class, schools=secondary_schools,
         )
-        teacher = Teacher.from_dn(teacher_dn, primary_school, self.schoolenv.lo)
+        teacher = Teacher.from_dn(teacher_dn, primary_school, schoolenv.lo)
         original_classes = self.__flat_school_classes_dn(teacher)
         visible_classes = [
             c["id"]
@@ -84,7 +86,7 @@ class __TestSchoolClassAssignment(object):
         wait_for_listener_replication()
         if result.result is False:
             raise ChangeSchoolClassError
-        teacher = Teacher.from_dn(teacher_dn, primary_school, self.schoolenv.lo)
+        teacher = Teacher.from_dn(teacher_dn, primary_school, schoolenv.lo)
         assert set(self.__flat_school_classes_dn(teacher)) == set(original_classes + new_classes)
         self.client.umc_command(
             "schoolgroups/put",
@@ -92,7 +94,7 @@ class __TestSchoolClassAssignment(object):
             options=[{"object": {"$dn$": teacher_dn, "classes": visible_classes,}}],
         )
         wait_for_listener_replication()
-        teacher = Teacher.from_dn(teacher_dn, primary_school, self.schoolenv.lo)
+        teacher = Teacher.from_dn(teacher_dn, primary_school, schoolenv.lo)
         assert set(self.__flat_school_classes_dn(teacher)) == set(original_classes)
 
     def test_class_from_primary_school(
@@ -104,9 +106,9 @@ class __TestSchoolClassAssignment(object):
             primary_school = schools[0]
         if not secondary_school:
             secondary_school = schools[1]
-        self.schoolenv = schoolenv
         self.client = client
         self.__test_class_assignment(
+            schoolenv,
             primary_school[0],
             [primary_school[0], secondary_school[0]],
             schoolenv.school_classes[secondary_school[0]][0],
@@ -122,9 +124,9 @@ class __TestSchoolClassAssignment(object):
             primary_school = schools[0]
         if not secondary_school:
             secondary_school = schools[1]
-        self.schoolenv = schoolenv
         self.client = client
         self.__test_class_assignment(
+            schoolenv,
             primary_school[0],
             [primary_school[0], secondary_school[0]],
             schoolenv.school_classes[primary_school[0]][0],
@@ -140,9 +142,9 @@ class __TestSchoolClassAssignment(object):
             primary_school = schools[0]
         if not secondary_school:
             secondary_school = schools[1]
-        self.schoolenv = schoolenv
         self.client = client
         self.__test_class_assignment(
+            schoolenv,
             primary_school[0],
             [primary_school[0], secondary_school[0], schools[2][0]],
             schoolenv.school_classes[schools[2][0]][0],

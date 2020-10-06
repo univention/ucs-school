@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/py.test
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 # -*- coding: utf-8 -*-
 ## desc: unit-test for csv-list creation
 ## exposure: dangerous
