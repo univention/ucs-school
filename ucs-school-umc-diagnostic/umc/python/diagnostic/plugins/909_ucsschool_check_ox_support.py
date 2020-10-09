@@ -69,6 +69,8 @@ def run(_umc_instance):
     domain = get_action("domain")
     info = domain.to_dict([ox_app])
     try:
+        if info[0] is None:
+            return
         is_ox_installed = info[0]["is_installed_anywhere"]
         if is_ox_installed is None:
             raise KeyError
