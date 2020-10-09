@@ -33,6 +33,7 @@
 
 import copy
 import re
+import subprocess
 import tempfile
 import threading
 import time
@@ -245,6 +246,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         self._core_ready = False
         self._computer = computer
         self._dn = self._computer.dn
+        self._active_ip = self.get_active_ip(self._computer.info.get("ip"))
+        self._active_mac = self.mac_from_ip(self._active_ip)
         self.objectType = self._computer.module
         self._timer = None
         self._resetUserInfoTimeout()
@@ -431,14 +434,23 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
     @property
     def ipAddress(self):
-        ip = self._computer.info.get("ip")
-        if not ip:
+        ips = self._computer.info.get("ip")
+        if not ips:
             raise ITALC_Error("Unknown IP address")
-        return ip[0]
+        if not self._active_ip:
+            self._active_ip = self.get_active_ip(ips)
+        return self._active_ip
 
     @property
     def macAddress(self):
-        return (self._computer.info.get("mac") or [""])[0]
+        udm_macs = self._computer.info.get("mac")
+        if not self._active_mac and self._active_ip:
+            active_mac = self.mac_from_ip(self._active_ip)
+            if active_mac in udm_macs:
+                self._active_mac = active_mac
+            else:
+                MODULE.warn("Active mac is not in udm computer object.")
+        return self._active_mac or (self._computer.info.get("mac") or [""])[0]
 
     @property
     def isTeacher(self):
@@ -660,6 +672,28 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
             )
         else:
             MODULE.error("%s: no MAC address set - skipping powerOn" % (self.ipAddress,))
+
+    @staticmethod
+    def mac_from_ip(ip):
+        pid = subprocess.Popen(["arp", "-n", ip], stdout=subprocess.PIPE)
+        s = pid.communicate()[0]
+        res = re.search(r"(([a-f\d]{1,2}\:){5}[a-f\d]{1,2})", s)
+        mac = ""
+        if res:
+            mac = res.group(0)
+        else:
+            MODULE.warn("Ip is not in arp cache %r" % ip)
+        return mac
+
+    @staticmethod
+    def get_active_ip(ips):
+        for ip in ips:
+            command = ["ping", "-c", "1", ip]
+            if subprocess.call(command) == 0:
+                return ip
+        else:
+            MODULE.warn("Non of the ips is pingable: %r" % ips)
+            return ips[0]
 
     def restart(self):
         if not self.connected():
