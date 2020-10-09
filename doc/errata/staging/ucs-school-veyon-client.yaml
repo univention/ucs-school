@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-veyon-client
 fix: 1.0.0-1A~4.4.0.202010070957
 desc: |
- * A python client to interface with the Veyon Web API was added to UCS@school (Bug #52183).
+ * Internal improvement: A Python library to interface with the Veyon Web API was added to UCS@school (Bug #52183).
 bug: [52183]

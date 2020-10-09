@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-groups
 fix: 9.0.0-6A~4.4.0.202009291103
 desc: |
- * It is now possible to manage email addresses on UCS@school workgroups if configured by an Administrator (Bug #52050).
+ * It is now possible for teachers and school administrators to manage email addresses on UCS@school workgroups, if allowed by an Administrator (the UCR variable <envar>ucsschool/workgroups/mailaddress</envar> must be set). See https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:setup:generic:configureworkgroupemails (Bug #52050).
 bug: [52050]

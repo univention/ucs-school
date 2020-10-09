@@ -5,6 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.46A~4.4.0.202009291038
 desc: |
- * The example result hook <filename>result_hook_example.py/filename> can now be configured to be executed or not be executed after a dry-run (Bug #51938).
- * The new user import hook <filename>log_user_object.py</filename> was added to <filename class="directory">/usr/share/ucs-school-import/pyhooks-available</filename>. When activated (copied to <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename>), it will log each users current attributes before and/or after create/modify/move/delete operations. Edit it to configure before/after which operations to log (Bug #51941).
+ * The example result hook <filename>result_hook_example.py/filename> in <filename class="directory">/usr/share/doc/ucs-school-import</filename> can now be configured to be executed or not be executed after a dry-run (Bug #51938).
+ * The new user import hook <filename>log_user_object.py</filename> was added to <filename class="directory">/usr/share/ucs-school-import/pyhooks-available</filename>. When activated (copied to <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename>), it will log each users current attributes before and/or after create/modify/move/delete operations. Two variables exist to configure what and when to log: <varname>PROPS</varname>: which user attributes, and <varname>LogUserObject.priority</varname>: before/after which operations to log (Bug #51941).
 bug: [51938, 51941]
