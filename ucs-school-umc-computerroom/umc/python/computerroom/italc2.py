@@ -33,6 +33,7 @@
 
 import copy
 import re
+import subprocess
 import tempfile
 import threading
 import time
@@ -245,6 +246,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         self._core_ready = False
         self._computer = computer
         self._dn = self._computer.dn
+        self._active_ip = None
         self.objectType = self._computer.module
         self._timer = None
         self._resetUserInfoTimeout()
@@ -431,10 +433,10 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
     @property
     def ipAddress(self):
-        ip = self._computer.info.get("ip")
-        if not ip:
+        ips = self._computer.info.get("ip")
+        if not ips:
             raise ITALC_Error("Unknown IP address")
-        return ip[0]
+        return self.active_ip(ips)
 
     @property
     def macAddress(self):
@@ -660,6 +662,19 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
             )
         else:
             MODULE.error("%s: no MAC address set - skipping powerOn" % (self.ipAddress,))
+
+    def active_ip(self, ips):
+        if not self._active_ip:
+            for ip in ips:
+                command = ["ping", "-c", "1", ip]
+                if subprocess.call(command) == 0:
+                    self._active_ip = ip
+                    break
+        if self._active_ip:
+            return self._active_ip
+        else:
+            MODULE.warn("Non of the ips is pingable: %r" % ips)
+            return ips[0]
 
     def restart(self):
         if not self.connected():
