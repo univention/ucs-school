@@ -30,10 +30,13 @@
 			<listitem>
 				<simpara>
 					<emphasis>Passwörter (Schüler)</emphasis> erlaubt Lehrern das
-					Zurücksetzen von Schüler-Passwörtern. Die bestehenden Schüler-Passwörter können
-					aus Sicherheitsgründen nicht ausgelesen werden; wenn Schüler ihr Passwort
-					vergessen, muss ein neues Passwort vergeben werden. Schuladministratoren dürfen
-					außerdem die Passwörter von Lehrern zurücksetzen.
+					Zurücksetzen von Schüler-Passwörtern.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					<emphasis>Passwörter (Lehrer)</emphasis> erlaubt Schuladministratoren das
+					Zurücksetzen von Lehrer-Passwörtern.
 				</simpara>
 			</listitem>
 			<listitem>
@@ -142,5 +145,60 @@
 				</para>
 			</listitem>
 		</itemizedlist>
+	</section>
+	<section id="ucsschool:passwoerterzuruecksetzen">
+		<title>Passwörter zurücksetzen</title>
+		<para>
+			Mit den Modulen <emphasis>Passwörter (Schüler)</emphasis> und
+			<emphasis>Passwörter (Lehrer)</emphasis> lassen sich Benutzerpasswörter
+			zurücksetzen. Die Benutzeroberfläche ist für beide Module identisch.
+			Es werden alle Schüler/Lehrer der gewählten <emphasis>Schule</emphasis>
+			angezeigt. Durch Auswahl einer <emphasis>Klasse oder Arbeitsgruppe</emphasis>
+			und/oder Nutzung der Suchleiste lässt sich die Menge der angezeigten Nutzer
+			weiter eingrenzen.
+		</para>
+		<figure id="reset_student_password">
+	 	    <title>Zurücksetzen von Schülerpasswörtern</title>
+	 	    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password.png"/>
+		</figure>
+		<para>
+			Durch Auswahl eines oder mehrerer Nutzer und Anklicken von 
+			<emphasis>PASSWORT ZURÜCKSETZEN</emphasis>, kann ein neues Passwort für die 
+			jeweiligen Nutzer festgelegt werden.
+		</para>
+		<figure id="reset_student_passwordpopup">
+	 	    <title>Festlegen eines neuen Passworts</title>
+	 	    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password_popup.png"/>
+		</figure>
+		<para>
+			Neben den Namen und Nutzernamen der angezeigten Nutzer wird außerdem gezeigt, bei
+			wem eine Änderung des Passwortes erforderlich ist. Die Passwortänderung ist dann
+			erforderlich, wenn beim Zurücksetzen eines Passworts die Checkbox
+			<emphasis>Benutzer muss das Passwort bei der nächsten Anmeldung ändern</emphasis>
+			angewählt wurde.
+			Aus Sicherheitsgründen sollten die Schüler zur Änderung des Passworts bei der 
+			nächsten Anmeldung aufgefordert werden.
+			Das Verhalten dieser Checkbox lässt sich durch folgende UCR-Variablen ändern:
+			<itemizedlist>
+			<listitem>
+				<simpara>
+					<emphasis>ucsschool/passwordreset/password-change-on-next-login:</emphasis>
+					Wenn eingeschaltet, wird der Wert der Checkbox standardmäßig eingeschaltet.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					<emphasis>ucsschool/passwordreset/force-password-change-on-next-login:</emphasis>
+					Wenn eingeschaltet, wird das Ändern des Checkbox-Werts verhindert.
+				</simpara>
+			</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			Die bestehenden Schüler-Passwörter können
+			aus Sicherheitsgründen nicht ausgelesen werden; wenn Schüler ihr Passwort
+			vergessen, muss ein neues Passwort vergeben werden. Schuladministratoren dürfen
+			die Passwörter von Lehrern zurücksetzen.
+		</para>
 	</section>
 </chapter>
