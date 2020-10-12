@@ -436,7 +436,10 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         ips = self._computer.info.get("ip")
         if not ips:
             raise ITALC_Error("Unknown IP address")
-        return self.active_ip(ips)
+        if not self._active_ip:
+            return self.get_active_ip(ips)
+        else:
+            return self._active_ip
 
     @property
     def macAddress(self):
@@ -663,15 +666,12 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         else:
             MODULE.error("%s: no MAC address set - skipping powerOn" % (self.ipAddress,))
 
-    def active_ip(self, ips):
-        if not self._active_ip:
-            for ip in ips:
-                command = ["ping", "-c", "1", ip]
-                if subprocess.call(command) == 0:
-                    self._active_ip = ip
-                    break
-        if self._active_ip:
-            return self._active_ip
+    @staticmethod
+    def get_active_ip(ips):
+        for ip in ips:
+            command = ["ping", "-c", "1", ip]
+            if subprocess.call(command) == 0:
+                return ip
         else:
             MODULE.warn("Non of the ips is pingable: %r" % ips)
             return ips[0]
