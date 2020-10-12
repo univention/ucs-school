@@ -449,7 +449,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
             if active_mac in udm_macs:
                 self._active_mac = active_mac
             else:
-                MODULE.warn("Active mac is not in udm computer object.")
+                MODULE.warn("Active mac {} is not in udm computer object.".format(active_mac))
         return self._active_mac or (self._computer.info.get("mac") or [""])[0]
 
     @property
@@ -682,7 +682,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         if res:
             mac = res.group(0)
         else:
-            MODULE.warn("Ip is not in arp cache %r" % ip)
+            MODULE.warn("Ip %r is not in arp cache." % ip)
         return mac
 
     @staticmethod
@@ -693,7 +693,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
                 return ip
         else:
             MODULE.warn("Non of the ips is pingable: %r" % ips)
-            return ips[0]
+            return ips[0] if ips else ""
 
     def restart(self):
         if not self.connected():
