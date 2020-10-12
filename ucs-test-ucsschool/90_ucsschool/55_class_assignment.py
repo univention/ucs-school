@@ -13,7 +13,10 @@ from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.user import Teacher
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
-from univention.testing.utils import wait_for_listener_replication
+from univention.testing.utils import (
+    wait_for_listener_replication,
+    wait_for_replication_from_master_openldap_to_local_samba,
+)
 
 
 @pytest.fixture(scope="module")
@@ -36,6 +39,9 @@ def schoolenv():
                 "schoolwizards/classes/add",
                 flavor="schoolwizards/classes",
                 options=[{"object": {"school": school, "name": class_name, "description": ""}}],
+            )
+            wait_for_replication_from_master_openldap_to_local_samba(
+                ldap_filter="CN={}-{}".format(school, class_name)
             )
             schoolenv.school_classes[school] = (
                 "{}-{}".format(school, class_name),
