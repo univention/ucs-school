@@ -42,6 +42,8 @@ try:
 except ImportError:
     pass
 
+from distutils.version import LooseVersion
+
 from ldap.filter import filter_format
 
 import univention.admin
@@ -229,19 +231,36 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
         if master_version == local_version:
             result = call_cmd(options, "/usr/bin/univention-app info --as-json", on_master=True)
             master_app_info = json.loads(result.stdout)
-            # master_app_info:  {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0", "installed": ["ucsschool=4.3 v5"]}
+            # master_app_info:  {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0",
+            # "installed": ["ucsschool=4.3 v5"]}
 
             for app_entry in master_app_info.get("installed", []):
                 app_name, app_version = app_entry.split("=", 1)
                 if app_name == "ucsschool":
-                    app_string = "%s=%s" % (app_string, app_version)
+                    log.info("Found UCS@school version %r on DC master.", app_version)
                     break
             else:
                 log.error(
-                    "UCS@school does not seem to be installed on %s! Cannot get app version of UCS@school on DC master!",
+                    "UCS@school does not seem to be installed on %s! Cannot get app version of "
+                    "UCS@school on DC master!",
                     options.master_fqdn,
                 )
                 sys.exit(1)
+
+            if LooseVersion(app_version) >= LooseVersion("4.4 v7"):
+                # Bug #52214: The errata level on the UCS installation DVD (incl. for UCS 4.4-6) may be
+                # below the one required by UCS@school 4.4 v7: "4.4-6 errata762". In such a case install
+                # a UCS@school app version without that requirement (4.4 v6).
+                errata_package = package_manager.get_package("univention-errata-level")
+                if not LooseVersion(errata_package.installed.version) >= LooseVersion("4.4.6-762"):
+                    app_version = "4.4 v6"
+                    log.warning(
+                        "Current errata level to low (%r), installing UCS@school version %r instead.",
+                        errata_package.installed.version,
+                        app_version,
+                    )
+
+            app_string = "%s=%s" % (app_string, app_version)
 
         activate_repository()
 
