@@ -31,12 +31,17 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
 import random
+import sys
 
 import pytest
 
 import univention.testing.strings as uts
-from univention.management.console.modules.computerroom.italc2 import UserMap
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "umc", "python"))
+
+from computerroom.italc2 import UserMap  # noqa: ignore=E402
 
 user_map = UserMap()
 

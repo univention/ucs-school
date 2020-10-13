@@ -31,10 +31,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
+import sys
 
-import univention.management.console.modules.computerroom.italc2 as italc_module
 import univention.testing.strings as uts
-from univention.management.console.modules.computerroom.italc2 import ITALC_Computer
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "umc", "python"))
+
+from computerroom import italc2 as italc_module  # noqa: ignore=E402
+from computerroom.italc2 import ITALC_Computer  # noqa: ignore=E402
 
 
 def test_first_valid(mocker):
