@@ -37,21 +37,25 @@ import subprocess
 import sys
 from collections import namedtuple
 
+try:
+    from typing import Any, List, Optional, Union
+except ImportError:
+    pass
+
 from ldap.filter import filter_format
 
 import univention.admin
 from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.package_manager import PackageManager
 
-log = logging.getLogger(__name__)
-ucr = ConfigRegistry()
-ucr.load()
+log = None  # type: Optional[logging.Logger]
+ucr = None  # type: Optional[ConfigRegistry]
 
 StdoutStderr = namedtuple("StdoutStderr", "stdout stderr")
 SchoolMembership = namedtuple("school_membership", "is_edu_school_member is_admin_school_member")
 
 
-def get_lo(options):
+def get_lo(options):  # type: (Any) -> univention.admin.uldap.access
     log.info("Connecting to LDAP as %r ...", options.binddn)
     try:
         lo = univention.admin.uldap.access(
@@ -109,7 +113,7 @@ def get_school_membership(options):  # type: (Any) -> SchoolMembership
     return SchoolMembership(is_edu_school_member, is_admin_school_member)
 
 
-def determine_role_packages(options, package_manager):
+def determine_role_packages(options, package_manager):  # type: (Any, PackageManager) -> List[str]
     if options.server_role in ("domaincontroller_master",):
         return []
 
@@ -150,7 +154,7 @@ def determine_role_packages(options, package_manager):
     elif options.server_role in ("memberserver",):
         return []
 
-    log.warn("System role %r not found!", options.server_role)
+    log.warning("System role %r not found!", options.server_role)
     return []
 
 
@@ -186,7 +190,7 @@ def activate_repository():  # type: () -> None
     """
     log.info("repository/online: %r", ucr.get("repository/online"))
     if ucr.is_false("repository/online", False):
-        log.warn("The online repository is deactivated. Reactivating it.")
+        log.warning("The online repository is deactivated. Reactivating it.")
         handler_set(["repository/online=true"])
         cmd = ["/usr/bin/apt-get", "update"]
         log.info("Calling %r ...", cmd)
@@ -195,7 +199,7 @@ def activate_repository():  # type: () -> None
             log.error("%s failed with exit code %s!", " ".join(cmd), returncode)
 
 
-def pre_joinscripts_hook(options):
+def pre_joinscripts_hook(options):  # type: (Any) -> None
     # do not do anything, if we are running within a docker container
     if ucr.get("docker/container/uuid"):
         log.info("This is a docker container... stopping here")
@@ -271,8 +275,8 @@ def pre_joinscripts_hook(options):
         subprocess.call(["univention-install", "--force-yes", "--yes"] + pkg_list)
 
 
-def main():
-    global log
+def main():  # type: () -> None
+    global log, ucr
 
     parser = optparse.OptionParser()
     parser.add_option(
@@ -333,10 +337,13 @@ def main():
 
     log = logging.getLogger(__name__)
     log.info("ucsschool-join-hook.py has been started")
+    ucr = ConfigRegistry()
+    ucr.load()
 
     if ucr.is_false("ucsschool/join/hook/join/pre-joinscripts", False):
-        log.warn(
-            "UCS@school join hook has been disabled via UCR variable ucsschool/join/hook/join/pre-joinscripts."
+        log.warning(
+            "UCS@school join hook has been disabled via UCR variable "
+            "ucsschool/join/hook/join/pre-joinscripts."
         )
         sys.exit(0)
 
