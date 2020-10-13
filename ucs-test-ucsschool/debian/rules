@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 export DH_ALWAYS_EXCLUDE=.svn
+export LC_ALL=C.UTF-8
 
 override_dh_auto_test:
 	dh_auto_test

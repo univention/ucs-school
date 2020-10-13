@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.147) unstable; urgency=low
+
+  * Bug #52191: fix build
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 13 Oct 2020 11:02:38 +0200
+
 ucs-test-ucsschool (6.0.146) unstable; urgency=low
 
   * Bug #52191: wait for replication
