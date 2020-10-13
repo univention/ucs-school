@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-24) unstable; urgency=medium
+
+  * Bug #51976: fix build dependencies 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 13 Oct 2020 15:19:54 +0200
+
 ucs-school-umc-computerroom (11.0.0-23) unstable; urgency=medium
 
   * Bug #52213: rebuild after changing changing rules file

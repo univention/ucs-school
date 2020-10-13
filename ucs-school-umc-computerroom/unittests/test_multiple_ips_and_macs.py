@@ -35,10 +35,12 @@ import os
 import sys
 
 import pytest
+import pytest_mock
 
 import univention.testing.strings as uts
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "umc", "python"))
+sys.modules["computerroom.italc2.PyQt4.Qt"] = pytest_mock.mocker()
 
 from computerroom import italc2 as italc_module  # noqa: ignore=E402
 from computerroom.italc2 import ITALC_Computer, ITALC_Error  # noqa: ignore=E402
