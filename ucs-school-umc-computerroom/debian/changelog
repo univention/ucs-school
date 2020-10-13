@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-22) unstable; urgency=medium
+
+  * Bug #51976: Allow computerroom to deal with multiple IPs and MACs
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 13 Oct 2020 13:35:06 +0200
+
 ucs-school-umc-computerroom (11.0.0-21) unstable; urgency=medium
 
   * Bug #52039: Change the user validation of italc user displaynames

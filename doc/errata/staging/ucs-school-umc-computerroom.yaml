@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-computerroom
+fix: 
+desc: |
+ * The UMC computerroom is now able to handle computers, e.g. laptops, with multiple IPs and MACs (Bug #51976).
+bug: [51976]
