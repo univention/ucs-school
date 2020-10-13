@@ -30,6 +30,8 @@
 # <http://www.gnu.org/licenses/>.
 #
 
+export LC_ALL=C.UTF-8
+
 override_dh_auto_test:
 	dh_auto_test
 	ucslint

@@ -29,6 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+export LC_ALL=C.UTF-8
+
 PO_FILES := $(shell find udm_hook syntax modules -name '*.po')
 MO_FILES := $(PO_FILES:%.po=%.mo)
 
