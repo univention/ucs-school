@@ -1,5 +1,5 @@
 #!/usr/bin/py.test
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 #
 # Univention Management Console
 #  module: Internet Rules Module
@@ -48,7 +48,7 @@ def monkey_get(*args, **kwargs):
     method = url_parts[1]
     if domain in ["unreachable"]:
         raise ConnectionError()
-    elif domain in "user_info":
+    elif domain in ["user_info"]:
         response.status_code = 200
         response._content = b'{ "login":"LOGIN", "fullname":"FULLNAME", "session":"SESSION" }'
     elif domain in ["get_feature"]:
