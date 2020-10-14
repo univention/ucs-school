@@ -2,7 +2,7 @@ Source: ucs-school-metapackage
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint
+Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint, univention-unittests
 Standards-Version: 3.8.2
 
 Package: ucs-school-master
