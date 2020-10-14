@@ -152,11 +152,11 @@ access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,
 
 # Lehrer, Mitarbeiter und OU-Admins muessen einige temporaere Objekte schreiben duerfen
 # da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
-access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
+access to dn.regex="^cn=([^,]+),cn=(mailPrimaryAddress|groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
 	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
 	by * +0 break
 
-access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
+access to dn.regex="^cn=(mailPrimaryAddress|groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
 	by set="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
 	by * +0 break
 
