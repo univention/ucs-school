@@ -161,7 +161,30 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-client 1.0.0-1A~4.4.0.202010070957 -->
 <!-- CHANGELOG:2020-10-12:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-10-14" lang="en">
+					<title>Released on 2020-10-14:</title>
+					<!-- START ucs-school-metapackage 12.0.4-2A~4.4.0.202010141322 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-2A~4.4.0.202010141322</emphasis>:
+						<itemizedlist>
+							<listitem><para>UCS@school version 4.4 v7 requires UCS to be updated to at least <emphasis>4.4-6 errata762</emphasis>. On the DVD installation media that is not the case, and thus the installation of new systems fails when the pre-join hook tries to install <emphasis>UCS@school 4.4 v7</emphasis>. The pre-join hook has been modified to detect that situation and install <emphasis>UCS@school version 4.4 v6</emphasis> instead. The user can update to <emphasis>4.4 v7</emphasis> after the installation finishes (<u:bug>52214</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-2A~4.4.0.202010141322 -->
+					<!-- START ucs-school-veyon-client 1.0.1-1A~4.4.0.202010140905 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-client</emphasis> in version <emphasis>1.0.1-1A~4.4.0.202010140905</emphasis>:
+						<itemizedlist>
+							<listitem><para>A predictive logic for automatically renewing the connection to the Veyon Server was added to the client lib (<u:bug>52204</u:bug>)</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-client 1.0.1-1A~4.4.0.202010140905 -->
+<!-- CHANGELOG:2020-10-14:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
