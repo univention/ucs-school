@@ -1,3 +1,9 @@
+ucs-school-veyon-client (1.0.1-1) unstable; urgency=medium
+
+  * Bug #52204: Add predictive renewal of connection to the client
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 14 Oct 2020 09:03:14 +0200
+
 ucs-school-veyon-client (1.0.0-1) unstable; urgency=medium
 
   * Bug #52183: Fix build problems

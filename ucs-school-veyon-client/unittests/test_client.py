@@ -37,7 +37,6 @@ from datetime import datetime
 import pytest
 import requests
 from requests import ConnectionError, Response
-
 from veyon_client.client import VeyonClient
 from veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
 
@@ -100,6 +99,8 @@ def monkey_post(*args, **kwargs):
             "invalid_feature",
             "get_feature",
             "user_info",
+            "idle_timeout",
+            "remove_session",
         ]
         and method == "authentication"
     ):
@@ -147,7 +148,8 @@ def test_reuse_session():
     client._session_cache["localhost"] = VeyonSession(
         "99", calendar.timegm(time.replace(time.year + 1).timetuple())
     )
-    assert client.get_connection_uid() == "99"
+    client._reset_idle_time("localhost")
+    assert client._get_connection_uid() == "99"
 
 
 def test_second_host(monkeypatch):
@@ -220,3 +222,39 @@ def test_get_user_info(monkeypatch):
     monkeypatch.setattr(requests, "post", monkey_post)
     client = VeyonClient("user_info", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_user_info() == VeyonUser("LOGIN", "FULLNAME", "SESSION")
+
+
+def test_idle_timeout(monkeypatch):
+    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient("idle_timeout", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    time = datetime.now()
+    client._session_cache["localhost"] = VeyonSession(
+        "99", calendar.timegm(time.replace(time.year + 1).timetuple())
+    )
+    client._last_used["localhost"] = 0.0
+    assert client._get_connection_uid() == "42"
+
+
+def test_remove_session(monkeypatch):
+    def monkey_delete(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(requests, "delete", monkey_delete)
+    client = VeyonClient("remove_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    time = datetime.now()
+    client._session_cache["localhost"] = VeyonSession(
+        "99", calendar.timegm(time.replace(time.year + 1).timetuple())
+    )
+    client._last_used["localhost"] = 0.0
+    client.remove_session("localhost")
+    assert client._session_cache == {}
+    assert client._last_used == {}
+
+
+def test_invalid_cached_session():
+    client = VeyonClient("invalid_cached_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    client._session_cache["localhost"] = None
+    with pytest.raises(VeyonError) as exc:
+        client._get_connection_uid(renew_session=False)
+    assert exc.value.code == 2
