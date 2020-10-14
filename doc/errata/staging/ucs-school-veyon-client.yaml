@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-veyon-client
+fix: 1.0.1-1A~4.4.0.202010140905
+desc: |
+ * A predictive logic for automatically renewing the connection to the Veyon Server was added to the client lib (Bug #52204)
+bug: [52204]
