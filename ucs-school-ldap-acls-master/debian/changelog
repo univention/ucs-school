@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (17.0.4-8) unstable; urgency=low
+
+  * Bug #52215: Grant school servers write access to mailPrimaryAddress
+    temporary objects
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 15 Oct 2020 12:41:02 +0200
+
 ucs-school-ldap-acls-master (17.0.4-7) unstable; urgency=low
 
   * Bug #52215: Fix changelog entry
