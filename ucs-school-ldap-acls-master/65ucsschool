@@ -150,6 +150,15 @@ access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,
 	by set.expand="[$3] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
 	by * +0 break
 
+# Slave DCs muessen das temporäre Objekt mailPrimaryAddress erstellen duerfen. Siehe Bug #52215
+access to dn.regex="^cn=([^,]+),cn=mailPrimaryAddress,cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+access to dn.regex="^cn=mailPrimaryAddress,cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
 # Lehrer, Mitarbeiter und OU-Admins muessen einige temporaere Objekte schreiben duerfen
 # da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
 access to dn.regex="^cn=([^,]+),cn=(mailPrimaryAddress|groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
