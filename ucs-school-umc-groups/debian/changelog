@@ -2,7 +2,7 @@ ucs-school-umc-groups (9.0.0-7) unstable; urgency=low
 
   * Bug #52217: Fix typo
 
- -- Ole Schwiegert <schwiegert@univention.de>  Thu, 15 Oct 2020 07:57:28 +0100
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 15 Oct 2020 07:57:28 +0200
 
 ucs-school-umc-groups (9.0.0-6) unstable; urgency=low
 
