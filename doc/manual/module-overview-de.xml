@@ -158,8 +158,8 @@
 			weiter eingrenzen.
 		</para>
 		<figure id="reset_student_password">
-	 	    <title>Zurücksetzen von Schülerpasswörtern</title>
-	 	    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password.png"/>
+			<title>Zurücksetzen von Schülerpasswörtern</title>
+			<graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password.png"/>
 		</figure>
 		<para>
 			Durch Auswahl eines oder mehrerer Nutzer und Anklicken von 
@@ -167,17 +167,20 @@
 			jeweiligen Nutzer festgelegt werden.
 		</para>
 		<figure id="reset_student_passwordpopup">
-	 	    <title>Festlegen eines neuen Passworts</title>
-	 	    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password_popup.png"/>
+			<title>Festlegen eines neuen Passworts</title>
+			<graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password_popup.png"/>
 		</figure>
 		<para>
-			Neben den Namen und Nutzernamen der angezeigten Nutzer wird außerdem gezeigt, bei
-			wem eine Änderung des Passwortes erforderlich ist. Die Passwortänderung ist dann
-			erforderlich, wenn beim Zurücksetzen eines Passworts die Checkbox
+			Aus Sicherheitsgründen ist es vor dem Zurücksetzen des Passwortes erforderlich, dass der
+			aktuell eingeloggte Nutzer sein Passwort erneut eingeben muss.
+		</para>
+		<para>
+			Neben dem Namen und Nutzernamen der angezeigten Nutzer wird außerdem gezeigt, bei
+			wem eine Änderung des Passwortes bei der nächsten Anmeldung erforderlich ist.
+			Die Passwortänderung ist dann erforderlich, wenn beim Zurücksetzen eines Passworts die
+			Checkbox
 			<emphasis>Benutzer muss das Passwort bei der nächsten Anmeldung ändern</emphasis>
 			angewählt wurde.
-			Aus Sicherheitsgründen sollten die Schüler zur Änderung des Passworts bei der 
-			nächsten Anmeldung aufgefordert werden.
 			Das Verhalten dieser Checkbox lässt sich durch folgende UCR-Variablen ändern:
 			<itemizedlist>
 			<listitem>
