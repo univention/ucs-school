@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-ldap-acls-master
-fix: 17.0.4-7A~4.4.0.202010150823
+fix: 17.0.4-8A~4.4.0.202010151242
 desc: |
- * Grant teachers write access to mailPrimaryAddress temporary objects to fix the error during creation of mail addresses for workgroups by teachers (Bug #52215).
+ * Grant teachers and school servers write access to mailPrimaryAddress temporary objects to fix the error during creation of mail addresses for workgroups by teachers (Bug #52215).
 bug: [52215]
