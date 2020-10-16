@@ -21,7 +21,7 @@ This will prevent the changes to be incorporated into the UDM REST client of the
 This can be done with the following commands::
 
     $ systemctl restart univention-directory-manager-rest.service
-    $ univention-app shell ucsschool-kelvin-rest-api /bin/sh -c '. /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure $DOCKER_HOST_NAME'
+    $ univention-app shell ucsschool-kelvin-rest-api /var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/update_openapi_client
 
 
 No pagination
