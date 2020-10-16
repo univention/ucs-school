@@ -101,9 +101,9 @@ define([
 					if (newValue && !this._form.getWidget('email_exists').value) {
 						this._form.getWidget('email').set('value', this.calculateEmail());
 					}
-					this._form.getWidget('email').set('visible', newValue)
-					this._form.getWidget('allowed_email_senders_users').set('visible', newValue)
-					this._form.getWidget('allowed_email_senders_groups').set('visible', newValue)
+					this._form.getWidget('email').set('visible', newValue);
+					this._form.getWidget('allowed_email_senders_users').set('visible', newValue);
+					this._form.getWidget('allowed_email_senders_groups').set('visible', newValue);
 				})
 				},
 				{
@@ -180,7 +180,7 @@ define([
 				'{name}': this._form.getWidget('name').value || '{name}'
 			};
 			for (const entry in replacementDict) {
-				emailString = emailString.replaceAll(entry, replacementDict[entry]);
+				emailString = emailString.replace(new RegExp(entry, "g"), replacementDict[entry]);
 			}
 			return emailString
 		},
