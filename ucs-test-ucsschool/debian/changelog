@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.148) unstable; urgency=low
+
+  * Bug #51976: Add unittests for the computerroom module
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 16 Oct 2020 08:36:54 +0200
+
 ucs-test-ucsschool (6.0.147) unstable; urgency=low
 
   * Bug #52191: fix build
