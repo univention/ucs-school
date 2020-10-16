@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-25) unstable; urgency=medium
+
+  * Bug #51976: Remove unittests from package due to import problems
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 16 Oct 2020 08:31:21 +0200
+
 ucs-school-umc-computerroom (11.0.0-24) unstable; urgency=medium
 
   * Bug #51976: fix build dependencies 
