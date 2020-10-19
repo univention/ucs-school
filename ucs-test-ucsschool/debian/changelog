@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.149) unstable; urgency=low
+
+  * Bug #52221: Add selenium test for administrate workgroups email feature
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 19 Oct 2020 07:42:55 +0200
+
 ucs-test-ucsschool (6.0.148) unstable; urgency=low
 
   * Bug #51976: Add unittests for the computerroom module
