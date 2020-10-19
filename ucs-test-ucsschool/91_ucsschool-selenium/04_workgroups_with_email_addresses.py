@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
 # -*- coding: utf-8 -*-
-## desc: Test the creation and assigning of internet rules
+## desc: Test the creation of workgroups with email addresses.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_selenium]
 ## exposure: dangerous
