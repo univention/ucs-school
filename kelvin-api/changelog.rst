@@ -7,9 +7,17 @@ Changelog
 
 v1.2.0 (2020-10-??)
 ...................
-* Update Docker image base to Alpine 3.12, updating Python to 3.8 (Bug #51768).
 * Improve user resource search speed: find all matching users with one lookup (Bug #51813).
 * Add fallback for retrieving LDAP connection settings from UCR if environment variables are not available (Bug #51154).
+
+v1.1.2 (2020-08-11)
+...................
+* The OpenAPI schema of the UDM REST API has been restricted to authenticated users. The Kelvin API now uses the updated ``update_openapi_script``, passing credentials to update the OpenAPI client library (Bug #51072).
+* The school class resource has been modified to accept class name containing only one character (Bug #51363).
+* Setting and changing the ``password`` attribute has been fixed (Bug #51285).
+* The UCS CA is now registered in the HTTP client certification verification backend to prevent SSL certification errors when communicating with the UDM REST API on the Docker host (Bug #51510).
+* The ``school_admin`` role is now supported (Bug #51509).
+* Update Docker image base to Alpine 3.12, updating Python to 3.8 (Bug #51768).
 
 v1.1.1 (2020-06-15)
 ...................
