@@ -76,7 +76,7 @@ def retry_cmd(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         utils.retry_on_error(
-            lambda: func(*args, **kwargs), exceptions=(CmdCheckFail), retry_count=8, delay=2
+            lambda: func(*args, **kwargs), exceptions=(CmdCheckFail), retry_count=8, delay=4
         )
 
     return decorated
