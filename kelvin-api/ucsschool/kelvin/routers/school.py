@@ -136,7 +136,10 @@ async def search(
 async def get(
     request: Request,
     school_name: str = Query(
-        None, alias="name", description="School (OU) with this name.", title="name",
+        None,
+        alias="name",
+        description="School (OU) with this name.",
+        title="name",
     ),
     udm: UDM = Depends(udm_ctx),
 ) -> SchoolModel:

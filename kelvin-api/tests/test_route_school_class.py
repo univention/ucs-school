@@ -136,7 +136,9 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     assert sc1_dn in [c.dn for c in lib_classes]
     assert sc2_dn in [c.dn for c in lib_classes]
     response = requests.get(
-        f"{url_fragment}/classes", headers=auth_header, params={"school": "DEMOSCHOOL"},
+        f"{url_fragment}/classes",
+        headers=auth_header,
+        params={"school": "DEMOSCHOOL"},
     )
     json_resp = response.json()
     assert response.status_code == 200
@@ -161,7 +163,10 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
         )
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
-    response = requests.get(url, headers=auth_header,)
+    response = requests.get(
+        url,
+        headers=auth_header,
+    )
     json_resp = response.json()
     assert response.status_code == 200
     api_obj = SchoolClassModel(**json_resp)
@@ -257,7 +262,11 @@ async def change_operation(
             change_data["school"] = f"{url_fragment}/schools/{sc1_attr['school']}"
         url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
         requests_method = getattr(requests, operation)
-        response = requests_method(url, headers=auth_header, json=change_data,)
+        response = requests_method(
+            url,
+            headers=auth_header,
+            json=change_data,
+        )
         json_resp = response.json()
         assert response.status_code == 200
         # check response
@@ -315,7 +324,10 @@ async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
         assert await lib_obj.exists(udm) is True
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
-    response = requests.delete(url, headers=auth_header,)
+    response = requests.delete(
+        url,
+        headers=auth_header,
+    )
     assert response.status_code == 204
     async with UDM(**udm_kwargs) as udm:
         with pytest.raises(NoObject):

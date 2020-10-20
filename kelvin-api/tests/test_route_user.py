@@ -229,7 +229,7 @@ async def test_search_no_filter(
         "school",
     ),
 )
-async def test_search_filter(
+async def test_search_filter(  # noqa: C901
     auth_header,
     url_fragment,
     create_random_users,
@@ -285,7 +285,9 @@ async def test_search_filter(
         else:
             params = {filter_param: param_value}
         response = requests.get(
-            f"{url_fragment}/users", headers=auth_header, params=params,
+            f"{url_fragment}/users",
+            headers=auth_header,
+            params=params,
         )
         assert response.status_code == 200, response.reason
         json_resp = response.json()
@@ -301,7 +303,8 @@ async def test_search_filter(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "filter_param", MAPPED_UDM_PROPERTIES,
+    "filter_param",
+    MAPPED_UDM_PROPERTIES,
 )
 async def test_search_filter_udm_properties(
     auth_header,
@@ -346,7 +349,9 @@ async def test_search_filter_udm_properties(
             )
         params = {filter_param: filter_value}
         response = requests.get(
-            f"{url_fragment}/users", headers=auth_header, params=params,
+            f"{url_fragment}/users",
+            headers=auth_header,
+            params=params,
         )
         assert response.status_code == 200, response.reason
         api_users = {data["name"]: UserModel(**data) for data in response.json()}
@@ -411,7 +416,11 @@ async def test_get(
 
 @pytest.mark.asyncio
 async def test_get_empty_udm_properties_are_returned(
-    auth_header, url_fragment, create_random_users, import_config, udm_kwargs,
+    auth_header,
+    url_fragment,
+    create_random_users,
+    import_config,
+    udm_kwargs,
 ):
     role: Role = random.choice(USER_ROLES)
     create_kwargs = {"udm_properties": {}}
@@ -720,7 +729,9 @@ async def test_patch(
     new_user_data["password"] = fake.password(length=20)
     print(f"PATCH new_user_data={new_user_data!r}.")
     response = requests.patch(
-        f"{url_fragment}/users/{user.name}", headers=auth_header, json=new_user_data,
+        f"{url_fragment}/users/{user.name}",
+        headers=auth_header,
+        json=new_user_data,
     )
     assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
@@ -750,7 +761,8 @@ async def test_delete(
     assert len(lib_users) == 1
     assert isinstance(lib_users[0], role.klass)
     response = requests.delete(
-        f"{url_fragment}/users/{r_user.name}", headers=auth_header,
+        f"{url_fragment}/users/{r_user.name}",
+        headers=auth_header,
     )
     assert response.status_code == 204, response.reason
     async with UDM(**udm_kwargs) as udm:
@@ -760,7 +772,8 @@ async def test_delete(
 
 def test_delete_non_existent(auth_header, url_fragment, random_name):
     response = requests.delete(
-        f"{url_fragment}/users/{random_name}", headers=auth_header,
+        f"{url_fragment}/users/{random_name}",
+        headers=auth_header,
     )
     assert response.status_code == 404, response.reason
 
@@ -940,7 +953,9 @@ async def test_change_disable(
         )
     else:
         response = requests.put(
-            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=user.json(),
         )
     assert response.status_code == 200, response.reason
     with pytest.raises(LDAPBindError):
@@ -955,7 +970,9 @@ async def test_change_disable(
         )
     else:
         response = requests.put(
-            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=user.json(),
         )
     assert response.status_code == 200, response.reason
     await check_password(lib_users[0].dn, password)
@@ -992,7 +1009,9 @@ async def test_change_password(
         )
     else:
         response = requests.put(
-            f"{url_fragment}/users/{user.name}", headers=auth_header, data=user.json(),
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=user.json(),
         )
     assert response.status_code == 200, response.reason
     await check_password(lib_users[0].dn, user.password)

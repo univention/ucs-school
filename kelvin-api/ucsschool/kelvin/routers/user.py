@@ -53,7 +53,6 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
-from ucsschool.lib.models.school import School
 from udm_rest_client import (
     UDM,
     APICommunicationError,
@@ -342,10 +341,19 @@ async def search(
         description="List only users that are members of matching school(s) (OUs).",
     ),
     username: str = Query(
-        None, alias="name", description="List users with this username.", title="name",
+        None,
+        alias="name",
+        description="List users with this username.",
+        title="name",
     ),
-    ucsschool_roles: List[str] = Query(None, regex="^.+:.+:.+$",),
-    email: str = Query(None, regex="^.+@.+$",),
+    ucsschool_roles: List[str] = Query(
+        None,
+        regex="^.+:.+:.+$",
+    ),
+    email: str = Query(
+        None,
+        regex="^.+@.+$",
+    ),
     record_uid: str = Query(None),
     source_uid: str = Query(None),
     birthday: datetime.date = Query(
@@ -586,7 +594,8 @@ async def change_school(
         )
         logger.exception(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=error_msg,
         )
     return await get_import_user(udm, user.dn)
 
@@ -605,23 +614,23 @@ async def rename_user(
         error_msg = f"Renaming {user!r} from {old_name!r} to {user.name!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=error_msg,
         )
     if not res:
         user.name = old_name
         error_msg = f"Failed to rename {user!r} to {new_name!r}: {user.errors!r}"
         logger.error(error_msg)
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=error_msg,
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=error_msg,
         )
     user = await get_import_user(udm, user.dn)
     return user
 
 
-@router.patch(  # noqa: C901
-    "/{username}", status_code=HTTP_200_OK, response_model=UserModel
-)
-async def partial_update(
+@router.patch("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
+async def partial_update(  # noqa: C901
     username: str,
     user: UserPatchModel,
     request: Request,
@@ -683,7 +692,8 @@ async def partial_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
@@ -762,13 +772,18 @@ async def complete_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=str(exc),
             ) from exc
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
 @router.delete("/{username}", status_code=HTTP_204_NO_CONTENT)
-async def delete(username: str, request: Request, udm: UDM = Depends(udm_ctx),) -> None:
+async def delete(
+    username: str,
+    request: Request,
+    udm: UDM = Depends(udm_ctx),
+) -> None:
     """
     Delete a school user
     """

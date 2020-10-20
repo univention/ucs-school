@@ -449,8 +449,8 @@ def restart_kelvin_api_server_session():
     return restart_kelvin_api_server
 
 
-@pytest.fixture(scope="session")  # noqa: C901
-def add_to_import_config(restart_kelvin_api_server_session):
+@pytest.fixture(scope="session")
+def add_to_import_config(restart_kelvin_api_server_session):  # noqa: C901
     def _func(**kwargs) -> None:
         if not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists():
             # not in Docker container

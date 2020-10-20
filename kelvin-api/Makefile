@@ -55,14 +55,14 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 format: ## format source code
-	isort --apply --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive  --project ucsschool --project udm_rest_client --project univention $(PY_PATHS)
-	black --target-version py37 $(PY_PATHS)
+	isort $(PY_PATHS)
+	black --config .black $(PY_PATHS)
 
 lint-isort:
-	isort --check-only --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive  --project ucsschool --project udm_rest_client --project univention $(PY_PATHS)
+	isort --check-only $(PY_PATHS)
 
 lint-black:
-	black --check --target-version py37 $(PY_PATHS)
+	black --config .black --check $(PY_PATHS)
 
 lint-flake8:
 	flake8 --max-line-length=105 --ignore=W503 $(PY_PATHS)

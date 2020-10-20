@@ -101,8 +101,8 @@ class UserBirthdayPyHook(UserPyHook):
         *args,
         **kwargs,
     ) -> None:
-        from ucsschool.lib.models.utils import env_or_ucr
         from ucsschool.importer.utils.user_pyhook import KelvinUserHook
+        from ucsschool.lib.models.utils import env_or_ucr
 
         assert isinstance(self, KelvinUserHook)
         super(UserBirthdayPyHook, self).__init__(
@@ -325,7 +325,8 @@ async def test_user_pyhook(
     assert api_user.firstname == api_user.lastname
 
     response = requests.delete(
-        f"{url_fragment}/users/{r_user.name}", headers=auth_header,
+        f"{url_fragment}/users/{r_user.name}",
+        headers=auth_header,
     )
     assert response.status_code == 204, response.reason
     async with UDM(**udm_kwargs) as udm:

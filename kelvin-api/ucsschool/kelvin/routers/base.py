@@ -31,13 +31,13 @@ from functools import lru_cache
 from typing import Any, Dict, List, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
+import psutil
 import ujson
 from fastapi import HTTPException
 from pydantic import BaseModel, HttpUrl, validator
 from starlette.requests import Request
 from starlette.status import HTTP_404_NOT_FOUND
 
-import psutil
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
 

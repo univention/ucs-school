@@ -264,7 +264,8 @@ async def partial_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=str(exc),
             ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
@@ -309,14 +310,18 @@ async def complete_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=str(exc),
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=str(exc),
             ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)
 async def delete(
-    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx),
+    class_name: str,
+    school: str,
+    request: Request,
+    udm: UDM = Depends(udm_ctx),
 ) -> None:
     sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     await sc.remove(udm)

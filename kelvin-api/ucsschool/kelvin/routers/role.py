@@ -109,7 +109,9 @@ class RoleModel(BaseModel):
 
 
 @router.get("/", response_model=List[RoleModel])
-async def search(request: Request,) -> List[RoleModel]:
+async def search(
+    request: Request,
+) -> List[RoleModel]:
     """
     List all available roles.
     """
@@ -126,7 +128,11 @@ async def search(request: Request,) -> List[RoleModel]:
 @router.get("/{role_name}", response_model=RoleModel)
 async def get(
     request: Request,
-    role_name: SchoolUserRole = Query(..., alias="name", title="name",),
+    role_name: SchoolUserRole = Query(
+        ...,
+        alias="name",
+        title="name",
+    ),
 ) -> RoleModel:
     return RoleModel(
         name=role_name,
