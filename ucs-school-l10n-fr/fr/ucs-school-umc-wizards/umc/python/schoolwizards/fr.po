@@ -48,6 +48,6 @@ msgstr "Échec de la suppression de l'utilisateur de l'école."
 
 #: umc/python/schoolwizards/__init__.py:108
 #, python-format
-msgid "The %s %r does not exists or might have been removed in the meanwhile."
+msgid "The %s %r does not exist or might have been removed in the meantime."
 msgstr "%s %r n'existe pas ou a été supprimé entre temps."
 
