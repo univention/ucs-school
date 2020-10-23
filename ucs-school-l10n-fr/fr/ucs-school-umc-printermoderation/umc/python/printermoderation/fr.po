@@ -26,7 +26,7 @@ msgstr "Échec de l'impression sur %(printer)s : %(stderr)s (erreur %(errno)d).
 
 #: umc/python/printermoderation/__init__.py:234
 #, python-format
-msgid "File %r could not be printed as it does not exists (anymore)."
+msgid "File %r could not be printed as it does not exist (anymore)."
 msgstr "Impossible d'imprimer le fichier « %r », car il n'existe pas (plus)."
 
 #: umc/python/printermoderation/__init__.py:90
