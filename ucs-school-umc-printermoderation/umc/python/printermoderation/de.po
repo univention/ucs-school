@@ -23,7 +23,7 @@ msgstr "Ungültige Drucker-URI"
 
 #: umc/python/printermoderation/__init__.py:226
 #, python-format
-msgid "File %r could not be printed as it does not exists (anymore)."
+msgid "File %r could not be printed as it does not exist (anymore)."
 msgstr "Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert."
 
 #: umc/python/printermoderation/__init__.py:252
