@@ -30,7 +30,21 @@ import logging
 from collections.abc import Sequence
 from functools import lru_cache
 from operator import attrgetter
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+)
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pydantic.main import Model
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
@@ -129,7 +143,21 @@ class UserBaseModel(UcsSchoolBaseModel):
     school_classes: Dict[str, List[str]] = {}
     source_uid: str = None
     ucsschool_roles: List[str] = []
-    udm_properties: Dict[str, Any] = {}
+    udm_properties: Dict[str, Any] = None
+
+    def __init__(self, **data: Any) -> None:
+        super(UserBaseModel, self).__init__(**data)
+        # Bug #51766: setting udm_properties = {} in model
+        # leads to invalid java code.
+        if self.udm_properties is None:
+            self.udm_properties = {}
+
+    @classmethod
+    def parse_obj(cls: Type["Model"], obj: Any) -> "Model":
+        res: UserBaseModel = super(UserBaseModel, cls).parse_obj(obj)
+        if res.udm_properties is None:
+            res.udm_properties = {}
+        return res
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = ImportUser
