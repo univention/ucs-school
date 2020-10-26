@@ -18,11 +18,17 @@ msgstr "Passwörter (Schüler)"
 msgid "Passwords (teachers)"
 msgstr "Passwörter (Lehrer)"
 
+msgid "Passwords (staff)"
+msgstr "Passwörter (Mitarbeiter)"
+
 msgid "Reset passwords of student accounts"
 msgstr "Zurücksetzen von Schülerpasswörtern"
 
 msgid "Reset passwords of teacher accounts"
 msgstr "Zurücksetzen von Lehrerpasswörtern"
+
+msgid "Reset passwords of staff accounts"
+msgstr "Zurücksetzen von Mitarbeiterpasswörtern"
 
 #~ msgid "Passwords"
 #~ msgstr "Passwörter"
