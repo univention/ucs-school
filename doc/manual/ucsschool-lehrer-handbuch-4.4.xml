@@ -937,6 +937,16 @@ feedback@univention.de
 		  Die Bedienung erfolgt analog zum in
 		  <xref linkend="lehrerdoku:schuelerpasswort"/> beschriebene Zurücksetzen von Passwörtern für Schüler.
 		</para>
+		<title>Passwörter (Mitarbeiter)</title>
+		<para>
+		  Dieses Modul erlaubt Schuladministratoren das Zurücksetzen von Mitarbeiter-Passwörtern. Die
+		  bestehenden Passwörter können aus Sicherheitsgründen nicht ausgelesen werden; wird ein Passwort
+		  vergessen, muss ein neues Passwort vergeben werden.
+		</para>
+		<para>
+		  Die Bedienung erfolgt analog zum in
+		  <xref linkend="lehrerdoku:schuelerpasswort"/> beschriebene Zurücksetzen von Passwörtern für Schüler.
+		</para>
 	  </section>
 
 	  <section id="admindoku:computerraum:anlegen">
