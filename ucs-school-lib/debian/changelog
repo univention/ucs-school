@@ -1,3 +1,11 @@
+ucs-school-lib (12.2.1) unstable; urgency=low
+
+  * Bug #52038: look for Attribute and Meta objects in all base classes
+  * Bug #52038: move email related attributes to mixin class
+  * Bug #52038: move 'ucsschool_roles' attribute to mixin class
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Oct 2020 13:49:35 +0100
+
 ucs-school-lib (12.1.21) unstable; urgency=low
 
   * Bug #52035: map email related UDM group properties in WorkGroup
