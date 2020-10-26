@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 
+fix: 12.2.1A~4.4.0.202010261353
 desc: |
  * Internal improvement: attributes of mixin classes are now recognized by the meta class (Bug #52038).
 bug: [52038]
