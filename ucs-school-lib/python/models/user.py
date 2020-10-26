@@ -87,7 +87,6 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     school_classes = SchoolClassesAttribute(
         _("Class"), aka=["Class", "Klasse"]
     )  # type: Dict[str, List[str]]
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
 
     type_name = None
     type_filter = (

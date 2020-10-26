@@ -1117,12 +1117,11 @@ class UCSSchoolHelperAbstractClass(object):
 
 class RoleSupportMixin(object):
     """
-    Methods required when using the ucsschool_roles / ucsschoolRoles attribute.
-
-    Inherit from this class and add this to your class:
-
-    `ucsschool_roles = Roles(_('Roles'), aka=['Roles'])`
+    Attribute and methods to handle the `ucsschool_roles` / `ucsschoolRoles`
+    attribute.
     """
+
+    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
 
     default_roles = []  # type: Set[str]
     _school_in_name = False
