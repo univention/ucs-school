@@ -90,6 +90,18 @@ class _MayHaveSchoolSuffix(object):
         return self.name
 
 
+class EmailAttributesMixin(object):
+    email = Email(
+        _("Email"), udm_name="mailAddress", aka=["Email", "E-Mail"], unlikely_to_change=True
+    )  # type: str
+    allowed_email_senders_users = Users(
+        _("Users that are allowed to send e-mails to the group"), udm_name="allowedEmailUsers",
+    )  # type: List[str]
+    allowed_email_senders_groups = Groups(
+        _("Groups that are allowed to send e-mails to the group"), udm_name="allowedEmailGroups",
+    )  # type: List[str]
+
+
 class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     name = GroupName(_("Name"))  # type: str
     description = Description(_("Description"))  # type: str
@@ -282,18 +294,9 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
             raise ValueError("Missing school prefix in name: {!r}.".format(self))
 
 
-class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
+class WorkGroup(EmailAttributesMixin, SchoolClass, _MayHaveSchoolPrefix):
     default_roles = [role_workgroup]
     ShareClass = WorkGroupShare
-    email = Email(
-        _("Email"), udm_name="mailAddress", aka=["Email", "E-Mail"], unlikely_to_change=True
-    )  # type: str
-    allowed_email_senders_users = Users(
-        _("Users that are allowed to send e-mails to the group"), udm_name="allowedEmailUsers",
-    )  # type: List[str]
-    allowed_email_senders_groups = Groups(
-        _("Groups that are allowed to send e-mails to the group"), udm_name="allowedEmailGroups",
-    )  # type: List[str]
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
