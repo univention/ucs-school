@@ -75,7 +75,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     school = None
     educational_servers = Attribute(_("Educational servers"), unlikely_to_change=True)
     administrative_servers = Attribute(_("Administrative servers"), unlikely_to_change=True)
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
 
     default_roles = [role_school]
     _school_in_name = True

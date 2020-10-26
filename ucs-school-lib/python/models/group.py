@@ -106,7 +106,6 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     name = GroupName(_("Name"))  # type: str
     description = Description(_("Description"))  # type: str
     users = Users(_("Users"))  # type: List[str]
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str

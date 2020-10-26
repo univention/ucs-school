@@ -297,7 +297,6 @@ class GroupShare(SetNTACLsMixin, Share):
 
 class WorkGroupShare(RoleSupportMixin, GroupShare):
     school_group = WorkgroupAttribute(_("Work group"), required=True, internal=True)
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_workgroup_share]
     _school_in_name_prefix = True
 
@@ -334,7 +333,6 @@ class WorkGroupShare(RoleSupportMixin, GroupShare):
 
 class ClassShare(RoleSupportMixin, GroupShare):
     school_group = SchoolClassAttribute(_("School class"), required=True, internal=True)
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_school_class_share]
     _school_in_name_prefix = True
     paths = {
@@ -358,7 +356,6 @@ class ClassShare(RoleSupportMixin, GroupShare):
 
 
 class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False
 

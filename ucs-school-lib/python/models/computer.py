@@ -93,7 +93,6 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 
 class SchoolDCSlave(RoleSupportMixin, SchoolDC):
     groups = Groups(_("Groups"))  # type: List[str]
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
 
     def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
         udm_obj["unixhome"] = "/dev/null"
@@ -418,7 +417,6 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 class WindowsComputer(RoleSupportMixin, SchoolComputer):
     type_name = _("Windows system")
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
     default_roles = [role_win_computer]
 
     class Meta(SchoolComputer.Meta):
@@ -428,7 +426,6 @@ class WindowsComputer(RoleSupportMixin, SchoolComputer):
 
 class MacComputer(RoleSupportMixin, SchoolComputer):
     type_name = _("Mac OS X")
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
     default_roles = [role_mac_computer]
 
     class Meta(SchoolComputer.Meta):
@@ -438,7 +435,6 @@ class MacComputer(RoleSupportMixin, SchoolComputer):
 
 class IPComputer(RoleSupportMixin, SchoolComputer):
     type_name = _("Device with IP address")
-    ucsschool_roles = Roles(_("Roles"), aka=["Roles"])  # type: List[str]
     default_roles = [role_ip_computer]
 
     class Meta(SchoolComputer.Meta):
