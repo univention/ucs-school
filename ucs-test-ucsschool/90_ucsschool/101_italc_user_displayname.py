@@ -42,7 +42,7 @@ import random
 import pytest
 
 import univention.testing.strings as uts
-from univention.management.console.modules.computerroom.italc2 import UserMap
+from ucsschool.italc_integration.italc2 import UserMap
 
 user_map = UserMap()
 
