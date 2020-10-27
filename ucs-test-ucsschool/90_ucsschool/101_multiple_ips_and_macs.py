@@ -43,8 +43,8 @@ import sys
 import pytest
 
 import univention.testing.strings as uts
-from univention.management.console.modules.computerroom import italc2 as italc_module
-from univention.management.console.modules.computerroom.italc2 import ITALC_Computer, ITALC_Error
+from ucsschool.italc_integration import italc2 as italc_module
+from ucsschool.italc_integration.italc2 import ITALC_Computer, ITALC_Error
 
 
 class MockComputer:

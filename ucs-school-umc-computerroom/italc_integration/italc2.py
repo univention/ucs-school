@@ -43,7 +43,6 @@ import notifier
 import notifier.signals
 import notifier.threads
 import sip
-import wakeonlan
 from ldap.dn import explode_dn
 from ldap.filter import filter_format
 from PyQt4.QtCore import QObject, pyqtSlot
@@ -55,6 +54,7 @@ from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
+from univention.management.console.modules.computerroom import wakeonlan
 
 _ = Translation("ucs-school-umc-computerroom").translate
 
