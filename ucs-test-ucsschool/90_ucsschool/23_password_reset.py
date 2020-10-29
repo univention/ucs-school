@@ -125,6 +125,22 @@ class Error(Exception):
     pass
 
 
+class TestPasswordResetStaff:
+    def __init__(self, schoolenv, school, host):
+        self.schoolenv = schoolenv
+        self.school = school
+        self.host = host
+
+    def run_test(self):
+        staff_user = self.schoolenv.create_staff(self.school)
+        ou_admin_name, ou_admin_dn = self.schoolenv.create_school_admin(self.school)
+        teacher_name, teacher_dn = self.schoolenv.create_teacher(self.school)
+        admin_pw_reset = PasswordReset(self.host, "staff", ou_admin_name)
+        teacher_pw_reset = PasswordReset(self.host, "staff", teacher_name)
+        teacher_pw_reset.assert_password_change_fails(staff_user)
+        admin_pw_reset.assert_password_change(staff_user, "jksdhgf983048ghsd", False)
+
+
 class TestPasswordReset(object):
     def __init__(self, schoolenv, school, host):
         self.schoolenv = schoolenv
@@ -308,6 +324,8 @@ def main():
     with utu.UCSTestSchool() as schoolenv:
         school, oudn = schoolenv.create_ou(name_edudc=host)
         TestPasswordReset(schoolenv, school, host)
+        pw_reset_staff = TestPasswordResetStaff(schoolenv, school, host)
+        pw_reset_staff.run_test()
 
 
 if __name__ == "__main__":
