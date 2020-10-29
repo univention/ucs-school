@@ -27,22 +27,34 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-MACHINE_USER="$HOSTNAME\$"
-MACHINE_PASSWORD=$(cat /etc/machine.secret)
+APP_ID="ucsschool-kelvin-rest-api"
+UDM_CLIENT_UPDATE_SCRIPT="/var/lib/univention-appcenter/apps/$APP_ID/data/update_openapi_client"
 
 if [ "$0" = "configure" ] || [ "$1" = "install" ] || [ "$1" = "upgrade" ] ; then
-  echo "Building OpenAPI client library using host ${DOCKER_HOST_NAME}..."
-  . /kelvin/venv/bin/activate
-  update_openapi_client \
-    --generator java \
-    --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
-    --insecure \
-    --username "$MACHINE_USER" \
-    --password "$MACHINE_PASSWORD" \
-    "$DOCKER_HOST_NAME" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
+  if ! [ -e "$UDM_CLIENT_UPDATE_SCRIPT" ]; then
+    cat >"$UDM_CLIENT_UPDATE_SCRIPT" <<__EOF__
+#!/bin/sh
+MACHINE_USER="\$(hostname)\$"
+MACHINE_PASSWORD="\$(cat /etc/machine.secret)"
+
+echo "Building OpenAPI client library using host \${DOCKER_HOST_NAME}..."
+. /kelvin/venv/bin/activate
+update_openapi_client \
+  --generator java \
+  --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar \
+  --insecure \
+  --username "\$MACHINE_USER" \
+  --password "\$MACHINE_PASSWORD" \
+  "\$DOCKER_HOST_NAME"
+echo "Finished building OpenAPI client library."
+__EOF__
+  chmod 0755 "$UDM_CLIENT_UPDATE_SCRIPT"
+  fi
+
+  "$UDM_CLIENT_UPDATE_SCRIPT" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
 
   echo "Adding UCS certificate to certifi store..."
-  CERTIFI_STORE="$(python -m certifi)"
+  CERTIFI_STORE="$(/kelvin/venv/bin/python3 -m certifi)"
   UCS_CERT="/usr/local/share/ca-certificates/ucs.crt"
   while IFS= read -r line; do
     if ! grep -q -- "$line" "$CERTIFI_STORE"; then

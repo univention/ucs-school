@@ -33,7 +33,7 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=3
+VERSION=4
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
@@ -43,6 +43,7 @@ TOKEN_SIGN_SECRET_FILE="/var/lib/univention-appcenter/apps/$APP_ID/conf/tokens.s
 KELVIN_IMPORT_CONFIG_FILE="/var/lib/ucs-school-import/configs/kelvin.json"
 KELVIN_IMPORTUSER_HOOKS_PATH="/var/lib/ucs-school-import/kelvin-hooks"
 KELVIN_IMPORTUSER_HOOKS_README="${KELVIN_IMPORTUSER_HOOKS_PATH}/README.txt"
+UDM_CLIENT_UPDATE_SCRIPT="/var/lib/univention-appcenter/apps/$APP_ID/data/update_openapi_client"
 
 . /usr/share/univention-join/joinscripthelper.lib || exit 1
 . /usr/share/univention-appcenter/joinscripthelper.sh || exit 1
@@ -163,10 +164,7 @@ The "__pycache__" directory can be safely ignored.
 check_openapi_client_knows_ucssschool() {
   if ! univention-app shell "$APP_ID" /kelvin/venv/bin/python3 -c "import sys; from openapi_client_udm import UsersUserOptions; sys.exit(0 if 'ucsschool_administrator' in UsersUserOptions.openapi_types else 1)"; then
     echo "Building OpenAPI client library in Docker container..."
-    MACHINE_USER="$(ucr get appcenter/apps/$APP_ID/hostdn | cut -d ',' -f 1 | cut -d '=' -f 2)\$"
-    MACHINE_PASSWORD_FILE="$(docker inspect --format='{{.GraphDriver.Data.MergedDir}}' "$(ucr get appcenter/apps/$APP_ID/container)")/etc/machine.secret"
-    MACHINE_PASSWORD="$(<"$MACHINE_PASSWORD_FILE")"
-    univention-app shell "$APP_ID" /bin/sh -c ". /kelvin/venv/bin/activate; update_openapi_client --generator java --jar /kelvin/openapi-generator/jar/openapi-generator-cli-*.jar --insecure --username \"$MACHINE_USER\" --password \"$MACHINE_PASSWORD\" \"\$DOCKER_HOST_NAME\" && /etc/init.d/ucsschool-kelvin-rest-api restart || exit 1"
+    univention-app shell "$APP_ID" "$UDM_CLIENT_UPDATE_SCRIPT"
   else
     echo "OpenAPI client library knows UCS@school types."
   fi
