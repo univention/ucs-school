@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.2) unstable; urgency=low
+
+  * Bug #40577: Add staff to the possible password reset flavors
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 29 Oct 2020 11:36:21 +0100
+
 ucs-school-lib (12.2.1) unstable; urgency=low
 
   * Bug #52038: look for Attribute and Meta objects in all base classes
