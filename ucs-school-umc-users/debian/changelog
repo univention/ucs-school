@@ -1,3 +1,9 @@
+ucs-school-umc-users (15.0.0-7) unstable; urgency=medium
+
+  * Bug #40577: Add staff as a new flavor for the Password Reset Module
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 29 Oct 2020 11:37:43 +0200
+
 ucs-school-umc-users (15.0.0-6) unstable; urgency=medium
 
   * Bug #50834: made an UCR-V description easier to understand
