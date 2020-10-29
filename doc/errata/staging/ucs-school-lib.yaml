@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.1A~4.4.0.202010261353
+fix: 12.2.2A~4.4.0.202010291141
 desc: |
  * Internal improvement: attributes of mixin classes are now recognized by the meta class (Bug #52038).
-bug: [52038]
+ * Internal changes for the new Password Reset (Staff) module (Bug #40577).
+bug: [52038, 40577]
