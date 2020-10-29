@@ -938,7 +938,7 @@ feedback@univention.de
 		  <xref linkend="lehrerdoku:schuelerpasswort"/> beschriebene Zurücksetzen von Passwörtern für Schüler.
 		</para>
 	  </section>
-	  <section>
+	  <section id="admindoku:pwmitarbeiter">
 		<title>Passwörter (Mitarbeiter)</title>
 		<para>
 		  Dieses Modul erlaubt Schuladministratoren das Zurücksetzen von Mitarbeiter-Passwörtern. Die
