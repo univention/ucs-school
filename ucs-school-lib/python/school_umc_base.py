@@ -284,6 +284,8 @@ class SchoolBaseModule(Base):
             classes = [ucsschool.lib.models.Teacher, ucsschool.lib.models.TeachersAndStaff]
         elif user_type.lower() in ("student", "students", "pupil", "pupils"):
             classes = [ucsschool.lib.models.Student]
+        elif user_type.lower() in ("staff",):
+            classes = [ucsschool.lib.models.Staff, ucsschool.lib.models.TeachersAndStaff]
         else:
             raise TypeError("user_type %r unknown." % (user_type,))
 

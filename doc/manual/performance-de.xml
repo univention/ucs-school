@@ -107,7 +107,7 @@
     		Je nach Größe der Umgebung kann das sehr lange dauern, wenn kein Suchfilter angegeben wird.
     		Dieses Verhalten kann durch setzen der folgenden &ucsUCRV;n für die jeweiligen Module deaktiviert werden.
     		<itemizedlist>
-				<listitem><simpara>Passwörter (Schüler), Passwörter (Lehrer): <envar>ucsschool/passwordreset/autosearch</envar></simpara></listitem>
+				<listitem><simpara>Passwörter (Schüler), Passwörter (Lehrer), Passwörter (Mitarbeiter): <envar>ucsschool/passwordreset/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Lehrer zuordnen: <envar>ucsschool/assign-teachers/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Klassen zuordnen: <envar>ucsschool/assign-classes/autosearch</envar></simpara></listitem>
 				<listitem><simpara>Arbeitsgruppen verwalten: <envar>ucsschool/workgroups/autosearch</envar></simpara></listitem>
