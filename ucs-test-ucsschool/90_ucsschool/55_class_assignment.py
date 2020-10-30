@@ -23,14 +23,15 @@ from univention.testing.utils import (
 def schoolenv():
     with UCSTestSchool() as schoolenv:
         hostname = schoolenv.ucr["hostname"]
-
+        name_edudc_2 = uts.random_name()
         schoolenv.school = schoolenv.create_ou(name_edudc=hostname, use_cache=False)
         schoolenv.schools = [schoolenv.school] + schoolenv.create_multiple_ous(
             2, name_edudc=uts.random_name(), name_share_file_server=hostname, use_cache=False
         )
+        name_edudcs = [hostname, name_edudc_2, name_edudc_2]
         schoolenv.school_classes = dict()
         client = Client.get_test_connection(hostname=schoolenv.ucr["ldap/master"])
-        for school, school_dn in schoolenv.schools:
+        for (school, school_dn), name_edudc in zip(schoolenv.schools, name_edudcs):
             class_name = uts.random_string()
             grp_dn = "cn={}-{},cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
                 school, class_name, school, schoolenv.LDAP_BASE
@@ -40,9 +41,10 @@ def schoolenv():
                 flavor="schoolwizards/classes",
                 options=[{"object": {"school": school, "name": class_name, "description": ""}}],
             )
-            wait_for_replication_from_master_openldap_to_local_samba(
-                ldap_filter="CN={}-{}".format(school, class_name)
-            )
+            if name_edudc == hostname:
+                wait_for_replication_from_master_openldap_to_local_samba(
+                    ldap_filter="CN={}-{}".format(school, class_name)
+                )
             schoolenv.school_classes[school] = (
                 "{}-{}".format(school, class_name),
                 grp_dn,
