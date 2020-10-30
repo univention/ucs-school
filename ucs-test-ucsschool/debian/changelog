@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.154) unstable; urgency=medium
+
+  * Bug #40577: Prevent new test to run on replication node
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 30 Oct 2020 09:33:12 +0100
+
 ucs-test-ucsschool (6.0.153) unstable; urgency=medium
 
   * Bug #52191: Only wait for replication of classes which are replicated 

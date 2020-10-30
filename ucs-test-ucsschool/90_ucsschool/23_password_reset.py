@@ -323,9 +323,10 @@ def main():
     host = ucr.get("hostname")
     with utu.UCSTestSchool() as schoolenv:
         school, oudn = schoolenv.create_ou(name_edudc=host)
-        TestPasswordReset(schoolenv, school, host)
-        pw_reset_staff = TestPasswordResetStaff(schoolenv, school, host)
-        pw_reset_staff.run_test()
+        if not is_domaincontroller_slave:  # Staff is not replicated to replication nodes
+            TestPasswordReset(schoolenv, school, host)
+            pw_reset_staff = TestPasswordResetStaff(schoolenv, school, host)
+            pw_reset_staff.run_test()
 
 
 if __name__ == "__main__":
