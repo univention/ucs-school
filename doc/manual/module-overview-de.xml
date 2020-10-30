@@ -39,6 +39,12 @@
 					Zurücksetzen von Lehrer-Passwörtern.
 				</simpara>
 			</listitem>
+            <listitem>
+				<simpara>
+					<emphasis>Passwörter (Mitarbeiter)</emphasis> erlaubt Schuladministratoren das
+					Zurücksetzen von Mitarbeiter-Passwörtern.
+				</simpara>
+			</listitem>
 			<listitem>
 				<para>
 					Das Modul <emphasis>Computerraum</emphasis> erlaubt die Kontrolle der
@@ -149,8 +155,9 @@
 	<section id="ucsschool:passwoerterzuruecksetzen">
 		<title>Passwörter zurücksetzen</title>
 		<para>
-			Mit den Modulen <emphasis>Passwörter (Schüler)</emphasis> und
-			<emphasis>Passwörter (Lehrer)</emphasis> lassen sich Benutzerpasswörter
+			Mit den Modulen <emphasis>Passwörter (Schüler)</emphasis>,
+            <emphasis>Passwörter (Lehrer)</emphasis> und
+			<emphasis>Passwörter (Mitarbeiter)</emphasis> lassen sich Benutzerpasswörter
 			zurücksetzen. Die Benutzeroberfläche ist für beide Module identisch.
 			Es werden alle Schüler/Lehrer der gewählten <emphasis>Schule</emphasis>
 			angezeigt. Durch Auswahl einer <emphasis>Klasse oder Arbeitsgruppe</emphasis>
@@ -175,6 +182,12 @@
 			aktuell eingeloggte Nutzer sein Passwort erneut eingeben muss.
 		</para>
 		<para>
+			Die bestehenden Schüler-Passwörter können
+			außerdem nicht ausgelesen werden; wenn Schüler ihr Passwort vergessen, muss ein neues
+            Passwort vergeben werden. Schuladministratoren dürfen die Passwörter von Lehrern
+            und Mitarbeitern zurücksetzen.
+		</para>
+		<para>
 			Neben dem Namen und Nutzernamen der angezeigten Nutzer wird außerdem gezeigt, bei
 			wem eine Änderung des Passwortes bei der nächsten Anmeldung erforderlich ist.
 			Die Passwortänderung ist dann erforderlich, wenn beim Zurücksetzen eines Passworts die
@@ -185,23 +198,17 @@
 			<itemizedlist>
 			<listitem>
 				<simpara>
-					<emphasis>ucsschool/passwordreset/password-change-on-next-login:</emphasis>
+					<envar>ucsschool/passwordreset/password-change-on-next-login</envar>:
 					Wenn eingeschaltet, wird der Wert der Checkbox standardmäßig eingeschaltet.
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>
-					<emphasis>ucsschool/passwordreset/force-password-change-on-next-login:</emphasis>
+					<envar>ucsschool/passwordreset/force-password-change-on-next-login</envar>:
 					Wenn eingeschaltet, wird das Ändern des Checkbox-Werts verhindert.
 				</simpara>
 			</listitem>
 			</itemizedlist>
-		</para>
-		<para>
-			Die bestehenden Schüler-Passwörter können
-			aus Sicherheitsgründen nicht ausgelesen werden; wenn Schüler ihr Passwort
-			vergessen, muss ein neues Passwort vergeben werden. Schuladministratoren dürfen
-			die Passwörter von Lehrern zurücksetzen.
 		</para>
 	</section>
 </chapter>
