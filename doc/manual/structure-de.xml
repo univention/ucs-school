@@ -146,7 +146,7 @@
 				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
 				repliziert: sein Benutzerobjekt und die Standardgruppen.
 				Verlässt der Benutzer die Schule, wird sein Benutzerobjekt dort gelöscht bzw. nicht mehr dorthin repliziert.
-				Schulübergreifenden Benutzerkonten können nur mit Importskripten verwaltet werden.
+				Schulübergreifende Benutzerkonten können nur mit Importskripten verwaltet werden.
 			</para>
 			<para>
 				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
