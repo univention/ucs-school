@@ -57,6 +57,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
     dc_schooladmin = defaultList + [
         ("schoolusers", "student"),
         ("schoolusers", "teacher"),
+        ("schoolusers", "staff"),
         ("schoolrooms", None),
         ("schoolgroups", "workgroup-admin"),
         ("schoolgroups", "class"),
@@ -72,6 +73,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
         ("helpdesk", None),
         ("schoolusers", "student"),
         ("schoolusers", "teacher"),
+        ("schoolusers", "staff"),
         ("schoolrooms", None),
         ("schoolgroups", "class"),
         ("schoolgroups", "teacher"),
@@ -89,6 +91,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
         ("schoolwizards", "schoolwizards/schools"),
         ("schoolusers", "student"),
         ("schoolusers", "teacher"),
+        ("schoolusers", "staff"),
         ("schoolrooms", None),
         ("schoolgroups", "class"),
         ("schoolgroups", "teacher"),
@@ -105,6 +108,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
         ("schoolinstaller", None),
         ("schoolusers", "student"),
         ("schoolusers", "teacher"),
+        ("schoolusers", "staff"),
         ("schoolrooms", None),
         ("schoolgroups", "class"),
         ("schoolgroups", "teacher"),
@@ -133,14 +137,16 @@ def checkModules(modules, userType, serverRole, singleMaster):
     }
     modules = removeListFromOther(modules, ignoreList)
     res = checks[(userType, serverRole, singleMaster)]
+    expected = set(modules)
+    found = set(res)
     if userType != "domainadmin":
-        success = set(modules) == set(res)
+        success = expected == found
     else:
         success = contains(modules, res)
     if not success:
         utils.fail(
-            'Modules for "%r" are not correct.\nExpected: %r\nFound:    %r'
-            % ((userType, serverRole, singleMaster,), sorted(res), sorted(modules))
+            'Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r'
+            % ((userType, serverRole, singleMaster,), expected - found, found - expected)
         )
 
 
