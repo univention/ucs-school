@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-26) unstable; urgency=medium
+
+  * Bug #52279: capsulate italc integration
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 03 Nov 2020 16:03:22 +0100
+
 ucs-school-umc-computerroom (11.0.0-25) unstable; urgency=medium
 
   * Bug #51976: Remove unittests from package due to import problems
