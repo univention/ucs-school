@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.156) unstable; urgency=medium
+
+  * Bug #52279: change imports for italc unit-tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 03 Nov 2020 16:04:28 +0100
+
 ucs-test-ucsschool (6.0.155) unstable; urgency=medium
 
   * Bug #40577: Fix available umc module test
