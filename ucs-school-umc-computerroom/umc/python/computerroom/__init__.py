@@ -52,6 +52,11 @@ from notifier.nf_qt import _exit
 
 import ucsschool.lib.internetrules as internetrules
 import univention.admin.uexceptions as udm_exceptions
+
+try:
+    from ucsschool.italc_integration.italc2 import ITALC_Error, ITALC_Manager
+except ImportError:
+    pass
 from ucsschool.lib.models import ComputerRoom, School, User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
@@ -75,8 +80,6 @@ from univention.management.console.modules.sanitizers import (
     Sanitizer,
     StringSanitizer,
 )
-
-from .italc2 import ITALC_Error, ITALC_Manager
 
 # import univention.management.console.modules.schoolexam.util as exam_util
 
