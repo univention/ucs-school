@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.157) unstable; urgency=low
+
+  * Bug #51015: update id-connector tests
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 05 Nov 2020 14:00:44 +0100
+
 ucs-test-ucsschool (6.0.156) unstable; urgency=medium
 
   * Bug #52279: change imports for italc unit-tests
