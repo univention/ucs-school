@@ -4,13 +4,11 @@
 ## tags: [ucsschool-id-connector]
 
 APP="ucsschool-id-connector"
-CMD="/usr/bin/python3 -m pytest -l -v /$APP/src/tests/integration_tests"
+CMD="/usr/bin/python3 -m pytest -l -v tests/integration_tests"
 
-echo "IP of Traeger 1:         $(</var/www/bb-api-IP_traeger1.txt)"
-echo "BB-API Key of Traeger 1: $(</var/www/bb-api-key_traeger1.txt)"
-echo "IP of Traeger 2:         $(</var/www/bb-api-IP_traeger2.txt)"
-echo "BB-API Key of Traeger 2: $(</var/www/bb-api-key_traeger2.txt)"
+echo "IP of Traeger 1: $(</var/www/IP_traeger1.txt)"
+echo "IP of Traeger 2: $(</var/www/IP_traeger2.txt)"
 
-echo "Running in container: '$CMD'"
+echo "Running in container: sh -c \"cd /$APP/src; $CMD\""
 
-univention-app shell "$APP" $CMD
+univention-app shell "$APP" sh -c "cd /$APP/src; $CMD"
