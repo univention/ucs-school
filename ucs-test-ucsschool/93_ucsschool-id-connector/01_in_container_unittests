@@ -4,8 +4,8 @@
 ## tags: [ucsschool-id-connector]
 
 APP="ucsschool-id-connector"
-CMD="/usr/bin/python3 -m pytest -l -v /$APP/src/tests/unittests"
+CMD="/usr/bin/python3 -m pytest -l -v tests/unittests"
 
-echo "Running in container: '$CMD'"
+echo "Running in container: sh -c \"cd /$APP/src; $CMD\""
 
-univention-app shell "$APP" $CMD
+univention-app shell "$APP" sh -c "cd /$APP/src; $CMD"
