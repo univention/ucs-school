@@ -37,12 +37,12 @@ msgstr "Klasse oder Arbeitsgruppe"
 #: umc/js/schoolusers.js:289
 #, python-brace-format
 msgid ""
-"Clicking the <i>Reset</i> button will set the password for all {0} selected "
+"Clicking the <i>Reset</i> button will set the password for all selected "
 "{1} to the given password. For security reasons the {2} should be forced to "
 "change the password on the next login."
 msgstr ""
 "Durch Klicken auf die <i>Zurücksetzen</i>-Schaltfläche wird das Passwort der "
-"{0} ausgewählten {1} auf das angegebene gesetzt. Aus Sicherheitsgründen "
+" ausgewählten {1} auf das angegebene gesetzt. Aus Sicherheitsgründen "
 "sollten die {2} zur Änderung des Passworts bei der nächsten Anmeldung "
 "aufgefordert werden."
 
