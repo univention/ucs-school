@@ -3,6 +3,7 @@ g++
 gcc
 git
 libstdc++
+linux-headers
 openjdk11-jre-headless
 make
 musl-dev

@@ -92,7 +92,8 @@ RUN apk add --no-cache $(cat /tmp/alpine_apk_list) && \
         gcc \
         git \
         musl-dev \
-        python3-dev && \
+        python3-dev \
+        linux-headers && \
 	rm -rf /tmp/*
 
 # install univention libraries
