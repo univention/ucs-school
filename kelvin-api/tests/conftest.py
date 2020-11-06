@@ -25,6 +25,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import base64
 import datetime
 import json
 import os
@@ -44,12 +45,13 @@ import requests
 from faker import Faker
 
 import ucsschool.kelvin.constants
+import ucsschool.kelvin.ldap_access
 import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.import_config import get_import_config
-from ucsschool.kelvin.routers.user import UserCreateModel
+from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
 from udm_rest_client import UDM, NoObject
 from univention.config_registry import ConfigRegistry
 
@@ -261,11 +263,16 @@ def create_random_user_data(url_fragment, new_school_class):
         l_name = fake.last_name()
         name = f"test.{f_name[:8]}{fake.pyint(10, 99)}.{l_name}"[:15].rstrip(".")
         domainname = env_or_ucr("domainname")
-        if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
-            school_classes = {}
-        else:
-            sc_dn, sc_attr = await new_school_class()
-            school_classes = {"DEMOSCHOOL": ["DEMOSCHOOL-Democlass", sc_attr["name"]]}
+        try:
+            school_classes = kwargs.pop("school_classes")
+        except KeyError:
+            if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
+                school_classes = {}
+            else:
+                sc_dn, sc_attr = await new_school_class()
+                school_classes = {
+                    "DEMOSCHOOL": ["DEMOSCHOOL-Democlass", sc_attr["name"]]
+                }
         data = dict(
             email=f"{name}mail{fake.pyint()}@{domainname}".lower(),
             record_uid=name,
@@ -526,5 +533,75 @@ def reset_import_config():
         ucsschool.kelvin.import_config._ucs_school_import_framework_initialized = False
         ucsschool.kelvin.import_config._ucs_school_import_framework_error = None
         Configuration._instance = None
+
+    return _func
+
+
+@pytest.fixture
+def check_password():
+    async def _func(bind_dn: str, bind_pw: str) -> None:
+        ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
+        search_kwargs = {
+            "filter_s": f"({bind_dn.split(',')[0]})",
+            "attributes": ["uid"],
+            "bind_dn": bind_dn,
+            "bind_pw": bind_pw,
+            "raise_on_bind_error": True,
+        }
+        print(f"Testing login (making LDAP search) with: {search_kwargs!r}")
+        results = await ldap_access.search(**search_kwargs)
+        print("Login success.")
+        assert len(results) == 1
+        result = results[0]
+        expected_uid = bind_dn.split(",")[0].split("=")[1]
+        assert expected_uid == result["uid"].value
+
+    return _func
+
+
+@pytest.fixture
+def password_hash(check_password, create_random_users):
+    async def _func(password: str = None) -> Tuple[str, PasswordsHashes]:
+        password = password or fake.password(length=20)
+        user = (
+            await create_random_users(
+                {"student": 1}, disabled=False, password=password, school_classes={}
+            )
+        )[0]
+        ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
+        user_dn = await ldap_access.get_dn_of_user(user.name)
+        await check_password(user_dn, password)
+        # get hashes of user2
+        filter_s = f"(uid={user.name})"
+        attributes = [
+            "userPassword",
+            "sambaNTPassword",
+            "krb5Key",
+            "krb5KeyVersionNumber",
+            "sambaPwdLastSet",
+        ]
+        ldap_results = await ldap_access.search(
+            filter_s=filter_s, attributes=attributes
+        )
+        if len(ldap_results) == 1:
+            ldap_result = ldap_results[0]
+        else:
+            raise RuntimeError(
+                f"More than 1 result when searching LDAP with filter {filter_s!r}: {ldap_results!r}."
+            )
+        user_password = ldap_result["userPassword"].value
+        if not isinstance(user_password, list):
+            user_password = [user_password]
+        user_password = [pw.decode("ascii") for pw in user_password]
+        krb_5_key = [
+            base64.b64encode(v).decode("ascii") for v in ldap_result["krb5Key"].value
+        ]
+        return password, PasswordsHashes(
+            user_password=user_password,
+            samba_nt_Password=ldap_result["sambaNTPassword"].value,
+            krb_5_key=krb_5_key,
+            krb5_key_version_number=ldap_result["krb5KeyVersionNumber"].value,
+            samba_pwd_last_set=ldap_result["sambaPwdLastSet"].value,
+        )
 
     return _func
