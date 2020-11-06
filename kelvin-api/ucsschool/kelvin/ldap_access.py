@@ -34,7 +34,14 @@ from typing import Any, Dict, List, Optional
 
 import aiofiles
 from async_property import async_cached_property
-from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, SIMPLE, Connection, Entry, Server
+from ldap3 import (
+    AUTO_BIND_TLS_BEFORE_BIND,
+    MODIFY_REPLACE,
+    SIMPLE,
+    Connection,
+    Entry,
+    Server,
+)
 from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
 from pydantic import BaseModel
@@ -154,6 +161,45 @@ class LDAPAccess:
             )
             raise
         return conn.entries
+
+    async def modify(
+        self,
+        dn: str,
+        changes: Dict[str, List[Any]],
+        bind_dn: str = None,
+        bind_pw: str = None,
+        raise_on_bind_error: bool = True,
+    ) -> bool:
+        """
+        Modify attributes, *replaces* value(s).
+
+        `changes` should be: {'sn': ['foo'], 'uid': ['bar']}
+
+        (Change usage of MODIFY_REPLACE to change behavior.)
+        """
+        bind_dn = bind_dn or f"{self.cn_admin},{self.ldap_base}"
+        bind_pw = bind_pw or await self.cn_admin_password
+        change_arg = dict((k, [(MODIFY_REPLACE, v)]) for k, v in changes.items())
+        try:
+            with Connection(
+                self.server,
+                user=bind_dn,
+                password=bind_pw,
+                auto_bind=AUTO_BIND_TLS_BEFORE_BIND,
+                authentication=SIMPLE,
+                read_only=False,
+            ) as conn:
+                return conn.modify(dn, change_arg)
+        except LDAPExceptionError as exc:
+            if isinstance(exc, LDAPBindError) and not raise_on_bind_error:
+                return False
+            self.logger.exception(
+                "When connecting to %r with bind_dn %r: %s",
+                self.server.host,
+                bind_dn,
+                exc,
+            )
+            raise
 
     async def get_dn_of_user(self, username: str) -> str:
         filter_s = f"(uid={escape_filter_chars(username)})"

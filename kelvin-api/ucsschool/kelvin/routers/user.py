@@ -25,6 +25,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import base64
 import datetime
 import logging
 from collections.abc import Sequence
@@ -46,9 +47,9 @@ from typing import (
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic.main import Model
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import HttpUrl, SecretStr, root_validator
+from pydantic import BaseModel, Field, HttpUrl, SecretStr, root_validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -79,6 +80,7 @@ from univention.admin.filter import conjunction, expression
 
 from ..exceptions import UnknownUDMProperty
 from ..import_config import get_import_config, init_ucs_school_import_framework
+from ..ldap_access import LDAPAccess
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -112,6 +114,11 @@ def get_user_importer() -> UserImport:
     return factory.make_user_importer(False)
 
 
+@lru_cache(maxsize=1)
+def ldap_access_obj() -> LDAPAccess:
+    return LDAPAccess()
+
+
 def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
     config: ReadOnlyDict = get_import_config()
     udm_properties = {}
@@ -129,6 +136,54 @@ async def get_import_user(udm: UDM, dn: str) -> ImportUser:
     current_udm_properties = get_udm_properties(udm_user_current)
     user.udm_properties.update(current_udm_properties)
     return user
+
+
+class PasswordsHashes(BaseModel):
+    user_password: List[str] = Field(
+        ...,
+        title="'userPassword' in OpenLDAP.",
+    )
+    samba_nt_Password: str = Field(
+        ...,
+        title="'sambaNTPassword' in OpenLDAP.",
+    )
+    krb_5_key: List[str] = Field(
+        ...,
+        title="'krb5Key' in OpenLDAP. **Items are base64 encoded bytes.**",
+    )
+    krb5_key_version_number: int = Field(
+        ...,
+        title="'krb5KeyVersionNumber' in OpenLDAP.",
+    )
+    samba_pwd_last_set: int = Field(
+        ...,
+        title="'sambaPwdLastSet' in OpenLDAP.",
+    )
+
+    def dict_with_ldap_attr_names(self, *args, **kwargs) -> Dict[str, Any]:
+        """
+        Wrapper around `dict()` that renames the keys to those used in a UCS'
+        OpenLDAP.
+        """
+        res = self.dict(*args, **kwargs)
+        res["userPassword"] = res.pop("user_password")
+        res["sambaNTPassword"] = res.pop("samba_nt_Password")
+        res["krb5Key"] = res.pop("krb_5_key")
+        res["krb5KeyVersionNumber"] = res.pop("krb5_key_version_number")
+        res["sambaPwdLastSet"] = res.pop("samba_pwd_last_set")
+        return res
+
+    @property
+    def krb_5_key_as_bytes(self) -> List[bytes]:
+        """Value of `krb_5_key` as a list of bytes."""
+        return [base64.b64decode(k) for k in self.krb_5_key]
+
+    @krb_5_key_as_bytes.setter
+    def krb_5_key_as_bytes(self, value: List[bytes]) -> None:
+        """Set value of `krb_5_key` from a list of bytes."""
+        if not isinstance(value, list):
+            raise TypeError("Argument 'value' must be a list.")
+        self.krb_5_key = [base64.b64encode(v).decode("ascii") for v in value]
 
 
 class UserBaseModel(UcsSchoolBaseModel):
@@ -168,6 +223,7 @@ class UserCreateModel(UserBaseModel):
     password: SecretStr = None
     school: HttpUrl = None
     schools: List[HttpUrl] = []
+    kelvin_password_hashes: PasswordsHashes = None
 
     class Config(UserBaseModel.Config):
         ...
@@ -176,6 +232,14 @@ class UserCreateModel(UserBaseModel):
     def not_no_school_and_schools(cls, values):
         if not values.get("school") and not values.get("schools"):
             raise ValueError("At least one of 'school' and 'schools' must be set.")
+        return values
+
+    @root_validator
+    def not_password_and_password_hashes(cls, values):
+        if values.get("password") and values.get("kelvin_password_hashes"):
+            raise ValueError(
+                "Only one of 'password' and 'kelvin_password_hashes' must be set."
+            )
         return values
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
@@ -263,6 +327,15 @@ class UserPatchModel(BasePatchModel):
     school_classes: Dict[str, List[str]] = None
     source_uid: str = None
     udm_properties: Dict[str, Any] = None
+    kelvin_password_hashes: PasswordsHashes = None
+
+    @root_validator
+    def not_password_and_password_hashes(cls, values):
+        if values.get("password") and values.get("kelvin_password_hashes"):
+            raise ValueError(
+                "Only one of 'password' and 'kelvin_password_hashes' must be set."
+            )
+        return values
 
     async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:  # noqa: C901
         kwargs = await super().to_modify_kwargs(request)
@@ -556,6 +629,8 @@ async def create(
     - **udm_properties**: object with UDM properties (optional, e.g.
         **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
         **mapped_udm_properties**, see documentation)
+    - **kelvin_password_hashes**: Password hashes to be stored unchanged in
+        OpenLDAP (optional)
     """
     request_user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
@@ -597,6 +672,9 @@ async def create(
         error_msg = f"Error creating {user!r}: {user.errors!r}"
         logger.error(error_msg)
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+
+    if request_user.kelvin_password_hashes:
+        await set_password_hashes(user.dn, request_user.kelvin_password_hashes)
 
     return await UserModel.from_lib_model(user, request, udm)
 
@@ -709,6 +787,9 @@ async def partial_update(  # noqa: C901
     # 3. modify
     changed = False
     for attr, new_value in to_change.items():
+        if attr == "kelvin_password_hashes":
+            # handled below
+            continue
         current_value = getattr(user_current, attr)
         if new_value != current_value:
             setattr(user_current, attr, new_value)
@@ -727,6 +808,11 @@ async def partial_update(  # noqa: C901
                 status_code=HTTP_400_BAD_REQUEST,
                 detail=str(exc),
             ) from exc
+
+    # 4. password hashes
+    if user.kelvin_password_hashes:
+        await set_password_hashes(user_current.dn, user.kelvin_password_hashes)
+
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
@@ -784,6 +870,9 @@ async def complete_update(
     changed = False
     # TODO: Should not access private interface:
     for attr in list(ImportUser._attributes.keys()) + ["udm_properties"]:
+        if attr == "kelvin_password_hashes":
+            # handled below
+            continue
         if attr in ("school", "schools"):
             continue  # school change was already handled above
         current_value = getattr(user_current, attr)
@@ -807,6 +896,11 @@ async def complete_update(
                 status_code=HTTP_400_BAD_REQUEST,
                 detail=str(exc),
             ) from exc
+
+    # 4. password hashes
+    if user.kelvin_password_hashes:
+        await set_password_hashes(user_current.dn, user.kelvin_password_hashes)
+
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
@@ -830,3 +924,17 @@ async def delete(
         )
     user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     await user.remove(udm)
+
+
+async def set_password_hashes(dn: str, kelvin_password_hashes: PasswordsHashes) -> None:
+    logger: logging.Logger = get_logger()
+    ldap_access = ldap_access_obj()
+    pw_hashes = kelvin_password_hashes.dict_with_ldap_attr_names()
+    pw_hashes["krb5Key"] = kelvin_password_hashes.krb_5_key_as_bytes
+    for key, value in pw_hashes.items():
+        pw_hashes[key] = value if isinstance(value, list) else [value]
+    res = await ldap_access.modify(dn, pw_hashes)
+    if res:
+        logger.info("Successfully set password hashes of %r.", dn)
+    else:
+        logger.error("Error modifying password hashes of %r.", dn)

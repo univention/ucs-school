@@ -9,6 +9,7 @@ v1.2.0 (2020-10-??)
 ...................
 * Improve user resource search speed: find all matching users with one lookup (Bug #51813).
 * Add fallback for retrieving LDAP connection settings from UCR if environment variables are not available (Bug #51154).
+* Add attribute ``kelvin_password_hashes`` to user resource. It allows overwriting the password hashes in the UCS LDAP with the ones delivered. Use only if you know what you're doing!
 
 v1.1.2 (2020-08-11)
 ...................
