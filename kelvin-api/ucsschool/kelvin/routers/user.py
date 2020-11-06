@@ -516,8 +516,12 @@ async def get(
 
 @router.post("/", status_code=HTTP_201_CREATED, response_model=UserModel)
 async def create(
-    user: UserCreateModel,
     request: Request,
+    request_user: UserCreateModel = Body(
+        ...,
+        alias="user",
+        title="user",
+    ),
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
 ) -> UserModel:
@@ -553,17 +557,17 @@ async def create(
         **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
         **mapped_udm_properties**, see documentation)
     """
-    user.Config.lib_class = SchoolUserRole.get_lib_class(
+    request_user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
             SchoolUserRole(
                 url_to_name(
                     request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)
                 )
             )
-            for role in user.roles
+            for role in request_user.roles
         ]
     )
-    user = await user.as_lib_model(request)
+    user: ImportUser = await request_user.as_lib_model(request)
     if await user.exists(udm):
         raise HTTPException(status_code=HTTP_409_CONFLICT, detail="School user exists.")
 
@@ -762,8 +766,8 @@ async def complete_update(
             for role in user.roles
         ]
     )
-    user_request = await user.as_lib_model(request)
-    user_current = await get_import_user(udm, udm_obj.dn)
+    user_request: ImportUser = await user.as_lib_model(request)
+    user_current: ImportUser = await get_import_user(udm, udm_obj.dn)
 
     # 1. move
     new_school = user_request.school

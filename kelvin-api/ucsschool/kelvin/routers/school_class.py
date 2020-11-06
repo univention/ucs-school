@@ -218,7 +218,7 @@ async def create(
     - **ucsschool_roles**: list of tags of the form
         $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
     """
-    sc = await school_class.as_lib_model(request)
+    sc: SchoolClass = await school_class.as_lib_model(request)
     if await sc.exists(udm):
         raise HTTPException(
             status_code=HTTP_409_CONFLICT, detail="School class exists."
@@ -290,7 +290,7 @@ async def complete_update(
         )
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
-    sc_request = await school_class.as_lib_model(request)
+    sc_request: SchoolClass = await school_class.as_lib_model(request)
     for attr in SchoolClass._attributes.keys():
         current_value = getattr(sc_current, attr)
         new_value = getattr(sc_request, attr)
