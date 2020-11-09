@@ -1,3 +1,9 @@
+ucs-school-umc-users (15.0.0-8) unstable; urgency=medium
+
+  * Bug 52247: change a description in the password reset module
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mo, 09 Nov 2020 09:25:42 +0100
+
 ucs-school-umc-users (15.0.0-7) unstable; urgency=medium
 
   * Bug #40577: Add staff as a new flavor for the Password Reset Module
