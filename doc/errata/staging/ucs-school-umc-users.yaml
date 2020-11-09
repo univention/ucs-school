@@ -6,4 +6,5 @@ src: ucs-school-umc-users
 fix: 15.0.0-7A~4.4.0.202010291142
 desc: |
  * A new UMC module for resetting the passwords of staff users was added (Bug #40577).
-bug: [40577]
+ * The text was corrected, which is displayed when resetting the passwords of users in the UMC module (Bug #52247).
+bug: [40577,52247]
