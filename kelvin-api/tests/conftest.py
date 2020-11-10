@@ -598,7 +598,7 @@ def password_hash(check_password, create_random_users):
         ]
         return password, PasswordsHashes(
             user_password=user_password,
-            samba_nt_Password=ldap_result["sambaNTPassword"].value,
+            samba_nt_password=ldap_result["sambaNTPassword"].value,
             krb_5_key=krb_5_key,
             krb5_key_version_number=ldap_result["krb5KeyVersionNumber"].value,
             samba_pwd_last_set=ldap_result["sambaPwdLastSet"].value,

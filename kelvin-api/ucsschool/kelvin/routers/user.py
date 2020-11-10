@@ -143,7 +143,7 @@ class PasswordsHashes(BaseModel):
         ...,
         title="'userPassword' in OpenLDAP.",
     )
-    samba_nt_Password: str = Field(
+    samba_nt_password: str = Field(
         ...,
         title="'sambaNTPassword' in OpenLDAP.",
     )
@@ -167,7 +167,7 @@ class PasswordsHashes(BaseModel):
         """
         res = self.dict(*args, **kwargs)
         res["userPassword"] = res.pop("user_password")
-        res["sambaNTPassword"] = res.pop("samba_nt_Password")
+        res["sambaNTPassword"] = res.pop("samba_nt_password")
         res["krb5Key"] = res.pop("krb_5_key")
         res["krb5KeyVersionNumber"] = res.pop("krb5_key_version_number")
         res["sambaPwdLastSet"] = res.pop("samba_pwd_last_set")
