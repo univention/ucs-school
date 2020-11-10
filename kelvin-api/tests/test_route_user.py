@@ -43,6 +43,7 @@ from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import (
     UserCreateModel,
     UserModel,
+    UserPatchModel,
     set_password_hashes,
 )
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
@@ -1191,8 +1192,13 @@ async def test_set_password_hashes(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("model", (UserCreateModel, UserPatchModel))
 async def test_not_password_and_password_hashes(
-    role: Role, create_random_user_data, password_hash, url_fragment
+    role: Role,
+    model: Union[Type[UserCreateModel], Type[UserPatchModel]],
+    create_random_user_data,
+    password_hash,
+    url_fragment,
 ):
     if role.name == "teacher_and_staff":
         roles = ["staff", "teacher"]
@@ -1207,13 +1213,17 @@ async def test_not_password_and_password_hashes(
 
     user_data.password = fake.password()
     user_data.kelvin_password_hashes = None
-    UserCreateModel(**user_data.dict())
+    model(**user_data.dict())
+    model(**user_data.dict())
 
     user_data.password = None
     user_data.kelvin_password_hashes = password_new_hashes
-    UserCreateModel(**user_data.dict())
+    model(**user_data.dict())
+    model(**user_data.dict())
 
     user_data.password = fake.password()
     user_data.kelvin_password_hashes = password_new_hashes
     with pytest.raises(ValueError):
-        UserCreateModel(**user_data.dict())
+        model(**user_data.dict())
+    with pytest.raises(ValueError):
+        model(**user_data.dict())

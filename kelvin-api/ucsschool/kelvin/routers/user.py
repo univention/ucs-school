@@ -218,6 +218,14 @@ class UserBaseModel(UcsSchoolBaseModel):
         lib_class = ImportUser
 
 
+def not_both_password_and_hashes(cls, values):
+    if values.get("password") and values.get("kelvin_password_hashes"):
+        raise ValueError(
+            "Only one of 'password' and 'kelvin_password_hashes' must be set."
+        )
+    return values
+
+
 class UserCreateModel(UserBaseModel):
     name: str = None
     password: SecretStr = None
@@ -234,13 +242,9 @@ class UserCreateModel(UserBaseModel):
             raise ValueError("At least one of 'school' and 'schools' must be set.")
         return values
 
-    @root_validator
-    def not_password_and_password_hashes(cls, values):
-        if values.get("password") and values.get("kelvin_password_hashes"):
-            raise ValueError(
-                "Only one of 'password' and 'kelvin_password_hashes' must be set."
-            )
-        return values
+    _not_both_password_and_hashes = root_validator(allow_reuse=True)(
+        not_both_password_and_hashes
+    )
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
@@ -329,13 +333,9 @@ class UserPatchModel(BasePatchModel):
     udm_properties: Dict[str, Any] = None
     kelvin_password_hashes: PasswordsHashes = None
 
-    @root_validator
-    def not_password_and_password_hashes(cls, values):
-        if values.get("password") and values.get("kelvin_password_hashes"):
-            raise ValueError(
-                "Only one of 'password' and 'kelvin_password_hashes' must be set."
-            )
-        return values
+    _not_both_password_and_hashes = root_validator(allow_reuse=True)(
+        not_both_password_and_hashes
+    )
 
     async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:  # noqa: C901
         kwargs = await super().to_modify_kwargs(request)
