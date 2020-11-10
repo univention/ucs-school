@@ -26,6 +26,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import random
+import time
 from typing import List, NamedTuple, Type, Union
 from urllib.parse import SplitResult, urlsplit
 
@@ -1106,6 +1107,13 @@ async def test_change_disable(
             data=user.json(),
         )
     assert response.status_code == 200, response.reason
+    response = requests.get(
+        f"{url_fragment}/users/{user.name}", headers=auth_header
+    )
+    assert response.status_code == 200, response.reason
+    time.sleep(5)
+    api_user = UserModel(**response.json())
+    assert api_user.disabled == user.disabled
     with pytest.raises(LDAPBindError):
         await check_password(lib_users[0].dn, password)
 
@@ -1123,6 +1131,12 @@ async def test_change_disable(
             data=user.json(),
         )
     assert response.status_code == 200, response.reason
+    time.sleep(5)
+    response = requests.get(
+        f"{url_fragment}/users/{user.name}", headers=auth_header
+    )
+    api_user = UserModel(**response.json())
+    assert api_user.disabled == user.disabled
     await check_password(lib_users[0].dn, password)
 
 
