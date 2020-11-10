@@ -76,8 +76,24 @@ The following JSON is an example User resource in the *UCS\@school Kelvin REST A
     "ucsschool_roles", "list", "List of roles the user has in to each school. Format is ``ROLE:CONTEXT_TYPE:CONTEXT``, for example: ``['"'teacher:school:gym1'"', '"'school_admin:school:school2'"']``.", "auto-managed by system, setting and changing discouraged"
     "udm_properties", "nested object", "Object with UDM properties. For example: ``{'"'street'"': '"'Luise Av.'"', '"'phone'"': ['"'+49 30 321654987'"', '"'123 456 789'"']}``", "Must be configured, see below."
 
-The ``password`` attribute is not listed, because it cannot be retrieved, it can only be *set* when creating or modifying a user.
+The ``password`` and ``kelvin_password_hashes`` attributes are not listed, because they cannot be retrieved, they can only be *set* when creating or modifying a user.
 UCS systems never store or send clear text passwords.
+
+The ``password`` attribute is a single string containing the clear text password to set for the user.
+
+The ``kelvin_password_hashes`` attribute is an object where all of the following attributes must be set. Setting all hashes ensures a consistent behavior for authenticating against OpenLDAP, Kerberos and Samba services:
+
+* ``user_password``: list of strings containing the LDAPs ``userPassword`` attribute
+* ``samba_nt_password``: string containing the LDAPs ``sambaNTPassword`` attribute
+* ``krb_5_key``: list of strings containing the LDAPs ``krb5Key`` attribute, each item is base64 encoded
+* ``krb5_key_version_number``: : integer containing the LDAPs ``krb5KeyVersionNumber`` attribute
+* ``samba_pwd_last_set``: integer containing the LDAPs ``sambaPwdLastSet`` attribute
+
+Run the following command on a UCS system to see how those values should look like::
+
+    $ univention-ldapsearch -LLL uid=Administrator userPassword sambaNTPassword krb5Key krb5KeyVersionNumber sambaPwdLastSet
+
+When transmitted in a valid POST/PATCH/PUT operation, the values of ``kelvin_password_hashes`` will be set on the users LDAP object as given (``krb_5_key`` will be base64 decoded), without further validation.
 
 school[s]
 ^^^^^^^^^
