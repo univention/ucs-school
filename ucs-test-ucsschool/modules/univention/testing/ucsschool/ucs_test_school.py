@@ -357,17 +357,19 @@ class UCSTestSchool(object):
             district_ou_dn = ""
             oudn = "ou=%(ou)s,%(basedn)s" % {"ou": ou_name, "basedn": self.ucr.get("ldap/base")}
 
-        # get list of OU and objects below - sorted by length, longest first (==> leafs first)
+        # get list of OU and objects below
         ok = True
         logger.info("*** Removing school %r (%s) and its children ...", ou_name, oudn)
         try:
-            obj_list = sorted(
-                self.lo.searchDn(base=oudn, scope="sub"), key=lambda x: len(x), reverse=True
-            )
+            obj_list = self.lo.searchDn(base=oudn, scope="sub")
         except noObject:
             logger.warn("*** OU has already been removed.")
             ok = False
         else:
+            # sorted by length, longest first (==> leafs first)
+            obj_list.sort(key=lambda x: len(x), reverse=True)
+            # delete users 1st, so their primary group can be deleted
+            obj_list.sort(key=lambda x: x.startswith("uid="), reverse=True)
             for obj_dn in obj_list:
                 try:
                     self.lo.delete(obj_dn)
