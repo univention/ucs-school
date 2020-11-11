@@ -47,8 +47,8 @@ from collections import defaultdict
 
 import lazy_object_proxy
 import ldap
-from ldap import LDAPError
 
+import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 import univention.testing.strings as uts
 import univention.testing.ucr
@@ -81,7 +81,7 @@ from ucsschool.lib.roles import (
     role_teacher,
     role_workgroup,
 )
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import ldapError, noObject
 
 try:
     from typing import Dict, List, Optional, Set, Tuple
@@ -235,7 +235,7 @@ class UCSTestSchool(object):
                 )
         except noObject:
             raise
-        except LDAPError as exc:
+        except ldap.LDAPError as exc:
             raise SchoolLDAPError("Opening LDAP connection failed: %s" % (exc,))
 
         return lo
@@ -329,7 +329,8 @@ class UCSTestSchool(object):
             utils.wait_for_replication()
         logger.info("UCSTestSchool cleanup done")
 
-    def cleanup_ou(self, ou_name, wait_for_replication=True):
+    def cleanup_ou(self, ou_name, wait_for_replication=True, retry=True):
+        # type: (str, bool, bool) -> bool
         """ Removes the given school ou and all its corresponding objects like groups """
 
         logger.info("*** Purging OU %r and related objects", ou_name)
@@ -358,23 +359,27 @@ class UCSTestSchool(object):
 
         # get list of OU and objects below - sorted by length, longest first (==> leafs first)
         ok = True
-        logger.info("Removing school %r (%s) and its children ...", ou_name, oudn)
+        logger.info("*** Removing school %r (%s) and its children ...", ou_name, oudn)
         try:
             obj_list = sorted(
                 self.lo.searchDn(base=oudn, scope="sub"), key=lambda x: len(x), reverse=True
             )
         except noObject:
-            logger.warn("OU has already been removed.")
+            logger.warn("*** OU has already been removed.")
             ok = False
         else:
             for obj_dn in obj_list:
                 try:
                     self.lo.delete(obj_dn)
-                except LDAPError as exc:
-                    logger.error("Cannot remove %r: %s", obj_dn, exc)
+                except (ldap.LDAPError, ldapError) as exc:
+                    logger.error("*** Cannot remove %r: %s", obj_dn, exc)
                     ok = False
                 else:
-                    logger.info("Removed %s", obj_dn)
+                    logger.info("*** Removed %s", obj_dn)
+                if not ok and retry:
+                    logger.info("*** Retrying cleanup_ou(%r)...", ou_name)
+                    ok = self.cleanup_ou(ou_name, wait_for_replication, retry=False)
+
         log_func = logger.info if ok else logger.error
         log_func(
             "*** Purging OU %r and its children objects (%s): %s\n\n",
@@ -395,6 +400,8 @@ class UCSTestSchool(object):
 
             if wait_for_replication:
                 utils.wait_for_replication()
+
+        return ok
 
     @classmethod
     def check_name_edudc(cls, name_edudc):
