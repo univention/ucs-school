@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.159) unstable; urgency=low
+
+  *  Bug #52346: delete users 1st, so their primary group can be deleted
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 11 Nov 2020 09:54:54 +0100
+
 ucs-test-ucsschool (6.0.158) unstable; urgency=low
 
   * Bug #52346: handle "subordinate objects must be deleted first" error in
