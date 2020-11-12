@@ -1,4 +1,16 @@
 <h1>Changelog</h1>
+<h2>v1.2.0 (2020-11-12)</h2>
+<ul>
+    <li>
+        The attribute <code>kelvin_password_hashes</code> has been added to the user resource. It allows overwriting the password hashes in the UCS LDAP with the ones delivered. Use only if you know what you're doing!
+    </li>
+    <li>
+        The user resource search speed has been improved: all matching users are now found with one LDAP lookup.
+    </li>
+    <li>
+        Internal improvement: A fallback for retrieving LDAP connection settings from UCR has been added for the case that that the environment variables are not available.
+    </li>
+</ul>
 <h2>v1.1.2 (2020-08-05)</h2>
 <ul>
     <li>
