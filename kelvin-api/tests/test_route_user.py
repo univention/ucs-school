@@ -42,6 +42,7 @@ import ucsschool.kelvin.ldap_access
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.routers.role import SchoolUserRole
 from ucsschool.kelvin.routers.user import (
+    PasswordsHashes,
     UserCreateModel,
     UserModel,
     UserPatchModel,
@@ -1237,3 +1238,15 @@ async def test_not_password_and_password_hashes(
         model(**user_data.dict())
     with pytest.raises(ValueError):
         model(**user_data.dict())
+
+
+@pytest.mark.asyncio
+async def test_krb_5_keys_are_base64_binaries(password_hash):
+    password_new, password_new_hashes = await password_hash()
+    assert PasswordsHashes(**password_new_hashes.dict())
+
+    password_new_hashes.krb_5_key.append("bar")
+    with pytest.raises(ValueError) as exc_info:
+        _ = PasswordsHashes(**password_new_hashes.dict())
+    assert "krb_5_key" in str(exc_info.value)
+    assert "must be base64 encoded" in str(exc_info.value)

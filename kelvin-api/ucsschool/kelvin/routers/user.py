@@ -26,6 +26,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import base64
+import binascii
 import datetime
 import logging
 from collections.abc import Sequence
@@ -49,7 +50,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import BaseModel, Field, HttpUrl, SecretStr, root_validator
+from pydantic import BaseModel, Field, HttpUrl, SecretStr, root_validator, validator
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -159,6 +160,16 @@ class PasswordsHashes(BaseModel):
         ...,
         title="'sambaPwdLastSet' in OpenLDAP.",
     )
+
+    @validator("krb_5_key")
+    def krb_5_keys_are_base64_binaries(cls, value: List[str]) -> List[str]:
+        """Check if all strings in `krb_5_key` are base64 encoded."""
+        try:
+            for v in value:
+                _ = base64.b64decode(v)
+        except (TypeError, binascii.Error):
+            raise ValueError("Values of 'krb_5_key' must be base64 encoded.")
+        return value
 
     def dict_with_ldap_attr_names(self, *args, **kwargs) -> Dict[str, Any]:
         """
