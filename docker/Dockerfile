@@ -28,6 +28,7 @@
 FROM alpine:3.12
 
 ARG app_id
+ARG commit
 ARG date
 ARG version
 
@@ -41,7 +42,8 @@ CMD ["/sbin/init"]
 
 LABEL "description"="Image of UCS app '$app_id'." \
     "url"="https://www.univention.com/products/univention-app-center/app-catalog/$app_id/" \
-    "version"="$version"
+    "version"="$version" \
+    "commit"="$commit"
 
 # package and Python dependency installation, base system configuration,
 # and uninstallation - all in one step to keep image small

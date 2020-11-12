@@ -11,6 +11,8 @@ APP_IMG="${APP_IMG_NO_VERSION}:${APP_VERSION}"
 APP_IMG_NO_TEST_NO_VERSION="docker-upload.software-univention.de/${APP_ID}"
 APP_IMG_NO_TEST="${APP_IMG_NO_TEST_NO_VERSION}:${APP_VERSION}"
 DOCKER_REGISTRY_SERVER="docker.knut.univention.de"
+DATE="$(date --iso-8601=seconds)"
+COMMIT="$(git rev-parse --short HEAD)"
 
 QUICK=0
 [ "$1" = "-q" ] && QUICK=1
@@ -37,6 +39,8 @@ fi
 
 echo "APP_ID=$APP_ID"
 echo "APP_VERSION=$APP_VERSION"
+echo "DATE=$DATE"
+echo "COMMIT=$COMMIT"
 echo "BASE_IMG=$BASE_IMG"
 echo "APP_IMG=$APP_IMG"
 echo "DOCKERFILE: $DOCKERFILE"
@@ -98,8 +102,9 @@ docker build \
   $PROXY_ARGS \
   $BUILD_ARGS \
   --build-arg app_id="$APP_ID" \
-  --build-arg date="$(date --iso-8601=seconds)" \
+  --build-arg date="$DATE" \
   --build-arg version="$APP_VERSION" \
+  --build-arg commit="$COMMIT"\
   -t "$APP_IMG" \
   build
 
