@@ -997,7 +997,7 @@ feedback@univention.de
 						zur CLI-Import-Schnittstelle</ulink>.
 				</para>
 				<para>
-					Klassenname müssen mit der Kurzbezeichnung der Schule (hier im Beispiel 042 und 011) als
+					Klassennamen müssen mit der Kurzbezeichnung der Schule (hier im Beispiel 042 und 011) als
 					Präfix beginnen:
 					<itemizedlist>
 						<listitem><para>Schema: <systemitem class="groupname">[Kurzbezeichnung Schule]-[Klasse]</systemitem></para></listitem>
@@ -1781,10 +1781,10 @@ feedback@univention.de
 							globale &ucsUCR;-Richtlinie
 							<property>ucsschool-ucr-settings</property> auf alle
 							anderen Systeme wirkt.  Dies kann überprüft werden,
-							in dem die Werte der &ucsUCR;-Variablen
+							indem der Wert der &ucsUCR;-Variable
 							<envar>nagios/client/allowedhosts</envar> 
 							auf den
-							anderen Servern abgerufen werden.  Sollten trotzdem
+							anderen Servern abgerufen wird.  Sollten trotzdem
 							keine Statusinformationen über einen Server
 							angezeigt werden, so müssen ggf. die Dienste
 							<command>univention-directory-listener</command> und
