@@ -10,6 +10,8 @@ from ldap.filter import filter_format
 
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
+import univention.testing.udm as udm_test
+from univention.testing.strings import random_string
 from univention.testing.ucsschool.acl import Acl
 from univention.testing.ucsschool.computerroom import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
@@ -18,10 +20,39 @@ from univention.testing.ucsschool.schoolroom import ComputerRoom
 def main():
     with utu.UCSTestSchool() as schoolenv:
         with ucr_test.UCSTestConfigRegistry() as ucr:
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+            name_edudc = random_string(length=5)
+            school, oudn = schoolenv.create_ou(name_edudc=name_edudc)
             school_admin, school_admin_dn = schoolenv.create_school_admin(
                 school, is_staff=False, is_teacher=True
             )
+
+            with udm_test.UCSTestUDM() as udm:
+                replication_node_dn = "cn={},cn=dc,cn=server,cn=computers,ou={},{}".format(
+                    name_edudc, school, ucr.get("ldap/base", "")
+                )
+                acl_replication_node = Acl(school, school_admin_dn, "DENIED")
+                acl_replication_node.assert_acl(
+                    replication_node_dn,
+                    "write",
+                    [
+                        "krb5KeyVersionNumber",
+                        "krb5KDCFlags",
+                        "krb5Key",
+                        "krb5PasswordEnd",
+                        "sambaAcctFlags",
+                        "sambaPwdLastSet",
+                        "sambaLMPassword",
+                        "sambaNTPassword",
+                        "shadowLastChange",
+                        "shadowMax",
+                        "userPassword",
+                        "pwhistory",
+                        "sambaPwdCanChange",
+                        "sambaPwdMustChange",
+                        "sambaPasswordHistory",
+                        "sambaBadPasswordCount",
+                    ],
+                )
 
             staff, staff_dn = schoolenv.create_staff(school)
             tea_staff, tea_staff_dn = schoolenv.create_teacher_and_staff(school)
@@ -70,7 +101,8 @@ def main():
             acl.assert_dhcp(computers_hostnames[0], "read")
             acl.assert_dhcp(computers_hostnames[0], "write", modify_only_attrs=True)
 
-            acl.assert_member_server("write")
+            #  Deactivated on purpose (Bug #42138)
+            #  acl.assert_member_server("write")
 
             acl.assert_ou("read")
 
