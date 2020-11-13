@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.160) unstable; urgency=low
+
+  *  Bug #42138: modify test to check for new school admin acls
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 13 Nov 2020 11:15:21 +0100
+
 ucs-test-ucsschool (6.0.159) unstable; urgency=low
 
   *  Bug #52346: delete users 1st, so their primary group can be deleted

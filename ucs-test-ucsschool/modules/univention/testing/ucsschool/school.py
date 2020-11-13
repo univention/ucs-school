@@ -48,6 +48,7 @@ class EditFail(Exception):
     pass
 
 
+#  This code does not create correct school replication nodes. Do not use this for new tests!
 def create_dc_slave(udm, school=None):
     with ucr_test.UCSTestConfigRegistry() as ucr:
         account = utils.UCSTestDomainAdminCredentials()
