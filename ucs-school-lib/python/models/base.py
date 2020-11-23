@@ -1192,7 +1192,7 @@ class RoleSupportMixin(object):
             if role["context_type"] != "school":
                 # check only context_type == 'school' for now
                 continue
-            if role["context"] not in schools:
+            if role["context"] != "-" and role["context"] not in schools:
                 self.add_error(
                     "ucsschool_roles",
                     _(
@@ -1205,9 +1205,10 @@ class RoleSupportMixin(object):
         Run by py:meth:`create_without_hooks()` before py:meth:`validate()`
         (and thus before py:meth:`do_create()`).
         """
-        if self.default_roles and not self.ucsschool_roles:
+        roles = self.roles_as_dicts
+        if self.default_roles and not any([role["context"] for role in roles if role["context"] != "-"]):
             schools = self.get_schools()
-            self.ucsschool_roles = [
+            self.ucsschool_roles += [
                 create_ucsschool_role_string(role, school)
                 for role in self.default_roles
                 for school in schools
@@ -1225,7 +1226,7 @@ class RoleSupportMixin(object):
         object, if it was removed from school(s).
         """
         roles = self.roles_as_dicts
-        old_schools = set(role["context"] for role in roles)
+        old_schools = set(role["context"] for role in roles if role["context"] != "-")
         cur_schools = set(self.get_schools())
         new_schools = cur_schools - old_schools
         removed_schools = old_schools - cur_schools
