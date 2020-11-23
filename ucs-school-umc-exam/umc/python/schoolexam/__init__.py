@@ -34,6 +34,7 @@
 import datetime
 import logging
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -139,6 +140,46 @@ class Instance(SchoolBaseModule):
         room_module.password = self.password
         room_module.auth_type = self.auth_type
         return room_module
+
+    @staticmethod
+    def set_nt_acls_on_folder(exam_users):  # type: (User) -> None
+        for exam_user in exam_users:
+            folder = exam_user.unixhome
+            if not os.path.exists(folder):
+                continue
+            proc = subprocess.Popen(
+                ["samba-tool", "ntacl", "get", "--as-sddl", folder],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+            )
+            stdout, stderr = proc.communicate()
+            res = re.search(r"(O:(.+?)G:.+?)D:[^\(]*(.+)", str(stdout))
+            if res:
+                owner = res.group(1)
+                owner_sid = res.group(2)
+                old_aces = res.group(3)
+                re_ace = re.compile(r"\(.+?\)")
+                old_aces = re.findall(re_ace, old_aces)
+                allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
+                deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
+                # deny user change of permissions
+                deny_aces += "(D;OICI;WOWD;;;{})".format(owner_sid)
+                # override the default behaviour for owners
+                allow_aces += "(A;OICI;0x001301BF;;;S-1-3-4)"
+                dacl_flags = "PAI"
+                sddl = "{}D:{}{}{}".format(owner, dacl_flags, deny_aces.strip(), allow_aces.strip())
+                proc = subprocess.Popen(
+                    ["samba-tool", "ntacl", "set", sddl, folder],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    close_fds=True,
+                )
+                _, stderr = proc.communicate()
+                if not stderr:
+                    logger.info("user (%s) set nt acls: %s " % (exam_user.username, sddl))
+                else:
+                    logger.warning("While setting nt acl for dir %s (%s)" % (folder, stderr))
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -548,7 +589,6 @@ class Instance(SchoolBaseModule):
             )
 
             progress.add_steps(percentPerUser)
-
             # wait for the replication of all users to be finished
             progress.component(_("Preparing user home directories"))
             recipients = []  # list of User objects for all exam users
@@ -568,7 +608,6 @@ class Instance(SchoolBaseModule):
                     if not iuser:
                         continue  # not a users/user object
                     logger.info("user has been replicated: %r", idn)
-
                     # call hook scripts
                     if 0 != subprocess.call(
                         [
@@ -637,6 +676,8 @@ class Instance(SchoolBaseModule):
             my.project.distribute()
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
+
+            Instance.set_nt_acls_on_folder(my.project.getRecipients())
 
             # prepare room settings via lib...
             #   first step: acquire room
