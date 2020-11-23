@@ -79,6 +79,7 @@ role_single_master = "single_master"
 role_student = "student"  # attention: there is also "role_pupil"
 role_workgroup = "workgroup"
 role_workgroup_share = "workgroup_share"
+role_computer_room_backend_veyon = "veyon-backend"
 
 all_roles = (
     role_pupil,
@@ -114,6 +115,7 @@ all_roles = (
     role_ubuntu_computer,
     role_win_computer,
     role_teacher_computer,
+    role_computer_room_backend_veyon,
 )
 
 context_type_school = "school"
