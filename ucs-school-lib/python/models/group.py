@@ -33,7 +33,13 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ..roles import role_computer_room, role_school_class, role_workgroup
+from ..roles import (
+    create_ucsschool_role_string,
+    role_computer_room,
+    role_computer_room_backend_veyon,
+    role_school_class,
+    role_workgroup,
+)
 from .attributes import (
     Attribute,
     Description,
@@ -327,6 +333,21 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
         return cls.get_search_base(school).rooms
+
+    @property
+    def veyon_backend(self):  # type: () -> bool
+        """True if the computerroom is configured to use the new veyon backend instead of italc."""
+        return (
+            create_ucsschool_role_string(role_computer_room_backend_veyon, "-") in self.ucsschool_roles
+        )
+
+    @veyon_backend.setter
+    def veyon_backend(self, is_veyon_backend):
+        role_string = create_ucsschool_role_string(role_computer_room_backend_veyon, "-")
+        if not is_veyon_backend and self.veyon_backend:
+            self.ucsschool_roles.remove(role_string)
+        if is_veyon_backend and not self.veyon_backend:
+            self.ucsschool_roles.append(role_string)
 
     def get_computers(self, ldap_connection):  # type: (LoType) -> Generator["SchoolComputer"]
         from ucsschool.lib.models.computer import SchoolComputer
