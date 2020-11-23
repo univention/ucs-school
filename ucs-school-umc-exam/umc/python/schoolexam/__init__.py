@@ -34,6 +34,7 @@
 import datetime
 import logging
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -43,14 +44,22 @@ from itertools import chain
 
 import ldap
 import notifier
+import samba
 from ldap.filter import filter_format
+from samba.ntacls import getntacl, setntacl
 from six import iteritems
 
 import univention.debug
 from ucsschool.lib import internetrules
 from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
-from ucsschool.lib.models.utils import ModuleHandler, NotInstalled, UnknownPackage, get_package_version
+from ucsschool.lib.models.utils import (
+    ModuleHandler,
+    NotInstalled,
+    UnknownPackage,
+    exec_cmd,
+    get_package_version,
+)
 from ucsschool.lib.roles import (
     context_type_exam,
     create_ucsschool_role_string,
@@ -62,6 +71,7 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from ucsschool.lib.schoollessons import SchoolLessons
 from univention.admin.uexceptions import noObject
+from univention.admin.uldap import access as LoType
 from univention.lib.i18n import Translation
 from univention.lib.misc import custom_groupname
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
@@ -95,6 +105,44 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
     _formatter = logging.Formatter(fmt="%(funcName)s:%(lineno)d  %(message)s")
     _module_handler.setFormatter(_formatter)
     logger.addHandler(_module_handler)
+
+
+def deny_owner_change_permissions(filename):  # type: (str) -> None
+    """
+    A user gets full control over her permissions by default.
+    The SDDL string of the home dir is extended by
+    - forbid exam-users to change the permissions and owner
+    - overrides standard behavior, i. e. full control, with 'edit' for owners.
+
+    :param filename:
+    """
+    lp = samba.param.LoadParm()
+    lp.load_default()
+    dacl = getntacl(lp, file=filename, direct_db_access=False)
+    old_sddl = dacl.as_sddl()
+    owner_sid = dacl.owner_sid
+    res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
+    if res:
+        owner = res.group(1)
+        old_aces = res.group(2)
+        old_aces = re.findall(r"\(.+?\)", old_aces)
+        allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
+        deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
+        # deny user change of permissions and owner
+        new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
+        new_allow_ace = [
+            "(A;OICI;0x001301BF;;;S-1-3-4)",  # change default behaviour for owners to modify
+            "(A;OICI;0x001301BF;;;{})".format(owner_sid),  # add modify ace for owner
+        ]
+        if new_deny_aces not in deny_aces:
+            deny_aces += new_deny_aces
+        for ace in new_allow_ace:
+            if ace not in allow_aces:
+                allow_aces += ace
+        new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
+        if new_sddl != old_sddl:
+            logger.debug("set nt acls {} on {}".format(new_sddl, filename))
+            setntacl(lp, filename, new_sddl, owner_sid)
 
 
 class Instance(SchoolBaseModule):
@@ -139,6 +187,69 @@ class Instance(SchoolBaseModule):
         room_module.password = self.password
         room_module.auth_type = self.auth_type
         return room_module
+
+    @staticmethod
+    @LDAP_Connection()
+    def init_windows_profiles(exam_user, ldap_user_read=None):  # type: (User, LoType) -> None
+        """
+        When login with smbclient, the folder windows-profile and others
+        are created. We need those folders to be present at this time to set the
+        permissions for them, too.
+
+        :param exam_user:
+        :param ldap_user_read:
+        """
+        ldap_user = ldap_user_read.get(exam_user.dn)
+        workstation = ldap_user["sambaUserWorkstations"]
+        password = ldap_user["sambaNTPassword"]
+        if not (workstation and password):
+            logger.warning(
+                "User {} is missing a workstation or password."
+                "They will be allowed to modify the permissions of their distribution folder,"
+                "which can be exploited to share data during the exam.".format(exam_user.dn)
+            )
+            return
+        with tempfile.NamedTemporaryFile(dir="/tmp") as auth_file:
+            auth_file.write(
+                """username={}
+                   password={}
+                   domain={}""".format(
+                    exam_user.username, password[0], ucr["domainname"]
+                )
+            )
+            auth_file.flush()
+            workstation = workstation[0].split(",")[0]
+            cmd = [
+                "smbclient",
+                "--netbiosname={}".format(workstation),
+                "--pw-nt-hash",
+                "--authentication-file={}".format(auth_file.name),
+                "-L",
+                "//{}/{}".format(ucr["hostname"], exam_user.username),
+            ]
+            rv, stdout, stderr = exec_cmd(cmd)
+            if rv != 0:
+                logger.error(
+                    "Error while initiating windows-profiles for {} rv: {} {}".format(
+                        exam_user.dn, rv, stderr
+                    )
+                )
+
+    @staticmethod
+    def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
+        """
+        Sets NT ACLs for exam users home dirs
+
+        :param exam_users:
+        """
+        logger.info("users=%r", [u.username for u in exam_users])
+        for exam_user in exam_users:
+            folder = exam_user.unixhome
+            Instance.init_windows_profiles(exam_user)
+            for root, sub, files in os.walk(folder):
+                deny_owner_change_permissions(root)
+                for f in files:
+                    deny_owner_change_permissions(os.path.join(root, f))
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -548,7 +659,6 @@ class Instance(SchoolBaseModule):
             )
 
             progress.add_steps(percentPerUser)
-
             # wait for the replication of all users to be finished
             progress.component(_("Preparing user home directories"))
             recipients = []  # list of User objects for all exam users
@@ -568,7 +678,6 @@ class Instance(SchoolBaseModule):
                     if not iuser:
                         continue  # not a users/user object
                     logger.info("user has been replicated: %r", idn)
-
                     # call hook scripts
                     if 0 != subprocess.call(
                         [
@@ -635,6 +744,7 @@ class Instance(SchoolBaseModule):
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             my.project.distribute()
+            # Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
@@ -662,6 +772,10 @@ class Instance(SchoolBaseModule):
                 request.options["shareMode"],
                 customRule=request.options.get("customRule"),
             )
+            progress.add_steps(5)
+            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
+            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
+            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(5)
 
         def _finished(thread, result, request):
