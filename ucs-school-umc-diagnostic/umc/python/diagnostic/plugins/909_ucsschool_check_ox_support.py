@@ -4,7 +4,7 @@
 #
 # UCS@school Diagnosis Module
 #
-# Copyright 2019-2020 Univention GmbH
+# Copyright 2020 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,7 +31,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 #
-# This module checks if a UCS@school DC-Master with OX installed also has the package ucs-school-ox-support installed. If not a button pops up, which tries to fix this issue by installing it.
+# This module checks if a UCS@school DC-Master with OX installed also has
+# the package ucs-school-ox-support installed. If not a button pops up,
+# which tries to fix this issue by installing it.
 
 from __future__ import absolute_import
 
@@ -39,7 +41,6 @@ import subprocess
 
 from univention.appcenter.actions import get_action
 from univention.appcenter.app_cache import Apps
-from univention.appcenter.ucr import ucr_get, ucr_is_true
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
@@ -48,19 +49,14 @@ _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school OX Support")
 description = "\n".join(
-    [
-        _(
-            "Check if a UCS@School DC-Master with the app oxseforucs installed, also has the package ucs-school-ox-support installed"
-        ),
-    ]
+    _(
+        "If the OX App Suite is installed somewhere on the domain, \
+        check that the package ucs-school-ox-support is also installed"
+    ),
 )
 
 
 def run(_umc_instance):
-    # check if test running on DC Master
-    if ucr.get("server/role") != "domaincontroller_master":
-        return
-
     # check if OX is installed
     ox_app = Apps().find("oxseforucs")
     if ox_app is None:
@@ -68,20 +64,17 @@ def run(_umc_instance):
 
     domain = get_action("domain")
     info = domain.to_dict([ox_app])
-    try:
-        if info[0] is None:
-            return
-        is_ox_installed = info[0]["is_installed_anywhere"]
-        if is_ox_installed is None:
-            raise KeyError
-    except KeyError:
+    if info[0] is None:
+        return
+    is_ox_installed = info[0]["is_installed_anywhere"]
+    if not is_ox_installed:
         return  # app is not installed on DC master
 
     # check if ucs-school-ox-support package is installed
     out, err = exec_cmd("/usr/bin/dpkg-query", "-W", "-f", "${Status}", "ucs-school-ox-support")
     if "ok installed" not in out:
         raise Warning(
-            "Package ucs-school-ox-support is not installed.",
+            "The OX App Suite is installed but the required package 'ucs-school-ox-support' is missing.",
             buttons=[{"action": "install_missing", "label": _("Install missing components"),}],
         )
 
@@ -100,7 +93,7 @@ def install_missing_components(_umc_instance):
         stdout, stderr = exec_cmd("univention-install", "ucs-school-ox-support")
         error_text = "E: Unable to locate package"
         if error_text in stdout or stderr:
-            raise Warning("Could not install package ucs-school-ox-support.\n{}".format(stderr))
+            raise Warning("Could not install package 'ucs-school-ox-support'.\n{}".format(stderr))
             return
     return run(_umc_instance)
 
