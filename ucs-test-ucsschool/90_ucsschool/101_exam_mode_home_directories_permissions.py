@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check permissions of home dirs of exam users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1,tobias]
+## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## bugs: [49655]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -30,15 +30,15 @@ from univention.testing.ucsschool.computerroom import (
 from univention.testing.ucsschool.exam import Exam
 
 
-def check_nt_acls(folder):
+def check_nt_acls(filename):  # type: (str) -> None
     rv, stdout, stderr = exec_cmd(
-        ["samba-tool", "ntacl", "get", "--as-sddl", folder], log=True, raise_exc=True
+        ["samba-tool", "ntacl", "get", "--as-sddl", filename], log=False, raise_exc=True
     )
-    if (
-        not re.match(r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*", stdout)
-        or "(A;OICI;0x001301bf;;;S-1-3-4)" not in stdout
+    if not re.match(
+        r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*\(A;OICI.*?;0x001301bf;;;S-1-3-4\).*?\(A;OICI.*?;0x001301bf;;;\1\)",
+        stdout,
     ):
-        utils.fail("The permissions of share {} can be changed.".format(folder))
+        utils.fail("The permissions of share {} can be changed {}".format(filename, stdout))
 
 
 def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):

@@ -19,6 +19,7 @@ from ucsschool.lib.models import (
     MacComputer as MacComputerLib,
     WindowsComputer as WindowsComputerLib,
 )
+from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_ip_computer,
@@ -1030,3 +1031,50 @@ class UmcComputer(object):
     def verify_ldap(self, should_exist):
         print "verifying computer %s" % self.name
         utils.verify_ldap_object(self.dn(), should_exist=should_exist)
+
+
+def create_homedirs(member_dn_list, open_ldap_co):
+    for dn in member_dn_list:
+        for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
+            if not home_dir:
+                utils.fail("No homeDirectory attribute found for %r" % (dn,))
+            if not os.path.exists(home_dir):
+                print ("# Creating %r for %r" % (home_dir, dn))
+                os.makedirs(home_dir)
+
+
+def check_create_share_folder(
+    share, username, dir_name, samba_workstation=""
+):  # type: (str, str, str, str) -> None
+    """
+    test if a user can create folders inside a given share, i.e. they have edit rights.
+    """
+    cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(username, share, dir_name)
+    if samba_workstation:
+        cmd += " --netbiosname='{}'".format(samba_workstation)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)
+    if "NT_STATUS_ACCESS_DENIED" in stdout:
+        utils.fail("Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout))
+
+
+def check_change_permissions(
+    filename, user_name, allowed, samba_workstation=""
+):  # type: (str, str, bool, str) -> None
+    """
+    test if user can change the permissions a given file in a share folder.
+    """
+    new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
+    cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)
+    if samba_workstation:
+        cmd += " --netbiosname='{}'".format(samba_workstation)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
+    if not allowed and "NT_STATUS_ACCESS_DENIED" not in stdout:
+        utils.fail(
+            "Expected NT_STATUS_ACCESS_DENIED, user could change the permissions: {}".format(stdout)
+        )
+    elif allowed and "NT_STATUS_ACCESS_DENIED" in stdout:
+        utils.fail(
+            "Expected user to be able to change the permissions, got NT_STATUS_ACCESS_DENIED: {}".format(
+                stdout
+            )
+        )
