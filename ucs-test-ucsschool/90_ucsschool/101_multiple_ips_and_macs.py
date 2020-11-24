@@ -38,6 +38,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os
+import subprocess
 import sys
 
 import pytest
@@ -45,6 +46,7 @@ import pytest
 import univention.testing.strings as uts
 from ucsschool.italc_integration import italc2 as italc_module
 from ucsschool.italc_integration.italc2 import ITALC_Computer, ITALC_Error
+from univention.config_registry import handler_set
 
 
 class MockComputer:
@@ -57,7 +59,9 @@ class MockComputer:
         self.module = "computers/windows"
 
 
-def test_first_valid(mocker):
+@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+def test_first_valid(mocker, ucr_value):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ips = [uts.random_ip() for _ in range(2)]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     mocked_subprocess.call.return_value = 0
@@ -65,10 +69,11 @@ def test_first_valid(mocker):
     assert active_ip == ips[0]
     assert mocked_subprocess.call.call_count == 1
     args, _ = mocked_subprocess.call.call_args_list[0]
-    assert args[0] == ["ping", "-c", "1", ips[0]]
+    assert args[0] == ["timeout", "1", "ping", "-c", "1", ips[0]]
 
 
 def test_second_valid(mocker):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ips = [uts.random_ip() for _ in range(2)]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     mocked_subprocess.call.side_effect = [2, 0]
@@ -77,10 +82,11 @@ def test_second_valid(mocker):
     assert mocked_subprocess.call.call_count == 2
     for i, ip in enumerate(ips):
         args, _ = mocked_subprocess.call.call_args_list[i]
-        assert args[0] == ["ping", "-c", "1", ip]
+        assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
 
 
 def test_multiple_ips_last_valid(mocker):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ips = [uts.random_ip() for _ in range(10)]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     mocked_subprocess.call.side_effect = [2] * 9 + [0]
@@ -89,10 +95,13 @@ def test_multiple_ips_last_valid(mocker):
     assert mocked_subprocess.call.call_count == 10
     for i, ip in enumerate(ips):
         args, _ = mocked_subprocess.call.call_args_list[i]
-        assert args[0] == ["ping", "-c", "1", ip]
+        assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
 
 
-def test_no_valid_ip(mocker):
+@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+def test_no_valid_ip(mocker, ucr_value):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    expected = ucr_value == "yes"
     ips = ["11.146.186.100", "12.173.49.218"]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     mocked_logger = mocker.patch.object(italc_module, "MODULE")
@@ -100,16 +109,17 @@ def test_no_valid_ip(mocker):
     active_ip = ITALC_Computer.get_active_ip(ips)
     # this is the default behaviour.
     assert active_ip == ips[0]
-    assert mocked_subprocess.call.call_count == 2
+    assert (mocked_subprocess.call.call_count == 2) is expected
     for i, ip in enumerate(ips):
         args, _ = mocked_subprocess.call.call_args_list[i]
-        assert args[0] == ["ping", "-c", "1", ip]
+        assert (args[0] == ["timeout", "1", "ping", "-c", "1", ip]) is expected
     assert mocked_logger.warn.call_count == 1
     args, kwargs = mocked_logger.warn.call_args_list[0]
-    assert args[0] == "Non of the ips is pingable: ['11.146.186.100', '12.173.49.218']"
+    assert (args[0] == "Non of the ips is pingable: ['11.146.186.100', '12.173.49.218']") is expected
 
 
 def test_ip_not_in_cache(mocker):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     mocked_logger = mocker.patch.object(italc_module, "MODULE")
     ip = uts.random_ip()
@@ -130,6 +140,7 @@ def test_ip_not_in_cache(mocker):
 
 
 def test_valid_mac(mocker):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
     ip = uts.random_ip()
     mac = uts.random_mac()
@@ -146,8 +157,7 @@ def test_valid_mac(mocker):
     assert mac == mac_from_ip
 
 
-def test_no_ips(mocker):
-    ips = [uts.random_ip() for _ in range(2)]
+def test_no_ips():
     with pytest.raises(ITALC_Error) as exc:
         computer = MockComputer()
         computer.info = {
@@ -158,7 +168,9 @@ def test_no_ips(mocker):
         assert exc == "Unknown IP address"
 
 
-def test_access_mac_before_ip(mocker):
+@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+def test_access_mac_before_ip(mocker, ucr_value):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ips = [uts.random_ip() for _ in range(2)]
     macs = [uts.random_mac() for _ in range(2)]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
@@ -179,13 +191,16 @@ def test_access_mac_before_ip(mocker):
     assert computer.ipAddress == ips[0]
 
 
-def test_mac_not_in_udm_computer(mocker):
+@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+def test_mac_not_in_udm_computer(mocker, ucr_value):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
+    expected = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(2)]
     macs = [uts.random_mac() for _ in range(2)]
     mocked_logger = mocker.patch.object(italc_module, "MODULE")
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
-    mocked_subprocess.call.return_value = 0
     wrong_mac = uts.random_mac()
+    mocked_subprocess.call.return_value = 0
     out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
     {}             ether   {}   C                     ens3
         """.format(
@@ -200,10 +215,12 @@ def test_mac_not_in_udm_computer(mocker):
     # reset _active_mac to recalculate it in computer.macAddress
     assert computer.macAddress == macs[0]
     args, kwargs = mocked_logger.warn.call_args_list[0]
-    assert args[0] == "Active mac {} is not in udm computer object.".format(wrong_mac)
+    assert (args[0] == "Active mac {} is not in udm computer object.".format(wrong_mac)) is expected
 
 
-def test_multiple_macs_last_valid(mocker):
+@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+def test_multiple_macs_last_valid(mocker, ucr_value):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ips = [uts.random_ip() for _ in range(10)]
     macs = [uts.random_mac() for _ in range(10)]
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
