@@ -687,13 +687,14 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
     @staticmethod
     def get_active_ip(ips):
-        for ip in ips:
-            command = ["ping", "-c", "1", ip]
-            if subprocess.call(command) == 0:
-                return ip
-        else:
-            MODULE.warn("Non of the ips is pingable: %r" % ips)
-            return ips[0] if ips else ""
+        if ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
+            for ip in ips:
+                command = ["timeout", "1", "ping", "-c", "1", ip]
+                if subprocess.call(command) == 0:
+                    return ip
+            else:
+                MODULE.warn("Non of the ips is pingable: %r" % ips)
+        return ips[0] if ips else ""
 
     def restart(self):
         if not self.connected():
