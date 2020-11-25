@@ -34,6 +34,12 @@ Description[en]=A space-separated list of network interface prefixes that should
 Type=str
 Categories=management-umc
 
+[ucsschool/umc/computerroom/ping-client-ip-addresses]
+Description[de]=Wenn Clients mehrere IP-Adressen haben und nur eine Adresse aktiv ist, kann diese Variable so gesetzt werden, sodass alle möglichen IPs iterativ gepingt werden und die erste, die eine positive Antwort zurückgibt, als aktiv ausgewählt wird. Da Firewalls solche Ping-Anrufe blockieren können, sollte diese Funktion mit Vorsicht verwendet werden (Standard: false)
+Description[en]=If clients have multiple IP addresses and only one address is active, this variable can be set so that all possible IPs are iteratively pinged and the first which returns a positive response is selected as active. Since firewalls may block such ping calls, this feature should be used with care  (default: false)
+Type=bool
+Categories=management-umc
+
 [ucsschool/umc/computerroom/wakeonlan/target_nets]
 Description[de]=Eine leerzeichen-separierte von Liste Broadcast IPs, über die WakeOnLAN-Pakete verschickt werden sollen (Standard: 255.255.255.255)
 Description[en]=A space-separated list of broadcast ips that should be used to send WakeOnLAN packets (default: 255.255.255.255)

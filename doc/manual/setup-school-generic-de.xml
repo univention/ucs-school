@@ -392,6 +392,11 @@
             Das Intervall, in dem die Überprüfung läuft, kann durch die &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/screenlock/interval</envar>
             konfiguriert werden. In der Standardkonfiguration wird die Prüfung alle 5 Sekunden durchgeführt. Wird der Wert der Variable auf 0 gesetzt, wird die Prüfung abgeschaltet.
         </para>
+        <para>
+            Ab Version 4.4v8 werden Rechner mit mehreren IP-Adressen unterstützt. Dazu werden die IP-Adressen des Rechners durchlaufen und die erste verwendet, die erreicht werden kann.
+            Dies kann zu längeren Wartezeiten führen, wenn Rechner innerhalb des Computerraums ausgeschaltet sind oder eine Firewall den Befehl blockiert. Das Verhalten ist standardmäßig deaktiviert und kann durch Setzen der &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar>
+            aktiviert werden.
+        </para>
     </section>
     <section id="school:setup:generic:configureclasslists">
         <title>Konfiguration des Klassenlisten-Moduls</title>
