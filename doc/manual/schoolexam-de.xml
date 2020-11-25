@@ -60,6 +60,7 @@
 			Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Präfix (standardmäßig <literal>exam-</literal>) und dem normalen Benutzernamen zusammen.
 			Bspw. wird für den Benutzer <systemitem class="username">anton123</systemitem> das Klassenarbeitskonto <systemitem class="username">exam-anton123</systemitem> angelegt, mit dem er sich während der Klassenarbeit anmelden muss.
 			Für das Klassenarbeitskonto wird ein neues Heimatverzeichnis erzeugt, Passwörter und andere Konteneinstellungen werden jedoch aus dem ursprünglichen Benutzerkonto direkt übernommen.
+			Schüler können die Zugriffsberechtigungen ihrer Heimatverzeichnisse nicht verändern. Dadurch wird verhindert, dass ein Schüler sein Heimatverzeichnis für weitere Schüler freigegeben kann.
 		</para>
 		<para>
 			Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind für den Zeitraum der Klassenarbeit Mitglieder der Gruppe <systemitem class="groupname">OU&lt;OU-Name&gt;-Klassenarbeit</systemitem>.
