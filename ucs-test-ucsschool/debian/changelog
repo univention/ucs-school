@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.161) unstable; urgency=medium
+
+  * Bug #52425: modify italc unittest
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 25 Nov 2020 12:46:09 +0100
+
 ucs-test-ucsschool (6.0.160) unstable; urgency=low
 
   *  Bug #42138: modify test to check for new school admin acls
