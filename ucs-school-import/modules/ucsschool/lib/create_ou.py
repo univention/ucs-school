@@ -41,6 +41,8 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 
+MAX_HOSTNAME_LENGTH = 13
+
 
 def create_ou(
     ou_name,
@@ -75,12 +77,13 @@ def create_ou(
         edu_name = hostname
     elif not edu_name and not is_single_master:
         edu_name = "dc{}".format(ou_name)
-        test_admin_name = "dcv{}".format(ou_name)
-        max_hostname_length = 13
-        if len(edu_name) > max_hostname_length or len(test_admin_name) > max_hostname_length:
-            raise ValueError(
-                "Automatically generated hostnames are too long (>13 characters). Please pass the desired hostname(s) as parameters."
-            )
+
+    test_admin_name = "dcv{}".format(ou_name)
+    if len(edu_name) > MAX_HOSTNAME_LENGTH or len(test_admin_name) > MAX_HOSTNAME_LENGTH:
+        raise ValueError(
+            "Automatically generated hostnames are too long (>%s characters)." % MAX_HOSTNAME_LENGTH,
+            "Please pass the desired hostname(s) as parameters.",
+        )
 
     if display_name is None:
         display_name = ou_name
