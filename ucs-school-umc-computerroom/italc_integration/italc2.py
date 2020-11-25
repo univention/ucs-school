@@ -448,7 +448,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
             active_mac = self.mac_from_ip(self._active_ip)
             if active_mac in udm_macs:
                 self._active_mac = active_mac
-            elif not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
+            elif ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
                 MODULE.warn("Active mac {} is not in udm computer object.".format(active_mac))
         return self._active_mac or (self._computer.info.get("mac") or [""])[0]
 
