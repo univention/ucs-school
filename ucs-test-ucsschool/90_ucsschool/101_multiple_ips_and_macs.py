@@ -42,7 +42,7 @@ import pytest
 import univention.testing.strings as uts
 from ucsschool.italc_integration import italc2 as italc_module
 from ucsschool.italc_integration.italc2 import ITALC_Computer, ITALC_Error
-from univention.config_registry import handler_set
+from univention.config_registry import handler_set, handler_unset
 from univention.management.console.config import ucr
 
 
@@ -56,9 +56,12 @@ class MockComputer:
         self.module = "computers/windows"
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_first_valid(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(2)]
@@ -72,9 +75,12 @@ def test_first_valid(mocker, ucr_value):
         assert args[0] == ["timeout", "1", "ping", "-c", "1", ips[0]]
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_second_valid(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(2)]
@@ -92,9 +98,12 @@ def test_second_valid(mocker, ucr_value):
             assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_multiple_ips_last_valid(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(10)]
@@ -112,9 +121,12 @@ def test_multiple_ips_last_valid(mocker, ucr_value):
             assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_no_valid_ip(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = ["11.146.186.100", "12.173.49.218"]
@@ -136,9 +148,12 @@ def test_no_valid_ip(mocker, ucr_value):
         ) is ucr_value_set
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_ip_not_in_cache(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
@@ -161,9 +176,12 @@ def test_ip_not_in_cache(mocker, ucr_value):
     assert (mocked_logger.warn.call_count == 1) is ucr_value_set
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_valid_mac(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     mocked_subprocess = mocker.patch.object(italc_module, "subprocess")
@@ -194,9 +212,12 @@ def test_no_ips():
         assert exc == "Unknown IP address"
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_access_mac_before_ip(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ips = [uts.random_ip() for _ in range(2)]
     macs = [uts.random_mac() for _ in range(2)]
@@ -219,9 +240,12 @@ def test_access_mac_before_ip(mocker, ucr_value):
     assert computer.ipAddress == ips[0]
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_mac_not_in_udm_computer(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(2)]
@@ -248,9 +272,12 @@ def test_mac_not_in_udm_computer(mocker, ucr_value):
         assert args[0] == "Active mac {} is not in udm computer object.".format(wrong_mac)
 
 
-@pytest.mark.parametrize("ucr_value", ["yes", "no"])
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
 def test_multiple_macs_last_valid(mocker, ucr_value):
-    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
     ucr_value_set = ucr_value == "yes"
     ips = [uts.random_ip() for _ in range(10)]
