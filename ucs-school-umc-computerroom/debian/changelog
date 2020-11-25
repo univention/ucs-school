@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-27) unstable; urgency=medium
+
+  * Bug #52425: added ucr to enable multiple ips in computerroom
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 25 Nov 2020 12:00:14 +0100
+
 ucs-school-umc-computerroom (11.0.0-26) unstable; urgency=medium
 
   * Bug #52279: capsulate italc integration
