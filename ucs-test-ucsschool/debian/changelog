@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.162) unstable; urgency=low
+
+  * Bug #52346: handle object already deleted
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 26 Nov 2020 10:00:08 +0100
+
 ucs-test-ucsschool (6.0.161) unstable; urgency=medium
 
   * Bug #52425: modify italc unittest
