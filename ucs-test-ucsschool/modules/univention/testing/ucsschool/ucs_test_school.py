@@ -376,6 +376,8 @@ class UCSTestSchool(object):
                 except (ldap.LDAPError, ldapError) as exc:
                     logger.error("*** Cannot remove %r: %s", obj_dn, exc)
                     ok = False
+                except noObject as exc:
+                    logger.warning("Trying to remove non-existent object %r: %s", obj_dn, exc)
                 else:
                     logger.info("*** Removed %s", obj_dn)
                 if not ok and retry:
