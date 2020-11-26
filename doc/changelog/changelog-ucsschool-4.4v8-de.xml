@@ -129,7 +129,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-users 15.0.0-8A~4.4.0.202011090930 -->
 <!-- CHANGELOG:2020-11-18:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2020-11-26" lang="en">
+					<title>Released on 2020-11-26:</title>
+					<!-- START ucs-school-umc-computerroom 11.0.0-27A~4.4.0.202011251212 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-27A~4.4.0.202011251212</emphasis>:
+						<itemizedlist>
+							<listitem><para>In version 4.4 v8 we introduced a feature, which allowed the usage of clients with multiple IP addresses. This can lead to long waiting times if computers inside a computer room are not running. The feature is now disabled by default and can be activated by setting the UCR-V <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar> (<u:bug>52425</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-27A~4.4.0.202011251212 -->
+<!-- CHANGELOG:2020-11-26:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
