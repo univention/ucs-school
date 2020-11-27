@@ -159,8 +159,7 @@ class Instance(SchoolBaseModule):
                 owner = res.group(1)
                 owner_sid = res.group(2)
                 old_aces = res.group(3)
-                re_ace = re.compile(r"\(.+?\)")
-                old_aces = re.findall(re_ace, old_aces)
+                old_aces = re.findall(r"\(.+?\)", old_aces)
                 allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
                 deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
                 # deny user change of permissions
@@ -177,9 +176,9 @@ class Instance(SchoolBaseModule):
                 )
                 _, stderr = proc.communicate()
                 if not stderr:
-                    logger.info("user (%s) set nt acls: %s " % (exam_user.username, sddl))
-                else:
-                    logger.warning("While setting nt acl for dir %s (%s)" % (folder, stderr))
+                    logger.info("User (%s) set nt acls: %s " % (exam_user.username, sddl))
+                    continue
+            logger.warning("Error while setting nt acl for dir %s (%s)" % (folder, stderr))
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
