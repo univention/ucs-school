@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.163) unstable; urgency=medium
+
+  * Bug #52307: Add exam mode uid test
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Fri, 27 Nov 2020 10:33:42 +0100
+
 ucs-test-ucsschool (6.0.162) unstable; urgency=low
 
   * Bug #52346: handle object already deleted

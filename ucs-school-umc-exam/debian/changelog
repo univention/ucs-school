@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-42) unstable; urgency=medium
+
+  * Bug #52307: invalidate passwd when exam is finished
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Fri, 27 Nov 2020 10:32:04 +0100
+
 ucs-school-umc-exam (9.0.1-41) unstable; urgency=medium
 
   * Bug #50636: restore original sambaUserWorkstations in cleanup script
