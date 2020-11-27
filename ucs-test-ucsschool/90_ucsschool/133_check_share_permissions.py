@@ -18,10 +18,11 @@ from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.decorators import SetTimeout
+from univention.testing.ucsschool.computerroom import check_change_permissions, check_create_folder
 
 
 @SetTimeout
-def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str, bool) -> bool
+def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str, bool) -> None
     rv, stdout, stderr = exec_cmd(
         ["samba-tool", "ntacl", "get", "--as-sddl", path], log=True, raise_exc=True
     )
@@ -30,37 +31,6 @@ def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str
             utils.fail("The permissions of share {} can not be changed for {}.".format(path, sid))
     elif not allowed:
         utils.fail("The permissions of share {} can be changed for {}.".format(path, sid))
-    return True
-
-
-def change_smbcacls_acls(file, user_name, allowed):  # type: (str, str, bool) -> None
-    """
-        test if user can change the permissions of a newly created file.
-    """
-    new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
-    cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(file, user_name, new_acl)
-    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
-    if not allowed and "NT_STATUS_ACCESS_DENIED" not in stdout:
-        utils.fail(
-            "Expected NT_STATUS_ACCESS_DENIED, user could change the permissions: {}".format(stdout)
-        )
-    elif allowed and "NT_STATUS_ACCESS_DENIED" in stdout:
-        utils.fail(
-            "Expected user to be able to change the permissions, got NT_STATUS_ACCESS_DENIED: {}".format(
-                stdout
-            )
-        )
-
-
-def check_create_folder(share, username, dir_name):  # type: (str, str, str) -> str
-    """
-        this is to make sure the folder is usable.
-    """
-    cmd = "smbclient -U {}%univention {} -c 'mkdir {}'".format(username, share, dir_name)
-    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
-    if stderr:
-        utils.fail("Failed to create folder inside of share.")
-    return dir_name
 
 
 def test_class_permissions(ucr_hostname, ucr_ldap_base):
@@ -142,9 +112,11 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
 
         smbcacls_cases = [(student_name, False), (teacher_name, True), (admin_name, True)]
         for user_name, allowed in smbcacls_cases:
-            change_smbcacls_acls(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
-            change_smbcacls_acls(file=new_workgroup_share_folder, user_name=user_name, allowed=allowed)
-            change_smbcacls_acls(file=marketplace_share_folder, user_name=user_name, allowed=allowed)
+            check_change_permissions(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
+            check_change_permissions(
+                file=new_workgroup_share_folder, user_name=user_name, allowed=allowed
+            )
+            check_change_permissions(file=marketplace_share_folder, user_name=user_name, allowed=allowed)
 
         # rename class and check if the permissions are still the same.
         new_class_name = "{}-{}".format(school, uts.random_string())
@@ -167,4 +139,6 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
             for sid, allowed in nt_acl_cases:
                 check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=klasse_path)
             for user_name, allowed in smbcacls_cases:
-                change_smbcacls_acls(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
+                check_change_permissions(
+                    file=new_klasse_share_folder, user_name=user_name, allowed=allowed
+                )
