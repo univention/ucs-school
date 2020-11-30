@@ -217,6 +217,8 @@ class ComputerRoom(object):
                 "name": self.name,
                 "$dn$": self.dn(),
                 "ucsschool_roles": [create_ucsschool_role_string(role_computer_room, self.school)],
+                "veyon": self.veyon,
+                "italc": self.italc,
             }
         )
         if current_attributes != new_attributes:
