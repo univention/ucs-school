@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.166) unstable; urgency=medium
+
+  * Bug #52422: Add tests for new veyon backend settings
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Nov 2020 17:33:22 +0100
+
 ucs-test-ucsschool (6.0.165) unstable; urgency=medium
 
   * Bug #52307: Fix changelog
