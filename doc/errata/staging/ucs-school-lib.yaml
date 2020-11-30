@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 
+fix: 12.2.3A~4.4.0.202011300958
 desc: |
  * Internal improvement: prevent unnecesary traceback during creation of school OU (Bug #52403).
 bug: [52403]
