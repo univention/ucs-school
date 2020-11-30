@@ -1,3 +1,10 @@
+ucs-school-lib (12.2.3) unstable; urgency=low
+
+  * Bug #52403: don't try to create already existing containers, when creating
+    new OU
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Nov 2020 09:55:45 +0100
+
 ucs-school-lib (12.2.2) unstable; urgency=low
 
   * Bug #40577: Add staff to the possible password reset flavors
