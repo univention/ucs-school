@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-rooms
+fix: 16.1.0-5A~4.4.0.202011301742
+desc: |
+ * It is now possible to configure computer rooms to use the upcoming Veyon integration instead of iTalc (Bug #52422).
+bug: [52422]
