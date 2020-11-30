@@ -85,4 +85,4 @@ def test_username_missing():
 
 
 if __name__ == "__main__":
-    assert pytest.main(["101_italc_user_displayname.py"]) == 0
+    assert pytest.main(["-l", "-v", __file__]) == 0

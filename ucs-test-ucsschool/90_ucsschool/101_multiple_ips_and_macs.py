@@ -305,4 +305,4 @@ def test_multiple_macs_last_valid(mocker, ucr_value):
 
 
 if __name__ == "__main__":
-    assert pytest.main(["101_multiple_ips_and_macs.py"]) == 0
+    assert pytest.main(["-l", "-v", __file__]) == 0
