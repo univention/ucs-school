@@ -142,7 +142,17 @@ class Instance(SchoolBaseModule):
         return room_module
 
     @staticmethod
-    def set_nt_acls_on_folder(exam_users):  # type: (User) -> None
+    def set_nt_acls_on_folder(exam_users):  # type: (List[User]) -> None
+        """
+        Sets NT ACLs for exam users home dirs:
+        A user gets full control over her permissions by default.
+        The SDDL string of the home dir is extended by
+        - forbid exam-users to change the permissions and owner
+        - overrides standard behavior, i. e. full control, with 'edit' for owners.
+
+        :param exam_users:
+        """
+
         for exam_user in exam_users:
             folder = exam_user.unixhome
             if not os.path.exists(folder):
@@ -162,7 +172,7 @@ class Instance(SchoolBaseModule):
                 old_aces = re.findall(r"\(.+?\)", old_aces)
                 allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
                 deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
-                # deny user change of permissions
+                # deny user change of permissions and owner
                 deny_aces += "(D;OICI;WOWD;;;{})".format(owner_sid)
                 # override the default behaviour for owners
                 allow_aces += "(A;OICI;0x001301BF;;;S-1-3-4)"
