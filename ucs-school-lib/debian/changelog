@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.4) unstable; urgency=low
+
+  * Bug #52422: add new veyon backend role
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Nov 2020 17:35:43 +0100
+
 ucs-school-lib (12.2.3) unstable; urgency=low
 
   * Bug #52403: don't try to create already existing containers, when creating
