@@ -95,4 +95,4 @@ def test_veyon_add_setting(create_win_computer, school, is_veyon):
 
 
 if __name__ == "__main__":
-    assert pytest.main([__file__]) == 0
+    assert pytest.main(["-l", "-v", __file__]) == 0
