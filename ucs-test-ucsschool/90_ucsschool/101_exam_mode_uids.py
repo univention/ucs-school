@@ -11,12 +11,15 @@ import os
 import pwd
 from datetime import datetime, timedelta
 
+from ldap.filter import filter_format
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
 from ucsschool.lib.models import Student
+from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
 
@@ -59,6 +62,7 @@ def main():
                 )
                 tea, teadn = schoolenv.create_user(school, is_teacher=True)
                 stu, studn = schoolenv.create_user(school)
+                wait_for_drs_replication(filter_format("cn=%s", (stu,)))
                 student2 = Student(
                     name=uts.random_username(),
                     school=school,
@@ -70,6 +74,7 @@ def main():
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
+                wait_for_drs_replication(filter_format("cn=%s", (student2.name,)))
 
                 print "# import random computers"
                 computers = Computers(open_ldap_co, school, 2, 0, 0)

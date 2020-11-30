@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.164) unstable; urgency=medium
+
+  * Bug #52307: Add replication wait code for jenkins execution
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Dec 2020 10:29:12 +0100
+
 ucs-test-ucsschool (6.0.163) unstable; urgency=medium
 
   * Bug #52307: Add exam mode uid test
