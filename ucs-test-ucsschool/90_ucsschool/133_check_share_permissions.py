@@ -18,7 +18,7 @@ from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.decorators import SetTimeout
-from univention.testing.ucsschool.computerroom import check_change_permissions, check_create_folder
+from univention.testing.ucsschool.computerroom import check_change_permissions, check_create_share_folder
 
 
 @SetTimeout
@@ -97,9 +97,13 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
         marketplace_share_folder = "{} {}".format(marketplace_share, marketplace_folder)
         new_marketplace_folder_path = os.path.join(marketplace_path, marketplace_folder)
 
-        check_create_folder(username=student_name, share=klasse_share, dir_name=klasse_folder)
-        check_create_folder(username=teacher_name, share=work_group_share, dir_name=work_group_folder)
-        check_create_folder(username=admin_name, share=marketplace_share, dir_name=marketplace_folder)
+        check_create_share_folder(username=student_name, share=klasse_share, dir_name=klasse_folder)
+        check_create_share_folder(
+            username=teacher_name, share=work_group_share, dir_name=work_group_folder
+        )
+        check_create_share_folder(
+            username=admin_name, share=marketplace_share, dir_name=marketplace_folder
+        )
 
         nt_acl_cases = [(schueler_group_sid, False), (lehrer_group_sid, True), (admin_group_sid, True)]
         for sid, allowed in nt_acl_cases:

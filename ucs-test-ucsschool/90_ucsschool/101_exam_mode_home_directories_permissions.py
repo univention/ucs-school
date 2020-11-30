@@ -23,7 +23,7 @@ from univention.testing.ucsschool.computerroom import (
     Computers,
     Room,
     check_change_permissions,
-    check_create_folder,
+    check_create_share_folder,
     create_homedirs,
 )
 from univention.testing.ucsschool.exam import Exam
@@ -47,7 +47,7 @@ def test_permissions(member_dn_list, open_ldap_co):
             uid = open_ldap_co.getAttr(dn, "uid")[0]
             new_folder = uts.random_string()
             samba_new_share_folder = "{} /".format(samba_home, new_folder)
-            check_create_folder(
+            check_create_share_folder(
                 username=uid, share=samba_home, dir_name=new_folder, samba_workstation=samba_workstation
             )
             check_change_permissions(
