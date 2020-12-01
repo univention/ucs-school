@@ -98,6 +98,55 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
     logger.addHandler(_module_handler)
 
 
+def deny_owner_change_permissions(folder):  # type: (str) -> None
+    """
+    A user gets full control over her permissions by default.
+    The SDDL string of the home dir is extended by
+    - forbid exam-users to change the permissions and owner
+    - overrides standard behavior, i. e. full control, with 'edit' for owners.
+
+    :param folder:
+    """
+    proc = subprocess.Popen(
+        ["samba-tool", "ntacl", "get", "--as-sddl", folder],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        close_fds=True,
+    )
+    stdout, stderr = proc.communicate()
+    res = re.search(r"(O:(.+?)G:.+?)D:[^\(]*(.+)", str(stdout))
+    if res:
+        owner = res.group(1)
+        owner_sid = res.group(2)
+        old_aces = res.group(3)
+        old_aces = re.findall(r"\(.+?\)", old_aces)
+        allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
+        deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
+        # deny user change of permissions and owner
+        new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
+        new_allow_ace = "(A;OICI;0x001301BF;;;S-1-3-4)"
+        if (new_allow_ace in allow_aces) and (new_deny_aces in deny_aces):
+            return
+        if new_deny_aces not in deny_aces:
+            deny_aces += new_deny_aces
+        # override the default behaviour for owners
+        if new_allow_ace not in allow_aces:
+            allow_aces += "(A;OICI;0x001301BF;;;S-1-3-4)"
+        dacl_flags = "PAI"
+        sddl = "{}D:{}{}{}".format(owner, dacl_flags, deny_aces.strip(), allow_aces.strip())
+        proc = subprocess.Popen(
+            ["samba-tool", "ntacl", "set", sddl, folder],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            close_fds=True,
+        )
+        _, stderr = proc.communicate()
+        if not stderr:
+            logger.debug("set nt acls:  {}".format(sddl))
+            return
+    logger.error("could not set nt acls on {} ".format(folder))
+
+
 class Instance(SchoolBaseModule):
     def __init__(self):
         SchoolBaseModule.__init__(self)
@@ -142,53 +191,19 @@ class Instance(SchoolBaseModule):
         return room_module
 
     @staticmethod
-    def set_nt_acls_on_folder(exam_users):  # type: (List[User]) -> None
+    def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
         """
-        Sets NT ACLs for exam users home dirs:
-        A user gets full control over her permissions by default.
-        The SDDL string of the home dir is extended by
-        - forbid exam-users to change the permissions and owner
-        - overrides standard behavior, i. e. full control, with 'edit' for owners.
+        Sets NT ACLs for exam users home dirs
 
         :param exam_users:
         """
-
         for exam_user in exam_users:
             folder = exam_user.unixhome
             if not os.path.exists(folder):
                 continue
-            proc = subprocess.Popen(
-                ["samba-tool", "ntacl", "get", "--as-sddl", folder],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                close_fds=True,
-            )
-            stdout, stderr = proc.communicate()
-            res = re.search(r"(O:(.+?)G:.+?)D:[^\(]*(.+)", str(stdout))
-            if res:
-                owner = res.group(1)
-                owner_sid = res.group(2)
-                old_aces = res.group(3)
-                old_aces = re.findall(r"\(.+?\)", old_aces)
-                allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
-                deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
-                # deny user change of permissions and owner
-                deny_aces += "(D;OICI;WOWD;;;{})".format(owner_sid)
-                # override the default behaviour for owners
-                allow_aces += "(A;OICI;0x001301BF;;;S-1-3-4)"
-                dacl_flags = "PAI"
-                sddl = "{}D:{}{}{}".format(owner, dacl_flags, deny_aces.strip(), allow_aces.strip())
-                proc = subprocess.Popen(
-                    ["samba-tool", "ntacl", "set", sddl, folder],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    close_fds=True,
-                )
-                _, stderr = proc.communicate()
-                if not stderr:
-                    logger.info("User (%s) set nt acls: %s " % (exam_user.username, sddl))
-                    continue
-            logger.warning("Error while setting nt acl for dir %s (%s)" % (folder, stderr))
+            deny_owner_change_permissions(folder)
+            for sub_folder, _, _ in os.walk(folder):
+                deny_owner_change_permissions(sub_folder)
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -683,10 +698,9 @@ class Instance(SchoolBaseModule):
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             my.project.distribute()
+            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
-
-            Instance.set_nt_acls_on_folder(my.project.getRecipients())
 
             # prepare room settings via lib...
             #   first step: acquire room
