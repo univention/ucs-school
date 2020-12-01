@@ -7,4 +7,5 @@ fix: 12.2.4A~4.4.0.202011301741
 desc: |
  * Internal improvement: prevent unnecesary traceback during creation of school OU (Bug #52403).
  * A role for marking computerrooms for the use of Veyon was added to the school.lib (Bug #52422).
-bug: [52403, 52422]
+ * Internal improvement: create container for group <systemitem class="groupname">ouadmins</systemitem> before creating group (Bug #52449).
+bug: [52403, 52422, 52449]
