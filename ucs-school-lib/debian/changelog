@@ -1,3 +1,10 @@
+ucs-school-lib (12.2.5) unstable; urgency=low
+
+  * Bug #52449: create container for non-school grop 'ouadmins' before
+    creating group
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 01 Dec 2020 11:30:07 +0100
+
 ucs-school-lib (12.2.4) unstable; urgency=low
 
   * Bug #52422: add new veyon backend role
