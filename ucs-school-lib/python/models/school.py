@@ -224,9 +224,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             group.create(lo)
 
         # cn=ouadmins
-        admin_group_container = "cn=ouadmins,cn=groups,%s" % ucr.get("ldap/base")
+        admin_group_container = Container(name="ouadmins", school="")
+        admin_group_container.position = "cn=groups,{}".format(ucr["ldap/base"])
+        if not admin_group_container.exists(lo):
+            admin_group_container.create(lo, False)
+
+        # admins-%s
         group = BasicSchoolGroup.cache(
-            self.group_name("admins", "admins-"), self.name, container=admin_group_container
+            self.group_name("admins", "admins-"), self.name, container=admin_group_container.dn
         )
         group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
         group.create(lo)
