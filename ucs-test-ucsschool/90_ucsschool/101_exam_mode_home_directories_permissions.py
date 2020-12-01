@@ -7,6 +7,7 @@
 ## bugs: [49655]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+import os
 import re
 from datetime import datetime, timedelta
 
@@ -29,29 +30,44 @@ from univention.testing.ucsschool.computerroom import (
 from univention.testing.ucsschool.exam import Exam
 
 
-def test_permissions(member_dn_list, open_ldap_co):
+def check_nt_acls(folder):
+    rv, stdout, stderr = exec_cmd(
+        ["samba-tool", "ntacl", "get", "--as-sddl", folder], log=True, raise_exc=True
+    )
+    if (
+        not re.match(r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*", stdout)
+        or "(A;OICI;0x001301bf;;;S-1-3-4)" not in stdout
+    ):
+        utils.fail("The permissions of share {} can be changed.".format(folder))
+
+
+def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
+
     for dn in member_dn_list:
         samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            rv, stdout, stderr = exec_cmd(
-                ["samba-tool", "ntacl", "get", "--as-sddl", home_dir], log=True, raise_exc=True
-            )
-            if (
-                not re.match(r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*", stdout)
-                or "(A;OICI;0x001301bf;;;S-1-3-4)" not in stdout
-            ):
-                utils.fail("The permissions of share {} can be changed for {}.".format(home_dir, dn))
+            check_nt_acls(home_dir)
+            for sub_folder, _, _ in os.walk(home_dir):
+                check_nt_acls(sub_folder)
+
         for samba_home in open_ldap_co.getAttr(dn, "sambaHomePath"):
             samba_home = samba_home.replace("\\", "/")
             samba_workstation = samba_workstation[0]
             uid = open_ldap_co.getAttr(dn, "uid")[0]
             new_folder = uts.random_string()
-            samba_new_share_folder = "{} /".format(samba_home, new_folder)
+            samba_new_share_folder = "{} {}".format(samba_home, new_folder)
             check_create_share_folder(
                 username=uid, share=samba_home, dir_name=new_folder, samba_workstation=samba_workstation
             )
             check_change_permissions(
                 file=samba_new_share_folder,
+                user_name=uid,
+                allowed=False,
+                samba_workstation=samba_workstation,
+            )
+            exam_share_folder = "{} {}".format(samba_home, distribution_data_folder)
+            check_change_permissions(
+                file=exam_share_folder,
                 user_name=uid,
                 allowed=False,
                 samba_workstation=samba_workstation,
@@ -113,7 +129,8 @@ def main():
         wait_for_s4connector()
         print("# create home directories and check permissions")
         create_homedirs(exam_member_dns, open_ldap_co)
-        test_permissions(exam_member_dns, open_ldap_co)
+        distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")
+        test_permissions(exam_member_dns, open_ldap_co, distribution_data_folder)
         print("# stopping exam")
         exam.finish()
 
