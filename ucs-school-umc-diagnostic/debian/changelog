@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-14) unstable; urgency=medium
+
+  * Bug #52195: added diagnostic module for checking ox support
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 01 Dec 2020 16:33:30 +0100
+
 ucs-school-umc-diagnostic (1.0.0-13) unstable; urgency=medium
 
   * Bug #45332: added diagnostic module to check school admin accounts
