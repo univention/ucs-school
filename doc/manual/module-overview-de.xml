@@ -158,11 +158,11 @@
 			Mit den Modulen <emphasis>Passwörter (Schüler)</emphasis>,
             <emphasis>Passwörter (Lehrer)</emphasis> und
 			<emphasis>Passwörter (Mitarbeiter)</emphasis> lassen sich Benutzerpasswörter
-			zurücksetzen. Die Benutzeroberfläche ist für beide Module identisch.
-			Es werden alle Schüler/Lehrer der gewählten <emphasis>Schule</emphasis>
-			angezeigt. Durch Auswahl einer <emphasis>Klasse oder Arbeitsgruppe</emphasis>
-			und/oder Nutzung der Suchleiste lässt sich die Menge der angezeigten Nutzer
-			weiter eingrenzen.
+			zurücksetzen. Die Benutzeroberfläche der Module ist identisch.
+			Es werden alle Schüler/Lehrer/Mitarbeiter der gewählten
+			<emphasis>Schule</emphasis> angezeigt. Durch Auswahl einer
+			<emphasis>Klasse oder Arbeitsgruppe</emphasis> und/oder Nutzung der
+			Suchleiste lässt sich die Menge der angezeigten Nutzer weiter eingrenzen.
 		</para>
 		<figure id="reset_student_password">
 			<title>Zurücksetzen von Schülerpasswörtern</title>
