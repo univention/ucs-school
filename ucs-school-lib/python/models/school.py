@@ -31,6 +31,11 @@
 
 import subprocess
 
+try:
+    from typing import List
+except ImportError:
+    pass
+
 import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
@@ -62,21 +67,23 @@ from .utils import _, flatten, ucr
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
-    name = SchoolName(_("School name"))
-    dc_name = DCName(_("DC Name"))
-    dc_name_administrative = DCName(_("DC Name administrative server"))
+    name = SchoolName(_("School name"))  # type: str
+    dc_name = DCName(_("DC Name"))  # type: str
+    dc_name_administrative = DCName(_("DC Name administrative server"))  # type: str
     class_share_file_server = ShareFileServer(
         _("Server for class shares"), udm_name="ucsschoolClassShareFileServer"
-    )
+    )  # type: str
     home_share_file_server = ShareFileServer(
         _("Server for Windows home directories"), udm_name="ucsschoolHomeShareFileServer"
-    )
-    display_name = DisplayName(_("Display name"))
+    )  # type: str
+    display_name = DisplayName(_("Display name"))  # type: str
     school = None
-    educational_servers = Attribute(_("Educational servers"), unlikely_to_change=True)
-    administrative_servers = Attribute(_("Administrative servers"), unlikely_to_change=True)
+    educational_servers = Attribute(_("Educational servers"), unlikely_to_change=True)  # type: List[str]
+    administrative_servers = Attribute(
+        _("Administrative servers"), unlikely_to_change=True
+    )  # type: List[str]
 
-    default_roles = [role_school]
+    default_roles = [role_school]  # type: List[str]
     _school_in_name = True
 
     def __init__(self, name=None, school=None, alter_dhcpd_base=None, **kwargs):
@@ -224,9 +231,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             group.create(lo)
 
         # cn=ouadmins
-        admin_group_container = "cn=ouadmins,cn=groups,%s" % ucr.get("ldap/base")
+        admin_group_container = Container(name="ouadmins", school="")
+        admin_group_container.position = "cn=groups,{}".format(ucr["ldap/base"])
+        if not admin_group_container.exists(lo):
+            admin_group_container.create(lo, False)
+
+        # admins-%s
         group = BasicSchoolGroup.cache(
-            self.group_name("admins", "admins-"), self.name, container=admin_group_container
+            self.group_name("admins", "admins-"), self.name, container=admin_group_container.dn
         )
         group.ucsschool_roles = [create_ucsschool_role_string(role_school_admin_group, self.name)]
         group.create(lo)
