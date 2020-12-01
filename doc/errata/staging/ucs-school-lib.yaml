@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.4A~4.4.0.202011301741
+fix: 12.2.5A~4.4.0.202012011133
 desc: |
  * Internal improvement: prevent unnecesary traceback during creation of school OU (Bug #52403).
  * A role for marking computerrooms for the use of Veyon was added to the school.lib (Bug #52422).
