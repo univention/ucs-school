@@ -30,11 +30,11 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-#
-# This module checks if a UCS@school DC-Master with OX installed also has
-# the package ucs-school-ox-support installed. If not a button pops up,
-# which tries to fix this issue by installing it.
-
+"""
+This module checks if a UCS@school DC-Master with OX installed also has
+the package ucs-school-ox-support installed. If not a button pops up,
+which tries to fix this issue by installing it.
+"""
 from __future__ import absolute_import
 
 import subprocess
@@ -50,13 +50,16 @@ _ = Translation("ucs-school-umc-diagnostic").translate
 title = _("UCS@school OX Support")
 description = "\n".join(
     _(
-        "If the OX App Suite is installed somewhere on the domain, \
-        check that the package ucs-school-ox-support is also installed"
+        "If the OX App Suite is installed somewhere on the domain "
+        "check that the package ucs-school-ox-support is also installed"
     ),
 )
 
 
 def run(_umc_instance):
+    if ucr.get("server/role") != "domaincontroller_master":
+        return
+
     # check if OX is installed
     ox_app = Apps().find("oxseforucs")
     if ox_app is None:
@@ -68,7 +71,7 @@ def run(_umc_instance):
         return
     is_ox_installed = info[0]["is_installed_anywhere"]
     if not is_ox_installed:
-        return  # app is not installed on DC master
+        return  # app is not installed anywhere
 
     # check if ucs-school-ox-support package is installed
     out, err = exec_cmd("/usr/bin/dpkg-query", "-W", "-f", "${Status}", "ucs-school-ox-support")
@@ -94,7 +97,6 @@ def install_missing_components(_umc_instance):
         error_text = "E: Unable to locate package"
         if error_text in stdout or stderr:
             raise Warning("Could not install package 'ucs-school-ox-support'.\n{}".format(stderr))
-            return
     return run(_umc_instance)
 
 
