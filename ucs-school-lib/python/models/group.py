@@ -194,6 +194,13 @@ class BasicGroup(Group):
 
     def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
         # prepare LDAP: create containers where this basic group lives if necessary
+        # Does not work correctly for non-school groups: they will be created at the LDAPs root!
+        # -> Create containers for non-school group manually before creating the group.
+        if not self.container_exists(lo):
+            self.create_groups_container(lo)
+        return super(BasicGroup, self).create_without_hooks(lo, validate)
+
+    def create_groups_container(self, lo):  # type: (LoType) -> None
         container_dn = self.get_own_container()[: -len(ucr.get("ldap/base")) - 1]
         containers = str2dn(container_dn)
         super_container_dn = ucr.get("ldap/base")
@@ -206,10 +213,16 @@ class BasicGroup(Group):
             container.position = super_container_dn
             if not container.exists(lo):
                 container.create(lo, False)
-        return super(BasicGroup, self).create_without_hooks(lo, validate)
 
     def get_own_container(self):  # type: () -> str
         return self.container
+
+    def container_exists(self, lo):  # type: (LoType) -> bool
+        try:
+            lo.searchDn(base=self.get_own_container())
+            return True
+        except noObject:
+            return False
 
     def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
         return None
