@@ -131,7 +131,7 @@ def deny_owner_change_permissions(folder):  # type: (str) -> None
             deny_aces += new_deny_aces
         # override the default behaviour for owners
         if new_allow_ace not in allow_aces:
-            allow_aces += "(A;OICI;0x001301BF;;;S-1-3-4)"
+            allow_aces += new_allow_ace
         dacl_flags = "PAI"
         sddl = "{}D:{}{}{}".format(owner, dacl_flags, deny_aces.strip(), allow_aces.strip())
         proc = subprocess.Popen(
@@ -142,9 +142,9 @@ def deny_owner_change_permissions(folder):  # type: (str) -> None
         )
         _, stderr = proc.communicate()
         if not stderr:
-            logger.debug("set nt acls:  {}".format(sddl))
+            logger.debug("set nt acls {} on {}".format(sddl, folder))
             return
-    logger.error("could not set nt acls on {} ".format(folder))
+    logger.error("could not set nt acls on {}: {}".format(folder, stderr))
 
 
 class Instance(SchoolBaseModule):
@@ -200,10 +200,15 @@ class Instance(SchoolBaseModule):
         for exam_user in exam_users:
             folder = exam_user.unixhome
             if not os.path.exists(folder):
-                continue
-            deny_owner_change_permissions(folder)
-            for sub_folder, _, _ in os.walk(folder):
-                deny_owner_change_permissions(sub_folder)
+                logger.info("create home folder {}".format(folder))
+                umask = os.umask(0)  # set umask so that os.makedirs can set correct permissions
+                owner = int(exam_user.uidNumber)
+                group = int(exam_user.gidNumber)
+                os.makedirs(folder, 0o711)
+                os.chmod(folder, 0o700)
+                os.chown(folder, owner, group)
+                deny_owner_change_permissions(folder)
+                os.umask(umask)
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -697,8 +702,8 @@ class Instance(SchoolBaseModule):
             progress.component(_("Distributing exam files"))
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
-            my.project.distribute()
             Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
+            my.project.distribute()
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
