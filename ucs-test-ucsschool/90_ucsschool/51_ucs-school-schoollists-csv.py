@@ -4,6 +4,7 @@
 ## exposure: dangerous
 ## tags: [apptest, ucsschool,unit-test, ucs-school-umc-list]
 ## bugs: [51363]
+## packages: [ucs-school-umc-lists]
 
 import random
 
