@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.167) unstable; urgency=medium
+
+  * Bug #51363: add package dependency 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 03 Dec 2020 09:01:44 +0100
+
 ucs-test-ucsschool (6.0.166) unstable; urgency=medium
 
   * Bug #52422: Add tests for new veyon backend settings
