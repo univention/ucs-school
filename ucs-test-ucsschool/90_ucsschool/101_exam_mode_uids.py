@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check the consistency of exam users in unix, ldap and the ownership of their home directories
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ole]
 ## exposure: dangerous
 ## bugs: [52307]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -122,6 +122,8 @@ def main():
                     recipients=[klasse_dn],  # list of classes dns
                 )
                 exam2.start()
+                wait_for_drs_replication(filter_format("cn=exam-%s", (stu,)))
+                wait_for_drs_replication(filter_format("cn=exam-%s", (student2.name,)))
                 check_uids(exam_member_dns, open_ldap_co)
                 exam2.finish()
 
