@@ -36,7 +36,7 @@ from ..configuration import Configuration
 from .import_pyhook import ImportPyHook
 
 try:
-    import typing
+    from typing import Any, Optional
 
     import univention.admin.uldap.access
 

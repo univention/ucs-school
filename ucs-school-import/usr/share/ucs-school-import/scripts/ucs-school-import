@@ -417,15 +417,13 @@ def extract_district(schoolNr):
 
 def getDN(schoolNr, base="school", basedn=baseDN):
     """
-    @param	base Values are either school, district or base
-    @return	According to the base a specific part of dn is returned.
-            Let's suppose the following school dn:
-            ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
-
-            The following is returned
-            'base'		-> dc=BASE,dc=DN
-            'district'	-> ou=DISTRICT,dc=BASE,dc=DN
-            'school'	-> ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+    @param base Values are either school, district or base
+    @return According to the base a specific part of dn is returned.
+        Let's suppose the following school dn: ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+        The following is returned:
+            'base'      -> dc=BASE,dc=DN
+            'district'  -> ou=DISTRICT,dc=BASE,dc=DN
+            'school'    -> ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
     """
     dn = "%(school)s%(district)s%(basedn)s"
     values = {"school": "ou=%s," % schoolNr, "district": "", "basedn": basedn}
@@ -497,10 +495,10 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
 
 def create_policy(cn, container, values, policy_module):
     """
-    @param cn					name of policy
-    @param container			target ldap container
-    @param properties			policy object properties
-    @param policy_module		UDM module
+    @param cn                   name of policy
+    @param container            target ldap container
+    @param properties           policy object properties
+    @param policy_module        UDM module
     returns DN if policy has been created, otherwise None
     """
     created = False
@@ -1137,7 +1135,7 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
         for objectDN in objects:
             object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position="", dn=objectDN)
             object.open()
-            subnet = ipaddr.IPv4Network("%s/%s" % (object["subnet"], object["subnetmask"],))
+            subnet = ipaddr.IPv4Network("%s/%s" % (object["subnet"], object["subnetmask"]))
             if subnet in interfaces:  # subnet matches any local subnet
                 position.setDn("cn=%s,cn=dhcp,%s" % (schoolNr.lower(), getDN(schoolNr)))
                 if lo.searchDn(
@@ -1255,7 +1253,7 @@ def verify_containers(position_dn, module, co, lo, superordinate, base, path="")
     """
     verifies all containers starting at the ldap base
 
-    @param	module	Param is ignored! cn_module is the only supported module!!
+    @param module Param is ignored! cn_module is the only supported module!!
     """
     split_dn = position_dn.split(",")
     # with this variable it's ensured that within a row of containers there is
@@ -1737,7 +1735,7 @@ tryFindHomeShareFileServer.results = {}
 
 def calculateSambahomePath(ouDn, username):
     if tryFindHomeShareFileServer(ouDn) is not None:
-        return "%s\\%s" % (tryFindHomeShareFileServer(ouDn), username,)
+        return "%s\\%s" % (tryFindHomeShareFileServer(ouDn), username)
 
 
 def create_user(person, baseDN, module, password, OUTFILE, line):
@@ -2060,10 +2058,11 @@ def create_network(
     schoolNr, network, iprange=None, defaultrouter=None, nameserver=None, netbiosserver=None
 ):
     """
-    @param  network	The network address MUST contain the netmask!! it could also be a ipaddr.IPv4Network object
-    @param  defaultrouter   IP-Adress, if no netmask is profided it's derived from network
-    @param  nameserver  IP-Adress, if no netmask is profided it's derived from network
-    @param  netbiosserver   IP-Adress, if no netmask is profided it's derived from network
+    @param network The network address MUST contain the netmask!! it could also be a ipaddr.IPv4Network
+        object
+    @param defaultrouter IP-Adress, if no netmask is profided it's derived from network
+    @param nameserver IP-Adress, if no netmask is profided it's derived from network
+    @param netbiosserver IP-Adress, if no netmask is profided it's derived from network
     """
     success = True
     dn = None
@@ -2173,7 +2172,7 @@ def create_network(
 
 def check_network(schoolNr, network):
     """
-    @param  network	ipaddr.IPv4Network object
+    @param network ipaddr.IPv4Network object
     """
     objects = univention.admin.modules.lookup(
         network_module,
@@ -2319,7 +2318,7 @@ def import_networks(router_only=False):
 
             # convert parameters to ipaddr.IPv4Network
             if "/" not in network:
-                network = "%s/%s" % (network, default_prefixlen,)
+                network = "%s/%s" % (network, default_prefixlen)
                 try:
                     network = ipaddr.IPv4Network(network)
                 except ipaddr.AddressValueError, e:
@@ -2738,7 +2737,7 @@ def import_computer():
 
             success = True
             if "/" not in IP:
-                ip = ipaddr.IPv4Network("%s/%s" % (IP, default_prefixlen,))
+                ip = ipaddr.IPv4Network("%s/%s" % (IP, default_prefixlen))
                 print "WARNING: no netmask specified for ip address %s using %s" % (ip.ip, ip.netmask)
 
             module = univention.admin.modules.get("computers/%s" % ctype)
@@ -3437,7 +3436,7 @@ def rename_class():
 
     # print warnings
     for isError, msg in messages:
-        level = {False: univention.debug.PROCESS, True: univention.debug.ERROR,}[isError]
+        level = {False: univention.debug.PROCESS, True: univention.debug.ERROR}[isError]
         univention.debug.debug(univention.debug.MAIN, level, msg)
         print msg
 
@@ -3833,7 +3832,7 @@ Arguments:
         help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")',
     )
 
-    (options, args,) = parser.parse_args()
+    options, args = parser.parse_args()
     if len(args) > 0:
         ouname = args[0]
         if len(args) > 1:
@@ -3916,7 +3915,7 @@ elif sys.argv[0].endswith("create_dc"):
         help="UCS@school type of the domaincontroller slave object (valid values: %r, %r)"
         % (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE),
     )
-    (options, args,) = parser.parse_args()
+    options, args = parser.parse_args()
 
     if not options.dc_name or not options.ou_name:
         print "ERROR: no domaincontroller hostname or ou specified"
@@ -3975,7 +3974,7 @@ within an OU LDAP subtree to the given OU."""
         default=False,
         help="force move of domaincontroller slave object if located in other OU",
     )
-    (options, args,) = parser.parse_args()
+    options, args = parser.parse_args()
 
     if not options.dcname or not options.ou:
         print "ERROR: no domaincontroller hostname or ou specified"

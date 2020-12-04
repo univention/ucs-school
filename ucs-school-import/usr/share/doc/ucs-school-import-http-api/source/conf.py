@@ -30,14 +30,14 @@ try:
         with open("/var/lib/ucs-school-import/configs/user_import.json", "w") as fp:
             fp.write("{}")
 
-    import ucsschool.importer.utils.shell
+    import ucsschool.importer.utils.shell  # noqa: F401
 except ImportError:
     pass
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 try:
     import django
-    from django.conf import settings
+    from django.conf import settings  # noqa: F401
 
     django.setup()
 except ImportError:
@@ -91,7 +91,7 @@ def get_deb_version():
         path = os.path.dirname(path)
     os.chdir(path)
     cmd = ["dpkg-parsechangelog", "-S", "version"]
-    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
+    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()  # nosec
     return out.strip()
 
 

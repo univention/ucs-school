@@ -88,7 +88,7 @@ Netzwerken und Rechnern.
 
 # Skripte:
 
-Alle Skripte liegen unter /usr/share/ucs-school-import/scripts. Ausgangspunkt ist das Skript 
+Alle Skripte liegen unter /usr/share/ucs-school-import/scripts. Ausgangspunkt ist das Skript
 "ucs-school-import", alle anderen Skripte sind nur symbolische links auf diese Datei.
 
 Alle Skripte legen automatisch eine Schule (also deren ou-Baum im LDAP) an, sobald
@@ -96,13 +96,13 @@ ein Element in dieser Schule angelegt werden soll (entspricht der Funktionalitä
 create_ou).
 
 ## Schule anlegen:
-Um eine Schule anzulegen kann das Skript "create_ou" aufgerufen werden, als Option 
+Um eine Schule anzulegen kann das Skript "create_ou" aufgerufen werden, als Option
 wird dabei die Schulnummer übergeben (z.B. "create_ou 308"). Das sollte besonders
 _vor_ der Installation eines Schulservers erfolgen, ansonsten wird dieser an falscher
 Stelle im LDAP angelegt.
 
 ## Benutzer importieren:
-Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des 
+Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des
 Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
 
 ## Netzwerk importieren:
@@ -118,11 +118,11 @@ z.B.:
 Das Netzwerk wird mit Maske 255.255.255.0 angelegt, dementsprechend sollte der Eintrag auf
 ".0" enden. Mittels dieser Netzwerke werden entpsrechende DNS und DHCP-Zonen voreingestellt.
 Der Import erfolgt dann durch import_networks mit dem Dateinamen als Option.
-Per Default wird ein Bereich von IPs .10 bis .250 für die freie vergabe (siehe unten) 
-voreingestellt. 
+Per Default wird ein Bereich von IPs .10 bis .250 für die freie vergabe (siehe unten)
+voreingestellt.
 
 ## Computer importieren
-Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über 
+Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über
 import_computer mit dem Dateinamen als Option angelegt. Format der Datei ist:
 
     <computertyp>;<computername>;<MAC>;<Schul-Nr>;<IP oder Netzwerk>
@@ -131,5 +131,5 @@ z.B.:
 
     windows;winrechner;00:11:22:33:44:56;10;10.0.101.0
 
-Wird der Rechner einem bereits angelegtem Netzwerk zugeordnet (IP endet auf .0), wird die 
+Wird der Rechner einem bereits angelegtem Netzwerk zugeordnet (IP endet auf .0), wird die
 IP automatisch vergeben, der Computer bekommt einen DHCP und einen DNS-Eintrag.

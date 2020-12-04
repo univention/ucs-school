@@ -6,8 +6,6 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
-from ldap.filter import filter_format
-
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test

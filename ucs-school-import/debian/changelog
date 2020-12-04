@@ -150,13 +150,13 @@ ucs-school-import (17.0.25) unstable; urgency=medium
 
 ucs-school-import (17.0.24) unstable; urgency=medium
 
-  * Bug #50707: add comment to print statement 
+  * Bug #50707: add comment to print statement
 
  -- Tobias Wenzel <wenzel@univention.de>  Mon, 10 Feb 2020 13:52:09 +0100
 
 ucs-school-import (17.0.23) unstable; urgency=medium
 
-  * Bug #50707: run ucs-school-purge-expired-users only on DC master 
+  * Bug #50707: run ucs-school-purge-expired-users only on DC master
 
  -- Tobias Wenzel <wenzel@univention.de>  Fri, 07 Feb 2020 11:50:09 +0100
 

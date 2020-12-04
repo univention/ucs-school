@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
+from __future__ import print_function
+
 import time
 
 import univention.testing.ucr as ucr_test
@@ -45,8 +47,8 @@ def main():
                         pc.verify_ldap(False)
                     except Exception as e:
                         if pc.dn() in str(e):
-                            print ":::::::%r::::::" % wait
-                            print str(e)
+                            print(":::::::%r::::::" % wait)
+                            print(str(e))
                             time.sleep(1)
                         else:
                             raise

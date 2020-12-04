@@ -6,7 +6,7 @@ ucs-school-umc-rooms (16.1.0-5) unstable; urgency=low
 
 ucs-school-umc-rooms (16.1.0-4) unstable; urgency=low
 
-  * Bug #47418: fix import 
+  * Bug #47418: fix import
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 04 Nov 2019 08:12:05 +0100
 
@@ -264,13 +264,13 @@ ucs-school-umc-rooms (8.0.0-1) unstable; urgency=low
 
 ucs-school-umc-rooms (0.1.7-1) unstable; urgency=low
 
-  * remove conflict to old roomadmin package (Bug #26393) 
+  * remove conflict to old roomadmin package (Bug #26393)
 
  -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 10:51:11 +0200
 
 ucs-school-umc-rooms (0.1.6-1) unstable; urgency=low
 
-  * added transitional package for update (Bug #26393) 
+  * added transitional package for update (Bug #26393)
 
  -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 10:24:09 +0200
 

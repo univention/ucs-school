@@ -31,7 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 #
-# This module reads the sourceUID and recordUID of all users and verifies that their combinations are different
+# This module reads the sourceUID and recordUID of all users and verifies that their combinations are
+# different
 
 from __future__ import absolute_import
 
@@ -40,16 +41,23 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, Set
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school UID Uniqueness")
 description = "\n".join(
     [
         _(
-            "In a UCS@school domain that uses the UCS@school import, all users that should be considered for imports must have a unique recordUID-sourceUID combination."
+            "In a UCS@school domain that uses the UCS@school import, all users that should be "
+            "considered for imports must have a unique recordUID-sourceUID combination."
         ),
         _(
-            "If multiple users have the same combination of those UID's, users may not be found or wrong user objects could get modified."
+            "If multiple users have the same combination of those UID's, users may not be found or "
+            "wrong user objects could get modified."
         ),
     ]
 )

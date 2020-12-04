@@ -178,7 +178,7 @@ ucs-school-umc-distribution (13.0.2-1) unstable; urgency=medium
 
 ucs-school-umc-distribution (13.0.1-2) unstable; urgency=low
 
-  * Bug #32331: changed check if returned fileInfo from webserver is 
+  * Bug #32331: changed check if returned fileInfo from webserver is
     an array or not
 
  -- Drees Dormann <dormann@univention.de>  Wed, 29 Apr 2015 12:24:33 +0200
@@ -663,7 +663,7 @@ ucs-school-umc-distribution (5.0.3-1) unstable; urgency=low
 
 ucs-school-umc-distribution (5.0.2-1) unstable; urgency=low
 
-  * added resuable code for project file creation. 
+  * added resuable code for project file creation.
     Ticket #2008110710000095 (Bug 12310)
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 17 Aug 2009 17:28:45 +0200
@@ -739,7 +739,7 @@ ucs-school-umc-distribution (3.0.0-0) unstable; urgency=low
 
 ucs-school-umc-distribution (2.0.1-2) unstable; urgency=low
 
-  *  new user icons (Ticket: #2008110710000077)  
+  *  new user icons (Ticket: #2008110710000077)
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Tue, 20 Jan 2009 14:42:24 +0100
 

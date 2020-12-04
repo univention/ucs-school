@@ -39,7 +39,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            "response.status_code = {} for URL {!r}.".format(
+            "response.status_code = {} for URL {!r} response.text={!r}.".format(
                 response.status_code, response.url, response.text
             ),
         )

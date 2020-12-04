@@ -4,6 +4,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
+from __future__ import print_function
+
 import os
 import random
 import tempfile
@@ -49,7 +51,7 @@ def main():
                             ):
                                 found = True
                         except (IOError, OSError) as exc:
-                            print "Failed to check %r: %r" % (filename, exc)
+                            print("Failed to check %r: %r" % (filename, exc))
                     if found:
                         break
                 if found:

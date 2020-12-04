@@ -47,8 +47,8 @@ CLOCK_MONOTONIC = 1  # see <linux/time.h>
 
 class timespec(Structure):
     _fields_ = [
-        ("tv_sec", c_long,),
-        ("tv_nsec", c_long,),
+        ("tv_sec", c_long),
+        ("tv_nsec", c_long),
     ]
 
 
@@ -71,14 +71,14 @@ def timestamp():
 
 
 def log(message):
-    stdout.write("%s %s\n" % (timestamp(), message,))
+    stdout.write("%s %s\n" % (timestamp(), message))
     stdout.flush()
 
 
 def reload_squid():
     log("Reloading %r now" % (reload_squid.name,))
     reload_squid.last = monotonic_time()
-    call(("/etc/init.d/squid", "reload",))
+    call(("/etc/init.d/squid", "reload"))  # nosec
 
 
 reload_squid.name = "squid"
@@ -92,7 +92,7 @@ def queue(reloader):
     now = monotonic_time()
     if reloader not in QUEUE:
         when = max(reloader.last + reloader.delay, now)
-        log("Reloading %r in %f s" % (reloader.name, when - now,))
+        log("Reloading %r in %f s" % (reloader.name, when - now))
         QUEUE[reloader] = when
 
 
@@ -106,7 +106,7 @@ def process_queue():
 
 def handle(message):
     message = tuple(message.split(" "))
-    if message == ("reload", "squid",):
+    if message == ("reload", "squid"):
         queue(reload_squid)
     else:
         log("Command not implemented %r!" % (message,))

@@ -144,9 +144,8 @@ def handler(dn, new, old, command):
         uid = old["uid"][0]
         if not exam_remove and "ucsschoolExam" in old["objectClass"]:
             warn(
-                "ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to False.".format(
-                    uid
-                )
+                "ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to "
+                "False.".format(uid)
             )
             return
 

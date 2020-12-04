@@ -58,7 +58,7 @@ class UMCTester(object):
 					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn]})
 					udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn]})
 
-					print (' ** After Creating users and classes')
+					print(' ** After Creating users and classes')
 					wait_replications_check_rejected_uniqueMember(existing_rejects)
 
 					# importing random computer

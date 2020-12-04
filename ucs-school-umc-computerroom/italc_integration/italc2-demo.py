@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import inspect
 import optparse
 import os
@@ -52,10 +54,10 @@ italcManager = None
 
 def start_demo(server, start, fullscreen):
     if start:
-        print "starting demo"
+        print("starting demo")
         italcManager.startDemo(server, fullscreen)
     else:
-        print "stopping demo"
+        print("stopping demo")
         italcManager.stopDemo(server)
     time.sleep(3)
     sys.exit(0)

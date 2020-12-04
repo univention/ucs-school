@@ -63,8 +63,8 @@ def parse_cmdline():
     parser.add_argument(
         "-c",
         "--conffile",
-        help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on configuration "
-        "file stacking).",
+        help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on "
+        "configuration file stacking).",
     )
     parser.add_argument("-l", "--logfile", help="Write to additional logfile (always verbose).")
     parser.add_argument(
@@ -84,7 +84,8 @@ def parse_cmdline():
         "-v",
         "--verbose",
         action="store_true",
-        help="Enable debugging output on the console (overwrites setting from configuration files) [default: %(default)s].",
+        help="Enable debugging output on the console (overwrites setting from configuration files) "
+        "[default: %(default)s].",
     )
     parser.set_defaults(**defaults)
 

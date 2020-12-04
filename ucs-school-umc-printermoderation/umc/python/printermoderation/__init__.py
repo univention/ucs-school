@@ -38,6 +38,7 @@ import stat
 import subprocess
 
 import cups
+import six
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_errors
@@ -104,7 +105,7 @@ class Instance(SchoolBaseModule):
         all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
         return [x for x in all_user_dirs if x.lower() == username.lower()]
 
-    @sanitize(school=SchoolSanitizer(required=True),)
+    @sanitize(school=SchoolSanitizer(required=True))
     @LDAP_Connection()
     def printers(self, request, ldap_user_read=None):
         """List all available printers except PDF printers
@@ -174,7 +175,7 @@ class Instance(SchoolBaseModule):
                 (self._get_path(username, ""), username)
                 for username in self._get_all_username_variants(username)
             )
-            for user_path, username in path_username.iteritems():
+            for user_path, username in six.iteritems(path_username):
                 printjoblist.extend(
                     Printjob(student, username, document).json()
                     for document in glob.glob(os.path.join(user_path, "*.pdf"))
@@ -184,9 +185,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, printjoblist)
 
     @allow_get_request
-    @sanitize(
-        username=StringSanitizer(required=True), printjob=StringSanitizer(required=True),
-    )
+    @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     def download(self, request):
         """Searches for print jobs
 
@@ -204,9 +203,7 @@ class Instance(SchoolBaseModule):
         with open(path) as fd:
             self.finished(request.id, fd.read(), mimetype="application/pdf")
 
-    @sanitize(
-        username=StringSanitizer(required=True), printjob=StringSanitizer(required=True),
-    )
+    @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     @simple_response
     def delete(self, username, printjob):
         """Delete a print job
@@ -278,7 +275,8 @@ class Instance(SchoolBaseModule):
             raise UMC_Error(
                 _("Failed to connect to print server %(printserver)s.") % {"printserver": spoolhost}
             )
-        except cups.IPPError as (errno, description):
+        except cups.IPPError as xxx_todo_changeme:
+            (errno, description) = xxx_todo_changeme.args
             IPP_AUTHENTICATION_CANCELED = 4096
             description = {
                 cups.IPP_NOT_AUTHORIZED: _("No permission to print"),
@@ -345,7 +343,7 @@ class Printjob(object):
             MODULE.error("PDF file was cached: %s" % self.fullfilename)
             self.metadata = Printjob.pdf_cache[self.fullfilename]
             return
-        pdfinfo = subprocess.Popen(
+        pdfinfo = subprocess.Popen(  # nosec
             ["/usr/bin/pdfinfo", self.fullfilename],
             shell=False,
             env={"LANG": "C"},

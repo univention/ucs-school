@@ -60,7 +60,8 @@ if os.path.isfile(demo_secret_path):
     with open(demo_secret_path, "r") as fd:
         demo_password = fd.read().strip()
 else:
-    demo_password = "".join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+    _chars = string.ascii_letters + string.digits
+    demo_password = "".join(random.choice(_chars) for _ in range(16))  # nosec
     with open(demo_secret_path, "w") as fd:
         os.fchmod(fd.fileno(), 0o640)
         fd.write(demo_password)
@@ -214,9 +215,8 @@ def create_school():
             break
     if not school_exists:
         try:
-            subprocess.check_call(
+            subprocess.check_call(  # nosec
                 [
-                    "python",
                     "/usr/share/ucs-school-import/scripts/create_ou",
                     "--displayName={}".format(SCHOOL[1]),
                     "--alter-dhcpd-base=false",
@@ -280,16 +280,18 @@ def create_portal():
         entry_groups["teacher"] = module_groups.lookup(
             None, lo, "name=lehrer-{}".format(SCHOOL[0]), pos.getBase()
         )[0].dn
-    except IndexError as e:
+    except IndexError:
         print(
-            "Could not find all necessary user groups to create demo portal. Something must have gone wrong with the school creation!"
+            "Could not find all necessary user groups to create demo portal. Something must have gone "
+            "wrong with the school creation!"
         )
         sys.exit(1)
 
     pos_portal.setDn("cn=portal,cn=univention")
     for name, en, de, descr_en, descr_de, link, icon, group in ENTRIES:
-        iconpath = "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/ucsschool_demo_{}.png".format(
-            icon
+        iconpath = (
+            "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/"
+            "ucsschool_demo_{}.png".format(icon)
         )
         entry_obj = module_portal_e.object(None, lo, pos_portal)
         entry_obj.open()

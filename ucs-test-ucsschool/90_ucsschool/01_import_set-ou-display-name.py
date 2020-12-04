@@ -7,6 +7,8 @@
 ## packages:
 ##   - ucs-school-import
 
+from __future__ import print_function
+
 import random
 import subprocess
 
@@ -33,7 +35,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
         ou_displayName,
         ou_name,
     ]
-    print "Calling following command: %r" % cmd
+    print("Calling following command: %r" % cmd)
     retval = subprocess.call(cmd)
     if retval:
         utils.fail("create_ou failed with exitcode %s" % retval)
@@ -51,9 +53,9 @@ def main():
     # create short OU name
     ou_name = uts.random_name()
     try:
-        print "*** Creating OU and set random display name"
+        print("*** Creating OU and set random display name")
         setRandomDisplayNameViaCreateOU(ou_name)
-        print "*** Change displayName to new random value"
+        print("*** Change displayName to new random value")
         setRandomDisplayNameViaCreateOU(ou_name)
     finally:
         school_tester = ut_school.UCSTestSchool()

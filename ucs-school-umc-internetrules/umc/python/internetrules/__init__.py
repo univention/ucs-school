@@ -33,6 +33,7 @@
 
 import re
 
+import six
 from urlparse import urlparse
 
 import ucsschool.lib.internetrules as rules
@@ -57,7 +58,7 @@ from univention.management.console.modules.sanitizers import (
 
 _ = Translation("ucs-school-umc-internetrules").translate
 
-_filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST,)
+_filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST)
 _filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
 
 
@@ -137,9 +138,9 @@ class Instance(SchoolBaseModule):
     def _parseRule(iprops, forceAllProperties=False):
         # validate types
         for ikey, itype in (
-            ("name", basestring),
-            ("type", basestring),
-            ("priority", (int, basestring)),
+            ("name", six.string_types),
+            ("type", six.string_types),
+            ("priority", (int, six.string_types)),
             ("wlan", bool),
             ("domains", list),
         ):
@@ -162,7 +163,8 @@ class Instance(SchoolBaseModule):
         ):
             raise ValueError(
                 _(
-                    'Invalid rule name "%s". The name needs to be a string, the following special characters are not allowed: %s'
+                    'Invalid rule name "%s". The name needs to be a string, the following special '
+                    "characters are not allowed: %s"
                 )
                 % (
                     iprops.get("name"),
@@ -186,7 +188,7 @@ class Instance(SchoolBaseModule):
                             return False
                     return True
 
-                if not isinstance(idomain, basestring) or not _validValueChar():
+                if not isinstance(idomain, six.string_types) or not _validValueChar():
                     raise ValueError(_("Invalid domain "))
 
                 # parse domain
@@ -200,7 +202,8 @@ class Instance(SchoolBaseModule):
                 if not domain:
                     raise ValueError(
                         _(
-                            'The specified domain "%s" is not valid. Please specify a valid domain name, such as "wikipedia.org", "facebook.com"'
+                            'The specified domain "%s" is not valid. Please specify a valid domain '
+                            'name, such as "wikipedia.org", "facebook.com"'
                         )
                         % idomain
                     )
@@ -303,14 +306,16 @@ class Instance(SchoolBaseModule):
         )
     )
     def put(self, request):
-        """Modify an existing rules:
+        """
+        Modify an existing rule:
+
         requests.options = [ {
             'object': {
-                'name': <str>, 						# optional
-                'type': 'whitelist' | 'blacklist', 	# optional
-                'priority': <int>, 					# optional
-                'wlan': <bool>,						# optional
-                'domains': [<str>, ...],  			# optional
+                'name': <str>,                      # optional
+                'type': 'whitelist' | 'blacklist',  # optional
+                'priority': <int>,                  # optional
+                'wlan': <bool>,                     # optional
+                'domains': [<str>, ...],            # optional
             },
             'options': {
                 'name': <str>  # the original name of the object
@@ -408,7 +413,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, result)
 
     @sanitize(
-        DictSanitizer(dict(group=StringSanitizer(required=True), rule=StringSanitizer(required=True),))
+        DictSanitizer(dict(group=StringSanitizer(required=True), rule=StringSanitizer(required=True)))
     )
     @LDAP_Connection()
     def groups_assign(self, request, ldap_user_read=None, ldap_position=None):

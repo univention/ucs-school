@@ -55,14 +55,13 @@ class Test(CLI_Import_v2_Tester):
 
         self.log.info("*** Importing a user from each role, PostReadPyHook will:")
         self.log.info(
-            "*** a) switch firstname and lastname b) add a birthday c) raise & test a class level variable..."
+            "*** a) switch firstname and lastname b) add a birthday c) raise & test a class level "
+            "variable..."
         )
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
-            person.update(
-                record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
-            )
+            person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
             person_list.append(person)
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)

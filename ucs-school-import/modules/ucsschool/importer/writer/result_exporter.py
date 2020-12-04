@@ -61,7 +61,8 @@ class ResultExporter(object):
         """
         Create file about added/modified/deleted objects and errors.
 
-        :param UserImport import_handler: object that contains data to dump from an import job (for example UserImport)
+        :param UserImport import_handler: object that contains data to dump from an import job (for
+            example UserImport)
         :param str filename: filename to write data to
         """
         mkdir_p(os.path.dirname(filename), "root", "root", stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)

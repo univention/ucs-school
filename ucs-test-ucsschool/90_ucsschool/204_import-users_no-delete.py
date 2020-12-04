@@ -42,7 +42,7 @@ class Test(CLI_Import_v2_Tester):
             person.update(record_uid=person.username, source_uid=source_uid)
             person_list_b.append(person)
 
-        self.log.info("Adding users A: %r", [person.username for person in person_list_a])
+        self.log.info("Adding users A: %r", [_person.username for _person in person_list_a])
         fn_csv = self.create_csv_file(person_list=person_list_a, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(values=config)
         self.save_ldap_status()

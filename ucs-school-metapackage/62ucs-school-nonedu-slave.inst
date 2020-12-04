@@ -83,7 +83,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 									dns/register/srv_records/gc?false \
 									dns/register/srv_records/pdc?false \
 									samba4/dns/domain/register?false
-	
+
 	ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"0 100 389 $hostname.$domainname." \
 			connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"0 100 389 $hostname.$domainname." \
 			connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"0 100 389 $hostname.$domainname." \

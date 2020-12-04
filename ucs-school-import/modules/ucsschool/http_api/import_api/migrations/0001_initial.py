@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ("path", models.CharField(unique=True, max_length=255)),
                 ("text", models.TextField(blank=True)),
             ],
-            options={"ordering": ("-pk",),},
+            options={"ordering": ("-pk",)},
         ),
         migrations.CreateModel(
             name="UserImportJob",
@@ -89,19 +89,19 @@ class Migration(migrations.Migration):
                 ),
                 ("school", models.ForeignKey(to="import_api.School", blank=True)),
             ],
-            options={"ordering": ("pk",),},
+            options={"ordering": ("pk",)},
         ),
         migrations.CreateModel(
-            name="Logfile", fields=[], options={"proxy": True,}, bases=("import_api.textartifact",),
+            name="Logfile", fields=[], options={"proxy": True}, bases=("import_api.textartifact",)
         ),
         migrations.CreateModel(
             name="PasswordsFile",
             fields=[],
-            options={"proxy": True,},
+            options={"proxy": True},
             bases=("import_api.textartifact",),
         ),
         migrations.CreateModel(
-            name="SummaryFile", fields=[], options={"proxy": True,}, bases=("import_api.textartifact",),
+            name="SummaryFile", fields=[], options={"proxy": True}, bases=("import_api.textartifact",)
         ),
         migrations.AddField(
             model_name="userimportjob",

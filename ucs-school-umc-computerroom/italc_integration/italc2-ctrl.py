@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import getpass
 import inspect
 import optparse
@@ -58,7 +60,7 @@ count = 5
 
 def wait4state(computer, signal, value):
     def _sig_handler(new_value, expected_value):
-        print "GOT SIGNAL", signal, new_value
+        print("GOT SIGNAL", signal, new_value)
         sys.exit(0)
         return False
 
@@ -79,33 +81,33 @@ def wait4state(computer, signal, value):
 
 
 def when_connected(computer, options):
-    print "SIGNAL connected"
+    print("SIGNAL connected")
     global italcManager
 
     if not italcManager[options.computer].connected:
-        print "NOT connected"
+        print("NOT connected")
         return True
 
-    print "connected"
+    print("connected")
 
     computer = italcManager[options.computer]
     if options.action:
         func = getattr(computer._core, options.action)
         func(*args)
     elif options.screen_lock is not None:
-        print "screen", options.screen_lock and "locked" or "unlocked"
+        print("screen", options.screen_lock and "locked" or "unlocked")
         computer.lockScreen(options.screen_lock)
         wait4state(computer, "screen-lock", options.screen_lock)
     elif options.input_lock is not None:
-        print "input", options.screen_lock and "locked" or "unlocked"
+        print("input", options.screen_lock and "locked" or "unlocked")
         computer.lockInput(options.input_lock)
         wait4state(computer, "input-lock", options.input_lock)
     elif options.message is not None:
-        print "display message", options.message
+        print("display message", options.message)
         computer.message("Title", options.message)
         wait4state(computer, "MessageBox", True)
     else:
-        print >> sys.stderr, "Unknown action"
+        print("Unknown action", file=sys.stderr)
         sys.exit(1)
 
 
@@ -144,7 +146,7 @@ if __name__ == "__main__":
     italcManager.room = options.room
 
     if options.list:
-        print "\n".join(italcManager.keys())
+        print("\n".join(italcManager.keys()))
         sys.exit(0)
 
     italcManager[options.computer].signal_connect(

@@ -7,6 +7,8 @@
 ## bugs: [47160]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+from __future__ import print_function
+
 import os
 import subprocess
 from datetime import datetime, timedelta
@@ -32,7 +34,7 @@ def main():
                 open_ldap_co = schoolenv.open_ldap_connection()
                 ucr.load()
 
-                print " ** Initial Status"
+                print(" ** Initial Status")
                 existing_rejects = get_s4_rejected()
 
                 if ucr.is_true("ucsschool/singlemaster"):
@@ -52,7 +54,7 @@ def main():
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
 
-                print " ** After Creating users and classes"
+                print(" ** After Creating users and classes")
                 wait_replications_check_rejected_uniqueMember(existing_rejects)
 
                 # importing random computer
@@ -69,7 +71,7 @@ def main():
                 current_time = datetime.now()
                 chosen_time = current_time + timedelta(hours=2)
 
-                print " ** After creating the rooms"
+                print(" ** After creating the rooms")
                 wait_replications_check_rejected_uniqueMember(existing_rejects)
 
                 exam = Exam(
@@ -80,7 +82,7 @@ def main():
                 )
 
                 exam.start()
-                print " ** After starting the exam"
+                print(" ** After starting the exam")
                 wait_replications_check_rejected_uniqueMember(existing_rejects)
                 filename = uts.random_string()
                 exam_stu_homedir = open_ldap_co.search(
@@ -95,7 +97,7 @@ def main():
                 exam.files.append(filename)
                 exam.finish()
                 exam.check_collect()
-                print " ** After finishing the exam"
+                print(" ** After finishing the exam")
                 wait_replications_check_rejected_uniqueMember(existing_rejects)
 
 

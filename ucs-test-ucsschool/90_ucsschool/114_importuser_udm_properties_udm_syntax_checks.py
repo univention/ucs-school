@@ -56,7 +56,8 @@ def main():
                 try:
                     user.create(lo)
                     utils.fail(
-                        "UDMValueError should have been raised in create() (tried to store 65 chars in string64)."
+                        "UDMValueError should have been raised in create() (tried to store 65 chars in "
+                        "string64)."
                     )
                 except UDMValueError as exc:
                     logger.info("*** OK: Caught expected UDMValueError exception: %s", exc)
@@ -79,7 +80,8 @@ def main():
                 try:
                     user.modify(lo)
                     utils.fail(
-                        "UDMValueError should have been raised in modify() (tried to store 65 chars in string64)."
+                        "UDMValueError should have been raised in modify() (tried to store 65 chars in "
+                        "string64)."
                     )
                 except UDMValueError as exc:
                     logger.info("*** OK: Caught expected UDMValueError exception: %s", exc)
@@ -116,9 +118,8 @@ def main():
                     try:
                         user.create(lo)
                         utils.fail(
-                            'NotSupportedError should have been raised in create() when storing "{}" from udm_properties.'.format(
-                                prop
-                            )
+                            'NotSupportedError should have been raised in create() when storing "{}" '
+                            "from udm_properties.".format(prop)
                         )
                     except NotSupportedError as exc:
                         logger.info("*** OK: Caught expected NotSupportedError exception: %s", exc)
@@ -141,9 +142,8 @@ def main():
                     try:
                         user.modify(lo)
                         utils.fail(
-                            'NotSupportedError should have been raised in modify() when storing "{}" from udm_properties.'.format(
-                                prop
-                            )
+                            'NotSupportedError should have been raised in modify() when storing "{}" '
+                            "from udm_properties.".format(prop)
                         )
                     except NotSupportedError as exc:
                         logger.info("*** OK: Caught expected NotSupportedError exception: %s", exc)

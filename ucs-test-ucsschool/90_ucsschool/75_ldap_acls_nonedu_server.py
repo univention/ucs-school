@@ -10,7 +10,6 @@
 import attr
 from ldap.filter import filter_format
 
-import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import Acl
@@ -32,13 +31,13 @@ class OUObj(object):
 
 def main():
     with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+        with ucr_test.UCSTestConfigRegistry():
             schools = []
             for i in xrange(2):
                 name_edudc = "e-myschool{}".format(i)
                 name_admindc = "a-myschool{}".format(i)
                 name, dn = schoolenv.create_ou(
-                    ou_name="myschool{}".format(i), name_edudc=name_edudc, name_admindc=name_admindc,
+                    ou_name="myschool{}".format(i), name_edudc=name_edudc, name_admindc=name_admindc
                 )
                 school = OUObj(name, dn, None, None)
                 school.edu_server = DCObj(
@@ -62,7 +61,7 @@ def main():
                 ou_name=schools[0].name, schools=[schools[0].name, schools[1].name], is_teacher=True
             )[1]
             stu_dn = schoolenv.create_user(
-                ou_name=schools[0].name, schools=[schools[0].name, schools[1].name],
+                ou_name=schools[0].name, schools=[schools[0].name, schools[1].name]
             )[1]
             lo = schoolenv.open_ldap_connection()
 
@@ -75,20 +74,22 @@ def main():
                         )
                     )[0][0]
                 except IndexError:
-                    print "\n\nERROR: Looks like the non-edu domaincontroller {} does not exist in LDAP\n\n".format(
-                        school.admin_server.dn
+                    print(
+                        "\n\nERROR: Looks like the non-edu domaincontroller {} does not exist in "
+                        "LDAP\n\n".format(school.admin_server.dn)
                     )
                     raise
                 if school.admin_server.dn != dn:
                     raise Exception(
-                        "Looks like the non-edu domaincontroller dn {} does not match expected DN {}\n\n".format(
-                            dn, school.admin_server.dn
-                        )
+                        "Looks like the non-edu domaincontroller dn {} does not match expected "
+                        "DN {}\n\n".format(dn, school.admin_server.dn)
                     )
 
-                # Bug 41818: administrative school server can only replicate staff users and teacher-staff users
+                # Bug 41818: administrative school server can only replicate staff users and
+                # teacher-staff users
                 acl = Acl(school.name, school.admin_server.dn, "ALLOWED")
-                # following attribute list is incomplete, but gives a rough idea if replication of this user is allowed
+                # following attribute list is incomplete, but gives a rough idea if replication of this
+                # user is allowed
                 attr_list = [
                     "uid",
                     "givenName",

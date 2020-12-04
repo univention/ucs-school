@@ -383,7 +383,7 @@ ucr unset ucsschool/singlemaster
 	  </para>
 	  <para>
 		  Durch die beiden Befehle wird das Meta-Paket <package>ucs-school-singlemaster</package> deinstalliert
-		  und im gleichen Zug das Paket <package>ucs-school-master</package> installiert. 
+		  und im gleichen Zug das Paket <package>ucs-school-master</package> installiert.
 		  Mit der Deinstallation des Pakets <package>ucs-school-singlemaster</package> werden die
 		  nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem DC Master
 		  der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche

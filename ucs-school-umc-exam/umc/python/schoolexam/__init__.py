@@ -42,6 +42,11 @@ import time
 import traceback
 from itertools import chain
 
+try:
+    from typing import List
+except ImportError:
+    pass
+
 import ldap
 import notifier
 from ldap.filter import filter_format
@@ -88,11 +93,6 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 from univention.management.console.modules.schoolexam import util
-
-try:
-    from typing import Any, Dict, List, Optional, Pattern
-except ImportError:
-    pass
 
 _ = Translation("ucs-school-umc-exam").translate
 
@@ -274,14 +274,14 @@ class Instance(SchoolBaseModule):
             datadir = os.path.dirname(project.user_projectdir(user).rstrip("/"))
             if os.path.exists(datadir):
                 try:
-                    subprocess.check_call(["chattr", modifier, datadir])
-                except subprocess.CalledProcessError as e:
+                    subprocess.check_call(["/usr/bin/chattr", modifier, datadir])  # nosec
+                except subprocess.CalledProcessError:
                     logger.error("Could not set the immutable bit on %r", datadir)
 
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True),),
+            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
             required=True,
         )
     )
@@ -319,11 +319,13 @@ class Instance(SchoolBaseModule):
                 filename.decode("UTF-8")
             except UnicodeDecodeError:
                 filename = file["filename"].encode("UTF-8")  # Bug #37716 was fixed
-        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8')
+        # after Bug #37716
         # Bug 46709/46710: start
         if "\\" in filename:  # filename seems to be a UNC / windows path
             logger.info(
-                "__workaround_filename_bug() Filename seems to contain Windows path name or UNC - fixing filename"
+                "__workaround_filename_bug() Filename seems to contain Windows path name or UNC - "
+                "fixing filename"
             )
             filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
         # Bug 46709/46710: end
@@ -379,7 +381,8 @@ class Instance(SchoolBaseModule):
         """
         Creates or updates an exam with the information given in the request object
         :param request: The request containing all information about the exam
-        :param update: If True it is expected that an exam with the same name already exists and will be updated
+        :param update: If True it is expected that an exam with the same name already exists and will
+            be updated
         :return: univention.management.console.modules.distribution.util.Project
         :raises: UMC_Error
         """
@@ -422,7 +425,8 @@ class Instance(SchoolBaseModule):
             if project:
                 raise UMC_Error(
                     _(
-                        'An exam with the name "%s" already exists. Please choose a different name for the exam.'
+                        'An exam with the name "%s" already exists. Please choose a different name '
+                        "for the exam."
                     )
                     % new_values["name"]
                 )
@@ -451,8 +455,9 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection()
     def _delete_exam(self, name, ldap_user_read=None):
         """
-        Deletes an exam project file including the uploaded data if the exam was not started yet and the caller is
-        authorized to do so.
+        Deletes an exam project file including the uploaded data if the exam was not started yet and
+        the caller is authorized to do so.
+
         :param name: Name of the exam to delete
         :return: True if exam was deleted, else False
         """
@@ -599,7 +604,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Preparing the computer room for exam mode..."))
             client.umc_command(
                 "schoolexam-master/set-computerroom-exammode",
-                dict(school=request.options["school"], roomdn=request.options["room"],),
+                dict(school=request.options["school"], roomdn=request.options["room"]),
             ).result  # FIXME: no error handling
             progress.add_steps(5)
 
@@ -663,7 +668,7 @@ class Instance(SchoolBaseModule):
             logger.info("start_exam() Sending DNs to add to group to master: %r", student_dns)
             client.umc_command(
                 "schoolexam-master/add-exam-users-to-groups",
-                dict(users=list(student_dns), school=request.options["school"],),
+                dict(users=list(student_dns), school=request.options["school"]),
             )
 
             progress.add_steps(percentPerUser)
@@ -687,7 +692,7 @@ class Instance(SchoolBaseModule):
                         continue  # not a users/user object
                     logger.info("user has been replicated: %r", idn)
                     # call hook scripts
-                    if 0 != subprocess.call(
+                    if 0 != subprocess.call(  # nosec
                         [
                             "/bin/run-parts",
                             CREATE_USER_POST_HOOK_DIR,
@@ -742,7 +747,7 @@ class Instance(SchoolBaseModule):
                 if ucr.is_true("nss/group/cachefile/check_member", False):
                     cmd.append("--check_member")
                 logger.info("Updating local nss group cache...")
-                if subprocess.call(cmd):
+                if subprocess.call(cmd):  # nosec
                     logger.error("Updating local nss group cache failed: %s", " ".join(cmd))
                 else:
                     logger.info("Update of local nss group cache finished successfully.")
@@ -827,7 +832,7 @@ class Instance(SchoolBaseModule):
         thread = notifier.threads.Simple("start_exam", _thread, notifier.Callback(_finished, request))
         thread.run()
 
-    @sanitize(exam=StringSanitizer(required=True),)
+    @sanitize(exam=StringSanitizer(required=True))
     @simple_response
     def collect_exam(self, exam):
         logger.info("exam=%r", exam)
@@ -839,7 +844,7 @@ class Instance(SchoolBaseModule):
         project.collect()
         return True
 
-    @sanitize(room=DNSanitizer(required=True),)
+    @sanitize(room=DNSanitizer(required=True))
     @LDAP_Connection()
     def validate_room(self, request, ldap_user_read=None, ldap_position=None):
         error = None
@@ -849,15 +854,14 @@ class Instance(SchoolBaseModule):
             # FIXME: raise UMC_Error()
             error = (
                 _(
-                    'Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.'
+                    'Room "%s" does not contain any computers. Empty rooms may not be used to start an '
+                    "exam."
                 )
                 % room.get_relative_name()
             )
         self.finished(request.id, error)
 
-    @sanitize(
-        room=StringSanitizer(required=True), exam=StringSanitizer(required=True),
-    )
+    @sanitize(room=StringSanitizer(required=True), exam=StringSanitizer(required=True))
     @LDAP_Connection()
     def finish_exam(self, request, ldap_user_read=None):
         logger.info("request.options=%r", request.options)
@@ -904,7 +908,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Configuring the computer room..."))
             client.umc_command(
                 "schoolexam-master/unset-computerroom-exammode",
-                dict(roomdn=request.options["room"], school=school,),
+                dict(roomdn=request.options["room"], school=school),
             ).result
             progress.add_steps(5)
 
@@ -957,7 +961,8 @@ class Instance(SchoolBaseModule):
                 # many large groups (e.g. in several schools with many students). Each group change is
                 # very time consuming for large groups.
                 # Therefore, the group changes are first aggregated for several exam users and executed
-                # as one LDAP modification per group. Only after that the Exam users are actually deleted.
+                # as one LDAP modification per group. Only after that the Exam users are actually
+                # deleted.
                 users_to_reduce = []
                 for recipient_dn, recipient_attrs in recipients:
                     exam_roles = [
@@ -976,7 +981,7 @@ class Instance(SchoolBaseModule):
                     umc_cmd = "schoolexam-master/remove-users-from-non-primary-groups"
                     try:
                         client.umc_command(
-                            umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"],}
+                            umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"]}
                         ).result
                     except Forbidden as exc:
                         # DC Master has old package. No problem, as users will still be
@@ -1022,7 +1027,7 @@ class Instance(SchoolBaseModule):
                 # new UID from ldap.
                 logger.info("Clear user name cache...")
                 cmd = ["/usr/sbin/nscd", "-i", "passwd"]
-                if subprocess.call(cmd):
+                if subprocess.call(cmd):  # nosec
                     logger.error("Clearing user name cache failed: %s", " ".join(cmd))
                 else:
                     logger.info("Clearing user name cache finished successfully.")

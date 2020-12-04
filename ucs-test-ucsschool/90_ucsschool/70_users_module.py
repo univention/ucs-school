@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
+from __future__ import print_function
+
 from copy import deepcopy
 
 from ldap.filter import filter_format
@@ -92,8 +94,8 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
             pass
         user.remove(remove_from_school)
         # importusers expects that the class groups are moved as well as the user during a school change
-        # schoolwizard does not do that -> reset the school classes that got modified during the school move
-        # see bug #47208
+        # schoolwizard does not do that -> reset the school classes that got modified during the school
+        # move see bug #47208
         user.school_classes = school_classes
         utils.wait_for_replication()
         user.verify()
@@ -137,7 +139,7 @@ def main():
             users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
 
             for user in users:
-                print(user.username, user.role, user.school, user.schools)
+                print((user.username, user.role, user.school, user.schools))
                 wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
                 user.get()
                 user.verify()

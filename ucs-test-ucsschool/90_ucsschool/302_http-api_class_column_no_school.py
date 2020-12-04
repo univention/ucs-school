@@ -26,13 +26,6 @@ from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvE
 from ucsschool.lib.models import SchoolClass
 from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
-try:
-    from typing import List
-
-    from ucsschool.http_api.client import ResourceRepresentation
-except ImportError:
-    pass
-
 
 class Test(HttpApiImportTester):
     ou_C = None
@@ -92,7 +85,8 @@ class Test(HttpApiImportTester):
             self.log.debug("import_job=%r", import_job)
             if import_job.status == "Finished":
                 self.log.info(
-                    '*** OK: import succeeded without "$OU-" in the class column, class names should start '
+                    '*** OK: import succeeded without "$OU-" in the class column, class names should '
+                    "start "
                     'with "$OU-"...'
                 )
             else:
@@ -115,7 +109,8 @@ class Test(HttpApiImportTester):
                     for sc in school_classes_in_ldap:
                         if sc.school != self.ou_A.name or sc.name not in school_class_names_in_csv:
                             self.fail(
-                                "Unexpected school class name: school={!r} and name={!r}, expected {!r} and one of {!r}.".format(
+                                "Unexpected school class name: school={!r} and name={!r}, expected {!r} "
+                                "and one of {!r}.".format(
                                     sc.school, sc.name, self.ou_A.name, school_class_names_in_csv
                                 ),
                                 import_job=import_job,
@@ -150,8 +145,8 @@ class Test(HttpApiImportTester):
             self.log.debug("import_job=%r", import_job)
             if import_job.status == "Finished":
                 self.log.info(
-                    '*** OK: import succeded with allowed "$OU-" in the class column, class names should start '
-                    'with "$OU-$OU-"...'
+                    '*** OK: import succeded with allowed "$OU-" in the class column, class names should'
+                    ' start with "$OU-$OU-"...'
                 )
             else:
                 self.fail(
@@ -174,7 +169,8 @@ class Test(HttpApiImportTester):
                     for sc in school_classes_in_ldap:
                         if sc.school != self.ou_A.name or sc.name not in school_class_names_in_csv:
                             self.fail(
-                                "Unexpected school class name: school={!r} and name={!r}, expected {!r} and one of {!r}.".format(
+                                "Unexpected school class name: school={!r} and name={!r}, expected {!r} "
+                                "and one of {!r}.".format(
                                     sc.school, sc.name, self.ou_A.name, school_class_names_in_csv
                                 ),
                                 import_job=import_job,

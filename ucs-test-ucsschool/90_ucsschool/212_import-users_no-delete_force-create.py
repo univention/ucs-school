@@ -9,7 +9,6 @@
 ## bugs: [41350, 41775]
 
 import copy
-import random
 
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person

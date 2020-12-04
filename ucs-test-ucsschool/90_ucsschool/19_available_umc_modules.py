@@ -146,7 +146,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
     if not success:
         utils.fail(
             'Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r'
-            % ((userType, serverRole, singleMaster,), expected - found, found - expected)
+            % ((userType, serverRole, singleMaster), expected - found, found - expected)
         )
 
 
@@ -156,7 +156,7 @@ def main():
             with ucr_test.UCSTestConfigRegistry() as ucr:
                 host = ucr.get("hostname")
                 serverRole = ucr.get("server/role")
-                print("Role = ".format(serverRole))
+                print("Role = {!r}".format(serverRole))
                 singleMaster = ucr.is_true("ucsschool/singlemaster", False)
                 basedn = ucr.get("ldap/base")
 
@@ -187,10 +187,10 @@ def main():
                 utils.wait_for_replication_and_postrun()
                 for user, userType in users:
                     client = Client(host, user, "univention")
-                    print("usertype=".format(userType))
+                    print("usertype={!r}".format(userType))
                     modules = client.umc_get("modules/list").data["modules"]
                     modules = [(x["id"], x.get("flavor")) for x in modules]
-                    print("modules = ".format(modules))
+                    print("modules = {!r}".format(modules))
                     checkModules(modules, userType, serverRole, singleMaster)
 
 

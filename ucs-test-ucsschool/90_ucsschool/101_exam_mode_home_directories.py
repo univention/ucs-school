@@ -7,6 +7,8 @@
 ## bugs: [37955]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+from __future__ import print_function
+
 import os
 from datetime import datetime, timedelta
 
@@ -27,7 +29,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
             if not homedir:
                 utils.fail("No homeDirectory attribute found for %r" % (dn,))
             if not os.path.exists(homedir):
-                print "# Creating %r for %r" % (homedir, dn)
+                print("# Creating %r for %r" % (homedir, dn))
                 os.makedirs(homedir)
 
 
@@ -35,7 +37,7 @@ def check_homedirs(member_dn_list, open_ldap_co, should_exist=True):
     # create home directories
     for dn in member_dn_list:
         for homedir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            print "# Checking %r for %r" % (homedir, dn)
+            print("# Checking %r for %r" % (homedir, dn))
             if not homedir:
                 utils.fail("No homeDirectory attribute found for %r" % (dn,))
             if os.path.exists(homedir) != should_exist:
@@ -52,7 +54,7 @@ def main():
                 open_ldap_co = schoolenv.open_ldap_connection()
                 ucr.load()
 
-                print "# create test users and classes"
+                print("# create test users and classes")
                 if ucr.is_true("ucsschool/singlemaster"):
                     edudc = None
                 else:
@@ -77,11 +79,11 @@ def main():
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
-                print "# import random computers"
+                print("# import random computers")
                 computers = Computers(open_ldap_co, school, 2, 0, 0)
                 pc1, pc2 = computers.create()
 
-                print "# set 2 computer rooms to contain the created computers"
+                print("# set 2 computer rooms to contain the created computers")
                 room1 = Room(school, host_members=pc1.dn)
                 room2 = Room(school, host_members=pc2.dn)
                 for room in [room1, room2]:
@@ -92,11 +94,11 @@ def main():
                         host_members=room.host_members,
                     )
 
-                print "# create home directories and check existance"
+                print("# create home directories and check existance")
                 create_homedirs([teadn, studn, student2.dn], open_ldap_co)
                 check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
 
-                print "# Set an exam and start it"
+                print("# Set an exam and start it")
                 current_time = datetime.now()
                 chosen_time = current_time + timedelta(hours=2)
                 exam = Exam(
@@ -113,18 +115,18 @@ def main():
                     "uid=exam-%s,cn=examusers,%s" % (student2.name, oudn),
                 ]
 
-                print "# recheck existance of home directories of original users"
+                print("# recheck existance of home directories of original users")
                 check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
-                print "# create home directories and check existance of exam users"
+                print("# create home directories and check existance of exam users")
                 create_homedirs(exam_member_dns, open_ldap_co)
                 check_homedirs(exam_member_dns, open_ldap_co, should_exist=True)
 
-                print "# stopping exam"
+                print("# stopping exam")
                 exam.finish()
 
-                print "# recheck existance of home directories of original users"
+                print("# recheck existance of home directories of original users")
                 check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
-                print "# check removal of home directories of exam users"
+                print("# check removal of home directories of exam users")
                 check_homedirs(exam_member_dns, open_ldap_co, should_exist=False)
 
 

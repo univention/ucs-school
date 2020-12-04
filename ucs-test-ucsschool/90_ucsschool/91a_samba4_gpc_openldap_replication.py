@@ -6,6 +6,8 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 
+from __future__ import print_function
+
 from re import search
 from sys import exit
 from time import sleep
@@ -49,14 +51,14 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         """
         display_name = "ucs_test_school_gpo_" + random_username(8)
 
-        print (
+        print(
             ("\nCreating a Group Policy Object (GPO) with a display " "name '%s' using 'samba-tool'")
             % display_name
         )
 
         stdout, stderr = self.samba_tool("gpo", "create", display_name)
         if stderr:
-            print (
+            print(
                 (
                     "\nAn error message while creating a GPO using "
                     "'samba-tool' on the remote host '%s'. STDERR:\n%s"
@@ -72,7 +74,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             )
 
         stdout = stdout.rstrip()
-        print "\nSamba-tool produced the following output:", stdout
+        print("\nSamba-tool produced the following output:", stdout)
 
         try:
             # extracting the GPO reference from the stdout:
@@ -104,13 +106,13 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             try:
                 result = self.ldap.search(filter=gpo_search, attr=["cn"], required=True)
             except univention.admin.uexceptions.noObject:
-                print ("GPO not yet replicated, sleeping..")
+                print("GPO not yet replicated, sleeping..")
                 sleep(5)
             else:
                 break
         else:
             utils.fail("GPO %s not replicated to DC Master LDAP" % gpo_reference)
-        print ("Found the created GPO: %s" % result)
+        print("Found the created GPO: %s" % result)
 
     def find_school_ou(self):
         schools = ucsschool.lib.models.School.get_all(self.ldap)
@@ -123,13 +125,11 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         Creates a GPO link to a given 'container_dn' for 'gpo_reference'
          using 'samba-tool'.
         """
-        print (
-            "\nLinking '%s' container and '%s' GPO using 'samba-tool'" % (container_dn, gpo_reference)
-        )
+        print("\nLinking '%s' container and '%s' GPO using 'samba-tool'" % (container_dn, gpo_reference))
 
         stdout, stderr = self.samba_tool("gpo", "setlink", container_dn, gpo_reference)
         if stderr:
-            print (
+            print(
                 ("\nAn error message while creating a GPO link using " "'samba-tool'. STDERR:\n%s")
                 % stderr
             )
@@ -148,7 +148,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         if self.gpo_reference not in stdout:
             utils.fail("The linked GPO was not referenced in the 'samba-tool' output")
 
-        print "\nSamba-tool produced the following output:\n", stdout
+        print("\nSamba-tool produced the following output:\n", stdout)
 
     def check_gpo_link_replicated(self, container_dn, gpo_reference):
         """
@@ -159,12 +159,12 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             try:
                 gp_link = self.ldap.getAttr(container_dn, "msGPOLink", required=True)
             except ldap.NO_SUCH_OBJECT:
-                print ("GPO Link not yet replicated, sleeping..")
+                print("GPO Link not yet replicated, sleeping..")
                 sleep(5)
             else:
                 gpo_dns = self.parse_gp_link_into_dns(gp_link)
                 if not any(gpo_reference in dn for dn in gpo_dns):
-                    print ("GPO Link not yet replicated, sleeping..")
+                    print("GPO Link not yet replicated, sleeping..")
                     sleep(10)
                 else:
                     break
@@ -172,7 +172,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             utils.fail(
                 "GPO link %s -> %s not replicated to DC Master LDAP." % (container_dn, gpo_reference)
             )
-        print ("Found msGPOLink attribute: %s" % gp_link)
+        print("Found msGPOLink attribute: %s" % gp_link)
 
     def parse_gp_link_into_dns(self, gp_link):
         """

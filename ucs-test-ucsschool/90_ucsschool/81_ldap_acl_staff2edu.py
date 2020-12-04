@@ -210,8 +210,8 @@ def main():
     # - UCR variables are cleaned up
     # - slapd.conf is committed/recreated
     # - slapd is restarted (with original config)
-    with utils.AutoCallCommand(exit_cmd=["/bin/systemctl", "restart", "slapd.service"]) as acc1:
-        with utils.AutoCallCommand(exit_cmd=["/usr/sbin/ucr", "commit", "/etc/ldap/slapd.conf"]) as acc2:
+    with utils.AutoCallCommand(exit_cmd=["/bin/systemctl", "restart", "slapd.service"]):
+        with utils.AutoCallCommand(exit_cmd=["/usr/sbin/ucr", "commit", "/etc/ldap/slapd.conf"]):
             with ucr_test.UCSTestConfigRegistry() as ucr:
                 with utu.UCSTestSchool() as schoolenv:
                     testcases = TestCases(ucr, schoolenv)

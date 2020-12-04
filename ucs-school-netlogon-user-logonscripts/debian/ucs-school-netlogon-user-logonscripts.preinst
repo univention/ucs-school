@@ -40,7 +40,7 @@ if [ "$1" = "upgrade" -a -n "$2" ] && dpkg --compare-versions "$2" lt 7.0.5; the
 	fi
 	if [ -d /var/lib/samba/userlogon/user ]; then
 		cp -rf /var/lib/samba/userlogon/user /var/lib/samba/netlogon/
-	fi	
+	fi
 fi
 
 exit 0

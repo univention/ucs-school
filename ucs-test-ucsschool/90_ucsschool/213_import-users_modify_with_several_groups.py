@@ -104,7 +104,8 @@ class Test(CLI_Import_v2_Tester):
             person.update_from_ldap(self.lo, ["dn", "username"])
             person.verify()
         self.log.warn(
-            "[person.dn for person in person_list if person.role in (student, teacher, teacher_and_staff)]=%r",
+            "[person.dn for person in person_list if person.role in (student, teacher, "
+            "teacher_and_staff)]=%r",
             [
                 person.dn
                 for person in person_list

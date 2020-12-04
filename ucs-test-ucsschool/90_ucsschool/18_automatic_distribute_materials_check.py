@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
+from __future__ import print_function
+
 import time
 from subprocess import call
 
@@ -68,11 +70,11 @@ def main():
                 project.add()
                 project.check_add()
 
-                print "waiting for 6 mins for the project to be automatically distributed"
+                print("waiting for 6 mins for the project to be automatically distributed")
                 time.sleep(MIN_DIST_TIME + 1)
                 project.check_distribute([stu])
 
-                print "waiting for 11 mins for the project to be automatically collected"
+                print("waiting for 11 mins for the project to be automatically collected")
                 time.sleep(MIN_COLL_TIME - MIN_DIST_TIME + 1)
                 project.check_collect([stu])
 

@@ -85,7 +85,7 @@ class Attribute(object):
         internal=False,
         map_to_udm=True,
     ):
-        # type: (str, Optional[List[str]], Optional[str], Optional[bool], Optional[bool], Optional[bool], Optional[bool]) -> None
+        # type: (str, Optional[List[str]], Optional[str], Optional[bool], Optional[bool], Optional[bool], Optional[bool]) -> None  # noqa: E501
         self.label = label
         self.aka = aka or []  # also_known_as
         self.required = required
@@ -341,7 +341,8 @@ class Schools(Attribute):
     udm_name = "school"
     value_type = list
     value_default = list
-    syntax = string  # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined DC Slave)
+    # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined DC Slave):
+    syntax = string
     extended = True
 
 

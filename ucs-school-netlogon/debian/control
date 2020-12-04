@@ -9,7 +9,7 @@ Package: ucs-school-netlogon
 Architecture: all
 Depends: ${misc:Depends}, shell-univention-lib
 Description: UCS@school: netlogon template
- This package provides a script to generate a 
+ This package provides a script to generate a
  windows netlogon script.
  .
  It is part of Univention Corporate Server (UCS), an

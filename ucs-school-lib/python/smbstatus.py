@@ -38,10 +38,13 @@ import sys
 import univention.debug as ud
 
 REGEX_LOCKED_FILES = re.compile(
-    r"(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$"
+    r"(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+"
+    r"(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$"
 )
 REGEX_USERS = re.compile(
-    r"(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s*"
+    r"(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+"
+    r"\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:"
+    r"(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s*"
 )
 REGEX_SERVICES = re.compile(
     r"(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$"
@@ -126,7 +129,7 @@ class SMB_Status(list):
         while self:
             self.pop()
         if testdata is None:
-            smbstatus = subprocess.Popen(
+            smbstatus = subprocess.Popen(  # nosec
                 ["/usr/bin/smbstatus"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             data = ["%s\n" % x for x in smbstatus.communicate()[0].splitlines()]

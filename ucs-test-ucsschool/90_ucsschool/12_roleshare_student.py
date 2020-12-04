@@ -8,6 +8,8 @@
 ##    - univention-samba | univention-samba4
 ##    - ucs-school-roleshares
 
+from __future__ import print_function
+
 import subprocess
 import sys
 
@@ -57,21 +59,21 @@ def run_smbclient(share, authname, password, smbcmd):
 
 def run_cmd(cmd, shell=False, print_output=True):
     try:
-        print "Running %r" % cmd
+        print("Running %r" % cmd)
         p1 = subprocess.Popen(
             cmd, close_fds=True, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
         (out, err) = p1.communicate()
     except OSError:
-        print "Failed to run: %r" % cmd
+        print("Failed to run: %r" % cmd)
         raise
     if print_output:
-        print "---[stdout+stderr]---"
-        print out
-        print "---[cut]---"
-    print "Exitcode: %s" % (p1.returncode,)
+        print("---[stdout+stderr]---")
+        print(out)
+        print("---[cut]---")
+    print("Exitcode: %s" % (p1.returncode,))
     if p1.returncode == 0 and any([line.startswith("NT_STATUS_") for line in out.splitlines()]):
-        print 'WARNING: "\\nNT_STATUS_" found in output --> raising exitcode to 127'
+        print('WARNING: "\\nNT_STATUS_" found in output --> raising exitcode to 127')
         return 127
     return p1.returncode
 
@@ -88,7 +90,7 @@ def access_user_dir(
     read_access=True,
 ):
     roleshare = "//%s/%s" % (serverfqdn, roleshares.roleshare_name(role_pupil, school_id, ucr))
-    print "INFO: Testing access to student roleshare for share %s by user %s" % (roleshare, authname)
+    print("INFO: Testing access to student roleshare for share %s by user %s" % (roleshare, authname))
 
     smbcmd = "dir %s" % (username,)
     read_success = run_smbclient(roleshare, authname, password, smbcmd) == 0
@@ -119,9 +121,12 @@ def access_user_dir(
 
 def create_testfile_on_homeshare(fqdn, username, password, filename):
     share_unc = "//%s/%s" % (fqdn, username)
-    print "INFO: Creating testfile %s on home share %s" % (
-        filename,
-        share_unc,
+    print(
+        "INFO: Creating testfile %s on home share %s"
+        % (
+            filename,
+            share_unc,
+        )
     )
 
     smbcmd = "dir"
@@ -143,11 +148,11 @@ def access_roleshare_student_on_all_school_fileservers(
     testwrite=True,
     write_access=False,
 ):
-    print "INFO: Testing access to student roleshare for school %s" % (school_id,)
-    print "INFO: teacher name = %s" % (name_teacher,)
-    print "INFO: teacher-staff name = %s" % (name_teacherstaff,)
-    print "INFO: staff name = %s" % (name_staff,)
-    print "INFO: student name = %s" % (name_student,)
+    print("INFO: Testing access to student roleshare for school %s" % (school_id,))
+    print("INFO: teacher name = %s" % (name_teacher,))
+    print("INFO: teacher-staff name = %s" % (name_teacherstaff,))
+    print("INFO: staff name = %s" % (name_staff,))
+    print("INFO: student name = %s" % (name_student,))
     for fqdn in roleshares.fileservers_for_school(school_id):
         # trigger home creation for stu1 and create a test file
         userfilename = "testfile1"
@@ -243,11 +248,11 @@ def prepare_fileservers(school_id):
     for fqdn in roleshares.fileservers_for_school(school_id):
         if smb_server_online(fqdn):
             if not smb_server_offers_roleshare_student(fqdn, school_id):
-                print "INFO: Manually creating roleshares for %s" % (school_id,)
+                print("INFO: Manually creating roleshares for %s" % (school_id,))
                 create_roleshare_student(school_id)
             tested_servers.append(fqdn)
         else:
-            print "WARNING: Server %s is not online" % (fqdn,)
+            print("WARNING: Server %s is not online" % (fqdn,))
     return tested_servers
 
 
@@ -271,7 +276,7 @@ def main(ldap_machine_read=None):
             if available_servers:
                 all_available_servers.extend(available_servers)
             else:
-                print "WARNING: No file servers online for school %s" % (school_id,)
+                print("WARNING: No file servers online for school %s" % (school_id,))
                 continue
 
             # create test users
@@ -284,7 +289,7 @@ def main(ldap_machine_read=None):
             stu1, stu1dn = schoolenv.create_user(school_id, classes=classes)
 
             utils.wait_for_replication_and_postrun()
-            print "Waiting for DRS replication..."
+            print("Waiting for DRS replication...")
             wait_for_drs_replication(
                 "(sAMAccountName=%s)" % (escape_filter_chars(stu1),), attrs="objectSid"
             )

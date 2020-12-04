@@ -77,8 +77,8 @@ class UCSSchoolHelperOptions(object):
                     #   we have to trust ourselved here
                     if attr.udm_name not in module.property_descriptions:
                         raise RuntimeError(
-                            '%s\'s attribute "%s" has no counterpart in the %s\'s property_descriptions ("%s")!'
-                            % (klass.__name__, key, self.udm_module, attr.udm_name)
+                            "%s's attribute \"%s\" has no counterpart in the %s's property_descriptions "
+                            '("%s")!' % (klass.__name__, key, self.udm_module, attr.udm_name)
                         )
             udm_name = klass._attributes["name"].udm_name
             ldap_name = module.mapping.mapName(udm_name)

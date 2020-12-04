@@ -52,9 +52,7 @@ class Test(CLI_Import_v2_Tester):
         ]:
             self.log.info("*** Test allowed scheme:username:{} : {}".format(scheme_role, user_scheme))
             config = copy.deepcopy(default_config)
-            config.update_entry(
-                "scheme:username:{}".format(scheme_role), user_scheme,
-            )
+            config.update_entry("scheme:username:{}".format(scheme_role), user_scheme)
             self.verify_correct_config(config, source_uid)
 
         for scheme_value in [
@@ -64,9 +62,7 @@ class Test(CLI_Import_v2_Tester):
         ]:
             self.log.info("*** Test disallowed scheme:username:default : {}".format(scheme_value))
             config = copy.deepcopy(default_config)
-            config.update_entry(
-                "scheme:username:default", scheme_value,
-            )
+            config.update_entry("scheme:username:default", scheme_value)
             try:
                 self.verify_correct_config(config, source_uid)
                 self.fail(
@@ -106,9 +102,7 @@ class Test(CLI_Import_v2_Tester):
         ]:
             self.log.info("*** Test allowed scheme:{} : {}".format(udm_value, user_scheme))
             config = copy.deepcopy(default_config)
-            config.update_entry(
-                "scheme:{}".format(udm_value), user_scheme,
-            )
+            config.update_entry("scheme:{}".format(udm_value), user_scheme)
             self.verify_correct_config(config, source_uid)
             self.log.info(
                 "*** Test disallowed scheme:{} : {}".format(udm_value, {"default": user_scheme})

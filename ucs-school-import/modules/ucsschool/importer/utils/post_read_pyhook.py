@@ -73,7 +73,8 @@ class PostReadPyHook(ImportPyHook):
         the read import data.
 
         :param int entry_count: index of the data entry (e.g. line of the CSV file)
-        :param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
+        :param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The
+            input_data may be changed.
         :param input_dict: input data mapped to column names. The input_dict may be changed.
         :type input_dict: dict[str, str]
         :return: None
@@ -90,7 +91,8 @@ class PostReadPyHook(ImportPyHook):
         errors contains a list of catched errors/exceptions.
 
         :param list[ImportUser] imported_users: list of ImportUser objects created from the input records
-        :param list[Exception] errors: list of exceptions that are caught during processing the input records
+        :param list[Exception] errors: list of exceptions that are caught during processing the input
+            records
         :return: None
         """
         return None

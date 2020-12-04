@@ -11,9 +11,9 @@
 import doctest
 
 import ucsschool.importer.utils.username_handler
-from ucsschool.importer.utils.shell import (  # prevent "InitialisationError: Configuration not yet loaded."
-    config,
-)
+
+# prevent "InitialisationError: Configuration not yet loaded.":
+from ucsschool.importer.utils.shell import config
 from ucsschool.importer.utils.username_handler import MemoryStorageBackend, UsernameHandler
 
 ucsschool.importer.utils.username_handler.noObject = KeyError

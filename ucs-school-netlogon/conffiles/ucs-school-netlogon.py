@@ -30,69 +30,73 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import os
 import stat
 import sys
 
-import univention.uldap
-
-logging = ">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
+logging = r">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
 
 
 def printHeader(fn):
 
-    print >> fn, 'Set objShell = WScript.CreateObject("WScript.Shell")'
-    print >> fn, 'Set objFSO = CreateObject("Scripting.FileSystemObject")'
-    print >> fn
-    print >> fn, 'temp = objShell.ExpandEnvironmentStrings("%TEMP%")'
-    print >> fn, 'username = objShell.ExpandEnvironmentStrings("%USERNAME%")'
-    print >> fn, 'logfile = objFSO.BuildPath(temp, username & "-ucs-school-netlogon.log")'
-    print >> fn, "baseName = objFSO.GetParentFolderName(Wscript.ScriptFullName)"
-    print >> fn
-    print >> fn, "set fh = objFSO.CreateTextFile(logfile, True)"
-    print >> fn, "fh.Close"
-    print >> fn
-    print >> fn, "sub printToLog(logfile, message)"
-    print >> fn, "    set fh = objFSO.OpenTextFile(logfile, 8, True)"
-    print >> fn, '    fh.WriteLine("")'
-    print >> fn, "    fh.WriteLine(message)"
-    print >> fn, "    fh.Close"
-    print >> fn, "end sub"
-    print >> fn
+    print('Set objShell = WScript.CreateObject("WScript.Shell")', file=fn)
+    print('Set objFSO = CreateObject("Scripting.FileSystemObject")', file=fn)
+    print(file=fn)
+    print('temp = objShell.ExpandEnvironmentStrings("%TEMP%")', file=fn)
+    print('username = objShell.ExpandEnvironmentStrings("%USERNAME%")', file=fn)
+    print('logfile = objFSO.BuildPath(temp, username & "-ucs-school-netlogon.log")', file=fn)
+    print("baseName = objFSO.GetParentFolderName(Wscript.ScriptFullName)", file=fn)
+    print(file=fn)
+    print("set fh = objFSO.CreateTextFile(logfile, True)", file=fn)
+    print("fh.Close", file=fn)
+    print(file=fn)
+    print("sub printToLog(logfile, message)", file=fn)
+    print("    set fh = objFSO.OpenTextFile(logfile, 8, True)", file=fn)
+    print('    fh.WriteLine("")', file=fn)
+    print("    fh.WriteLine(message)", file=fn)
+    print("    fh.Close", file=fn)
+    print("end sub", file=fn)
+    print(file=fn)
 
 
 def runCmd(script, fn, windowStyle, checkReturn):
 
-    print >> fn, 'printToLog logfile, "running %s"' % script
-    print >> fn, 'return = objShell.Run("%s %s", %s, true)' % (script, logging, windowStyle)
+    print('printToLog logfile, "running %s"' % script, file=fn)
+    print('return = objShell.Run("%s %s", %s, true)' % (script, logging, windowStyle), file=fn)
 
     if checkReturn:
-        print >> fn, "if return <> 0  then"
-        print >> fn, '    MsgBox "%s failed with error code: " & return' % script
-        print >> fn, "end if"
+        print("if return <> 0  then", file=fn)
+        print('    MsgBox "%s failed with error code: " & return' % script, file=fn)
+        print("end if", file=fn)
 
-    print >> fn
-    print >> fn
+    print(file=fn)
+    print(file=fn)
 
 
 def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
-    print >> fn, 'printToLog logfile, "running %s"' % script
-    print >> fn, 'script = objFSO.BuildPath(baseName, "%s")' % script
-    print >> fn, 'return = objShell.run("%s %s " & script & " %s", %s, true)' % (
-        vbsInt,
-        vbsOpts,
-        logging,
-        windowStyle,
+    print('printToLog logfile, "running %s"' % script, file=fn)
+    print('script = objFSO.BuildPath(baseName, "%s")' % script, file=fn)
+    print(
+        'return = objShell.run("%s %s " & script & " %s", %s, true)'
+        % (
+            vbsInt,
+            vbsOpts,
+            logging,
+            windowStyle,
+        ),
+        file=fn,
     )
 
     if checkReturn:
-        print >> fn, "if return <> 0  then"
-        print >> fn, '    MsgBox "%s failed with error code: " & return' % script
-        print >> fn, "end if"
+        print("if return <> 0  then", file=fn)
+        print('    MsgBox "%s failed with error code: " & return' % script, file=fn)
+        print("end if", file=fn)
 
-    print >> fn
-    print >> fn
+    print(file=fn)
+    print(file=fn)
 
 
 def handler(configRegistry, changes):
@@ -114,7 +118,7 @@ def handler(configRegistry, changes):
             if os.path.isfile(oldScript):
                 try:
                     os.remove(oldScript)
-                except:
+                except EnvironmentError:
                     pass
 
     # netlogon script name
@@ -128,7 +132,7 @@ def handler(configRegistry, changes):
         if os.path.isfile(netlogon):
             try:
                 os.remove(netlogon)
-            except:
+            except EnvironmentError:
                 pass
 
     # get ucr vars and save script in scripts

@@ -55,7 +55,10 @@ def main():
             )
             for username in usernames
         ]
-        line = "{mode}	{username}	{lastname}	{firstname}	{ou}	{ou}-{scool_class}		{username}m@{maildomain}	0	1	0"
+        line = (
+            "{mode}	{username}	{lastname}	{firstname}	{ou}	{ou}-{scool_class}		"
+            "{username}m@{maildomain}	0	1	0"
+        )
         print("*** Creating users {!r}...".format(usernames))
 
         with tempfile.NamedTemporaryFile() as csv_file:

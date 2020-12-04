@@ -45,11 +45,11 @@ Send an internal announcement mail with the following text (**Adapt version and 
 <pre>
 To: app-announcement@univention.de
 Subject: App Center: UCS@school aktualisiert
- 
+
 Hallo zusammen,
- 
+
 für UCS@school 4.4 v9 wurden soeben Errata freigegeben.
- 
+
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
 
@@ -58,7 +58,7 @@ Auszüge aus dem Changelog:
 - ...
 
 Viele Grüße,
- 
+
  $NAME
 </pre>
 

@@ -139,7 +139,7 @@ def check_create_demoportal_call_lists(
 
 @patch("subprocess.check_call")
 def test_create_school_doesnt_create_existing_school(
-    subprocess_check_call_mock, random_school, create_demoportal_module,
+    subprocess_check_call_mock, random_school, create_demoportal_module
 ):
     with patch.object(
         create_demoportal_module, "SCHOOL", (random_school.name, random_school.display_name)
@@ -171,7 +171,8 @@ def test_create_school_doesnt_create_existing_school(
         school_class_mock,
         from_binddn_mock,
     )
-    subprocess_check_call_mock.assert_not_called()  # when school exists, "create_ou" script should not be executed
+    # when school exists, "create_ou" script should not be executed
+    subprocess_check_call_mock.assert_not_called()
 
 
 @patch("subprocess.check_call")

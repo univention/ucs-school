@@ -8,6 +8,8 @@
 ## versions:
 ##  4.2-0: skip
 
+from __future__ import print_function
+
 import os
 import subprocess
 import tempfile
@@ -47,7 +49,7 @@ def main():
             fd.write("\n".join([prefix, CONF_SQUIDGUARD % {"tempdir": tempdir}]))
 
     def print_sg_log():
-        print open(fn_log, "r").read() + "\n"
+        print(open(fn_log, "r").read() + "\n")
 
     def exists_in_sg_log(searchstring):
         # check if given string exists in logfile
@@ -91,7 +93,7 @@ def main():
 
     try:
         tempdir = tempfile.mkdtemp(prefix="tmp.ucs-test.squidguard.")
-        print "TEMPDIR=%r" % (tempdir,)
+        print("TEMPDIR=%r" % (tempdir,))
         fn_cfg = os.path.join(tempdir, "squidguard.conf")
         fn_log = os.path.join(tempdir, "squidGuard.log")
         fn_userlist = os.path.join(tempdir, "testuser")
@@ -130,12 +132,15 @@ def main():
             utils.fail('"dbtemp" should not be mentioned in run 1')
         cnt_new_vartmp = count_bdb_files("/var/tmp")
         cnt_new_tempdir = count_bdb_files(tempdir)
-        print "Counts: /var/tmp: %d ==> %d    %s: %d ==> %d" % (
-            cnt_old_vartmp,
-            cnt_new_vartmp,
-            tempdir,
-            cnt_old_tempdir,
-            cnt_new_tempdir,
+        print(
+            "Counts: /var/tmp: %d ==> %d    %s: %d ==> %d"
+            % (
+                cnt_old_vartmp,
+                cnt_new_vartmp,
+                tempdir,
+                cnt_old_tempdir,
+                cnt_new_tempdir,
+            )
         )
         if not (cnt_old_vartmp < cnt_new_vartmp and cnt_old_tempdir == cnt_new_tempdir):
             utils.fail("Unexpected number of temporary backing files")
@@ -159,12 +164,15 @@ def main():
             utils.fail('"dbtemp" should be mentioned in run 2')
         cnt_new_vartmp = count_bdb_files("/var/tmp")
         cnt_new_tempdir = count_bdb_files(tempdir)
-        print "Counts: /var/tmp: %d ==> %d    %s: %d ==> %d" % (
-            cnt_old_vartmp,
-            cnt_new_vartmp,
-            tempdir,
-            cnt_old_tempdir,
-            cnt_new_tempdir,
+        print(
+            "Counts: /var/tmp: %d ==> %d    %s: %d ==> %d"
+            % (
+                cnt_old_vartmp,
+                cnt_new_vartmp,
+                tempdir,
+                cnt_old_tempdir,
+                cnt_new_tempdir,
+            )
         )
         if not (cnt_old_vartmp == cnt_new_vartmp and cnt_old_tempdir < cnt_new_tempdir):
             utils.fail("Unexpected number of temporary backing files")
@@ -181,7 +189,7 @@ def main():
         )
         for i in xrange(100000):
             if not i % 5000:
-                print "%d/100000" % i
+                print("%d/100000" % i)
             username = random_string(length=8)
             if i % 3 == 1:
                 username = "anton1"
@@ -192,7 +200,7 @@ def main():
                 % (random_string(), random_string(), username)
             )
             p.stdout.readline()
-        print
+        print()
         # p.stdin.close()
         p.communicate()
         print_sg_log()

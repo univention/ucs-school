@@ -80,7 +80,8 @@ class Instance(SchoolBaseModule):
                 return
 
         raise UMC_Error(
-            "SID %s is not member of one of the following groups: %s. The allowed groups can be modified by setting the UCR variable ucsschool/windows/join/groups."
+            "SID %s is not member of one of the following groups: %s. The allowed groups can be "
+            "modified by setting the UCR variable ucsschool/windows/join/groups."
             % (usersid, allowed_groups)
         )
 

@@ -450,7 +450,8 @@ class Project(_Dict):
 
         if not self.sender_projectdir:
             MODULE.error(
-                "ERROR: Sender information is not specified, cannot create project dir in the sender's home!"
+                "ERROR: Sender information is not specified, cannot create project dir in the sender's "
+                "home!"
             )
 
     def _create_project_dir(self, user, projectdir=None):
@@ -460,7 +461,8 @@ class Project(_Dict):
             group = int(user.gidNumber)
             homedir = user.homedir
 
-            # create home directory with correct permissions if not yet exsists (e.g. user never logged in via samba)
+            # create home directory with correct permissions if not yet exsists (e.g. user never logged
+            # in via samba)
             if homedir and not os.path.exists(homedir):
                 MODULE.warn("recreate homedir %r uidNumber=%r gidNumber=%r" % (homedir, owner, group))
                 os.makedirs(homedir, 0o711)
@@ -634,11 +636,14 @@ class Project(_Dict):
         statvfs = os.statvfs(self.sender_projectdir)
         return statvfs.f_frsize * statvfs.f_bavail
 
-    # After changing requirements this added function is no longer required, but kept for future reference
+    # After changing requirements this added function is no longer required, but kept for future
+    # reference
     # def prune_results(self, limit, username=None):
     # 	"""
-    # 	This function removes collected results from students as long as the number of existing collected results
-    # 	is bigger than the given limit. It starts from the oldest version and works its way up.
+    # 	This function removes collected results from students as long as the number of existing
+    # 	collected results is bigger than the given limit. It starts from the oldest version and works
+    # 	its way up.
+    #
     # 	:param limit: The number of collected results to prune to. Negative numbers are cropped to 0
     # 	:type limit: int
     # 	:param username: If the value is set, the pruning is restricted to the specified user
@@ -663,7 +668,8 @@ class Project(_Dict):
     # 		all_versions = list(self._all_versions(recipient))
     # 		all_versions.sort(reverse=True)
     # 		while len(all_versions) > limit:
-    # 			target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username, all_versions.pop()))
+    # 			target = os.path.join(self.sender_projectdir, '%s-%03d' % (recipient.username,
+    # 			    all_versions.pop()))
     # 			_delete_result(target)
 
     def collect(self, dirsFailed=None, readOnly=False, compress=False):
@@ -697,7 +703,8 @@ class Project(_Dict):
                     # copy dir
                     def ignore(src, names):
                         # !important" don't let symlinks be copied (e.g. /etc/shadow).
-                        # don't use shutil.copytree(symlinks=True) for this as it changes the owner + mode + flags of the symlinks afterwards
+                        # don't use shutil.copytree(symlinks=True) for this as it changes the
+                        # owner + mode + flags of the symlinks afterwards
                         return [name for name in names if os.path.islink(os.path.join(src, name))]
 
                     # zip is hard coded for now. But it could be possible to make it configurable

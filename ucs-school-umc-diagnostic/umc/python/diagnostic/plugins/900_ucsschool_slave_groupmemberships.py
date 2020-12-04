@@ -51,13 +51,19 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, List
+except ImportError:
+    pass
+
 _ = Translation("univention-management-console-module-diagnostic").translate
 
 title = _("UCS@school Group Memberships of DC Slaves")
 description = "\n".join(
     [
         _(
-            "UCS@school Domaincontroller Slave objects rely on the membership within certain UCS@school LDAP groups."
+            "UCS@school Domaincontroller Slave objects rely on the membership within certain UCS@school "
+            "LDAP groups."
         ),
         _("Inconsistencies in these group memberships can trigger erratic behaviour of UCS@school."),
     ]
@@ -72,17 +78,20 @@ def run(_umc_instance):
 
     lo = getAdminConnection()
     obj_list = lo.search(
-        filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))"
+        filter="(|"
+        "(univentionObjectType=computers/domaincontroller_slave)"
+        "(univentionObjectType=computers/memberserver)"
+        ")"
     )
     for (obj_dn, obj_attrs) in obj_list:
         result = {
             "slave": {
-                "edu": {"global_grp": False, "ou_grp": False,},
-                "admin": {"global_grp": False, "ou_grp": False,},
+                "edu": {"global_grp": False, "ou_grp": False},
+                "admin": {"global_grp": False, "ou_grp": False},
             },
             "memberserver": {
-                "edu": {"global_grp": False, "ou_grp": False,},
-                "admin": {"global_grp": False, "ou_grp": False,},
+                "edu": {"global_grp": False, "ou_grp": False},
+                "admin": {"global_grp": False, "ou_grp": False},
             },
         }
         filter_s = filter_format("(&(objectClass=univentionGroup)(uniqueMember=%s))", (obj_dn,))
@@ -129,7 +138,8 @@ def run(_umc_instance):
                 if result[hosttype][schooltype]["global_grp"] != result[hosttype][schooltype]["ou_grp"]:
                     problematic_objects.setdefault(obj_dn, []).append(
                         _(
-                            "Host object is member in global %s group but not in OU specific %s group (or the other way around)"
+                            "Host object is member in global %s group but not in OU specific %s group "
+                            "(or the other way around)"
                         )
                         % (schooltype, hosttype)
                     )

@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 # coding=utf-8
-## desc: Check if users in domain admin group & objectClass ucsschoolAdministrator have the permissions to create non-school users & UCS@school users.
+## desc: users in domain admin group & OC ucsschoolAdministrator can create school & non-school users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous

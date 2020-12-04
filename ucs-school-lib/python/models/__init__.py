@@ -29,18 +29,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import utils
+import utils  # noqa: F401
 
 import univention.admin.modules as udm_modules
 
-from .computer import *
-from .dhcp import *
-from .group import *
-from .misc import *
-from .network import *
-from .policy import *
-from .school import *
-from .share import *
-from .user import *
+from .computer import *  # noqa: F401, F403
+from .dhcp import *  # noqa: F401, F403
+from .group import *  # noqa: F401, F403
+from .misc import *  # noqa: F401, F403
+from .network import *  # noqa: F401, F403
+from .policy import *  # noqa: F401, F403
+from .school import *  # noqa: F401, F403
+from .share import *  # noqa: F401, F403
+from .user import *  # noqa: F401, F403
 
 udm_modules.update()

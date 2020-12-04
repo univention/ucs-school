@@ -43,6 +43,11 @@ import univention.debug
 from ucsschool.netlogon import SqliteQueue, get_netlogon_path_list
 from univention.admin.uldap import getMachineConnection
 
+try:
+    from typing import Dict, List, Optional
+except ImportError:
+    pass
+
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
 groups_group_module = univention.admin.modules.get("groups/group")
@@ -50,7 +55,13 @@ shares_share_module = univention.admin.modules.get("shares/share")
 
 name = "ucs-school-user-logonscript"
 description = "Create user-specific netlogon-scripts"
-filter = "(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=univentionGroup)(objectClass=univentionShare))"
+filter = (
+    "(|"
+    "(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))"
+    "(objectClass=univentionGroup)"
+    "(objectClass=univentionShare)"
+    ")"
+)
 attributes = []  # type: List[str]
 
 FN_PID = "/var/run/ucs-school-user-logonscript-daemon.pid"
@@ -99,7 +110,7 @@ def relevant_change(
 
 
 def handle_share(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles changes of share objects by triggering group changes for the relevant groups.
     """
@@ -143,7 +154,7 @@ def handle_share(dn, new, old, lo, user_queue):
 
 
 def handle_group(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles group changes by adding relevant user object DNs to the user queue.
     """
@@ -179,7 +190,7 @@ def handle_group(dn, new, old, lo, user_queue):
 
 
 def handle_user(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles user changes by adding the DN of the user object to the user queue.
     """
@@ -268,7 +279,7 @@ def initialize():  # type: () -> None
 
 
 def run_daemon(cmd):  # type: (List[str]) -> None
-    cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     cmd_out, cmd_err = cmd_proc.communicate()
     if cmd_proc.returncode:
         Log.error(

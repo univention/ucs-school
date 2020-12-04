@@ -50,7 +50,10 @@ class schoolOU(simpleHook):
             module.options.append(OPTION_SCHOOLOU)
 
     def hook_ldap_modlist(self, module, ml=None):
-        """Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or disabled."""
+        """
+        Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or
+        disabled.
+        """
         ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU.modlist called")
 
         if ml is None:

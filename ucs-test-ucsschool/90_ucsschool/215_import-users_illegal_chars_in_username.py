@@ -144,8 +144,9 @@ class Test(UniqueObjectTester):
         )
         config.update_entry("scheme:username:default", "[ALWAYSCOUNTER]<lastname>")
         for person in persons:
-            # Prevent 'The email address is already taken by another user. Please change the email address.'
-            # because of slow s4 replication. Username is the same, so it doesn't change what's tested.
+            # Prevent 'The email address is already taken by another user. Please change the email
+            # address.' because of slow s4 replication. Username is the same, so it doesn't change
+            # what's tested.
             person.mail = "{}{}".format(uts.random_username(4), person.mail)
         fn_csv = self.create_csv_file(person_list=persons, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
@@ -262,8 +263,8 @@ class Test(UniqueObjectTester):
             except FormatError:
                 if expected is not None:
                     self.fail(
-                        "UsernameHandler.format_username(%r) raise a FormatError, expected it to return %r."
-                        % (input_name, expected)
+                        "UsernameHandler.format_username(%r) raise a FormatError, expected it to return "
+                        "%r." % (input_name, expected)
                     )
                 continue
         self.log.info("*** Starting unit test for UsernameHandler.format_username() (2/5)")

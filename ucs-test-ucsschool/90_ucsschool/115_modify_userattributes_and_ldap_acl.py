@@ -19,7 +19,7 @@ import univention.testing.utils as utils
 from univention.config_registry import handler_set
 
 if __name__ == "__main__":
-    with utu.UCSTestSchool() as schoolenv, udm_test.UCSTestUDM() as udm, ucr_test.UCSTestConfigRegistry() as ucr:
+    with utu.UCSTestSchool() as schoolenv, udm_test.UCSTestUDM() as udm, ucr_test.UCSTestConfigRegistry() as ucr:  # noqa: E501
         host = ucr.get("hostname")
         school, oudn = schoolenv.create_ou(name_edudc=host)
 

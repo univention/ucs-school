@@ -20,7 +20,7 @@ Dim HTTPKey, HTTPPortKey, SSLKey, SSLPortKey, FTPKey, FTPPortKey
 Dim GopherKey, GopherPortKey, SOCKSKey, SOCKSPortKey, SOCKSVersionKey, ProxyExceptionsKey, ExceptionSplit
 Dim FirefoxUseIEKey, IESettingFile, ParseFileLine, ParseSplitLine, ParseSplitSetting, SameProxy
 
-on error resume next 
+on error resume next
 
 set EnVar = Wshshell.environment("Process")
 FirefoxProfilePath = EnVar("appdata") & "\Mozilla\Firefox\Profiles"
@@ -56,7 +56,7 @@ if fso.FolderExists(FirefoxProfilePath) = false then
 	FirefoxEmptyPrefsFile.Close
 end if
 
-			
+
 if fso.FolderExists(FirefoxProfilePath) then
 	' Get the folders within profile and store to array
 	set FirefoxProfileFolder = fso.GetFolder(FirefoxProfilePath)
@@ -139,12 +139,12 @@ if fso.FolderExists(FirefoxProfilePath) then
 						End If
 					Loop
 					IESettingFile.Close
-				end if			
+				end if
 			end if
 
 
 			' homepage setting
-			if FirefoxUseIEKey <> "1" then 
+			if FirefoxUseIEKey <> "1" then
 				HomePageKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxHomepage")
 			end if
 			if HomePageKey <> "" then
@@ -163,7 +163,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 					set SearchEngineSet = AppendPrefsToFile("browser.enable_automatic_image_resizing", "true")
 				end if
 			end if
-		
+
 
 			' Proxy Settings
 			ProxyKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxProxy")
@@ -318,7 +318,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 				end if
 			end if
 
-			
+
 			' Firefox certificates
 			FirefoxCertificatesLocationKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxCertificateLocation")
 			if FirefoxCertificatesLocationKey <> "" then
@@ -375,7 +375,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 				hostperm1File.close
 			end if
 
-		
+
 			' Enable Type Ahead Find
 			FirefoxTypeAheadFindKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxTypeAheadFindState")
 			If FirefoxTypeAheadFindKey = "1" then
@@ -406,7 +406,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 				RemoveCurrentPrefsFromFile("accessibility.browsewithcaret")
 				set FirefoxCaretSet = AppendPrefsToFile("accessibility.browsewithcaret", "false")
 			end if
-			
+
 
 			' CAPS sites
 			FirefoxFileSitesKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxFileSites")
@@ -420,7 +420,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 
 
 
-	
+
 		end if
 	next
 end if

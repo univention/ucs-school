@@ -64,8 +64,8 @@ class Instance(SchoolBaseModule):
         requests.options = {}
           'pattern' -- pattern to match
         """
-        MODULE.info("%s.query: options: %s" % (self.module_name, request.options,))
-        pattern = request.options.get("pattern", "").lower()
+        MODULE.info("%s.query: options: %s" % (self.module_name, request.options))  # noqa: F821
+        pattern = request.options.get("pattern", "").lower()  # noqa: F821
         return self.get_shares(pattern)
 
     @simple_response
@@ -73,9 +73,9 @@ class Instance(SchoolBaseModule):
         """Modify role shares
         requests.options = {}
         """
-        MODULE.info("%s.modify: options: %s" % (self.module_name, request.options,))
-        sharename = request.options.get("name", "").lower()
-        accessmode = request.options.get("access", "").lower()
+        MODULE.info("%s.modify: options: %s" % (self.module_name, request.options))  # noqa: F821
+        sharename = request.options.get("name", "").lower()  # noqa: F821
+        accessmode = request.options.get("access", "").lower()  # noqa: F821
         self.modify_share(sharename, accessmode)
 
     def valid_role_from_roleshare_name(self, inputstring):
@@ -101,7 +101,7 @@ class Instance(SchoolBaseModule):
         result["shares"] = []
 
         if not search_base.availableSchools:
-            MODULE.error("%s.query: No schools available to this user!" % (self.module_name,))
+            MODULE.error("%s.query: No schools available to this user!" % (self.module_name))
             return result  # empty
 
         # sanitize the search pattern to match only role shares and only in ou
@@ -136,7 +136,7 @@ class Instance(SchoolBaseModule):
                     udm_filter = conjunction("&", hints)
 
         if not udm_filter:
-            MODULE.error("%s.query: invalid search filter: %s" % (self.module_name, pattern,))
+            MODULE.error("%s.query: invalid search filter: %s" % (self.module_name, pattern))
             return result  # empty
 
         udm_modules.init(ldap_user_read, ldap_position, udm_modules.get(self.udm_module_name))
@@ -166,19 +166,19 @@ class Instance(SchoolBaseModule):
 
         supported_accessmodes = ("none", "read", "read,write")
         if accessmode not in supported_accessmodes:
-            MODULE.error("%s.modify: invalid access mode: %s" % (self.module_name, accessmode,))
+            MODULE.error("%s.modify: invalid access mode: %s" % (self.module_name, accessmode))
             return result  # TODO: How to communicate the error?
 
         # sanitize the sharename to match only role shares
         if not self.valid_role_from_roleshare_name(sharename):
-            MODULE.error("%s.modify: sharename is not a role share: %s" % (self.module_name, sharename,))
+            MODULE.error("%s.modify: sharename is not a role share: %s" % (self.module_name, sharename))
             return result  # TODO: How to communicate the error?
 
         school_ou = self.valid_school_from_roleshare_name(sharename, search_base.availableSchools)
         if not school_ou:
             MODULE.error(
                 '%s.modify: sharename "%s" is not in an accessible school (%s)'
-                % (self.module_name, sharename, search_base.availableSchools,)
+                % (self.module_name, sharename, search_base.availableSchools)
             )
             return result  # TODO: How to communicate the error?
 
@@ -193,7 +193,7 @@ class Instance(SchoolBaseModule):
             filter=udm_filter,
         )
         if not res:
-            MODULE.error("%s.modify: share note found: %s" % (self.module_name, sharename,))
+            MODULE.error("%s.modify: share note found: %s" % (self.module_name, sharename))
             return result  # TODO: How to communicate the error?
 
         teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))

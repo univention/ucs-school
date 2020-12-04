@@ -6,6 +6,8 @@
 ## packages: [ucs-school-umc-users]
 ## timeout: 14400
 
+from __future__ import print_function
+
 import sys
 import time
 
@@ -48,9 +50,9 @@ class TestCases(object):
         self.ucr = ucr
         self.schoolenv = schoolenv
 
-        print >> sys.stderr, "---[START /etc/ldap/slapd.conf]---"
-        print >> sys.stderr, open("/etc/ldap/slapd.conf", "r").read()
-        print >> sys.stderr, "---[END /etc/ldap/slapd.conf]---"
+        print("---[START /etc/ldap/slapd.conf]---", file=sys.stderr)
+        print(open("/etc/ldap/slapd.conf", "r").read(), file=sys.stderr)
+        print("---[END /etc/ldap/slapd.conf]---", file=sys.stderr)
         sys.stderr.flush()
 
         host = self.ucr.get("hostname")
@@ -60,8 +62,8 @@ class TestCases(object):
             *self.schoolenv.create_ou(name_edudc="dcschool2", wait_for_replication=False)
         )
 
-        print ("School 1 = {!r}".format(self.school1.name))
-        print ("School 2 = {!r}\n".format(self.school2.name))
+        print("School 1 = {!r}".format(self.school1.name))
+        print("School 2 = {!r}\n".format(self.school2.name))
 
         # "${type}2" is located at second school but member of both schools, so teachers/admins of
         # school1 should be able to reset passwords of "${type}1" and "${type}2"
@@ -122,7 +124,7 @@ class TestCases(object):
         )
 
     def test_pw_reset(self, actor, target, expected_result):
-        print ("\nTEST: {} ==> {}  (expected: {})".format(actor.dn, target.dn, expected_result))
+        print("\nTEST: {} ==> {}  (expected: {})".format(actor.dn, target.dn, expected_result))
         lo = udm_uldap.access(
             host=self.ucr.get("ldap/master"),
             port=7389,
@@ -132,7 +134,7 @@ class TestCases(object):
             start_tls=2,
         )
         old_values = lo.get(target.dn)
-        print ("target.ucsschoolSchool: {}".format(old_values.get("ucsschoolSchool")))
+        print("target.ucsschoolSchool: {}".format(old_values.get("ucsschoolSchool")))
         for attr_name in (
             "sambaNTPassword",
             "userPassword",
@@ -143,7 +145,7 @@ class TestCases(object):
             else:
                 with pytest.raises(Exception):
                     lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time())]]])
-        print "OK: result as expected"
+        print("OK: result as expected")
 
     def run(self):
         self.test_pw_reset(self.student0, self.student1, RESULT_FAIL)

@@ -8,6 +8,8 @@
 ## packages:
 ##   - ucs-school-webproxy
 
+from __future__ import print_function
+
 import univention.testing.ucr
 import univention.testing.utils as utils
 
@@ -28,7 +30,7 @@ def main():
                 % (key, value, ucr.get(key))
             )
         else:
-            print "UCR variable: %s=%r" % (key, value)
+            print("UCR variable: %s=%r" % (key, value))
 
 
 if __name__ == "__main__":

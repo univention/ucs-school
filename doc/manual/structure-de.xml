@@ -148,9 +148,9 @@
 				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
 				Einstellungen wird für jede Schule im LDAP-Verzeichnis eine eigene
 				<emphasis>Organisationseinheit</emphasis> (OU) angelegt. Unterhalb dieser OU
-				werden Container für z.B. Benutzerobjekte, Gruppen, DHCP-Einstellungen, 
+				werden Container für z.B. Benutzerobjekte, Gruppen, DHCP-Einstellungen,
 				usw. angelegt. Diese OUs werden direkt unterhalb
-				der LDAP-Basis angelegt. 
+				der LDAP-Basis angelegt.
 			</para>
 			<para>
 			  &ucsUAS; unterscheidet in seinem Verzeichnisdienst zwischen dem Namen einer Schule und dem Schulkürzel

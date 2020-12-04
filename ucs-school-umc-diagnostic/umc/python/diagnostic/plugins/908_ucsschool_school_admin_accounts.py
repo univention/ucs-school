@@ -33,7 +33,8 @@
 #
 # This module checks if the UCS@school admin accounts are correctly configured:
 # - get all user objects with an objectclass ucsschoolAdministrator
-# - check if this user is member of admins-school group for each school it is registered as an ucsschoolAdministrator
+# - check if this user is member of admins-school group for each school it is registered as an
+#   ucsschoolAdministrator
 # - check that each member of an admins-school group is a ucsschoolAdministrator
 
 from __future__ import absolute_import
@@ -41,6 +42,11 @@ from __future__ import absolute_import
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
+
+try:
+    from typing import Dict, List
+except ImportError:
+    pass
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 
@@ -79,9 +85,8 @@ def run(_umc_instance):
             if member not in admins_dn:
                 problematic_objects.setdefault(member, []).append(
                     _(
-                        "is member of group {} but is not registered as a ucsschoolAdministrator.".format(
-                            dn
-                        )
+                        "is member of group {} but is not registered as a "
+                        "ucsschoolAdministrator.".format(dn)
                     )
                 )
 

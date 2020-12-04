@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [univention-samba4]
 
+from __future__ import print_function
+
 import socket
 import subprocess
 import time
@@ -44,7 +46,7 @@ def main():
         status = SMB_Status()
         if not status:
             utils.fail("smbclient was not able to open any connection to host (%s)" % host)
-        print "smbstatus = ", status
+        print("smbstatus = ", status)
 
         def get_proccess_by_services(services):
             for process in status:

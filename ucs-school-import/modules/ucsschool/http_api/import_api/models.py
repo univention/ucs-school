@@ -47,15 +47,7 @@ from ldap.filter import escape_filter_chars
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 
-from .constants import (
-    JOB_ABORTED,
-    JOB_CHOICES,
-    JOB_FINISHED,
-    JOB_NEW,
-    JOB_SCHEDULED,
-    JOB_STARTED,
-    JOB_STATES,
-)
+from .constants import JOB_CHOICES, JOB_NEW
 
 USER_STAFF = "staff"
 USER_STUDENT = "student"
@@ -94,7 +86,7 @@ class Role(models.Model):
         for role in USER_ROLES:
             name = role
             display_name = _(USER_ROLE_TRANS[role])
-            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name},)
+            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})
             if not created and obj.displayName != display_name:
                 obj.displayName = display_name
                 obj.save()
@@ -142,7 +134,9 @@ class Role(models.Model):
 # 		for context in list(cls.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school)):
 # 			if context.content_object not in existing_school_objs:
 # 				context.delete()
-# 		existing_school_objs_in_contexts = cls.objects.filter(type=CONTEXT_TYPE_SCHOOL).values('content_object')
+# 		existing_school_objs_in_contexts = cls.objects.filter(type=CONTEXT_TYPE_SCHOOL).values(
+# 		    'content_object'
+# 		)
 # 		for school_obj in set(existing_school_objs) - set(existing_school_objs_in_contexts):
 # 			cls.objects.create(type=CONTEXT_TYPE_SCHOOL, content_object=school_obj)
 
@@ -218,7 +212,9 @@ class Role(models.Model):
 # 		if missing_schools:
 # 			raise RuntimeError('Cannot get context for unknown school(s): {!r}.'.format(missing_schools))
 # 		ct_school = ContentType.objects.get(app_label='import_api', model='school')
-# 		return Context.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school, object_id__in=schools)
+# 		return Context.objects.filter(
+# 		    type=CONTEXT_TYPE_SCHOOL, content_type=ct_school, object_id__in=schools
+# 		)
 
 
 class School(models.Model):
@@ -255,7 +251,7 @@ class School(models.Model):
         for dn, ou in res:
             name = ou["ou"][0]
             display_name = ou.get("displayName", [name])[0]
-            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name},)
+            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})
             if not created and obj.displayName != display_name:
                 obj.displayName = display_name
                 obj.save()

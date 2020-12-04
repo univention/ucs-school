@@ -333,7 +333,7 @@ ucs-school-webproxy (9.0.0-1) unstable; urgency=low
 
 ucs-school-webproxy (8.0.23-1) unstable; urgency=low
 
-  * respect priority for usergroup src entries (Bug #27360) 
+  * respect priority for usergroup src entries (Bug #27360)
 
  -- Felix Botner <botner@univention.de>  Wed, 06 Jun 2012 11:08:23 +0200
 
@@ -351,7 +351,7 @@ ucs-school-webproxy (8.0.21-1) unstable; urgency=low
 
 ucs-school-webproxy (8.0.20-1) unstable; urgency=low
 
-  * check all school groups in listener Bug #27288 
+  * check all school groups in listener Bug #27288
 
  -- Felix Botner <botner@univention.de>  Fri, 25 May 2012 16:01:24 +0200
 
@@ -480,7 +480,7 @@ ucs-school-webproxy (8.0.1-1) unstable; urgency=low
 ucs-school-webproxy (8.0.0-1) unstable; urgency=low
 
   * ucs 3.0 update (Bug #25700)
-  * removed squid configs/settings (as they are part of univention-squid) 
+  * removed squid configs/settings (as they are part of univention-squid)
 
  -- Felix Botner <botner@univention.de>  Tue, 10 Jan 2012 17:29:51 +0100
 
@@ -679,7 +679,7 @@ ucs-school-webproxy (2.0.1-1) unstable; urgency=low
   * fixed error in postinst that occured while updating
   * added proxy filter profile support
   * switched squid reload mechanism
-  
+
  -- Sönke Schwardt <schwardt@univention.de>  Fri, 22 Aug 2008 14:08:32 +0200
 
 ucs-school-webproxy (2.0.0-3) unstable; urgency=low

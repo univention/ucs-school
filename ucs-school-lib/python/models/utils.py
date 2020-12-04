@@ -251,7 +251,8 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
         from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
         add_module_logger_to_schoollib()
         # or:
-        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout,
+            log_format='ERROR (or worse): %(message)s')
     """
     logger = logging.getLogger(name or "ucsschool")
     if logger.level < logging.DEBUG:
@@ -294,7 +295,7 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
             try:
                 results, policies = policy_result(dn)
                 _pw_length_cache[dn] = int(results.get("univentionPWLength", ["8"])[0])
-            except Exception:
+            except Exception:  # nosec # TODO: replace with specific exeptions
                 pass
         length = _pw_length_cache.get(dn, length)
 
@@ -304,7 +305,7 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
             try:
                 results, policies = policy_result(ou)
                 _pw_length_cache[ou] = int(results.get("univentionPWLength", ["8"])[0])
-            except Exception:
+            except Exception:  # nosec # TODO: replace with specific exeptions
                 pass
         length = _pw_length_cache.get(ou, length)
 
@@ -327,25 +328,25 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
 
     # one symbol from each character class, MS requirement:
     # https://technet.microsoft.com/en-us/library/cc786468(v=ws.10).aspx
-    if length >= 3:
+    if length >= 3:  # nosec
         pw.append(choice(lowercase))
         pw.append(choice(uppercase))
         pw.append(choice(digits))
         length -= 3
-    if specials and length and specials_allowed:
+    if specials and length and specials_allowed:  # nosec
         pw.append(choice(specials))
         specials_allowed -= 1
         length -= 1
 
     # fill up with random chars (but not more than 20% specials)
-    for _x in range(length):
+    for _x in range(length):  # nosec
         char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
         if char in specials:
             specials_allowed -= 1
         pw.append(char)
 
     shuffle(pw)
-    pw = [choice(lowercase + uppercase)] + pw  # start with a letter
+    pw = [choice(lowercase + uppercase)] + pw  # nosec # start with a letter
     return "".join(pw)
 
 
@@ -390,7 +391,7 @@ def nearest_known_loglevel(level):
 
 
 def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None):
-    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
+    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler  # noqa: E501
     """
     Create a colored stream handler, usually for the console.
 
@@ -420,7 +421,7 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 
 
 def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None):
-    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler
+    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler  # noqa: E501
     """
     Create a :py:class:`UniFileHandler` (TimedRotatingFileHandler) for logging
     to a file.
@@ -568,7 +569,7 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
     assert all(isinstance(arg, string_types) for arg in cmd)
     kwargs["stdout"] = kwargs.get("stdout", subprocess.PIPE)
     kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
-    process = subprocess.Popen(cmd, **kwargs)
+    process = subprocess.Popen(cmd, **kwargs)  # nosec
     stdout, stderr = process.communicate()
     if log:
         logger = logging.getLogger(__name__)

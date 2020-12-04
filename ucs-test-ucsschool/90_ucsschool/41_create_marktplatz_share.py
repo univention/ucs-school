@@ -7,6 +7,8 @@
 ## packages: [ucs-school-umc-computerroom]
 ## bugs: [40785]
 
+from __future__ import print_function
+
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.config_registry import handler_set, handler_unset
@@ -21,7 +23,7 @@ def main():
             else:
                 handler_set(["ucsschool/import/generate/share/marktplatz=%s" % (variable,)])
 
-            print "### Creating school. Expecting Marktplatz to exists = %r" % (should_exist,)
+            print("### Creating school. Expecting Marktplatz to exists = %r" % (should_exist,))
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"), use_cache=False)
             utils.wait_for_replication()
             utils.verify_ldap_object(

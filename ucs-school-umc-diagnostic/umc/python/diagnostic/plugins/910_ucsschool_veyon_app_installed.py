@@ -97,7 +97,10 @@ def run(_umc_instance):
             )
         ),
         buttons=[
-            {"action": "install_veyon_proxy_app", "label": _("Install {!r} app".format(VEYON_APP_NAME)),}
+            {
+                "action": "install_veyon_proxy_app",
+                "label": _("Install {!r} app".format(VEYON_APP_NAME)),
+            }
         ],
     )
 
@@ -113,7 +116,10 @@ def install_veyon_proxy_app(_umc_instance):
         pw_file.write(_umc_instance.password)
         pw_file.flush()
         get_action("install").call(
-            app=app, noninteractive=True, username=_umc_instance.username, pwdfile=pw_file.name,
+            app=app,
+            noninteractive=True,
+            username=_umc_instance.username,
+            pwdfile=pw_file.name,
         )
     return run(_umc_instance)
 

@@ -7,6 +7,8 @@
 ## bugs: [36251, 41568]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+from __future__ import print_function
+
 from datetime import datetime, timedelta
 from unittest import TestCase, main
 
@@ -32,7 +34,7 @@ class TestExamMode(TestCase):
                     open_ldap_co = schoolenv.open_ldap_connection()
                     ucr.load()
 
-                    print " ** Initial Status"
+                    print(" ** Initial Status")
                     existing_rejects = get_s4_rejected()
 
                     if ucr.is_true("ucsschool/singlemaster"):
@@ -61,7 +63,7 @@ class TestExamMode(TestCase):
                     udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
                     udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
-                    print " ** After Creating users and classes"
+                    print(" ** After Creating users and classes")
                     wait_replications_check_rejected_uniqueMember(existing_rejects)
 
                     # importing random computers
@@ -85,7 +87,7 @@ class TestExamMode(TestCase):
                     current_time = datetime.now()
                     chosen_time = current_time + timedelta(hours=2)
 
-                    print " ** After creating the rooms"
+                    print(" ** After creating the rooms")
                     wait_replications_check_rejected_uniqueMember(existing_rejects)
 
                     exam = Exam(
@@ -96,11 +98,11 @@ class TestExamMode(TestCase):
                     )
 
                     exam.start()
-                    print " ** After starting the exam"
+                    print(" ** After starting the exam")
                     wait_replications_check_rejected_uniqueMember(existing_rejects)
 
                     exam.finish()
-                    print " ** After finishing the exam"
+                    print(" ** After finishing the exam")
                     wait_replications_check_rejected_uniqueMember(existing_rejects)
                     student2.remove(open_ldap_co)
 

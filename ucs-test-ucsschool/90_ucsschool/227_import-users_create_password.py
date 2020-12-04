@@ -57,9 +57,8 @@ def check_pw_policy():
             pw_count += 1
             if len(pw) != length:
                 utils.fail(
-                    "Generated password for DN {!r} is {!r} with length {}, but should have been {}.".format(
-                        user_dn, pw, len(pw), length
-                    )
+                    "Generated password for DN {!r} is {!r} with length {}, but should have been"
+                    " {}.".format(user_dn, pw, len(pw), length)
                 )
             check_num_specials(pw)
             check_forbidden_chars(pw)
@@ -75,7 +74,8 @@ def check_num_specials(pw, specials=None, num_specials_allowed=None):
     for char in pw:
         if char in forbidden_specials:
             utils.fail(
-                "Password {!r} with length {} contains a special that was not requested (argument specials={!r}): "
+                "Password {!r} with length {} contains a special that was not requested (argument "
+                "specials={!r}): "
                 "{!r}".format(pw, len(pw), specials, char)
             )
         if char in specials:

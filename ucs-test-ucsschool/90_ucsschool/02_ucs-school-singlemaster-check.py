@@ -6,6 +6,8 @@
 ## packages:
 ##    - ucs-school-master | ucs-school-singlemaster
 
+from __future__ import print_function
+
 import subprocess
 import sys
 
@@ -20,21 +22,21 @@ def main():
     ucr.load()
     if ucr.is_true("ucsschool/singlemaster"):
         if dpkgQuery == "install ok installed\n":
-            print "ucs-school-singlemaster is installed"
-            print "ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Correct Value)"
+            print("ucs-school-singlemaster is installed")
+            print("ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Correct Value)")
             returnValue = 0
         else:
-            print "ucs-school-singlemaster is not installed "
-            print "ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Wrong Value)"
+            print("ucs-school-singlemaster is not installed ")
+            print("ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Wrong Value)")
             returnValue = 1
     else:
         if dpkgQuery == "install ok installed\n":
-            print "ucs-school-singlemaster is installed "
-            print "ucsschool/singlemaster = false", " (Wrong Value)"
+            print("ucs-school-singlemaster is installed ")
+            print("ucsschool/singlemaster = false", " (Wrong Value)")
             returnValue = 1
         else:
-            print "ucs-school-singlemaster is not installed "
-            print "ucsschool/singlemaster = false", " (Correct Value)"
+            print("ucs-school-singlemaster is not installed ")
+            print("ucsschool/singlemaster = false", " (Correct Value)")
             returnValue = 0
     return returnValue
 

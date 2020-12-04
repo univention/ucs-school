@@ -54,13 +54,22 @@ from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import MODULE, Critical, ProblemFixed
 
+try:
+    from typing import TYPE_CHECKING, Set
+
+    if TYPE_CHECKING:
+        from univention.admin.uldap import access
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school School Computer Consistency")
 description = "\n".join(
     [
         _(
-            "Windows/Linux/IPManagedClient/Ubuntu computer objects below an UCS@school OU should contain the objectclass <i>ucsschoolComputer</i> and the attribute <i>ucsschoolRole</i>."
+            "Windows/Linux/IPManagedClient/Ubuntu computer objects below an UCS@school OU should "
+            "contain the objectclass <i>ucsschoolComputer</i> and the attribute <i>ucsschoolRole</i>."
         ),
     ]
 )
@@ -102,7 +111,7 @@ def run(_umc_instance):
             details += "\n  {}".format(dn)
         raise Critical(
             description + details,
-            buttons=[{"action": "fix_computers", "label": _("Fix computer objects"),}],
+            buttons=[{"action": "fix_computers", "label": _("Fix computer objects")}],
         )
 
 

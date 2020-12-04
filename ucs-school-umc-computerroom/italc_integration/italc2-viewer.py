@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import inspect
 import optparse
 import os
@@ -129,11 +131,11 @@ if __name__ == "__main__":
     )
 
     app = ViewerApp(sys.argv)
-    print app.quitOnLastWindowClosed()
+    print(app.quitOnLastWindowClosed())
     app.lastWindowClosed.connect(app.quit, QtCore.Qt.DirectConnection)
     imageViewer = ImageViewer(options)
     imageViewer.show()
 
     notifier.loop()
 
-    print "finished"
+    print("finished")

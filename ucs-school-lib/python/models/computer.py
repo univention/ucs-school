@@ -29,6 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import six
 from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
@@ -42,7 +43,7 @@ from ..roles import (
     role_teacher_computer,
     role_win_computer,
 )
-from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, Roles, SubnetMask
+from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, SubnetMask
 from .base import MultipleObjectsError, RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .dhcp import AnyDHCPService, DHCPServer
 from .group import BasicGroup
@@ -73,8 +74,8 @@ class AnyComputer(UCSSchoolHelperAbstractClass):
 
 
 class SchoolDC(UCSSchoolHelperAbstractClass):
-    # NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education)) # UCS@school Administration
-    # vs. group memberships
+    # NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education))
+    # UCS@school Administration vs. group memberships
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
@@ -205,7 +206,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
 
     def get_inventory_numbers(self):  # type: () -> List[str]
-        if isinstance(self.inventory_number, basestring):
+        if isinstance(self.inventory_number, six.string_types):
             return [inv.strip() for inv in self.inventory_number.split(",")]
         if isinstance(self.inventory_number, (list, tuple)):
             return list(self.inventory_number)
@@ -234,7 +235,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         if ipv4_network and len(udm_obj["ip"]) < 2:
             if self._ip_is_set_to_subnet(ipv4_network):
                 self.logger.info(
-                    "IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!"
+                    "IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: "
+                    "Assign next free IP!"
                 )
                 udm_obj["ip"] = []
             else:
@@ -311,7 +313,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "ip_address",
                     _(
-                        "The ip address is already taken by another computer. Please change the ip address."
+                        "The ip address is already taken by another computer. Please change the ip "
+                        "address."
                     ),
                 )
         for mac_address in self.mac_address:
@@ -320,7 +323,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "mac_address",
                     _(
-                        "The mac address is already taken by another computer. Please change the mac address."
+                        "The mac address is already taken by another computer. Please change the mac "
+                        "address."
                     ),
                 )
         own_network = self.get_network()
@@ -329,7 +333,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             self.add_warning(
                 "subnet_mask",
                 _(
-                    "The specified IP and subnet mask will cause the creation of a new network during the creation of the computer object."
+                    "The specified IP and subnet mask will cause the creation of a new network during "
+                    "the creation of the computer object."
                 ),
             )
             networks = [

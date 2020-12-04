@@ -23,7 +23,7 @@ Dim GopherKey, GopherPortKey, SOCKSKey, SOCKSPortKey, SOCKSVersionKey, ProxyExce
 Dim FirefoxUseIEKey, IESettingFile, ParseFileLine, ParseSplitLine, ParseSplitSetting, SameProxy
 Dim DefaultsPreferencesDirectory, LocalSettingsFile, MozillaCfgFile, ProgramFilesDir
 
-on error resume next 
+on error resume next
 
 set EnVar = Wshshell.environment("Process")
 

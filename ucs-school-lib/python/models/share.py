@@ -39,7 +39,7 @@ from univention.lib.misc import custom_groupname
 from univention.udm import UDM
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
-from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
+from .attributes import SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectType
 from .utils import _, ucr
 
@@ -64,12 +64,14 @@ class SetNTACLsMixin(object):
     Mixin for setting NTACLs of UCS@school Share (sub)classes. For example to
     to prevent students from changing the permissions in a share (Bug #42182).
 
-    D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container inheritance
+    D ~ deny, OI/ OBJECT_INHERIT_ACE ~ Object inheritance, CI/ CONTAINER_INHERIT_ACE ~ container
+    inheritance
     RC/ READ_CONTROL ~ display security attributes WO/ WRITE_OWNER ~ take ownership
     WD/ WRITE_DAC ~ write security permissions
     To make sure, students can edit folders&files in subfolders, they need to inherit edit
     or full control, since they are denied first.
-    For a complete overview of all options, see https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
+    For a complete overview of all options, see
+    https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
     """
 
     def get_nt_acls(self, lo):  # type: (LoType) -> List[str]
@@ -108,9 +110,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_work_group(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow workgroup-members to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow workgroup-members to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
@@ -124,9 +126,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow Domain Users to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow Domain Users to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
@@ -138,9 +140,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_class_group(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow class-members to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow class-members to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
@@ -251,7 +253,7 @@ class Share(UCSSchoolHelperAbstractClass):
             alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
             if len(ou_attr_ldap_access_write) > 1:
                 self.logger.warning(
-                    "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school,
+                    "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school
                 )
 
         # build fqdn of alternative server and set serverfqdn

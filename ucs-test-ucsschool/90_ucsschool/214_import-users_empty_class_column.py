@@ -149,7 +149,8 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("Test case 3/4 was successful.\n\n\n")
 
         self.log.info(
-            "*** Test case 4/4: has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 OUs."
+            "*** Test case 4/4: has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 "
+            "OUs."
         )
         self.log.info("*** (4.1/4) Importing new users and 1 class from each of 2 OUs.")
         config, source_uid = self.new_config()
@@ -163,7 +164,8 @@ class Test(CLI_Import_v2_Tester):
 
         self.log.info("*** (4.2/4) Modifying users: setting CSV-input to have no classes.")
         self.log.info(
-            "*** Test case 4.2.1/4: has 2 classes from 2 OUs -> import w/o classes & school_classes_keep_if_empty=True -> has 2 classes from 2 OUs."
+            "*** Test case 4.2.1/4: has 2 classes from 2 OUs -> import w/o classes & "
+            "school_classes_keep_if_empty=True -> has 2 classes from 2 OUs."
         )
         for person in person_list:
             person.update(school_classes={})
@@ -172,7 +174,8 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("Test case 4.2.1/4 was successful.\n\n\n")
 
         self.log.info(
-            "*** Test case 4.2.2/4: has 2 classes from 2 OUs -> import w/o classes & school_classes_keep_if_empty=False -> has 0 classes."
+            "*** Test case 4.2.2/4: has 2 classes from 2 OUs -> import w/o classes & "
+            "school_classes_keep_if_empty=False -> has 0 classes."
         )
         for person in person_list:
             person.update(school_classes={})

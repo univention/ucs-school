@@ -83,9 +83,8 @@ class Test(CLI_Import_v2_Tester):
             local, domain = email.rsplit("@")
             if not local.endswith("1"):
                 self.fail(
-                    'Email address should end in "1" ([ALWAYSCOUNTER] in scheme:email), but is {!r}.'.format(
-                        email
-                    )
+                    'Email address should end in "1" ([ALWAYSCOUNTER] in scheme:email), '
+                    "but is {!r}.".format(email)
                 )
             username = res[0][1]["uid"][0]
             self.log.debug("role=%r username=%r email=%r dn=%r", person.role, username, email, dn)

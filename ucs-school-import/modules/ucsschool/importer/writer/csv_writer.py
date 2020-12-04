@@ -46,7 +46,8 @@ class CsvWriter(BaseWriter):
 
         :param field_names: names of the columns
         :type field_names: list(str)
-        :param csv.Dialect dialect: If unset will try to detect dialect of input file or fall back to "excel".
+        :param csv.Dialect dialect: If unset will try to detect dialect of input file or fall back to
+            "excel".
         """
         super(CsvWriter, self).__init__()
         self.field_names = field_names

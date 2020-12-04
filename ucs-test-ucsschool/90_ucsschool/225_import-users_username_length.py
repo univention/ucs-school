@@ -127,9 +127,9 @@ class Test(CLI_Import_v2_Tester):
             for _ in range(2):
                 role_uses_default = random.choice(username_lengths.keys())
                 del username_lengths[role_uses_default]
-            username_lengths["default"] = random.randint(
-                9, 20
-            )  # min length is 4, if student is unset and default is used, it must be at least 4 + len('exam-') = 9
+            # min length is 4, if student is unset and default is used, it must be at least
+            # 4 + len('exam-') = 9
+            username_lengths["default"] = random.randint(9, 20)
             self.log.info("*** username_lengths=%r", username_lengths)
             for k, v in username_lengths.items():
                 config.update_entry("username:max_length:{}".format(k), v)
@@ -205,7 +205,8 @@ class Test(CLI_Import_v2_Tester):
 
         def test_settings_higher_than_20(set_ucr, counter):
             self.log.info(
-                "*** %s: Importing a user from each role (custom username:max_length settings higher than 20) and UCR is%s set...",
+                "*** %s: Importing a user from each role (custom username:max_length settings higher "
+                "than 20) and UCR is%s set...",
                 counter,
                 "" if set_ucr else " NOT",
             )
@@ -263,7 +264,8 @@ class Test(CLI_Import_v2_Tester):
                 self.run_import(["-c", fn_config])
                 if not set_ucr:
                     self.fail(
-                        "Import should have failed, because UCRV was not set and username:max_length:* to high."
+                        "Import should have failed, because UCRV was not set and username:max_length:* "
+                        "to high."
                     )
             except ImportException:
                 if not set_ucr:

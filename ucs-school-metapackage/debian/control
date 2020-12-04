@@ -43,7 +43,7 @@ Recommends:
  ucs-school-umc-diagnostic,
 Description: UCS@school meta package for UCS DC Master System (multi server environment)
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller master. The domaincontroller master will be 
+ a UCS domaincontroller master. The domaincontroller master will be
  configured for a multi server environment. The package ucs-school-slave
  has to be installed on all domaincontroller slave systems.
  .
@@ -158,8 +158,8 @@ Recommends:
  ucs-school-umc-diagnostic,
 Description: UCS@school meta package for UCS DC Master System (single server environment)
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller master. The domaincontroller master will be 
- configured for a single server environment. 
+ a UCS domaincontroller master. The domaincontroller master will be
+ configured for a single server environment.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

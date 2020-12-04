@@ -76,7 +76,7 @@ class __TestSchoolClassAssignment(object):
         print(old_class)
         print(secondary_schools)
         _, teacher_dn = schoolenv.create_teacher(
-            primary_school, classes=old_class, schools=secondary_schools,
+            primary_school, classes=old_class, schools=secondary_schools
         )
         teacher = Teacher.from_dn(teacher_dn, primary_school, schoolenv.lo)
         original_classes = self.__flat_school_classes_dn(teacher)
@@ -89,7 +89,7 @@ class __TestSchoolClassAssignment(object):
         result = self.client.umc_command(
             "schoolgroups/put",
             flavor="teacher",
-            options=[{"object": {"$dn$": teacher_dn, "classes": visible_classes + new_classes,}}],
+            options=[{"object": {"$dn$": teacher_dn, "classes": visible_classes + new_classes}}],
         )
         wait_for_listener_replication()
         if result.result is False:
@@ -99,7 +99,7 @@ class __TestSchoolClassAssignment(object):
         self.client.umc_command(
             "schoolgroups/put",
             flavor="teacher",
-            options=[{"object": {"$dn$": teacher_dn, "classes": visible_classes,}}],
+            options=[{"object": {"$dn$": teacher_dn, "classes": visible_classes}}],
         )
         wait_for_listener_replication()
         teacher = Teacher.from_dn(teacher_dn, primary_school, schoolenv.lo)
@@ -144,7 +144,8 @@ class __TestSchoolClassAssignment(object):
     def test_classes_from_two_schools(
         self, schoolenv, client, primary_school=None, secondary_school=None
     ):
-        # Teacher is at three schools. A class from his primary school and from one of his secondaries is added.
+        # Teacher is at three schools. A class from his primary school and from one of his secondaries
+        # is added.
         schools = schoolenv.schools
         if not primary_school:
             primary_school = schools[0]
@@ -192,7 +193,7 @@ class TestSchoolClassAssignmentSchoolAdmin(__TestSchoolClassAssignment):
     @pytest.fixture(scope="class")
     def client(self, schoolenv):
         school_admin, school_admin_dn = schoolenv.create_school_admin(
-            schoolenv.school[0], is_teacher=True, is_staff=False,
+            schoolenv.school[0], is_teacher=True, is_staff=False
         )
         return Client(username=school_admin, password="univention")
 
@@ -220,7 +221,7 @@ class TestSchoolClassAssignmentSchoolAdminPrimary(__TestSchoolClassAssignment):
     @pytest.fixture(scope="class")
     def client(self, schoolenv):
         school_admin, school_admin_dn = schoolenv.create_school_admin(
-            schoolenv.school[0], is_teacher=True, is_staff=False,
+            schoolenv.school[0], is_teacher=True, is_staff=False
         )
         return Client(username=school_admin, password="univention")
 

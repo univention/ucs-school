@@ -6,6 +6,8 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 
+from __future__ import print_function
+
 import sys
 from re import search
 from subprocess import check_call, check_output
@@ -51,7 +53,7 @@ class GPO(object):
             ]
         )
         stdout = stdout.rstrip()
-        print "\nSamba-tool produced the following output:", stdout
+        print("\nSamba-tool produced the following output:", stdout)
 
         try:
             # extracting the GPO reference from the stdout:
@@ -93,8 +95,8 @@ class GPO(object):
 
 
 def check_local_LDAP_for_GPO_link(gpo_reference, oudn):
-    stdout = check_output(["univention-ldapsearch", oudn.split(",", 1)[0],])
-    print (stdout)
+    stdout = check_output(["univention-ldapsearch", oudn.split(",", 1)[0]])
+    print(stdout)
     return gpo_reference.lower() in stdout.lower()
 
 

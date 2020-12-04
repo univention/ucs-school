@@ -69,7 +69,9 @@ class Instance(SchoolBaseModule):
         if not ucr.get("ucsschool/helpdesk/recipient"):
             raise UMC_Error(
                 _(
-                    'The message could not be send to the helpdesk team: The email address for the helpdesk team is not configured. It must be configured by an administrator via the UCR variable "ucsschool/helpdesk/recipient".'
+                    "The message could not be send to the helpdesk team: The email address for the "
+                    "helpdesk team is not configured. It must be configured by an administrator via "
+                    'the UCR variable "ucsschool/helpdesk/recipient".'
                 ),
                 status=500,
             )

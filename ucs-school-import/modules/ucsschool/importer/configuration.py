@@ -85,8 +85,8 @@ def _set_username_maxlength(config, logger):  # type: (ReadOnlyDict, logging.Log
         student = default - len(exam_prefix)
         config["username"]["max_length"]["student"] = student
         logger.info(
-            "Set value of configuration key username:max_length:student to username:max_length:default reduced by "
-            "length of the exam-prefix (%r): %d.",
+            "Set value of configuration key username:max_length:student to username:max_length:default "
+            "reduced by length of the exam-prefix (%r): %d.",
             exam_prefix,
             student,
         )
@@ -148,7 +148,8 @@ class ReadOnlyDict(dict):
             mandatory_attributes = self["mandatory_attributes"]
             assert isinstance(mandatory_attributes, list)
         except (AssertionError, KeyError):
-            # will be checked in /usr/share/ucs-school-import/checks/defaults::test_minimal_mandatory_attributes()
+            # will be checked in
+            # /usr/share/ucs-school-import/checks/defaults::test_minimal_mandatory_attributes()
             pass
         else:
             missing_mandatory_attributes = [
@@ -162,9 +163,7 @@ class ReadOnlyDict(dict):
             mandatory_attributes.sort()
 
     def close(self):  # type: () -> None
-        self.__setitem__ = (
-            self.__delitem__
-        ) = self.update = self._recursive_typed_update = self.__closed  # noqa
+        self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed
 
 
 class Configuration(object):

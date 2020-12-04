@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import inspect
 import optparse
 import os
@@ -49,24 +51,30 @@ sys.path.insert(0, os.path.join(script_dir, "umc/python/computerroom"))
 
 
 def show_state(options):
-    FORMAT = "%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s"
+    FORMAT = (
+        "%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s "
+        "%(DemoServer)-8s %(DemoClient)-8s %(Flags)5s"
+    )
     # clear screen and set position to HOME
     if not options.logmode:
-        print "\033[2J\033[H"
+        print("\033[2J\033[H")
     else:
-        print "##################"
-    print FORMAT % {
-        "name": "Name",
-        "description": "Description",
-        "user": "User",
-        "ScreenLock": "Screen locked",
-        "InputLock": "Input locked",
-        "MessageBox": "Message",
-        "DemoServer": "Server",
-        "DemoClient": "Client",
-        "Flags": "Flags",
-    }
-    print 120 * "-"
+        print("##################")
+    print(
+        FORMAT
+        % {
+            "name": "Name",
+            "description": "Description",
+            "user": "User",
+            "ScreenLock": "Screen locked",
+            "InputLock": "Input locked",
+            "MessageBox": "Message",
+            "DemoServer": "Server",
+            "DemoClient": "Client",
+            "Flags": "Flags",
+        }
+    )
+    print(120 * "-")
     for name, comp in m.items():
         info = {
             "name": name,
@@ -75,7 +83,7 @@ def show_state(options):
         }
         info.update(comp.flagsDict)
         info["Flags"] = comp.flags.current is None and "<not set>" or comp.flags.current
-        print FORMAT % info
+        print(FORMAT % info)
     return True
 
 
@@ -113,7 +121,7 @@ if __name__ == "__main__":
 
     if not options.logmode and not options.logonly:
         show_state(options)
-        print "starting timer"
+        print("starting timer")
         timer = notifier.timer_add(2000, notifier.Callback(show_state, options))
 
     notifier.loop()

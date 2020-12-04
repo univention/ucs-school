@@ -9,7 +9,7 @@
 import logging
 import os
 import tempfile
-from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARN, WARNING
+from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING
 
 import pytest
 

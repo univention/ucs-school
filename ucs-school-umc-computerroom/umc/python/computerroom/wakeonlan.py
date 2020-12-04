@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import argparse
 import socket
@@ -52,7 +52,8 @@ def get_local_ip_addresses(blacklisted_interfaces=None, blacklisted_interface_pr
 
     :param blacklisted_interfaces: iterable that returns a list of interface names that shall be ignored
     :type blacklisted_interfaces: None or Iterable[str]
-    :param blacklisted_interface_prefixes: iterable that returns a list of interface prefixes that shall be ignored
+    :param blacklisted_interface_prefixes: iterable that returns a list of interface prefixes that
+        shall be ignored
     :type blacklisted_interface_prefixes: None or Iterable[str]
     :return: list of IPv4 addresses
     :rtype: Set[str]
@@ -80,21 +81,23 @@ def send_wol_packet(
 ):
     # type: (str, Optional[Iterable[str]], Optional[Iterable[str]], Optional[Iterable[str]]) -> None
     """
-    Sends a WakeOnLan packet to the specified MAC address via
-    all interfaces (that are not blacklisted).
+    Sends a WakeOnLan packet to the specified MAC address via all interfaces (that are not blacklisted).
+
     >>> send_wol_packet(
-    ...	  '12:34:56:78:9A:BC',
-    ...	  blacklisted_interfaces=['lo'],
-    ...	  blacklisted_interface_prefixes=['tun', 'docker'])
+    ...   '12:34:56:78:9A:BC',
+    ...   blacklisted_interfaces=['lo'],
+    ...   blacklisted_interface_prefixes=['tun', 'docker'])
     >>>
 
     :param mac_address: MAC address of the target host
     :type mac_address: str
     :param blacklisted_interfaces: iterable that returns a list of interface names that shall be ignored
     :type blacklisted_interfaces: None or Iterable[str]
-    :param blacklisted_interface_prefixes: iterable that returns a list of interface prefixes that shall be ignored
+    :param blacklisted_interface_prefixes: iterable that returns a list of interface prefixes that
+        shall be ignored
     :type blacklisted_interface_prefixes: None or Iterable[str]
-    :param target_broadcast_ips: iterable that returns a list of target nets which are used for broadcasting
+    :param target_broadcast_ips: iterable that returns a list of target nets which are used for
+        broadcasting
     :type target_broadcast_ips: None or Iterable[str]
     """
 
@@ -127,7 +130,10 @@ def send_wol_packet(
 
 if __name__ == "__main__":
 
-    desc = """console tool for sending wake-on-LAN (WOL) magic packets. Example: %(prog)s 11:22:33:44:55:66 -b lo wlan0 -p docker tun"""
+    desc = (
+        "console tool for sending wake-on-LAN (WOL) magic packets. Example: %(prog)s"
+        " 11:22:33:44:55:66 -b lo wlan0 -p docker tun"
+    )
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument(
@@ -166,7 +172,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print repr(args)
+    print(repr(args))
     send_wol_packet(
         args.mac_address,
         blacklisted_interfaces=args.blacklisted_interfaces,

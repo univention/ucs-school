@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups,ucs-school-import,ucs-school-singlemaster]
 
+from __future__ import print_function
+
 import csv
 import itertools
 import re
@@ -29,7 +31,7 @@ def activate_groupmembers(group_name, newStatus, change_passwd):
         change_passwd,
     ]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-    print out, err
+    print(out, err)
     outfile = re.search(r"outfile\sis\s:\s([^\n]+)", out)
     if outfile:
         return outfile.group(1)
@@ -76,7 +78,7 @@ def is_active(username):
     found = re.search(r"disabled:\s(\d+)", out)
     if found:
         found = found.group(1)
-        print "disabled = ", found
+        print("disabled = ", found)
         return found == "0"
 
 
@@ -122,7 +124,7 @@ def main():
             for change_passwd, newStatus in itertools.product(["0", "1"], ["0", "1"]):
                 should_pass = newStatus == "1"
 
-                print "Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd)
+                print("Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd))
                 outfile = activate_groupmembers("%s-%s" % (school, group.name), newStatus, change_passwd)
                 utils.wait_for_replication_and_postrun()
 

@@ -11,8 +11,6 @@
 import copy
 import os
 import os.path
-import random
-import re
 import shutil
 
 from ldap.filter import escape_filter_chars
@@ -56,9 +54,7 @@ class Test(CLI_Import_v2_Tester):
         person_list = list()
         for role in roles:
             person = Person(self.ou_A.name, role)
-            person.update(
-                record_uid="recordUID-{}".format(uts.random_string()), source_uid=source_uid,
-            )
+            person.update(record_uid="recordUID-{}".format(uts.random_string()), source_uid=source_uid)
             person_list.append(person)
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         with open(fn_csv, "r") as fp:

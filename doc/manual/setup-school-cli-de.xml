@@ -187,7 +187,7 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	  Durch den Import von Netzwerken können IP-Subnetze im LDAP angelegt werden und diverse
 	  Voreinstellungen wie Adressen von Router, DNS-Server etc. für diese Subnetze konfiguriert
 	  werden. Darunter fällt z.B. auch ein Adressbereich aus dem für neuangelegte Systeme automatisch
-	  IP-Adressen vergeben werden können.  
+	  IP-Adressen vergeben werden können.
 	</para>
 	<para>
 	  Das Importieren von Subnetzen empfiehlt sich in größeren &ucsUAS;-Umgebungen. Kleinere

@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function
 
 from ldap.filter import filter_format
 
-from univention.management.console.modules.diagnostic import Instance, Warning
+from univention.management.console.modules.diagnostic import Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 
@@ -39,7 +39,7 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
         class_dn = self.lo.searchDn(filter=filter_str)[0]
         for user in (self.schoolA.teacher, self.schoolA.student):
             logger.info("*** Add {} to group {}".format(user.dn, class_dn))
-            self.lo.modify(class_dn, [["uniqueMember", None, user.dn], ["memberUid", None, user.name],])
+            self.lo.modify(class_dn, [["uniqueMember", None, user.dn], ["memberUid", None, user.name]])
 
         try:
             module = self.get_diagnostic_module()
@@ -57,7 +57,7 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
                 logger.info("*** Remove {} from group {}".format(user.dn, class_dn))
                 try:
                     self.lo.modify(
-                        class_dn, [["uniqueMember", user.dn, None], ["memberUid", user.name, None],]
+                        class_dn, [["uniqueMember", user.dn, None], ["memberUid", user.name, None]]
                     )
                 except Exception as exc:
                     logger.error("Failed to remove %r from %r: %r", user.dn, class_dn, exc)

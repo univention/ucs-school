@@ -25,7 +25,7 @@ def schoolenv():
         for school, school_dn in schoolenv.schools:
             school_class, _ = schoolenv.create_school_class(school, uts.random_string())
             _, schoolenv.teachers[school] = schoolenv.create_teacher(
-                school, classes=school_class, schools=[s[0] for s in schoolenv.schools],
+                school, classes=school_class, schools=[s[0] for s in schoolenv.schools]
             )
         yield schoolenv
 
@@ -61,7 +61,7 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
         result = self.client.umc_command(
             "schoolgroups/put",
             flavor="class",
-            options=[{"object": {"$dn$": school_class_dn, "members": visible_teachers + new_teachers,}}],
+            options=[{"object": {"$dn$": school_class_dn, "members": visible_teachers + new_teachers}}],
         )
         wait_for_listener_replication()
         if result.result is False:
@@ -71,7 +71,7 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
         self.client.umc_command(
             "schoolgroups/put",
             flavor="class",
-            options=[{"object": {"$dn$": school_class_dn, "members": visible_teachers,}}],
+            options=[{"object": {"$dn$": school_class_dn, "members": visible_teachers}}],
         )
         wait_for_listener_replication()
         schoolClass = SchoolClass.from_dn(school_class_dn, school, self.schoolenv.lo)
@@ -81,20 +81,20 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client
-        self.__test_teacher_assignment([schoolenv.teachers[schools[0][0]]],)
+        self.__test_teacher_assignment([schoolenv.teachers[schools[0][0]]])
 
     def test_teacher_from_secondary_school(self, schoolenv, client):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client
-        self.__test_teacher_assignment([schoolenv.teachers[schools[1][0]]],)
+        self.__test_teacher_assignment([schoolenv.teachers[schools[1][0]]])
 
     def test_teachers_from_two_schools(self, schoolenv, client):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client
         self.__test_teacher_assignment(
-            [schoolenv.teachers[schools[0][0]], schoolenv.teachers[schools[1][0]]],
+            [schoolenv.teachers[schools[0][0]], schoolenv.teachers[schools[1][0]]]
         )
 
 

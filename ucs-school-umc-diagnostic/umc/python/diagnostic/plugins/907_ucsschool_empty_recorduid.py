@@ -40,16 +40,23 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, Set
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school Empty RecordUIDs")
 description = "\n".join(
     [
         _(
-            "In a UCS@school domain that uses the UCS@school import, all users that should be considered for imports must have a unique recordUID-sourceUID combination."
+            "In a UCS@school domain that uses the UCS@school import, all users that should be "
+            "considered for imports must have a unique recordUID-sourceUID combination."
         ),
         _(
-            "Having an empty recordUID is theoretically OK, but will most likely lead to problems in the future and the user may not be found by the import."
+            "Having an empty recordUID is theoretically OK, but will most likely lead to problems in "
+            "the future and the user may not be found by the import."
         ),
     ]
 )

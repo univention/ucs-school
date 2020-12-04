@@ -29,7 +29,6 @@
 #
 
 import logging
-import os
 
 from ucsschool.lib.models.utils import get_stream_handler
 from univention.config_registry import ConfigRegistry

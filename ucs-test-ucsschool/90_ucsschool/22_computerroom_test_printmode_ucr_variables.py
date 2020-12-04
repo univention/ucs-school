@@ -7,6 +7,8 @@
 ## packages: [ucs-school-umc-computerroom]
 
 
+from __future__ import print_function
+
 import datetime
 
 import univention.testing.strings as uts
@@ -82,8 +84,8 @@ def main():
 
         def ucr_check_both_values(settings):
             ucr.load()
-            print "==> samba/printmode/hosts/all = %r" % ucr.get("samba/printmode/hosts/all")
-            print "==> samba/printmode/hosts/none = %r" % ucr.get("samba/printmode/hosts/none")
+            print("==> samba/printmode/hosts/all = %r" % ucr.get("samba/printmode/hosts/all"))
+            print("==> samba/printmode/hosts/none = %r" % ucr.get("samba/printmode/hosts/none"))
 
             class NotOk(Exception):
                 pass
@@ -105,9 +107,9 @@ def main():
                         or setting.ip[0] in ucr.get("samba/printmode/hosts/none", "")
                     ):
                         raise NotOk()
-                print "---OK---"
+                print("---OK---")
             except NotOk:
-                print "---FAIL---"
+                print("---FAIL---")
                 return False
             return True
 
@@ -117,9 +119,9 @@ def main():
         for settings1.printmode in printmodes:
             set_room_printmode(settings1)
             for settings2.printmode in printmodes:
-                print "---------------------------------------------"
+                print("---------------------------------------------")
                 set_room_printmode(settings2)
-                print "Printmodes: %r" % ([x.printmode for x in settingslist],)
+                print("Printmodes: %r" % ([x.printmode for x in settingslist],))
                 if not ucr_check_both_values(settingslist):
                     did_fail = True
 
@@ -130,9 +132,9 @@ def main():
             for settings2.printmode in printmodes:
                 set_room_printmode(settings2)
                 for settings3.printmode in printmodes:
-                    print "---------------------------------------------"
+                    print("---------------------------------------------")
                     set_room_printmode(settings3)
-                    print "Printmodes: %r" % ([x.printmode for x in settingslist],)
+                    print("Printmodes: %r" % ([x.printmode for x in settingslist],))
                     if not ucr_check_both_values(settingslist):
                         did_fail = True
 

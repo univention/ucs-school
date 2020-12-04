@@ -6,6 +6,8 @@
 ## packages:
 ##    - ucs-school-master | ucs-school-singlemaster | ucs-school-slave
 
+from __future__ import print_function
+
 import apt
 
 import univention.testing.utils as utils
@@ -31,7 +33,7 @@ def main():
                     pkglist.append(deppkg.name)
                     if deppkg.name in apt_cache and apt_cache[deppkg.name].is_installed:
                         found += 1
-                print "Checking packages %r (pkg found=%d)" % (pkglist, found)
+                print("Checking packages %r (pkg found=%d)" % (pkglist, found))
                 if found == 0:
                     utils.fail("Package %r is not installed but it should" % (deppkg,))
     if not meta_found:

@@ -50,7 +50,7 @@ usage() {
 	echo
 	echo "Options:"
 	echo "  -h, --help  show this help message and exit"
-	
+
 	exit 0
 }
 
@@ -60,7 +60,7 @@ while [ $# -ge 1 ] ; do
 		*)
 			if [ -z "$OU" ]; then
 				OU="$(echo "$1" | tr -cd 'a-zA-Z0-9-')"
-			fi 
+			fi
 			shift 1
 			;;
 	esac

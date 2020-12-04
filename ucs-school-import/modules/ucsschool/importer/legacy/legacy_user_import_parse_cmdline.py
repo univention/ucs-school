@@ -50,7 +50,8 @@ class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
         self.parser.add_argument(
             "-c",
             "--conffile",
-            help="Configuration file to use (e.g. /var/lib/ucs-school-import/configs/user_import_legacy.json).",
+            help="Configuration file to use (e.g. "
+            "/var/lib/ucs-school-import/configs/user_import_legacy.json).",
         )
         self.parser.add_argument(
             "-o", "--outfile", dest="outfile", help="File to write passwords of created users to."

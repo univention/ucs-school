@@ -27,7 +27,7 @@
 # (Replace "/var/lib/ucs-school-import/configs/myconfig.json" with your actual
 # configuration file and "subclassing_example.MyUserImport" with your module.class.)
 #
-# python -c 'MYCFG="/var/lib/ucs-school-import/configs/myconfig.json"; import json; cnf=json.load(open(MYCFG, "rb")); cnf["classes"]=cnf.get("classes", {}); cnf["classes"]["user_importer"]="subclassing_example.MyUserImport"; json.dump(cnf, open(MYCFG+".new", "wb"), indent=4)'
+# python -c 'MYCFG="/var/lib/ucs-school-import/configs/myconfig.json"; import json; cnf=json.load(open(MYCFG, "rb")); cnf["classes"]=cnf.get("classes", {}); cnf["classes"]["user_importer"]="subclassing_example.MyUserImport"; json.dump(cnf, open(MYCFG+".new", "wb"), indent=4)'  # noqa: E501
 #
 # Verfiy that /var/lib/ucs-school-import/configs/myconfig.json.new is correct and replace
 # /var/lib/ucs-school-import/configs/myconfig.json with it.

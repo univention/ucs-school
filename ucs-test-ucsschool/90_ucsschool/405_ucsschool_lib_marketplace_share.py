@@ -13,7 +13,7 @@
 #
 
 try:
-    from typing import Dict, List, Tuple
+    from typing import Dict, List
 except ImportError:
     pass
 
@@ -51,9 +51,7 @@ def test_get_all(exp_ldap_attr, ucr_hostname):
         assert len(objs) == 1
         obj = objs[0]
         assert isinstance(obj, MarketplaceShare)
-        utils.verify_ldap_object(
-            obj.dn, expected_attr=exp_ldap_attr(ou_name), strict=False,
-        )
+        utils.verify_ldap_object(obj.dn, expected_attr=exp_ldap_attr(ou_name), strict=False)
 
 
 def test_create(exp_ldap_attr, ucr_hostname, ucr_ldap_base):
@@ -76,9 +74,7 @@ def test_create(exp_ldap_attr, ucr_hostname, ucr_ldap_base):
         obj = MarketplaceShare(school=ou_name)
         res = obj.create(schoolenv.lo)
         assert res
-        utils.verify_ldap_object(
-            obj.dn, expected_attr=exp_ldap_attr(ou_name), strict=False,
-        )
+        utils.verify_ldap_object(obj.dn, expected_attr=exp_ldap_attr(ou_name), strict=False)
 
 
 def test_delete(exp_ldap_attr, ucr_hostname, ucr_ldap_base):

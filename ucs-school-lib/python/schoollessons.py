@@ -34,6 +34,7 @@ import re
 import shutil
 
 import ConfigParser
+import six
 
 from univention.lib import locking
 from univention.lib.i18n import Translation
@@ -57,16 +58,17 @@ class Lesson(object):
             raise AttributeError(_("Overlapping lessons are not allowed"))
 
     def _check_name(self, string):
-        if not isinstance(string, basestring):
+        if not isinstance(string, six.string_types):
             raise TypeError("string expected")
-        for (
-            char
-        ) in "\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f":
+        for char in (
+            "\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14"
+            "\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f"
+        ):
             string = string.replace(char, "")
         return string
 
     def _parse_time(self, string):
-        if not isinstance(string, basestring):
+        if not isinstance(string, six.string_types):
             raise TypeError("string expected")
         m = Lesson.TIME_REGEX.match(string)
         if not m:
@@ -109,19 +111,19 @@ class SchoolLessons(ConfigParser.ConfigParser):
     def init(self):
         for sec in self.sections():
             try:
-                l = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
-                self.add(l)
-            except (AttributeError, TypeError), e:
-                MODULE.warn("Lesson %s could not be added: %s" % (sec, str(e)))
+                lession = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
+                self.add(lession)
+            except (AttributeError, TypeError) as exc:
+                MODULE.warn("Lesson %s could not be added: %s" % (sec, str(exc)))
 
     def remove(self, lesson):
         if isinstance(lesson, Lesson):
             lesson = lesson.name
 
-        self._lessons[:] = [l for l in self._lessons if l.name != lesson]
+        self._lessons[:] = [les for les in self._lessons if les.name != lesson]
 
     def add(self, lesson, begin=None, end=None):
-        if isinstance(lesson, basestring):
+        if isinstance(lesson, six.string_types):
             lesson = Lesson(lesson, begin, end)
 
         # ensure there is no intersection between the lessons

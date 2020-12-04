@@ -30,6 +30,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+import ldap
 
 import univention.admin.filter
 import univention.admin.handlers
@@ -89,7 +90,7 @@ property_descriptions = {
 
 
 layout = [
-    Tab(_("General"), _("Basic Values"), layout=["description", "category",]),
+    Tab(_("General"), _("Basic Values"), layout=["description", "category"]),
 ]
 
 mapping = univention.admin.mapping.mapping()
@@ -156,7 +157,7 @@ def lookup(
     try:
         for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
             res.append(object(co, lo, None, dn))
-    except:
+    except ldap.LDAPError:
         pass
     return res
 

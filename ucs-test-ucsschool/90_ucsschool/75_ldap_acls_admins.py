@@ -26,7 +26,7 @@ def main():
                 school, is_staff=False, is_teacher=True
             )
 
-            with udm_test.UCSTestUDM() as udm:
+            with udm_test.UCSTestUDM():
                 replication_node_dn = "cn={},cn=dc,cn=server,cn=computers,ou={},{}".format(
                     name_edudc, school, ucr.get("ldap/base", "")
                 )

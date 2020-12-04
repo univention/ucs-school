@@ -30,9 +30,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
+try:
+    import typing  # noqa: F401
 
-import six
+    import requests
+except ImportError:
+    pass
 
 from .models import VeyonError
 

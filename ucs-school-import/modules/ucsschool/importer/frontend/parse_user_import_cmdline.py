@@ -67,8 +67,8 @@ class ParseUserImportCmdline(object):
         self.parser.add_argument(
             "-c",
             "--conffile",
-            help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on configuration "
-            "file stacking).",
+            help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on "
+            "configuration file stacking).",
         )
         self.parser.add_argument(
             "-i",
@@ -84,41 +84,45 @@ class ParseUserImportCmdline(object):
             dest="settings",
             metavar="KEY=VALUE",
             nargs="*",
-            help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values (e.g. "
-            "'scheme:email=...').",
+            help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values "
+            "(e.g. 'scheme:email=...').",
         )
         self.parser.add_argument(
             "-m",
             "--no-delete",
             dest="no_delete",
             action="store_true",
-            help="Do not delete user objects if actions are automatically determined. User objects in input data are "
-            "only added/modified. Please note: if user objects in input data are explicitly marked for deletion "
-            "(__action=D), the objects will be still deleted! (shortcut for --set no_delete=...) [default: %(default)s].",
+            help="Do not delete user objects if actions are automatically determined. User objects in "
+            "input data are only added/modified. Please note: if user objects in input data are "
+            "explicitly marked for deletion (__action=D), the objects will be still deleted! "
+            "(shortcut for --set no_delete=...) [default: %(default)s].",
         )
         self.parser.add_argument(
             "-n",
             "--dry-run",
             dest="dry_run",
             action="store_true",
-            help="Dry-run: don't actually commit changes to LDAP (shortcut for --set dry_run=...) [default: %(default)s].",
+            help="Dry-run: don't actually commit changes to LDAP (shortcut for --set dry_run=...) "
+            "[default: %(default)s].",
         )
         self.parser.add_argument(
             "--source_uid",
-            help="The ID of the source database (shortcut for --set source_uid=...) [mandatory either here or in the "
-            "configuration file].",
+            help="The ID of the source database (shortcut for --set source_uid=...) [mandatory either "
+            "here or in the configuration file].",
         )
         self.parser.add_argument(
             "-s",
             "--school",
-            help="Name of school. Set only, if the source data does not contain the name of the school and all users "
-            "are from one school (shortcut for --set school=...) [default: %(default)s].",
+            help="Name of school. Set only, if the source data does not contain the name of the school "
+            "and all users are from one school (shortcut for --set school=...) [default: "
+            "%(default)s].",
         )
         self.parser.add_argument(
             "-u",
             "--user_role",
-            help="Set this, if the source data contains users with only one role <student|staff|teacher|teacher_and_staff> "
-            "(shortcut for --set user_role=...) [default: %(default)s].",
+            help="Set this, if the source data contains users with only one role "
+            "<student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) "
+            "[default: %(default)s].",
         )
         self.parser.add_argument(
             "-v",

@@ -4,8 +4,8 @@
 'wscript.echo "ExpandEnvironmentStrings: "& WshShell.ExpandEnvironmentString
 
 
-Set oShell = CreateObject("Wscript.Shell") 
-strName = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH") 
+Set oShell = CreateObject("Wscript.Shell")
+strName = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
 wscript.echo strName
 
 
@@ -28,7 +28,7 @@ End If
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objFolder = objFSO.CreateFolder(FolderPath)
 
-Set oShell = CreateObject("Wscript.Shell") 
+Set oShell = CreateObject("Wscript.Shell")
 homepath = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
 
 Set oWS = WScript.CreateObject("WScript.Shell")

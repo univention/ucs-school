@@ -1,4 +1,4 @@
 [tool.black]
 line-length = 105
 target-version = ['py27']
-exclude = 'venv/|doc/doc-common/'
+exclude = 'venv/|doc/doc-common/|ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import'

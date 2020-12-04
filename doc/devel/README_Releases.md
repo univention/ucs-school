@@ -45,7 +45,7 @@ appcenter-modify-README -a ucsschool -r 4.4 -v "4.4 v9"
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 copy_app_binaries -r 4.4 -v "4.2 v9" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
-# Upload current ucs-test-ucsschool package to Testappcenter 
+# Upload current ucs-test-ucsschool package to Testappcenter
 univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
 ```
 
@@ -123,21 +123,21 @@ Send an internal announcement mail with the following text (**Adapt version and 
 <pre>
 To: app-announcement@univention.de
 Subject: App Center: UCS@school aktualisiert
- 
+
 Hallo zusammen,
- 
+
 folgendes App-Update wurde eben freigegeben:
 - UCS@school 4.4 v9
- 
+
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
- 
+
 Auszüge aus dem Changelog:
 - ...
 - ...
 
 Viele Grüße,
- 
+
  $NAME
 </pre>
 

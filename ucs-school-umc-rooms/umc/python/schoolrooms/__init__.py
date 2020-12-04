@@ -49,6 +49,14 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 
+try:
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        import univention.admin.uldap.access
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-rooms").translate
 
 
@@ -79,7 +87,7 @@ class Instance(SchoolBaseModule):
         pattern = LDAP_Filter.forGroups(request.options.get("pattern", ""), school)
 
         result = [
-            {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn,}
+            {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)
         ]
         result = sorted(
@@ -170,7 +178,9 @@ class Instance(SchoolBaseModule):
     ):  # type (...) -> None
         """
         All computers in teacher_computers become teacher computers.
-        All computers that are in all_computers, but not in teacher_computers become non teacher computers.
+        All computers that are in all_computers, but not in teacher_computers become non teacher
+        computers.
+
         :param all_computers: All computers present in a room
         :param teacher_computers: All computers in the room designated to become teacher computers
         :param ldap_user_read: ldap bind with read access

@@ -218,13 +218,14 @@ class HttpApiImportFrontend(UserImportCommandLine):
     def make_job_state(
         description, percentage=0, done=0, total=0, celery_task_state=CELERY_STATES_STARTED, **kwargs
     ):
-        kwargs.update(dict(description=description, percentage=percentage, done=done, total=total,))
+        kwargs.update(dict(description=description, percentage=percentage, done=done, total=total))
         return kwargs
 
     def setup_config(self):
         # Bug #47156: check that the used CSV reader is HttpApiCsvReader or a subclass
-        error_msg = "The CSV reader class for the HTTP-API import must be {!r} (or derived from it).".format(
-            self.reader_class
+        error_msg = (
+            "The CSV reader class for the HTTP-API import must be {!r} (or derived from "
+            "it).".format(self.reader_class)
         )
         config = super(HttpApiImportFrontend, self).setup_config()
         try:

@@ -4,7 +4,6 @@ import copy
 import csv
 import datetime
 import json
-import logging
 import os
 import pprint
 import random
@@ -17,6 +16,7 @@ import time
 import traceback
 from collections import Mapping
 
+import six
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
@@ -27,7 +27,6 @@ import univention.testing.udm
 import univention.testing.utils as utils
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 try:
@@ -35,9 +34,8 @@ try:
 except ImportError:
     DRSReplicationFailed = Exception
 
-
 try:
-    from typing import Dict, List, Optional, Set, Tuple
+    from typing import Set
 except ImportError:
     pass
 
@@ -58,7 +56,7 @@ class ConfigDict(dict):
         update_entry('foo:bar:baz', 'my value')
         update_entry('foo:bar:ding', False)
         """
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             if value.lower() == "false":
                 value = False
             elif value.lower() == "true":
@@ -84,8 +82,6 @@ class PyHooks(object):
         self.log = get_ucsschool_logger()
 
     def create_hooks(self):
-        """
-        """
         fn = "%s.py" % (uts.random_name(),)
         data = """from ucsschool.importer.utils.user_pyhook import UserPyHook
 import os
@@ -138,10 +134,12 @@ class MyHook(UserPyHook):
         self.logger.info("***** Running {} {} hook for user {}.".format(when, action, user))
         # udm_properties[k] is only filled from LDAP, if k was in the input
         # don't try to get_udm_object() on a user not {anymore, yet} in ldap
-        if not user.udm_properties.get('street') and not ((action == 'create' and when == 'pre') or (action == 'remove' and when == 'post')):
+        if not user.udm_properties.get('street') and not ((action == 'create' and when == 'pre') \
+        or (action == 'remove' and when == 'post')):
             obj = user.get_udm_object(self.lo)
             user.udm_properties['street'] = obj.info.get('street', '')
-        user.udm_properties['street'] = user.udm_properties.get('street', '') + ',{}-{}'.format(when, action)
+        user.udm_properties['street'] = user.udm_properties.get('street', '') + ',{}-{}'.format(
+            when, action)
         if when == 'post' and action != 'remove':
             user.modify(self.lo)
         fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))
@@ -218,8 +216,8 @@ class ImportTestbase(object):
     def syntax_date2_dateformat(cls, userexpirydate):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
-        _re_iso = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-        _re_de = re.compile("^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
+        _re_iso = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+        _re_de = re.compile(r"^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
         if _re_iso.match(userexpirydate):
             return "%Y-%m-%d"
         elif _re_de.match(userexpirydate):
@@ -288,7 +286,8 @@ class ImportTestbase(object):
             ou = ous[num]
             ou.name, ou.dn = name, dn
         self.log.info(
-            "Created OUs: %r.", [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
+            "Created OUs: %r.",
+            [_ou.name for _ou in [self.ou_A, self.ou_B, self.ou_C] if _ou is not None],
         )
 
     def setup_testenv(self, schoolenv):
@@ -364,7 +363,8 @@ class ImportTestbase(object):
                 self.log.info("Running subprocess.call(%r)...", cmd)
                 subprocess.call(cmd)
                 self.log.info(
-                    "Waiting again. Executing: wait_for_drs_replication_of_membership(group_dn=%r, member_uid=%r, is_member=%r, try_resync=False, **kwargs=%r)...",
+                    "Waiting again. Executing: wait_for_drs_replication_of_membership(group_dn=%r, "
+                    "member_uid=%r, is_member=%r, try_resync=False, **kwargs=%r)...",
                     group_dn,
                     member_uid,
                     is_member,
@@ -379,17 +379,6 @@ class ImportTestbase(object):
                     **kwargs
                 )
         return res
-
-    @staticmethod
-    def _get_logger():  # type: () -> logging.Logger
-        force_ucsschool_logger_colorized_if_has_tty()
-        logger = logging.getLogger("ucsschool")
-        logger.setLevel(logging.DEBUG)
-        if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
-            logger.addHandler(get_stream_handler("DEBUG"))
-        for handler in logger.handlers:
-            handler.setLevel(logging.DEBUG)
-        return logger
 
 
 class CLI_Import_v2_Tester(ImportTestbase):
@@ -465,11 +454,14 @@ class CLI_Import_v2_Tester(ImportTestbase):
     def create_csv_file(self, person_list, mapping=None, fn_csv=None):
         """
         Create CSV file for given persons
+        >>> from univention.testing.ucsschool.importusers import Person
         >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')])
         '/tmp/import.sldfhgsg.csv'
-        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], fn_csv='/tmp/import.foo.csv')
+        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')],
+            fn_csv='/tmp/import.foo.csv')
         '/tmp/import.foo.csv'
-        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], headers={'firstname': 'Vorname', ...})
+        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')],
+            headers={'firstname': 'Vorname', ...})
         '/tmp/import.cetjdfgj.csv'
         """
         if mapping:
@@ -508,8 +500,8 @@ class CLI_Import_v2_Tester(ImportTestbase):
             with open(config_path, "r") as config_file:
                 if len(json.load(config_file)) != 0:
                     msg = (
-                        'The config under "%s" seems to be non-empty. That often causes problems for tests. Please replace it with an empty config: "{}".'
-                        % (config_path,)
+                        'The config under "%s" seems to be non-empty. That often causes problems for '
+                        'tests. Please replace it with an empty config: "{}".' % (config_path,)
                     )
                     if raise_exc:
                         raise ImportException(msg)
@@ -522,8 +514,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
         path = "/usr/share/ucs-school-import/pyhooks"
         dir_content = os.listdir(path)
         if dir_content:
-            msg = "The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. Please remove all files in it.".format(
-                path, dir_content
+            msg = (
+                "The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. "
+                "Please remove all files in it.".format(path, dir_content)
             )
             if raise_exc:
                 raise ImportException(msg)

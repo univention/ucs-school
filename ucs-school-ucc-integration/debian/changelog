@@ -62,7 +62,7 @@ ucs-school-ucc-integration (2.0.0-1) unstable; urgency=medium
 
 ucs-school-ucc-integration (1.0.6-1) unstable; urgency=low
 
-  * do not set squid/krb5auth in ucc join script (Bug #31995) 
+  * do not set squid/krb5auth in ucc join script (Bug #31995)
 
  -- Felix Botner <botner@univention.de>  Fri, 26 Jul 2013 10:53:08 +0200
 
@@ -84,7 +84,7 @@ ucs-school-ucc-integration (1.0.4-4) unstable; urgency=low
 ucs-school-ucc-integration (1.0.4-3) unstable; urgency=low
 
   * Added version based dependencies to univention-printerserver and
-    ucs-school-umc-computerroom (Bug #31902) 
+    ucs-school-umc-computerroom (Bug #31902)
 
  -- Erik Damrose <damrose@univention.de>  Wed, 24 Jul 2013 16:13:32 +0200
 
@@ -104,7 +104,7 @@ ucs-school-ucc-integration (1.0.3-1) unstable; urgency=low
 
   * added dependency to univention-squid and
     univention-squid-kerberos, activate squid negotiate
-    in samba4 environments (Bug #31995) 
+    in samba4 environments (Bug #31995)
 
  -- Felix Botner <botner@univention.de>  Thu, 18 Jul 2013 16:21:46 +0200
 

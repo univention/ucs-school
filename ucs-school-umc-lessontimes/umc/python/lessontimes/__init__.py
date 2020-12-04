@@ -60,7 +60,7 @@ class Instance(SchoolBaseModule):
         try:
             # add the new lessons
             for lesson in request.options.get("lessons", []):
-                (description, begin, end,) = lesson
+                (description, begin, end) = lesson
                 if begin == end == "00:00" and not description:
                     continue
                 elif not description:
@@ -68,7 +68,7 @@ class Instance(SchoolBaseModule):
                 else:
                     self._lessons.add(description, begin, end)
             self._lessons.save()
-        except (ValueError, AttributeError), err:
+        except (ValueError, AttributeError) as err:
             MODULE.info(str(err))
             result = {"message": str(err)}
             self.finished(request.id, result)
