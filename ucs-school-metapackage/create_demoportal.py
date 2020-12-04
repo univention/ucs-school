@@ -282,14 +282,16 @@ def create_portal():
         )[0].dn
     except IndexError as e:
         print(
-            "Could not find all necessary user groups to create demo portal. Something must have gone wrong with the school creation!"
+            "Could not find all necessary user groups to create demo portal. Something must have gone "
+            "wrong with the school creation!"
         )
         sys.exit(1)
 
     pos_portal.setDn("cn=portal,cn=univention")
     for name, en, de, descr_en, descr_de, link, icon, group in ENTRIES:
-        iconpath = "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/ucsschool_demo_{}.png".format(
-            icon
+        iconpath = (
+            "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/"
+            "ucsschool_demo_{}.png".format(icon)
         )
         entry_obj = module_portal_e.object(None, lo, pos_portal)
         entry_obj.open()
