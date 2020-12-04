@@ -161,9 +161,7 @@ def test_ip_not_in_cache(mocker, ucr_value):
     ip = uts.random_ip()
     mac = uts.random_mac()
     out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
-        """.format(
-        ip, mac
-    )
+        """
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1

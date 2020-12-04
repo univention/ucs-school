@@ -75,7 +75,10 @@ else:
         "computers/ubuntu": ("ucsschoolComputer", role_ubuntu_computer),
     }
 try:
-    from typing import Dict, List, Set, Tuple, Union  # pylint: disable=unused-import
+    from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union
+
+    if TYPE_CHECKING:
+        import univention.admin.handlers.simpleComputer
 
     AddType = Tuple[str, List[str]]  # pylint: disable=invalid-name
     ModType = Tuple[str, List[str], List[str]]  # pylint: disable=invalid-name
@@ -114,7 +117,7 @@ class UcsschoolRoleComputers(simpleHook):
         return self.add_ocs_and_ucschool_roles(obj, ml, "mod")
 
     def add_ocs_and_ucschool_roles(self, obj, aml, operation):
-        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]], str) -> List[Union[AddType, ModType]]
+        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]], str) -> List[Union[AddType, ModType]]  # noqa: E501
         """
         Append `objectClass` and `ucsschoolRole` entries to add/change list.
 
@@ -166,7 +169,7 @@ class UcsschoolRoleComputers(simpleHook):
         :return: school name (OU) if obj is located inside one, else '-'
         :rtype: str
         """
-        if obj.has_key("school"):
+        if obj.has_key("school"):  # noqa: W601
             schools = obj.get("school")
         else:
             schools = []
@@ -181,7 +184,7 @@ class UcsschoolRoleComputers(simpleHook):
 
     @staticmethod
     def _existing_ocs_roles(obj, aml):
-        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]
+        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]  # noqa: E501
         """Get objectClasses and ucsschoolRoles from obj."""
         existing_ocs = set(obj.oldattr.get("objectClass", []))
         existing_roles = set(obj.get("ucsschoolRole", []))

@@ -34,17 +34,17 @@ Package: italc-master
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python, italc-client, libitalc (=${binary:Version})
 Description: iTALC Master Application
- iTALC makes it possible, to access and influence the pupils 
- activities just from the computer of the teacher. With the 
- help of iTALC, for example the teacher is able to see the 
- content of the pupils screens on his screen. If a pupil needs 
- help, the teacher can access the pupils desktop and give support 
- from his computer. The pupil can watch all activities, the 
- teacher is doing on his desktop. So the pupil can learn new processes. 
- For teaching something to all pupils, you can switch into demo-mode 
- where all screens of the pupils show the teacher-screen. 
- Furthermore things like locking pupil's screens, killing games, 
- power on/off clients and much more can be done with iTALC. 
+ iTALC makes it possible, to access and influence the pupils
+ activities just from the computer of the teacher. With the
+ help of iTALC, for example the teacher is able to see the
+ content of the pupils screens on his screen. If a pupil needs
+ help, the teacher can access the pupils desktop and give support
+ from his computer. The pupil can watch all activities, the
+ teacher is doing on his desktop. So the pupil can learn new processes.
+ For teaching something to all pupils, you can switch into demo-mode
+ where all screens of the pupils show the teacher-screen.
+ Furthermore things like locking pupil's screens, killing games,
+ power on/off clients and much more can be done with iTALC.
  .
  This package contains the software necessary to observe and control iTALC
  clients provided by the italc-client package.
@@ -53,17 +53,17 @@ Package: italc-client
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libitalc (=${binary:Version}), shell-univention-lib, italc-management-console
 Description: iTALC Client Application
- iTALC makes it possible, to access and influence the pupils 
- activities just from the computer of the teacher. With the 
- help of iTALC, for example the teacher is able to see the 
- content of the pupils screens on his screen. If a pupil needs 
- help, the teacher can access the pupils desktop and give support 
- from his computer. The pupil can watch all activities, the 
- teacher is doing on his desktop. So the pupil can learn new processes. 
- For teaching something to all pupils, you can switch into demo-mode 
- where all screens of the pupils show the teacher-screen. 
- Furthermore things like locking pupil's screens, killing games, 
- power on/off clients and much more can be done with iTALC. 
+ iTALC makes it possible, to access and influence the pupils
+ activities just from the computer of the teacher. With the
+ help of iTALC, for example the teacher is able to see the
+ content of the pupils screens on his screen. If a pupil needs
+ help, the teacher can access the pupils desktop and give support
+ from his computer. The pupil can watch all activities, the
+ teacher is doing on his desktop. So the pupil can learn new processes.
+ For teaching something to all pupils, you can switch into demo-mode
+ where all screens of the pupils show the teacher-screen.
+ Furthermore things like locking pupil's screens, killing games,
+ power on/off clients and much more can be done with iTALC.
  .
  This package contains the client software for iTALC that can be controlled
  using italc-master.
@@ -90,17 +90,17 @@ Package: italc-management-console
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libitalc (=${binary:Version})
 Description: iTALC Management Console
- iTALC makes it possible, to access and influence the pupils 
- activities just from the computer of the teacher. With the 
- help of iTALC, for example the teacher is able to see the 
- content of the pupils screens on his screen. If a pupil needs 
- help, the teacher can access the pupils desktop and give support 
- from his computer. The pupil can watch all activities, the 
- teacher is doing on his desktop. So the pupil can learn new processes. 
- For teaching something to all pupils, you can switch into demo-mode 
- where all screens of the pupils show the teacher-screen. 
- Furthermore things like locking pupil's screens, killing games, 
- power on/off clients and much more can be done with iTALC. 
+ iTALC makes it possible, to access and influence the pupils
+ activities just from the computer of the teacher. With the
+ help of iTALC, for example the teacher is able to see the
+ content of the pupils screens on his screen. If a pupil needs
+ help, the teacher can access the pupils desktop and give support
+ from his computer. The pupil can watch all activities, the
+ teacher is doing on his desktop. So the pupil can learn new processes.
+ For teaching something to all pupils, you can switch into demo-mode
+ where all screens of the pupils show the teacher-screen.
+ Furthermore things like locking pupil's screens, killing games,
+ power on/off clients and much more can be done with iTALC.
  .
  This package contains the iTALC Management Console which allows to
  control and configure iTALC installations.

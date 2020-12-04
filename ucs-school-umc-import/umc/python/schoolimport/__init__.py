@@ -82,7 +82,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
         except ObjectNotFound:
             raise UMC_Error(
                 _(
-                    "The UCS@school import API HTTP server could not be reached. It seems it is misconfigured, not installed or a proxy/firewall is blocking it."
+                    "The UCS@school import API HTTP server could not be reached. It seems it is "
+                    "misconfigured, not installed or a proxy/firewall is blocking it."
                 ),
                 status=503,
             )

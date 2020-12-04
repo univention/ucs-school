@@ -65,12 +65,18 @@ def LDAP_Connection(*connection_types):
 
     The function which uses this decorator may specify the following additional keyword arguments:
     ldap_position: a univention.admin.uldap.position instance valid ldap position.
-    ldap_user_read: a read only LDAP connection to the local LDAP server authenticated with the currently used user
-    ldap_user_write: a read/write LDAP connection to the master LDAP server authenticated with the currently used user
-    ldap_machine_read: a read only LDAP connection to the local LDAP server authenticated with the machine account
-    ldap_machine_write: a read/write LDAP connection to the master LDAP server authenticated with the machine account
-    ldap_admin_write: a read/write LDAP connection to the master LDAP server authenticated with cn=admin account
-    (deprecated!) search_base: a SchoolSearchBase instance which is bound to the school of the user or machine.
+    ldap_user_read: a read only LDAP connection to the local LDAP server authenticated with the
+        currently used user
+    ldap_user_write: a read/write LDAP connection to the master LDAP server authenticated with the
+        currently used user
+    ldap_machine_read: a read only LDAP connection to the local LDAP server authenticated with the
+        machine account
+    ldap_machine_write: a read/write LDAP connection to the master LDAP server authenticated with the
+        machine account
+    ldap_admin_write: a read/write LDAP connection to the master LDAP server authenticated with cn=admin
+        account
+    (deprecated!) search_base: a SchoolSearchBase instance which is bound to the school of the user or
+        machine.
 
     This decorator can only be used after set_bind_function() has been executed.
 

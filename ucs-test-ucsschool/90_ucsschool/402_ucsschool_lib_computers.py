@@ -15,7 +15,8 @@ from univention.testing.ucsschool.importcomputers import ComputerImport, ImportF
 
 def test_lookup(ou_name):
     """
-    This tests checks that no non-client computers are returned for the lookup function of the SchoolComputer
+    This tests checks that no non-client computers are returned for the lookup function of the
+    SchoolComputer
     """
     print("********** Generate school data")
     computer_import = ComputerImport(

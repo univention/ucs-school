@@ -90,14 +90,14 @@ class TestExamPrepare(TestCase):
                     try:
                         exam.save(fields=["recipients", "school"])
                         raise Exception("Exam should not have been saved due to missing name")
-                    except HTTPError as e:
+                    except HTTPError:
                         print(" ** Save failed as expected")
-                    except SaveFail as e:
+                    except SaveFail:
                         print(" ** Save failed as expected")
                     exam.save()
                     try:
                         exam.save()
-                    except HTTPError as e:
+                    except HTTPError:
                         print(" ** Save failed as expected due to existing name")
                     exam.save(update=True, fields=["name", "room", "school", "directory"])
                     result = exam.get()[0]

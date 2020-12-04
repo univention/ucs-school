@@ -51,7 +51,8 @@ urlpatterns = [
     # url(r'^docs/', include_docs_urls(title='UCS@school import API'))
     url(r"^admin/", admin.site.urls),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    # URLs for hyperlinked relationships from imports/users/<ID>/<log|pass|sum>/ back to imports/users/<ID>/
+    # URLs for hyperlinked relationships from imports/users/<ID>/<log|pass|sum>/ back to
+    # imports/users/<ID>/
     url(
         r"^(?P<version>(v1))/imports/users/(?P<pk>\d+)/logfile/",
         views.LogFileViewSet.as_view({"get": "retrieve"}),

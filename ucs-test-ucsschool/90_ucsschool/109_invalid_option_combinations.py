@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Test UDM hook that prevents creating and modifying user objects with forbidden option combinations
+## desc: UDM hook prevents creating and modifying user objects with forbidden option combinations
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous

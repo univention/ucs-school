@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import string
 import subprocess
@@ -27,6 +29,11 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_s
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
+
+try:
+    from typing import List, Optional
+except ImportError:
+    pass
 
 utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
@@ -178,7 +185,7 @@ class Person(object):
             elif hasattr(self, key):
                 setattr(self, key, kwargs[key])
             else:
-                print "ERROR: cannot update Person(): unknown option %r=%r" % (key, kwargs[key])
+                print("ERROR: cannot update Person(): unknown option %r=%r" % (key, kwargs[key]))
 
     def move_school_classes(self, old_school, new_school):
         assert new_school in self.schools
@@ -254,7 +261,8 @@ class Person(object):
     def append_random_working_group(self):
         return
         # working groups cannot be specified, neither in file for CLI nor by API in Python
-        # self.school_classes.setdefault(self.school, []).append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
+        # self.school_classes.setdefault(self.school, []).append('%s-%s' % (
+        #   self.school, uts.random_string(length=9, alpha=True, numeric=False)))
 
     def is_student(self):
         return self.role == "student"
@@ -336,11 +344,11 @@ class Person(object):
     def get_samba_home_path_server(self):
         sambahome = configRegistry.get("ucsschool/import/set/sambahome")
         if sambahome:
-            print ("UCR variable ucsschool/import/set/sambahome is set")
+            print("UCR variable ucsschool/import/set/sambahome is set")
             return sambahome
         is_singlemaster = configRegistry.is_true("ucsschool/singlemaster", False)
         if is_singlemaster:
-            print ("UCR variable ucsschool/singlemaster is set")
+            print("UCR variable ucsschool/singlemaster is set")
             return configRegistry.get("hostname")
         if self.school_base not in self._samba_info:
             self._add_to_samba_info_school_base_cache(self.school_base)
@@ -349,7 +357,7 @@ class Person(object):
     def get_profile_path_server(self):
         serverprofile_path = configRegistry.get("ucsschool/import/set/serverprofile/path")
         if serverprofile_path:
-            print ("UCR variable ucsschool/import/set/serverprofile/path is set")
+            print("UCR variable ucsschool/import/set/serverprofile/path is set")
             return serverprofile_path
         if self.school_base not in self._samba_info:
             self._add_to_samba_info_school_base_cache(self.school_base)
@@ -370,7 +378,7 @@ class Person(object):
         return res
 
     def verify(self):
-        print ("verify %s: %s" % (self.role, self.username))
+        print("verify %s: %s" % (self.role, self.username))
         utils.wait_for_replication()
         # reload UCR
         configRegistry.load()
@@ -416,7 +424,7 @@ class Person(object):
                 should_exist=True,
             )
 
-        print "person OK: %s" % self.username
+        print("person OK: %s" % self.username)
 
     def update_from_ldap(self, lo, attrs, source_uid=None, record_uid=None):
         # type: (univention.admin.uldap.access, List[str], Optional[str], Optional[str]) -> None
@@ -518,9 +526,9 @@ class ImportFile:
                 self._run_import_via_python_api()
             pre_result = hooks.get_pre_result()
             post_result = hooks.get_post_result()
-            print "PRE  HOOK result:\n%s" % pre_result
-            print "POST HOOK result:\n%s" % post_result
-            print "SCHOOL DATA     :\n%s" % str(self.user_import)
+            print("PRE  HOOK result:\n%s" % pre_result)
+            print("POST HOOK result:\n%s" % post_result)
+            print("SCHOOL DATA     :\n%s" % str(self.user_import))
             if pre_result != post_result != str(self.user_import):
                 raise UserHookResult()
         finally:
@@ -528,12 +536,12 @@ class ImportFile:
             try:
                 os.remove(self.import_file)
             except OSError as e:
-                print "WARNING: %s not removed. %s" % (self.import_file, e)
+                print("WARNING: %s not removed. %s" % (self.import_file, e))
 
     def _run_import_via_cli(self):
         cmd_block = [self.cli_path, self.import_file]
 
-        print "cmd_block: %r" % cmd_block
+        print("cmd_block: %r" % cmd_block)
         retcode = subprocess.call(cmd_block, shell=False)
         if retcode:
             raise ImportUser(
@@ -571,7 +579,7 @@ class ImportFile:
 
         for user in self.user_import.students:
             kwargs = _set_kwargs(user)
-            print "* student username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs)
+            print("* student username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs))
             if user.mode == "A":
                 StudentLib(**kwargs).create(lo)
             elif user.mode == "M":
@@ -581,7 +589,7 @@ class ImportFile:
 
         for user in self.user_import.teachers:
             kwargs = _set_kwargs(user)
-            print "* teacher username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs)
+            print("* teacher username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs))
             if user.mode == "A":
                 TeacherLib(**kwargs).create(lo)
             elif user.mode == "M":
@@ -591,7 +599,7 @@ class ImportFile:
 
         for user in self.user_import.staff:
             kwargs = _set_kwargs(user)
-            print "* staff username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs)
+            print("* staff username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs))
             if user.mode == "A":
                 StaffLib(**kwargs).create(lo)
             elif user.mode == "M":
@@ -601,7 +609,7 @@ class ImportFile:
 
         for user in self.user_import.teacher_staff:
             kwargs = _set_kwargs(user)
-            print "* teacher_staff username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs)
+            print("* teacher_staff username=%r mode=%r kwargs=%r" % (user.username, user.mode, kwargs))
             if user.mode == "A":
                 TeachersAndStaffLib(**kwargs).create(lo)
             elif user.mode == "M":
@@ -797,7 +805,7 @@ def create_and_verify_users(
 ):
     assert use_cli_api != use_python_api
 
-    print "********** Generate school data"
+    print("********** Generate school data")
     user_import = UserImport(
         school_name=school_name,
         nr_students=nr_students,
@@ -807,7 +815,7 @@ def create_and_verify_users(
     )
     import_file = ImportFile(use_cli_api, use_python_api)
 
-    print user_import
+    print(user_import)
 
     if use_cli_api:
         for user in (
@@ -815,20 +823,20 @@ def create_and_verify_users(
         ):
             user.legacy_v2 = True
 
-    print "********** Create users"
+    print("********** Create users")
     import_file.run_import(user_import)
     utils.wait_for_replication()
     wait_for_s4connector()
     user_import.verify()
 
-    print "********** Modify users"
+    print("********** Modify users")
     user_import.modify()
     import_file.run_import(user_import)
     utils.wait_for_replication()
     wait_for_s4connector()
     user_import.verify()
 
-    print "********** Delete users"
+    print("********** Delete users")
     user_import.delete()
     import_file.run_import(user_import)
     utils.wait_for_replication()
@@ -897,22 +905,22 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 
                             if not samba_home_server:
                                 univention.config_registry.handler_unset(
-                                    ["ucsschool/import/set/sambahome",]
+                                    ["ucsschool/import/set/sambahome"]
                                 )
 
                             if not profile_path_server:
                                 univention.config_registry.handler_unset(
-                                    ["ucsschool/import/set/serverprofile/path",]
+                                    ["ucsschool/import/set/serverprofile/path"]
                                 )
 
-                            print ""
-                            print "**** import_users_basics:"
-                            print "****    singlemaster: %s" % singlemaster
-                            print "****    samba_home_server: %s" % samba_home_server
-                            print "****    profile_path_server: %s" % profile_path_server
-                            print "****    home_server_at_ou: %s" % home_server_at_ou
-                            print "****    windows_profile_server: %s" % windows_profile_server
-                            print ""
+                            print("")
+                            print("**** import_users_basics:")
+                            print("****    singlemaster: %s" % singlemaster)
+                            print("****    samba_home_server: %s" % samba_home_server)
+                            print("****    profile_path_server: %s" % profile_path_server)
+                            print("****    home_server_at_ou: %s" % home_server_at_ou)
+                            print("****    windows_profile_server: %s" % windows_profile_server)
+                            print("")
                             create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
                         finally:
                             remove_ou(school_name)

@@ -6,6 +6,8 @@
 ## packages: [ucs-school-umc-users]
 ## timeout: 14400
 
+from __future__ import print_function
+
 import sys
 from pprint import pprint
 
@@ -44,7 +46,7 @@ class PasswordReset(object):
         return "PasswordReset(%r, %r, %r, %r)" % (self.host, self.flavor, self.username, self.password)
 
     def test_login(self, user, password):
-        print "%r.test_login(%r, %r)" % (self, user, password)
+        print("%r.test_login(%r, %r)" % (self, user, password))
         try:
             client = Client(self.host)
             return client.authenticate(user, password)
@@ -52,11 +54,14 @@ class PasswordReset(object):
             return exc.response
 
     def change_password(self, target_user, new_password, change_password_on_next_login):
-        print "%r.change_password(%r, %r, %r)" % (
-            self,
-            target_user,
-            new_password,
-            change_password_on_next_login,
+        print(
+            "%r.change_password(%r, %r, %r)"
+            % (
+                self,
+                target_user,
+                new_password,
+                change_password_on_next_login,
+            )
         )
         options = {
             "userDN": target_user[1],
@@ -66,7 +71,7 @@ class PasswordReset(object):
         return self.connection.umc_command("schoolusers/password/reset", options, self.flavor).result
 
     def assert_password_change(self, user, new_password, change_password_on_next_login):
-        print "%r.assert_password_change(%r, %r)" % (self, user, change_password_on_next_login)
+        print("%r.assert_password_change(%r, %r)" % (self, user, change_password_on_next_login))
         try:
             response = self.change_password(
                 user, new_password, change_password_on_next_login=change_password_on_next_login
@@ -78,12 +83,10 @@ class PasswordReset(object):
         )
 
     def assert_login(self, user, old_password, new_password, change_password_on_next_login):
-        print "%s.assert_login(%r, old_password=%r, new_password=%r, change_password_on_next_login=%r)" % (
-            self,
-            user,
-            old_password,
-            new_password,
-            change_password_on_next_login,
+        print(
+            "%s.assert_login(%r, old_password=%r, new_password=%r, "
+            "change_password_on_next_login=%r)"
+            % (self, user, old_password, new_password, change_password_on_next_login)
         )
         login = self.test_login(user, old_password)
         assert 401 == login.status, "The user could login with the old password: status=%r" % (
@@ -92,21 +95,23 @@ class PasswordReset(object):
 
         login = self.test_login(user, new_password)
         if change_password_on_next_login:
-            assert login.status == 401, (
-                "The user could login with new password and chgPwdNextLogin=True: status=%r"
-                % (login.status,)
+            assert (
+                login.status == 401
+            ), "The user could login with new password and chgPwdNextLogin=True: status=%r" % (
+                login.status,
             )
             assert login.result and login.result.get(
                 "password_expired"
             ), "The password is not expired - as expected"
         else:
-            assert login.status == 200, (
-                "The user could not login with new password and chgPwdNextLogin=False: status=%r"
-                % (login.status,)
+            assert (
+                login.status == 200
+            ), "The user could not login with new password and chgPwdNextLogin=False: status=%r" % (
+                login.status,
             )
 
     def assert_password_change_fails(self, user):
-        print "%r.assert_password_change_fails(%r)" % (self, user)
+        print("%r.assert_password_change_fails(%r)" % (self, user))
         new_password = uts.random_string()
         try:
             response = self.change_password(user, new_password, change_password_on_next_login=True)
@@ -279,12 +284,12 @@ class TestPasswordReset(object):
 
         try:
             if expected_result == EXPECT_OK:
-                print "Assert %s can change %s password" % (actor[1], target[1])
+                print("Assert %s can change %s password" % (actor[1], target[1]))
                 password_reset.assert_password_change(
                     target, new_password, change_password_on_next_login
                 )
             elif expected_result == EXPECT_DISALLOW:
-                print "Assert %s can not change %s password" % (actor[1], target[1])
+                print("Assert %s can not change %s password" % (actor[1], target[1]))
                 password_reset.assert_password_change_fails(target)
         except AssertionError as exc:
             raise Error("Changing password: %s" % (exc,))
@@ -311,7 +316,9 @@ class TestPasswordReset(object):
             )
         except AssertionError as exc:
             if expected_result != EXPECT_OK:
-                return  # the password change was disallowed to the actor. So the target still has the old password
+                # the password change was disallowed to the actor. So the target still has the old
+                # password
+                return
             raise Error("Login after password change: %s" % (exc,))
         if expected_result != EXPECT_OK:
             raise Error(

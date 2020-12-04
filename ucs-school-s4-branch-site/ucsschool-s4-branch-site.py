@@ -78,7 +78,7 @@ def load_hooks():
         ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
         try:
             hook = imp.load_source(modulename, file_path)
-        except Exception as ex:
+        except Exception:
             ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
             ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
         hooks.append(hook)
@@ -93,7 +93,7 @@ def run_hooks(fname, *args):
             try:
                 hook_func = getattr(hook, fname)
                 hook_func(*args)
-            except Exception as ex:
+            except Exception:
                 ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
                 ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
 
@@ -119,8 +119,8 @@ def on_load(ldap_machine_read=None, ldap_position=None):
     global _ucsschool_service_specialization_filter
     try:
         res = ldap_machine_read.search(base=_ldap_hostdn, scope="base", attr=("univentionService",))
-    except udm_errors.ldapError, e:
-        ud.debug(ud.LISTENER, ud.ERROR, "%s: Error accessing LDAP: %s" % (name, e))
+    except udm_errors.ldapError as exc:
+        ud.debug(ud.LISTENER, ud.ERROR, "%s: Error accessing LDAP: %s" % (name, exc))
         return
 
     services = []
@@ -335,8 +335,8 @@ def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
             for (record_dn, obj) in res:
                 s4_connector_listener.handler(record_dn, obj, obj, "m")
                 _relativeDomainName_trigger_set.remove(relativeDomainName)
-        except udm_errors.ldapError, e:
-            ud.debug(ud.LISTENER, ud.ERROR, "%s: Error accessing LDAP: %s" % (name, e))
+        except udm_errors.ldapError as exc:
+            ud.debug(ud.LISTENER, ud.ERROR, "%s: Error accessing LDAP: %s" % (name, exc))
 
 
 def add(dn, new):
@@ -419,7 +419,9 @@ def postrun():
             )
             listener.setuid(0)
             try:
-                p = subprocess.Popen(["/etc/init.d/univention-s4-connector", "restart"], close_fds=True)
+                p = subprocess.Popen(  # nosec
+                    ["/etc/init.d/univention-s4-connector", "restart"], close_fds=True
+                )
                 p.wait()
                 if p.returncode != 0:
                     ud.debug(

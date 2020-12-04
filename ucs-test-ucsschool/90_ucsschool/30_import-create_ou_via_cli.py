@@ -42,7 +42,9 @@ def disable_hooks():
 
 
 @pytest.mark.parametrize(
-    "ou_name,ou_displayname,dc,dc_administrative,sharefileserver,singlemaster,noneducational_create_objects,district_enable,default_dcs,dhcp_dns_clearou,use_cli_api,use_python_api",
+    "ou_name,ou_displayname,dc,dc_administrative,sharefileserver,singlemaster,"
+    "noneducational_create_objects,district_enable,default_dcs,dhcp_dns_clearou,use_cli_api,"
+    "use_python_api",
     eio.generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False),
     ids=eio.parametrization_id_base64_decode,
 )

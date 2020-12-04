@@ -33,6 +33,11 @@ import stat
 
 import univention.config_registry
 
+try:
+    from typing import Any, List, Optional, Tuple
+except ImportError:
+    pass
+
 FN_NETLOGON_USER_QUEUE = "/var/spool/ucs-school-netlogon-user-logonscripts/user_queue.sqlite"
 
 
@@ -124,7 +129,8 @@ class SqliteQueue(object):
         with Cursor(self.filename) as cursor:
             # create table if missing
             cursor.execute(
-                u"CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)"
+                u"CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn"
+                u" TEXT, username TEXT)"
             )
 
             # create index if missing
@@ -169,8 +175,8 @@ class SqliteQueue(object):
             "added/updated entries: {}".format(
                 ", ".join(
                     [
-                        "username={!r}".format(username) if username else "userdn={!r}".format(userdn)
-                        for userdn, username in users
+                        "username={!r}".format(_username) if _username else "userdn={!r}".format(_userdn)
+                        for _userdn, _username in users
                     ]
                 )
             )

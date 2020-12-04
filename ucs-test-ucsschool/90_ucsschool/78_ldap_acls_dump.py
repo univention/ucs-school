@@ -22,7 +22,8 @@ try:
 except ImportError:
     pass
 
-# OUTPUT of "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"
+# OUTPUT of:
+# "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"
 # ==> PLEASE NOTE THAT BINARY VALUES (LIKE "KRB5KEY") MAY CONTAIN LINEBREAKS THAT MAKE PARSING HARDER!
 #
 # authcDN: "cn=admin,dc=nstx,dc=local"
@@ -46,7 +47,8 @@ except ImportError:
 # entryUUID=c711836e-92a3-1036-98ae-19810040644d: manage(=mwrscxd)
 # creatorsName=cn=admin,dc=nstx,dc=local: manage(=mwrscxd)
 # createTimestamp=20170301082113Z: manage(=mwrscxd)
-# univentionPolicyReference=cn=default-admins,cn=admin-settings,cn=users,cn=policies,dc=nstx,dc=local: manage(=mwrscxd)
+# univentionPolicyReference=cn=default-admins,cn=admin-settings,cn=users,cn=policies,
+#     dc=nstx,dc=local: manage(=mwrscxd)
 # objectClass=krb5KDCEntry: manage(=mwrscxd)
 # objectClass=univentionPerson: manage(=mwrscxd)
 # objectClass=person: manage(=mwrscxd)
@@ -63,19 +65,29 @@ except ImportError:
 # objectClass=univentionPolicyReference: manage(=mwrscxd)
 # objectClass=posixAccount: manage(=mwrscxd)
 # univentionUMCProperty=appcenterSeen=2: manage(=mwrscxd)
-# univentionUMCProperty=favorites=appcenter:appcenter,updater,udm:users/user,udm:groups/group,udm:computers/computer,apps:ucsschool: manage(=mwrscxd)
+# univentionUMCProperty=favorites=appcenter:appcenter,updater,udm:users/user,udm:groups/group,
+#     udm:computers/computer,apps:ucsschool: manage(=mwrscxd)
 # description=Built-in account for administering the computer/domain: manage(=mwrscxd)
 # shadowLastChange=17229: manage(=mwrscxd)
 # gidNumber=5001: manage(=mwrscxd)
 # sambaPrimaryGroupSID=S-1-5-21-3846281231-3184689532-2158317326-513: manage(=mwrscxd)
-# pwhistory=$6$vRMTALPNn0OeUf/5$9Ql3H5jhwHMIfM8q816e/usMSViXY3S0R5l1YejNk6718aGPInlzKu0ZpSbiHGwtAN2Lz2IoHVxCBBfX7Td8B0 $6$oVtqfZgD.GRL1Lm2$F5b.NQQQjmNji56fOdAQoa04yH5SjBE6zjqGgIKiF43ubKSLDWAqQlorTMJYnGqH9ROTQ0zeki9t52jmjQPuK1 $6$mg9.eCcNgoszfFT3$PffIE27/wXxgmIgg2droezrLizh0xIMCmcHbSnNi.H/F8PAYB.0aQVI4hwTqe95uBTalyBXgsOIKcQ6pXczox1: manage(=mwrscxd)
+# pwhistory=$6$vRMTALPNn0OeUf/5$9Ql3H5jhwHMIfM8q816e/usMSViXY3S0R5l1YejNk6718aGPInlzKu0ZpSbiHGwtAN2Lz2Io
+# HVxCBBfX7Td8B0 $6$oVtqfZgD.GRL1Lm2$F5b.NQQQjmNji56fOdAQoa04yH5SjBE6zjqGgIKiF43ubKSLDWAqQlorTMJYnGqH9RO
+# TQ0zeki9t52jmjQPuK1 $6$mg9.eCcNgoszfFT3$PffIE27/wXxgmIgg2droezrLizh0xIMCmcHbSnNi.H/F8PAYB.0aQVI4hwTqe9
+# 5uBTalyBXgsOIKcQ6pXczox1: manage(=mwrscxd)
 # userPassword=****: manage(=mwrscxd)
 # sambaNTPassword=CAA1239D44DA7EDF926BCE39F5C65D0F: manage(=mwrscxd)
-# sambaPasswordHistory=390CFF5B17A555A5DB5BF14533A4B6E91AB9F6F3B25B4301BAF338FFAFC3442CDF15C89035597E162593E89108CD5775F1B3FE39C0B1711E05FBC38753CE22FE1863FE4A700E8A97B4BA601D207E57B0C67F70737659810F6BA6C3E231E8D0067B8149DCF354038D43EB671B6A55AB03D9A9E98FCFD02A424608FB0747DE1FF6: manage(=mwrscxd)
-# krb5Key=0Q<A1>+0)<A0>^C^B^A^R<A1>"^D ((<9F>VQ;}yo<AF>^F<A2><D6>^Z^O^g<A4><E4>x<BD>=^B<98><EF><CC>`<DB>R<97><ED>!<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
-# krb5Key=0A<A1>ESC0^Y<A0>^C^B^A^Q<A1>^R^D^P<DE><C9>^ZGp̏{<AA>^F<96><9E>N/<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
-# krb5Key=0I<A1>#0!<A0>^C^B^A^P<A1>^Z^D^X<C1><E9>><E9>v<8A>^B#^?<D0>h^P)4F#^D굑)^S^K<EC><A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
-# krb5Key=0A<A1>ESC0^Y<A0>^C^B^A^W<A1>^R^D^Pʡ#<9D>D<DA>~ߒk<CE>9<F5><C6>]^O<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
+# sambaPasswordHistory=390CFF5B17A555A5DB5BF14533A4B6E91AB9F6F3B25B4301BAF338FFAFC3442CDF15C89035597E162593E89108CD5775F1B3F
+# E39C0B1711E05FBC38753CE22FE1863FE4A700E8A97B4BA601D207E57B0C67F70737659810F6BA6C3E231E8D0067B8149DCF35
+# 4038D43EB671B6A55AB03D9A9E98FCFD02A424608FB0747DE1FF6: manage(=mwrscxd)
+# krb5Key=0Q<A1>+0)<A0>^C^B^A^R<A1>"^D ((<9F>VQ;}yo<AF>^F<A2><D6>^Z^O^g<A4><E4>x<BD>=^B<98><EF><CC>`<DB>
+# R<97><ED>!<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
+# krb5Key=0A<A1>ESC0^Y<A0>^C^B^A^Q<A1>^R^D^P<DE><C9>^ZGp̏{<AA>^F<96><9E>N/<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WN
+# STX.LOCALAdministrator: manage(=mwrscxd)
+# krb5Key=0I<A1>#0!<A0>^C^B^A^P<A1>^Z^D^X<C1><E9>><E9>v<8A>^B#^?<D0>h^P)4F#^D굑)^S^K<EC><A2>"0 <A0>^C^B^A
+# ^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
+# krb5Key=0A<A1>ESC0^Y<A0>^C^B^A^W<A1>^R^D^Pʡ#<9D>D<DA>~ߒk<CE>9<F5><C6>]^O<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WN
+# STX.LOCALAdministrator: manage(=mwrscxd)
 # krb5Key=09<A1>^S0^Q<A0>^C^B^A^C<A1>
 # ^D^HpWu;zb<A4>^Y<A2>"0 <A0>^C^B^A^C<A1>^Y^D^WNSTX.LOCALAdministrator: manage(=mwrscxd)
 # krb5Key=09<A1>^S0^Q<A0>^C^B^A^B<A1>

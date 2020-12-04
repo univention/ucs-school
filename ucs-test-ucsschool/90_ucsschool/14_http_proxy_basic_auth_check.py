@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-webproxy]
 
+from __future__ import print_function
+
 import time
 
 import univention.testing.ucr as ucr_test
@@ -35,14 +37,14 @@ def ruleInControl(user, ruleList, host, banPage):
     # return the bigger rule
     # in case one rule is contained in another
     result = [x.name for x in inCtrl if len(x.domains) == max(len(y.domains) for y in inCtrl)]
-    print "Rule in control =", result
+    print("Rule in control =", result)
     return result[0]
 
 
 def printHeader(comment):
-    print "-" * 80
-    print comment
-    print "-" * 80
+    print("-" * 80)
+    print(comment)
+    print("-" * 80)
 
 
 # Perform the whole check steps for a user and two rules
@@ -56,7 +58,7 @@ def doCheck(host, banPage, user, rulesType, ruleWithHigherPrio, ruleWithLowerPri
             % (user, ruleWithHigherPrio.name, ruleInCtrl)
         )
     else:
-        print "TEST PASSED: rule in Ctrl for user (%s) is (%s)" % (user, ruleInCtrl)
+        print("TEST PASSED: rule in Ctrl for user (%s) is (%s)" % (user, ruleInCtrl))
 
 
 def main():

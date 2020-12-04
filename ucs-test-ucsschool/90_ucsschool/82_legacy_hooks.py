@@ -305,9 +305,8 @@ class TestLegacyHooks(TestCase):
         for pattern, words in patterns_and_words:
             self.assertTrue(
                 check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "Could not find expected pattern {!r} and words {!r} in result file: ---\n{}\n---".format(
-                    pattern, words, txt.strip()
-                ),
+                "Could not find expected pattern {!r} and words {!r} in result file: "
+                "---\n{}\n---".format(pattern, words, txt.strip()),
             )
 
         self.objects[self.model] = obj
@@ -365,9 +364,8 @@ class TestLegacyHooks(TestCase):
         for pattern, words in patterns_and_words:
             self.assertTrue(
                 check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "Could not find expected pattern {!r} and words {!r} in result file: ---\n{}\n---".format(
-                    pattern, words, txt.strip()
-                ),
+                "Could not find expected pattern {!r} and words {!r} in result file: "
+                "---\n{}\n---".format(pattern, words, txt.strip()),
             )
         logger.info(
             "** OK %d/%d modify() of model %r.",
@@ -422,9 +420,8 @@ class TestLegacyHooks(TestCase):
         for pattern, words in patterns_and_words:
             self.assertTrue(
                 check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "Could not find expected pattern {!r} and words {!r} in result file: ---\n{}\n---".format(
-                    pattern, words, txt.strip()
-                ),
+                "Could not find expected pattern {!r} and words {!r} in result file: "
+                "---\n{}\n---".format(pattern, words, txt.strip()),
             )
         logger.info(
             "** OK %d/%d move() of model %r.",
@@ -465,9 +462,8 @@ class TestLegacyHooks(TestCase):
         for pattern, words in patterns_and_words:
             self.assertTrue(
                 check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "Could not find expected pattern {!r} and words {!r} in result file: ---\n{}\n---".format(
-                    pattern, words, txt.strip()
-                ),
+                "Could not find expected pattern {!r} and words {!r} in result file: "
+                "---\n{}\n---".format(pattern, words, txt.strip()),
             )
         logger.info(
             "** OK %d/%d remove() of model %r.",
@@ -490,7 +486,7 @@ class TestLegacyHooks(TestCase):
     _setup_TeachersAndStaff = _setup_ExamStudent
 
     def _setup_School(self):
-        return self.model(name=uts.random_username(),)
+        return self.model(name=uts.random_username())
 
     def _setup_IPComputer(self):
         return self.model(

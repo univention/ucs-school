@@ -6,6 +6,8 @@
 ## packages: [ucs-school-import, ucs-school-singlemaster]
 ## bugs: [38641]
 
+from __future__ import print_function
+
 import ldap
 from ldap.filter import filter_format
 
@@ -26,10 +28,13 @@ def verify_nfs_access(class_name, expected_nfs_option):
         utils.fail("Share object for class %r not found!" % (class_name,))
 
     nfs_enabled = "univentionShareNFS" in attr.get("objectClass", [])
-    print "*** Share %r: NFS option enabled=%r   expected=%r" % (
-        class_name,
-        nfs_enabled,
-        expected_nfs_option,
+    print(
+        "*** Share %r: NFS option enabled=%r   expected=%r"
+        % (
+            class_name,
+            nfs_enabled,
+            expected_nfs_option,
+        )
     )
     if expected_nfs_option != nfs_enabled:
         utils.fail("Unexpected NFS option state!")
@@ -40,21 +45,24 @@ def main():
         with utu.UCSTestSchool() as schoolenv:
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            print "--------YES------------------------------------------------------------"
+            print("--------YES------------------------------------------------------------")
             handler_set(["ucsschool/default/share/nfs=yes"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, True)
 
-            print "--------NO------------------------------------------------------------"
+            print("--------NO------------------------------------------------------------")
             handler_set(["ucsschool/default/share/nfs=no"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, False)
 
-            print "--------EMPTY------------------------------------------------------------"
+            print("--------EMPTY------------------------------------------------------------")
             handler_unset(["ucsschool/default/share/nfs"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, False)
 

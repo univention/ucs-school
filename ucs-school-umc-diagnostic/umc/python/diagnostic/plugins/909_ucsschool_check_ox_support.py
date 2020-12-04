@@ -78,7 +78,7 @@ def run(_umc_instance):
     if "ok installed" not in out:
         raise Warning(
             "The OX App Suite is installed but the required package 'ucs-school-ox-support' is missing.",
-            buttons=[{"action": "install_missing", "label": _("Install missing components"),}],
+            buttons=[{"action": "install_missing", "label": _("Install missing components")}],
         )
 
 
@@ -86,7 +86,7 @@ def exec_cmd(*args):
     cmd = []
     for arg in args:
         cmd.append(arg)
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     return p.communicate()
 
 

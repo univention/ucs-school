@@ -44,7 +44,7 @@ from six import iteritems, string_types
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.base import NoObject, WrongObjectType
-from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
+from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_teacher
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -84,15 +84,16 @@ from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 try:
-    from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
+    from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union
 
-    from univention.config_registry import ConfigRegistry
+    if TYPE_CHECKING:
+        from univention.config_registry import ConfigRegistry
 
-    from ..configuration import ReadOnlyDict
-    from ..default_user_import_factory import DefaultUserImportFactory
-    from ..reader.base_reader import BaseReader
-    from ..utils.ldap_connection import LoType, UdmObjectType
-    from ..utils.username_handler import UsernameHandler
+        from ..configuration import ReadOnlyDict
+        from ..default_user_import_factory import DefaultUserImportFactory
+        from ..reader.base_reader import BaseReader
+        from ..utils.ldap_connection import LoType, UdmObjectType
+        from ..utils.username_handler import UsernameHandler
 except ImportError:
     pass
 
@@ -516,7 +517,8 @@ class ImportUser(User):
                 )
             except Exception as exc:
                 self.logger.exception(
-                    "Unexpected exception caught: UDM property %r could not be set for user %r in import line %r: %s.",
+                    "Unexpected exception caught: UDM property %r could not be set for user %r in "
+                    "import line %r: %s.",
                     property_,
                     self.name,
                     self.entry_count,
@@ -637,8 +639,10 @@ class ImportUser(User):
         Existing entries will be overwritten unless listed in UCRV
         ucsschool/import/generate/user/attributes/no-overwrite-by-schema.
 
-        * Attributes (email, record_uid, [user]name etc.) are ignored, as they are processed separately in make_*.
-        * See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme" for details on the configuration.
+        * Attributes (email, record_uid, [user]name etc.) are ignored, as they are processed separately
+            in make_*.
+        * See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme"
+            for details on the configuration.
         """
         ignore_keys = self.to_dict().keys()
         ignore_keys.extend(
@@ -718,8 +722,8 @@ class ImportUser(User):
         elif isinstance(self.school_classes, dict) and not self.school_classes:
             input_dict = self.reader.get_data_mapping(self.input_data)
             if input_dict.get("school_classes") == "":
-                # mapping exists and csv field is empty -> empty property, except if config says otherwise
-                # keep only classes of schools that the user is still a member of (Bug #49995)
+                # mapping exists and csv field is empty -> empty property, except if config says
+                # otherwise keep only classes of schools that the user is still a member of (Bug #49995)
                 if self.old_user and self.config.get("school_classes_keep_if_empty", False):
                     self.logger.info(
                         "Reverting school_classes of %r to previous value %r.",
@@ -782,9 +786,8 @@ class ImportUser(User):
                 activate = self.config["activate_new_users"]["default"]
             except KeyError:
                 raise UnknownDisabledSetting(
-                    "Cannot find 'disabled' ('activate_new_users') setting for role '{}' or 'default'.".format(
-                        self.role_sting
-                    ),
+                    "Cannot find 'disabled' ('activate_new_users') setting for role '{}' or "
+                    "'default'.".format(self.role_sting),
                     self.entry_count,
                     import_user=self,
                 )
@@ -840,7 +843,8 @@ class ImportUser(User):
                         or "mailPrimaryAttribute" in self.config["mandatory_attributes"]
                     ):
                         raise MissingMailDomain(
-                            "Could not retrieve mail domain from configuration nor from UCRV mail/hosteddomains.",
+                            "Could not retrieve mail domain from configuration nor from UCRV "
+                            "mail/hosteddomains.",
                             entry_count=self.entry_count,
                             import_user=self,
                         )
@@ -918,8 +922,8 @@ class ImportUser(User):
             self.make_schools()  # this will recurse back, but schools will be a list then
         else:
             raise MissingSchoolName(
-                "Primary school name (ou) was not set on the cmdline or in the configuration file and was not found in "
-                "the input data.",
+                "Primary school name (ou) was not set on the cmdline or in the configuration file and "
+                "was not found in the input data.",
                 entry_count=self.entry_count,
                 import_user=self,
             )
@@ -1044,7 +1048,8 @@ class ImportUser(User):
             udm_obj = self.get_udm_object(lo)
             school_classes = self.get_school_classes(udm_obj, self)
             self.logger.info(
-                "Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new school_classes=%r.",
+                "Reverting school_classes of %r to %r, because school_classes_keep_if_empty=%r and new "
+                "school_classes=%r.",
                 self,
                 school_classes,
                 self.config.get("school_classes_keep_if_empty", False),
@@ -1150,7 +1155,8 @@ class ImportUser(User):
         * check that a username is not already in use by another user
 
         :param lo: LDAP connection object
-        :param bool validate_unlikely_changes: whether to create messages in self.warnings for changes to certain attributes
+        :param bool validate_unlikely_changes: whether to create messages in self.warnings for changes
+            to certain attributes
         :param bool check_username: if username and password checks should run
         :return: None
         :raises MissingMandatoryAttribute: ...
@@ -1165,7 +1171,8 @@ class ImportUser(User):
         """
         skip_tests = self.config.get("skip_tests", [])
 
-        # check `name` 1st: it must be set, or `dn` will be empty, leading to AttributeError in `User.validate()`
+        # check `name` 1st: it must be set, or `dn` will be empty, leading to AttributeError in
+        # `User.validate()`
         if check_username:
             if not self.name:
                 raise MissingUid(
@@ -1443,8 +1450,8 @@ class ImportUser(User):
             ):
                 # nothing we can do
                 raise InitialisationError(
-                    "Cannot find data provider for dependency {!r} for formatting of property {!r} with scheme "
-                    "{!r}.".format(prop_used_in_scheme, prop_to_format, scheme),
+                    "Cannot find data provider for dependency {!r} for formatting of property {!r} with "
+                    "scheme {!r}.".format(prop_used_in_scheme, prop_to_format, scheme),
                     entry_count=self.entry_count,
                     import_user=self,
                 )
@@ -1556,17 +1563,15 @@ class ImportUser(User):
         bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names())
         if bad_props:
             raise NotSupportedError(
-                "UDM properties '{}' must be set as attributes of the {} object (not in udm_properties).".format(
-                    "', '".join(bad_props), self.__class__.__name__
-                )
+                "UDM properties '{}' must be set as attributes of the {} object (not in "
+                "udm_properties).".format("', '".join(bad_props), self.__class__.__name__)
             )
         if "e-mail" in self.udm_properties.keys() and not self.email:
             # this might be an mistake, so let's warn the user
             self.logger.warn(
-                "UDM property 'e-mail' is used for storing contact information. The users mailbox address is stored in "
-                "the 'email' attribute of the {} object (not in udm_properties).".format(
-                    self.__class__.__name__
-                )
+                "UDM property 'e-mail' is used for storing contact information. The users mailbox "
+                "address is stored in  the 'email' attribute of the {} object (not in "
+                "udm_properties).".format(self.__class__.__name__)
             )
 
     def _schema_write_check(

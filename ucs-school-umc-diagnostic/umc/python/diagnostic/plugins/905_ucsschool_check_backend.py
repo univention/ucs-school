@@ -47,7 +47,8 @@ title = _("UCS@school Check if Samba4 is installed")
 description = "\n".join(
     [
         _(
-            "UCS@school: Test that checks if Samba4 is installed on a single master or on a school server in a multi-server-environment."
+            "UCS@school: Test that checks if Samba4 is installed on a single master or on a school "
+            "server in a multi-server-environment."
         ),
     ]
 )
@@ -74,7 +75,7 @@ def run(_umc_instance):
             return
 
     cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = p.communicate()
     installed, version = stdout.split(",")
     is_installed = "ok installed" in installed

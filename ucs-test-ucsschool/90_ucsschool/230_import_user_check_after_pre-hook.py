@@ -61,9 +61,7 @@ class Test(CLI_Import_v2_Tester):
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
-            person.update(
-                record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
-            )
+            person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
             person_list.append(person)
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
@@ -120,9 +118,7 @@ class Test(CLI_Import_v2_Tester):
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
-            person.update(
-                record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
-            )
+            person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
             person_list.append(person)
         random.shuffle(person_list)
         self.log.info("*** First user: %s", person_list[0])
@@ -171,13 +167,14 @@ class Test(CLI_Import_v2_Tester):
             )
 
         self.log.info(
-            "*** 6/6 Importing a user from each role (reusing users from 5/6), pre_move (%r -> %r) with error...",
+            "*** 6/6 Importing a user from each role (reusing users from 5/6), pre_move (%r -> %r) with "
+            "error...",
             self.ou_A.name,
             self.ou_B.name,
         )
         self.log.info(
-            '*** 6/6 pre_move hook will rewrite user.school to "NoSchool" instead of %r, so error is found in '
-            "move()-checks, not in the following modify()-checks"
+            '*** 6/6 pre_move hook will rewrite user.school to "NoSchool" instead of %r, so error is '
+            "found in move()-checks, not in the following modify()-checks"
         )
         self.create_pyhook("move", 'user.school = "NoSchool"')
         for person in person_list:

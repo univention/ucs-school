@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-radius-802.1x]
 
+from __future__ import print_function
+
 import random
 
 from ldap.filter import filter_format
@@ -71,7 +73,7 @@ def main():
             rule2.assign(school, group2.name, "workgroup")
 
             utils.wait_for_replication_and_postrun()
-            print "Wait until computers are replicated into S4..."
+            print("Wait until computers are replicated into S4...")
             for name in [x.name for x in created_computers]:
                 wait_for_drs_replication(filter_format("cn=%s", (name,)))
 

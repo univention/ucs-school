@@ -8,6 +8,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
+from __future__ import print_function
+
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import run_commands
@@ -302,11 +304,11 @@ class LDAPACLTestMatrix(object):
 
     def get_all_attributes_as_dict(self, base):
         """
-        return dict = {
-            dn1:[attibute1,	attribute2, ..	],
-            dn2:[attibute1,	attribute2, ..	],
+        return {
+            dn1: [attibute1, attribute2, ..],
+            dn2: [attibute1, attribute2, ..],
             ..
-            }
+        }
         """
         containers = list(self.walkThroughContainer(base))
         return dict([(y, [k for k in x]) for y, x in containers])
@@ -332,20 +334,15 @@ class LDAPACLTestMatrix(object):
                         access = Access.Read
                     expected_access = self.get_attribute_access(target_dn, attr)
                     if access != expected_access:
-                        print '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (
-                            self.auth_dn,
-                            target_dn,
-                            attr,
-                            expected_access,
-                            access,
+                        print(
+                            '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s",'
+                            ' expected="%s", result="%s"'
+                            % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
                     else:
-                        print 'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (
-                            self.auth_dn,
-                            target_dn,
-                            attr,
-                            expected_access,
-                            access,
+                        print(
+                            'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s",'
+                            ' result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
 
     def get_attribute_access(self, target_dn, attr):
@@ -355,11 +352,11 @@ class LDAPACLTestMatrix(object):
             return self.default
 
     def addDn(self, target_dn, attrs, access=Access.none):
-        print "adding target_dn= %s" % (target_dn,)
+        print("adding target_dn= %s" % (target_dn,))
         for attr in attrs:
-            print "\tattr= %s,\taccess= %s" % (attr, access)
+            print("\tattr= %s,\taccess= %s" % (attr, access))
             self.matrix.setdefault(target_dn, {})[attr] = access
-        print
+        print()
 
     def addSubtree(self, container, attrs, access=Access.none):
         for target_dn, _ in self.walkThroughContainer(container):
@@ -380,30 +377,20 @@ def main():
             school, school_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
             tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-            tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
-            staff, staff_dn = schoolenv.create_user(school, is_staff=True)
+            schoolenv.create_user(school, is_teacher=True, is_staff=True)
+            schoolenv.create_user(school, is_staff=True)
             stu, stu_dn = schoolenv.create_user(school)
-            school_admin, school_admin_dn = schoolenv.create_school_admin(school)
+            schoolenv.create_school_admin(school)
 
             open_ldap_co = schoolenv.open_ldap_connection()
             # importing 2 random computers
             computers = Computers(open_ldap_co, school, 1, 0, 0)
             created_computers = computers.create()
             computers_dns = computers.get_dns(created_computers)
-            computers_hostnames = computers.get_hostnames(created_computers)
-            computers_hostnames = [x[:-1] for x in computers_hostnames]
             room = ComputerRoom(school, host_members=computers_dns)
             room.add()
 
             room_container_dn = "cn=raeume,cn=groups,%s" % school_dn
-            shares_dn = "cn=shares,%s" % school_dn
-
-            teacher_group2_dn = "cn=lehrer-%s,cn=groups,%s" % (school, school_dn)
-            student_group2_dn = "cn=schueler-%s,cn=groups,%s" % (school, school_dn)
-
-            teacher_group_dn = "cn=lehrer,cn=groups,%s" % school_dn
-            student_group_dn = "cn=schueler,cn=groups,%s" % school_dn
-
             gid_temp_dn = "cn=gid,cn=temporary,cn=univention,%s" % base_dn
             gidNumber_temp_dn = "cn=gidNumber,cn=temporary,cn=univention,%s" % base_dn
             sid_temp_dn = "cn=sid,cn=temporary,cn=univention,%s" % base_dn
@@ -414,8 +401,6 @@ def main():
             global_policies_dn = "cn=policies,%s" % base_dn
             global_dns_dn = "cn=dns,%s" % base_dn
             global_groups_dn = "cn=groups,%s" % base_dn
-
-            dhcp_dn = "cn=%s,cn=%s,cn=dhcp,%s" % (computers_hostnames[0], school, base_dn)
 
             staff_dn_access_list = [
                 # 0 for base, 1 for subtree

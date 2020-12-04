@@ -106,9 +106,9 @@ class Instance(SchoolBaseModule):
             user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
             user["password"] = newPassword
             user["overridePWHistory"] = "1"
-            user[
-                "locked"
-            ] = "0"  # Bug #46175: reset locked state, do not set disabled=0 since this would enable the whole user account
+            # Bug #46175: reset locked state, do not set disabled=0 since this would enable the whole
+            # user account:
+            user["locked"] = "0"
             # workaround bug #46067 (start)
             user.modify()
             user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
@@ -131,8 +131,8 @@ class Instance(SchoolBaseModule):
         Calculates the number of days from now to the password expiration date.
 
         The result is always rounded up to the full day.
-        The time function used here are all based on Epoch(UTC). Since we are not interested in a specific
-        date and only in a time difference the actual timezone is neglectable.
+        The time function used here are all based on Epoch(UTC). Since we are not interested in a
+        specific date and only in a time difference the actual timezone is neglectable.
 
         :param timestr: The string representation of the expiration date, e.g. 2018-05-30 or None
         :type timestr: str

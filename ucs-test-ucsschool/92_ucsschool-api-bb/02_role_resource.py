@@ -14,7 +14,7 @@ from unittest import TestCase, main
 import requests
 
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from univention.testing.ucsschool.bb_api import API_ROOT_URL, RESSOURCE_URLS, HttpApiUserTestBase
+from univention.testing.ucsschool.bb_api import RESSOURCE_URLS, HttpApiUserTestBase
 
 try:
     from urlparse import urljoin  # py2
@@ -47,7 +47,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )
@@ -81,7 +81,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )
@@ -107,7 +107,7 @@ class Test(TestCase):
             self.assertEqual(
                 response.status_code,
                 200,
-                "response.status_code = {} for URL  -> {!r}".format(
+                "response.status_code = {} for URL {!r} -> {!r}".format(
                     response.status_code, response.url, response.text
                 ),
             )

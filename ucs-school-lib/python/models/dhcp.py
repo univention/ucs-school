@@ -46,7 +46,7 @@ from .base import UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
 try:
-    from typing import Any, List, Optional
+    from typing import List, Optional
 
     from univention.admin.uldap import access as LoType
 

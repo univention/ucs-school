@@ -77,7 +77,7 @@ An welcher Stelle werden die automatischen Laufwerksmappings für Windowsclients
 
 Das passiert über das Paket `ucs-school-netlogon-user-logonscripts`, was ein Listener-Modul und einen Daemon mitbringt, der für alle User userspezifische Netlogon-Skripte erzeugt. Siehe dazu die diversen UCR-Variablen `ucsschool/userlogon/.*`
 
-Für UCS@school ist vorgesehen, dass jeder Schüler nur einer Klasse zugeordnet ist. Die Klassenfreigabe dieser Klasse wird im userspezifischen Netlogon-Skript automatisch auf einen Laufwerksbuchstaben gemappt, der über die UCR-Variable 
+Für UCS@school ist vorgesehen, dass jeder Schüler nur einer Klasse zugeordnet ist. Die Klassenfreigabe dieser Klasse wird im userspezifischen Netlogon-Skript automatisch auf einen Laufwerksbuchstaben gemappt, der über die UCR-Variable
 `ucsschool/userlogon/classshareletter` definiert ist.
 
 Freigaben, die allen Usern zugeordnet werden sollen, wie z.B. dem Marktplatz, können ebenfalls über UCR-Variablen konfiguriert werden. Der Marktplatz wird über folgende UCR-Settings verknüpft:
@@ -132,7 +132,7 @@ Die Ausgabe des Diff-Tools sieht wie folgt aus:
 
     /var/log/univention/78_ldap_acls_dump.1558281264/dn20.ldif
 	/var/log/univention/78_ldap_acls_dump.1558282573/dn20.ldif
-    
+
      dn: uid=staffA,cn=mitarbeiter,cn=users,ou=schoolA,dc=nstx,dc=local
     +userPassword: =wrscxd
     -userPassword: =rscxd
@@ -214,7 +214,7 @@ Ganz klares `Jein`. Das Exam-Modul auf dem Slave wendet sich an den Master, um d
 
 ## Schulübergreifende Benutzerkonten
 
-### Darf ein schulübergreifender Benutzer eigentlich in beiden "Domain Users $OU"-Gruppen sein? Oder muss er? 
+### Darf ein schulübergreifender Benutzer eigentlich in beiden "Domain Users $OU"-Gruppen sein? Oder muss er?
 - Er muss in allen `Domain Users $OU`-Gruppen enthalten sein.
 - Er muss für alle OUs Einträge in den Attributen `ucsschoolSchool` und `ucsschoolRole` haben.
 - Er muss z.B. als Schüler in beiden Gruppen `schueler-$OU` enthalten sein.

@@ -27,7 +27,7 @@ Dim GopherKey, GopherPortKey, SOCKSKey, SOCKSPortKey, SOCKSVersionKey, ProxyExce
 Dim FirefoxUseIEKey, IESettingFile, ParseFileLine, ParseSplitLine, ParseSplitSetting, SameProxy
 Dim DefaultsPreferencesDirectory, LocalSettingsFile, MozillaCfgFile, ProgramFilesDir
 
-on error resume next 
+on error resume next
 
 set EnVar = Wshshell.environment("Process")
 
@@ -106,7 +106,7 @@ LocalSettingsFileSet.Close
 
 
 ' homepage setting
-if FirefoxUseIEKey <> "1" then 
+if FirefoxUseIEKey <> "1" then
 	HomePageTypeKey = WshShell.regread("HKLM\Software\Policies\Firefox\FirefoxHomepageType")
 	HomePageKey = WshShell.regread("HKLM\Software\Policies\Firefox\FirefoxHomepage")
 	HomePagePageKey = WshShell.regread("HKLM\Software\Policies\Firefox\FirefoxHomepagePage")
@@ -149,7 +149,7 @@ if ImageResizeKey <> "" then
 		end if
 	end if
 end if
-		
+
 
 ' Proxy Settings
 FirefoxProxyType = WshShell.regread("HKLM\Software\Policies\Firefox\FirefoxProxyType")
@@ -433,7 +433,7 @@ Elseif FirefoxSSLStateKey = "0" then
 	RemoveCurrentPrefsFromMozillaCfgFile("security.enable_tls")
 	set SSLStateSet = AppendPrefsToMozillaCfgFile("security.enable_ssl2", "false")
 	set SSLStateSet = AppendPrefsToMozillaCfgFile("security.enable_ssl3", "false")
-	set SSLStateSet = AppendPrefsToMozillaCfgFile("security.enable_tls", "false")	
+	set SSLStateSet = AppendPrefsToMozillaCfgFile("security.enable_tls", "false")
 end if
 
 
@@ -631,7 +631,7 @@ ElseIf FirefoxTabType = "default" then
 	set FirefoxTabShowBarKey = AppendDefaultToMozillaCfgFile("browser.tabs.autoHide", FirefoxTabShowBar)
 	FirefoxTabBackground = WshShell.regread("HKLM\Software\Policies\Firefox\FirefoxTabBackground")
 	set FirefoxTabBackgroundKey = AppendDefaultToMozillaCfgFile("browser.tabs.loadInBackground", FirefoxTabBackground)
-end if		
+end if
 
 
 ' History

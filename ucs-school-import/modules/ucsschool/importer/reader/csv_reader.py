@@ -37,7 +37,7 @@ import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 
 import magic
-from six import string_types
+from six import reraise, string_types
 
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
@@ -137,7 +137,8 @@ class CsvReader(BaseReader):
         Generate dicts from a CSV file.
 
         :param args: ignored
-        :param dict kwargs: if it has a dict `csv_reader_args`, that will be used as additional arguments for the :py:class:`DictReader` constructor.
+        :param dict kwargs: if it has a dict `csv_reader_args`, that will be used as additional
+            arguments for the :py:class:`DictReader` constructor.
         :return: iterator over list of dicts
         :rtype: Iterator
         """
@@ -145,11 +146,14 @@ class CsvReader(BaseReader):
             try:
                 dialect = self.get_dialect(fp)
             except CsvError as exc:
-                raise InitialisationError, InitialisationError(
-                    "Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(
-                        exc
-                    )
-                ), sys.exc_info()[2]
+                reraise(
+                    InitialisationError,
+                    InitialisationError(
+                        "Could not determine CSV dialect. Try setting the csv:delimiter configuration. "
+                        "Error: {}".format(exc)
+                    ),
+                    sys.exc_info()[2],
+                )
             fp.seek(0)
             encoding = self.get_encoding(fp)
             self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
@@ -206,7 +210,8 @@ class CsvReader(BaseReader):
         :param str mapping_value: the value in config["csv"]["mapping"]
         :param str csv_value: the associated value from the CSV line
         :param ImportUser import_user: the object to modify
-        :return: True if the field was handled here. It will be ignored in map(). False if map() should handle the field.
+        :return: True if the field was handled here. It will be ignored in map(). False if map() should
+            handle the field.
         :rtype: bool
         """
         if mapping_value == "__ignore":

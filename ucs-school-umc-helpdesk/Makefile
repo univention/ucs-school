@@ -38,7 +38,7 @@ MODULENAME=$(PACKAGE:ucs-school-umc-%=%)
 %.mo:	%.po
 	msgfmt -o $@ $<
 
-all:	$(ADMIN_MODULES) $(MO_FILES_ADMIN) 
+all:	$(ADMIN_MODULES) $(MO_FILES_ADMIN)
 
 admin-modules: $(ADMIN_MODULES)
 

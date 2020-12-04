@@ -41,9 +41,7 @@ class Test(UniqueObjectTester):
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)
-            person.update(
-                record_uid=record_uid, source_uid=source_uid, mail=None,
-            )
+            person.update(record_uid=record_uid, source_uid=source_uid, mail=None)
             person_list.append(person)
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
@@ -67,9 +65,7 @@ class Test(UniqueObjectTester):
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)
-            person.update(
-                record_uid=record_uid, source_uid=source_uid,
-            )
+            person.update(record_uid=record_uid, source_uid=source_uid)
             person_list.append(person)
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)

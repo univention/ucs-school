@@ -17,6 +17,11 @@ import univention.admin.uldap as udm_uldap
 import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import NameDnObj, UCSTestSchool, logger
 
+try:
+    from typing import Tuple
+except ImportError:
+    pass
+
 
 class LDAPACLCheck(UCSTestSchool):
     def __init__(self, *args, **kwargs):
@@ -60,8 +65,9 @@ class LDAPACLCheck(UCSTestSchool):
 
         try:
             # HINT:
-            # the case ucsschool/ldap/replicate_staff_to_edu=no is not tested, because this is currently the default case
-            # and it is difficult to test e.g. via verify_ldap_object() since it does not use the machine account
+            # the case ucsschool/ldap/replicate_staff_to_edu=no is not tested, because this is currently
+            # the default case and it is difficult to test e.g. via verify_ldap_object() since it does
+            # not use the machine account
 
             # ssh to master ==> set UCRV to ON and create Staff2 in test OU
             stdout, stderr = self.run_on_master(
@@ -79,7 +85,7 @@ class LDAPACLCheck(UCSTestSchool):
             # test with Administrator account
             utils.verify_ldap_object(
                 self.staff_user.dn,
-                {"uid": [self.staff_user.name],},
+                {"uid": [self.staff_user.name]},
                 should_exist=True,
                 retry_count=10,
                 delay=3,

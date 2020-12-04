@@ -714,7 +714,7 @@ define([
 					label += '<tr><td><b>{lblStatus}</b></td><td>{status}</td></tr>';
 					label += '<tr><td><b>{lblIP}</b></td><td>{ip}</td></tr>';
 					label += '<tr><td><b>{lblMAC}</b></td><td>{mac}</td></tr></table>';
-					
+
 					label = lang.replace(label, {
 						lblComputerType: _('Computer type'),
 						computertype: computertype,
@@ -1001,7 +1001,7 @@ define([
 						exam: info.exam,
 						room: info.room
 					});
-	
+
 					// create a 'real' ProgressBar
 					var deferred = new Deferred();
 					this._progressBar.reset(_('Finishing exam...'));
@@ -1010,7 +1010,7 @@ define([
 						// when progress is finished, resolve the given Deferred object
 						deferred.resolve();
 					});
-	
+
 					// things to do after finishing the exam
 					deferred.then(lang.hitch(this, function() {
 						return this.umcpCommand('computerroom/exam/finish', {
@@ -1029,7 +1029,7 @@ define([
 							delete info.examDescription;
 							delete info.examEndTime;
 							this.set('roomInfo', info);
-	
+
 						}
 					}));
 				}))

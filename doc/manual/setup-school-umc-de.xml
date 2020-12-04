@@ -380,7 +380,7 @@ cd /usr/share/ucs-school-import/scripts/
 		<title>Anlegen von Rechnerkonten</title>
 		<para>
 		  Im zentralen Suchdialog des UMC-Moduls ist oberhalb der Tabelle die Schaltfläche
-		  <guimenu>Hinzufügen</guimenu> auszuwählen, um den Assistenten für ein neues Rechnerkonto zu starten. 
+		  <guimenu>Hinzufügen</guimenu> auszuwählen, um den Assistenten für ein neues Rechnerkonto zu starten.
 		</para>
 		<para>
 		  Sind mehrere Schulen in der &ucsUAS;-Umgebung eingerichtet, ist zunächst auszuwählen, in welcher Schule das Rechnerkonto

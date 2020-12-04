@@ -83,7 +83,8 @@ class LegacyUserImport(UserImport):
                     or user.has_purge_timestamp(self.connection)
                 ):
                     self.logger.info(
-                        "Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.",
+                        "Found user %r that was previously deactivated or is scheduled for deletion "
+                        "(purge timestamp is non-empty), reactivating user.",
                         user,
                     )
                     imported_user.old_user = copy.deepcopy(user)
@@ -127,7 +128,8 @@ class LegacyUserImport(UserImport):
                     or user.has_purge_timestamp(self.connection)
                 ):
                     self.logger.info(
-                        "Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is non-empty), reactivating user.",
+                        "Found user %r that was previously deactivated or is scheduled for deletion "
+                        "(purge timestamp is non-empty), reactivating user.",
                         user,
                     )
                     if self.dry_run:

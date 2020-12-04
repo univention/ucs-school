@@ -9,7 +9,7 @@
 
 from datetime import datetime, timedelta
 
-from ldap.filter import escape_filter_chars, filter_format
+from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -74,7 +74,7 @@ def test_user_restore_after_exam():
             room = Room(school, host_members=created_computers_dn[0])
 
             schoolenv.create_computerroom(
-                school, name=room.name, description=room.description, host_members=room.host_members,
+                school, name=room.name, description=room.description, host_members=room.host_members
             )
 
             wait_replications_check_rejected_uniqueMember(existing_rejects)

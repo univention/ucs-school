@@ -1,23 +1,23 @@
-'Set shares to be mapped 
- Software="\\cmgc-fp-003\software$" 
- Apps="\\cmgc-fp-001\applications" 
- 'Call function for mapping drive 
- MapDrive "J:",Apps 
- MapDrive "S:",Software 
+'Set shares to be mapped
+ Software="\\cmgc-fp-003\software$"
+ Apps="\\cmgc-fp-001\applications"
+ 'Call function for mapping drive
+ MapDrive "J:",Apps
+ MapDrive "S:",Software
 
- Function MapDrive(Drive,Share) 
- ON ERROR RESUME NEXT 
- If FileSysObj.DriveExists(share)=True then 
- if FileSysObj.DriveExists(Drive)=True then 
- WSHNetwork.RemoveNetworkDrive Drive 
- end if 
- end if 
- WSHNetwork.MapNetworkDrive Drive, Share 
- If err.number >0 then 
- msgbox "ERROR: " & err.description & vbcr & Drive & " " & share 
- err.clear 
- End if 
- end function 
+ Function MapDrive(Drive,Share)
+ ON ERROR RESUME NEXT
+ If FileSysObj.DriveExists(share)=True then
+ if FileSysObj.DriveExists(Drive)=True then
+ WSHNetwork.RemoveNetworkDrive Drive
+ end if
+ end if
+ WSHNetwork.MapNetworkDrive Drive, Share
+ If err.number >0 then
+ msgbox "ERROR: " & err.description & vbcr & Drive & " " & share
+ err.clear
+ End if
+ end function
 
 
 --------------- variante
@@ -33,18 +33,18 @@ Set fso = WScript.CreateObject("Scripting.FileSystemObject")
 Set WSHNetwork = WScript.CreateObject("WScript.Network")
  Set WSHShell = WScript.CreateObject("WScript.Shell")
  Set WshEnv = WshShell.Environment("Process")
- 
+
  WinDir = WshEnv("windir")
- 
+
  LogonServer = WshEnv("LogonServer")
  OSVer = WshEnv("OS")
- 
+
  UserName = ""
  On Error Resume Next
  While UserName = ""
  UserName = WshNetwork.UserName
  Wend
- 
+
  ComputerName = WshNetwork.ComputerName
 
 
@@ -52,7 +52,7 @@ Set WSHNetwork = WScript.CreateObject("WScript.Network")
 
 
 Function MapDrive(Drive, Server, Share)
- 
+
  Choice = vbNo
  ServerShare = Server & Share
  If fso.DriveExists(ServerShare) Then

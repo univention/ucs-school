@@ -29,11 +29,14 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import argparse
 import subprocess
 import sys
 
 import ldif
+import six
 
 import univention.admin.uldap
 
@@ -57,7 +60,7 @@ def normalize_permission(perms):
 
 
 def parse_acls(args, lo):
-    if isinstance(args.output, basestring):
+    if isinstance(args.output, six.string_types):
         args.output = open(args.output, "wb")
     entries = lo.search(base=args.base)
 
@@ -67,8 +70,8 @@ def parse_acls(args, lo):
         entry = {}
         for attr in attrs:
             # TODO: replace subprocess by some C calls to improove speed
-            process = subprocess.Popen(
-                ["slapacl", "-d0", "-D", args.binddn, "-b", dn, attr], stderr=subprocess.PIPE
+            process = subprocess.Popen(  # nosec
+                ["/usr/sbin/slapacl", "-d0", "-D", args.binddn, "-b", dn, attr], stderr=subprocess.PIPE
             )
             _, stderr = process.communicate()
             for line in stderr.splitlines():
@@ -79,7 +82,7 @@ def parse_acls(args, lo):
             try:
                 entry[attr]
             except KeyError as exc:
-                print >>sys.stderr, dn, exc
+                print(dn, exc, file=sys.stderr)
                 code = 1
         writer.unparse(dn, entry)
     return code

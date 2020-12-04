@@ -39,6 +39,7 @@ import logging
 import sys
 from collections import defaultdict
 
+import six
 from ldap.filter import filter_format
 
 from ucsschool.lib.models.attributes import ValidationError
@@ -62,10 +63,9 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union
+    from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
     from ..configuration import ReadOnlyDict
-    from ..exceptions import UcsSchoolImportError
     from ..models.import_user import ImportUser
 except ImportError:
     pass
@@ -104,7 +104,8 @@ class UserImport(object):
         """
         Read users from input data.
 
-        * :py:class:`UcsSchoolImportErrors` are stored in in `self.errors` (with input entry number in `error.entry_count`).
+        * :py:class:`UcsSchoolImportErrors` are stored in in `self.errors` (with input entry number in
+            `error.entry_count`).
 
         :return: ImportUsers found in input
         :rtype: list(ImportUser)
@@ -127,12 +128,14 @@ class UserImport(object):
         return self.imported_users
 
     def create_and_modify_users(self, imported_users):
-        # type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]
+        # type: (List[ImportUser]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]], Dict[str, List[Dict[str, Any]]]]  # noqa: E501
         """
         Create and modify users.
 
-        * `self.added_users` and `self.modified_users` will hold created / modified :py:class:`ImportUser` objects.
-        * :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed :py:class:`ImportUser` objects in `error.import_user`).
+        * `self.added_users` and `self.modified_users` will hold created / modified
+            :py:class:`ImportUser` objects.
+        * :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed
+            :py:class:`ImportUser` objects in `error.import_user`).
 
         :param imported_users: ImportUser objects
         :type imported_users: :func:`list`
@@ -224,14 +227,18 @@ class UserImport(object):
                         # delete
                         continue
                 except ValidationError as exc:
-                    raise UserValidationError, UserValidationError(
-                        "ValidationError when {} {} "
-                        "(source_uid:{} record_uid: {}): {}".format(
-                            action_str.lower(), user, user.source_uid, user.record_uid, exc
+                    six.reraise(
+                        UserValidationError,
+                        UserValidationError(
+                            "ValidationError when {} {} "
+                            "(source_uid:{} record_uid: {}): {}".format(
+                                action_str.lower(), user, user.source_uid, user.record_uid, exc
+                            ),
+                            validation_error=exc,
+                            import_user=user,
                         ),
-                        validation_error=exc,
-                        import_user=user,
-                    ), sys.exc_info()[2]
+                        sys.exc_info()[2],
+                    )
 
                 if success:
                     self.logger.info(
@@ -247,7 +254,8 @@ class UserImport(object):
                     store.append(user.to_dict())
                 else:
                     raise err(
-                        "Error {} {}/{} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
+                        "Error {} {}/{} {} (source_uid:{} record_uid: {}), does probably "
+                        "{}exist.".format(
                             action_str.lower(),
                             usernum,
                             len(imported_users),
@@ -288,9 +296,11 @@ class UserImport(object):
                 self.connection, import_user.source_uid, import_user.record_uid
             )
         except WrongObjectType as exc:
-            raise WrongUserType, WrongUserType(
-                str(exc), entry_count=import_user.entry_count, import_user=import_user
-            ), sys.exc_info()[2]
+            six.reraise(
+                WrongUserType,
+                WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user),
+                sys.exc_info()[2],
+            )
 
     def prepare_imported_user(self, imported_user, old_user):
         # type: (ImportUser, Optional[ImportUser]) -> ImportUser
@@ -335,7 +345,8 @@ class UserImport(object):
         if user.school != imported_user.school:
             if user.school in imported_user.schools:
                 self.logger.info(
-                    "Preventing school move of %r by changing value of 'school' attribute from %r to previous value %r.",
+                    "Preventing school move of %r by changing value of 'school' attribute from %r to "
+                    "previous value %r.",
                     imported_user.name,
                     imported_user.school,
                     user.school,
@@ -355,8 +366,8 @@ class UserImport(object):
             or user.has_purge_timestamp(self.connection)
         ):
             self.logger.info(
-                "Found user %r that was previously deactivated or is scheduled for deletion (purge timestamp is "
-                "non-empty), reactivating user.",
+                "Found user %r that was previously deactivated or is scheduled for deletion (purge "
+                "timestamp is non-empty), reactivating user.",
                 user,
             )
             user.reactivate()
@@ -425,13 +436,14 @@ class UserImport(object):
         return users_to_delete
 
     def delete_users(self, users=None):
-        # type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]]]
+        # type: (Optional[List[Tuple[str, str, List[str]]]]) -> Tuple[List[UcsSchoolImportError], Dict[str, List[Dict[str, Any]]]]  # noqa: E501
         """
         Delete users.
 
         * :py:meth:`detect_users_to_delete()` should have run before this.
         * `self.deleted_users` will hold objects of deleted :py:class:`ImportUser`.
-        * :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed :py:class:`ImportUser` object in `error.import_user`).
+        * :py:class:`UcsSchoolImportErrors` are stored in `self.errors` (with failed
+            :py:class:`ImportUser` object in `error.import_user`).
         * To add or change a deletion strategy overwrite :py:meth:`do_delete()`.
 
         :param users: :func:`list` of tuples: [(source_uid, record_uid, input_data), ..]
@@ -456,7 +468,8 @@ class UserImport(object):
                 user.input_data = input_data  # most likely empty list (except in legacy import)
             except NoObject as exc:
                 self.logger.error(
-                    "Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: %s",
+                    "Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: "
+                    "%s",
                     source_uid,
                     record_uid,
                     input_data,
@@ -476,9 +489,8 @@ class UserImport(object):
                     )
                 else:
                     raise DeletionError(
-                        "Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already been deleted.".format(
-                            user.name, user.source_uid, user.record_uid
-                        ),
+                        "Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already "
+                        "been deleted.".format(user.name, user.source_uid, user.record_uid),
                         entry_count=user.entry_count,
                         import_user=user,
                     )
@@ -748,7 +760,8 @@ class UserImport(object):
         """
         Append given exception to list of errors.
         :param UcsSchoolImportError exc: an Exception raised during import
-        :raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable errors
+        :raises TooManyErrors: if the number of countable exceptions exceeds the number of tolerable
+            errors
         """
         self.errors.append(exc)
         if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):

@@ -14,6 +14,8 @@
 ##  3.2-5: skip
 ##  4.1-2: skip
 
+from __future__ import print_function
+
 from sys import exit
 from time import sleep
 
@@ -41,14 +43,14 @@ class TestS4DCLocatorDNS(TestSamba4):
          No DCs located and no DC options are available;
          Located DC is in the list of DC options.
         """
-        print ("\nChecking if a right DC was located, correct options are: %s" % self.site_dcs)
+        print("\nChecking if a right DC was located, correct options are: %s" % self.site_dcs)
         located_dc = self.get_dc_names()
 
         if self.site_dcs and not located_dc:
             utils.fail("No DCs were located while there is at least one correct option exists.")
 
         if not self.site_dcs and not located_dc:
-            print ("\nNo DCs are in the list of correct options and no DCs were located.")
+            print("\nNo DCs are in the list of correct options and no DCs were located.")
             return
 
         for correct_dc in self.site_dcs:
@@ -67,7 +69,7 @@ class TestS4DCLocatorDNS(TestSamba4):
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
-            print (
+            print(
                 "\nThe following message occured during '%s' command execution, STDERR:\n%s"
                 % (" ".join(cmd), stderr.strip())
             )
@@ -76,9 +78,9 @@ class TestS4DCLocatorDNS(TestSamba4):
         grep_stdout = grep_stdout.strip()
 
         if not grep_stdout:
-            print (
-                "The 'Domain Controller:' line was not found in the output from 'net ads lookup', i.e. no Domain "
-                "Controllers were located."
+            print(
+                "The 'Domain Controller:' line was not found in the output from 'net ads lookup', i.e. "
+                "no Domain Controllers were located."
             )
         return grep_stdout
 
@@ -93,7 +95,7 @@ class TestS4DCLocatorDNS(TestSamba4):
             branch_dcs = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^  fqdn: ")
 
             self.site_dcs.extend(branch_dcs.split())
-            print ("\nThe following DCs are located in the current School branch site:\n%s" % branch_dcs)
+            print("\nThe following DCs are located in the current School branch site:\n%s" % branch_dcs)
 
         else:
             # in a central department site (looks for DC-Master and DC-Backup)
@@ -103,7 +105,7 @@ class TestS4DCLocatorDNS(TestSamba4):
                 self.get_udm_list_dcs("domaincontroller_backup"), "^  fqdn: "
             )
             self.site_dcs.extend(central_dcs.split())
-            print (
+            print(
                 "\nThe following DCs are located in the current central School department:\n%s"
                 % central_dcs
             )
@@ -123,27 +125,27 @@ class TestS4DCLocatorDNS(TestSamba4):
 
             # case 1: samba running and any current site DC can be
             # located including the local (current) DC itself
-            print ("\nForcing the 'samba' service start to ensure it runs:")
+            print("\nForcing the 'samba' service start to ensure it runs:")
             self.start_stop_service("samba", "start")
             sleep(30)  # wait to ensure that 'samba' works
             self.check_dc_location()
 
             # case 2: samba stopped and current DC should not be located,
             # other DCs in a current site can be located (if there are any)
-            print ("\nForcing the 'samba' service stop to ensure it is stopped:")
+            print("\nForcing the 'samba' service stop to ensure it is stopped:")
             self.start_stop_service("samba", "stop")
             sleep(30)  # give the environment some seconds Bug #34223
             try:
                 self.site_dcs.remove(self.UCR.get("ldap/server/name"))
             except ValueError as exc:
                 utils.fail(
-                    "An error occured while trying to remove the current DC name from the list of site DCs that can be "
-                    "discovered: %r. Current DC should be present in this list." % exc
+                    "An error occured while trying to remove the current DC name from the list of site "
+                    "DCs that can be discovered: %r. Current DC should be present in this list." % exc
                 )
 
             self.check_dc_location()
         finally:
-            print "\nForcing the 'samba' service (re-)start:"
+            print("\nForcing the 'samba' service (re-)start:")
             self.start_stop_service("samba", "restart")
             sleep(30)  # wait to ensure that 'samba' works
 
