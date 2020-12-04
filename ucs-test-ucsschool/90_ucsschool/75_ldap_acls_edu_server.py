@@ -75,20 +75,22 @@ def main():
                         )
                     )[0][0]
                 except IndexError:
-                    print "\n\nERROR: Looks like the edu domaincontroller {} does not exist in LDAP\n\n".format(
-                        school.edu_server.dn
+                    print(
+                        "\n\nERROR: Looks like the edu domaincontroller {} does not exist in "
+                        "LDAP\n\n".format(school.edu_server.dn)
                     )
                     raise
                 if school.edu_server.dn != dn:
                     raise Exception(
-                        "Looks like the edu domaincontroller dn {} does not match expected DN {}\n\n".format(
-                            dn, school.edu_server.dn
-                        )
+                        "Looks like the edu domaincontroller dn {} does not match expected DN "
+                        "{}\n\n".format(dn, school.edu_server.dn)
                     )
 
-                # Bug 41818: administrative school server can only replicate staff users and teacher-staff users
+                # Bug 41818: administrative school server can only replicate staff users and
+                # teacher-staff users
                 acl = Acl(school.name, school.edu_server.dn, "ALLOWED")
-                # following attribute list is incomplete, but gives a rough idea if replication of this user is allowed
+                # following attribute list is incomplete, but gives a rough idea if replication of this
+                # user is allowed
                 attr_list = [
                     "uid",
                     "givenName",

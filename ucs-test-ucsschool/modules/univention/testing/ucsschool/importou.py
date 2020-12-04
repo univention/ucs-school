@@ -545,10 +545,14 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
         )
     # This will fail because we don't cleanup these groups in cleanup_ou
     # else:
-    # 	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-    # 	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-    # 	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
-    # 	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+    # 	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn,
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn,
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn),
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou,
+    # 	base_dn), should_exist=False)
 
     if not singlemaster:
         verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn, must_exist)
@@ -811,11 +815,15 @@ def generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False):
                                     if singlemaster and dc == "generate":
                                         continue
                                     if not dc and dc_administrative:
-                                        continue  # cannot specify administrative dc without educational dc
+                                        # cannot specify administrative dc without educational dc
+                                        continue
                                     if not noneducational_create_object and dc_administrative:
-                                        continue  # cannot create administrative DC without administrative objects in LDAP
+                                        # cannot create administrative DC without administrative objects
+                                        # in LDAP
+                                        continue
                                     ou_name = uts.random_name()
-                                    # character set contains multiple whitespaces to increase chance to get several words
+                                    # character set contains multiple whitespaces to increase chance to
+                                    # get several words
                                     charset = (
                                         uts.STR_ALPHANUMDOTDASH
                                         + uts.STR_ALPHA.upper()
@@ -921,7 +929,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
     """
     Creates 3 OUs in a row
     """
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:  # noqa: E501
         create_mail_domain(ucr, udm)
         for singlemaster in [True, False]:
             for district_enable in [False, True]:
@@ -958,7 +966,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 
 
 def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:  # noqa: E501
         create_mail_domain(ucr, udm)
         cleanup_ou_list = []
         try:

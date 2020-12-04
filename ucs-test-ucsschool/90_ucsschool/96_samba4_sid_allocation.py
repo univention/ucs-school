@@ -63,8 +63,8 @@ class TestS4SIDAllocation(TestSamba4):
 
         else:
             print (
-                "\nUnknown state '%s' is given for S4 connector, accepted 'True' to start or 'False' to stop."
-                % connector_should_run
+                "\nUnknown state '%s' is given for S4 connector, accepted 'True' to start or 'False' to "
+                "stop." % connector_should_run
             )
 
     def s4_search(self, filter_string, attribute):
@@ -92,8 +92,8 @@ class TestS4SIDAllocation(TestSamba4):
         user_dn = user_dn.replace("uid=", "cn=", 1)
 
         print (
-            "\nSearching for the 'objectSid' of the user with DN: '%s' in the database located at '%s' using "
-            "'ldbsearch'" % (user_dn, ldburl)
+            "\nSearching for the 'objectSid' of the user with DN: '%s' in the database located at '%s' "
+            "using 'ldbsearch'" % (user_dn, ldburl)
         )
 
         cmd = (
@@ -131,8 +131,8 @@ class TestS4SIDAllocation(TestSamba4):
                 utils.fail("The 'sambaSID' is empty in the LDAP.")
         except (KeyError, IndexError) as exc:
             utils.fail(
-                "An error occured while trying to get the 'sambaSID' for the user with a DN '%s' from the LDAP: '%s'"
-                % (user_dn, exc)
+                "An error occured while trying to get the 'sambaSID' for the user with a DN '%s' from "
+                "the LDAP: '%s'" % (user_dn, exc)
             )
 
         return samba_sid
@@ -149,7 +149,8 @@ class TestS4SIDAllocation(TestSamba4):
 
             if "Samba 4" in master_services:
                 print (
-                    "\nThe DC-Master has Samba4 running, the test will also check the SID for the test user on the DC-Master"
+                    "\nThe DC-Master has Samba4 running, the test will also check the SID for the test "
+                    "user on the DC-Master"
                 )
                 return True
 

@@ -207,7 +207,8 @@ dn="$2"
 name="$(cat $1 | awk -F '\t' '{print $3}')"
 mode="$(cat $1 | awk -F '\t' '{print $1}')"
 if [ "$mode" != D ]; then
-    ldap_dn="$(univention-ldapsearch "(&(objectClass=univentionGroup)(cn=$name))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+    ldap_dn="$(univention-ldapsearch "(&(objectClass=univentionGroup)(cn=$name))" | ldapsearch-wrapper \
+    | sed -ne 's|dn: ||p')"
     test "$dn" = "$ldap_dn" || exit 1
 fi
 cat $1 >>%(post_hook_result)s

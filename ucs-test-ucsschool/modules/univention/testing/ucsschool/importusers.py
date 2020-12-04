@@ -254,7 +254,8 @@ class Person(object):
     def append_random_working_group(self):
         return
         # working groups cannot be specified, neither in file for CLI nor by API in Python
-        # self.school_classes.setdefault(self.school, []).append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
+        # self.school_classes.setdefault(self.school, []).append('%s-%s' % (
+        #   self.school, uts.random_string(length=9, alpha=True, numeric=False)))
 
     def is_student(self):
         return self.role == "student"

@@ -82,8 +82,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         """
         machine_pass = generate_random_password(20, 32)
         print (
-            "\nInitiating a join of a computer with a name '%s' and a generated machine password '%s' using libnet:"
-            % (netbios_name, machine_pass)
+            "\nInitiating a join of a computer with a name '%s' and a generated machine password '%s' "
+            "using libnet:" % (netbios_name, machine_pass)
         )
 
         join_password = domain_sid = domain_name = ""
@@ -92,8 +92,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         )
         if not all((join_password, domain_sid, domain_name)):
             utils.fail(
-                "The join password, domain SID and domain name should be returned by the libnet join, however at least "
-                "one of them is empty"
+                "The join password, domain SID and domain name should be returned by the libnet join, "
+                "however at least one of them is empty"
             )
         utils.wait_for_replication()
 
@@ -109,8 +109,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         for a created Windows Client account and lists the contents.
         """
         print (
-            "\nTrying to access the Samba SYSVOL using joined Windows client credentials: computer name '%s' and "
-            "machine password '%s'" % (computer_name, machine_password)
+            "\nTrying to access the Samba SYSVOL using joined Windows client credentials: computer "
+            "name '%s' and machine password '%s'" % (computer_name, machine_password)
         )
 
         cmd = (
@@ -128,7 +128,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             print ("The 'smbclient' has produced the following output to STDERR: %s" % stderr)
         if not stdout:
             utils.fail(
-                "The 'smbclient' did not produce any output to STDOUT, while Samba SYSVOL contents listing were expected"
+                "The 'smbclient' did not produce any output to STDOUT, while Samba SYSVOL contents "
+                "listing were expected"
             )
         if self.domain_name not in stdout:
             utils.fail(
@@ -154,8 +155,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             utils.fail("An error occured while running the udm command. STDERR: %s" % stderr)
         if not stdout.strip():
             utils.fail(
-                "The udm command did not produce any output to STDOUT, while a computer with a name '%s' was expected "
-                "to be listed" % computer_name
+                "The udm command did not produce any output to STDOUT, while a computer with a name "
+                "'%s' was expected to be listed" % computer_name
             )
 
         if computer_name not in stdout:
@@ -220,14 +221,16 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             )
         if not stdout.strip():
             utils.fail(
-                "The 'ldbadd' tool did not produce any output to STDOUT, while a confirmation of computer record add was expected"
+                "The 'ldbadd' tool did not produce any output to STDOUT, while a confirmation of "
+                "computer record add was expected"
             )
         else:
             print "The 'ldbadd' produced the following output:", stdout
 
         if not bool(match(".*Added 1 record.* successfully", stdout, IGNORECASE)):
             utils.fail(
-                "Could not find the confirmation of a successful record addition to the database from 'ldbadd'."
+                "Could not find the confirmation of a successful record addition to the database from "
+                "'ldbadd'."
             )
 
     def remove_computer_via_udm(self, computer_name):
@@ -297,7 +300,8 @@ if __name__ == "__main__":
 
     ### Case 2 currently fails: Bug #37698
     ### # case 2: join without a pre-created computer account:
-    ### print("\nRunning test case 2: join of a Windows client with no computer account pre-created beforehand:")
+    ### print("\nRunning test case 2: join of a Windows client with no computer account pre-created
+    ### beforehand:")
     ### TestProcess = Process(target=TestWindowsClientJoin.main)
     ### TestProcess.start()
     ### TestProcess.join(120)

@@ -36,9 +36,8 @@ def check_uids(member_dn_list, open_ldap_co):
             dir_owner = str(os.stat(homedir).st_uid)
             if not (ldap_uid == unix_uid == dir_owner):
                 utils.fail(
-                    "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not consistent!".format(
-                        ldap_uid, unix_uid, dir_owner
-                    )
+                    "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not "
+                    "consistent!".format(ldap_uid, unix_uid, dir_owner)
                 )
 
 

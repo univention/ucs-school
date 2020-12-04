@@ -78,14 +78,14 @@ class TestSamba4(object):
             stdout = stdout.strip()
             if not stdout:
                 utils.fail(
-                    "The %s command did not produce any output to stdout, while a confirmation was expected"
-                    % action
+                    "The %s command did not produce any output to stdout, while a confirmation was "
+                    "expected" % action
                 )
             print stdout
         else:
             print (
-                "\nUnknown state '%s' is given for the service '%s', accepted 'start' to start it 'stop' to stop or 'restart' to restart"
-                % (action, service)
+                "\nUnknown state '%s' is given for the service '%s', accepted 'start' to start it "
+                "'stop' to stop or 'restart' to restart" % (action, service)
             )
 
     def dc_master_has_samba4(self):
@@ -180,7 +180,8 @@ class TestSamba4(object):
         except IndexError:
             print "\nselect_school_ou: split: %s" % (sed_stdout.split(),)
             utils.fail(
-                "Could not find the DN in the udm list output, thus cannot select the School OU to use as a container"
+                "Could not find the DN in the udm list output, thus cannot select the School OU to use "
+                "as a container"
             )
 
     def get_samba_sam_ldb_path(self):
@@ -212,8 +213,8 @@ class TestSamba4(object):
             self.admin_password = self.UCR["tests/domainadmin/pwd"]
         except KeyError as exc:
             print (
-                "\nAn exception while trying to read data from the UCR for the test: '%s'. Skipping the test."
-                % exc
+                "\nAn exception while trying to read data from the UCR for the test: '%s'. Skipping "
+                "the test." % exc
             )
             self.return_code_result_skip()
 

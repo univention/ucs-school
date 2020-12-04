@@ -93,8 +93,8 @@ def windows_create_gpo(gpo_name, gpo_comment, server=""):
         ret_code, stdout, stderr = Win.create_gpo(gpo_name, gpo_comment, server)
         if ret_code != 0:
             utils.fail(
-                "The creation of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The creation of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while creating GPO remotely: %r" % exc)
@@ -110,8 +110,8 @@ def windows_link_gpo(gpo_name, container, server=""):
         ret_code, stdout, stderr = Win.link_gpo(gpo_name, 1, container, server)
         if ret_code != 0:
             utils.fail(
-                "The linking of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The linking of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
@@ -152,8 +152,8 @@ def windows_set_gpo_security_filter(
         )
         if ret_code != 0:
             utils.fail(
-                "Set-GPPermissions on the Windows host returned status '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "Set-GPPermissions on the Windows host returned status '%s' when 0 is expected. STDOUT: "
+                "%s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("Exception during Set-GPPermissions: %r" % exc)
@@ -175,8 +175,8 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
         ret_code, stdout, stderr = Win.Get_ItemProperty(item)
         if ret_code != 0:
             utils.fail(
-                "Get-ItemProperty on the Windows host returned status '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "Get-ItemProperty on the Windows host returned status '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
         print "stdout:", stdout
     except univention.winexe.WinExeFailed as exc:
@@ -223,8 +223,8 @@ def windows_set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_t
         )
         if ret_code != 0:
             utils.fail(
-                "The modification of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The modification of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while modifying GPO remotely: %r" % exc)
@@ -256,8 +256,8 @@ def windows_check_gpo_report(gpo_name, identity_name, server=""):
         ret_code, stdout, stderr = Win.get_gpo_report(gpo_name, server)
         if ret_code != 0:
             utils.fail(
-                "The collection of the GPO report on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The collection of the GPO report on the Windows host returned code '%s' when 0 is "
+                "expected. STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
         if not stdout:
             utils.fail("The GPOreport STDOUT from the remote Windows Host is empty.")
@@ -415,7 +415,8 @@ def udm_get_windows_computer():
     sed_stdout, stderr = run_cmd(("sed", "-n", "s/^DN: //p"), stdin=PIPE, std_in=stdout)
     if not sed_stdout:
         print (
-            "SKIP: failed to find any Windows Host DN via UDM. Perhaps host not joined as a memberserver or does not exist in this setup."
+            "SKIP: failed to find any Windows Host DN via UDM. Perhaps host not joined as a "
+            "memberserver or does not exist in this setup."
         )
         exit(TestCodes.REASON_INSTALL)
 
@@ -443,8 +444,8 @@ def windows_remove_test_gpo(gpo_name, server=""):
         ret_code, stdout, stderr = Win.remove_gpo(gpo_name, server)
         if ret_code != 0:
             print (
-                "The removal of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The removal of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except (univention.winexe.WinExeFailed, NameError) as exc:
         print ("An Error occured while removing GPO remotely: %r" % exc)
@@ -570,7 +571,8 @@ class GPO_Test(object):
 
         # case 1: checks with user GPO
         # TODO: Doesn't work as Admin, needs to be checked with the student-account!
-        # windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey", "TestUserValueOne", self.test_user_gpo_value)
+        # windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey",
+        # "TestUserValueOne", self.test_user_gpo_value)
 
         # case 2: checks with computer GPO
         windows_check_registry_key(

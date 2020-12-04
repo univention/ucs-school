@@ -123,7 +123,8 @@ class Test(HttpApiUserTestBase):
             if attr["school_classes"]:
                 everyone_classes = attr["school_classes"]
                 # TODO: create bug report for this, or handle in API server:
-                # work around school.lib failing when trying to create same class (and share) in two processes
+                # work around school.lib failing when trying to create same class (and share) in two
+                # processes
                 group_dns = self.extract_class_dns(attr)
                 for group_dn in group_dns:
                     self.logger.debug("*** Creating group %r...", group_dn)
@@ -247,7 +248,8 @@ class Test(HttpApiUserTestBase):
                     attr, new_attrs = job
                     for k, v in new_attrs.items():
                         if k == "school_classes" and not v:
-                            # special case `school_classes`: if newly empty but previously non-empty -> use old value
+                            # special case `school_classes`: if newly empty but previously
+                            # non-empty -> use old value
                             # see end of ImportUser.make_classes()
                             # Bug #48045
                             continue
@@ -674,7 +676,8 @@ class Test(HttpApiUserTestBase):
         ou1, ou2 = ous
         self.logger.info("*** Using OUs %r and %r.", ou1, ou2)
         self.logger.info(
-            "*** Going to create teacher in OUs %r and %r, then remove it from primary (%r) and rename it. ***",
+            "*** Going to create teacher in OUs %r and %r, then remove it from primary (%r) and rename "
+            "it. ***",
             ou1,
             ou2,
             ou1,

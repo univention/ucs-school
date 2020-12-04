@@ -171,7 +171,8 @@ def test_create_school_doesnt_create_existing_school(
         school_class_mock,
         from_binddn_mock,
     )
-    subprocess_check_call_mock.assert_not_called()  # when school exists, "create_ou" script should not be executed
+    # when school exists, "create_ou" script should not be executed
+    subprocess_check_call_mock.assert_not_called()
 
 
 @patch("subprocess.check_call")

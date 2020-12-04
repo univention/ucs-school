@@ -162,7 +162,8 @@ class Test:
 
                 negative_test_fqdn = ".".join((negative_test_hostname, ucr.get("domainname")))
 
-                # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+                # wait for postrun and S4 Connector, check by creating a dummy user and waiting for
+                # that object to appear
                 dummy_username = uts.random_username()
                 dummy_password = uts.random_string()
                 udm.create_user(username=dummy_username, password=dummy_password)
@@ -219,7 +220,8 @@ class Test:
             p1.wait()
 
         # Ok, now the UCSTestUDM() context got destroyed via UCSTestUDM().__exit__()
-        # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+        # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object
+        # to appear
         with testing_udm.UCSTestUDM() as udm:
             dummy_username = uts.random_username()
             dummy_password = uts.random_string()
@@ -243,7 +245,8 @@ class Test:
                     % (postitive_test_fqdn, test_srv_record)
                 )
 
-        # verify that the "negative" DCs of the other Role (Education/Administration) are not in DNS/Samba4
+        # verify that the "negative" DCs of the other Role (Education/Administration) are not in
+        # DNS/Samba4
         for negative_test_fqdn in negative_test_fqdn_list:
             if stdout.find(negative_test_fqdn) != -1:
                 testing_utils.fail(

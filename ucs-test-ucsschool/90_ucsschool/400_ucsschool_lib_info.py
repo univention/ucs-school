@@ -75,7 +75,8 @@ def main():
                 ), "{} should NOT be a school slave".format(dn_centraldc)
                 with pytest.raises(
                     ValueError,
-                    match="Given computer DN does not refer to a computers/domaincontroller_slave object",
+                    match="Given computer DN does not refer to a computers/domaincontroller_slave "
+                    "object",
                 ):  # match will be evaluated as of pytest 3.1+
                     uli.is_school_slave(lo, dn_backup)
 

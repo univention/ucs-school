@@ -96,8 +96,8 @@ class TestGPCReplicationTwoWays(TestSamba4):
         display_name = "ucs_test_school_gpo_" + random_username(8)
 
         print (
-            "\nCreating a Group Policy Object (GPO) on the host '%s' with a display name '%s' using 'samba-tool'"
-            % (self.remote_host, display_name)
+            "\nCreating a Group Policy Object (GPO) on the host '%s' with a display name '%s' using "
+            "'samba-tool'" % (self.remote_host, display_name)
         )
 
         cmd = (
@@ -119,12 +119,13 @@ class TestGPCReplicationTwoWays(TestSamba4):
         if stderr:
             print "\nExecuting cmd:", cmd
             print (
-                "\nAn error message while creating a GPO using 'samba-tool' on the remote host '%s'. STDERR:\n%s"
-                % (self.remote_host, stderr)
+                "\nAn error message while creating a GPO using 'samba-tool' on the remote host '%s'. "
+                "STDERR:\n%s" % (self.remote_host, stderr)
             )
         if not stdout:
             utils.fail(
-                "The 'samba-tool' did not produce any output to STDOUT, while a GPO reference was expected"
+                "The 'samba-tool' did not produce any output to STDOUT, while a GPO reference was "
+                "expected"
             )
 
         stdout = stdout.rstrip()
@@ -169,13 +170,14 @@ class TestGPCReplicationTwoWays(TestSamba4):
         if stderr:
             print "\nExecuting cmd:", cmd
             print (
-                "\nAn error message while creating a GPO link using 'samba-tool' on the remote host '%s'. STDERR:\n%s"
-                % (self.remote_host, stderr)
+                "\nAn error message while creating a GPO link using 'samba-tool' on the remote host "
+                "'%s'. STDERR:\n%s" % (self.remote_host, stderr)
             )
 
         if not stdout:
             utils.fail(
-                "The 'samba-tool' did not produce any output to STDOUT, while a GPO link confirmation was expected"
+                "The 'samba-tool' did not produce any output to STDOUT, while a GPO link confirmation "
+                "was expected"
             )
         if container_dn not in stdout:
             utils.fail("The linked School OU (Container) was not referenced in the 'samba-tool' output")
@@ -219,12 +221,13 @@ class TestGPCReplicationTwoWays(TestSamba4):
 
         if container_dn not in stdout:
             utils.fail(
-                "The linked School OU (Container) was not referenced in the 'samba-tool' output, possibly the link was "
-                "not replicated"
+                "The linked School OU (Container) was not referenced in the 'samba-tool' output, "
+                "possibly the link was not replicated"
             )
         if self.gpo_reference not in stdout:
             utils.fail(
-                "The linked GPO was not referenced in the 'samba-tool output, possibly link was not replicated"
+                "The linked GPO was not referenced in the 'samba-tool output, possibly link was not "
+                "replicated"
             )
 
         print "\nSamba-tool produced the following output:\n", stdout
@@ -241,15 +244,16 @@ class TestGPCReplicationTwoWays(TestSamba4):
 
         if "serverRole: slave" not in udm_stdout.strip():
             print (
-                "\nThe udm list to did not produce any ouptut with slave(s)to STDOUT, assuming there are no DC-Slave(s) "
-                "in the domain. Skipping test..."
+                "\nThe udm list to did not produce any ouptut with slave(s)to STDOUT, assuming there "
+                "are no DC-Slave(s) in the domain. Skipping test..."
             )
             self.return_code_result_skip()
         else:
             sed_stdout = self.sed_for_key(udm_stdout, "^  ip: ")
             if not sed_stdout:
                 utils.fail(
-                    "Could not find at least one IP address of the DC-Slave in the output of the udm list command"
+                    "Could not find at least one IP address of the DC-Slave in the output of the udm "
+                    "list command"
                 )
 
             slave_ips = sed_stdout.split()
@@ -282,21 +286,21 @@ class TestGPCReplicationTwoWays(TestSamba4):
             # check first if DC-Master has Samba4:
             if not self.dc_master_has_samba4():
                 print (
-                    "The DC-Master '%s' has no Samba4, thus remote check not possible, skipping the test."
-                    % self.ldap_master
+                    "The DC-Master '%s' has no Samba4, thus remote check not possible, skipping the "
+                    "test." % self.ldap_master
                 )
                 self.return_code_result_skip()
 
             self.remote_host = "ldap://" + self.ldap_master
             self.host_or_ip = "-H"  # to use hostname as an arg for samba-tool
             print (
-                "\nCurrent server role is DC-Slave, the DC-Master '%s' will be selected as the remote host for the "
-                "test" % self.remote_host
+                "\nCurrent server role is DC-Slave, the DC-Master '%s' will be selected as the "
+                "remote host for the test" % self.remote_host
             )
         else:
             print (
-                "\nThe test not inteded to run on servers other than DC-Slave or DC-Master, current role is '%s'. "
-                "Skipping test..." % server_role
+                "\nThe test not inteded to run on servers other than DC-Slave or DC-Master, current "
+                "role is '%s'. Skipping test..." % server_role
             )
             self.return_code_result_skip()
 

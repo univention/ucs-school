@@ -235,8 +235,11 @@ class Acl(object):
         with CreateDCSlaveInContainer(group_container) as target_dn:
             self.assert_acl(target_dn, access, attrs, access_allowance="DENIED")
             with CreateGroupInContainer(group_container) as group_dn:
-                # access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
-                # filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
+                # access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),
+                # dc=najjar,dc=am$$"
+                # filter="(&
+                # (!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup)
+                # )"
                 attrs = [
                     "sambaGroupType",
                     "cn",
@@ -498,7 +501,10 @@ class Acl(object):
         lo = getMachineConnection()
         if not singlemaster:
             slave_found = lo.search(
-                filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))",
+                filter="(|"
+                "(univentionObjectType=computers/domaincontroller_slave)"
+                "(univentionObjectType=computers/memberserver)"
+                ")",
                 base=utu.UCSTestSchool().get_ou_base_dn(self.school),
             )
             if slave_found:

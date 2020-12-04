@@ -40,7 +40,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
             # makes running subsequent running of the script easier.
             logger.debug("{} already removed from group {}.".format(slave_dn, grp_dn))
         expected_warnings_slave.append(
-            "Host object is member in global edu group but not in OU specific slave group (or the other way around)"
+            "Host object is member in global edu group but not in OU specific slave group (or the other "
+            "way around)"
         )
 
         # Add slave to OUschoola-DC-Verwaltungsnetz
@@ -51,7 +52,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         unique_members.append(slave_dn)
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
-            "Host object is member in global admin group but not in OU specific slave group (or the other way around)"
+            "Host object is member in global admin group but not in OU specific slave group (or the "
+            "other way around)"
         )
 
         # Add Slave to Member-Edukativnetz
@@ -61,7 +63,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append("Slave object is member in memberserver groups")
         expected_warnings_slave.append(
-            "Host object is member in global edu group but not in OU specific memberserver group (or the other way around)"
+            "Host object is member in global edu group but not in OU specific memberserver group (or "
+            "the other way around)"
         )
 
         # Add slave_dn to OU{}-Member-Verwaltungsnetz
@@ -83,7 +86,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         expected_warnings_member.append("Memberserver object is member in slave groups")
 
         logger.info(
-            "Run diagnostic tool, capture and test if warnings were raised. The dns of the client computers should appear be in the warnings."
+            "Run diagnostic tool, capture and test if warnings were raised. The dns of the client "
+            "computers should appear be in the warnings."
         )
         module_name = "900_ucsschool_slave_groupmemberships"
         instance = Instance()

@@ -312,7 +312,8 @@ class UCSTestSchool(object):
                             self.udm._cleanup.setdefault(univention_object_type[0], []).append(dn)
                         else:
                             logger.info(
-                                '*** Removing LDAP object without "univentionObjectType" directly (not using UDM): %r',
+                                '*** Removing LDAP object without "univentionObjectType" directly (not '
+                                "using UDM): %r",
                                 dn,
                             )
                             try:
@@ -412,7 +413,8 @@ class UCSTestSchool(object):
         if isinstance(name_edudc, str):
             if name_edudc.lower() == cls.ucr.get("ldap/master", "").split(".", 1)[0].lower():
                 logger.info(
-                    "*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to None"
+                    "*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to "
+                    "None"
                 )
                 name_edudc = None
             elif any(
@@ -422,7 +424,8 @@ class UCSTestSchool(object):
                 ]
             ):
                 logger.info(
-                    "*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to None"
+                    "*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to "
+                    "None"
                 )
                 name_edudc = None
         return name_edudc
@@ -450,8 +453,9 @@ class UCSTestSchool(object):
         If use_cache is True (default) and an OU was created in a previous test with the same arguments,
         it will be reused. -> If ou_name and displayName are None, instead of creating new random names,
         the existing test-OU will be returned.
-        PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be unset automatically,
-            because it's not allowed to specify the hostname of the master or any backup in any situation!
+        PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be
+        unset automatically, because it's not allowed to specify the hostname of the master or any
+        backup in any situation!
 
         Return value: (ou_name, ou_dn)
             ou_name: name of the created OU
@@ -833,7 +837,8 @@ class UCSTestSchool(object):
             ou_name=ou_name,
             schools=schools,
             is_staff=is_staff or tmp_role,
-            is_teacher=is_teacher,  # add a role, or create_user() will create a student, remove role later
+            # add a role, or create_user() will create a student, remove role later:
+            is_teacher=is_teacher,
             wait_for_replication=wait_for_replication,
             *args,
             **kwargs

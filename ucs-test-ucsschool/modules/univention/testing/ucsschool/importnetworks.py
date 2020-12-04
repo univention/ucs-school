@@ -287,7 +287,8 @@ set -x
 dn="$2"
 network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
 school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | \
+ldapsearch-wrapper | sed -ne 's|dn: ||p')"
 test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0

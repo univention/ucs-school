@@ -26,8 +26,8 @@ def main():
             if expected_attr not in attr_list:
                 print "ldap/index/%s=%r" % (index, attr_list)
                 utils.fail(
-                    "Expected attribute %r to be found LDAP index ldap/index/%s, but this was not the case."
-                    % (expected_attr, index)
+                    "Expected attribute %r to be found LDAP index ldap/index/%s, but this was not the "
+                    "case." % (expected_attr, index)
                 )
             print "OK: %r found in ldap/index/%s" % (expected_attr, index)
 

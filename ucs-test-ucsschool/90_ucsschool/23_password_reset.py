@@ -78,12 +78,10 @@ class PasswordReset(object):
         )
 
     def assert_login(self, user, old_password, new_password, change_password_on_next_login):
-        print "%s.assert_login(%r, old_password=%r, new_password=%r, change_password_on_next_login=%r)" % (
-            self,
-            user,
-            old_password,
-            new_password,
-            change_password_on_next_login,
+        print (
+            "%s.assert_login(%r, old_password=%r, new_password=%r, "
+            "change_password_on_next_login=%r)"
+            % (self, user, old_password, new_password, change_password_on_next_login,)
         )
         login = self.test_login(user, old_password)
         assert 401 == login.status, "The user could login with the old password: status=%r" % (
@@ -311,7 +309,9 @@ class TestPasswordReset(object):
             )
         except AssertionError as exc:
             if expected_result != EXPECT_OK:
-                return  # the password change was disallowed to the actor. So the target still has the old password
+                # the password change was disallowed to the actor. So the target still has the old
+                # password
+                return
             raise Error("Login after password change: %s" % (exc,))
         if expected_result != EXPECT_OK:
             raise Error(

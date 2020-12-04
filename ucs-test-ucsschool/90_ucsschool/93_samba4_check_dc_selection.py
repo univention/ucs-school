@@ -77,8 +77,8 @@ class TestS4DCLocatorDNS(TestSamba4):
 
         if not grep_stdout:
             print (
-                "The 'Domain Controller:' line was not found in the output from 'net ads lookup', i.e. no Domain "
-                "Controllers were located."
+                "The 'Domain Controller:' line was not found in the output from 'net ads lookup', i.e. "
+                "no Domain Controllers were located."
             )
         return grep_stdout
 
@@ -137,8 +137,8 @@ class TestS4DCLocatorDNS(TestSamba4):
                 self.site_dcs.remove(self.UCR.get("ldap/server/name"))
             except ValueError as exc:
                 utils.fail(
-                    "An error occured while trying to remove the current DC name from the list of site DCs that can be "
-                    "discovered: %r. Current DC should be present in this list." % exc
+                    "An error occured while trying to remove the current DC name from the list of site "
+                    "DCs that can be discovered: %r. Current DC should be present in this list." % exc
                 )
 
             self.check_dc_location()

@@ -55,7 +55,8 @@ class Test(CLI_Import_v2_Tester):
         shutil.copy(TESTHOOKSOURCE, TESTHOOKTARGET)
 
         self.log.info(
-            '*** Importing a user from each role, two with firstname starting with "M" should not be created...'
+            '*** Importing a user from each role, two with firstname starting with "M" should not be '
+            "created..."
         )
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):

@@ -75,7 +75,8 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
         computer_dns = self.mess_up_clients()
 
         logger.info(
-            "Run diagnostic tool, capture and test if warnings were raised. The dns of the client computers should appear be in the warnings."
+            "Run diagnostic tool, capture and test if warnings were raised. The dns of the client "
+            "computers should appear be in the warnings."
         )
         module_name = "903_ucsschool_schoolcomputers"
         instance = Instance()

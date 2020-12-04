@@ -35,7 +35,8 @@ def main():
             options = {"school": school_name, "group": class_dn, "separator": separator}
             class_list = connection.umc_command("schoollists/csvlist", options).result
             expected_class_list = {
-                u"csv": u"Firstname{sep}Lastname{sep}Class{sep}Username\r\n{first}{sep}{last}{sep}{cls_name}{sep}{uid}\r\n".format(
+                u"csv": u"Firstname{sep}Lastname{sep}Class{sep}Username\r\n{first}{sep}{last}{sep}"
+                u"{cls_name}{sep}{uid}\r\n".format(
                     sep=separator,
                     first=stu_firstname,
                     last=stu_lastname,

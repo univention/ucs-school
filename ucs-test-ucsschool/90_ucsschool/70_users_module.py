@@ -92,8 +92,8 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
             pass
         user.remove(remove_from_school)
         # importusers expects that the class groups are moved as well as the user during a school change
-        # schoolwizard does not do that -> reset the school classes that got modified during the school move
-        # see bug #47208
+        # schoolwizard does not do that -> reset the school classes that got modified during the school
+        # move see bug #47208
         user.school_classes = school_classes
         utils.wait_for_replication()
         user.verify()

@@ -48,7 +48,8 @@ def main():
                 )
             except ObjectNotFound:
                 raise Exception(
-                    "The UCS@school import API HTTP server could not be reached. It seems it is misconfigured, not installed or a proxy/firewall is blocking it."
+                    "The UCS@school import API HTTP server could not be reached. It seems it is "
+                    "misconfigured, not installed or a proxy/firewall is blocking it."
                 )
             except ServerError as exc:
                 raise Exception("The UCS@school Import API HTTP server is not reachable: %s" % (exc,))
@@ -59,11 +60,13 @@ def main():
                 print("*** new_exception_count: {}".format(new_exception_count))
                 if new_exception_count > old_exception_count:
                     utils.fail(
-                        "Authentication against HTTP-API failed with unicode exception in gunicorn. See bug #48137."
+                        "Authentication against HTTP-API failed with unicode exception in gunicorn. See "
+                        "bug #48137."
                     )
                 else:
                     print(
-                        "*** Authentication failed for unknown reason! Test does not fail because school_admin was not explicitly allowed to use import."
+                        "*** Authentication failed for unknown reason! Test does not fail because "
+                        "school_admin was not explicitly allowed to use import."
                     )
                     print("*** Nevertheless bug #48137 does not seem to happen.")
                     raise

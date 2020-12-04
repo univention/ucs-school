@@ -42,7 +42,8 @@ class Test(CLI_Import_v2_Tester):
         * simply delete: deletion_grace_period={"deactivation": X, "deletion": 0}
         * delete later, deactivate now: deletion_grace_period={"deactivation": 0, "deletion": Y}
           + creating a user with the deactived users SUID+RUID -> reactivate account
-        * delete later, deactivate with an expiration date: deletion_grace_period={"deactivation": Z, "deletion": Z+1}
+        * delete later, deactivate with an expiration date: deletion_grace_period={"deactivation":
+            Z, "deletion": Z+1}
         """
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:Benutzername", "name")

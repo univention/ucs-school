@@ -144,7 +144,8 @@ class __TestSchoolClassAssignment(object):
     def test_classes_from_two_schools(
         self, schoolenv, client, primary_school=None, secondary_school=None
     ):
-        # Teacher is at three schools. A class from his primary school and from one of his secondaries is added.
+        # Teacher is at three schools. A class from his primary school and from one of his secondaries
+        # is added.
         schools = schoolenv.schools
         if not primary_school:
             primary_school = schools[0]

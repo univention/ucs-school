@@ -42,19 +42,22 @@ def main():
 
             print "--------YES------------------------------------------------------------"
             handler_set(["ucsschool/default/share/nfs=yes"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, True)
 
             print "--------NO------------------------------------------------------------"
             handler_set(["ucsschool/default/share/nfs=no"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, False)
 
             print "--------EMPTY------------------------------------------------------------"
             handler_unset(["ucsschool/default/share/nfs"])
-            ucsschool.lib.models.utils.ucr.load()  # workaround: manual reload of UCR instance in UCS@school lib
+            # workaround: manual reload of UCR instance in UCS@school lib:
+            ucsschool.lib.models.utils.ucr.load()
             class_name, class_dn = schoolenv.create_school_class(school)
             verify_nfs_access(class_name, False)
 

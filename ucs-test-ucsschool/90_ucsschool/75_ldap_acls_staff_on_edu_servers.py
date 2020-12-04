@@ -60,8 +60,9 @@ class LDAPACLCheck(UCSTestSchool):
 
         try:
             # HINT:
-            # the case ucsschool/ldap/replicate_staff_to_edu=no is not tested, because this is currently the default case
-            # and it is difficult to test e.g. via verify_ldap_object() since it does not use the machine account
+            # the case ucsschool/ldap/replicate_staff_to_edu=no is not tested, because this is currently
+            # the default case and it is difficult to test e.g. via verify_ldap_object() since it does
+            # not use the machine account
 
             # ssh to master ==> set UCRV to ON and create Staff2 in test OU
             stdout, stderr = self.run_on_master(

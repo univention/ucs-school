@@ -89,7 +89,8 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolHomeShareFileServer is set to master in a UCS@school multi server environment\n"
+                "ucsschoolHomeShareFileServer is set to master in a UCS@school multi server "
+                "environment\n"
             )
             self.lo.modify(
                 ou_c_dn,
@@ -102,7 +103,8 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolClassShareFileServer is set to master in a UCS@school multi server environment\n"
+                "ucsschoolClassShareFileServer is set to master in a UCS@school multi server "
+                "environment\n"
             )
         else:
             self.lo.modify(
@@ -116,7 +118,8 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolHomeShareFileServer is not set to master in a UCS@school single server environment\n"
+                "ucsschoolHomeShareFileServer is not set to master in a UCS@school single server "
+                "environment\n"
             )
             self.lo.modify(
                 ou_b_dn,
@@ -129,7 +132,8 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolClassShareFileServer is not set to master in a UCS@school single server environment\n"
+                "ucsschoolClassShareFileServer is not set to master in a UCS@school single server "
+                "environment\n"
             )
 
         logger.info(

@@ -60,18 +60,18 @@ def main():
                 try:
                     ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name, use_cache=False)
                     if should_fail:
-                        print "Creating a school(%s) with dc_name=%s was expected to fail)" % (
+                        print "Creating a school(%s) with dc_name=%s, expected to fail)" % (
                             school,
                             dc_name,
                         )
                     else:
-                        print "Creating a school(%s) with dc_name=%s was expected to succeed" % (
+                        print "Creating a school(%s) with dc_name=%s, expected to succeed" % (
                             school,
                             dc_name,
                         )
                 except ValidationError as ex:
                     if should_fail and "dc_name" in str(ex):
-                        print "Creating a school(%s) with dc_name=%s was expected to fail: %s)" % (
+                        print "Creating a school(%s) with dc_name=%s, expected to fail: %s)" % (
                             school,
                             dc_name,
                             str(ex),
@@ -89,7 +89,7 @@ def main():
                 err = pop.communicate()
                 if pop.returncode:
                     if should_fail:
-                        print "Creating a school(%s) cli with dc_name=%s was expected to fail: %r)" % (
+                        print "Creating a school(%s) cli with dc_name=%s, expected to fail: %r)" % (
                             school,
                             dc_name,
                             err,
@@ -106,7 +106,7 @@ def main():
                             % (school, dc_name)
                         )
                     else:
-                        print "Creating a school(%s) cli with dc_name=%s was expected to succeed: %r)" % (
+                        print "Creating a school(%s) cli with dc_name=%s, expected to succeed: %r)" % (
                             school,
                             dc_name,
                             err,
@@ -123,13 +123,13 @@ def main():
                             % (school.name, dc_name)
                         )
                     else:
-                        print "Creating a school(%s) umcp with dc_name=%s was unexpectedly successful" % (
+                        print "Creating a school(%s) umcp with dc_name=%s, unexpectedly successful" % (
                             school.name,
                             dc_name,
                         )
                 except CreateFail as ex:
                     if should_fail and "DC Name:" in str(ex):
-                        print "Creating a school(%s) umcp with dc_name=%s was expected to fail: %s)" % (
+                        print "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)" % (
                             school.name,
                             dc_name,
                             str(ex),

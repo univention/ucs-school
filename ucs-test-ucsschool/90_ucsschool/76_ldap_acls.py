@@ -332,20 +332,15 @@ class LDAPACLTestMatrix(object):
                         access = Access.Read
                     expected_access = self.get_attribute_access(target_dn, attr)
                     if access != expected_access:
-                        print '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (
-                            self.auth_dn,
-                            target_dn,
-                            attr,
-                            expected_access,
-                            access,
+                        print (
+                            '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s",'
+                            ' expected="%s", result="%s"'
+                            % (self.auth_dn, target_dn, attr, expected_access, access,)
                         )
                     else:
-                        print 'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (
-                            self.auth_dn,
-                            target_dn,
-                            attr,
-                            expected_access,
-                            access,
+                        print (
+                            'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s",'
+                            ' result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access,)
                         )
 
     def get_attribute_access(self, target_dn, attr):

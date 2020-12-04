@@ -177,14 +177,19 @@ def main():
                                     ucr,
                                 )
                                 # For DEBUG purposes
-                                # run_commands([['ucr', 'search', room1.name], ['ucr','search', room2.name], ['atq']], {})
+                                # run_commands([
+                                # ['ucr', 'search', room1.name],
+                                # ['ucr','search', room2.name],
+                                # ['atq']
+                                # ], {})
                                 clean_folder("/home/gsmitte/groups/Marktplatz/")
                                 clean_folder("/home/%s/lehrer/%s/" % (school, tea))
                             # TODO Exception Errno4
                             except ConnectionError as e:
                                 if "[Errno 4] Unterbrechung" in str(e):
-                                    print "FAILED to get or set room (%s) settings, exception [Errno4]" % (
-                                        room2.name,
+                                    print (
+                                        "FAILED to get or set room (%s) settings, exception"
+                                        "[Errno4]" % (room2.name,)
                                     )
                                 else:
                                     print ("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))

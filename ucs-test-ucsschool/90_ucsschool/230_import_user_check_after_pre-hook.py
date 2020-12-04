@@ -171,13 +171,14 @@ class Test(CLI_Import_v2_Tester):
             )
 
         self.log.info(
-            "*** 6/6 Importing a user from each role (reusing users from 5/6), pre_move (%r -> %r) with error...",
+            "*** 6/6 Importing a user from each role (reusing users from 5/6), pre_move (%r -> %r) with "
+            "error...",
             self.ou_A.name,
             self.ou_B.name,
         )
         self.log.info(
-            '*** 6/6 pre_move hook will rewrite user.school to "NoSchool" instead of %r, so error is found in '
-            "move()-checks, not in the following modify()-checks"
+            '*** 6/6 pre_move hook will rewrite user.school to "NoSchool" instead of %r, so error is '
+            "found in move()-checks, not in the following modify()-checks"
         )
         self.create_pyhook("move", 'user.school = "NoSchool"')
         for person in person_list:

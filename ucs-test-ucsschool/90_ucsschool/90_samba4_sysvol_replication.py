@@ -44,8 +44,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
                 print "Ignoring the following warning message:", stderr
             else:
                 utils.fail(
-                    "An error occured while connecting to the remote host '%s' via ssh or executing the command: '%s'"
-                    % (host, stderr)
+                    "An error occured while connecting to the remote host '%s' via ssh or executing the"
+                    " command: '%s'" % (host, stderr)
                 )
         if stdout:
             stdout = stdout.strip()
@@ -89,13 +89,14 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         if remote_stdout != "True":
             if remote_stdout == "False":
                 utils.fail(
-                    "The command to check the sysvol replication on a remote host '%s' reported that '%s' GPO folder "
+                    "The command to check the sysvol replication on a remote host '%s' reported that "
+                    "'%s' GPO folder "
                     "does not exist. (Replication did not work)." % (host, self.gpo_reference)
                 )
 
             utils.fail(
-                "The command to check the sysvol replication on a remote host '%s' did not report that '%s' GPO folder "
-                "exists. Command's stdout from the remote host: '%s'"
+                "The command to check the sysvol replication on a remote host '%s' did not report that "
+                "'%s' GPO folder exists. Command's stdout from the remote host: '%s'"
                 % (host, self.gpo_reference, remote_stdout)
             )
 
@@ -134,8 +135,9 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             other_hostnames.remove(self.UCR.get("hostname"))
         except ValueError as exc:
             utils.fail(
-                "An error occured while trying to remove local DC hostname from the list of DCs to be checked. Probably "
-                "current DC was not in the search results of DCs with Samba-4. Exception: '%s'" % exc
+                "An error occured while trying to remove local DC hostname from the list of DCs to be "
+                "checked. Probably current DC was not in the search results of DCs with Samba-4. "
+                "Exception: '%s'" % exc
             )
         return other_hostnames
 
@@ -169,8 +171,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         search_stdout, search_stderr = self.create_and_run_process(cmd)
         if search_stderr:
             print (
-                "An error message while executing 'univention-ldapsearch' on the '%s' with pattern '%s': '%s'"
-                % (ldap_master, search_pattern, search_stderr)
+                "An error message while executing 'univention-ldapsearch' on the '%s' with pattern '%s':"
+                " '%s'" % (ldap_master, search_pattern, search_stderr)
             )
 
         # reduce the LDAP search results to only 'displayName' fields:
@@ -179,13 +181,14 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         )
         if stderr:
             utils.fail(
-                "An error occured while trying to sed through the LDAP search results from the DC-Master: '%s'. sed "
-                "input was: '%s'" % (stderr, search_stdout,)
+                "An error occured while trying to sed through the LDAP search results from the "
+                "DC-Master: '%s'. sed input was: '%s'" % (stderr, search_stdout,)
             )
         if not stdout.strip():
             utils.fail(
-                "No output from sed process, possibly an error occured during the LDAP search on DC-Master or while "
-                "trying to connect to DC-Master. sed input was: '%s'" % (search_stdout,)
+                "No output from sed process, possibly an error occured during the LDAP search on "
+                "DC-Master or while trying to connect to DC-Master. sed input "
+                "was: '%s'" % (search_stdout,)
             )
 
         # DC-Master should be the first node to check the replication to:
@@ -224,7 +227,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             utils.fail("An error occured while creating a GPO using 'samba-tool': '%s'" % stderr)
         if not stdout:
             utils.fail(
-                "The 'samba-tool' did not produce any output to stdout, while a GPO reference was expected"
+                "The 'samba-tool' did not produce any output to stdout, while a GPO reference was "
+                "expected"
             )
 
         stdout = stdout.rstrip()

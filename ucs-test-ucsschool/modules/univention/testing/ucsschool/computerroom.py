@@ -514,7 +514,18 @@ class Room(object):
                 t += 300
                 rule, printMode, shareMode = next(settings)
                 print
-                print "***", i, "-(internetRule, printMode, shareMode) = (", rule, ",", printMode, ",", shareMode, ")", "-" * 10
+                print (
+                    "***",
+                    i,
+                    "-(internetRule, printMode, shareMode) = (",
+                    rule,
+                    ",",
+                    printMode,
+                    ",",
+                    shareMode,
+                    ")",
+                    "-" * 10,
+                )
                 new_settings = {
                     "customRule": white_page,
                     "printMode": printMode,
@@ -585,7 +596,18 @@ class Room(object):
                 t += 300
                 rule, printMode, shareMode = next(settings)
                 print
-                print "***", i, "-(internetRule, printMode, shareMode) = (", rule, ",", printMode, ",", shareMode, ")", "-" * 10
+                print (
+                    "***",
+                    i,
+                    "-(internetRule, printMode, shareMode) = (",
+                    rule,
+                    ",",
+                    printMode,
+                    ",",
+                    shareMode,
+                    ")",
+                    "-" * 10,
+                )
                 new_settings = {
                     "customRule": white_page,
                     "printMode": printMode,
@@ -635,12 +657,9 @@ class Room(object):
                     (datetime.datetime.now() + datetime.timedelta(0, t)).time(), "%H:%M"
                 )
                 print
-                print "*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) ----------" % (
-                    i,
-                    rule,
-                    printMode,
-                    shareMode,
-                    period,
+                print (
+                    "*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) "
+                    "----------" % (i, rule, printMode, shareMode, period,)
                 )
                 new_settings = {
                     "customRule": white_page,
@@ -965,8 +984,8 @@ class UmcComputer(object):
         if get_result != info:
             diff = set(x for x in get_result if get_result[x] != info[x])
             raise GetCheckFail(
-                "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\nDifference = %r"
-                % (self.name, get_result, info, diff)
+                "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
+                "Difference = %r" % (self.name, get_result, info, diff)
             )
 
     def type_name(self):

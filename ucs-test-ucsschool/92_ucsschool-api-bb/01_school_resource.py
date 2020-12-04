@@ -125,9 +125,8 @@ class Test(TestCase):
                     self.assertEqual(
                         v,
                         v_new,
-                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} ({!r}).".format(
-                            k, ldap_val, v_new, v, school.dn
-                        ),
+                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} "
+                        "({!r}).".format(k, ldap_val, v_new, v, school.dn),
                     )
                 else:
                     self.assertEqual(

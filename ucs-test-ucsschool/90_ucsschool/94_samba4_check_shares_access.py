@@ -67,7 +67,8 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
         if not stdout.strip():
             utils.fail(
-                "The Samba client did not produce any output to STDOUT, while DC-Master Sysvol contents were expected"
+                "The Samba client did not produce any output to STDOUT, while DC-Master Sysvol contents"
+                " were expected"
             )
         print ("The Samba client produced the following output to STDOUT:\n%s" % stdout)
 
@@ -76,7 +77,8 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             utils.fail("\nThe connection with DC-Master failed. See the stdout.")
         if domain_name not in stdout:
             utils.fail(
-                "The Samba client output of DC-Master Sysvol contents does not include folder with the domain name."
+                "The Samba client output of DC-Master Sysvol contents does not include folder with the "
+                "domain name."
             )
 
     def create_student(self):

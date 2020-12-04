@@ -75,8 +75,8 @@ class Workgroup(object):
 
     def create(self, expect_creation_fails_due_to_duplicated_name=False):
         """Creates object workgroup\n
-        :param expect_creation_fails_due_to_duplicated_name: if user allow duplicate names no exception is
-        raised, no group is created either
+        :param expect_creation_fails_due_to_duplicated_name: if user allow duplicate names no exception
+            is raised, no group is created either
         :type expect_creation_fails_due_to_duplicated_name: bool
         """
         try:

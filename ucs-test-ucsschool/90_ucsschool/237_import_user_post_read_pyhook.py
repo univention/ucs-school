@@ -55,7 +55,8 @@ class Test(CLI_Import_v2_Tester):
 
         self.log.info("*** Importing a user from each role, PostReadPyHook will:")
         self.log.info(
-            "*** a) switch firstname and lastname b) add a birthday c) raise & test a class level variable..."
+            "*** a) switch firstname and lastname b) add a birthday c) raise & test a class level "
+            "variable..."
         )
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):

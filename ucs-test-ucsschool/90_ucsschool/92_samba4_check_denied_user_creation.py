@@ -69,19 +69,20 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
             if bool(search(".*User .* created successfully.*", stdout)):
                 self.remove_user = username
                 utils.fail(
-                    "The creation of user '%s' succeded, while should be disabled on DC-Slave with Samba4"
-                    % username
+                    "The creation of user '%s' succeded, while should be disabled on DC-Slave with "
+                    "Samba4" % username
                 )
 
         if not stderr.strip():
             utils.fail(
-                "Expecting the user creation to fail, however, the 'samba-tool' did not produce any output to STDERR."
+                "Expecting the user creation to fail, however, the 'samba-tool' did not produce any "
+                "output to STDERR."
             )
 
         if not bool(self.fail_pattern.match(stderr)):
             utils.fail(
-                "The 'samba-tool' output produced to STDERR does not match the '%s' pattern. STDERR: '%s'"
-                % (self.fail_pattern.pattern, stderr)
+                "The 'samba-tool' output produced to STDERR does not match the '%s' pattern. STDERR: "
+                "'%s'" % (self.fail_pattern.pattern, stderr)
             )
 
     def main(self):

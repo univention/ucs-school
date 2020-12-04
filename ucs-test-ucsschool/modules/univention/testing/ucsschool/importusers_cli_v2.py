@@ -138,10 +138,12 @@ class MyHook(UserPyHook):
         self.logger.info("***** Running {} {} hook for user {}.".format(when, action, user))
         # udm_properties[k] is only filled from LDAP, if k was in the input
         # don't try to get_udm_object() on a user not {anymore, yet} in ldap
-        if not user.udm_properties.get('street') and not ((action == 'create' and when == 'pre') or (action == 'remove' and when == 'post')):
+        if not user.udm_properties.get('street') and not ((action == 'create' and when == 'pre') \
+        or (action == 'remove' and when == 'post')):
             obj = user.get_udm_object(self.lo)
             user.udm_properties['street'] = obj.info.get('street', '')
-        user.udm_properties['street'] = user.udm_properties.get('street', '') + ',{}-{}'.format(when, action)
+        user.udm_properties['street'] = user.udm_properties.get('street', '') + ',{}-{}'.format(
+            when, action)
         if when == 'post' and action != 'remove':
             user.modify(self.lo)
         fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))
@@ -364,7 +366,8 @@ class ImportTestbase(object):
                 self.log.info("Running subprocess.call(%r)...", cmd)
                 subprocess.call(cmd)
                 self.log.info(
-                    "Waiting again. Executing: wait_for_drs_replication_of_membership(group_dn=%r, member_uid=%r, is_member=%r, try_resync=False, **kwargs=%r)...",
+                    "Waiting again. Executing: wait_for_drs_replication_of_membership(group_dn=%r, "
+                    "member_uid=%r, is_member=%r, try_resync=False, **kwargs=%r)...",
                     group_dn,
                     member_uid,
                     is_member,
@@ -467,9 +470,11 @@ class CLI_Import_v2_Tester(ImportTestbase):
         Create CSV file for given persons
         >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')])
         '/tmp/import.sldfhgsg.csv'
-        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], fn_csv='/tmp/import.foo.csv')
+        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')],
+            fn_csv='/tmp/import.foo.csv')
         '/tmp/import.foo.csv'
-        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')], headers={'firstname': 'Vorname', ...})
+        >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')],
+            headers={'firstname': 'Vorname', ...})
         '/tmp/import.cetjdfgj.csv'
         """
         if mapping:
@@ -508,8 +513,8 @@ class CLI_Import_v2_Tester(ImportTestbase):
             with open(config_path, "r") as config_file:
                 if len(json.load(config_file)) != 0:
                     msg = (
-                        'The config under "%s" seems to be non-empty. That often causes problems for tests. Please replace it with an empty config: "{}".'
-                        % (config_path,)
+                        'The config under "%s" seems to be non-empty. That often causes problems for '
+                        'tests. Please replace it with an empty config: "{}".' % (config_path,)
                     )
                     if raise_exc:
                         raise ImportException(msg)
@@ -522,8 +527,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
         path = "/usr/share/ucs-school-import/pyhooks"
         dir_content = os.listdir(path)
         if dir_content:
-            msg = "The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. Please remove all files in it.".format(
-                path, dir_content
+            msg = (
+                "The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. "
+                "Please remove all files in it.".format(path, dir_content)
             )
             if raise_exc:
                 raise ImportException(msg)

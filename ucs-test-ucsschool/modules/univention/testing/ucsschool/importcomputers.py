@@ -369,7 +369,8 @@ set -x
 dn="$2"
 name="$(cat $1 | awk -F '\t' '{print $2}')"
 type="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch "(&(cn=$name)(univentionObjectType=computers/$type))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+ldap_dn="$(univention-ldapsearch "(&(cn=$name)(univentionObjectType=computers/$type))" | \
+ldapsearch-wrapper | sed -ne 's|dn: ||p')"
 test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0

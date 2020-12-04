@@ -83,7 +83,8 @@ class UMCTester(object):
             self.selenium.click_button(_("Save changes"))
             self.selenium.wait_for_text(
                 _(
-                    "This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members."
+                    "This module allows to create, modify and delete class comprehensive workgroups. "
+                    "Arbitrary students and teacher of the school can be selected as group members."
                 )
             )
             self.check_wg(lo, school_name, wg_name, False, None, [], [])
@@ -95,7 +96,8 @@ class UMCTester(object):
             self.selenium.click_button(_("Save changes"))
             self.selenium.wait_for_text(
                 _(
-                    "This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members."
+                    "This module allows to create, modify and delete class comprehensive workgroups. "
+                    "Arbitrary students and teacher of the school can be selected as group members."
                 )
             )
             self.check_wg(
