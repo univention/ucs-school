@@ -170,7 +170,9 @@ class Instance(SchoolBaseModule):
     ):  # type (...) -> None
         """
         All computers in teacher_computers become teacher computers.
-        All computers that are in all_computers, but not in teacher_computers become non teacher computers.
+        All computers that are in all_computers, but not in teacher_computers become non teacher
+        computers.
+
         :param all_computers: All computers present in a room
         :param teacher_computers: All computers in the room designated to become teacher computers
         :param ldap_user_read: ldap bind with read access
