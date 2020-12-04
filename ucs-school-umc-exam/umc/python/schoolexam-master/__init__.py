@@ -286,7 +286,8 @@ class Instance(SchoolBaseModule):
             if exam_user_uid in prohibited_object["usernames"]:
                 raise UMC_Error(
                     _(
-                        "Requested exam username %(exam_user_uid)s is not allowed according to settings/prohibited_username object %(prohibited_object_name)s"
+                        "Requested exam username %(exam_user_uid)s is not allowed according to "
+                        "settings/prohibited_username object %(prohibited_object_name)s"
                     )
                     % {
                         "exam_user_uid": exam_user_uid,
@@ -350,7 +351,11 @@ class Instance(SchoolBaseModule):
 
             def getBlacklistSet(ucrvar):
                 """
-                >>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
+                >>> set([
+                        x.replace('||','|')
+                        for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol')
+                        if x
+                    ])
                 set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
                 """
                 return set(
@@ -613,7 +618,7 @@ class Instance(SchoolBaseModule):
         exam = request.options["exam"]
         logger.info("userdn=%r school=%r exam=%r", userdn, school, exam)
         # Might be put into the lib at some point:
-        # https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
+        # https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f  # noqa: E501
         examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         user_uid = userdn.split(",")[0][len("uid={}".format(examUserPrefix)) :]
         user_module = univention.udm.UDM(ldap_admin_write, 1).get("users/user")
@@ -652,7 +657,8 @@ class Instance(SchoolBaseModule):
                     logger.info("Exam user was removed: %r", user)
                 else:
                     logger.warn(
-                        "remove_exam_user() User %r will not be removed as he currently participates in another exam.",
+                        "remove_exam_user() User %r will not be removed as he currently participates "
+                        "in another exam.",
                         user.dn,
                     )
                     try:
@@ -673,7 +679,8 @@ class Instance(SchoolBaseModule):
                     schools = list(set(user.schools) - set([school]))
                 if schools:
                     logger.warning(
-                        "remove_exam_user() User %r will not be removed as he currently participates in another exam.",
+                        "remove_exam_user() User %r will not be removed as he currently participates "
+                        "in another exam.",
                         user.dn,
                     )
                     user.schools = schools
@@ -694,7 +701,10 @@ class Instance(SchoolBaseModule):
     def set_computerroom_exammode(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None
     ):
-        """Add all member hosts except teacher_computers of a given computer room to the special exam group."""
+        """
+        Add all member hosts except teacher_computers of a given computer room to the special exam
+        group.
+        """
 
         roomdn = request.options["roomdn"]
         logger.info("roomdn=%r", roomdn)

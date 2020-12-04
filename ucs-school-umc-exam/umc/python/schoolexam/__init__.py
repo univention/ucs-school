@@ -319,11 +319,13 @@ class Instance(SchoolBaseModule):
                 filename.decode("UTF-8")
             except UnicodeDecodeError:
                 filename = file["filename"].encode("UTF-8")  # Bug #37716 was fixed
-        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8')
+        # after Bug #37716
         # Bug 46709/46710: start
         if "\\" in filename:  # filename seems to be a UNC / windows path
             logger.info(
-                "__workaround_filename_bug() Filename seems to contain Windows path name or UNC - fixing filename"
+                "__workaround_filename_bug() Filename seems to contain Windows path name or UNC - "
+                "fixing filename"
             )
             filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
         # Bug 46709/46710: end
@@ -379,7 +381,8 @@ class Instance(SchoolBaseModule):
         """
         Creates or updates an exam with the information given in the request object
         :param request: The request containing all information about the exam
-        :param update: If True it is expected that an exam with the same name already exists and will be updated
+        :param update: If True it is expected that an exam with the same name already exists and will
+            be updated
         :return: univention.management.console.modules.distribution.util.Project
         :raises: UMC_Error
         """
@@ -422,7 +425,8 @@ class Instance(SchoolBaseModule):
             if project:
                 raise UMC_Error(
                     _(
-                        'An exam with the name "%s" already exists. Please choose a different name for the exam.'
+                        'An exam with the name "%s" already exists. Please choose a different name '
+                        "for the exam."
                     )
                     % new_values["name"]
                 )
@@ -451,8 +455,9 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection()
     def _delete_exam(self, name, ldap_user_read=None):
         """
-        Deletes an exam project file including the uploaded data if the exam was not started yet and the caller is
-        authorized to do so.
+        Deletes an exam project file including the uploaded data if the exam was not started yet and
+        the caller is authorized to do so.
+
         :param name: Name of the exam to delete
         :return: True if exam was deleted, else False
         """
@@ -849,7 +854,8 @@ class Instance(SchoolBaseModule):
             # FIXME: raise UMC_Error()
             error = (
                 _(
-                    'Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.'
+                    'Room "%s" does not contain any computers. Empty rooms may not be used to start an '
+                    "exam."
                 )
                 % room.get_relative_name()
             )
@@ -957,7 +963,8 @@ class Instance(SchoolBaseModule):
                 # many large groups (e.g. in several schools with many students). Each group change is
                 # very time consuming for large groups.
                 # Therefore, the group changes are first aggregated for several exam users and executed
-                # as one LDAP modification per group. Only after that the Exam users are actually deleted.
+                # as one LDAP modification per group. Only after that the Exam users are actually
+                # deleted.
                 users_to_reduce = []
                 for recipient_dn, recipient_attrs in recipients:
                     exam_roles = [

@@ -345,8 +345,10 @@ class ExamCleanupHelper(object):
 
 
 def main():
-    description = """This script stops currently running exams and purges all remaining settings for exams and computer rooms.
-WARNING: if a running exam cannot be shutdown cleanly, data in the home directory may be lost.
+    description = """This script stops currently running exams and purges all remaining settings for
+exams and computer rooms.
+WARNING: if a running exam cannot be shutdown cleanly, data in the home
+directory may be lost.
 This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.log."""
     parser = optparse.OptionParser(description=description)
     parser.add_option(
