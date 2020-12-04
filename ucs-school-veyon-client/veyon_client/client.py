@@ -50,14 +50,15 @@ class VeyonClient:
         idle_timeout=60,
     ):  # type: (str, Dict[str, str], Optional[AuthenticationMethod], str, int) -> None
         """
-        Creates a client that communicates with the Veyon API to control features and fetches screenshots.
+        Creates a client that communicates with the Veyon API to control features and fetches
+        screenshots.
 
         :param url: The url this client should connect to
         :param credentials: The credentials used to authenticate against the Veyon API
         :param auth_method: The method to use for authentication against the Veyon API
         :param default_host: The default host to connect to if no specific host is provided
-        :param idle_timeout: The maximum time a connection can be idle without being invalidated by the server.
-        Has to be a value > 0. If the given value is < 1, the value is set to 1
+        :param idle_timeout: The maximum time a connection can be idle without being invalidated by the
+            server. Has to be a value > 0. If the given value is < 1, the value is set to 1
         """
         self._url = url
         self._credentials = credentials
@@ -85,10 +86,12 @@ class VeyonClient:
 
     def _get_connection_uid(self, host=None, renew_session=True):  # type:(Optional[str]) -> str
         """
-        Fetches the connection uid for a given host from the cache or generates a new one if none is present or valid.
+        Fetches the connection uid for a given host from the cache or generates a new one if none is
+        present or valid.
 
         :param host: The host to fetch the connection uid for
-        :param renew_session: If set to False an exception is thrown if no valid session exists in the session cache
+        :param renew_session: If set to False an exception is thrown if no valid session exists in the
+            session cache
         :return: The connection uid
         :raises VeyonError: If renew_session=False and the cached connection does not exist or is invalid
         """
@@ -111,7 +114,9 @@ class VeyonClient:
 
     def remove_session(self, host):
         """
-        This function tries to close the currently cached connection to the host and then purges it from the cache
+        This function tries to close the currently cached connection to the host and then purges it
+        from the cache
+
         :param host: The host to remove the session for
         """
         try:
@@ -141,9 +146,9 @@ class VeyonClient:
         :param screenshot_format: The file format the screenshot should be returned as
         :param compression: The compression level of the screenshot. Only used if the format is png
         :param quality: The quality of the screenshot. Only used if format is jpeg
-        :param dimension: Optional specification of the screenshots dimensions as (width, height). If neither is
-        specified (dimension=None) the original dimensions are used. If either is specified the other one is calculated
-        in a way to keep the aspect ratio.
+        :param dimension: Optional specification of the screenshots dimensions as (width, height). If
+            neither is specified (dimension=None) the original dimensions are used. If either is
+            specified the other one is calculated in a way to keep the aspect ratio.
         :return: The screenshot as bytes
         :raises VeyonError: Can throw a VeyonError(10) if no framebuffer is available yet.
         """
@@ -176,7 +181,8 @@ class VeyonClient:
 
         :param host: The host to set the feature for. If not specified the default host is used.
         :param feature: The feature to set
-        :param active: True if the feature should be activated or triggered, False to deactivate a feature
+        :param active: True if the feature should be activated or triggered, False to deactivate a
+            feature
         :param arguments: A dictionary containing additional arguments for the feature
         """
         data = {"active": active}
@@ -194,7 +200,8 @@ class VeyonClient:
         :param host: The host to fetch the feature status for. If not specified the default host is used.
         :param feature: The feature to fetch the status for
 
-        :returns: True if the feature is activated, False if the feature is deactivated or has no status, like "REBOOT"
+        :returns: True if the feature is activated, False if the feature is deactivated or has no
+            status, like "REBOOT"
         """
         result = requests.get(
             "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host),
@@ -208,7 +215,8 @@ class VeyonClient:
 
         :param host: The host to fetch the user info for. If not specified the default host is used.
 
-        :returns: The info about the logged in user. If no user is logged in the session field of the result will be -1
+        :returns: The info about the logged in user. If no user is logged in the session field of the
+            result will be -1
         """
         result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
         check_veyon_error(result)
