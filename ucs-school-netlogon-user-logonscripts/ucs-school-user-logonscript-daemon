@@ -328,8 +328,8 @@ class QueueHandler:
                     if lettersinuse[mappings[key]["letter"]] == mappings[key]["server"]:
                         continue
                     Log.warn(
-                        "{name}: the assigned letter {letter!r} for share \\\\{server}\\{key} is already in use by "
-                        'server "{lettersinuse!r}"'.format(
+                        "{name}: the assigned letter {letter!r} for share \\\\{server}\\{key} is "
+                        'already in use by server "{lettersinuse!r}"'.format(
                             name="ucs-school-user-logonscripts-daemon",
                             letter=mappings[key]["letter"],
                             server=mappings[key]["server"],
@@ -710,7 +710,8 @@ class QueueHandler:
                 self.SLEEP_INTERVAL_ON_EMPTY_QUEUE = int(value)
             except ValueError:
                 Log.error(
-                    "UCR variable ucsschool/userlogon/daemon/check-interval contains an invalid value (%r). Using default of %s seconds.",
+                    "UCR variable ucsschool/userlogon/daemon/check-interval contains an invalid value "
+                    "(%r). Using default of %s seconds.",
                     value,
                     self.SLEEP_INTERVAL_ON_EMPTY_QUEUE,
                 )
@@ -722,7 +723,8 @@ class QueueHandler:
                 self.DELAY_ON_ERROR = int(value)
             except ValueError:
                 Log.error(
-                    "UCR variable ucsschool/userlogon/daemon/error-delay contains an invalid value (%r). Using default of %s seconds.",
+                    "UCR variable ucsschool/userlogon/daemon/error-delay contains an invalid value "
+                    "(%r). Using default of %s seconds.",
                     value,
                     self.DELAY_ON_ERROR,
                 )
@@ -734,7 +736,8 @@ class QueueHandler:
                 self.SLEEP_INTERVAL_MINIMUM = int(value)
             except ValueError:
                 Log.error(
-                    "UCR variable ucsschool/userlogon/daemon/check-interval-minimum contains an invalid value (%r). Using default of %s seconds.",
+                    "UCR variable ucsschool/userlogon/daemon/check-interval-minimum contains an "
+                    "invalid value (%r). Using default of %s seconds.",
                     value,
                     self.SLEEP_INTERVAL_MINIMUM,
                 )

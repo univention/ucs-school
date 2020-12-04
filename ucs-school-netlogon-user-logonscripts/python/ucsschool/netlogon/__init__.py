@@ -124,7 +124,8 @@ class SqliteQueue(object):
         with Cursor(self.filename) as cursor:
             # create table if missing
             cursor.execute(
-                u"CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn TEXT, username TEXT)"
+                u"CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn"
+                u" TEXT, username TEXT)"
             )
 
             # create index if missing

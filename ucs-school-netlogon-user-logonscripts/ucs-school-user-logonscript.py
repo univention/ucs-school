@@ -50,7 +50,13 @@ shares_share_module = univention.admin.modules.get("shares/share")
 
 name = "ucs-school-user-logonscript"
 description = "Create user-specific netlogon-scripts"
-filter = "(|(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))(objectClass=univentionGroup)(objectClass=univentionShare))"
+filter = (
+    "(|"
+    "(&(uid=*)(objectClass=sambaSamAccount)(!(uid=*$)))"
+    "(objectClass=univentionGroup)"
+    "(objectClass=univentionShare)"
+    ")"
+)
 attributes = []  # type: List[str]
 
 FN_PID = "/var/run/ucs-school-user-logonscript-daemon.pid"
@@ -99,7 +105,7 @@ def relevant_change(
 
 
 def handle_share(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles changes of share objects by triggering group changes for the relevant groups.
     """
@@ -143,7 +149,7 @@ def handle_share(dn, new, old, lo, user_queue):
 
 
 def handle_group(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles group changes by adding relevant user object DNs to the user queue.
     """
@@ -179,7 +185,7 @@ def handle_group(dn, new, old, lo, user_queue):
 
 
 def handle_user(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None
+    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles user changes by adding the DN of the user object to the user queue.
     """
