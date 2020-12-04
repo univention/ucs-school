@@ -265,7 +265,8 @@ class Instance(SchoolBaseModule):
         for userdn in group_from_ldap.users:
             try:
                 user = User.from_dn(userdn, None, ldap_machine_write)
-            except udm_exceptions.noObject:  # no permissions/is not a user/does not exists → keep the old value
+            except udm_exceptions.noObject:
+                # no permissions/is not a user/does not exists → keep the old value
                 users.append(userdn)
                 continue
             if not user.schools or not set(user.schools) & set([group_from_ldap.school]):
