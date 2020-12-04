@@ -47,7 +47,8 @@
 # proxy/filter/setting/myprofile/domain/blacklisted/1: www.porno.de
 # proxy/filter/setting/myprofile/domain/whitelisted/1: www.alleswirdgut.de
 # proxy/filter/setting/myprofile/url/whitelisted/1: http://www.allessupi.de/toll.html
-# proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER whitelist-blacklist-pass
+# proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER
+#     whitelist-blacklist-pass
 
 import os
 import re
