@@ -114,7 +114,7 @@ class UcsschoolRoleComputers(simpleHook):
         return self.add_ocs_and_ucschool_roles(obj, ml, "mod")
 
     def add_ocs_and_ucschool_roles(self, obj, aml, operation):
-        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]], str) -> List[Union[AddType, ModType]]
+        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]], str) -> List[Union[AddType, ModType]]  # noqa: E501
         """
         Append `objectClass` and `ucsschoolRole` entries to add/change list.
 
@@ -181,7 +181,7 @@ class UcsschoolRoleComputers(simpleHook):
 
     @staticmethod
     def _existing_ocs_roles(obj, aml):
-        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]
+        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]  # noqa: E501
         """Get objectClasses and ucsschoolRoles from obj."""
         existing_ocs = set(obj.oldattr.get("objectClass", []))
         existing_roles = set(obj.get("ucsschoolRole", []))

@@ -198,7 +198,10 @@ with open(os.path.join(CONF_DIR, "rabbitmq.secret"), "rb") as fp:
     _celery_broker_credentials = fp.read().strip()
 
 BROKER_URL = "amqp://{}@localhost:5672/{}".format(_celery_broker_credentials, RABBITMQ_VHOST)
-CELERYD_TASK_LOG_FORMAT = "[%(asctime)s: %(levelname)-8s/%(processName)s] %(task_name)s[%(task_id)s] %(module)s.%(funcName)s:%(lineno)d: %(message)s"
+CELERYD_TASK_LOG_FORMAT = (
+    "[%(asctime)s: %(levelname)-8s/%(processName)s] %(task_name)s[%(task_id)s] "
+    "%(module)s.%(funcName)s:%(lineno)d: %(message)s"
+)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_EVENT_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -213,9 +216,11 @@ CELERY_ROUTES = {
 CELERY_TRACK_STARTED = True
 CELERY_TIMEZONE = TIME_ZONE
 CELERYD_HIJACK_ROOT_LOGGER = False
-# CELERYD_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
+# CELERYD_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s] ' \
+# '%(module)s.%(funcName)s:%(lineno)d  %(message)s'
 CELERYD_MAX_TASKS_PER_CHILD = 1
-# CELERYD_TASK_LOG_FORMAT = '%(asctime)s %(levelname)-8s [%(processName)s %(task_name)s(%(task_id)s)] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
+# CELERYD_TASK_LOG_FORMAT = '%(asctime)s %(levelname)-8s ' \
+# '[%(processName)s %(task_name)s(%(task_id)s)] %(module)s.%(funcName)s:%(lineno)d  %(message)s'
 
 
 # import settings

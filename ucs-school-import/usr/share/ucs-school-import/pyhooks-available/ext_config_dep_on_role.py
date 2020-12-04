@@ -75,7 +75,7 @@ class ExtendConfigByRole(ConfigPyHook):
     }
 
     def post_config_files_read(self, config, used_conffiles, used_kwargs):
-        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict
+        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict  # noqa: E501
         """
         Hook that runs after reading the configuration files `used_conffiles`
         and applying the command line arguments `used_kwargs`. Resulting

@@ -297,7 +297,8 @@ class ResourceRepresentation(object):
             return "{}({}, {}, {}, {}, {})".format(
                 self.__class__.__name__,
                 getattr(self, self._resource_client.pk_name),
-                self._cached_school,  # this will create a request (the first time) to get the schools name
+                self._cached_school,  # side effect: this will create a request (the first time) to get
+                # the schools name
                 self.user_role,
                 self.principal,
                 self.status,
@@ -615,9 +616,11 @@ class Client(object):
             :param str filename: path to a CSV file, or just a filename and read from 'file_obj'
             :param str source_uid: optional unique ID of school management software database
             :param str school: optional name of a School
-            :param str user_role: optional role of user, one of staff, student, teacher, teacher_and_staff
+            :param str user_role: optional role of user, one of staff, student, teacher,
+                teacher_and_staff
             :param bool dryrun: False to start a real import
-            :param file file_obj: optional file like object to read CSV data from, instead of opening 'filename'
+            :param file file_obj: optional file like object to read CSV data from, instead of opening
+                'filename'
             :return: the created UserImportJob resource
             :rtype: _ResourceReprBase
             """

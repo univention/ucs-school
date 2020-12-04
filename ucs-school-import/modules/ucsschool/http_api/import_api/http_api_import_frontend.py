@@ -223,8 +223,9 @@ class HttpApiImportFrontend(UserImportCommandLine):
 
     def setup_config(self):
         # Bug #47156: check that the used CSV reader is HttpApiCsvReader or a subclass
-        error_msg = "The CSV reader class for the HTTP-API import must be {!r} (or derived from it).".format(
-            self.reader_class
+        error_msg = (
+            "The CSV reader class for the HTTP-API import must be {!r} (or derived from "
+            "it).".format(self.reader_class)
         )
         config = super(HttpApiImportFrontend, self).setup_config()
         try:

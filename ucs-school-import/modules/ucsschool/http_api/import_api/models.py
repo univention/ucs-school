@@ -142,7 +142,9 @@ class Role(models.Model):
 # 		for context in list(cls.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school)):
 # 			if context.content_object not in existing_school_objs:
 # 				context.delete()
-# 		existing_school_objs_in_contexts = cls.objects.filter(type=CONTEXT_TYPE_SCHOOL).values('content_object')
+# 		existing_school_objs_in_contexts = cls.objects.filter(type=CONTEXT_TYPE_SCHOOL).values(
+# 		    'content_object'
+# 		)
 # 		for school_obj in set(existing_school_objs) - set(existing_school_objs_in_contexts):
 # 			cls.objects.create(type=CONTEXT_TYPE_SCHOOL, content_object=school_obj)
 
@@ -218,7 +220,9 @@ class Role(models.Model):
 # 		if missing_schools:
 # 			raise RuntimeError('Cannot get context for unknown school(s): {!r}.'.format(missing_schools))
 # 		ct_school = ContentType.objects.get(app_label='import_api', model='school')
-# 		return Context.objects.filter(type=CONTEXT_TYPE_SCHOOL, content_type=ct_school, object_id__in=schools)
+# 		return Context.objects.filter(
+# 		    type=CONTEXT_TYPE_SCHOOL, content_type=ct_school, object_id__in=schools
+# 		)
 
 
 class School(models.Model):

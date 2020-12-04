@@ -111,8 +111,8 @@ class SingleSourcePartialUserImport(UserImport):
             and imported_user.schools not in (self.config["school"], [self.config["school"]])
         ):
             raise InvalidSchools(
-                "In the SingleSourcePartialImport scenario it is not allowed to import into any other school that the "
-                "one configured ({!r}). Found school={!r} schools={!r}.".format(
+                "In the SingleSourcePartialImport scenario it is not allowed to import into any other "
+                "school that the one configured ({!r}). Found school={!r} schools={!r}.".format(
                     self.config["school"], imported_user.school, imported_user.schools
                 ),
                 entry_count=imported_user.entry_count,
@@ -134,8 +134,8 @@ class SingleSourcePartialUserImport(UserImport):
                 imported_user.reactivate()
             else:
                 self.logger.debug(
-                    'config["school"]=%r config["limbo_ou"]=%r imported_user.school=%r imported_user.schools=%r '
-                    "old_user.school=%r old_user.schools=%r",
+                    'config["school"]=%r config["limbo_ou"]=%r imported_user.school=%r '
+                    "imported_user.schools=%r old_user.school=%r old_user.schools=%r",
                     self.config["school"],
                     self.limbo_ou,
                     imported_user.school,

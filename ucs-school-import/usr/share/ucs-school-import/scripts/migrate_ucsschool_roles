@@ -103,8 +103,8 @@ class UcsSchoolRolesMigration(object):
         self.stats = {"objects": 0, "modifications": 0, "errors": 0}
         argp = argparse.ArgumentParser(
             description=(
-                "Set ucsschoolRole property on UCS@school objects (users, work groups, school classes, computer rooms, "
-                "class shares, school servers) and central server objects."
+                "Set ucsschoolRole property on UCS@school objects (users, work groups, school classes, "
+                "computer rooms, class shares, school servers) and central server objects."
             ),
             epilog="Logfile: {}".format(LOG_FILE),
         )
@@ -116,11 +116,13 @@ class UcsSchoolRolesMigration(object):
         argp.add_argument(
             "--force",
             action="store_true",
-            help="Overwrite existing role data. If unset, the default is to not modify objects that already have data in the role attribute.",
+            help="Overwrite existing role data. If unset, the default is to not modify objects that "
+            "already have data in the role attribute.",
         )
         argp.add_argument(
             "--schools",
-            help="Comma separated list of OUs whose objects should be modified. If unset all OUs will be modified.",
+            help="Comma separated list of OUs whose objects should be modified. If unset all OUs will "
+            "be modified.",
         )
         argp.add_argument("--all-objects", action="store_true", help="Modify all UCS@school objects.")
         argp.add_argument(
@@ -154,7 +156,8 @@ class UcsSchoolRolesMigration(object):
         argp.add_argument(
             "--computers-school",
             action="store_true",
-            help="Modify UCS@school school client computer objects (Win, IP managed and Mac OS computers).",
+            help="Modify UCS@school school client computer objects (Win, IP managed and Mac OS "
+            "computers).",
         )
 
         argp.add_argument("--users", action="store_true", help="Modify UCS@school user objects.")
@@ -301,9 +304,8 @@ class UcsSchoolRolesMigration(object):
             # Necessary because of Bug #50349
             if self.args.computers_school or self.args.all_objects:
                 self.logger.info(
-                    "- Looking in school {} for windows, macos or ipmanaged computers without proper objectClass".format(
-                        school
-                    )
+                    "- Looking in school {} for windows, macos or ipmanaged computers without proper "
+                    "objectClass".format(school)
                 )
                 for cls in (WindowsComputer, MacComputer, IPComputer):
                     roles = [create_ucsschool_role_string(role, school) for role in cls.default_roles]

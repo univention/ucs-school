@@ -121,7 +121,7 @@ class ImportPyHookLoader(object):
         self.logger = logging.getLogger(__name__)  # type: logging.Logger
 
     def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
-        # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+        # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]  # noqa: E501
         """
         Load and initialize hook class `hook_cls`.
 
@@ -131,8 +131,9 @@ class ImportPyHookLoader(object):
             hook objects, sorted by method priority
         :rtype: dict[str, list[callable]]
         """
-        # The PyHook objects themselves are already cached by PyHooksLoader, but we don't want to initialize a
-        # PyHooksLoader each time we run a hook, so we'll keep a dict linking directly to all PyHooksLoader caches.
+        # The PyHook objects themselves are already cached by PyHooksLoader, but we don't want to
+        # initialize a PyHooksLoader each time we run a hook, so we'll keep a dict linking directly to
+        # all PyHooksLoader caches.
         if hook_cls not in self._pyhook_obj_cache:
             pyhooks_loader = PyHooksLoader(self.pyhooks_base_path, hook_cls, self.logger, filter_func)
             self._pyhook_obj_cache[hook_cls] = pyhooks_loader.get_hook_objects(*args, **kwargs)
@@ -161,7 +162,7 @@ class ImportPyHookLoader(object):
 
 
 def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
-    # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+    # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]  # noqa: E501
     """
     Retrieve (and initialize subclasses of :py:class:`hook_cls`, if not yet
     done) pyhooks of type `hook_cls`. Results are cached.

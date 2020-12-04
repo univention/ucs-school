@@ -88,15 +88,17 @@ class Entry(object):
 class UcsSchoolUserMigration(object):
     def __init__(self):  # type: () -> None
         argp = argparse.ArgumentParser(
-            description="Tool that helps administrators to migrate from the old import (import_user or UMC module "
-            '"CSV-Import") to the new imports (ucs-school-import-user or UMC module "Benutzer-Import").',
+            description="Tool that helps administrators to migrate from the old import (import_user or "
+            'UMC module "CSV-Import") to the new imports (ucs-school-import-user or UMC '
+            'module "Benutzer-Import").',
             epilog="Logfile: {}".format(LOG_FILE),
         )
         argp.add_argument("--dry-run", action="store_true", help="If set, a dry run is performed.")
         argp.add_argument(
             "--modify-record-uid",
             action="store_true",
-            help="Sets the UCS@school record UID according to specified CSV file for each user. Please specify --input-file.",
+            help="Sets the UCS@school record UID according to specified CSV file for each user. Please "
+            "specify --input-file.",
         )
         argp.add_argument(
             "--source-uid",
@@ -106,26 +108,30 @@ class UcsSchoolUserMigration(object):
         argp.add_argument(
             "--guess-usernames",
             action="store_true",
-            help="Tries to guess usernames based on first name and last name. Please also specify --column-firstname, "
-            "--column-lastname, --column-record-uid and --input-file (Hint: this action does not support --dry-run).",
+            help="Tries to guess usernames based on first name and last name. Please also specify "
+            "--column-firstname, --column-lastname, --column-record-uid and --input-file (Hint: "
+            "this action does not support --dry-run).",
         )
         argp.add_argument(
             "--column-firstname",
             action="store",
             type=int,
-            help="Column number that contains the first name. Counting starts with 1 (1 == first column).",
+            help="Column number that contains the first name. Counting starts with 1 (1 == first "
+            "column).",
         )
         argp.add_argument(
             "--column-lastname",
             action="store",
             type=int,
-            help="Column number that contains the last name. Counting starts with 1 (1 == first column).",
+            help="Column number that contains the last name. Counting starts with 1 (1 == first "
+            "column).",
         )
         argp.add_argument(
             "--column-record-uid",
             action="store",
             type=int,
-            help="Column number that contains the record UID. Counting starts with 1 (1 == first column).",
+            help="Column number that contains the record UID. Counting starts with 1 (1 == first "
+            "column).",
         )
         argp.add_argument("--input-file", action="store", help="Path to input CSV file")
         argp.add_argument("--output-file", action="store", help="Path to output CSV file")
@@ -151,8 +157,8 @@ class UcsSchoolUserMigration(object):
             ]
         ):
             fatal_argp(
-                "For guessing usernames, the filenames for input and output CSV files and the columns for first "
-                "name, last name and record UID have to be specified!"
+                "For guessing usernames, the filenames for input and output CSV files and the columns "
+                "for first name, last name and record UID have to be specified!"
             )
 
         if self.args.modify_record_uid and not self.args.input_file:
@@ -240,22 +246,26 @@ class UcsSchoolUserMigration(object):
             writer.writerow(["This CSV file consists of 2 sections:"])
             writer.writerow(
                 [
-                    "The first section lists all problematic users for whom either *no* or *several* user names were found"
+                    "The first section lists all problematic users for whom either *no* or *several* "
+                    "user names were found"
                 ]
             )
             writer.writerow(
                 [
-                    "in LDAP by first and last name. These entries must be checked and corrected manually. The entries of the"
+                    "in LDAP by first and last name. These entries must be checked and corrected "
+                    "manually. The entries of the"
                 ]
             )
             writer.writerow(
                 [
-                    "first section can be recognized by a note in the comment column and the column for the user name being empty."
+                    "first section can be recognized by a note in the comment column and the column for "
+                    "the user name being empty."
                 ]
             )
             writer.writerow(
                 [
-                    "The second section contains all entries for which exactly one user was found in LDAP with the specified"
+                    "The second section contains all entries for which exactly one user was found in "
+                    "LDAP with the specified"
                 ]
             )
             writer.writerow(
@@ -270,7 +280,8 @@ class UcsSchoolUserMigration(object):
             )
             writer.writerow(
                 [
-                    "After completion of the corrections, the lines with this text paragraph must be removed!"
+                    "After completion of the corrections, the lines with this text paragraph must be "
+                    "removed!"
                 ]
             )
             writer.writerow([""])

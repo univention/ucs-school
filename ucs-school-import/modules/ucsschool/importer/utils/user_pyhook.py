@@ -91,7 +91,8 @@ class UserPyHook(ImportPyHook):
 
         * The hook is only executed if adding the user succeeded.
         * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
         * set `priority["post_create"]` to an int, to enable this method
 
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
@@ -115,8 +116,10 @@ class UserPyHook(ImportPyHook):
 
         * The hook is only executed if modifying the user succeeded.
         * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
-        * If running in an import job, the user may not have been removed, but merely deactivated. If `user.udm_properties["ucsschoolPurgeTimestamp"]` is set, the user is marked for removal.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
+        * If running in an import job, the user may not have been removed, but merely deactivated. If
+            `user.udm_properties["ucsschoolPurgeTimestamp"]` is set, the user is marked for removal.
         * set `priority["post_modify"]` to an `int`, to enable this method
 
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
@@ -140,7 +143,8 @@ class UserPyHook(ImportPyHook):
 
         * The hook is only executed if moving the user succeeded.
         * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
         * set `priority["post_move"]` to an `int`, to enable this method
 
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)

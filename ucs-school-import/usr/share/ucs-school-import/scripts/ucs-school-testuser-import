@@ -69,8 +69,9 @@ def parse_cmdline():
     )
     parser = ArgumentParser(
         description="UCS@school import test users tool",
-        epilog="When using --create-email-addresses either an email domain must be created in the corresponding "
-        "UMC-module or must be configured on the command line with --set maildomain=...",
+        epilog="When using --create-email-addresses either an email domain must be created in the "
+        "corresponding UMC-module or must be configured on the command line with --set "
+        "maildomain=...",
     )
     parser.add_argument(
         "-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s]."
@@ -78,7 +79,8 @@ def parse_cmdline():
     parser.add_argument(
         "--httpapi",
         action="store_true",
-        help="Create CSV suitable for importing via HTTP-API, implies -n and uses only first OU [default: %(default)s].",
+        help="Create CSV suitable for importing via HTTP-API, implies -n and uses only first OU "
+        "[default: %(default)s].",
     )
     parser.add_argument(
         "-n",
@@ -120,7 +122,8 @@ def parse_cmdline():
         "--schools",
         dest="schools",
         type=int,
-        help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].",
+        help="Number of schools to put users (except students) into (if #OUs > 1) [default: "
+        "%(default)s].",
     )
     parser.add_argument(
         "--create-email-addresses",
@@ -140,7 +143,8 @@ def parse_cmdline():
     parser.add_argument(
         "ImportArguments",
         nargs=REMAINDER,
-        help="All arguments following the OU names (first one must start with a dash) will be passed to the import script.",
+        help="All arguments following the OU names (first one must start with a dash) will be passed to "
+        "the import script.",
     )
     parser.set_defaults(**defaults)
 
@@ -180,7 +184,8 @@ def log_conf_hint(args, logger):
     logger.info("Use the configuration file %r or one derived from it.", conf_file)
     if args.httpapi:
         logger.info(
-            "When using the graphical UMC module, the configuration file must be copied to %r or '%s.json'.",
+            "When using the graphical UMC module, the configuration file must be copied to %r or "
+            "'%s.json'.",
             CONF_FILE_TARGET_VAR,
             os.path.join(CONF_FILE_TARGET_DIR, args.OU[0].lower()),
         )
@@ -195,12 +200,13 @@ def log_conf_hint(args, logger):
             args.csvfile,
         )
         logger.info(
-            "Replace 'student' in both '--user_role' and '--source_uid' with one of 'student', 'staff', 'teacher' or "
-            "'teacher_and_staff'."
+            "Replace 'student' in both '--user_role' and '--source_uid' with one of 'student', 'staff', "
+            "'teacher' or 'teacher_and_staff'."
         )
     else:
         logger.info(
-            "Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the file to %r.",
+            "Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the "
+            "file to %r.",
             CONF_FILE_TARGET_VAR,
         )
 

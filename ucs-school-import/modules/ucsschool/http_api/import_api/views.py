@@ -96,7 +96,14 @@ class RoleFilterBackend(BaseFilterBackend):
     Used to list only Roles the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool={})(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool={})"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (
         str("ucsschoolImportRole"),
         str("ucsschoolImportSchool"),
@@ -133,7 +140,14 @@ class SchoolFilterBackend(BaseFilterBackend):
     Used to list only Schools the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool=*)"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (str("ucsschoolImportSchool"),)  # unicode_literals + python-ldap = TypeError
 
     @classmethod
@@ -159,7 +173,14 @@ class UserImportJobFilterBackend(BaseFilterBackend):
     Used to list only ImportJobs the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool=*)"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (
         str("ucsschoolImportRole"),
         str("ucsschoolImportSchool"),
@@ -297,11 +318,12 @@ Manage Import jobs.
     queryset = UserImportJob.objects.all()
     serializer_class = UserImportJobSerializer
     filter_backends = (
-        UserImportJobFilterBackend,  # used to filter the queryset for allowed school-user_role-combinations
+        UserImportJobFilterBackend,  # filter the queryset for allowed school-user_role-combinations
         DjangoFilterBackend,  # used to filter view by attribute
         OrderingFilter,  # used for ordering
     )
-    filter_class = UserImportJobFilter  # filter principal by 'username' (DjangoFilterBackend works automatically only on pk)
+    # filter principal by 'username' (DjangoFilterBackend works automatically only on pk):
+    filter_class = UserImportJobFilter
     permission_classes = (
         IsAuthenticated,  # user must be authenticated to use this view
         UserImportJobViewPermission,  # apply per view and per-object permission checks
@@ -493,7 +515,8 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     """
 Read-only list of Schools (OUs).
 
-* `roles` provides navigation to a list of roles the connected user has permissions on the respective school.
+* `roles` provides navigation to a list of roles the connected user has permissions on the respective
+    school.
 * `user_imports` provides navigation to start an import for the respective school.
     """
 

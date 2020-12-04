@@ -69,8 +69,10 @@ class DefaultUserImportFactory(object):
         Overwrite the methods in this class with constructors or methods from
         the configuration file.
 
-        * Configuration keys in the configuration "classes" dict are the names of the methods here without the prepended `make\_`.
-        * It will be checked if the configured classes are really subclasses as described in the documentation (/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
+        * Configuration keys in the configuration "classes" dict are the names of the methods here
+            without the prepended `make\_`.
+        * It will be checked if the configured classes are really subclasses as described in the
+            documentation (/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
         * Please update the documentation if classes/methods are added.
         * Take care to honor the signature of the methods, this cannot be checked.
         """
@@ -170,7 +172,8 @@ class DefaultUserImportFactory(object):
         :type cur_user_roles: list(str)
         :param tuple arg: passed to constructor of created class
         :param dict kwarg: passed to constructor of created class
-        :return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles` was empty
+        :return: object of :py:class:`ImportUser` subclass or :py:class:`ImportUser` if `cur_user_roles`
+            was empty
         :rtype: ImportUser
         """
         from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
@@ -209,7 +212,7 @@ class DefaultUserImportFactory(object):
         return MassImport(dry_run=dry_run)
 
     def make_password_exporter(self, *arg, **kwargs):
-        # type: (*Any, **Any) -> ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
+        # type: (*Any, **Any) -> ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter  # noqa: E501
         """
         Creates a ResultExporter object that can dump passwords to disk.
 
@@ -223,7 +226,7 @@ class DefaultUserImportFactory(object):
         return NewUserPasswordCsvExporter(*arg, **kwargs)
 
     def make_result_exporter(self, *arg, **kwargs):
-        # type: (*Any, **Any) -> ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
+        # type: (*Any, **Any) -> ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter  # noqa: E501
         """
         Creates a ResultExporter object.
 
