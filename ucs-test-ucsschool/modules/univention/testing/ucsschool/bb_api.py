@@ -488,7 +488,7 @@ def init_ucs_school_import_framework(**config_kwargs):
                 '{.., "configuration_checks": ["defaults", "mapped_udm_properties"], ..}'
             )
         _ui.setup_logging(config["verbose"], config["logfile"])
-        _setup_factory(config["factory"])  # noqa
+        _setup_factory(config["factory"])
     except UcsSchoolImportError as exc:
         logger.exception("Error initializing UCS@school import framework: %s", exc)
         etype, exc, etraceback = sys.exc_info()

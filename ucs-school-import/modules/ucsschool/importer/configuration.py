@@ -163,9 +163,7 @@ class ReadOnlyDict(dict):
             mandatory_attributes.sort()
 
     def close(self):  # type: () -> None
-        self.__setitem__ = (
-            self.__delitem__
-        ) = self.update = self._recursive_typed_update = self.__closed  # noqa
+        self.__setitem__ = self.__delitem__ = self.update = self._recursive_typed_update = self.__closed
 
 
 class Configuration(object):

@@ -479,7 +479,7 @@ class Instance(SchoolBaseModule):
                 raise
             logger.info("ExamStudent created sucessfully: %r", exam_student)
 
-        except BaseException as exc:  # noqa
+        except BaseException as exc:
             for i, j in alloc:
                 univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
             logger.exception("Creation of exam user account failed: %s", exc)
