@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner bash 
+#!/usr/share/ucs-test/runner bash
 ## desc: Check connector/s4/mapping/group/syncmode variable
 ## exposure: safe
 ## tags:

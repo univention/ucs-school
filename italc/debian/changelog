@@ -467,10 +467,10 @@ italc (1:1.0.9~rc3-1) unstable; urgency=low
 
 italc (1:1.0.8-1) unstable; urgency=low
 
-  * Fix FTBFS by switching from openssl to libssl-dev build-dep. 
+  * Fix FTBFS by switching from openssl to libssl-dev build-dep.
     Thanks to Laurent Bigonville <bigon@bigon.be> (Closes: #477022)
   * Packaging new upstream version.
-  * 
+  *
 
  -- Patrick Winnertz <winnie@debian.org>  Tue, 13 May 2008 10:54:16 +0200
 
@@ -483,7 +483,7 @@ italc (1:1.0.7-2) unstable; urgency=low
 
 italc (1:1.0.7-1) unstable; urgency=low
 
-  * New upstrem release. 
+  * New upstrem release.
 
  -- Patrick Winnertz <winnie@debian.org>  Mon, 17 Mar 2008 10:13:42 +0100
 
@@ -519,7 +519,7 @@ italc (1:1.0.2-2) unstable; urgency=low
 italc (1:1.0.2-1) experimental; urgency=low
 
   * Packaging new upstream release
-  * FTBFS Bug on kfreeBSD send to upstream and this is fixed in 
+  * FTBFS Bug on kfreeBSD send to upstream and this is fixed in
     this version now. (Closes: #414096)
 
  -- Patrick Winnertz <patrick.winnertz@skolelinux.org>  Tue, 10 Apr 2007 15:29:41 +0200
@@ -541,10 +541,10 @@ italc (1.0.0.0~rc2-1) experimental; urgency=low
   * Packaging new upstream release
   * Adopting this package from Steffen Joeris with his acceptance
   * Increasing the debhelper level to 5
-  * Adding the build-depends: 
-     - libqt4-dev 
+  * Adding the build-depends:
+     - libqt4-dev
      - zlib1g-dev
-     - libjpeg62-dev 
+     - libjpeg62-dev
      - openssl
   * italc-master now has a dependency against italc-client, since
     the client server (ica ) also have to run on the master.

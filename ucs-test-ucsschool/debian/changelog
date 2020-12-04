@@ -152,7 +152,7 @@ ucs-test-ucsschool (6.0.154) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.153) unstable; urgency=medium
 
-  * Bug #52191: Only wait for replication of classes which are replicated 
+  * Bug #52191: Only wait for replication of classes which are replicated
 
  -- Tobias Wenzel <wenzel@univention.de>  Fri, 30 Oct 2020 08:52:48 +0100
 
@@ -206,7 +206,7 @@ ucs-test-ucsschool (6.0.145) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.144) unstable; urgency=medium
 
-  * Bug #42182: add timeout to make share permissions test more robust 
+  * Bug #42182: add timeout to make share permissions test more robust
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 01 Oct 2020 09:53:45 +0200
 
@@ -224,7 +224,7 @@ ucs-test-ucsschool (6.0.142) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.141) unstable; urgency=medium
 
-  * Bug #50636: add test for exam-and-room-cleanup script 
+  * Bug #50636: add test for exam-and-room-cleanup script
 
  -- Tobias Wenzel <wenzel@univention.de>  Mon, 28 Sep 2020 11:39:00 +0200
 
@@ -273,7 +273,7 @@ ucs-test-ucsschool (6.0.134) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.133) unstable; urgency=medium
 
-  * Bug #42182: ucs-test 36: use school prefix also in dn 
+  * Bug #42182: ucs-test 36: use school prefix also in dn
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Sep 2020 17:00:01 +0200
 
@@ -329,7 +329,7 @@ ucs-test-ucsschool (6.0.125) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.124) unstable; urgency=medium
 
-  * Bug #51606: test for not matching hosts fqdn 
+  * Bug #51606: test for not matching hosts fqdn
 
  -- Tobias Wenzel <twenzel@stockholm.knut.univention.de>  Fri, 17 Jul 2020 16:34:31 +0200
 
@@ -401,7 +401,7 @@ ucs-test-ucsschool (6.0.113) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.112) unstable; urgency=medium
 
-  * Bug #51074: ucs-test Send WoL to alternative broadcast ips 
+  * Bug #51074: ucs-test Send WoL to alternative broadcast ips
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 04 Jun 2020 13:51:10 +0200
 
@@ -453,7 +453,7 @@ ucs-test-ucsschool (6.0.105) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.104) unstable; urgency=low
 
-  * Bug #50406: add test for 'disabled_checks' feature 
+  * Bug #50406: add test for 'disabled_checks' feature
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 17 Mar 2020 13:20:20 +0100
 
@@ -982,7 +982,7 @@ ucs-test-ucsschool (6.0.14) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.13) unstable; urgency=medium
 
-  * Bug #47208: wait for drs for user remove 
+  * Bug #47208: wait for drs for user remove
 
  -- Jürn Brodersen <brodersen@univention.de>  Tue, 18 Jun 2019 13:25:16 +0200
 

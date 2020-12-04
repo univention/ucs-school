@@ -415,7 +415,7 @@ ucs-school-umc-helpdesk (0.3.0-4) unstable; urgency=low
 ucs-school-umc-helpdesk (0.3.0-3) unstable; urgency=low
 
   * fixed From-Header of helpdesk mail
-  * renamed baseconfig variable from console/helpdesk/recipient to 
+  * renamed baseconfig variable from console/helpdesk/recipient to
     umc/helpdesk/recipient
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 24 May 2007 17:31:13 +0200
@@ -447,7 +447,7 @@ ucs-school-umc-helpdesk (0.2.0-1) unstable; urgency=low
 ucs-school-umc-helpdesk (0.1-2) unstable; urgency=low
 
   * Fixed bug in admin module
-  * use ldap/hostdn to get "department" value or (if available) 
+  * use ldap/hostdn to get "department" value or (if available)
     console/helpdesk/hostdn as override
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 15 May 2007 09:58:12 +0200

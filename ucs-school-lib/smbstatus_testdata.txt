@@ -1,12 +1,12 @@
 
 Samba version 4.2.0rc2-Debian
-PID     Username      Group         Machine            Protocol Version       
+PID     Username      Group         Machine            Protocol Version
 ------------------------------------------------------------------------------
-26731     silke5        Domain Users test  10.200.27.155 (ipv4:10.200.27.155:51426) SMB2_10     
-25470     d.krause1     Domain Users test  10.200.27.16 (ipv4:10.200.27.16:59306) NT1         
-23740     anton5        Domain Users schule  10.200.28.25 (10.200.28.25:57430) NT1         
-23741     anton6        Domain Users schule  10.200.28.26 (ipv4:10.200.28.26:57431) SMB2_10     
-23558     lehrer1       Domain Users schule  client22     (ipv6:2001:4dd0:ff00:8c42:ff08:0ac8::221) SMB2_10     
+26731     silke5        Domain Users test  10.200.27.155 (ipv4:10.200.27.155:51426) SMB2_10
+25470     d.krause1     Domain Users test  10.200.27.16 (ipv4:10.200.27.16:59306) NT1
+23740     anton5        Domain Users schule  10.200.28.25 (10.200.28.25:57430) NT1
+23741     anton6        Domain Users schule  10.200.28.26 (ipv4:10.200.28.26:57431) SMB2_10
+23558     lehrer1       Domain Users schule  client22     (ipv6:2001:4dd0:ff00:8c42:ff08:0ac8::221) SMB2_10
 
 Service      pid     machine       Connected at
 -------------------------------------------------------

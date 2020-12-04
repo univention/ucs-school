@@ -35,7 +35,7 @@ override_dh_auto_test:
 	dh_auto_test
 	ucslint
 
-override_dh_install:                                                                                                                                                                                            
+override_dh_install:
 	dh_install
 	install -D -m 755 40ucs-school-ucc-integration.inst debian/ucs-school-ucc-integration/usr/lib/univention-install/
 

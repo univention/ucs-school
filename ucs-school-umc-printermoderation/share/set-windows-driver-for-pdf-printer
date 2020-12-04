@@ -36,13 +36,13 @@ VERSION=3
 eval "$(ucr shell)"
 
 # set default windows driver for pdf printer
-# is_ucr_true 
+# is_ucr_true
 #  -> 0 if true
 #  -> 1 if false
 #  -> 2 is unset
 ret=0
 is_ucr_true "ucsschool/printermoderation/windows/driver/assign"
-if [ $? -eq 0 -o $? -eq 2 ]; then 
+if [ $? -eq 0 -o $? -eq 2 ]; then
 	if [ -n "$ucsschool_printermoderation_windows_driver_name" ]; then
 		# once Bug #24075 is fixed, we can remove this update group
 		# stuff here, instead we can simply add the samba printer privileges
@@ -97,7 +97,7 @@ member: $s4_host_dn
 				fi
 			fi
 		done
-		# remove machine account from printer group 
+		# remove machine account from printer group
 		if [ -n "$remove" ]; then
 			if [ -f "$ldb" ]; then
 				ldbmodify -H "$ldb" <<-%EOF
