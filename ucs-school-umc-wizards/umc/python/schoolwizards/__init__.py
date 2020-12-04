@@ -347,7 +347,8 @@ class Instance(SchoolBaseModule, SchoolImport):
                 )
             school = obj_props["remove_from_school"]
             success = obj.remove_from_school(school, ldap_user_write)
-            # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was removed from it
+            # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was
+            # removed from it
             if success and obj.old_dn is not None:
                 success = obj.modify(ldap_user_write)
             if not success:
