@@ -30,25 +30,26 @@ from univention.testing.ucsschool.computerroom import (
 from univention.testing.ucsschool.exam import Exam
 
 
-def check_nt_acls(folder):
+def check_nt_acls(filename):  # type: (str) -> None
     rv, stdout, stderr = exec_cmd(
-        ["samba-tool", "ntacl", "get", "--as-sddl", folder], log=True, raise_exc=True
+        ["samba-tool", "ntacl", "get", "--as-sddl", filename], log=False, raise_exc=True
     )
-    if (
-        not re.match(r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*", stdout)
-        or "(A;OICI;0x001301bf;;;S-1-3-4)" not in stdout
+    if not re.match(
+        r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*\(A;OICI.*?;0x001301bf;;;S-1-3-4\).*?\(A;OICI.*?;0x001301bf;;;\1\)",
+        stdout,
     ):
-        utils.fail("The permissions of share {} can be changed.".format(folder))
+        utils.fail("The permissions of share {} can be changed {}".format(filename, stdout))
 
 
 def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
-
     for dn in member_dn_list:
         samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            check_nt_acls(home_dir)
-            for sub_folder, _, _ in os.walk(home_dir):
-                check_nt_acls(sub_folder)
+            print("# check nt acls for {}".format(home_dir))
+            for root, sub, files in os.walk(home_dir):
+                check_nt_acls(root)
+                for f in files:
+                    check_nt_acls(os.path.join(root, f))
 
         for samba_home in open_ldap_co.getAttr(dn, "sambaHomePath"):
             samba_home = samba_home.replace("\\", "/")
@@ -56,6 +57,11 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
             uid = open_ldap_co.getAttr(dn, "uid")[0]
             new_folder = uts.random_string()
             samba_new_share_folder = "{} {}".format(samba_home, new_folder)
+            print(
+                "# check if user can create folder {} which inherits the correct rights".format(
+                    new_folder
+                )
+            )
             check_create_share_folder(
                 username=uid, share=samba_home, dir_name=new_folder, samba_workstation=samba_workstation
             )
@@ -65,6 +71,26 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
                 allowed=False,
                 samba_workstation=samba_workstation,
             )
+            new_sub_folder = "{}/{}".format(new_folder, uts.random_string())
+            samba_new_share_folder = "{} {}".format(samba_home, new_sub_folder)
+            print(
+                "# check if user can create sub-folder {} which inherits the correct rights".format(
+                    new_sub_folder
+                )
+            )
+            check_create_share_folder(
+                username=uid,
+                share=samba_home,
+                dir_name=new_sub_folder,
+                samba_workstation=samba_workstation,
+            )
+            check_change_permissions(
+                file=samba_new_share_folder,
+                user_name=uid,
+                allowed=False,
+                samba_workstation=samba_workstation,
+            )
+            print("# check distribution folder has the correct rights".format(distribution_data_folder))
             exam_share_folder = "{} {}".format(samba_home, distribution_data_folder)
             check_change_permissions(
                 file=exam_share_folder,

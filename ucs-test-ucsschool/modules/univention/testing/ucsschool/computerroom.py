@@ -1046,6 +1046,9 @@ def create_homedirs(member_dn_list, open_ldap_co):
 def check_create_share_folder(
     share, username, dir_name, samba_workstation=""
 ):  # type: (str, str, str, str) -> None
+    """
+        test if a user can create folders inside a given share, i.e. they have edit rights.
+    """
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(username, share, dir_name)
     if samba_workstation:
         cmd += " --netbiosname='{}'".format(samba_workstation)
@@ -1055,13 +1058,13 @@ def check_create_share_folder(
 
 
 def check_change_permissions(
-    file, user_name, allowed, samba_workstation=""
+    filename, user_name, allowed, samba_workstation=""
 ):  # type: (str, str, bool, str) -> None
     """
         test if user can change the permissions a given file in a share folder.
     """
     new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
-    cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(file, user_name, new_acl)
+    cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)
     if samba_workstation:
         cmd += " --netbiosname='{}'".format(samba_workstation)
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)

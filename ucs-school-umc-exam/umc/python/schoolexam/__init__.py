@@ -44,7 +44,9 @@ from itertools import chain
 
 import ldap
 import notifier
+import samba
 from ldap.filter import filter_format
+from samba.ntacls import getdosinfo, getntacl, setntacl
 from six import iteritems
 
 import univention.debug
@@ -98,53 +100,42 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
     logger.addHandler(_module_handler)
 
 
-def deny_owner_change_permissions(folder):  # type: (str) -> None
+def deny_owner_change_permissions(filename):  # type: (str) -> None
     """
     A user gets full control over her permissions by default.
     The SDDL string of the home dir is extended by
     - forbid exam-users to change the permissions and owner
     - overrides standard behavior, i. e. full control, with 'edit' for owners.
 
-    :param folder:
+    :param filename:
     """
-    proc = subprocess.Popen(
-        ["samba-tool", "ntacl", "get", "--as-sddl", folder],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        close_fds=True,
-    )
-    stdout, stderr = proc.communicate()
-    res = re.search(r"(O:(.+?)G:.+?)D:[^\(]*(.+)", str(stdout))
+    lp = samba.param.LoadParm()
+    lp.load_default()
+    dacl = getntacl(lp, file=filename, direct_db_access=False)
+    old_sddl = dacl.as_sddl()
+    owner_sid = dacl.owner_sid
+    res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
     if res:
         owner = res.group(1)
-        owner_sid = res.group(2)
-        old_aces = res.group(3)
+        old_aces = res.group(2)
         old_aces = re.findall(r"\(.+?\)", old_aces)
         allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
         deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
         # deny user change of permissions and owner
         new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
-        new_allow_ace = "(A;OICI;0x001301BF;;;S-1-3-4)"
-        if (new_allow_ace in allow_aces) and (new_deny_aces in deny_aces):
-            return
+        new_allow_ace = [
+            "(A;OICI;0x001301BF;;;S-1-3-4)",  # change default behaviour for owners to modify
+            "(A;OICI;0x001301BF;;;{})".format(owner_sid),  # add modify ace for owner
+        ]
         if new_deny_aces not in deny_aces:
             deny_aces += new_deny_aces
-        # override the default behaviour for owners
-        if new_allow_ace not in allow_aces:
-            allow_aces += new_allow_ace
-        dacl_flags = "PAI"
-        sddl = "{}D:{}{}{}".format(owner, dacl_flags, deny_aces.strip(), allow_aces.strip())
-        proc = subprocess.Popen(
-            ["samba-tool", "ntacl", "set", sddl, folder],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            close_fds=True,
-        )
-        _, stderr = proc.communicate()
-        if not stderr:
-            logger.debug("set nt acls {} on {}".format(sddl, folder))
-            return
-    logger.error("could not set nt acls on {}: {}".format(folder, stderr))
+        for ace in new_allow_ace:
+            if ace not in allow_aces:
+                allow_aces += ace
+        new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
+        if new_sddl != old_sddl:
+            logger.debug("set nt acls {} on {}".format(new_sddl, filename))
+            setntacl(lp, filename, new_sddl, owner_sid)
 
 
 class Instance(SchoolBaseModule):
@@ -197,18 +188,13 @@ class Instance(SchoolBaseModule):
 
         :param exam_users:
         """
+        logger.info("users=%r", [u.username for u in exam_users])
         for exam_user in exam_users:
             folder = exam_user.unixhome
-            if not os.path.exists(folder):
-                logger.info("create home folder {}".format(folder))
-                umask = os.umask(0)  # set umask so that os.makedirs can set correct permissions
-                owner = int(exam_user.uidNumber)
-                group = int(exam_user.gidNumber)
-                os.makedirs(folder, 0o711)
-                os.chmod(folder, 0o700)
-                os.chown(folder, owner, group)
-                deny_owner_change_permissions(folder)
-                os.umask(umask)
+            for root, sub, files in os.walk(folder):
+                deny_owner_change_permissions(root)
+                for f in files:
+                    deny_owner_change_permissions(os.path.join(root, f))
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -702,8 +688,8 @@ class Instance(SchoolBaseModule):
             progress.component(_("Distributing exam files"))
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
-            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             my.project.distribute()
+            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
