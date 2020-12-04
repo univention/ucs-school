@@ -162,7 +162,8 @@ class Instance(SchoolBaseModule):
         ):
             raise ValueError(
                 _(
-                    'Invalid rule name "%s". The name needs to be a string, the following special characters are not allowed: %s'
+                    'Invalid rule name "%s". The name needs to be a string, the following special '
+                    "characters are not allowed: %s"
                 )
                 % (
                     iprops.get("name"),
@@ -200,7 +201,8 @@ class Instance(SchoolBaseModule):
                 if not domain:
                     raise ValueError(
                         _(
-                            'The specified domain "%s" is not valid. Please specify a valid domain name, such as "wikipedia.org", "facebook.com"'
+                            'The specified domain "%s" is not valid. Please specify a valid domain '
+                            'name, such as "wikipedia.org", "facebook.com"'
                         )
                         % idomain
                     )
