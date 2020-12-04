@@ -171,9 +171,13 @@ def install_app(options):  # type: (Any) -> None
         print "The app UCS@school is already installed."
     else:
         fd.write(
-            "The app UCS@school is currently not installed. Installing app ... this might take a while ...\n"
+            "The app UCS@school is currently not installed. Installing app ... this might take a while "
+            "...\n"
         )
-        print "The app UCS@school is currently not installed. Installing app ... this might take a while ..."
+        print (
+            "The app UCS@school is currently not installed. Installing app ... this might take a "
+            "while ..."
+        )
         sys.stdout.flush()
         fd.flush()
 
@@ -193,8 +197,9 @@ def install_app(options):  # type: (Any) -> None
             returncode = proc.wait()
 
         if returncode:
-            print "\nERROR: installation of UCS@school via univention-app failed with exitcode %r" % (
-                returncode,
+            print (
+                "\nERROR: installation of UCS@school via univention-app failed with exitcode %r"
+                % (returncode,)
             )
             sys.exit(1)
         print "UCS@school app successfully installed."
@@ -290,7 +295,10 @@ def main():  # type: () -> None
             options.password = getpass.getpass("Password: ")
         if not options.ou:
             while True:
-                print "Please enter the school name (school OU name) this system shall be responsible for."
+                print (
+                    "Please enter the school name (school OU name) this system shall be responsible "
+                    "for."
+                )
                 options.ou = raw_input("OU: ")
                 if not is_valid_ou_name(options.ou):
                     print "This is not a valid OU name!"

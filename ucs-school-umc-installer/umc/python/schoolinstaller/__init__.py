@@ -74,7 +74,8 @@ RE_HOSTNAME = re.compile(
     "^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$"
 )  # keep in sync with schoolinstaller.js widgets.master.regExp
 RE_HOSTNAME_OR_EMPTY = re.compile(
-    "^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$"
+    "^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*"
+    "[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$"
 )
 RE_OU = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$")
 RE_OU_OR_EMPTY = re.compile("^([a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?)?$")
@@ -92,13 +93,15 @@ CERTIFICATE_PATH = "/etc/univention/ssl/ucsCA/CAcert.pem"
 # 		if value == 'singlemaster':
 # 			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
 # 				return 'ucs-school-singlemaster'
-# 			self.raise_validation_error(_('Single server environment not allowed on server role "%s"') % server_role)
+# 			self.raise_validation_error(
+# 			    _('Single server environment not allowed on server role "%s"') % server_role)
 # 		if value == 'multiserver':
 # 			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
 # 				return 'ucs-school-master'
 # 			elif server_role == 'domaincontroller_slave':
 # 				return 'ucs-school-slave'
-# 			self.raise_validation_error(_('Multi server environment not allowed on server role "%s"') % server_role)
+# 			self.raise_validation_error(
+# 	    		_('Multi server environment not allowed on server role "%s"') % server_role)
 # 		self.raise_validation_error(_('Value "%s" not allowed') % value)
 
 
@@ -254,7 +257,10 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                 if m:
                     error_handler(
                         _(
-                            'Software packages have been installed, however, the system join could not be completed: %s. More details can be found in the log file /var/log/univention/join.log. Please retry the join process via the UMC module "Domain join" after resolving any conflicting issues.'
+                            "Software packages have been installed, however, the system join could not "
+                            "be completed: %s. More details can be found in the log file "
+                            "/var/log/univention/join.log. Please retry the join process via the UMC "
+                            'module "Domain join" after resolving any conflicting issues.'
                         )
                         % m.groupdict().get("message")
                     )
@@ -319,14 +325,20 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                 MODULE.warn("Could not perform system join: %s%s" % (stdout, stderr))
                 error_handler(
                     _(
-                        'Software packages have been installed successfully, however, the join process could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to join the system via the UMC module "Domain join" after resolving any conflicting issues.'
+                        "Software packages have been installed successfully, however, the join process "
+                        "could not be executed. More details can be found in the log file "
+                        "/var/log/univention/join.log. Please retry to join the system via the UMC "
+                        'module "Domain join" after resolving any conflicting issues.'
                     )
                 )
             elif failed_join_scripts:
                 MODULE.warn("The following join scripts could not be executed: %s" % failed_join_scripts)
                 error_handler(
                     _(
-                        'Software packages have been installed successfully, however, some join scripts could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'
+                        "Software packages have been installed successfully, however, some join scripts"
+                        " could not be executed. More details can be found in the log file "
+                        "/var/log/univention/join.log. Please retry to execute the join scripts via the"
+                        ' UMC module "Domain join" after resolving any conflicting issues.'
                     )
                 )
     finally:
@@ -442,7 +454,8 @@ class Instance(Base):
             if self._installation_started is False:
                 self.progress_state.finish()
                 self.progress_state.error_handler(
-                    "Critical: There is no current installation running. Maybe the previous process died?"
+                    "Critical: There is no current installation running. Maybe the previous process "
+                    "died?"
                 )
             self._installation_started = False
         return self.progress_state.poll()
@@ -532,7 +545,8 @@ class Instance(Base):
         except Forbidden:
             raise SchoolInstallerError(
                 _(
-                    "Make sure ucs-school-umc-installer is installed on the DC Master and all join scripts are executed."
+                    "Make sure ucs-school-umc-installer is installed on the DC Master and all join "
+                    "scripts are executed."
                 )
             )
         except (ConnectionError, HTTPError) as exc:
@@ -595,7 +609,8 @@ class Instance(Base):
         ):
             raise SchoolInstallerError(
                 _(
-                    "Invalid server role! UCS@school can only be installed on the system roles master domain controller, backup domain controller, or slave domain controller."
+                    "Invalid server role! UCS@school can only be installed on the system roles master "
+                    "domain controller, backup domain controller, or slave domain controller."
                 )
             )
 
@@ -609,7 +624,8 @@ class Instance(Base):
         ):
             raise SchoolInstallerError(
                 _(
-                    "The name of an educational server has to be specified if the system shall be configured as administrative server."
+                    "The name of an educational server has to be specified if the system shall be "
+                    "configured as administrative server."
                 )
             )
 
@@ -620,7 +636,8 @@ class Instance(Base):
         ):
             raise SchoolInstallerError(
                 _(
-                    "The name of the educational server may not be equal to the name of the administrative slave."
+                    "The name of the educational server may not be equal to the name of the "
+                    "administrative slave."
                 )
             )
 
@@ -638,31 +655,36 @@ class Instance(Base):
             if not school_environment:
                 raise SchoolInstallerError(
                     _(
-                        "Please install UCS@school on the master domain controller system. Cannot proceed installation on this system."
+                        "Please install UCS@school on the master domain controller system. Cannot "
+                        "proceed installation on this system."
                     )
                 )
             if master_samba_version == 3:
                 raise SchoolInstallerError(
                     _(
-                        "This UCS domain uses Samba 3 which is no longer supported by UCS@school. Please update all domain systems to samba 4 to be able to continue."
+                        "This UCS domain uses Samba 3 which is no longer supported by UCS@school. "
+                        "Please update all domain systems to samba 4 to be able to continue."
                     )
                 )
             if server_role == "domaincontroller_slave" and school_environment != "multiserver":
                 raise SchoolInstallerError(
                     _(
-                        "The master domain controller is not configured for a UCS@school multi server environment. Cannot proceed installation on this system."
+                        "The master domain controller is not configured for a UCS@school multi server "
+                        "environment. Cannot proceed installation on this system."
                     )
                 )
             if server_role == "domaincontroller_backup" and school_environment != setup:
                 raise SchoolInstallerError(
                     _(
-                        "The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct environment type for this system."
+                        "The UCS@school master domain controller needs to be configured similarly to "
+                        "this backup system. Please choose the correct environment type for this system."
                     )
                 )
             if server_role == "domaincontroller_backup" and not joined:
                 raise SchoolInstallerError(
                     _(
-                        "In order to install UCS@school on a backup domain controller, the system needs to be joined first."
+                        "In order to install UCS@school on a backup domain controller, the system needs"
+                        " to be joined first."
                     )
                 )
 
@@ -672,7 +694,8 @@ class Instance(Base):
             MODULE.warn("Could not aquire lock for package manager")
             raise SchoolInstallerError(
                 _(
-                    "Cannot get lock for installation process. Another package manager seems to block the operation."
+                    "Cannot get lock for installation process. Another package manager seems to block "
+                    "the operation."
                 )
             )
 
@@ -683,7 +706,8 @@ class Instance(Base):
         if installed_samba_version == 3:
             raise SchoolInstallerError(
                 _(
-                    "This UCS domain uses Samba 3 which is no longer supported by UCS@school. Please update all domain systems to samba 4 to be able to continue."
+                    "This UCS domain uses Samba 3 which is no longer supported by UCS@school. Please "
+                    "update all domain systems to samba 4 to be able to continue."
                 )
             )
         if server_role == "domaincontroller_slave":
@@ -804,8 +828,11 @@ class Instance(Base):
                     MODULE.error(str(exc))
                     raise SchoolInstallerError(
                         _(
-                            "The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. "
-                            'Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".'
+                            "The UCS@school software packages have been installed, however, a school "
+                            "OU could not be created and consequently a re-join of the system has not "
+                            "been performed. Please create a new school OU structure using the UMC "
+                            'module "Add school" on the master and perform a domain join on this '
+                            'machine via the UMC module "Domain join".'
                         )
                     )
 
@@ -829,7 +856,9 @@ class Instance(Base):
                     )
                     raise SchoolInstallerError(
                         _(
-                            "Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use."
+                            "Validating the LDAP school OU structure failed. It seems that the current "
+                            "slave system has already been assigned to a different school or that the "
+                            "specified school OU name is already in use."
                         )
                     )
 
