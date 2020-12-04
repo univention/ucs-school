@@ -73,8 +73,8 @@ class AnyComputer(UCSSchoolHelperAbstractClass):
 
 
 class SchoolDC(UCSSchoolHelperAbstractClass):
-    # NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education)) # UCS@school Administration
-    # vs. group memberships
+    # NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education))
+    # UCS@school Administration vs. group memberships
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
@@ -234,7 +234,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         if ipv4_network and len(udm_obj["ip"]) < 2:
             if self._ip_is_set_to_subnet(ipv4_network):
                 self.logger.info(
-                    "IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!"
+                    "IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: "
+                    "Assign next free IP!"
                 )
                 udm_obj["ip"] = []
             else:
@@ -311,7 +312,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "ip_address",
                     _(
-                        "The ip address is already taken by another computer. Please change the ip address."
+                        "The ip address is already taken by another computer. Please change the ip "
+                        "address."
                     ),
                 )
         for mac_address in self.mac_address:
@@ -320,7 +322,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "mac_address",
                     _(
-                        "The mac address is already taken by another computer. Please change the mac address."
+                        "The mac address is already taken by another computer. Please change the mac "
+                        "address."
                     ),
                 )
         own_network = self.get_network()
@@ -329,7 +332,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             self.add_warning(
                 "subnet_mask",
                 _(
-                    "The specified IP and subnet mask will cause the creation of a new network during the creation of the computer object."
+                    "The specified IP and subnet mask will cause the creation of a new network during "
+                    "the creation of the computer object."
                 ),
             )
             networks = [

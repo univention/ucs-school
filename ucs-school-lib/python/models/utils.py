@@ -251,7 +251,8 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
         from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
         add_module_logger_to_schoollib()
         # or:
-        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout,
+            log_format='ERROR (or worse): %(message)s')
     """
     logger = logging.getLogger(name or "ucsschool")
     if logger.level < logging.DEBUG:
@@ -390,7 +391,7 @@ def nearest_known_loglevel(level):
 
 
 def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None):
-    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler
+    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler  # noqa: E501
     """
     Create a colored stream handler, usually for the console.
 
@@ -420,7 +421,7 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 
 
 def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None):
-    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler
+    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler  # noqa: E501
     """
     Create a :py:class:`UniFileHandler` (TimedRotatingFileHandler) for logging
     to a file.

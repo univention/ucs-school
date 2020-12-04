@@ -418,7 +418,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.add_error(
                 "name",
                 _(
-                    "It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s."
+                    "It is not supported to change the role of a user. %(old_role)s %(name)s cannot "
+                    "become a %(new_role)s."
                 )
                 % {"old_role": exc.model.type_name, "name": self.name, "new_role": self.type_name},
             )
@@ -428,7 +429,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "name",
                     _(
-                        "It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s."
+                        "It is not supported to change the role of a user. %(old_role)s %(name)s cannot"
+                        " become a %(new_role)s."
                     )
                     % {
                         "old_role": original_class.type_name,
@@ -442,12 +444,16 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "email",
                     _(
-                        "The email address is already taken by another user. Please change the email address."
+                        "The email address is already taken by another user. Please change the email "
+                        "address."
                     ),
                 )
             # mail_domain = self.get_mail_domain(lo)
             # if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
-            # 	self.add_error('email', _('The mail domain is unknown. Please change the email address or create the mail domain "%s" using the Univention Directory Manager.') % mail_domain.name)
+            # 	self.add_error(
+            # 	'email',
+            # 	_('The mail domain is unknown. Please change the email address or create the mail \
+            # 	   domain "%s" using the Univention Directory Manager.') % mail_domain.name)
 
         if not isinstance(self.school_classes, Mapping):
             self.add_error(
@@ -463,7 +469,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "school_classes",
                     _(
-                        "School {school!r} in 'school_classes' is missing in the users 'school(s)' attributes."
+                        "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
+                        "attributes."
                     ).format(school=school),
                 )
         # check syntax of all class names

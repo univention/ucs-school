@@ -89,7 +89,8 @@ def get_school_membership_type(lo, dn):  # type: (univention.uldap.access, str) 
 
 def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
-    Checks if the given computer object specified by `dn` is a central system or located at a specific school.
+    Checks if the given computer object specified by `dn` is a central system or located at a specific
+    school.
 
     :param univention.uldap.access lo: the LDAP connection
     :param str dn: DN of the computer object

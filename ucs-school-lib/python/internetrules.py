@@ -38,7 +38,8 @@ from univention.management.console.log import MODULE
 
 # regular expression to match UCR variables for filter properties
 _regFilterNames = re.compile(
-    r"^proxy/filter/setting(?P<userPrefix>-user)?/(?P<name>[^/]*)/(?P<property>[^/]*)(/(?P<listType>[^/]*)/(?P<index>[^/]*))?$"
+    r"^proxy/filter/setting(?P<userPrefix>-user)?/(?P<name>[^/]*)/(?P<property>[^/]*)"
+    r"(/(?P<listType>[^/]*)/(?P<index>[^/]*))?$"
 )
 
 WHITELIST, BLACKLIST = range(2)

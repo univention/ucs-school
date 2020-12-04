@@ -64,7 +64,7 @@ class PyHooksLoader(object):
     _hook_classes = {}  # type: Dict[str, List[Type[PyHookTV]]]
 
     def __init__(self, base_dir, base_class, logger=None, filter_func=None):
-        # type: (str, Type[PyHookTV], Optional[logging.Logger], Optional[Callable[[Type[PyHookTV]], bool]]) -> None
+        # type: (str, Type[PyHookTV], Optional[logging.Logger], Optional[Callable[[Type[PyHookTV]], bool]]) -> None  # noqa: E501
         """
 
         Hint: if you wish to pass a logging instance to a hook, add it to the
@@ -77,7 +77,8 @@ class PyHooksLoader(object):
 
         :param str base_dir: path to a directory containing Python files
         :param type base_class: only subclasses of this class will be imported
-        :param logging.Logger logger: Python logging instance to use for loader logging (deprecated, ignored)
+        :param logging.Logger logger: Python logging instance to use for loader logging (deprecated,
+            ignored)
         :param Callable filter_func: function that takes a class and returns a bool
         """
         self.base_dir = base_dir

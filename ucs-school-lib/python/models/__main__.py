@@ -300,7 +300,7 @@ def create(
     multiple=True,
 )
 def modify(model, dn, name, school, multi_value, single_value, rm_value):
-    # type: (str, str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None
+    # type: (str, str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None  # noqa: E501
     logger.debug(
         "modify: model=%r dn=%r name=%r school=%r multi_value=%r single_value=%r rm_value=%r",
         model,

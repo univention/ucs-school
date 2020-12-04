@@ -358,7 +358,8 @@ class UCSSchoolHelperAbstractClass(object):
                 self.add_error(
                     "name",
                     _(
-                        "The name is already used somewhere outside the school. It may not be taken twice and has to be changed."
+                        "The name is already used somewhere outside the school. It may not be taken "
+                        "twice and has to be changed."
                     ),
                 )
         if self.supports_school() and self.school:
@@ -839,7 +840,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
-        # type: (LoType, str, Optional[str], Optional[bool], Optional[SuperOrdinateType]) -> List[UCSSchoolModel]
+        # type: (LoType, str, Optional[str], Optional[bool], Optional[SuperOrdinateType]) -> List[UCSSchoolModel]  # noqa: E501
         """
         Returns a list of all objects that can be found in cls.get_container() with the
         correct udm_module
@@ -940,7 +941,8 @@ class UCSSchoolHelperAbstractClass(object):
                 # security!
                 # ExamStudent must not be converted into Teacher/Student/etc.,
                 # SchoolClass must not be converted into ComputerRoom
-                # while Group must be converted into ComputerRoom, etc. and User must be converted into Student, etc.
+                # while Group must be converted into ComputerRoom, etc. and User must be converted into
+                # Student, etc.
                 raise WrongModel(udm_obj.dn, klass, cls)
             return klass.from_udm_obj(udm_obj, school, lo)
         udm_obj.open()
@@ -1196,7 +1198,8 @@ class RoleSupportMixin(object):
                 self.add_error(
                     "ucsschool_roles",
                     _(
-                        "Context {role}:{context_type}:{context} is not allowed for {dn}. Object is not in that school."
+                        "Context {role}:{context_type}:{context} is not allowed for {dn}. Object is not "
+                        "in that school."
                     ).format(dn=self.dn, **role),
                 )
 
