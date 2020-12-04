@@ -49,7 +49,10 @@ sys.path.insert(0, os.path.join(script_dir, "umc/python/computerroom"))
 
 
 def show_state(options):
-    FORMAT = "%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s"
+    FORMAT = (
+        "%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s "
+        "%(DemoServer)-8s %(DemoClient)-8s %(Flags)5s"
+    )
     # clear screen and set position to HOME
     if not options.logmode:
         print "\033[2J\033[H"

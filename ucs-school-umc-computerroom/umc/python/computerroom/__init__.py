@@ -892,7 +892,8 @@ class Instance(SchoolBaseModule):
 
         # Workaround for bug 30450:
         # if samba/printmode/hosts/none is not set but samba/printmode/hosts/all then all other hosts
-        # are unable to print on samba shares. Solution: set empty value for .../none if no host is on deny list.
+        # are unable to print on samba shares. Solution: set empty value for .../none if no host is on
+        # deny list.
         varname = "samba/printmode/hosts/none"
         if varname not in vset:
             ucr.load()

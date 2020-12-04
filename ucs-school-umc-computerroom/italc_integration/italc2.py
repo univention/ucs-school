@@ -262,7 +262,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
     def open(self):
         MODULE.info("Opening VNC connection to %s" % (self.ipAddress))
         self._vnc = italc.ItalcVncConnection()
-        # transfer responsibility for cleaning self._vnc up from python garbarge collector to C++/QT (Bug #27534)
+        # transfer responsibility for cleaning self._vnc up from python garbarge collector to C++/QT
+        # (Bug #27534)
         sip.transferto(self._vnc, None)
         self._vnc.setHost(self.ipAddress)
         self._vnc.setPort(ITALC_VNC_PORT)
@@ -281,7 +282,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         if self._core:
             self._core.receivedUserInfo.disconnect(self._userInfo)
             self._core.receivedSlaveStateFlags.disconnect(self._slaveStateFlags)
-            # WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call the stop() function again!
+            # WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call
+            # the stop() function again!
             del self._core
             self._core = None
             self._core_ready = False
@@ -306,8 +308,10 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         # Now the core connection is ready for use ==> _core_ready is set to True and the
         # "connected" signal is emitted.
         #
-        # self.connected() checks by default if _core_ready==True if not specified by argument to ignore this variable.
-        # (used to send initial sendGetUserInformationRequest() via core connection to trigger connection state change).
+        # self.connected() checks by default if _core_ready==True if not specified by argument to
+        # ignore this variable.
+        # (used to send initial sendGetUserInformationRequest() via core connection to trigger
+        # connection state change).
 
         if not self._core and self._state.current == "connected" and self._state.old != "connected":
             MODULE.process("%s: VNC connection established" % (self.ipAddress,))
@@ -352,7 +356,9 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
     @pyqtSlot(int)
     def _slaveStateFlags(self, flags):
-        # MODULE.info('%s: received slave state flags: (old=%r, new=%r)' % (self.ipAddress, self._flags.old, flags))
+        # MODULE.info(
+        #     '%s: received slave state flags: (old=%r, new=%r)' % (
+        #         self.ipAddress, self._flags.old, flags))
         self._flags.set(flags)
         if self._flags.old is None:
             diff = self._flags.current
@@ -369,7 +375,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         self._emit_flag(diff, italc.ItalcCore.SystemTrayIconRunning, "system-tray-icon")
 
     def update(self):
-        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for self.connected()
+        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for
+        # self.connected()
         if not self.connected(ignore_core_ready=True):
             MODULE.warn("%s: not connected - skipping update" % (self.ipAddress,))
             return True
@@ -531,7 +538,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         return self._state
 
     def connected(self, ignore_core_ready=False):
-        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for self.connected()
+        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for
+        # self.connected()
         return (
             self._core
             and self._vnc.isConnected()
