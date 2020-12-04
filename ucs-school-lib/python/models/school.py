@@ -56,7 +56,7 @@ from ..roles import (
     role_school_student_group,
     role_school_teacher_group,
 )
-from .attributes import Attribute, DCName, DisplayName, Roles, SchoolName, ShareFileServer
+from .attributes import Attribute, DCName, DisplayName, SchoolName, ShareFileServer
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .computer import AnyComputer, SchoolDC, SchoolDCSlave
 from .dhcp import DHCPService
@@ -114,7 +114,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
             else:
                 ldap_filter_str = filter_format(
-                    "(&(objectClass=univentionDomainController)(cn=%s)(|(univentionServerRole=backup)(univentionServerRole=master)))",
+                    "(&"
+                    "(objectClass=univentionDomainController)"
+                    "(cn=%s)"
+                    "(|"
+                    "(univentionServerRole=backup)"
+                    "(univentionServerRole=master)"
+                    ")"
+                    ")",
                     [self.dc_name.lower()],
                 )
             dcs = lo.search(ldap_filter_str)
@@ -376,16 +383,23 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             dc_udm_obj = None
             mb_dcs = lo.search(
                 filter_format(
-                    "(&(objectClass=univentionDomainController)(cn=%s)(|(univentionServerRole=backup)(univentionServerRole=master)))",
+                    "(&"
+                    "(objectClass=univentionDomainController)"
+                    "(cn=%s)"
+                    "(|"
+                    "(univentionServerRole=backup)"
+                    "(univentionServerRole=master)"
+                    ")"
+                    ")",
                     [self.dc_name.lower()],
                 )
             )
             if len(mb_dcs):
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
-            po = univention.admin.uldap.position(
-                lo.base
-            )  # Sadly we need this here to access non school specific computers. TODO: Use Daniels simple API if merged into product
+            # Sadly we need this here to access non school specific computers.
+            # TODO: Use Daniels simple API if merged into product
+            po = univention.admin.uldap.position(lo.base)
             univention.admin.modules.update()
             mod = univention.admin.modules.get("computers/domaincontroller_slave")
             if not mod.initialized:
@@ -451,7 +465,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             existing_host = AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(name))
             if existing_host:
                 self.logger.error(
-                    'Given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.',
+                    'Given host name "%s" is already in use and no domaincontroller slave system. '
+                    "Please choose another name.",
                     name,
                 )
                 return False
@@ -465,7 +480,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             dc_name = self.get_dc_name(administrative=administrative)
             server = AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(dc_name))
             self.logger.info(
-                "School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  server=%r",
+                "School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  "
+                "server=%r",
                 administrative,
                 dc_name,
                 self.dc_name,
@@ -483,12 +499,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     hostlist = lo.get(group_dn, ["uniqueMember"]).get("uniqueMember", [])
                 except ldap.NO_SUCH_OBJECT:
                     hostlist = []
-                except Exception, e:
-                    self.logger.error("cannot read %s: %s", group_dn, e)
+                except Exception as exc:
+                    self.logger.error("cannot read %s: %s", group_dn, exc)
                     return
 
                 if hostlist:
-                    continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item ==> do not create default slave objects
+                    # if at least one DC has control over this OU then jump to next 'school_dcs'
+                    # item ==> do not create default slave objects
+                    continue
 
                 self.create_dc_slave(lo, dc_name, administrative=administrative)
 
@@ -561,8 +579,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         )
         self.modify_without_hooks(lo)
 
-        # if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
-        # to prevent problems with "wrong" DHCP DNS policy connected to ldap base
+        # if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU
+        # level to prevent problems with "wrong" DHCP DNS policy connected to ldap base
         if ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/clearou", False):
             policy = DHCPDNSPolicy(
                 name="dhcp-dns-clear",
@@ -611,10 +629,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         msg = None
         cmd = ["udm", module, "remove", "--dn", dn]
         self.logger.info("*** Calling following command: %r", cmd)
-        retval = subprocess.call(cmd)
+        retval = subprocess.call(cmd)  # nosec
         if retval:
             msg = "*** ERROR: failed to remove UCS@school %s object: %s" % (module, dn)
-            logger.error(msg)
+            self.logger.error(msg)
         return msg
 
     def _alter_udm_obj(self, udm_obj):
@@ -644,7 +662,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
             school_dn = lo.binddn[lo.binddn.find("ou=") :]
             cls.logger.debug(
-                "Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s",
+                "Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show "
+                "%s",
                 school_dn,
             )
             school = cls.from_dn(school_dn, None, lo)

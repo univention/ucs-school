@@ -72,7 +72,8 @@ class DefaultConfigurationChecks(ConfigurationChecks):
     def test_deprecated_user_deletion(self):
         if "user_deletion" in self.config:
             raise InitialisationError(
-                "The 'user_deletion' configuration key is deprecated. Please set 'deletion_grace_period'."
+                "The 'user_deletion' configuration key is deprecated. Please set "
+                "'deletion_grace_period'."
             )
 
     def test_school_class_invalid_char_replacement_is_valid_char(self):
@@ -80,7 +81,7 @@ class DefaultConfigurationChecks(ConfigurationChecks):
         try:
             assert len(self.config.get("school_classes_invalid_character_replacement", "")) in (0, 1)
             assert self.config["school_classes_invalid_character_replacement"] in valid_chars
-        except:
+        except (AssertionError, IndexError):
             raise InitialisationError(
                 "school_classes_invalid_character_replacement must be one of {!r}".format(valid_chars)
             )
@@ -97,8 +98,8 @@ class DefaultConfigurationChecks(ConfigurationChecks):
                     )
                 if username_max_length > ucr_username_max_length:
                     raise InitialisationError(
-                        "Configuration value of username:max_length:{} is {!r}, but must not be higher than UCR variable "
-                        "ucsschool/username/max_length ({}).".format(
+                        "Configuration value of username:max_length:{} is {!r}, but must not be higher "
+                        "than UCR variable ucsschool/username/max_length ({}).".format(
                             role, username_max_length, int(ucr_username_max_length)
                         )
                     )
@@ -121,8 +122,8 @@ class DefaultConfigurationChecks(ConfigurationChecks):
         )
         if student_username_max_length > 20 - exam_user_prefix_length:
             self.logger.warning(
-                "Configuration value of username:max_length:student is higher than %d (20 - length(%r)). "
-                "Exam users will not be able to log into Windows < 8.1.",
+                "Configuration value of username:max_length:student is higher than %d (20 - length(%r))."
+                " Exam users will not be able to log into Windows < 8.1.",
                 20 - exam_user_prefix_length,
                 exam_user_prefix,
             )

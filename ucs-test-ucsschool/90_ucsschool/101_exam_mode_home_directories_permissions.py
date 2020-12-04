@@ -36,7 +36,8 @@ def check_nt_acls(filename):  # type: (str) -> None
         ["samba-tool", "ntacl", "get", "--as-sddl", filename], log=False, raise_exc=True
     )
     if not re.match(
-        r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*\(A;OICI.*?;0x001301bf;;;S-1-3-4\).*?\(A;OICI.*?;0x001301bf;;;\1\)",
+        r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*\(A;OICI.*?;0x001301bf;;;S-1-3-4\)"
+        r".*?\(A;OICI.*?;0x001301bf;;;\1\)",
         stdout,
     ):
         utils.fail("The permissions of share {} can be changed {}".format(filename, stdout))
@@ -97,7 +98,11 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
                 allowed=False,
                 samba_workstation=samba_workstation,
             )
-            print("# check distribution folder has the correct rights".format(distribution_data_folder))
+            print(
+                "# check the correct rights on distribution folder: {!r}".format(
+                    distribution_data_folder
+                )
+            )
             exam_share_folder = "{} {}".format(samba_home, distribution_data_folder)
             check_change_permissions(
                 filename=exam_share_folder,
@@ -109,7 +114,7 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
 
 
 def main():
-    with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
+    with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:  # noqa: E501
         open_ldap_co = schoolenv.open_ldap_connection()
         ucr.load()
 
@@ -136,7 +141,10 @@ def main():
         print("# set 2 computer rooms to contain the created computers")
         room = Room(school, host_members=pc1.dn)
         schoolenv.create_computerroom(
-            school, name=room.name, description=room.description, host_members=room.host_members,
+            school,
+            name=room.name,
+            description=room.description,
+            host_members=room.host_members,
         )
 
         create_homedirs([studn1, studn2], open_ldap_co)

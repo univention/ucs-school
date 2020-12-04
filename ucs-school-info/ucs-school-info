@@ -243,9 +243,9 @@ if __name__ == '__main__':
 	co = univention.admin.config.config()
 	try:
 		lo = univention.admin.uldap.access(host=configRegistry['ldap/server/name'], base=baseDN, binddn=machinedn, bindpw=machinepwd, start_tls=2)
-	except Exception, e:
-		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
-		print 'ERROR: authentication error: %s' % str(e)
+	except Exception as exc:
+		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(exc))
+		print 'ERROR: authentication error: %s' % str(exc)
 		sys.exit(1)
 
 	exitcode = 0

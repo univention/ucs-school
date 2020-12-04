@@ -29,7 +29,7 @@ def main():
     with open(LOGFILE, "rb") as log:
         log.seek(0, os.SEEK_END)
         logfile_pos = log.tell()
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+    with univention.testing.ucr.UCSTestConfigRegistry():
         # every handler_set and handler_unset of proxy/filter/.*
         # (ucs-school-webproxy/debian/ucs-school-webproxy.univention-config-registry)
         # triggers the UCR module, which triggers a squid reload

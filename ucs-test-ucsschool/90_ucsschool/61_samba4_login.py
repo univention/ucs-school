@@ -11,6 +11,8 @@
 ##  - ucsschool
 ##  - apptest
 
+from __future__ import print_function
+
 import subprocess
 
 from ldap.filter import escape_filter_chars
@@ -35,7 +37,7 @@ if __name__ == "__main__":
 
         user = udm.create_user(username=username, password=password)
 
-        print "Waiting for DRS replication..."
+        print("Waiting for DRS replication...")
         wait_for_drs_replication(
             "(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid"
         )

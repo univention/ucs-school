@@ -319,13 +319,13 @@ ucs-school-ldap-acls-master (14.0.0-1) unstable; urgency=medium
 
 ucs-school-ldap-acls-master (13.0.2-4) unstable; urgency=low
 
-  * allow slaves to write msPrintConnectionPolicy objects (Bug #32041) 
+  * allow slaves to write msPrintConnectionPolicy objects (Bug #32041)
 
  -- Felix Botner <botner@univention.de>  Mon, 11 Jan 2016 15:39:32 +0100
 
 ucs-school-ldap-acls-master (13.0.2-3) unstable; urgency=low
 
-  * allow slaves to write msPrintConnectionPolicy objects (Bug #32041) 
+  * allow slaves to write msPrintConnectionPolicy objects (Bug #32041)
 
  -- Felix Botner <botner@univention.de>  Fri, 18 Dec 2015 15:36:15 +0100
 
@@ -442,13 +442,13 @@ ucs-school-ldap-acls-master (8.0.0-1) unstable; urgency=low
 
 ucs-school-ldap-acls-master (7.0.9-1) unstable; urgency=low
 
-  * fixed postinst (rename objects for redistribute) (Bug #27933) 
+  * fixed postinst (rename objects for redistribute) (Bug #27933)
 
  -- Felix Botner <botner@univention.de>  Tue, 31 Jul 2012 11:57:32 +0200
 
 ucs-school-ldap-acls-master (7.0.8-1) unstable; urgency=low
 
-  * redistribute cn=mail,* (Bug #27933) 
+  * redistribute cn=mail,* (Bug #27933)
 
  -- Felix Botner <botner@univention.de>  Wed, 25 Jul 2012 16:22:57 +0200
 
@@ -742,10 +742,10 @@ ucs-school-ldap-acls-master (1.2.15) unstable; urgency=low
   * fixed access to cn=univention for memberserver and dc slaves
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Apr 2007 16:50:39 +0200
- 
+
 ucs-school-ldap-acls-master (1.2.14) unstable; urgency=low
 
-  * fixed typo 
+  * fixed typo
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Apr 2007 14:00:55 +0200
 
@@ -758,7 +758,7 @@ ucs-school-ldap-acls-master (1.2.13) unstable; urgency=low
 
 ucs-school-ldap-acls-master (1.2.12) unstable; urgency=low
 
-  * added dependency 
+  * added dependency
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 13:58:40 +0200
 
@@ -783,7 +783,7 @@ ucs-school-ldap-acls-master (1.2.9) unstable; urgency=low
 
 ucs-school-ldap-acls-master (1.2.8) unstable; urgency=low
 
-  * added permission for slave dcs to read cn=nagios 
+  * added permission for slave dcs to read cn=nagios
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 28 Mar 2007 17:13:25 +0200
 
@@ -815,19 +815,19 @@ ucs-school-ldap-acls-master (1.2.4) unstable; urgency=low
 
 ucs-school-ldap-acls-master (1.2.3) unstable; urgency=low
 
-  * ouadmins are allowed to add new shares, not only to change them 
+  * ouadmins are allowed to add new shares, not only to change them
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Mon, 22 May 2006 13:11:19 +0200
 
 ucs-school-ldap-acls-master (1.2.2) unstable; urgency=low
 
-  * bugfix for join of ou-admins 
+  * bugfix for join of ou-admins
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Tue, 16 May 2006 13:40:00 +0200
 
 ucs-school-ldap-acls-master (1.2.1) unstable; urgency=low
 
-  * additional ACL-file to meet UCS 1.3-1 enhancements 
+  * additional ACL-file to meet UCS 1.3-1 enhancements
   * restart slapd on installation
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Tue, 16 May 2006 09:49:22 +0200
@@ -840,13 +840,13 @@ ucs-school-ldap-acls-master (1.2.0) unstable; urgency=low
 
 ucs-school-ldap-acls-master (1.1.3) unstable; urgency=low
 
-  * allow admin-internal attributes to be stored for adding groups 
+  * allow admin-internal attributes to be stored for adding groups
 
  -- Ingo Steuwer <steuwer@univention.de>  Thu,  4 May 2006 08:33:39 +0200
 
 ucs-school-ldap-acls-master (1.1.2) unstable; urgency=low
 
-  * change to OpenLDAP 2.2 compatible ACLs 
+  * change to OpenLDAP 2.2 compatible ACLs
 
  -- Ingo Steuwer <steuwer@univention.de>  Mon, 12 Dec 2005 13:47:49 +0100
 
@@ -866,7 +866,7 @@ ucs-school-ldap-acls-master (1.1) unstable; urgency=low
 ucs-school-ldap-acls-master (1.0.5) unstable; urgency=low
 
   * added write-access to SambaNTPassword for ouadmins
-  
+
  -- Ingo Steuwer <steuwer@univention.de>  Wed,  6 Apr 2005 12:53:03 +0200
 
 ucs-school-ldap-acls-master (1.0.4) unstable; urgency=low
@@ -902,7 +902,7 @@ ucs-school-ldap-acls-master (1.0.0-3) unstable; urgency=low
 
 ucs-school-ldap-acls-master (1.0.0-2) unstable; urgency=low
 
-  * Use $ldap_base consequently 
+  * Use $ldap_base consequently
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 14 Jul 2004 08:38:47 +0200
 

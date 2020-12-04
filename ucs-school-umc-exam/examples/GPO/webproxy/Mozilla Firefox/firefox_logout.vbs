@@ -19,14 +19,14 @@ Dim HTTPKey, HTTPPortKey, SSLKey, SSLPortKey, FTPKey, FTPPortKey
 Dim GopherKey, GopherPortKey, SOCKSKey, SOCKSPortKey, SOCKSVersionKey, ProxyExceptionsKey, ExceptionSplit
 Dim FirefoxUseIEKey, IESettingFile, ParseFileLine, ParseSplitLine, ParseSplitSetting, SameProxy
 
-on error resume next 
+on error resume next
 
 set EnVar = Wshshell.environment("Process")
 FirefoxProfilePath = EnVar("appdata") & "\Mozilla\Firefox\Profiles"
 
 
 ' Do this:  For Each Dir within Firefox's profile, check for prefs.js, then remove setting
-		
+
 if fso.FolderExists(FirefoxProfilePath) then
 	' Get the folders within profile and store to array
 	set FirefoxProfileFolder = fso.GetFolder(FirefoxProfilePath)
@@ -56,7 +56,7 @@ if fso.FolderExists(FirefoxProfilePath) then
 			if ImageResizeKey <> "" then
 				RemoveCurrentPrefsFromFile("browser.enable_automatic_image_resizing")
 			end if
-		
+
 
 			' Proxy Settings
 			ProxyKey = WshShell.regread("HKCU\Software\Policies\Firefox\FirefoxProxy")

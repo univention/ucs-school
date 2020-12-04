@@ -99,7 +99,7 @@ class TestUserCreator(object):
     def _get_new_given_name(self):
         give_modifier = ""
         given_len = len(self.test_data["given"])
-        given_cursor = random.randint(0, given_len - 1)
+        given_cursor = random.randint(0, given_len - 1)  # nosec
         while True:
             yield u"{}{}".format(self.test_data["given"][given_cursor], give_modifier)
             given_cursor += 1
@@ -114,7 +114,7 @@ class TestUserCreator(object):
     def _get_new_family_name(self):
         family_modifier = ""
         family_len = len(self.test_data["family"])
-        family_cursor = random.randint(0, family_len - 1)
+        family_cursor = random.randint(0, family_len - 1)  # nosec
         while True:
             yield u"{}{}".format(self.test_data["family"][family_cursor], family_modifier)
             family_cursor += 1
@@ -170,7 +170,7 @@ class TestUserCreator(object):
                     Nachname=family_name,
                     Klassen=None,
                     Beschreibung="A {}.".format(kind),
-                    Telefon="+{:>02}-{:>03}-{}".format(
+                    Telefon="+{:>02}-{:>03}-{}".format(  # nosec
                         random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999)
                     ),
                 )
@@ -178,11 +178,11 @@ class TestUserCreator(object):
                     user["EMail"] = ImportUser.normalize(
                         "{}m.{}m@{}".format(given_name, family_name, self.mail_domain)
                     ).lower()
-                if kind != "student" and random.choice((True, False)):
+                if kind != "student" and random.choice((True, False)):  # nosec
                     # 50% chance for non-students to be in multiple schools
                     user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))
                 else:
-                    user["Schulen"] = [random.choice(self.ous)]
+                    user["Schulen"] = [random.choice(self.ous)]  # nosec
 
                 if kind == "staff":
                     user["Klassen"] = {}

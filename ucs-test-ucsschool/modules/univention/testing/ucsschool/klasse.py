@@ -4,6 +4,8 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
@@ -75,12 +77,12 @@ class Klasse(object):
         flavor = "schoolwizards/classes"
         param = [
             {
-                "object": {"name": self.name, "school": self.school, "description": self.description,},
+                "object": {"name": self.name, "school": self.school, "description": self.description},
                 "options": None,
             }
         ]
-        print "Creating class %s in school %s" % (self.name, self.school)
-        print "param = %s" % (param,)
+        print("Creating class %s in school %s" % (self.name, self.school))
+        print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/add", param, flavor).result
         if not reqResult[0]:
             raise CreateFail("Unable to create class (%r)" % (param,))
@@ -166,8 +168,8 @@ class Klasse(object):
                 "options": None,
             }
         ]
-        print "Editing class %s in school %s" % (self.name, self.school)
-        print "param = %s" % (param,)
+        print("Editing class %s in school %s" % (self.name, self.school))
+        print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/put", param, flavor).result
         if not reqResult[0]:
             raise EditFail("Unable to edit class (%s) with the parameters (%r)" % (self.name, param))

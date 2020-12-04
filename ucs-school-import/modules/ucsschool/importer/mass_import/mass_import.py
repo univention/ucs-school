@@ -46,11 +46,12 @@ from ..utils.result_pyhook import ResultPyHook
 from ..utils.utils import nullcontext
 
 try:
-    from typing import Any, Optional, Type, TypeVar
+    from typing import TYPE_CHECKING, Optional, TypeVar
 
-    from ..utils.import_pyhook import ImportPyHook
+    if TYPE_CHECKING:
+        from ..utils.import_pyhook import ImportPyHook
 
-    ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
+        ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
 except ImportError:
     pass
 

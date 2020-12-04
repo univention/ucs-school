@@ -156,7 +156,7 @@ class ExamCleanupHelper(object):
             )
 
     def remove_exam_user(self):
-        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup",):
+        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup"):
             ud.debug(ud.MAIN, ud.INFO, "Skipping remove_exam_user: system/role does not match")
             return
         if self.options.skip_exam_user_removal:
@@ -211,7 +211,7 @@ class ExamCleanupHelper(object):
         return group
 
     def remove_exam_computers(self):
-        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup",):
+        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup"):
             ud.debug(ud.MAIN, ud.INFO, "Skipping remove_exam_computers: system/role does not match")
             return
         if self.options.skip_exam_computer_removal:
@@ -345,8 +345,10 @@ class ExamCleanupHelper(object):
 
 
 def main():
-    description = """This script stops currently running exams and purges all remaining settings for exams and computer rooms.
-WARNING: if a running exam cannot be shutdown cleanly, data in the home directory may be lost.
+    description = """This script stops currently running exams and purges all remaining settings for
+exams and computer rooms.
+WARNING: if a running exam cannot be shutdown cleanly, data in the home
+directory may be lost.
 This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.log."""
     parser = optparse.OptionParser(description=description)
     parser.add_option(

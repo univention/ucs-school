@@ -26,7 +26,7 @@ def main():
     hostname = socket.gethostname()
     server_ip = socket.gethostbyname(hostname)
     proc = subprocess.Popen(
-        ["tshark", "-i", "any", "src", "host", server_ip,], stdout=subprocess.PIPE, close_fds=True,
+        ["tshark", "-i", "any", "src", "host", server_ip], stdout=subprocess.PIPE, close_fds=True
     )
 
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:

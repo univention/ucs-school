@@ -7,14 +7,12 @@
 ## bugs: [49960]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
-import os
 from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
-import univention.testing.utils as utils
 from ucsschool.lib.models import Student
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam

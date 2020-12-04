@@ -38,12 +38,13 @@ from univention.admin import uldap
 from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 try:
-    from typing import Tuple
+    from typing import TYPE_CHECKING, Tuple
 
-    import univention.admin.handlers
-    from univention.admin.uldap import access as LoType, position as PoType
+    if TYPE_CHECKING:
+        import univention.admin.handlers
+        from univention.admin.uldap import access as LoType, position as PoType
 
-    UdmObjectType = univention.admin.handlers.simpleLdap
+        UdmObjectType = univention.admin.handlers.simpleLdap
 except ImportError:
     pass
 

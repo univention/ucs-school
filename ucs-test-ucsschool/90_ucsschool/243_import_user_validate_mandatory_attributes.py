@@ -73,8 +73,8 @@ def main():
                 else:
                     user = kls.from_dn(user.dn, user.school, lo)
                     utils.fail(
-                        "MissingMandatoryAttribute was not raised (but {!r} was not created).\nCreated user: {!r} "
-                        "attr: {!r}".format(additional_attr, user, user.to_dict())
+                        "MissingMandatoryAttribute was not raised (but {!r} was not created).\nCreated "
+                        "user: {!r} attr: {!r}".format(additional_attr, user, user.to_dict())
                     )
 
                 logger.info('*** "firstname" is empty -> EmptyMandatoryAttribute expected')
@@ -96,8 +96,8 @@ def main():
                 else:
                     user = kls.from_dn(user.dn, user.school, lo)
                     utils.fail(
-                        "EmptyMandatoryAttribute was not raised (but firstname was empty).\nCreated user: {!r} "
-                        "attr: {!r}".format(user, user.to_dict())
+                        "EmptyMandatoryAttribute was not raised (but firstname was empty).\nCreated "
+                        "user: {!r} attr: {!r}".format(user, user.to_dict())
                     )
 
                 config["mandatory_attributes"].append(additional_attr)
@@ -124,8 +124,8 @@ def main():
                     else:
                         user = kls.from_dn(user.dn, user.school, lo)
                         utils.fail(
-                            "EmptyMandatoryAttribute was not raised (but firstname was empty).\nCreated user: {!r} "
-                            "attr: {!r}".format(user, user.to_dict())
+                            "EmptyMandatoryAttribute was not raised (but firstname was empty).\n"
+                            "Created user: {!r} attr: {!r}".format(user, user.to_dict())
                         )
             logger.info("Test was successful.\n\n\n")
 

@@ -27,7 +27,7 @@ Cross compiling iTALC for Windows on Linux
   * mingw32-x-pthreads
   * qt5base-mingw-w32
   * qt5tools-mingw-w32
-  * gcj-jdk 
+  * gcj-jdk
   * make
 
   e.g. "sudo apt-get install cmake nsis tofrodos mingw32-x-gcc mingw32-x-qt mingw32-x-zlib mingw32-x-openssl mingw32-x-libjpeg  mingw32-x-pthreads gcj-jdk make qt5base-mingw-w32 qt5tools-mingw-w32"

@@ -33,7 +33,7 @@ The contents of the file should look similar to this::
 
 
 A CSV file created by ``ucs-school-user-import`` with the ``--httpapi`` argument is designed to work with the configuration file ``ucs-school-testuser-http-import.json``.
- 
+
 As such, the CSV file can be imported on the command line with::
 
     $ /usr/share/ucs-school-import/scripts/ucs-school-user-import \
@@ -66,6 +66,6 @@ When running the import, make sure to specify the ``source_uid`` correctly. The 
         --infile delete-all-users.csv \
         --source_uid "$OU-$ROLE" \
         --verbose
- 
- 
+
+
 Now that you have a CSV file and a matching configuration file (in ``/var/lib/ucs-school-import/configs/user_import.json`` or/and ``/var/lib/ucs-school-import/configs/$OU.json``) that can be used with it, you can start an import using the HTTP-API.

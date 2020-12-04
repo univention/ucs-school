@@ -34,6 +34,11 @@ import univention.testing.strings as uts
 import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
+try:
+    from typing import List, Union
+except ImportError:
+    pass
+
 ATTR2TYPE = {
     "krb5KeyVersionNumber": "str_int",
     "sambaPwdLastSet": "str_int",
@@ -83,22 +88,19 @@ class ACLTester(object):
             result = self.lo.get(dn)
             if result and permission == "none":
                 self.errors.append(
-                    "Expected that {!r} has NO permission to read object  {!r} but is able to read".format(
-                        self.actor_dn, dn
-                    )
+                    "Expected that {!r} has NO permission to read object  {!r} but is able to "
+                    "read".format(self.actor_dn, dn)
                 )
             if not result and permission == "read":
                 self.errors.append(
-                    "Expected that {!r} has permission to read object {!r} but object has not been found".format(
-                        self.actor_dn, dn
-                    )
+                    "Expected that {!r} has permission to read object {!r} but object has not been "
+                    "found".format(self.actor_dn, dn)
                 )
         except univention.admin.uexceptions.noObject:
             if permission == "read":
                 self.errors.append(
-                    "Expected that {!r} has permission to read object {!r} but object has not been found".format(
-                        self.actor_dn, dn
-                    )
+                    "Expected that {!r} has permission to read object {!r} but object has not been "
+                    "found".format(self.actor_dn, dn)
                 )
 
     def test_attribute(self, dn, attribute, permission):
@@ -123,42 +125,39 @@ class ACLTester(object):
                 self.lo.modify(dn, [[attribute, result.get(attribute), value]])
                 self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
                 self.errors.append(
-                    "Expected that {!r} has NO permission to read attribute {!r} from {!r} but is also able to write".format(
-                        self.actor_dn, attribute, dn
-                    )
+                    "Expected that {!r} has NO permission to read attribute {!r} from {!r} but is also "
+                    "able to write".format(self.actor_dn, attribute, dn)
                 )
             except univention.admin.uexceptions.noObject:
                 logger.info(
-                    "Expected that {!r} has NO permission to read attribute {!r} from {!r}: object is not readable at all".format(
-                        self.actor_dn, attribute, dn
-                    )
+                    "Expected that {!r} has NO permission to read attribute {!r} from {!r}: object is "
+                    "not readable at all".format(self.actor_dn, attribute, dn)
                 )
             except univention.admin.uexceptions.permissionDenied:
                 if result.get(attribute) is not None:
                     self.errors.append(
-                        "Expected that {!r} has NO permission to read attribute {!r} from {!r}: result={!r}".format(
-                            self.actor_dn, attribute, dn, result.get(attribute)
-                        )
+                        "Expected that {!r} has NO permission to read attribute {!r} from {!r}: "
+                        "result={!r}".format(self.actor_dn, attribute, dn, result.get(attribute))
                     )
 
         elif permission == "read":
             result = self.lo.get(dn)
             # Disabled on purpose: object attributes may be empty
             # 			if result.get(attribute) is None:
-            # 				self.errors.append('Expected that {!r} has permission to read attribute {!r} from {!r}: result={!r}'.format(self.actor_dn, attribute, dn, result.get(attribute)))
+            # 				self.errors.append('Expected that {!r} has permission to read attribute {!r}
+            # 				from {!r}: result={!r}'.format(self.actor_dn, attribute, dn,
+            # 				result.get(attribute)))
             try:
                 self.lo.modify(dn, [[attribute, result.get(attribute), value]])
                 self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
                 self.errors.append(
-                    "Expected that {!r} has only permission to read attribute {!r} from {!r} but is also able to write".format(
-                        self.actor_dn, attribute, dn
-                    )
+                    "Expected that {!r} has only permission to read attribute {!r} from {!r} but is also"
+                    " able to write".format(self.actor_dn, attribute, dn)
                 )
             except univention.admin.uexceptions.noObject:
                 self.errors.append(
-                    "Expected that {!r} has permission to modify {!r} of {!r} but object is not readable/does not exist".format(
-                        self.actor_dn, attribute, dn
-                    )
+                    "Expected that {!r} has permission to modify {!r} of {!r} but object is not "
+                    "readable/does not exist".format(self.actor_dn, attribute, dn)
                 )
             except univention.admin.uexceptions.permissionDenied:
                 pass
@@ -170,20 +169,19 @@ class ACLTester(object):
                 self.lo.modify(dn, [[attribute, value, result.get(attribute)]])
             except univention.admin.uexceptions.noObject:
                 self.errors.append(
-                    "Expected that {!r} has permission to modify {!r} of {!r} but object is not readable/does not exist".format(
-                        self.actor_dn, attribute, dn
-                    )
+                    "Expected that {!r} has permission to modify {!r} of {!r} but object is not "
+                    "readable/does not exist".format(self.actor_dn, attribute, dn)
                 )
             except univention.admin.uexceptions.permissionDenied:
                 self.errors.append(
-                    "Expected that {!r} has permission to modify {!r} of {!r} but can only read: result={!r}".format(
-                        self.actor_dn, attribute, dn, result.get(attribute)
-                    )
+                    "Expected that {!r} has permission to modify {!r} of {!r} but can only read: "
+                    "result={!r}".format(self.actor_dn, attribute, dn, result.get(attribute))
                 )
 
     def raise_on_error(self):
         """
-        Raises an exception with detailed information, if there was at least one error during previous checks.
+        Raises an exception with detailed information, if there was at least one error during previous
+        checks.
         """
         if not self.errors:
             return
@@ -192,7 +190,7 @@ class ACLTester(object):
             all_msgs.append("ERROR {}) {}".format(i, msg))
         raise Exception(
             "There were {} ACL errors with {!r}:\n{}".format(
-                len(self.errors), self.actor_dn, "\n".join(all_msgs),
+                len(self.errors), self.actor_dn, "\n".join(all_msgs)
             )
         )
 

@@ -199,7 +199,10 @@ def main():
                 should_exist=True,
             )
 
-        msg = "new random OU, new random educational DC and then try to add a second new random administrative DC"
+        msg = (
+            "new random OU, new random educational DC and then try to add a second new random "
+            "administrative DC"
+        )
         logger.info("---------------------------[%s]---------------------------", msg)
         ou_name = uts.random_string()
         dc_name = uts.random_string()

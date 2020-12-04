@@ -61,6 +61,6 @@ univention-config-registry set \
 	proxy/filter/redirecttarget?"http://$hostname.$domainname/blocked-by-squid.html" \
 	proxy/filter/domain/whitelisted/1?"www.univention.de" \
 	"samba/global/options/winbind use default domain?yes" \
-	samba/winbind/trusted/domains/only=no 
+	samba/winbind/trusted/domains/only=no
 
 exit 0

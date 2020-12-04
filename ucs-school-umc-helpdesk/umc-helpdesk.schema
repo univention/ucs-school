@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2007-2021 Univention GmbH
 #
 # univention owns the namespace 10176.
@@ -12,7 +12,7 @@
 
 #
 # common attributes
-# 
+#
 attributetype ( 1.3.6.1.4.1.10176.1041.1001 NAME 'univentionUMCHelpdeskCategory'
 	DESC 'category name'
 	EQUALITY caseIgnoreMatch
@@ -21,6 +21,6 @@ attributetype ( 1.3.6.1.4.1.10176.1041.1001 NAME 'univentionUMCHelpdeskCategory'
 
 objectclass	( 1.3.6.1.4.1.10176.1041.10 NAME 'univentionUMCHelpdeskClass'
 	DESC 'UMC Helpdesk Definition'
-	SUP top STRUCTURAL	
+	SUP top STRUCTURAL
 	MUST ( cn )
 	MAY ( description $ univentionUMCHelpdeskCategory ) )

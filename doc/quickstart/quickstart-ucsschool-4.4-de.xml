@@ -70,7 +70,7 @@ feedback@univention.de
     Dieser Quickstart Guide beschreibt die Installation als Single-Server-Umgebung.
     Weiterführende Hinweise zu Multi-Server-Umgebungen finden sich in
     <xref linkend="quickstart:ucsschool-multi-server"/> sowie im &ucsUAS;-Handbuch
-    <biblioref linkend="ucsschool-multi-server"/>. 
+    <biblioref linkend="ucsschool-multi-server"/>.
   </para>
 
   <para>
@@ -94,7 +94,7 @@ feedback@univention.de
         <term>Software-Auswahl</term>
         <listitem><simpara>
           Hier können alle Auswahlkomponenten entfernt werden. Die spätere Installation der
-          &ucsUAS;-Erweiterung installiert alle notwendigen Abhängigkeiten automatisch mit. 
+          &ucsUAS;-Erweiterung installiert alle notwendigen Abhängigkeiten automatisch mit.
         </simpara></listitem>
       </varlistentry>
     </variablelist>
@@ -161,7 +161,7 @@ feedback@univention.de
       </simpara></listitem>
       <listitem><simpara>
         Zuletzt wird der Name der Schule und ein Schulkürzel festgelegt (z.B.
-        <emphasis><wordasword>Gesamtschule Nord</wordasword></emphasis> und <emphasis><wordasword>gsnord</wordasword></emphasis>). 
+        <emphasis><wordasword>Gesamtschule Nord</wordasword></emphasis> und <emphasis><wordasword>gsnord</wordasword></emphasis>).
       </simpara></listitem>
     </itemizedlist>
     Mit der Bestätigung der Einstellungen wird das System konfiguriert und benötigte Pakete automatisch
@@ -200,7 +200,7 @@ feedback@univention.de
       </simpara></listitem>
     </itemizedlist>
   </para>
-  
+
   <para>
     Bei der Konfiguration über den Assistenten wurde bereits ein Schulname konfiguriert.
   </para>
@@ -365,7 +365,7 @@ feedback@univention.de
   <para>
     Über <guimenu>Start -> Systemsteuerung -> System und Sicherheit -> System</guimenu> kann der
     Basiskonfigurationsdialog erreicht werden. Nun muss <guimenu>Einstellungen ändern</guimenu> gewählt und auf
-    <guimenu>Ändern</guimenu> geklickt werden. 
+    <guimenu>Ändern</guimenu> geklickt werden.
   </para>
 
   <figure id="join-win7">
@@ -452,7 +452,7 @@ feedback@univention.de
         <biblioref linkend="ucsschool-teacher"/>, die die Verwendung der webbasierten
         Administrationsschnittstellen dokumentiert.
       </simpara></listitem>
-	  
+
 	  <listitem><simpara>
 	    Im Univention Wiki (<ulink url="http://wiki.univention.de/"/>) finden sich u.a. verschiedene
 	    HOWTOs und Praxis-Tipps.

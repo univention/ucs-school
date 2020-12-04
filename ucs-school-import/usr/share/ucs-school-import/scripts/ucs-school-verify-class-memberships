@@ -147,7 +147,7 @@ Example for showing only errors:
         with open(ns.filename, "rb") as fd:
             lines = fd.readlines()
     except (IOError, OSError) as exc:
-        msg("Could not open file %r: %s" % (ns.filename, exc,))
+        msg("Could not open file %r: %s" % (ns.filename, exc))
         code = 2
     else:
         for problem in parse(lo, lines, columns):
@@ -174,7 +174,7 @@ def parse(lo, lines, columns):
 
 
 def parse_line(lo, line):
-    oubase = "ou=%s,%s" % (line["school"], ucr["ldap/base"],)
+    oubase = "ou=%s,%s" % (line["school"], ucr["ldap/base"])
     uid = line["name"]
     try:
         dn = lo.search(filter_format("uid=%s", (uid,)), oubase, unique=True)[0][0]

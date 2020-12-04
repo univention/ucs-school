@@ -118,7 +118,8 @@ class UserImportJobCreationValidator(object):
     def __call__(self, data):
         if not data.get("school"):
             raise ParseError(
-                'Either a school must be submitted or the request be run at "<school-URL>/imports/users".'
+                "Either a school must be submitted or the request be run at "
+                '"<school-URL>/imports/users".'
             )
         if not data.get("user_role"):
             raise ParseError(
@@ -127,8 +128,9 @@ class UserImportJobCreationValidator(object):
         if not self.is_user_school_role_combination_allowed(
             username=self.request.user.username, school=data["school"].name, role=data["user_role"]
         ):
-            msg = "User {!r} is not allowed to start an import job for school {!r} and role {!r}.".format(
-                self.request.user.username, data["school"].name, data["user_role"]
+            msg = (
+                "User {!r} is not allowed to start an import job for school {!r} and role "
+                "{!r}.".format(self.request.user.username, data["school"].name, data["user_role"])
             )
             self.logger.error(msg)
             raise PermissionDenied(msg)
@@ -138,8 +140,13 @@ class UserImportJobCreationValidator(object):
         lo, po = get_unprivileged_connection()
 
         # filter_format() will escape '*' as argument
-        filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole={role})(ucsschoolImportSchool={school})(memberUid=%s))".format(
-            role="*" if role == "*" else "%s", school="*" if school == "*" else "%s",
+        filter_s = (
+            "(&"
+            "(objectClass=ucsschoolImportGroup)"
+            "(ucsschoolImportRole={role})"
+            "(ucsschoolImportSchool={school})"
+            "(memberUid=%s)"
+            ")".format(role="*" if role == "*" else "%s", school="*" if school == "*" else "%s")
         )
         args = []
         if role != "*":

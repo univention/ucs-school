@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages:  [ucs-school-webproxy]
 
+from __future__ import print_function
+
 import re
 
 import univention.config_registry as uc
@@ -53,7 +55,7 @@ def prepare_UCR_setup(ucr):
 
 
 def test_ruleset(ucr, test_settings):
-    print "*** Testing with following test settings: %r" % test_settings
+    print("*** Testing with following test settings: %r" % test_settings)
 
     # assign different rules to each room
     changes = []
@@ -92,7 +94,7 @@ def test_ruleset(ucr, test_settings):
             if line not in content:
                 # print '---[expected strings]----------------------------------------------------------'
                 # print expected_strings
-                # print '---[/etc/squidguard/squidGuard.conf]------------------------------------------------'
+                # print '---[/etc/squidguard/squidGuard.conf]-------------------------------------------'
                 # print content
                 # print '-------------------------------------------------------------------------------'
                 utils.fail("Cannot find string %r in squidGuard.conf" % line)

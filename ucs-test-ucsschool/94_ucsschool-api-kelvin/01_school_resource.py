@@ -12,7 +12,6 @@ import logging
 from unittest import TestCase, main
 
 import requests
-from ldap.filter import filter_format
 from six import string_types
 
 import univention.testing.strings as uts
@@ -62,7 +61,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )
@@ -98,7 +97,7 @@ class Test(TestCase):
             self.assertEqual(
                 response.status_code,
                 200,
-                "response.status_code = {} for URL  -> {!r}".format(
+                "response.status_code = {} for URL {!r} -> {!r}".format(
                     response.status_code, response.url, response.text
                 ),
             )
@@ -130,9 +129,8 @@ class Test(TestCase):
                     self.assertEqual(
                         v,
                         v_new,
-                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} ({!r}).".format(
-                            k, ldap_val, v_new, v, school.dn
-                        ),
+                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} "
+                        "({!r}).".format(k, ldap_val, v_new, v, school.dn),
                     )
                 else:
                     self.assertEqual(
@@ -155,18 +153,21 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             405,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )
         # logger.info('*** response.json()=%r', response.json())
-        # self.assertEqual(response.status_code, 201, 'response.status_code = {} for URL  -> {!r}'.format(
+        # self.assertEqual(
+        #   response.status_code, 201, 'response.status_code = {} for URL  -> {!r}'.format(
         # 	response.status_code, response.url, response.text))
         #
-        # filter_s = filter_format('(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))', (attrs['name'],))
+        # filter_s = filter_format(
+        #       '(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))', (attrs['name'],))
         # res = self.lo.search(filter=filter_s)
         # if len(res) != 1:
-        # 	logger.error('School {!r} not found: search with filter={!r} did not return 1 result:\n{}'.format(
+        # 	logger.error(
+        #       'School {!r} not found: search with filter={!r} did not return 1 result:\n{}'.format(
         # 		attrs['name'], filter_s, res))
         # school_dn = res[0][0]
         # school_attrs = res[0][1]

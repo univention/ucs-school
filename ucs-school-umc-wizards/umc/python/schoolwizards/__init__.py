@@ -34,6 +34,8 @@
 import functools
 import re
 
+import six
+
 import univention.admin.modules as udm_modules
 from ucsschool.lib.models import (
     IPComputer,
@@ -105,7 +107,7 @@ def iter_objects_in_request(request, lo, require_dn=False):
     for obj_props in request.options:
         obj_props = obj_props["object"]
         for key, value in obj_props.iteritems():
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 obj_props[key] = value.strip()
         if issubclass(klass, User):
             klass = USER_TYPES.get(obj_props.get("type"), User)
@@ -210,9 +212,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"id": obj.dn, "label": obj.info.get("fqdn", obj.info["name"])})
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection()
     def _get_obj(self, request, ldap_user_read=None):
@@ -248,9 +248,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 MODULE.process("Creation failed %r" % (ret[-1],))
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
@@ -273,9 +271,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append(True)  # no changes? who cares?
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
@@ -323,7 +319,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     create_user = _create_obj
 
     @sanitize_object(
-        **{"remove_from_school": SchoolSanitizer(required=True), "$dn$": DNSanitizer(required=True),}
+        **{"remove_from_school": SchoolSanitizer(required=True), "$dn$": DNSanitizer(required=True)}
     )
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
@@ -347,7 +343,8 @@ class Instance(SchoolBaseModule, SchoolImport):
                 )
             school = obj_props["remove_from_school"]
             success = obj.remove_from_school(school, ldap_user_write)
-            # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was removed from it
+            # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was
+            # removed from it
             if success and obj.old_dn is not None:
                 success = obj.modify(ldap_user_write)
             if not success:
@@ -407,9 +404,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     delete_computer = _delete_obj
 
-    @sanitize(
-        school=StringSanitizer(required=True), filter=StringSanitizer(default=""),
-    )
+    @sanitize(school=StringSanitizer(required=True), filter=StringSanitizer(default=""))
     @response
     @LDAP_Connection()
     def get_classes(self, request, ldap_user_read=None):

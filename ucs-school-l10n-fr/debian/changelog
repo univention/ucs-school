@@ -54,7 +54,7 @@ ucs-school-l10n-fr (2.0.0-6) unstable; urgency=medium
 
 ucs-school-l10n-fr (2.0.0-5) unstable; urgency=medium
 
-  * Bug #43731: Add po header to ucs-school-ucr-l10n.po 
+  * Bug #43731: Add po header to ucs-school-ucr-l10n.po
 
  -- Alexander Kläser <klaeser@univention.de>  Wed, 29 Mar 2017 23:00:44 +0200
 

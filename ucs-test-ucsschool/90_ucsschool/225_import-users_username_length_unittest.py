@@ -75,7 +75,6 @@ class Test(CLI_Import_v2_Tester):
                     for firstname_length in range(3, 21):
                         firstname = uts.random_username(firstname_length)
                         assert len(firstname) == firstname_length
-                        # self.log.debug('***   firstname_length=%r firstname=%r', firstname_length, firstname)
                         for lastname_length in range(3, 21):
                             lastname = uts.random_username(lastname_length)
                             assert len(lastname) == lastname_length
@@ -85,10 +84,6 @@ class Test(CLI_Import_v2_Tester):
                             student.name = ""
                             student.config = config
                             student.make_username()
-                            # self.log.debug(
-                            # 	'***   lastname_length=%r lastname=%r student.name=%r len(student.name)=%r',
-                            # 	lastname_length, lastname, student.name, len(student.name)
-                            # )
                             self.usernames.append(student.name)
                             if len(student.name) > ucr_username_max_length - 5:
                                 self.fail(
@@ -100,17 +95,12 @@ class Test(CLI_Import_v2_Tester):
                             assert len(firstname) == firstname_length
                             lastname = uts.random_username(lastname_length)
                             assert len(lastname) == lastname_length
-                            # self.log.debug('***   firstname_length=%r firstname=%r', firstname_length, firstname)
                             teacher = ImportTeacher(
                                 name="name", school="school", firstname=firstname, lastname=lastname
                             )
                             teacher.name = ""
                             teacher.config = config
                             teacher.make_username()
-                            # self.log.debug(
-                            # 	'***   lastname_length=%r lastname=%r teacher.name=%r len(teacher.name)=%r',
-                            # 	lastname_length, lastname, teacher.name, len(teacher.name)
-                            # )
                             self.usernames.append(teacher.name)
                             if len(teacher.name) > ucr_username_max_length:
                                 self.fail(

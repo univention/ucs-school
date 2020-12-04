@@ -169,8 +169,8 @@
 			<graphic scalefit="1" width="67%" align="center" fileref="illustrations44/reset_student_password.png"/>
 		</figure>
 		<para>
-			Durch Auswahl eines oder mehrerer Nutzer und Anklicken von 
-			<emphasis>PASSWORT ZURÜCKSETZEN</emphasis>, kann ein neues Passwort für die 
+			Durch Auswahl eines oder mehrerer Nutzer und Anklicken von
+			<emphasis>PASSWORT ZURÜCKSETZEN</emphasis>, kann ein neues Passwort für die
 			jeweiligen Nutzer festgelegt werden.
 		</para>
 		<figure id="reset_student_passwordpopup">

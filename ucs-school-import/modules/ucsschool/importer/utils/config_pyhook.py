@@ -35,9 +35,7 @@ Base class for configuration hooks.
 from .import_pyhook import ImportPyHook
 
 try:
-    from typing import Any, Dict, List, Optional
-
-    import univention.admin.uldap.access
+    from typing import Any, Dict, List
 
     from ..configuration import ReadOnlyDict
 except ImportError:

@@ -52,10 +52,11 @@ from univention.admin.uexceptions import ldapError, noObject
 from univention.admin.uldap import access as LoType, getAdminConnection, position as PoType
 
 try:
-    from typing import Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
+    from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
 
-    import univention.admin.handlers.simpleLdap
-    from ucsschool.lib.models.base import UCSSchoolModel
+    if TYPE_CHECKING:
+        import univention.admin.handlers.simpleLdap
+        from ucsschool.lib.models.base import UCSSchoolModel
 except ImportError:
     pass
 
@@ -300,7 +301,7 @@ def create(
     multiple=True,
 )
 def modify(model, dn, name, school, multi_value, single_value, rm_value):
-    # type: (str, str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None
+    # type: (str, str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None  # noqa: E501
     logger.debug(
         "modify: model=%r dn=%r name=%r school=%r multi_value=%r single_value=%r rm_value=%r",
         model,

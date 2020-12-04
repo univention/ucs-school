@@ -49,10 +49,11 @@ from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStor
 from .ldap_connection import get_admin_connection, get_unprivileged_connection
 
 try:
-    from typing import Callable, Dict, Optional
+    from typing import TYPE_CHECKING, Callable, Dict, Optional
 
-    import univention.admin.uldap.access
-    import univention.admin.uldap.position
+    if TYPE_CHECKING:
+        import univention.admin.uldap.access
+        import univention.admin.uldap.position
 except ImportError:
     pass
 
@@ -117,7 +118,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
     """
 
     def __init__(self, attribute_storage_name, lo=None, pos=None):
-        # type: (str, Optional[univention.admin.uldap.access], Optional[univention.admin.uldap.position]) -> None
+        # type: (str, Optional[univention.admin.uldap.access], Optional[univention.admin.uldap.position]) -> None  # noqa: E501
         if lo and pos:
             self.lo, _pos = lo, pos
         else:
@@ -223,7 +224,7 @@ class UsernameHandler(object):
     >>> BAD_CHARS = ''.join(sorted(set(map(chr, range(128))) - set(UsernameHandler(20).allowed_chars)))
     >>> UsernameHandler(20).format_username('Max.Mustermann')
     'Max.Mustermann'
-    >>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')   # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')   # doctest: +IGNORE_EXCEPTION_DETAIL  # noqa: E501
     Traceback (most recent call last):
     ...
     FormatError:
@@ -464,7 +465,8 @@ class UsernameHandler(object):
             num = self.storage_backend.retrieve(name_base)
             self.storage_backend.modify(name_base, num, num + 1)
             res = str(num)
-        except NoValueStored:  # not handling BadValueStored, because a data corruption should stop the import
+        # not handling BadValueStored, because a data corruption should stop the import
+        except NoValueStored:
             res = initial_value
             self.storage_backend.create(name_base, 2)
         return res

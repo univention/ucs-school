@@ -38,7 +38,7 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Any, List, Optional, Union
+    from typing import Any, List, Optional
 except ImportError:
     pass
 
@@ -181,7 +181,7 @@ def call_cmd_on_master(master_fqdn, *cmd):  # type: (str, *str) -> StdoutStderr
 
 def call_cmd_locally(*cmd):  # type: (*str) -> StdoutStderr
     log.info("Calling %r ...", cmd)
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = proc.communicate()
     if proc.returncode:
         raise CallCommandError(

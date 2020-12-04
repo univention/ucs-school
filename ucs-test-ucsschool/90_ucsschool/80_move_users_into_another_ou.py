@@ -5,6 +5,8 @@
 ## bugs: [40870, 41601, 41609, 41620, 41910]
 ## exposure: dangerous
 
+from __future__ import print_function
+
 import functools
 import os.path
 
@@ -21,10 +23,10 @@ logger = get_ucsschool_logger()
 
 def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_name, grp2_name):
     user = User.from_dn(user.dn, None, lo)
-    print ("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
+    print("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
     workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
     if user.dn in workgroup.users:
-        print ("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
+        print("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
         utils.fail("User %r was not removed from workgroup." % user)
     try:
         utils.verify_ldap_object(
@@ -32,13 +34,16 @@ def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_nam
         )
     except utils.LDAPObjectValueMissing:
         info = user.get_udm_object(lo).info
-        print "FAIL1: %r;\noldinfo=%r\ninfo=%r" % (user.dn, oldinfo, info)
-        print "FAIL2: %r; attrs=%r" % (user.dn, lo.get(user.dn))
+        print("FAIL1: %r;\noldinfo=%r\ninfo=%r" % (user.dn, oldinfo, info))
+        print("FAIL2: %r; attrs=%r" % (user.dn, lo.get(user.dn)))
         raise
 
-    assert set(groups) == set(user.get_udm_object(lo)["groups"]), (
-        "Moving the user %r failed... Expected groups %r != %r"
-        % (user, groups, user.get_udm_object(lo)["groups"])
+    assert set(groups) == set(
+        user.get_udm_object(lo)["groups"]
+    ), "Moving the user %r failed... Expected groups %r != %r" % (
+        user,
+        groups,
+        user.get_udm_object(lo)["groups"],
     )
     assert "{}-{}".format(b, grp1_name) not in [
         sc.name for sc in SchoolClass.get_all(lo, b)
@@ -100,20 +105,20 @@ def main():
         ]
         lo = env.open_ldap_connection()
         workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
-        users_dns = [dn for (user, dn,), roleshare_path, groups in users]
+        users_dns = [dn for (user, dn), roleshare_path, groups in users]
         udm.modify_object("groups/group", dn=global_group_dn, append={"users": users_dns})
         workgroup.users.extend(users_dns)
         workgroup.modify(lo)
         workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
-        print ("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
+        print("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
 
-        for (user, dn,), roleshare_path, groups in users:
+        for (user, dn), roleshare_path, groups in users:
             user = User.from_dn(dn, None, lo)
-            print ("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
+            print("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
 
-            print "################################"
-            print "#### moving user at", dn, "to", b
-            print "################################"
+            print("################################")
+            print("#### moving user at", dn, "to", b)
+            print("################################")
 
             attrs = {
                 "homeDirectory": [os.path.join("/home", b, roleshare_path, user.name)],
