@@ -37,7 +37,8 @@
 # - is ucsschoolRole set to "school:school:$OU"?
 # - is a displayName set?
 # - is a HomeShareFileServer and a ClassShareFileServer set?
-# - is a HomeShareFileServer and a ClassShareFileServer (not) set to the DC master in multi/single server environment?
+# - is a HomeShareFileServer and a ClassShareFileServer (not) set to the DC master in multi/single
+#   server environment?
 from __future__ import absolute_import
 
 from ldap import NO_SUCH_OBJECT
@@ -47,13 +48,18 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, List
+except ImportError:
+    pass
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school OU Consistency")
 description = "\n".join(
     [
         _(
-            "UCS@school stores information about schools within the LDAP objects. One of these objects is the school OU object."
+            "UCS@school stores information about schools within the LDAP objects. One of these objects "
+            "is the school OU object."
         ),
         _("Inconsistencies in these OU object can trigger erratic behaviour of the UCS@school import."),
     ]

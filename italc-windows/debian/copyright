@@ -3,11 +3,11 @@ Fri, 10 Feb 2012 12:54:36 +0100.
 
 It was downloaded from http://italc.sourceforge.net/download.php
 
-Copyright Holders: 
+Copyright Holders:
 
 Main Developer:	   Tobias Doerffel <tobydox@users.sf.net>
-		   
-		   
+
+
 License:
 
 This program is free software; you can redistribute it and/or
@@ -43,7 +43,7 @@ Other developers and licenses:
 ./ica/JavaViewer/FTPFrame.java: GPL (v2 or later)
   [Copyright: 2004 Kenn Min Chong, John Witchel. All Rights Reserved / 2002-2005 Ultr@VNC Team. All Rights Reserved]
 
-./ica/JavaViewer/DesCipher.java: BSD (2 clause) 
+./ica/JavaViewer/DesCipher.java: BSD (2 clause)
   [Copyright: 1996 by Jef Poskanzer <jef@acme.com>. All rights reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 1996 Widget Workshop, Inc. All Rights Reserved]
 
 ./ica/JavaViewer/DH.java: please check file
@@ -564,10 +564,10 @@ Other developers and licenses:
 ./ica/x11/libvncserver/main.c: GPL (latest version)
   [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Johannes E. Schindelin <Johannes.Schindelin@gmx.de> / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
 
-./ica/x11/common/lzodefs.h: GPL (v2 or later) 
+./ica/x11/common/lzodefs.h: GPL (v2 or later)
   [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
 
-./ica/x11/common/zywrletemplate.c: BSD (3 clause) 
+./ica/x11/common/zywrletemplate.c: BSD (3 clause)
   [Copyright: HOLDERS AND CONTRIBUTORS / 2006 *]
 
 ./ica/x11/common/vncauth.c: GPL (v2 or later)
@@ -579,13 +579,13 @@ Other developers and licenses:
 ./ica/x11/common/d3des.c: public domain
   [Copyright: 1988,1989,1990,1991,1992 by Richard Outerbridge / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
 
-./ica/x11/common/minilzo.c: GPL (v2 or later) 
+./ica/x11/common/minilzo.c: GPL (v2 or later)
   [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
 
-./ica/x11/common/lzoconf.h: GPL (v2 or later) 
+./ica/x11/common/lzoconf.h: GPL (v2 or later)
   [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
 
-./ica/x11/common/minilzo.h: GPL (v2 or later) 
+./ica/x11/common/minilzo.h: GPL (v2 or later)
   [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
 
 ./ica/x11/libvncclient/corre.c: GPL (v2 or later)
@@ -710,7 +710,7 @@ Other developers and licenses:
 ./ica/win32/winvnc/vnchooks/SharedData.h: GPL (v2 or later)
   [Copyright: 2001 Const Kaplinsky. All Rights Reserved]
 
-./ica/win32/winvnc/rfb/zywrletemplate.c: BSD (3 clause) 
+./ica/win32/winvnc/rfb/zywrletemplate.c: BSD (3 clause)
   [Copyright: HOLDERS AND CONTRIBUTORS / 2006 *]
 
 ./ica/win32/winvnc/rfb/zrleEncode.h: GPL (v2 or later)
@@ -1256,7 +1256,7 @@ Other developers and licenses:
 ./ima/src/RemoteControlWidget.cpp: GPL (v2 or later)
   [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
-./ima/src/SideBar.cpp: GPL (v2 or later) 
+./ima/src/SideBar.cpp: GPL (v2 or later)
   [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
 
 ./ima/src/Dialogs.cpp: GPL (v2 or later)
@@ -1313,7 +1313,7 @@ Other developers and licenses:
 ./ima/src/MainWindow.cpp: GPL (v2 or later)
   [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
 
-./ima/src/SideBar.h: GPL (v2 or later) 
+./ima/src/SideBar.h: GPL (v2 or later)
   [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
 
 ./ima/src/ToolButton.cpp: GPL (v2 or later)
@@ -1536,7 +1536,7 @@ Other developers and licenses:
 ./lib/include/rfb/dh.h: public domain
   [Author: 2004, Lee Griffiths]
 
-./lib/include/rfb/keysym.h: MIT/X11 (BSD like) 
+./lib/include/rfb/keysym.h: MIT/X11 (BSD like)
   [Copyright: 1987 by Digital Equipment Corporation, Maynard, Massachusetts / 1987 X Consortium]
 
 ./lib/include/rfb/rfbint.h: no copyright header or license unknown / please check file

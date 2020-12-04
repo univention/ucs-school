@@ -45,8 +45,8 @@ else:
     mock_import_func = "__builtin__.__import__"
 
 try:
-    import typing
-    from types import ModuleType
+    import typing  # noqa: F401
+    from types import ModuleType  # noqa: F401
 except ImportError:
     pass
 

@@ -148,7 +148,8 @@ class Test(CLI_Import_v2_Tester):
             person.verify()
 
         self.log.info(
-            "*** 4.1 Importing (move %r -> %r) of existing users of each role with birthday in bad format.",
+            "*** 4.1 Importing (move %r -> %r) of existing users of each role with birthday in bad "
+            "format.",
             self.ou_A.name,
             self.ou_B.name,
         )
@@ -175,11 +176,13 @@ class Test(CLI_Import_v2_Tester):
             person.update(
                 birthday=person.old_birthday, school_classes={}
             )  # As the import aborts, school classes may
-            # not have been created in the new school, but old ones may have been removed already. So lets ignore them.
+            # not have been created in the new school, but old ones may have been removed already.
+            # So lets ignore them.
             person.verify()
 
         self.log.info(
-            "*** 4.2 Importing (move %r/%r -> %r) of existing users of each role with birthday in bad format.",
+            "*** 4.2 Importing (move %r/%r -> %r) of existing users of each role with birthday in bad "
+            "format.",
             self.ou_A.name,
             self.ou_B.name,
             self.ou_C.name,

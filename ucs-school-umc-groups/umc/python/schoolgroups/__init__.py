@@ -94,9 +94,7 @@ class Instance(SchoolBaseModule):
         )
         self.finished(request.id, result)
 
-    @sanitize(
-        school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""),
-    )
+    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
     @LDAP_Connection()
     def users(self, request, ldap_user_read=None, ldap_position=None):
         # parse group parameter
@@ -183,7 +181,7 @@ class Instance(SchoolBaseModule):
             return
         result["members"] = self._filter_members(request, group, result.pop("users", []), ldap_user_read)
 
-        self.finished(request.id, [result,])
+        self.finished(request.id, [result])
 
     @staticmethod
     def _filter_members(request, group, users, ldap_user_read=None):
@@ -265,7 +263,8 @@ class Instance(SchoolBaseModule):
         for userdn in group_from_ldap.users:
             try:
                 user = User.from_dn(userdn, None, ldap_machine_write)
-            except udm_exceptions.noObject:  # no permissions/is not a user/does not exists → keep the old value
+            except udm_exceptions.noObject:
+                # no permissions/is not a user/does not exists → keep the old value
                 users.append(userdn)
                 continue
             if not user.schools or not set(user.schools) & set([group_from_ldap.school]):

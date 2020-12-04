@@ -12,7 +12,7 @@ import random
 
 import pytest
 
-from ucsschool.importer.utils.shell import *  # initialize import framework
+from ucsschool.importer.utils.shell import ImportUser  # also initializes import framework
 
 
 def random_date():

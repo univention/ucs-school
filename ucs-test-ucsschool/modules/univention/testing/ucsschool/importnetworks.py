@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import random
 import string
@@ -112,7 +114,7 @@ class Network:
         return attr
 
     def verify(self):
-        print "verify network: %s" % self.network
+        print("verify network: %s" % self.network)
 
         utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
         utils.verify_ldap_object(self.dns_forward_zone, should_exist=True)
@@ -201,9 +203,9 @@ class ImportFile:
                 self._run_import_via_python_api()
             pre_result = hooks.get_pre_result()
             post_result = hooks.get_post_result()
-            print "PRE  HOOK result: %s" % pre_result
-            print "POST HOOK result: %s" % post_result
-            print "SCHOOL DATA     : %s" % data
+            print("PRE  HOOK result: %s" % pre_result)
+            print("POST HOOK result: %s" % post_result)
+            print("SCHOOL DATA     : %s" % data)
             if pre_result != post_result != data:
                 raise NetworkHookResult()
         finally:
@@ -216,7 +218,7 @@ class ImportFile:
         else:
             cmd_block = ["/usr/share/ucs-school-import/scripts/import_networks", self.import_file]
 
-        print "cmd_block: %r" % cmd_block
+        print("cmd_block: %r" % cmd_block)
         retcode = subprocess.call(cmd_block, shell=False)
         if retcode:
             raise ImportNetwork(
@@ -287,7 +289,8 @@ set -x
 dn="$2"
 network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
 school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | \
+ldapsearch-wrapper | sed -ne 's|dn: ||p')"
 test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0
@@ -349,16 +352,16 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
 
-        print "********** Generate school data"
+        print("********** Generate school data")
         network_import = NetworkImport(ou_name, nr_networks=nr_networks)
-        print (network_import)
+        print(network_import)
         import_file = ImportFile(use_cli_api, use_python_api)
 
-        print "********** Create networks"
+        print("********** Create networks")
         import_file.run_import(str(network_import))
         network_import.verify()
 
-        print "********** Create routers"
+        print("********** Create routers")
         network_import.set_mode_to_router()
         import_file.set_mode_to_router()
         network_import.modify()

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import random
 import stat
@@ -76,14 +78,14 @@ def create_mail_domain(ucr, udm):
         except (AttributeError, IndexError):
             maildomain = ucr["domainname"]
 
-        print ("\n\n*** Creating mail domain {!r}...\n".format(maildomain))
+        print("\n\n*** Creating mail domain {!r}...\n".format(maildomain))
         try:
             udm.create_object(
                 "mail/domain", position="cn=domain,cn=mail,{}".format(ucr["ldap/base"]), name=maildomain
             )
         except univention.testing.udm.UCSTestUDM_CreateUDMObjectFailed as exc:
             if "Object exists" in str(exc):
-                print ("\n\n*** Mail domain {!r} exists.\n".format(maildomain))
+                print("\n\n*** Mail domain {!r} exists.\n".format(maildomain))
 
 
 def remove_ou(ou_name):
@@ -136,7 +138,7 @@ def create_ou_cli(
     elif not alter_dhcpd_base:
         cmd_block.append("--alter-dhcpd-base=%s" % "false")
 
-    print "cmd_block: %r" % cmd_block
+    print("cmd_block: %r" % cmd_block)
     retcode = subprocess.call(cmd_block, shell=False)
     if retcode:
         raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
@@ -178,7 +180,7 @@ def move_domaincontroller_to_ou_cli(dc_name, ou):
         "--dcname",
         dc_name,
     ]
-    print "cmd_block: %r" % cmd_block
+    print("cmd_block: %r" % cmd_block)
 
     retcode = subprocess.call(cmd_block, shell=False)
     if retcode:
@@ -200,13 +202,11 @@ univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1\n"""
             % {"ou_base": ou_base}
         )
         if singlemaster:
-            pre_hook_fd.write(
-                'egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou, "dc": dc}
-            )
+            pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou})
         elif dc:
             pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
         else:
-            pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
+            pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou})
 
         pre_hook_fd.write('touch "%s"' % successful_file)
         os.fchmod(
@@ -295,19 +295,19 @@ def create_and_verify_ou(
 
     assert use_cli_api != use_python_api
 
-    print "******************************************************"
-    print "**** create_and_verify_ou test run"
-    print "****	ou=%s" % ou
-    print "****	ou_displayname=%r" % ou_displayname
-    print "****	dc=%s" % dc
-    print "****	dc_administrative=%s" % dc_administrative
-    print "****	sharefileserver=%s" % sharefileserver
-    print "****	singlemaster=%s" % singlemaster
-    print "****	noneducational_create_objects=%s" % noneducational_create_objects
-    print "****	district_enable=%s" % district_enable
-    print "****	default_dcs=%s" % default_dcs
-    print "****	dhcp_dns_clearou=%s" % dhcp_dns_clearou
-    print "******************************************************"
+    print("******************************************************")
+    print("**** create_and_verify_ou test run")
+    print("****	ou=%s" % ou)
+    print("****	ou_displayname=%r" % ou_displayname)
+    print("****	dc=%s" % dc)
+    print("****	dc_administrative=%s" % dc_administrative)
+    print("****	sharefileserver=%s" % sharefileserver)
+    print("****	singlemaster=%s" % singlemaster)
+    print("****	noneducational_create_objects=%s" % noneducational_create_objects)
+    print("****	district_enable=%s" % district_enable)
+    print("****	default_dcs=%s" % default_dcs)
+    print("****	dhcp_dns_clearou=%s" % dhcp_dns_clearou)
+    print("******************************************************")
 
     ucr.load()
 
@@ -384,11 +384,9 @@ def create_and_verify_ou(
 
 
 def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
-    print "*** Verifying OU (%s) ... " % ou
+    print("*** Verifying OU (%s) ... " % ou)
     ucr.load()
 
-    dc_name = ucr.get("hostname")
-    old_dhcpd_ldap_base = ucr.get("dhcpd/ldap/base")
     lo = univention.uldap.getMachineConnection()
     base_dn = ucr.get("ldap/base")
 
@@ -545,10 +543,14 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
         )
     # This will fail because we don't cleanup these groups in cleanup_ou
     # else:
-    # 	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-    # 	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
-    # 	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
-    # 	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+    # 	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn,
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn,
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn),
+    # 	should_exist=False)
+    # 	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou,
+    # 	base_dn), should_exist=False)
 
     if not singlemaster:
         verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn, must_exist)
@@ -693,7 +695,7 @@ def check_dhcp(ou_base, dc_name, singlemaster, dhcp_dns_clearou, ucr, must_exist
         dhcp_dn = dhcpd_ldap_base
 
     # dhcp
-    print "LDAP base of dhcpd = %r" % dhcp_dn
+    print("LDAP base of dhcpd = %r" % dhcp_dn)
     dhcp_service_dn = "cn=%s,%s" % (get_school_ou_from_dn(dhcp_dn, ucr), dhcp_dn)
     dhcp_server_dn = "cn=%s,%s" % (dc_name, dhcp_service_dn)
     if must_exist:
@@ -728,7 +730,8 @@ def check_dhcp(ou_base, dc_name, singlemaster, dhcp_dns_clearou, ucr, must_exist
 
 
 def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
-    """ Arguments:
+    """
+    Arguments:
     dc_name: name of the domaincontroller (cn)
     dc_type: type of the domaincontroller ('educational' or 'administrative')
     """
@@ -811,11 +814,15 @@ def generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False):
                                     if singlemaster and dc == "generate":
                                         continue
                                     if not dc and dc_administrative:
-                                        continue  # cannot specify administrative dc without educational dc
+                                        # cannot specify administrative dc without educational dc
+                                        continue
                                     if not noneducational_create_object and dc_administrative:
-                                        continue  # cannot create administrative DC without administrative objects in LDAP
+                                        # cannot create administrative DC without administrative objects
+                                        # in LDAP
+                                        continue
                                     ou_name = uts.random_name()
-                                    # character set contains multiple whitespaces to increase chance to get several words
+                                    # character set contains multiple whitespaces to increase chance to
+                                    # get several words
                                     charset = (
                                         uts.STR_ALPHANUMDOTDASH
                                         + uts.STR_ALPHA.upper()
@@ -921,7 +928,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
     """
     Creates 3 OUs in a row
     """
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:  # noqa: E501
         create_mail_domain(ucr, udm)
         for singlemaster in [True, False]:
             for district_enable in [False, True]:
@@ -933,7 +940,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 
                     for i in xrange(1, 4):
                         ou_name = uts.random_name()
-                        print "\n*** Creating OU #%d (ou_name=%s) ***\n" % (i, ou_name)
+                        print("\n*** Creating OU #%d (ou_name=%s) ***\n" % (i, ou_name))
                         cleanup_ou_list.append(ou_name)
                         create_and_verify_ou(
                             ucr,
@@ -958,14 +965,14 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 
 
 def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:  # noqa: E501
         create_mail_domain(ucr, udm)
         cleanup_ou_list = []
         try:
             univention.config_registry.handler_unset(["dhcpd/ldap/base"])
             ucr.load()
             ou_name = uts.random_name()
-            print "\n*** Creating OU #1 (ou_name=%s) ***\n" % (ou_name)
+            print("\n*** Creating OU #1 (ou_name=%s) ***\n" % (ou_name))
             cleanup_ou_list.append(ou_name)
             try:
                 create_and_verify_ou(
@@ -986,11 +993,11 @@ def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
                     use_python_api=use_python_api,
                     alter_dhcpd_base_option=False,
                 )
-            except DhcpdLDAPBase as e:
-                print ("dhcpd/ldap/base unset as expected!")
+            except DhcpdLDAPBase:
+                print("dhcpd/ldap/base unset as expected!")
             for i in (True, None):
                 ou_name = uts.random_name()
-                print "\n*** Creating OU with alter-dhcpd-base: %s (ou_name=%s) ***\n" % (i, ou_name)
+                print("\n*** Creating OU with alter-dhcpd-base: %s (ou_name=%s) ***\n" % (i, ou_name))
                 cleanup_ou_list.append(ou_name)
                 create_and_verify_ou(
                     ucr,
@@ -1022,7 +1029,7 @@ def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
             univention.config_registry.handler_unset(["dhcpd/ldap/base"])
             ucr.load()
             ou_name = uts.random_name()
-            print "\n*** Creating OU with alter-dhcpd-base: None (ou_name=%s) ***\n" % (ou_name)
+            print("\n*** Creating OU with alter-dhcpd-base: None (ou_name=%s) ***\n" % (ou_name))
             cleanup_ou_list.append(ou_name)
             create_and_verify_ou(
                 ucr,

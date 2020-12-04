@@ -8,6 +8,8 @@
 ## - domaincontroller_master
 ## - domaincontroller_slave
 
+from __future__ import print_function
+
 import glob
 import re
 import xml.etree.ElementTree as ET
@@ -78,9 +80,9 @@ def print_domain_ips():
             cmd = ["dig", dig_source, domainname, "+search", "+short"]
             p1 = Popen(cmd, close_fds=True, stdout=PIPE, stderr=STDOUT)
             stdout, stderr = p1.communicate()
-            print "IPs for %s: %s" % (domainname, stdout.strip())
+            print("IPs for %s: %s" % (domainname, stdout.strip()))
         except OSError as ex:
-            print "\n%s failed: %s" % (cmd, ex.args[1])
+            print("\n%s failed: %s" % (cmd, ex.args[1]))
 
 
 def windows_create_gpo(gpo_name, gpo_comment, server=""):
@@ -88,13 +90,13 @@ def windows_create_gpo(gpo_name, gpo_comment, server=""):
     Creates a GPO with a given 'gpo_name' and 'gpo_comment' via
     winexe running the powershell script on the Windows host.
     """
-    print "\nCreating GPO for the test with a name:", gpo_name
+    print("\nCreating GPO for the test with a name:", gpo_name)
     try:
         ret_code, stdout, stderr = Win.create_gpo(gpo_name, gpo_comment, server)
         if ret_code != 0:
             utils.fail(
-                "The creation of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The creation of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while creating GPO remotely: %r" % exc)
@@ -105,26 +107,26 @@ def windows_link_gpo(gpo_name, container, server=""):
     Links a given 'gpo_name' to a container using powershell script
     on Windows Host via winexe.
     """
-    print "\nLinking GPO '%s' to a '%s'" % (gpo_name, container)
+    print("\nLinking GPO '%s' to a '%s'" % (gpo_name, container))
     try:
         ret_code, stdout, stderr = Win.link_gpo(gpo_name, 1, container, server)
         if ret_code != 0:
             utils.fail(
-                "The linking of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The linking of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
 
 
 def windows_force_gpo_update():
-    print "Forcing GPO update on Windows:"
+    print("Forcing GPO update on Windows:")
     try:
         ret_code, stdout, stderr = Win.force_gpo_update()
         if stdout:
-            print stdout
+            print(stdout)
         if stderr:
-            print stderr
+            print(stderr)
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while linking a GPO remotely: %r" % exc)
 
@@ -142,7 +144,7 @@ def windows_set_gpo_security_filter(
     if target_type not in ("Computer", "User", "Group"):
         utils.fail("Set-GPPermissions: unsupported target_type: %s" % target_type)
 
-    print (
+    print(
         "\nSet-GPPermissions on '%s' for '%s' '%s' to '%s'"
         % (gpo_name, target_name, target_type, permission_level)
     )
@@ -152,17 +154,15 @@ def windows_set_gpo_security_filter(
         )
         if ret_code != 0:
             utils.fail(
-                "Set-GPPermissions on the Windows host returned status '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "Set-GPPermissions on the Windows host returned status '%s' when 0 is expected. STDOUT: "
+                "%s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("Exception during Set-GPPermissions: %r" % exc)
 
 
 def windows_check_registry_key(reg_key, subkey, expected_value):
-    print (
-        "\nGet-ItemProperty for '%s' check subkey '%s' value '%s'" % (reg_key, subkey, expected_value)
-    )
+    print("\nGet-ItemProperty for '%s' check subkey '%s' value '%s'" % (reg_key, subkey, expected_value))
 
     if reg_key.startswith("HKCU\\"):
         item = "HKCU:" + reg_key[4:]
@@ -175,10 +175,10 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
         ret_code, stdout, stderr = Win.Get_ItemProperty(item)
         if ret_code != 0:
             utils.fail(
-                "Get-ItemProperty on the Windows host returned status '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "Get-ItemProperty on the Windows host returned status '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
-        print "stdout:", stdout
+        print("stdout:", stdout)
     except univention.winexe.WinExeFailed as exc:
         # print("Exception during Get-ItemProperty: %r\n" % exc)
         # print("Continue?\n")
@@ -199,16 +199,16 @@ def samba_check_gpo_exists(gpo_name):
     """
     Checks that GPO with 'gpo_name' exists via samba-tool.
     """
-    print "\nChecking that GPO '%s' exists." % gpo_name
+    print("\nChecking that GPO '%s' exists." % gpo_name)
     cmd = ("samba-tool", "gpo", "listall")
 
     stdout, stderr = run_samba_tool(cmd)
     if not stdout:
         utils.fail("The samba-tool did not produce any output when list of all GPOs is expected.")
     if gpo_name not in stdout:
-        print "Output of %s: %s" % (cmd, stdout.strip())
+        print("Output of %s: %s" % (cmd, stdout.strip()))
         gpo_dirs = glob.glob("/var/lib/samba/sysvol/*/Policies/*")
-        print "Files in sysvol: %s" % (gpo_dirs,)
+        print("Files in sysvol: %s" % (gpo_dirs,))
         utils.fail("The GPO '%s' was not found in the list of all GPOs." % gpo_name)
 
 
@@ -216,15 +216,15 @@ def windows_set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_t
     """
     Sets the 'value_name', 'value' and 'value_type' for 'gpo_name' Registry Key
     """
-    print "\nModifying the '%s' GPO '%s' registry key " % (gpo_name, reg_key)
+    print("\nModifying the '%s' GPO '%s' registry key " % (gpo_name, reg_key))
     try:
         ret_code, stdout, stderr = Win.Set_GPRegistryValue(
             gpo_name, reg_key, value_name, value, value_type, server
         )
         if ret_code != 0:
             utils.fail(
-                "The modification of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The modification of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while modifying GPO remotely: %r" % exc)
@@ -238,7 +238,7 @@ def samba_get_gpo_uid_by_name(gpo_name):
     if not stdout:
         utils.fail("The samba-tool did not produce any output when list of all GPOs is expected.")
     if stderr:
-        print "Samba-tool STDERR:", stderr
+        print("Samba-tool STDERR:", stderr)
 
     stdout = stdout.split("\n\n")  # separate GPOs
     for gpo in stdout:
@@ -251,18 +251,18 @@ def windows_check_gpo_report(gpo_name, identity_name, server=""):
     Gets the XML GPOreport for the 'gpo_name' from the remote Windows Host
     via winexe. Checks that 'identity_name' has 'gpo_name' applied.
     """
-    print "\nCollecting and checking the GPOreport for %s:" % gpo_name
+    print("\nCollecting and checking the GPOreport for %s:" % gpo_name)
     try:
         ret_code, stdout, stderr = Win.get_gpo_report(gpo_name, server)
         if ret_code != 0:
             utils.fail(
-                "The collection of the GPO report on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+                "The collection of the GPO report on the Windows host returned code '%s' when 0 is "
+                "expected. STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
         if not stdout:
             utils.fail("The GPOreport STDOUT from the remote Windows Host is empty.")
         if stderr:
-            print "\nGET-GPOreport STDERR:", stderr
+            print("\nGET-GPOreport STDERR:", stderr)
     except univention.winexe.WinExeFailed as exc:
         utils.fail("An Error occured while collecting GPO report remotely: %r" % exc)
 
@@ -280,24 +280,24 @@ def windows_check_gpo_report(gpo_name, identity_name, server=""):
         for name in trust_perm.iter("{%s}Name" % gpo_types):
             trustee = name.text.split("\\", 1)[-1]  # cut off netbios domain prefix
             if identity_name == trustee:
-                print "Found GPO test identity '%s'." % identity_name
+                print("Found GPO test identity '%s'." % identity_name)
 
                 # check GPO is applied to user/computer:
                 for access in trust_perm.iter("{%s/Security}GPOGroupedAccessEnum" % gpo_types):
                     if "Apply Group Policy" in access.text:
-                        print ("Confirmed '%s' GPO application to '%s'." % (gpo_name, identity_name))
+                        print("Confirmed '%s' GPO application to '%s'." % (gpo_name, identity_name))
                         return True
 
-    print "\nUnexpected GPOreport:\n"
-    print gporeport_unicode
+    print("\nUnexpected GPOreport:\n")
+    print(gporeport_unicode)
     utils.fail("\nCould not confirm that GPO '%s' is applied to '%s'" % (gpo_name, identity_name))
 
 
 def sysvol_sync():
     stdout, stderr = run_cmd(("/usr/share/univention-samba4/scripts/sysvol-sync.sh"))
-    print stdout
+    print(stdout)
     if stderr:
-        print "\nAn Error occured during sysvol sync:", stderr
+        print("\nAn Error occured during sysvol sync:", stderr)
 
 
 def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
@@ -305,7 +305,7 @@ def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
     Checks that GPO exists on the filesystem level in sysvol;
     Checks the Registry.pol contents has test values.
     """
-    print "\nChecking '%s' GPO registry key value in Samba" % gpo_name
+    print("\nChecking '%s' GPO registry key value in Samba" % gpo_name)
     gpo_uid = samba_get_gpo_uid_by_name(gpo_name)  # get GPO UID to determine path
 
     gpo_path = "/var/lib/samba/sysvol/%s/Policies/%s" % (domainname, gpo_uid)
@@ -351,12 +351,12 @@ def samba_check_gpo_application_listed(gpo_name, username):
     Checks if the 'gpo_name' GPO is listen in GPOs for
     'username' via samba-tool.
     """
-    print "\nChecking that GPO '%s' is applied to %s" % (gpo_name, username)
+    print("\nChecking that GPO '%s' is applied to %s" % (gpo_name, username))
     stdout, stderr = run_samba_tool(("samba-tool", "gpo", "list", username))
     if stdout:
-        print stdout
+        print(stdout)
     if stderr:
-        print stderr
+        print(stderr)
 
     if not stdout:
         utils.fail(
@@ -370,7 +370,7 @@ def dns_get_host_ip(host_name, all=False):
     """
     Lookup host_name;
     """
-    print "\nLooking for '%s' host ip address:" % host_name
+    print("\nLooking for '%s' host ip address:" % host_name)
 
     ips = []
     dig_sources = []
@@ -390,16 +390,16 @@ def dns_get_host_ip(host_name, all=False):
             if ips:
                 break
         except OSError as ex:
-            print "\n%s failed: %s" % (cmd, ex.args[1])
+            print("\n%s failed: %s" % (cmd, ex.args[1]))
 
     if not ips:
         utils.fail("Could not resolve '%s' via DNS." % host_name)
     else:
         if all:
-            print "Host IPs are: %s" % (ips,)
+            print("Host IPs are: %s" % (ips,))
             return ips
         else:
-            print "Host IP is: %s" % (ips[0],)
+            print("Host IP is: %s" % (ips[0],))
             return ips[0]
 
 
@@ -410,12 +410,13 @@ def udm_get_windows_computer():
     """
     stdout, stderr = run_cmd(("udm", "computers/windows", "list"))
     if stderr:
-        print "\nAn Error occured while looking for Windows Server hostname:", stderr
+        print("\nAn Error occured while looking for Windows Server hostname:", stderr)
 
     sed_stdout, stderr = run_cmd(("sed", "-n", "s/^DN: //p"), stdin=PIPE, std_in=stdout)
     if not sed_stdout:
-        print (
-            "SKIP: failed to find any Windows Host DN via UDM. Perhaps host not joined as a memberserver or does not exist in this setup."
+        print(
+            "SKIP: failed to find any Windows Host DN via UDM. Perhaps host not joined as a "
+            "memberserver or does not exist in this setup."
         )
         exit(TestCodes.REASON_INSTALL)
 
@@ -426,7 +427,7 @@ def windows_check_domain():
     """
     Runs powershell script via Winexe to check Windows Host domain is correct.
     """
-    print "Trying to check Windows host '%s' domain" % Win.client
+    print("Trying to check Windows host '%s' domain" % Win.client)
     try:
         Win.winexec("check-domain", domainname)
     except univention.winexe.WinExeFailed as exc:
@@ -438,16 +439,16 @@ def windows_remove_test_gpo(gpo_name, server=""):
     Removes the GPO with a given 'gpo_name' via
     winexe running the powershell script on the Windows host.
     """
-    print "\nRemoving GPOs created for the test:", gpo_name
+    print("\nRemoving GPOs created for the test:", gpo_name)
     try:
         ret_code, stdout, stderr = Win.remove_gpo(gpo_name, server)
         if ret_code != 0:
-            print (
-                "The removal of the GPO on the Windows host returned code '%s' when 0 is expected. STDOUT: %s STDERR: %s"
-                % (ret_code, stdout, stderr)
+            print(
+                "The removal of the GPO on the Windows host returned code '%s' when 0 is expected. "
+                "STDOUT: %s STDERR: %s" % (ret_code, stdout, stderr)
             )
     except (univention.winexe.WinExeFailed, NameError) as exc:
-        print ("An Error occured while removing GPO remotely: %r" % exc)
+        print("An Error occured while removing GPO remotely: %r" % exc)
 
 
 class GPO_Test(object):
@@ -464,13 +465,13 @@ class GPO_Test(object):
         self.test_machine_gpo_value = random_username(4)
 
     def __enter__(self):
-        print "\nGPOTest.__enter__"
+        print("\nGPOTest.__enter__")
         # case 1: checks with user GPO
         gpo_name = self.test_user_gpo
 
         ## START test case debugging:
         print_domain_ips()
-        print "get_available_s4connector_dc: %s" % (get_available_s4connector_dc(),)
+        print("get_available_s4connector_dc: %s" % (get_available_s4connector_dc(),))
         ## END test case debugging
 
         windows_create_gpo(
@@ -482,7 +483,7 @@ class GPO_Test(object):
 
         windows_set_gpo_registry_value(
             gpo_name,
-            "HKCU\Software\Policies\Microsoft\UCSTestKey",
+            r"HKCU\Software\Policies\Microsoft\UCSTestKey",
             "TestUserValueOne",
             self.test_user_gpo_value,
             "String",
@@ -492,7 +493,7 @@ class GPO_Test(object):
         sysvol_sync()
         sysvol_check_gpo_registry_value(
             gpo_name,
-            "HKCU\Software\Policies\Microsoft\UCSTestKey",
+            r"HKCU\Software\Policies\Microsoft\UCSTestKey",
             "TestUserValueOne",
             self.test_user_gpo_value,
         )
@@ -523,7 +524,7 @@ class GPO_Test(object):
 
         windows_set_gpo_registry_value(
             gpo_name,
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
             "String",
@@ -533,7 +534,7 @@ class GPO_Test(object):
         sysvol_sync()
         sysvol_check_gpo_registry_value(
             gpo_name,
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
         )
@@ -556,25 +557,26 @@ class GPO_Test(object):
         # windows_force_gpo_update()
         windows_check_gpo_report(gpo_name, self.security_filter_group)
 
-        print "\nGPOTest.__enter__ return"
+        print("\nGPOTest.__enter__ return")
         return self
 
     def __exit__(self, exc_type, exc_value, etraceback):
-        print "\nGPOTest.__exit__"
+        print("\nGPOTest.__exit__")
         windows_remove_test_gpo(self.test_user_gpo)
         windows_remove_test_gpo(self.test_machine_gpo)
 
     def check(self):
-        print "\nGPOTest.check"
+        print("\nGPOTest.check")
         windows_force_gpo_update()  # seems to be necessary even for machine GPO after reboot
 
         # case 1: checks with user GPO
         # TODO: Doesn't work as Admin, needs to be checked with the student-account!
-        # windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey", "TestUserValueOne", self.test_user_gpo_value)
+        # windows_check_registry_key("HKCU\Software\Policies\Microsoft\UCSTestKey",
+        # "TestUserValueOne", self.test_user_gpo_value)
 
         # case 2: checks with computer GPO
         windows_check_registry_key(
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
         )
@@ -656,7 +658,7 @@ if __name__ == "__main__":
     ldap_base = ucr.get("ldap/base")
 
     if not all((domain_admin_dn, domain_admin_password, domainname, hostname, ldap_base)):
-        print ("\nFailed to obtain settings for the test from UCR. Skipping the test.")
+        print("\nFailed to obtain settings for the test from UCR. Skipping the test.")
         exit(TestCodes.REASON_INSTALL)
 
     domain_admin = domain_admin_dn.split(",")[0][len("uid=") :]

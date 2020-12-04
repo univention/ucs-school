@@ -96,7 +96,14 @@ class RoleFilterBackend(BaseFilterBackend):
     Used to list only Roles the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool={})(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool={})"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (
         str("ucsschoolImportRole"),
         str("ucsschoolImportSchool"),
@@ -133,7 +140,14 @@ class SchoolFilterBackend(BaseFilterBackend):
     Used to list only Schools the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool=*)"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (str("ucsschoolImportSchool"),)  # unicode_literals + python-ldap = TypeError
 
     @classmethod
@@ -159,7 +173,14 @@ class UserImportJobFilterBackend(BaseFilterBackend):
     Used to list only ImportJobs the user has any permissions on.
     """
 
-    filter_s = "(&(objectClass=ucsschoolImportGroup)(ucsschoolImportRole=*)(ucsschoolImportSchool=*)(memberUid=%s))"
+    filter_s = (
+        "(&"
+        "(objectClass=ucsschoolImportGroup)"
+        "(ucsschoolImportRole=*)"
+        "(ucsschoolImportSchool=*)"
+        "(memberUid=%s)"
+        ")"
+    )
     filter_attrs = (
         str("ucsschoolImportRole"),
         str("ucsschoolImportSchool"),
@@ -282,6 +303,7 @@ class UserImportJobViewPermission(BasePermission):
 class UserImportJobViewSet(
     mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
+    # fmt: off
     """
 Manage Import jobs.
 
@@ -293,15 +315,16 @@ Manage Import jobs.
 * `school` must be an absolute URI from `/{version}/schools/`
 * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
     """
-
+    # fmt: on
     queryset = UserImportJob.objects.all()
     serializer_class = UserImportJobSerializer
     filter_backends = (
-        UserImportJobFilterBackend,  # used to filter the queryset for allowed school-user_role-combinations
+        UserImportJobFilterBackend,  # filter the queryset for allowed school-user_role-combinations
         DjangoFilterBackend,  # used to filter view by attribute
         OrderingFilter,  # used for ordering
     )
-    filter_class = UserImportJobFilter  # filter principal by 'username' (DjangoFilterBackend works automatically only on pk)
+    # filter principal by 'username' (DjangoFilterBackend works automatically only on pk):
+    filter_class = UserImportJobFilter
     permission_classes = (
         IsAuthenticated,  # user must be authenticated to use this view
         UserImportJobViewPermission,  # apply per view and per-object permission checks
@@ -431,40 +454,44 @@ class SubResourceMixin(object):
 
 
 class LogFileViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
+    # fmt: off
     """
 Log file of import job.
 
 * Only GET is allowed.
     """
-
+    # fmt: on
     serializer_class = LogFileSerializer
 
 
 class PasswordsViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
+    # fmt: off
     """
 New users password file of import job.
 
 * Only GET is allowed.
     """
-
+    # fmt: on
     serializer_class = PasswordFileSerializer
 
 
 class SummaryViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
+    # fmt: off
     """
 Summary file of import job.
 
 * Only GET is allowed.
     """
-
+    # fmt: on
     serializer_class = SummarySerializer
 
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
+    # fmt: off
     """
 Read-only list of Roles.
     """
-
+    # fmt: on
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     filter_backends = (RoleFilterBackend, DjangoFilterBackend, OrderingFilter)
@@ -490,13 +517,15 @@ Read-only list of Roles.
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
+    # fmt: off
     """
 Read-only list of Schools (OUs).
 
-* `roles` provides navigation to a list of roles the connected user has permissions on the respective school.
+* `roles` provides navigation to a list of roles the connected user has permissions on the respective
+    school.
 * `user_imports` provides navigation to start an import for the respective school.
     """
-
+    # fmt: on
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filter_backends = (SchoolFilterBackend, DjangoFilterBackend, OrderingFilter)

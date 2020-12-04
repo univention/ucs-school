@@ -10,6 +10,8 @@
 ##    - univention-samba4
 ##    - ucs-school-s4-branch-site
 
+from __future__ import print_function
+
 import os
 import subprocess
 import sys
@@ -32,10 +34,10 @@ sys.dont_write_bytecode = True
 try:
     from univention.testing.ucs_samba import wait_for_drs_replication
 except ImportError:
-    print "WARNING: Using dummy implementation for wait_for_drs_replication."
+    print("WARNING: Using dummy implementation for wait_for_drs_replication.")
 
     def wait_for_drs_replication(ldap_filter, attrs=None):
-        print "wait_for_drs_replication: sleeping 15 seconds"
+        print("wait_for_drs_replication: sleeping 15 seconds")
         time.sleep(15)
 
 
@@ -162,7 +164,8 @@ class Test:
 
                 negative_test_fqdn = ".".join((negative_test_hostname, ucr.get("domainname")))
 
-                # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+                # wait for postrun and S4 Connector, check by creating a dummy user and waiting for
+                # that object to appear
                 dummy_username = uts.random_username()
                 dummy_password = uts.random_string()
                 udm.create_user(username=dummy_username, password=dummy_password)
@@ -219,7 +222,8 @@ class Test:
             p1.wait()
 
         # Ok, now the UCSTestUDM() context got destroyed via UCSTestUDM().__exit__()
-        # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+        # wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object
+        # to appear
         with testing_udm.UCSTestUDM() as udm:
             dummy_username = uts.random_username()
             dummy_password = uts.random_string()
@@ -243,7 +247,8 @@ class Test:
                     % (postitive_test_fqdn, test_srv_record)
                 )
 
-        # verify that the "negative" DCs of the other Role (Education/Administration) are not in DNS/Samba4
+        # verify that the "negative" DCs of the other Role (Education/Administration) are not in
+        # DNS/Samba4
         for negative_test_fqdn in negative_test_fqdn_list:
             if stdout.find(negative_test_fqdn) != -1:
                 testing_utils.fail(

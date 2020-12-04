@@ -71,7 +71,7 @@ class Test(CLI_Import_v2_Tester):
             for _ in range(num):
                 person = Person(self.ou_A.name, role)
                 person.update(
-                    record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
+                    record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid
                 )
                 person_list1.append(person)
                 if role in roles2:
@@ -83,7 +83,7 @@ class Test(CLI_Import_v2_Tester):
             for _ in range(num):
                 person = Person(self.ou_A.name, role)
                 person.update(
-                    record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
+                    record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid
                 )
                 person_list2.append(person)
 

@@ -29,6 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import ldap
+
 from .attributes import EmptyAttributes
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _
@@ -45,7 +47,7 @@ class Policy(UCSSchoolHelperAbstractClass):
         if "univentionPolicyReference" not in oc.get("objectClass", []):
             try:
                 lo.modify(obj.dn, [("objectClass", "", "univentionPolicyReference")])
-            except:
+            except ldap.LDAPError:
                 self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
                 return
         # add the missing policy
@@ -55,7 +57,7 @@ class Policy(UCSSchoolHelperAbstractClass):
             modlist = [("univentionPolicyReference", "", self.dn)]
             try:
                 lo.modify(obj.dn, modlist)
-            except:
+            except ldap.LDAPError:
                 self.logger.warning("Policy %s cannot be referenced to %r", self, obj)
         else:
             self.logger.info("Already attached!")

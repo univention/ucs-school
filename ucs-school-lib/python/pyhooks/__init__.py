@@ -32,5 +32,5 @@ Python based hooks.
 # <http://www.gnu.org/licenses/>.
 
 
-from ucsschool.lib.pyhooks.pyhook import PyHook
-from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
+from ucsschool.lib.pyhooks.pyhook import PyHook  # noqa: F401
+from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader  # noqa: F401

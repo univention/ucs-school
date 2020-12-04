@@ -67,8 +67,8 @@ def main():
                         opt not in udm_obj.options and opt in cls_options_map[user.__class__.__name__]
                     ):
                         utils.fail(
-                            "UDM object of user {} has options {}, but should have {}.\n (Ignoring non-ucsschool* "
-                            "options.)".format(
+                            "UDM object of user {} has options {}, but should have {}.\n (Ignoring "
+                            "non-ucsschool* options.)".format(
                                 user, udm_obj.options, cls_options_map[user.__class__.__name__]
                             )
                         )
@@ -80,7 +80,7 @@ def main():
                         ucs_user = cls.from_dn(user.dn, ou, lo)
                         if users_cls != ucs_user.__class__:
                             utils.fail("{} should be of class {}.".format(ucs_user, users_cls))
-                    except WrongModel as exc:
+                    except WrongModel:
                         if users_cls == cls:
                             utils.fail("User of type {} should have been found.".format(cls))
 

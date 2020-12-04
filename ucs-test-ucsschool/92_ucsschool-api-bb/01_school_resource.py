@@ -17,12 +17,7 @@ from ldap.filter import filter_format
 import univention.testing.strings as uts
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.school import School as LibSchool
-from univention.testing.ucsschool.bb_api import (
-    API_ROOT_URL,
-    RESSOURCE_URLS,
-    HttpApiUserTestBase,
-    setup_logging,
-)
+from univention.testing.ucsschool.bb_api import RESSOURCE_URLS, HttpApiUserTestBase
 from univention.udm import UDM
 
 try:
@@ -66,7 +61,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )
@@ -93,7 +88,7 @@ class Test(TestCase):
             self.assertEqual(
                 response.status_code,
                 200,
-                "response.status_code = {} for URL  -> {!r}".format(
+                "response.status_code = {} for URL {!r} -> {!r}".format(
                     response.status_code, response.url, response.text
                 ),
             )
@@ -125,9 +120,8 @@ class Test(TestCase):
                     self.assertEqual(
                         v,
                         v_new,
-                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} ({!r}).".format(
-                            k, ldap_val, v_new, v, school.dn
-                        ),
+                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} "
+                        "({!r}).".format(k, ldap_val, v_new, v, school.dn),
                     )
                 else:
                     self.assertEqual(
@@ -151,7 +145,7 @@ class Test(TestCase):
         self.assertEqual(
             response.status_code,
             201,
-            "response.status_code = {} for URL  -> {!r}".format(
+            "response.status_code = {} for URL {!r} -> {!r}".format(
                 response.status_code, response.url, response.text
             ),
         )

@@ -5,10 +5,11 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
+from __future__ import print_function
+
 import random
 
 import univention.config_registry
-import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
@@ -35,7 +36,7 @@ def random_properties(udm_user, klass_name, n=5):
             expected_values.append(value)
     udm_properties.append("Class")
     expected_values.append(klass_name)
-    column_names = [value.upper() for value in udm_properties]
+    column_names = [_value.upper() for _value in udm_properties]
     return expected_values, udm_properties, column_names
 
 
@@ -65,7 +66,7 @@ def main():
             connection.authenticate(account.username, account.bindpw)
             expected_class_list = {
                 u"csv": u"{fieldnames_string}\r\n{expected_values}\r\n".format(
-                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values),
+                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values)
                 ),
                 u"filename": u"{}.csv".format(class_name),
             }

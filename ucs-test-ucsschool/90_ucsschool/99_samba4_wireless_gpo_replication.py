@@ -31,7 +31,16 @@ def main():
                 schoolenv.ucr.get("domainname"), gpo_name
             ),
             msGPOVersionNumber="2",
-            msNTSecurityDescriptor="O:DAG:DAD:P(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;DA)(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;EA)(A;CIIO;RPWPCCDCLCLORCWOWDSDDTSW;;;CO)(A;;RPWPCCDCLCLORCWOWDSDDTSW;;;DA)(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;SY)(A;CI;RPLCLORC;;;AU)(OA;CI;CR;edacfd8f-ffb3-11d1-b41d-00a0c968f939;;AU)(A;CI;RPLCLORC;;;ED)S:AI(OU;CIIOIDSA;WP;f30e3bbe-9ff0-11d1-b603-0000f80367c1;bf967aa5-0de6-11d0-a285-00aa003049e2;WD)(OU;CIIOIDSA;WP;f30e3bbf-9ff0-11d1-b603-0000f80367c1;bf967aa5-0de6-11d0-a285-00aa003049e2;WD)",
+            msNTSecurityDescriptor=(
+                "O:DAG:DAD:P(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;DA)(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;EA)"
+                "(A;CIIO;RPWPCCDCLCLORCWOWDSDDTSW;;;CO)(A;;RPWPCCDCLCLORCWOWDSDDTSW;;;DA)"
+                "(A;CI;RPWPCCDCLCLORCWOWDSDDTSW;;;SY)(A;CI;RPLCLORC;;;AU)"
+                "(OA;CI;CR;edacfd8f-ffb3-11d1-b41d-00a0c968f939;;AU)(A;CI;RPLCLORC;;;ED)"
+                "S:AI(OU;CIIOIDSA;WP;"
+                "f30e3bbe-9ff0-11d1-b603-0000f80367c1;bf967aa5-0de6-11d0-a285-00aa003049e2;WD)"
+                "(OU;CIIOIDSA;WP;"
+                "f30e3bbf-9ff0-11d1-b603-0000f80367c1;bf967aa5-0de6-11d0-a285-00aa003049e2;WD)"
+            ),
             wait_for_replication=True,
         )
         wait_for_s4connector()

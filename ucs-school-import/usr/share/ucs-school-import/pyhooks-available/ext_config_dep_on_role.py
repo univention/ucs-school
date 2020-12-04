@@ -55,12 +55,17 @@ import json
 import pprint
 import sys
 
+import six
+
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.utils.config_pyhook import ConfigPyHook
 from ucsschool.lib.roles import supported_roles
 
 try:
-    from typing import Any, Dict, List
+    from typing import TYPE_CHECKING, Any, Dict, List
+
+    if TYPE_CHECKING:
+        import ucsschool.importer.configuration.ReadOnlyDict
 except ImportError:
     pass
 
@@ -75,7 +80,7 @@ class ExtendConfigByRole(ConfigPyHook):
     }
 
     def post_config_files_read(self, config, used_conffiles, used_kwargs):
-        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict
+        # type: (ucsschool.importer.configuration.ReadOnlyDict, List[str], Dict[str, Any]) -> ucsschool.importer.configuration.ReadOnlyDict  # noqa: E501
         """
         Hook that runs after reading the configuration files `used_conffiles`
         and applying the command line arguments `used_kwargs`. Resulting
@@ -100,7 +105,7 @@ class ExtendConfigByRole(ConfigPyHook):
                 include_config = json.load(fp)
         except (IOError, ValueError) as exc:
             self.logger.exception("Reading include file %r: %s", include_file, exc)
-            raise ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2]
+            six.reraise(ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2])
         self.logger.info("Updating configuration with:\n%s", pprint.pformat(include_config))
         config.update(include_config)
         return config

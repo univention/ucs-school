@@ -101,19 +101,19 @@ ucs-school-old-homedirs (7.0.2-1) unstable; urgency=low
   * timestamp name
   * check fs on source and destination
   * shutil.move()
-  * check fs with whitelist (Bug #20820)  
+  * check fs with whitelist (Bug #20820)
 
  -- Felix Botner <botner@univention.de>  Thu, 02 Feb 2012 14:49:43 +0100
 
 ucs-school-old-homedirs (7.0.1-1) unstable; urgency=low
 
-  * added modrdn in listener (Bug #20820) 
+  * added modrdn in listener (Bug #20820)
 
  -- Felix Botner <botner@univention.de>  Wed, 01 Feb 2012 15:35:57 +0100
 
 ucs-school-old-homedirs (7.0.0-1) unstable; urgency=low
 
-  * UCS 3.0 update (Bug #25694) 
+  * UCS 3.0 update (Bug #25694)
   * fixed insufficiently quoted commmands (Bug #20820)
 
  -- Felix Botner <botner@univention.de>  Wed, 25 Jan 2012 11:14:04 +0100

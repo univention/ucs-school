@@ -110,7 +110,7 @@ def _isUmcProcess(pid):
     cmdline = psutil.Process(pid).cmdline()
     # check if the process is the computerroom UMC module
     return "computerroom" in cmdline and any(
-        "univention-management-console-module" in l for l in cmdline
+        "univention-management-console-module" in line for line in cmdline
     )
 
 
@@ -353,7 +353,7 @@ class Instance(SchoolBaseModule):
                 except ImportError:
                     MODULE.error(traceback.format_exc())
                 for name, plugin in inspect.getmembers(module, inspect.isclass):
-                    MODULE.info("Loading plugin %r from module %r" % (plugin, module,))
+                    MODULE.info("Loading plugin %r from module %r" % (plugin, module))
                     if not name.startswith("_") and plugin is not Plugin and issubclass(plugin, Plugin):
                         try:
                             plugin = plugin(self, self._italc)
@@ -613,7 +613,7 @@ class Instance(SchoolBaseModule):
 
     @allow_get_request
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     @prevent_ucc
     def screenshot(self, request):
         """Returns a JPEG image containing a screenshot of the given computer."""
@@ -642,7 +642,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, response, mimetype="image/jpeg")
 
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     def vnc(self, request):
         """Returns a ultraVNC file for the given computer."""
 
@@ -892,7 +892,8 @@ class Instance(SchoolBaseModule):
 
         # Workaround for bug 30450:
         # if samba/printmode/hosts/none is not set but samba/printmode/hosts/all then all other hosts
-        # are unable to print on samba shares. Solution: set empty value for .../none if no host is on deny list.
+        # are unable to print on samba shares. Solution: set empty value for .../none if no host is on
+        # deny list.
         varname = "samba/printmode/hosts/none"
         if varname not in vset:
             ucr.load()
@@ -935,7 +936,7 @@ class Instance(SchoolBaseModule):
     def reload_cups(self):
         if os.path.exists("/etc/init.d/cups"):
             MODULE.info("Reloading cups")
-            if subprocess.call(["/etc/init.d/cups", "reload"]) != 0:
+            if subprocess.call(["/etc/init.d/cups", "reload"]) != 0:  # nosec
                 MODULE.error("Failed to reload cups! Printer settings not applied.")
 
     def reset_smb_connections(self):
@@ -948,7 +949,7 @@ class Instance(SchoolBaseModule):
                 MODULE.info("Kill SMB process %s" % process.pid)
                 os.kill(int(process.pid), signal.SIGTERM)
 
-    @sanitize(server=StringSanitizer(required=True),)
+    @sanitize(server=StringSanitizer(required=True))
     @check_room_access
     def demo_start(self, request):
         """Starts a presentation mode"""
@@ -981,7 +982,7 @@ class Instance(SchoolBaseModule):
         return True
 
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     @prevent_ucc
     @simple_response
     def user_logout(self, computer):
@@ -998,9 +999,7 @@ class Instance(SchoolBaseModule):
         return plugins
 
     @check_room_access
-    @sanitize(
-        plugin=StringSanitizer(required=True), computer=StringSanitizer(required=True),
-    )
+    @sanitize(plugin=StringSanitizer(required=True), computer=StringSanitizer(required=True))
     def plugins_execute(self, request):
         plugin = self._plugins.get(request.options["plugin"])
         if not plugin:

@@ -56,6 +56,6 @@ class TestCsvReader(CsvReader):
         header_lines = self.config["csv"]["header_lines"]
         super(TestCsvReader, self).__init__(filename, header_lines)
         self.logger.warn(
-            'The "TestCsvReader" class has been deprecated. Please use "CsvReader" and use "__role" instead of "__type"'
-            " in the mapping configuration."
+            'The "TestCsvReader" class has been deprecated. Please use "CsvReader" and use "__role" '
+            'instead of "__type" in the mapping configuration.'
         )

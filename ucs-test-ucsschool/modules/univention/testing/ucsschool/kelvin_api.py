@@ -237,7 +237,7 @@ class HttpApiUserTestBase(TestCase):
                 self.assertEqual(
                     response.status_code,
                     200,
-                    "response.status_code = {} for URL  -> {!r}".format(
+                    "response.status_code = {} for URL {!r} -> {!r}".format(
                         response.status_code, response.url, response.text
                     ),
                 )
@@ -245,9 +245,8 @@ class HttpApiUserTestBase(TestCase):
                 self.assertEqual(
                     obj.get("name"),
                     import_user.school,
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} ({!r}).".format(
-                        k, source, import_user.school, v, obj.get("name"), dn
-                    ),
+                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
+                    "({!r}).".format(k, source, import_user.school, v, obj.get("name"), dn),
                 )
             elif k == "schools":
                 objs = []
@@ -256,7 +255,7 @@ class HttpApiUserTestBase(TestCase):
                     self.assertEqual(
                         response.status_code,
                         200,
-                        "response.status_code = {} for URL  -> {!r}".format(
+                        "response.status_code = {} for URL {!r} -> {!r}".format(
                             response.status_code, response.url, response.text
                         ),
                     )
@@ -265,9 +264,8 @@ class HttpApiUserTestBase(TestCase):
                 self.assertEqual(
                     school_names,
                     set(import_user.schools),
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} ({!r}).".format(
-                        k, source, import_user.schools, v, school_names, dn
-                    ),
+                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
+                    "({!r}).".format(k, source, import_user.schools, v, school_names, dn),
                 )
             elif k == "disabled":
                 self.assertIn(v, (True, False), "Value of {!r} is {!r}.".format(k, v))
@@ -275,9 +273,8 @@ class HttpApiUserTestBase(TestCase):
                 self.assertEqual(
                     val,
                     import_user.disabled,
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} ({!r}).".format(
-                        k, source, import_user.disabled, v, val, dn
-                    ),
+                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
+                    "({!r}).".format(k, source, import_user.disabled, v, val, dn),
                 )
             elif k == "roles":
                 objs = []
@@ -286,7 +283,7 @@ class HttpApiUserTestBase(TestCase):
                     self.assertEqual(
                         response.status_code,
                         200,
-                        "response.status_code = {} for URL  -> {!r}".format(
+                        "response.status_code = {} for URL {!r} -> {!r}".format(
                             response.status_code, response.url, response.text
                         ),
                     )
@@ -297,9 +294,8 @@ class HttpApiUserTestBase(TestCase):
                 self.assertEqual(
                     role_names,
                     set(import_user.roles),
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} ({!r}).".format(
-                        k, source, import_user.roles, v, role_names, dn
-                    ),
+                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
+                    "({!r}).".format(k, source, import_user.roles, v, role_names, dn),
                 )
             elif k == "school_classes":
                 if source == "LDAP":
@@ -309,13 +305,14 @@ class HttpApiUserTestBase(TestCase):
                     )
                 else:
                     val = v
-                msg = "Value of attribute {!r} in {} is {!r} and in resource is v={!r} -> val={!r} ({!r}).".format(
-                    k, source, getattr(import_user, k), v, val, dn
+                msg = (
+                    "Value of attribute {!r} in {} is {!r} and in resource is "
+                    "v={!r} -> val={!r} ({!r}).".format(k, source, getattr(import_user, k), v, val, dn)
                 )
                 self.assertDictEqual(getattr(import_user, k), val, msg)
             elif k == "udm_properties":
-                # Could be the same test as for 'school_classes', but lists are not necessarily in order (for example
-                # phone, e-mail, etc), so converting them to sets:
+                # Could be the same test as for 'school_classes', but lists are not necessarily in
+                # order (for example phone, e-mail, etc), so converting them to sets:
                 self.assertSetEqual(set(import_user.udm_properties.keys()), set(v.keys()))
                 udm_properties = empty_str2none(import_user.udm_properties)
                 for udm_k, udm_v in iteritems(udm_properties):
@@ -348,7 +345,7 @@ class HttpApiUserTestBase(TestCase):
     def make_user_attrs(self, ous, partial=False, **kwargs):
         # type: (List[Text], Optional[bool], **Any) -> Dict[Text, Any]
         roles = kwargs.pop("roles", None) or random.choice(
-            (("staff",), ("staff", "teacher"), ("student",), ("teacher",),)
+            (("staff",), ("staff", "teacher"), ("student",), ("teacher",))
         )
         res = {
             "name": "test{}".format(uts.random_username()),
@@ -401,7 +398,13 @@ class HttpApiUserTestBase(TestCase):
 
     @classmethod
     def restart_api_server(cls):
-        cmd = ["univention-app", "shell", APP_ID, "/etc/init.d/ucsschool-kelvin-rest-api", "restart"]
+        cmd = [
+            "/usr/bin/univention-app",
+            "shell",
+            APP_ID,
+            "/etc/init.d/ucsschool-kelvin-rest-api",
+            "restart",
+        ]
         cls.logger.info("*** Restarting Kelvin API server: %r", cmd)
         subprocess.call(cmd)
         while True:
@@ -444,7 +447,7 @@ class HttpApiUserTestBase(TestCase):
 
 
 def api_call(method, url, auth=None, headers=None, json_data=None):
-    # type: (Text, Text, Optional[Any], Optional[Dict[Text, Any]], Optional[Dict[Text, Any]]) -> Dict[Text, Any]
+    # type: (Text, Text, Optional[Any], Optional[Dict[Text, Any]], Optional[Dict[Text, Any]]) -> Dict[Text, Any]  # noqa: E501
     HttpApiUserTestBase.logger.debug(
         "*** [%r] method=%r url=%r json_data=%r", os.getpid(), method, url, json_data
     )
@@ -502,7 +505,7 @@ def init_ucs_school_import_framework(**config_kwargs):
                 '{.., "configuration_checks": ["defaults", "mapped_udm_properties"], ..}'
             )
         _ui.setup_logging(config["verbose"], config["logfile"])
-        _setup_factory(config["factory"])  # noqa
+        _setup_factory(config["factory"])
     except UcsSchoolImportError as exc:
         logger.exception("Error initializing UCS@school import framework: %s", exc)
         etype, exc, etraceback = sys.exc_info()

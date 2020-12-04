@@ -19,7 +19,7 @@ class CreateNewContexts(UserPyHook):
         self.existing_contexts = set()
         self.default_context = None
 
-    async def _check_context(self, user):
+    async def _check_context(self, user):  # noqa: E999
         ctx_id = user.udm_properties.get("oxContext", "")
         if not ctx_id:
             self.logger.info("No OX context set for user %r.", user)

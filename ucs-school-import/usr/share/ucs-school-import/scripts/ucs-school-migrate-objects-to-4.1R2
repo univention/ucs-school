@@ -38,6 +38,7 @@ import pprint
 import sys
 
 import ldap
+import six
 
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin import uexceptions, uldap
@@ -84,7 +85,7 @@ def migrate_users(lo, options):
         ]
         for container, object_classes in mapping:
             yield "\nMigrating users underneath of %r" % (container,)
-            if isinstance(object_classes, basestring):
+            if isinstance(object_classes, six.string_types):
                 object_classes = [object_classes]
             try:
                 objects = lo.search(base=container, scope="one")
@@ -261,13 +262,13 @@ def main():
     try:
         if options.migrate_ous:
             for message in migrate_ous(lo, options):
-                print message
+                print(message)
         if options.migrate_users:
             for message in migrate_users(lo, options):
-                print message
+                print(message)
         if options.migrate_admin_groups:
             for message in migrate_admin_groups(lo, options):
-                print message
+                print(message)
     except MigrationFailed as exc:
         raise SystemExit(str(exc))
 

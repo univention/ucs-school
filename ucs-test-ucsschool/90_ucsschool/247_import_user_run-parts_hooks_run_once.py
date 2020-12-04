@@ -19,7 +19,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.admin.uexceptions import noObject
 from univention.testing.ucsschool.importusers import Person
-from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 HOOK_TEXT = """#!/bin/bash
 

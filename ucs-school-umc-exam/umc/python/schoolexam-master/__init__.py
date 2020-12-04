@@ -43,6 +43,7 @@ import traceback
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
+import ldap
 from ldap.filter import filter_format
 from six import iteritems
 
@@ -276,7 +277,7 @@ class Instance(SchoolBaseModule):
                     exam_user.name,
                     exam,
                 )
-            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user.dn,))
+            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user.dn))
             return
 
         # Check if it's blacklisted
@@ -286,7 +287,8 @@ class Instance(SchoolBaseModule):
             if exam_user_uid in prohibited_object["usernames"]:
                 raise UMC_Error(
                     _(
-                        "Requested exam username %(exam_user_uid)s is not allowed according to settings/prohibited_username object %(prohibited_object_name)s"
+                        "Requested exam username %(exam_user_uid)s is not allowed according to "
+                        "settings/prohibited_username object %(prohibited_object_name)s"
                     )
                     % {
                         "exam_user_uid": exam_user_uid,
@@ -305,7 +307,7 @@ class Instance(SchoolBaseModule):
             univention.admin.allocators.release(ldap_admin_write, ldap_position, "uid", exam_user_uid)
             logger.warning("The exam account does already exist for: %r", exam_user_uid)
             self.finished(
-                request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn,), success=True
+                request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn), success=True
             )
             return
 
@@ -329,7 +331,7 @@ class Instance(SchoolBaseModule):
                     userSid = univention.admin.allocators.requestUserSid(
                         ldap_admin_write, ldap_position, uidNum
                     )
-                except:
+                except (ldap.LDAPError, univention.admin.uexceptions.ldapError):
                     pass
             if not userSid or userSid == "None":
                 num = uidNum
@@ -350,7 +352,11 @@ class Instance(SchoolBaseModule):
 
             def getBlacklistSet(ucrvar):
                 """
-                >>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
+                >>> set([
+                        x.replace('||','|')
+                        for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol')
+                        if x
+                    ])
                 set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
                 """
                 return set(
@@ -474,7 +480,7 @@ class Instance(SchoolBaseModule):
                 raise
             logger.info("ExamStudent created sucessfully: %r", exam_student)
 
-        except BaseException as exc:  # noqa
+        except BaseException as exc:
             for i, j in alloc:
                 univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
             logger.exception("Creation of exam user account failed: %s", exc)
@@ -485,7 +491,7 @@ class Instance(SchoolBaseModule):
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "sid", userSid)
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "uidNumber", uidNum)
 
-        self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn,))
+        self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn))
 
     @sanitize(
         users=ListSanitizer(DNSanitizer(required=True), required=True),
@@ -574,7 +580,7 @@ class Instance(SchoolBaseModule):
             user_name = user_ldap_obj["uid"][0]
             users_primary_gid = user_ldap_obj["gidNumber"][0]
             for group_dn, group_attrs in ldap_user_read.search(
-                filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"],
+                filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"]
             ):
                 if group_attrs["gidNumber"][0] != users_primary_gid:
                     try:
@@ -613,7 +619,7 @@ class Instance(SchoolBaseModule):
         exam = request.options["exam"]
         logger.info("userdn=%r school=%r exam=%r", userdn, school, exam)
         # Might be put into the lib at some point:
-        # https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f
+        # https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f  # noqa: E501
         examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         user_uid = userdn.split(",")[0][len("uid={}".format(examUserPrefix)) :]
         user_module = univention.udm.UDM(ldap_admin_write, 1).get("users/user")
@@ -652,7 +658,8 @@ class Instance(SchoolBaseModule):
                     logger.info("Exam user was removed: %r", user)
                 else:
                     logger.warn(
-                        "remove_exam_user() User %r will not be removed as he currently participates in another exam.",
+                        "remove_exam_user() User %r will not be removed as he currently participates "
+                        "in another exam.",
                         user.dn,
                     )
                     try:
@@ -673,7 +680,8 @@ class Instance(SchoolBaseModule):
                     schools = list(set(user.schools) - set([school]))
                 if schools:
                     logger.warning(
-                        "remove_exam_user() User %r will not be removed as he currently participates in another exam.",
+                        "remove_exam_user() User %r will not be removed as he currently participates "
+                        "in another exam.",
                         user.dn,
                     )
                     user.schools = schools
@@ -687,14 +695,15 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, {}, success=True)
 
-    @sanitize(
-        roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""),
-    )
+    @sanitize(roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""))
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def set_computerroom_exammode(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None
     ):
-        """Add all member hosts except teacher_computers of a given computer room to the special exam group."""
+        """
+        Add all member hosts except teacher_computers of a given computer room to the special exam
+        group.
+        """
 
         roomdn = request.options["roomdn"]
         logger.info("roomdn=%r", roomdn)
@@ -725,9 +734,7 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, {}, success=True)
 
-    @sanitize(
-        roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""),
-    )
+    @sanitize(roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""))
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def unset_computerroom_exammode(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None

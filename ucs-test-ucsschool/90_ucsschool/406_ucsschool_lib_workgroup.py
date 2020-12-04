@@ -12,11 +12,6 @@
 # $ pytest -s -l -v ./......py::test_create
 #
 
-try:
-    from typing import Dict, List, Tuple
-except ImportError:
-    pass
-
 import univention.testing.utils as utils
 from ucsschool.lib.models.group import WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare
@@ -39,7 +34,7 @@ def test_create_with_share(
     assert wgs.exists(lo)
     utils.verify_ldap_object(
         wgs.dn,
-        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)],},
+        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)]},
         strict=False,
     )
     assert lo.searchDn("(&(cn={})(objectClass=ucsschoolShare))".format(wg.name)) == [wgs.dn]
@@ -77,7 +72,7 @@ def test_get_all(create_ou, lo, ucr_hostname, workgroup_ldap_attributes, workgro
 
     objs = WorkGroup.get_all(lo, ou_name)
     assert len(objs) == len(wg_attrs)
-    wg_names = [wg["name"] for wg in wg_attrs]
+    wg_names = [_wg["name"] for _wg in wg_attrs]
     for obj in objs:
         assert isinstance(obj, WorkGroup)
         assert obj.name in wg_names
@@ -97,7 +92,7 @@ def test_modify_with_share(
     assert wgs.exists(lo)
     utils.verify_ldap_object(
         wgs.dn,
-        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)],},
+        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)]},
         strict=False,
     )
     ldap_attrs_new = workgroup_ldap_attributes(ou_name)

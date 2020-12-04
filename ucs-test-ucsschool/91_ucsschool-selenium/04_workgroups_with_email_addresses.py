@@ -61,7 +61,7 @@ class UMCTester(object):
         assert wg_share.exists(lo) == share_exists, "{} != {}".format(wg_share.exists(lo), share_exists)
 
     def test_umc(self):
-        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry() as ucr:
+        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry():
             lo, po = getAdminConnection()
             handler_set(["ucsschool/workgroups/autosearch=no"])
             school_name, schooldn = schoolenv.create_ou()
@@ -83,7 +83,8 @@ class UMCTester(object):
             self.selenium.click_button(_("Save changes"))
             self.selenium.wait_for_text(
                 _(
-                    "This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members."
+                    "This module allows to create, modify and delete class comprehensive workgroups. "
+                    "Arbitrary students and teacher of the school can be selected as group members."
                 )
             )
             self.check_wg(lo, school_name, wg_name, False, None, [], [])
@@ -95,7 +96,8 @@ class UMCTester(object):
             self.selenium.click_button(_("Save changes"))
             self.selenium.wait_for_text(
                 _(
-                    "This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members."
+                    "This module allows to create, modify and delete class comprehensive workgroups. "
+                    "Arbitrary students and teacher of the school can be selected as group members."
                 )
             )
             self.check_wg(

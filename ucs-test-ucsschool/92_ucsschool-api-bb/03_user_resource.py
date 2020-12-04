@@ -18,7 +18,6 @@ import requests
 import univention.testing.strings as uts
 from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 from univention.testing.ucsschool.bb_api import (
-    API_ROOT_URL,
     RESSOURCE_URLS,
     HttpApiUserTestBase,
     api_call,
@@ -30,10 +29,6 @@ try:
     from urlparse import urljoin  # py2
 except ImportError:
     from urllib.parse import urljoin  # py3
-try:
-    from typing import Any, Dict, List, Optional, Text, Tuple
-except ImportError:
-    pass
 
 
 class Test(HttpApiUserTestBase):
@@ -122,7 +117,8 @@ class Test(HttpApiUserTestBase):
             if attr["school_classes"]:
                 everyone_classes = attr["school_classes"]
                 # TODO: create bug report for this, or handle in API server:
-                # work around school.lib failing when trying to create same class (and share) in two processes
+                # work around school.lib failing when trying to create same class (and share) in two
+                # processes
                 group_dns = self.extract_class_dns(attr)
                 for group_dn in group_dns:
                     self.logger.debug("*** Creating group %r...", group_dn)
@@ -237,7 +233,8 @@ class Test(HttpApiUserTestBase):
                     attr, new_attrs = job
                     for k, v in new_attrs.items():
                         if k == "school_classes" and not v:
-                            # special case `school_classes`: if newly empty but previously non-empty -> use old value
+                            # special case `school_classes`: if newly empty but previously
+                            # non-empty -> use old value
                             # see end of ImportUser.make_classes()
                             # Bug #48045
                             continue
@@ -665,7 +662,8 @@ class Test(HttpApiUserTestBase):
 
     def test_11_move_teacher_remove_primary_with_classes_and_rename(self):
         self.logger.info(
-            "*** Going to create teacher in OUs %r and %r, then remove it from primary (%r) and rename it. ***",
+            "*** Going to create teacher in OUs %r and %r, then remove it from primary (%r) and rename "
+            "it. ***",
             self.itb.ou_A.name,
             self.itb.ou_B.name,
             self.itb.ou_A.name,

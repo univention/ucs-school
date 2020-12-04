@@ -6,6 +6,8 @@
 ## packages: [univention-samba4, ucs-school-webproxy]
 ## bugs: [44252, 44287]
 
+from __future__ import print_function
+
 import itertools
 import subprocess
 
@@ -32,7 +34,7 @@ def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
 
 
 def checkBasic(host, passwd, url, http_code):
-    print "Performing Basic proxy auth check"
+    print("Performing Basic proxy auth check")
     curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_BASIC)
     result = curl.response(url)
     if http_code != result:
@@ -40,7 +42,7 @@ def checkBasic(host, passwd, url, http_code):
 
 
 def checkNTLM(host, passwd, url, http_code):
-    print "Performing NTLM proxy auth check"
+    print("Performing NTLM proxy auth check")
     curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_NTLM)
     result = curl.response(url)
     if http_code != result:
@@ -48,7 +50,7 @@ def checkNTLM(host, passwd, url, http_code):
 
 
 def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
-    print "Performing Gssnegotiate proxy auth check"
+    print("Performing Gssnegotiate proxy auth check")
     curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
     account = utils.UCSTestDomainAdminCredentials()
     admin = account.username
@@ -83,9 +85,9 @@ def setAuthVariables((basic, ntlm, gneg)):
 
 
 def printHeader(state, passwd, expect_wrong_password):
-    print "-" * 40
-    print "(Basic, NTLM, Gssnegotiate) = %s" % (state,)
-    print "Password used: %s, expect_wrong_password: %s" % (passwd, expect_wrong_password)
+    print("-" * 40)
+    print("(Basic, NTLM, Gssnegotiate) = %s" % (state,))
+    print("Password used: %s, expect_wrong_password: %s" % (passwd, expect_wrong_password))
 
 
 def main():

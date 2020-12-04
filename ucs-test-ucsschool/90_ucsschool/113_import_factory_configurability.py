@@ -115,7 +115,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 "source_uid-{}".format(uts.random_string()),
                 "--set",
-                "classes:mass_importer=univention.testing.ucsschool.import_factory_test_classes.NullImport",
+                "classes:mass_importer="
+                "univention.testing.ucsschool.import_factory_test_classes.NullImport",
             ]
         )
         self.check_new_and_removed_users(0, 0)
@@ -137,7 +138,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 "source_uid-{}".format(uts.random_string()),
                 "--set",
-                "classes:password_exporter=univention.testing.ucsschool.import_factory_test_classes.UniventionPasswordExporter",
+                "classes:password_exporter="
+                "univention.testing.ucsschool.import_factory_test_classes.UniventionPasswordExporter",
                 "output:new_user_passwords={}".format(outfile.name),
             ]
         )
@@ -169,7 +171,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 "source_uid-{}".format(uts.random_string()),
                 "--set",
-                "classes:result_exporter=univention.testing.ucsschool.import_factory_test_classes.AnonymizeResultExporter",
+                "classes:result_exporter="
+                "univention.testing.ucsschool.import_factory_test_classes.AnonymizeResultExporter",
                 "output:user_import_summary={}".format(outfile.name),
             ]
         )
@@ -240,7 +243,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 source_uid,
                 "--set",
-                "classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
+                "classes:user_importer="
+                "univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
                 "csv:mapping:Geburtstag=birthday",
             ]
         )
@@ -267,7 +271,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 source_uid,
                 "--set",
-                "classes:user_importer=univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
+                "classes:user_importer="
+                "univention.testing.ucsschool.import_factory_test_classes.BirthdayUserImport",
             ]
         )
         self.check_new_and_removed_users(0, len(random_birthday_users))
@@ -291,7 +296,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 "source_uid-{}".format(uts.random_string()),
                 "--set",
-                "classes:username_handler=univention.testing.ucsschool.import_factory_test_classes.FooUsernameHandler",
+                "classes:username_handler="
+                "univention.testing.ucsschool.import_factory_test_classes.FooUsernameHandler",
                 "output:user_import_summary={}".format(outfile.name),
                 "scheme:username:default=<:umlauts><firstname>.<lastname><:lower>[FOO]",
             ]
@@ -318,7 +324,8 @@ class FactoryConfTest(object):
                 "--source_uid",
                 "source_uid-{}".format(uts.random_string()),
                 "--set",
-                "classes:user_writer=univention.testing.ucsschool.import_factory_test_classes.JsonWriter",
+                "classes:user_writer="
+                "univention.testing.ucsschool.import_factory_test_classes.JsonWriter",
                 "output:user_import_summary={}".format(outfile.name),
             ]
         )

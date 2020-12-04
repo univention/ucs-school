@@ -17,7 +17,6 @@ from ldap.filter import filter_format
 import univention.admin.uldap
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from ucsschool.lib.models import User
 from univention.admin.uexceptions import authFail
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
@@ -61,7 +60,7 @@ class Test(CLI_Import_v2_Tester):
 
             utils.verify_ldap_object(
                 person.dn,
-                expected_attr={"sambaNTPassword": [smbpasswd.nthash(person.password)],},
+                expected_attr={"sambaNTPassword": [smbpasswd.nthash(person.password)]},
                 strict=True,
                 should_exist=True,
             )

@@ -9,8 +9,6 @@
 ## bugs: [46317, 46462]
 
 import copy
-import csv
-import tempfile
 
 from ldap.filter import filter_format
 

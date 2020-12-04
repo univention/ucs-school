@@ -37,7 +37,7 @@ def main():
                 u"\u2192".encode("UTF-8"),  # →
                 uts.random_name_special_characters(3),
             )
-            filename2 = "%s%s" % (u"\xc4".encode("UTF-8"), uts.random_name_special_characters(6),)
+            filename2 = "%s%s" % (u"\xc4".encode("UTF-8"), uts.random_name_special_characters(6))
             filename3 = "%s%s%s" % (
                 uts.random_name_special_characters(3),
                 u"\xc4".encode("ISO8859-1"),

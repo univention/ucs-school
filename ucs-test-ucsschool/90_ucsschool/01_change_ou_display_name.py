@@ -7,6 +7,8 @@
 ## packages:
 ##   - ucs-school-import
 
+from __future__ import print_function
+
 import random
 
 import univention.testing.strings as uts
@@ -23,10 +25,10 @@ charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ß
 
 def main():
     with univention.testing.udm.UCSTestUDM() as udm:
-        print "*** Stopping existing UDM CLI server"
+        print("*** Stopping existing UDM CLI server")
         udm.stop_cli_server()
 
-        print "*** Creating OU and set random display name without UCS@school option"
+        print("*** Creating OU and set random display name without UCS@school option")
         ou_name = uts.random_name()
         ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
         dn = udm.create_object(
@@ -39,7 +41,7 @@ def main():
             should_exist=True,
         )
 
-        print "*** Creating OU and set random display name with UCS@school option"
+        print("*** Creating OU and set random display name with UCS@school option")
         ou_name = uts.random_name()
         ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
         dn = udm.create_object(
@@ -56,7 +58,7 @@ def main():
             should_exist=True,
         )
 
-        print "*** Change displayName to new random value"
+        print("*** Change displayName to new random value")
         ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
         dn = udm.modify_object("container/ou", dn=dn, displayName=ou_displayName)
         utils.verify_ldap_object(

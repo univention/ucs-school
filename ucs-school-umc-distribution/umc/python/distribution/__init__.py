@@ -86,7 +86,7 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True),),
+            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
             required=True,
         )
     )
@@ -121,7 +121,8 @@ class Instance(SchoolBaseModule):
                 filename.decode("UTF-8")
             except UnicodeDecodeError:
                 filename = file["filename"].encode("UTF-8")  # Bug #37716 was fixed
-        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8')
+        # after Bug #37716
         # Bug 46709/46710: start
         if "\\" in filename:  # filename seems to be a UNC / windows path
             MODULE.info("Filename seems to contain Windows path name or UNC - fixing filename")
@@ -280,7 +281,8 @@ class Instance(SchoolBaseModule):
                 if project.deadline - project.starttime < timedelta(minutes=3):
                     raise UMC_Error(
                         _(
-                            "Distributing the data needs to happen sufficiently long enough before collecting them"
+                            "Distributing the data needs to happen sufficiently long enough before "
+                            "collecting them"
                         )
                     )
 
@@ -305,7 +307,8 @@ class Instance(SchoolBaseModule):
                 MODULE.error("The project name is already in use: %s" % (project.name))
                 raise UMC_Error(
                     _(
-                        'The specified project directory name "%s" is already in use by a different project.'
+                        'The specified project directory name "%s" is already in use by a different '
+                        "project."
                     )
                     % (project.name)
                 )
@@ -387,7 +390,8 @@ class Instance(SchoolBaseModule):
             if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, self.user_dn):
                 raise UMC_Error(
                     _(
-                        "Project details are only visible to the project owner himself or an administrator."
+                        "Project details are only visible to the project owner himself or an "
+                        "administrator."
                     ),
                     status=403,
                 )

@@ -46,10 +46,12 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 
 try:
-    from typing import Any, Dict, List, Optional, Tuple
+    from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-    from univention.admin.handlers import simpleLdap as UdmObject
-    from univention.admin.uldap import access as LoType
+    if TYPE_CHECKING:
+
+        from univention.admin.handlers import simpleLdap as UdmObject
+        from univention.admin.uldap import access as LoType
 except ImportError:
     pass
 
@@ -68,7 +70,8 @@ class SchoolSanitizer(StringSanitizer):
         if not value and self.required:
             raise UMC_Error(
                 _(
-                    'The request did not specify any school. You have to create a school before continuing. Use the "Schools" UMC module to create one.'
+                    "The request did not specify any school. You have to create a school before "
+                    'continuing. Use the "Schools" UMC module to create one.'
                 ),
                 status=503,
                 result={"no_school_found": True},
@@ -100,8 +103,9 @@ class SchoolBaseModule(Base):
     def bind_user_connection(self, lo):  # type: (LoType) -> None
         if not self.user_dn:  # ... backwards compatibility
             # the DN is None if we have a local user (e.g., root)
-            # FIXME: the statement above is not completely true, user_dn is None also if the UMC server could not detect it (for whatever reason)
-            # therefore this workaround is a security whole which allows to execute ldap operations as machine account
+            # FIXME: the statement above is not completely true, user_dn is None also if the UMC server +
+            # could not detect it (for whatever reason) therefore this workaround is a security whole
+            # which allows to execute ldap operations as machine account
             try:  # to get machine account password
                 MODULE.warn("Using machine account for local user: %s" % self.username)
                 with open("/etc/machine.secret", "rb") as fd:
@@ -124,7 +128,8 @@ class SchoolBaseModule(Base):
         if not schools:
             raise UMC_Error(
                 _(
-                    'Could not find any school. You have to create a school before continuing. Use the "Schools" UMC module to create one.'
+                    "Could not find any school. You have to create a school before continuing. Use the "
+                    '"Schools" UMC module to create one.'
                 ),
                 status=503,
                 result={"no_school_found": True},
@@ -209,7 +214,7 @@ class SchoolBaseModule(Base):
         )
 
     def _users(self, ldap_connection, school, group=None, user_type=None, pattern=""):
-        # type: (LoType, str, Optional[str], Optional[str], Optional[str]) -> List[ucsschool.lib.models.User]
+        # type: (LoType, str, Optional[str], Optional[str], Optional[str]) -> List[ucsschool.lib.models.User]  # noqa: E501
         """Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
         import ucsschool.lib.models
 
@@ -249,8 +254,8 @@ class SchoolBaseModule(Base):
                         udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
                     except noObject:
                         MODULE.error(
-                            "Possible group inconsistency detected: %r contains member %r but member was not found in LDAP"
-                            % (group, userdn)
+                            "Possible group inconsistency detected: %r contains member %r but member "
+                            "was not found in LDAP" % (group, userdn)
                         )
                         udm_obj = None
 
@@ -271,7 +276,7 @@ class SchoolBaseModule(Base):
         return users
 
     def _users_ldap(self, ldap_connection, school, group=None, user_type=None, pattern="", attr=None):
-        # type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Tuple[str, Dict[str, Any]]]
+        # type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Tuple[str, Dict[str, Any]]]  # noqa: E501
         """
         Returns a list of LDAP query result tuples (dn, attr) of all users
         given  `pattern`, `school` (search base) and `group`.
@@ -316,16 +321,15 @@ class SchoolBaseModule(Base):
                     except noObject:
                         raise noObject(
                             "User with DN: {} was not found in the group {}."
-                            " Please make sure it is a valid UCS@school user and is member of all necessary groups."
-                            " For more information visit https://help.univention.com/t/how-an-ucs-school-user-should-look-like/15630".format(
-                                userdn, group
-                            )
+                            " Please make sure it is a valid UCS@school user and is member of all "
+                            "necessary groups. For more information visit https://help.univention.com"
+                            "/t/how-an-ucs-school-user-should-look-like/15630".format(userdn, group)
                         )
                     if len(ldap_objs) == 1:
                         users.append(ldap_objs[0])
                     # else:
-                    # either: 'Possible group inconsistency detected: %r contains member %r but member was not
-                    #         found in LDAP' % (group, userdn))
+                    # either: 'Possible group inconsistency detected: %r contains member %r but member
+                    # was not found in LDAP' % (group, userdn))
                     # or: DN does not belong to teacher/student (WrongModel)
                     # in both cases: ignore user
         else:

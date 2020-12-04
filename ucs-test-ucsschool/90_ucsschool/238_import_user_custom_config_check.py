@@ -57,9 +57,7 @@ class Test(CLI_Import_v2_Tester):
         role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
 
         person = Person(self.ou_A.name, role)
-        person.update(
-            record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
-        )
+        person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
 
         self.log.info(
             "*** Importing a %r, no configuration test, no birthday mapping -> no exception...", role

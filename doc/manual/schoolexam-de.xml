@@ -83,7 +83,7 @@
 		<title>Konfiguration</title>
 		<para>
 			Für die Konfiguration des Klassenarbeitsmodus gibt es eine Reihe von &ucsUCRV;n.
-			Diese werden im folgenden aufgelistet und kurz erläutert. 
+			Diese werden im folgenden aufgelistet und kurz erläutert.
 		</para>
 		<para>
 			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsMaster; als auch auf den Schulservern identische Werte aufweisen müssen.
@@ -205,7 +205,7 @@
 		</para>
 		<note>
 			<simpara>
-			Zu diesem Thema ist auch ein Hinweis von Microsoft zu Windows XP Systemen zu beachten: <quote>Jede Version von Windows XP Professional stellt eine Funktion zur Optimierung für schnelles Anmelden zur Verfügung. Computer mit diesen Betriebssystemen warten standardmäßig beim Starten nicht auf den Start des Netzwerks. Nach der Anmeldung werden die Richtlinien im Hintergrund verarbeitet, sobald das Netzwerk zur Verfügung steht. Dies bedeutet, dass der Computer bei der Anmeldung und beim Start weiterhin die älteren Richtlinieneinstellungen verwendet. Daher sind für Einstellungen, die nur beim Start oder bei der Anmeldung angewendet werden können (z. B. Softwareinstallation und Ordnerumleitung), möglicherweise nach dem Ausführen der ersten Änderung am Gruppenrichtlinienobjekt mehrere Anmeldungen durch den Benutzer erforderlich. Diese Richtlinie wird gesteuert durch die Einstellung in <filename>Computerkonfiguration\Administrative Vorlagen\System\Anmeldung\Beim Neustart des Computers und bei der Anmeldung immer 
+			Zu diesem Thema ist auch ein Hinweis von Microsoft zu Windows XP Systemen zu beachten: <quote>Jede Version von Windows XP Professional stellt eine Funktion zur Optimierung für schnelles Anmelden zur Verfügung. Computer mit diesen Betriebssystemen warten standardmäßig beim Starten nicht auf den Start des Netzwerks. Nach der Anmeldung werden die Richtlinien im Hintergrund verarbeitet, sobald das Netzwerk zur Verfügung steht. Dies bedeutet, dass der Computer bei der Anmeldung und beim Start weiterhin die älteren Richtlinieneinstellungen verwendet. Daher sind für Einstellungen, die nur beim Start oder bei der Anmeldung angewendet werden können (z. B. Softwareinstallation und Ordnerumleitung), möglicherweise nach dem Ausführen der ersten Änderung am Gruppenrichtlinienobjekt mehrere Anmeldungen durch den Benutzer erforderlich. Diese Richtlinie wird gesteuert durch die Einstellung in <filename>Computerkonfiguration\Administrative Vorlagen\System\Anmeldung\Beim Neustart des Computers und bei der Anmeldung immer
 auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemversionen von Windows 2000 oder Windows Server 2003 nicht verfügbar.</quote>
 			<footnote><para><ulink url="http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx"/></para></footnote>
 			</simpara>
