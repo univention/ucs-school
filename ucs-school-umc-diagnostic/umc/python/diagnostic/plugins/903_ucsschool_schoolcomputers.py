@@ -60,7 +60,8 @@ title = _("UCS@school School Computer Consistency")
 description = "\n".join(
     [
         _(
-            "Windows/Linux/IPManagedClient/Ubuntu computer objects below an UCS@school OU should contain the objectclass <i>ucsschoolComputer</i> and the attribute <i>ucsschoolRole</i>."
+            "Windows/Linux/IPManagedClient/Ubuntu computer objects below an UCS@school OU should "
+            "contain the objectclass <i>ucsschoolComputer</i> and the attribute <i>ucsschoolRole</i>."
         ),
     ]
 )

@@ -46,10 +46,12 @@ title = _("UCS@school Empty RecordUIDs")
 description = "\n".join(
     [
         _(
-            "In a UCS@school domain that uses the UCS@school import, all users that should be considered for imports must have a unique recordUID-sourceUID combination."
+            "In a UCS@school domain that uses the UCS@school import, all users that should be "
+            "considered for imports must have a unique recordUID-sourceUID combination."
         ),
         _(
-            "Having an empty recordUID is theoretically OK, but will most likely lead to problems in the future and the user may not be found by the import."
+            "Having an empty recordUID is theoretically OK, but will most likely lead to problems in "
+            "the future and the user may not be found by the import."
         ),
     ]
 )

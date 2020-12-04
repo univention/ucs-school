@@ -49,7 +49,8 @@ title = _("UCS@school Group Consistency")
 description = "\n".join(
     [
         _(
-            "UCS@school: test for inconsistencies between class/working group memberships and school memberships."
+            "UCS@school: test for inconsistencies between class/working group memberships and school "
+            "memberships."
         ),
     ]
 )
