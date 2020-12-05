@@ -302,11 +302,11 @@ class LDAPACLTestMatrix(object):
 
     def get_all_attributes_as_dict(self, base):
         """
-        return dict = {
-            dn1:[attibute1,	attribute2, ..	],
-            dn2:[attibute1,	attribute2, ..	],
+        return {
+            dn1: [attibute1, attribute2, ..],
+            dn2: [attibute1, attribute2, ..],
             ..
-            }
+        }
         """
         containers = list(self.walkThroughContainer(base))
         return dict([(y, [k for k in x]) for y, x in containers])
@@ -335,12 +335,12 @@ class LDAPACLTestMatrix(object):
                         print (
                             '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s",'
                             ' expected="%s", result="%s"'
-                            % (self.auth_dn, target_dn, attr, expected_access, access,)
+                            % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
                     else:
                         print (
                             'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s",'
-                            ' result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access,)
+                            ' result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
 
     def get_attribute_access(self, target_dn, attr):

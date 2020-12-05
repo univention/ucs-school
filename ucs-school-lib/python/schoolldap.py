@@ -96,8 +96,8 @@ class SchoolSearchBase(object):
     def getOU(cls, dn):  # type: (str) -> str
         """Return the school OU for a given DN.
 
-            >>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
-            'dc1'
+        >>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+        'dc1'
         """
         school_dn = cls.getOUDN(dn)
         if school_dn:
@@ -107,10 +107,10 @@ class SchoolSearchBase(object):
     def getOUDN(cls, dn):  # type: (str) -> str
         """Return the School OU-DN part for a given DN.
 
-            >>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
-            'Ou=dc1,oU=dc,dc=foo,dc=bar'
-            >>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
-            'ou=dc1,ou=dc,dc=foo,dc=bar'
+        >>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+        'Ou=dc1,oU=dc,dc=foo,dc=bar'
+        >>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
+        'ou=dc1,ou=dc,dc=foo,dc=bar'
         """
         match = cls._RE_OUDN.search(dn)
         if match:

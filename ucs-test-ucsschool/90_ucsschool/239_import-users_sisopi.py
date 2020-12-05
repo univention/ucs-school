@@ -99,7 +99,7 @@ class Test(CLI_Import_v2_Tester):
             person.update(school=self.ou_A.name, schools=[self.ou_A.name, self.ou_B.name])
             if role != "staff":
                 person.update(
-                    school_classes={self.ou_A.name: [class_A_name], self.ou_B.name: [class_B_name],}
+                    school_classes={self.ou_A.name: [class_A_name], self.ou_B.name: [class_B_name]}
                 )
             self._import_and_verify(config, person)
             self.log.info("OK: create (A -> A+B) succeeded.")
@@ -145,7 +145,7 @@ class Test(CLI_Import_v2_Tester):
             person.update(school=self.ou_A.name, schools=[self.ou_A.name, self.ou_C.name])
             if role != "staff":
                 person.update(
-                    school_classes={self.ou_A.name: [class_A_name], self.ou_C.name: [class_C_name],}
+                    school_classes={self.ou_A.name: [class_A_name], self.ou_C.name: [class_C_name]}
                 )
             self._import_and_verify(config, person, delete=True)
             self.log.info("OK: deletion (A+B+C -> A+C) succeeded.")
@@ -165,9 +165,7 @@ class Test(CLI_Import_v2_Tester):
             )
             config.update_entry("school", self.ou_C.name)
             person.update(school=self.limbo_ou_name, schools=[self.limbo_ou_name])
-            person.update(
-                school=self.limbo_ou_name, schools=[self.limbo_ou_name], school_classes={},
-            )
+            person.update(school=self.limbo_ou_name, schools=[self.limbo_ou_name], school_classes={})
             person.set_inactive()
             self._import_and_verify(config, person, delete=True)
             self.log.info("OK: deletion (C -> limbo) succeeded.")

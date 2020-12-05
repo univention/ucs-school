@@ -242,8 +242,8 @@ class UCSTestSchool(object):
 
     def _remove_udm_object(self, module, dn, raise_exceptions=False):
         """
-            Tries to remove UDM object specified by given dn.
-            Return None on success or error message.
+        Tries to remove UDM object specified by given dn.
+        Return None on success or error message.
         """
         try:
             dn = self.lo.searchDn(base=dn)[0]
@@ -263,8 +263,8 @@ class UCSTestSchool(object):
 
     def _set_password(self, userdn, password, raise_exceptions=False):
         """
-            Tries to set a password for the given user.
-            Return None on success or error message.
+        Tries to set a password for the given user.
+        Return None on success or error message.
         """
         try:
             dn = self.lo.searchDn(base=userdn)[0]

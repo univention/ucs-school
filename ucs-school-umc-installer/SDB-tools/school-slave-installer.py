@@ -118,7 +118,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
             failcount += 1
             check_failcount(
                 'TRACEBACK %d in connection.request("schoolinstaller/progress"):\n%s'
-                % (failcount, traceback.format_exc(),)
+                % (failcount, traceback.format_exc())
             )
             time.sleep(1)
         msg = "%(component)s - %(info)s" % result

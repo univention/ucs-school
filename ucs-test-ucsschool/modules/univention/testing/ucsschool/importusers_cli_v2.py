@@ -84,8 +84,6 @@ class PyHooks(object):
         self.log = get_ucsschool_logger()
 
     def create_hooks(self):
-        """
-        """
         fn = "%s.py" % (uts.random_name(),)
         data = """from ucsschool.importer.utils.user_pyhook import UserPyHook
 import os

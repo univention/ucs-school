@@ -78,7 +78,7 @@ def run(_umc_instance):
     if "ok installed" not in out:
         raise Warning(
             "The OX App Suite is installed but the required package 'ucs-school-ox-support' is missing.",
-            buttons=[{"action": "install_missing", "label": _("Install missing components"),}],
+            buttons=[{"action": "install_missing", "label": _("Install missing components")}],
         )
 
 

@@ -39,7 +39,7 @@ def test_create_with_share(
     assert wgs.exists(lo)
     utils.verify_ldap_object(
         wgs.dn,
-        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)],},
+        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)]},
         strict=False,
     )
     assert lo.searchDn("(&(cn={})(objectClass=ucsschoolShare))".format(wg.name)) == [wgs.dn]
@@ -97,7 +97,7 @@ def test_modify_with_share(
     assert wgs.exists(lo)
     utils.verify_ldap_object(
         wgs.dn,
-        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)],},
+        expected_attr={"cn": [wg.name], "ucsschoolRole": ["workgroup_share:school:{}".format(ou_name)]},
         strict=False,
     )
     ldap_attrs_new = workgroup_ldap_attributes(ou_name)

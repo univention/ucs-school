@@ -61,7 +61,7 @@ class Test(CLI_Import_v2_Tester):
 
             utils.verify_ldap_object(
                 person.dn,
-                expected_attr={"sambaNTPassword": [smbpasswd.nthash(person.password)],},
+                expected_attr={"sambaNTPassword": [smbpasswd.nthash(person.password)]},
                 strict=True,
                 should_exist=True,
             )

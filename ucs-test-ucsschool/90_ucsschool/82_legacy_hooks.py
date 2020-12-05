@@ -486,7 +486,7 @@ class TestLegacyHooks(TestCase):
     _setup_TeachersAndStaff = _setup_ExamStudent
 
     def _setup_School(self):
-        return self.model(name=uts.random_username(),)
+        return self.model(name=uts.random_username())
 
     def _setup_IPComputer(self):
         return self.model(

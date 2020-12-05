@@ -50,7 +50,7 @@ except NameError:
 
 
 def parse_cmdline():
-    defaults = dict(email=False, pattern="*", username=False, write=False,)
+    defaults = dict(email=False, pattern="*", username=False, write=False)
     parser = ArgumentParser(
         description="UCS@school import tool to reset counters of unique names from schema."
     )

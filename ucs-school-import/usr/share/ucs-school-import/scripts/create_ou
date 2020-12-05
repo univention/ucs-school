@@ -92,9 +92,9 @@ def main():
         " The possible values are true, false and auto.",
     )
     parser.add_option(
-        "-v", "--verbose", action="store_true", default=False, help="Display debug output.",
+        "-v", "--verbose", action="store_true", default=False, help="Display debug output."
     )
-    (options, args,) = parser.parse_args()
+    options, args = parser.parse_args()
     logger = logging.getLogger("ucsschool")
     log_level = "DEBUG" if options.verbose else "INFO"
     logger.setLevel(log_level)

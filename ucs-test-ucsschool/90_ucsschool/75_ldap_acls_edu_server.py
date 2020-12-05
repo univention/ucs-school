@@ -38,7 +38,7 @@ def main():
                 name_edudc = "e-myschool{}".format(i)
                 name_admindc = "a-myschool{}".format(i)
                 name, dn = schoolenv.create_ou(
-                    ou_name="myschool{}".format(i), name_edudc=name_edudc, name_admindc=name_admindc,
+                    ou_name="myschool{}".format(i), name_edudc=name_edudc, name_admindc=name_admindc
                 )
                 school = OUObj(name, dn, None, None)
                 school.edu_server = DCObj(
@@ -62,7 +62,7 @@ def main():
                 ou_name=schools[0].name, schools=[schools[0].name, schools[1].name], is_teacher=True
             )[1]
             stu_dn = schoolenv.create_user(
-                ou_name=schools[0].name, schools=[schools[0].name, schools[1].name],
+                ou_name=schools[0].name, schools=[schools[0].name, schools[1].name]
             )[1]
             lo = schoolenv.open_ldap_connection()
 

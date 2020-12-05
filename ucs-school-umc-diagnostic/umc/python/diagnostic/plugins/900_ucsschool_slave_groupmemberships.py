@@ -81,12 +81,12 @@ def run(_umc_instance):
     for (obj_dn, obj_attrs) in obj_list:
         result = {
             "slave": {
-                "edu": {"global_grp": False, "ou_grp": False,},
-                "admin": {"global_grp": False, "ou_grp": False,},
+                "edu": {"global_grp": False, "ou_grp": False},
+                "admin": {"global_grp": False, "ou_grp": False},
             },
             "memberserver": {
-                "edu": {"global_grp": False, "ou_grp": False,},
-                "admin": {"global_grp": False, "ou_grp": False,},
+                "edu": {"global_grp": False, "ou_grp": False},
+                "admin": {"global_grp": False, "ou_grp": False},
             },
         }
         filter_s = filter_format("(&(objectClass=univentionGroup)(uniqueMember=%s))", (obj_dn,))

@@ -81,7 +81,7 @@ class PasswordReset(object):
         print (
             "%s.assert_login(%r, old_password=%r, new_password=%r, "
             "change_password_on_next_login=%r)"
-            % (self, user, old_password, new_password, change_password_on_next_login,)
+            % (self, user, old_password, new_password, change_password_on_next_login)
         )
         login = self.test_login(user, old_password)
         assert 401 == login.status, "The user could login with the old password: status=%r" % (
@@ -90,17 +90,19 @@ class PasswordReset(object):
 
         login = self.test_login(user, new_password)
         if change_password_on_next_login:
-            assert login.status == 401, (
-                "The user could login with new password and chgPwdNextLogin=True: status=%r"
-                % (login.status,)
+            assert (
+                login.status == 401
+            ), "The user could login with new password and chgPwdNextLogin=True: status=%r" % (
+                login.status,
             )
             assert login.result and login.result.get(
                 "password_expired"
             ), "The password is not expired - as expected"
         else:
-            assert login.status == 200, (
-                "The user could not login with new password and chgPwdNextLogin=False: status=%r"
-                % (login.status,)
+            assert (
+                login.status == 200
+            ), "The user could not login with new password and chgPwdNextLogin=False: status=%r" % (
+                login.status,
             )
 
     def assert_password_change_fails(self, user):

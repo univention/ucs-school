@@ -276,7 +276,7 @@ class Instance(SchoolBaseModule):
                     exam_user.name,
                     exam,
                 )
-            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user.dn,))
+            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user.dn))
             return
 
         # Check if it's blacklisted
@@ -306,7 +306,7 @@ class Instance(SchoolBaseModule):
             univention.admin.allocators.release(ldap_admin_write, ldap_position, "uid", exam_user_uid)
             logger.warning("The exam account does already exist for: %r", exam_user_uid)
             self.finished(
-                request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn,), success=True
+                request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn), success=True
             )
             return
 
@@ -490,7 +490,7 @@ class Instance(SchoolBaseModule):
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "sid", userSid)
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "uidNumber", uidNum)
 
-        self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn,))
+        self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn))
 
     @sanitize(
         users=ListSanitizer(DNSanitizer(required=True), required=True),
@@ -579,7 +579,7 @@ class Instance(SchoolBaseModule):
             user_name = user_ldap_obj["uid"][0]
             users_primary_gid = user_ldap_obj["gidNumber"][0]
             for group_dn, group_attrs in ldap_user_read.search(
-                filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"],
+                filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"]
             ):
                 if group_attrs["gidNumber"][0] != users_primary_gid:
                     try:
@@ -694,9 +694,7 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, {}, success=True)
 
-    @sanitize(
-        roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""),
-    )
+    @sanitize(roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""))
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def set_computerroom_exammode(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None
@@ -735,9 +733,7 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, {}, success=True)
 
-    @sanitize(
-        roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""),
-    )
+    @sanitize(roomdn=StringSanitizer(required=True), school=StringSanitizer(default=""))
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def unset_computerroom_exammode(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None

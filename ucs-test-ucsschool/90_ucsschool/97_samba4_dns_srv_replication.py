@@ -92,7 +92,7 @@ class TestS4DNSSRVReplication(TestSamba4):
             else:
                 partition = "DomainDnsZones"
                 zone_name = self.domainname
-            dns_searchbase = "CN=MicrosoftDNS,DC=%s,%s" % (partition, self.ldap_base,)
+            dns_searchbase = "CN=MicrosoftDNS,DC=%s,%s" % (partition, self.ldap_base)
         return (record_name, zone_name, dns_searchbase)
 
     def get_dns_srv_via_univention_s4search(self, record_name, dns_searchbase=None):

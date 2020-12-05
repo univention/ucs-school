@@ -732,7 +732,8 @@ def check_dhcp(ou_base, dc_name, singlemaster, dhcp_dns_clearou, ucr, must_exist
 
 
 def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
-    """ Arguments:
+    """
+    Arguments:
     dc_name: name of the domaincontroller (cn)
     dc_type: type of the domaincontroller ('educational' or 'administrative')
     """

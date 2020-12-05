@@ -353,7 +353,7 @@ class Instance(SchoolBaseModule):
                 except ImportError:
                     MODULE.error(traceback.format_exc())
                 for name, plugin in inspect.getmembers(module, inspect.isclass):
-                    MODULE.info("Loading plugin %r from module %r" % (plugin, module,))
+                    MODULE.info("Loading plugin %r from module %r" % (plugin, module))
                     if not name.startswith("_") and plugin is not Plugin and issubclass(plugin, Plugin):
                         try:
                             plugin = plugin(self, self._italc)
@@ -613,7 +613,7 @@ class Instance(SchoolBaseModule):
 
     @allow_get_request
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     @prevent_ucc
     def screenshot(self, request):
         """Returns a JPEG image containing a screenshot of the given computer."""
@@ -642,7 +642,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, response, mimetype="image/jpeg")
 
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     def vnc(self, request):
         """Returns a ultraVNC file for the given computer."""
 
@@ -949,7 +949,7 @@ class Instance(SchoolBaseModule):
                 MODULE.info("Kill SMB process %s" % process.pid)
                 os.kill(int(process.pid), signal.SIGTERM)
 
-    @sanitize(server=StringSanitizer(required=True),)
+    @sanitize(server=StringSanitizer(required=True))
     @check_room_access
     def demo_start(self, request):
         """Starts a presentation mode"""
@@ -982,7 +982,7 @@ class Instance(SchoolBaseModule):
         return True
 
     @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True),)
+    @sanitize(computer=ComputerSanitizer(required=True))
     @prevent_ucc
     @simple_response
     def user_logout(self, computer):
@@ -999,9 +999,7 @@ class Instance(SchoolBaseModule):
         return plugins
 
     @check_room_access
-    @sanitize(
-        plugin=StringSanitizer(required=True), computer=StringSanitizer(required=True),
-    )
+    @sanitize(plugin=StringSanitizer(required=True), computer=StringSanitizer(required=True))
     def plugins_execute(self, request):
         plugin = self._plugins.get(request.options["plugin"])
         if not plugin:

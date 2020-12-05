@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=255, primary_key=True, serialize=False)),
                 ("displayName", models.CharField(blank=True, max_length=255)),
             ],
-            options={"ordering": ("name",),},
+            options={"ordering": ("name",)},
         ),
-        migrations.AlterModelOptions(name="school", options={"ordering": ("name",)},),
+        migrations.AlterModelOptions(name="school", options={"ordering": ("name",)}),
     ]

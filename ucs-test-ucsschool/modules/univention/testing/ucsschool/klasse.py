@@ -75,7 +75,7 @@ class Klasse(object):
         flavor = "schoolwizards/classes"
         param = [
             {
-                "object": {"name": self.name, "school": self.school, "description": self.description,},
+                "object": {"name": self.name, "school": self.school, "description": self.description},
                 "options": None,
             }
         ]

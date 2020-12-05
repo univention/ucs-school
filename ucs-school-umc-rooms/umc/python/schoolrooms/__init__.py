@@ -79,7 +79,7 @@ class Instance(SchoolBaseModule):
         pattern = LDAP_Filter.forGroups(request.options.get("pattern", ""), school)
 
         result = [
-            {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn,}
+            {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)
         ]
         result = sorted(

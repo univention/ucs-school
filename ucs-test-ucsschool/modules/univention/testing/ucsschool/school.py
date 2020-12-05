@@ -78,7 +78,7 @@ def create_dc_slave(udm, school=None):
             position=position,
             ip=ip,
             name=name,
-            options=["nagios=False",],
+            options=["nagios=False"],
         )
         if dn:
             return name, dn
@@ -185,7 +185,7 @@ class School(object):
         """Remove school"""
         print "Removing school: %s" % self.name
         flavor = "schoolwizards/schools"
-        param = [{"object": {"$dn$": self.dn(),}, "options": None}]
+        param = [{"object": {"$dn$": self.dn()}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/schools/remove", param, flavor).result
         if not reqResult[0]:
             raise RemoveFail("Unable to remove school (%s)" % self.name)

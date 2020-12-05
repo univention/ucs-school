@@ -345,7 +345,7 @@ class HttpApiUserTestBase(TestCase):
     def make_user_attrs(self, ous, partial=False, **kwargs):
         # type: (List[Text], Optional[bool], **Any) -> Dict[Text, Any]
         roles = kwargs.pop("roles", None) or random.choice(
-            (("staff",), ("staff", "teacher"), ("student",), ("teacher",),)
+            (("staff",), ("staff", "teacher"), ("student",), ("teacher",))
         )
         res = {
             "name": "test{}".format(uts.random_username()),

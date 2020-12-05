@@ -210,9 +210,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"id": obj.dn, "label": obj.info.get("fqdn", obj.info["name"])})
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection()
     def _get_obj(self, request, ldap_user_read=None):
@@ -248,9 +246,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 MODULE.process("Creation failed %r" % (ret[-1],))
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
@@ -273,9 +269,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append(True)  # no changes? who cares?
         return ret
 
-    @sanitize_object(
-        **{"$dn$": DNSanitizer(required=True),}
-    )
+    @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
@@ -323,7 +317,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     create_user = _create_obj
 
     @sanitize_object(
-        **{"remove_from_school": SchoolSanitizer(required=True), "$dn$": DNSanitizer(required=True),}
+        **{"remove_from_school": SchoolSanitizer(required=True), "$dn$": DNSanitizer(required=True)}
     )
     @response
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
@@ -408,9 +402,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     delete_computer = _delete_obj
 
-    @sanitize(
-        school=StringSanitizer(required=True), filter=StringSanitizer(default=""),
-    )
+    @sanitize(school=StringSanitizer(required=True), filter=StringSanitizer(default=""))
     @response
     @LDAP_Connection()
     def get_classes(self, request, ldap_user_read=None):

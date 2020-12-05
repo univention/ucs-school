@@ -230,7 +230,7 @@ class User(Person):
         )
         flavor = "schoolwizards/users"
         param = [
-            {"object": {"remove_from_school": remove_from_school, "$dn$": self.dn,}, "options": None}
+            {"object": {"remove_from_school": remove_from_school, "$dn$": self.dn}, "options": None}
         ]
         reqResult = self.client.umc_command("schoolwizards/users/remove", param, flavor).result
         if not reqResult[0]:

@@ -57,7 +57,7 @@ from univention.management.console.modules.sanitizers import (
 
 _ = Translation("ucs-school-umc-internetrules").translate
 
-_filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST,)
+_filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST)
 _filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
 
 
@@ -305,14 +305,16 @@ class Instance(SchoolBaseModule):
         )
     )
     def put(self, request):
-        """Modify an existing rules:
+        """
+        Modify an existing rule:
+
         requests.options = [ {
             'object': {
-                'name': <str>, 						# optional
-                'type': 'whitelist' | 'blacklist', 	# optional
-                'priority': <int>, 					# optional
-                'wlan': <bool>,						# optional
-                'domains': [<str>, ...],  			# optional
+                'name': <str>,                      # optional
+                'type': 'whitelist' | 'blacklist',  # optional
+                'priority': <int>,                  # optional
+                'wlan': <bool>,                     # optional
+                'domains': [<str>, ...],            # optional
             },
             'options': {
                 'name': <str>  # the original name of the object
@@ -410,7 +412,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, result)
 
     @sanitize(
-        DictSanitizer(dict(group=StringSanitizer(required=True), rule=StringSanitizer(required=True),))
+        DictSanitizer(dict(group=StringSanitizer(required=True), rule=StringSanitizer(required=True)))
     )
     @LDAP_Connection()
     def groups_assign(self, request, ldap_user_read=None, ldap_position=None):

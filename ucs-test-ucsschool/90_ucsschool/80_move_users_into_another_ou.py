@@ -36,9 +36,12 @@ def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_nam
         print "FAIL2: %r; attrs=%r" % (user.dn, lo.get(user.dn))
         raise
 
-    assert set(groups) == set(user.get_udm_object(lo)["groups"]), (
-        "Moving the user %r failed... Expected groups %r != %r"
-        % (user, groups, user.get_udm_object(lo)["groups"])
+    assert set(groups) == set(
+        user.get_udm_object(lo)["groups"]
+    ), "Moving the user %r failed... Expected groups %r != %r" % (
+        user,
+        groups,
+        user.get_udm_object(lo)["groups"],
     )
     assert "{}-{}".format(b, grp1_name) not in [
         sc.name for sc in SchoolClass.get_all(lo, b)
@@ -100,14 +103,14 @@ def main():
         ]
         lo = env.open_ldap_connection()
         workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
-        users_dns = [dn for (user, dn,), roleshare_path, groups in users]
+        users_dns = [dn for (user, dn), roleshare_path, groups in users]
         udm.modify_object("groups/group", dn=global_group_dn, append={"users": users_dns})
         workgroup.users.extend(users_dns)
         workgroup.modify(lo)
         workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
         print ("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
 
-        for (user, dn,), roleshare_path, groups in users:
+        for (user, dn), roleshare_path, groups in users:
             user = User.from_dn(dn, None, lo)
             print ("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
 

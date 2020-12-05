@@ -146,7 +146,7 @@ class UserImportJobCreationValidator(object):
             "(ucsschoolImportRole={role})"
             "(ucsschoolImportSchool={school})"
             "(memberUid=%s)"
-            ")".format(role="*" if role == "*" else "%s", school="*" if school == "*" else "%s",)
+            ")".format(role="*" if role == "*" else "%s", school="*" if school == "*" else "%s")
         )
         args = []
         if role != "*":

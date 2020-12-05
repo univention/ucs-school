@@ -65,7 +65,7 @@ def main():
             connection.authenticate(account.username, account.bindpw)
             expected_class_list = {
                 u"csv": u"{fieldnames_string}\r\n{expected_values}\r\n".format(
-                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values),
+                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values)
                 ),
                 u"filename": u"{}.csv".format(class_name),
             }

@@ -110,9 +110,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_work_group(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow workgroup-members to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow workgroup-members to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
@@ -126,9 +126,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_market_place(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow Domain Users to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow Domain Users to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
@@ -140,9 +140,9 @@ class SetNTACLsMixin(object):
 
     def get_aces_class_group(self, lo):  # type: (LoType) -> List[str]
         """
-            ACE: deny schueler to change permissions & take ownership
-            ACE: allow class-members to read/write/modify
-            ACE: allow ou-admins full control
+        ACE: deny schueler to change permissions & take ownership
+        ACE: allow class-members to read/write/modify
+        ACE: allow ou-admins full control
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
@@ -253,7 +253,7 @@ class Share(UCSSchoolHelperAbstractClass):
             alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
             if len(ou_attr_ldap_access_write) > 1:
                 self.logger.warning(
-                    "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school,
+                    "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school
                 )
 
         # build fqdn of alternative server and set serverfqdn

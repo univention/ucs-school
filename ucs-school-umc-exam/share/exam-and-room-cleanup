@@ -156,7 +156,7 @@ class ExamCleanupHelper(object):
             )
 
     def remove_exam_user(self):
-        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup",):
+        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup"):
             ud.debug(ud.MAIN, ud.INFO, "Skipping remove_exam_user: system/role does not match")
             return
         if self.options.skip_exam_user_removal:
@@ -211,7 +211,7 @@ class ExamCleanupHelper(object):
         return group
 
     def remove_exam_computers(self):
-        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup",):
+        if self.ucr.get("server/role") not in ("domaincontroller_master", "domaincontroller_backup"):
             ud.debug(ud.MAIN, ud.INFO, "Skipping remove_exam_computers: system/role does not match")
             return
         if self.options.skip_exam_computer_removal:

@@ -817,8 +817,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
-        """raises NotImplementedError by default. Needs to be overridden!
-        """
+        """raises NotImplementedError by default. Needs to be overridden!"""
         raise NotImplementedError("%s.get_container()" % (cls.__name__,))
 
     @classmethod

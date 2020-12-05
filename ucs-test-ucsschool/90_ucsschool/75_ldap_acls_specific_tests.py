@@ -185,7 +185,7 @@ class ACLTester(object):
             all_msgs.append("ERROR {}) {}".format(i, msg))
         raise Exception(
             "There were {} ACL errors with {!r}:\n{}".format(
-                len(self.errors), self.actor_dn, "\n".join(all_msgs),
+                len(self.errors), self.actor_dn, "\n".join(all_msgs)
             )
         )
 

@@ -89,7 +89,7 @@ property_descriptions = {
 
 
 layout = [
-    Tab(_("General"), _("Basic Values"), layout=["description", "category",]),
+    Tab(_("General"), _("Basic Values"), layout=["description", "category"]),
 ]
 
 mapping = univention.admin.mapping.mapping()

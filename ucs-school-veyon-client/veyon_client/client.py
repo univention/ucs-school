@@ -158,7 +158,7 @@ class VeyonClient:
         if dimension and dimension.height:
             params["height"] = dimension.height
         result = requests.get(
-            "{}/framebuffer".format(self._url), params=params, headers=self._get_headers(host),
+            "{}/framebuffer".format(self._url), params=params, headers=self._get_headers(host)
         )
         check_veyon_error(result)
         return result.content
@@ -204,7 +204,7 @@ class VeyonClient:
             status, like "REBOOT"
         """
         result = requests.get(
-            "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host),
+            "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
         )
         check_veyon_error(result)
         return result.json()["active"]

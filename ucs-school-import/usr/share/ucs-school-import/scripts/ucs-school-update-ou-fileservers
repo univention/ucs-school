@@ -87,7 +87,7 @@ during creation of new classes or users.
     parser.add_option(
         "--ou", action="store", dest="ou", default=None, help="name of ou that shall be updated/modified"
     )
-    (options, args,) = parser.parse_args()
+    options, args = parser.parse_args()
 
     if not options.autodetect:
         print >> sys.stderr, "This tool only supports --auto-detect at the moment."

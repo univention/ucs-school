@@ -33,7 +33,6 @@ try:
 except ImportError:
     pass
 
-
 BACKUP_PATH = "/home/backup/groups"
 
 
@@ -98,8 +97,8 @@ def share_path(class_name, school):  # type: (str, str) -> str
 
 def permissions(dir_path, lo):  # type: (str, LoType) -> MegaSuperDuperPermissionTuple
     """Returns a tuple =
-        (( dir_permissions(octal), owner), group ),
-        { path.basename(files): ( permissions(octal), owner, group ) }
+    (( dir_permissions(octal), owner), group ),
+    { path.basename(files): ( permissions(octal), owner, group ) }
     """
     result = {}
     st = os.stat(dir_path)

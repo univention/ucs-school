@@ -60,7 +60,7 @@ class Instance(SchoolBaseModule):
         try:
             # add the new lessons
             for lesson in request.options.get("lessons", []):
-                (description, begin, end,) = lesson
+                (description, begin, end) = lesson
                 if begin == end == "00:00" and not description:
                     continue
                 elif not description:

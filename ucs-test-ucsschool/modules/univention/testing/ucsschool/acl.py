@@ -91,8 +91,8 @@ class Acl(object):
     """
     Acl class
 
-    contains the basic functuality to test acls for the common container in
-    ucsschool may change with time.
+    contains the basic functuality to test acls for the common container in ucsschool may change with
+    time.
     """
 
     def __init__(self, school, auth_dn, access_allowance):
@@ -174,8 +174,7 @@ class Acl(object):
         self.assert_acl(base_dn, access, attrs)
 
     def assert_student(self, stu_dn, access):
-        """Lehrer und OU-Admins duerfen Schueler-Passwoerter aendern
-        """
+        """Lehrer und OU-Admins duerfen Schueler-Passwoerter aendern"""
         attrs = [
             "krb5KeyVersionNumber",
             "krb5KDCFlags",
@@ -197,8 +196,7 @@ class Acl(object):
         self.assert_acl(stu_dn, access, attrs)
 
     def assert_room(self, room_dn, access):
-        """Lehrer und ouadmins duerfen Raum-Gruppen anlegen und bearbeiten
-        """
+        """Lehrer und ouadmins duerfen Raum-Gruppen anlegen und bearbeiten"""
         container_dn = "cn=raeume,cn=groups,%s" % utu.UCSTestSchool().get_ou_base_dn(self.school)
         attrs = [
             "children",
@@ -223,8 +221,9 @@ class Acl(object):
             self.assert_acl(target_dn, access, attrs, access_allowance="DENIED")
 
     def assert_teacher_group(self, access):
-        """Lehrer, Mitarbeiter und Mitglieder der lokalen Administratoren
-        duerfen Arbeitsgruppen anlegen und aendern
+        """
+        Lehrer, Mitarbeiter und Mitglieder der lokalen Administratoren duerfen Arbeitsgruppen anlegen
+        und aendern
         """
         group_container = "cn=lehrer,cn=groups,%s" % utu.UCSTestSchool().get_ou_base_dn(self.school)
         attrs = [
@@ -328,8 +327,9 @@ class Acl(object):
         self.assert_acl(share_dn, access, share_attribute_list, access_allowance)
 
     def assert_shares(self, shares_dn, access):
-        """Lehrer und Mitglieder der lokalen Administratoren duerfen Shares anlegen,
-        Klassenshares aber nicht aendern
+        """
+        Lehrer und Mitglieder der lokalen Administratoren duerfen Shares anlegen, Klassenshares aber
+        nicht aendern
         """
         attrs = [
             "children",
@@ -340,9 +340,10 @@ class Acl(object):
             self.assert_acl(target_dn, "write", attrs, access_allowance="DENIED")
 
     def assert_temps(self, access):
-        """Mitglieder der lokalen Administratoren muessen einige temporaere
-        Objekte schreiben duerfen da keine regulaeren Ausdruecke auf
-        Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
+        """
+        Mitglieder der lokalen Administratoren muessen einige temporaere Objekte schreiben duerfen da
+        keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern
+        erlaubt
         """
         base_dn = self.ucr.get("ldap/base")
         temp_dn = "cn=sid,cn=temporary,cn=univention,%s" % base_dn
@@ -376,10 +377,10 @@ class Acl(object):
             self.assert_acl(target_dn, access, attrs, access_allowance="DENIED")
 
     def assert_ou(self, access):
-        """Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben
-        (Passwortaenderungen etc.)
-        Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen
-        Standard-ACLs, ou-fremde Server/user duerfen nichts
+        """
+        Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
+        Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde
+        Server/user duerfen nichts
         """
         attrs = [
             "entry",
@@ -396,8 +397,9 @@ class Acl(object):
         self.assert_acl(target_dn, access, attrs)
 
     def assert_global_containers(self, access):
-        """Schüler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention,
-        policies, groups und dns lesen (werden bei Schuelern/Rechnern angezeigt)
+        """
+        Schüler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention, policies, groups und
+        dns lesen (werden bei Schuelern/Rechnern angezeigt)
         """
         base_dn = self.ucr.get("ldap/base")
         attrs = [
@@ -418,8 +420,8 @@ class Acl(object):
         self.assert_acl(container_dn, access, attrs)
 
     def assert_computers(self, computer_dn, access):
-        """Mitglieder der lokalen Administratoren duerfen MAC-Adressen
-        im Rechner- und DHCP-Objekt aendern
+        """
+        Mitglieder der lokalen Administratoren duerfen MAC-Adressen im Rechner- und DHCP-Objekt aendern
         """
         attrs = [
             "macAddress",
@@ -427,8 +429,8 @@ class Acl(object):
         self.assert_acl(computer_dn, access, attrs)
 
     def assert_user(self, user_dn, access):
-        """Mitglieder der lokalen Administratoren duerfen Passwoerter unterhalb
-        von cn=users aendern
+        """
+        Mitglieder der lokalen Administratoren duerfen Passwoerter unterhalb von cn=users aendern
         """
         attrs = [
             "krb5KeyVersionNumber",
@@ -453,9 +455,9 @@ class Acl(object):
     def assert_dhcp(self, client, access, modify_only_attrs=False):
         """
         Check access to DHCP host objects.
-        By default, all attributes are checked. If modify_only_attrs is True,
-        only attributes that are required to modify the DHCP host object are
-        checked.
+
+        By default, all attributes are checked. If modify_only_attrs is True, only attributes that are
+        required to modify the DHCP host object are checked.
         """
         client_dhcp_dn = "cn=%s,cn=%s,cn=dhcp,%s" % (
             client,
@@ -476,8 +478,9 @@ class Acl(object):
         self.assert_acl(client_dhcp_dn, access, attrs)
 
     def assert_member_server(self, access):
-        """Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver
-        joinen (benoetigt Passwortaenderung)
+        """
+        Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver joinen (benoetigt
+        Passwortaenderung)
         """
         base_dn = self.ucr.get("ldap/base")
         attrs = [

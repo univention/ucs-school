@@ -279,7 +279,7 @@ html5
     def get_groups(self):
         """Get groups"""
         reqResult = self.client.umc_command(
-            "schoolexam/groups", {"school": self.school, "pattern": "",}
+            "schoolexam/groups", {"school": self.school, "pattern": ""}
         ).result
         print "Groups response = ", reqResult
         groups = [x["label"] for x in reqResult]

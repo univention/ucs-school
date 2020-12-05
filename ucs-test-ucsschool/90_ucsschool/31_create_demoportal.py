@@ -139,7 +139,7 @@ def check_create_demoportal_call_lists(
 
 @patch("subprocess.check_call")
 def test_create_school_doesnt_create_existing_school(
-    subprocess_check_call_mock, random_school, create_demoportal_module,
+    subprocess_check_call_mock, random_school, create_demoportal_module
 ):
     with patch.object(
         create_demoportal_module, "SCHOOL", (random_school.name, random_school.display_name)

@@ -898,12 +898,12 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 
                             if not samba_home_server:
                                 univention.config_registry.handler_unset(
-                                    ["ucsschool/import/set/sambahome",]
+                                    ["ucsschool/import/set/sambahome"]
                                 )
 
                             if not profile_path_server:
                                 univention.config_registry.handler_unset(
-                                    ["ucsschool/import/set/serverprofile/path",]
+                                    ["ucsschool/import/set/serverprofile/path"]
                                 )
 
                             print ""

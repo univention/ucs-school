@@ -20,11 +20,13 @@ def main():
         school, _ = env.create_ou(name_edudc=ucr.get("hostname"))
 
         domain_users = lo.get(
-            "cn=Domain Users %s,cn=groups,ou=%s,%s" % (school, school, ucr.get("ldap/base"),)
+            "cn=Domain Users %s,cn=groups,ou=%s,%s" % (school, school, ucr.get("ldap/base"))
         )
-        assert policy_dn in domain_users.get("univentionPolicyReference", []), (
-            "The policy %r is not connected to the 'Domain Users %s' group, but should be."
-            % (policy_dn, school)
+        assert policy_dn in domain_users.get(
+            "univentionPolicyReference", []
+        ), "The policy %r is not connected to the 'Domain Users %s' group, but should be." % (
+            policy_dn,
+            school,
         )
 
 

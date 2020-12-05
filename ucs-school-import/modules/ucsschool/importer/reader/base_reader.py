@@ -117,8 +117,8 @@ class BaseReader(object):
     def map(self, input_data, cur_user_roles):
         """
         IMPLEMENT ME
-        Creates a ImportUser object from a users dict (self.cur_entry). Data
-        will not be	modified, just copied.
+        Creates a ImportUser object from a users dict (self.cur_entry). Data will not be modified, just
+        copied.
 
         :param dict input_data: user from read()
         :param cur_user_roles: [ucsschool.lib.roles, ..]
@@ -144,9 +144,8 @@ class BaseReader(object):
     def get_data_mapping(self, input_data):
         """
         IMPLEMENT ME
-        Create a mapping from the configured input mapping to the actual
-        input data. This is configuration and input format specific. See
-        csv_reader for an example.
+        Create a mapping from the configured input mapping to the actual input data. This is
+        configuration and input format specific. See csv_reader for an example.
         Used by ImportUser.format_from_scheme().
 
         :param input_data: raw input data as stored in ImportUser.input_data

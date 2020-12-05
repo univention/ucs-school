@@ -104,7 +104,7 @@ class Instance(SchoolBaseModule):
         all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
         return [x for x in all_user_dirs if x.lower() == username.lower()]
 
-    @sanitize(school=SchoolSanitizer(required=True),)
+    @sanitize(school=SchoolSanitizer(required=True))
     @LDAP_Connection()
     def printers(self, request, ldap_user_read=None):
         """List all available printers except PDF printers
@@ -184,9 +184,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, printjoblist)
 
     @allow_get_request
-    @sanitize(
-        username=StringSanitizer(required=True), printjob=StringSanitizer(required=True),
-    )
+    @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     def download(self, request):
         """Searches for print jobs
 
@@ -204,9 +202,7 @@ class Instance(SchoolBaseModule):
         with open(path) as fd:
             self.finished(request.id, fd.read(), mimetype="application/pdf")
 
-    @sanitize(
-        username=StringSanitizer(required=True), printjob=StringSanitizer(required=True),
-    )
+    @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     @simple_response
     def delete(self, username, printjob):
         """Delete a print job

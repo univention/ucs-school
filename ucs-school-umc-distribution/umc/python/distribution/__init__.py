@@ -86,7 +86,7 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True),),
+            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
             required=True,
         )
     )

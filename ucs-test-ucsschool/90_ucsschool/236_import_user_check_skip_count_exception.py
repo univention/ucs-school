@@ -61,9 +61,7 @@ class Test(CLI_Import_v2_Tester):
         person_list = list()
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
-            person.update(
-                record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid,
-            )
+            person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
             person_list.append(person)
         person_list[0].update(firstname="A{}".format(person_list[0].firstname[1:]))
         person_list[1].update(firstname="M{}".format(person_list[1].firstname[1:]))

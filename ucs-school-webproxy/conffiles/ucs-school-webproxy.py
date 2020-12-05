@@ -143,7 +143,7 @@ def signalReloadProcess():
 
 
 def reloadSquidDirectly():
-    subprocess.call(("/etc/init.d/squid", "reload",))
+    subprocess.call(("/etc/init.d/squid", "reload"))
 
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
@@ -190,7 +190,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
         elif key.startswith("proxy/filter/setting-user/"):
             roomRules.append(key.split("/")[3])
 
-    for (room, IPs,) in roomIPs.items():
+    for room, IPs in roomIPs.items():
         f.write("src room-%s {\n" % (quote(room),))
         for IP in IPs:
             f.write("	ip	%s\n" % (IP,))
@@ -292,7 +292,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
         "blacklist-pass": "!blacklist-%(username)s !global-blacklist all\n",
     }
 
-    for (username, rooms,) in roomRule.items():
+    for username, rooms in roomRule.items():
         for room in rooms:
             if username in roomRules:
                 filtertype = configRegistry.get(
@@ -308,12 +308,12 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
                 continue
             if filtertype in RULES:
                 f.write("	room-%s {\n" % (quote(room),))
-                f.write("		pass %s\n" % (RULES[filtertype] % {"username": quoted_username,},))
+                f.write("		pass %s\n" % (RULES[filtertype] % {"username": quoted_username},))
                 f.write("		redirect %s\n" % default_redirect)
                 f.write("	}\n")
 
     # acl usergroup
-    for (priority, usergroupname, proxy_setting,) in reversed(sorted(usergroupSetting)):
+    for priority, usergroupname, proxy_setting in reversed(sorted(usergroupSetting)):
         filtertype = configRegistry.get(
             "proxy/filter/setting/%s/filtertype" % proxy_setting, "whitelist-blacklist-pass"
         )
@@ -327,7 +327,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
             f.write("	 }\n\n")
         elif filtertype == "whitelist-block":
             f.write("	 usergroup-%s {\n" % quote(usergroupname))
-            f.write("		 pass %swhitelist-%s none\n" % (forced_blacklist, quote(proxy_setting),))
+            f.write("		 pass %swhitelist-%s none\n" % (forced_blacklist, quote(proxy_setting)))
             f.write("		 redirect %s\n" % (default_redirect,))
             f.write("	 }\n\n")
         elif filtertype == "blacklist-pass":
@@ -394,7 +394,7 @@ def writeSettinglist(configRegistry, DIR_TEMP):
         match = regex.match(key)
         if match:
             proxy_settinglist.add(match.groups())
-    for (userpart, proxy_setting,) in proxy_settinglist:
+    for userpart, proxy_setting in proxy_settinglist:
         for filtertype in ["domain", "url"]:
             for itemtype in ["blacklisted", "whitelisted"]:
                 filename = "%s-%s-%s%s" % (itemtype, filtertype, quote(proxy_setting), userpart)
@@ -457,10 +457,10 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
     # create all db files
-    subprocess.call(("squidGuard", "-c", fn_temp_config, "-C", "all",), stdin=open("/dev/null", "r"))
+    subprocess.call(("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"))
     # fix permissions
-    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config,))
-    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config,))
+    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config))
+    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config))
     # fix squidguard config (replace DIR_TEMP with DIR_DATA)
     content = open(fn_temp_config, "r").read()
     content = content.replace("\ndbhome %s/\n" % DIR_TEMP, "\ndbhome %s/\n" % DIR_DATA)

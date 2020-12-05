@@ -103,7 +103,7 @@ def run(_umc_instance):
             details += "\n  {}".format(dn)
         raise Critical(
             description + details,
-            buttons=[{"action": "fix_computers", "label": _("Fix computer objects"),}],
+            buttons=[{"action": "fix_computers", "label": _("Fix computer objects")}],
         )
 
 

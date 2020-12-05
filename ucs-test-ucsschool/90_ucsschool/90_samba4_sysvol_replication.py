@@ -182,7 +182,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         if stderr:
             utils.fail(
                 "An error occured while trying to sed through the LDAP search results from the "
-                "DC-Master: '%s'. sed input was: '%s'" % (stderr, search_stdout,)
+                "DC-Master: '%s'. sed input was: '%s'" % (stderr, search_stdout)
             )
         if not stdout.strip():
             utils.fail(

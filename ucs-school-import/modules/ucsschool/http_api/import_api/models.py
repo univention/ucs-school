@@ -94,7 +94,7 @@ class Role(models.Model):
         for role in USER_ROLES:
             name = role
             display_name = _(USER_ROLE_TRANS[role])
-            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name},)
+            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})
             if not created and obj.displayName != display_name:
                 obj.displayName = display_name
                 obj.save()
@@ -259,7 +259,7 @@ class School(models.Model):
         for dn, ou in res:
             name = ou["ou"][0]
             display_name = ou.get("displayName", [name])[0]
-            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name},)
+            obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})
             if not created and obj.displayName != display_name:
                 obj.displayName = display_name
                 obj.save()

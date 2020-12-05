@@ -81,12 +81,12 @@ def send_wol_packet(
 ):
     # type: (str, Optional[Iterable[str]], Optional[Iterable[str]], Optional[Iterable[str]]) -> None
     """
-    Sends a WakeOnLan packet to the specified MAC address via
-    all interfaces (that are not blacklisted).
+    Sends a WakeOnLan packet to the specified MAC address via all interfaces (that are not blacklisted).
+
     >>> send_wol_packet(
-    ...	  '12:34:56:78:9A:BC',
-    ...	  blacklisted_interfaces=['lo'],
-    ...	  blacklisted_interface_prefixes=['tun', 'docker'])
+    ...   '12:34:56:78:9A:BC',
+    ...   blacklisted_interfaces=['lo'],
+    ...   blacklisted_interface_prefixes=['tun', 'docker'])
     >>>
 
     :param mac_address: MAC address of the target host

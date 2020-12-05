@@ -130,10 +130,10 @@ class UserMap(dict):
         )
         users_groupmemberships = set([explode_dn(x, True)[0].lower() for x in userobj["groups"]])
         MODULE.info(
-            "UserMap: %s: hide screenshots for following groups: %s" % (username, blacklisted_groups,)
+            "UserMap: %s: hide screenshots for following groups: %s" % (username, blacklisted_groups)
         )
         MODULE.info(
-            "UserMap: %s: user is member of following groups: %s" % (username, users_groupmemberships,)
+            "UserMap: %s: user is member of following groups: %s" % (username, users_groupmemberships)
         )
         hide_screenshot = bool(blacklisted_groups & users_groupmemberships)
 
@@ -720,7 +720,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         self._core.logoutUser()
 
     def __repr__(self):
-        return "<%s(%s)>" % (type(self).__name__, self.ipAddress,)
+        return "<%s(%s)>" % (type(self).__name__, self.ipAddress)
 
 
 class ITALC_Manager(dict, notifier.signals.Provider):

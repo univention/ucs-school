@@ -189,9 +189,7 @@ class Test(HttpApiUserTestBase):
         # create users sequentially and using WSGI interface
         jobs = []
         for _i in range(parallelism):
-            create_attrs = self.make_user_attrs(
-                ous, school=ou1, schools=ous,  # overwrite URLs  # overwrite URLs
-            )
+            create_attrs = self.make_user_attrs(ous, school=ou1, schools=ous)  # overwrite URLs
             del create_attrs["roles"]
             self.schoolenv.udm._cleanup.setdefault("groups/group", []).extend(
                 self.extract_class_dns(create_attrs)

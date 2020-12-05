@@ -93,7 +93,7 @@ class GPO(object):
 
 
 def check_local_LDAP_for_GPO_link(gpo_reference, oudn):
-    stdout = check_output(["univention-ldapsearch", oudn.split(",", 1)[0],])
+    stdout = check_output(["univention-ldapsearch", oudn.split(",", 1)[0]])
     print (stdout)
     return gpo_reference.lower() in stdout.lower()
 

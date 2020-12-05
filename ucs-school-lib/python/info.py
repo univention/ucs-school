@@ -99,7 +99,7 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
     attrs = lo.get(dn, ["univentionObjectType"])
     object_type = attrs.get("univentionObjectType")[0]
-    if object_type in ("computers/domaincontroller_master", "computers/domaincontroller_backup",):
+    if object_type in ("computers/domaincontroller_master", "computers/domaincontroller_backup"):
         return True
     if object_type in ("computers/domaincontroller_slave", "computers/memberserver"):
         membership = get_school_membership_type(lo, dn)

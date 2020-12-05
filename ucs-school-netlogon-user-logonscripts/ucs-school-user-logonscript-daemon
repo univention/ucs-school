@@ -463,7 +463,7 @@ class QueueHandler:
         except ldap.LDAPError as exc:
             Log.error("LDAP search for %s failed in get_group_memberships(): %s", dn, exc)
             raise
-        return frozenset([attributes["gidNumber"][0] for (_, attributes,) in res])
+        return frozenset([attributes["gidNumber"][0] for _, attributes in res])
 
     def get_shares_with_specific_gidNumber(self, gid):
         try:

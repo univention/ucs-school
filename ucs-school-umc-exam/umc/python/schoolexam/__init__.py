@@ -281,7 +281,7 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True),),
+            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
             required=True,
         )
     )
@@ -604,7 +604,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Preparing the computer room for exam mode..."))
             client.umc_command(
                 "schoolexam-master/set-computerroom-exammode",
-                dict(school=request.options["school"], roomdn=request.options["room"],),
+                dict(school=request.options["school"], roomdn=request.options["room"]),
             ).result  # FIXME: no error handling
             progress.add_steps(5)
 
@@ -668,7 +668,7 @@ class Instance(SchoolBaseModule):
             logger.info("start_exam() Sending DNs to add to group to master: %r", student_dns)
             client.umc_command(
                 "schoolexam-master/add-exam-users-to-groups",
-                dict(users=list(student_dns), school=request.options["school"],),
+                dict(users=list(student_dns), school=request.options["school"]),
             )
 
             progress.add_steps(percentPerUser)
@@ -832,7 +832,7 @@ class Instance(SchoolBaseModule):
         thread = notifier.threads.Simple("start_exam", _thread, notifier.Callback(_finished, request))
         thread.run()
 
-    @sanitize(exam=StringSanitizer(required=True),)
+    @sanitize(exam=StringSanitizer(required=True))
     @simple_response
     def collect_exam(self, exam):
         logger.info("exam=%r", exam)
@@ -844,7 +844,7 @@ class Instance(SchoolBaseModule):
         project.collect()
         return True
 
-    @sanitize(room=DNSanitizer(required=True),)
+    @sanitize(room=DNSanitizer(required=True))
     @LDAP_Connection()
     def validate_room(self, request, ldap_user_read=None, ldap_position=None):
         error = None
@@ -861,9 +861,7 @@ class Instance(SchoolBaseModule):
             )
         self.finished(request.id, error)
 
-    @sanitize(
-        room=StringSanitizer(required=True), exam=StringSanitizer(required=True),
-    )
+    @sanitize(room=StringSanitizer(required=True), exam=StringSanitizer(required=True))
     @LDAP_Connection()
     def finish_exam(self, request, ldap_user_read=None):
         logger.info("request.options=%r", request.options)
@@ -910,7 +908,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Configuring the computer room..."))
             client.umc_command(
                 "schoolexam-master/unset-computerroom-exammode",
-                dict(roomdn=request.options["room"], school=school,),
+                dict(roomdn=request.options["room"], school=school),
             ).result
             progress.add_steps(5)
 
@@ -983,7 +981,7 @@ class Instance(SchoolBaseModule):
                     umc_cmd = "schoolexam-master/remove-users-from-non-primary-groups"
                     try:
                         client.umc_command(
-                            umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"],}
+                            umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"]}
                         ).result
                     except Forbidden as exc:
                         # DC Master has old package. No problem, as users will still be

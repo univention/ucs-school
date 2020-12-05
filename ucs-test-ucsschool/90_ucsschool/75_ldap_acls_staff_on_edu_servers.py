@@ -80,7 +80,7 @@ class LDAPACLCheck(UCSTestSchool):
             # test with Administrator account
             utils.verify_ldap_object(
                 self.staff_user.dn,
-                {"uid": [self.staff_user.name],},
+                {"uid": [self.staff_user.name]},
                 should_exist=True,
                 retry_count=10,
                 delay=3,

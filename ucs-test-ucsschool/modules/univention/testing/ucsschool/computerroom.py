@@ -659,7 +659,7 @@ class Room(object):
                 print
                 print (
                     "*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) "
-                    "----------" % (i, rule, printMode, shareMode, period,)
+                    "----------" % (i, rule, printMode, shareMode, period)
                 )
                 new_settings = {
                     "customRule": white_page,
@@ -939,7 +939,7 @@ class UmcComputer(object):
     def remove(self):
         """Remove computer"""
         flavor = "schoolwizards/computers"
-        param = [{"object": {"$dn$": self.dn(), "school": self.school,}, "options": None}]
+        param = [{"object": {"$dn$": self.dn(), "school": self.school}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/computers/remove", param, flavor).result
         if not reqResult[0] is True:
             raise RemoveFail("Unable to remove computer (%s): %r" % (self.name, reqResult))

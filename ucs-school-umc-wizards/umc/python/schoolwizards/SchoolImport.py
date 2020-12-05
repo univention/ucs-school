@@ -43,8 +43,7 @@ _ = Translation("ucs-school-umc-wizards").translate
 
 class SchoolImport(object):
 
-    """Wrapper for the ucs-school-import script
-    """
+    """Wrapper for the ucs-school-import script"""
 
     _SCRIPT_PATH = "/usr/share/ucs-school-import/scripts"
     USER_SCRIPT = "%s/import_user" % _SCRIPT_PATH
@@ -54,10 +53,9 @@ class SchoolImport(object):
     MOVE_DC_SCRIPT = "%s/move_domaincontroller_to_ou" % _SCRIPT_PATH
 
     def _run_script(self, script, entry, run_with_string_argument=False):
-        """Executes the script with given entry
-        """
+        """Executes the script with given entry"""
         # Replace `True` with 1 and `False` with 0
-        entry = [{True: 1, False: 0,}.get(x, x) for x in entry]
+        entry = [{True: 1, False: 0}.get(x, x) for x in entry]
 
         if run_with_string_argument:
             entry.insert(0, script)
@@ -108,8 +106,7 @@ class SchoolImport(object):
         staff,
         password,
     ):
-        """Imports a new user
-        """
+        """Imports a new user"""
         entry = [
             "A",
             username,
@@ -130,8 +127,7 @@ class SchoolImport(object):
             raise OSError(_("Could not create user"))
 
     def import_group(self, school, name, description):
-        """Creates a new class
-        """
+        """Creates a new class"""
         name = "%s-%s" % (school, name)
         entry = [
             "A",
@@ -145,8 +141,7 @@ class SchoolImport(object):
             raise OSError(_("Could not create class"))
 
     def import_computer(self, type_, name, mac, school, ip_address, subnet_mask, inventory_number):
-        """Imports a new computer
-        """
+        """Imports a new computer"""
         if subnet_mask:
             address = "%s/%s" % (ip_address, subnet_mask)
         else:

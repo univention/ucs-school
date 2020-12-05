@@ -74,7 +74,7 @@ def test_user_restore_after_exam():
             room = Room(school, host_members=created_computers_dn[0])
 
             schoolenv.create_computerroom(
-                school, name=room.name, description=room.description, host_members=room.host_members,
+                school, name=room.name, description=room.description, host_members=room.host_members
             )
 
             wait_replications_check_rejected_uniqueMember(existing_rejects)
