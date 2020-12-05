@@ -60,7 +60,8 @@ if os.path.isfile(demo_secret_path):
     with open(demo_secret_path, "r") as fd:
         demo_password = fd.read().strip()
 else:
-    demo_password = "".join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+    _chars = string.ascii_letters + string.digits
+    demo_password = "".join(random.choice(_chars) for _ in range(16))  # nosec
     with open(demo_secret_path, "w") as fd:
         os.fchmod(fd.fileno(), 0o640)
         fd.write(demo_password)
@@ -214,9 +215,8 @@ def create_school():
             break
     if not school_exists:
         try:
-            subprocess.check_call(
+            subprocess.check_call(  # nosec
                 [
-                    "python",
                     "/usr/share/ucs-school-import/scripts/create_ou",
                     "--displayName={}".format(SCHOOL[1]),
                     "--alter-dhcpd-base=false",

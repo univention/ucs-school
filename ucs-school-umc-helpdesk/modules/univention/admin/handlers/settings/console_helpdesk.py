@@ -156,7 +156,7 @@ def lookup(
     try:
         for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
             res.append(object(co, lo, None, dn))
-    except:
+    except:  # nosec # TODO: use specific expetions
         pass
     return res
 

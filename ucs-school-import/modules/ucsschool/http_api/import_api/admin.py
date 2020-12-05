@@ -63,11 +63,11 @@ class ProxyModelFilterMixin(object):
     def text_loaded(self, instance):
         return format_html(
             "{}{}{}",
-            mark_safe(
+            mark_safe(  # nosec
                 '<textarea class="vLargeTextField" name="text_loaded" cols="40" rows="30" readonly>'
             ),
             instance.get_text(),
-            mark_safe("</textarea>"),
+            mark_safe("</textarea>"),  # nosec
         )
 
     text_loaded.short_description = "Text loaded from disk"

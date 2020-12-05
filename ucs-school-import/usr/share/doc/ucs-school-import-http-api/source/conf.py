@@ -91,7 +91,7 @@ def get_deb_version():
         path = os.path.dirname(path)
     os.chdir(path)
     cmd = ["dpkg-parsechangelog", "-S", "version"]
-    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
+    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()  # nosec
     return out.strip()
 
 

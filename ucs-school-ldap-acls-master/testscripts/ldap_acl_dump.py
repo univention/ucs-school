@@ -67,8 +67,8 @@ def parse_acls(args, lo):
         entry = {}
         for attr in attrs:
             # TODO: replace subprocess by some C calls to improove speed
-            process = subprocess.Popen(
-                ["slapacl", "-d0", "-D", args.binddn, "-b", dn, attr], stderr=subprocess.PIPE
+            process = subprocess.Popen(  # nosec
+                ["/usr/sbin/slapacl", "-d0", "-D", args.binddn, "-b", dn, attr], stderr=subprocess.PIPE
             )
             _, stderr = process.communicate()
             for line in stderr.splitlines():

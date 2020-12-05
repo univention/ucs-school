@@ -430,7 +430,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         def run(args):  # type: (Sequence[str]) -> int
             self.logger.debug("Starting %r...", args)
-            process = subprocess.Popen(
+            process = subprocess.Popen(  # nosec
                 args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
             stdout, stderr = process.communicate()

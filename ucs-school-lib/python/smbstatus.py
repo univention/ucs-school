@@ -129,7 +129,7 @@ class SMB_Status(list):
         while self:
             self.pop()
         if testdata is None:
-            smbstatus = subprocess.Popen(
+            smbstatus = subprocess.Popen(  # nosec
                 ["/usr/bin/smbstatus"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             data = ["%s\n" % x for x in smbstatus.communicate()[0].splitlines()]

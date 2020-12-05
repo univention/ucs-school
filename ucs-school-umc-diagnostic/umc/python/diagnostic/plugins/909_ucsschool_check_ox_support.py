@@ -86,7 +86,7 @@ def exec_cmd(*args):
     cmd = []
     for arg in args:
         cmd.append(arg)
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     return p.communicate()
 
 

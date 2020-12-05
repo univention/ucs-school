@@ -295,7 +295,7 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
             try:
                 results, policies = policy_result(dn)
                 _pw_length_cache[dn] = int(results.get("univentionPWLength", ["8"])[0])
-            except Exception:
+            except Exception:  # nosec # TODO: replace with specific exeptions
                 pass
         length = _pw_length_cache.get(dn, length)
 
@@ -305,7 +305,7 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
             try:
                 results, policies = policy_result(ou)
                 _pw_length_cache[ou] = int(results.get("univentionPWLength", ["8"])[0])
-            except Exception:
+            except Exception:  # nosec # TODO: replace with specific exeptions
                 pass
         length = _pw_length_cache.get(ou, length)
 
@@ -328,25 +328,25 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
 
     # one symbol from each character class, MS requirement:
     # https://technet.microsoft.com/en-us/library/cc786468(v=ws.10).aspx
-    if length >= 3:
+    if length >= 3:  # nosec
         pw.append(choice(lowercase))
         pw.append(choice(uppercase))
         pw.append(choice(digits))
         length -= 3
-    if specials and length and specials_allowed:
+    if specials and length and specials_allowed:  # nosec
         pw.append(choice(specials))
         specials_allowed -= 1
         length -= 1
 
     # fill up with random chars (but not more than 20% specials)
-    for _x in range(length):
+    for _x in range(length):  # nosec
         char = choice(lowercase + uppercase + digits + (specials if specials_allowed else []))
         if char in specials:
             specials_allowed -= 1
         pw.append(char)
 
     shuffle(pw)
-    pw = [choice(lowercase + uppercase)] + pw  # start with a letter
+    pw = [choice(lowercase + uppercase)] + pw  # nosec # start with a letter
     return "".join(pw)
 
 
@@ -569,7 +569,7 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
     assert all(isinstance(arg, string_types) for arg in cmd)
     kwargs["stdout"] = kwargs.get("stdout", subprocess.PIPE)
     kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
-    process = subprocess.Popen(cmd, **kwargs)
+    process = subprocess.Popen(cmd, **kwargs)  # nosec
     stdout, stderr = process.communicate()
     if log:
         logger = logging.getLogger(__name__)

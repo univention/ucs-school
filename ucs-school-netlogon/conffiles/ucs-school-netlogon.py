@@ -114,7 +114,7 @@ def handler(configRegistry, changes):
             if os.path.isfile(oldScript):
                 try:
                     os.remove(oldScript)
-                except:
+                except:  # nosec # TODO: use specific exceptions
                     pass
 
     # netlogon script name
@@ -128,7 +128,7 @@ def handler(configRegistry, changes):
         if os.path.isfile(netlogon):
             try:
                 os.remove(netlogon)
-            except:
+            except:  # nosec # TODO: use specific exceptions
                 pass
 
     # get ucr vars and save script in scripts

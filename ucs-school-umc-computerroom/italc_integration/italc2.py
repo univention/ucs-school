@@ -684,7 +684,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
     @staticmethod
     def mac_from_ip(ip):
         if ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-            pid = subprocess.Popen(["arp", "-n", ip], stdout=subprocess.PIPE)
+            pid = subprocess.Popen(["/usr/sbin/arp", "-n", ip], stdout=subprocess.PIPE)  # nosec
             s = pid.communicate()[0]
             res = re.search(r"(([a-f\d]{1,2}\:){5}[a-f\d]{1,2})", s)
             mac = ""
@@ -699,8 +699,8 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
     def get_active_ip(ips):
         if ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
             for ip in ips:
-                command = ["timeout", "1", "ping", "-c", "1", ip]
-                if subprocess.call(command) == 0:
+                command = ["/usr/bin/timeout", "1", "ping", "-c", "1", ip]
+                if subprocess.call(command) == 0:  # nosec
                     return ip
             else:
                 MODULE.warn("Non of the ips is pingable: %r" % ips)

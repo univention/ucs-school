@@ -61,7 +61,7 @@ class SchoolImport(object):
             entry.insert(0, script)
             try:
                 MODULE.process("Executing command: %s" % " ".join(entry))
-                process = subprocess.Popen(entry, stdout=subprocess.PIPE)
+                process = subprocess.Popen(entry, stdout=subprocess.PIPE)  # nosec
                 stdout, stderr = process.communicate()
                 if stdout and process.returncode > 0:
                     MODULE.warn(stdout)
@@ -78,7 +78,7 @@ class SchoolImport(object):
                 tmpfile.write(entry)
                 tmpfile.flush()
                 MODULE.process("Executing command: %s" % script)
-                process = subprocess.Popen([script, tmpfile.name], stdout=subprocess.PIPE)
+                process = subprocess.Popen([script, tmpfile.name], stdout=subprocess.PIPE)  # nosec
                 stdout, stderr = process.communicate()
                 if stdout:
                     info = "\n".join(

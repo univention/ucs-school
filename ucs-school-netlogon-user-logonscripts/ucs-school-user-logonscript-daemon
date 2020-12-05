@@ -448,7 +448,7 @@ class QueueHandler:
             filepath = os.path.join(path, "{}.vbs".format(uid))
             with open(filepath, "w") as fp:
                 fp.write(script)
-            os.chmod(filepath, 0o755)
+            os.chmod(filepath, 0o755)  # nosec
 
     def get_group_memberships(self, dn):
         """

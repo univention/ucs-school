@@ -330,7 +330,7 @@ class Instance(SchoolBaseModule):
                     userSid = univention.admin.allocators.requestUserSid(
                         ldap_admin_write, ldap_position, uidNum
                     )
-                except:
+                except:  # nosec # TODO: use specific exceptions
                     pass
             if not userSid or userSid == "None":
                 num = uidNum

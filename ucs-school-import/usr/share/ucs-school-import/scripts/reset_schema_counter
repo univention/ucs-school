@@ -126,7 +126,8 @@ def main():
     if args.write:
         print("Would delete:")
         print("  {}".format("\n  ".join(dns)))
-        answer = input("Really reset the above {} counters? [y/N]:".format(total))
+        # TODO: replace with raw_input
+        answer = input("Really reset the above {} counters? [y/N]:".format(total))  # nosec
         if answer.lower() not in ("y", "yes"):
             print("Stopping as requested.")
             sys.exit(1)

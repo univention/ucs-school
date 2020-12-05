@@ -274,7 +274,7 @@ class Instance(SchoolBaseModule):
             datadir = os.path.dirname(project.user_projectdir(user).rstrip("/"))
             if os.path.exists(datadir):
                 try:
-                    subprocess.check_call(["chattr", modifier, datadir])
+                    subprocess.check_call(["/usr/bin/chattr", modifier, datadir])  # nosec
                 except subprocess.CalledProcessError as e:
                     logger.error("Could not set the immutable bit on %r", datadir)
 
@@ -692,7 +692,7 @@ class Instance(SchoolBaseModule):
                         continue  # not a users/user object
                     logger.info("user has been replicated: %r", idn)
                     # call hook scripts
-                    if 0 != subprocess.call(
+                    if 0 != subprocess.call(  # nosec
                         [
                             "/bin/run-parts",
                             CREATE_USER_POST_HOOK_DIR,
@@ -747,7 +747,7 @@ class Instance(SchoolBaseModule):
                 if ucr.is_true("nss/group/cachefile/check_member", False):
                     cmd.append("--check_member")
                 logger.info("Updating local nss group cache...")
-                if subprocess.call(cmd):
+                if subprocess.call(cmd):  # nosec
                     logger.error("Updating local nss group cache failed: %s", " ".join(cmd))
                 else:
                     logger.info("Update of local nss group cache finished successfully.")
@@ -1027,7 +1027,7 @@ class Instance(SchoolBaseModule):
                 # new UID from ldap.
                 logger.info("Clear user name cache...")
                 cmd = ["/usr/sbin/nscd", "-i", "passwd"]
-                if subprocess.call(cmd):
+                if subprocess.call(cmd):  # nosec
                     logger.error("Clearing user name cache failed: %s", " ".join(cmd))
                 else:
                     logger.info("Clearing user name cache finished successfully.")

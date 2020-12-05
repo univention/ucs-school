@@ -75,7 +75,7 @@ def run(_umc_instance):
             return
 
     cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = p.communicate()
     installed, version = stdout.split(",")
     is_installed = "ok installed" in installed

@@ -158,7 +158,7 @@ def create_ou_local(ou, display_name):
     # call create_ou
     cmd = ["/usr/share/ucs-school-import/scripts/create_ou", "--displayName", display_name, ou]
     MODULE.info("Executing: %s" % " ".join(cmd))
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec
         cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True
     )
     stdout, stderr = process.communicate()
@@ -203,7 +203,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 
     # disable UMC/apache restart
     MODULE.info("disabling UMC and apache server restart")
-    subprocess.call(CMD_DISABLE_EXEC)
+    subprocess.call(CMD_DISABLE_EXEC)  # nosec
 
     try:
         with tempfile.NamedTemporaryFile() as password_file:
@@ -220,7 +220,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
             if server_role == "domaincontroller_slave":
                 # DC slave -> complete re-join
                 MODULE.process("Performing system join...")
-                process = subprocess.Popen(
+                process = subprocess.Popen(  # nosec
                     ["/usr/sbin/univention-join", "-dcaccount", username, "-dcpwd", password_file.name],
                     shell=False,
                     stdout=subprocess.PIPE,
@@ -230,7 +230,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
             else:
                 # DC backup/master -> only run join scripts
                 MODULE.process("Executing join scripts ...")
-                process = subprocess.Popen(
+                process = subprocess.Popen(  # nosec
                     [
                         "/usr/sbin/univention-run-join-scripts",
                         "-dcaccount",
@@ -344,7 +344,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
     finally:
         # make sure that UMC servers and apache can be restarted again
         MODULE.info("enabling UMC and apache server restart")
-        subprocess.call(CMD_ENABLE_EXEC)
+        subprocess.call(CMD_ENABLE_EXEC)  # nosec
 
 
 class Progress(object):
@@ -783,7 +783,7 @@ class Instance(Base):
             with _self.package_manager.locked(reset_status=True, set_finished=True):
                 with _self.package_manager.no_umc_restart(exclude_apache=True):
                     _self.package_manager.progress_state.info("Updating package cache")
-                    proc = subprocess.Popen(
+                    proc = subprocess.Popen(  # nosec
                         ["/usr/bin/apt-get", "update"],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE,
@@ -921,7 +921,7 @@ class Instance(Base):
         certificate_uri = "http://%s/ucs-root-ca.crt" % (master,)
         MODULE.info("Downloading root certificate from: %s" % (master,))
         try:
-            certificate_file, headers = urllib.urlretrieve(certificate_uri)
+            certificate_file, headers = urllib.urlretrieve(certificate_uri)  # nosec
 
             if not filecmp.cmp(CERTIFICATE_PATH, certificate_file):
                 # we need to update the certificate file...

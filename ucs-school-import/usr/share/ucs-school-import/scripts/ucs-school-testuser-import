@@ -254,7 +254,7 @@ def main():
         ]
         cmd.extend(args.ImportArguments)
         logger.info("Running: %s", " ".join(cmd))
-        proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+        proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)  # nosec
         proc.communicate()
         logger.info("------ ucs-school-user-import return with exit code %d ------", proc.returncode)
         return proc.returncode

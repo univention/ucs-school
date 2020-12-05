@@ -274,7 +274,7 @@ def initialize():  # type: () -> None
 
 
 def run_daemon(cmd):  # type: (List[str]) -> None
-    cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     cmd_out, cmd_err = cmd_proc.communicate()
     if cmd_proc.returncode:
         Log.error(

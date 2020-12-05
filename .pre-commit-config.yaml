@@ -38,3 +38,8 @@ repos:
     -   id: python-check-blanket-noqa
     -   id: python-no-eval
     -   id: rst-backticks
+-   repo: https://github.com/PyCQA/bandit
+    rev: 1.6.2
+    hooks:
+    -   id: bandit
+        entry: bandit -c .bandit --exclude ucs-test-ucsschool
