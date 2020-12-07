@@ -79,7 +79,7 @@ class VeyonClient:
         )
         check_veyon_error(result)
         session_data = result.json()
-        return VeyonSession(str(session_data["connection-uid"]), session_data["validuntil"])
+        return VeyonSession(str(session_data["connection-uid"]), session_data["validUntil"])
 
     def _get_connection_uid(self, host=None, renew_session=True):  # type:(Optional[str]) -> str
         """
