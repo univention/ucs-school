@@ -46,7 +46,7 @@ import ldap
 import notifier
 import samba
 from ldap.filter import filter_format
-from samba.ntacls import getdosinfo, getntacl, setntacl
+from samba.ntacls import getntacl, setntacl
 from six import iteritems
 
 import univention.debug
