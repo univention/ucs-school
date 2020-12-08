@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check permissions of home dirs of exam users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,tobias]
 ## exposure: dangerous
 ## bugs: [49655]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
