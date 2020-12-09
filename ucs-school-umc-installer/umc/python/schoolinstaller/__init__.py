@@ -34,6 +34,7 @@ import errno
 import fcntl
 import filecmp
 import glob
+import json
 import os
 import os.path
 import re
@@ -722,6 +723,38 @@ class Instance(Base):
         self.package_manager.reset_status()
 
         def _thread(_self, packages):
+            MODULE.process("Start Veyon proxy app installation")
+            app_info = json.loads(subprocess.check_output(["univention-app", "info", "--as-json"]))
+            veyon_installed = any(
+                (
+                    app_string.split("=")[0] == "ucsschool-veyon-proxy"
+                    for app_string in app_info.get("installed", [])
+                )
+            )
+            if veyon_installed:
+                MODULE.process("Veyon proxy app already installed. Skip installation")
+            else:
+                MODULE.process(
+                    "The output for the installation of the Veyon proxy app can be found in /var/log/univention/appcenter.log"
+                )
+                with tempfile.NamedTemporaryFile() as pw_file:
+                    pw_file.write(self.password)
+                    pw_file.flush()
+                    cmd = [
+                        "univention-app",
+                        "install",
+                        "ucsschool-veyon-proxy",
+                        "--username",
+                        self.username,
+                        "--pwdfile",
+                        pw_file.name,
+                        "--noninteractive",
+                    ]
+                    return_code = subprocess.call(cmd)
+                if return_code != 0:
+                    MODULE.warn(
+                        "The Veyon proxy app could not be installed. Please install manually to ensure a working computerroom module."
+                    )
             MODULE.process("Starting package installation")
             with _self.package_manager.locked(reset_status=True, set_finished=True):
                 with _self.package_manager.no_umc_restart(exclude_apache=True):
