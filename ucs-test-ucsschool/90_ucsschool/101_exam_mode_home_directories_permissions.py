@@ -66,7 +66,7 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
                 username=uid, share=samba_home, dir_name=new_folder, samba_workstation=samba_workstation
             )
             check_change_permissions(
-                file=samba_new_share_folder,
+                filename=samba_new_share_folder,
                 user_name=uid,
                 allowed=False,
                 samba_workstation=samba_workstation,
@@ -85,7 +85,7 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
                 samba_workstation=samba_workstation,
             )
             check_change_permissions(
-                file=samba_new_share_folder,
+                filename=samba_new_share_folder,
                 user_name=uid,
                 allowed=False,
                 samba_workstation=samba_workstation,
@@ -93,7 +93,7 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
             print("# check distribution folder has the correct rights".format(distribution_data_folder))
             exam_share_folder = "{} {}".format(samba_home, distribution_data_folder)
             check_change_permissions(
-                file=exam_share_folder,
+                filename=exam_share_folder,
                 user_name=uid,
                 allowed=False,
                 samba_workstation=samba_workstation,
