@@ -65,6 +65,7 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from ucsschool.lib.schoollessons import SchoolLessons
 from univention.admin.uexceptions import noObject
+from univention.admin.uldap import access as LoType
 from univention.lib.i18n import Translation
 from univention.lib.misc import custom_groupname
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
@@ -182,6 +183,30 @@ class Instance(SchoolBaseModule):
         return room_module
 
     @staticmethod
+    @LDAP_Connection()
+    def init_windows_profiles(exam_user, ldap_user_read=None):  # type: (User, LoType) -> None
+        """
+        When login with smbclient, the folder windows-profile and others
+        are created. We need those folders to be present at this time to set the
+        permissions for them, too.
+
+        :param exam_user:
+        :param ldap_user_read:
+        """
+        password = ldap_user_read.get(exam_user.dn)["sambaNTPassword"]
+        workstation = ldap_user_read.get(exam_user.dn)["sambaUserWorkstations"]
+        if password and workstation:
+            cmd = "smbclient -U {}%{} -L localhost --netbiosname={} --pw-nt-hash".format(
+                exam_user.username, password[0], workstation[0]
+            )
+            p = subprocess.Popen(cmd, shell=True, close_fds=True)
+            _, stderr = p.communicate()
+            if stderr:
+                logger.error("Error while initiating windows-profiles: {}".format(stderr))
+        else:
+            logger.error("User {} is missing password or workstation".format(exam_user.dn))
+
+    @staticmethod
     def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
         """
         Sets NT ACLs for exam users home dirs
@@ -191,6 +216,7 @@ class Instance(SchoolBaseModule):
         logger.info("users=%r", [u.username for u in exam_users])
         for exam_user in exam_users:
             folder = exam_user.unixhome
+            Instance.init_windows_profiles(exam_user)
             for root, sub, files in os.walk(folder):
                 deny_owner_change_permissions(root)
                 for f in files:
