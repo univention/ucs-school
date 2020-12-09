@@ -19,7 +19,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
 from ucsschool.lib.models import Student
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
 
@@ -124,6 +124,8 @@ def main():
                 exam2.start()
                 wait_for_drs_replication(filter_format("cn=exam-%s", (stu,)))
                 wait_for_drs_replication(filter_format("cn=exam-%s", (student2.name,)))
+                utils.wait_for_replication()
+                wait_for_s4connector()
                 check_uids(exam_member_dns, open_ldap_co)
                 exam2.finish()
 

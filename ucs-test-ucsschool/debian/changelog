@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.168) unstable; urgency=medium
+
+  * Bug #52307: ucs-test wait_for_replication 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 09 Dec 2020 11:15:31 +0100
+
 ucs-test-ucsschool (6.0.167) unstable; urgency=medium
 
   * Bug #51363: add package dependency 
