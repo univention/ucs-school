@@ -1047,7 +1047,7 @@ def check_create_share_folder(
     share, username, dir_name, samba_workstation=""
 ):  # type: (str, str, str, str) -> None
     """
-        test if a user can create folders inside a given share, i.e. they have edit rights.
+    test if a user can create folders inside a given share, i.e. they have edit rights.
     """
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(username, share, dir_name)
     if samba_workstation:
@@ -1061,7 +1061,7 @@ def check_change_permissions(
     filename, user_name, allowed, samba_workstation=""
 ):  # type: (str, str, bool, str) -> None
     """
-        test if user can change the permissions a given file in a share folder.
+    test if user can change the permissions a given file in a share folder.
     """
     new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
     cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)
