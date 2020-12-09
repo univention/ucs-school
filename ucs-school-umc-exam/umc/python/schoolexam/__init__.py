@@ -193,18 +193,34 @@ class Instance(SchoolBaseModule):
         :param exam_user:
         :param ldap_user_read:
         """
-        password = ldap_user_read.get(exam_user.dn)["sambaNTPassword"]
-        workstation = ldap_user_read.get(exam_user.dn)["sambaUserWorkstations"]
-        if password and workstation:
-            cmd = "smbclient -U {}%{} -L localhost --netbiosname={} --pw-nt-hash".format(
-                exam_user.username, password[0], workstation[0]
-            )
-            p = subprocess.Popen(cmd, shell=True, close_fds=True)
-            _, stderr = p.communicate()
-            if stderr:
-                logger.error("Error while initiating windows-profiles: {}".format(stderr))
-        else:
-            logger.error("User {} is missing password or workstation".format(exam_user.dn))
+        auth_filename = os.path.join("/tmp/", exam_user.username)
+        ldap_user = ldap_user_read.get(exam_user.dn)
+        try:
+            with open(auth_filename, "w") as fout:
+                password = ldap_user["sambaNTPassword"]
+                if password:
+                    fout.write(
+                        """username={}
+                           password={}
+                           domain={}""".format(
+                            exam_user.username, password[0], ucr.get("domainname")
+                        )
+                    )
+            workstation = ldap_user["sambaUserWorkstations"]
+            if workstation and os.path.exists(auth_filename):
+                workstation = workstation[0].split(",")[0]
+                cmd = "smbclient -L localhost --netbiosname={} --pw-nt-hash --authentication-file={}".format(
+                    workstation, auth_filename
+                )
+                p = subprocess.Popen(cmd, shell=True, close_fds=True, stderr=subprocess.PIPE)
+                _, stderr = p.communicate()
+                if stderr:
+                    logger.error("Error while initiating windows-profiles: {}".format(stderr))
+            else:
+                logger.error("User {} is missing password or workstation".format(exam_user.dn))
+        finally:
+            if os.path.exists(auth_filename):
+                os.remove(auth_filename)
 
     @staticmethod
     def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
