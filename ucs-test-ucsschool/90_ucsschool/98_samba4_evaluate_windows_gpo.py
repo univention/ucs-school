@@ -483,7 +483,7 @@ class GPO_Test(object):
 
         windows_set_gpo_registry_value(
             gpo_name,
-            "HKCU\Software\Policies\Microsoft\UCSTestKey",
+            r"HKCU\Software\Policies\Microsoft\UCSTestKey",
             "TestUserValueOne",
             self.test_user_gpo_value,
             "String",
@@ -493,7 +493,7 @@ class GPO_Test(object):
         sysvol_sync()
         sysvol_check_gpo_registry_value(
             gpo_name,
-            "HKCU\Software\Policies\Microsoft\UCSTestKey",
+            r"HKCU\Software\Policies\Microsoft\UCSTestKey",
             "TestUserValueOne",
             self.test_user_gpo_value,
         )
@@ -524,7 +524,7 @@ class GPO_Test(object):
 
         windows_set_gpo_registry_value(
             gpo_name,
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
             "String",
@@ -534,7 +534,7 @@ class GPO_Test(object):
         sysvol_sync()
         sysvol_check_gpo_registry_value(
             gpo_name,
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
         )
@@ -576,7 +576,7 @@ class GPO_Test(object):
 
         # case 2: checks with computer GPO
         windows_check_registry_key(
-            "HKLM\Software\Policies\Microsoft\UCSTestKey",
+            r"HKLM\Software\Policies\Microsoft\UCSTestKey",
             "TestComputerValueTwo",
             self.test_machine_gpo_value,
         )

@@ -81,7 +81,7 @@ class DefaultUserImportFactory(object):
         the configuration file.
 
         * Configuration keys in the configuration "classes" dict are the names of the methods here
-            without the prepended `make\_`.
+            without the prepended ``make_``.
         * It will be checked if the configured classes are really subclasses as described in the
             documentation (/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
         * Please update the documentation if classes/methods are added.

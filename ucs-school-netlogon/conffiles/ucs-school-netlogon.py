@@ -34,7 +34,7 @@ import os
 import stat
 import sys
 
-logging = ">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
+logging = r">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
 
 
 def printHeader(fn):

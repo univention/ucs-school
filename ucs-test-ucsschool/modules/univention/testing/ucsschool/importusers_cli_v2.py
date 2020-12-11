@@ -215,8 +215,8 @@ class ImportTestbase(object):
     def syntax_date2_dateformat(cls, userexpirydate):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
-        _re_iso = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-        _re_de = re.compile("^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
+        _re_iso = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+        _re_de = re.compile(r"^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
         if _re_iso.match(userexpirydate):
             return "%Y-%m-%d"
         elif _re_de.match(userexpirydate):

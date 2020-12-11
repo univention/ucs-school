@@ -31,10 +31,10 @@ def main():
         driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
         printer_name = "PDFDrucker"
         registry_path = (
-            "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\%s" % printer_name
+            r"HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\%s" % printer_name
         )
         check_value(registry_path, "Printer Driver", driver_name)
-        check_value(registry_path + "\DsSpooler", "driverName", driver_name)
+        check_value(registry_path + r"\DsSpooler", "driverName", driver_name)
 
 
 if __name__ == "__main__":

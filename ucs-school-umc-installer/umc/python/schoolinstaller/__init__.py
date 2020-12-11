@@ -68,17 +68,17 @@ _ = Translation("ucs-school-umc-installer").translate
 os.umask(0o022)  # switch back to default umask
 
 RE_FQDN = re.compile(
-    "^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$"
+    r"^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$"
 )
 RE_HOSTNAME = re.compile(
-    "^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$"
+    r"^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$"
 )  # keep in sync with schoolinstaller.js widgets.master.regExp
 RE_HOSTNAME_OR_EMPTY = re.compile(
-    "^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*"
-    "[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$"
+    r"^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*"
+    r"[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$"
 )
-RE_OU = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$")
-RE_OU_OR_EMPTY = re.compile("^([a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?)?$")
+RE_OU = re.compile(r"^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$")
+RE_OU_OR_EMPTY = re.compile(r"^([a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?)?$")
 
 CMD_ENABLE_EXEC = ["/usr/share/univention-updater/enable-apache2-umc", "--no-restart"]
 CMD_DISABLE_EXEC = "/usr/share/univention-updater/disable-apache2-umc"
@@ -211,9 +211,9 @@ def system_join(username, password, info_handler, error_handler, step_handler):
             password_file.flush()
 
             # regular expressions for output parsing
-            error_pattern = re.compile("^\* Message:\s*(?P<message>.*)\s*$")
-            joinscript_pattern = re.compile("(Configure|Running)\s+(?P<script>.*)\.inst.*$")
-            info_pattern = re.compile("^(?P<message>.*?)\s*:?\s*\x1b.*$")
+            error_pattern = re.compile(r"^\* Message:\s*(?P<message>.*)\s*$")
+            joinscript_pattern = re.compile(r"(Configure|Running)\s+(?P<script>.*)\.inst.*$")
+            info_pattern = re.compile(r"^(?P<message>.*?)\s*:?\s*\x1b.*$")
 
             # call to univention-join
             process = None
