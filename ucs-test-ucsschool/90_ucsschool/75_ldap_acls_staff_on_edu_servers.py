@@ -17,6 +17,11 @@ import univention.admin.uldap as udm_uldap
 import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import NameDnObj, UCSTestSchool, logger
 
+try:
+    from typing import Tuple
+except ImportError:
+    pass
+
 
 class LDAPACLCheck(UCSTestSchool):
     def __init__(self, *args, **kwargs):

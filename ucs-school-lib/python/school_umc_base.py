@@ -46,10 +46,12 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 
 try:
-    from typing import Any, Dict, List, Optional, Tuple
+    from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-    from univention.admin.handlers import simpleLdap as UdmObject
-    from univention.admin.uldap import access as LoType
+    if TYPE_CHECKING:
+
+        from univention.admin.handlers import simpleLdap as UdmObject
+        from univention.admin.uldap import access as LoType
 except ImportError:
     pass
 

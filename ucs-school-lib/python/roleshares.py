@@ -36,18 +36,16 @@ import sys
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
-import univention.config_registry
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.models import Group, School
 from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
 from univention.admincli.admin import _2utf8
+from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
 
 try:
     from typing import Optional
-
-    from univention.config_registry import ConfigRegistry
 except ImportError:
     pass
 
@@ -75,7 +73,7 @@ def roleshare_home_subdir(
     school_ou, roles, ucr=None
 ):  # type: (str, str, Optional[ConfigRegistry]) -> str
     if not ucr:
-        ucr = univention.config_registry.ConfigRegistry()
+        ucr = ConfigRegistry()
         ucr.load()
 
     if ucr.is_true("ucsschool/import/roleshare", True):
@@ -98,7 +96,7 @@ def create_roleshare_on_server(
     ldap_position=None,
 ):
     if not ucr:
-        ucr = univention.config_registry.ConfigRegistry()
+        ucr = ConfigRegistry()
         ucr.load()
 
     if not teacher_group:
@@ -172,7 +170,7 @@ def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None
 @LDAP_Connection()
 def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None):
     if not ucr:
-        ucr = univention.config_registry.ConfigRegistry()
+        ucr = ConfigRegistry()
         ucr.load()
 
     school_ou = school.name
@@ -190,7 +188,7 @@ def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None)
 @LDAP_Connection(MACHINE_READ)
 def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=None):
     if not ucr:
-        ucr = univention.config_registry.ConfigRegistry()
+        ucr = ConfigRegistry()
         ucr.load()
 
     supported_roles = (role_pupil, role_teacher, role_staff)

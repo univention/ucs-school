@@ -64,8 +64,8 @@ class Instance(SchoolBaseModule):
         requests.options = {}
           'pattern' -- pattern to match
         """
-        MODULE.info("%s.query: options: %s" % (self.module_name, request.options))
-        pattern = request.options.get("pattern", "").lower()
+        MODULE.info("%s.query: options: %s" % (self.module_name, request.options))  # noqa: F821
+        pattern = request.options.get("pattern", "").lower()  # noqa: F821
         return self.get_shares(pattern)
 
     @simple_response
@@ -73,9 +73,9 @@ class Instance(SchoolBaseModule):
         """Modify role shares
         requests.options = {}
         """
-        MODULE.info("%s.modify: options: %s" % (self.module_name, request.options))
-        sharename = request.options.get("name", "").lower()
-        accessmode = request.options.get("access", "").lower()
+        MODULE.info("%s.modify: options: %s" % (self.module_name, request.options))  # noqa: F821
+        sharename = request.options.get("name", "").lower()  # noqa: F821
+        accessmode = request.options.get("access", "").lower()  # noqa: F821
         self.modify_share(sharename, accessmode)
 
     def valid_role_from_roleshare_name(self, inputstring):

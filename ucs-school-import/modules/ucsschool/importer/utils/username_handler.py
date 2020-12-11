@@ -49,10 +49,11 @@ from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStor
 from .ldap_connection import get_admin_connection, get_unprivileged_connection
 
 try:
-    from typing import Callable, Dict, Optional
+    from typing import TYPE_CHECKING, Callable, Dict, Optional
 
-    import univention.admin.uldap.access
-    import univention.admin.uldap.position
+    if TYPE_CHECKING:
+        import univention.admin.uldap.access
+        import univention.admin.uldap.position
 except ImportError:
     pass
 

@@ -35,6 +35,14 @@ Base class for all Python based User hooks.
 
 from .import_pyhook import ImportPyHook
 
+try:
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        from ucsschool.importer.models.import_user import ImportUser
+except ImportError:
+    pass
+
 
 class UserPyHook(ImportPyHook):
     """
@@ -72,7 +80,7 @@ class UserPyHook(ImportPyHook):
         "post_remove": None,
     }
 
-    def pre_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def pre_create(self, user):  # type: (ImportUser) -> None
         """
         Run code before creating a user.
 
@@ -85,7 +93,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def post_create(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def post_create(self, user):  # type: (ImportUser) -> None
         """
         Run code after creating a user.
 
@@ -99,7 +107,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def pre_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def pre_modify(self, user):  # type: (ImportUser) -> None
         """
         Run code before modifying a user.
 
@@ -110,7 +118,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def post_modify(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def post_modify(self, user):  # type: (ImportUser) -> None
         """
         Run code after modifying a user.
 
@@ -126,7 +134,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def pre_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def pre_move(self, user):  # type: (ImportUser) -> None
         """
         Run code before changing a users primary school (position).
 
@@ -137,7 +145,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def post_move(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def post_move(self, user):  # type: (ImportUser) -> None
         """
         Run code after changing a users primary school (position).
 
@@ -151,7 +159,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def pre_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def pre_remove(self, user):  # type: (ImportUser) -> None
         """
         Run code before deleting a user.
 
@@ -162,7 +170,7 @@ class UserPyHook(ImportPyHook):
         :return: None
         """
 
-    def post_remove(self, user):  # type: (ucsschool.importer.models.import_user.ImportUser) -> None
+    def post_remove(self, user):  # type: (ImportUser) -> None
         """
         Run code after deleting a user.
 

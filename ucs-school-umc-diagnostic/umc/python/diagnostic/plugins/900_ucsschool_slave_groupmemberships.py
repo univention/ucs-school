@@ -51,6 +51,11 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, List
+except ImportError:
+    pass
+
 _ = Translation("univention-management-console-module-diagnostic").translate
 
 title = _("UCS@school Group Memberships of DC Slaves")

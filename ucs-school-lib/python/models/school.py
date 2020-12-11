@@ -632,7 +632,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         retval = subprocess.call(cmd)
         if retval:
             msg = "*** ERROR: failed to remove UCS@school %s object: %s" % (module, dn)
-            logger.error(msg)
+            self.logger.error(msg)
         return msg
 
     def _alter_udm_obj(self, udm_obj):

@@ -28,6 +28,11 @@ from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
 
+try:
+    from typing import List, Optional
+except ImportError:
+    pass
+
 utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
 

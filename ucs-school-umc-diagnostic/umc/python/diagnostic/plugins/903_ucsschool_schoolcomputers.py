@@ -54,6 +54,14 @@ from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import MODULE, Critical, ProblemFixed
 
+try:
+    from typing import TYPE_CHECKING, Set
+
+    if TYPE_CHECKING:
+        from univention.admin.uldap import access
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school School Computer Consistency")

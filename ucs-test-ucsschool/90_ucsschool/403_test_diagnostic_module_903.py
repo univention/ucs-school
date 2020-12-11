@@ -13,6 +13,11 @@ import univention.testing.strings as uts
 from univention.management.console.modules.diagnostic import Critical, Instance, ProblemFixed
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, NameDnObj, logger
 
+try:
+    from typing import List
+except ImportError:
+    pass
+
 
 class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
     def __init__(self):

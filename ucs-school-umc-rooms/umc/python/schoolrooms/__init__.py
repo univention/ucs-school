@@ -49,6 +49,14 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 
+try:
+    from typing import TYPE_CHECKING
+
+    if TYPE_CHECKING:
+        import univention.admin.uldap.access
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-rooms").translate
 
 

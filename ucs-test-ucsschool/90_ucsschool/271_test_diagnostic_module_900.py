@@ -14,6 +14,11 @@ from univention.admin.uexceptions import ldapError
 from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
+try:
+    from typing import List
+except ImportError:
+    pass
+
 
 class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
     def unique_members(self, grp_dn):  # type: () -> List

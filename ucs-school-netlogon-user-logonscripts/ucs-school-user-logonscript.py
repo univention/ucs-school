@@ -43,6 +43,11 @@ import univention.debug
 from ucsschool.netlogon import SqliteQueue, get_netlogon_path_list
 from univention.admin.uldap import getMachineConnection
 
+try:
+    from typing import Dict, List, Optional
+except ImportError:
+    pass
+
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")
 groups_group_module = univention.admin.modules.get("groups/group")

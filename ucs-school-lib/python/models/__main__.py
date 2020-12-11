@@ -52,10 +52,11 @@ from univention.admin.uexceptions import ldapError, noObject
 from univention.admin.uldap import access as LoType, getAdminConnection, position as PoType
 
 try:
-    from typing import Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
+    from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
 
-    import univention.admin.handlers.simpleLdap
-    from ucsschool.lib.models.base import UCSSchoolModel
+    if TYPE_CHECKING:
+        import univention.admin.handlers.simpleLdap
+        from ucsschool.lib.models.base import UCSSchoolModel
 except ImportError:
     pass
 

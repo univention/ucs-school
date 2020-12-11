@@ -84,15 +84,16 @@ from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 try:
-    from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, Union
+    from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union
 
-    from univention.config_registry import ConfigRegistry
+    if TYPE_CHECKING:
+        from univention.config_registry import ConfigRegistry
 
-    from ..configuration import ReadOnlyDict
-    from ..default_user_import_factory import DefaultUserImportFactory
-    from ..reader.base_reader import BaseReader
-    from ..utils.ldap_connection import LoType, UdmObjectType
-    from ..utils.username_handler import UsernameHandler
+        from ..configuration import ReadOnlyDict
+        from ..default_user_import_factory import DefaultUserImportFactory
+        from ..reader.base_reader import BaseReader
+        from ..utils.ldap_connection import LoType, UdmObjectType
+        from ..utils.username_handler import UsernameHandler
 except ImportError:
     pass
 

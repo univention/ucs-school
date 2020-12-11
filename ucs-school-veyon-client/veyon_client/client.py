@@ -39,6 +39,14 @@ from requests import ReadTimeout
 from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
 from .utils import check_veyon_error
 
+try:
+    from typing import TYPE_CHECKING, Dict, Optional
+
+    if TYPE_CHECKING:
+        from .models import Dimension, Feature
+except ImportError:
+    pass
+
 
 class VeyonClient:
     def __init__(
@@ -84,7 +92,8 @@ class VeyonClient:
         session_data = result.json()
         return VeyonSession(str(session_data["connection-uid"]), session_data["validuntil"])
 
-    def _get_connection_uid(self, host=None, renew_session=True):  # type:(Optional[str]) -> str
+    def _get_connection_uid(self, host=None, renew_session=True):
+        # type:(Optional[str], Optional[bool]) -> str
         """
         Fetches the connection uid for a given host from the cache or generates a new one if none is
         present or valid.

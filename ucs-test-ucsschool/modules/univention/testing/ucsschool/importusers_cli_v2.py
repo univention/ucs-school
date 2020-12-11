@@ -4,7 +4,6 @@ import copy
 import csv
 import datetime
 import json
-import logging
 import os
 import pprint
 import random
@@ -378,17 +377,6 @@ class ImportTestbase(object):
                     **kwargs
                 )
         return res
-
-    @staticmethod
-    def _get_logger():  # type: () -> logging.Logger
-        force_ucsschool_logger_colorized_if_has_tty()
-        logger = logging.getLogger("ucsschool")
-        logger.setLevel(logging.DEBUG)
-        if not any(isinstance(handler, UniStreamHandler) for handler in logger.handlers):
-            logger.addHandler(get_stream_handler("DEBUG"))
-        for handler in logger.handlers:
-            handler.setLevel(logging.DEBUG)
-        return logger
 
 
 class CLI_Import_v2_Tester(ImportTestbase):

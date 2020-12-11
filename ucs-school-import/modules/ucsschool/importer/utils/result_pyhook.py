@@ -35,9 +35,10 @@ Base class for all Python based Result-Pyhooks.
 from .import_pyhook import ImportPyHook
 
 try:
-    import typing  # noqa: F401
+    from typing import TYPE_CHECKING
 
-    from ..mass_import.user_import import UserImportData
+    if TYPE_CHECKING:
+        from ..mass_import.user_import import UserImportData
 except ImportError:
     pass
 

@@ -46,6 +46,11 @@ import univention.admin.uldap
 import univention.lib.umc
 from univention.config_registry import ConfigRegistry
 
+try:
+    from typing import Any
+except ImportError:
+    pass
+
 ucr = ConfigRegistry()
 ucr.load()
 

@@ -44,6 +44,11 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
+try:
+    from typing import Dict, Set
+except ImportError:
+    pass
+
 _ = Translation("ucs-school-umc-diagnostic").translate
 title = _("UCS@school Group Consistency")
 description = "\n".join(

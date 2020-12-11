@@ -75,7 +75,10 @@ else:
         "computers/ubuntu": ("ucsschoolComputer", role_ubuntu_computer),
     }
 try:
-    from typing import Dict, List, Set, Tuple, Union  # pylint: disable=unused-import
+    from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union
+
+    if TYPE_CHECKING:
+        import univention.admin.handlers.simpleComputer
 
     AddType = Tuple[str, List[str]]  # pylint: disable=invalid-name
     ModType = Tuple[str, List[str], List[str]]  # pylint: disable=invalid-name

@@ -42,10 +42,10 @@ from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 
 try:
-    from typing import Any, Callable, Dict, List, Optional, Type, TypeVar
+    from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Type, TypeVar
 
-    import univention.admin.uldap.access
-
+    if TYPE_CHECKING:
+        import univention.admin.uldap.access
     ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
 except ImportError:
     pass
