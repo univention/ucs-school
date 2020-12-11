@@ -59,7 +59,7 @@ class UserStaffPyHook(UserPyHook):
         "post_remove": None,
     }
 
-    async def pre_create(self, user: ImportUser) -> None:
+    async def pre_create(self, user: ImportUser) -> None:  # noqa: E999
         if isinstance(user, Staff):
             user.udm_properties["sambahome"] = await super(Staff, user).get_samba_home_path(self.lo)
             user.udm_properties["profilepath"] = await super(Staff, user).get_profile_path(self.lo)

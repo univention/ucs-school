@@ -120,7 +120,7 @@ class PyHooksLoader(object):
             if self._filter_func:
                 filter_func = self._filter_func
             else:
-                filter_func = lambda x: True
+                filter_func = lambda x: True  # noqa: E731
             for filename in listdir(self.base_dir):
                 if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
                     info = imp.find_module(filename[:-3], [self.base_dir])
