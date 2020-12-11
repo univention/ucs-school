@@ -270,7 +270,7 @@ class Instance(SchoolBaseModule):
             if os.path.exists(datadir):
                 try:
                     subprocess.check_call(["/usr/bin/chattr", modifier, datadir])  # nosec
-                except subprocess.CalledProcessError as e:
+                except subprocess.CalledProcessError:
                     logger.error("Could not set the immutable bit on %r", datadir)
 
     @file_upload

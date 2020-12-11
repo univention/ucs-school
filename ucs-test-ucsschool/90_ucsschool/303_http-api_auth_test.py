@@ -33,7 +33,7 @@ def main():
             old_exception_count = count_unicode_exceptions_in_gunicorn_log()
 
             try:
-                client = Client(
+                Client(
                     name=school_admin.decode("utf-8"),
                     password=password.decode("utf-8"),
                     server="{}.{}".format(ucr["hostname"], ucr["domainname"]),

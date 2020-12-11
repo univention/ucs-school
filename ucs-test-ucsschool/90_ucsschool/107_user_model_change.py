@@ -80,7 +80,7 @@ def main():
                         ucs_user = cls.from_dn(user.dn, ou, lo)
                         if users_cls != ucs_user.__class__:
                             utils.fail("{} should be of class {}.".format(ucs_user, users_cls))
-                    except WrongModel as exc:
+                    except WrongModel:
                         if users_cls == cls:
                             utils.fail("User of type {} should have been found.".format(cls))
 

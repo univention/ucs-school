@@ -80,7 +80,7 @@ def main():
                 try:
                     print "Clean up remaining school %s after failed test." % school.name
                     school.remove()
-                except BadRequest as br:
+                except BadRequest:
                     print "Failed to remove remaining school %s after failed test." % school.name
 
 

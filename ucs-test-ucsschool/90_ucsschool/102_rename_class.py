@@ -62,7 +62,7 @@ def check_backup(cn):  # type: (str) -> None
 def check_ldap(school, old_name, new_name):  # type: (str, str, str) -> None
     utils.verify_ldap_object(class_dn(old_name, school), should_exist=False)
     utils.verify_ldap_object(share_dn(old_name, school), should_exist=False)
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+    with ucr_test.UCSTestConfigRegistry():
         utils.verify_ldap_object(
             class_dn(new_name, school),
             expected_attr={"ucsschoolRole": [create_ucsschool_role_string(role_school_class, school)]},

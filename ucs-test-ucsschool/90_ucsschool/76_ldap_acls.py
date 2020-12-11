@@ -375,30 +375,20 @@ def main():
             school, school_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
             tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-            tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
-            staff, staff_dn = schoolenv.create_user(school, is_staff=True)
+            schoolenv.create_user(school, is_teacher=True, is_staff=True)
+            schoolenv.create_user(school, is_staff=True)
             stu, stu_dn = schoolenv.create_user(school)
-            school_admin, school_admin_dn = schoolenv.create_school_admin(school)
+            schoolenv.create_school_admin(school)
 
             open_ldap_co = schoolenv.open_ldap_connection()
             # importing 2 random computers
             computers = Computers(open_ldap_co, school, 1, 0, 0)
             created_computers = computers.create()
             computers_dns = computers.get_dns(created_computers)
-            computers_hostnames = computers.get_hostnames(created_computers)
-            computers_hostnames = [x[:-1] for x in computers_hostnames]
             room = ComputerRoom(school, host_members=computers_dns)
             room.add()
 
             room_container_dn = "cn=raeume,cn=groups,%s" % school_dn
-            shares_dn = "cn=shares,%s" % school_dn
-
-            teacher_group2_dn = "cn=lehrer-%s,cn=groups,%s" % (school, school_dn)
-            student_group2_dn = "cn=schueler-%s,cn=groups,%s" % (school, school_dn)
-
-            teacher_group_dn = "cn=lehrer,cn=groups,%s" % school_dn
-            student_group_dn = "cn=schueler,cn=groups,%s" % school_dn
-
             gid_temp_dn = "cn=gid,cn=temporary,cn=univention,%s" % base_dn
             gidNumber_temp_dn = "cn=gidNumber,cn=temporary,cn=univention,%s" % base_dn
             sid_temp_dn = "cn=sid,cn=temporary,cn=univention,%s" % base_dn
@@ -409,8 +399,6 @@ def main():
             global_policies_dn = "cn=policies,%s" % base_dn
             global_dns_dn = "cn=dns,%s" % base_dn
             global_groups_dn = "cn=groups,%s" % base_dn
-
-            dhcp_dn = "cn=%s,cn=%s,cn=dhcp,%s" % (computers_hostnames[0], school, base_dn)
 
             staff_dn_access_list = [
                 # 0 for base, 1 for subtree

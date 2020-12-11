@@ -31,7 +31,7 @@ class OUObj(object):
 
 def main():
     with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+        with ucr_test.UCSTestConfigRegistry():
             schools = []
             for i in xrange(2):
                 name_edudc = "e-myschool{}".format(i)

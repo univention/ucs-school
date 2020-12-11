@@ -387,8 +387,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
     print "*** Verifying OU (%s) ... " % ou
     ucr.load()
 
-    dc_name = ucr.get("hostname")
-    old_dhcpd_ldap_base = ucr.get("dhcpd/ldap/base")
     lo = univention.uldap.getMachineConnection()
     base_dn = ucr.get("ldap/base")
 
@@ -995,7 +993,7 @@ def import_ou_alter_dhcpd_base_flag(use_cli_api=True, use_python_api=False):
                     use_python_api=use_python_api,
                     alter_dhcpd_base_option=False,
                 )
-            except DhcpdLDAPBase as e:
+            except DhcpdLDAPBase:
                 print ("dhcpd/ldap/base unset as expected!")
             for i in (True, None):
                 ou_name = uts.random_name()

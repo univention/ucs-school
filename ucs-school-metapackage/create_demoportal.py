@@ -280,7 +280,7 @@ def create_portal():
         entry_groups["teacher"] = module_groups.lookup(
             None, lo, "name=lehrer-{}".format(SCHOOL[0]), pos.getBase()
         )[0].dn
-    except IndexError as e:
+    except IndexError:
         print(
             "Could not find all necessary user groups to create demo portal. Something must have gone "
             "wrong with the school creation!"

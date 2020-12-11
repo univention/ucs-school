@@ -26,7 +26,6 @@ def main():
         memberListdn = [teadn, studn]
 
         account = utils.UCSTestDomainAdminCredentials()
-        admin = account.username
         passwd = account.bindpw
 
         utils.wait_for_replication_and_postrun()

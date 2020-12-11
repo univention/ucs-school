@@ -347,7 +347,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
     # NOTE: touch all referenced database files to prevent squidguard
     #       from shutting down due to missing files
     for fn in touchfnlist:
-        tmp = open(os.path.join(DIR_TEMP, fn), "a+")
+        open(os.path.join(DIR_TEMP, fn), "a+")
 
 
 def checkGlobalBlacklist(configRegistry, DIR_DATA, changes):

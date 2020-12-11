@@ -61,7 +61,7 @@ class UMCTester(object):
         assert wg_share.exists(lo) == share_exists, "{} != {}".format(wg_share.exists(lo), share_exists)
 
     def test_umc(self):
-        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry() as ucr:
+        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry():
             lo, po = getAdminConnection()
             handler_set(["ucsschool/workgroups/autosearch=no"])
             school_name, schooldn = schoolenv.create_ou()

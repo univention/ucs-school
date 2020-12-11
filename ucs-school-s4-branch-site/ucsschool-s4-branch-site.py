@@ -78,7 +78,7 @@ def load_hooks():
         ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
         try:
             hook = imp.load_source(modulename, file_path)
-        except Exception as ex:
+        except Exception:
             ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
             ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
         hooks.append(hook)
@@ -93,7 +93,7 @@ def run_hooks(fname, *args):
             try:
                 hook_func = getattr(hook, fname)
                 hook_func(*args)
-            except Exception as ex:
+            except Exception:
                 ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
                 ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
 

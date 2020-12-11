@@ -215,7 +215,7 @@ def main():
                 alljobs1A = queryPrintJobs(
                     connection, newPrinterName, "%s-1A" % school, school, "", basedn
                 )
-                alljobs2B = queryPrintJobs(
+                alljobs2B = queryPrintJobs(  # noqa: F841  # TODO: check value?
                     connection, newPrinterName, "%s-2B" % school, school, "", basedn
                 )
 
