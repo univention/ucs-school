@@ -169,7 +169,7 @@ class UcsschoolRoleComputers(simpleHook):
         :return: school name (OU) if obj is located inside one, else '-'
         :rtype: str
         """
-        if obj.has_key("school"):
+        if obj.has_key("school"):  # noqa: W601
             schools = obj.get("school")
         else:
             schools = []
