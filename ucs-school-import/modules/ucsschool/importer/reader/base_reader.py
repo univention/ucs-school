@@ -42,7 +42,9 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Dict, List
+    from typing import Any, Dict, Iterable, Iterator, List, Optional
+
+    from ..models.import_user import ImportUser
 except ImportError:
     pass
 
@@ -54,7 +56,7 @@ class BaseReader(object):
     Subclasses must override get_roles(), map() and read().
     """
 
-    def __init__(self, filename, header_lines=0, **kwargs):
+    def __init__(self, filename, header_lines=0, **kwargs):  # type: (str, Optional[int], **Any) -> None
         """
         :param str filename: Path to file with user data.
         :param int header_lines: Number of lines before the actual data starts.
@@ -73,10 +75,10 @@ class BaseReader(object):
         self.entry_count = 0  # line/node in input data
         self.input_data = None  # input data, as raw as possible/sensible
 
-    def __iter__(self):
+    def __iter__(self):  # type: () -> BaseReader
         return self
 
-    def next(self):
+    def next(self):  # type: () -> ImportUser
         """
         Generates ImportUsers from input data.
 
@@ -103,7 +105,7 @@ class BaseReader(object):
         cur_import_user.prepare_uids()
         return cur_import_user
 
-    def get_roles(self, input_data):
+    def get_roles(self, input_data):  # type: (Dict[str, Any]) -> Iterable[str]
         """
         IMPLEMENT ME
         Detect the ucsschool.lib.roles from the input data.
@@ -114,7 +116,7 @@ class BaseReader(object):
         """
         raise NotImplementedError()
 
-    def map(self, input_data, cur_user_roles):
+    def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
         """
         IMPLEMENT ME
         Creates a ImportUser object from a users dict (self.cur_entry). Data will not be modified, just
@@ -128,7 +130,7 @@ class BaseReader(object):
         """
         raise NotImplementedError()
 
-    def read(self, *args, **kwargs):
+    def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
         """
         IMPLEMENT ME
         Generator that returns dicts of read users
@@ -141,7 +143,7 @@ class BaseReader(object):
         """
         raise NotImplementedError()
 
-    def get_data_mapping(self, input_data):
+    def get_data_mapping(self, input_data):  # type: (Iterable[str]) -> Dict[str, Any]
         """
         IMPLEMENT ME
         Create a mapping from the configured input mapping to the actual input data. This is

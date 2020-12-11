@@ -8,7 +8,6 @@
 import random
 
 import univention.config_registry
-import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils

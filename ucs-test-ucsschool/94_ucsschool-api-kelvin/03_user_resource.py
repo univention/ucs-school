@@ -30,10 +30,6 @@ try:
     from urlparse import urljoin  # py2
 except ImportError:
     from urllib.parse import urljoin  # py3
-try:
-    from typing import Any, Dict, List, Optional, Text, Tuple
-except ImportError:
-    pass
 
 
 class Test(HttpApiUserTestBase):

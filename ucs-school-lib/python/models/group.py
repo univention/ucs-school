@@ -40,17 +40,7 @@ from ..roles import (
     role_school_class,
     role_workgroup,
 )
-from .attributes import (
-    Attribute,
-    Description,
-    Email,
-    GroupName,
-    Groups,
-    Hosts,
-    Roles,
-    SchoolClassName,
-    Users,
-)
+from .attributes import Attribute, Description, Email, GroupName, Groups, Hosts, SchoolClassName, Users
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .misc import OU, Container
 from .policy import UMCPolicy

@@ -44,7 +44,6 @@ from six import string_types
 
 import univention.admin.uldap
 from ucsschool.lib.models import (
-    AnyComputer,
     BasicGroup,
     ClassShare,
     ComputerRoom,
@@ -67,7 +66,6 @@ from ucsschool.lib.roles import (
     role_dc_slave,
     role_dc_slave_admin,
     role_dc_slave_edu,
-    role_memberserver,
     role_memberserver_admin,
     role_memberserver_edu,
     role_school,

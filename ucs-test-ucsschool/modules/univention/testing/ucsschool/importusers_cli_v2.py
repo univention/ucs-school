@@ -27,7 +27,6 @@ import univention.testing.udm
 import univention.testing.utils as utils
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 try:
@@ -35,9 +34,8 @@ try:
 except ImportError:
     DRSReplicationFailed = Exception
 
-
 try:
-    from typing import Dict, List, Optional, Set, Tuple
+    from typing import Set
 except ImportError:
     pass
 
@@ -466,6 +464,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
     def create_csv_file(self, person_list, mapping=None, fn_csv=None):
         """
         Create CSV file for given persons
+        >>> from univention.testing.ucsschool.importusers import Person
         >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')])
         '/tmp/import.sldfhgsg.csv'
         >>> create_csv_file([Person('schoolA', 'student'), Person('schoolB', 'teacher')],

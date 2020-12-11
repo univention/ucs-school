@@ -12,11 +12,6 @@
 # $ pytest -s -l -v ./......py::test_create
 #
 
-try:
-    from typing import Dict, List, Tuple
-except ImportError:
-    pass
-
 import univention.testing.utils as utils
 from ucsschool.lib.models.group import WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare

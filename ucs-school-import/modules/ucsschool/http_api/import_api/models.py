@@ -47,15 +47,7 @@ from ldap.filter import escape_filter_chars
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 
-from .constants import (
-    JOB_ABORTED,
-    JOB_CHOICES,
-    JOB_FINISHED,
-    JOB_NEW,
-    JOB_SCHEDULED,
-    JOB_STARTED,
-    JOB_STATES,
-)
+from .constants import JOB_CHOICES, JOB_NEW
 
 USER_STAFF = "staff"
 USER_STUDENT = "student"

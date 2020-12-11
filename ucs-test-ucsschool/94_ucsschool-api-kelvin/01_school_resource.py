@@ -12,7 +12,6 @@ import logging
 from unittest import TestCase, main
 
 import requests
-from ldap.filter import filter_format
 from six import string_types
 
 import univention.testing.strings as uts

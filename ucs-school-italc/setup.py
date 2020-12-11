@@ -3,7 +3,7 @@ import sys
 import traceback
 
 try:
-    import sipconfig
+    import sipconfig  # noqa: F401
 except ImportError:
     print "ERROR: cannot load python module sipconfig!"
     print traceback.print_exc()

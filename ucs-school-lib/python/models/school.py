@@ -56,7 +56,7 @@ from ..roles import (
     role_school_student_group,
     role_school_teacher_group,
 )
-from .attributes import Attribute, DCName, DisplayName, Roles, SchoolName, ShareFileServer
+from .attributes import Attribute, DCName, DisplayName, SchoolName, ShareFileServer
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .computer import AnyComputer, SchoolDC, SchoolDCSlave
 from .dhcp import DHCPService

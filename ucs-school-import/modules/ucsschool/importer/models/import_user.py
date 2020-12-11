@@ -44,7 +44,7 @@ from six import iteritems, string_types
 from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.base import NoObject, WrongObjectType
-from ucsschool.lib.models.utils import create_passwd, ucr, ucr_username_max_length
+from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_teacher
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
@@ -84,7 +84,7 @@ from ..utils.user_pyhook import UserPyHook
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 try:
-    from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type, Union
+    from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, Union
 
     from univention.config_registry import ConfigRegistry
 

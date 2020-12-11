@@ -18,7 +18,6 @@ import requests
 import univention.testing.strings as uts
 from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 from univention.testing.ucsschool.bb_api import (
-    API_ROOT_URL,
     RESSOURCE_URLS,
     HttpApiUserTestBase,
     api_call,
@@ -30,10 +29,6 @@ try:
     from urlparse import urljoin  # py2
 except ImportError:
     from urllib.parse import urljoin  # py3
-try:
-    from typing import Any, Dict, List, Optional, Text, Tuple
-except ImportError:
-    pass
 
 
 class Test(HttpApiUserTestBase):

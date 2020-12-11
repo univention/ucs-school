@@ -34,8 +34,6 @@ import os
 import stat
 import sys
 
-import univention.uldap
-
 logging = ">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
 
 

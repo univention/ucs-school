@@ -11,8 +11,6 @@
 import copy
 import os
 import os.path
-import random
-import re
 import shutil
 
 from ldap.filter import escape_filter_chars

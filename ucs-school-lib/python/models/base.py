@@ -56,7 +56,7 @@ try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
 
     import univention.admin.handlers.simpleLdap
-    from univention.admin.uldap import access as LoType, position as PoType
+    from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 
     UdmObject = univention.admin.handlers.simpleLdap
     SuperOrdinateType = Union[str, UdmObject]

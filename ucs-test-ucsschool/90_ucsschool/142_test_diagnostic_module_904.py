@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function
 
 from ldap.filter import filter_format
 
-from univention.management.console.modules.diagnostic import Instance, Warning
+from univention.management.console.modules.diagnostic import Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 

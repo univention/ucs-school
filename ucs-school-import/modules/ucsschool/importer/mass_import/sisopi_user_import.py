@@ -43,7 +43,7 @@ from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 
 try:
-    from typing import Optional, Union
+    from typing import Optional
 
     from ..models.import_user import ImportUser
 except ImportError:

@@ -89,11 +89,6 @@ from univention.management.console.modules.sanitizers import (
 )
 from univention.management.console.modules.schoolexam import util
 
-try:
-    from typing import Any, Dict, List, Optional, Pattern
-except ImportError:
-    pass
-
 _ = Translation("ucs-school-umc-exam").translate
 
 CREATE_USER_POST_HOOK_DIR = "/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/"

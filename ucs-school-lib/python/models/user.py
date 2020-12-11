@@ -49,7 +49,6 @@ from .attributes import (
     Firstname,
     Lastname,
     Password,
-    Roles,
     SchoolClassesAttribute,
     Schools,
     Username,

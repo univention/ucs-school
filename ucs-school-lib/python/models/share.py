@@ -39,7 +39,7 @@ from univention.lib.misc import custom_groupname
 from univention.udm import UDM
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
-from .attributes import Roles, SchoolClassAttribute, ShareName, WorkgroupAttribute
+from .attributes import SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectType
 from .utils import _, ucr
 

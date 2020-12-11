@@ -42,7 +42,7 @@ from ..roles import (
     role_teacher_computer,
     role_win_computer,
 )
-from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, Roles, SubnetMask
+from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, SubnetMask
 from .base import MultipleObjectsError, RoleSupportMixin, UCSSchoolHelperAbstractClass
 from .dhcp import AnyDHCPService, DHCPServer
 from .group import BasicGroup

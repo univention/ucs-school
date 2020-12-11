@@ -12,13 +12,11 @@ import copy
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
 from univention.management.console.config import ucr
-from univention.management.console.modules.diagnostic import Critical, Instance, ProblemFixed, Warning
+from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import UniqueObjectTester
-from univention.uldap import getAdminConnection
 
 
 class Test(UniqueObjectTester):

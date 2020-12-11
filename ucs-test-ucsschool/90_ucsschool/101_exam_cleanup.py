@@ -9,7 +9,7 @@
 
 from datetime import datetime, timedelta
 
-from ldap.filter import escape_filter_chars, filter_format
+from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu

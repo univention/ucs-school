@@ -61,11 +61,6 @@ from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
 
-try:
-    import typing
-except ImportError:
-    pass
-
 
 class ModifyCsvHeader(PreReadPyHook):
     """

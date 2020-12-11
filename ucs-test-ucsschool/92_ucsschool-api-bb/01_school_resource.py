@@ -17,12 +17,7 @@ from ldap.filter import filter_format
 import univention.testing.strings as uts
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.school import School as LibSchool
-from univention.testing.ucsschool.bb_api import (
-    API_ROOT_URL,
-    RESSOURCE_URLS,
-    HttpApiUserTestBase,
-    setup_logging,
-)
+from univention.testing.ucsschool.bb_api import RESSOURCE_URLS, HttpApiUserTestBase
 from univention.udm import UDM
 
 try:

@@ -57,7 +57,7 @@ except ImportError:
     from urllib.parse import parse_qs, quote as url_quote, urljoin, urlparse
 
 try:
-    from typing import Any, AnyStr, Callable, Dict, List, Union
+    from typing import Any, Callable, Dict, List
 except ImportError:
     pass
 

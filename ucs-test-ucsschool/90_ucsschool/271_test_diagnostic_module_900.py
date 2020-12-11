@@ -11,7 +11,7 @@ from __future__ import absolute_import, print_function
 import re
 
 from univention.admin.uexceptions import ldapError
-from univention.management.console.modules.diagnostic import Critical, Instance, ProblemFixed, Warning
+from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 

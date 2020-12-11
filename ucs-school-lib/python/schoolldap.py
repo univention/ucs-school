@@ -35,14 +35,6 @@ from ldap.dn import explode_dn
 
 from univention.config_registry import ConfigRegistry
 
-try:
-    from typing import Any, Dict, List, Optional, Tuple
-
-    from univention.admin.handlers import simpleLdap as UdmObject
-    from univention.admin.uldap import access as LoType
-except ImportError:
-    pass
-
 
 class SchoolSearchBase(object):
     """Deprecated utility class that generates DNs of common school containers for a OU"""

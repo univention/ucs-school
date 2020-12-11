@@ -26,13 +26,6 @@ from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvE
 from ucsschool.lib.models import SchoolClass
 from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
-try:
-    from typing import List
-
-    from ucsschool.http_api.client import ResourceRepresentation
-except ImportError:
-    pass
-
 
 class Test(HttpApiImportTester):
     ou_C = None
