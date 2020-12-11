@@ -175,8 +175,8 @@ class SqliteQueue(object):
             "added/updated entries: {}".format(
                 ", ".join(
                     [
-                        "username={!r}".format(username) if username else "userdn={!r}".format(userdn)
-                        for userdn, username in users
+                        "username={!r}".format(_username) if _username else "userdn={!r}".format(_userdn)
+                        for _userdn, _username in users
                     ]
                 )
             )

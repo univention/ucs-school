@@ -72,7 +72,7 @@ def test_get_all(create_ou, lo, ucr_hostname, workgroup_ldap_attributes, workgro
 
     objs = WorkGroup.get_all(lo, ou_name)
     assert len(objs) == len(wg_attrs)
-    wg_names = [wg["name"] for wg in wg_attrs]
+    wg_names = [_wg["name"] for _wg in wg_attrs]
     for obj in objs:
         assert isinstance(obj, WorkGroup)
         assert obj.name in wg_names

@@ -34,7 +34,7 @@ def random_properties(udm_user, klass_name, n=5):
             expected_values.append(value)
     udm_properties.append("Class")
     expected_values.append(klass_name)
-    column_names = [value.upper() for value in udm_properties]
+    column_names = [_value.upper() for _value in udm_properties]
     return expected_values, udm_properties, column_names
 
 

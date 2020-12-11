@@ -285,7 +285,8 @@ class ImportTestbase(object):
             ou = ous[num]
             ou.name, ou.dn = name, dn
         self.log.info(
-            "Created OUs: %r.", [ou.name for ou in [self.ou_A, self.ou_B, self.ou_C] if ou is not None]
+            "Created OUs: %r.",
+            [_ou.name for _ou in [self.ou_A, self.ou_B, self.ou_C] if _ou is not None],
         )
 
     def setup_testenv(self, schoolenv):
