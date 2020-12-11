@@ -37,7 +37,7 @@ import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 
 import magic
-from six import string_types
+from six import reraise, string_types
 
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
@@ -146,10 +146,14 @@ class CsvReader(BaseReader):
             try:
                 dialect = self.get_dialect(fp)
             except CsvError as exc:
-                raise InitialisationError, InitialisationError(
-                    "Could not determine CSV dialect. Try setting the csv:delimiter configuration. "
-                    "Error: {}".format(exc)
-                ), sys.exc_info()[2]
+                reraise(
+                    InitialisationError,
+                    InitialisationError(
+                        "Could not determine CSV dialect. Try setting the csv:delimiter configuration. "
+                        "Error: {}".format(exc)
+                    ),
+                    sys.exc_info()[2],
+                )
             fp.seek(0)
             encoding = self.get_encoding(fp)
             self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)

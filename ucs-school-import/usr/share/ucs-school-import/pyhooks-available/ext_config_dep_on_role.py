@@ -55,6 +55,8 @@ import json
 import pprint
 import sys
 
+import six
+
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.utils.config_pyhook import ConfigPyHook
 from ucsschool.lib.roles import supported_roles
@@ -103,7 +105,7 @@ class ExtendConfigByRole(ConfigPyHook):
                 include_config = json.load(fp)
         except (IOError, ValueError) as exc:
             self.logger.exception("Reading include file %r: %s", include_file, exc)
-            raise ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2]
+            six.reraise(ConfigurationError, ConfigurationError(str(exc)), sys.exc_info()[2])
         self.logger.info("Updating configuration with:\n%s", pprint.pformat(include_config))
         config.update(include_config)
         return config
