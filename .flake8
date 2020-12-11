@@ -11,4 +11,4 @@ max-line-length = 105
 #       recommended this instead of treating it as an error)
 
 ignore = E203,E231,E266,W503
-select = E1,E2,E3,E4,E5,W1,W2,W3,W5,F401,F403,F523,F821,F841,W605
+select = E1,E2,E3,E4,E5,E722,W1,W2,W3,W5,F401,F403,F523,F821,F841,W605

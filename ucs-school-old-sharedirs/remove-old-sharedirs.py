@@ -81,7 +81,7 @@ def check_target_dir(dir):
         listener.setuid(0)
         try:
             os.makedirs(dir)
-        except:
+        except EnvironmentError:
             return "failed to create target directory %s" % dir
         finally:
             listener.unsetuid()

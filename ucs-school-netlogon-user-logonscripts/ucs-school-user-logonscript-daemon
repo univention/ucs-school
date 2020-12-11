@@ -264,7 +264,7 @@ class QueueHandler:
                     os.remove(
                         os.path.join(homepath, "Desktop", self.desktop_folder_name_macos, filename)
                     )
-            except:
+            except EnvironmentError:
                 Log.error("failed to remove %s" % filename)
                 raise
 

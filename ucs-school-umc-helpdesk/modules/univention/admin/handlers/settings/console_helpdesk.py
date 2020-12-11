@@ -30,6 +30,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+import ldap
 
 import univention.admin.filter
 import univention.admin.handlers
@@ -156,7 +157,7 @@ def lookup(
     try:
         for dn in lo.searchDn(unicode(filter), base, scope, unique, required, timeout, sizelimit):
             res.append(object(co, lo, None, dn))
-    except:  # nosec # TODO: use specific expetions
+    except ldap.LDAPError:
         pass
     return res
 

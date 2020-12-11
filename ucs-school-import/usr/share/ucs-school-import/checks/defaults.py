@@ -81,7 +81,7 @@ class DefaultConfigurationChecks(ConfigurationChecks):
         try:
             assert len(self.config.get("school_classes_invalid_character_replacement", "")) in (0, 1)
             assert self.config["school_classes_invalid_character_replacement"] in valid_chars
-        except:
+        except (AssertionError, IndexError):
             raise InitialisationError(
                 "school_classes_invalid_character_replacement must be one of {!r}".format(valid_chars)
             )

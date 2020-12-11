@@ -43,6 +43,7 @@ import traceback
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
+import ldap
 from ldap.filter import filter_format
 from six import iteritems
 
@@ -330,7 +331,7 @@ class Instance(SchoolBaseModule):
                     userSid = univention.admin.allocators.requestUserSid(
                         ldap_admin_write, ldap_position, uidNum
                     )
-                except:  # nosec # TODO: use specific exceptions
+                except (ldap.LDAPError, univention.admin.uexceptions.ldapError):
                     pass
             if not userSid or userSid == "None":
                 num = uidNum
