@@ -150,7 +150,7 @@ class QueueHandler:
             for k, v in self.ucr.items():
                 if k.startswith("ucsschool/userlogon/disabled_share_links/"):
                     server = k.rpartition("/")[-1]
-                    shares = [l.strip().rstrip("/") for l in v.split(",")]
+                    shares = [val.strip().rstrip("/") for val in v.split(",")]
                     self._disabled_share_links[server] = shares
         return self._disabled_share_links
 

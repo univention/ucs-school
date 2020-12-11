@@ -110,8 +110,8 @@ class SchoolLessons(ConfigParser.ConfigParser):
     def init(self):
         for sec in self.sections():
             try:
-                l = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
-                self.add(l)
+                lession = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
+                self.add(lession)
             except (AttributeError, TypeError), e:
                 MODULE.warn("Lesson %s could not be added: %s" % (sec, str(e)))
 
@@ -119,7 +119,7 @@ class SchoolLessons(ConfigParser.ConfigParser):
         if isinstance(lesson, Lesson):
             lesson = lesson.name
 
-        self._lessons[:] = [l for l in self._lessons if l.name != lesson]
+        self._lessons[:] = [les for les in self._lessons if les.name != lesson]
 
     def add(self, lesson, begin=None, end=None):
         if isinstance(lesson, basestring):

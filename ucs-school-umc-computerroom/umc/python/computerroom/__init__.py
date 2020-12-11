@@ -110,7 +110,7 @@ def _isUmcProcess(pid):
     cmdline = psutil.Process(pid).cmdline()
     # check if the process is the computerroom UMC module
     return "computerroom" in cmdline and any(
-        "univention-management-console-module" in l for l in cmdline
+        "univention-management-console-module" in line for line in cmdline
     )
 
 

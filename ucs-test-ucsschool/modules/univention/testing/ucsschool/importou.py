@@ -200,13 +200,11 @@ univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1\n"""
             % {"ou_base": ou_base}
         )
         if singlemaster:
-            pre_hook_fd.write(
-                'egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou, "dc": dc}
-            )
+            pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou})
         elif dc:
             pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
         else:
-            pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
+            pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou})
 
         pre_hook_fd.write('touch "%s"' % successful_file)
         os.fchmod(
