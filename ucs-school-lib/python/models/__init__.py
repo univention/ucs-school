@@ -33,14 +33,14 @@ import utils  # noqa: F401
 
 import univention.admin.modules as udm_modules
 
-from .computer import *  # noqa: F401
-from .dhcp import *  # noqa: F401
-from .group import *  # noqa: F401
-from .misc import *  # noqa: F401
-from .network import *  # noqa: F401
-from .policy import *  # noqa: F401
-from .school import *  # noqa: F401
-from .share import *  # noqa: F401
-from .user import *  # noqa: F401
+from .computer import *  # noqa: F401, F403
+from .dhcp import *  # noqa: F401, F403
+from .group import *  # noqa: F401, F403
+from .misc import *  # noqa: F401, F403
+from .network import *  # noqa: F401, F403
+from .policy import *  # noqa: F401, F403
+from .school import *  # noqa: F401, F403
+from .share import *  # noqa: F401, F403
+from .user import *  # noqa: F401, F403
 
 udm_modules.update()
