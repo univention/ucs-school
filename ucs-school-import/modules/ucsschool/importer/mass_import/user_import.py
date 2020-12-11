@@ -65,7 +65,6 @@ try:
     from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
     from ..configuration import ReadOnlyDict
-    from ..exceptions import UcsSchoolImportError
     from ..models.import_user import ImportUser
 except ImportError:
     pass
