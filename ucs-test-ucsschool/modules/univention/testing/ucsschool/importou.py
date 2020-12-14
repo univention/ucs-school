@@ -345,7 +345,7 @@ def create_and_verify_ou(
             move_dc_after_create_ou = True
         dc_name = dc
     else:
-        dc_name = "dc%s-01" % ou
+        dc_name = "dc%s" % ou
 
     # create hooks
     (pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc_name, singlemaster)
@@ -415,8 +415,8 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
         dc_dn = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (dc, ou_base)
         dc_name = dc
     else:
-        dc_dn = "cn=dc%s-01,cn=dc,cn=server,cn=computers,%s" % (ou, ou_base)
-        dc_name = "dc%s-01" % ou
+        dc_dn = "cn=dc%s,cn=dc,cn=server,cn=computers,%s" % (ou, ou_base)
+        dc_name = "dc%s" % ou
 
     sharefileserver_dn = dc_dn
     if sharefileserver:

@@ -66,14 +66,14 @@ ldap_base="$(ucr get ldap/base)"
 # Auslesen der ersten Spalte (OU-name) der Importdatei
 ou="$(awk -F '\t' '{print $1}' "$1")"
 # Den Standard-Schul-DC-Namen erzeugen
-host="dc${ou}-01.$(ucr get domainname)"
+host="dc${ou}.$(ucr get domainname)"
 # Eine UCR-Richtlinie erstellen und mit dem Schul-DC verbinden
 udm policies/registry create \
   --position "cn=policies,ou=$ou,$ldap_base" \
   --set name=dhcpd_ldap_base \
   --append "registry=dhcpd/ldap/base=cn=dhcp,ou=$ou,$ldap_base"
 udm computers/domaincontroller_slave \
-  --dn "cn=dc${ou}-01,cn=dc,cn=computers,ou=$ou,$ldap_base" \
+  --dn "cn=dc${ou},cn=dc,cn=computers,ou=$ou,$ldap_base" \
   --policy-reference "cn=dhcpd_ldap_base,cn=policies,ou=$ou,$ldap_base"
 echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
   <para>

@@ -48,7 +48,7 @@ ou_lower="${ou,,}"
 dcname="$(awk -F '\t' '{print $2}' "$1")"
 
 if [[ -z "$dcname" ]]; then
-	dcname="dc${ou}-01.${domainname}"
+	dcname="dc${ou}.${domainname}"
 else
 	dcname="${dcname}.${domainname}"
 fi
