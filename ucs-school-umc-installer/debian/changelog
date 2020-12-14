@@ -1,3 +1,9 @@
+ucs-school-umc-installer (7.0.0-7) unstable; urgency=low
+
+  * Bug #52465: Install the Veyon proxy app during singlemaster installation
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 14 Dec 2020 14:05:23 +0200
+
 ucs-school-umc-installer (7.0.0-6) unstable; urgency=low
 
   * Bug #49046: Revert previous changes
