@@ -45,7 +45,11 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
     for dn in member_dn_list:
         samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            print("# check nt acls for {}".format(home_dir))
+            print("# check nt acls for {} and it's subfolders.".format(home_dir))
+            assert os.path.exists(os.path.join(home_dir, "windows-profiles"))
+            assert os.path.exists(os.path.join(home_dir, ".profile"))
+            assert os.path.exists(os.path.join(home_dir, ".univention-skel.lock"))
+
             for root, sub, files in os.walk(home_dir):
                 check_nt_acls(root)
                 for f in files:
@@ -98,6 +102,7 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
                 allowed=False,
                 samba_workstation=samba_workstation,
             )
+            # Since the -i flag is set during the exam-mode, it's not possible to create folders/ files.
 
 
 def main():
@@ -110,7 +115,7 @@ def main():
             edudc = None
         else:
             edudc = ucr.get("hostname")
-        school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
+        school, oudn = schoolenv.create_ou(name_edudc=edudc)
         klasse_dn = udm.create_object(
             "groups/group",
             name="%s-AA1" % school,
