@@ -202,7 +202,7 @@ class Instance(SchoolBaseModule):
         ldap_user = ldap_user_read.get(exam_user.dn)
         workstation = ldap_user["sambaUserWorkstations"]
         password = ldap_user["sambaNTPassword"]
-        if not workstation and password:
+        if not (workstation and password):
             logger.warning(
                 "User {} is missing a workstation or password."
                 "They will be allowed to modify the permissions of their distribution folder,"
