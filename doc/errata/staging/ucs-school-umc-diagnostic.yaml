@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
-fix: 1.0.0-15
+fix: 1.0.0-15A~4.4.0.202012141639
 desc: |
   * When having the OX App Suite installed on a UCS@School System, the package <package>ucs-school-ox-support</package> is required to be installed. This fix implements a new diagnostic module which checks, if the package is correctly installed. (Bug #52195).
   * A diagnostic module now checks if the UCS@school Veyon Proxy app has been installed on single server and school server systems (Bug #52463).
