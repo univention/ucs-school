@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.169) unstable; urgency=medium
+
+  * Bug #49655: ucs-test for user-homedir permissions during exam
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Dec 2020 12:15:41 +0100
+
 ucs-test-ucsschool (6.0.168) unstable; urgency=medium
 
   * Bug #52307: ucs-test wait_for_replication
