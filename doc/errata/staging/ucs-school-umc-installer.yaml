@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-installer
+fix: 7.0.0-7A~4.4.0.202012141408
+desc: |
+ * During the installation of an UCS@school Singlemaster the Veyon Proxy App is installed as well (Bug #52465).
+bug: [52465]
