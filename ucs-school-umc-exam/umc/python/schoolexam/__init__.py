@@ -53,7 +53,13 @@ import univention.debug
 from ucsschool.lib import internetrules
 from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
-from ucsschool.lib.models.utils import ModuleHandler, NotInstalled, UnknownPackage, get_package_version
+from ucsschool.lib.models.utils import (
+    ModuleHandler,
+    NotInstalled,
+    UnknownPackage,
+    exec_cmd,
+    get_package_version,
+)
 from ucsschool.lib.roles import (
     context_type_exam,
     create_ucsschool_role_string,
@@ -193,34 +199,41 @@ class Instance(SchoolBaseModule):
         :param exam_user:
         :param ldap_user_read:
         """
-        auth_filename = os.path.join("/tmp/", exam_user.username)
         ldap_user = ldap_user_read.get(exam_user.dn)
-        try:
-            with open(auth_filename, "w") as fout:
-                password = ldap_user["sambaNTPassword"]
-                if password:
-                    fout.write(
-                        """username={}
-                           password={}
-                           domain={}""".format(
-                            exam_user.username, password[0], ucr.get("domainname")
-                        )
-                    )
-            workstation = ldap_user["sambaUserWorkstations"]
-            if workstation and os.path.exists(auth_filename):
-                workstation = workstation[0].split(",")[0]
-                cmd = "smbclient -L localhost --netbiosname={} --pw-nt-hash --authentication-file={}".format(
-                    workstation, auth_filename
+        workstation = ldap_user["sambaUserWorkstations"]
+        password = ldap_user["sambaNTPassword"]
+        if not workstation and password:
+            logger.warning(
+                "User {} is missing a workstation or password."
+                "They will be allowed to modify the permissions of their distribution folder,"
+                "which can be exploited to share data during the exam.".format(exam_user.dn)
+            )
+            return
+        with tempfile.NamedTemporaryFile(dir="/tmp") as auth_file:
+            auth_file.write(
+                """username={}
+                   password={}
+                   domain={}""".format(
+                    exam_user.username, password[0], ucr["domainname"]
                 )
-                p = subprocess.Popen(cmd, shell=True, close_fds=True, stderr=subprocess.PIPE)
-                _, stderr = p.communicate()
-                if stderr:
-                    logger.error("Error while initiating windows-profiles: {}".format(stderr))
-            else:
-                logger.error("User {} is missing password or workstation".format(exam_user.dn))
-        finally:
-            if os.path.exists(auth_filename):
-                os.remove(auth_filename)
+            )
+            auth_file.flush()
+            workstation = workstation[0].split(",")[0]
+            cmd = [
+                "smbclient",
+                "--netbiosname={}".format(workstation),
+                "--pw-nt-hash",
+                "--authentication-file={}".format(auth_file.name),
+                "-L",
+                "//{}/{}".format(ucr["hostname"], exam_user.username),
+            ]
+            rv, stdout, stderr = exec_cmd(cmd)
+            if rv != 0:
+                logger.error(
+                    "Error while initiating windows-profiles for {} rv: {} {}".format(
+                        exam_user.dn, rv, stderr
+                    )
+                )
 
     @staticmethod
     def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
@@ -731,7 +744,7 @@ class Instance(SchoolBaseModule):
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             my.project.distribute()
-            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
+            # Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
@@ -759,6 +772,10 @@ class Instance(SchoolBaseModule):
                 request.options["shareMode"],
                 customRule=request.options.get("customRule"),
             )
+            progress.add_steps(5)
+            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
+            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
+            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(5)
 
         def _finished(thread, result, request):
