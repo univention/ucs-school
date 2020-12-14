@@ -88,10 +88,14 @@ def import_mock(name, *args):
 
 
 @pytest.fixture(scope="session")
-def join_hook_module():  # type () -> ModuleType
+def join_hook_module():  # type: () -> ModuleType
     info = imp.find_module(JOIN_HOOK_FILE[:-3], [os.path.dirname(os.path.dirname(__file__))])
     with mock.patch(mock_import_func, side_effect=import_mock):
         return imp.load_module(JOIN_HOOK_FILE[:-3], *info)
+
+
+def role_id(roles):  # type: (typing.List[str]) -> str
+    return roles[0] if roles else "<empty list>"
 
 
 def test_determine_app_version_lower_than_req_for_44v7(join_hook_module):
@@ -127,3 +131,33 @@ def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
             )
             assert result_version == "4.4 v7"
             assert not log_mock.warning.called
+
+
+@pytest.mark.parametrize(
+    "roles",
+    (
+        [],
+        ["ucs-school-master"],
+        ["ucs-school-singlemaster"],
+        ["ucs-school-slave"],
+        ["ucs-school-nonedu-slave"],
+        ["ucs-school-central-slave"],
+    ),
+    ids=role_id,
+)
+def test_install_veyon_app(roles, join_hook_module):
+    with mock.patch.object(join_hook_module, "log") as log_mock, mock.patch.object(
+        join_hook_module, "call_cmd_locally", return_value=join_hook_module.StdoutStderr("{}", "")
+    ) as call_cmd_locally_mock:
+        join_hook_module.install_veyon_app(mock.MagicMock(), roles)
+        assert log_mock.info.called
+        if roles == ["ucs-school-slave"]:
+            log_mock.info.assert_called_with("Log output of the installation goes to 'appcenter.log'.")
+            assert "/usr/bin/univention-app" in call_cmd_locally_mock.call_args[0]
+            assert "install" in call_cmd_locally_mock.call_args[0]
+            assert "ucsschool-veyon-proxy" in call_cmd_locally_mock.call_args[0]
+        else:
+            log_mock.info.assert_called_with(
+                "Not installing 'UCS@school Veyon Proxy' app on this system role."
+            )
+            assert not call_cmd_locally_mock.called

@@ -56,6 +56,13 @@ ucr = None  # type: Optional[ConfigRegistry]
 StdoutStderr = namedtuple("StdoutStderr", "stdout stderr")
 SchoolMembership = namedtuple("school_membership", "is_edu_school_member is_admin_school_member")
 
+VEYON_APP_ID = "ucsschool-veyon-proxy"
+MINIMUM_UCSSCHOOL_VERSION_FOR_VEYON = "4.4 v9"
+
+
+class CallCommandError(Exception):
+    pass
+
 
 def get_lo(options):  # type: (Any) -> univention.admin.uldap.access
     log.info("Connecting to LDAP as %r ...", options.binddn)
@@ -129,7 +136,9 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
         # if no metapackage has been found, determine package type via master's UCR variable
-        result = call_cmd(options, "/usr/sbin/ucr get ucsschool/singlemaster", on_master=True)
+        result = call_cmd_on_master(
+            options.master_fqdn, "/usr/sbin/ucr", "get", "ucsschool/singlemaster"
+        )
         if ucr.is_true(value=result.stdout.strip()):
             log.info("Master is a UCS@school single server system")
             return ["ucs-school-singlemaster"]
@@ -160,27 +169,24 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
     return []
 
 
-def call_cmd(
-    options, cmd, on_master=False
-):  # type: (Any, Union[str, List[str]], Optional[bool]) -> StdoutStderr
-    if on_master:
-        assert isinstance(cmd, str)
-        cmd = [
-            "univention-ssh",
-            "/etc/machine.secret",
-            "{}$@{}".format(ucr.get("hostname"), options.master_fqdn),
-            cmd,
-        ]
-    else:
-        assert isinstance(cmd, (list, tuple))
+def call_cmd_on_master(master_fqdn, *cmd):  # type: (str, *str) -> StdoutStderr
+    local_cmd = [
+        "univention-ssh",
+        "/etc/machine.secret",
+        "{}$@{}".format(ucr.get("hostname"), master_fqdn),
+        " ".join(cmd),
+    ]
+    return call_cmd_locally(*local_cmd)
+
+
+def call_cmd_locally(*cmd):  # type: (*str) -> StdoutStderr
     log.info("Calling %r ...", cmd)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = proc.communicate()
     if proc.returncode:
-        log.error(
-            "%s returned with exitcode %s:\n%s\n%s", " ".join(cmd), proc.returncode, stderr, stdout
+        raise CallCommandError(
+            "{!r} returned with exitcode {}:\n{}\n{}".format(cmd, proc.returncode, stderr, stdout)
         )
-        sys.exit(1)
     return StdoutStderr(stdout, stderr)
 
 
@@ -194,11 +200,7 @@ def activate_repository():  # type: () -> None
     if ucr.is_false("repository/online", False):
         log.warning("The online repository is deactivated. Reactivating it.")
         handler_set(["repository/online=true"])
-        cmd = ["/usr/bin/apt-get", "update"]
-        log.info("Calling %r ...", cmd)
-        returncode = subprocess.call(cmd)
-        if returncode:
-            log.error("%s failed with exit code %s!", " ".join(cmd), returncode)
+        call_cmd_locally("/usr/bin/apt-get", "update")
 
 
 def pre_joinscripts_hook(options):  # type: (Any) -> None
@@ -214,22 +216,35 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
 
     # check if UCS@school app is installed/configured/included,
     # if not, then install the same version used by domaincontroller_master
-    result = call_cmd(options, ["univention-app", "info", "--as-json"], on_master=False)
+    result = call_cmd_locally("/usr/bin/univention-app", "info", "--as-json")
     local_status = json.loads(result.stdout)
-    ucsschool_installed = any(x.startswith("ucsschool=") for x in local_status.get("installed", []))
-    log.info("Installed packages: %r", local_status.get("installed"))
-    log.info("Is ucsschool already installed? %r", ucsschool_installed)
+    for app_entry in local_status.get("installed", []):
+        app_name, app_version = app_entry.split("=", 1)
+        if app_name == "ucsschool":
+            ucsschool_installed = True
+            break
+    else:
+        app_version = ""
+        ucsschool_installed = False
+    log.info("Installed apps: %r", local_status.get("installed"))
+    log.info(
+        "Is ucsschool already installed? %r%s",
+        ucsschool_installed,
+        " ({})".format(app_version) if app_version else "",
+    )
     # only install UCS@school if at least one package has to be installed
     if not ucsschool_installed and pkg_list:
-        result = call_cmd(options, "/usr/sbin/ucr get version/version", on_master=True)
+        result = call_cmd_on_master(options.master_fqdn, "/usr/sbin/ucr", "get", "version/version")
         master_version = result.stdout.strip()
-        result = call_cmd(options, ["ucr", "get", "version/version"], on_master=False)
+        result = call_cmd_locally("ucr", "get", "version/version")
         local_version = result.stdout.strip()
         app_string = "ucsschool"
         log.info("Master version: %r", master_version)
         log.info("Local version: %r", local_version)
         if master_version == local_version:
-            result = call_cmd(options, "/usr/bin/univention-app info --as-json", on_master=True)
+            result = call_cmd_on_master(
+                options.master_fqdn, "/usr/bin/univention-app", "info", "--as-json"
+            )
             master_app_info = json.loads(result.stdout)
             # master_app_info:  {"compat": "4.3-1 errata0", "upgradable": [], "ucs": "4.3-1 errata0",
             # "installed": ["ucsschool=4.3 v5"]}
@@ -253,33 +268,24 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
         activate_repository()
 
         log.info("Updating app center information...")
-        cmd = [
-            "univention-app",
-            "update",
-        ]
-        returncode = subprocess.call(cmd)
-        if returncode:
-            log.error("%s failed with exit code %s!", " ".join(cmd), returncode)
-            sys.exit(1)
+        call_cmd_locally("/usr/bin/univention-app", "update")
 
         log.info("Installing %s ...", app_string)
-        cmd = [
-            "univention-app",
+        call_cmd_locally(
+            "/usr/bin/univention-app",
             "install",
             app_string,
             "--skip-check",
             "must_have_valid_license",
             "--do-not-call-join-scripts",
-        ]
-        returncode = subprocess.call(cmd)
-        if returncode:
-            log.error("%s failed with exit code %s!", " ".join(cmd), returncode)
-            sys.exit(1)
+        )
 
     # if not all packages are installed, then try to install them again
     if not all(package_manager.is_installed(pkg_name) for pkg_name in pkg_list):
         log.info("Not all required packages installed - calling univention-install...")
-        subprocess.call(["univention-install", "--force-yes", "--yes"] + pkg_list)
+        call_cmd_locally("univention-install", "--force-yes", "--yes", *pkg_list)
+
+    install_veyon_app(options, pkg_list)
 
 
 def determine_app_version(primary_node_app_version, package_manager):
@@ -300,6 +306,61 @@ def determine_app_version(primary_node_app_version, package_manager):
         )
     # add future version checks (e.g. for 4.4 v8) here
     return result_app_version
+
+
+def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None
+    """Install 'UCS@school Veyon Proxy' app on local system if it is an edu-slave."""
+    if "ucs-school-slave" not in roles_pkg_list:
+        log.info("Not installing 'UCS@school Veyon Proxy' app on this system role.")
+        return
+    result = call_cmd_locally("/usr/bin/univention-app", "info", "--as-json")
+    app_infos = json.loads(result.stdout)
+    for app_entry in app_infos.get("installed", []):
+        app_name, app_version = app_entry.split("=", 1)
+        if app_name == "ucsschool" and LooseVersion(app_version) < LooseVersion(
+            MINIMUM_UCSSCHOOL_VERSION_FOR_VEYON
+        ):
+            log.info(
+                "Not installing 'UCS@school Veyon Proxy' app on local system with UCS@school version "
+                "prior to %r.",
+                MINIMUM_UCSSCHOOL_VERSION_FOR_VEYON,
+            )
+            return
+        elif app_name == VEYON_APP_ID:
+            log.info("Found 'UCS@school Veyon Proxy' app version %r on local system.", app_version)
+            return
+    log.info("Installing 'UCS@school Veyon Proxy' app on local system...")
+
+    log.info("Updating app center information...")
+    call_cmd_locally("/usr/bin/univention-app", "update")
+
+    log.info("Installing 'UCS@school Veyon Proxy' app (%r)...", VEYON_APP_ID)
+    log.info("Log output of the installation goes to 'appcenter.log'.")
+    username = options.lo.getAttr(options.binddn, "uid")[0]
+    try:
+        call_cmd_locally(
+            "/usr/bin/univention-app",
+            "install",
+            "--username",
+            username,
+            "--pwdfile",
+            options.bindpwdfile,
+            VEYON_APP_ID,
+            "--skip-check",
+            "must_have_valid_license",
+            "--do-not-call-join-scripts",
+            "--noninteractive",
+        )
+    except CallCommandError as exc:
+        # don't exit program if veyon proxy app cannot be installed
+        log.error("#" * 79)
+        log.error("# Error installing the 'UCS@school Veyon Proxy' app.                          #")
+        log.error("#" * 79)
+        log.error(str(exc))
+        log.error("#" * 79)
+        log.error("# Please install the app manually by executing on the command line:           #")
+        log.error("# univention-app install ucsschool-veyon-proxy                                #")
+        log.error("#" * 79)
 
 
 def main():  # type: () -> None
@@ -376,7 +437,11 @@ def main():  # type: () -> None
 
     options.lo = get_lo(options)
 
-    pre_joinscripts_hook(options)
+    try:
+        pre_joinscripts_hook(options)
+    except CallCommandError as exc:
+        log.error(str(exc))
+        sys.exit(1)
 
     log.info("ucsschool-join-hook.py is done")
 
