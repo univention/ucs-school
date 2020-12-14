@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-15) unstable; urgency=low
+
+  * Bug #52463: diagnostic module to check veyon proxy app installation
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 14 Dec 2020 16:32:56 +0100
+
 ucs-school-umc-diagnostic (1.0.0-14) unstable; urgency=medium
 
   * Bug #52195: added diagnostic module for checking ox support
