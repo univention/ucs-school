@@ -3,9 +3,10 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.5A~4.4.0.202012011133
+fix: 12.2.6A~4.4.0.202012151005
 desc: |
- * Internal improvement: prevent unnecesary traceback during creation of school OU (Bug #52403).
- * A role for marking computerrooms for the use of Veyon was added to the school.lib (Bug #52422).
- * Internal improvement: create container for group <systemitem class="groupname">ouadmins</systemitem> before creating group (Bug #52449).
-bug: [52403, 52422, 52449]
+  * Internal improvement: prevent unnecesary traceback during creation of school OU (Bug #52403).
+  * A role for marking computerrooms for the use of Veyon was added to the school.lib (Bug #52422).
+  * Internal improvement: create container for group <systemitem class="groupname">ouadmins</systemitem> before creating group (Bug #52449).
+  * When creating a new school, the name length of the new school server is automatically checked. The allowed maximum length was raised from 12 to 13 characters (Bug #51274).
+bug: [52403, 52422, 52449, 51274]

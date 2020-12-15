@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.47A~4.4.0.202012150952
+desc: |
+  * When creating a new school via the create_school CLI script, the educational and administrative DC host name lengths were not checked. This fix ensures that they do not exceed a length of 13 characters (Bug #51274).
+bug: [51274]
