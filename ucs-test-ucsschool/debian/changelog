@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.170) unstable; urgency=medium
+
+  * Bug #51274: remove "-01" suffix from dc names
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 14:02:20 +0100
+
 ucs-test-ucsschool (6.0.169) unstable; urgency=medium
 
   * Bug #49655: ucs-test for exam-home permissions
