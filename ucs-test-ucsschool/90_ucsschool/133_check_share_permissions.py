@@ -116,11 +116,15 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
 
         smbcacls_cases = [(student_name, False), (teacher_name, True), (admin_name, True)]
         for user_name, allowed in smbcacls_cases:
-            check_change_permissions(file=new_klasse_share_folder, user_name=user_name, allowed=allowed)
             check_change_permissions(
-                file=new_workgroup_share_folder, user_name=user_name, allowed=allowed
+                filename=new_klasse_share_folder, user_name=user_name, allowed=allowed
             )
-            check_change_permissions(file=marketplace_share_folder, user_name=user_name, allowed=allowed)
+            check_change_permissions(
+                filename=new_workgroup_share_folder, user_name=user_name, allowed=allowed
+            )
+            check_change_permissions(
+                filename=marketplace_share_folder, user_name=user_name, allowed=allowed
+            )
 
         # rename class and check if the permissions are still the same.
         new_class_name = "{}-{}".format(school, uts.random_string())
@@ -144,5 +148,5 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
                 check_deny_nt_acls_permissions(sid=sid, allowed=allowed, path=klasse_path)
             for user_name, allowed in smbcacls_cases:
                 check_change_permissions(
-                    file=new_klasse_share_folder, user_name=user_name, allowed=allowed
+                    filename=new_klasse_share_folder, user_name=user_name, allowed=allowed
                 )

@@ -26,6 +26,7 @@ from univention.testing.ucsschool.computerroom import (
     check_change_permissions,
     check_create_share_folder,
     create_homedirs,
+    retry_cmd,
 )
 from univention.testing.ucsschool.exam import Exam
 
@@ -41,11 +42,13 @@ def check_nt_acls(filename):  # type: (str) -> None
         utils.fail("The permissions of share {} can be changed {}".format(filename, stdout))
 
 
+@retry_cmd
 def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
     for dn in member_dn_list:
         samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
             print("# check nt acls for {} and it's subfolders.".format(home_dir))
+            print(os.listdir(home_dir))
             assert os.path.exists(os.path.join(home_dir, "windows-profiles"))
             assert os.path.exists(os.path.join(home_dir, ".profile"))
             assert os.path.exists(os.path.join(home_dir, ".univention-skel.lock"))

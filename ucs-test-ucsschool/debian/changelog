@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.171) unstable; urgency=medium
+
+  * Bug #49655: add retry_cmd
+
+   -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Dec 2020 17:38:00 +0100
+
 ucs-test-ucsschool (6.0.170) unstable; urgency=medium
 
   * Bug #51274: remove "-01" suffix from dc names
