@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-10) unstable; urgency=medium
+
+  * Bug #51274: edu and adm school server name length limit was raised to 13
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 10:01:44 +0100
+
 ucs-school-umc-wizards (11.0.0-9) unstable; urgency=low
 
   * Bug #51691: Add optional fields to user wizard and make visibility configurable
