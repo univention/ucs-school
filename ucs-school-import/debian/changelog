@@ -1,3 +1,9 @@
+ucs-school-import (17.0.47) unstable; urgency=medium
+
+  * Bug #51274: check length of server-name to not exceed 13 characters
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 09:35:20 +0100
+
 ucs-school-import (17.0.46) unstable; urgency=low
 
   * Bug #51938: only run example result hook if not in dry-run (or forced)
