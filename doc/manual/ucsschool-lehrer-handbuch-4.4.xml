@@ -694,7 +694,7 @@ feedback@univention.de
 		  zuvor beschriebenen Eingabefeld <guimenu>Mitglieder</guimenu> genutzt.
 		</para>
 		<para>
-		  Die Email-Adresse einer Arbeitsgruppe kan jederzeit über den <guimenu>Bearbeiten</guimenu> Dialog wieder
+		  Die Email-Adresse einer Arbeitsgruppe kann jederzeit über den <guimenu>Bearbeiten</guimenu> Dialog wieder
 		  deaktiviert werden. Dabei gehen sowohl die Email-Adresse, als auch die konfigurierten Absenderlimitierungen
 		  verloren.
 		</para>
