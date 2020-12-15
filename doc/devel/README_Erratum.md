@@ -13,20 +13,20 @@ This document describes how to prepare and execute an Errata Release for the UCS
 
 - Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
   with the chosen yaml files to release an Errata for the latest UCS@school version.
-  - **This will need manual interaction to verify the changelog changes before comitting!**
+  - **This will need manual interaction to verify the changelog changes before committing!**
   - Changelog will be modified
   - Upload of binaries to TestAppCenter
   - Moving of advisories to published
 - Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')`.
-  This has to be executed on **dimma**.
+  This has to be executed **on dimma or omar**.
 
 ## Publish to production App Center
 
-The following code should be executed on dimma:
+The following code should be executed on dimma or omar:
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma and lists all available app center repositories
+./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
 ./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
@@ -52,7 +52,11 @@ für UCS@school 4.4 v9 wurden soeben Errata freigegeben.
  
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
- 
+
+Auszüge aus dem Changelog:
+- ...
+- ...
+
 Viele Grüße,
  
  $NAME
@@ -64,7 +68,7 @@ cd doc/errata/published/
 grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
 ```
 
-Use this text to as the comment for closing the bug:
+Use this text as the comment for closing the mentioned bugs:
 <pre>
 Errata updates for UCS@school 4.4 v9 have been released.
 

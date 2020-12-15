@@ -5,7 +5,7 @@ This document describes how to prepare and execute a full Release for the UCS@sc
 
 ## Preparations
 The manual release process needs access to some commands. The easiest way is to set up an environment
-like this on **dimma**:
+like this **on dimma or omar**:
 ```shell
 cd git  # Or whatever folder you want to use for your repositories
 git clone --depth 1 git@git.knut.univention.de:univention/ucsschool.git
@@ -59,7 +59,7 @@ create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
 
 For example:
 ```shell
-create_app_changelog -r 4.4 -v "4.4 v2" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
+create_app_changelog -r 4.4 -v "4.4 v9" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
 ```
 
 Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
@@ -70,26 +70,26 @@ vi ../../changelog/Makefile
 
 <pre>
 - MAIN := changelog-ucsschool-4.4-de
-+ MAIN := changelog-ucsschool-4.4v2-de
++ MAIN := changelog-ucsschool-4.4v9-de
 </pre>
 
 ```shell
-git add ../../changelog/changelog-ucsschool-4.4v2-de.xml ../../changelog/Makefile
+git add ../../changelog/changelog-ucsschool-4.4v9-de.xml ../../changelog/Makefile
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```
 
 - Create a PDF from the XML with [Release Notes Job](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/ReleaseNotes/)
 - upload PDF & HTML to docs.univention.de
-    - checkout git@git.knut.univention.de:univention/docs.univention.de.git
-    - copy content of doc-common/foobar/ to working copy of docs.univention.de/
-    - fetch new PDF and HTML files created by above jenkins job (ReleaseNotes) and place them in working copy of docs.univention.de/
+    - checkout `git@git.knut.univention.de:univention/docs.univention.de.git`
+    - copy content of `doc-common/webframe/` to working copy of `docs.univention.de/`
+    - fetch the new PDF and HTML files created by the above jenkins job (ReleaseNotes) and place them in working copy of `docs.univention.de/`
     - commit new index files and new HTML and PDF files
     - push to repo (be aware that another coworker may now push the current repo state to the public web server!)
 - generate docs.u.de overview pages:
 ```shell
 git clone git@git.knut.univention.de:documentation/ucs-doc-overview-pages.git
-su -c "apt-get install python3-jinja2 python3-yaml python3-pycountry"
+apt install python3-jinja2 python3-yaml python3-pycountry
 vi src/content.yaml
 python3 src/model.py src/content.yaml .../docs.software-univention.de
 git add src/content.yaml
@@ -106,10 +106,10 @@ Run [Publish Docs job](https://jenkins.knut.univention.de:8181/view/Publish/job/
 
 ## Publish packages from TestAppCenter
 
-This code should be run on **dimma**:
+This code should be run **on dimma or omar**:
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma and lists all available app center repositories
+./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
 ./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
@@ -132,6 +132,10 @@ folgendes App-Update wurde eben freigegeben:
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
  
+Auszüge aus dem Changelog:
+- ...
+- ...
+
 Viele Grüße,
  
  $NAME
@@ -143,7 +147,7 @@ cd doc/errata/published/
 grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
 ```
 
-Use this text to as the comment for closing the bug:
+Use this text as the comment for closing the mentioned bugs:
 <pre>
 UCS@school 4.4 v9 has been released.
 
