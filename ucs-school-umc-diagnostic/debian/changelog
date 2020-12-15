@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-17) unstable; urgency=medium
+
+  * Bug #52147: add consistency script to debian package
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 14:20:57 +0100
+
 ucs-school-umc-diagnostic (1.0.0-16) unstable; urgency=medium
 
   * Bug #52147: added CLI script that verifies consistency of ucsschool objects
