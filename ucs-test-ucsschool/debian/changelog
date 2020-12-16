@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.172) unstable; urgency=medium
+
+  * Bug #49655: ucs-test don't use use_cache
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 16 Dec 2020 08:53:25 +0100
+
 ucs-test-ucsschool (6.0.171) unstable; urgency=medium
 
   * Bug #49655: add retry_cmd
