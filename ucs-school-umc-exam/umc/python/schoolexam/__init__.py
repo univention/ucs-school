@@ -44,9 +44,9 @@ from itertools import chain
 
 import ldap
 import notifier
-import samba
 from ldap.filter import filter_format
 from samba.ntacls import getntacl, setntacl
+from samba.param import LoadParm
 from six import iteritems
 
 import univention.debug
@@ -116,7 +116,7 @@ def deny_owner_change_permissions(filename):  # type: (str) -> None
 
     :param filename:
     """
-    lp = samba.param.LoadParm()
+    lp = LoadParm()
     lp.load_default()
     dacl = getntacl(lp, file=filename, direct_db_access=False)
     old_sddl = dacl.as_sddl()
@@ -225,13 +225,13 @@ class Instance(SchoolBaseModule):
                 "--pw-nt-hash",
                 "--authentication-file={}".format(auth_file.name),
                 "-L",
-                "//{}/{}".format(ucr["hostname"], exam_user.username),
+                "localhost",
             ]
             rv, stdout, stderr = exec_cmd(cmd)
             if rv != 0:
                 logger.error(
-                    "Error while initiating windows-profiles for {} rv: {} {}".format(
-                        exam_user.dn, rv, stderr
+                    "Error while initiating windows-profiles for {} rv: {} {} {}".format(
+                        exam_user.dn, rv, stderr, stdout
                     )
                 )
 
@@ -744,7 +744,6 @@ class Instance(SchoolBaseModule):
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             my.project.distribute()
-            # Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
@@ -772,6 +771,7 @@ class Instance(SchoolBaseModule):
                 request.options["shareMode"],
                 customRule=request.options.get("customRule"),
             )
+            # wait for samba-replication
             progress.add_steps(5)
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
