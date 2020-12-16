@@ -43,10 +43,13 @@ import traceback
 from itertools import chain
 
 import ldap
+import ldb
 import notifier
-import samba
-from ldap.filter import filter_format
+from ldap.filter import escape_filter_chars, filter_format
+from samba.auth import system_session
 from samba.ntacls import getntacl, setntacl
+from samba.param import LoadParm
+from samba.samdb import SamDB
 from six import iteritems
 
 import univention.debug
@@ -107,6 +110,32 @@ if "schoolexam" not in [handler for handler in logger.handlers]:
     logger.addHandler(_module_handler)
 
 
+def wait_for_local_samba_replication(exam_users):  # type: (List[User]) -> None
+    """
+    wait until all users are replicated to local samba
+    """
+    open_attempts = 30 * 60
+    users_replicated = set()
+    lp = LoadParm()
+    lp.load_default()
+    samdb = SamDB("tdb://%s" % lp.private_path("sam.ldb"), session_info=system_session(lp), lp=lp)
+    expected_users = set(user.username for user in exam_users)
+    while (len(exam_users) > len(users_replicated)) and (open_attempts > 0):
+        open_attempts -= 1
+        for user in expected_users - users_replicated:
+            res = samdb.search(
+                base=samdb.domain_dn(),
+                expression="(sAMAccountName={})".format(escape_filter_chars(user)),
+                attrs=["objectSid"],
+            )
+            if not res:
+                # not replicated yet
+                continue
+            users_replicated.add(user)
+            logger.debug("# replicated {}".format(user))
+        time.sleep(0.5)
+
+
 def deny_owner_change_permissions(filename):  # type: (str) -> None
     """
     A user gets full control over her permissions by default.
@@ -116,7 +145,7 @@ def deny_owner_change_permissions(filename):  # type: (str) -> None
 
     :param filename:
     """
-    lp = samba.param.LoadParm()
+    lp = LoadParm()
     lp.load_default()
     dacl = getntacl(lp, file=filename, direct_db_access=False)
     old_sddl = dacl.as_sddl()
@@ -224,8 +253,9 @@ class Instance(SchoolBaseModule):
                 "--netbiosname={}".format(workstation),
                 "--pw-nt-hash",
                 "--authentication-file={}".format(auth_file.name),
-                "-L",
                 "//{}/{}".format(ucr["hostname"], exam_user.username),
+                "-c",
+                "dir",
             ]
             rv, stdout, stderr = exec_cmd(cmd)
             if rv != 0:
@@ -744,7 +774,6 @@ class Instance(SchoolBaseModule):
             progress.info("")
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             my.project.distribute()
-            # Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(20)
 
@@ -772,6 +801,8 @@ class Instance(SchoolBaseModule):
                 request.options["shareMode"],
                 customRule=request.options.get("customRule"),
             )
+            # wait for samba-replication
+            wait_for_local_samba_replication(my.project.getRecipients())
             progress.add_steps(5)
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
             Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
