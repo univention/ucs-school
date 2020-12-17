@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-43A~4.4.0.202012150915
+fix: 9.0.1-44A~4.4.0.202012171109
 desc: |
   * Creating two exams quickly in succession led to the problem that exam-users were not able to access their home directories anymore. This fix ensures that this problem does not occur anymore (Bug #52307).
   * During the exams, students could change the permissions of their home directories, which opened up the possibility of sharing files with their fellow students. This fix removes this ability for students (Bug #49655).
