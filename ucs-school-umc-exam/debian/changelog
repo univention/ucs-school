@@ -1,4 +1,4 @@
-ucs-school-umc-exam (9.0.1-43) unstable; urgency=medium
+ucs-school-umc-exam (9.0.1-44) unstable; urgency=medium
 
   * Bug #49655: modify smbclient call to init windows-profiles
 
