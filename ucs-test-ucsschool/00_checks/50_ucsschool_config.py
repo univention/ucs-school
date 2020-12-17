@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Check ucs config in ucs@school
-## tags: [ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: safe
 
 import sys
