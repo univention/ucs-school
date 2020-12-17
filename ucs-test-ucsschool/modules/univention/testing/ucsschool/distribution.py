@@ -543,7 +543,6 @@ html5
         """
         path = ""
         self.ucr.load()
-        roleshare = self.ucr.get("ucsschool/import/roleshare")
         sender_dir_name = self.ucr.get(
             "ucsschool/datadistribution/datadir/sender", "Unterrichtsmaterial"
         )
@@ -554,25 +553,11 @@ html5
             "ucsschool/datadistribution/datadir/recipient", "Unterrichtsmaterial"
         )
         if purpose == "distribute":
-            if roleshare == "no" or roleshare is False:
-                path = "/home/{0}/{1}/{2}/".format(user, recipient_dir_name, self.name)
-            else:
-                path = "/home/{0}/schueler/{1}/{2}/{3}".format(
-                    self.school, user, recipient_dir_name, self.name
-                )
+            path = "/home/{0}/schueler/{1}/{2}/{3}".format(
+                self.school, user, recipient_dir_name, self.name
+            )
         elif purpose == "collect":
-            if roleshare == "no" or roleshare is False:
-                path = "/home/{0}/{1}/{2}{3}/{4}/".format(
-                    self.sender, sender_dir_suffix, self.name, project_dir_name, user, version
-                )
-            else:
-                path = "/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}-{6:03d}".format(
-                    self.school,
-                    self.sender,
-                    sender_dir_name,
-                    self.name,
-                    project_dir_suffix,
-                    user,
-                    version,
-                )
+            path = "/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}-{6:03d}".format(
+                self.school, self.sender, sender_dir_name, self.name, project_dir_suffix, user, version,
+            )
         return path
