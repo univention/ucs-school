@@ -54,7 +54,7 @@ def main():
                     edudc = None
                 else:
                     edudc = ucr.get("hostname")
-                school, oudn = schoolenv.create_ou(name_edudc=edudc)
+                school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
                 klasse_dn = udm.create_object(
                     "groups/group",
                     name="%s-AA1" % school,
