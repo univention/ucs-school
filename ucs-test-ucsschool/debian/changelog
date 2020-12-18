@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.175) unstable; urgency=medium
+
+  * Bug #49655: use_cache in uids test 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 18 Dec 2020 13:26:38 +0100
+
 ucs-test-ucsschool (6.0.174) unstable; urgency=medium
 
   * Bug #52481: ucs-test remove roleshare=no branch
