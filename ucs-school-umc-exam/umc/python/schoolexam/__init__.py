@@ -200,8 +200,9 @@ class Instance(SchoolBaseModule):
         :param ldap_user_read:
         """
         ldap_user = ldap_user_read.get(exam_user.dn)
-        workstation = ldap_user["sambaUserWorkstations"]
-        password = ldap_user["sambaNTPassword"]
+        workstation = ldap_user.get("sambaUserWorkstations", "")
+        password = ldap_user.get("sambaNTPassword", "")
+
         if not (workstation and password):
             logger.warning(
                 "User {} is missing a workstation or password."

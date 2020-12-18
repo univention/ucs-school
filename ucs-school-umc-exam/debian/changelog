@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-45) unstable; urgency=medium
+
+  * Bug #49655: use lo.get with default value
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 18 Dec 2020 13:23:38 +0100
+
 ucs-school-umc-exam (9.0.1-44) unstable; urgency=medium
 
   * Bug #49655: modify smbclient call to init windows-profiles
