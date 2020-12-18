@@ -203,9 +203,9 @@ class Instance(SchoolBaseModule):
         workstation = ldap_user.get("sambaUserWorkstations", "")
         password = ldap_user.get("sambaNTPassword", "")
 
-        if not (workstation and password):
+        if not password:
             logger.warning(
-                "User {} is missing a workstation or password."
+                "User {} is missing a password."
                 "They will be allowed to modify the permissions of their distribution folder,"
                 "which can be exploited to share data during the exam.".format(exam_user.dn)
             )
@@ -219,15 +219,22 @@ class Instance(SchoolBaseModule):
                 )
             )
             auth_file.flush()
-            workstation = workstation[0].split(",")[0]
+
             cmd = [
                 "smbclient",
-                "--netbiosname={}".format(workstation),
                 "--pw-nt-hash",
                 "--authentication-file={}".format(auth_file.name),
                 "-L",
                 "localhost",
             ]
+            if workstation:
+                workstation = workstation[0].split(",")[0]
+                cmd.append("--netbiosname={}".format(workstation))
+            else:
+                logger.debug(
+                    "{} is missing a workstation. The exam-user will be able to login to workstations "
+                    "outside the computerroom.".format(exam_user.dn)
+                )
             rv, stdout, stderr = exec_cmd(cmd)
             if rv != 0:
                 logger.error(
