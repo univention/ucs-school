@@ -29,9 +29,10 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
 import time
+from collections import defaultdict
 from datetime import datetime
+from threading import Lock
 
 import requests
 from requests import ReadTimeout
@@ -76,6 +77,9 @@ class VeyonClient:
         self._ping_timeout = 0.5
         self._session_cache = dict()  # type: Dict[str, VeyonSession]
         self._last_used = dict()  # type: Dict[str, float]
+        self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]
+        self._locks_lock = Lock()  # type: Lock
+        """This lock is needed to ensure thread safe operation of the defaultdict for the individual session locks"""
 
     def _get_headers(self, host=None):  # type: (Optional[host]) -> Dict[str, str]
         return {"Connection-Uid": self._get_connection_uid(host)}
@@ -90,7 +94,7 @@ class VeyonClient:
         )
         check_veyon_error(result)
         session_data = result.json()
-        return VeyonSession(str(session_data["connection-uid"]), session_data["validuntil"])
+        return VeyonSession(str(session_data["connection-uid"]), session_data["validUntil"])
 
     def _get_connection_uid(self, host=None, renew_session=True):
         # type:(Optional[str], Optional[bool]) -> str
@@ -105,21 +109,24 @@ class VeyonClient:
         :raises VeyonError: If renew_session=False and the cached connection does not exist or is invalid
         """
         host = host if host else self._default_host
-        session = self._session_cache.get(host, None)  # type: VeyonSession
-        if (
-            session
-            and datetime.fromtimestamp(session.valid_until) > datetime.now()
-            and time.time() - self._last_used.get(host, 0.0) < self._idle_timeout
-        ):
-            self._reset_idle_time(host)
-            return session.connection_uid
-        else:
-            if not renew_session:
-                raise VeyonError("The currently cached connection is invalid", 2)
-            session = self._create_session(host)
-            self._session_cache[host] = session
-            self._reset_idle_time(host)
-            return session.connection_uid
+        with self._locks_lock:
+            host_lock = self._session_locks[host]
+        with host_lock:
+            session = self._session_cache.get(host, None)  # type: VeyonSession
+            if (
+                session
+                and datetime.fromtimestamp(session.valid_until) > datetime.now()
+                and time.time() - self._last_used.get(host, 0.0) < self._idle_timeout
+            ):
+                self._reset_idle_time(host)
+                return session.connection_uid
+            else:
+                if not renew_session:
+                    raise VeyonError("The currently cached connection is invalid", 2)
+                session = self._create_session(host)
+                self._session_cache[host] = session
+                self._reset_idle_time(host)
+                return session.connection_uid
 
     def remove_session(self, host):
         """

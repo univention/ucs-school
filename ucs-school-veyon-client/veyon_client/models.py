@@ -72,6 +72,6 @@ class Feature(enum.Enum):
         return str(self.value)
 
 
-VeyonUser = namedtuple("VeyonUser", ["login", "fullname", "session"])
+VeyonUser = namedtuple("VeyonUser", ["login", "fullName", "session"])
 VeyonSession = namedtuple("VeyonSession", ["connection_uid", "valid_until"])
 Dimension = namedtuple("Dimension", ["width", "height"])
