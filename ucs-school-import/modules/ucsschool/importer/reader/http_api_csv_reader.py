@@ -45,10 +45,10 @@ class HttpApiCsvReader(CsvReader):
         # UserImport.__init__() without arguments.
         # So we'll fetch the necessary information from the configuration.
         self.config = Configuration()
+        self.school = self.config["school"]
         filename = self.config["input"]["filename"]
         header_lines = self.config["csv"]["header_lines"]
         super(HttpApiCsvReader, self).__init__(filename, header_lines)
-        self.config = Configuration()
 
     def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
         """
@@ -57,8 +57,8 @@ class HttpApiCsvReader(CsvReader):
         if mapping_value == "school_classes":
             if not isinstance(import_user, Staff):  # ignore column if user is staff
                 import_user.school_classes = {
-                    self.config["school"]: [
-                        "{}-{}".format(self.config["school"], sc.strip())
+                    self.school: [
+                        "{}-{}".format(self.school, sc.strip())
                         for sc in csv_value.split(",")
                         if sc.strip()
                     ]
