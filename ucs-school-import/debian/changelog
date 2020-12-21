@@ -1,3 +1,9 @@
+ucs-school-import (17.0.48) unstable; urgency=low
+
+  * Bug #52524: replace invalid chars in school_class names in all code paths
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Dec 2020 13:04:53 +0100
+
 ucs-school-import (17.0.47) unstable; urgency=medium
 
   * Bug #51274: check length of server-name to not exceed 13 characters
