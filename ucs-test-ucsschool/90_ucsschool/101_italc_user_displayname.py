@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Unittests for italc display names
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest, ucsschool, ucsschool_base1, unit-test]
 ## exposure: safe
 ## bugs: []
 ## packages: [ucs-school-umc-computerroom]
@@ -42,9 +42,9 @@ import random
 import pytest
 
 import univention.testing.strings as uts
-from ucsschool.italc_integration.italc2 import UserMap
+from univention.management.console.modules.computerroom.room_management import ITALC_USER_REGEX, UserMap
 
-user_map = UserMap()
+user_map = UserMap(ITALC_USER_REGEX)
 
 
 def random_user_str(n):  # type: (int) -> str

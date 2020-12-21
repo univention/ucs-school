@@ -81,7 +81,7 @@ class VeyonClient:
         self._locks_lock = Lock()  # type: Lock
         """This lock is needed to ensure thread safe operation of the defaultdict for the individual session locks"""
 
-    def _get_headers(self, host=None):  # type: (Optional[host]) -> Dict[str, str]
+    def _get_headers(self, host=None):  # type: (Optional[str]) -> Dict[str, str]
         return {"Connection-Uid": self._get_connection_uid(host)}
 
     def _reset_idle_time(self, host):
@@ -102,10 +102,11 @@ class VeyonClient:
         Fetches the connection uid for a given host from the cache or generates a new one if none is
         present or valid.
 
-        :param host: The host to fetch the connection uid for
-        :param renew_session: If set to False an exception is thrown if no valid session exists in the
+        :param str host: The host to fetch the connection uid for
+        :param bool renew_session: If set to False an exception is thrown if no valid session exists in the
             session cache
         :return: The connection uid
+        :rtype: str
         :raises VeyonError: If renew_session=False and the cached connection does not exist or is invalid
         """
         host = host if host else self._default_host
@@ -128,12 +129,12 @@ class VeyonClient:
                 self._reset_idle_time(host)
                 return session.connection_uid
 
-    def remove_session(self, host):
+    def remove_session(self, host):  # type: (str) -> None
         """
         This function tries to close the currently cached connection to the host and then purges it
         from the cache
 
-        :param host: The host to remove the session for
+        :param str host: The host to remove the session for
         """
         try:
             requests.delete(
@@ -166,6 +167,7 @@ class VeyonClient:
             neither is specified (dimension=None) the original dimensions are used. If either is
             specified the other one is calculated in a way to keep the aspect ratio.
         :return: The screenshot as bytes
+        :rtype: bytes
         :raises VeyonError: Can throw a VeyonError(10) if no framebuffer is available yet.
         """
         params = {"format": screenshot_format, "compression": compression, "quality": quality}
@@ -220,6 +222,7 @@ class VeyonClient:
 
         :returns: True if the feature is activated, False if the feature is deactivated or has no
             status, like "REBOOT"
+        :rtype: bool
         """
         result = requests.get(
             "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
@@ -235,6 +238,7 @@ class VeyonClient:
 
         :returns: The info about the logged in user. If no user is logged in the session field of the
             result will be -1
+        :rtype: VeyonUser
         """
         result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
         check_veyon_error(result)

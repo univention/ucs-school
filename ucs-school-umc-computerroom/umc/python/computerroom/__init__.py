@@ -54,7 +54,7 @@ import ucsschool.lib.internetrules as internetrules
 import univention.admin.uexceptions as udm_exceptions
 
 try:
-    from ucsschool.italc_integration.italc2 import ITALC_Error, ITALC_Manager
+    from .room_management import ComputerRoomError, ComputerRoomManager
 except ImportError:
     pass
 from ucsschool.lib.models import ComputerRoom, School, User
@@ -335,7 +335,7 @@ class Instance(SchoolBaseModule):
     def init(self):
         SchoolBaseModule.init(self)
         ComputerSanitizer.instance = self
-        self._italc = ITALC_Manager()
+        self._italc = ComputerRoomManager()
         self._random = Random()
         self._random.seed()
         self._lessons = SchoolLessons()
@@ -411,7 +411,7 @@ class Instance(SchoolBaseModule):
             if self._italc.room != roomDN:
                 try:
                     self._italc.room = roomDN
-                except ITALC_Error:
+                except ComputerRoomError:
                     success = False
                     message = "EMPTY_ROOM"
 
@@ -585,6 +585,7 @@ class Instance(SchoolBaseModule):
                 result["settingEndsIn"] = diff.seconds / 60
 
         MODULE.info("Update: result: %s" % str(result))
+        self._italc.update_computers()
         self.finished(request.id, result)
 
     def _positiveTimeDiff(self):

@@ -115,7 +115,7 @@ if __name__ == "__main__":
         "uid=%s,cn=users,%s" % (options.username, config.get("ldap/base")), options.password
     )
 
-    m = italc2.ITALC_Manager()
+    m = italc2.ComputerRoomManager()
     m.school = options.school
     m.room = options.room
 
