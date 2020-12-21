@@ -308,9 +308,20 @@ def determine_app_version(primary_node_app_version, package_manager):
     return result_app_version
 
 
+def veyon_app_should_be_installed(options, roles_pkg_list):  # type: (Any, List[str]) -> bool
+    """
+    Check whether the Veyon Proxy App should be installed on this system.
+
+    :return: True if this is a singlemaster or an edu slave, else False
+    """
+    if options.server_role == "domaincontroller_master":
+        return ucr.is_true("ucsschool/singlemaster")
+    return "ucs-school-slave" in roles_pkg_list
+
+
 def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None
     """Install 'UCS@school Veyon Proxy' app on local system if it is an edu-slave."""
-    if "ucs-school-slave" not in roles_pkg_list:
+    if not veyon_app_should_be_installed(options, roles_pkg_list):
         log.info("Not installing 'UCS@school Veyon Proxy' app on this system role.")
         return
     result = call_cmd_locally("/usr/bin/univention-app", "info", "--as-json")
@@ -336,21 +347,22 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
 
     log.info("Installing 'UCS@school Veyon Proxy' app (%r)...", VEYON_APP_ID)
     log.info("Log output of the installation goes to 'appcenter.log'.")
-    username = options.lo.getAttr(options.binddn, "uid")[0]
-    try:
-        call_cmd_locally(
-            "/usr/bin/univention-app",
-            "install",
-            "--username",
-            username,
-            "--pwdfile",
-            options.bindpwdfile,
-            VEYON_APP_ID,
-            "--skip-check",
-            "must_have_valid_license",
-            "--do-not-call-join-scripts",
-            "--noninteractive",
+    cmd = [
+        "/usr/bin/univention-app",
+        "install",
+        VEYON_APP_ID,
+        "--skip-check",
+        "must_have_valid_license",
+        "--do-not-call-join-scripts",
+        "--noninteractive",
+    ]
+    if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
+        username = options.lo.getAttr(options.binddn, "uid")[0]
+        cmd.extend(
+            ["--username", username, "--pwdfile", options.bindpwdfile,]
         )
+    try:
+        call_cmd_locally(*cmd)
     except CallCommandError as exc:
         # don't exit program if veyon proxy app cannot be installed
         log.error("#" * 79)
