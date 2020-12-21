@@ -99,6 +99,7 @@ except ImportError:
 
 FunctionSignature = namedtuple("FunctionSignature", ["name", "args", "kwargs"])
 UsernameUniquenessTuple = namedtuple("UsernameUniquenessTuple", ["record_uid", "source_uid", "dn"])
+ALLOWED_CHARS_IN_SCHOOL_CLASS_NAME = set(string.digits + string.ascii_letters + " -._")
 UNIQUENESS = "uniqueness"
 
 
@@ -705,10 +706,15 @@ class ImportUser(User):
         * If attribute already exists as a dict, it is not changed.
         * Attribute is only written if it is set to a string like 'school1-cls2,school3-cls4'.
         """
+        char_replacement = self.config["school_classes_invalid_character_replacement"]
         if isinstance(self, Staff):
             self.school_classes = dict()  # type: Dict[str, Dict[str, List[str]]]
         elif isinstance(self.school_classes, dict) and self.school_classes:
-            pass
+            for school, classes in iteritems(self.school_classes):
+                self.school_classes[school] = [
+                    self.school_classes_invalid_character_replacement(class_name, char_replacement)
+                    for class_name in classes
+                ]
         elif isinstance(self.school_classes, dict) and not self.school_classes:
             input_dict = self.reader.get_data_mapping(self.input_data)
             if input_dict.get("school_classes") == "":
@@ -748,25 +754,9 @@ class ImportUser(User):
                     school = self.school
                 cls_name = self.normalize(cls_name)
                 school = self.normalize(school)
-                klass_name = "{}-{}".format(school, cls_name)
-                char_replacement = self.config["school_classes_invalid_character_replacement"]
-                if char_replacement:
-                    allowed_special = " -._"
-                    whitelist = "".join([string.digits, string.ascii_letters, allowed_special])
-                    klass_name_old = klass_name  # only for debug output
-                    for character in klass_name:
-                        if character not in whitelist:
-                            klass_name = klass_name.replace(character, char_replacement)
-                            self.logger.debug(
-                                "Replaced character '{}' in '{}' with '{}'.".format(
-                                    character, klass_name_old, char_replacement
-                                )
-                            )
-                    if klass_name != klass_name_old:
-                        self.logger.debug(
-                            "Class name changed from '{}' to '{}'.".format(klass_name_old, klass_name)
-                        )
-
+                klass_name = self.school_classes_invalid_character_replacement(
+                    "{}-{}".format(school, cls_name), char_replacement
+                )
                 if klass_name not in res[school]:
                     res[school].append(klass_name)
             self.school_classes = dict(res)
@@ -1613,6 +1603,30 @@ class ImportUser(User):
             return self.config["username"]["max_length"][self.role_sting]
         except KeyError:
             return self.config["username"]["max_length"]["default"]
+
+    @classmethod
+    def school_classes_invalid_character_replacement(cls, school_class, char_replacement):
+        # type: (str, Union[str, unicode]) -> str
+        """
+        Replace disallowed characters in ``school_class`` with ``char_replacement``. Allowed chars:
+        ``[string.digits, string.ascii_letters, " -._"]``. If ``char_replacement`` is empty no
+        replacement will be done.
+
+        :param str school_class: name of school class
+        :param str char_replacement: character to replace disallowed characters with
+        :return: (possibly modified) name of school class
+        :rtype: str
+        """
+        if not char_replacement or not school_class:
+            return school_class
+        klass_name_old = school_class  # for debug output at the end
+        school_class = school_class.decode("utf-8")
+        for character in school_class:
+            if character not in ALLOWED_CHARS_IN_SCHOOL_CLASS_NAME:
+                school_class = school_class.replace(character, char_replacement)
+        if school_class != klass_name_old:
+            cls.logger.debug("Class name changed from %r to %r.", klass_name_old, school_class)
+        return school_class
 
 
 class ImportStaff(ImportUser, Staff):
