@@ -71,9 +71,11 @@ class MockPackage(object):
         self._version = value
 
 
+options_mock = mock.MagicMock()
 package = MockPackage()
 package_manager = mock.MagicMock()
 package_manager.get_package.return_value = package
+ucr_mock = mock.MagicMock()
 
 
 def import_mock(name, *args):
@@ -148,10 +150,16 @@ def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
 def test_install_veyon_app(roles, join_hook_module):
     with mock.patch.object(join_hook_module, "log") as log_mock, mock.patch.object(
         join_hook_module, "call_cmd_locally", return_value=join_hook_module.StdoutStderr("{}", "")
-    ) as call_cmd_locally_mock:
-        join_hook_module.install_veyon_app(mock.MagicMock(), roles)
+    ) as call_cmd_locally_mock, mock.patch.object(join_hook_module, "ucr", ucr_mock):
+        if roles in ([], ["ucs-school-singlemaster"]):
+            options_mock.server_role = "domaincontroller_master"
+            ucr_mock.is_true.return_value = True
+        else:
+            options_mock.server_role = "foo"
+            ucr_mock.is_true.return_value = False
+        join_hook_module.install_veyon_app(options_mock, roles)
         assert log_mock.info.called
-        if roles == ["ucs-school-slave"]:
+        if roles in ([], ["ucs-school-singlemaster"], ["ucs-school-slave"]):
             log_mock.info.assert_called_with("Log output of the installation goes to 'appcenter.log'.")
             assert "/usr/bin/univention-app" in call_cmd_locally_mock.call_args[0]
             assert "install" in call_cmd_locally_mock.call_args[0]
