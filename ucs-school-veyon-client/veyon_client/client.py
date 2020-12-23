@@ -34,6 +34,7 @@ import time
 from datetime import datetime
 
 import requests
+from requests import ReadTimeout
 
 from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
 from .utils import check_veyon_error
@@ -63,6 +64,7 @@ class VeyonClient:
         self._auth_method = auth_method
         self._default_host = default_host
         self._idle_timeout = max(idle_timeout - 1, 1)
+        self._ping_timeout = 0.5
         self._session_cache = dict()  # type: Dict[str, VeyonSession]
         self._last_used = dict()  # type: Dict[str, float]
 
@@ -158,19 +160,28 @@ class VeyonClient:
 
     def ping(self, host=None):  # type: (Optional[str]) -> bool
         host = host if host else self._default_host
-        result = requests.get("{}/authentication/{}".format(self._url, host))
-        return result.status_code == 200
+        try:
+            result = requests.get(
+                "{}/authentication/{}".format(self._url, host), timeout=self._ping_timeout
+            )
+            return result.status_code == 200
+        except ReadTimeout:
+            return False
 
     def set_feature(
-        self, feature, host=None, active=True
-    ):  # type: (Feature, Optional[str], Optional[bool]) -> None
+        self, feature, host=None, active=True, arguments=None
+    ):  # type: (Feature, Optional[str], Optional[bool], Optional[Dict[str, str]]) -> None
         """
         De-/Activates a Veyon feature on the given host
 
         :param host: The host to set the feature for. If not specified the default host is used.
         :param feature: The feature to set
         :param active: True if the feature should be activated or triggered, False to deactivate a feature
+        :param arguments: A dictionary containing additional arguments for the feature
         """
+        data = {"active": active}
+        if arguments:
+            data["arguments"] = arguments
         result = requests.put(
             "{}/feature/{}".format(self._url, feature),
             json={"active": active},
