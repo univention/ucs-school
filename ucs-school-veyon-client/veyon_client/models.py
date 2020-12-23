@@ -64,6 +64,9 @@ class Feature(enum.Enum):
     USER_LOGOFF = "7311d43d-ab53-439e-a03a-8cb25f7ed526"
     REBOOT = "4f7d98f0-395a-4fff-b968-e49b8d0f748c"
     POWER_DOWN = "6f5a27a0-0e2f-496e-afcc-7aae62eede10"
+    DEMO_SERVER = "e4b6e743-1f5b-491d-9364-e091086200f4"
+    DEMO_CLIENT_FULLSCREEN = "7b6231bd-eb89-45d3-af32-f70663b2f878"
+    DEMO_CLIENT_WINDOWED = "ae45c3db-dc2e-4204-ae8b-374cdab8c62c"
 
     def __str__(self):
         return str(self.value)
