@@ -46,6 +46,7 @@ def get_lo(options):
         options.bindpw = open(options.bindpwdfile, "r").read()
         try:
             lo = univention.admin.uldap.access(
+                host=ucr["ldap/master"],
                 port=int(ucr.get("ldap/master/port", "7389")),
                 base=ucr.get("ldap/base"),
                 binddn=options.binddn,
