@@ -68,9 +68,7 @@ class UserCheck(object):
         container_teachers = ucr.get("ucsschool/ldap/default/containers/teachers", "lehrer")
         container_staff = ucr.get("ucsschool/ldap/default/containers/staff", "mitarbeiter")
         container_students = ucr.get("ucsschool/ldap/default/containers/pupils", "schueler")
-        container_teachers_and_staff = ucr.get(
-            "ucsschool/ldap/default/containers/teachers-and-staff", "lehrer und mitarbeiter"
-        )
+
         self.teachers_regex = re.compile(
             r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_teachers, ldap_base),
             flags=re.IGNORECASE,
@@ -81,12 +79,6 @@ class UserCheck(object):
         )
         self.students_regex = re.compile(
             r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_students, ldap_base),
-            flags=re.IGNORECASE,
-        )
-        self.teachers_and_staff_regex = re.compile(
-            r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
-                container_teachers_and_staff, ldap_base
-            ),
             flags=re.IGNORECASE,
         )
 
@@ -102,7 +94,6 @@ class UserCheck(object):
         self.students_ou = {}
         self.teachers_ou = {}
         self.staff_ou = {}
-        self.teachers_and_staff_ou = {}
         self.admins_ou = {}
 
         all_schools = [ou.name for ou in School.get_all(self.lo)]
@@ -117,16 +108,11 @@ class UserCheck(object):
             self.staff_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
                 container_staff, ou.lower(), ldap_base, ou
             )
-            self.teachers_and_staff_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
-                container_teachers_and_staff, ou.lower(), ldap_base, ou
-            )
             self.admins_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
                 container_admins, ou.lower(), ldap_base, ou
             )
 
-    def check_allowed_membership(
-        self, group_dn, students=False, teachers=False, staff=False, teachers_and_staff=False
-    ):
+    def check_allowed_membership(self, group_dn, students=False, teachers=False, staff=False):
         """
         This function is used to check if a group of a user matches the users UCS@School role(s).
         The caller specifies the group dn and the user roles which are allowed by setting them to 'True'.
@@ -142,8 +128,6 @@ class UserCheck(object):
             errors.append("Disallowed member of teachers group {}.".format(group_dn))
         if self.staff_regex.match(group_dn) and not staff:
             errors.append("Disallowed member of staff group {}.".format(group_dn))
-        if self.teachers_and_staff_regex.match(group_dn) and not teachers_and_staff:
-            errors.append("Disallowed member of teachers and staff group {}.".format(group_dn))
 
         return errors
 
@@ -238,16 +222,8 @@ class UserCheck(object):
                 if self.students_regex.match(group_dn):
                     issues.append("Admin should not be in a students group {}".format(group_dn))
 
-        # check teacher and staff
-        if user_obj.is_teacher(self.lo) and user_obj.is_staff(self.lo):
-            for ou in user_obj.schools:
-                if self.teachers_and_staff_ou[ou] not in users_group_dns:
-                    issues.append("Not member of group {}".format(self.teachers_and_staff_ou[ou]))
-            for group_dn in users_group_dns:
-                issues += self.check_allowed_membership(group_dn, teachers_and_staff=True)
-
         # check teachers
-        elif user_obj.is_teacher(self.lo):
+        if user_obj.is_teacher(self.lo):
             for ou in user_obj.schools:
                 if self.teachers_ou[ou] not in users_group_dns:
                     issues.append("Not member of group {}".format(self.teachers_ou[ou]))
@@ -255,7 +231,7 @@ class UserCheck(object):
                 issues += self.check_allowed_membership(group_dn, teachers=True)
 
         # check staff
-        elif user_obj.is_staff(self.lo):
+        if user_obj.is_staff(self.lo):
             for ou in user_obj.schools:
                 if self.staff_ou[ou] not in users_group_dns:
                     issues.append("Not member of group {}".format(self.staff_ou[ou]))
