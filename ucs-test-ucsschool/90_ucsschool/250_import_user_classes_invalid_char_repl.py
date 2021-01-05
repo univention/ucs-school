@@ -42,7 +42,6 @@ def ids(name):  # type: (Tuple[unicode, unicode]) -> unicode
 
 @pytest.mark.parametrize("name", names(), ids=ids)
 def test_school_classes_invalid_character_replacement(name):
-    # def school_classes_invalid_character_replacement(cls, school_class, char_replacement)
     good_class_name, bad_class_name = name
     calculated_name = ImportUser.school_classes_invalid_character_replacement(bad_class_name, repl_char)
     school, class_name = calculated_name.split("-", 1)
