@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.4-6) unstable; urgency=low
+
+  * Bug #52519: script set_nt_acl_on_shares connects to DC master to update
+    NTACL settings on share objects
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 Jan 2021 07:33:59 +0100
+
 ucs-school-metapackage (12.0.4-5) unstable; urgency=low
 
   * Bug #52523: Install veyon client lib on singlemaster and school slaves
