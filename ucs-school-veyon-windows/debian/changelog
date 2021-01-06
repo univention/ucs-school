@@ -1,0 +1,5 @@
+ucs-school-veyon-windows (4.5.2.0-0) unstable; urgency=low
+
+  * Bug #52522: provide Veyon Windows setup binary and SSL keys
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 Jan 2021 16:17:46 +0100
