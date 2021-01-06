@@ -42,12 +42,17 @@ import random
 import pytest
 
 import univention.testing.strings as uts
-from univention.management.console.modules.computerroom.room_management import ITALC_USER_REGEX, UserMap
+from univention.management.console.modules.computerroom.room_management import (
+    ITALC_USER_REGEX,
+    VEYON_USER_REGEX,
+    UserMap,
+)
 
-user_map = UserMap(ITALC_USER_REGEX)
+user_map_italc = UserMap(ITALC_USER_REGEX)
+user_map_veyon = UserMap(VEYON_USER_REGEX)
 
 
-def random_user_str(n):  # type: (int) -> str
+def italc_random_user_str(n):  # type: (int) -> str
     enclosing = [
         ("[", "]"),
         ("{", "}"),
@@ -64,12 +69,18 @@ def random_user_str(n):  # type: (int) -> str
         yield "{0} ({1})".format(uts.random_string(), uts.random_string())
 
 
-@pytest.mark.parametrize("user_str", random_user_str(100))
-def test_usermap_regex(user_str):
-    user_map.validate_userstr(user_str)
+def veyon_random_user_str(n):  # type (int) -> str
+    for i in range(n):
+        domain_name = "{}-{}.{}".format(uts.random_string(), uts.random_string(), uts.random_string())
+        yield "{}\\{}".format(domain_name, uts.random_username())
 
 
-def test_username_missing():
+@pytest.mark.parametrize("user_str", italc_random_user_str(100))
+def test_usermap_regex_italc(user_str):
+    user_map_italc.validate_userstr(user_str)
+
+
+def test_username_missing_italc():
     for enclosing in [
         ("[", "]"),
         ("{", "}"),
@@ -81,7 +92,21 @@ def test_username_missing():
         a, b = enclosing
         user_str = "{0} {1}{2}{3}".format(uts.random_username(), a, uts.random_username(), b)
         with pytest.raises(AttributeError):
-            user_map.validate_userstr(user_str)
+            user_map_italc.validate_userstr(user_str)
+
+
+@pytest.mark.parametrize("user_str", veyon_random_user_str(100))
+def test_usermap_regex_veyon(user_str):
+    user_map_veyon.validate_userstr(user_str)
+
+
+@pytest.mark.parametrize("user_str", veyon_random_user_str(1))
+@pytest.mark.parametrize("missing_username", [True, False])
+def test_username_missing_veyon(user_str, missing_username):
+    user_str = user_str.split("\\")
+    user_str = user_str[-1] if missing_username else user_str[0]
+    with pytest.raises(AttributeError):
+        user_map_veyon.validate_userstr(user_str)
 
 
 if __name__ == "__main__":
