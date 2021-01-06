@@ -77,6 +77,8 @@ ITALC_CORE_TIMEOUT = max(1, int(ucr.get("ucsschool/umc/computerroom/core/timeout
 ITALC_USER_REGEX = r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$"
 VEYON_USER_REGEX = r"(?P<domain>.*)\\(?P<username>[^\(\\]+)$"
 
+VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
+
 italc.ItalcCore.init()
 
 italc.ItalcCore.config.setLogLevel(italc.Logger.LogLevelDebug)
@@ -746,14 +748,8 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
     def __init__(self):
         dict.__init__(self)
         notifier.signals.Provider.__init__(self)
-        #  TODO: Implement correct authentication method via pubkey!
-        # See https://docs.veyon.io/en/latest/developer/webapi.html#connection-management-authentication
-        self.veyon_client = VeyonClient(
-            "http://localhost:11080/api/v1",
-            credentials={"username": "Administrator", "password": "univention"},
-            auth_method=AuthenticationMethod.AUTH_LOGON,
-        )
         self._user_map = UserMap(ITALC_USER_REGEX)
+        self._veyon_client = None  # type: Optional[VeyonClient]
 
     @property
     def room(self):
@@ -788,6 +784,18 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
     @property
     def veyon_backend(self):  # type: () -> bool
         return ComputerRoomManager.VEYON_BACKEND
+
+    @property
+    def veyon_client(self):  # type: () -> VeyonClient
+        if not self._veyon_client:
+            with open(VEYON_KEY_FILE, "r") as fp:
+                key_data = fp.read().strip()
+            self._veyon_client = VeyonClient(
+                "http://localhost:11080/api/v1",
+                credentials={"keyname": "teacher", "keydata": key_data},
+                auth_method=AuthenticationMethod.AUTH_KEYS,
+            )
+        return self._veyon_client
 
     def ipAddresses(self, students_only=True):
         values = self.values()

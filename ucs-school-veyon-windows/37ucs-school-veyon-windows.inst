@@ -1,0 +1,107 @@
+#!/bin/sh
+
+# Copyright 2021 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+## joinscript api: bindpwdfile
+
+VERSION="1"
+
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+eval "$(ucr shell)"
+
+# create keys
+KEY_DIR="/etc/ucsschool-veyon"
+PRIVATE_KEY="$KEY_DIR/key.pem"
+PUBLIC_KEY="$KEY_DIR/cert.pem"
+if [ ! -f "$PRIVATE_KEY" ] || [ ! -f "$PUBLIC_KEY" ]; then
+	echo "Veyon key pair is missing. creating new key pair in $KEY_DIR..."
+	openssl genrsa -out "$PRIVATE_KEY" 4096 || die
+	chown root:root "$PRIVATE_KEY"
+	chmod 640 "$PRIVATE_KEY"
+	openssl rsa -in "$PRIVATE_KEY" -outform PEM -pubout -out "$PUBLIC_KEY" || die
+	chown root:root "$PUBLIC_KEY"
+	chmod 644 "$PUBLIC_KEY"
+fi
+
+# copy cert to samba3 and samba4 netlogon share
+REALM="$(univention-config-registry get kerberos/realm | tr '[:upper:]' '[:lower:]')"
+SAMBA4="/var/lib/samba/sysvol/$REALM/scripts"
+# use value from samba/share/netlogon/path if set or default value otherwise
+SAMBA3="${samba_share_netlogon_path:-/var/lib/samba/netlogon}/veyon"
+echo "Copying public key (certificate) to netlogon share..."
+for DIR in "$SAMBA3" "$SAMBA4"; do
+	if [ ! -d "$DIR" ]; then
+		mkdir -pv "$DIR"
+	fi
+  cp -fav "$PUBLIC_KEY" "$DIR/veyon-cert.pem" || die
+done
+
+# create share providing Veyon binary
+
+# determine OU
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ] ; then
+	position="cn=shares,${ldap_base}"
+	name_suffix="-$hostname"
+else
+	ou_base="$(univention-ldapsearch -LLLo ldif-wrap=no "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | sed -nre 's/^dn: //p' | head -1)"
+	[ -n "$ou_base" ] || die "ERROR: $(basename "$0"): cannot determine ou ldap base for $ldap_hostdn"
+  position="cn=shares,${ou_base}"
+  name_suffix=""
+fi
+
+# create potentially missing containers
+udm container/cn create "$@" --ignore_exists --set name="shares" --position "${ou_base}" || die
+
+# white list path below /usr/share
+univention-config-registry set 'listener/shares/whitelist/veyon-windows?/usr/share/ucs-school-veyon-windows/*'
+service univention-directory-listener crestart
+
+# create share
+echo "Creating share 'Veyon-Installation${name_suffix}' serving the Veyon installer binary for Windows..."
+udm shares/share create "$@" --ignore_exists \
+	--position "$position" \
+	--set name="Veyon-Installation${name_suffix}" \
+	--set sambaName="Veyon-Installation" \
+	--set "host=${hostname}.${domainname}" \
+	--set "path=/usr/share/ucs-school-veyon-windows" \
+	--set "directorymode=0755" \
+	--set "owner=0" \
+	--set "group=0" \
+	--set "writeable=0" \
+	--set "sambaWriteable=0" || die
+
+# no need for sharing a Windows executable through NFS
+udm shares/share modify "$@" \
+	--dn "cn=Veyon-Installation${name_suffix},$position" \
+	--remove-option nfs || die
+
+joinscript_save_current_version
+
+exit 0
