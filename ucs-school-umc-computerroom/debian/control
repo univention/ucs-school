@@ -29,6 +29,8 @@ Depends:
  python-univention-lib,
  shell-ucs-school,
  ucs-school-umc-common,
+ ucs-school-veyon-client,
+ ucs-school-veyon-windows,
  univention-config-registry,
  univention-management-console,
  ${misc:Depends},
