@@ -222,8 +222,18 @@ class UserCheck(object):
                 if self.students_regex.match(group_dn):
                     issues.append("Admin should not be in a students group {}".format(group_dn))
 
+        # check teachers and staff
+        if user_obj.is_teacher(self.lo) and user_obj.is_staff(self.lo):
+            for ou in user_obj.schools:
+                if self.teachers_ou[ou] not in users_group_dns:
+                    issues.append("Not member of group {}".format(self.teachers_ou[ou]))
+                if self.staff_ou[ou] not in users_group_dns:
+                    issues.append("Not member of group {}".format(self.staff_ou[ou]))
+            for group_dn in users_group_dns:
+                issues += self.check_allowed_membership(group_dn, teachers=True, staff=True)
+
         # check teachers
-        if user_obj.is_teacher(self.lo):
+        elif user_obj.is_teacher(self.lo):
             for ou in user_obj.schools:
                 if self.teachers_ou[ou] not in users_group_dns:
                     issues.append("Not member of group {}".format(self.teachers_ou[ou]))
@@ -231,7 +241,7 @@ class UserCheck(object):
                 issues += self.check_allowed_membership(group_dn, teachers=True)
 
         # check staff
-        if user_obj.is_staff(self.lo):
+        elif user_obj.is_staff(self.lo):
             for ou in user_obj.schools:
                 if self.staff_ou[ou] not in users_group_dns:
                     issues.append("Not member of group {}".format(self.staff_ou[ou]))
