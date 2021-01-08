@@ -35,7 +35,7 @@ import optparse
 import os
 import subprocess
 import sys
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 
 try:
     from typing import Any, List, Optional
@@ -296,21 +296,48 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
 
 def determine_app_version(primary_node_app_version, package_manager):
     # type: (str, PackageManager) -> str
+
+    # When the pre-join hook is executed on a repliction node, it fetches the UCS@school version
+    # installed on the primary node and trys to install the same one on the repliction node.
+    # But the errata level of the UCS installation (already installed or currently installing from DVD)
+    # may be below the one required by the UCS@school version. In such a case a lower app version
+    # with lower requirements must be installed.
+
+    # To add further checks, edit the "requirements" and "replacements" dictionaries. The order of the
+    # "requirements" dict is the one in which the checks will be executed. Please leave a comment with
+    # the reason for the errata requirement. The "replacements" dict holds the information which app
+    # version should be installed in case a dependency is not met.
+
+    log.info("Checking app version dependencies...")
     result_app_version = primary_node_app_version
     errata_package = package_manager.get_package("univention-errata-level")
-    if LooseVersion(primary_node_app_version) >= LooseVersion("4.4 v7") and LooseVersion(
-        errata_package.installed.version
-    ) < LooseVersion("4.4.6-762"):
-        # Bug #52214: The errata level on the UCS installation DVD (incl. for UCS 4.4-6) may be
-        # below the one required by UCS@school 4.4 v7: "4.4-6 errata762". In such a case install
-        # a UCS@school app version without that requirement (4.4 v6).
-        result_app_version = "4.4 v6"
-        log.warning(
-            "Current errata level (%r) to low for UCS@school version '4.4 v7', installing %r instead.",
-            errata_package.installed.version,
-            result_app_version,
-        )
-    # add future version checks (e.g. for 4.4 v8) here
+    errata_loose_version = LooseVersion(errata_package.installed.version)
+    primary_node_app_loose_version = LooseVersion(primary_node_app_version)
+    # Order by which requirements will be checked:
+    requirements = OrderedDict(
+        {
+            "4.4 v7": "4.4.6-762",  # Bug #52214 - univention-samba4 package for share permissions
+            "4.4 v9": "4.4.7-841",  # Bug #52551 - univention-docker sec policy for Veyon proxy app
+        }
+    )
+    replacements = {
+        "4.4 v7": "4.4 v6",
+        "4.4 v9": "4.4 v8",
+    }
+    for app_version, requirement in requirements.items():
+        if primary_node_app_loose_version >= LooseVersion(
+            app_version
+        ) and errata_loose_version < LooseVersion(requirement):
+            result_app_version = replacements[app_version]
+            log.warning(
+                "Current errata level (%r) to low for UCS@school version %r, installing %r instead.",
+                errata_package.installed.version,
+                app_version,
+                result_app_version,
+            )
+            break
+    else:
+        log.info("UCS@school version %r can be installed.", primary_node_app_version)
     return result_app_version
 
 
