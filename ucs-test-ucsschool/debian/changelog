@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.177) unstable; urgency=low
+
+  * Bug #48138: fix test for corner cases
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Jan 2021 09:49:03 +0100
+
 ucs-test-ucsschool (6.0.176) unstable; urgency=low
 
   * Bug #52524: test invalid char replacement for school_class names
