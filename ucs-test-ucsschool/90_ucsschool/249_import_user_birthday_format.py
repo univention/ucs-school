@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test acceptence/conversion of birthday formats
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1, unit-test]
 ## exposure: safe
 ## packages:
 ##   - ucs-school-import
@@ -16,7 +16,7 @@ from ucsschool.importer.utils.shell import *  # initialize import framework
 
 
 def random_date():
-    year = random.randint(1900, 2100)
+    year = random.randint(1901, 2099)
     month = random.randint(1, 12)
     day = random.randint(1, 27)  # make sure not to hit an invalid day in february
     return year, month, day
