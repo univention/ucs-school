@@ -135,6 +135,41 @@ def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
             assert not log_mock.warning.called
 
 
+def test_determine_app_version_lower_than_req_for_44v9(join_hook_module):
+    primary_node_app_version = "4.4 v9"
+    for local_errata_version in ("3.1.2-999", "4.4.6-999", "4.4.7-840"):
+        package.version = local_errata_version
+        with mock.patch.object(join_hook_module, "log") as log_mock:
+            result_version = join_hook_module.determine_app_version(
+                primary_node_app_version, package_manager
+            )
+            assert result_version == "4.4 v8"
+            assert log_mock.warning.called
+
+
+def test_determine_app_version_equals_req_for_44v9(join_hook_module):
+    primary_node_app_version = "4.4 v9"
+    package.version = "4.4.7-841"
+    with mock.patch.object(join_hook_module, "log") as log_mock:
+        result_version = join_hook_module.determine_app_version(
+            primary_node_app_version, package_manager
+        )
+        assert result_version == "4.4 v9"
+        assert not log_mock.warning.called
+
+
+def test_determine_app_version_higher_than_req_for_44v9(join_hook_module):
+    primary_node_app_version = "4.4 v9"
+    for local_errata_version in ("4.4.7-842", "4.4.7-999", "4.5.0-0", "4.5", "4.6.0-0", "5.0.0-0"):
+        package.version = local_errata_version
+        with mock.patch.object(join_hook_module, "log") as log_mock:
+            result_version = join_hook_module.determine_app_version(
+                primary_node_app_version, package_manager
+            )
+            assert result_version == "4.4 v9"
+            assert not log_mock.warning.called
+
+
 @pytest.mark.parametrize(
     "roles",
     (
