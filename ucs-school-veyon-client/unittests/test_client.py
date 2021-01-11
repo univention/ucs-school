@@ -1,10 +1,7 @@
-#!/usr/bin/py.test
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 # -*- coding: utf-8 -*-
-#
-# Univention Management Console
-#  module: Internet Rules Module
-#
-# Copyright 2012-2021 Univention GmbH
+
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
