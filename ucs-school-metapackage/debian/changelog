@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.4-7) unstable; urgency=low
+
+  * Bug #52463, Bug #52523, Bug #52525: bump for fresh build from branch 4.4
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 11 Jan 2021 11:48:06 +0100
+
 ucs-school-metapackage (12.0.4-6) unstable; urgency=low
 
   * Bug #52519: script set_nt_acl_on_shares connects to DC master to update
