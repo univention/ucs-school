@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Univention Management Console
-#  module: Internet Rules Module
-#
-# Copyright 2012-2021 Univention GmbH
+
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,10 +28,11 @@
 # <http://www.gnu.org/licenses/>.
 
 import time
+from collections import defaultdict
 from datetime import datetime
+from threading import Lock
 
 import requests
-from requests import ReadTimeout
 
 from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
 from .utils import check_veyon_error
@@ -58,7 +56,7 @@ class VeyonClient:
         idle_timeout=60,
     ):  # type: (str, Dict[str, str], Optional[AuthenticationMethod], str, int) -> None
         """
-        Creates a client that communicates with the Veyon API to control features and fetches
+        Creates a client that communicates with the Veyon API to control features and fetch
         screenshots.
 
         :param url: The url this client should connect to
@@ -66,7 +64,7 @@ class VeyonClient:
         :param auth_method: The method to use for authentication against the Veyon API
         :param default_host: The default host to connect to if no specific host is provided
         :param idle_timeout: The maximum time a connection can be idle without being invalidated by the
-            server. Has to be a value > 0. If the given value is < 1, the value is set to 1
+            server. Has to be a value > 0. If the given value is < 1, the value is set to 1.
         """
         self._url = url
         self._credentials = credentials
@@ -76,8 +74,12 @@ class VeyonClient:
         self._ping_timeout = 0.5
         self._session_cache = dict()  # type: Dict[str, VeyonSession]
         self._last_used = dict()  # type: Dict[str, float]
+        self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]
+        self._locks_lock = Lock()  # type: Lock
+        """This lock is needed to ensure thread safe operation of the defaultdict for the individual
+        session locks"""
 
-    def _get_headers(self, host=None):  # type: (Optional[host]) -> Dict[str, str]
+    def _get_headers(self, host=None):  # type: (Optional[str]) -> Dict[str, str]
         return {"Connection-Uid": self._get_connection_uid(host)}
 
     def _reset_idle_time(self, host):
@@ -90,7 +92,7 @@ class VeyonClient:
         )
         check_veyon_error(result)
         session_data = result.json()
-        return VeyonSession(str(session_data["connection-uid"]), session_data["validuntil"])
+        return VeyonSession(str(session_data["connection-uid"]), session_data["validUntil"])
 
     def _get_connection_uid(self, host=None, renew_session=True):
         # type:(Optional[str], Optional[bool]) -> str
@@ -98,35 +100,38 @@ class VeyonClient:
         Fetches the connection uid for a given host from the cache or generates a new one if none is
         present or valid.
 
-        :param host: The host to fetch the connection uid for
-        :param renew_session: If set to False an exception is thrown if no valid session exists in the
-            session cache
+        :param str host: The host to fetch the connection uid for
+        :param bool renew_session: If set to False an exception is thrown if no valid session exists in
+            the session cache
         :return: The connection uid
+        :rtype: str
         :raises VeyonError: If renew_session=False and the cached connection does not exist or is invalid
         """
         host = host if host else self._default_host
-        session = self._session_cache.get(host, None)  # type: VeyonSession
-        if (
-            session
-            and datetime.fromtimestamp(session.valid_until) > datetime.now()
-            and time.time() - self._last_used.get(host, 0.0) < self._idle_timeout
-        ):
-            self._reset_idle_time(host)
-            return session.connection_uid
-        else:
-            if not renew_session:
-                raise VeyonError("The currently cached connection is invalid", 2)
-            session = self._create_session(host)
-            self._session_cache[host] = session
-            self._reset_idle_time(host)
-            return session.connection_uid
+        with self._locks_lock:
+            host_lock = self._session_locks[host]
+        with host_lock:
+            session = self._session_cache.get(host, None)  # type: VeyonSession
+            if (
+                session
+                and datetime.fromtimestamp(session.valid_until) > datetime.now()
+                and time.time() - self._last_used.get(host, 0.0) < self._idle_timeout
+            ):
+                self._reset_idle_time(host)
+                return session.connection_uid
+            else:
+                if not renew_session:
+                    raise VeyonError("The currently cached connection is invalid", 2)
+                session = self._create_session(host)
+                self._session_cache[host] = session
+                self._reset_idle_time(host)
+                return session.connection_uid
 
-    def remove_session(self, host):
+    def remove_session(self, host):  # type: (str) -> None
         """
         This function tries to close the currently cached connection to the host and then purges it
         from the cache
-
-        :param host: The host to remove the session for
+        :param str host: The host to remove the session for
         """
         try:
             requests.delete(
@@ -157,8 +162,10 @@ class VeyonClient:
         :param quality: The quality of the screenshot. Only used if format is jpeg
         :param dimension: Optional specification of the screenshots dimensions as (width, height). If
             neither is specified (dimension=None) the original dimensions are used. If either is
-            specified the other one is calculated in a way to keep the aspect ratio.
+            specified the other
+            one is calculated in a way to keep the aspect ratio.
         :return: The screenshot as bytes
+        :rtype: bytes
         :raises VeyonError: Can throw a VeyonError(10) if no framebuffer is available yet.
         """
         params = {"format": screenshot_format, "compression": compression, "quality": quality}
@@ -179,7 +186,7 @@ class VeyonClient:
                 "{}/authentication/{}".format(self._url, host), timeout=self._ping_timeout
             )
             return result.status_code == 200
-        except ReadTimeout:
+        except requests.ReadTimeout:
             return False
 
     def set_feature(
@@ -213,6 +220,7 @@ class VeyonClient:
 
         :returns: True if the feature is activated, False if the feature is deactivated or has no
             status, like "REBOOT"
+        :rtype: bool
         """
         result = requests.get(
             "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
@@ -228,6 +236,7 @@ class VeyonClient:
 
         :returns: The info about the logged in user. If no user is logged in the session field of the
             result will be -1
+        :rtype: VeyonUser
         """
         result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
         check_veyon_error(result)
