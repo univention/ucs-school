@@ -27,17 +27,33 @@
 	linkend="school:setup:generic:windowsattributes"/>.
   </para>
   <para>
-	Auf den Windows-Clients der Schüler kann die Software <emphasis>iTALC</emphasis> installiert werden. Sie
+	Auf den Windows-Clients der Schüler kann die Software <emphasis>Veyon</emphasis> installiert werden. Sie
 	erlaubt es Lehrern, über ein UMC-Modul den Desktop der Schüler einzuschränken und z.B. Bildschirme
 	und Eingabegeräte zu sperren. Außerdem kann ein Übertragungsmodus aktiviert werden, der die
 	Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. Die Installation
-	von iTALC wird in <xref linkend="school:windows:italc"/> beschrieben.
+	von Veyon wird in <xref linkend="school:windows:veyon"/> beschrieben.
   </para>
   <para>
-	Aufgrund einiger Limitierungen (u.a. von iTALC) kann auf Windows-Terminalservern nicht der volle
+	Aufgrund einiger Limitierungen (u.a. von Veyon) kann auf Windows-Terminalservern nicht der volle
 	Funktionsumfang von &ucsUAS; genutzt werden. Die Verwendung von Terminalservern mit &ucsUAS; wird
 	daher nicht unterstützt.
   </para>
+  <note>
+	<para>
+	In &ucsUAS; 4.4 v9 wird iTALC von Veyon abgelöst. iTALC wird bis UCS@school 5.0 weiterhin unterstützt. Wir empfehlen mit dem Umstieg auf Veyon so bald wie möglich zu starten.
+	Der parallele Betrieb von iTALC und Veyon wird unterstützt. Pro Computerraum müssen aber alle PCs auf eine von beiden Varianten eingestellt werden.
+	Die iTALC Dokumentation kann unter <ulink url="https://docs.software-univention.de/ucsschool-handbuch-4-4v8.html"/> abgerufen werden.
+  </para>
+  <para>
+	Die App <emphasis>&ucsUAS; Veyon Proxy</emphasis> wird in Single-Server-Umgebungen,
+	sowie auf edukativen Schulservern automatisch installiert. Sie wird von &ucsUAS; angesprochen und ist nicht zur manuellen Verwendung gedacht.
+	Die App sollte nicht manuell deinstalliert werden.
+  </para>
+  <para>
+	Sollte sich noch eine iTALC Installation auf dem Windows Client befinden, muss diese zunächst deinstalliert werden,
+	damit Veyon verwendet werden kann.
+  </para>
+  </note>
 
   <section id="school:windows:samba">
 	<title>Anmeldedienste mit Samba</title>
@@ -149,54 +165,73 @@ service univention-directory-listener restart
 	</para>
   </section>
 
-  <section id="school:windows:italc">
-	<title>iTALC-Installation auf Windows-Clients</title>
+  <section id="school:windows:veyon">
+	<title>Veyon-Installation auf Windows-Clients</title>
 	<para>
 	  Für die Kontrolle und Steuerung der Schüler-PCs integriert &ucsUAS; optional die Software
-	  iTALC. Dieses Kapitel beschreibt die Installation von iTALC auf den Schüler-PCs. Die Administration
+	  Veyon. Dieses Kapitel beschreibt die Installation von Veyon auf den Schüler-PCs. Die Administration
 	  durch die Lehrkräfte ist in der &ucsUAS;-Lehrerdokumentation <biblioref linkend="ucs-school-teacher"/>
 	  beschrieben.
 	</para>
 	<para>
 	  Für die Nutzung der Rechnerüberwachungs- und Präsentationsfunktionen in der Computerraumverwaltung
 	  (siehe <xref linkend="ucsschool:moduluebersicht"/>) wird vorausgesetzt, dass auf den
-	  Windows-Clients die Software iTALC installiert wurde.
+	  Windows-Clients die Software Veyon installiert wurde und als Computerraum Backend des entsprechenden Computerraums
+	  Veyon gesetzt ist (siehe <xref linkend="school:setup:generic:computerroom"/>).
 	</para>
 	<para>
-	  Seit &ucsUAS; 3.1 R2 sind Windows-Binärpakete für die Open Source-Software iTALC in &ucsUAS;
-	  enthalten.  Die Binärpakete sind direkt über die Samba-Freigabe
-	  <emphasis>iTALC-Installation</emphasis> abruf- und installierbar. Alternativ finden sich die
-	  Installationdateien für 32- und 64bit-Versionen von iTALC auf dem Schulserver im Verzeichnis
-	  <filename class="directory">/usr/share/italc-windows/</filename>.  Interoperabilitätstests zwischen &ucsUAS; und iTALC
-	  wurden ausschließlich mit der von &ucsUAS; mitgelieferten iTALC-Version unter Windows XP und Windows
-	  7 (32 und 64 Bit) durchgeführt.
+	  Seit &ucsUAS; 4.4 v9 sind Windows-Binärpakete für die Open Source-Software Veyon in &ucsUAS;
+	  enthalten. Die Binärpakete sind direkt über die Samba-Freigabe
+	  <emphasis>Veyon-Installation</emphasis> abruf- und installierbar. Die Installationsdatei der 64bit-Version von Veyon
+	  findet sich auf dem Schulserver im Verzeichnis
+	  <filename class="directory">/usr/share/ucs-school-veyon-windows/</filename>.  Interoperabilitätstests zwischen &ucsUAS; und Veyon
+	  wurden ausschließlich mit der von &ucsUAS; mitgelieferten Veyon-Version unter Windows 7 und Windows 10 (64 Bit) durchgeführt.
 	</para>
-	  <figure id="school:windows:italc:fig">
-		<title>iTALC-Installation: Auswahl der Komponenten</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/italc1.png"/>
+	  <figure id="school:windows:veyon:fig1">
+		<title>Veyon-Installation: Auswahl der Komponenten</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-installation.png"/>
 	  </figure>
 	<para>
-	  iTALC bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt. Während
-	  der Installation sollte nur der <emphasis>iTALC Service</emphasis> installiert werden. Der
-	  <emphasis>iTALC Master</emphasis> wird für die Funktion von UCS@school nicht benötigt.
+	  Veyon bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt.
+	  Während der Installation sollte nur der <emphasis>Veyon Service</emphasis> sowie der <emphasis>Interception driver</emphasis> installiert werden.
+	  Der <emphasis>Veyon Master</emphasis> wird für die Funktion von &ucsUAS; nicht benötigt.
+	</para>
+	  <figure id="school:windows:veyon:fig2">
+		<title>Veyon-Konfiguration: Auswahl der Authentifizierungs-Methode</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-auth-method.png"/>
+	  </figure>
+	<para>
+	  Nach der Installation von Veyon auf dem Windows-Client muss das Programm mit dem installierten Veyon Configurator
+	  für eine Schlüsseldatei-Authentifizierung konfiguriert werden. Zunächst muss im Veyon Configurator unter
+	  <guimenu>Allgemein &ar; Authentifizierung</guimenu> die Methode Schlüsseldatei-Authentifizierung ausgewählt werden.
+	</para>
+	  <figure id="school:windows:veyon:fig3">
+		<title>Veyon-Konfiguration: Zugriffskontrolle</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-access-control.png"/>
+	  </figure>
+	  <para>
+		Anschließend muss unter <guimenu>Zugriffskontrolle</guimenu> die Checkbox <emphasis>Verwendung von Domaingruppen aktivieren</emphasis> aktiviert werden.
+		Als <emphasis>Benutzergruppen-Backend</emphasis> wird der Standard <emphasis>Systembenutzergruppen</emphasis> verwendet.
+	  </para>
+	  <figure id="school:windows:veyon:fig4">
+		<title>Veyon-Konfiguration: Schlüsselimport</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-key-import.png"/>
+	  </figure>
+	  <para>
+	  Schließlich muss der öffentliche Schlüssel importiert werden, damit der Schulserver Zugriff auf das installierte Veyon-Backend erhält.
+	  Der Import kann mit <guimenu>Authentifizierungsschlüssl &ar; Schlüssel importieren</guimenu> durchgeführt werden. Dort ist der Veyon-Schlüssel des Schulservers anzugeben. Der Schlüssel
+	  wird automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
+	  <filename>scripts/veyon-cert.pem</filename> abgelegt. Im Dialog <emphasis>Authentifizierungsschlüsselname</emphasis>
+	  muss der Name <emphasis>teacher</emphasis> angegeben werden. Außer den beschriebenen Konfigurationen müssen keine weiteren Anpassungen vorgenommen werden.
 	</para>
 	<para>
-	  Nach der Installation von iTALC auf dem Windows-Client muss der öffentliche Schlüssel
-	  importiert werden, damit der Schulserver Zugriff auf das installierte iTALC-Backend erhält. Dies
-	  erfolgt durch Aufruf der iTALC Management Console unter <guimenu>Authentifizierung &ar;
-	  Schlüsseldatei-Assistent starten &ar; Öffentlichen Schlüssel importieren (Client-Computer) &ar;
-	  Lehrer</guimenu>. Unter <guimenu>Bitte geben Sie den Ort des öffentlichen Zugriffsschlüssels an, der
-	  importiert werden soll</guimenu> ist der iTALC-Schlüssel des Schulservers anzugeben. Der Schlüssel
-	  wird automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
-	  <filename>scripts</filename> abgelegt. Der Dateiname der Schlüsseldatei enthält den Namen des Schulservers für
-	  den sie generiert wurde, um Namenskonflikte auf der SYSVOL-Freigabe bei der Verwendung von Samba 4
-	  zu vermeiden.  Damit der iTALC-Assistent die Schlüsseldatei selbständig erkennt, sollte die Datei
-	  <filename>italc-key_<replaceable>SERVERNAME</replaceable>.pub.key.txt</filename> verwendet werden.
+	  Der Konfigurations-Test im Veyon Configurator unter <guimenu>Allgemein &ar; Authentifizierung &ar; Testen</guimenu> wird trotz korrekter Einrichtung fehlschlagen. Die korrekte Einrichtung
+	  kann im Computerraum Modul überprüft werden. Hier sollte sich der Punkt neben dem Namen des eingerichteten Windows Clients dunkelgrau färben.
 	</para>
 	<para>
 	  Außerdem sollte auf den Windows-Clients sichergestellt werden, dass die installierte
 	  System-Firewall so konfiguriert ist, dass Port <emphasis>11100</emphasis> nicht blockiert wird. Dies
-	  ist Voraussetzung für eine funktionierende Umgebung, da iTALC diesen Port für die Kommunikation mit
+	  ist Voraussetzung für eine funktionierende Umgebung, da Veyon diesen Port für die Kommunikation mit
 	  dem Schulserver bzw. anderen Computern verwendet.
 	</para>
   </section>
