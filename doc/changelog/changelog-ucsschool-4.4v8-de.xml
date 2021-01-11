@@ -142,7 +142,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-27A~4.4.0.202011251212 -->
 <!-- CHANGELOG:2020-11-26:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-01-11" lang="en">
+					<title>Released on 2021-01-11:</title>
+					<!-- START ucs-school-metapackage 12.0.4-6A~4.4.0.202101050746 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-6A~4.4.0.202101050746</emphasis>:
+						<itemizedlist>
+							<listitem><para>The script <command>set_nt_acl_on_shares</command> (called by meta package join scripts) now connects to the DC master to update NTACL settings in share objects (<u:bug>52519</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-6A~4.4.0.202101050746 -->
+					<!-- START ucs-school-umc-exam 9.0.1-46A~4.4.0.202012181441 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-46A~4.4.0.202012181441</emphasis>:
+						<itemizedlist>
+							<listitem><para>Creating two exams quickly in succession led to the problem that exam-users were not able to access their home directories anymore. This fix ensures that this problem does not occur anymore (<u:bug>52307</u:bug>).</para></listitem>
+
+							<listitem><para>During the exams, students could change the permissions of their home directories, which opened up the possibility of sharing files with their fellow students. This fix removes this ability for students (<u:bug>49655</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-46A~4.4.0.202012181441 -->
+<!-- CHANGELOG:2021-01-11:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 		</section>
