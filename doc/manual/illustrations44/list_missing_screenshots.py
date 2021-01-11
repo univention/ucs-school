@@ -103,7 +103,7 @@ needed_screenshots = [
     ),
     Screenshot("printer_moderation_1", [Lang.DE, Lang.FR], desc="Übersicht Druckjobs"),
     Screenshot("printer_moderation_2", [Lang.DE, Lang.FR], desc="Drucker für Druckjob auswählen"),
-    Screenshot("school-italc-lock", [Lang.DE], desc="Lockscreen von iTALC"),
+    Screenshot("school-veyon-lock", [Lang.DE], desc="Lockscreen von Veyon"),
     Screenshot("wizard_add_user", [Lang.DE, Lang.EN], desc="Benutzer hinzufügen"),
     Screenshot(
         "workgroup_1_selected", [Lang.DE, Lang.FR, Lang.EN], desc="Arbeitsgruppe aus Liste auswählen"
