@@ -266,7 +266,7 @@ feedback@univention.de
       <listitem><simpara>
         Das Modul <guimenu>Computerraum</guimenu> erlaubt die Kontrolle der Schüler-PCs und des Internetzugangs
         während einer Unterrichtsstunde. Der Internetzugang kann gesperrt und freigegeben werden und einzelne
-        Internetseiten können gezielt freigegeben werden. Wenn eine entsprechende Software (iTALC) auf den
+        Internetseiten können gezielt freigegeben werden. Wenn eine entsprechende Software (Veyon) auf den
         Schüler-PCs installiert ist, besteht auch die Möglichkeit diese PCs zu steuern. So kann der Bildschirm
         gesperrt werden, so dass beispielweise in einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein
         Experiment gelenkt werden kann. Außerdem kann der Bildschiminhalt eines PCs auf andere Systeme
@@ -409,11 +409,11 @@ feedback@univention.de
   </para>
 
   <para>
-    Auf den Windows-Clients der Schüler kann die Software iTALC installiert werden. Sie wird vom UMC-Modul
+    Auf den Windows-Clients der Schüler kann die Software Veyon installiert werden. Sie wird vom UMC-Modul
     Computerraumverwaltung verwendet und erlaubt Lehrern den Desktop der Schüler einzuschränken und z.B.
     Bildschirme und Eingabegeräte zu sperren. Außerdem kann ein Übertragungsmodus aktiviert werden, der die
-    Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. iTALC wird im
-    &ucsUAS;-Handbuch <biblioref linkend="ucsschool-italk"/> weitergehend dokumentiert.
+    Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. Veyon wird im
+    &ucsUAS;-Handbuch <biblioref linkend="ucsschool-veyon"/> weitergehend dokumentiert.
   </para>
 
 </chapter>
@@ -524,11 +524,11 @@ feedback@univention.de
     <title>Konfiguration und Management von Windows-Desktops</title>
     <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.4.html#windows:samba4:desktopmanagement"/></releaseinfo>
   </biblioentry>
-  <biblioentry id="ucsschool-italk">
+  <biblioentry id="ucsschool-veyon">
     <publishername>Univention GmbH</publishername>
-    <pubdate>2017</pubdate>
-    <title>iTALC-Installation auf Windows-Clients</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:windows:italc"/></releaseinfo>
+    <pubdate>2021</pubdate>
+    <title>Veyon-Installation auf Windows-Clients</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:windows:veyon"/></releaseinfo>
   </biblioentry>
 
   <bibliomixed id="ec2-quickstart"/>
