@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Univention Management Console
-#  module: Internet Rules Module
-#
-# Copyright 2012-2021 Univention GmbH
+
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -35,7 +32,6 @@ from datetime import datetime
 from threading import Lock
 
 import requests
-from requests import ReadTimeout
 
 from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
 from .utils import check_veyon_error
@@ -59,7 +55,7 @@ class VeyonClient:
         idle_timeout=60,
     ):  # type: (str, Dict[str, str], Optional[AuthenticationMethod], str, int) -> None
         """
-        Creates a client that communicates with the Veyon API to control features and fetches
+        Creates a client that communicates with the Veyon API to control features and fetch
         screenshots.
 
         :param url: The url this client should connect to
@@ -67,7 +63,7 @@ class VeyonClient:
         :param auth_method: The method to use for authentication against the Veyon API
         :param default_host: The default host to connect to if no specific host is provided
         :param idle_timeout: The maximum time a connection can be idle without being invalidated by the
-            server. Has to be a value > 0. If the given value is < 1, the value is set to 1
+            server. Has to be a value > 0. If the given value is < 1, the value is set to 1.
         """
         self._url = url
         self._credentials = credentials
@@ -79,7 +75,8 @@ class VeyonClient:
         self._last_used = dict()  # type: Dict[str, float]
         self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]
         self._locks_lock = Lock()  # type: Lock
-        """This lock is needed to ensure thread safe operation of the defaultdict for the individual session locks"""
+        """This lock is needed to ensure thread safe operation of the defaultdict for the individual
+        session locks"""
 
     def _get_headers(self, host=None):  # type: (Optional[str]) -> Dict[str, str]
         return {"Connection-Uid": self._get_connection_uid(host)}
@@ -103,8 +100,8 @@ class VeyonClient:
         present or valid.
 
         :param str host: The host to fetch the connection uid for
-        :param bool renew_session: If set to False an exception is thrown if no valid session exists in the
-            session cache
+        :param bool renew_session: If set to False an exception is thrown if no valid session exists in
+            the session cache
         :return: The connection uid
         :rtype: str
         :raises VeyonError: If renew_session=False and the cached connection does not exist or is invalid
@@ -133,7 +130,6 @@ class VeyonClient:
         """
         This function tries to close the currently cached connection to the host and then purges it
         from the cache
-
         :param str host: The host to remove the session for
         """
         try:
@@ -165,7 +161,8 @@ class VeyonClient:
         :param quality: The quality of the screenshot. Only used if format is jpeg
         :param dimension: Optional specification of the screenshots dimensions as (width, height). If
             neither is specified (dimension=None) the original dimensions are used. If either is
-            specified the other one is calculated in a way to keep the aspect ratio.
+            specified the other
+            one is calculated in a way to keep the aspect ratio.
         :return: The screenshot as bytes
         :rtype: bytes
         :raises VeyonError: Can throw a VeyonError(10) if no framebuffer is available yet.
@@ -188,7 +185,7 @@ class VeyonClient:
                 "{}/authentication/{}".format(self._url, host), timeout=self._ping_timeout
             )
             return result.status_code == 200
-        except ReadTimeout:
+        except requests.ReadTimeout:
             return False
 
     def set_feature(
