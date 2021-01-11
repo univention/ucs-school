@@ -249,7 +249,7 @@ feedback@univention.de
 		  einzelne Internetseiten freigegeben werden.
 		</para>
 		<para>
-		  Wenn eine entsprechende Software (iTALC) auf den Schüler-PCs installiert
+		  Wenn eine entsprechende Software (Veyon) auf den Schüler-PCs installiert
 		  ist, besteht auch die Möglichkeit diese PCs zu steuern. So kann beispielsweise der Bildschirm
 		  gesperrt werden, so dass in einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein Experiment
 		  gelenkt werden kann.
@@ -279,12 +279,12 @@ feedback@univention.de
 		  einen PC wird zusätzlich ein Feld angezeigt, das zwei Adressen anzeigt, mit denen der PC im
 		  Schulnetz identifiziert werden kann. Diese Informationen werden ggf. vom Helpdesk abgefragt, haben
 		  aber für die Computerverwaltung keine weitergehende Bedeutung. Neben jedem PC wird ein Kreis
-		  angezeigt. Ist dieser dunkelgrau, ist auf den PCs die Software iTALC installiert (siehe
-		  <xref linkend="lehrerdoku:computerraum"/>), ist der Kreis hellgrau, fehlt iTALC oder der Rechner ist
+		  angezeigt. Ist dieser dunkelgrau, ist auf den PCs die Software Veyon installiert (siehe
+		  <xref linkend="lehrerdoku:computerraum"/>), ist der Kreis hellgrau, fehlt Veyon oder der Rechner ist
 		  abgeschaltet.
 		</para>
 		<para>
-		  Ist iTALC installiert, wird unter <guimenu>Benutzer</guimenu> der Name des gerade
+		  Ist Veyon installiert, wird unter <guimenu>Benutzer</guimenu> der Name des gerade
 		  angemeldeten Schülers/Lehrers angezeigt.
 		</para>
 		<para>
@@ -302,11 +302,11 @@ feedback@univention.de
 		  werden über das Feld <guimenu>Gültig bis</guimenu> zeitlich eingeschränkt.
 		</para>
 
-	  <section id="lehrerdoku:computerraum:italc">
-		<title>Kontrolle der Schüler-PCs bei Einsatz von iTALC</title>
+	  <section id="lehrerdoku:computerraum:veyon">
+		<title>Kontrolle der Schüler-PCs bei Einsatz von Veyon</title>
 		<para>
 		  Die folgenden Möglichkeiten stehen nur zur Verfügung, wenn auf den Schüler-PCs die Software
-		  iTALC installiert ist. Für die Installation der Software kann der Helpdesk angesprochen werden
+		  Veyon installiert ist. Für die Installation der Software kann der Helpdesk angesprochen werden
 		  (siehe <xref linkend="lehrerdoku:helpdesk"/>).
 		</para>
 		<para>
@@ -331,7 +331,7 @@ feedback@univention.de
 		<para>
 		  <figure id="screenlock">
 			<title>Ein gesperrter Bildschirm</title>
-			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/school-italc-lock.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/school-veyon-lock.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -375,7 +375,7 @@ feedback@univention.de
 		<title>Durchführung von Bildschirmpräsentationen</title>
 		<para>
 		  Diese Funktion steht ebenfalls nur zur
-		  Verfügung, wenn auf den Schüler-PCs die Software iTALC installiert ist. Sie erlaubt es, den
+		  Verfügung, wenn auf den Schüler-PCs die Software Veyon installiert ist. Sie erlaubt es, den
 		  Bildschirminhalt eines PCs an alle anderen PCs zu übertragen und dort darzustellen. So können
 		  Schüler und Lehrer Präsentationen ohne die Verwendung eines Beamers durchzuführen.
 		</para>
