@@ -1,3 +1,9 @@
+ucs-school-roleshares (7.0.0-5) unstable; urgency=medium
+
+  * Bug #52583: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 21:01:55 +0200
+
 ucs-school-roleshares (7.0.0-4) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
