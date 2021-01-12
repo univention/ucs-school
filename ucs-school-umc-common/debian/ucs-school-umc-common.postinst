@@ -32,6 +32,6 @@
 #DEBHELPER#
 
 # reload UMC server
-invoke-rc.d univention-management-console-server reload
+systemctl reload univention-management-console-server
 
 exit 0
