@@ -37,18 +37,10 @@ D=$(CURDIR)/debian/${PACKAGE_NAME}
 DM=$(CURDIR)/debian/${PACKAGE_NAME}-schema
 
 %:
-	dh $@ --with python2,python3
-
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+	dh $@ --with python2,python3,umc,ucr
 
 override_dh_auto_test:
 	ucslint
-
-override_dh_auto_build:
-	dh-umc-module-build
-	dh_auto_build
 
 override_dh_installdirs:
 	dh_installdirs
