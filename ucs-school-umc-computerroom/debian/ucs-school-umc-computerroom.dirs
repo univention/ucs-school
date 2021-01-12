@@ -1,2 +1,2 @@
 var/cache/ucs-school-umc-computerroom
-usr/share/pyshared/ucsschool/italc_integration
+usr/lib/python2.7/dist-packages/ucsschool/italc_integration
