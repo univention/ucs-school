@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:01 +0100
+
 ucs-school-umc-diagnostic (1.0.0-18) unstable; urgency=medium
 
   * Bug #51886: fixed diagnostic module 905_ucsschool_check_backend
