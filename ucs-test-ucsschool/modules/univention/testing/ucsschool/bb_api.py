@@ -155,12 +155,12 @@ class HttpApiUserTestBase(TestCase):
         if cls.should_restart_api_server:
             # for testing through HTTP (using WSGI directly not affected)
             cls.restart_api_server()
-        exec_cmd(["/usr/share/pyshared/bb/http_api/users/manage.py", "updateschools"])
+        exec_cmd(["/usr/lib/python2.7/dist-packages/bb/http_api/users/manage.py", "updateschools"])
 
     @classmethod
     def tearDownClass(cls):
         cls.itb.cleanup()
-        exec_cmd(["/usr/share/pyshared/bb/http_api/users/manage.py", "updateschools"])
+        exec_cmd(["/usr/lib/python2.7/dist-packages/bb/http_api/users/manage.py", "updateschools"])
         cls.revert_import_config()
         if cls.should_restart_api_server:
             cls.restart_api_server()
@@ -172,12 +172,12 @@ class HttpApiUserTestBase(TestCase):
             print("*** Got a token from UCR. ***")
             return "Token", token.strip()
         token_from_django_cmd_local = [
-            "/usr/share/pyshared/bb/http_api/users/manage.py",
+            "/usr/lib/python2.7/dist-packages/bb/http_api/users/manage.py",
             "shell",
             "-c",
             "from rest_framework.authtoken.models import Token; print(Token.objects.first().key)",
         ]
-        if os.path.exists("/usr/share/pyshared/bb/http_api/users/manage.py"):
+        if os.path.exists("/usr/lib/python2.7/dist-packages/bb/http_api/users/manage.py"):
             returncode, stdout, stderr = exec_cmd(token_from_django_cmd_local, raise_exc=True)
             print("*** Got a token from local BB-API installation. ***")
             return "Token", stdout.strip()
