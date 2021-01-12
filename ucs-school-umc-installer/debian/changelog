@@ -1,3 +1,9 @@
+ucs-school-umc-installer (7.0.0-8) unstable; urgency=medium
+
+  * Bug #52591: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:15:33 +0100
+
 ucs-school-umc-installer (7.0.0-7) unstable; urgency=low
 
   * Bug #52465: Install the Veyon proxy app during singlemaster installation
