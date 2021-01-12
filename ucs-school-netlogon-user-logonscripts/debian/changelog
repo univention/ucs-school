@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (15.0.0-3) unstable; urgency=medium
+
+  * Bug #52647: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:38:23 +0200
+
 ucs-school-netlogon-user-logonscripts (15.0.0-2) unstable; urgency=medium
 
   * Bug #52604: migrate UCR template to Python 3
