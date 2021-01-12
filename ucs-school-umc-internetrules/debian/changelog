@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (15.0.0-3) unstable; urgency=medium
+
+  * Bug #52592: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:22:29 +0100
+
 ucs-school-umc-internetrules (15.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
