@@ -1,3 +1,9 @@
+ucs-school-umc-groups (9.0.0-13) unstable; urgency=medium
+
+  * Bug #52588: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 21:35:29 +0200
+
 ucs-school-umc-groups (9.0.0-12) unstable; urgency=low
 
   * Bug #52945: use full path to model imports
