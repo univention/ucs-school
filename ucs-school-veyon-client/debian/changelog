@@ -1,3 +1,9 @@
+ucs-school-veyon-client (2.0.1) unstable; urgency=medium
+
+  * Bug #52599: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:26:18 +0100
+
 ucs-school-veyon-client (1.0.1-7) unstable; urgency=medium
 
   * Bug #53055: Fix build problem
