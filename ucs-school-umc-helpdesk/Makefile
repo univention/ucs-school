@@ -44,7 +44,7 @@ admin-modules: $(ADMIN_MODULES)
 
 install-admin-modules: admin-modules
 	@for i in $(ADMIN_MODULES); do\
-		o=debian/$(PACKAGE)/usr/share/pyshared/$${i#modules};\
+		o=debian/$(PACKAGE)/usr/lib/python2.7/dist-packages/$${i#modules};\
 		install -d "`dirname $$o`";\
 		install -m644 $$i $$o;\
 	done
