@@ -2,25 +2,33 @@ Source: ucs-school-umc-users
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~),
- python-support,
- univention-management-console-dev,
+Build-Depends:
+ debhelper (>= 10),
+ dh-python,
+ ucslint,
  univention-config-dev,
- ucslint
+ univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
-XS-Python-Version: 2.6, 2.7
 
 Package: ucs-school-umc-users
 Architecture: all
-Replaces: ucs-school-umc-schooladmin
-Breaks: ucs-school-umc-schooladmin (<< 8.0.0)
-Depends: ${misc:Depends},
- univention-management-console,
- univention-config-registry,
- ucs-school-umc-common,
+Replaces:
+ ucs-school-umc-schooladmin,
+Breaks:
+ ucs-school-umc-schooladmin (<< 8.0.0),
+Depends:
  python-ucs-school (>= 12.1.9),
+ python-univention-directory-manager,
  shell-ucs-school,
- python-univention-directory-manager
+ ucs-school-umc-common,
+ univention-config-registry,
+ univention-management-console,
+ ${misc:Depends},
+ ${python3:Depends},
+ ${python:Depends},
+Provides:
+ ${python:Provides},
+ ${python3:Provides},
 Description: UMC modules to reset account passwords
  This package contains two UMC modules for resetting
  passwods of teacher and student accounts.
@@ -31,7 +39,12 @@ Description: UMC modules to reset account passwords
  refer to: http://www.univention.de/
 
 Package: ucs-school-umc-schooladmin
-Depends: ucs-school-umc-users, ucs-school-umc-groups, ${misc:Depends}
+Depends:
+ ucs-school-umc-groups,
+ ucs-school-umc-users,
+ ${misc:Depends},
+ ${python3:Depends},
+ ${python:Depends},
 Architecture: all
 Description: transitional dummy package
  Package to ease upgrading from ucs-school-umc-schooladmin to
