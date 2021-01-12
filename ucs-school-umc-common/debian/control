@@ -3,9 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0),
- univention-config-dev,
  ucslint,
- univention-management-console-dev
 Standards-Version: 3.8.2
 
 Package: ucs-school-umc-common
