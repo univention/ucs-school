@@ -37,7 +37,7 @@ D=$(CURDIR)/debian/${PACKAGE_NAME}
 DM=$(CURDIR)/debian/${PACKAGE_NAME}-schema
 
 %:
-	dh $@ --with python_support
+	dh $@ --with python2,python3
 
 override_dh_auto_install:
 	dh_auto_install
