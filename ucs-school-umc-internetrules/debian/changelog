@@ -1,5 +1,6 @@
 ucs-school-umc-internetrules (15.0.2) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52592: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 21:59:11 +0200

@@ -1,5 +1,6 @@
 ucs-school-umc-printermoderation (16.0.2) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52595: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:05:34 +0200

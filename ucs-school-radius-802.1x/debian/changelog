@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (8.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:58 +0100
+
 ucs-school-radius-802.1x (7.0.1-8) unstable; urgency=medium
 
   * Bug #52651: migrate to dh_python

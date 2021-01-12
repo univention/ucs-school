@@ -1,5 +1,6 @@
 ucs-school-umc-computerroom (11.0.0-32) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52585: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 23:30:33 +0200

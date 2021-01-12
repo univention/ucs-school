@@ -1,5 +1,6 @@
 ucs-test-ucsschool (6.0.229) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52600: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:19:34 +0200
