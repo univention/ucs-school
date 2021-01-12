@@ -2,22 +2,26 @@ Source: ucs-school-umc-import
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~),
- python-support,
- univention-config-dev,
- univention-management-console-dev,
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ dh-python,
  python-all,
- ucslint
+ python3-all,
+ ucslint,
+ univention-config-dev,
+ univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
-XS-Python-Version: 2.7
 
 Package: ucs-school-umc-import
 Architecture: all
-Depends: ${misc:Depends},
- univention-management-console-server,
+Depends:
+ python-ucs-school (>= 12.1.9),
  ucs-school-import-http-api-client (>= 17.0.6-15),
  ucs-school-import-http-api-common (>= 17.0.6-15),
- python-ucs-school (>= 12.1.9),
+ univention-management-console-server (>= 11.0.4-37),
+ ${misc:Depends},
+ ${python3:Depends},
+ ${python:Depends},
 Description: Automatic UCS@school user import
  Automatic UCS@school user import
  .
