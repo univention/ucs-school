@@ -1,3 +1,9 @@
+ucs-school-ox-support (3.0.2) unstable; urgency=medium
+
+  * Bug #52650: drop python-support
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:53:08 +0200
+
 ucs-school-ox-support (3.0.1) unstable; urgency=low
 
   * Bug #49557: add support for Python based hooks
