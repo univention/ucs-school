@@ -1,2 +1,6 @@
 0010-2: debian/copyright
 0011-3: debian/control
+0010-2: ica/x11/x11vnc/tkx11vnc
+0010-2: italc/.travis/linux..script.sh
+0010-2: italc/.travis/linux..before_install.sh
+0010-2: italc/.travis/linux..install.sh

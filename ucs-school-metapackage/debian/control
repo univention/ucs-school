@@ -2,45 +2,54 @@ Source: ucs-school-metapackage
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint, univention-unittests
+Build-Depends:
+ debhelper-compat (= 12),
+ ucslint,
+ univention-config-dev,
+ univention-unittests,
 Standards-Version: 3.8.2
 
 Package: ucs-school-master
 Architecture: all
-Conflicts: ucs-school-singlemaster,
- ucs-school-umc-csv-import
-Breaks: ucs-school-umc-csv-import,
-Replaces: ucs-school-umc-csv-import
-Pre-Depends: univention-config
-Depends: univention-ldap-server (>= 8.0.77-4),
- univention-ldap-acl-master (>= 8.0.77-4),
- univention-directory-manager-tools (>= 7.0.234-1),
+Conflicts:
+ ucs-school-singlemaster,
+ ucs-school-umc-csv-import,
+Breaks:
+ ucs-school-umc-csv-import,
+Replaces:
+ ucs-school-umc-csv-import,
+Pre-Depends:
+ univention-config,
+Depends:
+ makepasswd,
+ python-univention (>= 6.0.21-1),
+ python-univention-lib (>= 1.0.51-3),
+ shell-ucs-school (>= 5.0.38),
+ shell-univention-lib (>= 1.0.51-3),
  ucs-school-import,
+ ucs-school-info,
  ucs-school-ldap-acls-master,
  ucs-school-umc-helpdesk-schema,
- ucs-school-info,
  ucs-school-umc-installer,
- python-univention (>= 6.0.21-1),
- univention-management-console-module-selective-udm,
+ univention-config,
+ univention-directory-manager-tools (>= 7.0.234-1),
+ univention-ldap-acl-master (>= 8.0.77-4),
+ univention-ldap-server (>= 8.0.77-4),
  univention-management-console (>= 4.0.231-1),
  univention-management-console-frontend (>= 1.0.320-1),
+ univention-management-console-module-selective-udm,
  univention-management-console-web-server (>= 1.0.320-1),
- python-univention-lib (>= 1.0.51-3),
- shell-univention-lib (>= 1.0.51-3),
- shell-ucs-school (>= 5.0.38),
  univention-samba4-sysvol-sync,
- univention-config,
- makepasswd
 Recommends:
+ ucs-school-import-http-api,
+ ucs-school-umc-diagnostic,
+ ucs-school-umc-exam-master,
  ucs-school-umc-groups,
- ucs-school-umc-users,
+ ucs-school-umc-import,
  ucs-school-umc-lists,
  ucs-school-umc-rooms,
+ ucs-school-umc-users,
  ucs-school-umc-wizards,
- ucs-school-umc-exam-master,
- ucs-school-import-http-api,
- ucs-school-umc-import,
- ucs-school-umc-diagnostic,
 Description: UCS@school meta package for UCS DC Master System (multi server environment)
  This meta package installs all required packages for UCS@school on
  a UCS domaincontroller master. The domaincontroller master will be
@@ -52,35 +61,32 @@ Description: UCS@school meta package for UCS DC Master System (multi server envi
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
-# TODO: cleanup required: univention-samba (w/o '4') is not supported anymore on DCs
-# TODO: cleanup required: univention-samba-slave-pdc is not supported anymore on DCs
-# TODO: cleanup required: in ucs-school-singlemaster we should depend on univention-samba4 (>= 8.0.0-32)
-
 Package: ucs-school-slave
 Architecture: all
-Depends: univention-ldap-server (>= 8.0.77-4),
- univention-ldap-acl-slave (>= 8.0.77-4),
- univention-directory-manager-tools (>= 7.0.234-1),
- univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
- univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
- ucs-school-s4-branch-site | univention-samba,
+Depends:
+ python-ucs-school (>= 5.0.3-17),
+ python-univention (>= 6.0.21-1),
+ python-univention-lib (>= 1.0.51-3),
+ shell-ucs-school,
+ shell-ucs-school (>= 5.0.38),
+ shell-univention-lib (>= 1.0.51-3),
+ ucs-school-info,
+ ucs-school-netlogon,
  ucs-school-netlogon-user-logonscripts,
  ucs-school-old-homedirs,
  ucs-school-old-sharedirs,
- ucs-school-info,
+ ucs-school-s4-branch-site | univention-samba,
  ucs-school-umc-installer,
  ucs-school-veyon-client,
+ univention-config,
+ univention-directory-manager-tools (>= 7.0.234-1),
+ univention-ldap-acl-slave (>= 8.0.77-4),
+ univention-ldap-server (>= 8.0.77-4),
  univention-management-console (>= 4.0.231-1),
  univention-management-console-frontend (>= 1.0.320-1),
  univention-management-console-web-server (>= 1.0.320-1),
- python-univention (>= 6.0.21-1),
- ucs-school-netlogon,
- shell-ucs-school,
- python-univention-lib (>= 1.0.51-3),
- shell-univention-lib (>= 1.0.51-3),
- shell-ucs-school (>= 5.0.38),
- python-ucs-school (>= 5.0.3-17),
- univention-config
+ univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
+ univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
 Recommends:
  ucs-school-branding,
  ucs-school-ucc-integration,
@@ -91,10 +97,10 @@ Recommends:
  ucs-school-umc-helpdesk,
  ucs-school-umc-internetrules,
  ucs-school-umc-lessontimes,
- ucs-school-umc-printermoderation,
- ucs-school-umc-users,
  ucs-school-umc-lists,
+ ucs-school-umc-printermoderation,
  ucs-school-umc-rooms,
+ ucs-school-umc-users,
  ucs-school-webproxy,
 Description: UCS@school meta package for UCS DC Slave System
  This meta package installs all required packages for UCS@school on
@@ -108,54 +114,59 @@ Description: UCS@school meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Conflicts: ucs-school-master,
- ucs-school-umc-csv-import
-Replaces: ucs-school-umc-csv-import
-Breaks: ucs-school-umc-csv-import,
-Pre-Depends: univention-config
-Depends: univention-ldap-server (>= 8.0.77-4),
- univention-ldap-acl-master (>= 8.0.77-4),
- univention-directory-manager-tools (>= 7.0.234-1),
+Conflicts:
+ ucs-school-master,
+ ucs-school-umc-csv-import,
+Replaces:
+ ucs-school-umc-csv-import,
+Breaks:
+ ucs-school-umc-csv-import,
+Pre-Depends:
+ univention-config,
+Depends:
+ makepasswd,
+ python-ucs-school (>= 5.0.3-17),
+ python-univention (>= 6.0.21-1),
+ python-univention-lib (>= 1.0.51-3),
+ shell-ucs-school (>= 5.0.38),
+ shell-univention-lib (>= 1.0.51-3),
  ucs-school-import,
+ ucs-school-info,
  ucs-school-ldap-acls-master,
+ ucs-school-netlogon,
  ucs-school-netlogon-user-logonscripts,
  ucs-school-old-homedirs,
  ucs-school-old-sharedirs,
- ucs-school-info,
  ucs-school-umc-installer,
  ucs-school-veyon-client,
- univention-s4-connector (>= 6.0.128-24) | univention-samba (>= 13.0.0-11),
+ univention-directory-manager-tools (>= 7.0.234-1),
+ univention-ldap-acl-master (>= 8.0.77-4),
+ univention-ldap-server (>= 8.0.77-4),
  univention-management-console (>= 4.0.231-1),
  univention-management-console-frontend (>= 1.0.320-1),
- univention-management-console-web-server (>= 1.0.320-1),
  univention-management-console-module-selective-udm,
- python-univention (>= 6.0.21-1),
- python-univention-lib (>= 1.0.51-3),
- shell-univention-lib (>= 1.0.51-3),
- shell-ucs-school (>= 5.0.38),
- python-ucs-school (>= 5.0.3-17),
- ucs-school-netlogon,
- makepasswd
+ univention-management-console-web-server (>= 1.0.320-1),
+ univention-s4-connector (>= 6.0.128-24) | univention-samba (>= 13.0.0-11),
 Recommends:
  ucs-school-branding,
+ ucs-school-import-http-api,
  ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
+ ucs-school-umc-diagnostic,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
  ucs-school-umc-exam-master,
  ucs-school-umc-groups,
  ucs-school-umc-helpdesk,
+ ucs-school-umc-import,
  ucs-school-umc-internetrules,
  ucs-school-umc-lessontimes,
- ucs-school-umc-printermoderation,
- ucs-school-umc-users,
  ucs-school-umc-lists,
+ ucs-school-umc-printermoderation,
  ucs-school-umc-rooms,
+ ucs-school-umc-users,
  ucs-school-umc-wizards,
  ucs-school-webproxy,
- ucs-school-import-http-api,
- ucs-school-umc-import,
- ucs-school-umc-diagnostic,
 Description: UCS@school meta package for UCS DC Master System (single server environment)
  This meta package installs all required packages for UCS@school on
  a UCS domaincontroller master. The domaincontroller master will be
@@ -168,12 +179,13 @@ Description: UCS@school meta package for UCS DC Master System (single server env
 
 Package: ucs-school-nonedu-slave
 Architecture: all
-Depends: univention-config,
- shell-ucs-school (>= 5.0.38),
+Depends:
  python-ucs-school (>= 5.0.3-17),
- univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
- univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
+ shell-ucs-school (>= 5.0.38),
  ucs-school-s4-branch-site | univention-samba,
+ univention-config,
+ univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
+ univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
 Description: UCS@school meta package for non-educational Slave servers
  .
  This package is part of Univention Corporate Server (UCS),
@@ -183,9 +195,10 @@ Description: UCS@school meta package for non-educational Slave servers
 
 Package: ucs-school-central-slave
 Architecture: all
-Depends: univention-config,
- shell-ucs-school (>= 5.0.38),
+Depends:
  python-ucs-school (>= 5.0.3-17),
+ shell-ucs-school (>= 5.0.38),
+ univention-config,
 Description: UCS@school meta package for central Slave servers
  .
  This package is part of Univention Corporate Server (UCS),

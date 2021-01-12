@@ -3,7 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  python-all,
  python3-all,
@@ -22,8 +22,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Description: Starts a new exam for a specified computer room
  Starts a new exam for a specified computer room
  .
@@ -47,8 +47,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Description: UMC module delivering backend services for ucs-school-umc-exam
  UMC module delivering backend services for ucs-school-umc-exam
  .

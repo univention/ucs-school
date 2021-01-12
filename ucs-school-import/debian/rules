@@ -31,17 +31,11 @@
 
 export LC_ALL=C.UTF-8
 
-PO_FILES := $(shell find udm_hook syntax modules -name '*.po')
-MO_FILES := $(PO_FILES:%.po=%.mo)
-
 APIDOC_BASE_DIR := usr/share/doc/ucs-school-import-http-api
 APIDOCSRC_DIR := $(APIDOC_BASE_DIR)/source
 PLANTUML_DIR := $(APIDOC_BASE_DIR)/plantuml
 APIDOCSRC_FILES := $(shell find $(APIDOCSRC_DIR) -name '*.rst' -o -name '*.png')
 PYMODULESRC_FILES := $(shell find modules/ -name '*.py')
-
-%.mo:	%.po
-	msgfmt --check -o $@ $<
 
 plantuml:
 	make -C $(PLANTUML_DIR)
@@ -53,7 +47,7 @@ pymoduledoc: $(PYMODULESRC_FILES)
 apidoc:	$(APIDOCSRC_FILES) plantuml pymoduledoc
 	make -C$(APIDOC_BASE_DIR) html
 
-override_dh_auto_build: $(MO_FILES) apidoc
+override_dh_auto_build: apidoc
 	dh_auto_build
 
 override_dh_auto_install:
@@ -80,4 +74,4 @@ override_dh_auto_test:
 	ucslint
 
 %:
-	dh $@ --with python2,python3,systemd
+	dh $@ --with python2,python3,univention-l10n

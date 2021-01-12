@@ -3,10 +3,11 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  ucslint,
  univention-config-dev,
+ univention-l10n-dev,
  univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
 
@@ -25,8 +26,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Description: Univention Directory Manager module to administrate helpdesk categories of UMC
  This package contains an Univention Directory Manager module that provides a
  web frontend or commandline tool to administrate helpdesk categories used

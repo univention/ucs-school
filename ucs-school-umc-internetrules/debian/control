@@ -3,7 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  ucslint,
  univention-config-dev,
@@ -23,8 +23,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Replaces:
  ucs-school-umc-proxysettings,
 Breaks:

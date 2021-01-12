@@ -34,9 +34,9 @@ export LC_ALL=C.UTF-8
 %:
 	dh $@
 
-override_dh_build:
+override_dh_auto_test:
+	dh_auto_test
 	ucslint
-	dh_build
 
 override_dh_strip:
 	dh_strip --dbg-package=italc-dbg
