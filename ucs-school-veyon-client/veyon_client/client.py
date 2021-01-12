@@ -183,9 +183,7 @@ class VeyonClient:
         if arguments:
             data["arguments"] = arguments
         result = requests.put(
-            "{}/feature/{}".format(self._url, feature),
-            json={"active": active},
-            headers=self._get_headers(host),
+            "{}/feature/{}".format(self._url, feature), json=data, headers=self._get_headers(host),
         )
         check_veyon_error(result)
 
