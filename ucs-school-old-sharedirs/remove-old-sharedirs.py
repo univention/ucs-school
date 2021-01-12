@@ -39,9 +39,9 @@ import listener
 
 import univention.debug
 
-hostname = listener.baseConfig["hostname"]
-domainname = listener.baseConfig["domainname"]
-ip = listener.baseConfig["interfaces/eth0/address"]
+hostname = listener.configRegistry["hostname"]
+domainname = listener.configRegistry["domainname"]
+ip = listener.configRegistry["interfaces/eth0/address"]
 name = "remove-old-sharedirs"
 description = "moves directories of removed group shares to backup folder"
 filter = "(&(objectClass=univentionShare)(|(univentionShareHost=%s.%s)(univentionShareHost=%s)))" % (

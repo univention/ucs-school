@@ -2,12 +2,17 @@ Source: ucs-school-old-sharedirs
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 7.0), univention-config-dev, ucslint
+Build-Depends:
+ debhelper (>= 10),
+ ucslint,
+ univention-config-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-old-sharedirs
 Architecture: all
-Depends: univention-directory-listener, univention-config
+Depends:
+ univention-config,
+ univention-directory-listener,
 Description: UCS@School listener module to move away obsolete share directories
  This package contains a univention directory listener module that
  moves away obsolete share directories on deletion of share objects.

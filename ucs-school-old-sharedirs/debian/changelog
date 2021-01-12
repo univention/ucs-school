@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (14.0.0-1) unstable; urgency=medium
+
+  * Bug #52649: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:49:02 +0200
+
 ucs-school-old-sharedirs (14.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4
