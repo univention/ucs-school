@@ -2,21 +2,26 @@ Source: ucs-school-netlogon-user-logonscripts
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>> 7.0),
- univention-config-dev,
+Build-Depends:
+ debhelper (>> 7.0),
+ dh-python,
+ dh-systemd,
  ucslint,
- dh-systemd
+ univention-config-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon-user-logonscripts
 Architecture: all
-Depends: univention-config-registry,
- univention-ldap-client,
- univention-directory-manager-tools,
- univention-directory-listener,
- ucs-school-netlogon,
+Depends:
  shell-univention-lib,
- univention-config
+ ucs-school-netlogon,
+ univention-config,
+ univention-config-registry,
+ univention-directory-listener,
+ univention-directory-manager-tools,
+ univention-ldap-client,
+ ${python3:Depends},
+ ${python:Depends},
 Description: UCS@school userspecific netlogon scripts
  This package provides a listener-module that creates
  specific netlogon scripts for each local user.
