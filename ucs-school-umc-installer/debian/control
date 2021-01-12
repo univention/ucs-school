@@ -2,27 +2,31 @@ Source: ucs-school-umc-installer
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~),
- python-support,
- univention-management-console-dev,
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ dh-python,
  python-all,
- ucslint
+ python3-all,
+ ucslint,
+ univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.8.2
-XS-Python-Version: 2.6, 2.7
 
 Package: ucs-school-umc-installer
 Architecture: all
-Depends: ${misc:Depends},
- univention-management-console-server,
+Depends:
  python-dnspython,
  python-notifier,
- univention-updater,
- python-univention-lib (>= 2.0.17-1.116),
- python-univention-directory-manager,
- univention-management-console-module-lib,
- ucs-school-umc-common,
  python-ucs-school,
+ python-univention-directory-manager,
+ python-univention-lib (>= 2.0.17-1.116),
  shell-univention-lib,
+ ucs-school-umc-common,
+ univention-management-console-module-lib,
+ univention-management-console-server (>= 11.0.4-37),
+ univention-updater,
+ ${misc:Depends},
+ ${python3:Depends},
+ ${python:Depends},
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain
  .
