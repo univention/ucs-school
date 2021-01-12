@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.0.1) unstable; urgency=low
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Thu, 09 Sep 2021 21:13:08 +0200
+
 ucs-test-ucsschool (6.0.248) unstable; urgency=medium
 
   * Bug #53744: fix kelvin res test

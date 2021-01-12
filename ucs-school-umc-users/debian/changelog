@@ -1,8 +1,14 @@
+ucs-school-umc-users (16.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 15 Jun 2021 15:05:08 +0200
+
 ucs-school-umc-users (15.0.3) unstable; urgency=medium
 
   * Bug #53026: fix double star search raises traceback
 
- -- Tobias Wenzel <wenzel@univention.de>  Tue, 20 Jul 2021 09:57:27 +0200
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 10 Aug 2021 18:40:28 +0200
 
 ucs-school-umc-users (15.0.2) unstable; urgency=medium
 
