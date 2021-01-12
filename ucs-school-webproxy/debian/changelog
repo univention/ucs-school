@@ -1,3 +1,9 @@
+ucs-school-webproxy (15.0.3) unstable; urgency=medium
+
+  * Bug #52652: drop python-support
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 23:10:34 +0200
+
 ucs-school-webproxy (15.0.2) unstable; urgency=medium
 
   * Bug #52604: migrate UCR templates to Python 3
