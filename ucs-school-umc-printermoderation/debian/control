@@ -2,25 +2,29 @@ Source: ucs-school-umc-printermoderation
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~),
- python-support,
- univention-management-console-dev,
- ucslint,
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ dh-python,
  python-all,
- univention-config-dev
+ python3-all,
+ ucslint,
+ univention-config-dev,
+ univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
-XS-Python-Version: 2.6, 2.7
 
 Package: ucs-school-umc-printermoderation
 Architecture: all
-Depends: ${misc:Depends},
- univention-management-console-server,
- univention-printserver-pdf,
+Depends:
  poppler-utils,
- shell-ucs-school,
- shell-univention-lib,
  python-cups,
  python-ucs-school (>= 12.1.9),
+ shell-ucs-school,
+ shell-univention-lib,
+ univention-management-console-server (>= 11.0.4-37),
+ univention-printserver-pdf,
+ ${misc:Depends},
+ ${python3:Depends},
+ ${python:Depends},
 Description: UCS@school UMC module for moderating print
  This package contains a UMC module for moderating print jobs of students
  .
