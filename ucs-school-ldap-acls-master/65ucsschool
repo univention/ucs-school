@@ -49,8 +49,8 @@ def replace_ucr_variables(template):
 	while True:
 		i = variable_token.finditer(template)
 		try:
-			start = i.next()
-			end = i.next()
+			start = next(i)
+			end = next(i)
 			name = template[start.end():end.start()]
 
 			template = template[:start.start()] + replacements.get(name, '') + template[end.end():]
