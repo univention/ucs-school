@@ -3,11 +3,15 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Standards-Version: 3.8.2
-Build-Depends: debhelper, ucslint
+Build-Depends:
+ debhelper,
+ ucslint,
 
 Package: ucs-school-info
 Architecture: all
-Depends: python (>= 2.4), python-ipaddr
+Depends:
+ python (>= 2.7),
+ python-ipaddr,
 Description: UCS@school: provides info script
  This package provides a script for listing users, computers
  and networks in UCS@school environment.

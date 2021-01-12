@@ -31,6 +31,8 @@
 # <http://www.gnu.org/licenses/>.
 
 
+from __future__ import print_function
+
 import sys
 from optparse import OptionParser
 
@@ -50,8 +52,8 @@ univention.admin.modules.update()
 
 
 def _print(_str):
-	print _str
-	print '-' * len(_str)
+	print(_str)
+	print('-' * len(_str))
 
 
 def get_object(dn, module, superordinate=None):
@@ -89,7 +91,7 @@ def get_objects(module, base=baseDN, _filter=None, superordinate=None):
 def user(base=baseDN):
 	"""List user information for specified ou."""
 	users = get_objects('users/user', base=base)
-	print 'Users:'
+	print('Users:')
 	for u in users:
 		u.open()
 
@@ -116,16 +118,16 @@ def user(base=baseDN):
 			tabs = '\t'
 			if len(_str) <= 8:
 				tabs += '\t'
-			print _str + '%s(%s)' % (tabs, '; '.join(_options))
+			print(_str + '%s(%s)' % (tabs, '; '.join(_options)))
 		else:
-			print _str
-	print
+			print(_str)
+	print('')
 
 
 def computer(base=baseDN):
 	"""List computer information for specified ou."""
 	computers = get_objects('computers/computer', base=base)
-	print 'Computers:'
+	print('Computers:')
 	for c in computers:
 		c.open()
 
@@ -142,28 +144,28 @@ def computer(base=baseDN):
 			_options.append('inv. number: %s' % ', '.join(c["inventoryNumber"]))
 
 		if _options:
-			print _str + '\t(%s)' % '; '.join(_options)
+			print(_str + '\t(%s)' % '; '.join(_options))
 		else:
-			print _str
-	print
+			print(_str)
+	print('')
 
 
 def network(base=baseDN):
 	"""List network information for specified ou."""
 	networks = get_objects('networks/network', base=base)
-	print 'Network:'
+	print('Network:')
 	for n in networks:
 		n.open()
 
 	networks = sorted(networks, cmp=lambda x, y: cmp(x['name'], y['name']))
 
 	for n in networks:
-		print '\t%s' % n['name']
-		print '\tNetwork:\t%s' % n["network"]
+		print('\t%s' % n['name'])
+		print('\tNetwork:\t%s' % n["network"])
 
 		net_ip = ipaddr.IPv4Network('%s/%s' % (n['network'], n['netmask']))
 		netmask = str(net_ip.netmask)
-		print '\tNetmask:\t%s' % netmask
+		print('\tNetmask:\t%s' % netmask)
 
 		if n['dhcpEntryZone']:
 			_base = base
@@ -177,9 +179,9 @@ def network(base=baseDN):
 				if brd_ip not in net_ip:
 					continue
 
-				print '\tBroadcast:\t%s' % subnet['broadcastaddress']
+				print('\tBroadcast:\t%s' % subnet['broadcastaddress'])
 				if subnet['range']:
-					print '\tDynamic Range:\t%s' % subnet['range']
+					print('\tDynamic Range:\t%s' % subnet['range'])
 
 				# FIXME: This is very ugly but it seems like you can't get the
 				# type of a policy object easily
@@ -191,22 +193,22 @@ def network(base=baseDN):
 					try:
 						if dnx[1] == 'cn=routing':
 							policy = get_object(dn, 'policies/dhcp_routing')
-							print '\tRouters:\t%s' % '; '.join(policy['routers'])
+							print('\tRouters:\t%s' % '; '.join(policy['routers']))
 						elif dnx[1] == 'cn=netbios':
 							policy = get_object(dn, 'policies/dhcp_netbios')
 							# print '\tNetBIOS Scope:\t%s' % policy['netbios_scope']
-							print '\tNetBIOS Server:\t%s' % '; '.join(policy['netbios_name_servers'])
+							print('\tNetBIOS Server:\t%s' % '; '.join(policy['netbios_name_servers']))
 						elif dnx[1] == 'cn=dns':
 							policy = get_object(dn, 'policies/dhcp_dns')
-							print '\tDomain Name:\t%s' % policy['domain_name']
-							print '\tDNS Server:\t%s' % '; '.join(policy['domain_name_servers'])
+							print('\tDomain Name:\t%s' % policy['domain_name'])
+							print('\tDNS Server:\t%s' % '; '.join(policy['domain_name_servers']))
 					except:
 						pass
 
 		for iprange in n['ipRange']:
-			print '\tIP-Range:\t%s' % '-'.join(iprange)
+			print('\tIP-Range:\t%s' % '-'.join(iprange))
 
-		print
+		print('')
 
 
 if __name__ == '__main__':
@@ -237,7 +239,7 @@ if __name__ == '__main__':
 	machinepwd = secretFile.readline().replace('\n', '')
 	machinedn = configRegistry.get('ldap/hostdn')
 	if not machinedn or not machinepwd:
-		print 'Cannot get machine account dn or machine credentials'
+		print('Cannot get machine account dn or machine credentials')
 		sys.exit(1)
 
 	co = univention.admin.config.config()
@@ -245,18 +247,18 @@ if __name__ == '__main__':
 		lo = univention.admin.uldap.access(host=configRegistry['ldap/server/name'], base=baseDN, binddn=machinedn, bindpw=machinepwd, start_tls=2)
 	except Exception as exc:
 		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(exc))
-		print 'ERROR: authentication error: %s' % str(exc)
+		print('ERROR: authentication error: %s' % str(exc))
 		sys.exit(1)
 
 	exitcode = 0
 	for _ou in args:
 		res = lo.search('ou=%s' % _ou)
 		if not res:
-			print >>sys.stderr, 'WARNING: Unable to find OU %s.' % _ou
+			print('WARNING: Unable to find OU %s.' % _ou, file=sys.stderr)
 			exitcode = 1
 			continue
 		elif len(res) > 1:
-			print >>sys.stderr, 'WARNING: Multiple OUs found for %s, ignoring request.' % _ou
+			print('WARNING: Multiple OUs found for %s, ignoring request.' % _ou, file=sys.stderr)
 			exitcode = 2
 			continue
 		search_base = res[0][0]
