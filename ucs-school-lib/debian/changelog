@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.7) unstable; urgency=medium
+
+  * Bug #52582: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:02:04 +0100
+
 ucs-school-lib (12.2.6) unstable; urgency=medium
 
   * Bug #51274: hostname length was raised from 12 to 13

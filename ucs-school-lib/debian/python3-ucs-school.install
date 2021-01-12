@@ -1,0 +1,4 @@
+python/*.py usr/lib/python3/dist-packages/ucsschool/lib/
+python/pyhooks/*.py usr/lib/python3/dist-packages/ucsschool/lib/pyhooks/
+python/models/*.py usr/lib/python3/dist-packages/ucsschool/lib/models/
+ucsschool/__init__.py usr/lib/python3/dist-packages/ucsschool/
