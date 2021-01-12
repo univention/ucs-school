@@ -10,7 +10,6 @@ Build-Depends:
  ucslint,
  univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.5.2
-XS-Python-Version: all
 
 Package: univention-management-console-module-selective-udm
 Architecture: all
