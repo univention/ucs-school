@@ -31,9 +31,9 @@ except ImportError:
     pass
 
 MODULE_PATHS = (
-    ("/usr/share/pyshared/ucsschool/lib/models", "ucsschool.lib.models"),
-    ("/usr/share/pyshared/ucsschool/importer/models", "ucsschool.importer.models"),
-    ("/usr/share/pyshared/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/lib/models", "ucsschool.lib.models"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/models", "ucsschool.importer.models"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test82_legacy_hook.sh")
