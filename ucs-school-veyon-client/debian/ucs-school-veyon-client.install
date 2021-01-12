@@ -1,1 +1,1 @@
-veyon_client/*.py usr/share/pyshared/ucsschool/veyon_client/
+veyon_client/*.py usr/lib/python2.7/dist-packages/ucsschool/veyon_client/
