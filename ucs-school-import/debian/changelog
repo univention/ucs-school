@@ -1,3 +1,9 @@
+ucs-school-import (18.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 15 Jun 2021 15:05:08 +0200
+
 ucs-school-import (17.0.67) unstable; urgency=medium
 
   * Bug #50331: fix quiet option in ucs-school-purge-expired-users script
