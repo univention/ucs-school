@@ -45,7 +45,7 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
         with self.as_root():
             self.logger.info("Syncing all schools in http api")
             returncode, stdout, stderr = exec_cmd(
-                ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "-a"],
+                ["/usr/bin/python2.7", "-m", "ucsschool.http_api.manage", "updateschools", "-a"],
                 raise_exc=False,
             )
             if returncode:
@@ -67,7 +67,7 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
         with self.as_root():
             self.logger.info("Update school {} in http api".format(name))
             returncode, stdout, stderr = exec_cmd(
-                ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "--ou", name],
+                ["/usr/bin/python2.7", "-m", "ucsschool.http_api.manage", "updateschools", "--ou", name],
                 raise_exc=False,
             )
             if returncode:

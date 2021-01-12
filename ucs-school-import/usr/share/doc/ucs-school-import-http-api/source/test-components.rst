@@ -31,7 +31,7 @@ If the join script succeeded, the database already contains a list of OUs. Let's
 
 Those OUs should already exist as objects in Djangos database::
 
-	$ python /usr/share/pyshared/ucsschool/http_api/manage.py shell -c \
+	$ python -m ucsschool.http_api.manage shell -c \
 	    "from ucsschool.http_api.import_api.models import School; print School.objects.all()"
 
 	<QuerySet [<School: SchoolOne>, <School: SchoolTwo>]>

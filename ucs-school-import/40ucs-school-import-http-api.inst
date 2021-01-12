@@ -182,24 +182,24 @@ else
 fi
 
 unset DJANGO_SETTINGS_MODULE
-python /usr/share/pyshared/ucsschool/http_api/manage.py check --no-color --deploy || die
+python -m ucsschool.http_api.manage check --no-color --deploy || die
 echo "Collecting static files..."
-python /usr/share/pyshared/ucsschool/http_api/manage.py collectstatic --no-color --noinput --link || die
+python -m ucsschool.http_api.manage collectstatic --no-color --noinput --link || die
 if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 	echo "Handling django-celerys upgrade (faking DB schema migration)..."
-	python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput --fake-initial djcelery
+	python -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial djcelery
 fi
 echo "Migrating DB schema..."
-python /usr/share/pyshared/ucsschool/http_api/manage.py migrate --no-color --noinput || die
-if python /usr/share/pyshared/ucsschool/http_api/manage.py superuserexists "$ADMINISTRATOR_UID";
+python -m ucsschool.http_api.manage migrate --no-color --noinput || die
+if python -m ucsschool.http_api.manage superuserexists "$ADMINISTRATOR_UID";
 then
     printf "\nSuper user exists.\n"
 else
     printf "\nCreating super user...\n"
-    python /usr/share/pyshared/ucsschool/http_api/manage.py createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
+    python -m ucsschool.http_api.manage createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
 fi
 echo "Seeding DB with School entries..."
-python /usr/share/pyshared/ucsschool/http_api/manage.py updateschools --all
+python -m ucsschool.http_api.manage updateschools --all
 
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf

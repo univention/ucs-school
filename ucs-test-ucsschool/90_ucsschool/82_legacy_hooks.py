@@ -27,14 +27,14 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 
 try:
-    from typing import Type
+    from typing import Type  # noqa: F401
 except ImportError:
     pass
 
 MODULE_PATHS = (
     ("/usr/share/pyshared/ucsschool/lib/models", "ucsschool.lib.models"),
-    ("/usr/share/pyshared/ucsschool/importer/models", "ucsschool.importer.models"),
-    ("/usr/share/pyshared/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/models", "ucsschool.importer.models"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test82_legacy_hook.sh")

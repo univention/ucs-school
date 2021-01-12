@@ -7,4 +7,5 @@ fix:
 desc: |
  * UDM extensions for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52658).
  * The UCR templates for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52604).
-bug: [52658, 52604]
+ * The package <package>ucs-school-import</package> has been migrated to dh_python (Bug #52580).
+bug: [52658, 52604, 52580]
