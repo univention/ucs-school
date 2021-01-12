@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (17.0.1-9) unstable; urgency=medium
+
+  * Bug #52586: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 21:21:18 +0200
+
 ucs-school-umc-distribution (17.0.1-8) unstable; urgency=low
 
   * Bug #51167: add __repr__ methods to Project and _Dict

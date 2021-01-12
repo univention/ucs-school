@@ -52,7 +52,7 @@ def debugmsg(component, level, msg):
 		printInfo.append(info[0])
 	printInfo.extend(info[1:3])
 	ud.debug(component, level, "%s:%s: %s" % (printInfo[0], printInfo[1], msg))
-	print msg
+	print(msg)
 
 
 def main():
