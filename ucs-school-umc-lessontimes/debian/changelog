@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (7.0.0-3) unstable; urgency=medium
+
+  * Bug #52593: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:01:54 +0200
+
 ucs-school-umc-lessontimes (7.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
