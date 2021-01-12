@@ -10,13 +10,13 @@ Build-Depends: debhelper (>> 10),
  make,
  python2.7-doc,
  default-jre,
- python-support (>= 0.90),
+ dh-python,
 Standards-Version: 3.8.2
-XS-Python-Version: 2.7
 
 Package: ucs-school-import
 Architecture: all
-Depends: univention-directory-manager,
+Depends:
+ univention-directory-manager,
  ucs-school-import-schema (= ${source:Version}),
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
@@ -40,7 +40,8 @@ Description: UCS@school: Importing objects like users and computers
 Homepage: https://www.univention.de/produkte/ucsschool/
 
 Package: ucs-school-import-schema
-Depends: python-univention-directory-manager-cli (>= 4.0.19-1),
+Depends:
+ python-univention-directory-manager-cli (>= 4.0.19-1),
  shell-univention-lib (>> 2.0.17-1.125),
  univention-ldap-server ( >= 8.0.77-7 ),
  univention-config
@@ -55,7 +56,8 @@ Description: UCS@school: LDAP import schema and custom attributes
 
 Package: ucs-school-import-http-api
 Architecture: all
-Depends: ${misc:Depends},
+Depends:
+ ${misc:Depends},
  univention-config,
  ucs-school-import (= ${source:Version}),
  ucs-school-import-http-api-common (= ${source:Version}),
@@ -83,7 +85,8 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 
 Package: ucs-school-import-http-api-client
 Architecture: all
-Depends: ${misc:Depends},
+Depends:
+ ${misc:Depends},
  python-requests,
  python-magic,
  python-univention-config-registry,
@@ -99,7 +102,8 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 
 Package: ucs-school-import-http-api-common
 Architecture: all
-Depends: ${misc:Depends}
+Depends:
+ ${misc:Depends}
 Replaces:
  ucs-school-import-http-api (<< 17.0.6-15)
 Breaks:
