@@ -9,7 +9,6 @@ Build-Depends:
  univention-config-dev,
  univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
-XS-Python-Version: 2.6, 2.7
 
 Package: ucs-school-umc-distribution
 Architecture: all
