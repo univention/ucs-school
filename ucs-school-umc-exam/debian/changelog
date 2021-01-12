@@ -1,5 +1,6 @@
 ucs-school-umc-exam (10.0.0-1) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52587: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:11:42 +0100

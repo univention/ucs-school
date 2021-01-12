@@ -1,5 +1,6 @@
 ucs-school-import (18.0.1) unstable; urgency=medium
 
+  * Bug #52578: UCS@school 5.0 version bump
   * Bug #52580: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 15:52:14 +0100

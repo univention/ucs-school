@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (18.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:53 +0100
+
 ucs-school-ldap-acls-master (17.0.4-9) unstable; urgency=low
 
   * Bug #42138: Remove school admin access to replication node password data

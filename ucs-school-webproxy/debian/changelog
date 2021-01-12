@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:00 +0100
+
 ucs-school-webproxy (15.0.1) unstable; urgency=low
 
   * Bug #52945: use full path to model imports

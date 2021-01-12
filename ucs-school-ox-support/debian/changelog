@@ -1,3 +1,9 @@
+ucs-school-ox-support (4.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:06 +0100
+
 ucs-school-ox-support (3.0.1) unstable; urgency=low
 
   * Bug #49557: add support for Python based hooks
