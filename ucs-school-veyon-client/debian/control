@@ -9,7 +9,6 @@ Build-Depends:
  ucslint,
  univention-unittests,
 Standards-Version: 3.7.2
-XS-Python-Version: 2.7
 
 Package: ucs-school-veyon-client
 Architecture: all
