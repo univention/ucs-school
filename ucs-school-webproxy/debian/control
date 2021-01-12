@@ -2,17 +2,25 @@ Source: ucs-school-webproxy
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper, univention-config-dev, ucslint
+Build-Depends:
+ debhelper,
+ dh-python,
+ ucslint,
+ univention-config-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-webproxy
 Architecture: all
-Pre-Depends: univention-config
-Depends: univention-squid (>= 5.0.8),
- squidguard (>= 1.5-1.23),
+Pre-Depends:
+ univention-config,
+Depends:
  python-ucs-school,
+ squidguard (>= 1.5-1.23),
  ucs-school-umc-internetrules,
- univention-runit
+ univention-runit,
+ univention-squid (>= 5.0.8),
+ ${python3:Depends},
+ ${python:Depends},
 Description: meta package for UCS@school webproxy
  This meta package installs and configures squid and squidguard
  as HTTP proxy with transparent NTLM authentication.
