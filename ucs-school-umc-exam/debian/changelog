@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-47) unstable; urgency=medium
+
+  * Bug #52587: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:11:42 +0100
+
 ucs-school-umc-exam (9.0.1-46) unstable; urgency=medium
 
   * Bug #49655: skip netbiosname if workstation attr is not set
