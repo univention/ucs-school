@@ -1,3 +1,9 @@
+ucs-school-ox-support (4.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jun 2021 15:03:44 +0200
+
 ucs-school-ox-support (3.0.2) unstable; urgency=medium
 
   * Bug #52650: drop python-support

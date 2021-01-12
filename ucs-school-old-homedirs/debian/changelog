@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (15.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jun 2021 15:03:44 +0200
+
 ucs-school-old-homedirs (14.0.1-0) unstable; urgency=low
 
   * Bug #49443: Respect UCRV for exam user home dir deletion

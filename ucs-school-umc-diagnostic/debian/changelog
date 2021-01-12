@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jun 2021 15:03:44 +0200
+
 ucs-school-umc-diagnostic (1.0.0-21) unstable; urgency=medium
 
   * Bug #53386: drop python-support for ucs-school-umc-diagnostic
