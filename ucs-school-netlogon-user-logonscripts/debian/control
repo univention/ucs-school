@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper (>> 7.0),
+ dh-python,
  dh-systemd,
  ucslint,
  univention-config-dev,
