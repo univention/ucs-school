@@ -33,7 +33,7 @@
 export LC_ALL=C.UTF-8
 
 %:
-	dh $@ --with python_support
+	dh $@
 
 override_dh_auto_test:
 	ucslint

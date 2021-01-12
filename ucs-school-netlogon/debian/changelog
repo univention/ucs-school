@@ -1,3 +1,9 @@
+ucs-school-netlogon (9.0.0-1) unstable; urgency=medium
+
+  * Bug #52648: drop python-support
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 22:44:05 +0200
+
 ucs-school-netlogon (9.0.0-0) unstable; urgency=low
 
   * bump version for UCS@school 4.4

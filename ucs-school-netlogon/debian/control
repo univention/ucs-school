@@ -2,12 +2,17 @@ Source: ucs-school-netlogon
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper, univention-config-dev, ucslint
+Build-Depends:
+ debhelper,
+ ucslint,
+ univention-config-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon
 Architecture: all
-Depends: ${misc:Depends}, shell-univention-lib
+Depends:
+ shell-univention-lib,
+ ${misc:Depends},
 Description: UCS@school: netlogon template
  This package provides a script to generate a
  windows netlogon script.
@@ -16,4 +21,3 @@ Description: UCS@school: netlogon template
  integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
-
