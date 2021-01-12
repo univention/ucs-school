@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-veyon-client
-fix: 1.0.1-2A~4.4.0.202012231421
+fix: 1.0.1-3A~4.4.0.202101121110
 desc: |
  * Internal change: The client lib can now handle arguments in feature_set (Bug #52534).
 bug: [52534]
