@@ -6,4 +6,5 @@ src: ucs-school-umc-helpdesk
 fix:
 desc: |
  * The UDM module "settings/console_helpdesk" has been migrated to be Python 3 compatible (Bug #52658).
-bug: [52658]
+ * The package <package>ucs-school-umc-helpdesk</package> has been migrated to dh_python (Bug #52589).
+bug: [52658, 52589]

@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (15.0.0-5) unstable; urgency=medium
+
+  * Bug #52589: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 21:37:28 +0200
+
 ucs-school-umc-helpdesk (15.0.0-4) unstable; urgency=medium
 
   * Bug #52658: migrate settings/console_helpdesk to Python 3

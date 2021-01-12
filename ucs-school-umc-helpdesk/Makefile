@@ -30,7 +30,6 @@
 # <http://www.gnu.org/licenses/>.
 
 DESTDIR=debian/tmp/
-ADMIN_MODULES=$(shell find modules/univention/admin -name '*.py')
 MO_FILES_ADMIN=$(shell find modules/univention/admin -name '*.po' | sed 's/\.po/\.mo/g')
 
 MODULENAME=$(PACKAGE:ucs-school-umc-%=%)
@@ -38,16 +37,7 @@ MODULENAME=$(PACKAGE:ucs-school-umc-%=%)
 %.mo:	%.po
 	msgfmt -o $@ $<
 
-all:	$(ADMIN_MODULES) $(MO_FILES_ADMIN)
-
-admin-modules: $(ADMIN_MODULES)
-
-install-admin-modules: admin-modules
-	@for i in $(ADMIN_MODULES); do\
-		o=debian/$(PACKAGE)/usr/share/pyshared/$${i#modules};\
-		install -d "`dirname $$o`";\
-		install -m644 $$i $$o;\
-	done
+all:	$(MO_FILES_ADMIN)
 
 install-locales-admin: $(MO_FILES_ADMIN)
 	@for i in $(MO_FILES_ADMIN); do\
