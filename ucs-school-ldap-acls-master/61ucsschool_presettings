@@ -125,9 +125,9 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 '''
 
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
-	print aclset
+	print(aclset)
 else:
-	print '# no ACL required on domaincontroller_slave'
+	print('# no ACL required on domaincontroller_slave')
 @!@
 
 # end 61ucsschool_presettings
