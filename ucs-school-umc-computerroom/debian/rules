@@ -33,7 +33,7 @@
 export LC_ALL=C.UTF-8
 
 %:
-	dh $@ --with python_support
+	dh $@ --with python2,python3
 
 override_dh_auto_test:
 	ucslint
@@ -51,4 +51,4 @@ override_dh_auto_install:
 override_dh_fixperms:
 	dh_fixperms
 	chmod 755 debian/ucs-school-umc-computerroom/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules
-	chmod 755 debian/ucs-school-umc-computerroom/usr/share/pyshared/univention/management/console/modules/computerroom/wakeonlan.py
+	chmod 755 debian/ucs-school-umc-computerroom/usr/lib/python2.7/dist-packages/univention/management/console/modules/computerroom/wakeonlan.py
