@@ -1,6 +1,7 @@
-python/*.py usr/share/pyshared/ucsschool/lib/
-python/pyhooks/*.py usr/share/pyshared/ucsschool/lib/pyhooks/
-python/models/*.py usr/share/pyshared/ucsschool/lib/models/
+python/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/
+ucsschool/__init__.py usr/lib/python2.7/dist-packages/ucsschool/
+python/pyhooks/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/pyhooks/
+python/models/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/models/
 python/*.mo usr/share/locale/de/LC_MESSAGES/
 lessons.ini usr/share/ucs-school-lib/
 smbstatus_testdata.txt usr/share/ucs-school-lib/
