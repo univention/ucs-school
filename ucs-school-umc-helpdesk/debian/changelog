@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (16.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:04 +0100
+
 ucs-school-umc-helpdesk (15.0.0-3) unstable; urgency=medium
 
   * Bug #52589: migrate to dh_python

@@ -1,3 +1,9 @@
+ucs-school-veyon-client (2.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:06 +0100
+
 ucs-school-veyon-client (1.0.1-4) unstable; urgency=medium
 
   * Bug #52599: migrate to dh_python
