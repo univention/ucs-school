@@ -33,16 +33,7 @@
 export LC_ALL=C.UTF-8
 
 %:
-	dh $@ --with python2,python3
+	dh $@ --with python2,python3,umc,ucr
 
 override_dh_auto_test:
 	ucslint
-
-override_dh_auto_build:
-	dh-umc-module-build
-	dh_auto_build
-
-override_dh_auto_install:
-	univention-install-config-registry
-	dh-umc-module-install
-	dh_auto_install
