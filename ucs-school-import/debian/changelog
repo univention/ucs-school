@@ -1,3 +1,9 @@
+ucs-school-import (18.0.1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Wed, 14 Jul 2021 12:22:34 +0200
+
 ucs-school-import (17.0.71) unstable; urgency=medium
 
   * Bug #53576: fix regression: revert moving django packages into the
