@@ -1,3 +1,9 @@
+ucs-school-umc-lists (2.0.0-7) unstable; urgency=medium
+
+  * Bug #52594: migrate to dh_python
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:23:52 +0100
+
 ucs-school-umc-lists (2.0.0-6) unstable; urgency=medium
 
   * Bug #50773: added an ucrv to configure classlists attributes
