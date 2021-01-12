@@ -5,6 +5,7 @@ Maintainer: Univention GmbH <packages@univention.de>
 Standards-Version: 3.8.2
 Build-Depends:
  debhelper,
+ dh-python,
  ucslint,
 
 Package: ucs-school-info
