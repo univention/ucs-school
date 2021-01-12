@@ -110,7 +110,6 @@ class UMCTester(object):
             self.selenium.click_text(wg_name2)
             time.sleep(5)
             assert self.selenium.elements_visible("//input[@name = 'email']")
-            # assert self.selenium.wait_until_element_visible("//input[@name = 'email']", timeout=5)
             assert not self.selenium.elements_visible("//label[text() = 'Activate Email Address']")
 
 
