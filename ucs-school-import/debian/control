@@ -12,7 +12,6 @@ Build-Depends: debhelper (>> 10),
  default-jre,
  dh-python,
 Standards-Version: 3.8.2
-XS-Python-Version: 2.7
 
 Package: ucs-school-import
 Architecture: all
