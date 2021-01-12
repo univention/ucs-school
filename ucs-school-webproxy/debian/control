@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper,
+ dh-python,
  ucslint,
  univention-config-dev,
 Standards-Version: 3.8.2
