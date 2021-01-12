@@ -1,3 +1,9 @@
+ucs-school-umc-installer (8.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:56 +0100
+
 ucs-school-umc-installer (7.0.0-8) unstable; urgency=medium
 
   * Bug #52591: migrate to dh_python

@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (5.0.0-1) unstable; urgency=medium
+
+  * Bug #52578: UCS@school 5.0 version bump
+
+ -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:56 +0100
+
 ucs-school-l10n-fr (4.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module
