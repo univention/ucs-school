@@ -1,2 +1,2 @@
 share/* usr/share/ucs-school-exam-master/
-modules/ucsschool usr/share/pyshared/
+modules/ucsschool usr/lib/python2.7/dist-packages/
