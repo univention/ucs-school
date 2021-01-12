@@ -58,7 +58,7 @@ class Hook(PyHook):
     The :py:attr:`model` attribute must be set to the class object the hook is
     intended for.
 
-    An example is provided in /usr/share/doc/python-ucs-school/hook_example.py
+    Examples are provided in /usr/share/doc/ucs-school-lib-common/hook_example*.py
 
     The following attributes are available:
 

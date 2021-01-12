@@ -1,3 +1,9 @@
+ucs-school-import (17.0.63) unstable; urgency=medium
+
+  * Bug #52582: migrate ucsschool.lib.create_ou to dh-python
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 14:24:36 +0200
+
 ucs-school-import (17.0.62) unstable; urgency=medium
 
   * Bug #52604: make UCR templates Python 3 compatible

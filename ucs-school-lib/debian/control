@@ -2,27 +2,65 @@ Source: ucs-school-lib
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7),
+Build-Depends: debhelper (>= 10),
  ucslint,
  univention-config-dev,
  python-all,
- python-support (>= 0.90)
+ python3-all,
+ dh-python,
 Standards-Version: 3.8.2
 
 Package: python-ucs-school
 Architecture: all
-Depends: ${misc:Depends},
+Depends:
+ ${misc:Depends},
  ${python:Depends},
- python-six,
- univention-management-console,
- python-univention-directory-manager (>=14.0.15-4),
- python-univention-lib,
- python-colorlog,
- python-ruamel.yaml,
  python-apt,
  python-click,
-Provides: ${python:Provides}
+ python-colorlog,
+ python-lazy-object-proxy,
+ python-ldap,
+ python-psutil,
+ python-ruamel.yaml,
+ python-six,
+ python-univention-debug,
+ python-univention-directory-manager (>=14.0.15-4),
+ python-univention-lib,
+ python-univention-management-console,
+ ucs-school-lib-common,
+ univention-management-console,
+Provides:
+ ${python:Provides}
 Description: UCS@school - common Python modules
+ This package contains Python modules used by various
+ components of UCS@school.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: python3-ucsschool-lib
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python3:Depends},
+ python3-apt,
+ python3-click,
+ python3-colorlog,
+ python3-lazy-object-proxy,
+ python3-ldap,
+ python3-psutil,
+ python3-ruamel.yaml,
+ python3-six,
+ python3-univention-debug,
+ python3-univention-directory-manager,
+ python3-univention-lib,
+ ucs-school-lib-common,
+ univention-management-console,
+Provides:
+ ${python3:Provides}
+Description: UCS@school - common Python 3 modules
  This package contains Python modules used by various
  components of UCS@school.
  .
@@ -33,10 +71,25 @@ Description: UCS@school - common Python modules
 
 Package: shell-ucs-school
 Architecture: all
-Depends: ${misc:Depends}
+Depends:
+ ${misc:Depends}
 Description: UCS@school - common shell functions
  This package contains shell functions used by various
  components of UCS@school.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-lib-common
+Architecture: all
+Depends:
+ ${misc:Depends}
+Breaks: python-ucs-school (<< 12.2.28),
+Description: UCS@school - common files of ucs-school-lib
+ This package contains files used by multiple ucs-school-lib
+ packages.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

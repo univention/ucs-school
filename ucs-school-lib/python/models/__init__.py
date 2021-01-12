@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import utils  # noqa: F401
+from ucsschool.lib.models import utils  # noqa: F401
 
 import univention.admin.modules as udm_modules
 
