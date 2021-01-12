@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-s4-branch-site
+fix:
+desc: |
+ * The python-support debhelper has been removed from the package <package>ucs-school-s4-branch-site</package> (Bug #52584).
+bug: [52584]
