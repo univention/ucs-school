@@ -452,7 +452,7 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
         fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
     )
     datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-    formatter_kwargs = {"fmt": fmt, "datefmt": datefmt}
+    formatter_kwargs = {"fmt": fmt, "datefmt": datefmt, "stream": sys.stdout if stream is None else stream}
     fmt_cls = fmt_cls or UCSTTYColoredFormatter
     if issubclass(fmt_cls, colorlog.ColoredFormatter):
         formatter_kwargs["log_colors"] = LOG_COLORS
