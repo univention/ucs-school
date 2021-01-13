@@ -40,9 +40,10 @@ EXPOSE 7890
 
 CMD ["/sbin/init"]
 
-LABEL "description"="Image of UCS app '$app_id'." \
+LABEL "description"="Image of UCS app 'UCS@school Kelvin REST API' ('$app_id')." \
     "url"="https://www.univention.com/products/univention-app-center/app-catalog/$app_id/" \
     "version"="$version" \
+    "release date"="$date" \
     "commit"="$commit"
 
 # package and Python dependency installation, base system configuration,
@@ -110,7 +111,6 @@ RUN /kelvin/venv/bin/python3 -m pip install --no-cache-dir --compile -i https://
 
 # copy and install project - separate last step for fast image rebuilds
 # install packages 'editable', so we can work directly on them
-LABEL "release date"="$date"
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
 COPY ucs-school-import/ /kelvin/ucs-school-import
 COPY ucsschool-kelvin-rest-api.initd /tmp/
