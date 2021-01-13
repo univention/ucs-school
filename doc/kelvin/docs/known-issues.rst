@@ -22,6 +22,7 @@ This can be done with the following commands::
 
     $ systemctl restart univention-directory-manager-rest.service
     $ univention-app shell ucsschool-kelvin-rest-api /var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/update_openapi_client
+    $ univention-app shell ucsschool-kelvin-rest-api /etc/init.d/ucsschool-kelvin-rest-api restart
 
 
 No pagination

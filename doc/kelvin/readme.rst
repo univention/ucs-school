@@ -19,6 +19,7 @@ Build HTML output from RST files
 
 To build the HTML documentation run::
 
+    $ cd doc/kelvin
     $ docker run -u "$(id -u):$(id -g)" -it --rm -v "$(pwd)/docs":/home/python/docs keimlink/sphinx-doc:1.7.1 make -C docs html
 
 Autobuild HTML docs during development
@@ -42,4 +43,22 @@ To stop the container hit ``Ctrl-C``.
 Publish HTML documentation
 --------------------------
 
-TODO
+After building the HTML files (see section ``Build HTML output from RST files`` above) the result has to be published.
+Add the files to the docs git repository and start a Jenkins job::
+
+    $ rsync -av --delete docs/_build/html/ ~/git/docs.univention.de/ucsschool-kelvin-rest-api/
+    $ cd ~/git/docs.univention.de/
+    $ git add -u
+    $ git commit -m "Bug #52220: update Kelvin API documentation"
+    $ git push
+
+The start the Jenkins job at https://jenkins.knut.univention.de:8181/view/Publish/job/Publish_docs.univention.de/ and open its terminal output page.
+After a while there will be a question if the prepared result should really be published. Verify the build and tell it to *proceed*::
+
+    [ftp] Is http://univention-repository.knut.univention.de/download/docs/ okay?
+    [ftp] Proceed or Abort
+
+The result will be uploaded to docs.software-univention.de and then there will be a second verify request::
+
+    Is https://docs.software-univention.de/ okay?
+    Proceed or Abort
