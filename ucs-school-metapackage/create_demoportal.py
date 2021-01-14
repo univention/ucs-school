@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2018-2021 Univention GmbH
@@ -34,6 +34,8 @@ import random
 import string
 import subprocess
 import sys
+
+from ldap.filter import filter_format
 
 import univention.admin.modules as modules
 from ucsschool.lib.models.group import SchoolClass
@@ -252,9 +254,9 @@ def create_school():
                     hostname_demoschool,
                 ]
             )
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError as exc:
             print("The following error occured while creating the Demo School object: \n")
-            print(e)
+            print(exc)
             sys.exit(1)
     kls = SchoolClass(name="{}-Democlass".format(SCHOOL[0]), school=SCHOOL[0])
     kls.create(lo)
@@ -331,9 +333,9 @@ def create_portal():
         entry_obj["displayName"] = [("en_US", en), ("de_DE", de)]
         entry_obj["description"] = [("en_US", descr_en), ("de_DE", descr_de)]
         entry_obj["link"] = [("en_US", link)]
-        with open(iconpath, "r") as fd:
+        with open(iconpath, "rb") as fd:
             content = fd.read()
-            entry_obj["icon"] = base64.b64encode(content)
+            entry_obj["icon"] = base64.b64encode(content).decode("ASCII")
         entry_obj["allowedGroups"] = [entry_groups[group]]
         to_create.append(entry_obj)
 
@@ -363,9 +365,9 @@ def create_portal():
         "cn=certificates,{}".format(pos_folder.getDn()),
         "cn=help,{}".format(pos_folder.getDn()),
     ]
-    with open("/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.jpg", "r") as fd:
+    with open("/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.jpg", "rb") as fd:
         content = fd.read()
-        portal_obj["background"] = base64.b64encode(content)
+        portal_obj["background"] = base64.b64encode(content).decode("ASCII")
     to_create.append(portal_obj)
 
     for o in to_create:
@@ -387,36 +389,27 @@ def already_exists(check_obj):
     Checks if a given object already exists in the LDAP
     (works only with portal, portal categories and portal entries)
     """
-    obj_type = type(check_obj)
-    if obj_type == module_portal.object:
-        return (
-            len(
-                module_portal.lookup(
-                    None, lo, "name={}".format(check_obj.get("name")), base=check_obj.position.getBase()
-                )
-            )
-            > 0
-        )
-    elif obj_type == module_portal_c.object:
-        return (
-            len(
-                module_portal_c.lookup(
-                    None, lo, "name={}".format(check_obj.get("name")), base=check_obj.position.getBase()
-                )
-            )
-            > 0
-        )
-    elif obj_type == module_portal_e.object:
-        return (
-            len(
-                module_portal_e.lookup(
-                    None, lo, "name={}".format(check_obj.get("name")), base=check_obj.position.getBase()
-                )
-            )
-            > 0
-        )
+    module = None
+    if isinstance(check_obj, module_portal.object):
+        module = module_portal
+    elif isinstance(check_obj, module_portal_c.object):
+        module = module_portal_c
+    elif isinstance(check_obj, module_portal_e.object):
+        module = module_portal_e
     else:
-        raise ValueError("The checked object is no portal[_entry|_category] object!")
+        raise TypeError("The checked object is no portal[_entry|_category] object!")
+
+    return (
+        len(
+            module.lookup(
+                None,
+                lo,
+                filter_format("name=%s", (check_obj.get("name"),)),
+                base=check_obj.position.getBase(),
+            )
+        )
+        > 0
+    )
 
 
 if __name__ == "__main__":
