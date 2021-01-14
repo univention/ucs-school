@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #  Check App version
@@ -57,7 +57,7 @@ if not app.is_installed():
 try:
     master_version = info["installations"][hostname_master]["version"]
     if master_version is None:
-        raise KeyError
+        raise KeyError()
 except KeyError:
     print('App "{}" is not installed on DC master.'.format(app_name))
     sys.exit(2)

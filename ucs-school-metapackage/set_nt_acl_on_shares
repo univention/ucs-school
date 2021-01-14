@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2020-2021 Univention GmbH
@@ -28,8 +28,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import argparse
 import logging
-import optparse
 import sys
 
 import univention.admin.uldap
@@ -75,12 +75,12 @@ def main(options):
         class_shares = sorted(
             [ClassShare.from_school_class(c) for c in school_classes], key=lambda x: x.name
         )
-        class_shares = filter(lambda x: x.exists(lo), class_shares)
+        class_shares = [x for x in class_shares if x.exists(lo)]
         work_groups = WorkGroup.get_all(lo, school=school.name)
         work_group_shares = sorted(
             [WorkGroupShare.from_school_class(w) for w in work_groups], key=lambda x: x.name
         )
-        work_group_shares = filter(lambda x: x.exists(lo), work_group_shares)
+        work_group_shares = [x for x in work_group_shares if x.exists(lo)]
         all_shares = [("class share", share) for share in class_shares] + [
             ("work group share", share) for share in work_group_shares
         ]
@@ -89,7 +89,7 @@ def main(options):
         if market_place:
             all_shares.append(("market place", market_place[0]))
         fqdn = "{}.{}".format(ucr["hostname"], ucr["domainname"])
-        all_shares = filter(lambda x: x[1].get_udm_object(lo)["host"] == fqdn, all_shares)
+        all_shares = [x for x in all_shares if x[1].get_udm_object(lo)["host"] == fqdn]
 
         for share_num, (share_type, share) in enumerate(all_shares):
             share_udm = share.get_udm_object(lo)
@@ -115,10 +115,8 @@ def main(options):
 
 
 if __name__ == "__main__":
-    parser = optparse.OptionParser()
-    parser.add_option("--binddn", dest="binddn", action="store", default=None, help="LDAP binddn")
-    parser.add_option(
-        "--bindpwdfile", dest="bindpwdfile", action="store", default=None, help="path to password file"
-    )
-    (options, args) = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--binddn", default=None, help="LDAP binddn")
+    parser.add_argument("--bindpwdfile", default=None, help="path to password file")
+    options = parser.parse_args()
     main(options)

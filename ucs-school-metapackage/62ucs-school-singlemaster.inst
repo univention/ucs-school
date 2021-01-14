@@ -57,7 +57,7 @@ append_ucr_policy_to_base() {
 	value="${2?append_ucr_policy: Value missing}"
 	shift 2
 
-	key_hex=$(python -c "print '$key'.encode('hex')")
+	key_hex=$(python3 -c "import binascii; print(binascii.hexlify(b'$key').decode('ASCII'))")
 
 	policy_dn_list=$(univention-directory-manager container/dc list "$@" \
 		--dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
@@ -183,7 +183,7 @@ if is_ucr_true "ucsschool/join/create_demo"; then
 	touch /etc/ucsschool/demoschool.secret
 	chmod 640 /etc/ucsschool/demoschool.secret
 	makepasswd --chars 16 > /etc/ucsschool/demoschool.secret
-	python /usr/share/ucs-school-metapackage/scripts/create_demoportal.py
+	/usr/share/ucs-school-metapackage/scripts/create_demoportal.py
 	univention-config-registry set ucsschool/join/create_demo=no
 fi
 
@@ -208,7 +208,7 @@ fi
 # From 4.4 v9 on force user to (re)run join scripts, which will install the veyon proxy app in the
 # pre-join hooks (Bug #52525, Bug #52660).
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ]; then
-	if python -c '''
+	if python3 -c '''
 import sys
 from distutils.version import LooseVersion
 from univention.appcenter.app_cache import Apps

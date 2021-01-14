@@ -1,4 +1,4 @@
-#!/usr/bin/pytest
+#!/usr/bin/pytest-3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2020-2021 Univention GmbH
@@ -32,6 +32,8 @@ import imp
 import os.path
 import sys
 
+import pytest
+
 if sys.version_info.major > 2:
     import builtins
     from unittest import mock
@@ -45,13 +47,13 @@ else:
     mock_import_func = "__builtin__.__import__"
 
 try:
-    import logging
-    from typing import Any, List, NamedTuple, Optional
+    import logging  # noqa: F401
+    from typing import Any, List, NamedTuple, Optional  # noqa: F401
 
     from typing_extensions import Protocol
 
-    from univention.config_registry import ConfigRegistry
-    from univention.lib.package_manager import PackageManager
+    from univention.config_registry import ConfigRegistry  # noqa: F401
+    from univention.lib.package_manager import PackageManager  # noqa: F401
 
     StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
 
@@ -76,8 +78,6 @@ try:
 
 except ImportError:
     pass
-
-import pytest
 
 JOIN_HOOK_FILE = "ucsschool-join-hook.py"
 
