@@ -53,12 +53,22 @@ description = "\n".join(
 )
 
 
-SERVER_ROLES = ["domaincontroller_master", "domaincontroller_backup", "domaincontroller_slave"]
-
-
 def run(_umc_instance):
-    if ucr.get("server/role") not in SERVER_ROLES:
+    server_role = ucr["server/role"]
+    if server_role == "domaincontroller_master" and ucr.is_false("ucsschool/singlemaster"):
+        # not a single master
         return
+
+    if server_role == "domaincontroller_slave":
+        host_dn = ucr["ldap/hostdn"]
+        lo = _umc_instance.get_user_ldap_connection()
+        edu_dc_dns = lo.getAttr(
+            "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"]), "uniqueMember"
+        )
+        if host_dn not in edu_dc_dns:
+            # not a school server
+            return
+
     cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
