@@ -44,18 +44,12 @@ from univention.management.console.modules.diagnostic import Problem
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 title = _("UCS@school Check if Samba4 is installed")
-description = "\n".join(
-    [
-        _(
-            "UCS@school: Test that checks if the host role is a master, slave or backup DC, samba4 is installed."
-        ),
-    ]
-)
+description = "\n".join([_("UCS@school: Test that checks samba4 is installed on a school server."),])
 
 
 def run(_umc_instance):
     server_role = ucr["server/role"]
-    if server_role == "domaincontroller_master" and ucr.is_false("ucsschool/singlemaster"):
+    if server_role == "domaincontroller_master" and ucr.is_false("ucsschool/singlemaster", default=True):
         # not a single master
         return
 
