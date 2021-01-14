@@ -47,18 +47,32 @@ title = _("UCS@school Check if Samba4 is installed")
 description = "\n".join(
     [
         _(
-            "UCS@school: Test that checks if the host role is a master, slave or backup DC, samba4 is installed."
+            "UCS@school: Test that checks if Samba4 is installed on a single master or on a school server in a multi-server-environment."
         ),
     ]
 )
 
 
-SERVER_ROLES = ["domaincontroller_master", "domaincontroller_backup", "domaincontroller_slave"]
-
-
 def run(_umc_instance):
-    if ucr.get("server/role") not in SERVER_ROLES:
+    server_role = ucr["server/role"]
+    if server_role == "domaincontroller_backup":
         return
+    if server_role == "domaincontroller_master" and ucr.is_false("ucsschool/singlemaster", default=True):
+        # not a single master
+        return
+    if server_role == "domaincontroller_slave":
+        host_dn = ucr["ldap/hostdn"]
+        lo = _umc_instance.get_user_ldap_connection()
+        edu_dc_dns = lo.getAttr(
+            "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"]), "uniqueMember"
+        )
+        admin_dc_dns = lo.getAttr(
+            "cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"]), "uniqueMember"
+        )
+        if not any(host_dn in dns for dns in [edu_dc_dns, admin_dc_dns]):
+            # not a school server
+            return
+
     cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
