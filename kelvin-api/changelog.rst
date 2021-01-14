@@ -5,6 +5,10 @@
 Changelog
 ---------
 
+v1.2.1 (2021-01-14)
+...................
+* Validation errors when reading malformed user objects from LDAP now produce more helpful error messages (Bug #52368).
+
 v1.2.0 (2020-11-12)
 ...................
 * Improve user resource search speed: find all matching users with one lookup (Bug #51813).

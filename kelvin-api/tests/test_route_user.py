@@ -362,6 +362,42 @@ async def test_search_filter_udm_properties(
 
 
 @pytest.mark.asyncio
+async def test_search_user_without_firstname(
+    auth_header, url_fragment, create_random_users, udm_kwargs
+):
+    role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
+    user = (await create_random_users({role: 1}))[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_user = (
+            await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}")
+        )[0]
+        assert lib_user.firstname
+        response = requests.get(
+            f"{url_fragment}/users",
+            headers=auth_header,
+            params={"school": "DEMOSCHOOL"},
+        )
+        assert response.status_code == 200, (response.reason, response.content)
+        json_resp = response.json()
+        assert any(u["firstname"] == user.firstname for u in json_resp)
+        # reading the user is OK at this point
+        udm_user = await udm.get("users/user").get(lib_user.dn)
+        udm_user.props.firstname = ""
+        await udm_user.save()
+        # should fail now:
+        response = requests.get(
+            f"{url_fragment}/users",
+            headers=auth_header,
+            params={"school": "DEMOSCHOOL"},
+        )
+        assert response.status_code == 500, (response.reason, response.content)
+        json_resp = response.json()
+        assert lib_user.dn in json_resp["detail"]
+        assert "firstname" in json_resp["detail"]
+        assert "none is not an allowed value" in json_resp["detail"]
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_get(
     auth_header,
@@ -499,8 +535,8 @@ async def test_create_without_username(
     r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
     )
-    r_user.name = ""
-    data = r_user.json()
+    data = r_user.json(exclude={"name"})
+    assert "'name'" not in data
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
@@ -551,18 +587,18 @@ async def test_create_minimal_attrs(
     r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], disabled=False
     )
-    data = r_user.dict()
-    for attr in (
-        "birthday",
-        "disabled",
-        no_school_s,
-        "email",
-        "name",
-        "source_uid",
-        "ucsschool_roles",
-        "udm_properties",
-    ):
-        del data[attr]
+    data = r_user.dict(
+        exclude={
+            "birthday",
+            "disabled",
+            no_school_s,
+            "email",
+            "name",
+            "source_uid",
+            "ucsschool_roles",
+            "udm_properties",
+        }
+    )
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
@@ -608,10 +644,8 @@ async def test_create_requires_school_or_schools(
     r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], disabled=False
     )
-    data = r_user.dict()
+    data = r_user.dict(exclude={"school", "schools"})
     data["birthday"] = data["birthday"].isoformat()
-    del data["school"]
-    del data["schools"]
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
@@ -700,10 +734,7 @@ async def test_put(
     print("OK: can login with old password")
     new_user_data = (
         await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict()
-    del new_user_data["name"]
-    del new_user_data["record_uid"]
-    del new_user_data["source_uid"]
+    ).dict(exclude={"name", "record_uid", "source_uid"})
     title = random_name()
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
@@ -755,11 +786,9 @@ async def test_put_with_password_hashes(
     print("OK: can login with old password")
     new_user_data = (
         await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict()
-    del new_user_data["name"]
-    del new_user_data["password"]
-    del new_user_data["record_uid"]
-    del new_user_data["source_uid"]
+    ).dict(exclude={"name", "password", "record_uid", "source_uid"})
+    for key in ("name", "password", "record_uid", "source_uid"):
+        assert key not in new_user_data
     modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
     modified_user.password = None
     password_new, password_new_hashes = await password_hash()
@@ -809,10 +838,7 @@ async def test_patch(
     print("OK: can login with old password")
     new_user_data = (
         await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict()
-    del new_user_data["name"]
-    del new_user_data["record_uid"]
-    del new_user_data["source_uid"]
+    ).dict(exclude={"name", "record_uid", "source_uid"})
     new_user_data["birthday"] = str(new_user_data["birthday"])
     for key in random.sample(
         new_user_data.keys(), random.randint(1, len(new_user_data.keys()))
@@ -869,12 +895,7 @@ async def test_patch_with_password_hashes(
     print("OK: can login with old password")
     new_user_data = (
         await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict()
-    del new_user_data["name"]
-    del new_user_data["record_uid"]
-    del new_user_data["source_uid"]
-    del new_user_data["birthday"]
-    del new_user_data["password"]
+    ).dict(exclude={"birthday", "name", "password", "record_uid", "source_uid"})
     password_new, password_new_hashes = await password_hash()
     new_user_data["kelvin_password_hashes"] = password_new_hashes.dict()
     print(f"PATCH new_user_data={new_user_data!r}.")
@@ -954,12 +975,10 @@ async def test_rename(
     elif method == "put":
         user_data = (
             await create_random_user_data(roles=[url_fragment, url_fragment])
-        ).dict()
-        del user_data["roles"]
+        ).dict(exclude={"roles"})
         user = (await create_random_users({role.name: 1}, **user_data))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
-        old_data = user.dict()
-        del old_data["name"]
+        old_data = user.dict(exclude={"name"})
         modified_user = UserCreateModel(name=new_name, **old_data)
         response = requests.put(
             f"{url_fragment}/users/{user.name}",
@@ -1028,10 +1047,7 @@ async def test_school_change(
                 json=patch_data,
             )
         elif method == "put":
-            old_data = user.dict()
-            del old_data["school"]
-            del old_data["schools"]
-            del old_data["school_classes"]
+            old_data = user.dict(exclude={"school", "schools", "school_classes"})
             modified_user = UserCreateModel(
                 school=new_school_url, schools=[new_school_url], **old_data
             )

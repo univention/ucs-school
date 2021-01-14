@@ -66,7 +66,7 @@ class FormatFirstnamePyHook(FormatPyHook):
         "patch_fields_student": 10,
         "patch_fields_teacher_and_staff": 10,
     }
-    properties = ("firstname",)
+    properties = ("record_uid",)
 
     def crazy_camel(self, property_name: str, fields: Dict[str, Any]) -> Dict[str, Any]:
         import random
@@ -144,7 +144,7 @@ class UserBirthdayPyHook(UserPyHook):
         await self.test_lo()
         await self.test_udm()
 
-        user.firstname = user.lastname
+        user.record_uid = user.lastname
         self.logger.info("   -> NEW GIVEN NAME")
 
     async def post_modify(self, user: ImportUser) -> None:
@@ -250,8 +250,7 @@ async def test_format_pyhook(
     r_user = await create_random_user_data(
         roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
     )
-    r_user.firstname = ""
-    data = r_user.json()
+    data = r_user.json(exclude={"record_uid"})
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
@@ -266,10 +265,10 @@ async def test_format_pyhook(
     response_json = response.json()
     api_user = UserModel(**response_json)
     if role.name in ("staff", "teacher"):
-        assert api_user.firstname == api_user.lastname
+        assert api_user.record_uid == api_user.lastname
     else:
-        assert api_user.firstname != api_user.lastname
-        assert api_user.firstname.lower() == api_user.lastname.lower()
+        assert api_user.record_uid != api_user.lastname
+        assert api_user.record_uid.lower() == api_user.lastname.lower()
 
 
 @pytest.mark.asyncio
@@ -322,7 +321,7 @@ async def test_user_pyhook(
     )
     assert response.status_code == 200, response.reason
     api_user = UserModel(**response.json())
-    assert api_user.firstname == api_user.lastname
+    assert api_user.record_uid == api_user.lastname
 
     response = requests.delete(
         f"{url_fragment}/users/{r_user.name}",

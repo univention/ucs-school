@@ -50,7 +50,15 @@ if TYPE_CHECKING:  # pragma: no cover
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from ldap.filter import escape_filter_chars
-from pydantic import BaseModel, Field, HttpUrl, SecretStr, root_validator, validator
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    SecretStr,
+    ValidationError,
+    root_validator,
+    validator,
+)
 from starlette.requests import Request
 from starlette.status import (
     HTTP_200_OK,
@@ -60,6 +68,7 @@ from starlette.status import (
     HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from ucsschool.importer.configuration import ReadOnlyDict
@@ -570,7 +579,16 @@ async def search(
     except APICommunicationError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.reason)
     users.sort(key=attrgetter("name"))
-    return [await UserModel.from_lib_model(user, request, udm) for user in users]
+    res: List[UserModel] = []
+    for user in users:
+        try:
+            obj = await UserModel.from_lib_model(user, request, udm)
+        except ValidationError as exc:
+            msg = f"Validation error when reading user {user.dn!r}: {exc!s}"
+            logger.error(msg)
+            raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=msg)
+        res.append(obj)
+    return res
 
 
 @router.get("/{username}", response_model=UserModel)
