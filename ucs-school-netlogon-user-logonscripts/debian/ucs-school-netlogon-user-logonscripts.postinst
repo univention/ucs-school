@@ -51,6 +51,6 @@ mkdir -p /var/lib/samba/netlogon/user
 #DEBHELPER#
 
 # restart listener only if listener was running before
-/etc/init.d/univention-directory-listener crestart
+systemctl try-restart univention-directory-listener
 
 exit 0
