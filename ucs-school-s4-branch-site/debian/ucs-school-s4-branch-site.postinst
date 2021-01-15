@@ -44,9 +44,7 @@ if [ "$1" = "configure" ]; then
 		:
 	fi
 
-	if [ -x /etc/init.d/univention-directory-listener ]; then
-		/etc/init.d/univention-directory-listener crestart
-	fi
+	systemctl try-restart univention-directory-listener
 fi
 
 exit 0
