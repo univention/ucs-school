@@ -30,7 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import six
-from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
+from ipaddress import AddressValueError, IPv4Network, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
 from univention.admin.filter import conjunction, expression, parse

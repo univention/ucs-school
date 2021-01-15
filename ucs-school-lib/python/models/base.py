@@ -51,6 +51,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
+from future.utils import with_metaclass
 
 try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
@@ -102,7 +103,7 @@ class MultipleObjectsError(Exception):
         self.objs = objs
 
 
-class UCSSchoolHelperAbstractClass(object):
+class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, object)):
     """
     Base class of all UCS@school models.
     Hides UDM.
@@ -212,8 +213,6 @@ class UCSSchoolHelperAbstractClass(object):
             class Meta:
                 hook_path = 'computer'
     """
-
-    __metaclass__ = UCSSchoolHelperMetaClass
     _cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
     _machine_connection = None  # type: LoType
     _search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
@@ -263,7 +262,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def invalidate_cache(cls):  # type: () -> None
-        for key in cls._cache.keys():
+        for key in cls._cache.copy().keys():
             if key[0] == cls.__name__:
                 cls._cache.pop(key)
 
@@ -329,6 +328,7 @@ class UCSSchoolHelperAbstractClass(object):
         """
         if self.name and self.position:
             name = self._meta.ldap_map_function(self.name)
+            name = name.decode('utf-8') if isinstance(name, bytes) else name
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
@@ -463,7 +463,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         # create temporary file with data
         with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line)
+            tmpfile.write(line if isinstance(line, bytes) else line.encode('utf-8'))
             tmpfile.flush()
 
             # invoke hook scripts
@@ -723,6 +723,7 @@ class UCSSchoolHelperAbstractClass(object):
                 name = explode_dn(dn, 1)[0]
             except ldap.DECODING_ERROR:
                 name = ""
+            name = name if isinstance(name, bytes) else name.encode('utf-8')
             return cls._meta.ldap_unmap_function([name])
 
     @classmethod

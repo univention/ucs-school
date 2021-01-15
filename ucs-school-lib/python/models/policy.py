@@ -46,7 +46,7 @@ class Policy(UCSSchoolHelperAbstractClass):
         oc = lo.get(obj.dn, ["objectClass"])
         if "univentionPolicyReference" not in oc.get("objectClass", []):
             try:
-                lo.modify(obj.dn, [("objectClass", "", "univentionPolicyReference")])
+                lo.modify(obj.dn, [("objectClass", "", b"univentionPolicyReference")])
             except ldap.LDAPError:
                 self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
                 return
@@ -54,7 +54,7 @@ class Policy(UCSSchoolHelperAbstractClass):
         pl = lo.get(obj.dn, ["univentionPolicyReference"])
         self.logger.info("Attaching %r to %r", self, obj)
         if self.dn.lower() not in map(lambda x: x.lower(), pl.get("univentionPolicyReference", [])):
-            modlist = [("univentionPolicyReference", "", self.dn)]
+            modlist = [("univentionPolicyReference", "", self.dn.encode('utf-8'))]
             try:
                 lo.modify(obj.dn, modlist)
             except ldap.LDAPError:

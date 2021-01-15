@@ -37,6 +37,7 @@ import string
 import subprocess
 import sys
 from contextlib import contextmanager
+from io import IOBase
 from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from random import choice, shuffle
 
@@ -223,7 +224,7 @@ class ModuleHandler(logging.Handler):
         """log to univention debug, remove password from dicts in args"""
         _remove_password_from_log_record(record)
         msg = self.format(record)
-        if isinstance(msg, unicode):
+        if not isinstance(msg, bytes):
             msg = msg.encode("utf-8")
         udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
         ud.debug(self._udebug_facility, udebug_level, msg)
@@ -489,7 +490,7 @@ def get_logger(
     """
     if not name:
         name = "noname"
-    if isinstance(target, file) or hasattr(target, "write"):
+    if isinstance(target, IOBase) or hasattr(target, "write"):
         # file like object
         filename = target.name
     else:
@@ -510,7 +511,7 @@ def get_logger(
     if not isinstance(formatter_kwargs, dict):
         formatter_kwargs = dict()
 
-    if isinstance(target, file) or hasattr(target, "write"):
+    if isinstance(target, IOBase) or hasattr(target, "write"):
         handler_defaults = dict(cls=UniStreamHandler, stream=target)
         fmt = "%(log_color)s{}".format(CMDLINE_LOG_FORMATS[level])
         fmt_cls = colorlog.TTYColoredFormatter
@@ -545,7 +546,7 @@ def get_logger(
         handler.setFormatter(formatter)
         _logger.addHandler(handler)
         _handler_cache[cache_key] = handler
-    _logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
+    _logger.warning('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
     return _logger
 
 
