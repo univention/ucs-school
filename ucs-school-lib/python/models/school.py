@@ -206,7 +206,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         last_dn = self.dn
         path = None
-        for path, containers in containers_with_path.iteritems():
+        for path, containers in containers_with_path.items():
             for cn in containers:
                 last_dn = _add_container(cn, last_dn, self.dn, path, lo)
 

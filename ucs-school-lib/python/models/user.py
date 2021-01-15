@@ -655,7 +655,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             cls._meta.udm_module,
             None,
             lo,
-            filter=unicode(filter_object_type),
+            filter=u"{}".format(filter_object_type),
             scope="sub",
             superordinate=superordinate,
         )
