@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 
 # Copyright (C) 2019-2021 Univention GmbH
 #
@@ -56,7 +56,7 @@ except ImportError:
 else:
     _UDM_MODULE_NAME2OC_ROLE = {
         "computers/domaincontroller_backup": (
-            "ucsschoolServer",
+            b"ucsschoolServer",
             "ignore",
         ),  # ignore, done in join script
         "computers/domaincontroller_master": (
@@ -149,8 +149,7 @@ class UcsschoolRoleComputers(simpleHook):
                 role_str = role_memberserver
             else:
                 return aml
-
-        roles = {create_ucsschool_role_string(role_str, school) for school in obj_schools}
+        roles = {create_ucsschool_role_string(role_str, school).encode('utf-8') for school in obj_schools}
         missing_roles = roles - existing_roles
         if missing_roles:
             if operation == "add":

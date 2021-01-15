@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # UCS@school purge timestamp hook
 #
@@ -80,8 +80,9 @@ class UcsschoolPurgeTimestamp(simpleHook):
     @classmethod
     def ldap2udm(cls, ldap_val):
         """Convert '20090101000000Z' to '2009-01-01'. Ignores timezones."""
+        ldap_val = ldap_val.decode('utf-8')
         if not ldap_val:
-            return ""
+            return u""
         ldap_date = datetime.datetime.strptime(ldap_val, cls.ldap_date_format)
         return ldap_date.strftime(cls.udm_date_format)
 
@@ -91,4 +92,5 @@ class UcsschoolPurgeTimestamp(simpleHook):
         if not udm_val:
             return ""
         udm_date = datetime.datetime.strptime(udm_val, cls.udm_date_format)
-        return udm_date.strftime(cls.ldap_date_format)
+        udm_date = udm_date.strftime(cls.ldap_date_format)
+        return udm_date.encode('ASCII')
