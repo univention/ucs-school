@@ -53,7 +53,7 @@ root@master:~#
 	Auf dem UCS-System, auf dem der betroffene DHCP-Server läuft (in Single-Server-Umgebungen ist dies der &ucsMaster; in Multi-Server-Umgebungen i.d.R. ein konkreter Schulserver), muss anschießend eine UCR-Variable entfernt und der DHCP-Server neu gestartet werden:
 	<programlisting>
 ucr unset dhcpd/options/wpad/252
-/etc/init.d/univention-dhcp restart
+service univention-dhcp restart
 	</programlisting>
   </para>
   <para>
