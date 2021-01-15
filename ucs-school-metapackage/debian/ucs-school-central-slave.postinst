@@ -50,7 +50,7 @@ univention-config-registry set \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false
 
-/etc/init.d/univention-directory-listener crestart
+systemctl try-restart univention-directory-listener
 
 #DEBHELPER#
 
