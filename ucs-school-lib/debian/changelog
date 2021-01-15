@@ -1,3 +1,10 @@
+ucs-school-lib (13.0.2) unstable; urgency=medium
+
+  * Bug #52603: use systemctl to start stop and check status of
+    univention-directory-notifier
+
+ -- Sebastian Lobinger <lobinger@univention.de>  Fri, 15 Jan 2021 13:19:27 +0100
+
 ucs-school-lib (13.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
