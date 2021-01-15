@@ -343,7 +343,7 @@ class UCSSchoolHelperAbstractClass(object):
         likely change the outcome of self.dn as well
         """
         if self.name and self.position:
-            name = self._meta.ldap_map_function(self.name)
+            name = self._meta.ldap_map_function(self.name).decode('utf-8')
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
@@ -484,7 +484,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         # create temporary file with data
         with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line)
+            tmpfile.write(line.encode("utf-8"))
             tmpfile.flush()
 
             # invoke hook scripts
@@ -841,6 +841,7 @@ class UCSSchoolHelperAbstractClass(object):
                 name = explode_dn(dn, 1)[0]
             except ldap.DECODING_ERROR:
                 name = ""
+            name = name.encode("utf-8")
             return cls._meta.ldap_unmap_function([name])
 
     @classmethod

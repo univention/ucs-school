@@ -32,7 +32,7 @@
 
 import re
 
-import six
+from six import string_types
 
 import univention.config_registry
 from univention.management.console.config import ucr
@@ -93,7 +93,7 @@ class Rule(object):
         """domains can be a list of strings or a list of index-string-type tuples."""
         self._domains = []
         for i in domains:
-            if isinstance(i, six.string_types):
+            if isinstance(i, string_types):
                 self._domains.append((-1, i, self.type))
             else:
                 self._domains.append(i)

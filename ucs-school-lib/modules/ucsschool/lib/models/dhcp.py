@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import ipaddr
+import ipaddress
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 
@@ -124,12 +124,13 @@ class DHCPService(UCSSchoolHelperAbstractClass):
                 [key.split("/")[1] for key in ucr.keys() if key.startswith("interfaces/eth")]
             ):
                 try:
-                    address = ipaddr.IPv4Network(
-                        "%s/%s"
+                    address = ipaddress.IPv4Network(
+                        u"%s/%s"
                         % (
                             ucr["interfaces/%s/address" % interface_name],
                             ucr["interfaces/%s/netmask" % interface_name],
-                        )
+                        ),
+                        strict=False,
                     )
                     interfaces.append(address)
                 except ValueError as exc:
@@ -235,10 +236,10 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
         if self.dhcp_service:
             return self.dhcp_service.get_udm_object(lo)
 
-    def get_ipv4_subnet(self):  # type: () -> ipaddr.IPv4Network
-        network_str = "%s/%s" % (self.name, self.subnet_mask)
+    def get_ipv4_subnet(self):  # type: () -> ipaddress.IPv4Network
+        network_str = u"%s/%s" % (self.name, self.subnet_mask)
         try:
-            return ipaddr.IPv4Network(network_str)
+            return ipaddress.IPv4Network(network_str, strict=False)
         except ValueError as exc:
             self.logger.info("%r is no valid IPv4Network:\n%s", network_str, exc)
 
