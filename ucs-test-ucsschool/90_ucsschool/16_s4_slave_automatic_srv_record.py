@@ -93,7 +93,7 @@ class Test:
     def __exit__(self, type, value, traceback):
         os.unlink(os.path.join(LISTENER_HOOKS_BASEDIR, "01_hook.py"))
         os.unlink(os.path.join(LISTENER_HOOKS_BASEDIR, "02_hook.py"))
-        cmd = ["/etc/init.d/univention-directory-listener", "restart"]
+        cmd = ["systemctl", "restart", "univention-directory-listener"]
         p1 = subprocess.Popen(cmd)
         p1.wait()
 
@@ -217,7 +217,7 @@ class Test:
                     )
 
             # restart listener to load the test hooks before the test DCs get removed
-            cmd = ["/etc/init.d/univention-directory-listener", "restart"]
+            cmd = ["systemctl", "restart", "univention-directory-listener"]
             p1 = subprocess.Popen(cmd)
             p1.wait()
 
