@@ -46,7 +46,6 @@ import apt
 import colorlog
 import lazy_object_proxy
 import ruamel.yaml
-from psutil import NoSuchProcess, process_iter
 from six import string_types
 
 import univention.debug as ud
@@ -638,7 +637,7 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
 def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
     """
     Stops univention-directory-notifier while in a block and starts it in the
-    end. Service if stopped/started by /etc/init.d.
+    end. Service if stopped/started by systemctl.
 
     Will not start if ``ucr get notifier/autostart=no`` -- but *will* stop!
 
@@ -657,46 +656,31 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
         returncode, stdout, stderr = exec_cmd(args, log=True)
         return returncode == 0
 
-    notifier_running = False
     logger.info("Stopping %s", service_name)
-    for process in process_iter():
-        try:
-            if process.name() == service_name:
-                notifier_running = True
-                break
-        except (IOError, NoSuchProcess):
-            pass
-    if not notifier_running:
-        logger.warning("%s is not running! Skipping", service_name)
+    if _run(["systemctl", "stop", service_name]):
+        logger.info("%s stopped", service_name)
     else:
-        if _run(["/etc/init.d/%s" % service_name, "stop"]):
-            logger.info("%s stopped", service_name)
+        logger.error("Failed to stop %s...", service_name)
+        if strict:
+            raise RuntimeError(
+                "Failed to stop %s, but this seems to be very important (strict=True was specified)"
+                % service_name
+            )
         else:
-            logger.error("Failed to stop %s...", service_name)
-            if strict:
-                raise RuntimeError(
-                    "Failed to stop %s, but this seems to be very important (strict=True was specified)"
-                    % service_name
-                )
-            else:
-                logger.warning("In the end, will try to start it nonetheless")
+            logger.warning("In the end, will try to start it nonetheless")
     try:
         yield
     finally:
         logger.info("Starting %s", service_name)
-        if not notifier_running:
-            logger.warning("Notifier was not running! Skipping")
+        command = ["systemctl", "start", service_name]
+        if _run(command):
+            logger.info("%s started", service_name)
         else:
-            start_disabled = ucr.is_false("notifier/autostart", False)
-            command = ["/etc/init.d/%s" % service_name, "start"]
-            if not start_disabled and _run(command):
-                logger.info("%s started", service_name)
-            else:
-                logger.error(
-                    'Failed to start %s... Bad news! Better run "%s" manually!',
-                    service_name,
-                    " ".join(command),
-                )  # correct: shlex... unnecessary
+            logger.error(
+                'Failed to start %s... Bad news! Better run "%s" manually!',
+                service_name,
+                " ".join(command),
+            )  # correct: shlex... unnecessary
 
 
 def _write_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> None
