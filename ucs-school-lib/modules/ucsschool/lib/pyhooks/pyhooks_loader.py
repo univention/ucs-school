@@ -138,7 +138,7 @@ class PyHooksLoader(object):
                             self.logger.info(
                                 "Hook class %r filtered out by %s().",
                                 a_class.__name__,
-                                filter_func.func_name,
+                                filter_func.__name__,
                             )
             self.logger.info(
                 "Found hook classes: %s",
@@ -204,7 +204,7 @@ class PyHooksLoader(object):
                     [
                         (
                             meth_name,
-                            ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths],
+                            ["{}.{}".format(m.im_class.__name__, m.im_func.__name__) for m in meths],
                         )
                         for meth_name, meths in iteritems(self._pyhook_obj_cache)
                     ]
