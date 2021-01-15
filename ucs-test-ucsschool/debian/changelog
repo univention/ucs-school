@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.0.1-1) unstable; urgency=medium
+
+  * Bug #52603: use systemctl to restart univention-directory-listener
+
+ -- Sebastian Lobinger <lobinger@univention.de>  Fri, 15 Jan 2021 11:16:32 +0100
+
 ucs-test-ucsschool (7.0.0-1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
