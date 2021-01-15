@@ -219,9 +219,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):
         ocs = set(udm_obj.oldattr.get("objectClass", []))
-        if ocs >= set(["ucsschoolTeacher", "ucsschoolStaff"]):
+        if ocs >= {"ucsschoolTeacher", "ucsschoolStaff"}:
             return TeachersAndStaff
-        if ocs >= set(["ucsschoolExam", "ucsschoolStudent"]):
+        if ocs >= {"ucsschoolExam", "ucsschoolStudent"}:
             return ExamStudent
         if "ucsschoolTeacher" in ocs:
             return Teacher
@@ -640,7 +640,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             cls._meta.udm_module,
             None,
             lo,
-            filter=unicode(filter_object_type),
+            filter=u"{}".format(filter_object_type),
             scope="sub",
             superordinate=superordinate,
         )
