@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 
 # Copyright (C) 2019-2021 Univention GmbH
 #
