@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # UCS@school OU hook
 #
@@ -31,7 +31,7 @@
 import univention.debug as ud
 from univention.admin.hook import simpleHook
 
-OBJECTCLASS_SCHOOLOU = "ucsschoolOrganizationalUnit"
+OBJECTCLASS_SCHOOLOU = b"ucsschoolOrganizationalUnit"
 OPTION_SCHOOLOU = "UCSschool-School-OU"
 ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer", "displayName")
 
@@ -75,7 +75,7 @@ class schoolOU(simpleHook):
 
                 if not isinstance(add_val, list):
                     add_val = set([add_val])
-                    add_val.discard("")
+                    add_val.discard(b"")
                 ocs |= set(add_val)
 
                 ml.remove(modification)
@@ -88,7 +88,7 @@ class schoolOU(simpleHook):
         else:
             ocs.discard(OBJECTCLASS_SCHOOLOU)
             for attr in ATTRIBUTE_LIST:
-                ml.append((attr, module.oldattr.get(attr, ""), ""))
+                ml.append((attr, module.oldattr.get(attr, b""), b""))
 
         ml.append(("objectClass", old_ocs, list(ocs)))
 
