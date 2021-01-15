@@ -108,7 +108,7 @@ class SchoolSearchBase(object):
         if match:
             return match.group(1)
 
-    _RE_OUDN = re.compile("(?:^|,)(ou=.*)$", re.I)
+    _RE_OUDN = re.compile(r"(?:^|,)(ou=.*)$", re.I)
 
     @property
     def dhcp(self):  # type: () -> str

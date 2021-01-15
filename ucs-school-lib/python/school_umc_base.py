@@ -148,7 +148,7 @@ class SchoolBaseModule(Base):
         groupresult = udm_modules.lookup(
             "groups/group", None, ldap_connection, scope=scope, base=ldap_base, filter=ldapFilter
         )
-        name_pattern = re.compile("^%s-" % (re.escape(school)), flags=re.I)
+        name_pattern = re.compile(r"^%s-" % (re.escape(school)), flags=re.I)
         return [{"id": grp.dn, "label": name_pattern.sub("", grp["name"])} for grp in groupresult]
 
     @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
@@ -246,9 +246,7 @@ class SchoolBaseModule(Base):
                 if pattern:
                     search_filter_list.append(LDAP_Filter.forUsers(pattern))
                 # concatenate LDAP filters
-                search_filter = unicode(
-                    conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
-                )
+                search_filter = u"{}".format(conjunction("&", [parse(subfilter) for subfilter in search_filter_list]))
                 for cls in classes:
                     try:
                         udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)
@@ -311,7 +309,7 @@ class SchoolBaseModule(Base):
                 for cls in classes:
                     search_filter_list.append(cls.type_filter)
                     # concatenate LDAP filters
-                    search_filter = unicode(
+                    search_filter = u"{}".format(
                         user_module.lookup_filter(
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
@@ -334,7 +332,7 @@ class SchoolBaseModule(Base):
                     # in both cases: ignore user
         else:
             for cls in classes:
-                filter_s = unicode(
+                filter_s = u"{}".format(
                     user_module.lookup_filter(
                         conjunction(
                             "&",
