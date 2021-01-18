@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (15.0.0-4) unstable; urgency=medium
+
+  * Bug #52658: migrate settings/console_helpdesk to Python 3
+
+ -- Florian Best <best@univention.de>  Wed, 02 Jun 2021 00:13:34 +0200
+
 ucs-school-umc-helpdesk (15.0.0-3) unstable; urgency=low
 
   * Bug #52945: use full path to model imports
