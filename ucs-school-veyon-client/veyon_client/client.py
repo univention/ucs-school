@@ -121,6 +121,7 @@ class VeyonClient:
             else:
                 if not renew_session:
                     raise VeyonError("The currently cached connection is invalid", 2)
+                self.remove_session(host)
                 session = self._create_session(host)
                 self._session_cache[host] = session
                 self._reset_idle_time(host)
@@ -129,13 +130,15 @@ class VeyonClient:
     def remove_session(self, host):  # type: (str) -> None
         """
         This function tries to close the currently cached connection to the host and then purges it
-        from the cache
+        from the cache. This function is not thread safe and thus needs to be used in an already thread safe context.
         :param str host: The host to remove the session for
         """
         try:
+            session = self._session_cache.get(host, None)
+            session_uid = session.connection_uid if session else ""
             requests.delete(
                 "{}/authentication".format(self._url),
-                headers={"Connection-Uid": self._get_connection_uid(host, renew_session=False)},
+                headers={"Connection-Uid": session_uid},
             )
         except VeyonError:
             pass  # We do not care if the connection was already invalid or does not exist anymore
