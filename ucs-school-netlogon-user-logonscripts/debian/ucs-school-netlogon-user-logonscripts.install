@@ -5,4 +5,5 @@ univention-management-console.ico usr/share/ucs-school-netlogon-user-logonscript
 univention-portal.ico usr/share/ucs-school-netlogon-user-logonscripts/
 logon_script_templates/* usr/share/ucs-school-netlogon-user-logonscripts/
 python/ucsschool/netlogon/*.py usr/lib/python2.7/dist-packages/ucsschool/netlogon
+python/ucsschool/netlogon/*.py usr/lib/python3/dist-packages/ucsschool/netlogon
 usr

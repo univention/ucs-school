@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (16.0.0-3) unstable; urgency=medium
+
+  * Bug #52647: Migrate ucs-school-user-logonscript to Python 3
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jan 2021 19:56:29 +0100
+
 ucs-school-netlogon-user-logonscripts (16.0.0-2) unstable; urgency=medium
 
   * Bug #52647: migrate to dh_python
