@@ -34,7 +34,7 @@ import stat
 import univention.config_registry
 
 try:
-    from typing import Any, List, Optional, Tuple
+    from typing import Any, List, Optional, Tuple  # noqa: F401
 except ImportError:
     pass
 
@@ -122,7 +122,7 @@ class SqliteQueue(object):
             )
 
         if not os.path.exists(self.filename):
-            self.logger.warn(
+            self.logger.warning(
                 "database does not exist - creating new one (filename=%r)" % (self.filename,)
             )
 
@@ -154,9 +154,9 @@ class SqliteQueue(object):
         """
         with Cursor(self.filename) as cursor:
             for userdn, username in users:
-                if isinstance(userdn, str):
+                if isinstance(userdn, bytes):  # Python 2
                     userdn = userdn.decode("utf-8")
-                if isinstance(username, str):
+                if isinstance(username, bytes):  # Python 2
                     username = username.decode("utf-8")
                 if username is not None:
                     cursor.execute(
@@ -187,13 +187,13 @@ class SqliteQueue(object):
         Removes a specific user DN from queue.
         userdn has to be an UTF-8 encoded string or unicode string.
         """
-        if isinstance(userdn, str):
+        if isinstance(userdn, bytes):  # Python 2
             userdn = userdn.decode("utf-8")
         with Cursor(self.filename) as cursor:
             cursor.execute(u"DELETE FROM user_queue WHERE userdn=?", (userdn,))
         self.logger.debug("removed entry: userdn=%r" % (userdn,))
 
-    def query_next_user(self):  # type: (None) -> [str]
+    def query_next_user(self):  # type: () -> [str]
         """
         Returns next user dn and username of user_queue as UTF-8 encoded strings.
         """
@@ -204,10 +204,10 @@ class SqliteQueue(object):
             row = cursor.fetchone()
         if row is not None:
             userdn = row[0]
-            if userdn is not None:
+            if userdn is not None and bytes is str:  # Python 2
                 userdn = userdn.encode("utf-8")
             username = row[1]
-            if username is not None:
+            if username is not None and bytes is str:  # Python 2
                 username = username.encode("utf-8")
             self.logger.debug("next entry: userdn=%r" % (userdn,))
             return userdn, username

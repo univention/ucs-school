@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -30,9 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import argparse
 import copy
 import logging
-import optparse
 import os
 import pwd
 import re
@@ -90,9 +90,9 @@ class Log(object):
         cls.logger.info(*args)
 
     @classmethod
-    def warn(cls, *args):
+    def warning(cls, *args):
         cls.setup()
-        cls.logger.warn(*args)
+        cls.logger.warning(*args)
 
 
 class QueueHandler:
@@ -236,7 +236,7 @@ class QueueHandler:
             uidnumber = pwd.getpwnam(uid)[2]
             gidnumber = pwd.getpwnam(uid)[3]
         except Exception as exc:
-            Log.warn("unable to get uidNumber and gidNumber of user %r: %s", uid, exc)
+            Log.warning("unable to get uidNumber and gidNumber of user %r: %s", uid, exc)
 
         if not os.path.exists(os.path.join(homepath, "Desktop", self.desktop_folder_name_macos)):
             if not os.path.exists(homepath):
@@ -296,7 +296,7 @@ class QueueHandler:
         """
         if path not in self._template_cache:
             # read file into list of strings
-            with open(path, "rb") as fp:
+            with open(path, "r") as fp:
                 tmp = fp.readlines()
             # remove icon lines
             for key in no_icons or list():
@@ -327,7 +327,7 @@ class QueueHandler:
                 if lettersinuse.get(mappings[key]["letter"]):
                     if lettersinuse[mappings[key]["letter"]] == mappings[key]["server"]:
                         continue
-                    Log.warn(
+                    Log.warning(
                         "{name}: the assigned letter {letter!r} for share \\\\{server}\\{key} is "
                         'already in use by server "{lettersinuse!r}"'.format(
                             name="ucs-school-user-logonscripts-daemon",
@@ -349,7 +349,7 @@ class QueueHandler:
     def generate_header_and_functions_snippet(self):
         str_replacements = dict(
             desktop_folder_icon=self.desktop_folder_icon,
-            desktop_folder_name=self.desktop_folder_name.translate(None, r'\/:*?"<>|'),
+            desktop_folder_name=self.desktop_folder_name.translate(str.maketrans("", "", r'\/:*?"<>|')),
             desktop_folder_path=self.desktop_folder_path,
             domainname=self.domainname,
             hostname=self.hostname,
@@ -463,7 +463,7 @@ class QueueHandler:
         except ldap.LDAPError as exc:
             Log.error("LDAP search for %s failed in get_group_memberships(): %s", dn, exc)
             raise
-        return frozenset([attributes["gidNumber"][0] for _, attributes in res])
+        return frozenset([attributes["gidNumber"][0].decode("UTF-8") for _, attributes in res])
 
     def get_shares_with_specific_gidNumber(self, gid):
         try:
@@ -475,7 +475,7 @@ class QueueHandler:
                 attr=["cn", "univentionShareHost", "univentionShareSambaName"],
             )
         except ldap.LDAPError as msg:
-            Log.warn("LDAP-search failed for shares with gid %s: %r" % (gid, msg))
+            Log.warning("LDAP-search failed for shares with gid %s: %r" % (gid, msg))
             raise
 
     def handle_user_change(self, dn, unchecked_uid):  # type: (str, str) -> None
@@ -493,17 +493,17 @@ class QueueHandler:
                     os.remove(vbs_path)
             return
 
-        uid = new.get("uid", ["$"])[0]
-        if uid[-1] == "$" or "univentionHost" in new.get("objectClass", []):
+        uid = new.get("uid", [b"$"])[0].decode("UTF-8")
+        if uid.endswith("$") or b"univentionHost" in new.get("objectClass", []):
             # if uid ends with '$', it is a machine account
             Log.debug("%s is a computer object - skipping queue item", dn)
             return
-        if "univentionGroup" in new.get("objectClass", []):
+        if b"univentionGroup" in new.get("objectClass", []):
             Log.debug("%s is a group object - skipping queue item", dn)
             return
 
         membershipIDs = set()  # set of gidNumbers of groups the user is member of
-        newGidNumber = new.get("gidNumber", [""])[0]
+        newGidNumber = new.get("gidNumber", [b""])[0].decode("UTF-8")
         if not newGidNumber:
             Log.debug("User %r has no gidNumber set - skipping queue item" % (uid,))
             return
@@ -544,16 +544,16 @@ class QueueHandler:
         for ID in membershipIDs:
             for share in self.get_shares_with_specific_gidNumber(ID):
                 # linkname is identical to the sharename
-                linkname = share[1]["cn"][0]
+                linkname = share[1]["cn"][0].decode("UTF-8")
                 if "univentionShareSambaName" in share[1]:
-                    linkname = share[1]["univentionShareSambaName"][0]
+                    linkname = share[1]["univentionShareSambaName"][0].decode("UTF-8")
 
                 # ignore link if already in global links
                 if links.get(linkname):
                     continue
 
                 # hostname_ is either an IP or an FQDN
-                hostname_ = share[1]["univentionShareHost"][0]
+                hostname_ = share[1]["univentionShareHost"][0].decode("UTF-8")
                 if hostname_.strip("0123456789."):  # no IP-Address
                     hostname_ = hostname_.split(".", 1)[0]  # use only hostname not FQDN
 
@@ -572,7 +572,7 @@ class QueueHandler:
         # create logon script for OSX systems
         if self.ucr.is_true("ucsschool/userlogon/mac"):
             self.write_mac_link_scripts(
-                uid, new.get("homeDirectory", ["NO-HOMEDIRECTORY-SET"])[0], links
+                uid, new.get("homeDirectory", [b"NO-HOMEDIRECTORY-SET"])[0].decode("UTF-8"), links
             )
 
     def setup_signal_handling(self):
@@ -597,7 +597,7 @@ class QueueHandler:
         """
         shut down gracefully
         """
-        Log.warn("signal received - shutting down gracefully")
+        Log.warning("signal received - shutting down gracefully")
         self.shutdown_requested = True
 
     def signal_usr1(self, signal_number, frame):
@@ -607,7 +607,7 @@ class QueueHandler:
         seconds are left to wait.
         """
         minimum_wait_until = time.time() + self.SLEEP_INTERVAL_MINIMUM
-        if self.wait_until > minimum_wait_until:
+        if self.wait_until and self.wait_until > minimum_wait_until:
             Log.info(
                 "signal received - reduced wait time by %.1f seconds",
                 self.wait_until - minimum_wait_until,
@@ -796,11 +796,9 @@ class QueueHandler:
 
 
 def main():
-    parser = optparse.OptionParser()
-    parser.add_option(
-        "-d", "--debug", dest="debug", default=False, action="store_true", help="show debug output"
-    )
-    (options, args) = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug", default=False, action="store_true", help="show debug output")
+    options = parser.parse_args()
 
     if options.debug:
         Log.set_debug_level(logging.DEBUG)
