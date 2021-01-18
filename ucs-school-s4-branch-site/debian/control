@@ -13,7 +13,7 @@ Standards-Version: 3.5.2
 Package: ucs-school-s4-branch-site
 Architecture: all
 Depends:
- python-ucs-school (>= 12.1.9),
+ python3-ucs-school (>= 12.1.9),
  univention-config-registry,
  univention-s4-connector,
  ${misc:Depends},
