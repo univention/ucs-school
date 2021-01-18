@@ -11,7 +11,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-old-homedirs
 Architecture: all
 Depends:
- python-psutil,
+ python3-psutil,
  univention-config-registry,
  univention-directory-listener,
  ${misc:Depends},
