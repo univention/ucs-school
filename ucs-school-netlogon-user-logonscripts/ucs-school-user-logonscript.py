@@ -74,7 +74,7 @@ class Log(object):
         cls.emit(univention.debug.ALL, msg)
 
     @staticmethod
-    def emit(level, msg):  # type: (str) -> None
+    def emit(level, msg):  # type: (int, str) -> None
         univention.debug.debug(univention.debug.LISTENER, level, "{}: {}".format(name, msg))
 
     @classmethod
@@ -96,13 +96,13 @@ class Log(object):
 
 def relevant_change(
     old, new, attr_list
-):  # type: (Dict[str,List[str]], Dict[str,List[str]], List[str]) -> bool
+):  # type: (Dict[str,List[bytes]], Dict[str,List[bytes]], List[str]) -> bool
     """
     Check for differences between old and new.
 
     :param dict old: attribute dictionary
-    :param dict new:  attribute dictionary
-    :param list attr_list:  list of attribute names (case sensitive!)
+    :param dict new: attribute dictionary
+    :param list attr_list: list of attribute names (case sensitive!)
     :return: True, if any attribute specified in attr_list differs between old and new, otherwise False.
     :rtype: bool
     """
@@ -110,7 +110,7 @@ def relevant_change(
 
 
 def handle_share(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
+    # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles changes of share objects by triggering group changes for the relevant groups.
     """
@@ -135,10 +135,10 @@ def handle_share(dn, new, old, lo, user_queue):
 
     if not old and new:
         # update all members of new group
-        add_group_change_to_queue(new.get("univentionShareGid", [None])[0])
+        add_group_change_to_queue(new.get("univentionShareGid", [b""])[0].decode("UTF-8"))
     elif old and not new:
         # update all members of old group
-        add_group_change_to_queue(old.get("univentionShareGid", [None])[0])
+        add_group_change_to_queue(old.get("univentionShareGid", [b""])[0].decode("UTF-8"))
     if old and new:
         attr_list = [
             "univentionShareSambaName",
@@ -149,19 +149,19 @@ def handle_share(dn, new, old, lo, user_queue):
             Log.info("handle_share: no relevant attribute change")
             return
         # update all members of old and new group
-        add_group_change_to_queue(old.get("univentionShareGid", [None])[0])
-        add_group_change_to_queue(new.get("univentionShareGid", [None])[0])
+        add_group_change_to_queue(old.get("univentionShareGid", [b""])[0].decode("UTF-8"))
+        add_group_change_to_queue(new.get("univentionShareGid", [b""])[0].decode("UTF-8"))
 
 
 def handle_group(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
+    # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles group changes by adding relevant user object DNs to the user queue.
     """
     old_members = set(old.get("uniqueMember", []))
     new_members = set(new.get("uniqueMember", []))
     Log.info("handle_group: dn: %s" % (dn,))
-    newGidNumber = new.get("gidNumber", [""])[0]
+    newGidNumber = new.get("gidNumber", [b""])[0].decode("UTF-8")
     if new and newGidNumber:
         # performance optimization:
         # the group members only have to be processed if there is at least one share object
@@ -182,15 +182,15 @@ def handle_group(dn, new, old, lo, user_queue):
     # "uid=" to filter out computer or group objects (computers in groups resp. groups in groups)
     user_queue.add(
         [
-            (user_dn, None)
+            (user_dn.decode("UTF-8"), None)
             for user_dn in old_members.symmetric_difference(new_members)
-            if user_dn.startswith("uid=")
+            if user_dn.startswith(b"uid=")
         ]
     )
 
 
 def handle_user(dn, new, old, lo, user_queue):
-    # type: (str, Dict[str,List[str]], Dict[str,List[str]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
+    # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
     """
     Handles user changes by adding the DN of the user object to the user queue.
     """
@@ -205,10 +205,10 @@ def handle_user(dn, new, old, lo, user_queue):
             Log.debug("no relevant attribute has changed - skipping user object")
             return
     username = new.get("uid", old.get("uid", [None]))[0]
-    user_queue.add([(dn, username)])
+    user_queue.add([(dn, username.decode("UTF-8") if username is not None else username)])
 
 
-def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str]]) -> None
+def handler(dn, new, old):  # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]]) -> None
     global lo
     attrs = new if new else old
 
@@ -227,7 +227,7 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[str]], Dict[str,List[str
         elif shares_share_module.identify(dn, attrs):
             handle_share(dn, new, old, lo, user_queue)
         else:
-            Log.error("handler: unknown object type: dn: %r\nold=%s\nnew=%s" % (dn, old, new))
+            Log.error("handler: unknown object type: dn: %r\nold=%r\nnew=%r" % (dn, old, new))
 
         pid = None
         try:
@@ -284,7 +284,10 @@ def run_daemon(cmd):  # type: (List[str]) -> None
     if cmd_proc.returncode:
         Log.error(
             "Command {!r} returned with exit code {!r}. stdout={!r} stderr={!r}".format(
-                cmd, cmd_proc.returncode, cmd_out, cmd_err
+                cmd,
+                cmd_proc.returncode,
+                cmd_out.decode("UTF-8", "replace"),
+                cmd_err.decode("UTF-8", "replace"),
             )
         )
 
