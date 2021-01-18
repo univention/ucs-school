@@ -38,6 +38,7 @@ import tempfile
 import threading
 import time
 import traceback
+import uuid
 
 try:
     from typing import List, Optional, TypeVar
@@ -920,14 +921,29 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
             return False
 
         MODULE.info("Demo clients (teachers): %s" % ", ".join(teachers))
-        server.startDemoServer(clients)
-        for client in clients:
-            client.startDemoClient(server, fullscreen=False if client.name in teachers else fullscreen)
+        if self.veyon_backend:
+            demo_access_token = str(uuid.uuid4())
+            server.startDemoServer(token=demo_access_token)
+            for client in clients:
+                client.startDemoClient(
+                    server=server,
+                    token=demo_access_token,
+                    full_screen=False if client.name in teachers else fullscreen,
+                )
+        else:  # Can be deleted as soon as italc is unsupported
+            server.startDemoServer(clients)
+            for client in clients:
+                client.startDemoClient(
+                    server, fullscreen=False if client.name in teachers else fullscreen
+                )
 
     def stopDemo(self):
         if self.demoServer is not None:
             self.demoServer.stopDemoServer()
-        for client in self.demoClients:
+        # This is necessary since Veyon has a considerable delay with exposing its demo client status.
+        # So we just end the demo client on all computers.
+        clients = self.values() if self.veyon_backend else self.demoClients
+        for client in clients:
             client.stopDemoClient()
 
 
@@ -939,6 +955,7 @@ class VeyonComputer:
         self._veyon_client = veyon_client  # type: VeyonClient
         self._user_map = user_map
         self._ip_addresses = self._computer.info.get("ip", [])  # type: List[str]
+        self._reachable_ip = None
         self._username = LockableAttribute()
         self._state = LockableAttribute(initial_value="disconnected")
         self._teacher = LockableAttribute(initial_value=False)
@@ -978,8 +995,11 @@ class VeyonComputer:
 
     @property
     def ipAddress(self):
+        if self._reachable_ip:
+            return self._reachable_ip
         if len(self._ip_addresses) > 0:
-            return self._ip_addresses[0]
+            self._reachable_ip = self._find_reachable_ip()
+            return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
         raise ComputerRoomError("Unknown IP address")
 
     @property
@@ -999,10 +1019,10 @@ class VeyonComputer:
                 self.state,
                 self.user,
                 self.teacher,
-                self.screenLock,
-                self.inputLock,
-                self.demoClient,
-                self.demoServer,
+                self._screen_lock,
+                self._input_lock,
+                self._demo_client,
+                self._demo_server,
             )
         )
 
@@ -1039,10 +1059,10 @@ class VeyonComputer:
     @property
     def flagsDict(self):
         return {
-            "ScreenLock": self.screenLock.current,
-            "InputLock": self.inputLock.current,
-            "DemoServer": self.demoServer.current,
-            "DemoClient": self.demoClient.current,
+            "ScreenLock": self._screen_lock.current,
+            "InputLock": self._input_lock.current,
+            "DemoServer": self._demo_server.current,
+            "DemoClient": self._demo_client.current,
         }
 
     @property
@@ -1069,30 +1089,41 @@ class VeyonComputer:
 
     @property
     def screenLock(self):
-        return self._screen_lock
+        return self._screen_lock.current
 
     @property
     def inputLock(self):
-        return self._input_lock
+        return self._input_lock.current
 
     @property
     def demoServer(self):
-        return self._demo_server
+        return self._demo_server.current
 
     @property
     def demoClient(self):
-        return self._demo_client
+        return self._demo_client.current
 
-    def _fetch_feature_status(self, feature):  # type: (Feature) -> Optional[bool]
+    def _find_reachable_ip(self):  # type: () -> Optional[str]
         for ip_address in self._ip_addresses:
             try:
-                return self._veyon_client.get_feature_status(feature, host=ip_address)
+                reachable = self._veyon_client.ping(host=ip_address)
             except VeyonError:
-                pass  # might just be a non reachable IP. TODO: Catch errors other than 404
-            return None
+                reachable = False
+            if reachable:
+                return ip_address
+        return None
+
+    def _fetch_feature_status(self, feature):  # type: (Feature) -> Optional[bool]
+        try:
+            return self._veyon_client.get_feature_status(feature, host=self.ipAddress)
+        except VeyonError as exc:
+            MODULE.error(
+                "Fetching feature status failed: {}".format(exc)
+            )  # might just be a non reachable IP. TODO: Catch errors other than 404
+        return None
 
     def connected(self):
-        return any((self._veyon_client.ping(host=ip_address) for ip_address in self._ip_addresses))
+        return self._veyon_client.ping(host=self.ipAddress)
 
     def update(self):
         MODULE.info("{}: updating information.".format(self.name))
@@ -1103,26 +1134,37 @@ class VeyonComputer:
             veyon_user = None
             input_lock = None
             screen_lock = None
-            for ip_address in self._ip_addresses:
-                if not self._veyon_client.ping(ip_address):
-                    MODULE.warn("Ping not successfull for {} with IP {}".format(self.name, ip_address))
-                    continue
-                try:
-                    veyon_user = self._veyon_client.get_user_info(host=ip_address)
-                    input_lock = self._fetch_feature_status(Feature.INPUT_DEVICE_LOCK)
-                    screen_lock = self._fetch_feature_status(Feature.SCREEN_LOCK)
-                    break
-                except VeyonError as exc:
-                    MODULE.warn("Veyon error on {}: {}".format(self.name, exc))
+            demo_server = None
+            demo_client = None
+            if not self._veyon_client.ping(self.ipAddress):
+                MODULE.warn("Ping not successfull for {} with IP {}".format(self.name, self.ipAddress))
+                MODULE.warn("{}: Updating information was not successful.".format(self.name))
+                self.reset_state()
+                return
+            try:
+                veyon_user = self._veyon_client.get_user_info(host=self.ipAddress)
+                input_lock = self._fetch_feature_status(Feature.INPUT_DEVICE_LOCK)
+                screen_lock = self._fetch_feature_status(Feature.SCREEN_LOCK)
+                demo_server = self._fetch_feature_status(Feature.DEMO_SERVER)
+                demo_client = any(
+                    [
+                        self._fetch_feature_status(Feature.DEMO_CLIENT_FULLSCREEN),
+                        self._fetch_feature_status(Feature.DEMO_CLIENT_WINDOWED),
+                    ]
+                )
+            except VeyonError as exc:
+                MODULE.warn("Veyon error on {}: {}".format(self.name, exc))
             if veyon_user is None:
                 MODULE.warn("{}: Updating information was not successful.".format(self.name))
                 self.reset_state()
                 return
             self.state.set("connected")
             self.user.set(veyon_user.login)
-            self.inputLock.set(input_lock)
-            self.screenLock.set(screen_lock)
+            self._input_lock.set(input_lock)
+            self._screen_lock.set(screen_lock)
             self.teacher.set(self.isTeacher)
+            self._demo_server.set(demo_server)
+            self._demo_client.set(demo_client)
         except Exception as exc:
             MODULE.error(
                 "{}: Error updating information (raise loglevel for full traceback): {}".format(
@@ -1143,8 +1185,10 @@ class VeyonComputer:
         self.state.set("disconnected")
         self.user.set(None)
         self.teacher.set(False)
-        self.inputLock.set(None)
-        self.screenLock.set(None)
+        self._input_lock.set(None)
+        self._screen_lock.set(None)
+        self._demo_client.set(None)
+        self._demo_server.set(None)
 
     def open(self):
         pass  # Nothing to do for the VeyonComputer
@@ -1157,11 +1201,10 @@ class VeyonComputer:
         if not self.connected():
             MODULE.warn("{} not connected - skipping setting feature {}".format(self.name, feature))
             return None
-        for ip_address in self._ip_addresses:
-            try:
-                self._veyon_client.set_feature(feature, host=ip_address, active=active)
-            except VeyonError:
-                pass
+        try:
+            self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
+        except VeyonError:
+            pass
 
     def lockScreen(self, lock):  # type: (bool) -> None
         self._set_feature(Feature.SCREEN_LOCK, lock)
@@ -1169,14 +1212,27 @@ class VeyonComputer:
     def lockInput(self, lock):  # type: (bool) -> None
         self._set_feature(Feature.INPUT_DEVICE_LOCK, lock)
 
-    def startDemoServer(self, clients):
-        raise NotImplementedError
+    def startDemoServer(self, token):  # type: (str) -> None
+        MODULE.process("Starting demo server on %s with token: %s" % (self.ipAddress, token))
+        self._veyon_client.set_feature(
+            Feature.DEMO_SERVER, host=self.ipAddress, active=True, arguments={"demoAccessToken": token}
+        )
 
     def stopDemoServer(self):
-        raise NotImplementedError
+        self._set_feature(Feature.DEMO_SERVER, active=False)
 
-    def startDemoClient(self):
-        raise NotImplementedError
+    def startDemoClient(self, server, token, full_screen=False):
+        MODULE.process(
+            "Starting demo client on %s with token %s, server %s and fullscreen: %s"
+            % (self.ipAddress, token, server.ipAddress, full_screen)
+        )
+        arguments = {"demoAccessToken": token, "demoServerHost": server.ipAddress}
+        feature = Feature.DEMO_CLIENT_FULLSCREEN if full_screen else Feature.DEMO_CLIENT_WINDOWED
+        self._veyon_client.set_feature(feature, host=self.ipAddress, active=True, arguments=arguments)
+
+    def stopDemoClient(self):
+        self._set_feature(Feature.DEMO_CLIENT_FULLSCREEN, active=False)
+        self._set_feature(Feature.DEMO_CLIENT_WINDOWED, active=False)
 
     def powerOff(self):
         self._set_feature(Feature.POWER_DOWN)
