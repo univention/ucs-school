@@ -660,7 +660,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # we got an OU in the user DN -> school teacher or assistent
             # restrict the visibility to current school
             # (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-            school_dn = lo.binddn[lo.binddn.find("ou=") :]
+            school_dn = lo.binddn[lo.binddn.find("ou="):]
             cls.logger.debug(
                 "Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show "
                 "%s",
