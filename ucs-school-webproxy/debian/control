@@ -15,6 +15,7 @@ Pre-Depends:
  univention-config,
 Depends:
  python-ucs-school,
+ python3-ucs-school,
  squidguard (>= 1.5-1.23),
  ucs-school-umc-internetrules,
  univention-runit,
