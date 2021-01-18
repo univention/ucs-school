@@ -48,8 +48,3 @@ override_dh_installdirs:
 	make PACKAGE=${PACKAGE_NAME} LANGUAGE='de' install-locales-admin
 	install -m 0755 38ucs-school-umc-helpdesk.inst ${D}/usr/lib/univention-install/
 	install -m 644 umc-helpdesk.schema ${DM}/usr/share/univention-ldap/schema
-
-override_dh_pysupport:
-	univention-install-config-registry
-	dh-umc-module-install
-	dh_pysupport
