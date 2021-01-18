@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention S4 Connector
@@ -31,14 +31,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-__package__ = ""  # workaround for PEP 366
-import imp
+from __future__ import absolute_import
+
+import importlib.util
 import os
 import subprocess
 import sys
 import traceback
 
-import ldap
+import ldap.filter
 import listener
 
 import univention.admin.uexceptions as udm_errors
@@ -51,7 +52,9 @@ from ucsschool.lib.schoolldap import SchoolSearchBase
 sys.dont_write_bytecode = True
 # import s4-connector listener module code, but don't generate pyc file
 s4_connector_listener_path = "/usr/lib/univention-directory-listener/system/s4-connector.py"
-s4_connector_listener = imp.load_source("s4_connector", s4_connector_listener_path)
+spec = importlib.util.spec_from_file_location("s4-connector", s4_connector_listener_path)
+s4_connector_listener = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(s4_connector_listener)
 
 # Listener registration data
 name = "ucsschool-s4-branch-site"
@@ -77,7 +80,11 @@ def load_hooks():
         modulename = ".".join((name.replace("-", "_"), filename[:-3].replace("-", "_")))
         ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
         try:
-            hook = imp.load_source(modulename, file_path)
+            spec = importlib.util.spec_from_file_location(
+                os.path.basename(file_path).rsplit(".", 1)[0], file_path
+            )
+            hook = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(hook)
         except Exception:
             ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
             ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
@@ -129,9 +136,11 @@ def on_load(ldap_machine_read=None, ldap_position=None):
         if "univentionService" in obj:
             services = obj["univentionService"]
 
-    for service_id in ("UCS@school Education", "UCS@school Administration"):
+    for service_id in (b"UCS@school Education", b"UCS@school Administration"):
         if service_id in services:
-            _ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
+            _ucsschool_service_specialization_filter = ldap.filter.filter_format(
+                "(univentionService=%s)", [service_id.decode("UTF-8")]
+            )
             break
 
 
@@ -204,10 +213,10 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
         # select only school branches and exclude a modrdn 'r' phase DN which still exists
         if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
             if "associatedDomain" in obj:
-                domainname = obj["associatedDomain"][0]
+                domainname = obj["associatedDomain"][0].decode("UTF-8")
             else:
                 domainname = _local_domainname
-            _visible_samba4_school_dcs.append(".".join((obj["cn"][0], domainname)))
+            _visible_samba4_school_dcs.append(".".join((obj["cn"][0].decode("UTF-8"), domainname)))
 
     return _visible_samba4_school_dcs
 
@@ -367,16 +376,14 @@ def delete(old_dn, old, command):
 
 def handler(dn, new, old, command):
     if not _ucsschool_service_specialization_filter:
-        univention.debug.debug(
-            univention.debug.LISTENER,
-            univention.debug.INFO,
-            "%s: Local UCS@school server type still unknown, ignoring." % (name,),
+        ud.debug(
+            ud.LISTENER, ud.INFO, "%s: Local UCS@school server type still unknown, ignoring." % (name,)
         )
         return
 
-    univention.debug.debug(
-        univention.debug.LISTENER,
-        univention.debug.ALL,
+    ud.debug(
+        ud.LISTENER,
+        ud.ALL,
         "%s: command: %s, dn: %s, new? %s, old? %s" % (name, command, dn, bool(new), bool(old)),
     )
 
@@ -403,9 +410,9 @@ def postrun():
     global _relativeDomainName_trigger_set
 
     if not listener.configRegistry.is_true("connector/s4/autostart", True):
-        univention.debug.debug(
-            univention.debug.LISTENER,
-            univention.debug.PROCESS,
+        ud.debug(
+            ud.LISTENER,
+            ud.PROCESS,
             "%s: S4 Connector restart skipped, disabled via connector/s4/autostart." % (name,),
         )
         return
@@ -416,15 +423,11 @@ def postrun():
         stdout=open("/dev/null", "w"),
     ):
         if _s4_connector_restart:
-            univention.debug.debug(
-                univention.debug.LISTENER,
-                univention.debug.PROCESS,
-                "%s: Restarting S4 Connector" % (name,),
-            )
+            ud.debug(ud.LISTENER, ud.PROCESS, "%s: Restarting S4 Connector" % (name,))
             listener.setuid(0)
             try:
                 p = subprocess.Popen(  # nosec
-                    ["/etc/init.d/univention-s4-connector", "restart"], close_fds=True
+                    ["systemctl", "restart", "univention-s4-connector.service"], close_fds=True
                 )
                 p.wait()
                 if p.returncode != 0:
