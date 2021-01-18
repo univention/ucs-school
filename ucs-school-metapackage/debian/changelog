@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.4-9) unstable; urgency=low
+
+  * Bug #52463: make ucsschool installation in pre-join hook more robust
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Jan 2021 12:10:36 +0100
+
 ucs-school-metapackage (12.0.4-8) unstable; urgency=low
 
   * Bug #52660: check for ucsschool-veyon-proxy only in 4.4 v9

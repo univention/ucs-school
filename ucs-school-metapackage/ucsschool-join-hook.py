@@ -271,14 +271,20 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
         call_cmd_locally("/usr/bin/univention-app", "update")
 
         log.info("Installing %s ...", app_string)
-        call_cmd_locally(
+        cmd = [
             "/usr/bin/univention-app",
             "install",
             app_string,
             "--skip-check",
             "must_have_valid_license",
             "--do-not-call-join-scripts",
-        )
+            "--noninteractive",
+            "--do-not-revert",
+        ]
+        if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
+            username = options.lo.getAttr(options.binddn, "uid")[0]
+            cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
+        call_cmd_locally(*cmd)
 
     # if not all packages are installed, then try to install them again
     if not all(package_manager.is_installed(pkg_name) for pkg_name in pkg_list):
@@ -358,9 +364,7 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
     ]
     if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
         username = options.lo.getAttr(options.binddn, "uid")[0]
-        cmd.extend(
-            ["--username", username, "--pwdfile", options.bindpwdfile,]
-        )
+        cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
     try:
         call_cmd_locally(*cmd)
     except CallCommandError as exc:
