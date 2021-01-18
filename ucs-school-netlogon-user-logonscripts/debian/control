@@ -25,6 +25,9 @@ Depends:
  univention-ldap-client,
  ${python3:Depends},
  ${python:Depends},
+Provides:
+ ${python3:Provides},
+ ${python:Provides},
 Description: UCS@school userspecific netlogon scripts
  This package provides a listener-module that creates
  specific netlogon scripts for each local user.
