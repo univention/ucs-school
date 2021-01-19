@@ -20,6 +20,11 @@ from univention.testing.umc import Client
 
 from .randomdomain import RandomDomain
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
 
 class InternetRule(object):
 

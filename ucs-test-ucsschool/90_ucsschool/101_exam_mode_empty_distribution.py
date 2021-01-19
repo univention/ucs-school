@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Check file collection from exams without prior distribution of files
 ## roles: [domaincontroller_master, domaincontroller_slave]

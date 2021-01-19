@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test Window client join into UCS@School S4-Slave.
 ## bugs: [34219]
 ## roles:

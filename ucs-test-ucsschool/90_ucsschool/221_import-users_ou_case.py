@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Import users via CLI v2 with a OU name in wrong upper/lower case
 ## tags: [apptest,ucsschool,ucsschool_import1]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: automatic_distribute_materials_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -43,11 +43,11 @@ def main():
                 connection.authenticate(tea, "univention")
 
                 # Prepare times for auto distribution and collection
-                local = list(time.localtime(time.time() + MIN_DIST_TIME))
+                local = time.localtime(time.time() + MIN_DIST_TIME)
                 distTime = time.strftime("%H:%M", local)
                 distDate = time.strftime("%Y-%m-%d", local)
 
-                local = list(time.localtime(time.time() + MIN_COLL_TIME))
+                local = time.localtime(time.time() + MIN_COLL_TIME)
                 collTime = time.strftime("%H:%M", local)
                 collDate = time.strftime("%Y-%m-%d", local)
 

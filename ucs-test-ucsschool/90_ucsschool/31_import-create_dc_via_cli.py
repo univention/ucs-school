@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: create DC via CLI
 ## tags: [apptest,ucsschool,ucsschool_import1]

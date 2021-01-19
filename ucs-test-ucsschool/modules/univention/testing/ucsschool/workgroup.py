@@ -153,7 +153,7 @@ class Workgroup(object):
             if member not in currentMembers:
                 currentMembers.append(member)
             else:
-                print(("member", member, "already exist in the group"))
+                print("member", member, "already exist in the group")
         self.set_members(currentMembers)
 
     def removeMembers(self, memberListdn, options=None):

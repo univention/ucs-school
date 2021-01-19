@@ -80,7 +80,7 @@ def print_domain_ips():
             cmd = ["dig", dig_source, domainname, "+search", "+short"]
             p1 = Popen(cmd, close_fds=True, stdout=PIPE, stderr=STDOUT)
             stdout, stderr = p1.communicate()
-            print("IPs for %s: %s" % (domainname, stdout.strip()))
+            print("IPs for %s: %s" % (domainname, stdout.decode('utf-8', 'replace').strip()))
         except OSError as ex:
             print("\n%s failed: %s" % (cmd, ex.args[1]))
 
@@ -185,7 +185,7 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
         # raw_input()
         utils.fail("Exception during Get-ItemProperty: %r" % exc)
 
-    reg_key_pattern = re.compile("^%s +: (.*)$" % subkey, re.M)
+    reg_key_pattern = re.compile(r"^%s +: (.*)$" % subkey, re.M)
     m = reg_key_pattern.search(stdout)
     if m and m.group(1).strip() == expected_value:
         return True
@@ -243,7 +243,7 @@ def samba_get_gpo_uid_by_name(gpo_name):
     stdout = stdout.split("\n\n")  # separate GPOs
     for gpo in stdout:
         if gpo_name in gpo:
-            return "{" + re.search("{(.+?)}", gpo).group(1) + "}"
+            return "{" + re.search(r"{(.+?)}", gpo).group(1) + "}"
 
 
 def windows_check_gpo_report(gpo_name, identity_name, server=""):
@@ -330,7 +330,8 @@ def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
         reg_policy = open(reg_pol_file)
         # skip first 8 bytes (signature and file version):
         # https://msdn.microsoft.com/en-us/library/aa374407%28v=vs.85%29.aspx
-        reg_policy_text = reg_policy.read()[8:].decode(encoding="utf-16")
+        reg_policy_text = reg_policy.read()[8:]
+        reg_policy_text = reg_policy_text.decode(encoding="utf-16") if not isinstance(reg_policy_text, str) else reg_policy_text
         reg_policy.close()
     except (IOError, OSError) as exc:
         utils.fail("An Error occured while opening '%s' file: %r" % (reg_pol_file, exc))

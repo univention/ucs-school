@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 # coding=utf-8
 ## desc: ucs-school-ldap-acls
 ## roles: [domaincontroller_master]
@@ -314,7 +314,7 @@ class LDAPACLTestMatrix(object):
         return dict([(y, [k for k in x]) for y, x in containers])
 
     def gather_attributes_as_set(self, base_list):
-        result = set(["children", "entry"])
+        result = {"children", "entry"}
         for base in base_list:
             containers = list(self.walkThroughContainer(base))
             s = set([u for x, y in containers for u in y])

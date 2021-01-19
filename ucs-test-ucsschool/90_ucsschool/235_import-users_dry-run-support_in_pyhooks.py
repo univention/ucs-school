@@ -52,15 +52,15 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** Creating PyHook with dry-run support (%r)...", TESTHOOKTARGETWITHSUPPORT)
         with open(TESTHOOKTARGETWITHSUPPORT, "wb") as fp:
             fp.write(
-                text.replace("%CLASSNAME%", "HookSupportsDryRun").replace(
-                    "%DRYRUNSUPPORT%", "supports_dry_run = True"
+                text.replace(b"%CLASSNAME%", b"HookSupportsDryRun").replace(
+                    b"%DRYRUNSUPPORT%", b"supports_dry_run = True"
                 )
             )
         self.log.info(
             "*** Creating PyHook without dry-run support (%r)...", TESTHOOKTARGETWITHOUTSUPPORT
         )
         with open(TESTHOOKTARGETWITHOUTSUPPORT, "wb") as fp:
-            fp.write(text.replace("%CLASSNAME%", "HookNoDryRun").replace("%DRYRUNSUPPORT%", ""))
+            fp.write(text.replace(b"%CLASSNAME%", b"HookNoDryRun").replace(b"%DRYRUNSUPPORT%", b""))
 
     @staticmethod
     def get_path(has_support, dry_run, hook_name):

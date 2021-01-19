@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test migration from old-legacy import to new-legacy import
 ## tags: [apptest,ucsschool,ucsschool_import2]

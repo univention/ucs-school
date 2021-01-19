@@ -15,10 +15,16 @@ import tempfile
 import time
 import traceback
 from collections import Mapping
+from six import string_types
 
-import six
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
+
+from ucsschool.lib.models.utils import (
+    UniStreamHandler,
+    add_stream_logger_to_schoollib,
+    get_stream_handler,
+)
 
 import univention.testing.strings as uts
 import univention.testing.ucr
@@ -27,7 +33,8 @@ import univention.testing.udm
 import univention.testing.utils as utils
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
+from univention.testing.ucsschool.importusers import Person
+from univention.testing.ucsschool.ucs_test_school import force_ucsschool_logger_colorized_if_has_tty, get_ucsschool_logger
 
 try:
     from univention.testing.ucs_samba import DRSReplicationFailed
@@ -56,7 +63,7 @@ class ConfigDict(dict):
         update_entry('foo:bar:baz', 'my value')
         update_entry('foo:bar:ding', False)
         """
-        if isinstance(value, six.string_types):
+        if isinstance(value, string_types):
             if value.lower() == "false":
                 value = False
             elif value.lower() == "true":
@@ -246,7 +253,7 @@ class ImportTestbase(object):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
         dateformat = cls.syntax_date2_dateformat(userexpirydate)
-        return str(long(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
+        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
 
     def check_new_and_removed_users(self, exp_new, exp_removed):
         ldap_diff = self.diff_ldap_status()
