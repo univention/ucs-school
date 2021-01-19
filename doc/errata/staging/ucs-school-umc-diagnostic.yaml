@@ -8,5 +8,5 @@ desc: |
   * When having the OX App Suite installed on a UCS@School System, the package <package>ucs-school-ox-support</package> is required to be installed. This fix implements a new diagnostic module which checks, if the package is correctly installed. (Bug #52195).
   * A diagnostic module now checks if the UCS@school Veyon Proxy app has been installed on single server and school server systems (Bug #52463).
   * This patch adds a CLI script which checks the consistency of all LDAP objects on a UCS@School system. This can help identifying many problems related to users, groups, shares or containers. The script will also later be used in a diagnostic module (Bug #52147).
-* The diagnostic module "UCS@school Check if Samba4 is installed" ran on systems which are not required to have Samba4 installed. This fix ensures, that it only is executed on a single master or on a school server in a multi-server-environment (Bug #51886).
+  * The diagnostic module "UCS@school Check if Samba4 is installed" ran on systems which are not required to have Samba4 installed. This fix ensures, that it only is executed in single-server-environments or on school servers in multi-server-environments (Bug #51886).
 bug: [52195, 52463, 52147, 51886]
