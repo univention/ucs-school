@@ -7,7 +7,7 @@
 import univention.config_registry
 import univention.testing.utils as utils
 
-EXPECTED_VERSION = "4.4"
+EXPECTED_VERSION = "5.0"
 
 
 def main():

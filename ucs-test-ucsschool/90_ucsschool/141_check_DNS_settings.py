@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## bugs: [40470]
 ## desc: school-servers (except master and backup) not added to DNS forward and reverse lookup zones
 ## exposure: safe

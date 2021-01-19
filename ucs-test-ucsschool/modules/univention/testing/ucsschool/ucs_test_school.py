@@ -111,7 +111,7 @@ def force_ucsschool_logger_colorized_if_has_tty():
         ppid = os.getppid()
         with open("/proc/{}/cmdline".format(ppid), "r") as fp:
             if "ucs-test" in fp.read():
-                fd = open("/proc/{}/fd/1".format(ppid), "a")
+                fd = sys.stdout
                 if fd.isatty():
                     colorize = True
     if colorize:
@@ -309,7 +309,8 @@ class UCSTestSchool(object):
                     if objs:
                         univention_object_type = objs[0][1].get("univentionObjectType")
                         if univention_object_type:
-                            self.udm._cleanup.setdefault(univention_object_type[0], []).append(dn)
+                            object_type = univention_object_type[0]
+                            self.udm._cleanup.setdefault(object_type if not isinstance(object_type, bytes) else object_type.decode('utf-8'), []).append(dn)
                         else:
                             logger.info(
                                 '*** Removing LDAP object without "univentionObjectType" directly (not '
@@ -1070,9 +1071,9 @@ class UCSTestSchool(object):
     def load_test_ous(cls):
         cls._test_ous = dict()
         try:
-            with open(TEST_OU_CACHE_FILE, "rb") as fp:
+            with open(TEST_OU_CACHE_FILE, "r") as fp:
                 loaded = json.load(fp)
-        except IOError as exc:
+        except (ValueError, IOError, json.decoder.JSONDecodeError) as exc:
             logger.info("*** Warning: reading %r: %s", TEST_OU_CACHE_FILE, exc)
             return
         keys = loaded.pop("keys")
@@ -1084,7 +1085,7 @@ class UCSTestSchool(object):
 
     @classmethod
     def store_test_ous(cls):
-        with open(TEST_OU_CACHE_FILE, "wb") as fp:
+        with open(TEST_OU_CACHE_FILE, "w") as fp:
             # json needs strings as keys, must split data
             res = {"keys": dict(), "values": dict()}
             for num, (k, v) in enumerate(cls._test_ous.items()):

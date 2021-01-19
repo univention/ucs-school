@@ -10,7 +10,10 @@ import os
 import time
 
 import pycurl
-import StringIO
+try:
+    import StringIO
+except ModuleNotFoundError:
+    from io import StringIO
 
 import univention.testing.utils as utils
 
@@ -88,7 +91,7 @@ class SimpleCurl(object):
         buf = StringIO.StringIO()
         self.curl.setopt(pycurl.WRITEFUNCTION, buf.write)
         print("getting page:", url)
-        for i in xrange(60):
+        for i in range(60):
             try:
                 self.curl.perform()
                 break

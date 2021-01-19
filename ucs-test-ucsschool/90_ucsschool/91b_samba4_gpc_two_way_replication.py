@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test the Samba4 GPC objects and links replication from DC-Master to DC-Slave or vice versa.
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]

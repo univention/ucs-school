@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 # coding=utf-8
 ## desc: Check if the permissions to user password attributes are correct
 ## roles: [domaincontroller_master]

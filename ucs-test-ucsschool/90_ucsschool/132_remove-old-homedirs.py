@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test deletion of users home directory by listener module
 ## roles: [domaincontroller_slave]
@@ -65,8 +65,8 @@ class Test(CLI_Import_v2_Tester):
             homedir2 = user2.get_udm_object(self.lo)["unixhome"]
             self.log.debug("homedir1=%r", homedir1)
             self.log.debug("homedir2=%r", homedir2)
-            os.makedirs(homedir1, 0711)
-            os.makedirs(homedir2, 0711)
+            os.makedirs(homedir1, 0o0711)
+            os.makedirs(homedir2, 0o0711)
             try:
                 os.chown(homedir1, getpwnam(username1).pw_uid, getpwnam(username1).pw_gid)
                 os.chown(homedir2, getpwnam(username2).pw_uid, getpwnam(username2).pw_gid)

@@ -18,10 +18,10 @@ def check_value(path, key, value):
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     found = False
     print(path + " " + key)
-    for i in out.split("\n"):
+    for i in out.split(b"\n"):
         print(i)
-        if i.startswith("Value "):
-            v = i.split("=")[1].strip().strip('"')
+        if i.startswith(b"Value "):
+            v = i.split(b"=")[1].strip().strip(b'"')
             if v == value:
                 found = True
     if not found:

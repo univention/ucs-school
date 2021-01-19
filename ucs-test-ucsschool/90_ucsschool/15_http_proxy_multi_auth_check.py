@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: http-proxy-multi-auth-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -19,7 +19,8 @@ from univention.config_registry import handler_set, handler_unset
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 
 
-def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
+def checkAuths(host, passwd, url, state, expect_wrong_password):
+    basic, ntlm, gneg = state
     # in case all auth are disabled, all return 200
     http_basic, http_ntlm, http_gneg = (200, 200, 200)
     if basic or ntlm or gneg:
@@ -67,8 +68,9 @@ def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
             utils.fail("kinit: correct Password used but did not work")
 
 
-def setAuthVariables((basic, ntlm, gneg)):
+def setAuthVariables(state):
     """set ucr variables according to the auth states, and restart Squid"""
+    basic, ntlm, gneg = state
     if basic:
         handler_set(["squid/basicauth=yes"])
     else:
