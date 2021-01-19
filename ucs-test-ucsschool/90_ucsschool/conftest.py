@@ -1,5 +1,7 @@
 import enum
+import logging
 import os
+import tempfile
 
 try:
     from typing import Any, Dict, List, Optional, Tuple, Type
@@ -16,6 +18,7 @@ from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff
+from ucsschool.lib.models.utils import get_file_handler
 from ucsschool.lib.roles import (
     role_marketplace_share,
     role_school_admin,
@@ -418,3 +421,13 @@ def workgroup_share_school_attributes(workgroup_share_ldap_attributes):
         }
 
     return _func
+
+
+@pytest.fixture
+def random_logger():
+    with tempfile.NamedTemporaryFile() as f:
+        handler = get_file_handler("DEBUG", f.name)
+        logger = logging.getLogger(f.name)
+        logger.addHandler(handler)
+        logger.setLevel("DEBUG")
+        yield logger
