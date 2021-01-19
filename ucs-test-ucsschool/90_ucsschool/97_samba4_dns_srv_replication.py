@@ -31,10 +31,7 @@ from univention.testing.ucsschool.test_samba4 import TestSamba4
 try:
     from cStringIO import StringIO  # a faster version
 except ImportError:
-    try:
-        from StringIO import StringIO
-    except ImportError:
-        from io import StringIO
+    from io import StringIO
 
 
 class TestS4DNSSRVReplication(TestSamba4):

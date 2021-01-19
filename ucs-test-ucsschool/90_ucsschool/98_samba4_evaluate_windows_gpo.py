@@ -80,7 +80,7 @@ def print_domain_ips():
             cmd = ["dig", dig_source, domainname, "+search", "+short"]
             p1 = Popen(cmd, close_fds=True, stdout=PIPE, stderr=STDOUT)
             stdout, stderr = p1.communicate()
-            print("IPs for %s: %s" % (domainname, stdout.strip()))
+            print("IPs for %s: %s" % (domainname, stdout.decode('utf-8', 'replace').strip()))
         except OSError as ex:
             print("\n%s failed: %s" % (cmd, ex.args[1]))
 

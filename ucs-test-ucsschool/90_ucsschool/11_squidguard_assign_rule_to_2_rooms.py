@@ -8,6 +8,7 @@
 
 from __future__ import print_function
 
+import binascii
 import re
 
 import univention.config_registry as uc
@@ -19,12 +20,12 @@ import univention.testing.utils as utils
 def quote(string):
     "Replace every unsafe byte with hex value"
     string = string.encode("utf-8")
-    newstring = ""
+    newstring = b""
     for byte in string:
         if byte in quote.safeBytes:
             newstring += byte
         else:
-            newstring += "-" + byte.encode("hex")
+            newstring += b"-" + binascii.hexlify(byte)
     return newstring
 
 

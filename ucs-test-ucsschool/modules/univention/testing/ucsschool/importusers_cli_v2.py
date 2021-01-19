@@ -253,7 +253,7 @@ class ImportTestbase(object):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
         dateformat = cls.syntax_date2_dateformat(userexpirydate)
-        return str(float(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
+        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
 
     def check_new_and_removed_users(self, exp_new, exp_removed):
         ldap_diff = self.diff_ldap_status()

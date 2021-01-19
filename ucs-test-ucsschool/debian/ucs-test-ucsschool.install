@@ -5,3 +5,4 @@
 93_ucsschool-id-connector usr/share/ucs-test
 94_ucsschool-api-kelvin usr/share/ucs-test
 modules/univention/testing usr/lib/python2.7/dist-packages/univention
+modules/univention/testing usr/lib/python3/dist-packages/univention

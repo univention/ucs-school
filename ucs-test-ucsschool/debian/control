@@ -12,7 +12,6 @@ Package: ucs-test-ucsschool
 Architecture: all
 Depends:
  eapol,
- python-samba,
  python-attr,
  python-mock,
  python-pycurl,
