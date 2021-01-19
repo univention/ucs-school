@@ -197,7 +197,7 @@ html5
         for item in self.recipients:
             recipients.append(item.dn())
         print("recipients=", recipients)
-        files = [file_name.decode(encoding).encode("UTF-8") for file_name, encoding in self.files]
+        files = [file_name for file_name, encoding in self.files]
         param = [
             {
                 "object": {

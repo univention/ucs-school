@@ -25,7 +25,7 @@ role_packages = {
 lo = utils.get_ldap_connection()
 role = lo.get(ucr["ldap/hostdn"]).get("ucsschoolRole")[0]
 role = role.split(b":", 1)[0]
-role = role.decode('utf-8')
+role = role if isinstance(role, str) else role.decode('utf-8')
 if role == "dc_master":
     role = "dc_single_master" if ucr.is_true("ucsschool/singlemaster") else "dc_multi_master"
 package = role_packages[role]

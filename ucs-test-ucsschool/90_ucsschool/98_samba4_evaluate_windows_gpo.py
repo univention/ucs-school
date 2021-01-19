@@ -331,7 +331,7 @@ def sysvol_check_gpo_registry_value(gpo_name, reg_key, value_name, value):
         # skip first 8 bytes (signature and file version):
         # https://msdn.microsoft.com/en-us/library/aa374407%28v=vs.85%29.aspx
         reg_policy_text = reg_policy.read()[8:]
-        reg_policy_text = reg_policy_text.decode(encoding="utf-16")
+        reg_policy_text = reg_policy_text.decode(encoding="utf-16") if not isinstance(reg_policy_text, str) else reg_policy_text
         reg_policy.close()
     except (IOError, OSError) as exc:
         utils.fail("An Error occured while opening '%s' file: %r" % (reg_pol_file, exc))
