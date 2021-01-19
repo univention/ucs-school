@@ -35,6 +35,12 @@ Description[en]=Pipe-separated (|) blacklist of attribute values, that are strip
 Type=str
 Categories=ucsschool-base
 
+[ucsschool/exam/user/disable]
+Description[en]=Defines whether the original user should be disabled during an exam in order to prevent them from using other services (Default: no)
+Description[de]=Definiert, ob der originale Benutzer während einer Klassenarbeit deaktiviert werden soll, um die Nutzung anderer Dienste zu verhindern (Standard: no)
+Type=bool
+Categories=ucsschool-exam
+
 [ucsschool/exam/cron/cleanup-master]
 Description[en]=Specifies the point in time when the script exam-and-room-cleanup is called by cron (disabled by default; example: "30 3 * * *")
 Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-and-room-cleanup automatisch durch cron gestartet wird (standardmäßig deaktiviert; Beispiel: "30 3 * * *")
