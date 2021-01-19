@@ -12,12 +12,14 @@ Package: ucs-test-ucsschool
 Architecture: all
 Depends:
  eapol,
+ python-samba,
  python-attr,
  python-mock,
  python-pycurl,
  python-pytest,
  python-requests,
  python-ucs-school (>= 12.1.9),
+ pyhton3-samba,
  python3-attr,
  python3-mock,
  python3-pycurl,
@@ -32,5 +34,6 @@ Depends:
  ${python:Depends},
 Provides:
  ucs-test-module,
+ ${python3:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
