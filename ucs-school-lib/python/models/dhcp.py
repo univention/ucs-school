@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import ipaddr
+import ipaddress
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 

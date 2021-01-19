@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
+from ipaddress import AddressValueError, IPv4Network, NetmaskValueError
 
 from univention.admin.uexceptions import noObject
 
