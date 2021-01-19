@@ -87,3 +87,9 @@ Description[en]=Defines whether the home directory of the exam users should also
 Description[de]=Definiert, ob beim automatischen Löschen der Prüfungsbenutzer auch deren Heimatverzeichnis gelöscht werden soll (Standard: no)
 Type=bool
 Categories=ucsschool-exam
+
+[ucsschool/exam/user/disable]
+Description[en]=Defines whether the original user should be disabled during an exam in order to prevent them from using other services (Default: no)
+Description[de]=Definiert, ob der originale Benutzer während einer Klassenarbeit deaktiviert werden soll, um die Nutzung anderer Dienste zu verhindern (Standard: no)
+Type=bool
+Categories=ucsschool-exam

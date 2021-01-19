@@ -242,7 +242,6 @@ class Instance(SchoolBaseModule):
                 new_ws = ws if ws.startswith("$") else "${}".format(ws)
                 new_value.append(new_ws)
             user_orig["sambaUserWorkstations"] = new_value
-        user_orig.modify()
 
         # uid and DN of exam_user
         exam_user_uid = "".join((self._examUserPrefix, user_orig["username"]))
@@ -250,6 +249,12 @@ class Instance(SchoolBaseModule):
             exam_user_uid,
             self.examUserContainerDN(ldap_admin_write, ldap_position, user.school or school),
         )
+
+        # disable original user
+        if ucr.is_true("ucsschool/exam/user/disable"):
+            logger.info("Disable original user {} temporarily.".format(userdn))
+            user_orig["disabled"] = True
+        user_orig.modify()
 
         try:
             exam_user = ExamStudent.get_only_udm_obj(
@@ -626,6 +631,10 @@ class Instance(SchoolBaseModule):
                     new_ws = ws[1:] if ws.startswith("$") else ws
                     new_value.append(new_ws)
                 orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if len(ws) > 0]
+                # enable original user
+                if ucr.is_true("ucsschool/exam/user/disable"):
+                    logger.info("Enable original user {} again.".format(orig_udm))
+                    orig_udm.props.disabled = False
                 orig_udm.save()
                 logger.info("Original user access has been restored for %r.", orig_udm)
             except univention.admin.uexceptions.noObject:
