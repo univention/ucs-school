@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-18) unstable; urgency=medium
+
+  * Bug #51886: fixed diagnostic module 905_ucsschool_check_backend
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 19 Jan 2021 14:15:13 +0100
+
 ucs-school-umc-diagnostic (1.0.0-17) unstable; urgency=medium
 
   * Bug #52147: add consistency script to debian package
