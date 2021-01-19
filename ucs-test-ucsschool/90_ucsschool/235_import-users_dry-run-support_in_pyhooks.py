@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test if in dry-run pyhooks with dry-run support run and those without don't
 ## tags: [apptest,ucsschool,ucsschool_base1]
