@@ -1,0 +1,552 @@
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+## -*- coding: utf-8 -*-
+## desc: test ucsschool.lib.models.users validation
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_import1,unit-test]
+## exposure: dangerous
+## packages:
+##   - python-ucs-school
+
+#
+# Hint: When debugging interactively, disable output capturing:
+# $ pytest -s -l -v ./......py::test_create
+#
+import logging
+import tempfile
+
+try:
+    from typing import Dict, List, Tuple
+except ImportError:
+    pass
+
+import re
+
+import pytest
+
+import univention.testing.strings as uts
+from ucsschool.lib.models import validator as validator
+from ucsschool.lib.models.utils import get_file_handler, ucr
+from ucsschool.lib.models.validator import (
+    EXAM_STUDENT_CLASS_NAME,
+    LOGGER_NAME,
+    STAFF_CLASS_NAME,
+    STUDENT_CLASS_NAME,
+    TEACHER_AND_STAFF_CLASS_NAME,
+    TEACHER_CLASS_NAME,
+    container_exam_students,
+    container_staff,
+    container_students,
+    container_teachers,
+    container_teachers_and_staff,
+    exam_students_group,
+    get_role_container,
+    staff_group_regex,
+    teachers_group_regex,
+    ucr_get,
+    validate_udm,
+)
+
+ldap_base = ucr_get("ldap/base")
+
+
+def base_user_dict(firstname, lastname):  # type(str, str) -> dict
+    return {
+        "dn": "",
+        "properties": {
+            "mobileTelephoneNumber": [],
+            "postOfficeBox": [],
+            "groups": [],
+            "sambahome": "\\\\{}\\{}.{}".format(ucr_get("hostname"), firstname, lastname),
+            "umcProperty": {},
+            "overridePWLength": None,
+            "uidNumber": 2021,
+            "disabled": False,
+            "preferredDeliveryMethod": None,
+            "unlock": False,
+            "homeShare": None,
+            "postcode": None,
+            "scriptpath": "ucs-school-logon.vbs",
+            "sambaPrivileges": [],
+            "primaryGroup": "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+            "ucsschoolPurgeTimestamp": None,
+            "city": None,
+            "mailForwardCopyToSelf": "0",
+            "employeeType": None,
+            "homedrive": "I:",
+            "title": None,
+            "mailAlternativeAddress": [],
+            "serviceprovider": [],
+            "organisation": None,
+            "ucsschoolRecordUID": None,
+            "e-mail": [],
+            "userexpiry": None,
+            "pwdChangeNextLogin": None,
+            "unixhome": "",
+            "sambaUserWorkstations": [],
+            "preferredLanguage": None,
+            "username": "tobias.wenzel",
+            "departmentNumber": ["DEMOSCHOOL"],
+            "homeTelephoneNumber": [],
+            "shell": "/bin/bash",
+            "homePostalAddress": [],
+            "firstname": firstname,
+            "lastname": lastname,
+            "mailHomeServer": None,
+            "mailForwardAddress": [],
+            "phone": [],
+            "gidNumber": 5086,
+            "birthday": None,
+            "employeeNumber": None,
+            "objectFlag": [],
+            "sambaLogonHours": None,
+            "displayName": "{} {}".format(firstname, lastname),
+            "ucsschoolRole": [],
+            "password": None,
+            "lockedTime": "0",
+            "school": ["DEMOSCHOOL",],
+            "overridePWHistory": None,
+            "mailPrimaryAddress": None,
+            "secretary": [],
+            "country": None,
+            "lastbind": None,
+            "description": None,
+            "roomNumber": [],
+            "locked": False,
+            "passwordexpiry": None,
+            "pagerTelephoneNumber": [],
+            "street": None,
+            "gecos": "{} {}".format(firstname, lastname),
+            "unlockTime": "",
+            "sambaRID": 5042,
+            "ucsschoolSourceUID": None,
+            "profilepath": "%LOGONSERVER%\\%USERNAME%\\windows-profiles\\default",
+            "initials": None,
+            "jpegPhoto": None,
+            "homeSharePath": "tobias.wenzel",
+            "physicalDeliveryOfficeName": None,
+        },
+        "id": "{}.{}".format(firstname, lastname),
+        "_links": {},
+        "policies": {"policies/pwhistory": [], "policies/umc": [], "policies/desktop": []},
+        "position": "",
+        "options": {
+            "ucsschoolAdministrator": False,
+            "ucsschoolExam": False,
+            "ucsschoolTeacher": False,
+            "ucsschoolStudent": False,
+            "ucsschoolStaff": False,
+            "pki": False,
+        },
+        "objectType": "users/user",
+    }
+
+
+def student_as_dict():  # type(None) -> dict
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user_dict(firstname, lastname)
+    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        firstname, lastname, container_students, ldap_base
+    )
+    user["properties"]["groups"] = [
+        "cn=schueler-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
+            container_students, ldap_base
+        ),
+    ]
+    user["properties"]["unihome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
+    user["properties"]["ucsschoolRole"] = [
+        "student:school:DEMOSCHOOL",
+    ]
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
+    user["options"]["ucsschoolStudent"] = True
+    return user
+
+
+def exam_student_as_dict():  # type(None) -> dict
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user_dict(firstname, lastname)
+    user["dn"] = "uid={}.{},cn={},ou=DEMOSCHOOL,{}".format(
+        firstname, lastname, container_exam_students, ldap_base
+    )
+    user["properties"]["groups"] = [
+        "cn=schueler-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=OUdemoschool-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ldap_base),
+        "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
+            container_students, ldap_base
+        ),
+    ]
+    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
+    user["properties"]["ucsschoolRole"] = [
+        "exam_user:school:DEMOSCHOOL",
+        "exam_user:exam:{}-DEMOSCHOOL".format(uts.random_name()),
+    ]
+    user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
+    user["options"]["ucsschoolStudent"] = True
+    user["options"]["ucsschoolExam"] = True
+    return user
+
+
+def teacher_as_dict():  # type(None) -> dict
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user_dict(firstname, lastname)
+    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        firstname, lastname, container_teachers, ldap_base
+    )
+    user["properties"]["groups"] = [
+        "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+    ]
+    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["properties"]["ucsschoolRole"] = [
+        "staff:school:DEMOSCHOOL",
+    ]
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers, ldap_base)
+    user["options"]["ucsschoolTeacher"] = True
+    return user
+
+
+def staff_as_dict():  # type(None) -> dict
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user_dict(firstname, lastname)
+    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        firstname, lastname, container_staff, ldap_base
+    )
+    user["properties"]["groups"] = [
+        "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+    ]
+    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}.{}".format(firstname, lastname)
+    user["properties"]["ucsschoolRole"] = [
+        "teacher:school:DEMOSCHOOL",
+    ]
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_staff, ldap_base)
+    user["options"]["ucsschoolStaff"] = True
+    return user
+
+
+def teacher_and_staff_as_dict():  # type(None) -> dict
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user_dict(firstname, lastname)
+    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        firstname, lastname, container_teachers_and_staff, ldap_base
+    )
+    user["properties"]["groups"] = [
+        "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+    ]
+    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["properties"]["ucsschoolRole"] = [
+        "teacher:school:DEMOSCHOOL",
+        "staff:school:DEMOSCHOOL",
+    ]
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers_and_staff, ldap_base)
+    user["options"]["ucsschoolStaff"] = True
+    user["options"]["ucsschoolTeacher"] = True
+    return user
+
+
+@pytest.fixture
+def random_logger():
+    def _func():
+        handler = get_file_handler("DEBUG", tempfile.mkstemp()[1])
+        logger = logging.getLogger(uts.random_username())
+        logger.addHandler(handler)
+        logger.setLevel("DEBUG")
+        return logger
+
+    return _func
+
+
+@pytest.fixture(autouse=True)
+def mock_logger_file(mocker):
+    with tempfile.NamedTemporaryFile() as file:
+        mocker.patch.object(validator, "LOG_FILE", file.name)
+
+
+complete_role_matrix = [
+    (STUDENT_CLASS_NAME, student_as_dict()),
+    (TEACHER_CLASS_NAME, teacher_as_dict()),
+    (STAFF_CLASS_NAME, staff_as_dict()),
+    (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict()),
+    (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict()),
+]
+
+student_matrix = [
+    (STUDENT_CLASS_NAME, student_as_dict()),
+    (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict()),
+]
+
+
+def filter_log_messages(logs, name):
+    return "".join([m for n, _, m in logs if n == name])
+
+
+@pytest.mark.parametrize(
+    "class_name,get_user_a,get_user_b",
+    [
+        (STUDENT_CLASS_NAME, student_as_dict, teacher_as_dict),
+        (STUDENT_CLASS_NAME, student_as_dict, staff_as_dict),
+        (STUDENT_CLASS_NAME, student_as_dict, teacher_and_staff_as_dict),
+        (STUDENT_CLASS_NAME, student_as_dict, exam_student_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict, staff_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict, student_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict, teacher_and_staff_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict, exam_student_as_dict),
+        (STAFF_CLASS_NAME, staff_as_dict, teacher_as_dict),
+        (STAFF_CLASS_NAME, staff_as_dict, student_as_dict),
+        (STAFF_CLASS_NAME, staff_as_dict, exam_student_as_dict),
+        (STAFF_CLASS_NAME, staff_as_dict, teacher_and_staff_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict, teacher_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict, student_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict, teacher_and_staff_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict, staff_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict, student_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict, teacher_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict, staff_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict, exam_student_as_dict),
+    ],
+)
+def test_correct_ldap_position(caplog, get_user_a, get_user_b, class_name, random_logger):
+    random_logger = random_logger()
+    user_a = get_user_a()
+    user_b = get_user_b()
+    user_a["position"] = user_b["position"]
+    validate_udm(user_a, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "{} has wrong position in ldap".format(class_name) in log
+    assert "{}".format(user_a) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
+def test_wrong_ucsschool_role(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    user_dict["properties"]["ucsschoolRole"] = [
+        "{}:school:{}".format(uts.random_name(), uts.random_name())
+    ]
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert (
+            "{} is not part of schools: {}".format(
+                class_name, "".format(user_dict["properties"]["school"])
+            )
+            in log
+        )
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", student_matrix)
+def test_missing_student_role(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for role in user_dict["properties"]["ucsschoolRole"]:
+        if "student" in role:
+            user_dict["properties"]["ucsschoolRole"].remove(role)
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert (
+            "Student is missing a student role at schools: {}".format(
+                "".format(user_dict["properties"]["school"])
+            )
+            in log
+        )
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", [(EXAM_STUDENT_CLASS_NAME, exam_student_as_dict()),])
+def test_missing_exam_context_role(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for role in user_dict["properties"]["ucsschoolRole"]:
+        r, c, s = role.split(":")
+        if "exam" == c:
+            user_dict["properties"]["ucsschoolRole"].remove(role)
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "Exam-Students must have an ucsschoolRole with context exam." in log
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
+def test_missing_role_group(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    role_container = get_role_container(class_name)
+    for group in user_dict["properties"]["groups"]:
+        if re.match(r"cn={}-[^,]+,cn=groups,.+".format(role_container), group):
+            user_dict["properties"]["groups"].remove(group)
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert (
+            "User is missing the {}s groups for the following schools: {}".format(
+                class_name, ",".join(user_dict["properties"]["school"])
+            )
+            in log
+        )
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("role", ["teacher", "staff"])
+@pytest.mark.parametrize("class_name,user_dict", student_matrix)
+def test_students_wrong_role(caplog, user_dict, role, class_name, random_logger):
+    random_logger = random_logger()
+    user_dict["properties"]["ucsschoolRole"].append("{}:school:{}".format(role, uts.random_name()))
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "Students must not any other roles than 'student' or 'exam_student'" in log
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
+def test_missing_domain_users_group(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for group in user_dict["properties"]["groups"]:
+        if re.match(r"cn=Domain Users.+", group):
+            user_dict["properties"]["groups"].remove(group)
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert (
+            "User is missing the Domain Users groups for the following schools: {}".format(
+                ",".join(user_dict["properties"]["school"])
+            )
+            in log
+        )
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize(
+    "class_name,user_dict",
+    [
+        (STUDENT_CLASS_NAME, student_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict),
+        (STAFF_CLASS_NAME, staff_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict),
+    ],
+)
+@pytest.mark.parametrize(
+    "required_attribute",
+    ["username", "ucsschoolRole", "school", "firstname", "lastname", "groups", "primaryGroup",],
+)
+def test_missing_required_attribute(caplog, user_dict, class_name, random_logger, required_attribute):
+    random_logger = random_logger()
+    _user_dict = user_dict()
+    _user_dict["properties"][required_attribute] = []
+    validate_udm(_user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "User is missing required attributes: {}".format(required_attribute) in log
+    assert "{}".format(_user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", student_matrix)
+def test_student_missing_class(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for group in user_dict["properties"]["groups"]:
+        if "cn=klassen,cn=schueler,cn=groups" in group:
+            user_dict["properties"]["groups"].remove(group)
+    validate_udm(user_dict, class_name, random_logger)
+    assert (
+        "User is missing a class for the following schools: {}".format(
+            ",".join(user_dict["properties"]["school"])
+        )
+        in caplog.text
+    )
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert (
+            "User is missing a class for the following schools: {}".format(
+                ",".join(user_dict["properties"]["school"])
+            )
+            in log
+        )
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize(
+    "class_name,get_user_a,get_user_b",
+    [
+        (STUDENT_CLASS_NAME, student_as_dict, teacher_as_dict),
+        (TEACHER_CLASS_NAME, teacher_as_dict, staff_as_dict),
+        (EXAM_STUDENT_CLASS_NAME, exam_student_as_dict, teacher_as_dict),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict, student_as_dict),
+    ],
+)
+def test_validate_group_membership(caplog, get_user_a, get_user_b, class_name, random_logger):
+    random_logger = random_logger()
+    user_a = get_user_a()
+    user_b = get_user_b()
+    for group in user_b["properties"]["groups"]:
+        if group not in user_a["properties"]["groups"]:
+            user_a["properties"]["groups"].append(group)
+    validate_udm(user_a, class_name, random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "Disallowed member of group" in log
+    assert "{}".format(user_a) in secret_logs
+
+
+@pytest.mark.parametrize(
+    "class_name,user_dict", complete_role_matrix,
+)
+def test_incorrect_udm_options(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for key in [
+        "ucsschoolAdministrator",
+        "ucsschoolExam",
+        "ucsschoolTeacher",
+        "ucsschoolStudent",
+        "ucsschoolStaff",
+    ]:
+        user_dict["options"][key] = True
+    validate_udm(user_dict, class_name, random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "{} has incorrect UDM options".format(class_name) in log
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize(
+    "class_name,user_dict,remove_teachers_group",
+    [
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict(), True),
+        (TEACHER_AND_STAFF_CLASS_NAME, teacher_and_staff_as_dict(), False),
+    ],
+)
+def test_missing_teachers_and_staff_group(
+    caplog, user_dict, class_name, random_logger, remove_teachers_group
+):
+    random_logger = random_logger()
+    for group in user_dict["properties"]["groups"]:
+        if remove_teachers_group and re.match(teachers_group_regex, group):
+            user_dict["properties"]["groups"].remove(group)
+        elif re.match(staff_group_regex, group):
+            user_dict["properties"]["groups"].remove(group)
+    validate_udm(user_dict, class_name, random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "{} is missing a teacher- or staff-group".format(class_name) in log
+    assert "{}".format(user_dict) in secret_logs

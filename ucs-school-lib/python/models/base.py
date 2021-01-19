@@ -1067,10 +1067,13 @@ class UCSSchoolHelperAbstractClass(object):
             filter=str(filter_str),
             superordinate=superordinate,
         )
+
         if len(objs) == 0:
             return None
         if len(objs) > 1:
             raise MultipleObjectsError(objs)
+        # todo
+        # validate_udm(objs, "user_klasse", cls.logger)
         obj = objs[0]
         obj.open()
         return obj
