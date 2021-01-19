@@ -44,7 +44,6 @@ import apt
 import colorlog
 import lazy_object_proxy
 import ruamel.yaml
-from psutil import NoSuchProcess, process_iter
 from six import string_types
 
 import univention.debug as ud
