@@ -90,6 +90,7 @@ def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str, s
     (
         ("student", role_staff, "student"),
         ("teacher", role_student, "teacher"),
+        ("staff", role_teacher, "staff"),
         ("teacher_and_staff", role_staff, "teacher"),
     ),
     ids=input_ids_wrong_school_role,
@@ -113,6 +114,8 @@ def test_wrong_school_role(schoolenv, ucr_hostname, udm_instance, role_and_bad_v
 
 
 def test_wrong_school_role_for_each_school(schoolenv, ucr_hostname, udm_instance):
+    # this test is intentionally only applied for checking the student role.
+    # test_wrong_school_role() already ensures that this should also work for all other roles.
     (ou_name1, ou_dn1), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr_hostname)
     student_name, student_dn = schoolenv.create_student(ou_name1, wait_for_replication=False)
     student = Student.from_dn(student_dn, ou_name1, schoolenv.lo)
@@ -154,8 +157,10 @@ def input_ids_wrong_group_membership(role_and_container):  # type: (Tuple[str, s
 @pytest.mark.parametrize(
     "role_and_container",
     (
-        ("student", container_students, "Not member of group cn=schueler"),
-        ("teacher_and_staff", container_staff, "Not member of group cn=mitarbeiter"),
+        ("student", container_students, "Not member of group cn={}".format(container_students)),
+        ("teacher", container_teachers, "Not member of group cn={}".format(container_teachers)),
+        ("staff", container_staff, "Not member of group cn={}".format(container_staff)),
+        ("teacher_and_staff", container_staff, "Not member of group cn={}".format(container_staff)),
     ),
     ids=input_ids_wrong_group_membership,
 )
