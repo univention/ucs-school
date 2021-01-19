@@ -18,7 +18,6 @@ Depends:
  python-pytest,
  python-requests,
  python-ucs-school (>= 12.1.9),
- pyhton3-samba,
  python3-attr,
  python3-mock,
  python3-pycurl,
