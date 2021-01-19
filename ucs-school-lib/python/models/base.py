@@ -51,6 +51,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
+from .validator import validate
 
 try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
@@ -811,6 +812,7 @@ class UCSSchoolHelperAbstractClass(object):
                     self._udm_obj = None
                 else:
                     self._udm_obj.open()
+                    validate(self._udm_obj, self.logger)
             self._udm_obj_searched = True
         return self._udm_obj
 
@@ -964,6 +966,7 @@ class UCSSchoolHelperAbstractClass(object):
                 raise WrongModel(udm_obj.dn, klass, cls)
             return klass.from_udm_obj(udm_obj, school, lo)
         udm_obj.open()
+        validate(udm_obj, cls.logger)
         attrs = {
             "school": cls.get_school_from_dn(udm_obj.dn) or school
         }  # TODO: is this adjustment okay?
@@ -1067,12 +1070,14 @@ class UCSSchoolHelperAbstractClass(object):
             filter=str(filter_str),
             superordinate=superordinate,
         )
+
         if len(objs) == 0:
             return None
         if len(objs) > 1:
             raise MultipleObjectsError(objs)
         obj = objs[0]
         obj.open()
+        validate(obj, cls.logger)
         return obj
 
     @classmethod
@@ -1086,6 +1091,7 @@ class UCSSchoolHelperAbstractClass(object):
         except MultipleObjectsError as exc:
             obj = exc.objs[0]
             obj.open()
+            validate(obj, cls.logger)
             return obj
 
     @classmethod
