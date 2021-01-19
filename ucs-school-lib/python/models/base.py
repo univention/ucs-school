@@ -51,6 +51,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
+from future.utils import with_metaclass
 
 try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
@@ -102,7 +103,7 @@ class MultipleObjectsError(Exception):
         self.objs = objs
 
 
-class UCSSchoolHelperAbstractClass(object):
+class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, object)):
     """
     Base class of all UCS@school models.
     Hides UDM.
@@ -212,8 +213,6 @@ class UCSSchoolHelperAbstractClass(object):
             class Meta:
                 hook_path = 'computer'
     """
-
-    __metaclass__ = UCSSchoolHelperMetaClass
     _cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
     _machine_connection = None  # type: LoType
     _search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
