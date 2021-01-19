@@ -35,7 +35,7 @@ def main():
             try:
                 Client(
                     name=school_admin.decode("utf-8"),
-                    password=password.decode("utf-8"),
+                    password=password.decode("utf-8") if isinstance(password, bytes) else password,
                     server="{}.{}".format(ucr["hostname"], ucr["domainname"]),
                     log_level=Client.LOG_RESPONSE,
                     ssl_verify=True,

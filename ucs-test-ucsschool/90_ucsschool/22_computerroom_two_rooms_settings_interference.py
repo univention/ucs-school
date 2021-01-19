@@ -117,7 +117,7 @@ def main():
                     room2_time = room1_time + 10 * 60
 
                     # Testing loop over room1 settings
-                    for i in xrange(24):
+                    for i in range(24):
                         room1_period = datetime.time.strftime(
                             (datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), "%H:%M"
                         )
@@ -140,7 +140,7 @@ def main():
 
                         # Testing loop over room2 settings
                         room2_settings = itertools.product(rules, printmodes, sharemodes)
-                        for j in xrange(24):
+                        for j in range(24):
                             try:
                                 room2_period = datetime.time.strftime(
                                     (datetime.datetime.now() + datetime.timedelta(0, room2_time)).time(),

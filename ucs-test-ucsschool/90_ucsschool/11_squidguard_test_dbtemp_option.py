@@ -58,7 +58,7 @@ def main():
 
     def write_lists():
         with open(fn_userlist, "w") as fd:
-            for i in xrange(1000):
+            for i in range(1000):
                 for name in (
                     "anton",
                     "berta",
@@ -73,11 +73,11 @@ def main():
                 ):
                     fd.write("%s%d\nMYDOMAIN\\%s%d\n" % (name, i, name, i))
         with open(fn_whitelist_domains, "w") as fd:
-            for i in xrange(5000):
+            for i in range(5000):
                 for name in ("univention.de", "software-univention.de"):
                     fd.write("%d.%s\nsmtp%d.%s\n" % (i, name, i, name))
         with open(fn_whitelist_urls, "w") as fd:
-            for i in xrange(10000):
+            for i in range(10000):
                 fd.write(
                     "http://updates.software-univention.de/%s/%s.html\n"
                     % (random_string(), random_string())
@@ -187,7 +187,7 @@ def main():
             stdout=subprocess.PIPE,
             stderr=open(fn_log, "a+"),
         )
-        for i in xrange(100000):
+        for i in range(100000):
             if not i % 5000:
                 print("%d/100000" % i)
             username = random_string(length=8)
@@ -196,8 +196,10 @@ def main():
             elif i % 3 == 2:
                 username = "-"
             p.stdin.write(
-                "http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
-                % (random_string(), random_string(), username)
+                (
+                    "http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
+                    % (random_string(), random_string(), username)
+                ).encode("utf-8")
             )
             p.stdout.readline()
         print()
