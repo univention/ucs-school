@@ -424,17 +424,17 @@ html5
         # manual -> automatic
         # atJobs don't care -> int
         if before_type == "manual" and after_type == "automatic":
-            fail_state = not (isinstance(after_atJob, (int, long)))
+            fail_state = not (isinstance(after_atJob, int))
 
         # automatic -> manual
         # atJobs int -> don't care
         if before_type == "automatic" and after_type == "manual":
-            fail_state = not (isinstance(before_atJob, (int, long)))
+            fail_state = not (isinstance(before_atJob, int))
 
         # automatic -> automatic
         # atJobs int1 -> int2 & int1 < int2
         if before_type == "automatic" and after_type == "automatic":
-            fail1 = not (isinstance(before_atJob, (int, long)) and isinstance(after_atJob, (int, long)))
+            fail1 = not (isinstance(before_atJob, int) and isinstance(after_atJob, int))
             fail2 = not (before_time != after_time and (before_atJob < after_atJob))
             fail_state = fail1 or fail2
         return fail_state

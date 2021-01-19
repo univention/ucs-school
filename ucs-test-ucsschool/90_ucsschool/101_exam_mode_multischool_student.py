@@ -14,13 +14,13 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
+from ucsschool.lib.models.user import ExamStudent, Student
 from ucsschool.lib.roles import (
     context_type_exam,
     create_ucsschool_role_string,
     role_exam_user,
     role_student,
 )
-from ucsschool.lib.models.user import ExamStudent, Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set
 from univention.testing import utils

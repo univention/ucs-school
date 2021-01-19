@@ -26,7 +26,7 @@ def main():
             "foobar.txt",
         ]:
             fd = tempfile.NamedTemporaryFile()
-            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in xrange(256))
+            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
             fd.write(token)
             fd.flush()
 

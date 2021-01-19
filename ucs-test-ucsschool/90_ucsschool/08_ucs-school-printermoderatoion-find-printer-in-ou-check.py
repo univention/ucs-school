@@ -21,7 +21,9 @@ def doPrinter(operation, printer_name, schoolName, spool_host, domainname):
     uri = "%s://%s" % ("lpd", localIp)
     print_server = "%s.%s" % (spool_host, domainname)
     f = tempfile.NamedTemporaryFile(suffix=".csv")
-    line = "%s\t%s\t%s\t%s\t%s\n" % (operation, schoolName, print_server, printer_name, uri)
+    line = ("%s\t%s\t%s\t%s\t%s\n" % (operation, schoolName, print_server, printer_name, uri)).encode(
+        "utf-8"
+    )
     f.write(line)
     f.flush()
     cmd = ["/usr/share/ucs-school-import/scripts/import_printer", f.name]
@@ -63,7 +65,7 @@ def main():
             doPrinter("A", newPrinterName, schoolName1, host, domainname)
 
             # check if the printer exists in the correct OU
-            for i in xrange(5):
+            for i in range(5):
                 if not printerExist(connection, newPrinterName, schoolName1):
                     utils.fail("Printer not found in the specified OU")
 
