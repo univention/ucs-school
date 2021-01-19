@@ -67,7 +67,7 @@ def main():
             group.removeMembers([memberListdn[0]])
 
             # 10 checking if the atrriputes for the group is correct in ldap
-            for wait in xrange(30):
+            for wait in range(30):
                 try:
                     group.verify_ldap_attributes()
                 except Exception as e:
@@ -84,7 +84,7 @@ def main():
             group.set_members([memberListdn[0]])
 
             # 11 checking if the atrriputes for the group is correct in ldap
-            for wait in xrange(30):
+            for wait in range(30):
                 try:
                     group.verify_ldap_attributes()
                 except Exception as e:

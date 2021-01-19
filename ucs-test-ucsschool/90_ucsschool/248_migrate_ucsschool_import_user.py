@@ -98,9 +98,9 @@ def main():
         next_record_uid += 1
 
         # create CSV file for guessing
-        with tempfile.NamedTemporaryFile(mode="wb") as fd_guess, tempfile.NamedTemporaryFile(
-            mode="rb"
-        ) as fd_target, tempfile.NamedTemporaryFile(mode="wb") as fd_migrate:
+        with tempfile.NamedTemporaryFile(mode="w") as fd_guess, tempfile.NamedTemporaryFile(
+            mode="r"
+        ) as fd_target, tempfile.NamedTemporaryFile(mode="w") as fd_migrate:
             os.remove(fd_target.name)
 
             writer = csv.writer(fd_guess, dialect="excel")
@@ -127,7 +127,7 @@ def main():
             print("*******************")
 
             # check CSV file from guessing
-            fd_target2 = open(fd_target.name, "rb")
+            fd_target2 = open(fd_target.name, "r")
             reader = csv.reader(fd_target2, dialect="excel")
             # drop CSV header and comments
             row = reader.next()
@@ -175,16 +175,16 @@ def main():
                         result = lo.search(base=user.dn)
                         assert result, "Could not find {} in LDAP".format(user.dn)
                         if dry_run:
-                            assert result[0][1].get("ucsschoolSourceUID", [""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [""])[0] != user.record_uid
-                            assert result[0][1].get("uid", [""])[0] == user.username
+                            assert result[0][1].get("ucsschoolSourceUID", [b""])[0] != source_uid
+                            assert result[0][1].get("ucsschoolRecordUID", [b""])[0] != user.record_uid
+                            assert result[0][1].get("uid", [b""])[0] == user.username
                         else:
                             if source_uid is not None:
-                                assert result[0][1].get("ucsschoolSourceUID", [""])[0] == source_uid
+                                assert result[0][1].get("ucsschoolSourceUID", [b""])[0] == source_uid
                             else:
-                                assert result[0][1].get("ucsschoolSourceUID", [""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [""])[0] == user.record_uid
-                            assert result[0][1].get("uid", [""])[0] == user.username
+                                assert result[0][1].get("ucsschoolSourceUID", [b""])[0] != source_uid
+                            assert result[0][1].get("ucsschoolRecordUID", [b""])[0] == user.record_uid
+                            assert result[0][1].get("uid", [b""])[0] == user.username
 
             print("*\n*** Test was successful.\n*")
 

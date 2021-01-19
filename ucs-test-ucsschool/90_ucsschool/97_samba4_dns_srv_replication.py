@@ -31,7 +31,7 @@ from univention.testing.ucsschool.test_samba4 import TestSamba4
 try:
     from cStringIO import StringIO  # a faster version
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class TestS4DNSSRVReplication(TestSamba4):
@@ -188,7 +188,7 @@ class TestS4DNSSRVReplication(TestSamba4):
         zone_searchbase = "DC=%s,%s" % (zone_name, dns_searchbase)
 
         ldif = self.get_dns_srv_via_univention_s4search(record_name, zone_searchbase)
-        dns_record_re = re.compile("^dnsRecord:: (.*)$", re.M)
+        dns_record_re = re.compile(r"^dnsRecord:: (.*)$", re.M)
         priority = []
         weight = []
         port = []

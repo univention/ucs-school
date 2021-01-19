@@ -42,7 +42,7 @@ def main():
                 pc.check_get()
                 pc.verify_ldap(True)
                 pc.remove()
-                for wait in xrange(30):
+                for wait in range(30):
                     try:
                         pc.verify_ldap(False)
                     except Exception as e:
