@@ -290,7 +290,7 @@ class Room(object):
         ula_length = len(ula.list())
         time_out = 30  # seconds
         self.set_room_settings(client, new_settings)
-        for i in xrange(time_out, 0, -1):
+        for i in range(time_out, 0, -1):
             print(i)
             if len(ula.list()) > ula_length:
                 break
@@ -528,7 +528,7 @@ class Room(object):
             t = 600
 
             # Testing loop
-            for i in xrange(settings_len):
+            for i in range(settings_len):
                 period = datetime.time.strftime(
                     (datetime.datetime.now() + datetime.timedelta(0, t)).time(), "%H:%M"
                 )
@@ -612,7 +612,7 @@ class Room(object):
             t = 600
 
             # Testing loop
-            for i in xrange(settings_len):
+            for i in range(settings_len):
                 period = datetime.time.strftime(
                     (datetime.datetime.now() + datetime.timedelta(0, t)).time(), "%H:%M"
                 )

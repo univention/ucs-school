@@ -41,11 +41,11 @@ def main():
                 rule.define()
                 rules.append(rule)
 
-            for i in xrange(2):
+            for i in range(2):
                 tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
                 stu, stu_dn = schoolenv.create_user(school)
                 users.append([tea, stu])
-                for j in xrange(2):
+                for j in range(2):
                     group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
                     group.create()
                     groups.append(group)
@@ -53,7 +53,7 @@ def main():
             tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
             stu, stu_dn = schoolenv.create_user(school)
             users.append([tea, stu])
-            for j in xrange(4):
+            for j in range(4):
                 group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
                 group.create()
                 groups.append(group)

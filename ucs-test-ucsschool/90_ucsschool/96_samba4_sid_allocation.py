@@ -81,7 +81,7 @@ class TestS4SIDAllocation(TestSamba4):
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
             utils.fail("An error occured while running univention-s4search: %r" % stderr)
-        matches = re.findall("^%s: (.*)$" % attribute, stdout, re.MULTILINE)
+        matches = re.findall(r"^%s: (.*)$" % attribute, stdout, re.MULTILINE)
         if not matches:
             utils.fail("The 'univention-s4search' did not produce any %s." % attribute)
         return matches[0]
@@ -116,7 +116,7 @@ class TestS4SIDAllocation(TestSamba4):
                 % (user_dn, stderr)
             )
 
-        object_sids = re.findall("^objectSid: (.*)$", stdout, re.MULTILINE)
+        object_sids = re.findall(r"^objectSid: (.*)$", stdout, re.MULTILINE)
         if not object_sids:
             return ""
         return object_sids[0]

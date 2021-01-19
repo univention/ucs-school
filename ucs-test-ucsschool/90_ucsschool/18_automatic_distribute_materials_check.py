@@ -43,11 +43,11 @@ def main():
                 connection.authenticate(tea, "univention")
 
                 # Prepare times for auto distribution and collection
-                local = list(time.localtime(time.time() + MIN_DIST_TIME))
+                local = time.localtime(time.time() + MIN_DIST_TIME)
                 distTime = time.strftime("%H:%M", local)
                 distDate = time.strftime("%Y-%m-%d", local)
 
-                local = list(time.localtime(time.time() + MIN_COLL_TIME))
+                local = time.localtime(time.time() + MIN_COLL_TIME)
                 collTime = time.strftime("%H:%M", local)
                 collDate = time.strftime("%Y-%m-%d", local)
 
