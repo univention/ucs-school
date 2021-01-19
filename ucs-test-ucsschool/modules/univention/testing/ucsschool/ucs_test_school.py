@@ -111,7 +111,7 @@ def force_ucsschool_logger_colorized_if_has_tty():
         ppid = os.getppid()
         with open("/proc/{}/cmdline".format(ppid), "r") as fp:
             if "ucs-test" in fp.read():
-                fd = open("/proc/{}/fd/1".format(ppid), "a")
+                fd = sys.stdout
                 if fd.isatty():
                     colorize = True
     if colorize:
