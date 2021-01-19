@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: support deletion of users in different ways
 ## tags: [apptest,ucsschool,ucsschool_import1]

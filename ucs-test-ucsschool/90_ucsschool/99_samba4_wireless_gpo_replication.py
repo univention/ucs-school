@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test wireless gpo replication
 ## roles: [domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
