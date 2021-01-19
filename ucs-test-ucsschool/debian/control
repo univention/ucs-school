@@ -21,6 +21,13 @@ Depends:
  python-pytest,
  python-pytest-catchlog,
  python-requests,
+ python-ucs-school (>= 12.1.9),
+ python3-attr,
+ python3-mock,
+ python3-pycurl,
+ python3-pytest,
+ python3-requests,
+ python3-ucs-school (>= 12.1.9),
  ucs-test-framework (>= 9.0.2-90),
  ucs-test-libs,
  univention-unittests,
@@ -29,5 +36,6 @@ Depends:
  ${python:Depends},
 Provides:
  ucs-test-module,
+ ${python3:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.

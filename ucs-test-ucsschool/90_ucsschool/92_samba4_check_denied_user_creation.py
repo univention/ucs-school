@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test user creation denial on DC-Slave with Samba4.
 ## bugs: [34217, 37700]
 ## roles: [domaincontroller_slave]

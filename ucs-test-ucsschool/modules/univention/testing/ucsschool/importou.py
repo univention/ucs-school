@@ -940,7 +940,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
                     univention.config_registry.handler_unset(["dhcpd/ldap/base"])
                     ucr.load()
 
-                    for i in xrange(1, 4):
+                    for i in range(1, 4):
                         ou_name = uts.random_name()
                         print("\n*** Creating OU #%d (ou_name=%s) ***\n" % (i, ou_name))
                         cleanup_ou_list.append(ou_name)

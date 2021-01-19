@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: upload files to distribute module with problematic filenames
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -25,8 +25,8 @@ def main():
             "C:\\Windows\\Temp\\foobar.txt",
             "foobar.txt",
         ]:
-            fd = tempfile.NamedTemporaryFile()
-            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in xrange(256))
+            fd = tempfile.NamedTemporaryFile(mode="w")
+            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
             fd.write(token)
             fd.flush()
 
