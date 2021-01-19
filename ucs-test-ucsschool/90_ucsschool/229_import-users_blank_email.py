@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test bahavior of import with and without email column/mapping/value
 ## tags: [apptest,ucsschool,ucsschool_import1]

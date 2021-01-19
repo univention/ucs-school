@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: ucs-school-assign-internet-rules-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -39,7 +39,7 @@ def main():
 
             # define many random internet rules
             newRules = []
-            for _ in xrange(8):
+            for _ in range(8):
                 rule = InternetRule(ucr=ucr, connection=umc_connection)
                 rule.define()
                 rule.get(should_exist=True)
@@ -48,7 +48,7 @@ def main():
 
             # Create random workgroups
             newWorkgroups = []
-            for _ in xrange(2):
+            for _ in range(2):
                 group = Workgroup(school, ucr=ucr, connection=umc_connection)
                 group.create()
                 newWorkgroups.append(group)
@@ -99,7 +99,7 @@ def main():
 
             # Create random classs
             newclasses = []
-            for _ in xrange(2):
+            for _ in range(2):
                 klasse = Klasse(school, ucr=ucr, connection=umc_connection_master)
                 klasse.create()
                 newclasses.append(klasse)

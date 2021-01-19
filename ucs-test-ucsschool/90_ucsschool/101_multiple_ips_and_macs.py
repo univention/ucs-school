@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Unittests for italc multiple ips and macs
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -198,8 +198,7 @@ def test_ip_not_in_cache_italc(mocker, ucr_value):
     mocked_logger = mocker.patch.object(room_management_module, "MODULE")
     ip = uts.random_ip()
     mac = uts.random_mac()
-    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
-        """
+    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface"""
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1
@@ -223,11 +222,11 @@ def test_valid_mac_italc(mocker, ucr_value):
     mocked_subprocess = mocker.patch.object(room_management_module, "subprocess")
     ip = uts.random_ip()
     mac = uts.random_mac()
-    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
+    out = ("""Address                  HWtype  HWaddress           Flags Mask            Iface
 {}             ether   {}   C                     ens3
     """.format(
         ip, mac
-    )
+    )).encode('utf-8')
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1
@@ -259,11 +258,11 @@ def test_access_mac_before_ip_italc(mocker, ucr_value):
     macs = [uts.random_mac() for _ in range(2)]
     mocked_subprocess = mocker.patch.object(room_management_module, "subprocess")
     mocked_subprocess.call.return_value = 0
-    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
+    out = ("""Address                  HWtype  HWaddress           Flags Mask            Iface
     {}             ether   {}   C                     ens3
         """.format(
         ips[0], macs[0]
-    )
+    )).encode('utf-8')
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1
@@ -290,11 +289,11 @@ def test_mac_not_in_udm_computer_italc(mocker, ucr_value):
     mocked_subprocess = mocker.patch.object(room_management_module, "subprocess")
     wrong_mac = uts.random_mac()
     mocked_subprocess.call.return_value = 0
-    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
+    out = ("""Address                  HWtype  HWaddress           Flags Mask            Iface
     {}             ether   {}   C                     ens3
         """.format(
         ips[0], wrong_mac
-    )
+    )).encode('utf-8')
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1
@@ -320,11 +319,11 @@ def test_multiple_macs_last_valid_italc(mocker, ucr_value):
     macs = [uts.random_mac() for _ in range(10)]
     mocked_subprocess = mocker.patch.object(room_management_module, "subprocess")
     mocked_subprocess.call.side_effect = [2] * 9 + [0]
-    out = b"""Address                  HWtype  HWaddress           Flags Mask            Iface
+    out = ("""Address                  HWtype  HWaddress           Flags Mask            Iface
     {}             ether   {}   C                     ens3
         """.format(
         ips[-1], macs[-1]
-    )
+    )).encode('utf-8')
     popen_mock = mocker.Mock(**{"communicate.return_value": (out, "")})
     mocked_subprocess.PIPE = -1
     mocked_subprocess.STDOUT = 1

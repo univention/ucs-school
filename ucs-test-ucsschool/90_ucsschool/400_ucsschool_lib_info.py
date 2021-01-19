@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test python module ucsschool.lib.info
 ## tags: [apptest,ucsschool,ucsschool_base1]

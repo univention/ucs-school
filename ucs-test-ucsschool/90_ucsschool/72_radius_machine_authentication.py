@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Computers(schools) module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -28,7 +28,7 @@ def random_case(txt):  # type: (str) -> str
     """
     assert txt, "Given string should not be empty!"
     result = []
-    for i in xrange(1000):
+    for i in range(1000):
         for c in txt:
             if random.randint(0, 1):
                 result.append(c.upper())
