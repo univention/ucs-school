@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Check if an internet rule may be assigned to 2 rooms
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## bugs: [32544]
@@ -18,8 +18,7 @@ import univention.testing.utils as utils
 # copied from ucs-school-webproxy.py
 def quote(string):
     "Replace every unsafe byte with hex value"
-    if type(string) is unicode:
-        string = string.encode("utf-8")
+    string = string.encode("utf-8")
     newstring = ""
     for byte in string:
         if byte in quote.safeBytes:
@@ -66,9 +65,9 @@ def test_ruleset(ucr, test_settings):
 
     # read and normalize content of squidGuard.conf
     content = open("/etc/squidguard/squidGuard.conf", "r").read()
-    content = re.sub("[ \t]+", " ", content)  # merge whitespaces
-    content = re.sub("\n +", "\n", content)  # remove leading whitespace
-    content = re.sub(" +\n", "\n", content)  # remove trailing whitespace
+    content = re.sub(r"[ \t]+", " ", content)  # merge whitespaces
+    content = re.sub(r"\n +", "\n", content)  # remove leading whitespace
+    content = re.sub(r" +\n", "\n", content)  # remove trailing whitespace
 
     for room, rule in test_settings.items():
         # do a rough check if all required lines are present

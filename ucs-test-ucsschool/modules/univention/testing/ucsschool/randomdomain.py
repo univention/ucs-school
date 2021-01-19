@@ -41,4 +41,4 @@ class RandomDomain(object):
         :returns: [str] domains list
         """
         cls = type(self)
-        return [cls().domain for i in xrange(count)]
+        return [cls().domain for i in range(count)]

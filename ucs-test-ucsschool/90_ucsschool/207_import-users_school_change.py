@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test moving a user from ou_A to ou_B
 ## tags: [apptest,ucsschool,ucsschool_import1]

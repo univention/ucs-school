@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Schools module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -19,7 +19,7 @@ def main():
     with udm_test.UCSTestUDM() as udm:
         schools = []
         try:
-            for i in xrange(2):
+            for i in range(2):
                 school = School()
                 school.create()
                 school.verify_ldap(True)
@@ -63,7 +63,7 @@ def main():
                 school.verify_ldap(True)
                 school.remove()
 
-                for wait in xrange(30):
+                for wait in range(30):
                     try:
                         school.verify_ldap(False)
                     except Exception as e:

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Basic tests importing users via CLI v2
 ## tags: [apptest,ucsschool,ucsschool_import1]

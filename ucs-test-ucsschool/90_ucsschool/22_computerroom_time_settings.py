@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: computerroom module time settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## versions:

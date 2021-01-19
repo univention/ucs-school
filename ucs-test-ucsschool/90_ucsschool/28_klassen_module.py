@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Klassen module
 ## roles: [domaincontroller_master]
@@ -17,7 +17,7 @@ def main():
             ou, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             klassen = []
 
-            for i in xrange(2):
+            for i in range(2):
                 klasse = Klasse(school=ou)
                 klasse.create()
                 klasse.check_existence(True)

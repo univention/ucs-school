@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: ucs-school-helpdesk - send mail via helpdesk module
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -51,7 +51,7 @@ def main():
                 timeOut = 60
                 print("Waiting %ds for incoming mail..." % (timeOut,))
                 # periodically checking the receipt of the same sent mail
-                for i in xrange(timeOut, 0, -1):
+                for i in range(timeOut, 0, -1):
                     print(i, end=" ")
                     if message in open(f.name).read():
                         print("\nUnique id was found in target file %r" % (f.name,))

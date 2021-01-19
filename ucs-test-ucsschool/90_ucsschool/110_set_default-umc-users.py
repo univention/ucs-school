@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: set default umc users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]

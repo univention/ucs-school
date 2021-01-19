@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: ucs-school-printermoderation-find-printer-in-ou-check
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -63,7 +63,7 @@ def main():
             doPrinter("A", newPrinterName, schoolName1, host, domainname)
 
             # check if the printer exists in the correct OU
-            for i in xrange(5):
+            for i in range(5):
                 if not printerExist(connection, newPrinterName, schoolName1):
                     utils.fail("Printer not found in the specified OU")
 

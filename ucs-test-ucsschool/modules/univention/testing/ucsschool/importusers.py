@@ -210,7 +210,7 @@ class Person(object):
             value_map.get("source_uid", "__EMPTY__"): self.source_uid,
             value_map.get("description", "__EMPTY__"): self.description,
             value_map.get("school_classes", "__EMPTY__"): ",".join(
-                [x for school_, classes in self.school_classes.iteritems() for x in classes]
+                [x for school_, classes in self.school_classes.items() for x in classes]
             ),
             value_map.get("email", "__EMPTY__"): self.mail,
             value_map.get("__action", "__EMPTY__"): self.mode,
@@ -233,7 +233,7 @@ class Person(object):
             self.lastname,
             self.firstname,
             self.school,
-            ",".join([x for school_, classes in self.school_classes.iteritems() for x in classes]),
+            ",".join([x for school_, classes in self.school_classes.items() for x in classes]),
             "",
             self.mail,
             str(int(self.is_teacher() or self.is_teacher_staff())),
@@ -399,7 +399,7 @@ class Person(object):
             should_exist=True,
         )
 
-        for school, classes in self.school_classes.iteritems():
+        for school, classes in self.school_classes.items():
             for cl in classes:
                 cl_group_dn = "cn=%s,cn=klassen,cn=%s,cn=groups,%s" % (
                     cl,
@@ -512,7 +512,7 @@ class ImportFile:
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, str(self.user_import))
+        os.write(self.import_fd, str(self.user_import) if isinstance(str(self.user_import), bytes) else str(self.user_import).encode('utf-8'))
         os.close(self.import_fd)
 
     def run_import(self, user_import):

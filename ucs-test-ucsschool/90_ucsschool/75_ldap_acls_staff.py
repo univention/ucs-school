@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 # coding=utf-8
 ## desc: Check if staff users have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]

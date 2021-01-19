@@ -164,7 +164,7 @@ def main():
                         )
 
             # Checking legal chars in dc_name
-            for count in xrange(5):
+            for count in range(5):
                 dc_name = uts.random_name()
                 school = uts.random_name()
                 process_school(school, dc_name, should_fail=False)
