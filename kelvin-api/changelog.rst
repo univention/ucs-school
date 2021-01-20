@@ -9,6 +9,7 @@ v1.3.0 (2021-01-28)
 ...................
 * It is now possible to change the roles of users. See manual section `Changing a users roles <https://docs.software-univention.de/ucsschool-kelvin-rest-api/resource-users.html#changing-a-users-roles>`_ for details (Bug #52659).
 * Validation errors when reading malformed user objects from LDAP now produce more helpful error messages (Bug #52368).
+* A bug setting the properties ``profilepath`` and ``sambahome`` to empty values when creating users has been fixed (Bug #52668).
 
 v1.2.0 (2020-11-12)
 ...................

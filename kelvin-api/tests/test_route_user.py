@@ -49,6 +49,7 @@ from ucsschool.kelvin.routers.user import (
     UserPatchModel,
     set_password_hashes,
 )
+from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from udm_rest_client import UDM
 
@@ -594,6 +595,26 @@ async def test_create(
             await check_password(response_json["dn"], r_user.password)
     else:
         await check_password(response_json["dn"], r_user.password)
+    # Bug #52668: check sambahome and profilepath
+    async with UDM(**udm_kwargs) as udm:
+        user_udm = await udm.get("users/user").get(response_json["dn"])
+        if role.name == "staff":
+            assert user_udm.props.profilepath is None
+            assert user_udm.props.sambahome is None
+        else:
+            assert (
+                user_udm.props.profilepath
+                == r"%LOGONSERVER%\%USERNAME%\windows-profiles\default"
+            )
+            school = await School.from_dn(
+                School.cache(lib_users[0].school).dn, None, udm
+            )
+            home_share_file_server = school.home_share_file_server
+            assert (
+                home_share_file_server
+            ), f"No 'home_share_file_server' set for OU {lib_users[0].school!r}."
+            samba_home_path = fr"\\{school.get_name_from_dn(home_share_file_server)}\{lib_users[0].name}"
+            assert user_udm.props.sambahome == samba_home_path
 
 
 @pytest.mark.asyncio

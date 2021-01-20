@@ -477,8 +477,8 @@ def search_query_params_to_udm_filter(  # noqa: C901
         return None
 
 
-@router.get("/", response_model=List[UserModel])  # noqa: C901
-async def search(
+@router.get("/", response_model=List[UserModel])
+async def search(  # noqa: C901
     request: Request,
     school: str = Query(
         None,
