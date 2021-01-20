@@ -70,7 +70,7 @@ def _set_username_maxlength(config, logger):  # type: (ReadOnlyDict, logging.Log
 		config['username'].setdefault('max_length', {})['default'] = default
 		logger.info(
 			'Set value of configuration key username:max_length:default to%s value of UCR variable '
-			'ucsschool/username/max_length: %d.', ' default' if ucrv is None else '', default)
+			'ucsschool/username/max_length: %d.', ' default' if not ucrv else '', default)
 	try:
 		student = config['username']['max_length']['student']
 	except KeyError:

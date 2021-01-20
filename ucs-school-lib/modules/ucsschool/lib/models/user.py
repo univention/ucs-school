@@ -117,12 +117,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 	async def get_samba_home_path(self, lo):
 		school = School.cache(self.school)
 		# if defined then use UCR value
-		ucr_variable = ucr.get('ucsschool/import/set/sambahome')
-		if ucr_variable is not None:
+		if ucr_variable := ucr.get('ucsschool/import/set/sambahome'):
 			samba_home_path = r'\\%s' % ucr_variable.strip('\\')
-		# in single server environments the master is always the fileserver
 		elif ucr.is_true('ucsschool/singlemaster', False):
-			samba_home_path = r'\\%s' % ucr.get('hostname')
+			# in single server environments the master is always the fileserver
+			samba_home_path = r'\\%s' % ucr.get('ldap/server/name').split(".")[0]
 		# if there's a cached result then use it
 		elif school.dn not in self._samba_home_path_cache:
 			samba_home_path = None
@@ -138,8 +137,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			return r'%s\%s' % (samba_home_path, self.name)
 
 	async def get_profile_path(self, lo):
-		ucr_variable = ucr.get('ucsschool/import/set/serverprofile/path')
-		if ucr_variable is not None:
+		if ucr_variable := ucr.get('ucsschool/import/set/serverprofile/path'):
 			return ucr_variable
 		school = School.cache(self.school)
 		if school.dn not in self._profile_path_cache:
@@ -261,17 +259,13 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			udm_obj.props.disabled = False
 		if hasattr(udm_obj.props, 'mailbox'):
 			udm_obj.props.mailbox = '/var/spool/%s/' % self.name
-		samba_home = await self.get_samba_home_path(lo)
-		if samba_home:
+		if samba_home := await self.get_samba_home_path(lo):
 			udm_obj.props.sambahome = samba_home
-		profile_path = await self.get_profile_path(lo)
-		if profile_path:
+		if profile_path := await self.get_profile_path(lo):
 			udm_obj.props.profilepath = profile_path
-		home_drive = self.get_samba_home_drive()
-		if home_drive is not None:
+		if home_drive := self.get_samba_home_drive():
 			udm_obj.props.homedrive = home_drive
-		script_path = self.get_samba_netlogon_script_path()
-		if script_path is not None:
+		if script_path := self.get_samba_netlogon_script_path():
 			udm_obj.props.scriptpath = script_path
 		success = await super(User, self).do_create(udm_obj, lo)
 		if password_created:
@@ -330,17 +324,13 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			udm_obj.props.groups = list(groups | at_least_groups)
 		subdir = self.get_roleshare_home_subdir()
 		udm_obj.props.unixhome = '/home/' + os.path.join(subdir, self.name)
-		samba_home = await self.get_samba_home_path(lo)
-		if samba_home:
+		if samba_home := await self.get_samba_home_path(lo):
 			udm_obj.props.sambahome = samba_home
-		profile_path = await self.get_profile_path(lo)
-		if profile_path:
+		if profile_path := await self.get_profile_path(lo):
 			udm_obj.props.profilepath = profile_path
-		home_drive = self.get_samba_home_drive()
-		if home_drive is not None:
+		if home_drive := self.get_samba_home_drive():
 			udm_obj.props.homedrive = home_drive
-		script_path = self.get_samba_netlogon_script_path()
-		if script_path is not None:
+		if script_path := self.get_samba_netlogon_script_path():
 			udm_obj.props.scriptpath = script_path
 		if udm_obj.props.departmentNumber == [old_school]:
 			udm_obj.props.departmentNumber = [school]
