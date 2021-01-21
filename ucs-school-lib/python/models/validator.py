@@ -9,9 +9,6 @@ try:
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
-from ucsschool.lib.models.group import ComputerRoom, SchoolClass, WorkGroup
-from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
-from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler, ucr
 from ucsschool.lib.roles import (
     role_computer_room,
@@ -26,17 +23,17 @@ from ucsschool.lib.roles import (
     role_workgroup_share,
 )
 
-STUDENT_CLASS_NAME = Student.__name__
-EXAM_STUDENT_CLASS_NAME = ExamStudent.__name__
-TEACHER_CLASS_NAME = Teacher.__name__
-STAFF_CLASS_NAME = Staff.__name__
-TEACHER_AND_STAFF_CLASS_NAME = TeachersAndStaff.__name__
-SCHOOLCLASS_CLASS_NAME = SchoolClass.__name__
-WORKGROUP_CLASS_NAME = WorkGroup.__name__
-COMPUTERROOM_CLASS_NAME = ComputerRoom.__name__
-CLASS_SHARE_CLASS_NAME = ClassShare.__name__
-WORKGOUP_SHARE_CLASS_NAME = WorkGroupShare.__name__
-MARKTPLATZ_SHARE_CLASS_NAME = MarketplaceShare.__name__
+STUDENT_CLASS_NAME = "Student"
+EXAM_STUDENT_CLASS_NAME = "ExamStudent"
+TEACHER_CLASS_NAME = "Teacher"
+STAFF_CLASS_NAME = "Staff"
+TEACHER_AND_STAFF_CLASS_NAME = "TeachersAndStaff"
+SCHOOLCLASS_CLASS_NAME = "SchoolClass"
+WORKGROUP_CLASS_NAME = "WorkGroup"
+COMPUTERROOM_CLASS_NAME = "ComputerRoom"
+CLASS_SHARE_CLASS_NAME = "ClassShare"
+WORKGOUP_SHARE_CLASS_NAME = "WorkGroupShare"
+MARKTPLATZ_SHARE_CLASS_NAME = "MarketplaceShare"
 
 role_mapping = {
     STUDENT_CLASS_NAME: role_student,
