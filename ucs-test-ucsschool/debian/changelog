@@ -1,6 +1,6 @@
 ucs-test-ucsschool (6.0.178) unstable; urgency=medium
 
-  * Bug #52221: fix flaky selenium test 
+  * Bug #52221: fix flaky selenium test
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 12 Jan 2021 15:45:09 +0100
 
@@ -18,7 +18,7 @@ ucs-test-ucsschool (6.0.176) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.175) unstable; urgency=medium
 
-  * Bug #49655: use_cache in uids test 
+  * Bug #49655: use_cache in uids test
 
  -- Tobias Wenzel <wenzel@univention.de>  Fri, 18 Dec 2020 13:26:38 +0100
 

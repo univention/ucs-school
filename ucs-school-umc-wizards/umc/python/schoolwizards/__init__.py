@@ -34,6 +34,8 @@
 import functools
 import re
 
+import six
+
 import univention.admin.modules as udm_modules
 from ucsschool.lib.models import (
     IPComputer,
@@ -105,7 +107,7 @@ def iter_objects_in_request(request, lo, require_dn=False):
     for obj_props in request.options:
         obj_props = obj_props["object"]
         for key, value in obj_props.iteritems():
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 obj_props[key] = value.strip()
         if issubclass(klass, User):
             klass = USER_TYPES.get(obj_props.get("type"), User)

@@ -16,6 +16,7 @@ import time
 import traceback
 from collections import Mapping
 
+import six
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
@@ -55,7 +56,7 @@ class ConfigDict(dict):
         update_entry('foo:bar:baz', 'my value')
         update_entry('foo:bar:ding', False)
         """
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             if value.lower() == "false":
                 value = False
             elif value.lower() == "true":

@@ -42,6 +42,11 @@ import time
 import traceback
 from itertools import chain
 
+try:
+    from typing import List
+except ImportError:
+    pass
+
 import ldap
 import notifier
 from ldap.filter import filter_format

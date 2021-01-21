@@ -38,7 +38,7 @@ import sys
 from collections import namedtuple
 
 try:
-    from typing import Any, List, Optional, Union
+    from typing import Any, List, Optional
 except ImportError:
     pass
 

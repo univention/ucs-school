@@ -33,6 +33,7 @@
 
 import re
 
+import six
 from urlparse import urlparse
 
 import ucsschool.lib.internetrules as rules
@@ -137,9 +138,9 @@ class Instance(SchoolBaseModule):
     def _parseRule(iprops, forceAllProperties=False):
         # validate types
         for ikey, itype in (
-            ("name", basestring),
-            ("type", basestring),
-            ("priority", (int, basestring)),
+            ("name", six.string_types),
+            ("type", six.string_types),
+            ("priority", (int, six.string_types)),
             ("wlan", bool),
             ("domains", list),
         ):
@@ -187,7 +188,7 @@ class Instance(SchoolBaseModule):
                             return False
                     return True
 
-                if not isinstance(idomain, basestring) or not _validValueChar():
+                if not isinstance(idomain, six.string_types) or not _validValueChar():
                     raise ValueError(_("Invalid domain "))
 
                 # parse domain

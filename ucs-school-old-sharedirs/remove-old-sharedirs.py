@@ -121,7 +121,7 @@ def check_source_dir(prefixlist, dir):
 
 def check_filesystem(dir):
 
-    ret, out = commands.getstatusoutput("LC_ALL=C stat -f '%s'" % dir)
+    ret, out = commands.getstatusoutput("LC_ALL=C stat -f '%s'" % dir)  # nosec
     myFs = ""
     for line in out.split("\n"):
         tmp = line.split("Type: ")
@@ -147,8 +147,8 @@ def move_dir(src, dst, listener):
     listener.setuid(0)
     try:
         shutil.move(src, dst)
-    except Exception, e:
-        ret = str(e)
+    except Exception as exc:
+        ret = str(exc)
     finally:
         listener.unsetuid()
 

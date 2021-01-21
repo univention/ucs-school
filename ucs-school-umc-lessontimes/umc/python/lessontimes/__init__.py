@@ -68,7 +68,7 @@ class Instance(SchoolBaseModule):
                 else:
                     self._lessons.add(description, begin, end)
             self._lessons.save()
-        except (ValueError, AttributeError), err:
+        except (ValueError, AttributeError) as err:
             MODULE.info(str(err))
             result = {"message": str(err)}
             self.finished(request.id, result)

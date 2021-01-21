@@ -34,6 +34,7 @@ import re
 import shutil
 
 import ConfigParser
+import six
 
 from univention.lib import locking
 from univention.lib.i18n import Translation
@@ -57,7 +58,7 @@ class Lesson(object):
             raise AttributeError(_("Overlapping lessons are not allowed"))
 
     def _check_name(self, string):
-        if not isinstance(string, basestring):
+        if not isinstance(string, six.string_types):
             raise TypeError("string expected")
         for char in (
             "\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14"
@@ -67,7 +68,7 @@ class Lesson(object):
         return string
 
     def _parse_time(self, string):
-        if not isinstance(string, basestring):
+        if not isinstance(string, six.string_types):
             raise TypeError("string expected")
         m = Lesson.TIME_REGEX.match(string)
         if not m:
@@ -112,8 +113,8 @@ class SchoolLessons(ConfigParser.ConfigParser):
             try:
                 lession = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
                 self.add(lession)
-            except (AttributeError, TypeError), e:
-                MODULE.warn("Lesson %s could not be added: %s" % (sec, str(e)))
+            except (AttributeError, TypeError) as exc:
+                MODULE.warn("Lesson %s could not be added: %s" % (sec, str(exc)))
 
     def remove(self, lesson):
         if isinstance(lesson, Lesson):
@@ -122,7 +123,7 @@ class SchoolLessons(ConfigParser.ConfigParser):
         self._lessons[:] = [les for les in self._lessons if les.name != lesson]
 
     def add(self, lesson, begin=None, end=None):
-        if isinstance(lesson, basestring):
+        if isinstance(lesson, six.string_types):
             lesson = Lesson(lesson, begin, end)
 
         # ensure there is no intersection between the lessons

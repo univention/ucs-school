@@ -36,6 +36,7 @@ import subprocess
 import sys
 
 import ldif
+import six
 
 import univention.admin.uldap
 
@@ -59,7 +60,7 @@ def normalize_permission(perms):
 
 
 def parse_acls(args, lo):
-    if isinstance(args.output, basestring):
+    if isinstance(args.output, six.string_types):
         args.output = open(args.output, "wb")
     entries = lo.search(base=args.base)
 

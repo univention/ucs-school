@@ -559,6 +559,12 @@ html5
             )
         elif purpose == "collect":
             path = "/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}-{6:03d}".format(
-                self.school, self.sender, sender_dir_name, self.name, project_dir_suffix, user, version,
+                self.school,
+                self.sender,
+                sender_dir_name,
+                self.name,
+                project_dir_suffix,
+                user,
+                version,
             )
         return path

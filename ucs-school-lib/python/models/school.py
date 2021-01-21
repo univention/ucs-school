@@ -499,8 +499,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     hostlist = lo.get(group_dn, ["uniqueMember"]).get("uniqueMember", [])
                 except ldap.NO_SUCH_OBJECT:
                     hostlist = []
-                except Exception, e:
-                    self.logger.error("cannot read %s: %s", group_dn, e)
+                except Exception as exc:
+                    self.logger.error("cannot read %s: %s", group_dn, exc)
                     return
 
                 if hostlist:
@@ -629,7 +629,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         msg = None
         cmd = ["udm", module, "remove", "--dn", dn]
         self.logger.info("*** Calling following command: %r", cmd)
-        retval = subprocess.call(cmd)
+        retval = subprocess.call(cmd)  # nosec
         if retval:
             msg = "*** ERROR: failed to remove UCS@school %s object: %s" % (module, dn)
             self.logger.error(msg)

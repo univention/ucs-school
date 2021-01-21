@@ -1087,7 +1087,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
             if not home_dir:
                 utils.fail("No homeDirectory attribute found for %r" % (dn,))
             if not os.path.exists(home_dir):
-                print ("# Creating %r for %r" % (home_dir, dn))
+                print("# Creating %r for %r" % (home_dir, dn))
                 os.makedirs(home_dir)
 
 

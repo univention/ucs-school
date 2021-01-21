@@ -147,7 +147,7 @@ class VeyonClient:
         compression=5,
         quality=75,
         dimension=None,
-    ):  # type: (Optional[str], Optional[ScreenshotFormat], Optional[int], Optional[int], Optional[Dimension]) -> bytes
+    ):  # type: (Optional[str], Optional[ScreenshotFormat], Optional[int], Optional[int], Optional[Dimension]) -> bytes  # noqa: E501
         """
         Fetches a screenshot for the specified host from the Veyon API
 
@@ -198,7 +198,9 @@ class VeyonClient:
         if arguments:
             data["arguments"] = arguments
         result = requests.put(
-            "{}/feature/{}".format(self._url, feature), json=data, headers=self._get_headers(host),
+            "{}/feature/{}".format(self._url, feature),
+            json=data,
+            headers=self._get_headers(host),
         )
         check_veyon_error(result)
 

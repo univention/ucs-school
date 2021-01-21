@@ -79,8 +79,8 @@ def move_file(fnsrc, fndst):
     if os.path.isfile(fnsrc):
         try:
             shutil.move(fnsrc, fndst)
-        except Exception, e:
-            logerror("cannot move %s to %s: Exception %s" % (fnsrc, fndst, e))
+        except Exception as exc:
+            logerror("cannot move %s to %s: Exception %s" % (fnsrc, fndst, exc))
             raise
 
 
@@ -145,7 +145,7 @@ def signalReloadProcess():
 
 
 def reloadSquidDirectly():
-    subprocess.call(("/etc/init.d/squid", "reload"))
+    subprocess.call(("/etc/init.d/squid", "reload"))  # nosec
 
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
@@ -459,10 +459,12 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
     # create all db files
-    subprocess.call(("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"))
+    subprocess.call(  # nosec
+        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r")
+    )
     # fix permissions
-    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config))
-    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config))
+    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config))  # nosec
+    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config))  # nosec
     # fix squidguard config (replace DIR_TEMP with DIR_DATA)
     content = open(fn_temp_config, "r").read()
     content = content.replace("\ndbhome %s/\n" % DIR_TEMP, "\ndbhome %s/\n" % DIR_DATA)
@@ -487,6 +489,6 @@ def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
 def removeTempDirectory(DIR_TEMP):
     try:
         os.rmdir(DIR_TEMP)
-    except Exception, e:
-        logerror("cannot remove temp directory %s: Exception %s" % (DIR_TEMP, e))
+    except Exception as exc:
+        logerror("cannot remove temp directory %s: Exception %s" % (DIR_TEMP, exc))
         raise
