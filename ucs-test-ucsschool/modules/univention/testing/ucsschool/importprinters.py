@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import string
 import subprocess
@@ -77,7 +79,7 @@ class Printer:
         return attr
 
     def verify(self):
-        print "verify printer: %s" % self.name
+        print("verify printer: %s" % self.name)
 
         if self.mode == "D":
             utils.verify_ldap_object(self.dn, should_exist=False)
@@ -108,9 +110,9 @@ class ImportFile:
                 self._run_import_via_python_api()
             pre_result = hooks.get_pre_result()
             post_result = hooks.get_post_result()
-            print "PRE  HOOK result: %s" % pre_result
-            print "POST HOOK result: %s" % post_result
-            print "SCHOOL DATA     : %s" % data
+            print("PRE  HOOK result: %s" % pre_result)
+            print("POST HOOK result: %s" % post_result)
+            print("SCHOOL DATA     : %s" % data)
             if pre_result != post_result != data:
                 raise PrinterHookResult()
         finally:
@@ -120,7 +122,7 @@ class ImportFile:
     def _run_import_via_cli(self):
         cmd_block = ["/usr/share/ucs-school-import/scripts/import_printer", self.import_file]
 
-        print "cmd_block: %r" % cmd_block
+        print("cmd_block: %r" % cmd_block)
         retcode = subprocess.call(cmd_block, shell=False)
         if retcode:
             raise ImportPrinter(
@@ -244,21 +246,21 @@ def create_and_verify_printers(use_cli_api=True, use_python_api=False, nr_printe
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
 
-        print "********** Generate school data"
+        print("********** Generate school data")
         printer_import = PrinterImport(ou_name, nr_printers=nr_printers)
-        print (printer_import)
+        print(printer_import)
         import_file = ImportFile(use_cli_api, use_python_api)
 
-        print "********** Create printers"
+        print("********** Create printers")
         import_file.run_import(str(printer_import))
         printer_import.verify()
 
-        print "********** Modify printers"
+        print("********** Modify printers")
         printer_import.modify()
         import_file.run_import(str(printer_import))
         printer_import.verify()
 
-        print "********** Delete printers"
+        print("********** Delete printers")
         printer_import.delete()
         import_file.run_import(str(printer_import))
         printer_import.verify()

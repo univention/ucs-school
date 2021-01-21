@@ -6,6 +6,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 
 import copy
 import subprocess
@@ -42,7 +43,7 @@ def run_commands(cmdlist, argdict):
         cmd = copy.deepcopy(cmd)
         for i, val in enumerate(cmd):
             cmd[i] = val % argdict
-        print "*** %r" % cmd
+        print("*** %r" % cmd)
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         result_list.append((out, err))
     return result_list
@@ -73,7 +74,7 @@ class CreateContextManager(object):
 
     def __exit__(self, exc_type, exc_value, etraceback):
         if exc_type:
-            print ("*** Cleanup after exception: %s %s" % (exc_type, exc_value))
+            print("*** Cleanup after exception: %s %s" % (exc_type, exc_value))
         self.udm.cleanup()
 
 
@@ -117,11 +118,14 @@ class Acl(object):
         :param str access: type of access - `read`, `write` or `none`
         """
         access_allowance = access_allowance if access_allowance else self.access_allowance
-        print "\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n" % (
-            target_dn,
-            self.auth_dn,
-            access,
-            access_allowance,
+        print(
+            "\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n"
+            % (
+                target_dn,
+                self.auth_dn,
+                access,
+                access_allowance,
+            )
         )
         cmd = [
             "slapacl",
@@ -148,7 +152,7 @@ class Acl(object):
                     result = [x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x)][0]
                 except IndexError:
                     result = None
-                    print "Failed to parse slapacl output:", attr, err
+                    print("Failed to parse slapacl output:", attr, err)
                 if result and access_allowance not in result:
                     raise FailAcl(
                         "Access (%s) by (%s) to (%s) not expected %r"

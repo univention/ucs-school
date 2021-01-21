@@ -9,6 +9,8 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 
+from __future__ import print_function
+
 import re
 from sys import exit
 from time import sleep
@@ -37,7 +39,7 @@ class TestS4SIDAllocation(TestSamba4):
         """
         Makes a UMC request to DC-Master to stop or start the S4-Connector.
         """
-        print ("\nMaking a UMC request to %s the S4-Connector service on the DC-Master\n" % action)
+        print("\nMaking a UMC request to %s the S4-Connector service on the DC-Master\n" % action)
         assert self.client.umc_command("services/" + action, ["univention-s4-connector"]).result.get(
             "success"
         ), "Restarting S4-Connector service failed"
@@ -62,7 +64,7 @@ class TestS4SIDAllocation(TestSamba4):
             utils.stop_s4connector()
 
         else:
-            print (
+            print(
                 "\nUnknown state '%s' is given for S4 connector, accepted 'True' to start or 'False' to "
                 "stop." % connector_should_run
             )
@@ -72,10 +74,10 @@ class TestS4SIDAllocation(TestSamba4):
         Search in S4 LDAP via univention-s4-search
         """
 
-        print "\nLooking for %s using univention-s4search." % attribute
+        print("\nLooking for %s using univention-s4search." % attribute)
         cmd = ("univention-s4search", filter_string, attribute)
 
-        print "Executing command:", cmd
+        print("Executing command:", cmd)
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
             utils.fail("An error occured while running univention-s4search: %r" % stderr)
@@ -91,7 +93,7 @@ class TestS4SIDAllocation(TestSamba4):
         """
         user_dn = user_dn.replace("uid=", "cn=", 1)
 
-        print (
+        print(
             "\nSearching for the 'objectSid' of the user with DN: '%s' in the database located at '%s' "
             "using 'ldbsearch'" % (user_dn, ldburl)
         )
@@ -106,7 +108,7 @@ class TestS4SIDAllocation(TestSamba4):
             "objectSid",
         )
 
-        print "Executing command:", cmd
+        print("Executing command:", cmd)
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
             utils.fail(
@@ -124,7 +126,7 @@ class TestS4SIDAllocation(TestSamba4):
         Opens the uldap machine connection and returns the 'sambaSID' for the
         user with a given 'user_dn'.
         """
-        print ("\nLooking for a 'sambaSID' of a user with a DN: '%s' in the LDAP" % user_dn)
+        print("\nLooking for a 'sambaSID' of a user with a DN: '%s' in the LDAP" % user_dn)
         try:
             samba_sid = self.LdapConnection.get(user_dn)["sambaSID"][0]
             if not samba_sid:
@@ -148,7 +150,7 @@ class TestS4SIDAllocation(TestSamba4):
             master_services = self.LdapConnection.get(dc_master_dn)["univentionService"]
 
             if "Samba 4" in master_services:
-                print (
+                print(
                     "\nThe DC-Master has Samba4 running, the test will also check the SID for the test "
                     "user on the DC-Master"
                 )
@@ -167,10 +169,10 @@ class TestS4SIDAllocation(TestSamba4):
         also be performed there.
         """
         if self.UCR.get("server/role") == "domaincontroller_master":
-            print "\nCurrent role is DC-Master, performing only local checks"
+            print("\nCurrent role is DC-Master, performing only local checks")
             self.test_remotely = False
         elif not self.dc_master_has_s4():
-            print "\nThe DC-Master has no Samba4, performing only local checks"
+            print("\nThe DC-Master has no Samba4, performing only local checks")
             self.test_remotely = False
         else:
             self.test_remotely = True
@@ -223,7 +225,7 @@ class TestS4SIDAllocation(TestSamba4):
                     )
                 )
 
-            print ("\nComparing the SID for test user as stored in LDAP after sync:")
+            print("\nComparing the SID for test user as stored in LDAP after sync:")
             # get SID from LDAP
             ldap_sid_pre_sync = self.get_sid_from_ldap(test_user_dn)
 
@@ -267,14 +269,14 @@ class TestS4SIDAllocation(TestSamba4):
 
             # perform remote check when needed
             if self.test_remotely:
-                print "\nComparing the SID on DC-Master with the local one:"
+                print("\nComparing the SID on DC-Master with the local one:")
 
                 uri = "ldap://" + self.ldap_master
                 for _ in range(5):  # poor man's replication check
                     samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, uri)
                     if samba_sid_master:
                         break
-                    print "\nNot yet replicated to master. Sleep for 10 seconds and retry."
+                    print("\nNot yet replicated to master. Sleep for 10 seconds and retry.")
                     sleep(10)
 
                 # compare objectSid@locally vs. objectSid@Master
@@ -288,10 +290,10 @@ class TestS4SIDAllocation(TestSamba4):
                     )
         finally:
             if test_user_dn:
-                print "\nRemoving the test user:", test_username
+                print("\nRemoving the test user:", test_username)
                 UDM.remove_object("users/user", dn=test_user_dn)
 
-            print "\nForcing S4 connector start to make sure it runs:"
+            print("\nForcing S4 connector start to make sure it runs:")
             self.start_stop_s4_connector(True)
 
 

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -87,17 +89,17 @@ class ComputerRoom(object):
                 "options": None,
             }
         ]
-        print "Adding school room %s with UMCP:%s" % (self.name, "schoolrooms/add")
-        print "param = %r" % (param,)
+        print("Adding school room %s with UMCP:%s" % (self.name, "schoolrooms/add"))
+        print("param = %r" % (param,))
         reqResult = self.client.umc_command("schoolrooms/add", param).result
         utils.wait_for_replication()
         if reqResult[0] and should_pass:
-            print "School room created successfully: %s" % (self.name,)
+            print("School room created successfully: %s" % (self.name,))
         else:
             if should_pass:
                 raise FailAdd("Unable to add school room (%r)" % (param,))
             else:
-                print "School room (%r) addition failed as expected." % (self.name,)
+                print("School room (%r) addition failed as expected." % (self.name,))
 
     def assert_backend_role(self, is_veyon):  # type: (bool) -> None
         """
@@ -121,7 +123,7 @@ class ComputerRoom(object):
         """gets school room via UMCP\n
         :param should_exist: True if the school room is expected to be found
         :type should_exist: bool"""
-        print "Calling %s for %s" % ("schoolrooms/get", self.dn())
+        print("Calling %s for %s" % ("schoolrooms/get", self.dn()))
         reqResult = self.client.umc_command("schoolrooms/get", [self.dn()]).result
         if bool(reqResult[0]["name"]) != should_exist:
             raise FailGet("Unexpected fetching result for school room (%r)" % (self.dn()))
@@ -143,7 +145,7 @@ class ComputerRoom(object):
         """Get all school rooms via UMCP\n
         :returns: [str] list of school rooms names
         """
-        print "Calling %s = get all school rooms" % ("schoolrooms/query")
+        print("Calling %s = get all school rooms" % ("schoolrooms/query"))
         try:
             rooms = self.client.umc_command(
                 "schoolrooms/query", {"school": self.school, "pattern": ""}
@@ -190,8 +192,8 @@ class ComputerRoom(object):
                 "options": None,
             }
         ]
-        print "Modifying school room %s with UMCP:%s" % (self.dn(), "schoolrooms/put")
-        print "param = %r" % (param,)
+        print("Modifying school room %s with UMCP:%s" % (self.dn(), "schoolrooms/put"))
+        print("param = %r" % (param,))
         reqResult = self.client.umc_command("schoolrooms/put", param).result
         if not reqResult:
             raise FailPut("Unable to modify school room (%r)" % (param,))
@@ -229,7 +231,7 @@ class ComputerRoom(object):
 
     def remove(self):
         """removes school room via UMCP"""
-        print "Calling %s for %s" % ("schoolrooms/remove", self.dn())
+        print("Calling %s for %s" % ("schoolrooms/remove", self.dn()))
         options = [{"object": [self.dn()], "options": None}]
         reqResult = self.client.umc_command("schoolrooms/remove", options).result
         utils.wait_for_replication()

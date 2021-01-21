@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
+from __future__ import print_function
+
 from copy import deepcopy
 
 from ldap.filter import filter_format
@@ -137,7 +139,7 @@ def main():
             users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
 
             for user in users:
-                print(user.username, user.role, user.school, user.schools)
+                print((user.username, user.role, user.school, user.schools))
                 wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
                 user.get()
                 user.verify()

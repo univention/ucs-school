@@ -6,6 +6,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 
 import glob
 import os
@@ -43,7 +44,7 @@ def get_dir_files(dir_path, recursive=True):
 def get_s4_rejected():
     cmd = ["univention-s4connector-list-rejected"]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-    print "rejected Objects:", out, err
+    print("rejected Objects:", out, err)
     found = re.findall(r"DN:\s\w{2,4}=.*", out)
     return set(found)
 
@@ -60,7 +61,7 @@ def check_proof_uniqueMember():
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = popen.communicate()
     returncode = popen.returncode
-    print out, err, returncode
+    print(out, err, returncode)
     if returncode != 0:
         utils.fail("Proof unique members failed")
 
@@ -145,10 +146,10 @@ class Exam(object):
             "internetRule": self.internetRule,
             "customRule": self.customRule,
         }
-        print "Starting exam %s in room %s" % (self.name, self.room)
-        print "param = %s" % param
+        print("Starting exam %s in room %s" % (self.name, self.room))
+        print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/start", param).result
-        print "Start exam response = ", reqResult
+        print("Start exam response = ", reqResult)
         if not reqResult["success"]:
             raise StartFail("Unable to start exam (%r)" % (param,))
 
@@ -182,10 +183,10 @@ class Exam(object):
         else:
             for field in fields:
                 param[field] = getattr(self, field, "")
-        print ("Saving exam {}".format(self.name))
+        print("Saving exam {}".format(self.name))
         command = "put" if update else "add"
         reqResult = self.client.umc_command("schoolexam/exam/{}".format(command), param).result
-        print ("Save exam response = {}".format(reqResult))
+        print("Save exam response = {}".format(reqResult))
         if not reqResult:
             raise SaveFail("Unable to {} exam {!r}".format(command, param))
 
@@ -202,10 +203,10 @@ class Exam(object):
     def finish(self):
         """Finish an exam"""
         param = {"exam": self.name, "room": self.room}
-        print "Finishing exam %s in room %s" % (self.name, self.room)
-        print "param = %s" % param
+        print("Finishing exam %s in room %s" % (self.name, self.room))
+        print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/finish", param).result
-        print "Finish exam response = ", reqResult
+        print("Finish exam response = ", reqResult)
         if not reqResult["success"]:
             raise FinishFail("Unable to finish exam (%r)" % param)
 
@@ -248,7 +249,7 @@ html5
         :param content_type: type of the content of the file
         :type content_type: str ('application/octet-stream',..)
         """
-        print "Uploading file %s" % file_name
+        print("Uploading file %s" % file_name)
         content_type = content_type or "application/octet-stream"
         boundary = "---------------------------12558488471903363215512784168"
         data = self.genData(file_name, content_type, boundary, override_file_name=override_file_name)
@@ -258,7 +259,7 @@ html5
     def get_internetRules(self):
         """Get internet rules"""
         reqResult = self.client.umc_command("schoolexam/internetrules", {}).result
-        print "InternetRules = ", reqResult
+        print("InternetRules = ", reqResult)
         return reqResult
 
     def fetch_internetRule(self, internetRule_name):
@@ -269,7 +270,7 @@ html5
         """Get schools"""
         reqResult = self.client.umc_command("schoolexam/schools", {}).result
         schools = [x["label"] for x in reqResult]
-        print "Schools = ", schools
+        print("Schools = ", schools)
         return schools
 
     def fetch_school(self, school):
@@ -281,9 +282,9 @@ html5
         reqResult = self.client.umc_command(
             "schoolexam/groups", {"school": self.school, "pattern": ""}
         ).result
-        print "Groups response = ", reqResult
+        print("Groups response = ", reqResult)
         groups = [x["label"] for x in reqResult]
-        print "Groups = ", groups
+        print("Groups = ", groups)
         return groups
 
     def fetch_groups(self, group):
@@ -293,7 +294,7 @@ html5
     def get_lessonEnd(self):
         """Get lessonEnd"""
         reqResult = self.client.umc_command("schoolexam/lesson_end", {}).result
-        print "Lesson End = ", reqResult
+        print("Lesson End = ", reqResult)
         return reqResult
 
     def fetch_lessonEnd(self, lessonEnd):
@@ -303,7 +304,7 @@ html5
     def collect(self):
         """Collect results"""
         reqResult = self.client.umc_command("schoolexam/exam/collect", {"exam": self.name}).result
-        print "Collect respose = ", reqResult
+        print("Collect respose = ", reqResult)
         return reqResult
 
     def check_collect(self):

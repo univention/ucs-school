@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import argparse
 import socket
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print repr(args)
+    print(repr(args))
     send_wol_packet(
         args.mac_address,
         blacklisted_interfaces=args.blacklisted_interfaces,

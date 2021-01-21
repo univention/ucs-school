@@ -10,6 +10,8 @@
 ##    - univention-samba4
 ##    - ucs-school-s4-branch-site
 
+from __future__ import print_function
+
 import os
 import subprocess
 import sys
@@ -32,10 +34,10 @@ sys.dont_write_bytecode = True
 try:
     from univention.testing.ucs_samba import wait_for_drs_replication
 except ImportError:
-    print "WARNING: Using dummy implementation for wait_for_drs_replication."
+    print("WARNING: Using dummy implementation for wait_for_drs_replication.")
 
     def wait_for_drs_replication(ldap_filter, attrs=None):
-        print "wait_for_drs_replication: sleeping 15 seconds"
+        print("wait_for_drs_replication: sleeping 15 seconds")
         time.sleep(15)
 
 

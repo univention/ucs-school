@@ -4,6 +4,8 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
+
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
@@ -118,8 +120,8 @@ class User(Person):
                 "options": None,
             }
         ]
-        print "#### Creating user %s" % (self.username,)
-        print "#### param = %s" % (param,)
+        print("#### Creating user %s" % (self.username,))
+        print("#### param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/users/add", param, flavor).result
         if not reqResult[0]:
             raise CreateFail("Unable to create user (%r)" % (param,))
@@ -225,7 +227,7 @@ class User(Person):
     def remove(self, remove_from_school=None):
         """Remove user"""
         remove_from_school = remove_from_school or self.school
-        print (
+        print(
             "#### Removing User %r (%s) from school %r." % (self.username, self.dn, remove_from_school)
         )
         flavor = "schoolwizards/users"
@@ -271,8 +273,8 @@ class User(Person):
             object_props["school_classes"] = new_attributes.get("school_classes", self.school_classes)
 
         param = [{"object": object_props, "options": None}]
-        print "#### Editing user %s" % (self.username,)
-        print "#### param = %s" % (param,)
+        print("#### Editing user %s" % (self.username,))
+        print("#### param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/users/put", param, flavor).result
         if not reqResult[0]:
             raise EditFail("Unable to edit user (%s) with the parameters (%r)" % (self.username, param))

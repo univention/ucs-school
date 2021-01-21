@@ -6,6 +6,8 @@
 ## packages:
 ##    - ucs-school-master | ucs-school-singlemaster | ucs-school-slave
 
+from __future__ import print_function
+
 import univention.config_registry
 import univention.testing.utils as utils
 
@@ -24,12 +26,12 @@ def main():
         attr_list = ucr.get("ldap/index/%s" % (index,), "").split(",")
         for expected_attr in EXPECTED_ATTRS.get(index, []):
             if expected_attr not in attr_list:
-                print "ldap/index/%s=%r" % (index, attr_list)
+                print("ldap/index/%s=%r" % (index, attr_list))
                 utils.fail(
                     "Expected attribute %r to be found LDAP index ldap/index/%s, but this was not the "
                     "case." % (expected_attr, index)
                 )
-            print "OK: %r found in ldap/index/%s" % (expected_attr, index)
+            print("OK: %r found in ldap/index/%s" % (expected_attr, index))
 
 
 if __name__ == "__main__":

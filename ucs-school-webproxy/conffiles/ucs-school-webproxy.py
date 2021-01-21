@@ -50,6 +50,8 @@
 # proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER
 #     whitelist-blacklist-pass
 
+from __future__ import print_function
+
 import os
 import re
 import shutil
@@ -70,7 +72,7 @@ RELOAD_SOCKET_PATH = "/var/run/univention-reload-service.socket"
 
 def logerror(msg):
     logfd = open(PATH_LOG, "a+")
-    print >> logfd, "%s [%s] %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), os.getpid(), msg)
+    print("%s [%s] %s" % (time.strftime("%Y-%m-%d %H:%M:%S"), os.getpid(), msg), file=logfd)
 
 
 def move_file(fnsrc, fndst):
@@ -136,7 +138,7 @@ def signalReloadProcess():
         s = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
         s.settimeout(0)
         s.sendto("reload squid", RELOAD_SOCKET_PATH)
-        print "Delayed reload triggered"
+        print("Delayed reload triggered")
         return True
     except socket.error:
         return False

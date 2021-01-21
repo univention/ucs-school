@@ -6,6 +6,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+from __future__ import print_function
 
 import os
 import time
@@ -171,7 +172,7 @@ html5
         :param content_type: type of the content of the file
         :type content_type: str ('text/plain',..)
         """
-        print "Uploading a file"
+        print("Uploading a file")
         content_type = content_type or "application/octet-stream"
         boundary = "---------------------------103454444410473823401882756"
         data = self.genData(
@@ -190,12 +191,12 @@ html5
             with open(filename, "w") as g:
                 g.write("test_content")
             self.uploadFile(filename, content_type)
-        print "Adding Project %s" % (self.name)
+        print("Adding Project %s" % (self.name))
         flavor = self.flavor
         recipients = []
         for item in self.recipients:
             recipients.append(item.dn())
-        print "recipients=", recipients
+        print("recipients=", recipients)
         files = [file_name.decode(encoding).encode("UTF-8") for file_name, encoding in self.files]
         param = [
             {
@@ -214,9 +215,9 @@ html5
                 "options": None,
             }
         ]
-        print "param=", param
+        print("param=", param)
         reqResult = self.client.umc_command("distribution/add", param, flavor).result
-        print "reqResult =", reqResult
+        print("reqResult =", reqResult)
         if not reqResult[0]["success"]:
             utils.fail("Unable to add project (%r)" % (param,))
 
@@ -224,7 +225,7 @@ html5
         """Calls 'distribution/query'
         and check the existance of the added project
         """
-        print "Checking %s addition" % (self.name,)
+        print("Checking %s addition" % (self.name,))
         current = self.query(pattern=self.name)
         if not (self.name in current):
             utils.fail("Project %s was not added successfully" % (self.name,))
@@ -261,7 +262,7 @@ html5
         :param recipients: groups which are included in the project
         :type recipients: list of group objects
         """
-        print "Editing Project %s" % (self.name)
+        print("Editing Project %s" % (self.name))
         description = description if description else self.description
         if distributeType:
             distributeType = distributeType
@@ -302,7 +303,7 @@ html5
             }
         ]
         reqResult = self.client.umc_command("distribution/put", param, flavor).result
-        print "reqResult =", reqResult
+        print("reqResult =", reqResult)
         if not reqResult[0]["success"]:
             utils.fail("Unable to edit project with params =(%r)" % (param,))
         else:
@@ -322,7 +323,7 @@ html5
         :type previousGetResult: dict
         check changing sates for distribution and collection
         """
-        print "Checking %s modification" % (self.name,)
+        print("Checking %s modification" % (self.name,))
         found = self.get()
         supposed = {
             "files": found["files"],
@@ -358,8 +359,8 @@ html5
             "starttime": sTime,
             "deadline": dTime,
         }
-        print "supposed = ", supposed
-        print "current = ", current
+        print("supposed = ", supposed)
+        print("current = ", current)
 
         fail_state = supposed != current
         if fail_state:
@@ -440,7 +441,7 @@ html5
 
     def distribute(self):
         """Calls 'distribution/distribute'"""
-        print "Distributing Project %s" % (self.name)
+        print("Distributing Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/distribute", [self.name], flavor).result
         if not reqResult[0]["success"]:
@@ -452,12 +453,12 @@ html5
         :param users: names of users to have the material distributed for
         :type users: list of str
         """
-        print "Checking %s distribution" % (self.name,)
+        print("Checking %s distribution" % (self.name,))
         for user in users:
             path = self.getUserFilesPath(user, "distribute")
-            print "file_path=", path
+            print("file_path=", path)
             existingFiles = self.idir(path)
-            print "existingFiles=", existingFiles
+            print("existingFiles=", existingFiles)
             files = [x for x, y in self.files]
             assert files == existingFiles, "Project files were not distributed for user %s:\n%r!=%r" % (
                 user,
@@ -467,7 +468,7 @@ html5
 
     def collect(self):
         """Calls 'distribution/collect'"""
-        print "Collecting Project %s" % (self.name)
+        print("Collecting Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/collect", [self.name], flavor).result
         if not reqResult[0]["success"]:
@@ -479,12 +480,12 @@ html5
         :param users: names of users to have the material collected form
         :type users: list of str
         """
-        print "Checking %s collection" % (self.name,)
+        print("Checking %s collection" % (self.name,))
         for user in users:
             path = self.getUserFilesPath(user, "collect", self.distributed_version)
-            print "file_path=", path
+            print("file_path=", path)
             existingFiles = self.idir(path)
-            print "existingFiles=", existingFiles
+            print("existingFiles=", existingFiles)
             files = [x for x, y in self.files]
             assert files == existingFiles, "Project files were not collected for user %s:\n%r!=%r" % (
                 user,
@@ -494,7 +495,7 @@ html5
 
     def remove(self):
         """Calls 'distribution/remove'"""
-        print "Removing Project %s" % (self.name)
+        print("Removing Project %s" % (self.name))
         flavor = self.flavor
         param = [{"object": self.name, "options": None}]
         reqResult = self.client.umc_command("distribution/remove", param, flavor).result
@@ -505,14 +506,14 @@ html5
         """Calls 'distribution/query'
         and check the existance of the removed project
         """
-        print "Checking %s removal" % (self.name,)
+        print("Checking %s removal" % (self.name,))
         current = self.query(pattern=self.name)
         if self.name in current:
             utils.fail("Project %s was not removed successfully" % (self.name,))
 
     def checkFiles(self, files):
         """Calls 'distribution/checkfiles'"""
-        print "Checking files Project %s" % (self.name)
+        print("Checking files Project %s" % (self.name))
         flavor = self.flavor
         param = {"project": self.name, "filenames": files}
         reqResult = self.client.umc_command("distribution/checkfiles", param, flavor).result
@@ -521,14 +522,14 @@ html5
 
     def adopt(self, project_name):
         """Calls 'distribute/adopt'"""
-        print "Adopting project", self.name
+        print("Adopting project", self.name)
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/adopt", [project_name], flavor).result
         if reqResult:
             utils.fail("Failed to adopt project (%r)" % (project_name,))
 
     def check_adopt(self, project_name):
-        print "Checking adopting"
+        print("Checking adopting")
         q = self.query(pattern=project_name)
         if not (project_name in q):
             utils.fail("Project %s was not adopted successfully" % (project_name,))

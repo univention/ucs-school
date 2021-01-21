@@ -7,6 +7,8 @@
 ## bugs: [52307]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+from __future__ import print_function
+
 import os
 import pwd
 from datetime import datetime, timedelta
@@ -48,7 +50,7 @@ def main():
                 open_ldap_co = schoolenv.open_ldap_connection()
                 ucr.load()
 
-                print "# create test users and classes"
+                print("# create test users and classes")
                 if ucr.is_true("ucsschool/singlemaster"):
                     edudc = None
                 else:
@@ -75,11 +77,11 @@ def main():
                 udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
                 wait_for_drs_replication(filter_format("cn=%s", (student2.name,)))
 
-                print "# import random computers"
+                print("# import random computers")
                 computers = Computers(open_ldap_co, school, 2, 0, 0)
                 pc1, pc2 = computers.create()
 
-                print "# set 2 computer rooms to contain the created computers"
+                print("# set 2 computer rooms to contain the created computers")
                 room1 = Room(school, host_members=pc1.dn)
                 room2 = Room(school, host_members=pc2.dn)
                 for room in [room1, room2]:
@@ -90,7 +92,7 @@ def main():
                         host_members=room.host_members,
                     )
 
-                print "# Set an exam and start it"
+                print("# Set an exam and start it")
                 current_time = datetime.now()
                 chosen_time = current_time + timedelta(hours=2)
                 exam = Exam(
@@ -108,10 +110,10 @@ def main():
 
                 check_uids(exam_member_dns, open_ldap_co)
 
-                print "# stopping exam"
+                print("# stopping exam")
                 exam.finish()
 
-                print "# Set another exam and start it"
+                print("# Set another exam and start it")
                 current_time = datetime.now()
                 chosen_time = current_time + timedelta(hours=2)
                 exam2 = Exam(

@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
+from __future__ import print_function
+
 import time
 
 import univention.testing.udm as udm_test
@@ -66,8 +68,8 @@ def main():
                         school.verify_ldap(False)
                     except Exception as e:
                         if school.dn() in str(e):
-                            print ":::::::%r::::::" % wait
-                            print str(e)
+                            print(":::::::%r::::::" % wait)
+                            print(str(e))
                             time.sleep(1)
                         else:
                             raise
@@ -78,10 +80,10 @@ def main():
         finally:
             for school in schools:
                 try:
-                    print "Clean up remaining school %s after failed test." % school.name
+                    print("Clean up remaining school %s after failed test." % school.name)
                     school.remove()
                 except BadRequest:
-                    print "Failed to remove remaining school %s after failed test." % school.name
+                    print("Failed to remove remaining school %s after failed test." % school.name)
 
 
 if __name__ == "__main__":

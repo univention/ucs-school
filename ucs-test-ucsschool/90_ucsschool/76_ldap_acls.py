@@ -8,6 +8,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
+from __future__ import print_function
+
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import run_commands
@@ -332,13 +334,13 @@ class LDAPACLTestMatrix(object):
                         access = Access.Read
                     expected_access = self.get_attribute_access(target_dn, attr)
                     if access != expected_access:
-                        print (
+                        print(
                             '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s",'
                             ' expected="%s", result="%s"'
                             % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
                     else:
-                        print (
+                        print(
                             'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s",'
                             ' result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access)
                         )
@@ -350,11 +352,11 @@ class LDAPACLTestMatrix(object):
             return self.default
 
     def addDn(self, target_dn, attrs, access=Access.none):
-        print "adding target_dn= %s" % (target_dn,)
+        print("adding target_dn= %s" % (target_dn,))
         for attr in attrs:
-            print "\tattr= %s,\taccess= %s" % (attr, access)
+            print("\tattr= %s,\taccess= %s" % (attr, access))
             self.matrix.setdefault(target_dn, {})[attr] = access
-        print
+        print()
 
     def addSubtree(self, container, attrs, access=Access.none):
         for target_dn, _ in self.walkThroughContainer(container):

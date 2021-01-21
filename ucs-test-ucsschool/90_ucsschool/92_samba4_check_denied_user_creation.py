@@ -11,6 +11,8 @@
 ##  3.2-5: skip
 ##  4.1-2: fixed
 
+from __future__ import print_function
+
 from re import compile as regex_compile, search
 from sys import exit
 
@@ -64,7 +66,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stdout:
-            print("The 'samba-tool' produced the following output to STDOUT:", stdout)
+            print(("The 'samba-tool' produced the following output to STDOUT:", stdout))
 
             if bool(search(".*User .* created successfully.*", stdout)):
                 self.remove_user = username

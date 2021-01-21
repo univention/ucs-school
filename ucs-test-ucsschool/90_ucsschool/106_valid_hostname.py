@@ -6,6 +6,8 @@
 ## exposure: dangerous
 ## packages: []
 
+from __future__ import print_function
+
 import subprocess
 
 import univention.testing.strings as uts
@@ -52,7 +54,7 @@ def main():
             passwd = account.bindpw
             client.authenticate(admin, passwd)
             if ucr.is_true("ucsschool/singlemaster"):
-                print "This test is only for Multi Server Environments"
+                print("This test is only for Multi Server Environments")
                 exit(0)
 
             # Using ucs-school-lib
@@ -60,21 +62,30 @@ def main():
                 try:
                     ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name, use_cache=False)
                     if should_fail:
-                        print "Creating a school(%s) with dc_name=%s, expected to fail)" % (
-                            school,
-                            dc_name,
+                        print(
+                            "Creating a school(%s) with dc_name=%s, expected to fail)"
+                            % (
+                                school,
+                                dc_name,
+                            )
                         )
                     else:
-                        print "Creating a school(%s) with dc_name=%s, expected to succeed" % (
-                            school,
-                            dc_name,
+                        print(
+                            "Creating a school(%s) with dc_name=%s, expected to succeed"
+                            % (
+                                school,
+                                dc_name,
+                            )
                         )
                 except ValidationError as ex:
                     if should_fail and "dc_name" in str(ex):
-                        print "Creating a school(%s) with dc_name=%s, expected to fail: %s)" % (
-                            school,
-                            dc_name,
-                            str(ex),
+                        print(
+                            "Creating a school(%s) with dc_name=%s, expected to fail: %s)"
+                            % (
+                                school,
+                                dc_name,
+                                str(ex),
+                            )
                         )
                     else:
                         utils.fail(
@@ -89,10 +100,13 @@ def main():
                 err = pop.communicate()
                 if pop.returncode:
                     if should_fail:
-                        print "Creating a school(%s) cli with dc_name=%s, expected to fail: %r)" % (
-                            school,
-                            dc_name,
-                            err,
+                        print(
+                            "Creating a school(%s) cli with dc_name=%s, expected to fail: %r)"
+                            % (
+                                school,
+                                dc_name,
+                                err,
+                            )
                         )
                     else:
                         utils.fail(
@@ -106,10 +120,13 @@ def main():
                             % (school, dc_name)
                         )
                     else:
-                        print "Creating a school(%s) cli with dc_name=%s, expected to succeed: %r)" % (
-                            school,
-                            dc_name,
-                            err,
+                        print(
+                            "Creating a school(%s) cli with dc_name=%s, expected to succeed: %r)"
+                            % (
+                                school,
+                                dc_name,
+                                err,
+                            )
                         )
 
             # Using UMCP
@@ -123,16 +140,22 @@ def main():
                             % (school.name, dc_name)
                         )
                     else:
-                        print "Creating a school(%s) umcp with dc_name=%s, unexpectedly successful" % (
-                            school.name,
-                            dc_name,
+                        print(
+                            "Creating a school(%s) umcp with dc_name=%s, unexpectedly successful"
+                            % (
+                                school.name,
+                                dc_name,
+                            )
                         )
                 except CreateFail as ex:
                     if should_fail and "DC Name:" in str(ex):
-                        print "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)" % (
-                            school.name,
-                            dc_name,
-                            str(ex),
+                        print(
+                            "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)"
+                            % (
+                                school.name,
+                                dc_name,
+                                str(ex),
+                            )
                         )
                     else:
                         utils.fail(

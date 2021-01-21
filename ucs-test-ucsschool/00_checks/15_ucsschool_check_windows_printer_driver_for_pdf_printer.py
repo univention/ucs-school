@@ -5,6 +5,8 @@
 ## exposure: safe
 ## packages: [ucs-school-umc-printermoderation]
 
+from __future__ import print_function
+
 import subprocess
 
 import univention.testing.ucr as ucr_test
@@ -15,9 +17,9 @@ def check_value(path, key, value):
     cmd = ["net", "registry", "getvalue", path, key]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     found = False
-    print path + " " + key
+    print(path + " " + key)
     for i in out.split("\n"):
-        print i
+        print(i)
         if i.startswith("Value "):
             v = i.split("=")[1].strip().strip('"')
             if v == value:

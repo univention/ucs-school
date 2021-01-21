@@ -7,6 +7,8 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: careful
 
+from __future__ import print_function
+
 from sys import exit
 
 from dns import resolver
@@ -45,7 +47,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
                 "--workgroup=" + domain_name.upper(),
                 "--command=ls",
             )
-            print "\nKerberos authentication will be used:"
+            print("\nKerberos authentication will be used:")
             cmd = cmd + ("-k",)
         else:
             ldap_master_ip = resolver.query(ldap_master)[0].address
@@ -58,19 +60,19 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
                 "--command=ls",
             )
 
-        print ("\nTrying to connect to Sysvol on DC-Master and list the contents using Samba client:")
-        print cmd
+        print("\nTrying to connect to Sysvol on DC-Master and list the contents using Samba client:")
+        print(cmd)
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
-            print ("\nThe Samba client produced the following output to STDERR:\n%s" % stderr)
+            print("\nThe Samba client produced the following output to STDERR:\n%s" % stderr)
 
         if not stdout.strip():
             utils.fail(
                 "The Samba client did not produce any output to STDOUT, while DC-Master Sysvol contents"
                 " were expected"
             )
-        print ("The Samba client produced the following output to STDOUT:\n%s" % stdout)
+        print("The Samba client produced the following output to STDOUT:\n%s" % stdout)
 
         connection_errors = ("NT_STATUS_CONNECTION_REFUSED", "failed", "Error")
         if any(err_string in stdout for err_string in connection_errors):
@@ -88,7 +90,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
         student_name = "ucs_test_school_user_" + random_username(8)
         student_password = "Foo3" + random_username(8)
 
-        print (
+        print(
             "\nCreating a student for the test with a name '%s' and a password '%s'"
             % (student_name, student_password)
         )
@@ -112,7 +114,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
         # skip the test if DC-Master has no S4:
         if not self.dc_master_has_samba4():
-            print "\nThe DC-Master has no S4, skipping test..."
+            print("\nThe DC-Master has no S4, skipping test...")
             self.return_code_result_skip()
 
         try:
@@ -127,7 +129,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             # 									 True)
         finally:
             if student_dn:
-                print "\nRemoving the test student user '%s':" % student_name
+                print("\nRemoving the test student user '%s':" % student_name)
                 self.TestSchool._remove_udm_object("users/user", student_dn)
 
 

@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-users]
 
+from __future__ import print_function
+
 import sys
 
 import pytest
@@ -102,54 +104,54 @@ def main():
 
         utils.wait_for_replication_and_postrun()
 
-        print "#1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True)"
+        print("#1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, teachers[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
         )
 
-        print "#2 test if student is unable to reset teacher password (chgPwdNextLogin=True)"
+        print("#2 test if student is unable to reset teacher password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, students[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
         )
 
-        print "#3 test if student is unable to reset student password (chgPwdNextLogin=True)"
+        print("#3 test if student is unable to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, students[0], "student", students[1], studentsDn[1], True, Forbidden, 200, 401
         )
 
-        print "#4 test if teacher is unable to reset teacher password (chgPwdNextLogin=False)"
+        print("#4 test if teacher is unable to reset teacher password (chgPwdNextLogin=False)")
         test_pwd_reset(
             host, teachers[0], "teacher", teachers[1], teachersDn[1], False, Forbidden, 200, 401
         )
 
-        print "#5 test if student is unable to reset teacher password (chgPwdNextLogin=False)"
+        print("#5 test if student is unable to reset teacher password (chgPwdNextLogin=False)")
         test_pwd_reset(
             host, students[0], "teacher", teachers[1], teachersDn[1], False, Forbidden, 200, 401
         )
 
-        print "#6 test if student is unable to reset student password (chgPwdNextLogin=False)"
+        print("#6 test if student is unable to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(
             host, students[0], "student", students[1], studentsDn[1], False, Forbidden, 200, 401
         )
 
-        print "#7 test if teacher is able to reset student password (chgPwdNextLogin=True)"
+        print("#7 test if teacher is able to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, teachers[0], "student", students[1], studentsDn[1], True, True, 401, 401, True
         )
 
-        print "#8 test if teacher is able to reset student password (chgPwdNextLogin=False)"
+        print("#8 test if teacher is able to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(host, teachers[0], "student", students[0], studentsDn[0], False, True, 401, 200)
 
-        print "#9 test if schooladmin is able to reset student password (chgPwdNextLogin=False)"
+        print("#9 test if schooladmin is able to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(host, admins[0], "student", students[0], studentsDn[0], False, True, 401, 200)
 
-        print "#10 test if schooladmin is able to reset student password (chgPwdNextLogin=True)"
+        print("#10 test if schooladmin is able to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(host, admins[0], "student", students[2], studentsDn[2], True, True, 401, 401)
 
-        print "#11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False)"
+        print("#11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False)")
         test_pwd_reset(host, admins[0], "student", teachers[0], teachersDn[0], False, True, 401, 200)
 
-        print "#12 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True)"
+        print("#12 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True)")
         test_pwd_reset(host, admins[0], "student", teachers[1], teachersDn[1], True, True, 401, 401)
 
 

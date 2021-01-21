@@ -8,6 +8,8 @@
 ## packages: [ucs-school-umc-computerroom]
 
 
+from __future__ import print_function
+
 import datetime
 import itertools
 
@@ -31,17 +33,23 @@ from univention.testing.umc import Client
 def print_header(
     i, room1_rule, room1_printmode, room1_sharemode, j, room2_rule, room2_printmode, room2_sharemode
 ):
-    print "\n** ROOM 1\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)" % (
-        i,
-        room1_rule,
-        room1_printmode,
-        room1_sharemode,
+    print(
+        "\n** ROOM 1\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)"
+        % (
+            i,
+            room1_rule,
+            room1_printmode,
+            room1_sharemode,
+        )
     )
-    print "\n** ROOM 2\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)" % (
-        j,
-        room2_rule,
-        room2_printmode,
-        room2_sharemode,
+    print(
+        "\n** ROOM 2\n** (%d) (internetRule, printMode, shareMode) = (%s, %s, %s)"
+        % (
+            j,
+            room2_rule,
+            room2_printmode,
+            room2_sharemode,
+        )
     )
 
 
@@ -187,12 +195,12 @@ def main():
                             # TODO Exception Errno4
                             except ConnectionError as e:
                                 if "[Errno 4] Unterbrechung" in str(e):
-                                    print (
+                                    print(
                                         "FAILED to get or set room (%s) settings, exception"
                                         "[Errno4]" % (room2.name,)
                                     )
                                 else:
-                                    print ("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+                                    print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
                                     raise
                 finally:
                     remove_printer(printer_name, school, ucr.get("ldap/base"))

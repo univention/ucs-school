@@ -12,6 +12,8 @@
 ##  4.0-1: skip
 ##  4.1-2: fixed
 
+from __future__ import print_function
+
 from multiprocessing import Process
 from os import getenv
 from re import IGNORECASE, match
@@ -50,7 +52,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         Creates temporary folder to use as a private directory for the test
         and returns its path.
         """
-        print ("\nSetting up credentials and a temporary private directory for Samba:")
+        print("\nSetting up credentials and a temporary private directory for Samba:")
 
         smb_conf_path = getenv("SMB_CONF_PATH")
 
@@ -61,7 +63,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
 
         private_dir = mkdtemp()
         self.SambaLP.set("private dir", private_dir)
-        print "Samba temporary private dir path:", private_dir
+        print("Samba temporary private dir path:", private_dir)
 
         self.SambaCreds.parse_string(self.admin_username)
         self.SambaCreds.set_password(self.admin_password)
@@ -81,7 +83,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         Samba libnet. Returns machine password.
         """
         machine_pass = generate_random_password(20, 32)
-        print (
+        print(
             "\nInitiating a join of a computer with a name '%s' and a generated machine password '%s' "
             "using libnet:" % (netbios_name, machine_pass)
         )
@@ -97,9 +99,9 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             )
         utils.wait_for_replication()
 
-        print "Join Password:", join_password
-        print "Domain SID:", domain_sid
-        print "Domain Name:", domain_name
+        print("Join Password:", join_password)
+        print("Domain SID:", domain_sid)
+        print("Domain Name:", domain_name)
 
         return join_password
 
@@ -108,7 +110,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         Tries to access the sysvol using 'smb-client' with given credentials
         for a created Windows Client account and lists the contents.
         """
-        print (
+        print(
             "\nTrying to access the Samba SYSVOL using joined Windows client credentials: computer "
             "name '%s' and machine password '%s'" % (computer_name, machine_password)
         )
@@ -121,11 +123,11 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             "ls",
         )
 
-        print "\nExecuting command:", cmd
+        print("\nExecuting command:", cmd)
         stdout, stderr = self.create_and_run_process(cmd)
 
         if stderr:
-            print ("The 'smbclient' has produced the following output to STDERR: %s" % stderr)
+            print("The 'smbclient' has produced the following output to STDERR: %s" % stderr)
         if not stdout:
             utils.fail(
                 "The 'smbclient' did not produce any output to STDOUT, while Samba SYSVOL contents "
@@ -142,13 +144,13 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         Lists the Windows computers via udm and checks the output for a given
         'computer_name'.
         """
-        print (
+        print(
             "\nListing all Windows computers to check the presence of the test client with a name '%s':"
             % computer_name
         )
 
         cmd = ("udm", "computers/windows", "list")
-        print "Executing command:", cmd
+        print("Executing command:", cmd)
         stdout, stderr = self.create_and_run_process(cmd)
 
         if stderr:
@@ -201,7 +203,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         given computer_name and generated ldif.
         """
         computer_ldif = self.generate_windows_client_ldif(computer_name)
-        print (
+        print(
             "\nCreating a Windows Client Computer for the test with a name  %s via 'ldbadd':"
             % computer_name
         )
@@ -225,7 +227,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
                 "computer record add was expected"
             )
         else:
-            print "The 'ldbadd' produced the following output:", stdout
+            print("The 'ldbadd' produced the following output:", stdout)
 
         if not bool(match(".*Added 1 record.* successfully", stdout, IGNORECASE)):
             utils.fail(
@@ -238,7 +240,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         Removes the computer with the given 'computer_name' using
         'UCSTestSchool' functionality.
         """
-        print "\nRemoving the computer with a name: '%s':" % computer_name
+        print("\nRemoving the computer with a name: '%s':" % computer_name)
 
         school_ou_dn = self.UCR.get("ldap/hostdn")
         school_ou_dn = school_ou_dn[school_ou_dn.find("ou=") :]
@@ -277,7 +279,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             if computer_name:
                 self.remove_computer_via_udm(computer_name)
             if private_dir:
-                print "\nRemoving temporary Samba private dir:", private_dir
+                print("\nRemoving temporary Samba private dir:", private_dir)
                 rmtree(private_dir, True)
 
 
@@ -290,7 +292,7 @@ if __name__ == "__main__":
     TestWindowsClientJoin = TestS4ClientJoinIntoSchool()
 
     # case 1: first create a computer in ldb and than join it:
-    print ("Running test case 1: join of a Windows client with a pre-creation of a computer account:")
+    print("Running test case 1: join of a Windows client with a pre-creation of a computer account:")
     TestProcess = Process(target=TestWindowsClientJoin.main, args=(True,))
     TestProcess.start()
     TestProcess.join(150)

@@ -6,6 +6,8 @@
 ## tags: [SKIP-UCSSCHOOL,apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 
+from __future__ import print_function
+
 from os import path
 from re import IGNORECASE, match, search
 from subprocess import PIPE
@@ -24,7 +26,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         admin credentials and executes there the given 'command_line'.
         Returns the stdout produced on the remote 'host'.
         """
-        print ("\nAccessing the remote host '%s' using the test administrator credentials" % host)
+        print("\nAccessing the remote host '%s' using the test administrator credentials" % host)
 
         # '/dev/stdin' used to avoid creation of a file with a password:
         cmd = (
@@ -41,7 +43,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             # ignore warnings (both lower/UPPER case)
             # ("Permanently added to the list of known hosts", etc.):
             if bool(match("Warning|Warnung", stderr, IGNORECASE)):
-                print "Ignoring the following warning message:", stderr
+                print("Ignoring the following warning message:", stderr)
             else:
                 utils.fail(
                     "An error occured while connecting to the remote host '%s' via ssh or executing the"
@@ -49,7 +51,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
                 )
         if stdout:
             stdout = stdout.strip()
-            print (
+            print(
                 "\nThe output of the command '%s' executed on the remote host '%s' is: '%s'"
                 % (command_line, host, stdout)
             )
@@ -60,7 +62,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         Executes the command on the given 'host' to check the presence of
         a test GPO folder in Samba sysvol.
         """
-        print "\nChecking SYSVOL replication to host '%s':" % host
+        print("\nChecking SYSVOL replication to host '%s':" % host)
 
         sysvol_path = "/var/lib/samba/sysvol/%s/Policies/%s/" % (
             self.UCR["domainname"],
@@ -70,7 +72,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         # command should return 'True' if folder exists and 'False' otherwise:
         command_line = "[ -d %s ] && echo 'True' || echo 'False'" % sysvol_path
 
-        print "\nWaiting for SYSVOL synchronisation to happen (up to 370 sec.)"
+        print("\nWaiting for SYSVOL synchronisation to happen (up to 370 sec.)")
         remote_stdout = ""
 
         for attempt in range(37):
@@ -78,7 +80,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             if remote_stdout == "True":
                 # folder created, replication works
                 return
-            print "Waiting 10 more seconds before next check..."
+            print("Waiting 10 more seconds before next check...")
             sleep(10)  # wait up to 5 (+1) mins (cron job schedule)
 
         if not remote_stdout:
@@ -106,7 +108,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         """
         repl_script = "/usr/share/univention-samba4/scripts/sysvol-sync.sh"
 
-        print "\nLocally executing the replication script '%s'" % repl_script
+        print("\nLocally executing the replication script '%s'" % repl_script)
         if not path.exists(repl_script):
             utils.fail("The replication script '%s' file cannot be found." % repl_script)
 
@@ -148,7 +150,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         have S4 running; Excludes the local hostname and returns the list with
         a DC-Master hostname plus all other DC hostnames in the domain.
         """
-        print ("\nGenerating the list of other DCs in the domain to check the SYSVOL replication:")
+        print("\nGenerating the list of other DCs in the domain to check the SYSVOL replication:")
 
         ldap_master = self.UCR.get("ldap/master")
         search_pattern = "univentionService=Samba 4"  # pick those with Samba4
@@ -170,7 +172,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
         search_stdout, search_stderr = self.create_and_run_process(cmd)
         if search_stderr:
-            print (
+            print(
                 "An error message while executing 'univention-ldapsearch' on the '%s' with pattern '%s':"
                 " '%s'" % (ldap_master, search_pattern, search_stderr)
             )
@@ -193,7 +195,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
         # DC-Master should be the first node to check the replication to:
         hosts = [ldap_master] + self.get_other_hostnames_from_search(stdout)
-        print "The following hosts will be checked:", hosts
+        print("The following hosts will be checked:", hosts)
         return hosts
 
     def create_samba_gpo(self):
@@ -203,7 +205,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         'self.gpo_reference'.
         """
         display_name = "ucs_test_school_gpo_" + random_username(8)
-        print (
+        print(
             "\nCreating Group Policy Object (GPO) for the test with a name '%s' using 'samba-tool'"
             % display_name
         )
@@ -232,7 +234,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             )
 
         stdout = stdout.rstrip()
-        print "\nSamba-tool produced the following output:", stdout
+        print("\nSamba-tool produced the following output:", stdout)
         try:
             # extracting the GPO reference from the stdout:
             self.gpo_reference = "{" + search("{(.+?)}", stdout).group(1) + "}"

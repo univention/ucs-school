@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
 import random
 import string
@@ -142,7 +144,7 @@ class Computer(object):
         return attr
 
     def verify(self):
-        print "verify computer: %s" % self.name
+        print("verify computer: %s" % self.name)
 
         utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
 
@@ -258,9 +260,9 @@ class ImportFile:
                 self._run_import_via_python_api()
             pre_result = hooks.get_pre_result()
             post_result = hooks.get_post_result()
-            print "PRE  HOOK result:\n%s" % pre_result
-            print "POST HOOK result:\n%s" % post_result
-            print "SCHOOL DATA     :\n%s" % str(self.computer_import)
+            print("PRE  HOOK result:\n%s" % pre_result)
+            print("POST HOOK result:\n%s" % post_result)
+            print("SCHOOL DATA     :\n%s" % str(self.computer_import))
             if pre_result != post_result != str(self.computer_import):
                 raise ComputerHookResult()
         finally:
@@ -268,12 +270,12 @@ class ImportFile:
             try:
                 os.remove(self.import_file)
             except OSError as e:
-                print "WARNING: %s not removed. %s" % (self.import_file, e)
+                print("WARNING: %s not removed. %s" % (self.import_file, e))
 
     def _run_import_via_cli(self):
         cmd_block = ["/usr/share/ucs-school-import/scripts/import_computer", self.import_file]
 
-        print "cmd_block: %r" % cmd_block
+        print("cmd_block: %r" % cmd_block)
         retcode = subprocess.call(cmd_block, shell=False)
         if retcode:
             raise ImportComputer(
@@ -466,7 +468,7 @@ def create_and_verify_computers(
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
 
-        print "********** Generate school data"
+        print("********** Generate school data")
         computer_import = ComputerImport(
             ou_name,
             nr_windows=nr_windows,
@@ -474,10 +476,10 @@ def create_and_verify_computers(
             nr_macos=nr_macos,
             nr_ipmanagedclient=nr_ipmanagedclient,
         )
-        print (computer_import)
+        print(computer_import)
         import_file = ImportFile(use_cli_api, use_python_api)
 
-        print "********** Create computers"
+        print("********** Create computers")
         import_file.run_import(computer_import)
         computer_import.verify()
 

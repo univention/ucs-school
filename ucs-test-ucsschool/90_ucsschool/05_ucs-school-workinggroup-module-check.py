@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
+from __future__ import print_function
+
 import time
 
 import univention.testing.ucr as ucr_test
@@ -70,8 +72,8 @@ def main():
                     group.verify_ldap_attributes()
                 except Exception as e:
                     if group.dn() in str(e):
-                        print ":::::::%r::::::" % wait
-                        print str(e)
+                        print(":::::::%r::::::" % wait)
+                        print(str(e))
                         time.sleep(1)
                     else:
                         raise
@@ -87,8 +89,8 @@ def main():
                     group.verify_ldap_attributes()
                 except Exception as e:
                     if group.dn() in str(e):
-                        print ":::::::%r::::::" % wait
-                        print str(e)
+                        print(":::::::%r::::::" % wait)
+                        print(str(e))
                         time.sleep(1)
                     else:
                         raise

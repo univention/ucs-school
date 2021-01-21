@@ -4,6 +4,8 @@
 ## exposure: dangerous
 ## packages:  [ucs-school-umc-printermoderation, ucs-school-import]
 
+from __future__ import print_function
+
 import os
 import socket
 import subprocess
@@ -49,7 +51,7 @@ def orderPrint(printer, userName, _file):
     ]
     # cmd = ['smbclient', "-N", "-L", "//%s/%s" % (master, printer)]
     for cmd in cmds:
-        print "cmd = %s" % " ".join(cmd)
+        print("cmd = %s" % " ".join(cmd))
         err, out = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         # workaround for smbclient session setup failed: NT_STATUS_LOGON_FAILURE
         for waitingTime in range(150):
@@ -58,7 +60,7 @@ def orderPrint(printer, userName, _file):
             ).communicate()
             if err:
                 time.sleep(1)
-                print " - %d - " % waitingTime, err,
+                print(" - %d - " % waitingTime, err, end=" ")
             else:
                 break
         err, out = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
@@ -70,7 +72,7 @@ def orderPrint(printer, userName, _file):
             job = [x for x in _dir(userName) if x not in oldPrintJobs]
             if not job:
                 time.sleep(1)
-                print " - %d - " % waitingTime, "Waiting for print job .. "
+                print(" - %d - " % waitingTime, "Waiting for print job .. ")
             else:
                 break
         if not job:
@@ -148,7 +150,7 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost, doma
     printerURI = "%s.%s://%s" % (spoolHost, domainname, printerName)
     param = {"username": userName, "printjob": printJob, "printer": printerURI}
     reqResult = connection.umc_command("printermoderation/print", param).result
-    print "reqResult = ", reqResult
+    print("reqResult = ", reqResult)
     if not reqResult:
         utils.fail("Could not pass print jobs to hard printer")
 

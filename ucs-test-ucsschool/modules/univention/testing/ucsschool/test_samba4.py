@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from os import getenv
 from subprocess import PIPE, Popen
 from sys import exit
@@ -48,7 +50,7 @@ class TestSamba4(object):
         and executes it. When stdin is needed, it can be provided with kwargs.
         To write to a file an istance can be provided to stdout.
         """
-        print "\n create_and_run_process(%r, shell=%r)" % (cmd, shell)
+        print("\n create_and_run_process(%r, shell=%r)" % (cmd, shell))
         proc = Popen(cmd, stdin=stdin, stdout=stdout, stderr=PIPE, shell=shell, close_fds=True)
 
         stdout, stderr = proc.communicate(input=std_input)
@@ -67,7 +69,7 @@ class TestSamba4(object):
         """
         if action in ("start", "stop", "restart"):
             cmd = ("service", service, action)
-            print "\nExecuting command:", cmd
+            print("\nExecuting command:", cmd)
 
             stdout, stderr = self.create_and_run_process(cmd)
             if stderr:
@@ -81,9 +83,9 @@ class TestSamba4(object):
                     "The %s command did not produce any output to stdout, while a confirmation was "
                     "expected" % action
                 )
-            print stdout
+            print(stdout)
         else:
-            print (
+            print(
                 "\nUnknown state '%s' is given for the service '%s', accepted 'start' to start it "
                 "'stop' to stop or 'restart' to restart" % (action, service)
             )
@@ -140,7 +142,7 @@ class TestSamba4(object):
             "domaincontroller_slave",
         ):
 
-            print "\nThe given DC type '%s' is unknown" % dc_type
+            print("\nThe given DC type '%s' is unknown" % dc_type)
             self.return_code_result_skip()
 
         cmd = ("udm", "computers/" + dc_type, "list")
@@ -168,17 +170,17 @@ class TestSamba4(object):
         """
         Returns the first found School OU from the list of DC-Slaves in domain.
         """
-        print "\nSelecting the School OU for the test"
+        print("\nSelecting the School OU for the test")
 
         sed_stdout = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^DN: ")
         ous = [schoolldap.SchoolSearchBase.getOUDN(x) for x in sed_stdout.split()]
         ous = [schoolldap.SchoolSearchBase.getOU(ou) if schoolname_only else ou for ou in ous if ou]
 
-        print "\nselect_school_ou: SchoolSearchBase found these OUs: %s" % (ous,)
+        print("\nselect_school_ou: SchoolSearchBase found these OUs: %s" % (ous,))
         try:
             return ous[0]
         except IndexError:
-            print "\nselect_school_ou: split: %s" % (sed_stdout.split(),)
+            print("\nselect_school_ou: split: %s" % (sed_stdout.split(),))
             utils.fail(
                 "Could not find the DN in the udm list output, thus cannot select the School OU to use "
                 "as a container"
@@ -188,7 +190,7 @@ class TestSamba4(object):
         """
         Returns the 'sam.ldb' path using samba conf or defaults.
         """
-        print ("\nObtaining the Samba configuration to determine Samba private path")
+        print("\nObtaining the Samba configuration to determine Samba private path")
         smb_conf_path = getenv("SMB_CONF_PATH")
         SambaLP = LoadParm()
 
@@ -203,7 +205,7 @@ class TestSamba4(object):
         """
         Loads the UCR to get credentials for the test.
         """
-        print ("\nObtaining Administrator username and password for the test from the UCR")
+        print("\nObtaining Administrator username and password for the test from the UCR")
         try:
             self.UCR.load()
 
@@ -212,7 +214,7 @@ class TestSamba4(object):
             self.admin_username = self.admin_username.split(",")[0][len("uid=") :]
             self.admin_password = self.UCR["tests/domainadmin/pwd"]
         except KeyError as exc:
-            print (
+            print(
                 "\nAn exception while trying to read data from the UCR for the test: '%s'. Skipping "
                 "the test." % exc
             )
@@ -229,8 +231,8 @@ class TestSamba4(object):
         try:
             self.client = Client(self.ldap_master, self.admin_username, self.admin_password)
         except (ConnectionError, HTTPError) as exc:
-            print ("An HTTP Error occured while trying to authenticate to UMC: %r" % exc)
-            print "Waiting 10 seconds and making another attempt"
+            print("An HTTP Error occured while trying to authenticate to UMC: %r" % exc)
+            print("Waiting 10 seconds and making another attempt")
             sleep(10)
             self.client.authenticate(self.admin_username, self.admin_password)
 
@@ -238,7 +240,7 @@ class TestSamba4(object):
         """
         Deletes the Group Policy Object using the 'samba-tool gpo del'.
         """
-        print (
+        print(
             "\nRemoving previously created Group Policy Object (GPO) with a reference: %s"
             % self.gpo_reference
         )
@@ -254,7 +256,7 @@ class TestSamba4(object):
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
-            print "\nExecuting cmd:", cmd
-            print ("\nAn error message while removing the GPO using 'samba-tool':\n%s" % stderr)
+            print("\nExecuting cmd:", cmd)
+            print("\nAn error message while removing the GPO using 'samba-tool':\n%s" % stderr)
 
-        print "\nSamba-tool produced the following output:\n", stdout
+        print("\nSamba-tool produced the following output:\n", stdout)

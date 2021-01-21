@@ -29,6 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import argparse
 import subprocess
 import sys
@@ -79,7 +81,7 @@ def parse_acls(args, lo):
             try:
                 entry[attr]
             except KeyError as exc:
-                print >>sys.stderr, dn, exc
+                print(dn, exc, file=sys.stderr)
                 code = 1
         writer.unparse(dn, entry)
     return code

@@ -5,6 +5,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
+from __future__ import print_function
+
 import random
 
 import univention.config_registry
