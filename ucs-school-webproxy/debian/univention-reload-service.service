@@ -1,0 +1,12 @@
+[Unit]
+Description=Univention reload service for univention-web-proxy
+
+[Service]
+ExecStart=/usr/sbin/univention-reload-service
+Restart=always
+RestartSec=10s
+StandardOutput=append:/var/log/univention/reload-service.log
+StandardError=append:/var/log/univention/reload-service.log
+
+[Install]
+WantedBy=multi-user.target
