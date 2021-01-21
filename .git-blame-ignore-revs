@@ -1,2 +1,3 @@
 fa7002fe # 08.06.2020 - major code reformat with black and isort
 1328d983 # 21.09.2020 - Bug #52119: upgrade to isort version 5
+b40ff404 # 21.01.2021 - Bug #52458: enable most flake8 tests and add more linters
