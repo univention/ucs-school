@@ -1,3 +1,10 @@
+ucs-school-webproxy (16.0.2-1) unstable; urgency=medium
+
+  * Bug #52606: migrate the univention-reload-service from runit to systemd
+    and use systemctl to reload swuid in ucs-school-webproxy.py
+
+ -- Sebastian Lobinger <lobinger@univention.de>  Wed, 20 Jan 2021 10:33:45 +0100
+
 ucs-school-webproxy (16.0.1-1) unstable; urgency=medium
 
   * Bug #52652: Migrate pupilgroups.py listener to Python 3
