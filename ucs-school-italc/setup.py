@@ -30,7 +30,7 @@ qt_sip_flags = config.pyqt_sip_flags
 
 # Run SIP to generate the code.  Note that we tell SIP where to find the qt
 # module's specification files using the -I flag.
-os.system(
+os.system(  # nosec
     " ".join(
         [
             config.sip_bin,

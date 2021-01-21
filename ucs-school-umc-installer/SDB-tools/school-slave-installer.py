@@ -157,8 +157,8 @@ def install_app(options):  # type: (Any) -> None
     fd.write(time.ctime() + "\n")
 
     print 'Checking installation status of app "UCS@school" ...'
-    proc = subprocess.Popen(
-        ["univention-app", "info", "--as-json"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    proc = subprocess.Popen(  # nosec
+        ["/usr/bin/univention-app", "info", "--as-json"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     stdout, stderr = proc.communicate()
     if proc.returncode:
@@ -189,7 +189,7 @@ def install_app(options):  # type: (Any) -> None
         with tempfile.NamedTemporaryFile() as tmpfn:
             tmpfn.write(options.password)
             cmd = [
-                "univention-app",
+                "/usr/bin/univention-app",
                 "install",
                 "ucsschool",
                 "--username",
@@ -198,7 +198,7 @@ def install_app(options):  # type: (Any) -> None
                 tmpfn.name,
             ]
             fd.write("CMD: %s\n" % (" ".join(cmd),))
-            proc = subprocess.Popen(cmd, stdout=fd, stderr=fd)
+            proc = subprocess.Popen(cmd, stdout=fd, stderr=fd)  # nosec
             returncode = proc.wait()
 
         if returncode:

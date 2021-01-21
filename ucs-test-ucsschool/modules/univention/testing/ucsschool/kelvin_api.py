@@ -398,7 +398,13 @@ class HttpApiUserTestBase(TestCase):
 
     @classmethod
     def restart_api_server(cls):
-        cmd = ["univention-app", "shell", APP_ID, "/etc/init.d/ucsschool-kelvin-rest-api", "restart"]
+        cmd = [
+            "/usr/bin/univention-app",
+            "shell",
+            APP_ID,
+            "/etc/init.d/ucsschool-kelvin-rest-api",
+            "restart",
+        ]
         cls.logger.info("*** Restarting Kelvin API server: %r", cmd)
         subprocess.call(cmd)
         while True:
