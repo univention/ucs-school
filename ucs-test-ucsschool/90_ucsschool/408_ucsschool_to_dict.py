@@ -129,3 +129,71 @@ def test_udm_share_to_dict():
                     assert dict_obj["options"][option] is True
                 else:
                     assert dict_obj["options"][option] is False
+
+
+def test_udm_group_to_dict():
+    with utu.UCSTestSchool() as schoolenv:
+        for cls in [SchoolClass, WorkGroup, ComputerRoom]:
+            name = "DEMOSCHOOL-{}".format(uts.random_name())
+            group = cls(school="DEMOSCHOOL", name=name,)
+            group.create(schoolenv.lo)
+            udm_obj = udm_modules.lookup(
+                "groups/group",
+                None,
+                schoolenv.lo,
+                scope="sub",
+                base=schoolenv.ucr.get("ldap/base"),
+                filter=str("cn={}".format(group.name)),
+                superordinate=None,
+            )[0]
+            dict_obj = obj_to_dict(udm_obj)
+            assert dict_obj["properties"]
+            for key, value in udm_obj.items():
+                assert key in dict_obj["properties"].keys()
+            assert udm_obj.position.getDn() == dict_obj["dn"]
+            position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
+            assert position == dict_obj["position"]
+            for option in udm_obj.options:
+                if option in dict_obj["options"]:
+                    assert dict_obj["options"][option] is True
+                else:
+                    assert dict_obj["options"][option] is False
+
+
+def test_udm_share_to_dict():
+    with utu.UCSTestSchool() as schoolenv:
+        for cls in [ClassShare, WorkGroupShare, MarketplaceShare]:
+            if cls in [ClassShare, WorkGroupShare]:
+                name = "DEMOSCHOOL-{}".format(uts.random_name())
+                if cls == ClassShare:
+                    group = SchoolClass(school="DEMOSCHOOL", name=name,)
+                    group.create(schoolenv.lo)
+                elif cls == WorkGroupShare:
+                    group = WorkGroup(school="DEMOSCHOOL", name=name,)
+                    group.create(schoolenv.lo)
+            else:
+                name = "Marktplatz"
+
+            share = cls(school="DEMOSCHOOL", name=name,)
+            share.create(schoolenv.lo)
+            udm_obj = udm_modules.lookup(
+                "shares/share",
+                None,
+                schoolenv.lo,
+                scope="sub",
+                base=schoolenv.ucr.get("ldap/base"),
+                filter=str("cn={}".format(share.name)),
+                superordinate=None,
+            )[0]
+            dict_obj = obj_to_dict(udm_obj)
+            assert dict_obj["properties"]
+            for key, value in udm_obj.items():
+                assert key in dict_obj["properties"].keys()
+            assert udm_obj.position.getDn() == dict_obj["dn"]
+            position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
+            assert position == dict_obj["position"]
+            for option in udm_obj.options:
+                if option in dict_obj["options"]:
+                    assert dict_obj["options"][option] is True
+                else:
+                    assert dict_obj["options"][option] is False

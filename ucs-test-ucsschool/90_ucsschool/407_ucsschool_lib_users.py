@@ -15,7 +15,7 @@ import logging
 import tempfile
 
 try:
-    from typing import Dict, List, Tuple
+    from typing import Dict
 except ImportError:
     pass
 
@@ -40,6 +40,7 @@ from ucsschool.lib.models.validator import (
     container_teachers_and_staff,
     exam_students_group,
     get_role_container,
+    role_mapping,
     staff_group_regex,
     teachers_group_regex,
     ucr_get,
@@ -49,7 +50,7 @@ from ucsschool.lib.models.validator import (
 ldap_base = ucr_get("ldap/base")
 
 
-def base_user_dict(firstname, lastname):  # type(str, str) -> dict
+def base_user_dict(firstname, lastname):  # type(str, str) -> Dict
     return {
         "dn": "",
         "properties": {
@@ -141,7 +142,7 @@ def base_user_dict(firstname, lastname):  # type(str, str) -> dict
     }
 
 
-def student_as_dict():  # type(None) -> dict
+def student_as_dict():  # type(None) -> Dict
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user_dict(firstname, lastname)
@@ -164,7 +165,7 @@ def student_as_dict():  # type(None) -> dict
     return user
 
 
-def exam_student_as_dict():  # type(None) -> dict
+def exam_student_as_dict():  # type(None) -> Dict
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user_dict(firstname, lastname)
@@ -190,7 +191,7 @@ def exam_student_as_dict():  # type(None) -> dict
     return user
 
 
-def teacher_as_dict():  # type(None) -> dict
+def teacher_as_dict():  # type(None) -> Dict
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user_dict(firstname, lastname)
@@ -210,7 +211,7 @@ def teacher_as_dict():  # type(None) -> dict
     return user
 
 
-def staff_as_dict():  # type(None) -> dict
+def staff_as_dict():  # type(None) -> Dict
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user_dict(firstname, lastname)
@@ -230,7 +231,7 @@ def staff_as_dict():  # type(None) -> dict
     return user
 
 
-def teacher_and_staff_as_dict():  # type(None) -> dict
+def teacher_and_staff_as_dict():  # type(None) -> Dict
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user_dict(firstname, lastname)
@@ -410,6 +411,21 @@ def test_students_wrong_role(caplog, user_dict, role, class_name, random_logger)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
         assert "Students must not any other roles than 'student' or 'exam_student'" in log
+    assert "{}".format(user_dict) in secret_logs
+
+
+@pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
+def test_test_missing_role(caplog, user_dict, class_name, random_logger):
+    random_logger = random_logger()
+    for role in user_dict["properties"]["ucsschoolRole"]:
+        r, c, s = role.split(":")
+        if r == role_mapping[class_name]:
+            user_dict["properties"]["ucsschoolRole"].remove(role)
+    validate_udm(user_dict, class_name=class_name, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert "{} does not have {}-role.".format(class_name, role_mapping[class_name]) in log
     assert "{}".format(user_dict) in secret_logs
 
 
