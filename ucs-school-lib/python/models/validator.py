@@ -24,7 +24,7 @@ LOG_FILE = "/var/log/univention/ucs-school-validation.log"
 LOGGER_NAME = "UCSSchool-Validation"
 private_data_logger = logging.getLogger(LOGGER_NAME)
 private_data_logger.setLevel("DEBUG")
-private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0))
+private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
 
 
 @lru_cache(maxsize=32)
