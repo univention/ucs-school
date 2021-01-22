@@ -33,6 +33,8 @@ CSV reader for CSV files using the new import format.
 """
 
 import codecs
+from io import IOBase
+import six
 import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 
@@ -102,7 +104,7 @@ class CsvReader(BaseReader):
         if isinstance(filename_or_file, string_types):
             with open(filename_or_file, "rb") as fp:
                 txt = fp.read()
-        elif isinstance(filename_or_file, file):
+        elif isinstance(filename_or_file, IOBase):
             old_pos = filename_or_file.tell()
             txt = filename_or_file.read()
             filename_or_file.seek(old_pos)
@@ -146,14 +148,11 @@ class CsvReader(BaseReader):
             try:
                 dialect = self.get_dialect(fp)
             except CsvError as exc:
-                reraise(
-                    InitialisationError,
-                    InitialisationError(
-                        "Could not determine CSV dialect. Try setting the csv:delimiter configuration. "
-                        "Error: {}".format(exc)
-                    ),
-                    sys.exc_info()[2],
-                )
+                six.reraise(InitialisationError, InitialisationError(
+                    "Could not determine CSV dialect. Try setting the csv:delimiter configuration. Error: {}".format(
+                        exc
+                    )
+                ), sys.exc_info()[2])
             fp.seek(0)
             encoding = self.get_encoding(fp)
             self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
@@ -187,10 +186,15 @@ class CsvReader(BaseReader):
             for row in reader:
                 self.entry_count = reader.line_num
                 self.input_data = reader.row
-                yield {
-                    unicode(key, "utf-8").strip(): unicode(value or "", "utf-8").strip()
-                    for key, value in row.iteritems()
+                try:
+                    yield_value = {
+                        unicode(key, "utf-8").strip(): unicode(value or "", "utf-8").strip() for key, value in row.iteritems()
+                    }
+                except NameError:
+                    yield_value = {
+                    str(key).strip(): str(value or "").strip() for key, value in row.iteritems()
                 }
+                yield yield_value
 
     def handle_input(
         self,

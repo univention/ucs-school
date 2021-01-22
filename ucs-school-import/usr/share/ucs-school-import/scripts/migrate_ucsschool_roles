@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2018-2021 Univention GmbH
@@ -240,7 +240,7 @@ class UcsSchoolRolesMigration(object):
                 "school",
                 [create_ucsschool_role_string(role_school, school)],
                 School(name=school).dn,
-                "ucsschoolOrganizationalUnit",
+                b"ucsschoolOrganizationalUnit",
             )
 
             if self.search_school_groups:

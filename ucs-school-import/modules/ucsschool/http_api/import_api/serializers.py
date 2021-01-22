@@ -51,7 +51,7 @@ from rest_framework.exceptions import ParseError, PermissionDenied
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.lib.models.utils import ucr
 
-from .models import (
+from ucsschool.http_api.import_api.models import (
     JOB_NEW,
     JOB_SCHEDULED,
     Logfile,
@@ -62,7 +62,7 @@ from .models import (
     TextArtifact,
     UserImportJob,
 )
-from .tasks import dry_run, import_users
+from ucsschool.http_api.import_api.tasks import dry_run, import_users
 
 try:
     from typing import Tuple

@@ -53,6 +53,7 @@ nothing will be done.
 
 import json
 import pprint
+import six
 import sys
 
 import six

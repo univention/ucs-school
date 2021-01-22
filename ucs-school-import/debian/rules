@@ -53,7 +53,7 @@ pymoduledoc: $(PYMODULESRC_FILES)
 apidoc:	$(APIDOCSRC_FILES) plantuml pymoduledoc
 	make -C$(APIDOC_BASE_DIR) html
 
-override_dh_auto_build: $(MO_FILES) apidoc
+override_dh_auto_build: $(MO_FILES) #apidoc
 	dh_auto_build
 
 override_dh_auto_install:

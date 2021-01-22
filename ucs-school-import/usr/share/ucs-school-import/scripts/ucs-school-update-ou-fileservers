@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2007-2021 Univention GmbH
@@ -144,8 +144,8 @@ during creation of new classes or users.
         classshareserver = None
 
         ou_attrs = lo.get(ou_dn)
-        if "ucsschoolOrganizationalUnit" not in ou_attrs["objectClass"]:
-            modlist.append(("objectClass", "", "ucsschoolOrganizationalUnit"))
+        if b"ucsschoolOrganizationalUnit" not in ou_attrs["objectClass"]:
+            modlist.append(("objectClass", "", b"ucsschoolOrganizationalUnit"))
 
         if is_singlemaster:
             # in single server environments the DC master is always the correct fileserver for shares

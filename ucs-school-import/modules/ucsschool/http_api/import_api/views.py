@@ -53,8 +53,8 @@ from rest_framework.reverse import reverse
 
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 
-from .models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
-from .serializers import (
+from ucsschool.http_api.import_api.models import JOB_CHOICES, Role, School, TextArtifact, UserImportJob
+from ucsschool.http_api.import_api.serializers import (
     LogFileSerializer,
     PasswordFileSerializer,
     RoleSerializer,

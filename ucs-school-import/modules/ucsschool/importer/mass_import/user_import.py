@@ -36,6 +36,7 @@ Default user import class.
 import copy
 import datetime
 import logging
+import six
 import sys
 from collections import defaultdict
 
@@ -227,18 +228,14 @@ class UserImport(object):
                         # delete
                         continue
                 except ValidationError as exc:
-                    six.reraise(
-                        UserValidationError,
-                        UserValidationError(
-                            "ValidationError when {} {} "
-                            "(source_uid:{} record_uid: {}): {}".format(
-                                action_str.lower(), user, user.source_uid, user.record_uid, exc
-                            ),
-                            validation_error=exc,
-                            import_user=user,
+                    six.reraise(UserValidationError, UserValidationError(
+                        "ValidationError when {} {} "
+                        "(source_uid:{} record_uid: {}): {}".format(
+                            action_str.lower(), user, user.source_uid, user.record_uid, exc
                         ),
-                        sys.exc_info()[2],
-                    )
+                        validation_error=exc,
+                        import_user=user,
+                    ), sys.exc_info()[2])
 
                 if success:
                     self.logger.info(
@@ -296,11 +293,9 @@ class UserImport(object):
                 self.connection, import_user.source_uid, import_user.record_uid
             )
         except WrongObjectType as exc:
-            six.reraise(
-                WrongUserType,
-                WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user),
-                sys.exc_info()[2],
-            )
+            six.reraise(WrongUserType, WrongUserType(
+                str(exc), entry_count=import_user.entry_count, import_user=import_user
+            ), sys.exc_info()[2])
 
     def prepare_imported_user(self, imported_user, old_user):
         # type: (ImportUser, Optional[ImportUser]) -> ImportUser
@@ -454,7 +449,7 @@ class UserImport(object):
         self.logger.info("------ Deleting %d users... ------", len(users))
         a_user = self.factory.make_import_user([])
         for num, (source_uid, record_uid, input_data) in enumerate(users, start=1):
-            percentage = 10 * num / len(users)  # 0% - 10%
+            percentage = int(10 * num / len(users))  # 0% - 10%
             self.progress_report(
                 description="Deleting users: {}.".format(percentage),
                 percentage=percentage,

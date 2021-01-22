@@ -141,9 +141,9 @@ def create_ou(
 
     new_school.validate(lo)
     if len(new_school.warnings) > 0:
-        logger.warn("The following fields reported warnings during validation:")
+        logger.warning("The following fields reported warnings during validation:")
         for key, value in new_school.warnings.items():
-            logger.warn("%s: %s", key, value)
+            logger.warning("%s: %s", key, value)
     if len(new_school.errors) > 0:
         error_str = "The following fields reported errors during validation:\n"
         for key, value in new_school.errors.items():
