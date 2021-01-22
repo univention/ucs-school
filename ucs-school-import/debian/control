@@ -9,6 +9,7 @@ Build-Depends: debhelper (>> 10),
  python-sphinx-rtd-theme,
  make,
  python2.7-doc,
+ python3-doc,
  default-jre,
  dh-python,
 Standards-Version: 3.8.2
@@ -17,10 +18,11 @@ Package: ucs-school-import
 Architecture: all
 Depends:
  univention-directory-manager,
- ucs-school-import-schema (= ${source:Version}),
+ ucs-school-import-schema (>= ${source:Version}),
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 12.1.17),
+ python3-ucs-school (>= 12.1.17),
  shell-univention-lib,
  univention-config,
  univention-join,
@@ -29,6 +31,11 @@ Depends:
  python-lazy-object-proxy,
  python-ldap,
  python-univention-config-registry,
+ python3-univention,
+ python3-univention-lib,
+ python3-lazy-object-proxy,
+ python3-ldap,
+ python3-univention-config-registry,
 Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.
@@ -66,14 +73,22 @@ Depends:
  python-djangorestframework (>= 3.4.0-2),
  python-django-celery (>=3.1.16-1),
  python-django-filter (>=1.0.1-1),
+ python3-django (>=1.8),
+ python3-djangorestframework (>= 3.4.0-2),
+ python3-django-celery (>=3.1.16-1),
+ python3-django-filter (>=1.0.1-1),
  gunicorn (>=19.0-1),
  univention-postgresql,
  python-psycopg2 (>=2.5.4),
  python-django-pam (>=1.2.0-1),
  python-pampy (>=1.8.2-1),
+ python3-psycopg2 (>=2.5.4),
+ python3-django-pam (>=1.2.0-1),
+ python3-pampy (>=1.8.2-1),
 Recommends: ucs-school-umc-import
 Conflicts: python3-celery,
  python-django-filters (<<1.0.0),
+ python3-django-filters (<<1.0.0),
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .
@@ -90,6 +105,9 @@ Depends:
  python-requests,
  python-magic,
  python-univention-config-registry,
+ python3-requests,
+ python3-magic,
+ python3-univention-config-registry,
  ucs-school-import-http-api-common (= ${source:Version}),
 Description: UCS@school: Python client library for the US@school API
  This package provides a Python client for accessing the RESTful HTTP API.

@@ -1,3 +1,6 @@
 modules/ucsschool/http_api/__init__.py          usr/lib/python2.7/dist-packages/ucsschool/http_api/
 modules/ucsschool/http_api/import_api/__init__.py      usr/lib/python2.7/dist-packages/ucsschool/http_api/import_api/
 modules/ucsschool/http_api/import_api/constants.py     usr/lib/python2.7/dist-packages/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/__init__.py          usr/lib/python3/dist-packages/ucsschool/http_api/
+modules/ucsschool/http_api/import_api/__init__.py      usr/lib/python3/dist-packages/ucsschool/http_api/import_api/
+modules/ucsschool/http_api/import_api/constants.py     usr/lib/python3/dist-packages/ucsschool/http_api/import_api/

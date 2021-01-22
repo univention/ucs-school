@@ -4,5 +4,8 @@ usr/lib/univention-server/server_password_change.d/gunicorn_ucs-school-import us
 modules/ucsschool/__init__.py                               usr/lib/python2.7/dist-packages/ucsschool/
 modules/ucsschool/importer                                  usr/lib/python2.7/dist-packages/ucsschool/
 modules/ucsschool/lib/*.py                                  usr/lib/python2.7/dist-packages/ucsschool/lib/
+modules/ucsschool/__init__.py                               usr/lib/python3/dist-packages/ucsschool/
+modules/ucsschool/importer                                  usr/lib/python3/dist-packages/ucsschool/
+modules/ucsschool/lib/*.py                                  usr/lib/python3/dist-packages/ucsschool/lib/
 modules/univention/admin/hooks.d/*.py                       usr/share/ucs-school-import/hooks.d/
 35ucs-school-import.inst                                    usr/lib/univention-install/
