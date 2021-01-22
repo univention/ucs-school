@@ -44,7 +44,7 @@ from ucsschool.lib.models.validator import (
     staff_group_regex,
     teachers_group_regex,
     ucr_get,
-    validate_udm,
+    validate,
 )
 
 ldap_base = ucr_get("ldap/base")
@@ -255,7 +255,7 @@ def test_correct_ldap_position(caplog, get_group_a, get_group_b, class_name, ran
     group_a = get_group_a()
     group_b = get_group_b()
     group_a["position"] = group_b["position"]
-    validate_udm(group_a, class_name=class_name, logger=random_logger)
+    validate(group_a, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
@@ -281,7 +281,7 @@ def test_missing_required_attribute(caplog, dict_obj, class_name, random_logger,
     random_logger = random_logger()
     _dict_obj = dict_obj()
     _dict_obj["properties"][required_attribute] = []
-    validate_udm(_dict_obj, class_name=class_name, logger=random_logger)
+    validate(_dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
@@ -306,7 +306,7 @@ def test_missing_role(caplog, dict_obj, class_name, random_logger):
         r, c, s = role.split(":")
         if r == role_mapping[class_name]:
             dict_obj["properties"]["ucsschoolRole"].remove(role)
-    validate_udm(dict_obj, class_name=class_name, logger=random_logger)
+    validate(dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
@@ -327,7 +327,7 @@ def test_missing_role(caplog, dict_obj, class_name, random_logger):
 def test_missing_school_prefix(caplog, dict_obj, class_name, random_logger):
     random_logger = random_logger()
     dict_obj["properties"]["name"] = uts.random_name()
-    validate_udm(dict_obj, class_name=class_name, logger=random_logger)
+    validate(dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
