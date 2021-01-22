@@ -100,8 +100,12 @@ def LDAP_Connection(*connection_types):
     def inner_wrapper(func):
         argspec = get_arguments(func)
         argnames = set(argspec.args) | set(connection_types)
-        add_search_base = "search_base" in argspec.args or argspec.keywords is not None
-        add_position = "ldap_position" in argspec.args or argspec.keywords is not None
+        try:
+            keywords = argspec.keywords
+        except AttributeError:
+            keywords = None if not argspec.kwonlyargs else argspec.kwonlyargs
+        add_search_base = "search_base" in argspec.args or keywords is not None
+        add_position = "ldap_position" in argspec.args or keywords is not None
 
         def wrapper_func(*args, **kwargs):
             # set LDAP keyword arguments
