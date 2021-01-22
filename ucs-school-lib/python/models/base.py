@@ -51,7 +51,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
-from .validator import validate_udm
+from .validator import validate
 
 try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
@@ -812,7 +812,7 @@ class UCSSchoolHelperAbstractClass(object):
                     self._udm_obj = None
                 else:
                     self._udm_obj.open()
-                    validate_udm(self._udm_obj, self.__class__.__name__, self.logger)
+                    validate(self._udm_obj, self.__class__.__name__, self.logger)
             self._udm_obj_searched = True
         return self._udm_obj
 
@@ -967,7 +967,7 @@ class UCSSchoolHelperAbstractClass(object):
                 raise WrongModel(udm_obj.dn, klass, cls)
             return klass.from_udm_obj(udm_obj, school, lo)
         udm_obj.open()
-        validate_udm(udm_obj, cls.__name__, cls.logger)
+        validate(udm_obj, cls.__name__, cls.logger)
         attrs = {
             "school": cls.get_school_from_dn(udm_obj.dn) or school
         }  # TODO: is this adjustment okay?
@@ -1078,7 +1078,7 @@ class UCSSchoolHelperAbstractClass(object):
             raise MultipleObjectsError(objs)
         obj = objs[0]
         obj.open()
-        validate_udm(obj, cls.__name__, cls.logger)
+        validate(obj, cls.__name__, cls.logger)
         return obj
 
     @classmethod
@@ -1092,7 +1092,7 @@ class UCSSchoolHelperAbstractClass(object):
         except MultipleObjectsError as exc:
             obj = exc.objs[0]
             obj.open()
-            validate_udm(obj, cls.__name__, cls.logger)
+            validate(obj, cls.__name__, cls.logger)
             return obj
 
     @classmethod

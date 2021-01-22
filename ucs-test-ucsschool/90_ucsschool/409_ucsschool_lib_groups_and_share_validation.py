@@ -259,7 +259,7 @@ def test_correct_ldap_position(caplog, get_group_a, get_group_b, class_name, ran
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "{} has wrong position in ldap".format(class_name) in log
+        assert "has wrong position in ldap" in log
     assert "{}".format(group_a) in secret_logs
 
 
@@ -285,7 +285,7 @@ def test_missing_required_attribute(caplog, dict_obj, class_name, random_logger,
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "{} is missing required attributes: {}".format(class_name, required_attribute) in log
+        assert "is missing required attributes: {}".format(required_attribute) in log
     assert "{}".format(_dict_obj) in secret_logs
 
 
@@ -310,7 +310,7 @@ def test_missing_role(caplog, dict_obj, class_name, random_logger):
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "{} does not have {}-role.".format(class_name, role_mapping[class_name]) in log
+        assert "does not have {}-role.".format(role_mapping[class_name]) in log
     assert "{}".format(dict_obj) in secret_logs
 
 
@@ -331,5 +331,5 @@ def test_missing_school_prefix(caplog, dict_obj, class_name, random_logger):
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "{} has an incorrect school prefix for school DEMOSCHOOL.".format(class_name) in log
+        assert "has an incorrect school prefix for school DEMOSCHOOL." in log
     assert "{}".format(dict_obj) in secret_logs
