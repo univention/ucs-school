@@ -262,7 +262,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, obje
 
     @classmethod
     def invalidate_cache(cls):  # type: () -> None
-        for key in cls._cache.keys():
+        for key in cls._cache.copy().keys():
             if key[0] == cls.__name__:
                 cls._cache.pop(key)
 
@@ -328,6 +328,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, obje
         """
         if self.name and self.position:
             name = self._meta.ldap_map_function(self.name)
+            name = name.decode('utf-8') if isinstance(name, bytes) else name
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
@@ -462,7 +463,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, obje
 
         # create temporary file with data
         with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line)
+            tmpfile.write(line if isinstance(line, bytes) else line.encode('utf-8'))
             tmpfile.flush()
 
             # invoke hook scripts
@@ -722,6 +723,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass, obje
                 name = explode_dn(dn, 1)[0]
             except ldap.DECODING_ERROR:
                 name = ""
+            name = name if isinstance(name, bytes) else name.encode('utf-8')
             return cls._meta.ldap_unmap_function([name])
 
     @classmethod
