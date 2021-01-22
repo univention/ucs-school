@@ -64,6 +64,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, env_or_ucr, ucr
+from .validator import validate
 
 SuperOrdinateType = Union[str, UdmObject]
 UldapFilter = Union[str, conjunction, expression]
@@ -814,6 +815,7 @@ class UCSSchoolHelperAbstractClass(object):
 				raise WrongModel(udm_obj.dn, klass, cls)
 			return await klass.from_udm_obj(udm_obj, school, lo)
 		# udm_obj.open()
+		validate(udm_obj, cls.__name__, cls.logger)
 		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		if cls.supports_schools():
 			attrs['schools'] = udm_obj.props.school
@@ -901,6 +903,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if len(objs) > 1:
 			raise MultipleObjectsError(objs=objs)
 		obj = objs[0]
+		validate(obj, cls.__name__, cls.logger)
 		return obj
 
 	@classmethod
@@ -913,6 +916,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return await cls.get_only_udm_obj(lo, filter_str, superordinate)
 		except MultipleObjectsError as exc:
 			obj = exc.objs[0]
+			validate(obj, cls.__name__, cls.logger)
 			return obj
 
 	@classmethod
