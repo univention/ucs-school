@@ -25,8 +25,8 @@ def main():
             "C:\\Windows\\Temp\\foobar.txt",
             "foobar.txt",
         ]:
-            fd = tempfile.NamedTemporaryFile()
-            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in xrange(256))
+            fd = tempfile.NamedTemporaryFile(mode="w")
+            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
             fd.write(token)
             fd.flush()
 

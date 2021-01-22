@@ -309,7 +309,8 @@ class UCSTestSchool(object):
                     if objs:
                         univention_object_type = objs[0][1].get("univentionObjectType")
                         if univention_object_type:
-                            self.udm._cleanup.setdefault(univention_object_type[0], []).append(dn)
+                            object_type = univention_object_type[0]
+                            self.udm._cleanup.setdefault(object_type if not isinstance(object_type, bytes) else object_type.decode('utf-8'), []).append(dn)
                         else:
                             logger.info(
                                 '*** Removing LDAP object without "univentionObjectType" directly (not '

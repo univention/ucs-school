@@ -33,7 +33,7 @@ def main():
     with utu.UCSTestSchool() as schoolenv:
         with ucr_test.UCSTestConfigRegistry():
             schools = []
-            for i in xrange(2):
+            for i in range(2):
                 name_edudc = "e-myschool{}".format(i)
                 name_admindc = "a-myschool{}".format(i)
                 name, dn = schoolenv.create_ou(
