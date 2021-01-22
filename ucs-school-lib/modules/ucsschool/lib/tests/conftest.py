@@ -1,6 +1,8 @@
+import logging
 import os
 from functools import lru_cache
 from pathlib import Path
+import tempfile
 from typing import Any, Dict, Tuple
 
 import pytest
@@ -11,8 +13,10 @@ from ucsschool.lib.roles import (
     create_ucsschool_role_string, role_school_class, role_school_class_share, role_staff, role_teacher
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from ucsschool.lib.models.utils import get_file_handler
 from udm_rest_client import UDM, NoObject as UdmNoObject
 from univention.config_registry import ConfigRegistry
+
 
 APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -41,6 +45,21 @@ def env_or_ucr(key: str) -> str:
 @pytest.fixture(scope="session")
 def ldap_base():
     return env_or_ucr("ldap/base")
+
+
+@pytest.fixture(scope="session")
+def random_user_name():
+    return fake.user_name
+
+
+@pytest.fixture(scope="session")
+def random_first_name():
+    return fake.first_name
+
+
+@pytest.fixture(scope="session")
+def random_last_name():
+    return fake.last_name
 
 
 @pytest.fixture(scope="session")
@@ -309,3 +328,13 @@ async def demoschool2(udm_kwargs, ldap_base) -> Tuple[str, str]:
             )
 
     return dn, name
+
+
+@pytest.fixture
+def random_logger():
+    with tempfile.NamedTemporaryFile() as f:
+        handler = get_file_handler("DEBUG", f.name)
+        logger = logging.getLogger(f.name)
+        logger.addHandler(handler)
+        logger.setLevel("DEBUG")
+        yield logger
