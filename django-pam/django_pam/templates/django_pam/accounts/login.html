@@ -1,0 +1,3 @@
+{% extends "django_pam/base.html" %}
+{% block script %}    {{ form.media }}{% endblock %}
+{% block content %}{% include "django_pam/accounts/_login.html" %}{% endblock %}

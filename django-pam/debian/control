@@ -1,0 +1,67 @@
+Source: django-pam
+Maintainer: Univention GmbH <packages@univention.de>
+Section: python
+Priority: optional
+Build-Depends:
+ debhelper (>= 9),
+ dh-python,
+ python-all (>= 2.6.6-3),
+ python-setuptools (>= 0.6b3),
+ python3-all,
+ python3-setuptools,
+Standards-Version: 3.9.6
+Homepage: https://github.com/cnobile2012/django-pam
+
+Package: python-django-pam
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python:Depends},
+Description: Django PAM can be used in an SSO (Single Sign On) environmen
+ ==========
+ Django PAM
+ ==========
+ .
+ .. image:: http://img.shields.io/pypi/v/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: PyPI Version
+ .
+ .. image:: http://img.shields.io/pypi/wheel/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: PyPI Wheel
+ .
+ .. image:: http://img.shields.io/pypi/pyversions/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: Python Versions
+ .
+ .. image:: http://img.shields.io/pypi/l/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: License
+ .
+
+Package: python3-django-pam
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${python3:Depends},
+Description: Django PAM can be used in an SSO (Single Sign On) environmen
+ ==========
+ Django PAM
+ ==========
+ .
+ .. image:: http://img.shields.io/pypi/v/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: PyPI Version
+ .
+ .. image:: http://img.shields.io/pypi/wheel/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: PyPI Wheel
+ .
+ .. image:: http://img.shields.io/pypi/pyversions/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: Python Versions
+ .
+ .. image:: http://img.shields.io/pypi/l/django-pam.svg
+    :target: https://pypi.python.org/pypi/django-pam
+    :alt: License
+ .
