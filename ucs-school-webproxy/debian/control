@@ -17,7 +17,6 @@ Depends:
  python-ucs-school,
  squidguard (>= 1.5-1.23),
  ucs-school-umc-internetrules,
- univention-runit,
  univention-squid (>= 5.0.8),
 Description: meta package for UCS@school webproxy
  This meta package installs and configures squid and squidguard
