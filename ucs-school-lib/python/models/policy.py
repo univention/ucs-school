@@ -44,17 +44,17 @@ class Policy(UCSSchoolHelperAbstractClass):
     def attach(self, obj, lo):
         # add univentionPolicyReference if neccessary
         oc = lo.get(obj.dn, ["objectClass"])
-        if "univentionPolicyReference" not in oc.get("objectClass", []):
+        if b"univentionPolicyReference" not in oc.get("objectClass", []):
             try:
-                lo.modify(obj.dn, [("objectClass", "", b"univentionPolicyReference")])
+                lo.modify(obj.dn, [("objectClass", b"", b"univentionPolicyReference")])
             except ldap.LDAPError:
                 self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
                 return
         # add the missing policy
         pl = lo.get(obj.dn, ["univentionPolicyReference"])
         self.logger.info("Attaching %r to %r", self, obj)
-        if self.dn.lower() not in map(lambda x: x.lower(), pl.get("univentionPolicyReference", [])):
-            modlist = [("univentionPolicyReference", "", self.dn.encode('utf-8'))]
+        if self.dn.lower() not in map(lambda x: x.decode('UTF-8').lower(), pl.get("univentionPolicyReference", [])):
+            modlist = [("univentionPolicyReference", b"", self.dn.encode('utf-8'))]
             try:
                 lo.modify(obj.dn, modlist)
             except ldap.LDAPError:

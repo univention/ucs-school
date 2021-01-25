@@ -237,15 +237,15 @@ class Share(UCSSchoolHelperAbstractClass):
         # fetch serverfqdn from OU
         result = lo.get(school_dn, ["ucsschoolClassShareFileServer"])
         if result:
-            share_file_server = result["ucsschoolClassShareFileServer"][0]
-            server_domain_name = lo.get(share_file_server if not isinstance(share_file_server, bytes) else share_file_server.decode('utf-8'), ["associatedDomain"])
+            share_file_server = result["ucsschoolClassShareFileServer"][0].decode('utf-8')
+            server_domain_name = lo.get(share_file_server, ["associatedDomain"])
             if server_domain_name:
-                server_domain_name = server_domain_name["associatedDomain"][0]
+                server_domain_name = server_domain_name["associatedDomain"][0].decode('UTF-8')
             else:
                 server_domain_name = domainname
-            result = lo.get(share_file_server if not isinstance(share_file_server, bytes) else share_file_server.decode('utf-8'), ["cn"])
+            result = lo.get(share_file_server, ["cn"])
             if result:
-                return "%s.%s" % (result["cn"][0] if not isinstance(result["cn"][0], bytes) else result["cn"][0].decode('utf-8ls'), server_domain_name)
+                return "%s.%s" % (result["cn"][0].decode('UTF-8'), server_domain_name)
 
         # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
         ou_attr_ldap_access_write = lo.get(school_dn, ["univentionLDAPAccessWrite"])
