@@ -12,7 +12,7 @@ import time
 import pycurl
 try:
     import StringIO
-except ModuleNotFoundError:
+except ImportError:
     from io import StringIO
 
 import univention.testing.utils as utils
