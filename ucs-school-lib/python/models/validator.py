@@ -542,7 +542,8 @@ def validate(obj, class_name, logger=None):
         errors.extend(validate_group_and_share_required_attributes(obj, class_name))
         errors.extend(validate_share_position(obj, class_name))
         errors.extend(validate_obligatory_roles(obj, class_name))
-        errors.extend(validate_school_prefix(obj, class_name))
+        if class_name not in MARKTPLATZ_SHARE_CLASS_NAME:
+            errors.extend(validate_school_prefix(obj, class_name))
 
     if errors:
         user_uuid = str(uuid.uuid4())
