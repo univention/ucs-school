@@ -1,0 +1,5 @@
+include LICENSE.txt
+include README.rst
+include include.mk
+recursive-include django_pam/static *
+recursive-include django_pam/templates *
