@@ -30,6 +30,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+if [ "$1" = upgrade ] && dpkg --compare-versions "${2:-}" lt-nl 16.0.1
+then
+	sv -w 30 force-shutdown univention-reload-service || true
+	rm -rf /etc/runit/univention-reload-service
+	rm -rf /etc/runit/univention/univention-reload-service
+	rm -rf /etc/univention/templates/files/etc/runit/univention-reload-service
+	univention-config-registry update
+fi
+
 #DEBHELPER#
 
 eval "$(univention-config-registry shell)"
