@@ -1,1 +1,5 @@
 rm_conffile /etc/apache2/sites-available/wpad-config 13.0.0-2
+rm_conffile /etc/init.d/univention-reload-service 16.0.2-1~
+rm_conffile /etc/runit/univention-reload-service/down 16.0.2-1~
+rm_conffile /etc/runit/univention-reload-service/finish 16.0.2-1~
+rm_conffile /etc/runit/univention-reload-service/run 16.0.2-1~
