@@ -88,7 +88,7 @@ class schoolOU(simpleHook):
         else:
             ocs.discard(OBJECTCLASS_SCHOOLOU)
             for attr in ATTRIBUTE_LIST:
-                ml.append((attr, module.oldattr.get(attr, b""), b""))
+                ml.append((attr, module.oldattr.get(attr, [b""]), [b""]))
 
         ml.append(("objectClass", old_ocs, list(ocs)))
 
