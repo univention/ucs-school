@@ -47,10 +47,10 @@ def test_udm_user_to_dict():
                 superordinate=None,
             )[0]
             dict_obj = obj_to_dict(udm_obj)
-            assert dict_obj["properties"]
+            assert dict_obj["props"]
             for key, value in udm_obj.items():
-                assert key in dict_obj["properties"].keys()
-                assert dict_obj["properties"][key] == value
+                assert key in dict_obj["props"].keys()
+                assert dict_obj["props"][key] == value
             assert udm_obj.position.getDn() == dict_obj["dn"]
             position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
             assert position == dict_obj["position"]
@@ -77,10 +77,10 @@ def test_udm_group_to_dict():
                 superordinate=None,
             )[0]
             dict_obj = obj_to_dict(udm_obj)
-            assert dict_obj["properties"]
+            assert dict_obj["props"]
             for key, value in udm_obj.items():
-                assert key in dict_obj["properties"].keys()
-                assert dict_obj["properties"][key] == value
+                assert key in dict_obj["props"].keys()
+                assert dict_obj["props"][key] == value
             assert udm_obj.position.getDn() == dict_obj["dn"]
             position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
             assert position == dict_obj["position"]
@@ -117,10 +117,10 @@ def test_udm_share_to_dict():
                 superordinate=None,
             )[0]
             dict_obj = obj_to_dict(udm_obj)
-            assert dict_obj["properties"]
+            assert dict_obj["props"]
             for key, value in udm_obj.items():
-                assert key in dict_obj["properties"].keys()
-                assert dict_obj["properties"][key] == value
+                assert key in dict_obj["props"].keys()
+                assert dict_obj["props"][key] == value
             assert udm_obj.position.getDn() == dict_obj["dn"]
             position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
             assert position == dict_obj["position"]
@@ -147,9 +147,9 @@ def test_udm_group_to_dict():
                 superordinate=None,
             )[0]
             dict_obj = obj_to_dict(udm_obj)
-            assert dict_obj["properties"]
+            assert dict_obj["props"]
             for key, value in udm_obj.items():
-                assert key in dict_obj["properties"].keys()
+                assert key in dict_obj["props"].keys()
             assert udm_obj.position.getDn() == dict_obj["dn"]
             position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
             assert position == dict_obj["position"]
@@ -186,9 +186,9 @@ def test_udm_share_to_dict():
                 superordinate=None,
             )[0]
             dict_obj = obj_to_dict(udm_obj)
-            assert dict_obj["properties"]
+            assert dict_obj["props"]
             for key, value in udm_obj.items():
-                assert key in dict_obj["properties"].keys()
+                assert key in dict_obj["props"].keys()
             assert udm_obj.position.getDn() == dict_obj["dn"]
             position = re.search(r"[^=]+=[^,]+,(.+)", udm_obj.position.getDn()).group(1)
             assert position == dict_obj["position"]

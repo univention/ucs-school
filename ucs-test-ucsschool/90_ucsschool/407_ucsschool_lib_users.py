@@ -53,7 +53,7 @@ ldap_base = ucr_get("ldap/base")
 def base_user_dict(firstname, lastname):  # type(str, str) -> Dict
     return {
         "dn": "",
-        "properties": {
+        "props": {
             "mobileTelephoneNumber": [],
             "postOfficeBox": [],
             "groups": [],
@@ -149,15 +149,15 @@ def student_as_dict():  # type(None) -> Dict
     user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         firstname, lastname, container_students, ldap_base
     )
-    user["properties"]["groups"] = [
+    user["props"]["groups"] = [
         "cn=schueler-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
             container_students, ldap_base
         ),
     ]
-    user["properties"]["unihome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
-    user["properties"]["ucsschoolRole"] = [
+    user["props"]["unihome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
+    user["props"]["ucsschoolRole"] = [
         "student:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
@@ -172,7 +172,7 @@ def exam_student_as_dict():  # type(None) -> Dict
     user["dn"] = "uid={}.{},cn={},ou=DEMOSCHOOL,{}".format(
         firstname, lastname, container_exam_students, ldap_base
     )
-    user["properties"]["groups"] = [
+    user["props"]["groups"] = [
         "cn=schueler-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=OUdemoschool-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ldap_base),
@@ -180,8 +180,8 @@ def exam_student_as_dict():  # type(None) -> Dict
             container_students, ldap_base
         ),
     ]
-    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
-    user["properties"]["ucsschoolRole"] = [
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
+    user["props"]["ucsschoolRole"] = [
         "exam_user:school:DEMOSCHOOL",
         "exam_user:exam:{}-DEMOSCHOOL".format(uts.random_name()),
     ]
@@ -198,12 +198,12 @@ def teacher_as_dict():  # type(None) -> Dict
     user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         firstname, lastname, container_teachers, ldap_base
     )
-    user["properties"]["groups"] = [
+    user["props"]["groups"] = [
         "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
-    user["properties"]["ucsschoolRole"] = [
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["props"]["ucsschoolRole"] = [
         "staff:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers, ldap_base)
@@ -218,12 +218,12 @@ def staff_as_dict():  # type(None) -> Dict
     user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         firstname, lastname, container_staff, ldap_base
     )
-    user["properties"]["groups"] = [
+    user["props"]["groups"] = [
         "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}.{}".format(firstname, lastname)
-    user["properties"]["ucsschoolRole"] = [
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}.{}".format(firstname, lastname)
+    user["props"]["ucsschoolRole"] = [
         "teacher:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_staff, ldap_base)
@@ -238,13 +238,13 @@ def teacher_and_staff_as_dict():  # type(None) -> Dict
     user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         firstname, lastname, container_teachers_and_staff, ldap_base
     )
-    user["properties"]["groups"] = [
+    user["props"]["groups"] = [
         "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["properties"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
-    user["properties"]["ucsschoolRole"] = [
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["props"]["ucsschoolRole"] = [
         "teacher:school:DEMOSCHOOL",
         "staff:school:DEMOSCHOOL",
     ]
@@ -331,31 +331,27 @@ def test_correct_ldap_position(caplog, get_user_a, get_user_b, class_name, rando
 @pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
 def test_wrong_ucsschool_role(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    user_dict["properties"]["ucsschoolRole"] = [
-        "{}:school:{}".format(uts.random_name(), uts.random_name())
-    ]
+    user_dict["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), uts.random_name())]
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "is not part of schools: {}".format("".format(user_dict["properties"]["school"])) in log
+        assert "is not part of schools: {}".format("".format(user_dict["props"]["school"])) in log
     assert "{}".format(user_dict) in secret_logs
 
 
 @pytest.mark.parametrize("class_name,user_dict", student_matrix)
 def test_missing_student_role(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for role in user_dict["properties"]["ucsschoolRole"]:
+    for role in user_dict["props"]["ucsschoolRole"]:
         if "student" in role:
-            user_dict["properties"]["ucsschoolRole"].remove(role)
+            user_dict["props"]["ucsschoolRole"].remove(role)
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
         assert (
-            "is missing a student role at schools: {}".format(
-                "".format(user_dict["properties"]["school"])
-            )
+            "is missing a student role at schools: {}".format("".format(user_dict["props"]["school"]))
             in log
         )
     assert "{}".format(user_dict) in secret_logs
@@ -364,10 +360,10 @@ def test_missing_student_role(caplog, user_dict, class_name, random_logger):
 @pytest.mark.parametrize("class_name,user_dict", [(EXAM_STUDENT_CLASS_NAME, exam_student_as_dict()),])
 def test_missing_exam_context_role(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for role in user_dict["properties"]["ucsschoolRole"]:
+    for role in user_dict["props"]["ucsschoolRole"]:
         r, c, s = role.split(":")
         if "exam" == c:
-            user_dict["properties"]["ucsschoolRole"].remove(role)
+            user_dict["props"]["ucsschoolRole"].remove(role)
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -383,16 +379,16 @@ def test_missing_role_group(caplog, user_dict, class_name, random_logger):
         return
     random_logger = random_logger()
     role_container = get_role_container(class_name)
-    for group in user_dict["properties"]["groups"]:
+    for group in user_dict["props"]["groups"]:
         if re.match(r"cn={}-[^,]+,cn=groups,.+".format(role_container), group):
-            user_dict["properties"]["groups"].remove(group)
+            user_dict["props"]["groups"].remove(group)
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
         assert (
             "is missing the {}s groups for the following schools: {}".format(
-                class_name, ",".join(user_dict["properties"]["school"])
+                class_name, ",".join(user_dict["props"]["school"])
             )
             in log
         )
@@ -403,7 +399,7 @@ def test_missing_role_group(caplog, user_dict, class_name, random_logger):
 @pytest.mark.parametrize("class_name,user_dict", student_matrix)
 def test_students_wrong_role(caplog, user_dict, role, class_name, random_logger):
     random_logger = random_logger()
-    user_dict["properties"]["ucsschoolRole"].append("{}:school:{}".format(role, uts.random_name()))
+    user_dict["props"]["ucsschoolRole"].append("{}:school:{}".format(role, uts.random_name()))
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -415,10 +411,10 @@ def test_students_wrong_role(caplog, user_dict, role, class_name, random_logger)
 @pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
 def test_test_missing_role(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for role in user_dict["properties"]["ucsschoolRole"]:
+    for role in user_dict["props"]["ucsschoolRole"]:
         r, c, s = role.split(":")
         if r == role_mapping[class_name]:
-            user_dict["properties"]["ucsschoolRole"].remove(role)
+            user_dict["props"]["ucsschoolRole"].remove(role)
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -430,16 +426,16 @@ def test_test_missing_role(caplog, user_dict, class_name, random_logger):
 @pytest.mark.parametrize("class_name,user_dict", complete_role_matrix)
 def test_missing_domain_users_group(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for group in user_dict["properties"]["groups"]:
+    for group in user_dict["props"]["groups"]:
         if re.match(r"cn=Domain Users.+", group):
-            user_dict["properties"]["groups"].remove(group)
+            user_dict["props"]["groups"].remove(group)
     validate(user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
         assert (
             "is missing the Domain Users groups for the following schools: {}".format(
-                ",".join(user_dict["properties"]["school"])
+                ",".join(user_dict["props"]["school"])
             )
             in log
         )
@@ -463,7 +459,7 @@ def test_missing_domain_users_group(caplog, user_dict, class_name, random_logger
 def test_missing_required_attribute(caplog, user_dict, class_name, random_logger, required_attribute):
     random_logger = random_logger()
     _user_dict = user_dict()
-    _user_dict["properties"][required_attribute] = []
+    _user_dict["props"][required_attribute] = []
     validate(_user_dict, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -475,14 +471,12 @@ def test_missing_required_attribute(caplog, user_dict, class_name, random_logger
 @pytest.mark.parametrize("class_name,user_dict", student_matrix)
 def test_student_missing_class(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for group in user_dict["properties"]["groups"]:
+    for group in user_dict["props"]["groups"]:
         if "cn=klassen,cn=schueler,cn=groups" in group:
-            user_dict["properties"]["groups"].remove(group)
+            user_dict["props"]["groups"].remove(group)
     validate(user_dict, class_name, random_logger)
     assert (
-        "is missing a class for the following schools: {}".format(
-            ",".join(user_dict["properties"]["school"])
-        )
+        "is missing a class for the following schools: {}".format(",".join(user_dict["props"]["school"]))
         in caplog.text
     )
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
@@ -490,7 +484,7 @@ def test_student_missing_class(caplog, user_dict, class_name, random_logger):
     for log in (public_logs, secret_logs):
         assert (
             "is missing a class for the following schools: {}".format(
-                ",".join(user_dict["properties"]["school"])
+                ",".join(user_dict["props"]["school"])
             )
             in log
         )
@@ -510,9 +504,9 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, class_name, r
     random_logger = random_logger()
     user_a = get_user_a()
     user_b = get_user_b()
-    for group in user_b["properties"]["groups"]:
-        if group not in user_a["properties"]["groups"]:
-            user_a["properties"]["groups"].append(group)
+    for group in user_b["props"]["groups"]:
+        if group not in user_a["props"]["groups"]:
+            user_a["props"]["groups"].append(group)
     validate(user_a, class_name, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -574,11 +568,11 @@ def test_missing_teachers_and_staff_group(
     caplog, user_dict, class_name, random_logger, remove_teachers_group
 ):
     random_logger = random_logger()
-    for group in user_dict["properties"]["groups"]:
+    for group in user_dict["props"]["groups"]:
         if remove_teachers_group and re.match(teachers_group_regex, group):
-            user_dict["properties"]["groups"].remove(group)
+            user_dict["props"]["groups"].remove(group)
         elif re.match(staff_group_regex, group):
-            user_dict["properties"]["groups"].remove(group)
+            user_dict["props"]["groups"].remove(group)
     validate(user_dict, class_name, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)

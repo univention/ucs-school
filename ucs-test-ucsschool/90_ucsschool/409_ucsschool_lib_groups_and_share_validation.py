@@ -75,7 +75,7 @@ def mock_logger_file(mocker):
 def base_group_dict(name):  # type(str, str) -> Dict
     return {
         "dn": "",
-        "properties": {
+        "props": {
             "sambaGroupType": "2",
             "serviceprovidergroup": [],
             "description": None,
@@ -114,7 +114,7 @@ def workgroup_as_dict():  # type(None) -> Dict
     group = base_group_dict(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
     group["position"] = "cn={},cn=groups,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
-    group["properties"]["ucsschoolRole"] = ["workgroup:school:DEMOSCHOOL"]
+    group["props"]["ucsschoolRole"] = ["workgroup:school:DEMOSCHOOL"]
     return group
 
 
@@ -125,7 +125,7 @@ def klasse_as_dict():  # type(None) -> Dict
     group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
         container_students, ldap_base
     )
-    group["properties"]["ucsschoolRole"] = ["school_class:school:DEMOSCHOOL"]
+    group["props"]["ucsschoolRole"] = ["school_class:school:DEMOSCHOOL"]
     return group
 
 
@@ -136,14 +136,14 @@ def computer_room_as_dict():  # type(None) -> Dict
         name, container_computerrooms, ldap_base
     )
     group["position"] = "cn={},cn=groups,ou=DEMOSCHOOL,{}".format(container_computerrooms, ldap_base)
-    group["properties"]["ucsschoolRole"] = ["computer_room:school:DEMOSCHOOL"]
+    group["props"]["ucsschoolRole"] = ["computer_room:school:DEMOSCHOOL"]
     return group
 
 
 def base_share_dict(name):  # type(str) -> Dict
     return {
         "dn": "",
-        "properties": {
+        "props": {
             "sambaFakeOplocks": False,
             "sambaDirectorySecurityMode": "0777",
             "sambaNtAclSupport": True,
@@ -212,7 +212,7 @@ def klassen_share_as_dict():  # type(None) -> Dict
     share = base_share_dict(name)
     share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
     share["position"] = "cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["properties"]["ucsschoolRole"] = ["school_class_share:school:DEMOSCHOOL"]
+    share["props"]["ucsschoolRole"] = ["school_class_share:school:DEMOSCHOOL"]
     return share
 
 
@@ -221,7 +221,7 @@ def workgroup_share_as_dict():  # type(None) -> Dict
     share = base_share_dict(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
     share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["properties"]["ucsschoolRole"] = ["workgroup_share:school:DEMOSCHOOL"]
+    share["props"]["ucsschoolRole"] = ["workgroup_share:school:DEMOSCHOOL"]
     return share
 
 
@@ -230,7 +230,7 @@ def marktplatz_share_as_dict():  # type(None) -> Dict
     share = base_share_dict(name)
     share["dn"] = "cn=Marktplatz,cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
     share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["properties"]["ucsschoolRole"] = ["marketplace_share:school:DEMOSCHOOL"]
+    share["props"]["ucsschoolRole"] = ["marketplace_share:school:DEMOSCHOOL"]
     return share
 
 
@@ -280,7 +280,7 @@ def test_correct_ldap_position(caplog, get_group_a, get_group_b, class_name, ran
 def test_missing_required_attribute(caplog, dict_obj, class_name, random_logger, required_attribute):
     random_logger = random_logger()
     _dict_obj = dict_obj()
-    _dict_obj["properties"][required_attribute] = []
+    _dict_obj["props"][required_attribute] = []
     validate(_dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -302,10 +302,10 @@ def test_missing_required_attribute(caplog, dict_obj, class_name, random_logger,
 )
 def test_missing_role(caplog, dict_obj, class_name, random_logger):
     random_logger = random_logger()
-    for role in dict_obj["properties"]["ucsschoolRole"]:
+    for role in dict_obj["props"]["ucsschoolRole"]:
         r, c, s = role.split(":")
         if r == role_mapping[class_name]:
-            dict_obj["properties"]["ucsschoolRole"].remove(role)
+            dict_obj["props"]["ucsschoolRole"].remove(role)
     validate(dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -326,7 +326,7 @@ def test_missing_role(caplog, dict_obj, class_name, random_logger):
 )
 def test_missing_school_prefix(caplog, dict_obj, class_name, random_logger):
     random_logger = random_logger()
-    dict_obj["properties"]["name"] = uts.random_name()
+    dict_obj["props"]["name"] = uts.random_name()
     validate(dict_obj, class_name=class_name, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)

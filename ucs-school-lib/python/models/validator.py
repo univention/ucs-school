@@ -144,7 +144,7 @@ def get_role_container(expected_role):  # type(str) -> str
 
 def obj_to_dict(obj):
     dict_obj = dict()
-    dict_obj["properties"] = dict(obj.items())
+    dict_obj["props"] = dict(obj.items())
     dict_obj["dn"] = obj.position.getDn()
     dict_obj["position"] = re.search(r"[^=]+=[^,]+,(.+)", dict_obj["dn"]).group(1)
     keys = [
@@ -214,7 +214,7 @@ def validate_user_roles(obj, class_name):  # type(dict, str)
     - User is with r x is not part of schools x,y.
     """
     errors = []
-    props = obj["properties"]
+    props = obj["props"]
     schools = props["school"]
     roles = props.get("ucsschoolRole", [])
 
@@ -263,7 +263,7 @@ def validate_user_groups(obj, class_name):  # type(dict, str) -> List
     - Validate group membership, e.g. students should not be part of teacher-group, see validate_group_membership.
     """
     errors = []
-    props = obj["properties"]
+    props = obj["props"]
     schools = props.get("school", [])
     groups = props.get("groups", [])
     missing_schools = []
@@ -383,7 +383,7 @@ def validate_user_required_attributes(obj):  # type(dict) -> List
      "username", "ucsschoolRole",  "school", "firstname", "lastname", "groups", "primaryGroup
     """
     errors = []
-    props = obj["properties"]
+    props = obj["props"]
     required_attr = [
         "username",
         "ucsschoolRole",
@@ -449,7 +449,7 @@ def validate_group_and_share_required_attributes(obj, class_name):  # type(dict,
      "name", "ucsschoolRole"
     """
     errors = []
-    props = obj["properties"]
+    props = obj["props"]
     required_attr = [
         "name",
         "ucsschoolRole",
@@ -466,7 +466,7 @@ def validate_obligatory_roles(obj, class_name):  # type(dict, str)
     E.g. a SchoolClass should have at least one school_class
     """
     errors = []
-    props = obj["properties"]
+    props = obj["props"]
     ucsschool_roles = props.get("ucsschoolRole", [])
     ucsschool_roles = [r.split(":") for r in ucsschool_roles]
     obligatory_roles = [
@@ -502,7 +502,7 @@ def validate_school_prefix(obj, class_name):  # type(dict, str) -> List
     """
     errors = []
     dn = obj["dn"]
-    props = obj["properties"]
+    props = obj["props"]
     school = re.search(r"ou=([^,]+)", dn)
     name = props.get("name", "")
     if school and name:
