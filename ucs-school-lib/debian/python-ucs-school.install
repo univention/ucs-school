@@ -1,4 +1,5 @@
 python/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/
+ucsschool/__init__.py usr/lib/python2.7/dist-packages/ucsschool/
 python/pyhooks/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/pyhooks/
 python/models/*.py usr/lib/python2.7/dist-packages/ucsschool/lib/models/
 python/*.mo usr/share/locale/de/LC_MESSAGES/
