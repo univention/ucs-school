@@ -1,0 +1,21 @@
+      <div id="dp-logout" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Logout</h4>
+              <div class="alert-error" hidden>
+                <span>Error:</span>
+              </div>
+            </div>
+            <div class="modal-body">
+              <form name="logout" role="form" method="post" action="">
+                <input name="next" type="hidden" value="{{ next }}" />
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" name="logout-submit"
+                      class="btm btn-default">Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
