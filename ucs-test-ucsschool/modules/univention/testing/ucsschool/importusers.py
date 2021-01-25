@@ -512,7 +512,7 @@ class ImportFile:
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, str(self.user_import) if isinstance(str(self.user_import), bytes) else str(self.user_import).encode('utf-8'))
+        os.write(self.import_fd, str(self.user_import).encode('utf-8'))
         os.close(self.import_fd)
 
     def run_import(self, user_import):
