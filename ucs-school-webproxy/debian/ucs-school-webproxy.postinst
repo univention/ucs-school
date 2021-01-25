@@ -123,6 +123,11 @@ case "$1" in
 			ucr set squid/forwardedfor=on
 		fi
 
+		# shellcheck disable=SC2015
+		dpkg --compare-versions "${2:-}" lt-nl 16.0.2-1 &&
+			update-rc.d -f univention-reload-service remove ||
+			:
+
 		echo "Restarting univention-dhcp"
 		deb-systemd-invoke restart univention-dhcp || true
 		;;
