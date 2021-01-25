@@ -35,9 +35,9 @@ export LC_ALL=C.UTF-8
 %:
 	dh $@ --with ucr
 
-override_dh_installinit:
-	dh_installinit
-	dh_installinit --name univention-reload-service
+override_dh_installsystemd:
+	dh_installsystemd
+	dh_installsystemd --name univention-reload-service
 
 override_dh_auto_test:
 	dh_auto_test
