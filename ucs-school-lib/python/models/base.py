@@ -896,7 +896,7 @@ class UCSSchoolHelperAbstractClass(object):
     def lookup(cls, lo, school, filter_s="", superordinate=None):
         # type: (LoType, str, Optional[UldapFilter], Optional[SuperOrdinateType]) -> List[UdmObject]
         try:
-            udm_obj = udm_modules.lookup(
+            return udm_modules.lookup(
                 cls._meta.udm_module,
                 None,
                 lo,
@@ -905,7 +905,6 @@ class UCSSchoolHelperAbstractClass(object):
                 scope="sub",
                 superordinate=superordinate,
             )
-            return udm_obj
         except noObject:
             cls.logger.warning(
                 "Error while getting all %s of %s: probably %r does not exist!",
