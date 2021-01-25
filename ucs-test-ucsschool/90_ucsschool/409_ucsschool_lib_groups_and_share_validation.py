@@ -99,12 +99,7 @@ def base_group_dict(name):  # type(str, str) -> Dict
         "_links": {},
         "policies": {"policies/umc": []},
         "position": "",
-        "options": {
-            "ucsschoolAdministratorGroup": False,
-            "samba": True,
-            "posix": True,
-            "ucsschoolImportGroup": False,
-        },
+        "options": [],
         "objectType": "groups/group",
     }
 
@@ -202,7 +197,7 @@ def base_share_dict(name):  # type(str) -> Dict
         "_links": {},
         "policies": {"policies/share_userquota": []},
         "position": "",
-        "options": {"samba": True, "nfs": False},
+        "options": [],
         "objectType": "shares/share",
     }
 

@@ -406,20 +406,21 @@ def validate_user_options(obj, class_name):  # type(dict, str) -> List
     - Objects need to have their options set, e.g. Teacher -> ucsschoolTeacher
     """
     errors = []
-    option = obj["options"]
+    options = obj["options"]
     if (
-        (class_name == STUDENT_CLASS_NAME and not option["ucsschoolStudent"])
-        or (class_name == TEACHER_CLASS_NAME and not option["ucsschoolTeacher"])
-        or (class_name == STAFF_CLASS_NAME and not option["ucsschoolStaff"])
-        or (class_name == EXAM_STUDENT_CLASS_NAME and not option["ucsschoolExam"])
+        (class_name == STUDENT_CLASS_NAME and "ucsschoolStudent" not in options)
+        or (class_name == TEACHER_CLASS_NAME and "ucsschoolTeacher" not in options)
+        or (class_name == STAFF_CLASS_NAME and "ucsschoolStaff" not in options)
+        or (class_name == EXAM_STUDENT_CLASS_NAME and "ucsschoolExam" not in options)
         or (
             class_name == TEACHER_AND_STAFF_CLASS_NAME
-            and not (option["ucsschoolTeacher"] and option["ucsschoolStaff"])
+            and not ("ucsschoolTeacher" in options and "ucsschoolStaff" not in options)
         )
         or (
             is_student(class_name)
             and any(
-                option[key] for key in ["ucsschoolTeacher", "ucsschoolStaff", "ucsschoolAdministrator",]
+                key in options
+                for key in ["ucsschoolTeacher", "ucsschoolStaff", "ucsschoolAdministrator",]
             )
         )
     ):

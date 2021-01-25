@@ -130,14 +130,7 @@ def base_user_dict(firstname, lastname):  # type(str, str) -> Dict
         "_links": {},
         "policies": {"policies/pwhistory": [], "policies/umc": [], "policies/desktop": []},
         "position": "",
-        "options": {
-            "ucsschoolAdministrator": False,
-            "ucsschoolExam": False,
-            "ucsschoolTeacher": False,
-            "ucsschoolStudent": False,
-            "ucsschoolStaff": False,
-            "pki": False,
-        },
+        "options": [],
         "objectType": "users/user",
     }
 
@@ -161,7 +154,7 @@ def student_as_dict():  # type(None) -> Dict
         "student:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
-    user["options"]["ucsschoolStudent"] = True
+    user["options"].append("ucsschoolStudent")
     return user
 
 
@@ -186,8 +179,8 @@ def exam_student_as_dict():  # type(None) -> Dict
         "exam_user:exam:{}-DEMOSCHOOL".format(uts.random_name()),
     ]
     user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
-    user["options"]["ucsschoolStudent"] = True
-    user["options"]["ucsschoolExam"] = True
+    user["options"].append("ucsschoolStudent")
+    user["options"].append("ucsschoolExam")
     return user
 
 
@@ -207,7 +200,7 @@ def teacher_as_dict():  # type(None) -> Dict
         "staff:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers, ldap_base)
-    user["options"]["ucsschoolTeacher"] = True
+    user["options"].append("ucsschoolTeacher")
     return user
 
 
@@ -227,7 +220,7 @@ def staff_as_dict():  # type(None) -> Dict
         "teacher:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_staff, ldap_base)
-    user["options"]["ucsschoolStaff"] = True
+    user["options"].append("ucsschoolStaff")
     return user
 
 
@@ -249,8 +242,8 @@ def teacher_and_staff_as_dict():  # type(None) -> Dict
         "staff:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers_and_staff, ldap_base)
-    user["options"]["ucsschoolStaff"] = True
-    user["options"]["ucsschoolTeacher"] = True
+    user["options"].append("ucsschoolStaff")
+    user["options"].append("ucsschoolTeacher")
     return user
 
 
@@ -520,14 +513,7 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, class_name, r
 )
 def test_missing_udm_options(caplog, user_dict, class_name, random_logger):
     random_logger = random_logger()
-    for key in [
-        "ucsschoolAdministrator",
-        "ucsschoolExam",
-        "ucsschoolTeacher",
-        "ucsschoolStudent",
-        "ucsschoolStaff",
-    ]:
-        user_dict["options"][key] = False
+    user_dict["options"] = []
     validate(user_dict, class_name, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
@@ -548,7 +534,7 @@ def test_student_has_incorrect_udm_options(caplog, get_user_a, get_user_b, class
     random_logger = random_logger()
     user_a = get_user_a()
     user_b = get_user_b()
-    user_a["options"].update(user_b["options"])
+    user_a["options"] = user_b["options"]
     validate(user_a, class_name, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
