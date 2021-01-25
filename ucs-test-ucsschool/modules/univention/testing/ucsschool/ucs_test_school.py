@@ -309,8 +309,8 @@ class UCSTestSchool(object):
                     if objs:
                         univention_object_type = objs[0][1].get("univentionObjectType")
                         if univention_object_type:
-                            object_type = univention_object_type[0]
-                            self.udm._cleanup.setdefault(object_type if not isinstance(object_type, bytes) else object_type.decode('utf-8'), []).append(dn)
+                            object_type = univention_object_type[0].decode('UTF-8')
+                            self.udm._cleanup.setdefault(object_type, []).append(dn)
                         else:
                             logger.info(
                                 '*** Removing LDAP object without "univentionObjectType" directly (not '
@@ -1073,7 +1073,7 @@ class UCSTestSchool(object):
         try:
             with open(TEST_OU_CACHE_FILE, "r") as fp:
                 loaded = json.load(fp)
-        except (ValueError, IOError, json.decoder.JSONDecodeError) as exc:
+        except (ValueError, IOError) as exc:
             logger.info("*** Warning: reading %r: %s", TEST_OU_CACHE_FILE, exc)
             return
         keys = loaded.pop("keys")
