@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-47) unstable; urgency=medium
+
+  * Bug #52372: added option to disable user during exam mode
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 26 Jan 2021 14:55:59 +0100
+
 ucs-school-umc-exam (9.0.1-46) unstable; urgency=medium
 
   * Bug #49655: skip netbiosname if workstation attr is not set
