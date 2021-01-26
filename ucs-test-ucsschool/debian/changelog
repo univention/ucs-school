@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.179) unstable; urgency=medium
+
+  * Bug #52372: added disable user during exam test
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 26 Jan 2021 14:57:43 +0100
+
 ucs-test-ucsschool (6.0.178) unstable; urgency=medium
 
   * Bug #52221: fix flaky selenium test
