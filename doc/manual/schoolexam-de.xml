@@ -108,6 +108,11 @@
 					<envar>ucsschool/exam/user/homedir/autoremove</envar> definiert, ob beim automatischen Löschen der Prüfungsbenutzer auch deren Heimatverzeichnis gelöscht werden soll. Der Standard ist <literal>no</literal>
 					</simpara>
 				</listitem>
+				<listitem>
+					<simpara>
+					<envar>ucsschool/exam/user/disable</envar> definiert, ob der originale Benutzer während einer Klassenarbeit deaktiviert werden soll, um die Nutzung anderer Dienste zu verhindern. Der Standard ist <literal>no</literal>. Es empfiehlt sich, das Verhalten nach der Deaktivierung eines Benutzers in allen installierten Apps vorher zu überprüfen.
+					</simpara>
+				</listitem>
 			</itemizedlist>
 		</para>
 		<para>
