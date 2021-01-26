@@ -65,7 +65,7 @@ Depends:
  python-django (>=1.8),
  python-djangorestframework (>= 3.4.0-2),
  python-django-celery (>=3.1.16-1),
- python-django-filter (>=1.0.1-1),
+ python-django-filters (>=1.0.1-1),
  gunicorn (>=19.0-1),
  univention-postgresql,
  python-psycopg2 (>=2.5.4),
