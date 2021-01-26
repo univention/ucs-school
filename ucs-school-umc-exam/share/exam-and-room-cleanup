@@ -140,6 +140,7 @@ class ExamCleanupHelper(object):
                 orig_udm = search_result[0]
                 new_value = [ws.lstrip("$") for ws in orig_udm.props.sambaUserWorkstations]
                 orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if ws]
+                orig_udm.props.disabled = False
                 orig_udm.save()
                 ud.debug(
                     ud.MAIN, ud.PROCESS, "Original user access has been restored for %r." % (orig_udm,)
