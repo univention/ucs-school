@@ -62,6 +62,15 @@ private_data_logger.setLevel("DEBUG")
 private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
 
 
+class SecretFilter(logging.Filter):
+    def filter(self, record):
+        return record.name != LOGGER_NAME
+
+
+for handler in logging.root.handlers:
+    handler.addFilter(SecretFilter())
+
+
 @lru_cache(maxsize=32)
 def ucr_get(value, default=""):  # type(str) -> str
     return ucr.get(value, default)
@@ -120,7 +129,6 @@ teachers_and_staff_position_regex = re.compile(
     r"cn={},cn=users,ou=[^,]+,{}".format(container_teachers_and_staff, ucr_get("ldap/base")),
     flags=re.IGNORECASE,
 )
-
 students_position_regex = re.compile(
     r"cn={},cn=users,ou=[^,]+,{}".format(container_students, ucr_get("ldap/base")), flags=re.IGNORECASE,
 )
@@ -190,23 +198,27 @@ def obj_to_dict_conversion(func):
     return _inner
 
 
-def is_student(role):  # type(str) -> bool
-    return role in (role_student, role_exam_user,) or "ucsschoolStudent" in role
+def is_student_role(role):  # type(str) -> bool
+    return role in (role_student, role_exam_user,)
 
 
-def is_teacher(options):  # type(str) -> bool
+def is_student(options):  # type(List) -> bool
+    return "ucsschoolStudent" in options
+
+
+def is_teacher(options):  # type(List) -> bool
     return "ucsschoolTeacher" in options
 
 
-def is_teachers_and_staff(options):  # type(str) -> bool
+def is_teachers_and_staff(options):  # type(List) -> bool
     return is_teacher(options) and is_staff(options)
 
 
-def is_staff(options):  # type(str) -> bool
+def is_staff(options):  # type(List) -> bool
     return "ucsschoolStaff" in options
 
 
-def is_exam_student(options):  # type(str) -> bool
+def is_exam_student(options):  # type(List) -> bool
     return "ucsschoolExam" in options
 
 
@@ -247,13 +259,14 @@ def validate_user_roles(obj):  # type(dict)
     ucsschool_roles = [(r, c, s) for r, c, s in roles if c == "school"]
     expected_role_name = user_role_mapping(options)
     obligatory_roles = [True for r, c, s in ucsschool_roles if expected_role_name == r]
+
     if not obligatory_roles:
         errors.append("does not have {}-role.".format(expected_role_name))
 
     for r, c, s in ucsschool_roles:
         if expected_role_name != r:
-            if (not is_student(expected_role_name) and is_student(r)) or (
-                is_student(expected_role_name) and (not is_student(r))
+            if (not is_student_role(expected_role_name) and is_student_role(r)) or (
+                is_student_role(expected_role_name) and (not is_student_role(r))
             ):
                 errors.append("Students must not any other roles than 'student' or 'exam_student'.")
 
@@ -296,11 +309,10 @@ def validate_user_groups(obj):  # type(dict) -> List
 
     missing_schools = []
     for school in schools:
-        if not [
-            group
-            for group in groups
-            if group == "cn=Domain Users {0},cn=groups,ou={0},{1}".format(school, ucr_get("ldap/base"))
-        ]:
+        expected_group_dn = "cn=Domain Users {0},cn=groups,ou={0},{1}".format(
+            school, ucr_get("ldap/base")
+        )
+        if expected_group_dn not in groups:
             missing_schools.append(school)
     if missing_schools:
         errors.append(
@@ -343,7 +355,7 @@ def validate_user_groups(obj):  # type(dict) -> List
                 True
                 for group in groups
                 if re.match(
-                    r".+?cn={},cn=ucsschool,cn=groups,{}".format(
+                    r"cn={},cn=ucsschool,cn=groups,{}".format(
                         _exam_students_group, ucr_get("ldap/base")
                     ),
                     group,
@@ -386,12 +398,18 @@ def validate_user_position(obj):  # type(dict, str) -> List
     position = obj["position"]
     options = obj["options"]
     errors = []
+    teachers_and_staff = is_teachers_and_staff(options)
+    exam_user = is_exam_student(options)
     if (
-        (is_student(options) and not students_position_regex.match(position))
-        or (is_exam_student(options) and not exam_students_position_regex.match(position))
-        or (is_teacher(options) and not teachers_position_regex.match(position))
-        or (is_staff(options) and not staff_position_regex.match(position))
-        or (is_teachers_and_staff(options) and not teachers_and_staff_position_regex.match(position))
+        (is_student(options) and not exam_user and not students_position_regex.match(position))
+        or (exam_user and not exam_students_position_regex.match(position))
+        or (
+            is_teacher(options)
+            and not teachers_and_staff
+            and not teachers_position_regex.match(position)
+        )
+        or (is_staff(options) and not teachers_and_staff and not staff_position_regex.match(position))
+        or (teachers_and_staff and not teachers_and_staff_position_regex.match(position))
     ):
         errors = ["has wrong position in ldap."]
     return errors
@@ -507,6 +525,6 @@ def validate(obj, logger=None):
         if logger:
             logger.error(errors_str)
             logger.error("Grep for {} in {} for more information.".format(user_uuid, LOG_FILE))
-        private_data_logger.error(errors_str)
+        private_data_logger.error("{}".format(errors_str))
         private_data_logger.error("{}".format(obj))
         private_data_logger.error("{}".format("\n".join(traceback.format_stack())))

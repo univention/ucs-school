@@ -171,6 +171,7 @@ def exam_student_as_dict():  # type(None) -> Dict
     ]
     user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
     user["props"]["ucsschoolRole"] = [
+        "student:school:DEMOSCHOOL",
         "exam_user:school:DEMOSCHOOL",
         "exam_user:exam:{}-DEMOSCHOOL".format(uts.random_name()),
     ]
@@ -193,7 +194,7 @@ def teacher_as_dict():  # type(None) -> Dict
     ]
     user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
     user["props"]["ucsschoolRole"] = [
-        "staff:school:DEMOSCHOOL",
+        "teacher:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers, ldap_base)
     user["options"].append("ucsschoolTeacher")
@@ -213,7 +214,7 @@ def staff_as_dict():  # type(None) -> Dict
     ]
     user["props"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}.{}".format(firstname, lastname)
     user["props"]["ucsschoolRole"] = [
-        "teacher:school:DEMOSCHOOL",
+        "staff:school:DEMOSCHOOL",
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_staff, ldap_base)
     user["options"].append("ucsschoolStaff")
@@ -261,26 +262,17 @@ def mock_logger_file(mocker):
         mocker.patch.object(validator, "LOG_FILE", file.name)
 
 
-role_mapping = {
-    Student: role_student,
-    ExamStudent: role_exam_user,
-    Teacher: role_teacher,
-    Staff: role_staff,
-    TeachersAndStaff: role_teacher,
-}
-
-
 complete_role_matrix = [
-    student_as_dict(),
-    teacher_as_dict(),
-    staff_as_dict(),
-    exam_student_as_dict(),
-    teacher_and_staff_as_dict(),
+    student_as_dict,
+    teacher_as_dict,
+    staff_as_dict,
+    exam_student_as_dict,
+    teacher_and_staff_as_dict,
 ]
 
 student_matrix = [
-    (student_as_dict()),
-    (exam_student_as_dict()),
+    student_as_dict,
+    exam_student_as_dict,
 ]
 
 
@@ -313,7 +305,7 @@ def filter_log_messages(logs, name):
         (teacher_and_staff_as_dict, exam_student_as_dict),
     ],
 )
-def test_correct_ldap_position(caplog, get_user_a, get_user_b, random_logger):
+def test_false_ldap_position(caplog, get_user_a, get_user_b, random_logger):
     random_logger = random_logger()
     user_a = get_user_a()
     user_b = get_user_b()
@@ -326,8 +318,21 @@ def test_correct_ldap_position(caplog, get_user_a, get_user_b, random_logger):
     assert "{}".format(user_a) in secret_logs
 
 
-@pytest.mark.parametrize("user_dict", complete_role_matrix)
-def test_wrong_ucsschool_role(caplog, user_dict, random_logger):
+@pytest.mark.parametrize("get_user_dict", complete_role_matrix)
+def test_correct_object(caplog, get_user_dict, random_logger):
+    random_logger = random_logger()
+    user_dict = get_user_dict()
+    validate(user_dict, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert not log
+    assert "{}".format(user_dict) not in secret_logs
+
+
+@pytest.mark.parametrize("get_user_dict", complete_role_matrix)
+def test_wrong_ucsschool_role(caplog, get_user_dict, random_logger):
+    user_dict = get_user_dict()
     random_logger = random_logger()
     user_dict["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), uts.random_name())]
     validate(user_dict, logger=random_logger)
@@ -338,9 +343,10 @@ def test_wrong_ucsschool_role(caplog, user_dict, random_logger):
     assert "{}".format(user_dict) in secret_logs
 
 
-@pytest.mark.parametrize("user_dict", student_matrix)
-def test_missing_student_role(caplog, user_dict, random_logger):
+@pytest.mark.parametrize("get_user_dict", student_matrix)
+def test_missing_student_role(caplog, get_user_dict, random_logger):
     random_logger = random_logger()
+    user_dict = get_user_dict()
     for role in user_dict["props"]["ucsschoolRole"]:
         if "student" in role:
             user_dict["props"]["ucsschoolRole"].remove(role)
@@ -370,16 +376,20 @@ def test_missing_exam_context_role(caplog, user_dict, random_logger):
     assert "{}".format(user_dict) in secret_logs
 
 
-@pytest.mark.parametrize("user_dict", complete_role_matrix)
-def test_missing_role_group(caplog, user_dict, random_logger):
+@pytest.mark.parametrize("get_user_dict", complete_role_matrix)
+def test_missing_role_group(caplog, get_user_dict, random_logger):
+    user_dict = get_user_dict()
     options = user_dict["options"]
     if "ucsschoolTeacher" in options and "ucsschoolStaff" in options:
         # is tested in test_missing_teachers_and_staff_group
         return
     random_logger = random_logger()
     role_container = get_role_container(user_dict["options"])
+    exam_user = "ucsschoolExam" in user_dict["options"]
     for group in user_dict["props"]["groups"]:
         if re.match(r"cn={}-[^,]+,cn=groups,.+".format(role_container), group):
+            user_dict["props"]["groups"].remove(group)
+        if exam_user and "cn=ucsschool,cn=groups" in group:
             user_dict["props"]["groups"].remove(group)
     validate(user_dict, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
@@ -395,8 +405,9 @@ def test_missing_role_group(caplog, user_dict, random_logger):
 
 
 @pytest.mark.parametrize("role", ["teacher", "staff"])
-@pytest.mark.parametrize("user_dict", student_matrix)
-def test_students_wrong_role(caplog, user_dict, role, random_logger):
+@pytest.mark.parametrize("get_user_dict", student_matrix)
+def test_students_wrong_role(caplog, get_user_dict, role, random_logger):
+    user_dict = get_user_dict()
     random_logger = random_logger()
     user_dict["props"]["ucsschoolRole"].append("{}:school:{}".format(role, uts.random_name()))
     validate(user_dict, logger=random_logger)
@@ -431,8 +442,9 @@ def test_test_missing_role(caplog, user_dict, expected_role, random_logger):
     assert "{}".format(user_dict) in secret_logs
 
 
-@pytest.mark.parametrize("user_dict", complete_role_matrix)
-def test_missing_domain_users_group(caplog, user_dict, random_logger):
+@pytest.mark.parametrize("get_user_dict", complete_role_matrix)
+def test_missing_domain_users_group(caplog, get_user_dict, random_logger):
+    user_dict = get_user_dict()
     random_logger = random_logger()
     for group in user_dict["props"]["groups"]:
         if re.match(r"cn=Domain Users.+", group):
@@ -470,8 +482,9 @@ def test_missing_required_attribute(caplog, user_dict, random_logger, required_a
     assert "{}".format(_user_dict) in secret_logs
 
 
-@pytest.mark.parametrize("user_dict", student_matrix)
-def test_student_missing_class(caplog, user_dict, random_logger):
+@pytest.mark.parametrize("get_user_dict", student_matrix)
+def test_student_missing_class(caplog, get_user_dict, random_logger):
+    user_dict = get_user_dict()
     random_logger = random_logger()
     for group in user_dict["props"]["groups"]:
         if "cn=klassen,cn=schueler,cn=groups" in group:
