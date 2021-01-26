@@ -27,15 +27,6 @@ from ucsschool.lib.roles import (
     role_workgroup_share,
 )
 
-STUDENT_CLASS_NAME = "Student"
-IMPORT_STUDENT_CLASS_NAME = "ImportStudent"
-EXAM_STUDENT_CLASS_NAME = "ExamStudent"
-IMPORT_TEACHER_CLASS_NAME = "Teacher"
-TEACHER_CLASS_NAME = "ImportTeacher"
-STAFF_CLASS_NAME = "Staff"
-IMPORT_STAFF_CLASS_NAME = "ImportStaff"
-TEACHER_AND_STAFF_CLASS_NAME = "TeachersAndStaff"
-IMPORT_TEACHER_AND_STAFF_CLASS_NAME = "ImportTeachersAndStaff"
 SCHOOLCLASS_CLASS_NAME = "SchoolClass"
 WORKGROUP_CLASS_NAME = "WorkGroup"
 COMPUTERROOM_CLASS_NAME = "ComputerRoom"
@@ -43,16 +34,7 @@ CLASS_SHARE_CLASS_NAME = "ClassShare"
 WORKGOUP_SHARE_CLASS_NAME = "WorkGroupShare"
 MARKTPLATZ_SHARE_CLASS_NAME = "MarketplaceShare"
 
-role_mapping = {
-    STUDENT_CLASS_NAME: role_student,
-    IMPORT_STUDENT_CLASS_NAME: role_student,
-    EXAM_STUDENT_CLASS_NAME: role_exam_user,
-    TEACHER_CLASS_NAME: role_teacher,
-    IMPORT_TEACHER_CLASS_NAME: role_teacher,
-    STAFF_CLASS_NAME: role_staff,
-    IMPORT_STAFF_CLASS_NAME: role_staff,
-    TEACHER_AND_STAFF_CLASS_NAME: role_teacher,
-    IMPORT_TEACHER_AND_STAFF_CLASS_NAME: role_teacher,
+group_and_share_role_mapping = {
     SCHOOLCLASS_CLASS_NAME: role_school_class,
     WORKGROUP_CLASS_NAME: role_workgroup,
     COMPUTERROOM_CLASS_NAME: role_computer_room,
@@ -60,6 +42,17 @@ role_mapping = {
     WORKGOUP_SHARE_CLASS_NAME: role_workgroup_share,
     MARKTPLATZ_SHARE_CLASS_NAME: role_marketplace_share,
 }
+
+
+def user_role_mapping(options):
+    if is_teacher(options):
+        return role_teacher
+    elif is_staff(options):
+        return role_staff
+    elif is_exam_student(options):
+        return role_exam_user
+    elif is_student(options):
+        return role_student
 
 
 LOG_FILE = "/var/log/univention/ucs-school-validation.log"
@@ -111,7 +104,9 @@ computerroom_position_regex = re.compile(
 workgroup_share_position_regex = re.compile(
     r"cn=shares,ou=[^,]+?,{}".format(ucr_get("ldap/base")), flags=re.IGNORECASE,
 )
-marktplatz_share_position_regex = workgroup_share_position_regex
+marktplatz_share_position_regex = re.compile(
+    r"cn=Marktplatz,cn=shares,ou=[^,]+?,{}".format(ucr_get("ldap/base")), flags=re.IGNORECASE,
+)
 klassen_share_position_regex = re.compile(
     r"cn=klassen,cn=shares,ou=[^,]+?,{}".format(ucr_get("ldap/base")), flags=re.IGNORECASE,
 )
@@ -134,20 +129,40 @@ exam_students_position_regex = re.compile(
 )
 
 
-def get_role_container(class_name):  # type(str) -> str
-    role_container = ""
-    if class_name in (STUDENT_CLASS_NAME, IMPORT_STUDENT_CLASS_NAME):
-        role_container = container_students
-    elif is_teacher(class_name):
-        role_container = container_teachers
-    elif is_staff(class_name):
-        role_container = container_staff
-    elif is_teachers_and_staff(class_name):
-        role_container = container_teachers_and_staff
-    elif class_name == EXAM_STUDENT_CLASS_NAME:
-        role_container = container_exam_students
+def get_role_container(options):  # type(List) -> str
+    if is_exam_student(options):
+        return container_exam_students
+    elif is_student(options):
+        return container_students
+    elif is_teachers_and_staff(options):
+        return container_teachers_and_staff
+    elif is_teacher(options):
+        return container_teachers
+    elif is_staff(options):
+        return container_staff
+    else:
+        return ""
 
-    return role_container
+
+def get_pseudo_class_name(obj):  # type(dict, str) -> Optional[str]
+    """
+    Groups & shares don't have udm options.
+    We need to calculate them by their ldap-position. Since the class
+    could be derived, the actual class name can be different, like CustomSchoolClass.
+    """
+    position = obj["position"]
+    if re.match(klassen_position_regex, position):
+        return SCHOOLCLASS_CLASS_NAME
+    elif re.match(workgroup_position_regex, position):
+        return WORKGROUP_CLASS_NAME
+    elif re.match(computerroom_position_regex, position):
+        return COMPUTERROOM_CLASS_NAME
+    elif re.match(klassen_share_position_regex, position):
+        return CLASS_SHARE_CLASS_NAME
+    elif re.match(marktplatz_share_position_regex, obj["dn"]):
+        return MARKTPLATZ_SHARE_CLASS_NAME
+    elif re.match(workgroup_share_position_regex, position):
+        return WORKGOUP_SHARE_CLASS_NAME
 
 
 def obj_to_dict(obj):
@@ -155,19 +170,7 @@ def obj_to_dict(obj):
     dict_obj["props"] = dict(obj.items())
     dict_obj["dn"] = obj.position.getDn()
     dict_obj["position"] = re.search(r"[^=]+=[^,]+,(.+)", dict_obj["dn"]).group(1)
-    keys = [
-        "ucsschoolAdministrator",
-        "ucsschoolExam",
-        "ucsschoolTeacher",
-        "ucsschoolStudent",
-        "ucsschoolStaff",
-        "ucsschoolAdministratorGroup",
-        "ucsschoolImportGroup",
-    ]
-    values = len(keys) * [False]
-    dict_obj["options"] = dict(zip(keys, values))
-    for option in obj.options:
-        dict_obj["options"][option] = True
+    dict_obj["options"] = obj.options
     return dict_obj
 
 
@@ -177,33 +180,34 @@ def obj_to_dict_conversion(func):
     To make testing easier, objects of type dicts are passed directly.
     """
 
-    def _inner(obj, class_name, logger):
+    def _inner(obj, logger):
         if type(obj) is dict:
             dict_obj = obj
         else:
             dict_obj = obj_to_dict(obj)
-        return func(dict_obj, class_name, logger)
+        return func(dict_obj, logger)
 
     return _inner
 
 
 def is_student(role):  # type(str) -> bool
-    return role in (STUDENT_CLASS_NAME, EXAM_STUDENT_CLASS_NAME, IMPORT_STUDENT_CLASS_NAME,) or role in (
-        role_student,
-        role_exam_user,
-    )
+    return role in (role_student, role_exam_user,) or "ucsschoolStudent" in role
 
 
-def is_teacher(class_name):  # type(str) -> bool
-    return class_name in (TEACHER_CLASS_NAME, IMPORT_TEACHER_CLASS_NAME)
+def is_teacher(options):  # type(str) -> bool
+    return "ucsschoolTeacher" in options
 
 
-def is_teachers_and_staff(class_name):  # type(str) -> bool
-    return class_name in (TEACHER_AND_STAFF_CLASS_NAME, IMPORT_TEACHER_AND_STAFF_CLASS_NAME)
+def is_teachers_and_staff(options):  # type(str) -> bool
+    return is_teacher(options) and is_staff(options)
 
 
-def is_staff(class_name):  # type(str) -> bool
-    return class_name in (STAFF_CLASS_NAME, IMPORT_STAFF_CLASS_NAME)
+def is_staff(options):  # type(str) -> bool
+    return "ucsschoolStaff" in options
+
+
+def is_exam_student(options):  # type(str) -> bool
+    return "ucsschoolExam" in options
 
 
 def validate_group_membership(
@@ -223,7 +227,7 @@ def validate_group_membership(
     return errors
 
 
-def validate_user_roles(obj, class_name):  # type(dict, str)
+def validate_user_roles(obj):  # type(dict)
     """
     check if user has the correct roles.
     - Students should only have student or exam_student.
@@ -237,21 +241,23 @@ def validate_user_roles(obj, class_name):  # type(dict, str)
     props = obj["props"]
     schools = props["school"]
     roles = props.get("ucsschoolRole", [])
+    options = obj["options"]
 
     roles = [r.split(":") for r in roles]
     ucsschool_roles = [(r, c, s) for r, c, s in roles if c == "school"]
-    obligatory_roles = [True for r, c, s in ucsschool_roles if role_mapping[class_name] == r]
+    expected_role_name = user_role_mapping(options)
+    obligatory_roles = [True for r, c, s in ucsschool_roles if expected_role_name == r]
     if not obligatory_roles:
-        errors.append("does not have {}-role.".format(role_mapping[class_name]))
+        errors.append("does not have {}-role.".format(expected_role_name))
 
     for r, c, s in ucsschool_roles:
-        if role_mapping[class_name] != r:
-            if (not is_student(class_name) and is_student(r)) or (
-                is_student(class_name) and (not is_student(r))
+        if expected_role_name != r:
+            if (not is_student(expected_role_name) and is_student(r)) or (
+                is_student(expected_role_name) and (not is_student(r))
             ):
                 errors.append("Students must not any other roles than 'student' or 'exam_student'.")
 
-    if class_name == EXAM_STUDENT_CLASS_NAME:
+    if is_exam_student(options):
         if not [r for r, c, s in roles if c == "exam"]:
             errors.append("ExamStudents must have an ucsschoolRole with context exam.")
 
@@ -259,13 +265,13 @@ def validate_user_roles(obj, class_name):  # type(dict, str)
     missing_student_role_schools = []
     for school in schools:
         missing_schools.extend([s for r, c, s in ucsschool_roles if s not in schools])
-        if is_student(class_name) and not [
+        if is_student(options) and not [
             r for r, c, s in ucsschool_roles if s == school and r == role_student
         ]:
             missing_student_role_schools.append(school)
 
     if missing_schools:
-        errors.append("{} is not part of schools: {}.".format(class_name, ",".join(schools)))
+        errors.append("is not part of schools: {}.".format(",".join(schools)))
     if missing_student_role_schools:
         errors.append(
             "is missing a student role at schools: {}.".format(",".join(missing_student_role_schools))
@@ -273,7 +279,7 @@ def validate_user_roles(obj, class_name):  # type(dict, str)
     return errors
 
 
-def validate_user_groups(obj, class_name):  # type(dict, str) -> List
+def validate_user_groups(obj):  # type(dict) -> List
     """
     For all schools check if
     - User is part of the Domain Users OU group.
@@ -286,6 +292,8 @@ def validate_user_groups(obj, class_name):  # type(dict, str) -> List
     props = obj["props"]
     schools = props.get("school", [])
     groups = props.get("groups", [])
+    options = obj["options"]
+
     missing_schools = []
     for school in schools:
         if not [
@@ -300,7 +308,7 @@ def validate_user_groups(obj, class_name):  # type(dict, str) -> List
                 ",".join(missing_schools)
             )
         )
-    if is_student(class_name):
+    if is_student(options):
         missing_classes = []
         for school in schools:
             klassen = [
@@ -319,17 +327,17 @@ def validate_user_groups(obj, class_name):  # type(dict, str) -> List
                 "is missing a class for the following schools: {}.".format(",".join(missing_classes))
             )
 
-    if class_name == TEACHER_AND_STAFF_CLASS_NAME:
-        teacher_roles = [True for group in groups if re.match(teachers_group_regex, group)]
-        staff_roles = [True for group in groups if re.match(staff_group_regex, group)]
-        if not (teacher_roles and staff_roles):
-            errors.append("is missing a Teacher or Staff group".format(TEACHER_AND_STAFF_CLASS_NAME))
+    if is_teachers_and_staff(options):
+        teacher_groups = [True for group in groups if re.match(teachers_group_regex, group)]
+        staff_groups = [True for group in groups if re.match(staff_group_regex, group)]
+        if not (teacher_groups and staff_groups):
+            errors.append("is missing a Teacher or Staff group")
     missing_role_groups = []
-    role_container = get_role_container(class_name)
+    role_container = get_role_container(options)
     for school in schools:
-        if class_name == TEACHER_AND_STAFF_CLASS_NAME:
+        if is_teachers_and_staff(options):
             continue
-        if class_name == EXAM_STUDENT_CLASS_NAME:
+        if is_exam_student(options):
             _exam_students_group = exam_students_group % {"ou": school.lower()}
             role_groups = [
                 True
@@ -347,51 +355,43 @@ def validate_user_groups(obj, class_name):  # type(dict, str) -> List
             # exam-student is also in students group
             role_container = container_students
 
-        role_groups = [
-            True
-            for group in groups
-            if group
-            == "cn={}-{},cn=groups,ou={},{}".format(
-                role_container, school.lower(), school, ucr_get("ldap/base")
-            )
-        ]
-        if not role_groups:
+        expected_group_dn = "cn={}-{},cn=groups,ou={},{}".format(
+            role_container, school.lower(), school, ucr_get("ldap/base")
+        )
+        if expected_group_dn not in groups:
             missing_role_groups.append(school)
 
     if missing_role_groups:
         errors.append(
-            "is missing the {}s groups for the following schools: {}.".format(
-                class_name, ",".join(set(missing_role_groups))
-            )
+            "is missing groups for the following schools: {}.".format(",".join(set(missing_role_groups)))
         )
 
-    students = True if is_student(class_name) else False
-    teachers = True if is_teacher(class_name) else False
-    staff = True if is_staff(class_name) else False
-    if is_teachers_and_staff(class_name):
-        teachers = True
-        staff = True
     for group in groups:
-        errors.extend(validate_group_membership(group, students, teachers, staff))
+        errors.extend(
+            validate_group_membership(
+                group,
+                students=is_student(options),
+                teachers=is_teacher(options),
+                staff=is_staff(options),
+            )
+        )
     return errors
 
 
-def validate_user_position(obj, class_name):  # type(dict, str) -> List
+def validate_user_position(obj):  # type(dict, str) -> List
     """
     Validate user position given a user with class_name, i.e. Student, ExamStudent, Teacher, Staff
     and TeacherAndStaff to match a regex defined in *_position_regex.
     """
     position = obj["position"]
+    options = obj["options"]
     errors = []
     if (
-        (
-            class_name in (STUDENT_CLASS_NAME, IMPORT_STUDENT_CLASS_NAME)
-            and not students_position_regex.match(position)
-        )
-        or (class_name == EXAM_STUDENT_CLASS_NAME and not exam_students_position_regex.match(position))
-        or (is_teacher(class_name) and not teachers_position_regex.match(position))
-        or (is_staff(class_name) and not staff_position_regex.match(position))
-        or (is_teachers_and_staff(class_name) and not teachers_and_staff_position_regex.match(position))
+        (is_student(options) and not students_position_regex.match(position))
+        or (is_exam_student(options) and not exam_students_position_regex.match(position))
+        or (is_teacher(options) and not teachers_position_regex.match(position))
+        or (is_staff(options) and not staff_position_regex.match(position))
+        or (is_teachers_and_staff(options) and not teachers_and_staff_position_regex.match(position))
     ):
         errors = ["has wrong position in ldap."]
     return errors
@@ -419,55 +419,7 @@ def validate_user_required_attributes(obj):  # type(dict) -> List
     return errors
 
 
-def validate_user_options(obj, class_name):  # type(dict, str) -> List
-    """
-    Validate Options:
-    - Students must not have ucsschoolTeacher, ucsschoolStaff or ucsschoolAdministrator
-    - Objects need to have their options set, e.g. Teacher -> ucsschoolTeacher
-    """
-    errors = []
-    options = obj["options"]
-    if (
-        (
-            class_name in (STUDENT_CLASS_NAME, IMPORT_STUDENT_CLASS_NAME)
-            and "ucsschoolStudent" not in options
-        )
-        or (is_teacher(class_name) and "ucsschoolTeacher" not in options)
-        or (is_staff(class_name) and "ucsschoolStaff" not in options)
-        or (class_name == EXAM_STUDENT_CLASS_NAME and "ucsschoolExam" not in options)
-        or (
-            is_teachers_and_staff(class_name)
-            and not ("ucsschoolTeacher" in options and "ucsschoolStaff" not in options)
-        )
-        or (
-            is_student(class_name)
-            and any(
-                key in options
-                for key in ["ucsschoolTeacher", "ucsschoolStaff", "ucsschoolAdministrator",]
-            )
-        )
-    ):
-        errors.append("has incorrect options.")
-    return errors
-
-
-def validate_group_position(obj, class_name):  # type(dict, str) -> List
-    """
-    Validate user position given a group with class_name, i.e. ComputerRoom, SchoolClass or WorkGroup
-    to match a regex defined in *_position_regex.
-    """
-    dn = obj["position"]
-    errors = []
-    if (
-        (class_name == SCHOOLCLASS_CLASS_NAME and not re.match(klassen_position_regex, dn))
-        or (class_name == WORKGROUP_CLASS_NAME and not re.match(workgroup_position_regex, dn))
-        or (class_name == COMPUTERROOM_CLASS_NAME and not re.match(computerroom_position_regex, dn))
-    ):
-        errors = ["has wrong position in ldap."]
-    return errors
-
-
-def validate_group_and_share_required_attributes(obj, class_name):  # type(dict, str)
+def validate_group_and_share_required_attributes(obj):  # type(dict)
     """
     Validate Group or Share has values for
      "name", "ucsschoolRole"
@@ -494,33 +446,16 @@ def validate_obligatory_roles(obj, class_name):  # type(dict, str)
     ucsschool_roles = props.get("ucsschoolRole", [])
     ucsschool_roles = [r.split(":") for r in ucsschool_roles]
     obligatory_roles = [
-        True for r, c, s in ucsschool_roles if c == "school" and role_mapping[class_name] == r
+        True
+        for r, c, s in ucsschool_roles
+        if c == "school" and group_and_share_role_mapping[class_name] == r
     ]
     if not obligatory_roles:
-        errors.append("does not have {}-role.".format(role_mapping[class_name]))
+        errors.append("does not have {}-role.".format(group_and_share_role_mapping[class_name]))
     return errors
 
 
-def validate_share_position(obj, class_name):  # type(dict, str) -> List
-    """
-    Validate user position given a group with class_name, i.e. WorkGroupShare, ClassShare or MarketplaceShare
-    to match a regex defined in *_position_regex.
-    """
-    dn = obj["position"]
-    errors = []
-    if (
-        (class_name == CLASS_SHARE_CLASS_NAME and not re.match(klassen_share_position_regex, dn))
-        or (class_name == WORKGOUP_SHARE_CLASS_NAME and not re.match(workgroup_share_position_regex, dn))
-        or (
-            class_name == MARKTPLATZ_SHARE_CLASS_NAME
-            and not re.match(marktplatz_share_position_regex, dn)
-        )
-    ):
-        errors = ["has wrong position in ldap."]
-    return errors
-
-
-def validate_school_prefix(obj, class_name):  # type(dict, str) -> List
+def validate_school_prefix(obj):  # type(dict) -> List
     """
     Validate school-prefix by extracting the ou-name from the dn.
     """
@@ -538,45 +473,36 @@ def validate_school_prefix(obj, class_name):  # type(dict, str) -> List
 
 
 @obj_to_dict_conversion
-def validate(obj, class_name, logger=None):
+def validate(obj, logger=None):
     """
     Objects are validated as dicts and errors are logged to
     the passed logger. Sensitive data is logged to /var/log/univention/ucs-school-validation.log
     """
     errors = []
-    if class_name in [
-        STUDENT_CLASS_NAME,
-        IMPORT_STUDENT_CLASS_NAME,
-        TEACHER_CLASS_NAME,
-        IMPORT_TEACHER_CLASS_NAME,
-        EXAM_STUDENT_CLASS_NAME,
-        TEACHER_CLASS_NAME,
-        IMPORT_TEACHER_CLASS_NAME,
-        STAFF_CLASS_NAME,
-        IMPORT_STAFF_CLASS_NAME,
-        TEACHER_AND_STAFF_CLASS_NAME,
-        IMPORT_TEACHER_AND_STAFF_CLASS_NAME,
-    ]:
+    options = obj["options"]
+    object_type = obj.get("objectType", "")
+    class_name = ""
+    if object_type in ["groups/group", "shares/share"]:
+        class_name = get_pseudo_class_name(obj)
+    if any([is_student(options), is_teacher(options), is_staff(options), is_exam_student(options)]):
         errors.extend(validate_user_required_attributes(obj))
-        errors.extend(validate_user_options(obj, class_name))
-        errors.extend(validate_user_position(obj, class_name))
-        errors.extend(validate_user_roles(obj.copy(), class_name))
-        errors.extend(validate_user_groups(obj, class_name))
+        errors.extend(validate_user_position(obj))
+        errors.extend(validate_user_roles(obj))
+        errors.extend(validate_user_groups(obj))
     elif class_name in [SCHOOLCLASS_CLASS_NAME, WORKGROUP_CLASS_NAME, COMPUTERROOM_CLASS_NAME]:
-        errors.extend(validate_group_and_share_required_attributes(obj, class_name))
-        errors.extend(validate_group_position(obj, class_name))
+        class_name = get_pseudo_class_name(obj)
+        errors.extend(validate_group_and_share_required_attributes(obj))
         errors.extend(validate_obligatory_roles(obj, class_name))
-        errors.extend(validate_school_prefix(obj, class_name))
+        errors.extend(validate_school_prefix(obj))
     elif class_name in [CLASS_SHARE_CLASS_NAME, WORKGOUP_SHARE_CLASS_NAME, MARKTPLATZ_SHARE_CLASS_NAME]:
-        errors.extend(validate_group_and_share_required_attributes(obj, class_name))
-        errors.extend(validate_share_position(obj, class_name))
+        errors.extend(validate_group_and_share_required_attributes(obj))
         errors.extend(validate_obligatory_roles(obj, class_name))
-        errors.extend(validate_school_prefix(obj, class_name))
+        errors.extend(validate_school_prefix(obj))
 
     if errors:
         user_uuid = str(uuid.uuid4())
-        errors_str = "UCS@school Object {} with class {} and UUID {} has validation errors:\n\n\t- {}\n".format(
-            obj.get("dn", ""), class_name, user_uuid, "\n\t- ".join(errors)
+        errors_str = "UCS@school Object {} with options {} has validation errors:\n\n\t- {}\n".format(
+            obj.get("dn", ""), "{}".format(",".join(options)), "\n\t- ".join(errors)
         )
         if logger:
             logger.error(errors_str)

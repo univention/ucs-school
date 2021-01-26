@@ -812,7 +812,7 @@ class UCSSchoolHelperAbstractClass(object):
                     self._udm_obj = None
                 else:
                     self._udm_obj.open()
-                    validate(self._udm_obj, self.__class__.__name__, self.logger)
+                    validate(self._udm_obj, self.logger)
             self._udm_obj_searched = True
         return self._udm_obj
 
@@ -966,7 +966,7 @@ class UCSSchoolHelperAbstractClass(object):
                 raise WrongModel(udm_obj.dn, klass, cls)
             return klass.from_udm_obj(udm_obj, school, lo)
         udm_obj.open()
-        validate(udm_obj, cls.__name__, cls.logger)
+        validate(udm_obj, cls.logger)
         attrs = {
             "school": cls.get_school_from_dn(udm_obj.dn) or school
         }  # TODO: is this adjustment okay?
@@ -1077,7 +1077,7 @@ class UCSSchoolHelperAbstractClass(object):
             raise MultipleObjectsError(objs)
         obj = objs[0]
         obj.open()
-        validate(obj, cls.__name__, cls.logger)
+        validate(obj, cls.logger)
         return obj
 
     @classmethod
@@ -1091,7 +1091,7 @@ class UCSSchoolHelperAbstractClass(object):
         except MultipleObjectsError as exc:
             obj = exc.objs[0]
             obj.open()
-            validate(obj, cls.__name__, cls.logger)
+            validate(obj, cls.logger)
             return obj
 
     @classmethod

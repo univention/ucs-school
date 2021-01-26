@@ -33,16 +33,8 @@ from ucsschool.lib.models.validator import (
     WORKGOUP_SHARE_CLASS_NAME,
     WORKGROUP_CLASS_NAME,
     container_computerrooms,
-    container_exam_students,
-    container_staff,
     container_students,
-    container_teachers,
-    container_teachers_and_staff,
-    exam_students_group,
-    get_role_container,
-    role_mapping,
-    staff_group_regex,
-    teachers_group_regex,
+    group_and_share_role_mapping,
     ucr_get,
     validate,
 )
@@ -230,53 +222,24 @@ def marktplatz_share_as_dict():  # type(None) -> Dict
 
 
 @pytest.mark.parametrize(
-    "class_name,get_group_a,get_group_b",
+    "dict_obj",
     [
-        (SCHOOLCLASS_CLASS_NAME, klasse_as_dict, workgroup_as_dict),
-        (SCHOOLCLASS_CLASS_NAME, klasse_as_dict, marktplatz_share_as_dict),
-        (WORKGROUP_CLASS_NAME, workgroup_as_dict, klasse_as_dict),
-        (WORKGROUP_CLASS_NAME, workgroup_as_dict, computer_room_as_dict),
-        (COMPUTERROOM_CLASS_NAME, computer_room_as_dict, klasse_as_dict),
-        (COMPUTERROOM_CLASS_NAME, computer_room_as_dict, marktplatz_share_as_dict),
-        (CLASS_SHARE_CLASS_NAME, klassen_share_as_dict, marktplatz_share_as_dict),
-        (CLASS_SHARE_CLASS_NAME, klassen_share_as_dict, klasse_as_dict),
-        (WORKGOUP_SHARE_CLASS_NAME, workgroup_share_as_dict, computer_room_as_dict),
-        (MARKTPLATZ_SHARE_CLASS_NAME, marktplatz_share_as_dict, computer_room_as_dict),
-        (MARKTPLATZ_SHARE_CLASS_NAME, marktplatz_share_as_dict, klassen_share_as_dict),
-    ],
-)
-def test_correct_ldap_position(caplog, get_group_a, get_group_b, class_name, random_logger):
-    random_logger = random_logger()
-    group_a = get_group_a()
-    group_b = get_group_b()
-    group_a["position"] = group_b["position"]
-    validate(group_a, class_name=class_name, logger=random_logger)
-    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
-    for log in (public_logs, secret_logs):
-        assert "has wrong position in ldap" in log
-    assert "{}".format(group_a) in secret_logs
-
-
-@pytest.mark.parametrize(
-    "class_name,dict_obj",
-    [
-        (SCHOOLCLASS_CLASS_NAME, klasse_as_dict),
-        (WORKGROUP_CLASS_NAME, workgroup_as_dict),
-        (COMPUTERROOM_CLASS_NAME, computer_room_as_dict),
-        (WORKGOUP_SHARE_CLASS_NAME, workgroup_share_as_dict),
-        (MARKTPLATZ_SHARE_CLASS_NAME, marktplatz_share_as_dict),
-        (CLASS_SHARE_CLASS_NAME, klassen_share_as_dict),
+        klasse_as_dict,
+        workgroup_as_dict,
+        computer_room_as_dict,
+        workgroup_share_as_dict,
+        marktplatz_share_as_dict,
+        klassen_share_as_dict,
     ],
 )
 @pytest.mark.parametrize(
     "required_attribute", ["name", "ucsschoolRole",],
 )
-def test_missing_required_attribute(caplog, dict_obj, class_name, random_logger, required_attribute):
+def test_missing_required_attribute(caplog, dict_obj, random_logger, required_attribute):
     random_logger = random_logger()
     _dict_obj = dict_obj()
     _dict_obj["props"][required_attribute] = []
-    validate(_dict_obj, class_name=class_name, logger=random_logger)
+    validate(_dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
@@ -299,30 +262,30 @@ def test_missing_role(caplog, dict_obj, class_name, random_logger):
     random_logger = random_logger()
     for role in dict_obj["props"]["ucsschoolRole"]:
         r, c, s = role.split(":")
-        if r == role_mapping[class_name]:
+        if r == group_and_share_role_mapping[class_name]:
             dict_obj["props"]["ucsschoolRole"].remove(role)
-    validate(dict_obj, class_name=class_name, logger=random_logger)
+    validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "does not have {}-role.".format(role_mapping[class_name]) in log
+        assert "does not have {}-role.".format(group_and_share_role_mapping[class_name]) in log
     assert "{}".format(dict_obj) in secret_logs
 
 
 @pytest.mark.parametrize(
-    "class_name,dict_obj",
+    "dict_obj",
     [
-        (SCHOOLCLASS_CLASS_NAME, klasse_as_dict()),
-        (WORKGROUP_CLASS_NAME, workgroup_as_dict()),
-        (COMPUTERROOM_CLASS_NAME, computer_room_as_dict()),
-        (WORKGOUP_SHARE_CLASS_NAME, workgroup_share_as_dict()),
-        (CLASS_SHARE_CLASS_NAME, klassen_share_as_dict()),
+        klasse_as_dict(),
+        workgroup_as_dict(),
+        computer_room_as_dict(),
+        workgroup_share_as_dict(),
+        klassen_share_as_dict(),
     ],
 )
-def test_missing_school_prefix(caplog, dict_obj, class_name, random_logger):
+def test_missing_school_prefix(caplog, dict_obj, random_logger):
     random_logger = random_logger()
     dict_obj["props"]["name"] = uts.random_name()
-    validate(dict_obj, class_name=class_name, logger=random_logger)
+    validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
