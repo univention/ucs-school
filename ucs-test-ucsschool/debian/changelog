@@ -10,11 +10,23 @@ ucs-test-ucsschool (7.0.0-1) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:53 +0100
 
-ucs-test-ucsschool (6.0.179) unstable; urgency=medium
+ucs-test-ucsschool (7.0.0-0) unstable; urgency=medium
 
   * Bug #52600: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
+
+ucs-test-ucsschool (6.0.180) unstable; urgency=low
+
+  * Bug #52654: manually wait for replication
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Jan 2021 09:34:41 +0100
+
+ucs-test-ucsschool (6.0.179) unstable; urgency=medium
+
+  * Bug #52372: added disable user during exam test
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 26 Jan 2021 14:57:43 +0100
 
 ucs-test-ucsschool (6.0.178) unstable; urgency=medium
 
