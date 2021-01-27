@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix: 9.0.1-47A~4.4.0.202101261500
+fix: 9.0.1-48A~4.4.0.202101271000
 desc: |
   * It is now possible to deactivate users taking part in an exam. This prevents them from using other services during the exam. Afterwards they are reactivated. The feature can be enabled by setting the UCR variable <envar>ucsschool/exam/user/disable</envar> to <envar>true</envar> and restarting the <envar>univention-management-console-server</envar>. Please test the consequences of this feature thoroughly with third party apps (Bug #52372).
 bug: [52372]
