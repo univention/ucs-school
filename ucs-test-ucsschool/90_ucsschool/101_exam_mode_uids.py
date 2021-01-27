@@ -5,7 +5,7 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## bugs: [52307]
-## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
+## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from __future__ import print_function
 
@@ -34,7 +34,28 @@ SLEEP_TIMEOUT = 300
 def check_uids(member_dn_list, open_ldap_co):
     # check that the uids in ldap, unix and home dir ownership are consistent
     for dn in member_dn_list:
-        attrs = open_ldap_co.get(dn, attr=["uid", "uidNumber", "homeDirectory"])
+        print("Waiting for replication of {!r}...".format(dn))
+        timeout = SLEEP_TIMEOUT
+        get_attrs = ["uid", "uidNumber", "homeDirectory"]
+        replicated = False
+        attrs = {}
+        while timeout > 0:
+            try:
+                attrs = open_ldap_co.get(dn, attr=get_attrs)
+                if set(attrs.keys()).issubset(set(get_attrs)):
+                    print("Replication complete: {!r} -> {!r}".format(dn, attrs))
+                    replicated = True
+                else:
+                    print("Replication incomplete: {!r} -> {!r}".format(dn, attrs))
+            except noObject:
+                print("Not yet replicated: {!r}".format(dn))
+            if replicated:
+                break
+            else:
+                print("Sleeping {}s...".format(SLEEP_INTERVAL))
+                time.sleep(SLEEP_INTERVAL)
+                timeout -= SLEEP_INTERVAL
+
         user_name = attrs["uid"][0]
         ldap_uid = str(attrs["uidNumber"][0])
         unix_uid = str(pwd.getpwnam(user_name).pw_uid)
@@ -133,26 +154,6 @@ def main():
                 wait_for_drs_replication(filter_format("cn=exam-%s", (student2.name,)))
                 utils.wait_for_replication()
                 wait_for_s4connector()
-                print("Waiting for replication of {!r}...".format(exam_member_dns))
-                timeout = SLEEP_TIMEOUT
-                all_found = False
-                while timeout > 0:
-                    for dn in exam_member_dns:
-                        try:
-                            open_ldap_co.get(dn)
-                            print("Replicated: {!r}".format(dn))
-                        except noObject:
-                            print("Not yet replicated: {!r}".format(dn))
-                        else:
-                            if dn == exam_member_dns[-1]:
-                                # all objects replicated
-                                all_found = True
-                    if all_found:
-                        break
-                    else:
-                        print("Sleeping {}s...".format(SLEEP_INTERVAL))
-                        time.sleep(SLEEP_INTERVAL)
-                        timeout -= SLEEP_INTERVAL
                 check_uids(exam_member_dns, open_ldap_co)
                 exam2.finish()
 
