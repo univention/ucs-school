@@ -11,6 +11,7 @@ from __future__ import print_function
 
 import os
 import pwd
+import time
 from datetime import datetime, timedelta
 
 from ldap.filter import filter_format
@@ -21,18 +22,23 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
 from ucsschool.lib.models import Student
+from univention.admin.uexceptions import noObject
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
+
+SLEEP_INTERVAL = 10
+SLEEP_TIMEOUT = 300
 
 
 def check_uids(member_dn_list, open_ldap_co):
     # check that the uids in ldap, unix and home dir ownership are consistent
     for dn in member_dn_list:
-        user_name = open_ldap_co.getAttr(dn, "uid")[0]
-        ldap_uid = str(open_ldap_co.getAttr(dn, "uidNumber")[0])
+        attrs = open_ldap_co.get(dn, attr=["uid", "uidNumber", "homeDirectory"])
+        user_name = attrs["uid"][0]
+        ldap_uid = str(attrs["uidNumber"][0])
         unix_uid = str(pwd.getpwnam(user_name).pw_uid)
-        for homedir in open_ldap_co.getAttr(dn, "homeDirectory"):
+        for homedir in attrs["homeDirectory"]:
             if not os.path.exists(homedir):
                 utils.fail("homeDirectory {} for {} does not exist".format(homedir, dn))
             dir_owner = str(os.stat(homedir).st_uid)
@@ -127,6 +133,26 @@ def main():
                 wait_for_drs_replication(filter_format("cn=exam-%s", (student2.name,)))
                 utils.wait_for_replication()
                 wait_for_s4connector()
+                print("Waiting for replication of {!r}...".format(exam_member_dns))
+                timeout = SLEEP_TIMEOUT
+                all_found = False
+                while timeout > 0:
+                    for dn in exam_member_dns:
+                        try:
+                            open_ldap_co.get(dn)
+                            print("Replicated: {!r}".format(dn))
+                        except noObject:
+                            print("Not yet replicated: {!r}".format(dn))
+                        else:
+                            if dn == exam_member_dns[-1]:
+                                # all objects replicated
+                                all_found = True
+                    if all_found:
+                        break
+                    else:
+                        print("Sleeping {}s...".format(SLEEP_INTERVAL))
+                        time.sleep(SLEEP_INTERVAL)
+                        timeout -= SLEEP_INTERVAL
                 check_uids(exam_member_dns, open_ldap_co)
                 exam2.finish()
 
