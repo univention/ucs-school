@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-48) unstable; urgency=medium
+
+  * Bug #52372: restore original disable user property after exam
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Wed, 27 Jan 2021 09:55:25 +0100
+
 ucs-school-umc-exam (9.0.1-47) unstable; urgency=medium
 
   * Bug #52372: added option to disable user during exam mode
