@@ -25,9 +25,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import itertools
 import random
 import time
-from typing import List, NamedTuple, Type, Union
+from typing import List, NamedTuple, Tuple, Type, Union
 from urllib.parse import SplitResult, urlsplit
 
 import pytest
@@ -80,6 +81,10 @@ random.shuffle(USER_ROLES)
 
 def role_id(value: Role) -> str:
     return value.name
+
+
+def two_roles_id(value: List[Role]) -> str:
+    return f"{value[0].name} -> {value[1].name}"
 
 
 async def compare_lib_api_user(  # noqa: C901
@@ -905,19 +910,192 @@ async def test_patch_with_password_hashes(
         json=new_user_data,
     )
     assert response.status_code == 200, response.reason
-    api_user = UserModel(**response.json())
+    json_resp = response.json()
+    api_user = UserModel(**json_resp)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
-    json_resp = response.json()
     compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
     await check_password(lib_users[0].dn, password_new)
     print("OK: can login as user with new password.")
     with pytest.raises(LDAPBindError):
         await check_password(lib_users[0].dn, user.password)
     print("OK: cannot login as user with old password.")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_role_change(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    import_config,
+    udm_kwargs,
+    schedule_delete_user,
+    new_school_class,
+    random_name,
+    roles: Tuple[Role, Role],
+    method: str,
+):
+    role_from, role_to = roles
+    user = (await create_random_users(
+        {role_from.name: 1},
+        school=f"{url_fragment}/schools/DEMOSCHOOL",
+        schools=[f"{url_fragment}/schools/DEMOSCHOOL", f"{url_fragment}/schools/DEMOSCHOOL2"],
+    ))[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+    if role_to.name == "teacher_and_staff":
+        roles_ulrs = [
+            f"{url_fragment}/roles/staff",
+            f"{url_fragment}/roles/teacher",
+        ]
+    else:
+        roles_ulrs = [f"{url_fragment}/roles/{role_to.name}"]
+    user_url = f"{url_fragment}/users/{user.name}"
+    schedule_delete_user(user.name)
+    if role_to.name == "student":
+        # For conversion to Student it one class per school is required, and Teacher has only the one
+        # for DEMOSCHOOL.
+        sc_dn2, sc_attr2 = await new_school_class(
+            school="DEMOSCHOOL2",
+            name=f"DEMOSCHOOL2-{random_name()}",
+        )
+        school_classes = {"DEMOSCHOOL2": [sc_attr2["name"]]}
+        if role_from.name == "staff":
+            # Staff user will have no school_class, so it is missing even the one for DEMOSCHOOL.
+            sc_dn, sc_attr = await new_school_class()
+            school_classes["DEMOSCHOOL"] = ["Democlass", sc_attr["name"]]
+    else:
+        school_classes = {}
+    if method == "patch":
+        patch_data = {"roles": roles_ulrs}
+        if school_classes:
+            patch_data["school_classes"] = school_classes
+        response = requests.patch(
+            user_url,
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"roles"})
+        if school_classes:
+            old_data["school_classes"] = school_classes
+        modified_user = UserCreateModel(
+            roles=roles_ulrs, **old_data
+        )
+        response = requests.put(
+            user_url,
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    assert response.status_code == 200, response.reason
+    json_resp = response.json()
+    assert set(
+        UserCreateModel.unscheme_and_unquote(role_url) for role_url in json_resp["roles"]
+    ) == set(roles_ulrs)
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], role_to.klass)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_role_change_fails_for_student_without_school_class(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    import_config,
+    udm_kwargs,
+    schedule_delete_user,
+    method: str,
+):
+    user = (await create_random_users({"staff": 1}))[0]  # staff has no school classes
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await Staff.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+    roles_ulrs = [f"{url_fragment}/roles/student"]
+    user_url = f"{url_fragment}/users/{user.name}"
+    schedule_delete_user(user.name)
+    if method == "patch":
+        patch_data = {"roles": roles_ulrs}
+        response = requests.patch(
+            user_url,
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"roles"})
+        modified_user = UserCreateModel(
+            roles=roles_ulrs, **old_data
+        )
+        response = requests.put(
+            user_url,
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    assert response.status_code == 400, response.reason
+    json_resp = response.json()
+    assert "requires at least one school class per school" in json_resp["detail"]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], Staff)  # unchanged
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_role_change_fails_for_student_missing_school_class_for_second_school(
+    auth_header,
+    url_fragment,
+    create_random_users,
+    import_config,
+    udm_kwargs,
+    schedule_delete_user,
+    method: str,
+):
+    user = (await create_random_users(
+        {"teacher": 1},
+        school=f"{url_fragment}/schools/DEMOSCHOOL",
+        schools=[f"{url_fragment}/schools/DEMOSCHOOL", f"{url_fragment}/schools/DEMOSCHOOL2"],
+    ))[0]  # staff has no school classes
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await Teacher.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+        assert lib_users[0].school_classes["DEMOSCHOOL"]
+        assert not lib_users[0].school_classes.get("DEMOSCHOOL2")
+    roles_ulrs = [f"{url_fragment}/roles/student"]
+    user_url = f"{url_fragment}/users/{user.name}"
+    schedule_delete_user(user.name)
+    if method == "patch":
+        patch_data = {"roles": roles_ulrs}
+        response = requests.patch(
+            user_url,
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"roles"})
+        modified_user = UserCreateModel(
+            roles=roles_ulrs, **old_data
+        )
+        response = requests.put(
+            user_url,
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    assert response.status_code == 400, response.reason
+    json_resp = response.json()
+    assert "requires at least one school class per school" in json_resp["detail"]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_users[0], Teacher)  # unchanged
 
 
 @pytest.mark.asyncio
