@@ -76,7 +76,10 @@ from ucsschool.importer.default_user_import_factory import DefaultUserImportFact
 from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.models.import_user import ImportUser
+from ucsschool.importer.models.import_user import (
+    ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser, convert_to_staff,
+    convert_to_student, convert_to_teacher, convert_to_teacher_and_staff
+)
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from udm_rest_client import (
     UDM,
@@ -346,6 +349,7 @@ class UserPatchModel(BasePatchModel):
     email: str = None
     password: SecretStr = None
     record_uid: str = None
+    roles: List[HttpUrl] = None
     school: HttpUrl = None
     schools: List[HttpUrl] = None
     school_classes: Dict[str, List[str]] = None
@@ -397,6 +401,18 @@ class UserPatchModel(BasePatchModel):
                     )
             elif key == "password" and isinstance(value, SecretStr):
                 kwargs[key] = value.get_secret_value()
+            elif key == "roles":
+                if not isinstance(value, list) or value == []:
+                    raise HTTPException(
+                        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail="No or empty list of role URLs in 'roles' property.",
+                    )
+                kwargs["roles"] = [
+                    url_to_name(
+                        request, "role", UserCreateModel.unscheme_and_unquote(role)
+                    )
+                    for role in value
+                ]
         return kwargs
 
 
@@ -768,6 +784,40 @@ async def rename_user(
     return user
 
 
+conversion_target_to_func = {
+    ImportStaff: convert_to_staff,
+    ImportStudent: convert_to_student,
+    ImportTeacher: convert_to_teacher,
+    ImportTeachersAndStaff: convert_to_teacher_and_staff,
+}
+
+
+async def change_roles(
+    udm: UDM,
+    logger: logging.Logger,
+    user: ImportUser,
+    new_roles: List[str],
+    new_school_classes: Dict[str, List[str]] = None,
+) -> ImportUser:
+    target_cls = SchoolUserRole.get_lib_class([SchoolUserRole(role_s) for role_s in new_roles])
+    if set(user.roles) == set(target_cls.roles):
+        return user
+    converter_func = conversion_target_to_func[target_cls]
+    try:
+        return await converter_func(user, udm, new_school_classes)
+    except TypeError as exc:
+        logger.error(
+            "Changing role of user %r to %r: %s",
+            user,
+            target_cls.__name__,
+            exc,
+        )
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
 @router.patch("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
 async def partial_update(  # noqa: C901
     username: str,
@@ -815,21 +865,32 @@ async def partial_update(  # noqa: C901
     # 1. move
     try:
         new_school = to_change["school"]
+    except KeyError:
+        pass
+    else:
         new_schools = to_change.get("schools", [])
         user_current = await change_school(
             udm, logger, user_current, new_school, new_schools
         )
-    except KeyError:
-        pass
 
     # 2. rename
     try:
         new_name = to_change["name"]
-        user_current = await rename_user(udm, logger, user_current, new_name)
     except KeyError:
         pass
+    else:
+        user_current = await rename_user(udm, logger, user_current, new_name)
 
-    # 3. modify
+    # 3. change roles
+    try:
+        new_roles = to_change["roles"]
+        new_school_classes = to_change.get("school_classes")
+    except KeyError:
+        pass
+    else:
+        user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
+
+    # 4. modify
     changed = False
     for attr, new_value in to_change.items():
         if attr == "kelvin_password_hashes":
@@ -854,7 +915,7 @@ async def partial_update(  # noqa: C901
                 detail=str(exc),
             ) from exc
 
-    # 4. password hashes
+    # 5. password hashes
     if user.kelvin_password_hashes:
         await set_password_hashes(user_current.dn, user.kelvin_password_hashes)
 
@@ -936,7 +997,12 @@ async def complete_update(  # noqa: C901
     new_name = user_request.name
     user_current = await rename_user(udm, logger, user_current, new_name)
 
-    # 3. modify
+    # 3. change roles
+    new_roles = user_request.roles
+    new_school_classes = user_request.school_classes
+    user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
+
+    # 4. modify
     changed = False
     # TODO: Should not access private interface:
     for attr in list(ImportUser._attributes.keys()) + ["udm_properties"]:
@@ -967,7 +1033,7 @@ async def complete_update(  # noqa: C901
                 detail=str(exc),
             ) from exc
 
-    # 4. password hashes
+    # 5. password hashes
     if user.kelvin_password_hashes:
         await set_password_hashes(user_current.dn, user.kelvin_password_hashes)
 
