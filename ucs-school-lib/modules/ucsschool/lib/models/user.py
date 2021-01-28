@@ -29,9 +29,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import copy
 import os.path
 from collections.abc import Mapping
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Type, TypeVar, Union
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -41,7 +42,7 @@ from univention.admin.uexceptions import noObject
 
 from udm_rest_client import UdmObject, UDM
 
-from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
+from ..roles import context_type_school, create_ucsschool_role_string, role_exam_user, role_pupil, role_staff, role_student, role_teacher
 from .attributes import (
 	Birthday,
 	Disabled,
@@ -695,3 +696,226 @@ class ExamStudent(Student):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
 		return await cls.from_dn(dn, school, lo)
+
+
+ConcreteUserClass = TypeVar("ConcreteUserClass", Staff, Student, Teacher, TeachersAndStaff)
+
+
+class UserTypeConverter:
+	school_options = (
+		"ucsschoolAdministrator",
+		"ucsschoolExam",
+		"ucsschoolStaff",
+		"ucsschoolStudent",
+		"ucsschoolTeacher",
+	)
+	roles_add = {
+		"staff": (role_staff,),
+		"student": (role_student,),
+		"teacher": (role_teacher,),
+		"teacher_and_staff": (role_staff, role_teacher),
+	}
+	roles_rm = {
+		"staff": (role_student, role_teacher),
+		"student": (role_staff, role_teacher),
+		"teacher": (role_staff, role_student),
+		"teacher_and_staff": (role_student,),
+	}
+
+	@classmethod
+	async def convert(
+		cls,
+		user: ConcreteUserClass,
+		new_cls: Type[ConcreteUserClass],
+		udm: UDM,
+		additional_classes: Dict[str, List[str]] = None,
+	) -> ConcreteUserClass:
+		logger = user.logger
+		if not isinstance(user, User) or user.__class__ is User:
+			raise TypeError(f"Argument 'user' is not an object of a 'User' subclass: {user!r}")
+		if new_cls is User or not issubclass(new_cls, User):
+			raise TypeError(f"Argument 'new_cls' is not a subclass of 'User': {new_cls!r}")
+		elif new_cls is ExamStudent or isinstance(user, ExamStudent):
+			raise TypeError("Type conversion from or to 'ExamStudent' is not allowed.")
+		elif issubclass(new_cls, Student):
+			if additional_classes:
+				school_classes = copy.deepcopy(user.school_classes)
+				for school, classes in additional_classes.items():
+					school_classes.setdefault(school, []).extend(classes)
+			else:
+				school_classes = user.school_classes
+			if not all(school_classes.get(school) for school in user.schools):
+				raise TypeError(
+					"Type conversion to 'Student' requires at least one school class per school in old "
+					"user or passed in additionally."
+				)
+		if issubclass(new_cls, Staff) and additional_classes:
+			logger.warning("Additional school classes will be ignored during conversion to 'Staff'.")
+		new_cls_name = new_cls.__name__
+		if set(user.roles) == set(new_cls.roles):
+			logger.debug("No type conversion necessary, user type is already %r: %r", new_cls_name, user)
+			return user
+		udm_obj = await user.get_udm_object(udm)
+		if issubclass(new_cls, Student) and "ucsschoolAdministrator" in udm_obj.options:
+			raise TypeError(f"Conversion to {new_cls_name!r} is not allowed for school administrator.")
+		logger.info("Converting to %r: %r...", new_cls_name, user)
+		logger.debug("Data before conversion:\n%s", cls._dump_user_data(udm_obj))
+		options = sorted(new_cls.get_default_options())
+		position = new_cls.get_container(user.school)
+		groups = cls._groups(user, udm_obj, new_cls, additional_classes)
+		ucsschool_roles = cls._roles(user, new_cls)
+		logger.info(
+			"The following data will be changed for %r:\n"
+			"  Options: %r\n"
+			"  Position: %r\n"
+			"  Groups: %r\n"
+			"  Ucsschool_roles: %r",
+			user,
+			options,
+			position,
+			groups,
+			ucsschool_roles,
+		)
+		#udm_obj.options = options  # TODO: fix Bug #50974, remove workaround
+		udm_obj.position = position
+		udm_obj.props.groups = groups
+		udm_obj.props.ucsschoolRole = ucsschool_roles
+		logger.warning("Workaround: changing everything except options now...")
+		await udm_obj.save()
+		logger.warning("Workaround: changing only options now...")
+		await cls._change_options(udm_obj, options)
+		new_user: ConcreteUserClass = await new_cls.from_dn(udm_obj.dn, user.school, udm)
+		logger.info("Conversion to %r finished.", new_cls_name)
+		logger.debug("Data after conversion:\n%s", cls._dump_user_data(await new_user.get_udm_object(udm)))
+		return new_user
+
+	@staticmethod
+	def _dump_user_data(udm_user: UdmObject) -> str:
+		return (
+			f"DN: {udm_user.dn!r}:\n"
+			f"  options: {sorted(udm_user.options)!r}\n"
+			f"  schools: {sorted(udm_user.props.school)!r}\n"
+			f"  groups: {sorted(udm_user.props.groups)!r}\n"
+			f"  ucsschool_roles: {sorted(udm_user.props.ucsschoolRole)!r}"
+		)
+
+	@staticmethod
+	def _groups(
+		user: User,
+		udm_obj: UdmObject,
+		new_cls: Type[User],
+		additional_classes: Dict[str, List[str]],
+	) -> List[str]:
+		if issubclass(new_cls, Staff):
+			add_groups = user.get_staff_groups()
+			rm_groups = user.get_students_groups() + user.get_teachers_groups()
+		elif issubclass(new_cls, Student):
+			add_groups = user.get_students_groups()
+			rm_groups = user.get_staff_groups() + user.get_teachers_groups()
+		elif issubclass(new_cls, TeachersAndStaff):
+			add_groups = user.get_staff_groups() + user.get_teachers_groups()
+			rm_groups = user.get_students_groups()
+		else:
+			if not issubclass(new_cls, Teacher):
+				raise RuntimeError(
+					f"Variable 'new_cls' should be [a subclass of] Teacher, but is: {new_cls!r} "
+					f"({type(new_cls)!r})."
+				)
+			add_groups = user.get_teachers_groups()
+			rm_groups = user.get_staff_groups() + user.get_students_groups()
+		# not beautiful, but keeps lower/upper case intact:
+		rm_groups = set(g.lower() for g in rm_groups)
+		if issubclass(new_cls, Staff):
+			# remove school classes
+			school_class_objs = user.get_school_class_objs()
+			rm_groups.update(sc.dn.lower() for sc in school_class_objs)
+		else:
+			# add additional_classes
+			if additional_classes:
+				for school, classes in additional_classes.items():
+					cn = SchoolClass.get_container(school)
+					add_groups.extend(f"cn={school}-{kls},{cn}" for kls in classes)
+		groups = set(
+			grp
+			for grp in udm_obj.props.groups
+			if grp.lower() not in rm_groups
+		)
+		groups_lower = {grp.lower() for grp in groups}
+		groups.update(grp for grp in add_groups if grp.lower() not in groups_lower)
+		return sorted(groups)
+
+	@classmethod
+	def _roles(cls, user: User, new_cls: Type[User]) -> List[str]:
+		if issubclass(new_cls, Staff):
+			_add_roles = cls.roles_add["staff"]
+			_rm_roles = cls.roles_rm["staff"]
+		elif issubclass(new_cls, Student):
+			_add_roles = cls.roles_add["student"]
+			_rm_roles = cls.roles_rm["student"]
+		elif issubclass(new_cls, TeachersAndStaff):
+			_add_roles = cls.roles_add["teacher_and_staff"]
+			_rm_roles = cls.roles_rm["teacher_and_staff"]
+		else:
+			assert issubclass(new_cls, Teacher)
+			_add_roles = cls.roles_add["teacher"]
+			_rm_roles = cls.roles_rm["teacher"]
+		ucsschool_roles = {
+			role
+			for role in user.ucsschool_roles
+			if not any(
+				role.startswith(f"{rm_role}:{context_type_school}:")
+				for rm_role in _rm_roles
+			)
+		}
+		ucsschool_roles.update(
+			create_ucsschool_role_string(role, school)
+			for role in _add_roles
+			for school in user.schools
+		)
+		return sorted(ucsschool_roles)
+
+	@classmethod
+	async def _change_options(cls, udm_obj: UdmObject, options: List[str]):
+		# TODO: fix Bug #50974, remove this function
+		rest_api_options = dict((opt, opt in options) for opt in cls.school_options)
+		await udm_obj._udm_module.session.call_openapi(
+			udm_module_name=udm_obj._udm_module.name,
+			operation="update",
+			dn=udm_obj.dn,
+			api_model_obj={
+				"position": udm_obj.position,
+				"options": rest_api_options,
+			},
+		)
+
+
+async def convert_to_staff(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> Staff:
+	return await UserTypeConverter.convert(user, Staff, udm, additional_classes)
+
+
+async def convert_to_student(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> Student:
+	return await UserTypeConverter.convert(user, Student, udm, additional_classes)
+
+
+async def convert_to_teacher(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> Teacher:
+	return await UserTypeConverter.convert(user, Teacher, udm, additional_classes)
+
+
+async def convert_to_teacher_and_staff(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> TeachersAndStaff:
+	return await UserTypeConverter.convert(user, TeachersAndStaff, udm, additional_classes)
