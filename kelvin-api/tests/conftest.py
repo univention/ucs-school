@@ -271,7 +271,7 @@ def create_random_user_data(url_fragment, new_school_class):
             else:
                 sc_dn, sc_attr = await new_school_class()
                 school_classes = {
-                    "DEMOSCHOOL": ["DEMOSCHOOL-Democlass", sc_attr["name"]]
+                    "DEMOSCHOOL": ["Democlass", sc_attr["name"]]
                 }
         data = dict(
             email=f"{name}mail{fake.pyint()}@{domainname}".lower(),
