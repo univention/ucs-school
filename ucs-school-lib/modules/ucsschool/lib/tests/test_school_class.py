@@ -169,6 +169,9 @@ async def test_modify(new_school_class, new_user, ldap_base, udm_kwargs):
 @pytest.mark.xfail(reason="new_ou() NotImplementedYet")
 @pytest.mark.asyncio
 async def test_move(new_school_class, new_ou, ldap_base, udm_kwargs):
+    # TODO: is moving a group really supported?
+    # and if it is, do we support moving school_classes?
+    # in case it is: just use "DEMOSCHOOL2", like we do in the Kelvin tests
     dn, attr = await new_school_class()
     ou_dn, ou_attr = new_ou()
     new_school = ou_attr["name"]

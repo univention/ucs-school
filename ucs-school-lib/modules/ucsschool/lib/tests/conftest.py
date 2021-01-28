@@ -56,8 +56,8 @@ def udm_kwargs() -> Dict[str, Any]:
 
 @pytest.fixture
 def school_class_attrs(ldap_base):
-    def _func() -> Dict[str, str]:
-        return {
+    def _func(**kwargs) -> Dict[str, str]:
+        res = {
             "name": f"test.{fake.user_name()}",
             "school": "DEMOSCHOOL",
             "description": fake.text(max_nb_chars=50),
@@ -66,6 +66,8 @@ def school_class_attrs(ldap_base):
                 f"uid={fake.user_name()},cn=users,{ldap_base}",
             ],
         }
+        res.update(kwargs)
+        return res
 
     return _func
 
@@ -73,12 +75,10 @@ def school_class_attrs(ldap_base):
 @pytest.fixture
 def users_user_props(ldap_base):
     def _func() -> Dict[str, str]:
-        fn = fake.first_name()
-        ln = fake.last_name()
         return {
-            "firstname": fn,
-            "lastname": ln,
-            "username": f"test.{fn}.{ln}".lower(),
+            "firstname": fake.first_name(),
+            "lastname": fake.last_name(),
+            "username": f"test.{fake.user_name()}".lower()[:15],
             "school": ["DEMOSCHOOL"],
             "birthday": fake.date_of_birth(minimum_age=6, maximum_age=65),
             "mailPrimaryAddress": None,
@@ -96,9 +96,9 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
     created_school_classes = []
     created_school_shares = []
 
-    async def _func() -> Tuple[str, Dict[str, str]]:
+    async def _func(**kwargs) -> Tuple[str, Dict[str, str]]:
         async with UDM(**udm_kwargs) as udm:
-            sc_attrs = school_class_attrs()
+            sc_attrs = school_class_attrs(**kwargs)
             grp_obj = await udm.get("groups/group").new()
             grp_obj.position = (
                 f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
@@ -150,21 +150,21 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
 
 
 @pytest.fixture
-async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
+async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, schedule_delete_user):
     """Create a new user"""
-    created_users = []
 
     async def _func(role) -> Tuple[str, Dict[str, str]]:
         assert role in ("staff", "student", "teacher", "teacher_and_staff")
         user_props = users_user_props()
+        school = user_props["school"][0]
         if role == "teacher_and_staff":
             user_props["ucsschoolRole"] = [
-                create_ucsschool_role_string("teacher", user_props["school"][0]),
-                create_ucsschool_role_string("teacher", user_props["school"][0]),
+                create_ucsschool_role_string("staff", school),
+                create_ucsschool_role_string("teacher", school),
             ]
         else:
             user_props["ucsschoolRole"] = [
-                create_ucsschool_role_string(role, user_props["school"][0])
+                create_ucsschool_role_string(role, school)
             ]
         school_search_base = SchoolSearchBase(user_props["school"])
         options = {
@@ -184,21 +184,33 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class):
             user_obj.options.extend(options)
             user_obj.position = position
             user_obj.props.update(user_props)
+            user_obj.props.primaryGroup = f"cn=Domain Users {school},cn=groups,ou={school},{ldap_base}"
+            user_obj.props.groups.append(user_obj.props.primaryGroup)
             if role != "staff":
                 cls_dn1, _ = await new_school_class()
                 cls_dn2, _ = await new_school_class()
                 user_obj.props.groups.extend([cls_dn1, cls_dn2])
             await user_obj.save()
-            created_users.append(user_obj.dn)
+            schedule_delete_user(user_obj.dn)
             print(f"Created new {role!r}: {user_obj!r}")
 
         return user_obj.dn, user_props
 
     yield _func
 
+
+@pytest.fixture
+async def schedule_delete_user(udm_kwargs):
+    dns = []
+
+    def _func(dn: str):
+        dns.append(dn)
+
+    yield _func
+
     async with UDM(**udm_kwargs) as udm:
         user_mod = udm.get("users/user")
-        for dn in created_users:
+        for dn in dns:
             try:
                 user_obj = await user_mod.get(dn)
             except UdmNoObject:
@@ -271,3 +283,22 @@ async def new_ou(udm_kwargs, ldap_base, ou_attrs):
 
     yield _func
     print(f"Deleted OU 'TODO'.")
+
+
+@pytest.fixture
+async def demoschool2(udm_kwargs, ldap_base) -> Tuple[str, str]:
+    """Check for existence and return (DN, name) of DEMOSCHOOL2"""
+    name = "DEMOSCHOOL2"
+    dn = f"ou={name},{ldap_base}"
+
+    async with UDM(**udm_kwargs) as udm:
+        try:
+            await udm.get("container/ou").get(dn)
+        except UdmNoObject:
+            raise AssertionError(
+                "To run the tests properly you need to have a school named "
+                "DEMOSCHOOL2 at the moment! Execute *on the host*: "
+                "'/usr/share/ucs-school-import/scripts/create_ou DEMOSCHOOL2'"
+            )
+
+    return dn, name
