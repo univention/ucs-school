@@ -35,38 +35,43 @@ Representation of a user read from a file.
 import re
 import datetime
 from collections import defaultdict, namedtuple
+from typing import Any, cast, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union
+
 from ldap.filter import filter_format
 from six import iteritems, string_types
+
 from udm_rest_client import UDM, UdmObject
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
-from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_student, role_teacher
-from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import NoObject, WrongObjectType
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import (
+	ConcreteUserClass, Staff, Student, Teacher, TeachersAndStaff, User, UserTypeConverter
+)
 from ucsschool.lib.models.utils import create_passwd, ucr
-from ..configuration import Configuration
-from ..factory import Factory
+from ucsschool.lib.roles import (
+	create_ucsschool_role_string, role_pupil, role_staff, role_student, role_teacher
+)
+
+from ..configuration import Configuration, ReadOnlyDict
+from ..default_user_import_factory import DefaultUserImportFactory
 from ..exceptions import (
 	BadPassword, EmptyFormatResultError, EmptyMandatoryAttribute, InitialisationError,
 	InvalidBirthday, InvalidClassName, InvalidEmail, InvalidSchoolClasses, InvalidSchools,
-	MissingUid, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsernameAtAll,
-	UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty, UnknownSchoolName, UsernameToLong,
-	UserValidationError
+	MissingUid, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError,
+	NoUsernameAtAll, UDMError, UDMValueError, UniqueIdError, UnknownDisabledSetting, UnknownProperty,
+	UnknownSchoolName, UsernameToLong, UserValidationError
 )
+from ..factory import Factory
+from ..reader.base_reader import BaseReader
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.user_pyhook import UserPyHook
-from ..utils.utils import get_ldap_mapping_for_udm_property
-
-
-from typing import Any, cast, Dict, Iterable, List, Optional, Tuple, Type, Union
-from ..configuration import ReadOnlyDict
-from ..default_user_import_factory import DefaultUserImportFactory
 from ..utils.username_handler import UsernameHandler
-from ..reader.base_reader import BaseReader
+from ..utils.utils import get_ldap_mapping_for_udm_property
 
 
 FunctionSignature = namedtuple('FunctionSignature', ['name', 'args', 'kwargs'])
@@ -1412,3 +1417,63 @@ class ImportTeacher(ImportUser, Teacher):
 
 class ImportTeachersAndStaff(ImportUser, TeachersAndStaff):
 	pass
+
+
+ConcreteImportUserClass = TypeVar(
+	"ConcreteImportUserClass", ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
+)
+
+
+class ImportUserTypeConverter(UserTypeConverter):
+	@classmethod
+	async def convert(
+		cls,
+		user: ConcreteUserClass,
+		new_cls: Type[ConcreteImportUserClass],
+		udm: UDM,
+		additional_classes: Dict[str, List[str]] = None,
+	) -> ConcreteImportUserClass:
+		if not isinstance(user, ImportUser) or user.__class__ is ImportUser:
+			raise TypeError(f"Argument 'user' is not an object of a 'ImportUser' subclass: {user!r}")
+		if new_cls is ImportUser or not issubclass(new_cls, ImportUser):
+			raise TypeError(f"Argument 'new_cls' is not a subclass of 'ImportUser': {new_cls!r}")
+		return await super(ImportUserTypeConverter, cls).convert(user, new_cls, udm, additional_classes)
+
+	@staticmethod
+	def _dump_user_data(udm_user: UdmObject) -> str:
+		res = super(ImportUserTypeConverter, ImportUserTypeConverter)._dump_user_data(udm_user)
+		record_uid = udm_user.props.ucsschoolRecordUID
+		source_uid = udm_user.props.ucsschoolSourceUID
+		return f"{res} record_uid: {record_uid!r} source_uid: {source_uid!r}"
+
+
+async def convert_to_staff(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> ImportStaff:
+	return await ImportUserTypeConverter.convert(user, ImportStaff, udm, additional_classes)
+
+
+async def convert_to_student(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> ImportStudent:
+	return await ImportUserTypeConverter.convert(user, ImportStudent, udm, additional_classes)
+
+
+async def convert_to_teacher(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> ImportTeacher:
+	return await ImportUserTypeConverter.convert(user, ImportTeacher, udm, additional_classes)
+
+
+async def convert_to_teacher_and_staff(
+	user: ConcreteUserClass,
+	udm: UDM,
+	additional_classes: Dict[str, List[str]] = None,
+) -> ImportTeachersAndStaff:
+	return await ImportUserTypeConverter.convert(user, ImportTeachersAndStaff, udm, additional_classes)
