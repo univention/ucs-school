@@ -652,7 +652,7 @@ async def create(
         format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
     - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
     - **disabled**: whether the user should be created deactivated (optional,
-        default if **false**)
+        default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school
         (optional, auto-managed by system, setting and changing discouraged)
     - **udm_properties**: object with UDM properties (optional, e.g.
@@ -779,10 +779,26 @@ async def partial_update(  # noqa: C901
     """
     Patch a school user with partial information
 
-    - **name**: name of the school user
-    - **firstname**: first name of the school user
-    - **lastname**: last name of the school user
-    - **role**: One of either student, staff, teacher, teacher_and_staff
+    - **name**: name of the user
+    - **firstname**: given name of the user
+    - **lastname**: family name of the user
+    - **school**: school (OU) the user belongs to  (URL to **school** resource)
+    - **schools**: list of schools the user belongs to (list of URLs to **school** resources)
+    - **roles**: user type, one of staff, student, teacher or teacher and staff (list of URLs to
+        **role** resources)
+    - **password**: users password, a random one will be generated if unset
+    - **email**: the users email address (**mailPrimaryAddress**)
+    - **record_uid**: identifier unique to the upstream database referenced by **source_uid**
+    - **source_uid**: identifier of the upstream database)
+    - **school_classes**: school classes the user is a member of (format: **{"school1": ["class1",
+        "class2"], "school2": ["class3"]}**)
+    - **birthday**: birthday of user (format: **YYYY-MM-DD**)
+    - **disabled**: whether the user should be created deactivated (default: **false**)
+    - **ucsschool_roles**: list of roles the user has in to each school (auto-managed by system,
+        setting and changing discouraged)
+    - **udm_properties**: object with UDM properties (e.g. **{"street": "Luise Av."}**, must be
+        configured in **kelvin.json** in **mapped_udm_properties**, see documentation)
+    - **kelvin_password_hashes**: Password hashes to be stored unchanged in OpenLDAP
     """
     async for udm_obj in udm.get("users/user").search(
         f"uid={escape_filter_chars(username)}"
@@ -856,11 +872,36 @@ async def complete_update(  # noqa: C901
     """
     Update a school user with all the information:
 
-    - **name**: name of the school user (required)
-    - **firstname**: name of the school user (required)
-    - **lastname**: name of the school user (required)
-    - **school**: school the class belongs to (required)
-    - **role**: One of either student, staff, teacher, teacher_and_staff
+    - **name**: name of the user (**required**)
+    - **firstname**: given name of the user (**required**)
+    - **lastname**: family name of the user (**required**)
+    - **school**: school (OU) the user belongs to (**required unless
+        schools is set**, URL of a **school** resource)
+    - **schools**: list of schools the user belongs to (**required unless
+        school is set**, list of URLs to **school** resources)
+    - **roles**: user type, one of staff, student, teacher or teacher and staff
+        (**required**, list of URLs to **role** resources)
+    - **password**: users password, a random one will be generated if unset
+        (optional)
+    - **email**: the users email address (**mailPrimaryAddress**), used only
+        when the email domain is hosted on UCS, not to be confused with the
+        contact property **e-mail** (optional)
+    - **record_uid**: identifier unique to the upstream database referenced by
+        **source_uid** (**required**, used by the UCS@school import)
+    - **source_uid**: identifier of the upstream database (optional, will be
+        **Kelvin** if unset, used by the UCS@school import)
+    - **school_classes**: school classes the user is a member of (optional,
+        format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
+    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
+    - **disabled**: whether the user should be created deactivated (optional,
+        default: **false**)
+    - **ucsschool_roles**: list of roles the user has in to each school
+        (optional, auto-managed by system, setting and changing discouraged)
+    - **udm_properties**: object with UDM properties (optional, e.g.
+        **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
+        **mapped_udm_properties**, see documentation)
+    - **kelvin_password_hashes**: Password hashes to be stored unchanged in
+        OpenLDAP (optional)
     """
     async for udm_obj in udm.get("users/user").search(
         f"uid={escape_filter_chars(username)}"
