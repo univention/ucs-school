@@ -44,13 +44,19 @@ from ucsschool.lib.models import School, User
 from ucsschool.lib.models.base import WrongObjectType
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
+    role_dc_slave_admin,
+    role_dc_slave_edu,
     role_exam_user,
+    role_memberserver_admin,
+    role_memberserver_edu,
     role_school_admin,
     role_school_class,
     role_school_class_share,
     role_staff,
     role_student,
     role_teacher,
+    role_workgroup,
+    role_workgroup_share,
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import ConfigRegistry
@@ -64,21 +70,21 @@ class UserCheck(object):
         ldap_base = ucr.get("ldap/base")
         self.lo = getAdminConnection()
 
-        container_admins = ucr.get("ucsschool/ldap/default/containers/admins", "admins")
-        container_teachers = ucr.get("ucsschool/ldap/default/containers/teachers", "lehrer")
-        container_staff = ucr.get("ucsschool/ldap/default/containers/staff", "mitarbeiter")
-        container_students = ucr.get("ucsschool/ldap/default/containers/pupils", "schueler")
+        admins_prefix = ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
+        teachers_prefix = ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
+        staff_prefix = ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
+        students_prefix = ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
 
         self.teachers_regex = re.compile(
-            r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_teachers, ldap_base),
+            r"cn={}(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(teachers_prefix, ldap_base),
             flags=re.IGNORECASE,
         )
         self.staff_regex = re.compile(
-            r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_staff, ldap_base),
+            r"cn={}(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(staff_prefix, ldap_base),
             flags=re.IGNORECASE,
         )
         self.students_regex = re.compile(
-            r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_students, ldap_base),
+            r"cn={}(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(students_prefix, ldap_base),
             flags=re.IGNORECASE,
         )
 
@@ -96,20 +102,20 @@ class UserCheck(object):
         self.staff_ou = {}
         self.admins_ou = {}
 
-        all_schools = [ou.name for ou in School.get_all(self.lo)]
-        for ou in all_schools:
+        self.all_schools = [ou.name for ou in School.get_all(self.lo)]
+        for ou in self.all_schools:
             self.domain_users_ou[ou] = "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base)
-            self.students_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
-                container_students, ou.lower(), ldap_base, ou
+            self.students_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
+                students_prefix, ou.lower(), ldap_base, ou
             )
-            self.teachers_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
-                container_teachers, ou.lower(), ldap_base, ou
+            self.teachers_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
+                teachers_prefix, ou.lower(), ldap_base, ou
             )
-            self.staff_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
-                container_staff, ou.lower(), ldap_base, ou
+            self.staff_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
+                staff_prefix, ou.lower(), ldap_base, ou
             )
-            self.admins_ou[ou] = "cn={0}-{1},cn=groups,ou={3},{2}".format(
-                container_admins, ou.lower(), ldap_base, ou
+            self.admins_ou[ou] = "cn={0}{1},cn=ouadmins,cn=groups,{2}".format(
+                admins_prefix, ou.lower(), ldap_base
             )
 
     def check_allowed_membership(self, group_dn, students=False, teachers=False, staff=False):
@@ -202,6 +208,16 @@ class UserCheck(object):
         # check appropriate group memberships
         users_group_dns = self.lo.searchDn(filter="uniqueMember={}".format(dn))
 
+        # further checks require all of user_obj.schools to exist
+        for school in user_obj.schools:
+            if school not in self.all_schools:
+                issues.append(
+                    "User is member of school {}, which does not exist anymore. "
+                    "Further tests on this user cannot be performed.".format(school)
+                )
+                # abort further user checks here
+                return issues
+
         for school in user_obj.schools:
             if self.domain_users_ou[school] not in users_group_dns:
                 issues.append("Not member of group {}".format(self.domain_users_ou[school]))
@@ -248,8 +264,11 @@ class UserCheck(object):
             for group_dn in users_group_dns:
                 issues += self.check_allowed_membership(group_dn, staff=True)
 
-        # Check if user is in a class group.
-        # If so, the user should also be member of the corresponding school
+        # Check if student is in a class group.
+        if not user_obj.school_classes and user_obj.is_student(self.lo):
+            issues.append("Is not a member of any school class.")
+
+        # Users should also be member of the corresponding school
         for ou in user_obj.school_classes:
             if ou not in attrs["ucsschoolSchool"]:
                 issues.append(
@@ -370,16 +389,18 @@ def check_shares(school=None):
         all_schools = [ou.name for ou in School.get_all(lo)]
         school_filter = "*"
 
-    for ou in all_schools:
-        search_base = SchoolSearchBase([ou])
-        marktplatz_share = "cn=Marktplatz,cn=shares,{}".format(search_base.schoolDN)
-        try:
-            lo.search(base=marktplatz_share)
-        except NO_SUCH_OBJECT:
-            problematic_objects.setdefault(marktplatz_share, []).append(
-                "The 'Marktplatz' share of school %r does not exist." % (ou,)
-            )
+    if ucr.is_true("ucsschool/import/generate/marktplatz", True):
+        for ou in all_schools:
+            search_base = SchoolSearchBase([ou])
+            marktplatz_share = "cn=Marktplatz,cn=shares,{}".format(search_base.schoolDN)
+            try:
+                lo.search(base=marktplatz_share)
+            except NO_SUCH_OBJECT:
+                problematic_objects.setdefault(marktplatz_share, []).append(
+                    "The 'Marktplatz' share of school %r does not exist." % (ou,)
+                )
 
+    # check if there is a school class for each class share
     classes = []
     role_classes_string = create_ucsschool_role_string(role_school_class, school_filter)
     for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_classes_string)):
@@ -391,6 +412,86 @@ def check_shares(school=None):
         if attrs["cn"] not in classes:
             problematic_objects.setdefault(dn, []).append(
                 "Corresponding class {} is missing.".format(attrs["cn"][0])
+            )
+
+    # check if there is a work group for each work group share
+    work_groups = []
+    role_workgroup_string = create_ucsschool_role_string(role_workgroup, school_filter)
+    for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_workgroup_string)):
+        work_groups.append(attrs["cn"])
+
+    role_workgroup_share_string = create_ucsschool_role_string(role_workgroup_share, school_filter)
+    wg_share = lo.search(filter="(ucsschoolRole={})".format(role_workgroup_share_string))
+    for dn, attrs in wg_share:
+        if attrs["cn"] not in work_groups:
+            problematic_objects.setdefault(dn, []).append(
+                "Corresponding work group {} is missing.".format(attrs["cn"][0])
+            )
+
+    return problematic_objects
+
+
+def server_in_group_errors(lo, role, members, group_dn):
+    problematic_objects = {}
+    for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role)):
+        if dn not in members:
+            problematic_objects.setdefault(dn, []).append("is not a member of group {}".format(group_dn))
+    return problematic_objects
+
+
+def check_server_group_membership(school=None):
+    ucr = ConfigRegistry()
+    ucr.load()
+    ldap_base = ucr.get("ldap/base")
+    problematic_objects = {}
+
+    lo = getAdminConnection()
+
+    if school:
+        all_schools = [school]
+    else:
+        all_schools = [ou.name for ou in School.get_all(lo)]
+
+    dn_dc_edu_global = "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ldap_base)
+    dn_dc_admin_global = "cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(ldap_base)
+    dn_member_edu_global = "cn=Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ldap_base)
+    dn_member_admin_global = "cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(ldap_base)
+    global_groups = [dn_dc_edu_global, dn_dc_admin_global, dn_member_edu_global, dn_member_admin_global]
+
+    members = {}
+    for dn in global_groups:
+        try:
+            members[dn] = lo.search(base=dn)[0][1]["uniqueMember"]
+        except KeyError:
+            members[dn] = ""
+            continue
+
+    for ou in all_schools:
+        dn_dc_edu = "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
+        dn_dc_admin = "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
+        dn_member_edu = "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
+        dn_member_admin = "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+            ou, ldap_base
+        )
+        role_dc_edu_str = create_ucsschool_role_string(role_dc_slave_edu, ou)
+        role_dc_admin_str = create_ucsschool_role_string(role_dc_slave_admin, ou)
+        role_member_edu_str = create_ucsschool_role_string(role_memberserver_edu, ou)
+        role_member_admin_str = create_ucsschool_role_string(role_memberserver_admin, ou)
+        checks = [
+            (role_dc_edu_str, dn_dc_edu, dn_dc_edu_global),
+            (role_dc_admin_str, dn_dc_admin, dn_dc_admin_global),
+            (role_member_edu_str, dn_member_edu, dn_member_edu_global),
+            (role_member_admin_str, dn_member_admin, dn_member_admin_global),
+        ]
+
+        for role, group_dn, global_group in checks:
+            try:
+                members[group_dn] = lo.search(base=group_dn)[0][1]["uniqueMember"]
+            except KeyError:
+                members[group_dn] = ""
+            problematic_objects.update(server_in_group_errors(lo, role, members[group_dn], group_dn))
+            problematic_objects.update(
+                server_in_group_errors(lo, role, members[global_group], global_group)
             )
 
     return problematic_objects
@@ -439,6 +540,7 @@ def main():
     group_problematic_objects = check_groups(school)
     container_problematic_objects = check_containers(school)
     share_problematic_objects = check_shares(school)
+    server_group_problematic_objects = check_server_group_membership(school)
 
     print_problematic_objects(user_problematic_objects, "The following USER PROBLEMS were found:")
     print_problematic_objects(group_problematic_objects, "The following GROUP PROBLEMS were found:")
@@ -446,6 +548,9 @@ def main():
         container_problematic_objects, "The following CONTAINER PROBLEMS were found:"
     )
     print_problematic_objects(share_problematic_objects, "The following SHARE PROBLEMS were found:")
+    print_problematic_objects(
+        server_group_problematic_objects, "The following SERVER GROUP PROBLEMS were found:"
+    )
 
 
 if __name__ == "__main__":
