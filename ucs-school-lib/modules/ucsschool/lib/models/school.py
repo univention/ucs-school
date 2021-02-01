@@ -211,8 +211,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			self.logger.error('Could not load OU admin group %r for adding "school" value', group.dn)
 		else:
 			admin_option = 'ucsschoolAdministratorGroup'
-			if admin_option not in udm_obj.options:
-				udm_obj.options.append(admin_option)
+			if udm_obj.options.get(admin_option) is not True:
+				udm_obj.options[admin_option] = True
 			udm_obj['school'] = [self.name]
 			udm_obj.modify()
 
@@ -472,7 +472,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		return {self.name}
 
 	async def _alter_udm_obj(self, udm_obj):
-		udm_obj.options.append('UCSschool-School-OU')
+		udm_obj.options['UCSschool-School-OU'] = True
 		return await super(School, self)._alter_udm_obj(udm_obj)
 
 	@classmethod

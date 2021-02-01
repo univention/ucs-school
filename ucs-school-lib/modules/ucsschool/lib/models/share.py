@@ -70,7 +70,7 @@ class Share(UCSSchoolHelperAbstractClass):
 		udm_obj.props.directorymode = '0770'
 		if ucr.is_false('ucsschool/default/share/nfs', True):
 			try:
-				udm_obj.options.remove('nfs')  # deactivate NFS
+				udm_obj.options['nfs'] = False  # deactivate NFS
 			except ValueError:
 				pass
 		self.logger.info('Creating share on "%s"', udm_obj.props.host)
