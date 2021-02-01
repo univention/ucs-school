@@ -3,7 +3,7 @@
 #
 # UCS@school python lib: models
 #
-# Copyright 2014-2020 Univention GmbH
+# Copyright 2014-2021 Univention GmbH
 #
 # http://www.univention.de/
 #

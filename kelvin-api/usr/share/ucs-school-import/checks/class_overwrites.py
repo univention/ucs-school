@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # UCS@school Kelvin REST API
-# Copyright 2020 Univention GmbH
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
