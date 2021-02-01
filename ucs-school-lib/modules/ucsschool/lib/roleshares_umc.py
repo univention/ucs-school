@@ -75,7 +75,7 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		share_container = udm_uldap.position(share_container_dn)
 		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
 		udm_obj.open()
-		udm_obj.options = ['samba']
+		udm_obj.options['samba'] = True
 		udm_obj['name'] = roleshare_name(role, school_ou, ucr)
 		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
 		udm_obj['host'] = serverfqdn
