@@ -232,7 +232,7 @@ async def test_format_pyhook(
     url_fragment,
     udm_kwargs,
     create_random_user_data,
-    schedule_delete_user,
+    schedule_delete_user_name,
     create_format_pyhook,
     role: Role,
 ):
@@ -255,7 +255,7 @@ async def test_format_pyhook(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user(r_user.name)
+    schedule_delete_user_name(r_user.name)
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -278,7 +278,7 @@ async def test_user_pyhook(
     url_fragment,
     udm_kwargs,
     create_random_user_data,
-    schedule_delete_user,
+    schedule_delete_user_name,
     create_user_pyhook,
     schedule_delete_file,
     role: Role,
@@ -303,7 +303,7 @@ async def test_user_pyhook(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user(r_user.name)
+    schedule_delete_user_name(r_user.name)
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},

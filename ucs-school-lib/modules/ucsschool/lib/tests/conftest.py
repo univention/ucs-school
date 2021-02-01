@@ -7,7 +7,9 @@ import pytest
 from faker import Faker
 
 import ucsschool.lib.models.user
-from ucsschool.lib.roles import create_ucsschool_role_string
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string, role_school_class, role_school_class_share, role_staff, role_teacher
+)
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
 from univention.config_registry import ConfigRegistry
@@ -65,6 +67,7 @@ def school_class_attrs(ldap_base):
                 f"uid={fake.user_name()},cn=users,{ldap_base}",
                 f"uid={fake.user_name()},cn=users,{ldap_base}",
             ],
+            "ucsschool_roles": [create_ucsschool_role_string(role_school_class, "DEMOSCHOOL")]
         }
         res.update(kwargs)
         return res
@@ -106,6 +109,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             grp_obj.props.name = f"{sc_attrs['school']}-{sc_attrs['name']}"
             grp_obj.props.description = sc_attrs["description"]
             grp_obj.props.users = sc_attrs["users"]
+            grp_obj.props.ucsschoolRole = sc_attrs["ucsschool_roles"]
             await grp_obj.save()
             created_school_classes.append(grp_obj.dn)
             print("Created new SchoolClass: {!r}".format(grp_obj))
@@ -120,6 +124,9 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             share_obj.props.group = 0
             share_obj.props.path = f"/home/tmp/{grp_obj.props.name}"
             share_obj.props.directorymode = "0770"
+            grp_obj.props.ucsschoolRole = [
+                create_ucsschool_role_string(role_school_class_share, sc_attrs["school"]),
+            ]
             await share_obj.save()
             created_school_shares.append(share_obj.dn)
             print("Created new ClassShare: {!r}".format(share_obj))
@@ -137,7 +144,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
                 print(f"SchoolClass {dn!r} does not exist (anymore).")
                 continue
             await grp_obj.delete()
-            print(f"Deleted SchoolClass {dn!r}.")
+            print(f"Deleted SchoolClass {dn!r} through UDM.")
         share_mod = udm.get("shares/share")
         for dn in created_school_shares:
             try:
@@ -146,11 +153,11 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
                 print(f"ClassShare {dn!r} does not exist (anymore).")
                 continue
             await share_obj.delete()
-            print(f"Deleted ClassShare {dn!r}.")
+            print(f"Deleted ClassShare {dn!r} through UDM.")
 
 
 @pytest.fixture
-async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, schedule_delete_user):
+async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, schedule_delete_user_dn):
     """Create a new user"""
 
     async def _func(role) -> Tuple[str, Dict[str, str]]:
@@ -159,8 +166,8 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, sc
         school = user_props["school"][0]
         if role == "teacher_and_staff":
             user_props["ucsschoolRole"] = [
-                create_ucsschool_role_string("staff", school),
-                create_ucsschool_role_string("teacher", school),
+                create_ucsschool_role_string(role_staff, school),
+                create_ucsschool_role_string(role_teacher, school),
             ]
         else:
             user_props["ucsschoolRole"] = [
@@ -191,7 +198,7 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, sc
                 cls_dn2, _ = await new_school_class()
                 user_obj.props.groups.extend([cls_dn1, cls_dn2])
             await user_obj.save()
-            schedule_delete_user(user_obj.dn)
+            schedule_delete_user_dn(user_obj.dn)
             print(f"Created new {role!r}: {user_obj!r}")
 
         return user_obj.dn, user_props
@@ -200,7 +207,7 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, sc
 
 
 @pytest.fixture
-async def schedule_delete_user(udm_kwargs):
+async def schedule_delete_user_dn(udm_kwargs):
     dns = []
 
     def _func(dn: str):
@@ -217,7 +224,7 @@ async def schedule_delete_user(udm_kwargs):
                 print(f"User {dn!r} does not exist (anymore).")
                 continue
             await user_obj.delete()
-            print(f"Deleted user {dn!r}.")
+            print(f"Deleted user {dn!r} through UDM.")
 
 
 @pytest.fixture

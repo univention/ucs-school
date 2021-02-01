@@ -431,7 +431,16 @@ async def test_get(
             f"{url_fragment}/users/{user.name}", headers=auth_header
         )
         assert response.status_code == 200, response.reason
-        api_user = UserModel(**response.json())
+        json_resp = response.json()
+        assert all(
+            attr in json_resp
+            for attr in (
+                "birthday", "disabled", "dn", "email", "firstname", "lastname", "name", "record_uid",
+                "roles", "schools", "school_classes", "source_uid", "ucsschool_roles", "udm_properties",
+                "url"
+            )
+        )
+        api_user = UserModel(**json_resp)
         for k, v in create_kwargs["udm_properties"].items():
             if isinstance(v, (tuple, list)):
                 assert set(api_user.udm_properties.get(k, [])) == set(v)
@@ -472,7 +481,7 @@ async def test_create(
     random_name,
     import_config,
     udm_kwargs,
-    schedule_delete_user,
+    schedule_delete_user_name,
     role: Role,
 ):
     if role.name == "teacher_and_staff":
@@ -491,7 +500,7 @@ async def test_create(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user(r_user.name)
+    schedule_delete_user_name(r_user.name)
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -530,7 +539,7 @@ async def test_create_without_username(
     reset_import_config,
     udm_kwargs,
     add_to_import_config,
-    schedule_delete_user,
+    schedule_delete_user_name,
     role: Role,
 ):
     if role.name == "teacher_and_staff":
@@ -546,7 +555,7 @@ async def test_create_without_username(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
     assert len(lib_users) == 0
-    schedule_delete_user(expected_name)
+    schedule_delete_user_name(expected_name)
     print(f"POST data={data!r}")
     response = requests.post(
         f"{url_fragment}/users/",
@@ -581,7 +590,7 @@ async def test_create_minimal_attrs(
     reset_import_config,
     udm_kwargs,
     add_to_import_config,
-    schedule_delete_user,
+    schedule_delete_user_name,
     role: Role,
     no_school_s: str,
 ):
@@ -608,7 +617,7 @@ async def test_create_minimal_attrs(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
     assert len(lib_users) == 0
-    schedule_delete_user(expected_name)
+    schedule_delete_user_name(expected_name)
     print(f"POST data={data!r}")
     response = requests.post(
         f"{url_fragment}/users/",
@@ -638,7 +647,7 @@ async def test_create_requires_school_or_schools(
     reset_import_config,
     udm_kwargs,
     add_to_import_config,
-    schedule_delete_user,
+    schedule_delete_user_name,
     role: Role,
     no_school_s: str,
 ):
@@ -655,7 +664,7 @@ async def test_create_requires_school_or_schools(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={expected_name}")
     assert len(lib_users) == 0
-    schedule_delete_user(expected_name)
+    schedule_delete_user_name(expected_name)
     print(f"POST data={data!r}")
     response = requests.post(
         f"{url_fragment}/users/",
@@ -678,7 +687,7 @@ async def test_create_with_password_hashes(
     random_name,
     import_config,
     udm_kwargs,
-    schedule_delete_user,
+    schedule_delete_user_name,
     password_hash,
 ):
     role = random.choice(USER_ROLES)
@@ -699,7 +708,7 @@ async def test_create_with_password_hashes(
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user(r_user.name)
+    schedule_delete_user_name(r_user.name)
     response = requests.post(
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
@@ -934,7 +943,7 @@ async def test_role_change(
     create_random_users,
     import_config,
     udm_kwargs,
-    schedule_delete_user,
+    schedule_delete_user_name,
     new_school_class,
     random_name,
     roles: Tuple[Role, Role],
@@ -957,7 +966,7 @@ async def test_role_change(
     else:
         roles_ulrs = [f"{url_fragment}/roles/{role_to.name}"]
     user_url = f"{url_fragment}/users/{user.name}"
-    schedule_delete_user(user.name)
+    schedule_delete_user_name(user.name)
     if role_to.name == "student":
         # For conversion to Student it one class per school is required, and Teacher has only the one
         # for DEMOSCHOOL.
@@ -1012,7 +1021,7 @@ async def test_role_change_fails_for_student_without_school_class(
     create_random_users,
     import_config,
     udm_kwargs,
-    schedule_delete_user,
+    schedule_delete_user_name,
     method: str,
 ):
     user = (await create_random_users({"staff": 1}))[0]  # staff has no school classes
@@ -1021,7 +1030,7 @@ async def test_role_change_fails_for_student_without_school_class(
         assert len(lib_users) == 1
     roles_ulrs = [f"{url_fragment}/roles/student"]
     user_url = f"{url_fragment}/users/{user.name}"
-    schedule_delete_user(user.name)
+    schedule_delete_user_name(user.name)
     if method == "patch":
         patch_data = {"roles": roles_ulrs}
         response = requests.patch(
@@ -1056,7 +1065,7 @@ async def test_role_change_fails_for_student_missing_school_class_for_second_sch
     create_random_users,
     import_config,
     udm_kwargs,
-    schedule_delete_user,
+    schedule_delete_user_name,
     method: str,
 ):
     user = (await create_random_users(
@@ -1071,7 +1080,7 @@ async def test_role_change_fails_for_student_missing_school_class_for_second_sch
         assert not lib_users[0].school_classes.get("DEMOSCHOOL2")
     roles_ulrs = [f"{url_fragment}/roles/student"]
     user_url = f"{url_fragment}/users/{user.name}"
-    schedule_delete_user(user.name)
+    schedule_delete_user_name(user.name)
     if method == "patch":
         patch_data = {"roles": roles_ulrs}
         response = requests.patch(
@@ -1139,12 +1148,12 @@ async def test_rename(
     udm_kwargs,
     role: Role,
     method: str,
-    schedule_delete_user,
+    schedule_delete_user_name,
 ):
     if method == "patch":
         user = (await create_random_users({role.name: 1}))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
-        schedule_delete_user(new_name)
+        schedule_delete_user_name(new_name)
         response = requests.patch(
             f"{url_fragment}/users/{user.name}",
             headers=auth_header,

@@ -104,7 +104,7 @@ async def test_from_udm_obj(new_user, udm_kwargs, role: Role):
         for kls in (role.klass, User):
             udm_mod = udm.get(kls._meta.udm_module)
             udm_obj = await udm_mod.get(dn)
-            user = await kls.from_udm_obj(udm_obj, attr["school"], udm)
+            user = await kls.from_udm_obj(udm_obj, attr["school"][0], udm)
             assert isinstance(user, role.klass)
             compare_attr_and_lib_user(attr, user)
 
@@ -135,7 +135,7 @@ async def test_get_class_for_udm_obj(new_user, role2class, udm_kwargs, role: Rol
     dn, attr = await new_user(role.name)
     async with UDM(**udm_kwargs) as udm:
         udm_obj = await udm.get(User._meta.udm_module).get(dn)
-        klass = await User.get_class_for_udm_obj(udm_obj, attr["school"])
+        klass = await User.get_class_for_udm_obj(udm_obj, attr["school"][0])
         assert klass is role.klass
 
 
@@ -171,7 +171,7 @@ async def test_create(new_school_class, users_user_props, udm_kwargs, role: Role
 async def test_modify(new_user, udm_kwargs, role: Role):
     dn, attr = await new_user(role.name)
     async with UDM(**udm_kwargs) as udm:
-        user = await role.klass.from_dn(dn, attr["school"], udm)
+        user = await role.klass.from_dn(dn, attr["school"][0], udm)
         description = fake.text(max_nb_chars=50)
         user.description = description
         firstname = fake.first_name()
@@ -184,7 +184,7 @@ async def test_modify(new_user, udm_kwargs, role: Role):
         user.birthday = birthday
         success = await user.modify(udm)
         assert success is True
-        user = await role.klass.from_dn(dn, attr["school"], udm)
+        user = await role.klass.from_dn(dn, attr["school"][0], udm)
     attr["firstname"] = firstname
     attr["lastname"] = lastname
     attr["birthday"] = birthday
@@ -193,7 +193,7 @@ async def test_modify(new_user, udm_kwargs, role: Role):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
-async def test_modify_role(ldap_base, new_school_class, new_user, udm_kwargs, roles: Tuple[Role, Role], schedule_delete_user, demoschool2):
+async def test_modify_role(ldap_base, new_school_class, new_user, udm_kwargs, roles: Tuple[Role, Role], schedule_delete_user_dn, demoschool2):
     role_from, role_to = roles
     dn, attr = await new_user(role_from.name)
     async with UDM(**udm_kwargs) as udm:
@@ -222,7 +222,7 @@ async def test_modify_role(ldap_base, new_school_class, new_user, udm_kwargs, ro
         non_school_role = f"{fake.first_name()}:{fake.last_name()}:{fake.user_name()}"
         use_old_udm.props.ucsschoolRole.extend([role_demo2, non_school_role])
         await use_old_udm.save()
-        user_old = await role_from.klass.from_dn(dn, attr["school"], udm)
+        user_old = await role_from.klass.from_dn(dn, attr["school"][0], udm)
         assert isinstance(user_old, role_from.klass)
         # check 'addition_class' functionality
         addition_class = {cls_attr2["school"]: [cls_attr2["name"]]}
@@ -240,7 +240,7 @@ async def test_modify_role(ldap_base, new_school_class, new_user, udm_kwargs, ro
         else:
             assert issubclass(role_to.klass, Teacher)
             user_new = await convert_to_teacher(user_old, udm, addition_class)
-        schedule_delete_user(user_new.dn)
+        schedule_delete_user_dn(user_new.dn)
 
         if role_from.klass == role_to.klass:
             assert user_old is user_new
@@ -323,23 +323,22 @@ async def test_modify_role(ldap_base, new_school_class, new_user, udm_kwargs, ro
 
 
 @pytest.mark.asyncio
-async def test_modify_role_forbidden(ldap_base, new_school_class, users_user_props, new_user, udm_kwargs, schedule_delete_user, demoschool2):
+async def test_modify_role_forbidden(ldap_base, new_school_class, users_user_props, new_user, udm_kwargs, schedule_delete_user_dn, demoschool2):
     # illegal source objects
     cls_dn, cls_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc_obj = await SchoolClass.from_dn(cls_dn, cls_attr["school"], udm)
         with pytest.raises(TypeError, match=r"is not an object of a 'User' subclass"):
             new_user_obj = await convert_to_staff(sc_obj, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
         dn, attr = await new_user("teacher")
-        user_obj = await Teacher.from_dn(dn, attr["school"], udm)
+        user_obj = await Teacher.from_dn(dn, attr["school"][0], udm)
         user_udm = await user_obj.get_udm_object(udm)
         user_udm.options["ucsschoolAdministrator"] = True
-        user_udm.save()
         with pytest.raises(TypeError, match=r"not allowed for school administrator"):
             new_user_obj = await convert_to_student(user_obj, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
     user_props = users_user_props()
     user_props["name"] = user_props.pop("username")
@@ -350,46 +349,45 @@ async def test_modify_role_forbidden(ldap_base, new_school_class, users_user_pro
     user_obj = User(**user_props)
     with pytest.raises(TypeError, match=r"is not an object of a 'User' subclass"):
         new_user_obj = await convert_to_staff(user_obj, udm)
-        schedule_delete_user(new_user_obj.dn)
+        schedule_delete_user_dn(new_user_obj.dn)
 
     user_obj = ExamStudent(**user_props)
     with pytest.raises(TypeError, match=r"from or to 'ExamStudent' is not allowed"):
         new_user_obj = await convert_to_teacher(user_obj, udm)
-        schedule_delete_user(new_user_obj.dn)
+        schedule_delete_user_dn(new_user_obj.dn)
 
     # illegal convert target
     dn, attr = await new_user("student")
     async with UDM(**udm_kwargs) as udm:
-        user_obj = await Student.from_dn(dn, attr["school"], udm)
+        user_obj = await Student.from_dn(dn, attr["school"][0], udm)
 
         with pytest.raises(TypeError, match=r"is not a subclass of 'User'"):
             new_user_obj = await UserTypeConverter.convert(user_obj, User, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
         with pytest.raises(TypeError, match=r"from or to 'ExamStudent' is not allowed"):
             new_user_obj = await UserTypeConverter.convert(user_obj, ExamStudent, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
         with pytest.raises(TypeError, match=r"is not a subclass of 'User'"):
             new_user_obj = await UserTypeConverter.convert(user_obj, SchoolClass, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
         # no school_class for student target
         dn, attr = await new_user("staff")
-        user_obj = await Staff.from_dn(dn, attr["school"], udm)
+        user_obj = await Staff.from_dn(dn, attr["school"][0], udm)
         with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             new_user_obj = await UserTypeConverter.convert(user_obj, Student, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
         # not enough school_classes for student target
         demoschool2_dn, demoschool2_name = demoschool2
         dn, attr = await new_user("teacher")
-        user_obj = await Teacher.from_dn(dn, attr["school"], udm)
+        user_obj = await Teacher.from_dn(dn, attr["school"][0], udm)
         user_obj.schools.append(demoschool2_name)
-        user_obj.modify(udm)
         with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             new_user_obj = await UserTypeConverter.convert(user_obj, Student, udm)
-            schedule_delete_user(new_user_obj.dn)
+            schedule_delete_user_dn(new_user_obj.dn)
 
 
 @pytest.mark.xfail(reason="new_ou() NotImplementedYet")
