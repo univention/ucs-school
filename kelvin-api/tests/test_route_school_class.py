@@ -146,7 +146,8 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
         f"{sc1_attr['school']}-{data['name']}": SchoolClassModel(**data)
         for data in json_resp
     }
-    assert set(api_classes.keys()) == set(c.name for c in lib_classes)
+    assert sc1_dn in [ac.dn for ac in api_classes.values()]
+    assert sc2_dn in [ac.dn for ac in api_classes.values()]
     for lib_obj in lib_classes:
         api_obj = api_classes[lib_obj.name]
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
@@ -169,6 +170,10 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
     )
     json_resp = response.json()
     assert response.status_code == 200
+    assert all(
+        attr in json_resp
+        for attr in ("description", "dn", "name", "ucsschool_roles", "url", "users")
+    )
     api_obj = SchoolClassModel(**json_resp)
     await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
     compare_ldap_json_obj(json_resp["dn"], json_resp, url_fragment)
