@@ -846,7 +846,7 @@ async def partial_update(  # noqa: C901
 
 
 @router.put("/{username}", status_code=HTTP_200_OK, response_model=UserModel)
-async def complete_update(
+async def complete_update(  # noqa: C901
     username: str,
     user: UserCreateModel,
     request: Request,

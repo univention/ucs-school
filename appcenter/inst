@@ -61,6 +61,8 @@ main () {
         touch "$TOKEN_SIGN_SECRET_FILE"
         chown root:root "$TOKEN_SIGN_SECRET_FILE"
         chmod 640 "$TOKEN_SIGN_SECRET_FILE"
+        # prevent "unable to write 'random state'" because $HOME is not set
+        export RANDFILE=/.rnd
         openssl rand -hex 32 > "$TOKEN_SIGN_SECRET_FILE" || die
     else
         echo "Using existing token key."

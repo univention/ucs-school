@@ -29,7 +29,7 @@
 
 
 #
-# Install: pip3 install -e .
+# Install: python3 -m pip install -e .
 #
 
 import os

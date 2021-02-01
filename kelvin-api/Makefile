@@ -31,7 +31,7 @@ PY_PATHS := setup.py $(PY_MODULES)
 PY_FILES := $(shell find $(PY_PATHS) -name '*.py')
 
 help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
@@ -68,12 +68,12 @@ lint-flake8:
 	flake8 --max-line-length=105 --ignore=W503 $(PY_PATHS)
 
 lint-coverage: .coverage
-	coverage report --show-missing --fail-under=33
+	coverage report --show-missing --fail-under=30
 
 lint: lint-isort lint-black lint-flake8 lint-coverage ## check source code style
 
 test: ## run tests (with the current active Python interpreter)
-	python -m pytest -l -v
+	python3 -m pytest -l -v
 
 .coverage: $(PY_FILES)
 	coverage run --source tests,ucsschool -m pytest
@@ -86,12 +86,12 @@ coverage-html: coverage ## check code coverage, create HTML report and show in b
 	$(BROWSER) htmlcov/index.html
 
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python3 setup.py sdist
+	python3 setup.py bdist_wheel
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
-	pip3 install -e .
+	python3 -m pip install -e .
 
 build-docker-image: clean ## build docker image
 	(cd ../docker && ./build_docker_image)
