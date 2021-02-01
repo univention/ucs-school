@@ -299,7 +299,7 @@ def create_random_user_data(url_fragment, new_school_class):
 
 @pytest.fixture
 def create_random_users(
-    create_random_user_data, url_fragment, auth_header, schedule_delete_user
+    create_random_user_data, url_fragment, auth_header, schedule_delete_user_name
 ):  # TODO: Extend with schools and school_classes if resources are done
     async def _create_random_users(
         roles: Dict[str, int], **data_kwargs
@@ -328,14 +328,14 @@ def create_random_users(
                     f"with {user_data.dict()!r}."
                 )
                 users.append(user_data)
-                schedule_delete_user(user_data.name)
+                schedule_delete_user_name(user_data.name)
         return users
 
     return _create_random_users
 
 
 @pytest.fixture
-def schedule_delete_user(auth_header, url_fragment):
+def schedule_delete_user_name(auth_header, url_fragment):
     usernames = []
 
     def _func(username: str):
@@ -348,6 +348,10 @@ def schedule_delete_user(auth_header, url_fragment):
             f"{url_fragment}/users/{username}", headers=auth_header
         )
         assert response.status_code in (204, 404)
+        if response.status_code == 204:
+            print(f"Deleted user {username!r} through Kelvin API.")
+        else:
+            print(f"User {username!r} does not exist (anymore)")
 
 
 @pytest.fixture
@@ -401,7 +405,7 @@ async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
                 print(f"SchoolClass {dn!r} does not exist (anymore).")
                 continue
             await obj.remove(udm)
-            print(f"Deleted SchoolClass {dn!r}.")
+            print(f"Deleted SchoolClass {dn!r} through UDM.")
 
 
 @pytest.fixture
