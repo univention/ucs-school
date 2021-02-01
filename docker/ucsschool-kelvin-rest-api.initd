@@ -10,7 +10,7 @@ else
     RELOAD=""
 fi
 
-command=/kelvin/venv/bin/uvicorn
+command=/usr/bin/uvicorn
 command_args="$RELOAD --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app"
 name=ucsschool-kelvin-rest-api
 description="UCS@school Kelvin REST API server"
