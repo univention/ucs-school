@@ -155,8 +155,9 @@ async def test_modify_role(
             assert cls_dn2.lower() not in new_groups
             assert cls_dn3.lower() not in new_groups
             # check options
-            assert "ucsschoolStaff" in user_new_udm.options
-            assert set(user_new_udm.options).isdisjoint({"ucsschoolStudent", "ucsschoolTeacher"})
+            assert user_new_udm.options.get("ucsschoolStaff") is True
+            assert user_new_udm.options.get("ucsschoolStudent", False) is False
+            assert user_new_udm.options.get("ucsschoolTeacher", False) is False
             # check position
             assert user_new_udm.position == f"cn=mitarbeiter,cn=users,ou={user_new.school},{ldap_base}"
             # check roles
@@ -168,10 +169,10 @@ async def test_modify_role(
             assert cls_dn1.lower() in new_groups
             assert cls_dn2.lower() in new_groups
             assert cls_dn3.lower() in new_groups
-            assert "ucsschoolStudent" in user_new_udm.options
-            assert set(user_new_udm.options).isdisjoint(
-                {"ucsschoolAdministrator", "ucsschoolStaff", "ucsschoolTeacher"}
-            )
+            assert user_new_udm.options.get("ucsschoolStudent") is True
+            assert user_new_udm.options.get("ucsschoolAdministrator", False) is False
+            assert user_new_udm.options.get("ucsschoolStaff", False) is False
+            assert user_new_udm.options.get("ucsschoolTeacher", False) is False
             assert user_new_udm.position == f"cn=schueler,cn=users,ou={user_new.school},{ldap_base}"
             assert {f"student:school:{ou}" for ou in user_new.schools}.issubset(user_new_ucsschool_roles)
             assert {
@@ -183,9 +184,9 @@ async def test_modify_role(
             assert cls_dn1.lower() in new_groups
             assert cls_dn2.lower() in new_groups
             assert cls_dn3.lower() in new_groups
-            assert "ucsschoolStaff" in user_new_udm.options
-            assert "ucsschoolTeacher" in user_new_udm.options
-            assert "ucsschoolStudent" not in user_new_udm.options
+            assert user_new_udm.options.get("ucsschoolStaff") is True
+            assert user_new_udm.options.get("ucsschoolTeacher") is True
+            assert user_new_udm.options.get("ucsschoolStudent", False) is False
             assert user_new_udm.position == f"cn=lehrer und mitarbeiter,cn=users,ou={user_new.school}," \
                                             f"{ldap_base}"
             assert {f"{role}:school:{ou}"
@@ -200,8 +201,9 @@ async def test_modify_role(
             assert cls_dn1.lower() in new_groups
             assert cls_dn2.lower() in new_groups
             assert cls_dn3.lower() in new_groups
-            assert "ucsschoolTeacher" in user_new_udm.options
-            assert set(user_new_udm.options).isdisjoint({"ucsschoolStudent", "ucsschoolStaff"})
+            assert user_new_udm.options.get("ucsschoolTeacher") is True
+            assert user_new_udm.options.get("ucsschoolStaff", False) is False
+            assert user_new_udm.options.get("ucsschoolStudent", False) is False
             assert user_new_udm.position == f"cn=lehrer,cn=users,ou={user_new.school},{ldap_base}"
             assert {f"teacher:school:{ou}" for ou in user_new.schools}.issubset(user_new_ucsschool_roles)
             assert {
@@ -233,7 +235,7 @@ async def test_modify_role_forbidden(
         dn, attr = await new_user("teacher")
         user_obj = await ImportTeacher.from_dn(dn, attr["school"], udm)
         user_udm = await user_obj.get_udm_object(udm)
-        user_udm.options.append("ucsschoolAdministrator")
+        user_udm.options["ucsschoolAdministrator"] = True
         user_udm.save()
         with pytest.raises(TypeError, match=r"not allowed for school administrator"):
             new_user_obj = await convert_to_student(user_obj, udm)

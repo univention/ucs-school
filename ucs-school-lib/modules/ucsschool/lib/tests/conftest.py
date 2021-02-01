@@ -181,7 +181,7 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, sc
         }[role]
         async with UDM(**udm_kwargs) as udm:
             user_obj = await udm.get("users/user").new()
-            user_obj.options.extend(options)
+            user_obj.options.update(dict((opt, True) for opt in options))
             user_obj.position = position
             user_obj.props.update(user_props)
             user_obj.props.primaryGroup = f"cn=Domain Users {school},cn=groups,ou={school},{ldap_base}"

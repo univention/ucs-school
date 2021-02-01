@@ -204,7 +204,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Union[None, Type["ImportUser"]]:
-		ocs = set(udm_obj.options)
+		ocs = set(key for key, val in udm_obj.options.items() if val is True)
 		if ocs >= {'ucsschoolTeacher', 'ucsschoolStaff'}:
 			return TeachersAndStaff
 		if ocs >= {'ucsschoolExam', 'ucsschoolStudent'}:
@@ -371,7 +371,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				self.logger.warning('Not allowed to create %r.', mail_domain)
 
 	async def set_default_options(self, udm_obj):
-		udm_obj.options.extend(self.get_default_options())
+		udm_obj.options.update(dict((opt, True) for opt in self.get_default_options()))
 
 	@classmethod
 	def get_default_options(cls):
@@ -702,13 +702,6 @@ ConcreteUserClass = TypeVar("ConcreteUserClass", Staff, Student, Teacher, Teache
 
 
 class UserTypeConverter:
-	school_options = (
-		"ucsschoolAdministrator",
-		"ucsschoolExam",
-		"ucsschoolStaff",
-		"ucsschoolStudent",
-		"ucsschoolTeacher",
-	)
 	roles_add = {
 		"staff": (role_staff,),
 		"student": (role_student,),
@@ -756,11 +749,12 @@ class UserTypeConverter:
 			logger.debug("No type conversion necessary, user type is already %r: %r", new_cls_name, user)
 			return user
 		udm_obj = await user.get_udm_object(udm)
-		if issubclass(new_cls, Student) and "ucsschoolAdministrator" in udm_obj.options:
+		if issubclass(new_cls, Student) and udm_obj.options.get("ucsschoolAdministrator", False):
 			raise TypeError(f"Conversion to {new_cls_name!r} is not allowed for school administrator.")
 		logger.info("Converting to %r: %r...", new_cls_name, user)
 		logger.debug("Data before conversion:\n%s", cls._dump_user_data(udm_obj))
-		options = sorted(new_cls.get_default_options())
+		options = {"ucsschoolStaff": False, "ucsschoolStudent": False, "ucsschoolTeacher": False}
+		options.update(dict((opt, True) for opt in new_cls.get_default_options()))
 		position = new_cls.get_container(user.school)
 		groups = cls._groups(user, udm_obj, new_cls, additional_classes)
 		ucsschool_roles = cls._roles(user, new_cls)
@@ -776,14 +770,11 @@ class UserTypeConverter:
 			groups,
 			ucsschool_roles,
 		)
-		#udm_obj.options = options  # TODO: fix Bug #50974, remove workaround
+		udm_obj.options = options
 		udm_obj.position = position
 		udm_obj.props.groups = groups
 		udm_obj.props.ucsschoolRole = ucsschool_roles
-		logger.warning("Workaround: changing everything except options now...")
 		await udm_obj.save()
-		logger.warning("Workaround: changing only options now...")
-		await cls._change_options(udm_obj, options)
 		new_user: ConcreteUserClass = await new_cls.from_dn(udm_obj.dn, user.school, udm)
 		logger.info("Conversion to %r finished.", new_cls_name)
 		logger.debug("Data after conversion:\n%s", cls._dump_user_data(await new_user.get_udm_object(udm)))
@@ -793,7 +784,7 @@ class UserTypeConverter:
 	def _dump_user_data(udm_user: UdmObject) -> str:
 		return (
 			f"DN: {udm_user.dn!r}:\n"
-			f"  options: {sorted(udm_user.options)!r}\n"
+			f"  options: {udm_user.options!r}\n"
 			f"  schools: {sorted(udm_user.props.school)!r}\n"
 			f"  groups: {sorted(udm_user.props.groups)!r}\n"
 			f"  ucsschool_roles: {sorted(udm_user.props.ucsschoolRole)!r}"
@@ -873,20 +864,6 @@ class UserTypeConverter:
 			for school in user.schools
 		)
 		return sorted(ucsschool_roles)
-
-	@classmethod
-	async def _change_options(cls, udm_obj: UdmObject, options: List[str]):
-		# TODO: fix Bug #50974, remove this function
-		rest_api_options = dict((opt, opt in options) for opt in cls.school_options)
-		await udm_obj._udm_module.session.call_openapi(
-			udm_module_name=udm_obj._udm_module.name,
-			operation="update",
-			dn=udm_obj.dn,
-			api_model_obj={
-				"position": udm_obj.position,
-				"options": rest_api_options,
-			},
-		)
 
 
 async def convert_to_staff(

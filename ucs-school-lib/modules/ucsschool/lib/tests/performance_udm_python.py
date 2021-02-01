@@ -57,7 +57,7 @@ def create_objs_via_UDM_python_sequential(
     res = []
     for data in datas:
         obj = user_mod.new(data["superordinate"])  # type: BaseObject
-        obj.options = data["options"].keys()
+        obj.options = data["options"]
         obj.policies = data["policies"].keys()
         obj.position = data["position"]
         for k, v in data["properties"].items():

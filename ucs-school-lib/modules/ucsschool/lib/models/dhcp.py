@@ -56,7 +56,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 	domainname = Attribute(_('Domain'))  # type: str
 
 	async def do_create(self, udm_obj, lo):  # type: (UdmObject, UDM) -> None
-		udm_obj.options.append('options')
+		udm_obj.options['options'] = True
 		udm_obj['option'] = ['wpad "http://%s.%s/proxy.pac"' % (self.hostname, self.domainname)]
 		return super(DHCPService, self).do_create(udm_obj, lo)
 
