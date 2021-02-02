@@ -438,6 +438,7 @@ def get_file_handler(
         primary group if None)
     :param int mode: permissions of the file
     :param int backupCount: start a new log file at predetermined size
+    :param str when: time when log is rotated.
     :return: a handler
     :rtype: logging.Handler
     """

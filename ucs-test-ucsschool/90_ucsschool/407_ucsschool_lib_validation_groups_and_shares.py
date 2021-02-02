@@ -11,7 +11,7 @@ import logging
 
 #
 # Hint: When debugging interactively, disable output capturing:
-# $ pytest -s -l -v ./......py::test_create
+# $ pytest -s -l -v ./......py::test_*
 #
 import tempfile
 
@@ -25,46 +25,44 @@ import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.models.validator import (
-    CLASS_SHARE_CLASS_NAME,
-    COMPUTERROOM_CLASS_NAME,
     LOGGER_NAME,
-    MARKTPLATZ_SHARE_CLASS_NAME,
-    SCHOOLCLASS_CLASS_NAME,
-    WORKGOUP_SHARE_CLASS_NAME,
-    WORKGROUP_CLASS_NAME,
+    ClasshareValidator,
+    ComputerroomValidator,
+    MarketplaceShareValidator,
+    SchoolClassValidator,
+    WorkGroupShareValidator,
+    WorkGroupValidator,
     container_computerrooms,
     container_students,
-    group_and_share_role_mapping,
-    ucr_get,
+    get_class,
     validate,
 )
+from ucsschool.lib.roles import (
+    role_computer_room,
+    role_marketplace_share,
+    role_school_class,
+    role_school_class_share,
+    role_workgroup,
+    role_workgroup_share,
+)
 
-ldap_base = ucr_get("ldap/base")
+ldap_base = ucr["ldap/base"]
 
 
-def filter_log_messages(logs, name):
+def filter_log_messages(logs, name):  # type(logging.Logger, str) -> str
+    """
+    get all log messages for logger with name
+    """
     return "".join([m for n, _, m in logs if n == name])
-
-
-@pytest.fixture
-def random_logger():
-    def _func():
-        handler = get_file_handler("DEBUG", tempfile.mkstemp()[1])
-        logger = logging.getLogger(uts.random_username())
-        logger.addHandler(handler)
-        logger.setLevel("DEBUG")
-        return logger
-
-    return _func
 
 
 @pytest.fixture(autouse=True)
 def mock_logger_file(mocker):
-    with tempfile.NamedTemporaryFile() as file:
-        mocker.patch.object(validator, "LOG_FILE", file.name)
+    with tempfile.NamedTemporaryFile() as f:
+        mocker.patch.object(validator, "LOG_FILE", f.name)
 
 
-def base_group_dict(name):  # type(str, str) -> Dict
+def base_group(name):  # type(str, str) -> Dict[Any]
     return {
         "dn": "",
         "props": {
@@ -96,18 +94,18 @@ def base_group_dict(name):  # type(str, str) -> Dict
     }
 
 
-def workgroup_as_dict():  # type(None) -> Dict
+def workgroup():  # type(None) -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
-    group = base_group_dict(name)
+    group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
     group["position"] = "cn={},cn=groups,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
     group["props"]["ucsschoolRole"] = ["workgroup:school:DEMOSCHOOL"]
     return group
 
 
-def klasse_as_dict():  # type(None) -> Dict
+def schoolclass():  # type(None) -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
-    group = base_group_dict(name)
+    group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
     group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
         container_students, ldap_base
@@ -116,9 +114,9 @@ def klasse_as_dict():  # type(None) -> Dict
     return group
 
 
-def computer_room_as_dict():  # type(None) -> Dict
+def computer_room():  # type(None) -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
-    group = base_group_dict(name)
+    group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
         name, container_computerrooms, ldap_base
     )
@@ -127,7 +125,7 @@ def computer_room_as_dict():  # type(None) -> Dict
     return group
 
 
-def base_share_dict(name):  # type(str) -> Dict
+def base_share(name):  # type(str) -> Dict[Any]
     return {
         "dn": "",
         "props": {
@@ -194,96 +192,152 @@ def base_share_dict(name):  # type(str) -> Dict
     }
 
 
-def klassen_share_as_dict():  # type(None) -> Dict
-    name = uts.random_name()
-    share = base_share_dict(name)
+def klassen_share():  # type(None) -> Dict[Any]
+    name = "DEMOSCHOOL-{}".format(uts.random_name())
+    share = base_share(name)
     share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
     share["position"] = "cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
     share["props"]["ucsschoolRole"] = ["school_class_share:school:DEMOSCHOOL"]
     return share
 
 
-def workgroup_share_as_dict():  # type(None) -> Dict
-    name = uts.random_name()
-    share = base_share_dict(name)
+def workgroup_share():  # type(None) -> Dict[Any]
+    name = "DEMOSCHOOL-{}".format(uts.random_name())
+    share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
     share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
     share["props"]["ucsschoolRole"] = ["workgroup_share:school:DEMOSCHOOL"]
     return share
 
 
-def marktplatz_share_as_dict():  # type(None) -> Dict
-    name = uts.random_name()
-    share = base_share_dict(name)
-    share["dn"] = "cn=Marktplatz,cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
+def marktplatz_share():  # type(None) -> Dict[Any]
+    name = "Marktplatz"
+    share = base_share(name)
+    share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
     share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
     share["props"]["ucsschoolRole"] = ["marketplace_share:school:DEMOSCHOOL"]
     return share
 
 
+complete_role_matrix = [
+    schoolclass(),
+    workgroup(),
+    computer_room(),
+    workgroup_share(),
+    klassen_share(),
+    marktplatz_share(),
+]
+
+complete_role_matrix_ids = [
+    role_school_class,
+    role_workgroup,
+    role_computer_room,
+    role_workgroup_share,
+    role_school_class_share,
+    role_marketplace_share,
+]
+
+
+@pytest.mark.parametrize(
+    "dict_obj,ObjectClass",
+    zip(
+        complete_role_matrix,
+        [
+            SchoolClassValidator,
+            WorkGroupValidator,
+            ComputerroomValidator,
+            WorkGroupShareValidator,
+            ClasshareValidator,
+            MarketplaceShareValidator,
+        ],
+    ),
+    ids=complete_role_matrix_ids,
+)
+def test_get_class(dict_obj, ObjectClass):
+    """
+    note: This code tests the get_class method for groups and shares.
+    It can be refactored with the user-test if the dict_obj are moved to a separate file.
+    """
+    assert get_class(dict_obj) is ObjectClass
+
+
+@pytest.mark.parametrize(
+    "dict_obj", complete_role_matrix, ids=complete_role_matrix_ids,
+)
+def test_correct_object(caplog, dict_obj, random_logger):
+    """
+    note: This code tests if no validation errors are logged for valid groups and shares.
+    It can be refactored with the user-test when the dict_obj are moved to a separate file.
+    """
+    validate(dict_obj, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    for log in (public_logs, secret_logs):
+        assert not log
+    assert "{}".format(dict_obj) not in secret_logs
+
+
+@pytest.mark.parametrize(
+    "required_attribute", ["name", "ucsschoolRole"],
+)
 @pytest.mark.parametrize(
     "dict_obj",
-    [
-        klasse_as_dict,
-        workgroup_as_dict,
-        computer_room_as_dict,
-        workgroup_share_as_dict,
-        marktplatz_share_as_dict,
-        klassen_share_as_dict,
-    ],
-)
-@pytest.mark.parametrize(
-    "required_attribute", ["name", "ucsschoolRole",],
+    [schoolclass, workgroup, computer_room, workgroup_share, klassen_share, marktplatz_share,],
+    ids=complete_role_matrix_ids,
 )
 def test_missing_required_attribute(caplog, dict_obj, random_logger, required_attribute):
-    random_logger = random_logger()
     _dict_obj = dict_obj()
     _dict_obj["props"][required_attribute] = []
     validate(_dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "is missing required attributes: {}".format(required_attribute) in log
+        assert "is missing required attributes: {!r}".format([required_attribute]) in log
     assert "{}".format(_dict_obj) in secret_logs
 
 
 @pytest.mark.parametrize(
-    "class_name,dict_obj",
+    "expected_role,get_dict_obj",
     [
-        (SCHOOLCLASS_CLASS_NAME, klasse_as_dict()),
-        (WORKGROUP_CLASS_NAME, workgroup_as_dict()),
-        (COMPUTERROOM_CLASS_NAME, computer_room_as_dict()),
-        (WORKGOUP_SHARE_CLASS_NAME, workgroup_share_as_dict()),
-        (MARKTPLATZ_SHARE_CLASS_NAME, marktplatz_share_as_dict()),
-        (CLASS_SHARE_CLASS_NAME, klassen_share_as_dict()),
+        (role_school_class, schoolclass),
+        (role_workgroup, workgroup),
+        (role_computer_room, computer_room),
+        (role_workgroup_share, workgroup_share),
+        (role_marketplace_share, marktplatz_share),
+        (role_school_class_share, klassen_share),
     ],
+    ids=complete_role_matrix_ids,
 )
-def test_missing_role(caplog, dict_obj, class_name, random_logger):
-    random_logger = random_logger()
+def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
+    dict_obj = get_dict_obj()
+    _role = "dummy"
     for role in dict_obj["props"]["ucsschoolRole"]:
         r, c, s = role.split(":")
-        if r == group_and_share_role_mapping[class_name]:
-            dict_obj["props"]["ucsschoolRole"].remove(role)
+        if r == expected_role:
+            dict_obj["props"]["ucsschoolRole"] = ["funny:school:DEMOSCHOOL"]
+            _role = role
+            break
+
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "does not have {}-role.".format(group_and_share_role_mapping[class_name]) in log
+        assert "is missing roles {!r}".format([_role]) in log
     assert "{}".format(dict_obj) in secret_logs
 
 
 @pytest.mark.parametrize(
     "dict_obj",
-    [
-        klasse_as_dict(),
-        workgroup_as_dict(),
-        computer_room_as_dict(),
-        workgroup_share_as_dict(),
-        klassen_share_as_dict(),
+    [schoolclass(), workgroup(), computer_room(), workgroup_share(), klassen_share(),],
+    ids=[
+        role_school_class,
+        role_workgroup,
+        role_computer_room,
+        role_workgroup_share,
+        role_school_class_share,
     ],
 )
 def test_missing_school_prefix(caplog, dict_obj, random_logger):
-    random_logger = random_logger()
     dict_obj["props"]["name"] = uts.random_name()
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
