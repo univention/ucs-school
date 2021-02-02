@@ -8,25 +8,25 @@
 ##   - python-ucs-school
 
 import logging
-import re
 
 #
 # Hint: When debugging interactively, disable output capturing:
 # $ pytest -s -l -v ./......py::test_*
 #
-import tempfile
-
-import pytest
+import re
 
 try:
     from typing import Dict
 except ImportError:
     pass
 
+import tempfile
+
+import pytest
 
 import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
-from ucsschool.lib.models.utils import get_file_handler, ucr
+from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
     LOGGER_NAME,
     ExamStudentValidator,
@@ -39,7 +39,6 @@ from ucsschool.lib.models.validator import (
     container_students,
     container_teachers,
     container_teachers_and_staff,
-    exam_students_group,
     get_class,
     staff_group_regex,
     teachers_group_regex,
@@ -104,7 +103,9 @@ def base_user(firstname, lastname):  # type(str, str) ->  Dict[Any]
             "ucsschoolRole": [],
             "password": None,
             "lockedTime": "0",
-            "school": ["DEMOSCHOOL",],
+            "school": [
+                "DEMOSCHOOL",
+            ],
             "overridePWHistory": None,
             "mailPrimaryAddress": None,
             "secretary": [],
@@ -155,7 +156,7 @@ def student_user():  # type(None) ->  Dict[Any]
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
     user["options"].append("ucsschoolStudent")
-    return user.copy()
+    return user
 
 
 def exam_user():  # type(None) -> Dict[Any]
@@ -182,7 +183,7 @@ def exam_user():  # type(None) -> Dict[Any]
     user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
     user["options"].append("ucsschoolStudent")
     user["options"].append("ucsschoolExam")
-    return user.copy()
+    return user
 
 
 def teacher_user():  # type(None) -> Dict[Any]
@@ -202,7 +203,7 @@ def teacher_user():  # type(None) -> Dict[Any]
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers, ldap_base)
     user["options"].append("ucsschoolTeacher")
-    return user.copy()
+    return user
 
 
 def staff_user():  # type(None) -> Dict[Any]
@@ -222,7 +223,7 @@ def staff_user():  # type(None) -> Dict[Any]
     ]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_staff, ldap_base)
     user["options"].append("ucsschoolStaff")
-    return user.copy()
+    return user
 
 
 def teacher_and_staff_user():  # type(None) -> Dict[Any]
@@ -245,7 +246,7 @@ def teacher_and_staff_user():  # type(None) -> Dict[Any]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(container_teachers_and_staff, ldap_base)
     user["options"].append("ucsschoolStaff")
     user["options"].append("ucsschoolTeacher")
-    return user.copy()
+    return user
 
 
 @pytest.fixture(autouse=True)
@@ -355,7 +356,7 @@ def test_wrong_ucsschool_role(caplog, dict_obj, random_logger):
 def test_missing_exam_context_role(caplog, random_logger):
     dict_obj = exam_user()
     exam_role = "dummy"
-    for role in dict_obj["props"]["ucsschoolRole"]:
+    for role in list(dict_obj["props"]["ucsschoolRole"]):
         r, c, s = role.split(":")
         if "exam" == c:
             dict_obj["props"]["ucsschoolRole"].remove(role)
@@ -380,7 +381,7 @@ def test_missing_exam_context_role(caplog, random_logger):
 )
 def test_missing_role_group(caplog, dict_obj, container, random_logger):
     role_group = "dummy"
-    for group in dict_obj["props"]["groups"]:
+    for group in list(dict_obj["props"]["groups"]):
         if re.match(r"cn={}-[^,]+,cn=groups,.+".format(container), group):
             dict_obj["props"]["groups"].remove(group)
             role_group = group
@@ -397,7 +398,7 @@ def test_exam_student_missing_exam_group(caplog, random_logger):
     dict_obj = exam_user()
     is_exam_user = "ucsschoolExam" in dict_obj["options"]
     exam_group = "dummy"
-    for group in dict_obj["props"]["groups"]:
+    for group in list(dict_obj["props"]["groups"]):
         if is_exam_user and "cn=ucsschool,cn=groups" in group:
             dict_obj["props"]["groups"].remove(group)
             exam_group = group
@@ -427,7 +428,7 @@ def test_missing_role_teachers_and_staff(caplog, random_logger):
 @pytest.mark.parametrize("dict_obj", all_user_role_objects, ids=all_user_roles_names)
 def test_missing_domain_users_group(caplog, dict_obj, random_logger):
     domain_users_groups = "dummy"
-    for group in dict_obj["props"]["groups"]:
+    for group in list(dict_obj["props"]["groups"]):
         if re.match(r"cn=Domain Users.+", group):
             dict_obj["props"]["groups"].remove(group)
             domain_users_groups = group
@@ -441,7 +442,8 @@ def test_missing_domain_users_group(caplog, dict_obj, random_logger):
 
 
 @pytest.mark.parametrize(
-    "required_attribute", ["username", "ucsschoolRole", "school", "firstname", "lastname"],
+    "required_attribute",
+    ["username", "ucsschoolRole", "school", "firstname", "lastname"],
 )
 @pytest.mark.parametrize(
     "get_dict_obj",
@@ -459,10 +461,17 @@ def test_missing_required_attribute(caplog, get_dict_obj, random_logger, require
     assert "{}".format(dict_obj) in secret_logs
 
 
-@pytest.mark.parametrize("dict_obj", [student_user(), exam_user(),], ids=[role_student, role_exam_user])
+@pytest.mark.parametrize(
+    "dict_obj",
+    [
+        student_user(),
+        exam_user(),
+    ],
+    ids=[role_student, role_exam_user],
+)
 def test_student_missing_class(caplog, dict_obj, random_logger):
     klass_group = "dummy"
-    for group in dict_obj["props"]["groups"]:
+    for group in list(dict_obj["props"]["groups"]):
         if "cn=klassen,cn=schueler,cn=groups" in group:
             dict_obj["props"]["groups"].remove(group)
             klass_group = group
@@ -495,7 +504,7 @@ def test_student_missing_class(caplog, dict_obj, random_logger):
 def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger):
     user_a = get_user_a()
     user_b = get_user_b()
-    for group in user_b["props"]["groups"]:
+    for group in list(user_b["props"]["groups"]):
         if group not in user_a["props"]["groups"]:
             user_a["props"]["groups"].append(group)
     validate(user_a, random_logger)
@@ -513,7 +522,7 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger
 )
 def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remove_teachers_group):
     missing_groups = []
-    for group in dict_obj["props"]["groups"]:
+    for group in list(dict_obj["props"]["groups"]):
         if remove_teachers_group and re.match(teachers_group_regex, group):
             dict_obj["props"]["groups"].remove(group)
             missing_groups.append(group)

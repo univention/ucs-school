@@ -7,6 +7,7 @@
 ## packages:
 ##   - python-ucs-school
 
+
 import logging
 
 #
@@ -23,7 +24,7 @@ except ImportError:
     pass
 import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
-from ucsschool.lib.models.utils import get_file_handler, ucr
+from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
     LOGGER_NAME,
     ClasshareValidator,
@@ -262,7 +263,9 @@ def test_get_class(dict_obj, ObjectClass):
 
 
 @pytest.mark.parametrize(
-    "dict_obj", complete_role_matrix, ids=complete_role_matrix_ids,
+    "dict_obj",
+    complete_role_matrix,
+    ids=complete_role_matrix_ids,
 )
 def test_correct_object(caplog, dict_obj, random_logger):
     """
@@ -278,11 +281,19 @@ def test_correct_object(caplog, dict_obj, random_logger):
 
 
 @pytest.mark.parametrize(
-    "required_attribute", ["name", "ucsschoolRole"],
+    "required_attribute",
+    ["name", "ucsschoolRole"],
 )
 @pytest.mark.parametrize(
     "dict_obj",
-    [schoolclass, workgroup, computer_room, workgroup_share, klassen_share, marktplatz_share,],
+    [
+        schoolclass,
+        workgroup,
+        computer_room,
+        workgroup_share,
+        klassen_share,
+        marktplatz_share,
+    ],
     ids=complete_role_matrix_ids,
 )
 def test_missing_required_attribute(caplog, dict_obj, random_logger, required_attribute):
@@ -311,10 +322,10 @@ def test_missing_required_attribute(caplog, dict_obj, random_logger, required_at
 def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
     dict_obj = get_dict_obj()
     _role = "dummy"
-    for role in dict_obj["props"]["ucsschoolRole"]:
+    for role in list(dict_obj["props"]["ucsschoolRole"]):
         r, c, s = role.split(":")
         if r == expected_role:
-            dict_obj["props"]["ucsschoolRole"] = ["funny:school:DEMOSCHOOL"]
+            dict_obj["props"]["ucsschoolRole"] = []
             _role = role
             break
 
@@ -328,7 +339,13 @@ def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
 
 @pytest.mark.parametrize(
     "dict_obj",
-    [schoolclass(), workgroup(), computer_room(), workgroup_share(), klassen_share(),],
+    [
+        schoolclass(),
+        workgroup(),
+        computer_room(),
+        workgroup_share(),
+        klassen_share(),
+    ],
     ids=[
         role_school_class,
         role_workgroup,
