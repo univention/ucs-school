@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-test-ucsschool
-fix: 6.0.179A~4.4.0.202101261505
-desc: |
-  * This patch adds a new ucs-test, which ensures that user deactivation during an exam works properly (Bug #52372).
-bug: [52372]
