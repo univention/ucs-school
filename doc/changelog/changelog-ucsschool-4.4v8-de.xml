@@ -166,7 +166,30 @@ feedback@univention.de
 					<!-- END ucs-school-umc-exam 9.0.1-46A~4.4.0.202012181441 -->
 <!-- CHANGELOG:2021-01-11:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-02-03" lang="en">
+					<title>Released on 2021-02-03:</title>
+					<!-- START ucs-school-umc-exam 9.0.1-48A~4.4.0.202101271000 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-48A~4.4.0.202101271000</emphasis>:
+						<itemizedlist>
+							<listitem><para>It is now possible to deactivate users taking part in an exam. This prevents them from using other services during the exam. Afterwards they are reactivated. The feature can be enabled by setting the UCR variable <envar>ucsschool/exam/user/disable</envar> to <envar>true</envar> and restarting the <envar>univention-management-console-server</envar>. Please test the consequences of this feature thoroughly with third party apps (<u:bug>52372</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-48A~4.4.0.202101271000 -->
+					<!-- START ucs-school-veyon-client 1.0.1-3A~4.4.0.202101121110 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-client</emphasis> in version <emphasis>1.0.1-3A~4.4.0.202101121110</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal change: The client lib can now handle arguments in feature_set (<u:bug>52534</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-client 1.0.1-3A~4.4.0.202101121110 -->
+<!-- CHANGELOG:2021-02-03:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
