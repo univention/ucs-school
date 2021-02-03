@@ -292,12 +292,30 @@ def test_get_class(dict_obj, ObjectClass):
 
 @pytest.mark.parametrize("dict_obj", all_user_role_objects, ids=all_user_roles_names)
 def test_correct_object(caplog, dict_obj, random_logger):
+    """
+    correct objects should not produce validation errors (logs).
+    """
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
+
+
+def test_correct_uuid(caplog, random_logger):
+    """
+    the uuids for the logging event should be identical in both loggers.
+    """
+    user_dict = student_user()
+    user_dict["props"]["school"] = []
+    validate(user_dict, logger=random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
+    uuids = []
+    for log in (public_logs, secret_logs):
+        uuids.append(re.search(r"^([0-9a-f\-]+)", log).group(1))
+    assert len(set(uuids)) == 1
 
 
 @pytest.mark.parametrize("dict_obj", [student_user(), exam_user()], ids=[role_student, role_exam_user])
@@ -355,19 +373,16 @@ def test_wrong_ucsschool_role(caplog, dict_obj, random_logger):
 
 def test_missing_exam_context_role(caplog, random_logger):
     dict_obj = exam_user()
-    exam_role = "dummy"
     for role in list(dict_obj["props"]["ucsschoolRole"]):
         r, c, s = role.split(":")
         if "exam" == c:
             dict_obj["props"]["ucsschoolRole"].remove(role)
-            exam_role = role
             break
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
-        # assert "is missing roles {!r}".format([exam_role]) in log
-        assert "is missing role with context exam."
+        assert "is missing role with context exam." in log
     assert "{}".format(dict_obj) in secret_logs
 
 
