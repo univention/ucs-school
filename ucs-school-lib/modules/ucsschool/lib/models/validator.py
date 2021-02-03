@@ -40,7 +40,7 @@ try:
 
     from .base import UdmObject
 except ImportError:
-    from backports.functools_lru_cache import lru_cache
+    pass
 
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler, ucr
 from ucsschool.lib.roles import (
