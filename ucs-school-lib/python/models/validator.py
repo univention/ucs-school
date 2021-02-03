@@ -221,7 +221,7 @@ class UserValidator(SchoolValidator):
         """
         Users should not have roles with schools which they don't have.
         """
-        missing_schools = list(set([s for r, c, s in roles if s not in schools]))
+        missing_schools = list(set([s for r, c, s in roles if c == "school" and s not in schools]))
         if missing_schools:
             return "is not part of schools: {!r}.".format(missing_schools)
 
@@ -268,7 +268,10 @@ class UserValidator(SchoolValidator):
         """
         return [
             validate_group_membership(
-                group, student=cls.is_student, teacher=cls.is_teacher, staff=cls.is_staff,
+                group,
+                student=cls.is_student,
+                teacher=cls.is_teacher,
+                staff=cls.is_staff,
             )
             for group in groups
         ]
@@ -277,7 +280,8 @@ class UserValidator(SchoolValidator):
 class StudentValidator(UserValidator):
     container = container_students
     position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
     is_student = True
     roles = [role_student]
@@ -306,7 +310,8 @@ class StudentValidator(UserValidator):
 class TeacherValidator(UserValidator):
     container = container_teachers
     position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
     is_teacher = True
     roles = [role_teacher]
@@ -326,22 +331,24 @@ class ExamStudentValidator(StudentValidator):
         expected_groups = kwargs.get("expected_groups", [])
         expected_roles = kwargs.get("expected_roles", [])
         schools = obj["props"].get("school", [])
+        roles = obj["props"].get("ucsschoolRole", [])
 
-        expected_roles.extend(cls.exam_contexts(schools))
         expected_groups.extend(cls.exam_group(schools))
-        return super(ExamStudentValidator, cls).validate(
+        errors = super(ExamStudentValidator, cls).validate(
             obj, expected_roles=expected_roles, expected_groups=expected_groups
         )
+        errors.append(cls.exam_contexts(roles))
+        return errors
 
     @classmethod
-    def exam_contexts(cls, schools):  # type(List[str]) -> List[str]
+    def exam_contexts(cls, roles):  # type(List[str]) -> List[str]
         """
-        ExamUsers should have a role with context `exam` for each of their schools.
+        ExamUsers should have a role with context `exam`,
+        e.g exam_user:exam:demo-exam-DEMOSCHOOL.
         """
-        return [
-            create_ucsschool_role_string(role_exam_user, school, context_type="exam")
-            for school in schools
-        ]
+        exam_roles = [r for r, c, s in split_roles(roles) if c == "exam" and r == role_exam_user]
+        if not exam_roles:
+            return "is missing role with context exam."
 
     @classmethod
     def exam_group(cls, schools):  # type(List[str]) -> List[str]
@@ -359,7 +366,8 @@ class ExamStudentValidator(StudentValidator):
 class StaffValidator(UserValidator):
     container = container_staff
     position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
     is_staff = True
     roles = [role_staff]
@@ -368,7 +376,8 @@ class StaffValidator(UserValidator):
 class TeachersAndStaffValidator(UserValidator):
     container = container_teachers_and_staff
     position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
     is_teacher = True
     is_staff = True
@@ -468,21 +477,29 @@ class ComputerroomValidator(GroupAndShareValidator):
 
 class WorkGroupShareValidator(GroupAndShareValidator):
     roles = [role_workgroup_share]
-    position_regex = re.compile(r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]), flags=re.IGNORECASE,)
+    position_regex = re.compile(
+        r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
+        flags=re.IGNORECASE,
+    )
 
 
 class ClasshareValidator(GroupAndShareValidator):
     roles = [role_school_class_share]
     position_regex = re.compile(
-        r"cn=klassen,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn=klassen,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
 
 
 class MarketplaceShareValidator(GroupAndShareValidator):
     roles = [role_marketplace_share]
-    position_regex = re.compile(r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]), flags=re.IGNORECASE,)
+    position_regex = re.compile(
+        r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
+        flags=re.IGNORECASE,
+    )
     dn_regex = re.compile(
-        r"cn=Marktplatz,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]), flags=re.IGNORECASE,
+        r"cn=Marktplatz,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
+        flags=re.IGNORECASE,
     )
 
 
@@ -529,8 +546,13 @@ def validate(obj, logger=None):  # type(Dict[Any], logging.Logger) -> None
         errors = list(filter(None, errors))
         if errors:
             validation_uuid = str(uuid.uuid4())
-            errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}\n".format(
-                validation_uuid, obj.get("dn", ""), "{!r}".format(options), "\n\t- ".join(errors),
+            errors_str = (
+                "{} UCS@school Object {} with options {} has validation errors:\n\t- {}\n".format(
+                    validation_uuid,
+                    obj.get("dn", ""),
+                    "{!r}".format(options),
+                    "\n\t- ".join(errors),
+                )
             )
             if logger:
                 logger.error(errors_str)

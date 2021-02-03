@@ -178,7 +178,7 @@ def exam_user():  # type(None) -> Dict[Any]
     user["props"]["ucsschoolRole"] = [
         "student:school:DEMOSCHOOL",
         "exam_user:school:DEMOSCHOOL",
-        "exam_user:exam:DEMOSCHOOL",
+        "exam_user:exam:demo-exam-DEMOSCHOOL",
     ]
     user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
     user["options"].append("ucsschoolStudent")
@@ -366,7 +366,8 @@ def test_missing_exam_context_role(caplog, random_logger):
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
     secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
     for log in (public_logs, secret_logs):
-        assert "is missing roles {!r}".format([exam_role]) in log
+        # assert "is missing roles {!r}".format([exam_role]) in log
+        assert "is missing role with context exam."
     assert "{}".format(dict_obj) in secret_logs
 
 
