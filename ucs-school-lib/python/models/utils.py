@@ -81,6 +81,11 @@ class UnknownPackage(Exception):
     pass
 
 
+class ValidationDataFilter(logging.Filter):
+    def filter(self, record):
+        return record.name != "UCSSchool-Validation"
+
+
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
     with open(path, "r") as fp:
         config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
@@ -275,11 +280,13 @@ def add_module_logger_to_schoollib():
         handler.name in ("ucsschool_mem_handler", "ucsschool_mod_handler") for handler in logger.handlers
     ):
         module_handler = ModuleHandler(udebug_facility=ud.MODULE)
+        module_handler.addFilter(ValidationDataFilter())
         module_handler.setLevel(logging.DEBUG)
         module_handler.set_name("ucsschool_mod_handler")
         memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
         memory_handler.setLevel(logging.DEBUG)
         memory_handler.set_name("ucsschool_mem_handler")
+        memory_handler.addFilter(ValidationDataFilter())
         logger.addHandler(memory_handler)
     else:
         logger.info("add_module_logger_to_schoollib() should only be called once! Skipping...")

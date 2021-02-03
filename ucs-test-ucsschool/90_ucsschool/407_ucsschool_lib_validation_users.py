@@ -28,7 +28,7 @@ import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
-    LOGGER_NAME,
+    VALIDATION_LOGGER,
     ExamStudentValidator,
     StaffValidator,
     StudentValidator,
@@ -294,7 +294,7 @@ def test_get_class(dict_obj, ObjectClass):
 def test_correct_object(caplog, dict_obj, random_logger):
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
@@ -306,7 +306,7 @@ def test_students_exclusive_role(caplog, dict_obj, random_logger, disallowed_rol
     dict_obj["props"]["ucsschoolRole"].append("{}:school:DEMOSCHOOL".format(disallowed_role))
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert (
             "Students must not have these roles: {!r}.".format(
@@ -334,7 +334,7 @@ def test_false_ldap_position(caplog, get_user_a, get_user_b, random_logger):
     user_a["position"] = user_b["position"]
     validate(user_a, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "has wrong position in ldap" in log
     assert "{}".format(user_a) in secret_logs
@@ -347,7 +347,7 @@ def test_wrong_ucsschool_role(caplog, dict_obj, random_logger):
     dict_obj["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), wrong_school)]
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is not part of schools: {!r}".format([wrong_school]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -364,7 +364,7 @@ def test_missing_exam_context_role(caplog, random_logger):
             break
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         # assert "is missing roles {!r}".format([exam_role]) in log
         assert "is missing role with context exam."
@@ -389,7 +389,7 @@ def test_missing_role_group(caplog, dict_obj, container, random_logger):
             break
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing groups at positions {!r}".format([role_group]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -406,7 +406,7 @@ def test_exam_student_missing_exam_group(caplog, random_logger):
             break
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing groups at positions {!r}".format([exam_group]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -418,7 +418,7 @@ def test_missing_role_teachers_and_staff(caplog, random_logger):
     dict_obj["props"]["ucsschoolRole"] = []
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing roles" in log
         for role in missing_roles:
@@ -436,7 +436,7 @@ def test_missing_domain_users_group(caplog, dict_obj, random_logger):
             break
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing groups at positions {!r}".format([domain_users_groups]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -456,7 +456,7 @@ def test_missing_required_attribute(caplog, get_dict_obj, random_logger, require
     dict_obj["props"][required_attribute] = []
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing required attributes: {!r}".format([required_attribute]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -479,7 +479,7 @@ def test_student_missing_class(caplog, dict_obj, random_logger):
             break
     validate(dict_obj, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
 
     klass_container = re.search(r"(cn=klassen.+)", klass_group).group()
     for log in (public_logs, secret_logs):
@@ -510,7 +510,7 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger
             user_a["props"]["groups"].append(group)
     validate(user_a, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "Disallowed member of group" in log
     assert "{}".format(user_a) in secret_logs
@@ -532,7 +532,7 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
             missing_groups.append(group)
     validate(dict_obj, random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing groups at positions" in log
         for group in missing_groups:

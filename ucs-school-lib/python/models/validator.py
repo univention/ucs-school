@@ -28,15 +28,15 @@ from ucsschool.lib.roles import (
 )
 
 LOG_FILE = "/var/log/univention/ucs-school-validation.log"
-LOGGER_NAME = "UCSSchool-Validation"
-private_data_logger = logging.getLogger(LOGGER_NAME)
+VALIDATION_LOGGER = "UCSSchool-Validation"
+private_data_logger = logging.getLogger(VALIDATION_LOGGER)
 private_data_logger.setLevel("DEBUG")
 private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
 
 
 class SecretFilter(logging.Filter):
     def filter(self, record):
-        return record.name != LOGGER_NAME
+        return record.name != VALIDATION_LOGGER
 
 
 for handler in logging.root.handlers:
@@ -556,6 +556,7 @@ def validate(obj, logger=None):  # type(Dict[Any], logging.Logger) -> None
             )
             if logger:
                 logger.error(errors_str)
-            private_data_logger.error("{}".format(errors_str))
-            private_data_logger.error("{}".format(obj))
-            private_data_logger.error("{}".format("\n".join(traceback.format_stack())))
+            private_data_logger.error(errors_str)
+            private_data_logger.error(obj)
+            stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
+            private_data_logger.error(stack_trace)

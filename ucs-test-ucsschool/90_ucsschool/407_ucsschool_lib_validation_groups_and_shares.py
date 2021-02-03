@@ -26,7 +26,7 @@ import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
-    LOGGER_NAME,
+    VALIDATION_LOGGER,
     ClasshareValidator,
     ComputerroomValidator,
     MarketplaceShareValidator,
@@ -274,7 +274,7 @@ def test_correct_object(caplog, dict_obj, random_logger):
     """
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
@@ -301,7 +301,7 @@ def test_missing_required_attribute(caplog, dict_obj, random_logger, required_at
     _dict_obj["props"][required_attribute] = []
     validate(_dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing required attributes: {!r}".format([required_attribute]) in log
     assert "{}".format(_dict_obj) in secret_logs
@@ -331,7 +331,7 @@ def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
 
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "is missing roles {!r}".format([_role]) in log
     assert "{}".format(dict_obj) in secret_logs
@@ -358,7 +358,7 @@ def test_missing_school_prefix(caplog, dict_obj, random_logger):
     dict_obj["props"]["name"] = uts.random_name()
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, LOGGER_NAME)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
         assert "has an incorrect school prefix for school DEMOSCHOOL." in log
     assert "{}".format(dict_obj) in secret_logs
