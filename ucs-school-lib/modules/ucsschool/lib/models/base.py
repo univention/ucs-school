@@ -691,10 +691,12 @@ class UCSSchoolHelperAbstractClass(object):
 				name = self.get_name_from_dn(dn)
 				filter_str = '%s=%s' % (udm_name, escape_filter_chars(name))
 				self._udm_obj = await self.get_first_udm_obj(lo, filter_str, superordinate)
+				validate(self._udm_obj, self.logger)
 			else:
 				self.logger.debug('Getting %s UDM object by dn: %s', self.__class__.__name__, dn)
 				try:
 					self._udm_obj = await lo.get(self._meta.udm_module).get(dn)
+					validate(self._udm_obj, self.logger)
 				except UdmNoObject:
 					self._udm_obj = None
 			self._udm_obj_searched = True
@@ -815,7 +817,7 @@ class UCSSchoolHelperAbstractClass(object):
 				raise WrongModel(udm_obj.dn, klass, cls)
 			return await klass.from_udm_obj(udm_obj, school, lo)
 		# udm_obj.open()
-		validate(udm_obj, cls.__name__, cls.logger)
+		validate(udm_obj, cls.logger)
 		attrs = {'school': cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		if cls.supports_schools():
 			attrs['schools'] = udm_obj.props.school
@@ -903,7 +905,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if len(objs) > 1:
 			raise MultipleObjectsError(objs=objs)
 		obj = objs[0]
-		validate(obj, cls.__name__, cls.logger)
+		validate(obj, cls.logger)
 		return obj
 
 	@classmethod
@@ -916,7 +918,7 @@ class UCSSchoolHelperAbstractClass(object):
 			return await cls.get_only_udm_obj(lo, filter_str, superordinate)
 		except MultipleObjectsError as exc:
 			obj = exc.objs[0]
-			validate(obj, cls.__name__, cls.logger)
+			validate(obj, cls.logger)
 			return obj
 
 	@classmethod
