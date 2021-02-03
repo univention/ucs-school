@@ -1,3 +1,34 @@
+# -*- coding: utf-8 -*-
+#
+# UCS@school python lib: models
+#
+# Copyright 2014-2021 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
 import logging
 import re
 import traceback
@@ -27,20 +58,13 @@ from ucsschool.lib.roles import (
     role_workgroup_share,
 )
 
-LOG_FILE = "/var/log/univention/ucs-school-validation.log"
-LOGGER_NAME = "UCSSchool-Validation"
-private_data_logger = logging.getLogger(LOGGER_NAME)
+LOG_FILE = "/var/log/univention/ucsschool-kelvin-rest-api/ucs-school-validation.log"
+VALIDATION_LOGGER = "UCSSchool-Validation"
+private_data_logger = logging.getLogger(VALIDATION_LOGGER)
 private_data_logger.setLevel("DEBUG")
-private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
-
-
-class SecretFilter(logging.Filter):
-    def filter(self, record):
-        return record.name != LOGGER_NAME
-
-
-for handler in logging.root.handlers:
-    handler.addFilter(SecretFilter())
+private_data_logger.addHandler(
+    get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000)
+)
 
 
 container_teachers = ucr.get("ucsschool/ldap/default/containers/teachers", "lehrer")
@@ -51,18 +75,26 @@ container_teachers_and_staff = ucr.get(
 container_students = ucr.get("ucsschool/ldap/default/containers/pupils", "schueler")
 container_exam_students = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
 container_computerrooms = ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
-exam_students_group = ucr.get("ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit")
+exam_students_group = ucr.get(
+    "ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
+)
 
 teachers_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_teachers, ucr["ldap/base"]),
+    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+        container_teachers, ucr["ldap/base"]
+    ),
     flags=re.IGNORECASE,
 )
 staff_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_staff, ucr["ldap/base"]),
+    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+        container_staff, ucr["ldap/base"]
+    ),
     flags=re.IGNORECASE,
 )
 students_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_students, ucr["ldap/base"]),
+    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+        container_students, ucr["ldap/base"]
+    ),
     flags=re.IGNORECASE,
 )
 
@@ -120,13 +152,21 @@ class SchoolValidator(object):
         errors.append(cls.required_attributes(obj["props"]))
         errors.append(cls.position(obj["position"]))
         if expected_roles:
-            errors.append(cls.required_roles(obj["props"].get("ucsschoolRole", []), expected_roles))
+            errors.append(
+                cls.required_roles(
+                    obj["props"].get("ucsschoolRole", []), expected_roles
+                )
+            )
         if expected_groups:
-            errors.append(cls.required_groups(obj["props"].get("groups", []), expected_groups))
+            errors.append(
+                cls.required_groups(obj["props"].get("groups", []), expected_groups)
+            )
         return errors
 
     @classmethod
-    def required_groups(cls, groups, expected_groups):  # type(List[str], List[Any]) -> Optional[str]
+    def required_groups(
+        cls, groups, expected_groups
+    ):  # type(List[str], List[Any]) -> Optional[str]
         """
         Object should be in all groups. I test with g.endswith(group) to
         also catch classes without using regexes.
@@ -140,7 +180,9 @@ class SchoolValidator(object):
 
     @classmethod
     def required_attributes(cls, props):  # type(Dict[Any]) -> Optional[str]
-        missing_attributes = [attr for attr in cls.attributes if not props.get(attr, "")]
+        missing_attributes = [
+            attr for attr in cls.attributes if not props.get(attr, "")
+        ]
         if missing_attributes:
             return "is missing required attributes: {!r}.".format(missing_attributes)
 
@@ -150,7 +192,9 @@ class SchoolValidator(object):
             return "has wrong position in ldap."
 
     @classmethod
-    def required_roles(cls, roles, expected_roles):  # type(List[str], List[str]) -> Optional[str]
+    def required_roles(
+        cls, roles, expected_roles
+    ):  # type(List[str], List[str]) -> Optional[str]
         missing_roles = [role for role in expected_roles if role not in roles]
         if missing_roles:
             return "is missing roles {!r}".format(missing_roles)
@@ -201,11 +245,15 @@ class UserValidator(SchoolValidator):
         return errors
 
     @classmethod
-    def part_of_school(cls, roles, schools):  # type(List[str], List[str]) -> Optional[str]
+    def part_of_school(
+        cls, roles, schools
+    ):  # type(List[str], List[str]) -> Optional[str]
         """
         Users should not have roles with schools which they don't have.
         """
-        missing_schools = list(set([s for r, c, s in roles if c == "school" and s not in schools]))
+        missing_schools = list(
+            set([s for r, c, s in roles if c == "school" and s not in schools])
+        )
         if missing_schools:
             return "is not part of schools: {!r}.".format(missing_schools)
 
@@ -219,7 +267,9 @@ class UserValidator(SchoolValidator):
             if (cls.is_student and r in not_allowed_for_students) or (
                 not cls.is_student and r in [role_student, role_exam_user]
             ):
-                return "Students must not have these roles: {!r}.".format(not_allowed_for_students)
+                return "Students must not have these roles: {!r}.".format(
+                    not_allowed_for_students
+                )
 
     @classmethod
     def domain_users_group(cls, schools):  # type(List[str]) -> List[str]
@@ -241,7 +291,9 @@ class UserValidator(SchoolValidator):
         if cls in [ExamStudentValidator, TeachersAndStaffValidator]:
             return []
         return [
-            "cn={}-{},cn=groups,ou={},{}".format(cls.container, school.lower(), school, ucr["ldap/base"])
+            "cn={}-{},cn=groups,ou={},{}".format(
+                cls.container, school.lower(), school, ucr["ldap/base"]
+            )
             for school in schools
         ]
 
@@ -286,7 +338,9 @@ class StudentValidator(UserValidator):
         Students have at least one class at every school.
         """
         return [
-            "cn=klassen,cn={},cn=groups,ou={},{}".format(container_students, school, ucr["ldap/base"])
+            "cn=klassen,cn={},cn=groups,ou={},{}".format(
+                container_students, school, ucr["ldap/base"]
+            )
             for school in schools
         ]
 
@@ -330,7 +384,9 @@ class ExamStudentValidator(StudentValidator):
         ExamUsers should have a role with context `exam`,
         e.g exam_user:exam:demo-exam-DEMOSCHOOL.
         """
-        exam_roles = [r for r, c, s in split_roles(roles) if c == "exam" and r == role_exam_user]
+        exam_roles = [
+            r for r, c, s in split_roles(roles) if c == "exam" and r == role_exam_user
+        ]
         if not exam_roles:
             return "is missing role with context exam."
 
@@ -438,7 +494,9 @@ class GroupAndShareValidator(SchoolValidator):
 class SchoolClassValidator(GroupAndShareValidator):
     roles = [role_school_class]
     position_regex = re.compile(
-        r"cn=klassen,cn={},cn=groups,ou=[^,]+?,{}".format(container_students, ucr["ldap/base"]),
+        r"cn=klassen,cn={},cn=groups,ou=[^,]+?,{}".format(
+            container_students, ucr["ldap/base"]
+        ),
         flags=re.IGNORECASE,
     )
 
@@ -454,7 +512,9 @@ class WorkGroupValidator(GroupAndShareValidator):
 class ComputerroomValidator(GroupAndShareValidator):
     roles = [role_computer_room]
     position_regex = re.compile(
-        r"cn={},cn=groups,ou=[^,]+?,{}".format(container_computerrooms, ucr["ldap/base"]),
+        r"cn={},cn=groups,ou=[^,]+?,{}".format(
+            container_computerrooms, ucr["ldap/base"]
+        ),
         flags=re.IGNORECASE,
     )
 
@@ -530,16 +590,15 @@ def validate(obj, logger=None):  # type(Dict[Any], logging.Logger) -> None
         errors = list(filter(None, errors))
         if errors:
             validation_uuid = str(uuid.uuid4())
-            errors_str = (
-                "{} UCS@school Object {} with options {} has validation errors:\n\t- {}\n".format(
-                    validation_uuid,
-                    obj.get("dn", ""),
-                    "{!r}".format(options),
-                    "\n\t- ".join(errors),
-                )
+            errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}\n".format(
+                validation_uuid,
+                obj.get("dn", ""),
+                "{!r}".format(options),
+                "\n\t- ".join(errors),
             )
             if logger:
                 logger.error(errors_str)
-            private_data_logger.error("{}".format(errors_str))
-            private_data_logger.error("{}".format(obj))
-            private_data_logger.error("{}".format("\n".join(traceback.format_stack())))
+            private_data_logger.error(errors_str)
+            private_data_logger.error(obj)
+            stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
+            private_data_logger.error(stack_trace)
