@@ -57,7 +57,8 @@ define([
 					['student', _('Student')],
 					['teacher', _('Teacher')],
 					['staff', _('Staff')],
-					['teachersAndStaff', _('Teachers and staff')]
+					['teachersAndStaff', _('Teachers and staff')],
+					['schoolAdmin', _('School Administrator')]
 				];
 
 				var roleValues = [];
