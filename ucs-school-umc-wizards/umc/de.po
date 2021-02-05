@@ -27,8 +27,8 @@ msgstr "Rechnerverwaltung für Schulen"
 msgid "Management of schools in the domain"
 msgstr "Verwaltung von Schulen in der Domäne"
 
-msgid "Management of users for schools (students, teachers, staff)"
-msgstr "Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
+msgid "Management of users for schools (students, teachers, staff, schoolAdmin)"
+msgstr "Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter, Schuladministratoren)"
 
 msgid "Schools"
 msgstr "Schulen"

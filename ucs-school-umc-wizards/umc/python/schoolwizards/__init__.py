@@ -41,6 +41,7 @@ from ucsschool.lib.models import (
     IPComputer,
     MacComputer,
     School,
+    SchoolAdmin,
     SchoolClass,
     SchoolComputer,
     Staff,
@@ -86,6 +87,7 @@ USER_TYPES = {
     "teacher": Teacher,
     "staff": Staff,
     "teachersAndStaff": TeachersAndStaff,
+    "schoolAdmin": SchoolAdmin,
 }
 
 

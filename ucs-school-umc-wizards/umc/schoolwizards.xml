@@ -6,7 +6,7 @@
 		</categories>
 		<flavor id="schoolwizards/users" priority="53">
 			<name>Users (schools)</name>
-			<description>Management of users for schools (students, teachers, staff)</description>
+			<description>Management of users for schools (students, teachers, staff, schoolAdmin)</description>
 		</flavor>
 		<flavor id="schoolwizards/classes" priority="52">
 			<name>Classes (schools)</name>
