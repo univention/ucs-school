@@ -392,6 +392,10 @@ msgstr "Lehrer"
 msgid "Staff"
 msgstr "Mitarbeiter"
 
+#: models/user.py:720
+msgid "School Administrator"
+msgstr "Schuladministrator"
+
 #: models/user.py:672
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
