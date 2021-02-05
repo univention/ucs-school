@@ -280,7 +280,6 @@ def add_module_logger_to_schoollib():
         handler.name in ("ucsschool_mem_handler", "ucsschool_mod_handler") for handler in logger.handlers
     ):
         module_handler = ModuleHandler(udebug_facility=ud.MODULE)
-        module_handler.addFilter(ValidationDataFilter())
         module_handler.setLevel(logging.DEBUG)
         module_handler.set_name("ucsschool_mod_handler")
         memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
