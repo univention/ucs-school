@@ -315,7 +315,8 @@ def test_correct_uuid(caplog, random_logger):
     uuids = []
     for log in (public_logs, secret_logs):
         uuids.append(re.search(r"^([0-9a-f\-]+)", log).group(1))
-    assert len(set(uuids)) == 1
+    assert len(uuids) == 2
+    assert uuids[0] == uuids[1]
 
 
 @pytest.mark.parametrize("dict_obj", [student_user(), exam_user()], ids=[role_student, role_exam_user])
