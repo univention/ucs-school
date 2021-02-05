@@ -41,7 +41,7 @@ import univention.admin.syntax as syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import role_exam_user, role_pupil, role_staff, role_student, role_teacher
+from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
 from .attributes import (
     Birthday,
     Disabled,
@@ -55,7 +55,7 @@ from .attributes import (
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from .computer import AnyComputer
-from .group import Group, SchoolClass, SchoolGroup, WorkGroup
+from .group import BasicGroup, Group, SchoolClass, SchoolGroup, WorkGroup
 from .misc import MailDomain
 from .school import School
 from .utils import _, create_passwd, ucr
@@ -230,7 +230,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if "ucsschoolStudent" in ocs:
             return Student
         if "ucsschoolAdministrator" in ocs:
-            return Teacher  # we have no class for a school administrator
+            return SchoolAdmin
 
         # legacy DN based checks
         if cls._legacy_is_student(school, udm_obj.dn):
@@ -545,6 +545,14 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         prefix = ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
         return [self.get_group_dn("%s%s" % (prefix, school), school) for school in self.schools]
 
+    def get_school_admin_groups(self):
+        prefix = self.get_search_base("DEMOSCHOOL").group_prefix_admins
+        ldap_base = ucr.get("ldap/base")
+        return [
+            "cn=%s%s,cn=ouadmins,cn=groups,%s" % (prefix, school.lower(), ldap_base)
+            for school in self.schools
+        ]
+
     def groups_used(self, lo):
         group_dns = self.get_specific_groups(lo)
 
@@ -557,7 +565,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     def get_or_create_group_udm_object(cls, group_dn, lo, fresh=False):
         name = cls.get_name_from_dn(group_dn)
         school = cls.get_school_from_dn(group_dn)
-        if Group.is_school_class(school, group_dn):
+        if school is None and name.startswith(
+            cls.get_search_base(school).group_prefix_admins
+        ):  # Should only happen for ouadmin groups
+            group = BasicGroup.from_dn(group_dn, None, lo)
+        elif Group.is_school_class(school, group_dn):
             group = SchoolClass.cache(name, school)
         else:
             group = Group.cache(name, school)
@@ -703,6 +715,23 @@ class Teacher(User):
     def get_specific_groups(self, lo):
         groups = super(Teacher, self).get_specific_groups(lo)
         groups.extend(self.get_teachers_groups())
+        return groups
+
+
+class SchoolAdmin(User):
+    type_name = _("School Administrator")
+    type_filter = "(objectClass=ucsschoolAdministrator)"
+    roles = [role_school_admin]
+    default_roles = [role_school_admin]
+    default_options = ("ucsschoolAdministrator",)
+
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).admins
+
+    def get_specific_groups(self, lo):
+        groups = super(SchoolAdmin, self).get_specific_groups(lo)
+        groups.extend(self.get_school_admin_groups())
         return groups
 
 
