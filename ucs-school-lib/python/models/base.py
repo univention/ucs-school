@@ -346,8 +346,8 @@ class UCSSchoolHelperAbstractClass(object):
                 setattr(self, key, value)
             else:
                 self.logger.debug(
-                    "Setting attribute '{}={}' on {} does not work, since it doesn't exist.".format(
-                        key, value, self
+                    "Setting attribute '{!r}' on {!r} does not work, since it doesn't exist.".format(
+                        key, self
                     )
                 )
 
