@@ -14,8 +14,9 @@ UCS is a linux system/distro which is target at organizations to provide
 
 UCS is installed on all the participating machines.
 
-### Single machine
+Read more on [ucs] (german)
 
+### Single machine
 
 Within such a machine you will find many components:
 
@@ -51,10 +52,10 @@ graph TB
 - **app**, **shares**, **print**, **mail**: examples for apps and services
 - **umc**: the univention managament center, the central management component
 - **ucr**: key/value store for variables; used in scripts and for generating **configfiles** for
-  apps and services
+  apps and services [ucr]
 - **udm**: is a wrapper around the **ldap**, to add ucs specific logic around the 'pure' ldap
-  objects. Among other handles CRUD of dependend objects. Objects within ldap have *attributes*, 
-  objects from udm have *properties*.
+  objects. Among other handles CRUD of dependend objects. Objects within ldap have *attributes*,
+  objects from udm have *properties*. [udm]
 - **samba**: provides active direcory services and other sharing services (print, shares). Is synced
   with the ldap using a connector, e.g. s4 connector in this case.
 
@@ -97,7 +98,7 @@ secondary3--ldap protocol-->member
 
 There is one, and only one machine in the role of the domain controller **primary***. This server
 contains the **ldap primary**, the only place where data is written into the the ldap. This primary
-also contains ssl and other security relevant data.
+also contains ssl and other security relevant data. [ldap] [domain]
 
 The **ldap backup*** mirrors everything the primary contains, but only as a read-only backup. This
 backup can be upgraded into a primary server in case of failure of the real primary.
@@ -112,14 +113,15 @@ servers, e.g. a secondary.  (??? how does it get its data?)
 
 All synchronization between ldap servers is done using a **listen/notify** mechanism. This mechanism
 allows hooks to be called on actions, allowing e.g. for syncing servers, writing configfiles etc.
+[listener]
 
-Other communication then ldap syncing between machines is done using the umc protocol **umcp**. 
-This procotol allows sending of data as well as calling commands. 
+Other communication then ldap syncing between machines is done using the umc protocol **umcp**. This
+procotol allows sending of data as well as calling commands.
 
 ??? Are there other ways?
 
-If the main appcenter needs to install applications on the other machines in the domain, it uses 
-umc to speak to other machines, which in turn communcate with their respective appcenters
+If the main appcenter needs to install applications on the other machines in the domain, it uses umc
+to speak to other machines, which in turn communcate with their respective appcenters
 
 ```mermaid
 graph LR
@@ -139,5 +141,19 @@ Call flows
 tbd
 
 
+[listener]: https://docs.software-univention.de/handbuch-4.4.html#introduction:Listener_Notifier-Replikation
 
+[ucs]: https://docs.software-univention.de/handbuch-4.4.html#introduction:Was_ist_Univention_Corporate_Server
+
+[ldap]: https://docs.software-univention.de/handbuch-4.4.html#domain-ldap:Einfuehrung
+
+[domain]: https://docs.software-univention.de/handbuch-4.4.html#introduction:Domaenenkonzept
+
+[join]: https://docs.software-univention.de/handbuch-4.4.html#domain-ldap:joinscripts
+
+[schema]: https://docs.software-univention.de/handbuch-4.4.html#domain:ldap:extensions
+
+[ucr]: https://docs.software-univention.de/developer-reference-4.4.html#chap:ucr
+
+[udm]: https://docs.software-univention.de/developer-reference-4.4.html#chap:udm
 
