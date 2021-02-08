@@ -1,17 +1,49 @@
+# -*- coding: utf-8 -*-
+#
+# UCS@school python lib
+#
+# Copyright 2021 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
 import logging
 import re
 import traceback
 import uuid
 
+import ldap
+
 try:
-    from functools import lru_cache
-    from typing import Dict, List, Optional
+    from typing import Any, Dict, List, Optional, Type
 
     from .base import UdmObject
 except ImportError:
-    from backports.functools_lru_cache import lru_cache
+    pass
 
-from ucsschool.lib.models.utils import get_file_handler, get_stream_handler, ucr
+from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_computer_room,
@@ -26,6 +58,7 @@ from ucsschool.lib.roles import (
     role_workgroup,
     role_workgroup_share,
 )
+from ucsschool.lib.schoolldap import SchoolSearchBase
 
 LOG_FILE = "/var/log/univention/ucs-school-validation.log"
 VALIDATION_LOGGER = "UCSSchool-Validation"
@@ -34,54 +67,19 @@ private_data_logger.setLevel("DEBUG")
 private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
 
 
-class SecretFilter(logging.Filter):
-    def filter(self, record):
-        return record.name != VALIDATION_LOGGER
-
-
-for handler in logging.root.handlers:
-    handler.addFilter(SecretFilter())
-
-
-container_teachers = ucr.get("ucsschool/ldap/default/containers/teachers", "lehrer")
-container_staff = ucr.get("ucsschool/ldap/default/containers/staff", "mitarbeiter")
-container_teachers_and_staff = ucr.get(
-    "ucsschool/ldap/default/containers/teachers-and-staff", "lehrer und mitarbeiter"
-)
-container_students = ucr.get("ucsschool/ldap/default/containers/pupils", "schueler")
-container_exam_students = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
-container_computerrooms = ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
-exam_students_group = ucr.get("ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit")
-
-teachers_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_teachers, ucr["ldap/base"]),
-    flags=re.IGNORECASE,
-)
-staff_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_staff, ucr["ldap/base"]),
-    flags=re.IGNORECASE,
-)
-students_group_regex = re.compile(
-    r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(container_students, ucr["ldap/base"]),
-    flags=re.IGNORECASE,
-)
-
-
-def split_roles(roles):  # type(List[str]) -> List[List[str]]
+def split_roles(roles):  # type: (List[str]) -> List[List[str]]
     return [r.split(":") for r in roles]
 
 
-def get_position_from(dn):  # type(str) -> Optional[str]
+def get_position_from(dn):  # type: (str) -> Optional[str]
     # note: obj.position does not have a position
-    res = re.search(r"[^=]+=[^,]+,(.+)", dn)
-    if res:
-        return res.group(1)
+    return ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 
 
-def obj_to_dict(obj):  # type(UdmObject) -> Dict[Any]
+def obj_to_dict(obj):  # type: (UdmObject) -> Dict[Any]
     dict_obj = dict()
     dict_obj["props"] = dict(obj.items())
-    dict_obj["dn"] = obj.position.getDn()
+    dict_obj["dn"] = obj.dn
     dict_obj["position"] = get_position_from(dict_obj["dn"])
     dict_obj["options"] = obj.options
     return dict_obj
@@ -103,76 +101,43 @@ def obj_to_dict_conversion(func):
     return _inner
 
 
-def is_student_role(role):  # type(str) -> bool
+def is_student_role(role):  # type: (str) -> bool
     return role in (role_student, role_exam_user)
-
-
-def validate_group_membership(
-    dn, student=False, teacher=False, staff=False
-):  # type(str, bool, bool, bool) -> Optional[str]
-    """
-    Check if user is allowed in group with group_dn.
-    E.g. a Teacher should not be part of any students groups.
-    """
-    if (
-        (students_group_regex.match(dn) and not student)
-        or (teachers_group_regex.match(dn) and not teacher)
-        or (staff_group_regex.match(dn) and not staff)
-    ):
-        return "Disallowed member of group {}".format(dn)
 
 
 class SchoolValidator(object):
     position_regex = None
     attributes = []
     roles = []
-    container = ""
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_groups = kwargs.get("expected_groups", [])
-        expected_roles = kwargs.get("expected_roles", [])
-        errors = list()
+    def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
+        errors = []
+        roles = obj["props"].get("ucsschoolRole", [])
+        errors.append(cls.required_roles(roles, cls.expected_roles(obj)))
         errors.append(cls.required_attributes(obj["props"]))
         errors.append(cls.position(obj["position"]))
-        if expected_roles:
-            errors.append(cls.required_roles(obj["props"].get("ucsschoolRole", []), expected_roles))
-        if expected_groups:
-            errors.append(cls.required_groups(obj["props"].get("groups", []), expected_groups))
         return errors
 
     @classmethod
-    def required_groups(cls, groups, expected_groups):  # type(List[str], List[Any]) -> Optional[str]
-        """
-        Object should be in all groups. I test with g.endswith(group) to
-        also catch classes without using regexes.
-        """
-        missing_groups = []
-        for group in expected_groups:
-            if not any([g for g in groups if g.endswith(group)]):
-                missing_groups.append(group)
-        if missing_groups:
-            return "is missing groups at positions {!r}".format(missing_groups)
-
-    @classmethod
-    def required_attributes(cls, props):  # type(Dict[Any]) -> Optional[str]
+    def required_attributes(cls, props):  # type: (Dict[Any]) -> Optional[str]
         missing_attributes = [attr for attr in cls.attributes if not props.get(attr, "")]
         if missing_attributes:
             return "is missing required attributes: {!r}.".format(missing_attributes)
 
     @classmethod
-    def position(cls, position):  # type(str) -> Optional[str]
+    def position(cls, position):  # type: (str) -> Optional[str]
         if not cls.position_regex.match(position):
             return "has wrong position in ldap."
 
     @classmethod
-    def required_roles(cls, roles, expected_roles):  # type(List[str], List[str]) -> Optional[str]
+    def required_roles(cls, roles, expected_roles):  # type: (List[str], List[str]) -> Optional[str]
         missing_roles = [role for role in expected_roles if role not in roles]
         if missing_roles:
             return "is missing roles {!r}".format(missing_roles)
 
     @classmethod
-    def roles_at_school(cls, schools):  # type(List[str]) -> List[str]
+    def roles_at_school(cls, schools):  # type: (List[str]) -> List[str]
         """
         Get all roles for all schools which the object is expected to have.
         """
@@ -181,6 +146,16 @@ class SchoolValidator(object):
             for school in schools:
                 expected_roles.append(create_ucsschool_role_string(role, school))
         return expected_roles
+
+    @classmethod
+    def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+        return []
+
+    @classmethod
+    def get_search_base(cls, school):  # type: (str) -> SchoolSearchBase
+        from .base import UCSSchoolHelperAbstractClass
+
+        return UCSSchoolHelperAbstractClass.get_search_base(school)
 
 
 class UserValidator(SchoolValidator):
@@ -197,36 +172,64 @@ class UserValidator(SchoolValidator):
     ]
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_groups = kwargs.get("expected_groups", [])
-        expected_roles = kwargs.get("expected_roles", [])
+    def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
         schools = obj["props"].get("school", [])
         groups = obj["props"].get("groups", [])
         roles = split_roles(obj["props"].get("ucsschoolRole", []))
-
-        expected_roles.extend(cls.roles_at_school(schools))
-        expected_groups.extend(cls.domain_users_group(schools))
-        expected_groups.extend(cls.role_groups(schools))
-        errors = super(UserValidator, cls).validate(
-            obj, expected_roles=expected_roles, expected_groups=expected_groups
-        )
-
-        errors.append(cls.part_of_school(roles, schools))
-        errors.append(cls.student_roles(roles))
-        errors.extend(cls.group_membership(groups))
+        errors = super(UserValidator, cls).validate(obj)
+        errors.append(cls.validate_required_groups(groups, cls.expected_groups(obj)))
+        errors.append(cls.validate_part_of_school(roles, schools))
+        errors.append(cls.validate_student_roles(roles))
+        errors.extend(cls.validate_group_membership(groups))
         return errors
 
     @classmethod
-    def part_of_school(cls, roles, schools):  # type(List[str], List[str]) -> Optional[str]
+    def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+        schools = obj["props"].get("school", [])
+        return cls.roles_at_school(schools)
+
+    @classmethod
+    def expected_groups(cls, obj):  # type: (Dict) -> List[str]
+        """
+        Collect expected groups of user. Overwrite for special cases in subclasses.
+        """
+        expected_groups = []
+        schools = obj["props"].get("school", [])
+        expected_groups.extend(cls.domain_users_group(schools))
+        expected_groups.extend(cls.role_groups(schools))
+        return expected_groups
+
+    @classmethod
+    def validate_required_groups(
+        cls, groups, expected_groups
+    ):  # type: (List[str], List[Any]) -> Optional[str]
+        """
+        Object should be in all groups/ containers.
+        E.g.: Students must have at least one group in `cn=klassen,cn=schueler,cn=groups,ou=ou`,
+        which is true if the string ends with the classes position.
+        For groups like `cn=schueler-ou` endwith is the same as equal.
+        """
+        missing_groups = [
+            exp_group
+            for exp_group in expected_groups
+            if not any([grp.endswith(exp_group) for grp in groups])
+        ]
+        if missing_groups:
+            return "is missing groups at positions {!r}".format(missing_groups)
+
+    @classmethod
+    def validate_part_of_school(
+        cls, roles, schools
+    ):  # type: (List[List[str]], List[str]) -> Optional[str]
         """
         Users should not have roles with schools which they don't have.
         """
-        missing_schools = list(set([s for r, c, s in roles if c == "school" and s not in schools]))
+        missing_schools = set([s for r, c, s in roles if c == "school" and s not in schools])
         if missing_schools:
-            return "is not part of schools: {!r}.".format(missing_schools)
+            return "is not part of schools: {!r}.".format(list(missing_schools))
 
     @classmethod
-    def student_roles(cls, roles):  # type(List[str]) -> Optional[str]
+    def validate_student_roles(cls, roles):  # type: (List[List[str]]) -> Optional[str]
         """
         Students should not have teacher, staff or school_admin role.
         """
@@ -235,10 +238,10 @@ class UserValidator(SchoolValidator):
             if (cls.is_student and r in not_allowed_for_students) or (
                 not cls.is_student and r in [role_student, role_exam_user]
             ):
-                return "Students must not have these roles: {!r}.".format(not_allowed_for_students)
+                return "must not have these roles: {!r}.".format(not_allowed_for_students)
 
     @classmethod
-    def domain_users_group(cls, schools):  # type(List[str]) -> List[str]
+    def domain_users_group(cls, schools):  # type: (List[str]) -> List[str]
         """
         Users should be inside the `Domain Users OU` of their schools.
         """
@@ -248,100 +251,75 @@ class UserValidator(SchoolValidator):
         ]
 
     @classmethod
-    def role_groups(cls, schools):  # type(List[str]) -> List[str]
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
         """
         Users with `cls.role` should be in the corresponding group at
         each school they are part of.
-        Special cases ExamUsers and TeachersAndStaff are handled in subclasses.
+        Implemented in subclasses.
         """
-        if cls in [ExamStudentValidator, TeachersAndStaffValidator]:
-            return []
-        return [
-            "cn={}-{},cn=groups,ou={},{}".format(cls.container, school.lower(), school, ucr["ldap/base"])
-            for school in schools
-        ]
+        return []
 
     @classmethod
-    def group_membership(cls, groups):  # type(List[str]) -> List[str]
+    def validate_group_membership(cls, groups):  # type: (List[str]) -> List[str]
         """
         Validate group membership, e.g. students should not be in teachers group.
         """
         return [
-            validate_group_membership(
-                group,
-                student=cls.is_student,
-                teacher=cls.is_teacher,
-                staff=cls.is_staff,
+            "Disallowed member of group {}".format(dn)
+            for dn in groups
+            if (
+                (SchoolSearchBase.get_is_student_group_regex().match(dn) and not cls.is_student)
+                or (SchoolSearchBase.get_is_teachers_group_regex().match(dn) and not cls.is_teacher)
+                or (SchoolSearchBase.get_is_staff_group_regex().match(dn) and not cls.is_staff)
             )
-            for group in groups
         ]
 
 
 class StudentValidator(UserValidator):
-    container = container_students
-    position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_students_pos_regex()
     is_student = True
     roles = [role_student]
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_groups = kwargs.get("expected_groups", [])
-        expected_roles = kwargs.get("expected_roles", [])
-
-        expected_groups.extend(cls.classes_at_schools(obj["props"]["school"]))
-        return super(StudentValidator, cls).validate(
-            obj, expected_roles=expected_roles, expected_groups=expected_groups
-        )
-
-    @classmethod
-    def classes_at_schools(cls, schools):  # type(List[str]) -> List[str]
+    def expected_groups(cls, obj):  # type: (Dict) -> List[str]
         """
         Students have at least one class at every school.
         """
-        return [
-            "cn=klassen,cn={},cn=groups,ou={},{}".format(container_students, school, ucr["ldap/base"])
-            for school in schools
-        ]
+        schools = obj["props"].get("school", [])
+        expected_groups = super(StudentValidator, cls).expected_groups(obj)
+        expected_groups.extend([cls.get_search_base(school).classes for school in schools])
+        return expected_groups
+
+    @classmethod
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
+        return [cls.get_search_base(school).students_group for school in schools]
 
 
 class TeacherValidator(UserValidator):
-    container = container_teachers
-    position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_teachers_pos_regex()
     is_teacher = True
     roles = [role_teacher]
 
+    @classmethod
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
+        return [cls.get_search_base(school).teachers_group for school in schools]
+
 
 class ExamStudentValidator(StudentValidator):
-    container = container_exam_students
-    position_regex = re.compile(
-        r"cn={},ou=[^,]+,{}".format(container, ucr["ldap/base"]), flags=re.IGNORECASE
-    )
+    position_regex = SchoolSearchBase.get_exam_users_pos_regex()
     is_exam_user = True
     is_student = True
     roles = [role_exam_user]
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_groups = kwargs.get("expected_groups", [])
-        expected_roles = kwargs.get("expected_roles", [])
-        schools = obj["props"].get("school", [])
+    def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
         roles = obj["props"].get("ucsschoolRole", [])
-
-        expected_groups.extend(cls.exam_group(schools))
-        errors = super(ExamStudentValidator, cls).validate(
-            obj, expected_roles=expected_roles, expected_groups=expected_groups
-        )
-        errors.append(cls.exam_contexts(roles))
+        errors = super(ExamStudentValidator, cls).validate(obj)
+        errors.append(cls.validate_exam_contexts(roles))
         return errors
 
     @classmethod
-    def exam_contexts(cls, roles):  # type(List[str]) -> List[str]
+    def validate_exam_contexts(cls, roles):  # type: (List[str]) -> str
         """
         ExamUsers should have a role with context `exam`,
         e.g exam_user:exam:demo-exam-DEMOSCHOOL.
@@ -351,63 +329,45 @@ class ExamStudentValidator(StudentValidator):
             return "is missing role with context exam."
 
     @classmethod
-    def exam_group(cls, schools):  # type(List[str]) -> List[str]
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
         """
         ExamUsers should be inside a corresponding group in each of their schools.
+        SchoolSearchBase.examGroup has no school.lower()
         """
         return [
             "cn={},cn=ucsschool,cn=groups,{}".format(
-                exam_students_group % {"ou": school.lower()}, ucr["ldap/base"]
+                SchoolSearchBase._examGroupNameTemplate % {"ou": school.lower()}, ucr["ldap/base"]
             )
             for school in schools
         ]
 
 
 class StaffValidator(UserValidator):
-    container = container_staff
-    position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_staff_pos_regex()
     is_staff = True
     roles = [role_staff]
 
+    @classmethod
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
+        return [cls.get_search_base(school).staff_group for school in schools]
+
 
 class TeachersAndStaffValidator(UserValidator):
-    container = container_teachers_and_staff
-    position_regex = re.compile(
-        r"cn={},cn=users,ou=[^,]+,{}".format(container, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_teachers_and_staff_pos_regex()
     is_teacher = True
     is_staff = True
     roles = [role_teacher, role_staff]
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_groups = kwargs.get("expected_groups", [])
-        expected_roles = kwargs.get("expected_roles", [])
-
-        schools = obj["props"]["school"]
-        expected_groups.extend(cls.teachers_and_staff_groups(schools))
-        return super(TeachersAndStaffValidator, cls).validate(
-            obj, expected_roles=expected_roles, expected_groups=expected_groups
-        )
-
-    @classmethod
-    def teachers_and_staff_groups(cls, schools):  # type(List[str]) -> List[str]
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
         """
         TeachersAndStaff Users should be inside teachers and staff groups in
         all of their schools.
         """
         expected_groups = []
         for school in schools:
-            for container in [container_teachers, container_staff]:
-                expected_groups.append(
-                    "cn={}-{},cn=groups,ou={},{}".format(
-                        container, school.lower(), school, ucr["ldap/base"]
-                    )
-                )
+            expected_groups.append(cls.get_search_base(school).teachers_group)
+            expected_groups.append(cls.get_search_base(school).staff_group)
         return expected_groups
 
 
@@ -418,7 +378,7 @@ class GroupAndShareValidator(SchoolValidator):
     ]
 
     @staticmethod
-    def _extract_ou(dn):  # type(str) -> str
+    def _extract_ou(dn):  # type: (str) -> Optional[str]
         """
         Groups and shares do not have the property school,
         so it is extracted of the dn.
@@ -428,21 +388,19 @@ class GroupAndShareValidator(SchoolValidator):
             return res.group(1)
 
     @classmethod
-    def validate(cls, obj, **kwargs):  # type(Dict[Any], Dict[Any]) -> List[str]
-        expected_roles = kwargs.get("expected_roles", [])
-        expected_groups = kwargs.get("expected_groups", [])
-
+    def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
         school = GroupAndShareValidator._extract_ou(obj["dn"])
-        # note: groups and shares exist only at one ou.
-        expected_roles.extend(cls.roles_at_school([school]))
-        errors = super(GroupAndShareValidator, cls).validate(
-            obj, expected_roles=expected_roles, expected_groups=expected_groups
-        )
+        errors = super(GroupAndShareValidator, cls).validate(obj)
         errors.append(cls.school_prefix(obj["props"]["name"], school))
         return errors
 
     @classmethod
-    def school_prefix(cls, name, school):  # type(str, str) -> Optional[str]
+    def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+        school = GroupAndShareValidator._extract_ou(obj["dn"])
+        return cls.roles_at_school([school])
+
+    @classmethod
+    def school_prefix(cls, name, school):  # type: (str, str) -> Optional[str]
         """
         Groups and Shares should have a school prefix in their name, like `DEMOSCHOOL-Democlass`
         """
@@ -453,87 +411,69 @@ class GroupAndShareValidator(SchoolValidator):
 
 class SchoolClassValidator(GroupAndShareValidator):
     roles = [role_school_class]
-    position_regex = re.compile(
-        r"cn=klassen,cn={},cn=groups,ou=[^,]+?,{}".format(container_students, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_schoolclass_pos_regex()
 
 
 class WorkGroupValidator(GroupAndShareValidator):
     roles = [role_workgroup]
-    position_regex = re.compile(
-        r"cn={},cn=groups,ou=[^,]+?,{}".format(container_students, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_workgroup_pos_regex()
 
 
 class ComputerroomValidator(GroupAndShareValidator):
     roles = [role_computer_room]
-    position_regex = re.compile(
-        r"cn={},cn=groups,ou=[^,]+?,{}".format(container_computerrooms, ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_computerroom_pos_regex()
 
 
 class WorkGroupShareValidator(GroupAndShareValidator):
     roles = [role_workgroup_share]
-    position_regex = re.compile(
-        r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_workgroup_share_pos_regex()
 
 
-class ClasshareValidator(GroupAndShareValidator):
+class ClassShareValidator(GroupAndShareValidator):
     roles = [role_school_class_share]
-    position_regex = re.compile(
-        r"cn=klassen,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_school_class_share_pos_regex()
 
 
 class MarketplaceShareValidator(GroupAndShareValidator):
     roles = [role_marketplace_share]
-    position_regex = re.compile(
-        r"cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
-        flags=re.IGNORECASE,
-    )
+    position_regex = SchoolSearchBase.get_workgroup_share_pos_regex()
     dn_regex = re.compile(
         r"cn=Marktplatz,cn=shares,ou=[^,]+?,{}".format(ucr["ldap/base"]),
         flags=re.IGNORECASE,
     )
 
 
-def get_class(obj):  # type(Dict[Any]) -> Optional[SchoolValidator]
+def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
     options = obj["options"]
     position = obj["position"]
     if "ucsschoolExam" in options:
         return ExamStudentValidator
-    elif {"ucsschoolTeacher", "ucsschoolStaff"}.issubset(set(options)):
+    if {"ucsschoolTeacher", "ucsschoolStaff"}.issubset(set(options)):
         return TeachersAndStaffValidator
-    elif "ucsschoolStudent" in options:
+    if "ucsschoolStudent" in options:
         return StudentValidator
-    elif "ucsschoolTeacher" in options:
+    if "ucsschoolTeacher" in options:
         return TeacherValidator
-    elif "ucsschoolStaff" in options:
+    if "ucsschoolStaff" in options:
         return StaffValidator
-    elif SchoolClassValidator.position_regex.match(position):
+    if SchoolClassValidator.position_regex.match(position):
         return SchoolClassValidator
-    elif WorkGroupValidator.position_regex.match(position):
+    if WorkGroupValidator.position_regex.match(position):
         return WorkGroupValidator
-    elif ComputerroomValidator.position_regex.match(position):
+    if ComputerroomValidator.position_regex.match(position):
         return ComputerroomValidator
-    elif ClasshareValidator.position_regex.match(position):
-        return ClasshareValidator
-    elif MarketplaceShareValidator.dn_regex.match(obj["dn"]):
+    if ClassShareValidator.position_regex.match(position):
+        return ClassShareValidator
+    if MarketplaceShareValidator.dn_regex.match(obj["dn"]):
         # note: MarketplaceShares have the same position as WorkgroupShares,
         # but are unique for ous.
         return MarketplaceShareValidator
-    elif WorkGroupShareValidator.position_regex.match(position):
+    if WorkGroupShareValidator.position_regex.match(position):
         return WorkGroupShareValidator
 
 
 @obj_to_dict_conversion
-def validate(obj, logger=None):  # type(Dict[Any], logging.Logger) -> None
+def validate(obj, logger=None):  # type: (Dict[Any], logging.Logger) -> None
     """
     Objects are validated as dicts and errors are logged to
     the passed logger. Sensitive data is only logged to /var/log/univention/ucs-school-validation.log
@@ -546,13 +486,11 @@ def validate(obj, logger=None):  # type(Dict[Any], logging.Logger) -> None
         errors = list(filter(None, errors))
         if errors:
             validation_uuid = str(uuid.uuid4())
-            errors_str = (
-                "{} UCS@school Object {} with options {} has validation errors:\n\t- {}\n".format(
-                    validation_uuid,
-                    obj.get("dn", ""),
-                    "{!r}".format(options),
-                    "\n\t- ".join(errors),
-                )
+            errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}".format(
+                validation_uuid,
+                obj.get("dn", ""),
+                "{!r}".format(options),
+                "\n\t- ".join(errors),
             )
             if logger:
                 logger.error(errors_str)

@@ -1,25 +1,24 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
-## desc: test ucsschool.lib.models.users to_dict conversion
+## desc: test ucsschool.lib.models.groups and shares validation
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
 ##   - python-ucs-school
 
-
-import logging
-
 #
 # Hint: When debugging interactively, disable output capturing:
 # $ pytest -s -l -v ./......py::test_*
 #
+import logging
 import tempfile
 
 import pytest
+import pytest_catchlog
 
 try:
-    from typing import Dict
+    from typing import Any, Dict
 except ImportError:
     pass
 import univention.testing.strings as uts
@@ -27,14 +26,12 @@ from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
-    ClasshareValidator,
+    ClassShareValidator,
     ComputerroomValidator,
     MarketplaceShareValidator,
     SchoolClassValidator,
     WorkGroupShareValidator,
     WorkGroupValidator,
-    container_computerrooms,
-    container_students,
     get_class,
     validate,
 )
@@ -46,11 +43,15 @@ from ucsschool.lib.roles import (
     role_workgroup,
     role_workgroup_share,
 )
+from ucsschool.lib.schoolldap import SchoolSearchBase
 
+SchoolSearchBase._load_containers_and_prefixes()
 ldap_base = ucr["ldap/base"]
+container_computerrooms = SchoolSearchBase._containerRooms
+container_students = SchoolSearchBase._containerStudents
 
 
-def filter_log_messages(logs, name):  # type(logging.Logger, str) -> str
+def filter_log_messages(logs, name):  # type: (logging.Logger, str) -> str
     """
     get all log messages for logger with name
     """
@@ -63,7 +64,7 @@ def mock_logger_file(mocker):
         mocker.patch.object(validator, "LOG_FILE", f.name)
 
 
-def base_group(name):  # type(str, str) -> Dict[Any]
+def base_group(name):  # type: (str, str) -> Dict[Any]
     return {
         "dn": "",
         "props": {
@@ -75,7 +76,7 @@ def base_group(name):  # type(str, str) -> Dict[Any]
             "UVMMGroup": False,
             "memberOf": [],
             "nestedGroup": [],
-            "name": "{}".format(name),
+            "name": name,
             "gidNumber": 5088,
             "hosts": [],
             "objectFlag": [],
@@ -86,8 +87,6 @@ def base_group(name):  # type(str, str) -> Dict[Any]
             "allowedEmailGroups": [],
             "users": [],
         },
-        "id": "{}".format(name),
-        "_links": {},
         "policies": {"policies/umc": []},
         "position": "",
         "options": [],
@@ -95,7 +94,7 @@ def base_group(name):  # type(str, str) -> Dict[Any]
     }
 
 
-def workgroup():  # type(None) -> Dict[Any]
+def workgroup():  # type: () -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
@@ -104,18 +103,18 @@ def workgroup():  # type(None) -> Dict[Any]
     return group
 
 
-def schoolclass():  # type(None) -> Dict[Any]
+def schoolclass():  # type: () -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
-    group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
     group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
         container_students, ldap_base
     )
+    group["dn"] = "cn={}{}".format(name, group["position"])
     group["props"]["ucsschoolRole"] = ["school_class:school:DEMOSCHOOL"]
     return group
 
 
-def computer_room():  # type(None) -> Dict[Any]
+def computer_room():  # type: () -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
@@ -126,7 +125,7 @@ def computer_room():  # type(None) -> Dict[Any]
     return group
 
 
-def base_share(name):  # type(str) -> Dict[Any]
+def base_share(name):  # type: (str) -> Dict[Any]
     return {
         "dn": "",
         "props": {
@@ -193,7 +192,7 @@ def base_share(name):  # type(str) -> Dict[Any]
     }
 
 
-def klassen_share():  # type(None) -> Dict[Any]
+def klassen_share():  # type: () -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -202,7 +201,7 @@ def klassen_share():  # type(None) -> Dict[Any]
     return share
 
 
-def workgroup_share():  # type(None) -> Dict[Any]
+def workgroup_share():  # type: () -> Dict[Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -211,7 +210,7 @@ def workgroup_share():  # type(None) -> Dict[Any]
     return share
 
 
-def marktplatz_share():  # type(None) -> Dict[Any]
+def marktplatz_share():  # type: () -> Dict[Any]
     name = "Marktplatz"
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -239,6 +238,16 @@ complete_role_matrix_ids = [
 ]
 
 
+def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
+    # type: (Dict[str, Any], pytest_catchlog.CallableList, str, str) -> None
+    public_logs = filter_log_messages(record_tuples, public_logger_name)
+    secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
+    for log in (public_logs, secret_logs):
+        assert expected_msg in log
+    assert "{}".format(dict_obj) in secret_logs
+    assert "{}".format(dict_obj) not in public_logs
+
+
 @pytest.mark.parametrize(
     "dict_obj,ObjectClass",
     zip(
@@ -248,7 +257,7 @@ complete_role_matrix_ids = [
             WorkGroupValidator,
             ComputerroomValidator,
             WorkGroupShareValidator,
-            ClasshareValidator,
+            ClassShareValidator,
             MarketplaceShareValidator,
         ],
     ),
@@ -278,6 +287,7 @@ def test_correct_object(caplog, dict_obj, random_logger):
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
+    assert "{}".format(dict_obj) not in public_logs
 
 
 @pytest.mark.parametrize(
@@ -300,11 +310,8 @@ def test_missing_required_attribute(caplog, dict_obj, random_logger, required_at
     _dict_obj = dict_obj()
     _dict_obj["props"][required_attribute] = []
     validate(_dict_obj, logger=random_logger)
-    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
-    for log in (public_logs, secret_logs):
-        assert "is missing required attributes: {!r}".format([required_attribute]) in log
-    assert "{}".format(_dict_obj) in secret_logs
+    expected_msg = "is missing required attributes: {!r}".format([required_attribute])
+    check_logs(_dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
 @pytest.mark.parametrize(
@@ -330,11 +337,8 @@ def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
             break
 
     validate(dict_obj, logger=random_logger)
-    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
-    for log in (public_logs, secret_logs):
-        assert "is missing roles {!r}".format([_role]) in log
-    assert "{}".format(dict_obj) in secret_logs
+    expected_msg = "is missing roles {!r}".format([_role])
+    check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
 @pytest.mark.parametrize(
@@ -357,8 +361,5 @@ def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
 def test_missing_school_prefix(caplog, dict_obj, random_logger):
     dict_obj["props"]["name"] = uts.random_name()
     validate(dict_obj, logger=random_logger)
-    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
-    for log in (public_logs, secret_logs):
-        assert "has an incorrect school prefix for school DEMOSCHOOL." in log
-    assert "{}".format(dict_obj) in secret_logs
+    expected_msg = "has an incorrect school prefix for school DEMOSCHOOL."
+    check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)

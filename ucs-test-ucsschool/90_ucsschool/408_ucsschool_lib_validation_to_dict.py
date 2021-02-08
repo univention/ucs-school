@@ -9,12 +9,8 @@
 
 #
 # Hint: When debugging interactively, disable output capturing:
-# $ pytest -s -l -v ./......py::test_create
+# $ pytest -s -l -v ./......py::test_*
 #
-try:
-    from typing import Dict, List, Tuple
-except ImportError:
-    pass
 
 import pytest
 
@@ -35,7 +31,10 @@ def test_udm_obj_to_dict(ObjectClass, schoolenv):
     else:
         name = uts.random_name()
     user = ObjectClass(
-        school="DEMOSCHOOL", name=name, firstname=uts.random_name(), lastname=uts.random_name(),
+        school="DEMOSCHOOL",
+        name=name,
+        firstname=uts.random_name(),
+        lastname=uts.random_name(),
     )
     user.create(schoolenv.lo)
     udm_obj = user.get_udm_object(schoolenv.lo)
@@ -49,8 +48,6 @@ def test_udm_obj_to_dict(ObjectClass, schoolenv):
     for option in udm_obj.options:
         if option in dict_obj["options"]:
             assert option in dict_obj["options"]
-        else:
-            assert option not in dict_obj["options"]
 
 
 @pytest.mark.parametrize("GroupShareClass", [ClassShare, WorkGroupShare, MarketplaceShare])
@@ -58,15 +55,24 @@ def test_udm_share_to_dict(GroupShareClass, schoolenv):
     if GroupShareClass in [ClassShare, WorkGroupShare]:
         name = "DEMOSCHOOL-{}".format(uts.random_name())
         if GroupShareClass == ClassShare:
-            group = SchoolClass(school="DEMOSCHOOL", name=name,)
+            group = SchoolClass(
+                school="DEMOSCHOOL",
+                name=name,
+            )
             group.create(schoolenv.lo)
         elif GroupShareClass == WorkGroupShare:
-            group = WorkGroup(school="DEMOSCHOOL", name=name,)
+            group = WorkGroup(
+                school="DEMOSCHOOL",
+                name=name,
+            )
             group.create(schoolenv.lo)
     else:
         name = "Marktplatz"
 
-    share = GroupShareClass(school="DEMOSCHOOL", name=name,)
+    share = GroupShareClass(
+        school="DEMOSCHOOL",
+        name=name,
+    )
     share.create(schoolenv.lo)
     udm_obj = share.get_udm_object(schoolenv.lo)
     dict_obj = obj_to_dict(udm_obj)
@@ -79,5 +85,3 @@ def test_udm_share_to_dict(GroupShareClass, schoolenv):
     for option in udm_obj.options:
         if option in dict_obj["options"]:
             assert option in dict_obj["options"]
-        else:
-            assert option not in dict_obj["options"]
