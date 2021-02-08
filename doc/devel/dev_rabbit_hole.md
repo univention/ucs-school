@@ -14,7 +14,7 @@ UCS is a linux system/distro which is target at organizations to provide
 
 UCS is installed on all the participating machines.
 
-Read more on [ucs] (german)
+See: [ucs] (german)
 
 ### Single machine
 
@@ -52,10 +52,10 @@ graph TB
 - **app**, **shares**, **print**, **mail**: examples for apps and services
 - **umc**: the univention managament center, the central management component
 - **ucr**: key/value store for variables; used in scripts and for generating **configfiles** for
-  apps and services [ucr]
+  apps and services. See: [ucr]
 - **udm**: is a wrapper around the **ldap**, to add ucs specific logic around the 'pure' ldap
   objects. Among other handles CRUD of dependend objects. Objects within ldap have *attributes*,
-  objects from udm have *properties*. [udm]
+  objects from udm have *properties*. See: [udm]
 - **samba**: provides active direcory services and other sharing services (print, shares). Is synced
   with the ldap using a connector, e.g. s4 connector in this case.
 
@@ -98,7 +98,7 @@ secondary3--ldap protocol-->member
 
 There is one, and only one machine in the role of the domain controller **primary***. This server
 contains the **ldap primary**, the only place where data is written into the the ldap. This primary
-also contains ssl and other security relevant data. [ldap] [domain]
+also contains ssl and other security relevant data. See: [ldap], [domain]
 
 The **ldap backup*** mirrors everything the primary contains, but only as a read-only backup. This
 backup can be upgraded into a primary server in case of failure of the real primary.
@@ -113,7 +113,7 @@ servers, e.g. a secondary.  (??? how does it get its data?)
 
 All synchronization between ldap servers is done using a **listen/notify** mechanism. This mechanism
 allows hooks to be called on actions, allowing e.g. for syncing servers, writing configfiles etc.
-[listener]
+See: [listener]
 
 Other communication then ldap syncing between machines is done using the umc protocol **umcp**. This
 procotol allows sending of data as well as calling commands.
