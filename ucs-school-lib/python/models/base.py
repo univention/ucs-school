@@ -332,6 +332,25 @@ class UCSSchoolHelperAbstractClass(object):
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
+    def set_attributes(self, **kwargs):
+        """
+        A function to set the attributes of an UCS@school object in one function call.
+        Only attributes that exist in self._attributes are set. The rest of the kwargs are
+        simply ignored.
+
+        :param kwargs: The attributes to set.
+        """
+        existing_attributes = self._attributes.keys()
+        for key, value in kwargs.items():
+            if key in existing_attributes:
+                setattr(self, key, value)
+            else:
+                self.logger.debug(
+                    "Setting attribute '{}={}' on {} does not work, since it doesn't exist.".format(
+                        key, value, self
+                    )
+                )
+
     def set_dn(self, dn):  # type: (str) -> None
         """Does not really set dn, as this is generated
         on-the-fly. Instead, sets old_dn in case it was
