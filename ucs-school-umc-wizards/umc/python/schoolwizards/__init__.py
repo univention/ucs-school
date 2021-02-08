@@ -33,6 +33,7 @@
 
 import functools
 import re
+from enum import Enum
 
 import six
 
@@ -51,6 +52,7 @@ from ucsschool.lib.models import (
     UCCComputer,
     User,
     WindowsComputer,
+    WrongModel,
 )
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
@@ -68,6 +70,14 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
+from univention.udm import UDM
+
+try:
+    from typing import Any, Iterator, Optional, Set, Union
+
+    from univention.admin.uldap import access as LoType
+except ImportError:
+    pass
 
 _ = Translation("ucs-school-umc-wizards").translate
 
@@ -99,16 +109,75 @@ COMPUTER_TYPES = {
 }
 
 
-def iter_objects_in_request(request, lo, require_dn=False):
+class OperationType(Enum):
+    CREATE = 0
+    MODIFY = 1
+    DELETE = 2
+    GET = 3
+
+
+def check_workaround_constraints(
+    subject_schools, old_object_schools, new_object_schools, operation_type
+):  # type: (Set[str], Set[str], Set[str], int) -> bool
+    """
+    This function checks the constraints for the admin workaround as described in Bug #52757.
+    Returns whether the constraints are fulfilled or not.
+
+    Attention! This function does only check the general constrain for DELETE. User deletions are not checked
+    correctly due to their special handling.
+
+    :param subject_schools: The set of schools the subject is in
+    :param old_object_schools: The set of schools the object is in before any modification
+    :param new_object_schools: The set of schools the object is in after the modification
+    :param operation_type: The type of operation to check the constraints for
+    :return: True if the operation should be allowed, False otherwise
+    """
+    if subject_schools == set() or (
+        old_object_schools == set() and operation_type != OperationType.CREATE
+    ):
+        # Prevent editing by global users; prevent editing of global users
+        return False
+    if operation_type == OperationType.CREATE:
+        return new_object_schools <= subject_schools and new_object_schools != set()
+    elif operation_type == OperationType.MODIFY:
+        return subject_schools & old_object_schools != set() and old_object_schools == new_object_schools
+    elif operation_type == OperationType.DELETE:
+        return old_object_schools <= subject_schools
+    elif operation_type == OperationType.GET:
+        return subject_schools & old_object_schools != set()
+    else:  # Operations with undefined constraints just return False
+        return False
+
+
+def iter_objects_in_request(
+    request, lo, operation_type, subject_schools=frozenset(), is_domain_admin=False
+):  # type: (Any, LoType, int, Set[str], bool) -> Iterator[Union[School, User, SchoolComputer, SchoolClass]]
+    """
+    This function iterates over all given objects given in the request and returns the corresponding UCS@school lib
+    objects already altered with the changes from the request.
+
+    Attention: If the admin workaround is activated (see Bug #52757) certain constraints are checked. If they are not
+    fulfilled this function aborts with an UMC Error.
+
+    :param request: The request from the UMCP call containing all the objects to be iterated over.
+    :param lo: A LDAP access for retrieving existing UCS@school objects.
+    :param operation_type: The type of operation applied onto the returned objects. Necessary for constraint checking.
+    :param subject_schools: The schools the user triggering the UMCP command is in. This is needed for constraint checking.
+    :param is_domain_admin: If the user triggering the UMCP command is a domain admin or not. This is needed for constraint checking.
+
+    :returns: An iterator to iterate over the altered or new UCS@school objects.
+    :raises UMC_Error: If an object that should exist does not or if the admin workaround constraints are not met.
+    """
     klass = {
         "schoolwizards/schools": School,
         "schoolwizards/users": User,
         "schoolwizards/computers": SchoolComputer,
         "schoolwizards/classes": SchoolClass,
     }[request.flavor]
+    admin_workaround_active = ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection")
     for obj_props in request.options:
         obj_props = obj_props["object"]
-        for key, value in obj_props.iteritems():
+        for key, value in six.iteritems(obj_props):
             if isinstance(value, six.string_types):
                 obj_props[key] = value.strip()
         if issubclass(klass, User):
@@ -122,7 +191,23 @@ def iter_objects_in_request(request, lo, require_dn=False):
         if issubclass(klass, SchoolClass):
             # workaround to be able to reuse this function everywhere
             obj_props["name"] = "%s-%s" % (obj_props["school"], obj_props["name"])
-        if require_dn:
+        object_new_schools = (set([obj_props.get("school")]) if "school" in obj_props else set()) | set(
+            obj_props.get("schools", [])
+        )
+        if operation_type == OperationType.CREATE:
+            if (
+                admin_workaround_active
+                and not is_domain_admin
+                and not check_workaround_constraints(
+                    subject_schools, set, object_new_schools, operation_type
+                )
+            ):
+                raise UMC_Error(
+                    _("You do not have the rights to create an object for the schools %s")
+                    % object_new_schools
+                )
+            obj = klass(**obj_props)
+        else:
             try:
                 obj = klass.from_dn(dn, obj_props.get("school"), lo)
             except noObject:
@@ -130,11 +215,26 @@ def iter_objects_in_request(request, lo, require_dn=False):
                     _("The %s %r does not exists or might have been removed in the meanwhile.")
                     % (getattr(klass, "type_name", klass.__name__), obj_props["name"])
                 )
-            for key, value in obj_props.iteritems():
-                if key in obj._attributes:
-                    setattr(obj, key, value)
-        else:
-            obj = klass(**obj_props)
+            try:
+                object_old_schools = set(obj.schools)
+            except AttributeError:  # there are school lib objects that do not have the schools attribute
+                object_old_schools = set()
+            if obj.school:
+                object_old_schools.add(obj.school)
+            if (
+                admin_workaround_active
+                and not is_domain_admin
+                and not check_workaround_constraints(
+                    subject_schools, object_old_schools, object_new_schools, operation_type
+                )
+            ):
+                raise UMC_Error(
+                    _(
+                        "You do not have the right to modify the object with the DN %s from the schools %s."
+                    )
+                    % (dn, object_old_schools)
+                )
+            obj.set_attributes(**obj_props)
         if dn:
             obj.old_dn = dn
         yield obj
@@ -157,6 +257,43 @@ def sanitize_object(**kwargs):
 
 
 class Instance(SchoolBaseModule, SchoolImport):
+    def __init__(self):
+        super(Instance, self).__init__()
+        self._own_schools = None  # type: Optional[Set[str]]
+        self._user_is_domain_admin = None  # type: Optional[bool]
+
+    @property
+    def admin_workaround_active(self):
+        # Bug #44641: workaround with security implications!
+        return ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection")
+
+    @LDAP_Connection(ADMIN_WRITE)
+    def own_schools(self, ldap_admin_write=None):  # type: (Optional[LoType]) -> Set[str]
+        """
+        Returns a set of all schools the current user has.
+        """
+        if self._own_schools is None:
+            try:
+                current_user = User.from_dn(self.user_dn, None, ldap_admin_write)  # type: User
+                self._own_schools = ({current_user.school} if current_user.school else set()) | set(
+                    current_user.schools
+                )
+            except (noObject, WrongModel):
+                MODULE.error("The user with dn {} could not be found or associated with any schools!")
+                self._own_schools = set()
+        return self._own_schools
+
+    def is_domain_admin(self):  # type: () -> bool
+        """
+        Returns if the currently logged in user is a domain admin or not.
+        """
+        if self._user_is_domain_admin is None:
+            self._user_is_domain_admin = (
+                "cn=Domain Admins,cn=groups,{}".format(ucr.get("ldap/base"))
+                in UDM.admin().version(0).obj_by_dn(self.user_dn).props.groups
+            )
+        return self._user_is_domain_admin
+
     def init(self):
         super(Instance, self).init()
         add_module_logger_to_schoollib()
@@ -219,7 +356,9 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection()
     def _get_obj(self, request, ldap_user_read=None):
         ret = []
-        for obj in iter_objects_in_request(request, ldap_user_read, True):
+        for obj in iter_objects_in_request(
+            request, ldap_user_read, OperationType.GET, self.own_schools(), self.is_domain_admin()
+        ):
             MODULE.process("Getting %r" % (obj))
             obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
             ret.append(obj.to_dict())
@@ -229,11 +368,13 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
         # Bug #44641: workaround with security implications!
-        if ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection"):
+        if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
 
         ret = []
-        for obj in iter_objects_in_request(request, ldap_user_write):
+        for obj in iter_objects_in_request(
+            request, ldap_user_write, OperationType.CREATE, self.own_schools(), self.is_domain_admin()
+        ):
             MODULE.process("Creating %r" % (obj,))
             obj.validate(ldap_user_read)
             if obj.errors:
@@ -255,11 +396,13 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
         # Bug #44641: workaround with security implications!
-        if ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection"):
+        if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
 
         ret = []
-        for obj in iter_objects_in_request(request, ldap_user_write, True):
+        for obj in iter_objects_in_request(
+            request, ldap_user_write, OperationType.MODIFY, self.own_schools(), self.is_domain_admin()
+        ):
             MODULE.process("Modifying %r" % (obj))
             obj.validate(ldap_user_read)
             if obj.errors:
@@ -278,11 +421,13 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
         # Bug #44641: workaround with security implications!
-        if ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection"):
+        if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
 
         ret = []
-        for obj in iter_objects_in_request(request, ldap_user_write, True):
+        for obj in iter_objects_in_request(
+            request, ldap_user_write, OperationType.DELETE, self.own_schools(), self.is_domain_admin()
+        ):
             obj.name = obj.get_name_from_dn(obj.old_dn)
             MODULE.process("Deleting %r" % (obj))
             if obj.remove(ldap_user_write):
@@ -327,14 +472,14 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def delete_user(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
         # Bug #44641: workaround with security implications!
-        if ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection"):
+        if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
 
         ret = []
         for obj_props in request.options:
             obj_props = obj_props["object"]
             try:
-                obj = User.from_dn(obj_props["$dn$"], None, ldap_user_write)
+                obj = User.from_dn(obj_props["$dn$"], None, ldap_user_write)  # type: User
             except noObject:
                 raise UMC_Error(
                     _("The %s %r does not exists or might have been removed in the meanwhile.")
@@ -344,6 +489,14 @@ class Instance(SchoolBaseModule, SchoolImport):
                     )
                 )
             school = obj_props["remove_from_school"]
+            user_schools = ({obj.school} if obj.school else set()) | set(obj.schools)
+            if (self.admin_workaround_active and not self.is_domain_admin()) and (
+                school not in self.own_schools() or school not in user_schools
+            ):
+                raise UMC_Error(
+                    _("You do not have the right to delete the user with the dn %s from the school %s.")
+                    % (obj_props["$dn$"], school)
+                )
             success = obj.remove_from_school(school, ldap_user_write)
             # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was
             # removed from it
@@ -373,7 +526,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection(USER_READ, USER_WRITE, ADMIN_WRITE)
     def create_computer(self, request, ldap_user_read=None, ldap_user_write=None, ldap_admin_write=None):
         # Bug #44641: workaround with security implications!
-        if ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection"):
+        if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
 
         for option in request.options:
@@ -383,7 +536,9 @@ class Instance(SchoolBaseModule, SchoolImport):
         ]
         ignore_warnings.reverse()
         ret = {}
-        for obj in iter_objects_in_request(request, ldap_user_write):
+        for obj in iter_objects_in_request(
+            request, ldap_user_write, OperationType.CREATE, self.own_schools(), self.is_domain_admin()
+        ):
             ignore_warning = ignore_warnings.pop()
             obj.validate(ldap_user_read)
             if obj.errors:
