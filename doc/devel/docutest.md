@@ -12,7 +12,14 @@ Mermaid
 ```mermaid
 graph TD;
   A-->B;
-  A-->C;
-  B-->D;
+  A--foo-->C;
+  B-.->D;
   C-->D;
+```
+
+```mermaid
+sequenceDiagram
+    Alice->Bob: Hello Bob, how are you?
+    Note right of Bob: Bob thinks
+    Bob-->Alice: I am good thanks!
 ```
