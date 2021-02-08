@@ -4,9 +4,9 @@ Down the dev rabbit hole
 Overview
 --------
 
-UCS is a linux system/distro which is target at organizations to provide
+UCS is a linux system/distro which is targeted at organizations to provide:
 
-- Idenity and infrastructure management
+- Identity- and infrastructure management
 - Providing or integration within a domain
 - Mechanisms to run virtual machines
 - Running ready provided apps
@@ -50,13 +50,14 @@ graph TB
 
 - **appcenter**: allows the provisioning of apps and services
 - **app**, **shares**, **print**, **mail**: examples for apps and services
-- **umc**: the univention managament center, the central management component
+- **umc**: the univention management center, the central management component
 - **ucr**: key/value store for variables; used in scripts and for generating **configfiles** for
   apps and services. See: [ucr]
 - **udm**: is a wrapper around the **ldap**, to add ucs specific logic around the 'pure' ldap
-  objects. Among other handles CRUD of dependend objects. Objects within ldap have *attributes*,
+  objects. Among other handles CRUD of dependent objects. Objects within ldap have *attributes*,
   objects from udm have *properties*. See: [udm]
-- **samba**: provides active direcory services and other sharing services (print, shares). Is synced
+- **samba**: provides active directory services and other sharing services (print, shares). Is 
+  synced
   with the ldap using a connector, e.g. s4 connector in this case.
 
 ### Multi machine setup
@@ -97,7 +98,7 @@ secondary3--ldap protocol-->member
 ```
 
 There is one, and only one machine in the role of the domain controller **primary***. This server
-contains the **ldap primary**, the only place where data is written into the the ldap. This primary
+contains the **ldap primary**, the only place where data is written into the ldap. This primary
 also contains ssl and other security relevant data. See: [ldap], [domain]
 
 The **ldap backup*** mirrors everything the primary contains, but only as a read-only backup. This
@@ -116,12 +117,12 @@ allows hooks to be called on actions, allowing e.g. for syncing servers, writing
 See: [listener]
 
 Other communication then ldap syncing between machines is done using the umc protocol **umcp**. This
-procotol allows sending of data as well as calling commands.
+protocol allows sending of data as well as calling commands.
 
 ??? Are there other ways?
 
 If the main appcenter needs to install applications on the other machines in the domain, it uses umc
-to speak to other machines, which in turn communcate with their respective appcenters
+to speak to other machines, which in turn communicate with their respective appcenters
 
 ```mermaid
 graph LR
