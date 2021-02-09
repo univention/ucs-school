@@ -416,7 +416,8 @@ def get_file_handler(
 	:param int gid: group that the file should belong to (current users
 		primary group if None)
 	:param int mode: permissions of the file
-	:param int backupCount: start a new log file at predetermined size
+	:param int backupCount: If backupCount is nonzero, at most backupCount files will be kept.
+		When rollover occurs, the oldest one is deleted.
 	:param str when: time when log is rotated.
 	:return: a handler
 	:rtype: logging.Handler
