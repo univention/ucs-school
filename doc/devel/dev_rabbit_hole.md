@@ -99,7 +99,8 @@ secondary3--ldap protocol-->member
 
 There is one, and only one machine in the role of the domain controller **primary***. This server
 contains the **ldap primary**, the only place where data is written into the ldap. This primary
-also contains ssl and other security relevant data. See: [ldap], [domain]
+also contains ssl and other security relevant data. See: [ldap], 
+[domain], [default ldap content of the primary](default_ldap_content.txt)
 
 The **ldap backup*** mirrors everything the primary contains, but only as a read-only backup. This
 backup can be upgraded into a primary server in case of failure of the real primary.
@@ -148,6 +149,9 @@ tbd
 Call flows
 ----------
 tbd
+
+
+
 
 
 [listener]: https://docs.software-univention.de/handbuch-4.4.html#introduction:Listener_Notifier-Replikation
