@@ -88,6 +88,7 @@ model_classes = {
     "network": ModuleAndClass("ucsschool.lib.models.network", "Network"),
     "policy": ModuleAndClass("ucsschool.lib.models.policy", "Policy"),
     "school": ModuleAndClass("ucsschool.lib.models.school", "School"),
+    "schooladmin": ModuleAndClass("ucsschool.lib.models.user", "SchoolAdmin"),
     "schoolclass": ModuleAndClass("ucsschool.lib.models.group", "SchoolClass"),
     "schoolcomputer": ModuleAndClass("ucsschool.lib.models.computer", "SchoolComputer"),
     "schooldc": ModuleAndClass("ucsschool.lib.models.computer", "SchoolDC"),
