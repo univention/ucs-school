@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-11) unstable; urgency=medium
+
+  * Bug #52748: Schooladmins can now be created via UMC user wizard
+
+ -- Toni Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:12 +0100
+
 ucs-school-umc-wizards (11.0.0-10) unstable; urgency=medium
 
   * Bug #51274: edu and adm school server name length limit was raised to 13
