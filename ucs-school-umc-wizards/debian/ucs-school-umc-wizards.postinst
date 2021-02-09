@@ -36,4 +36,15 @@
 
 univention-config-registry set ucsschool/wizards/schoolwizards/users/optional_visible_fields?"schools ucsschool_roles password email disabled birthday"
 
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 11.0.0-11; then
+	python2 - << END
+from univention.config_registry import ConfigRegistry, handler_set # "$@" comment necessary to satisfy ucslint.
+ucr = ConfigRegistry()
+ucr.load()
+disabled_roles_str = ucr.get("ucsschool/wizards/schoolwizards/users/roles/disabled", "")
+disabled_roles = ",".join(set([role.strip() for role in disabled_roles_str.split(",") if role] + ["schoolAdmin"]))
+handler_set(["ucsschool/wizards/schoolwizards/users/roles/disabled={}".format(disabled_roles)])
+END
+fi
+
 exit 0
