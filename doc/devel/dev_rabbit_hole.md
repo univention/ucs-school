@@ -126,7 +126,15 @@ to speak to other machines, which in turn communicate with their respective appc
 
 ```mermaid
 graph LR
-  appcenter --- umc-. umcp .-umc2 --- appcenter2
+  subgraph primary
+    appcenter --- umc
+  end
+    
+  subgraph secondary
+    umc2 --- appcenter2
+  end
+  
+  umc-. umcp .- umc2
 ```
 
 Dev Setup
