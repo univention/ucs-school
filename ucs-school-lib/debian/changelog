@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.7) unstable; urgency=medium
+
+  * Bug #52748: Add SchoolAdmin model to lib
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:22 +0100
+
 ucs-school-lib (12.2.6) unstable; urgency=medium
 
   * Bug #51274: hostname length was raised from 12 to 13
