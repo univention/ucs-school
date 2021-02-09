@@ -64,7 +64,10 @@ LOG_FILE = "/var/log/univention/ucs-school-validation.log"
 VALIDATION_LOGGER = "UCSSchool-Validation"
 private_data_logger = logging.getLogger(VALIDATION_LOGGER)
 private_data_logger.setLevel("DEBUG")
-private_data_logger.addHandler(get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=1000))
+backup_count = ucr.get("ucsschool/validation/logging/backupcount", 60)
+private_data_logger.addHandler(
+    get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
+)
 
 
 def split_roles(roles):  # type: (List[str]) -> List[List[str]]
