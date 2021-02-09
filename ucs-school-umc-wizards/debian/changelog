@@ -1,8 +1,14 @@
+ucs-school-umc-wizards (11.0.0-12) unstable; urgency=medium
+
+  * Bug #52757: Harden the admin workaround
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:52:21 +0100
+
 ucs-school-umc-wizards (11.0.0-11) unstable; urgency=medium
 
   * Bug #52748: Schooladmins can now be created via UMC user wizard
 
- -- Toni Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:12 +0100
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:12 +0100
 
 ucs-school-umc-wizards (11.0.0-10) unstable; urgency=medium
 
