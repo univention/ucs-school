@@ -303,6 +303,13 @@
     <section id="school:setup:generic:schooladmins">
         <title>Anlegen von Benutzerkonten für Schuladministratoren</title>
         <para>
+            Ab &ucsUAS; 4.4 v8 können Benutzerkonten für Schuladministratoren direkt über das &ucsUAS;-UMC-Modul angelegt
+            werden. Diese Option ist standardmäßig abgeschaltet. Um das Verhalten zu aktivieren, muss <literal>schoolAdmin</literal>
+            aus der &ucsUCRV; <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> entfernt werden.
+            Schuladministratoren, die mit dem &ucsUAS;-UMC-Modul erstellt werden, besitzen nicht die Option <option>UCS@school-Lehrer</option> und befinden sich nicht in der Gruppe
+            <systemitem class="groupname"><replaceable>lehrer-OU</replaceable></systemitem>.
+        </para>
+        <para>
             Benutzerkonten von Lehrern können durch eine zusätzliche Gruppenmitgliedschaft und das Einschalten einer
             Option zu Schuladministratoren umgewandelt werden.
             <itemizedlist>

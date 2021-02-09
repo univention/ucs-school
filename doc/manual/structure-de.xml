@@ -57,6 +57,10 @@
 					Sie können z.B. Computer zu
 					Rechnergruppen zusammenfassen, neue Internetfilter definieren oder
 					auch Lehrerpasswörter zurücksetzen.
+					Schuladministratoren, die mit dem &ucsUAS;-UMC-Modul erstellt werden, besitzen nicht
+					die Option <option>UCS@school-Lehrer</option> und befinden sich nicht in der Gruppe
+					<systemitem class="groupname"><replaceable>lehrer-OU</replaceable></systemitem>
+					(siehe auch <xref linkend="school:setup:generic:schooladmins"/>).
 				</simpara>
 			</listitem>
 			<listitem>
