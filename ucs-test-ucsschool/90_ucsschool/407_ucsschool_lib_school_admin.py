@@ -1,0 +1,100 @@
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+## -*- coding: utf-8 -*-
+## desc: test ucsschool.lib.models.user.SchoolAdmin CRUD operations
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_import1]
+## exposure: dangerous
+## packages:
+##   - python-ucs-school
+
+#
+# Hint: When debugging interactively, disable output capturing:
+# $ pytest -s -l -v ./......py::test_create
+#
+
+from conftest import UserType
+
+import univention.testing.utils as utils
+from ucsschool.lib.models.user import SchoolAdmin
+
+
+def test_create(create_ou, lo, user_ldap_attributes, user_school_attributes):
+    ou_name, ou_dn = create_ou()
+    ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
+    groups = ldap_attrs.pop("groups")
+    school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
+    obj = SchoolAdmin(**school_attrs)
+    res = obj.create(lo)
+    assert res
+    utils.verify_ldap_object(obj.dn, expected_attr=ldap_attrs, strict=False)
+    for dn in groups:
+        utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
+
+
+def test_get_all(create_ou, lo, user_school_attributes):
+    ou_name, ou_dn = create_ou(use_cache=False)
+    attrs = (
+        user_school_attributes([ou_name], UserType.SchoolAdmin),
+        user_school_attributes([ou_name], UserType.SchoolAdmin),
+        user_school_attributes([ou_name], UserType.SchoolAdmin),
+    )
+    for school_attrs in attrs:
+        obj = SchoolAdmin(**school_attrs)
+        res = obj.create(lo)
+        assert res
+        assert obj.exists(lo)
+
+    objs = SchoolAdmin.get_all(lo, ou_name)
+    assert len(objs) == len(attrs)
+    names = [_attrs["name"] for _attrs in attrs]
+    for obj in objs:
+        assert isinstance(obj, SchoolAdmin)
+        assert obj.name in names
+
+
+def test_modify(create_ou, lo, user_ldap_attributes, user_school_attributes):
+    ou_name, ou_dn = create_ou()
+    ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
+    groups = ldap_attrs.pop("groups")
+    school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
+    obj = SchoolAdmin(**school_attrs)
+    res = obj.create(lo)
+    assert res
+    utils.verify_ldap_object(obj.dn, expected_attr=ldap_attrs, strict=False)
+    for dn in groups:
+        utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
+    ldap_attrs_new = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
+    groups = ldap_attrs_new.pop("groups")
+    school_attrs_new = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs_new)
+    assert obj.name != school_attrs_new["name"]
+    for k, v in school_attrs_new.items():
+        setattr(obj, k, v)
+    assert obj.name == school_attrs_new["name"]
+    res = obj.modify(lo)
+    assert res
+    utils.verify_ldap_object(obj.dn, expected_attr=ldap_attrs_new, strict=False)
+    for dn in groups:
+        utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
+
+
+def test_delete(create_ou, lo, model_ldap_object_classes, user_ldap_attributes, user_school_attributes):
+    ou_name, ou_dn = create_ou()
+    ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
+    groups = ldap_attrs.pop("groups")
+    school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
+    obj = SchoolAdmin(**school_attrs)
+    res = obj.create(lo)
+    assert res
+    utils.verify_ldap_object(obj.dn, expected_attr=ldap_attrs, strict=False)
+    for dn in groups:
+        utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
+    obj_dn = obj.dn
+    res = obj.remove(lo)
+    assert res
+    utils.verify_ldap_object(obj_dn, should_exist=False)
+    for dn in groups:
+        assert obj_dn not in lo.get(dn, attr=["uniqueMember"]).get("uniqueMember", [])
+    ocs = model_ldap_object_classes(UserType.SchoolAdmin)
+    filter_ocs = "".join("(objectClass={})".format(oc) for oc in ocs)
+    filter_s = "(&(cn={}){})".format(obj.name, filter_ocs)
+    assert lo.searchDn(filter_s) == []
