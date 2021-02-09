@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.182) unstable; urgency=low
+
+  * Bug #52757: Add tests for school admin creation and admin workaround
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:51:02 +0100
+
 ucs-test-ucsschool (6.0.181) unstable; urgency=low
 
   * Bug #52654: wait for replication of all attributes
