@@ -188,7 +188,55 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-client 1.0.1-3A~4.4.0.202101121110 -->
 <!-- CHANGELOG:2021-02-03:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-02-10" lang="en">
+					<title>Released on 2021-02-10:</title>
+					<!-- START ucs-school-import 17.0.48A~4.4.0.202012211307 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.48A~4.4.0.202012211307</emphasis>:
+						<itemizedlist>
+							<listitem><para>When creating a new school via the <command>create_ou</command> CLI script, the educational and administrative DC host name lengths were not checked. This fix ensures that they do not exceed a length of 13 characters (<u:bug>51274</u:bug>).</para></listitem>
+
+							<listitem><para>Invalid characters in school class names are now also replaced when importing through the UMC module (<u:bug>52524</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.48A~4.4.0.202012211307 -->
+					<!-- START ucs-school-lib 12.2.8A~4.4.0.202102091758 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.8A~4.4.0.202102091758</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: prevent unnecesary traceback during creation of school OU (<u:bug>52403</u:bug>).</para></listitem>
+
+							<listitem><para>A role for marking computerrooms for the use of Veyon was added to the school.lib (<u:bug>52422</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: create container for group <systemitem class="groupname">ouadmins</systemitem> before creating group (<u:bug>52449</u:bug>).</para></listitem>
+
+							<listitem><para>When creating a new school, the name length of the new school server is automatically checked. The allowed maximum length was raised from 12 to 13 characters (<u:bug>51274</u:bug>).</para></listitem>
+
+							<listitem><para>Internal change: The model for SchoolAdmins was added to the ucsschool.lib (<u:bug>52748</u:bug>).</para></listitem>
+
+							<listitem><para>Internal change: The function set_attributes was added to ucsschool.lib models (<u:bug>52757</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.8A~4.4.0.202102091758 -->
+					<!-- START ucs-school-umc-wizards 11.0.0-13A~4.4.0.202102100826 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.0-13A~4.4.0.202102100826</emphasis>:
+						<itemizedlist>
+							<listitem><para>When creating a new school via the UMC, the name length of the new school server is automatically checked. The allowed maximum length was raised from 12 to 13 characters (<u:bug>51274</u:bug>).</para></listitem>
+
+							<listitem><para>It is now possible to create school administrators using the UMC school user wizard. Those users will be dedicated school administrators without the staff or teacher roles. This feature is currently disabled by default and can be enabled by setting the UCRV <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> (<u:bug>52748</u:bug>).</para></listitem>
+
+							<listitem><para>The admin workaround, which can be activated by setting <envar>ucsschool/wizards/schoolwizards/workaround/admin-connection</envar> to yes, was hardened against modifying objects that do not belong to the users school (<u:bug>52757</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.0-13A~4.4.0.202102100826 -->
+<!-- CHANGELOG:2021-02-10:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
