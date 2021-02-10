@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-wizards
-fix: 11.0.0-12A~4.4.0.202102091755
+fix: 11.0.0-13A~4.4.0.202102100826
 desc: |
   * When creating a new school via the UMC, the name length of the new school server is automatically checked. The allowed maximum length was raised from 12 to 13 characters (Bug #51274).
   * It is now possible to create school administrators using the UMC school user wizard. Those users will be dedicated school administrators without the staff or teacher roles. This feature is currently disabled by default and can be enabled by setting the UCRV <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> (Bug #52748).
