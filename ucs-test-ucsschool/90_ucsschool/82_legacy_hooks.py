@@ -83,6 +83,7 @@ EXPECTED_CLASSES = [
     "Student",
     "Teacher",
     "TeachersAndStaff",
+    "SchoolAdmin",
     "UCCComputer",
     "UMCPolicy",
     "User",
