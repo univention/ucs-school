@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-13) unstable; urgency=medium
+
+  * Bug #52757: Fix typo
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 10 Feb 2021 08:22:43 +0100
+
 ucs-school-umc-wizards (11.0.0-12) unstable; urgency=medium
 
   * Bug #52757: Harden the admin workaround

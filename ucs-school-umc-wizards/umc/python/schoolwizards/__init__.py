@@ -191,7 +191,7 @@ def iter_objects_in_request(
         if issubclass(klass, SchoolClass):
             # workaround to be able to reuse this function everywhere
             obj_props["name"] = "%s-%s" % (obj_props["school"], obj_props["name"])
-        object_new_schools = (set([obj_props.get("school")]) if "school" in obj_props else set()) | set(
+        object_new_schools = ({obj_props.get("school")} if "school" in obj_props else set()) | set(
             obj_props.get("schools", [])
         )
         if operation_type == OperationType.CREATE:
@@ -199,7 +199,7 @@ def iter_objects_in_request(
                 admin_workaround_active
                 and not is_domain_admin
                 and not check_workaround_constraints(
-                    subject_schools, set, object_new_schools, operation_type
+                    subject_schools, set(), object_new_schools, operation_type
                 )
             ):
                 raise UMC_Error(
