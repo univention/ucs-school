@@ -17,6 +17,18 @@
 	  die auch eine automatisierte Pflege der &ucsUAS;-Umgebung zulassen (diese werden in <xref
 	  linkend="school:setup:cli"/> näher beschrieben).
 	</para>
+	<note>
+		<para>
+		  Das Bearbeiten von &ucsUAS; Objekten außerhalb der &ucsUAS;-UMC-Module oder des Benutzer-Imports
+		  kann zu fehlerhaften Objekten führen. Um diese Objekte sichtbar zu machen, werden
+		  ab &ucsUAS; 4.4 v8 Objekte validiert, die aus dem Verzeichnisdienst in &ucsUAS; geladen werden.
+		  Zusätzlich zu den Fehlermeldungen in den regulären Log Dateien wird
+		  eine Ausgabe des gesamten Objekts in die nur vom Benutzer <systemitem class="username">root</systemitem>
+		  lesbare Datei <filename>/var/log/univention/ucs-school-validation.log</filename> geschrieben.
+		  Mit der &ucsUCRV; <envar>ucsschool/validation/logging/backupcount</envar> kann gesetzt werden, wie viele Kopien dieser Datei in Rotation gehalten werden,
+		  bevor die erste gelöscht wird. Als Standard ist 60 gesetzt.
+		</para>
+	</note>
 
 	<section id="school:setup:umc:schools">
 		<title>Verwaltung von Schulen</title>
