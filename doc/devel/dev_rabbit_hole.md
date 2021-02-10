@@ -56,9 +56,8 @@ graph TB
 - **udm**: is a wrapper around the **ldap**, to add ucs specific logic around the 'pure' ldap
   objects. Among other handles CRUD of dependent objects. Objects within ldap have *attributes*,
   objects from udm have *properties*. See: [udm]
-- **samba**: provides active directory services and other sharing services (print, shares). Is 
-  synced
-  with the ldap using a connector, e.g. s4 connector in this case.
+- **samba**: provides active directory services and other sharing services (print, shares). Is
+  synced with the ldap using a connector, e.g. s4 connector in this case.
 
 ### Multi machine setup
 
@@ -98,8 +97,8 @@ secondary3--ldap protocol-->member
 ```
 
 There is one, and only one machine in the role of the domain controller **primary***. This server
-contains the **ldap primary**, the only place where data is written into the ldap. This primary
-also contains ssl and other security relevant data. See: [ldap], 
+contains the **ldap primary**, the only place where data is written into the ldap. This primary also
+contains ssl and other security relevant data. See: [ldap],
 [domain], [default ldap content of the primary](default_ldap_content.txt)
 
 The **ldap backup*** mirrors everything the primary contains, but only as a read-only backup. This
@@ -138,6 +137,33 @@ graph LR
   umc-. umcp .- umc2
 ```
 
+LDAP concepts
+-------------
+
+- ldap is the protocol to speak to a directory service
+- a directory service is organized as a tree of nodes, where all nodes can have attributes
+- attributes are typed, with the attributetype defining the arity of the attribute.
+- attributetypes can be used in objectclass definitions, which can be structural or auxiliary. There
+  can be only one structural objectclass attribute in a node
+- attributetypes and objectclasses are defined in schemas.
+
+see: [ldap_concepts]
+
+```mermaid
+graph TD
+subgraph schema
+	sn[attributetype<br/> surname<br>SINGLE-VALUE]
+	cn[attributetype<br>commonName]
+	person[objectclass person<br>structural or auxiliary]
+end
+subgraph schema2
+	userPassword[attributetype<br>userPassword]
+end
+person --must-->sn
+person --must-->cn
+person --may-->userPassword
+```
+
 Dev Setup
 ---------
 tbd
@@ -153,6 +179,7 @@ tbd
 
 
 
+<!-- ------------------------Footnotes-----------------------------  -->
 
 [listener]: https://docs.software-univention.de/handbuch-4.4.html#introduction:Listener_Notifier-Replikation
 
@@ -169,4 +196,6 @@ tbd
 [ucr]: https://docs.software-univention.de/developer-reference-4.4.html#chap:ucr
 
 [udm]: https://docs.software-univention.de/developer-reference-4.4.html#chap:udm
+
+[ldap_concepts]: https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components
 
