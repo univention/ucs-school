@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.183) unstable; urgency=low
+
+  * Bug #52748: Fix legacy hooks tests due to new model class
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 10 Feb 2021 08:03:21 +0100
+
 ucs-test-ucsschool (6.0.182) unstable; urgency=low
 
   * Bug #52757: Add tests for school admin creation and admin workaround
