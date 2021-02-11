@@ -691,12 +691,14 @@ class UCSSchoolHelperAbstractClass(object):
 				name = self.get_name_from_dn(dn)
 				filter_str = '%s=%s' % (udm_name, escape_filter_chars(name))
 				self._udm_obj = await self.get_first_udm_obj(lo, filter_str, superordinate)
-				validate(self._udm_obj, self.logger)
+				if self._udm_obj:
+					validate(self._udm_obj, self.logger)
 			else:
 				self.logger.debug('Getting %s UDM object by dn: %s', self.__class__.__name__, dn)
 				try:
 					self._udm_obj = await lo.get(self._meta.udm_module).get(dn)
-					validate(self._udm_obj, self.logger)
+					if self._udm_obj:
+						validate(self._udm_obj, self.logger)
 				except UdmNoObject:
 					self._udm_obj = None
 			self._udm_obj_searched = True
