@@ -77,8 +77,15 @@ from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.models.import_user import (
-    ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser, convert_to_staff,
-    convert_to_student, convert_to_teacher, convert_to_teacher_and_staff
+    ImportStaff,
+    ImportStudent,
+    ImportTeacher,
+    ImportTeachersAndStaff,
+    ImportUser,
+    convert_to_staff,
+    convert_to_student,
+    convert_to_teacher,
+    convert_to_teacher_and_staff,
 )
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from udm_rest_client import (
@@ -799,7 +806,9 @@ async def change_roles(
     new_roles: List[str],
     new_school_classes: Dict[str, List[str]] = None,
 ) -> ImportUser:
-    target_cls = SchoolUserRole.get_lib_class([SchoolUserRole(role_s) for role_s in new_roles])
+    target_cls = SchoolUserRole.get_lib_class(
+        [SchoolUserRole(role_s) for role_s in new_roles]
+    )
     if set(user.roles) == set(target_cls.roles):
         return user
     converter_func = conversion_target_to_func[target_cls]
@@ -888,7 +897,9 @@ async def partial_update(  # noqa: C901
     except KeyError:
         pass
     else:
-        user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
+        user_current = await change_roles(
+            udm, logger, user_current, new_roles, new_school_classes
+        )
 
     # 4. modify
     changed = False
@@ -1000,7 +1011,9 @@ async def complete_update(  # noqa: C901
     # 3. change roles
     new_roles = user_request.roles
     new_school_classes = user_request.school_classes
-    user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
+    user_current = await change_roles(
+        udm, logger, user_current, new_roles, new_school_classes
+    )
 
     # 4. modify
     changed = False

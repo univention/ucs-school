@@ -435,9 +435,21 @@ async def test_get(
         assert all(
             attr in json_resp
             for attr in (
-                "birthday", "disabled", "dn", "email", "firstname", "lastname", "name", "record_uid",
-                "roles", "schools", "school_classes", "source_uid", "ucsschool_roles", "udm_properties",
-                "url"
+                "birthday",
+                "disabled",
+                "dn",
+                "email",
+                "firstname",
+                "lastname",
+                "name",
+                "record_uid",
+                "roles",
+                "schools",
+                "school_classes",
+                "source_uid",
+                "ucsschool_roles",
+                "udm_properties",
+                "url",
             )
         )
         api_user = UserModel(**json_resp)
@@ -935,7 +947,9 @@ async def test_patch_with_password_hashes(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
+@pytest.mark.parametrize(
+    "roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id
+)
 @pytest.mark.parametrize("method", ("patch", "put"))
 async def test_role_change(
     auth_header,
@@ -950,11 +964,16 @@ async def test_role_change(
     method: str,
 ):
     role_from, role_to = roles
-    user = (await create_random_users(
-        {role_from.name: 1},
-        school=f"{url_fragment}/schools/DEMOSCHOOL",
-        schools=[f"{url_fragment}/schools/DEMOSCHOOL", f"{url_fragment}/schools/DEMOSCHOOL2"],
-    ))[0]
+    user = (
+        await create_random_users(
+            {role_from.name: 1},
+            school=f"{url_fragment}/schools/DEMOSCHOOL",
+            schools=[
+                f"{url_fragment}/schools/DEMOSCHOOL",
+                f"{url_fragment}/schools/DEMOSCHOOL2",
+            ],
+        )
+    )[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
@@ -994,9 +1013,7 @@ async def test_role_change(
         old_data = user.dict(exclude={"roles"})
         if school_classes:
             old_data["school_classes"] = school_classes
-        modified_user = UserCreateModel(
-            roles=roles_ulrs, **old_data
-        )
+        modified_user = UserCreateModel(roles=roles_ulrs, **old_data)
         response = requests.put(
             user_url,
             headers=auth_header,
@@ -1005,7 +1022,8 @@ async def test_role_change(
     assert response.status_code == 200, response.reason
     json_resp = response.json()
     assert set(
-        UserCreateModel.unscheme_and_unquote(role_url) for role_url in json_resp["roles"]
+        UserCreateModel.unscheme_and_unquote(role_url)
+        for role_url in json_resp["roles"]
     ) == set(roles_ulrs)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
@@ -1040,9 +1058,7 @@ async def test_role_change_fails_for_student_without_school_class(
         )
     elif method == "put":
         old_data = user.dict(exclude={"roles"})
-        modified_user = UserCreateModel(
-            roles=roles_ulrs, **old_data
-        )
+        modified_user = UserCreateModel(roles=roles_ulrs, **old_data)
         response = requests.put(
             user_url,
             headers=auth_header,
@@ -1068,11 +1084,18 @@ async def test_role_change_fails_for_student_missing_school_class_for_second_sch
     schedule_delete_user_name,
     method: str,
 ):
-    user = (await create_random_users(
-        {"teacher": 1},
-        school=f"{url_fragment}/schools/DEMOSCHOOL",
-        schools=[f"{url_fragment}/schools/DEMOSCHOOL", f"{url_fragment}/schools/DEMOSCHOOL2"],
-    ))[0]  # staff has no school classes
+    user = (
+        await create_random_users(
+            {"teacher": 1},
+            school=f"{url_fragment}/schools/DEMOSCHOOL",
+            schools=[
+                f"{url_fragment}/schools/DEMOSCHOOL",
+                f"{url_fragment}/schools/DEMOSCHOOL2",
+            ],
+        )
+    )[
+        0
+    ]  # staff has no school classes
     async with UDM(**udm_kwargs) as udm:
         lib_users = await Teacher.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
@@ -1090,9 +1113,7 @@ async def test_role_change_fails_for_student_missing_school_class_for_second_sch
         )
     elif method == "put":
         old_data = user.dict(exclude={"roles"})
-        modified_user = UserCreateModel(
-            roles=roles_ulrs, **old_data
-        )
+        modified_user = UserCreateModel(roles=roles_ulrs, **old_data)
         response = requests.put(
             user_url,
             headers=auth_header,
