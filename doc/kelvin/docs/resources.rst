@@ -15,6 +15,8 @@ The token must be in the ``Authorization`` header with a value ``Bearer <token>`
 
     "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...."
 
+When objects are loaded that are called by the **UDM Rest API**, the expected properties of the corresponding UCS\@school object are checked
+and errors are logged. The output of the complete object as well as the stack trace are written to ``ucs-school-validation.log``.
 
 .. toctree::
    :maxdepth: 2

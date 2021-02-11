@@ -29,7 +29,7 @@ To have the HTML output served at http://127.0.0.1:8000 and auto-rebuild when a 
 
 Build a Docker image (execute only once)::
 
-    $ docker build -u "$(id -u):$(id -g)" -t sphinx-autobuild --file Dockerfile_autobuild .
+    $ docker build -t sphinx-autobuild --file Dockerfile_autobuild .
 
 You should have a Docker image of about 150 MB now.
 Check with ``docker images sphinx-autobuild``.
