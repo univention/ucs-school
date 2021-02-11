@@ -12,7 +12,7 @@ pydantic[email]>=1.0
 pyjwt
 python-multipart
 ucs-school-lib
-udm-rest-client>=0.4.0
+udm-rest-client>=1.0.1
 ujson==2.0.3
 univention-config-registry
 uvicorn
