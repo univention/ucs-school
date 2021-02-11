@@ -3,8 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.48A~4.4.0.202012211307
+fix:
 desc: |
-  * When creating a new school via the <command>create_ou</command> CLI script, the educational and administrative DC host name lengths were not checked. This fix ensures that they do not exceed a length of 13 characters (Bug #51274).
-  * Invalid characters in school class names are now also replaced when importing through the UMC module (Bug #52524).
-bug: [51274, 52524]
+ * The join script was improved to generate passwords that adhere to MS password policies (Bug #52770).
+bug: [52770]
