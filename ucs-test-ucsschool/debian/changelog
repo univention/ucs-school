@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.184) unstable; urgency=low
+
+  * Bug #52150: virtualenv not used anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Feb 2021 13:24:28 +0100
+
 ucs-test-ucsschool (6.0.183) unstable; urgency=low
 
   * Bug #52748: Fix legacy hooks tests due to new model class
