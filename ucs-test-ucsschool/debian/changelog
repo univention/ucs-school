@@ -16,6 +16,24 @@ ucs-test-ucsschool (7.0.0-0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
 
+ucs-test-ucsschool (6.0.184) unstable; urgency=low
+
+  * Bug #52150: virtualenv not used anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Feb 2021 13:24:28 +0100
+
+ucs-test-ucsschool (6.0.183) unstable; urgency=low
+
+  * Bug #52748: Fix legacy hooks tests due to new model class
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 10 Feb 2021 08:03:21 +0100
+
+ucs-test-ucsschool (6.0.182) unstable; urgency=low
+
+  * Bug #52757: Add tests for school admin creation and admin workaround
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:51:02 +0100
+
 ucs-test-ucsschool (6.0.181) unstable; urgency=low
 
   * Bug #52654: wait for replication of all attributes
