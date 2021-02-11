@@ -75,7 +75,7 @@ then
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
 else
     echo "Creating password for unprivileged LDAP user $LDAP_USER_NAME."
-    LDAP_SECRET_PW="$(makepasswd --chars=50)"
+    LDAP_SECRET_PW="$(echo "$(makepasswd --chars=40)$(makepasswd --chars=10 --string=',.-_')" | fold -w1 | shuf | tr -d '\n')"
     write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
 fi
 
