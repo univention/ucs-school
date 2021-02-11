@@ -124,7 +124,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             share_obj.props.group = 0
             share_obj.props.path = f"/home/tmp/{grp_obj.props.name}"
             share_obj.props.directorymode = "0770"
-            grp_obj.props.ucsschoolRole = [
+            share_obj.props.ucsschoolRole = [
                 create_ucsschool_role_string(role_school_class_share, sc_attrs["school"]),
             ]
             await share_obj.save()
