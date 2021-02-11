@@ -37,7 +37,7 @@ import uuid
 import ldap
 
 try:
-    from typing import Any, Dict, List, Optional, Type
+    from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
 
     from .base import UdmObject
 except ImportError:
@@ -88,7 +88,10 @@ def obj_to_dict(obj):  # type: (UdmObject) -> Dict[Any]
     return dict_obj
 
 
-def obj_to_dict_conversion(func):
+FType = TypeVar("FType", bound=Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None])
+
+
+def obj_to_dict_conversion(func):  # type: (FType) -> FType
     """
     Decorator which converts an obj object to dict.
     To make testing easier, objects of type dicts are passed directly.
@@ -101,7 +104,7 @@ def obj_to_dict_conversion(func):
             dict_obj = obj_to_dict(obj)
         return func(dict_obj, logger)
 
-    return _inner
+    return cast(FType, _inner)
 
 
 def is_student_role(role):  # type: (str) -> bool
@@ -476,7 +479,7 @@ def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
 
 
 @obj_to_dict_conversion
-def validate(obj, logger=None):  # type: (Dict[Any], logging.Logger) -> None
+def validate(obj, logger=None):  # type: (Union[UdmObject, Dict[str, Any]], logging.Logger) -> None
     """
     Objects are validated as dicts and errors are logged to
     the passed logger. Sensitive data is only logged to /var/log/univention/ucs-school-validation.log
