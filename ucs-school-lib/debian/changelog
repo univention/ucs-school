@@ -1,21 +1,40 @@
-ucs-school-lib (13.0.1-1) unstable; urgency=medium
+ucs-school-lib (13.0.2) unstable; urgency=medium
 
   * Bug #52603: use systemctl to start stop and check status of
     univention-directory-notifier
 
  -- Sebastian Lobinger <lobinger@univention.de>  Fri, 15 Jan 2021 13:19:27 +0100
 
-ucs-school-lib (13.0.0-1) unstable; urgency=medium
+ucs-school-lib (13.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:43:04 +0100
 
-ucs-school-lib (12.2.7) unstable; urgency=medium
+ucs-school-lib (13.0.0) unstable; urgency=medium
 
   * Bug #52582: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:02:04 +0100
+
+ucs-school-lib (12.2.9) unstable; urgency=low
+
+  * Bug #52783: fix typo so get_role_info() returns correct context
+  * Bug #52783: add exception hierarchy
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Feb 2021 11:26:46 +0100
+
+ucs-school-lib (12.2.8) unstable; urgency=medium
+
+  * Bug #52757: Add set_attributes function to lib objects
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:53:56 +0100
+
+ucs-school-lib (12.2.7) unstable; urgency=medium
+
+  * Bug #52748: Add SchoolAdmin model to lib
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:22 +0100
 
 ucs-school-lib (12.2.6) unstable; urgency=medium
 
