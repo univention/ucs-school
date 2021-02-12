@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the hardening of the UMC school wizard admin workaround
+## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## tags: [apptest, ucsschool, base1]
 ## bugs: [52757]
@@ -9,7 +10,7 @@ from typing import List
 import pytest
 from conftest import UserType
 
-from ucsschool.lib.models import SchoolAdmin, User
+from ucsschool.lib.models import User
 from univention.config_registry import handler_get, handler_set, handler_unset
 from univention.lib.umc import BadRequest, Client
 from univention.udm import UDM
