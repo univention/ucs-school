@@ -403,6 +403,36 @@ async def test_search_user_without_firstname(
 
 
 @pytest.mark.asyncio
+async def test_search_returns_no_exam_user(
+    auth_header, url_fragment, create_exam_user, udm_kwargs
+):
+    exam_user = await create_exam_user()
+    school = exam_user.school.split("/")[-1]
+    async with UDM(**udm_kwargs) as udm:
+        lib_user: User = (
+            await User.get_all(udm, school, filter_str=f"uid={exam_user.name}")
+        )[0]
+        assert lib_user.name == exam_user.name
+        assert lib_user.school == school
+        assert lib_user.ucsschool_roles == exam_user.ucsschool_roles
+        assert f"cn=examusers,ou={school}" in lib_user.dn
+
+        response = requests.get(
+            f"{url_fragment}/users",
+            headers=auth_header,
+            params={"school": school},
+        )
+        assert response.status_code == 200, (response.reason, response.content)
+        json_resp = response.json()
+        assert not any(u["name"] == exam_user.name for u in json_resp)
+        assert not any(
+            role.startswith("exam")
+            for user in json_resp
+            for role in user["ucsschool_roles"]
+        )
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_get(
     auth_header,
@@ -481,6 +511,33 @@ async def test_get_empty_udm_properties_are_returned(
     api_user = UserModel(**response.json())
     for prop in import_config["mapped_udm_properties"]:
         assert prop in api_user.udm_properties
+
+
+@pytest.mark.asyncio
+async def test_get_returns_exam_user(
+    auth_header, url_fragment, create_exam_user, udm_kwargs
+):
+    exam_user = await create_exam_user()
+    school = exam_user.school.split("/")[-1]
+    async with UDM(**udm_kwargs) as udm:
+        lib_user: User = (
+            await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={exam_user.name}")
+        )[0]
+        assert lib_user.name == exam_user.name
+        assert lib_user.school == school
+        assert lib_user.ucsschool_roles == exam_user.ucsschool_roles
+        assert f"cn=examusers,ou={school}" in lib_user.dn
+
+        response = requests.get(
+            f"{url_fragment}/users/{exam_user.name}",
+            headers=auth_header,
+            params={"school": school},
+        )
+        assert response.status_code == 200, response.reason
+        json_resp = response.json()
+        assert json_resp["name"] == exam_user.name
+        assert json_resp["ucsschool_roles"] == exam_user.ucsschool_roles
+        assert f"cn=examusers,ou={school}" in json_resp["dn"]
 
 
 @pytest.mark.asyncio

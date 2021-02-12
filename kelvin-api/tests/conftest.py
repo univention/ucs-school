@@ -52,7 +52,7 @@ import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
-from udm_rest_client import UDM, NoObject
+from udm_rest_client import UDM, NoObject, UdmObject
 from univention.config_registry import ConfigRegistry
 
 # handle RuntimeError: Directory '/kelvin/kelvin-api/static' does not exist
@@ -330,6 +330,36 @@ def create_random_users(
         return users
 
     return _create_random_users
+
+
+@pytest.fixture
+def create_exam_user(create_random_users, ldap_base, random_name, udm_kwargs):
+    async def _func(**kwargs) -> UserCreateModel:
+        user = (await create_random_users({"student": 1}, **kwargs))[0]
+        school = user.school.split("/")[-1]
+        user.ucsschool_roles = [
+            f"exam_user:school:{school}",
+            f"exam_user:exam:{random_name()}-{school}",
+        ]
+        print(f"Modifying student {user.name!r} to be an exam user...")
+        async with UDM(**udm_kwargs) as udm:
+            udm_users: List[UdmObject] = [
+                user
+                async for user in udm.get("users/user").search(f"username={user.name}")
+            ]
+            assert len(udm_users) == 1
+            udm_user = udm_users[0]
+            udm_user.options["ucsschoolExam"] = True
+            udm_user.position = f"cn=examusers,ou={school},{ldap_base}"
+            udm_user.props.groups.append(
+                f"cn=OU{school.lower()}-Klassenarbeit,cn=ucsschool,cn=groups,{ldap_base}"
+            )
+            udm_user.props.ucsschoolRole = user.ucsschool_roles
+            await udm_user.save()
+        print(f"Done: {udm_user.dn!r}")
+        return user
+
+    return _func
 
 
 @pytest.fixture

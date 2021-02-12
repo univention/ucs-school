@@ -591,6 +591,9 @@ async def search(
         udm_filter = f"(&{user_class.type_filter}{school_filter}{filter_str})"
     else:
         udm_filter = user_class.type_filter
+    if user_class is ImportUser:
+        udm_filter = f"(&{udm_filter}(!(objectClass=ucsschoolExam)))"
+
     logger.debug("Looking for %r with filter %r...", user_class.__name__, udm_filter)
     users: List[ImportUser] = []
     try:
