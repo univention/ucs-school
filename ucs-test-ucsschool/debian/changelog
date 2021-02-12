@@ -1,20 +1,32 @@
-ucs-test-ucsschool (7.0.1-1) unstable; urgency=medium
+ucs-test-ucsschool (6.0.185) unstable; urgency=low
+
+  * Bug #52757: run tests for exam-master only on dc master
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Feb 2021 08:14:47 +0100
+
+ucs-test-ucsschool (7.0.2) unstable; urgency=medium
 
   * Bug #52603: use systemctl to restart univention-directory-listener
 
  -- Sebastian Lobinger <lobinger@univention.de>  Fri, 15 Jan 2021 11:16:32 +0100
 
-ucs-test-ucsschool (7.0.0-1) unstable; urgency=medium
+ucs-test-ucsschool (7.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:53 +0100
 
-ucs-test-ucsschool (7.0.0-0) unstable; urgency=medium
+ucs-test-ucsschool (7.0.0) unstable; urgency=medium
 
   * Bug #52600: migrate to dh_python
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
+
+ucs-test-ucsschool (6.0.185) unstable; urgency=low
+
+  * Bug #52757: run tests for exam-master only on dc master
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Feb 2021 08:14:47 +0100
 
 ucs-test-ucsschool (6.0.184) unstable; urgency=low
 
