@@ -1,3 +1,138 @@
+ucs-school-lib (12.2.9) unstable; urgency=low
+
+  * Bug #52783: fix typo so get_role_info() returns correct context
+  * Bug #52783: add exception hierarchy
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Feb 2021 11:26:46 +0100
+
+ucs-school-lib (12.2.8) unstable; urgency=medium
+
+  * Bug #52757: Add set_attributes function to lib objects
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:53:56 +0100
+
+ucs-school-lib (12.2.7) unstable; urgency=medium
+
+  * Bug #52748: Add SchoolAdmin model to lib
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 14:32:22 +0100
+
+ucs-school-lib (12.2.6) unstable; urgency=medium
+
+  * Bug #51274: hostname length was raised from 12 to 13
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 09:55:40 +0100
+
+ucs-school-lib (12.2.5) unstable; urgency=low
+
+  * Bug #52449: create container for non-school grop 'ouadmins' before
+    creating group
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 01 Dec 2020 11:30:07 +0100
+
+ucs-school-lib (12.2.4) unstable; urgency=low
+
+  * Bug #52422: add new veyon backend role
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 30 Nov 2020 17:35:43 +0100
+
+ucs-school-lib (12.2.3) unstable; urgency=low
+
+  * Bug #52403: don't try to create already existing containers, when creating
+    new OU
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Nov 2020 09:55:45 +0100
+
+ucs-school-lib (12.2.2) unstable; urgency=low
+
+  * Bug #40577: Add staff to the possible password reset flavors
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 29 Oct 2020 11:36:21 +0100
+
+ucs-school-lib (12.2.1) unstable; urgency=low
+
+  * Bug #52038: look for Attribute and Meta objects in all base classes
+  * Bug #52038: move email related attributes to mixin class
+  * Bug #52038: move 'ucsschool_roles' attribute to mixin class
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Oct 2020 13:49:35 +0100
+
+ucs-school-lib (12.1.21) unstable; urgency=low
+
+  * Bug #52035: map email related UDM group properties in WorkGroup
+  * Bug #52035: allow to create a school class without a share
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 17 Sep 2020 11:52:10 +0200
+
+ucs-school-lib (12.1.20) unstable; urgency=medium
+
+  * Bug #42182: add custom nt acls in share
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 10 Sep 2020 15:25:30 +0200
+
+ucs-school-lib (12.1.19) unstable; urgency=low
+
+  * Bug #51301: fix MarketplaceShare sambaForceGroup property
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 26 Aug 2020 09:54:57 +0200
+
+ucs-school-lib (12.1.18) unstable; urgency=low
+
+  * Bug #51301: fix MarketplaceShare path calculation
+  * Bug #51301: generally simplify share path calculation
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 24 Aug 2020 16:46:36 +0200
+
+ucs-school-lib (12.1.17) unstable; urgency=low
+
+  * Bug #51301: remove useless shebangs
+  * Bug #51301: add new ucsschool.lib model MarketplaceShare
+  * Bug #51301: add cli to create/list/modify/delete ucsschool objects
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:05:25 +0200
+
+ucs-school-lib (12.1.16) unstable; urgency=medium
+
+  * Bug #51717: Fix hidden error that occured after code reformat and import reorder
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 23 Jul 2020 10:35:12 +0200
+
+ucs-school-lib (12.1.15) unstable; urgency=medium
+
+  * Bug #50625: raise error with user & group for broken school groups & link
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 22 Jul 2020 13:14:28 +0200
+
+ucs-school-lib (12.1.14) unstable; urgency=medium
+
+  * Bug #47155: override remove_without_hooks
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Tue, 12 May 2020 18:15:51 +0200
+
+ucs-school-lib (12.1.13) unstable; urgency=medium
+
+  * Bug #51190: revert wrong fix
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 30 Apr 2020 12:17:40 +0200
+
+ucs-school-lib (12.1.12) unstable; urgency=medium
+
+  * Bug #45683: added class name syntax check
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:21:47 +0200
+
+ucs-school-lib (12.1.11) unstable; urgency=low
+
+  * Bug #51167: add function to get the version of an installed Debian package
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 24 Apr 2020 10:31:21 +0200
+
+ucs-school-lib (12.1.10) unstable; urgency=low
+
+  * Bug #50819: Enable contexts other than school for ucsschool roles
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 21 Feb 2020 14:30:22 +0100
+
 ucs-school-lib (12.1.9) unstable; urgency=low
 
   * Bug #47418: fix typo in import
@@ -31,7 +166,7 @@ ucs-school-lib (12.1.5) unstable; urgency=low
 
 ucs-school-lib (12.1.4) unstable; urgency=low
 
-  * Bug #49938: remove password also from dict in record.msg 
+  * Bug #49938: remove password also from dict in record.msg
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 30 Jul 2019 18:57:56 +0200
 
