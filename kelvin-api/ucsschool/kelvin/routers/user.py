@@ -490,10 +490,7 @@ async def search(
         description="List users with this username.",
         title="name",
     ),
-    ucsschool_roles: List[str] = Query(
-        None,
-        regex="^.+:.+:.+$",
-    ),
+    ucsschool_roles: List[str] = Query(None),
     email: str = Query(
         None,
         regex="^.+@.+$",
