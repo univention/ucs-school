@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.2.9A~4.4.0.202102121129
+desc: |
+ * Internal improvement: an error in an internal function was fixed (Bug #52783).
+bug: [52783]
