@@ -29,14 +29,18 @@ from enum import Enum
 from typing import List, Type
 from urllib.parse import ParseResult, urlparse
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, HttpUrl
 from starlette.requests import Request
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.lib.roles import (
+    UcsschoolRoleStringError,
     create_ucsschool_role_string,
+    get_role_info,
+    role_exam_user,
     role_school_admin,
     role_staff,
     role_student,
@@ -57,16 +61,24 @@ class SchoolUserRole(str, Enum):
 
     @classmethod
     def from_lib_role(cls, lib_role: str) -> "SchoolUserRole":
-        if role_student in lib_role:
+        try:
+            role, _, _ = get_role_info(lib_role)
+        except UcsschoolRoleStringError as exc:
+            raise HTTPException(
+                status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+            )
+        if role in (role_exam_user, role_student):
             return cls.student
-        if role_teacher in lib_role:
+        if role == role_teacher:
             return cls.teacher
-        if role_staff in lib_role:
+        if role == role_staff:
             return cls.staff
-        if role_school_admin in lib_role:
+        if role == role_school_admin:
             return cls.school_admin
-        else:  # Should never happen and throws exception
-            return cls(lib_role)
+        raise HTTPException(
+            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unknown UCS@school role {lib_role!r}.",
+        )
 
     @classmethod
     def get_lib_class(cls, roles: List["SchoolUserRole"]) -> Type[ImportUser]:
