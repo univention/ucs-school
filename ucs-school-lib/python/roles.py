@@ -31,15 +31,19 @@
 # <http://www.gnu.org/licenses/>.
 
 
-class UnknownRole(Exception):
+class UcsschoolRoleStringError(Exception):
     pass
 
 
-class UnknownContextType(Exception):
+class UnknownRole(UcsschoolRoleStringError):
     pass
 
 
-class InvalidUcsschoolRoleString(Exception):
+class UnknownContextType(UcsschoolRoleStringError):
+    pass
+
+
+class InvalidUcsschoolRoleString(UcsschoolRoleStringError):
     pass
 
 
@@ -154,15 +158,17 @@ def get_role_info(ucsschool_role_string):
     try:
         role, context_type, context = ucsschool_role_string.split(":")
     except ValueError:
-        raise InvalidUcsschoolRoleString()
+        raise InvalidUcsschoolRoleString(
+            "Invalid UCS@school role string: {!r}.".format(ucsschool_role_string)
+        )
     if role not in all_roles:
         raise UnknownRole(
-            'The role string "{}" includes the unknown role "{}"'.format(ucsschool_role_string, role)
+            "The role string {!r} includes the unknown role {!r}.".format(ucsschool_role_string, role)
         )
     if context_type not in all_context_types:
         raise UnknownContextType(
-            'The role string "{}" includes the unknown context type "{}"'.format(
+            "The role string {!r} includes the unknown context type {!r}.".format(
                 ucsschool_role_string, context_type
             )
         )
-    return role, context_type, context_type
+    return role, context_type, context
