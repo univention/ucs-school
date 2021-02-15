@@ -51,17 +51,8 @@ from rest_framework.exceptions import ParseError, PermissionDenied
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 from ucsschool.lib.models.utils import ucr
 
-from .models import (
-    JOB_NEW,
-    JOB_SCHEDULED,
-    Logfile,
-    PasswordsFile,
-    Role,
-    School,
-    SummaryFile,
-    TextArtifact,
-    UserImportJob,
-)
+from .constants import JOB_NEW, JOB_SCHEDULED
+from .models import Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob
 from .tasks import dry_run, import_users
 
 try:
