@@ -468,7 +468,8 @@ def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
 
 
 @obj_to_dict_conversion
-def validate(obj, logger=None):  # type: (Union[UdmObject, Dict[str, Any]], logging.Logger) -> None
+def validate(obj, logger=None):
+	# type: (Union[UdmObject, Dict[str, Any]], Optional[logging.Logger]) -> None
 	"""
 	Objects are validated as dicts and errors are logged to
 	the passed logger. Sensitive data is only logged to /var/log/univention/ucs-school-validation.log
