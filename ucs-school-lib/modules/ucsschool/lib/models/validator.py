@@ -447,13 +447,13 @@ def get_class(obj):  # type: (Dict[str, Any]) -> Optional[Type[SchoolValidator]]
 	position = obj["position"]
 	if options.get("ucsschoolExam", False):
 		return ExamStudentValidator
-	if options.get("ucsschoolTeacher", False) and options.get("ucsschoolTeacher", False):
+	if options.get("ucsschoolTeacher", False) and options.get("ucsschoolStaff", False):
 		return TeachersAndStaffValidator
 	if options.get("ucsschoolStudent", False):
 		return StudentValidator
 	if options.get("ucsschoolTeacher", False):
 		return TeacherValidator
-	if options.get("ucsschoolTeacher", False):
+	if options.get("ucsschoolStaff", False):
 		return StaffValidator
 	if SchoolClassValidator.position_regex.match(position):
 		return SchoolClassValidator
