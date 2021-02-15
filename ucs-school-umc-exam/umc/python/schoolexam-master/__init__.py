@@ -235,6 +235,12 @@ class Instance(SchoolBaseModule):
                 raise UMC_Error("Room %r not found." % (room_dn,))
 
         user_orig = user.get_udm_object(ldap_admin_write)
+
+        if user_orig["disabled"] == "1":
+            logger.info("Ignored disabled user {}".format(userdn))
+            self.finished(request.id, None)
+            return
+
         if len(user_orig["sambaUserWorkstations"]) == 0:
             user_orig["sambaUserWorkstations"] = ["$"]
         else:

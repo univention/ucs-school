@@ -61,6 +61,12 @@
 			Bspw. wird für den Benutzer <systemitem class="username">anton123</systemitem> das Klassenarbeitskonto <systemitem class="username">exam-anton123</systemitem> angelegt, mit dem er sich während der Klassenarbeit anmelden muss.
 			Für das Klassenarbeitskonto wird ein neues Heimatverzeichnis erzeugt, Passwörter und andere Konteneinstellungen werden jedoch aus dem ursprünglichen Benutzerkonto direkt übernommen.
 			Schüler können die Zugriffsberechtigungen ihrer Heimatverzeichnisse nicht verändern. Dadurch wird verhindert, dass ein Schüler sein Heimatverzeichnis für weitere Schüler freigegeben kann.
+			Um Schülern den Zugriff auf andere Dienste (z.B. Mail, Cloud...) während einer Klassenarbeit zu verwehren, kann die UCR-Variable <envar>ucsschool/exam/user/disable</envar> aktiviert werden (siehe <xref linkend="school:exam:configuration"/>).
+		</para>
+		<para>
+			Für deaktivierte Nutzerkonten wird kein Klassenarbeitskonto angelegt. Diese werden beim Hinzufügen zur Klassenarbeit ignoriert.
+			Soll ein Schüler an einer Klassenarbeit teilnehmen, muss dessen Nutzerkonto aktiviert sein.
+			Wie Benutzer aktiviert/deaktiviert werden können, wird im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben.
 		</para>
 		<para>
 			Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind für den Zeitraum der Klassenarbeit Mitglieder der Gruppe <systemitem class="groupname">OU&lt;OU-Name&gt;-Klassenarbeit</systemitem>.
