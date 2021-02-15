@@ -41,7 +41,7 @@ The minimum severity for log messages written to ``/var/log/univention/ucsschool
 Backup count of validation logging
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The UCR-V ``ucsschool/validation/logging/backupcount`` sets the amount of copies of the log file ``ucs-school-validation.log``, which should be kept in rotation. The default is ``60``. The host's UCR-V is copied into the Docker container during the join script.
-To change it for the `UCS\@school Kelvin REST API`, it has to be modified inside the Docker container.
+To change it for the *UCS\@school Kelvin REST API*, it has to be modified inside the Docker container.
 
 Configuration of user object management (import configuration)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
