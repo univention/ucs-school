@@ -11,18 +11,16 @@
 # Hint: When debugging interactively, disable output capturing:
 # $ pytest -s -l -v ./......py::test_*
 #
-import logging
 import re
 
 try:
-    from typing import Any, Dict, List
+    from typing import Any, Dict, List, Tuple
 except ImportError:
     pass
 
 import tempfile
 
 import pytest
-import pytest_catchlog
 
 import univention.testing.strings as uts
 from ucsschool.lib.models import validator as validator
@@ -269,7 +267,7 @@ all_user_role_objects = [
 all_user_roles_names = [role_student, role_teacher, role_staff, role_exam_user, "teacher_and_staff"]
 
 
-def filter_log_messages(logs, name):  # type: (List[logging.Logger], str) -> str
+def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) -> str
     """
     get all log messages for logger with name
     """
@@ -277,7 +275,7 @@ def filter_log_messages(logs, name):  # type: (List[logging.Logger], str) -> str
 
 
 def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
-    # type: (Dict[str, Any], pytest_catchlog.CallableList, str, str) -> None
+    # type: (Dict[str, Any], Any, str, str) -> None
     public_logs = filter_log_messages(record_tuples, public_logger_name)
     secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):
