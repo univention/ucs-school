@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.49A~4.4.0.202102111452
+fix: 17.0.50A~4.4.0.202102151418
 desc: |
  * The join script was improved to generate passwords that adhere to MS password policies (Bug #52770).
 bug: [52770]
