@@ -78,6 +78,10 @@ def get_position_from(dn):  # type: (str) -> Optional[str]
 	return ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 
 
+def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
+	return obj.to_dict()
+
+
 def obj_to_dict_conversion(
 		func  # type: Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
 ):
@@ -91,7 +95,7 @@ def obj_to_dict_conversion(
 		if type(obj) is dict:
 			dict_obj = obj
 		else:
-			dict_obj = obj.to_dict()
+			dict_obj = obj_to_dict(obj)
 		return func(dict_obj, logger)
 	return _inner
 
@@ -438,7 +442,7 @@ class MarketplaceShareValidator(GroupAndShareValidator):
 	)
 
 
-def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
+def get_class(obj):  # type: (Dict[str, Any]) -> Optional[Type[SchoolValidator]]
 	options = obj["options"]
 	position = obj["position"]
 	if options.get("ucsschoolExam", False):
