@@ -112,7 +112,6 @@ def setup_logging() -> None:
     logger.addHandler(file_handler)
 
 
-
 @app.on_event("startup")
 def configure_import():
     get_import_config()
