@@ -36,7 +36,7 @@ import uuid
 import ldap
 
 try:
-	from typing import Any, Dict, List, Optional, Type, cast, Callable, TypeVar, Union
+	from typing import Any, Dict, List, Optional, Type, Callable, Union
 
 	from .base import UdmObject
 except ImportError:
@@ -78,10 +78,10 @@ def get_position_from(dn):  # type: (str) -> Optional[str]
 	return ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 
 
-FType = TypeVar('FType', bound=Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None])
-
-
-def obj_to_dict_conversion(func):  # type: (FType) -> FType
+def obj_to_dict_conversion(
+		func  # type: Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
+):
+	# type: (...) -> Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
 	"""
 	Decorator which converts an obj object to dict.
 	To make testing easier, objects of type dicts are passed directly.
@@ -93,7 +93,7 @@ def obj_to_dict_conversion(func):  # type: (FType) -> FType
 		else:
 			dict_obj = obj.to_dict()
 		return func(dict_obj, logger)
-	return cast(FType, _inner)
+	return _inner
 
 
 def is_student_role(role):  # type: (str) -> bool
@@ -441,15 +441,15 @@ class MarketplaceShareValidator(GroupAndShareValidator):
 def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
 	options = obj["options"]
 	position = obj["position"]
-	if "ucsschoolExam" in options:
+	if options.get("ucsschoolExam", False):
 		return ExamStudentValidator
-	if {"ucsschoolTeacher", "ucsschoolStaff"}.issubset(set(options)):
+	if options.get("ucsschoolTeacher", False) and options.get("ucsschoolTeacher", False):
 		return TeachersAndStaffValidator
-	if "ucsschoolStudent" in options:
+	if options.get("ucsschoolStudent", False):
 		return StudentValidator
-	if "ucsschoolTeacher" in options:
+	if options.get("ucsschoolTeacher", False):
 		return TeacherValidator
-	if "ucsschoolStaff" in options:
+	if options.get("ucsschoolTeacher", False):
 		return StaffValidator
 	if SchoolClassValidator.position_regex.match(position):
 		return SchoolClassValidator
