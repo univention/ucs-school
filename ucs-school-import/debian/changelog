@@ -10,6 +10,12 @@ ucs-school-import (18.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 15:52:14 +0100
 
+ucs-school-import (17.0.50) unstable; urgency=low
+
+  * Bug #52458: fix ImportError after cleanup of imports
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Feb 2021 14:14:01 +0100
+
 ucs-school-import (17.0.49) unstable; urgency=low
 
   * Bug #52770: generate password for importhttpapi user/ldap including
