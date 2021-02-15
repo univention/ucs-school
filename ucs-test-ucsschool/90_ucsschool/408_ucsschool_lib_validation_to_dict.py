@@ -46,8 +46,7 @@ def test_udm_obj_to_dict(ObjectClass, schoolenv):
     assert udm_obj.dn == dict_obj["dn"]
     assert get_position_from(udm_obj.position.getDn()) == dict_obj["position"]
     for option in udm_obj.options:
-        if option in dict_obj["options"]:
-            assert option in dict_obj["options"]
+        assert option in dict_obj["options"].keys()
 
 
 @pytest.mark.parametrize("GroupShareClass", [ClassShare, WorkGroupShare, MarketplaceShare])
@@ -83,5 +82,4 @@ def test_udm_share_to_dict(GroupShareClass, schoolenv):
     assert udm_obj.dn == dict_obj["dn"]
     assert get_position_from(udm_obj.position.getDn()) == dict_obj["position"]
     for option in udm_obj.options:
-        if option in dict_obj["options"]:
-            assert option in dict_obj["options"]
+        assert option in dict_obj["options"].keys()

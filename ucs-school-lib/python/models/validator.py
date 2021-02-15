@@ -37,7 +37,7 @@ import uuid
 import ldap
 
 try:
-    from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union, cast
+    from typing import Any, Callable, Dict, List, Optional, Type, Union
 
     from .base import UdmObject
 except ImportError:
@@ -84,14 +84,14 @@ def obj_to_dict(obj):  # type: (UdmObject) -> Dict[Any]
     dict_obj["props"] = dict(obj.items())
     dict_obj["dn"] = obj.dn
     dict_obj["position"] = get_position_from(dict_obj["dn"])
-    dict_obj["options"] = obj.options
+    dict_obj["options"] = {key: True for key in obj.options}
     return dict_obj
 
 
-FType = TypeVar("FType", bound=Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None])
-
-
-def obj_to_dict_conversion(func):  # type: (FType) -> FType
+def obj_to_dict_conversion(
+    func,  # type: Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
+):
+    # type: (...) -> Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
     """
     Decorator which converts an obj object to dict.
     To make testing easier, objects of type dicts are passed directly.
@@ -104,7 +104,7 @@ def obj_to_dict_conversion(func):  # type: (FType) -> FType
             dict_obj = obj_to_dict(obj)
         return func(dict_obj, logger)
 
-    return cast(FType, _inner)
+    return _inner
 
 
 def is_student_role(role):  # type: (str) -> bool
@@ -452,15 +452,15 @@ class MarketplaceShareValidator(GroupAndShareValidator):
 def get_class(obj):  # type: (Dict[Any]) -> Optional[Type[SchoolValidator]]
     options = obj["options"]
     position = obj["position"]
-    if "ucsschoolExam" in options:
+    if options.get("ucsschoolExam", False):
         return ExamStudentValidator
-    if {"ucsschoolTeacher", "ucsschoolStaff"}.issubset(set(options)):
+    if options.get("ucsschoolTeacher", False) and options.get("ucsschoolStaff", False):
         return TeachersAndStaffValidator
-    if "ucsschoolStudent" in options:
+    if options.get("ucsschoolStudent", False):
         return StudentValidator
-    if "ucsschoolTeacher" in options:
+    if options.get("ucsschoolTeacher", False):
         return TeacherValidator
-    if "ucsschoolStaff" in options:
+    if options.get("ucsschoolStaff", False):
         return StaffValidator
     if SchoolClassValidator.position_regex.match(position):
         return SchoolClassValidator

@@ -129,7 +129,7 @@ def base_user(firstname, lastname):  # type: (str, str) ->  Dict[str, Any]
         "_links": {},
         "policies": {"policies/pwhistory": [], "policies/umc": [], "policies/desktop": []},
         "position": "",
-        "options": [],
+        "options": {},
         "objectType": "users/user",
     }
 
@@ -155,7 +155,7 @@ def student_user():  # type: () ->  Dict[str, Any]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         SchoolSearchBase._containerStudents, ldap_base
     )
-    user["options"].append("ucsschoolStudent")
+    user["options"] = {"ucsschoolStudent": True}
     return user
 
 
@@ -181,8 +181,7 @@ def exam_user():  # type: () -> Dict[str, Any]
         "exam_user:exam:demo-exam-DEMOSCHOOL",
     ]
     user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
-    user["options"].append("ucsschoolStudent")
-    user["options"].append("ucsschoolExam")
+    user["options"] = {"ucsschoolStudent": True, "ucsschoolExam": True}
     return user
 
 
@@ -204,7 +203,7 @@ def teacher_user():  # type: () -> Dict[str, Any]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         SchoolSearchBase._containerTeachers, ldap_base
     )
-    user["options"].append("ucsschoolTeacher")
+    user["options"] = {"ucsschoolTeacher": True}
     return user
 
 
@@ -226,7 +225,7 @@ def staff_user():  # type: () -> Dict[Any]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         SchoolSearchBase._containerStaff, ldap_base
     )
-    user["options"].append("ucsschoolStaff")
+    user["options"] = {"ucsschoolStaff": True}
     return user
 
 
@@ -250,8 +249,7 @@ def teacher_and_staff_user():  # type: () -> Dict[str, Any]
     user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         SchoolSearchBase._containerTeachersAndStaff, ldap_base
     )
-    user["options"].append("ucsschoolStaff")
-    user["options"].append("ucsschoolTeacher")
+    user["options"] = {"ucsschoolTeacher": True, "ucsschoolStaff": True}
     return user
 
 
@@ -410,7 +408,8 @@ def test_missing_role_group(caplog, dict_obj, container, random_logger):
 
 def test_exam_student_missing_exam_group(caplog, random_logger):
     dict_obj = exam_user()
-    is_exam_user = "ucsschoolExam" in dict_obj["options"]
+
+    is_exam_user = "ucsschoolExam" in dict_obj["options"].keys()
     exam_group = "dummy"
     for group in list(dict_obj["props"]["groups"]):
         if is_exam_user and "cn=ucsschool,cn=groups" in group:

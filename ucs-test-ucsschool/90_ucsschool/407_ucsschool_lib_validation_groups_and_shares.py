@@ -89,7 +89,7 @@ def base_group(name):  # type: (str, str) -> Dict[Any]
         },
         "policies": {"policies/umc": []},
         "position": "",
-        "options": [],
+        "options": {},
         "objectType": "groups/group",
     }
 
@@ -187,7 +187,7 @@ def base_share(name):  # type: (str) -> Dict[Any]
         "_links": {},
         "policies": {"policies/share_userquota": []},
         "position": "",
-        "options": [],
+        "options": {},
         "objectType": "shares/share",
     }
 
