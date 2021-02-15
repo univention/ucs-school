@@ -30,6 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
+import os
 import re
 import traceback
 import uuid
@@ -60,14 +61,15 @@ from ucsschool.lib.roles import (
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
-LOG_FILE = "/var/log/univention/ucs-school-validation.log"
-VALIDATION_LOGGER = "UCSSchool-Validation"
-private_data_logger = logging.getLogger(VALIDATION_LOGGER)
-private_data_logger.setLevel("DEBUG")
-backup_count = ucr.get("ucsschool/validation/logging/backupcount", 60)
-private_data_logger.addHandler(
-    get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
-)
+if os.geteuid() == 0:
+    LOG_FILE = "/var/log/univention/ucs-school-validation.log"
+    VALIDATION_LOGGER = "UCSSchool-Validation"
+    private_data_logger = logging.getLogger(VALIDATION_LOGGER)
+    private_data_logger.setLevel("DEBUG")
+    backup_count = ucr.get("ucsschool/validation/logging/backupcount", 60)
+    private_data_logger.addHandler(
+        get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
+    )
 
 
 def split_roles(roles):  # type: (List[str]) -> List[List[str]]
@@ -500,7 +502,8 @@ def validate(obj, logger=None):  # type: (Union[UdmObject, Dict[str, Any]], logg
             )
             if logger:
                 logger.error(errors_str)
-            private_data_logger.error(errors_str)
-            private_data_logger.error(obj)
-            stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
-            private_data_logger.error(stack_trace)
+            if private_data_logger:
+                private_data_logger.error(errors_str)
+                private_data_logger.error(obj)
+                stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
+                private_data_logger.error(stack_trace)
