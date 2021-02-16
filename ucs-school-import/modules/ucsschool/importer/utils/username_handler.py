@@ -224,7 +224,7 @@ class UsernameHandler(object):
     >>> BAD_CHARS = ''.join(sorted(set(map(chr, range(128))) - set(UsernameHandler(20).allowed_chars)))
     >>> UsernameHandler(20).format_username('Max.Mustermann')
     'Max.Mustermann'
-    >>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')   # doctest: +IGNORE_EXCEPTION_DETAIL  # noqa: E501
+    >>> UsernameHandler(20).format_username('Foo[COUNTER2][COUNTER2]')  # noqa: E501 # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     FormatError:

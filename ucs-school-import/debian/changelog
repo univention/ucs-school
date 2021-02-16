@@ -1,3 +1,9 @@
+ucs-school-import (17.0.51) unstable; urgency=low
+
+  * Bug #52458: fix ValueError raised by doctest (invalid option: '#')
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 16 Feb 2021 14:29:55 +0100
+
 ucs-school-import (17.0.50) unstable; urgency=low
 
   * Bug #52458: fix ImportError after cleanup of imports
