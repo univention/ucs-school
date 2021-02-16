@@ -67,7 +67,7 @@ The following JSON is an example User resource in the *UCS\@school Kelvin REST A
     "birthday", "date", "The users birthday in ISO 8601 format: ``YYYY-MM-DD``.", ""
     "disabled", "boolean", "Whether the user should be deactivated.", ""
     "email", "string", "The users email address (``mailPrimaryAddress``), used only when the emails domain is hosted on UCS, not to be confused with the *contact* attribute ``e-mail``.", ""
-    "roles", "list", "The users UCS\@school roles. A list of URLs in the ``roles`` resource.", "required when creating, see section ``Changing roles`` below about changing a users roles"
+    "roles", "list", "The users UCS\@school roles. A list of URLs in the ``roles`` resource.", "required when creating, see section ``Changing roles`` below about changing a user''s roles"
     "school", "string", "School (OU) the user belongs to. A URL in the ``schools`` resource.", "required for creation when ``schools`` is not set"
     "schools", "list", "List of schools (OUs) the user belongs to. A list of URLs in the ``schools`` resource.", "required for creation when ``school`` is not set"
     "school_classes", "nested object", "School classes the user is a member of. A mapping from school names to class names, for example: ``{'"'school1'"': ['"'class1'"', '"'class2'"'], '"'school2'"': ['"'class3'"']}``.", "The schools must also be listed (as URLs) in the ``schools`` attribute."
@@ -453,7 +453,7 @@ A few examples of possible problems:
 
 * The UCS\@school import is used to provision users. The ``source_uid`` user attribute is used to select which user accounts to include in searches for existing uses. If the imports are done through the graphical UMC module, the ``source_uid`` attribute contains the role of the imported user. When user roles are changed through the *UCS\@school Kelvin REST API*, the ``source_uid`` attribute is *not* adapted. If in the mentioned import case the CSV source data is not adapted, a new user would be created with the old roles and the user with the modified roles would be deleted.
 * When creating users, their email addresses are created from different templates for different roles. For example ``<firstname>.<lastname>@staff.<domain>`` for staff members and ``<firstname>[0].<lastname>@teacher.<domain>`` for teachers. When user roles are changed through the *UCS\@school Kelvin REST API*, the email address is *not* adapted.
-* Home directories of UCS\@school users are located on school servers in a directory structure containing the users role (e.g. ``/home/$OU/lehrer/$USERNAME``). The directory path is stored in the LDAP attribute ``homeDirectory`` / the UDM property ``unixhome``. The location of home directories is of no technical consequence. When user roles are changed, the *UCS\@school Kelvin REST API* will not modify the users home directory property and will not move its files and directories.
+* Home directories of UCS\@school users are located on school servers in a directory structure containing the user's role (e.g. ``/home/$OU/lehrer/$USERNAME``). The directory path is stored in the LDAP attribute ``homeDirectory`` / the UDM property ``unixhome``. The location of home directories is of no technical consequence. When user roles are changed, the *UCS\@school Kelvin REST API* will not modify the users home directory property and will not move its files and directories.
 
 
 Delete
