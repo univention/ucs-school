@@ -25,6 +25,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import asyncio
 import base64
 import datetime
 import json
@@ -83,6 +84,14 @@ MAPPED_UDM_PROPERTIES = (
 )  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
 
 fake = Faker()
+
+
+@pytest.fixture(scope="session")
+def event_loop(request):
+    """Create an instance of the default event loop for each test case."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
 
 
 @lru_cache(maxsize=1)

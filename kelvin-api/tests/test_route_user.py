@@ -624,7 +624,6 @@ async def test_create_without_username(
     check_password,
     url_fragment,
     create_random_user_data,
-    random_name,
     import_config,
     reset_import_config,
     udm_kwargs,
@@ -675,7 +674,6 @@ async def test_create_minimal_attrs(
     check_password,
     url_fragment,
     create_random_user_data,
-    random_name,
     import_config,
     reset_import_config,
     udm_kwargs,
@@ -732,7 +730,6 @@ async def test_create_requires_school_or_schools(
     auth_header,
     url_fragment,
     create_random_user_data,
-    random_name,
     import_config,
     reset_import_config,
     udm_kwargs,
@@ -774,7 +771,6 @@ async def test_create_with_password_hashes(
     check_password,
     url_fragment,
     create_random_user_data,
-    random_name,
     import_config,
     udm_kwargs,
     schedule_delete_user_name,
@@ -875,7 +871,6 @@ async def test_put_with_password_hashes(
     create_random_users,
     create_random_user_data,
     password_hash,
-    random_name,
     import_config,
     udm_kwargs,
 ):
@@ -983,7 +978,6 @@ async def test_patch_with_password_hashes(
     url_fragment,
     create_random_users,
     create_random_user_data,
-    random_name,
     import_config,
     password_hash,
     udm_kwargs,
@@ -1228,7 +1222,7 @@ async def test_delete(
 
 def test_delete_non_existent(auth_header, url_fragment, random_name):
     response = requests.delete(
-        f"{url_fragment}/users/{random_name}",
+        f"{url_fragment}/users/{random_name()}",
         headers=auth_header,
     )
     assert response.status_code == 404, response.reason
@@ -1379,7 +1373,6 @@ async def test_change_disable(
     check_password,
     url_fragment,
     create_random_users,
-    random_name,
     import_config,
     udm_kwargs,
     role: Role,
@@ -1447,7 +1440,6 @@ async def test_change_password(
     check_password,
     url_fragment,
     create_random_users,
-    random_name,
     import_config,
     udm_kwargs,
     role: Role,
