@@ -81,6 +81,11 @@ class UnknownPackage(Exception):
     pass
 
 
+class ValidationDataFilter(logging.Filter):
+    def filter(self, record):
+        return record.name != "UCSSchool-Validation"
+
+
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
     with open(path, "r") as fp:
         config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
@@ -280,6 +285,7 @@ def add_module_logger_to_schoollib():
         memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
         memory_handler.setLevel(logging.DEBUG)
         memory_handler.set_name("ucsschool_mem_handler")
+        memory_handler.addFilter(ValidationDataFilter())
         logger.addHandler(memory_handler)
     else:
         logger.info("add_module_logger_to_schoollib() should only be called once! Skipping...")
@@ -420,8 +426,10 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
     return handler
 
 
-def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None):
-    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int]) -> logging.Handler  # noqa: E501
+def get_file_handler(
+    level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None, backupCount=10000, when="D"
+):
+    # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int], Optional[int],Optional[str]) -> logging.Handler  # noqa: E501
     """
     Create a :py:class:`UniFileHandler` (TimedRotatingFileHandler) for logging
     to a file.
@@ -435,13 +443,18 @@ def get_file_handler(level, filename, fmt=None, datefmt=None, uid=None, gid=None
     :param int gid: group that the file should belong to (current users
         primary group if None)
     :param int mode: permissions of the file
+    :param int backupCount: If backupCount is nonzero, at most backupCount files will be kept.
+        When rollover occurs, the oldest one is deleted.
+    :param str when: time when log is rotated.
     :return: a handler
     :rtype: logging.Handler
     """
     fmt = fmt or FILE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
     datefmt = datefmt or str(LOG_DATETIME_FORMAT)
     formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
-    handler = UniFileHandler(filename, when="D", backupCount=10000000, fuid=uid, fgid=gid, fmode=mode)
+    handler = UniFileHandler(
+        filename, when=when, backupCount=backupCount, fuid=uid, fgid=gid, fmode=mode
+    )
     handler.setFormatter(formatter)
     handler.setLevel(level)
     return handler
