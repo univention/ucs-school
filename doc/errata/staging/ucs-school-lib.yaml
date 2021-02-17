@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.9A~4.4.0.202102121129
+fix: 12.2.10A~4.4.0.202102171458
 desc: |
  * Internal improvement: an error in an internal function was fixed (Bug #52783).
  * UCS@school users and groups are now validated after loading them from LDAP. Additionally to the errors in the regular log files, the complete object is written to <filename>/var/log/univention/ucs-school-validation.log</filename> which is only readable by the user root. The new UCR-V <envar>ucsschool/validation/logging/backupcount</envar> sets the amount of copies which are kept in rotation before deleting the first log file (Bug #52309).
