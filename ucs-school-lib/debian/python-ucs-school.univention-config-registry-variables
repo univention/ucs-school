@@ -4,3 +4,8 @@ Description[en]=This variable controls if new UCS@school shares are automaticall
 Type=bool
 Categories=ucsschool-base
 
+[ucsschool/validation/logging/backupcount]
+Description[de]=Diese Variable steuert, wie viele Kopien der Log-Datei zum Loggen vertraulicher Daten während der Validierung von UCS@school Objekten in Rotation gehalten werden. Diese Log-Dateien sind nur von root lesbar (Standard: 60)
+Description[en]=This variable controls how many copies of the log file, which is used for logging sensitive data, are kept in rotation during the validation of UCS@school objects. These log files can only be read by root (Default: 60)
+Type=str
+Categories=ucsschool-base

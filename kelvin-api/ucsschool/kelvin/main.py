@@ -45,6 +45,7 @@ from starlette.status import (
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import env_or_ucr, get_file_handler
+from ucsschool.lib.models.validator import VALIDATION_LOGGER
 
 from .constants import (
     APP_VERSION,
@@ -80,6 +81,11 @@ app = FastAPI(
 )
 
 
+class ValidationDataFilter(logging.Filter):
+    def filter(self, record):
+        return record.name != VALIDATION_LOGGER
+
+
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
@@ -98,6 +104,7 @@ def setup_logging() -> None:
         abs_min_level = min(min_level, logger.level)
 
     file_handler = get_file_handler(abs_min_level, str(LOG_FILE_PATH))
+    file_handler.addFilter(ValidationDataFilter())
     logger = logging.getLogger("uvicorn.access")
     logger.addHandler(file_handler)
     logger = logging.getLogger()

@@ -38,6 +38,11 @@ Log level
 
 The minimum severity for log messages written to ``/var/log/univention/ucsschool-kelvin-rest-api/http.log`` can be configured. The default is ``INFO``. The value can be changed through the `app settings` of the `UCS\@school Kelvin REST API` app in the `Univention App Center` UMC module.
 
+Backup count of validation logging
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The UCR variable ``ucsschool/validation/logging/backupcount`` sets the amount of copies of the log file ``ucs-school-validation.log``, which should be kept in rotation. The default is ``60``. The host's UCR-V is copied into the Docker container during the join script.
+To change it for the *UCS\@school Kelvin REST API*, it has to be modified inside the Docker container.
+
 Configuration of user object management (import configuration)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -99,7 +104,8 @@ Logfiles
 ^^^^^^^^
 
 ``/var/log/univention/ucsschool-kelvin-rest-api`` is a volume mounted into the docker container, so it can be accessed from the host.
-The directory contains the file ``http.log``, which is the log of the HTTP-API (both ASGI server and API application).
+The directory contains the file ``http.log``, which is the log of the HTTP-API (both ASGI server and API application)
+and the file ``ucs-school-validation.log``, which is used to write sensitive information during the UCS\@school validation.
 
 User object (import) configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -31,56 +31,85 @@
 
 import re
 
-from ldap.dn import explode_dn
-from univention.config_registry import ConfigRegistry
-
 try:
-	from typing import Any, Dict, List, Optional, Tuple
-	from univention.admin.uldap import access as LoType
-	from univention.admin.handlers import simpleLdap as UdmObject
+	from typing import Dict, Optional, Pattern, Sequence
 except ImportError:
 	pass
 
+from ldap.dn import explode_dn
+
+from univention.config_registry import ConfigRegistry
 
 
 class SchoolSearchBase(object):
-	"""Deprecated utility class that generates DNs of common school containers for a OU"""
-	ucr = None
+	"""Deprecated: don't use position to identify user objects"""
 
 	ucr = None  # type: ConfigRegistry
+	_regex_cache = {}  # type: Dict[str, Pattern]
+
+	# prefixes
+	_containerAdmins = ""
+	_containerStudents = ""
+	_containerStaff = ""
+	_containerTeachersAndStaff = ""
+	_containerTeachers = ""
+	_containerClass = ""
+	_containerRooms = ""
+	_examUserContainerName = ""
+	_examGroupNameTemplate = ""
+	group_prefix_students = ""
+	group_prefix_teachers = ""
+	group_prefix_admins = ""
+	group_prefix_staff = ""
 
 	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
+		#  type: (Sequence[str], Optional[str], Optional[str], Optional[str]) -> None
 		if not self.ucr:
-			self.__class__.ucr = ConfigRegistry()
-			self.ucr.load()
-		self._ldapBase = ldapBase or self.ucr.get('ldap/base')
+			self._load_ucr()
 
-		from ucsschool.lib.models.school import School
+		self._ldapBase = ldapBase or self.ucr.get("ldap/base")
+
+		from ucsschool.lib.models import School
+
 		self._school = school or availableSchools[0]
 		self._schoolDN = dn or School.cache(self.school).dn
+		if not self._containerAdmins:
+			self._load_containers_and_prefixes()
 
-		# prefixes
-		self._containerAdmins = self.ucr.get('ucsschool/ldap/default/container/admins', 'admins')
-		self._containerStudents = self.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
-		self._containerStaff = self.ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
-		self._containerTeachersAndStaff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-		self._containerTeachers = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-		self._containerClass = self.ucr.get('ucsschool/ldap/default/container/class', 'klassen')
-		self._containerRooms = self.ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
-		self._examUserContainerName = self.ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
-		self._examGroupNameTemplate = self.ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
+	@classmethod
+	def _load_containers_and_prefixes(cls):  # type: () -> None
+		if not cls.ucr:
+			cls._load_ucr()
+		cls._containerAdmins = cls.ucr.get("ucsschool/ldap/default/container/admins", "admins")
+		cls._containerStudents = cls.ucr.get("ucsschool/ldap/default/container/pupils", "schueler")
+		cls._containerStaff = cls.ucr.get("ucsschool/ldap/default/container/staff", "mitarbeiter")
+		cls._containerTeachersAndStaff = cls.ucr.get(
+			"ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
+		)
+		cls._containerTeachers = cls.ucr.get("ucsschool/ldap/default/container/teachers", "lehrer")
+		cls._containerClass = cls.ucr.get("ucsschool/ldap/default/container/class", "klassen")
+		cls._containerRooms = cls.ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
+		cls._examUserContainerName = cls.ucr.get("ucsschool/ldap/default/container/exam", "examusers")
+		cls._examGroupNameTemplate = cls.ucr.get(
+			"ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
+		)
+		cls.group_prefix_students = cls.ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
+		cls.group_prefix_teachers = cls.ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
+		cls.group_prefix_admins = cls.ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
+		cls.group_prefix_staff = cls.ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
 
-		self.group_prefix_students = self.ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-		self.group_prefix_teachers = self.ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-		self.group_prefix_admins = self.ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
-		self.group_prefix_staff = self.ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+	@classmethod
+	def _load_ucr(cls):  # type: () -> ConfigRegistry
+		cls.ucr = ConfigRegistry()
+		cls.ucr.load()
+		return cls.ucr
 
 	@classmethod
 	def getOU(cls, dn):  # type: (str) -> str
 		"""Return the school OU for a given DN.
 
-			>>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
-			'dc1'
+		>>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+		'dc1'
 		"""
 		school_dn = cls.getOUDN(dn)
 		if school_dn:
@@ -90,15 +119,16 @@ class SchoolSearchBase(object):
 	def getOUDN(cls, dn):  # type: (str) -> str
 		"""Return the School OU-DN part for a given DN.
 
-			>>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
-			'Ou=dc1,oU=dc,dc=foo,dc=bar'
-			>>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
-			'ou=dc1,ou=dc,dc=foo,dc=bar'
+		>>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+		'Ou=dc1,oU=dc,dc=foo,dc=bar'
+		>>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
+		'ou=dc1,ou=dc,dc=foo,dc=bar'
 		"""
 		match = cls._RE_OUDN.search(dn)
 		if match:
 			return match.group(1)
-	_RE_OUDN = re.compile('(?:^|,)(ou=.*)$', re.I)
+
+	_RE_OUDN = re.compile("(?:^|,)(ou=.*)$", re.I)
 
 	@property
 	def dhcp(self):  # type: () -> str
@@ -129,12 +159,28 @@ class SchoolSearchBase(object):
 		return "cn=groups,%s" % self.schoolDN
 
 	@property
+	def students_group(self):  # type: () -> str
+		return "cn=%s-%s,cn=groups,%s" % (self._containerStudents, self.school.lower(), self.schoolDN)
+
+	@property
+	def teachers_group(self):  # type: () -> str
+		return "cn=%s-%s,cn=groups,%s" % (self._containerTeachers, self.school.lower(), self.schoolDN)
+
+	@property
+	def staff_group(self):  # type: () -> str
+		return "cn=%s-%s,cn=groups,%s" % (self._containerStaff, self.school.lower(), self.schoolDN)
+
+	@property
 	def workgroups(self):  # type: () -> str
 		return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
 	def classes(self):  # type: () -> str
-		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerStudents, self.schoolDN)
+		return "cn=%s,cn=%s,cn=groups,%s" % (
+			self._containerClass,
+			self._containerStudents,
+			self.schoolDN,
+		)
 
 	@property
 	def rooms(self):  # type: () -> str
@@ -203,7 +249,7 @@ class SchoolSearchBase(object):
 	@property
 	def examGroupName(self):  # type: () -> str
 		# replace '%(ou)s' strings in generic exam_group_name
-		ucr_value_keywords = {'ou': self.school}
+		ucr_value_keywords = {"ou": self.school}
 		return self._examGroupNameTemplate % ucr_value_keywords
 
 	@property
@@ -224,3 +270,183 @@ class SchoolSearchBase(object):
 
 	def isRoom(self, groupDN):  # type: (str) -> bool
 		return groupDN.endswith(self.rooms)
+
+	@classmethod
+	def get_is_teachers_group_regex(cls):  # type: () -> Pattern
+		if "is_teachers_group" not in cls._regex_cache:
+			if not cls._containerTeachers:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["is_teachers_group"] = re.compile(
+				r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+					cls._containerTeachers, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["is_teachers_group"]
+
+	@classmethod
+	def get_is_staff_group_regex(cls):  # type: () -> Pattern
+		if "is_staff_group" not in cls._regex_cache:
+			if not cls._containerStaff:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["is_staff_group"] = re.compile(
+				r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+					cls._containerStaff, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["is_staff_group"]
+
+	@classmethod
+	def get_is_student_group_regex(cls):  # type: () -> Pattern
+		if "is_student_group" not in cls._regex_cache:
+			if not cls._containerStudents:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["is_student_group"] = re.compile(
+				r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+					cls._containerStudents, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["is_student_group"]
+
+	@classmethod
+	def get_staff_group_regex(cls):  # type: () -> Pattern
+		if "staff" not in cls._regex_cache:
+			if not cls._containerStaff:
+				cls._load_containers_and_prefixes()
+
+			cls._regex_cache["staff"] = re.compile(
+				r"cn={}-(?P<ou>[^,]?),cn=groups,ou=(?P=ou),{}".format(
+					cls._containerStaff, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+
+		return cls._regex_cache["staff"]
+
+	@classmethod
+	def get_students_group_regex(cls):  # type: () -> Pattern
+		if "students" not in cls._regex_cache:
+			if not cls._containerStudents:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["students"] = re.compile(
+				r"cn={}-(?P<ou>[^,]?),cn=groups,ou=(?P=ou),{}".format(
+					cls._containerStudents, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+
+		return cls._regex_cache["students"]
+
+	@classmethod
+	def get_students_pos_regex(cls):  # type: () -> Pattern
+		if "students_pos" not in cls._regex_cache:
+			if not cls._containerStudents:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["students_pos"] = re.compile(
+				r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerStudents, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["students_pos"]
+
+	@classmethod
+	def get_teachers_pos_regex(cls):  # type: () -> Pattern
+		if "teachers_pos" not in cls._regex_cache:
+			if not cls._containerTeachers:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["teachers_pos"] = re.compile(
+				r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerTeachers, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["teachers_pos"]
+
+	@classmethod
+	def get_staff_pos_regex(cls):  # type: () -> Pattern
+		if "staff_pos" not in cls._regex_cache:
+			if not cls._containerStaff:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["staff_pos"] = re.compile(
+				r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerStaff, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["staff_pos"]
+
+	@classmethod
+	def get_teachers_and_staff_pos_regex(cls):  # type: () -> Pattern
+		if "teachers_and_staff_pos" not in cls._regex_cache:
+			if not cls._containerTeachersAndStaff:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["teachers_and_staff_pos"] = re.compile(
+				r"cn={},cn=users,ou=[^,]+,{}".format(
+					cls._containerTeachersAndStaff, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["teachers_and_staff_pos"]
+
+	@classmethod
+	def get_exam_users_pos_regex(cls):  # type: () -> Pattern
+		if "exam_user_pos" not in cls._regex_cache:
+			if not cls._examUserContainerName:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["exam_user_pos"] = re.compile(
+				r"cn={},ou=[^,]+,{}".format(cls._examUserContainerName, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["exam_user_pos"]
+
+	@classmethod
+	def get_schoolclass_pos_regex(cls):  # type: () -> Pattern
+		if "schoolclass_pos" not in cls._regex_cache:
+			if not cls._containerStudents or not cls._containerClass:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["schoolclass_pos"] = re.compile(
+				r"cn={},cn={},cn=groups,ou=[^,]+?,{}".format(
+					cls._containerClass, cls._containerStudents, cls.ucr["ldap/base"]
+				),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["schoolclass_pos"]
+
+	@classmethod
+	def get_workgroup_pos_regex(cls):  # type: () -> Pattern
+		if "workgroup_pos" not in cls._regex_cache:
+			if not cls._containerStudents:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["workgroup_pos"] = re.compile(
+				r"cn={},cn=groups,ou=[^,]+?,{}".format(cls._containerStudents, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["workgroup_pos"]
+
+	@classmethod
+	def get_computerroom_pos_regex(cls):  # type: () -> Pattern
+		if "computerroom_pos" not in cls._regex_cache:
+			if not cls._containerRooms:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["computerroom_pos"] = re.compile(
+				r"cn={},cn=groups,ou=[^,]+?,{}".format(cls._containerRooms, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["computerroom_pos"]
+
+	@classmethod
+	def get_workgroup_share_pos_regex(cls):  # type: () -> Pattern
+		if "workgroup_share_pos" not in cls._regex_cache:
+			cls._regex_cache["workgroup_share_pos"] = re.compile(
+				r"cn=shares,ou=[^,]+?,{}".format(cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["workgroup_share_pos"]
+
+	@classmethod
+	def get_school_class_share_pos_regex(cls):  # type: () -> Pattern
+		if "school_class_share_pos" not in cls._regex_cache:
+			if not cls._containerClass:
+				cls._load_containers_and_prefixes()
+			cls._regex_cache["school_class_share_pos"] = re.compile(
+				r"cn={},cn=shares,ou=[^,]+?,{}".format(cls._containerClass, cls.ucr["ldap/base"]),
+				flags=re.IGNORECASE,
+			)
+		return cls._regex_cache["school_class_share_pos"]
