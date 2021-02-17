@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.186) unstable; urgency=medium
+
+  * Bug #52309: add unit and integration tests for validation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Feb 2021 14:33:40 +0100
+
 ucs-test-ucsschool (6.0.185) unstable; urgency=low
 
   * Bug #52757: run tests for exam-master only on dc master
