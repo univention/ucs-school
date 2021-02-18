@@ -62,7 +62,7 @@ def mock_logger_file(mocker):
         mocker.patch.object(validator, "LOG_FILE", f.name)
 
 
-def base_group(name):  # type: (str, str) -> Dict[Any]
+def base_group(name):  # type: (str, str) -> Dict[str, Any]
     return {
         "dn": "",
         "props": {
@@ -92,7 +92,7 @@ def base_group(name):  # type: (str, str) -> Dict[Any]
     }
 
 
-def workgroup():  # type: () -> Dict[Any]
+def workgroup():  # type: () -> Dict[str, Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
@@ -101,7 +101,7 @@ def workgroup():  # type: () -> Dict[Any]
     return group
 
 
-def schoolclass():  # type: () -> Dict[Any]
+def schoolclass():  # type: () -> Dict[str, Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
     group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
@@ -112,7 +112,7 @@ def schoolclass():  # type: () -> Dict[Any]
     return group
 
 
-def computer_room():  # type: () -> Dict[Any]
+def computer_room():  # type: () -> Dict[str, Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
@@ -123,7 +123,7 @@ def computer_room():  # type: () -> Dict[Any]
     return group
 
 
-def base_share(name):  # type: (str) -> Dict[Any]
+def base_share(name):  # type: (str) -> Dict[str, Any]
     return {
         "dn": "",
         "props": {
@@ -190,7 +190,7 @@ def base_share(name):  # type: (str) -> Dict[Any]
     }
 
 
-def klassen_share():  # type: () -> Dict[Any]
+def klassen_share():  # type: () -> Dict[str, Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -199,7 +199,7 @@ def klassen_share():  # type: () -> Dict[Any]
     return share
 
 
-def workgroup_share():  # type: () -> Dict[Any]
+def workgroup_share():  # type: () -> Dict[str, Any]
     name = "DEMOSCHOOL-{}".format(uts.random_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -208,7 +208,7 @@ def workgroup_share():  # type: () -> Dict[Any]
     return share
 
 
-def marktplatz_share():  # type: () -> Dict[Any]
+def marktplatz_share():  # type: () -> Dict[str, Any]
     name = "Marktplatz"
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
