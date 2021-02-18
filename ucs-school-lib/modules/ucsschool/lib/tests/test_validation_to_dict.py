@@ -21,6 +21,20 @@ from ucsschool.lib.models.validator import obj_to_dict
 from udm_rest_client import UDM
 
 
+def _inside_docker():
+    try:
+        import ucsschool.kelvin.constants
+    except ImportError:
+        return False
+    return ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists()
+
+
+pytestmark = pytest.mark.skipif(
+    not _inside_docker(),
+    reason="Must run inside Docker container started by appcenter.",
+)
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "ObjectClass",

@@ -37,7 +37,7 @@ import uuid
 import ldap
 
 try:
-	from typing import Any, Dict, List, Optional, Type, Callable, Union
+	from typing import Any, Dict, List, Optional, Type, Union
 
 	from .base import UdmObject
 except ImportError:
@@ -71,7 +71,7 @@ if os.geteuid() == 0:
 	)
 
 
-def split_roles(roles):  # type(List[str]) -> List[List[str]]
+def split_roles(roles):  # type: (List[str]) -> List[List[str]]
 	return [r.split(":") for r in roles]
 
 
@@ -84,22 +84,13 @@ def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
 	return obj.to_dict()
 
 
-def obj_to_dict_conversion(
-		func  # type: Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
-):
-	# type: (...) -> Callable[[Union[UdmObject, Dict[str, Any]], logging.Logger], None]
-	"""
-	Decorator which converts an obj object to dict.
-	To make testing easier, objects of type dicts are passed directly.
-	"""
-
-	def _inner(obj, logger):
-		if type(obj) is dict:
-			dict_obj = obj
-		else:
-			dict_obj = obj_to_dict(obj)
-		return func(dict_obj, logger)
-	return _inner
+def obj_to_dict_conversion(obj):
+	# type: (Union[UdmObject, Dict[str, Any]]) -> Dict[str, Any]
+	if type(obj) is dict:
+		dict_obj = obj
+	else:
+		dict_obj = obj_to_dict(obj)
+	return dict_obj
 
 
 def is_student_role(role):  # type: (str) -> bool
@@ -149,7 +140,7 @@ class SchoolValidator(object):
 		return expected_roles
 
 	@classmethod
-	def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+	def expected_roles(cls, obj):  # type: (Dict[str, Any]) -> List[str]
 		return []
 
 	@classmethod
@@ -185,12 +176,12 @@ class UserValidator(SchoolValidator):
 		return errors
 
 	@classmethod
-	def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+	def expected_roles(cls, obj):  # type: (Dict[str, Any]) -> List[str]
 		schools = obj["props"].get("school", [])
 		return cls.roles_at_school(schools)
 
 	@classmethod
-	def expected_groups(cls, obj):  # type: (Dict) -> List[str]
+	def expected_groups(cls, obj):  # type: (Dict[str, Any]) -> List[str]
 		"""
 		Collect expected groups of user. Overwrite for special cases in subclasses.
 		"""
@@ -282,7 +273,7 @@ class StudentValidator(UserValidator):
 	roles = [role_student]
 
 	@classmethod
-	def expected_groups(cls, obj):  # type: (Dict) -> List[str]
+	def expected_groups(cls, obj):  # type: (Dict[str, Any]) -> List[str]
 		"""
 		Students have at least one class at every school.
 		"""
@@ -396,7 +387,7 @@ class GroupAndShareValidator(SchoolValidator):
 		return errors
 
 	@classmethod
-	def expected_roles(cls, obj):  # type: (Dict) -> List[str]
+	def expected_roles(cls, obj):  # type: (Dict[str, Any]) -> List[str]
 		school = GroupAndShareValidator._extract_ou(obj["dn"])
 		return cls.roles_at_school([school])
 
@@ -473,24 +464,22 @@ def get_class(obj):  # type: (Dict[str, Any]) -> Optional[Type[SchoolValidator]]
 		return WorkGroupShareValidator
 
 
-@obj_to_dict_conversion
-def validate(obj, logger=None):
-	# type: (Union[UdmObject, Dict[str, Any]], Optional[logging.Logger]) -> None
+def validate(obj, logger=None):  # type: (Dict[str, Any], logging.Logger) -> None
 	"""
 	Objects are validated as dicts and errors are logged to
 	the passed logger. Sensitive data is only logged to /var/log/univention/ucs-school-validation.log
 	"""
-
-	validation_class = get_class(obj)
+	dict_obj = obj_to_dict_conversion(obj)
+	validation_class = get_class(dict_obj)
 	if validation_class:
-		options = obj["options"]
-		errors = validation_class.validate(obj)
+		options = dict_obj["options"]
+		errors = validation_class.validate(dict_obj)
 		errors = list(filter(None, errors))
 		if errors:
 			validation_uuid = str(uuid.uuid4())
 			errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}".format(
 				validation_uuid,
-				obj.get("dn", ""),
+				dict_obj.get("dn", ""),
 				"{!r}".format(options),
 				"\n\t- ".join(errors),
 			)
@@ -498,6 +487,6 @@ def validate(obj, logger=None):
 				logger.error(errors_str)
 			if private_data_logger:
 				private_data_logger.error(errors_str)
-				private_data_logger.error(obj)
+				private_data_logger.error(dict_obj)
 				stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
 				private_data_logger.error(stack_trace)
