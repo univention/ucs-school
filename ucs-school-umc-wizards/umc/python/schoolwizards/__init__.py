@@ -75,6 +75,8 @@ from univention.udm import UDM
 try:
     from typing import Any, Iterator, Optional, Set, Union
 
+    LibModel = Union[School, User, SchoolComputer, SchoolClass]
+
     from univention.admin.uldap import access as LoType
 except ImportError:
     pass
@@ -123,8 +125,8 @@ def check_workaround_constraints(
     This function checks the constraints for the admin workaround as described in Bug #52757.
     Returns whether the constraints are fulfilled or not.
 
-    Attention! This function does only check the general constrain for DELETE. User deletions are not checked
-    correctly due to their special handling.
+    Attention! This function does only check the general constrain for DELETE.
+    User deletions are not checked correctly due to their special handling.
 
     :param subject_schools: The set of schools the subject is in
     :param old_object_schools: The set of schools the object is in before any modification
@@ -151,22 +153,27 @@ def check_workaround_constraints(
 
 def iter_objects_in_request(
     request, lo, operation_type, subject_schools=frozenset(), is_domain_admin=False
-):  # type: (Any, LoType, int, Set[str], bool) -> Iterator[Union[School, User, SchoolComputer, SchoolClass]]
+):  # type: (Any, LoType, int, Set[str], bool) -> Iterator[LibModel]
     """
-    This function iterates over all given objects given in the request and returns the corresponding UCS@school lib
-    objects already altered with the changes from the request.
+    This function iterates over all given objects given in the request and returns the corresponding
+    UCS@school lib objects already altered with the changes from the request.
 
-    Attention: If the admin workaround is activated (see Bug #52757) certain constraints are checked. If they are not
-    fulfilled this function aborts with an UMC Error.
+    Attention: If the admin workaround is activated (see Bug #52757) certain constraints are checked.
+     If they are not fulfilled this function aborts with an UMC Error.
 
-    :param request: The request from the UMCP call containing all the objects to be iterated over.
+    :param request: The request from the UMCP call containing all the objects
+        to be iterated over.
     :param lo: A LDAP access for retrieving existing UCS@school objects.
-    :param operation_type: The type of operation applied onto the returned objects. Necessary for constraint checking.
-    :param subject_schools: The schools the user triggering the UMCP command is in. This is needed for constraint checking.
-    :param is_domain_admin: If the user triggering the UMCP command is a domain admin or not. This is needed for constraint checking.
+    :param operation_type: The type of operation applied onto the returned objects.
+        Necessary for constraint checking.
+    :param subject_schools: The schools the user triggering the UMCP command is in.
+        This is needed for constraint checking.
+    :param is_domain_admin: If the user triggering the UMCP command is a domain admin or not.
+        This is needed for constraint checking.
 
     :returns: An iterator to iterate over the altered or new UCS@school objects.
-    :raises UMC_Error: If an object that should exist does not or if the admin workaround constraints are not met.
+    :raises UMC_Error: If an object that should exist does not or if the admin workaround
+        constraints are not met.
     """
     klass = {
         "schoolwizards/schools": School,
@@ -230,7 +237,8 @@ def iter_objects_in_request(
             ):
                 raise UMC_Error(
                     _(
-                        "You do not have the right to modify the object with the DN %s from the schools %s."
+                        "You do not have the right to modify the object with the DN %s"
+                        "from the schools %s."
                     )
                     % (dn, object_old_schools)
                 )
