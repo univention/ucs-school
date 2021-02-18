@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.11) unstable; urgency=medium
+
+  * Bug #52309: add correct hints and replace decorator
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Feb 2021 09:20:46 +0100
+
 ucs-school-lib (12.2.10) unstable; urgency=medium
 
   * Bug #52309: add validation code for ucsschool objects
