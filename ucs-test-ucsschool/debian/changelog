@@ -22,6 +22,24 @@ ucs-test-ucsschool (7.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
 
+ucs-test-ucsschool (6.0.188) unstable; urgency=low
+
+  * Bug #52309: rename test for ucs-test
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 18 Feb 2021 16:05:19 +0100
+
+ucs-test-ucsschool (6.0.187) unstable; urgency=medium
+
+  * Bug #52309: correct type hints
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Feb 2021 09:22:02 +0100
+
+ucs-test-ucsschool (6.0.186) unstable; urgency=medium
+
+  * Bug #52309: add unit and integration tests for validation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Feb 2021 14:33:40 +0100
+
 ucs-test-ucsschool (6.0.185) unstable; urgency=low
 
   * Bug #52757: run tests for exam-master only on dc master
