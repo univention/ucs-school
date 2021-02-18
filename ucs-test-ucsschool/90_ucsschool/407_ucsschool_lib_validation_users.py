@@ -205,7 +205,7 @@ def teacher_user():  # type: () -> Dict[str, Any]
     return user
 
 
-def staff_user():  # type: () -> Dict[Any]
+def staff_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user(firstname, lastname)
