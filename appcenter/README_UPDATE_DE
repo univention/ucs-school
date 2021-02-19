@@ -1,5 +1,11 @@
 <h1>Changelog</h1>
-<h2>v1.3.0 (2021-01-28)</h2>
+<h2>v1.3.1 (2021-02-23)</h2>
+<ul>
+    <li>
+       The FastAPI framework has been updated to version <code>0.63.0</code>.
+    </li>
+</ul>
+<h2>v1.3.0 (2021-02-18)</h2>
 <ul>
     <li>
        <p>It is now possible to change the roles of users. See manual section <a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/resource-users.html#changing-a-users-roles">Changing a users roles</a> for details.</p>

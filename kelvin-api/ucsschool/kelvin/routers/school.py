@@ -29,9 +29,8 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from ldap.filter import escape_filter_chars
-from starlette.requests import Request
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
@@ -158,5 +157,5 @@ async def get(
 #     **Not implemented yet!**
 #     """
 #     raise HTTPException(
-#         status_code=HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
+#         status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
 #     )

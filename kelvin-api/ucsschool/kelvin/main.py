@@ -31,16 +31,10 @@ from functools import lru_cache
 
 import aiofiles
 import lazy_object_proxy
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi.responses import HTMLResponse, UJSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
-from starlette.requests import Request
-from starlette.responses import HTMLResponse, UJSONResponse
-from starlette.staticfiles import StaticFiles
-from starlette.status import (
-    HTTP_400_BAD_REQUEST,
-    HTTP_401_UNAUTHORIZED,
-    HTTP_404_NOT_FOUND,
-)
+from fastapi.staticfiles import StaticFiles
 
 from ucsschool.lib.models.attributes import ValidationError as SchooLibValidationError
 from ucsschool.lib.models.base import NoObject
@@ -119,7 +113,9 @@ def configure_import():
 
 @app.exception_handler(NoObject)
 async def no_object_exception_handler(request: Request, exc: NoObject):
-    return UJSONResponse(status_code=HTTP_404_NOT_FOUND, content={"message": str(exc)})
+    return UJSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)}
+    )
 
 
 @app.exception_handler(SchooLibValidationError)
@@ -127,7 +123,7 @@ async def school_lib_validation_exception_handler(
     request: Request, exc: SchooLibValidationError
 ):
     return UJSONResponse(
-        status_code=HTTP_400_BAD_REQUEST, content={"message": str(exc)}
+        status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)}
     )
 
 
@@ -141,7 +137,8 @@ async def login_for_access_token(
     )
     if not user:
         raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED, detail="Incorrect username or password"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
         )
     access_token_expires = timedelta(minutes=get_token_ttl())
     access_token = await create_access_token(

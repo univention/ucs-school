@@ -5,6 +5,10 @@
 Changelog
 ---------
 
+v1.3.1 (2021-02-23)
+...................
+* The FastAPI framework has been updated to version ``0.63.0``.
+
 v1.3.0 (2021-02-18)
 ...................
 * It is now possible to change the roles of users. See manual section `Changing a users roles <https://docs.software-univention.de/ucsschool-kelvin-rest-api/resource-users.html#changing-a-users-roles>`_ for details (Bug #52659).

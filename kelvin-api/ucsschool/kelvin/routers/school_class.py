@@ -28,17 +28,8 @@
 import logging
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, Field, HttpUrl, root_validator, validator
-from starlette.requests import Request
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST,
-    HTTP_409_CONFLICT,
-    HTTP_422_UNPROCESSABLE_ENTITY,
-)
 
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
 from ucsschool.lib.models.group import SchoolClass
@@ -201,7 +192,7 @@ async def get(
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
-@router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolClassModel)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolClassModel)
 async def create(
     school_class: SchoolClassCreateModel,
     request: Request,
@@ -221,7 +212,7 @@ async def create(
     sc: SchoolClass = await school_class.as_lib_model(request)
     if await sc.exists(udm):
         raise HTTPException(
-            status_code=HTTP_409_CONFLICT, detail="School class exists."
+            status_code=status.HTTP_409_CONFLICT, detail="School class exists."
         )
     else:
         try:
@@ -229,12 +220,16 @@ async def create(
         except (LibValidationError, CreateError) as exc:
             error_msg = f"Failed to create school class {sc!r}: {exc}"
             logger.exception(error_msg)
-            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=error_msg)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg
+            )
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
 @router.patch(
-    "/{school}/{class_name}", status_code=HTTP_200_OK, response_model=SchoolClassModel
+    "/{school}/{class_name}",
+    status_code=status.HTTP_200_OK,
+    response_model=SchoolClassModel,
 )
 async def partial_update(
     class_name: str,
@@ -264,14 +259,16 @@ async def partial_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=str(exc),
             ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
 @router.put(
-    "/{school}/{class_name}", status_code=HTTP_200_OK, response_model=SchoolClassModel
+    "/{school}/{class_name}",
+    status_code=status.HTTP_200_OK,
+    response_model=SchoolClassModel,
 )
 async def complete_update(
     class_name: str,
@@ -285,7 +282,7 @@ async def complete_update(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)
     ):
         raise HTTPException(
-            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Moving of class to other school is not allowed.",
         )
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
@@ -310,13 +307,13 @@ async def complete_update(
                 exc,
             )
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=str(exc),
             ) from exc
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
-@router.delete("/{school}/{class_name}", status_code=HTTP_204_NO_CONTENT)
+@router.delete("/{school}/{class_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(
     class_name: str,
     school: str,

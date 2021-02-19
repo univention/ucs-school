@@ -32,11 +32,10 @@ from datetime import datetime, timedelta
 import aiofiles
 import jwt
 import lazy_object_proxy
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError
 from pydantic import BaseModel
-from starlette.status import HTTP_401_UNAUTHORIZED
 
 from ucsschool.lib.models.utils import ucr
 
@@ -91,7 +90,7 @@ async def create_access_token(*, data: dict, expires_delta: timedelta = None) ->
 
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> LdapUser:
     credentials_exception = HTTPException(
-        status_code=HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
@@ -117,5 +116,7 @@ async def get_current_active_user(
     current_user: LdapUser = Depends(get_current_user),
 ) -> LdapUser:
     if current_user.disabled:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Inactive user"
+        )
     return current_user

@@ -29,10 +29,8 @@ from enum import Enum
 from typing import List, Type
 from urllib.parse import ParseResult, urlparse
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from pydantic import BaseModel, HttpUrl
-from starlette.requests import Request
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.models.import_user import ImportUser
@@ -65,7 +63,7 @@ class SchoolUserRole(str, Enum):
             role, _, _ = get_role_info(lib_role)
         except UcsschoolRoleStringError as exc:
             raise HTTPException(
-                status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
             )
         if role in (role_exam_user, role_student):
             return cls.student
@@ -76,7 +74,7 @@ class SchoolUserRole(str, Enum):
         if role == role_school_admin:
             return cls.school_admin
         raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unknown UCS@school role {lib_role!r}.",
         )
 
