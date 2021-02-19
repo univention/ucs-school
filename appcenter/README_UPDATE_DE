@@ -11,6 +11,9 @@
     <li>
         Internal improvement: A fallback for retrieving LDAP connection settings from UCR has been added for the case that that the environment variables are not available.
     </li>
+    <li>
+        UCS@school user and group objects are now validated before usage, when loading them from LDAP. See manual sections <a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/resources.html#resources">Resources</a> and <a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#backup-count-of-validation-logging">Backup count of validation logging</a> for details.
+    </li>
 </ul>
 <h2>v1.2.0 (2020-11-12)</h2>
 <ul>
