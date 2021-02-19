@@ -33,10 +33,8 @@ from urllib.parse import ParseResult, quote, unquote, urlparse
 
 import psutil
 import ujson
-from fastapi import HTTPException
+from fastapi import HTTPException, Request, status
 from pydantic import BaseModel, HttpUrl, validator
-from starlette.requests import Request
-from starlette.status import HTTP_404_NOT_FOUND
 
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
@@ -83,7 +81,7 @@ async def get_lib_obj(
         return await lib_cls.from_dn(dn, school, udm)
     except NoObject:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"No {lib_cls.__name__} with name={name!r} dn={dn!r} and school={school!r} found.",
         )
 
