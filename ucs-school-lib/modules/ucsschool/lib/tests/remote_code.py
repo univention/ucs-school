@@ -3,14 +3,7 @@
 import json
 
 from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.user import (
-    ExamStudent,
-    Staff,
-    Student,
-    Teacher,
-    TeachersAndStaff,
-    User,
-)
+from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff, User
 from univention.admin.uexceptions import noObject
 from univention.admin.uldap import getAdminConnection
 

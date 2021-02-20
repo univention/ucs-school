@@ -1,7 +1,8 @@
+from typing import Any, Dict, List
+
 import pytest
 from faker import Faker
 from ldap.filter import filter_format
-from typing import Any, Dict, List
 
 from ucsschool.lib.models.group import Group, SchoolClass
 from udm_rest_client import UDM, NoObject as UdmNoObject
@@ -50,13 +51,9 @@ async def test_exists(new_school_class, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
         sc0 = await SchoolClass.from_dn(dn, attr["school"], udm)
         assert await sc0.exists(udm) is True
-        sc1 = SchoolClass(
-            name=f"{attr['school']}-{attr['name']}", school=attr["school"]
-        )
+        sc1 = SchoolClass(name=f"{attr['school']}-{attr['name']}", school=attr["school"])
         assert await sc1.exists(udm) is True
-        sc2 = SchoolClass(
-            name=f"{attr['school']}-{fake.pystr()}", school=attr["school"]
-        )
+        sc2 = SchoolClass(name=f"{attr['school']}-{fake.pystr()}", school=attr["school"])
         assert await sc2.exists(udm) is False
 
 
@@ -86,9 +83,7 @@ async def test_get_all(new_school_class, udm_kwargs):
             if obj.dn == dn:
                 break
         else:
-            raise AssertionError(
-                f"DN {dn!r} not found in SchoolClass.get_all(udm, {attr['school']})."
-            )
+            raise AssertionError(f"DN {dn!r} not found in SchoolClass.get_all(udm, {attr['school']}).")
         filter_str = filter_format("(cn=%s)", (f"{attr['school']}-{attr['name']}",))
         objs = await SchoolClass.get_all(udm, attr["school"], filter_str=filter_str)
         assert len(objs) == 1

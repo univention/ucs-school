@@ -64,9 +64,7 @@ class SchoolUserRole(str, Enum):
         try:
             role, _, _ = get_role_info(lib_role)
         except UcsschoolRoleStringError as exc:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
-            )
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc))
         if role in (role_exam_user, role_student):
             return cls.student
         if role == role_teacher:

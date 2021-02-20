@@ -23,12 +23,12 @@ LDAP_BASE_DN = "dc=uni,dc=dtr"
 AUTH = ("Administrator", "univention")
 
 
-user_mod = UDM.credentials(*AUTH).version(0).get("users/user")  # type: BaseModule
+user_mod: BaseModule = UDM.credentials(*AUTH).version(0).get("users/user")
 
 
-def random_string(
-    length=10, alpha=True, numeric=True
-):  # type: (Optional[int], Optional[bool], Optional[bool]) -> str
+def random_string(  # nosec
+    length: Optional[int] = 10, alpha: Optional[bool] = True, numeric: Optional[bool] = True
+) -> str:
     result = ""
     for _ in range(length):
         if alpha and numeric:
@@ -40,10 +40,10 @@ def random_string(
     return str(result)
 
 
-def random_name(length=10):  # type: (Optional[int]) -> str
+def random_name(length: int = 10) -> str:
     """
-	create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
-	"""
+    create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
+    """
     return (
         random_string(length=1, alpha=True, numeric=False)
         + random_string(length=(length - 2), alpha=True, numeric=True)
@@ -52,11 +52,11 @@ def random_name(length=10):  # type: (Optional[int]) -> str
 
 
 def create_objs_via_UDM_python_sequential(
-    datas,
-):  # type: (List[Dict[str, Any]]) -> List[str]
+    datas: List[Dict[str, Any]],
+) -> List[str]:
     res = []
     for data in datas:
-        obj = user_mod.new(data["superordinate"])  # type: BaseObject
+        obj: BaseObject = user_mod.new(data["superordinate"])
         obj.options = data["options"]
         obj.policies = data["policies"].keys()
         obj.position = data["position"]
@@ -92,8 +92,9 @@ def user_resource_kwargs(school):
     }
 
 
-def create_objs_via_UDM_python_parallel(school, num, parallelism):
-    # type: (str, int, int) -> Tuple[float, List[str]]
+def create_objs_via_UDM_python_parallel(
+    school: str, num: int, parallelism: int
+) -> Tuple[float, List[str]]:
     # create `parallelism` amount of processes each working on a `num / parallelism` long list
     assert num % parallelism == 0
     if parallelism == 1:
@@ -104,8 +105,7 @@ def create_objs_via_UDM_python_parallel(school, num, parallelism):
             dns.extend(create_objs_via_UDM_python_sequential([kw]))
         return time.time() - t0, dns
     kwargs = [
-        [user_resource_kwargs(school) for i in range(int(num / parallelism))]
-        for j in range(parallelism)
+        [user_resource_kwargs(school) for i in range(int(num / parallelism))] for j in range(parallelism)
     ]
     pool = Pool(processes=parallelism)
     t0 = time.time()
@@ -118,15 +118,13 @@ def create_objs_via_UDM_python_parallel(school, num, parallelism):
     return t1, dns
 
 
-def read_objs_via_UDM_python(dns):  # type: (List[str]) -> None
+def read_objs_via_UDM_python(dns: List[str]) -> None:
     for dn in dns:
-        obj = user_mod.get(dn)  # type: BaseObject
+        obj: BaseObject = user_mod.get(dn)
         assert obj.dn == dn
 
 
-def read_objs_via_UDM_python_parallel(
-    dns, parallelism
-):  # type: (List[str], int) -> float
+def read_objs_via_UDM_python_parallel(dns: List[str], parallelism: int) -> float:
     # create `parallelism` amount of processes each working on a `num / parallelism` long list
     assert len(dns) % parallelism == 0
     if parallelism == 1:
@@ -134,9 +132,7 @@ def read_objs_via_UDM_python_parallel(
         for dn in dns:
             read_objs_via_UDM_python([dn])
         return time.time() - t0
-    kwargs = [
-        dns[i : i + parallelism] for i in range(0, len(dns), parallelism)
-    ]  # type: List[List[str]]
+    kwargs: List[List[str]] = [dns[i : i + parallelism] for i in range(0, len(dns), parallelism)]
     pool = Pool(processes=parallelism)
     t0 = time.time()
     map_async_result = pool.map_async(read_objs_via_UDM_python, kwargs)
@@ -144,57 +140,49 @@ def read_objs_via_UDM_python_parallel(
     return time.time() - t0
 
 
-def modify_objs_via_UDM_python(dns):  # type: (List[str]) -> float
+def modify_objs_via_UDM_python(dns: List[str]) -> float:
     t_delta = 0.0
     for dn in dns:
-        obj = user_mod.get(dn)  # type: BaseObject
+        obj: BaseObject = user_mod.get(dn)
         obj.props.firstname = random_name()
         obj.props.lastname = random_name()
         t0 = time.time()
         obj.save()
         t_delta += time.time() - t0
-        obj_new = user_mod.get(dn)  # type: BaseObject
+        obj_new: BaseObject = user_mod.get(dn)
         assert obj_new.props.firstname == obj.props.firstname
         assert obj_new.props.lastname == obj.props.lastname
     return t_delta
 
 
-def modify_objs_via_UDM_python_parallel(
-    dns, parallelism
-):  # type: (List[str], int) -> float
+def modify_objs_via_UDM_python_parallel(dns: List[str], parallelism: int) -> float:
     assert len(dns) % parallelism == 0
     if parallelism == 1:
         t0 = time.time()
         for dn in dns:
             modify_objs_via_UDM_python([dn])
         return time.time() - t0
-    kwargs = [
-        dns[i : i + parallelism] for i in range(0, len(dns), parallelism)
-    ]  # type: List[List[str]]
+    kwargs: List[List[str]] = [dns[i : i + parallelism] for i in range(0, len(dns), parallelism)]
     pool = Pool(processes=parallelism)
     map_async_result = pool.map_async(modify_objs_via_UDM_python, kwargs)
     results = map_async_result.get()
     return sum(results)
 
 
-def delete_objs_via_UDM_python(dns):  # type: (List[str]) -> None
+def delete_objs_via_UDM_python(dns: List[str]) -> None:
     for dn in dns:
-        obj = user_mod.get(dn)  # type: BaseObject
+        obj: BaseObject = user_mod.get(dn)
         obj.delete()
 
 
-def delete_objs_via_UDM_python_parallel(
-    dns, parallelism
-):  # type: (List[str], int) -> float
+def delete_objs_via_UDM_python_parallel(dns: List[str], parallelism: int) -> float:
     assert len(dns) % parallelism == 0
     if parallelism == 1:
         t0 = time.time()
         for dn in dns:
             delete_objs_via_UDM_python([dn])
         return time.time() - t0
-    kwargs = [
-        dns[i : i + parallelism] for i in range(0, len(dns), parallelism)
-    ]  # type: List[List[str]]
+    kwargs: List[List[str]] = [dns[i : i + parallelism] for i in range(0, len(dns), parallelism)]
     pool = Pool(processes=parallelism)
     t0 = time.time()
     map_async_result = pool.map_async(delete_objs_via_UDM_python, kwargs)
@@ -202,13 +190,11 @@ def delete_objs_via_UDM_python_parallel(
     return time.time() - t0
 
 
-def main():  # type: () -> None
+def main() -> None:
     print("Starting UDM Python tests (parallelism={})...".format(PARALLELISM))
     print("Connection args: {!r}".format(AUTH))
     print("Creating {} Users...".format(NUMBER_USERS))
-    t_1000_1, dns = create_objs_via_UDM_python_parallel(
-        SCHOOL_OU, NUMBER_USERS, PARALLELISM
-    )
+    t_1000_1, dns = create_objs_via_UDM_python_parallel(SCHOOL_OU, NUMBER_USERS, PARALLELISM)
     time.sleep(30)
 
     print("Reading {} Users...".format(NUMBER_USERS))

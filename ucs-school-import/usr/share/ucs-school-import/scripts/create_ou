@@ -30,103 +30,142 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import optparse
-import sys
 import csv
 import logging
-from univention.admin.uexceptions import uidAlreadyUsed
-from univention.admin.uldap import getAdminConnection
+import optparse
+import sys
+
 from ucsschool.lib.create_ou import create_ou
 from ucsschool.lib.models.utils import get_stream_handler, ucr
+from univention.admin.uexceptions import uidAlreadyUsed
+from univention.admin.uldap import getAdminConnection
 
 
 def main():
-	usage = '''
-	%prog [options] <ou_name> [<educational_dc_name> [<administrative_dc_name>]]
-	create school container for UCS@school
+    usage = """
+    %prog [options] <ou_name> [<educational_dc_name> [<administrative_dc_name>]]
+    create school container for UCS@school
 
-	Arguments:
-	<ou_name>		        name of ou that shall be created or verified
-	<educational_dc_name>	hostname of the educational DC for specified OU
-							(if dc_name is not specified "dc<ou_name>-01" will be
-						used as the default for the domaincontroller name)
-	<administrative_dc_name>    hostname of the administrative DC for the specified OU'''
-	parser = optparse.OptionParser(usage=usage)
-	parser.add_option(
-		'--sharefileserver', action='store', type='string',
-		dest='ShareFileServer', default=None,
-		help="hostname of the fileserver within given OU that is used for class shares and user home shares")
-	parser.add_option(
-		'--displayName', action='store', type='string',
-		dest='displayName', default=None,
-		help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")')
-	parser.add_option(
-		'--infile', action='store', type='string',
-		dest='infile', default=None,
-		help='CSV file for mass import of ou\'s. Format is ou_name,display_name,edu_name,admin_name,share_name. If given parameters are overwritten.')
-	parser.add_option(
-		"--alter-dhcpd-base", action="store", type='choice',
-		choices=("true", "false", "auto"), dest="alter_dhcpd_base", default="auto",
-		help='This option sets whether the UCR variable dhcpd/ldap/base should be modified during school creation on singleserver environments.'
-			' The possible values are true, false and auto.')
-	parser.add_option(
-		"-v", "--verbose", action="store_true", default=False,
-		help="Display debug output.",
-	)
-	(options, args,) = parser.parse_args()
-	logger = logging.getLogger('ucsschool')
-	log_level = 'DEBUG' if options.verbose else 'INFO'
-	logger.setLevel(log_level)
-	logger.addHandler(get_stream_handler(log_level))
-	ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
-	alter_dhcpd_base = None
-	if options.alter_dhcpd_base == "true":
-		alter_dhcpd_base = True
-	elif options.alter_dhcpd_base == "false":
-		alter_dhcpd_base = False
-	if options.infile:
-		try:
-			with open(options.infile, 'r') as fd:
-				reader = csv.reader(fd, delimiter=',')
-				for row in reader:
-					if len(row) != 5:
-						logger.warn('WARNING: Malformed row for {} will be ignored!'.format(row[0]))
-					ou_tuples.append(tuple([e if e != '' else None for e in row]))
-		except IOError as e:
-			logger.error('ERROR: The given file could not be parsed:')
-			logger.error(e)
-			sys.exit(1)
-	elif len(args) > 0:
-		ou_name = args[0]
-		dc_name_educational = args[1] if len(args) > 1 else None
-		dc_name_administrative = args[2] if len(args) > 2 else None
-		ou_tuples.append(
-			(ou_name, options.displayName, dc_name_educational, dc_name_administrative, options.ShareFileServer))
-	else:
-		parser.print_help()
-		sys.exit(1)
-	if len(ou_tuples) == 0:
-		parser.print_help()
-		sys.exit(1)
+    Arguments:
+    <ou_name>               name of ou that shall be created or verified
+    <educational_dc_name>   hostname of the educational DC for specified OU
+                            (if dc_name is not specified "dc<ou_name>" will be
+                        used as the default for the domaincontroller name)
+    <administrative_dc_name>    hostname of the administrative DC for the specified OU"""
+    parser = optparse.OptionParser(usage=usage)
+    parser.add_option(
+        "--sharefileserver",
+        action="store",
+        type="string",
+        dest="ShareFileServer",
+        default=None,
+        help="hostname of the fileserver within given OU that is used for class shares and user home "
+        "shares",
+    )
+    parser.add_option(
+        "--displayName",
+        action="store",
+        type="string",
+        dest="displayName",
+        default=None,
+        help="Descriptive name of the school OU that is shown within UCS@school modules as school name "
+        '(e.g. "Gymnasium Mitte")',
+    )
+    parser.add_option(
+        "--infile",
+        action="store",
+        type="string",
+        dest="infile",
+        default=None,
+        help="CSV file for mass import of ou's. Format is ou_name,display_name,edu_name,admin_name,"
+        "share_name. If given parameters are overwritten.",
+    )
+    parser.add_option(
+        "--alter-dhcpd-base",
+        action="store",
+        type="choice",
+        choices=("true", "false", "auto"),
+        dest="alter_dhcpd_base",
+        default="auto",
+        help="This option sets whether the UCR variable dhcpd/ldap/base should be modified during school"
+        " creation on singleserver environments."
+        " The possible values are true, false and auto.",
+    )
+    parser.add_option(
+        "-v", "--verbose", action="store_true", default=False, help="Display debug output."
+    )
+    options, args = parser.parse_args()
+    logger = logging.getLogger("ucsschool")
+    log_level = "DEBUG" if options.verbose else "INFO"
+    logger.setLevel(log_level)
+    logger.addHandler(get_stream_handler(log_level))
+    ou_tuples = list()  # (ou_name,display_name,edu_name,admin_name,share_name)
+    alter_dhcpd_base = None
+    if options.alter_dhcpd_base == "true":
+        alter_dhcpd_base = True
+    elif options.alter_dhcpd_base == "false":
+        alter_dhcpd_base = False
+    if options.infile:
+        try:
+            with open(options.infile, "r") as fd:
+                reader = csv.reader(fd, delimiter=",")
+                for row in reader:
+                    if len(row) != 5:
+                        logger.warning("WARNING: Malformed row for {} will be ignored!".format(row[0]))
+                    ou_tuples.append(tuple([e if e != "" else None for e in row]))
+        except IOError as e:
+            logger.error("ERROR: The given file could not be parsed:")
+            logger.error(e)
+            sys.exit(1)
+    elif len(args) > 0:
+        ou_name = args[0]
+        dc_name_educational = args[1] if len(args) > 1 else None
+        dc_name_administrative = args[2] if len(args) > 2 else None
+        ou_tuples.append(
+            (
+                ou_name,
+                options.displayName,
+                dc_name_educational,
+                dc_name_administrative,
+                options.ShareFileServer,
+            )
+        )
+    else:
+        parser.print_help()
+        sys.exit(1)
+    if len(ou_tuples) == 0:
+        parser.print_help()
+        sys.exit(1)
 
-	baseDN = ucr['ldap/base']
-	is_single_master = ucr.is_true('ucsschool/singlemaster', False)
-	hostname = ucr.get('hostname')
-	lo, pos = getAdminConnection()
-	exit_value = 0
+    baseDN = ucr["ldap/base"]
+    is_single_master = ucr.is_true("ucsschool/singlemaster", False)
+    hostname = ucr.get("hostname")
+    lo, pos = getAdminConnection()
+    exit_value = 0
 
-	for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
-		logger.info('Create OU: %s', ou_name)
-		try:
-			create_ou(ou_name, display_name, edu_name, admin_name, share_name, lo, baseDN, hostname, is_single_master, alter_dhcpd_base)
-		except (ValueError, uidAlreadyUsed) as e:
-			logger.error(e)
-			logger.error('Skip OU: %s', ou_name)
-			exit_value = 1
-		else:
-			logger.info('Created OU: %s', ou_name)
-	sys.exit(exit_value)
+    for ou_name, display_name, edu_name, admin_name, share_name in ou_tuples:
+        logger.info("Create OU: %s", ou_name)
+        try:
+            create_ou(
+                ou_name,
+                display_name,
+                edu_name,
+                admin_name,
+                share_name,
+                lo,
+                baseDN,
+                hostname,
+                is_single_master,
+                alter_dhcpd_base,
+            )
+        except (ValueError, uidAlreadyUsed) as e:
+            logger.error(e)
+            logger.error("Skip OU: %s", ou_name)
+            exit_value = 1
+        else:
+            logger.info("Created OU: %s", ou_name)
+    sys.exit(exit_value)
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

@@ -58,9 +58,7 @@ async def test_unhandled_routes_non_kelvin_admin(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("route", ("classes", "roles", "schools"))
-async def test_unhandled_routes_kelvin_admin(
-    route: str, generate_auth_header, url_fragment
-):
+async def test_unhandled_routes_kelvin_admin(route: str, generate_auth_header, url_fragment):
     headers = await generate_auth_header("dummy", True, schools=[], roles=[])
     params = dict()
     if route == "classes":
@@ -110,9 +108,7 @@ async def test_policy_list(
     school: str,
     generate_jwt,
 ):
-    token = await generate_jwt(
-        "actor", False, ["DEMOSCHOOL"], [f"{role}:school:DEMOSCHOOL"]
-    )
+    token = await generate_jwt("actor", False, ["DEMOSCHOOL"], [f"{role}:school:DEMOSCHOOL"])
     request = dict(
         method="GET",
         path=["users"],
@@ -141,9 +137,7 @@ async def test_policy_list(
     )
     target = {}
     assert set(
-        await OPAClient.instance().check_policy(
-            "allowed_users_list", token, request, target
-        )
+        await OPAClient.instance().check_policy("allowed_users_list", token, request, target)
     ) == (expected if school == "DEMOSCHOOL" else set())
 
 
@@ -173,18 +167,11 @@ async def test_policy_list(
 async def test_policy_password_reset_as_role(
     actor_role: str, target_role: str, expected: bool, school: str, generate_jwt
 ):
-    token = await generate_jwt(
-        "actor", False, ["DEMOSCHOOL"], [f"{actor_role}:school:DEMOSCHOOL"]
-    )
-    request = dict(
-        method="PATCH", path=["users", "target"], data={"password": "new_password"}
-    )
+    token = await generate_jwt("actor", False, ["DEMOSCHOOL"], [f"{actor_role}:school:DEMOSCHOOL"])
+    request = dict(method="PATCH", path=["users", "target"], data={"password": "new_password"})
     target = dict(
         username="target",
         schools=["DEMOSCHOOL"],
         roles=[f"{target_role}:school:DEMOSCHOOL"],
     )
-    assert (
-        await OPAClient.instance().check_policy_true("users", token, request, target)
-        == expected
-    )
+    assert await OPAClient.instance().check_policy_true("users", token, request, target) == expected

@@ -35,41 +35,39 @@ from .utils import _
 
 
 class Policy(UCSSchoolHelperAbstractClass):
+    @classmethod
+    def get_container(cls, school):
+        return cls.get_search_base(school).policies
 
-	@classmethod
-	def get_container(cls, school):
-		return cls.get_search_base(school).policies
-
-	async def attach(self, obj, lo):
-		# add univentionPolicyReference if neccessary
-		oc = lo.get(obj.dn, ['objectClass'])
-		if 'univentionPolicyReference' not in oc.get('objectClass', []):
-			try:
-				lo.modify(obj.dn, [('objectClass', '', 'univentionPolicyReference')])
-			except:
-				self.logger.warning('Objectclass univentionPolicyReference cannot be added to %r', obj)
-				return
-		# add the missing policy
-		pl = lo.get(obj.dn, ['univentionPolicyReference'])
-		self.logger.info('Attaching %r to %r', self, obj)
-		if self.dn.lower() not in map(lambda x: x.lower(), pl.get('univentionPolicyReference', [])):
-			modlist = [('univentionPolicyReference', '', self.dn)]
-			try:
-				lo.modify(obj.dn, modlist)
-			except:
-				self.logger.warning('Policy %s cannot be referenced to %r', self, obj)
-		else:
-			self.logger.info('Already attached!')
+    async def attach(self, obj, lo):
+        # add univentionPolicyReference if neccessary
+        oc = lo.get(obj.dn, ["objectClass"])
+        if "univentionPolicyReference" not in oc.get("objectClass", []):
+            try:
+                lo.modify(obj.dn, [("objectClass", "", "univentionPolicyReference")])
+            except:
+                self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
+                return
+        # add the missing policy
+        pl = lo.get(obj.dn, ["univentionPolicyReference"])
+        self.logger.info("Attaching %r to %r", self, obj)
+        if self.dn.lower() not in map(lambda x: x.lower(), pl.get("univentionPolicyReference", [])):
+            modlist = [("univentionPolicyReference", "", self.dn)]
+            try:
+                lo.modify(obj.dn, modlist)
+            except:
+                self.logger.warning("Policy %s cannot be referenced to %r", self, obj)
+        else:
+            self.logger.info("Already attached!")
 
 
 class UMCPolicy(Policy):
-
-	class Meta:
-		udm_module = 'policies/umc'
+    class Meta:
+        udm_module = "policies/umc"
 
 
 class DHCPDNSPolicy(Policy):
-	empty_attributes = EmptyAttributes(_('Empty attributes'))
+    empty_attributes = EmptyAttributes(_("Empty attributes"))
 
-	class Meta:
-		udm_module = 'policies/dhcp_dns'
+    class Meta:
+        udm_module = "policies/dhcp_dns"

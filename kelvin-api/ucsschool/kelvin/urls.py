@@ -58,9 +58,7 @@ def url_to_name(request: Request, obj_type: str, url: Union[str, HttpUrl]) -> st
         url = str(url)
     if url.startswith("https"):
         raise RuntimeError(f"Missed unscheme_and_unquote() for URL {url!r}.")
-    no_object_exception = NoObject(
-        f"Could not find object of type {obj_type!r} with URL {url!r}."
-    )
+    no_object_exception = NoObject(f"Could not find object of type {obj_type!r} with URL {url!r}.")
     if obj_type == "school":
         name = URL(url).path.rstrip("/").split("/")[-1]
         calc_url = request.url_for("get", school_name=name)
@@ -92,12 +90,8 @@ async def url_to_dn(request: Request, obj_type: str, url: str) -> str:
     elif obj_type == "user":
         async with UDM(**await udm_kwargs()) as udm:
             filter_s = f"(&(objectClass=ucsschoolType)(uid={escape_dn_chars(name)}))"
-            async for obj in udm.get("users/user").search(
-                filter_s, base=env_or_ucr("ldap/base")
-            ):
+            async for obj in udm.get("users/user").search(filter_s, base=env_or_ucr("ldap/base")):
                 return obj.dn
             else:
-                raise NoObject(
-                    f"Could not find object of type {obj_type!r} with URL {url!r}."
-                )
+                raise NoObject(f"Could not find object of type {obj_type!r} with URL {url!r}.")
     raise NotImplementedError(f"Don't know how to create DN for obj_type {obj_type!r}.")

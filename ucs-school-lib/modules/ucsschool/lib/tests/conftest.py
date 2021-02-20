@@ -1,22 +1,25 @@
 import logging
 import os
+import tempfile
 from functools import lru_cache
 from pathlib import Path
-import tempfile
 from typing import Any, Dict, Tuple
 
 import pytest
 from faker import Faker
 
 import ucsschool.lib.models.user
+from ucsschool.lib.models.utils import get_file_handler
 from ucsschool.lib.roles import (
-    create_ucsschool_role_string, role_school_class, role_school_class_share, role_staff, role_teacher
+    create_ucsschool_role_string,
+    role_school_class,
+    role_school_class_share,
+    role_staff,
+    role_teacher,
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from ucsschool.lib.models.utils import get_file_handler
 from udm_rest_client import UDM, NoObject as UdmNoObject
 from univention.config_registry import ConfigRegistry
-
 
 APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -86,7 +89,7 @@ def school_class_attrs(ldap_base):
                 f"uid={fake.user_name()},cn=users,{ldap_base}",
                 f"uid={fake.user_name()},cn=users,{ldap_base}",
             ],
-            "ucsschool_roles": [create_ucsschool_role_string(role_school_class, "DEMOSCHOOL")]
+            "ucsschool_roles": [create_ucsschool_role_string(role_school_class, "DEMOSCHOOL")],
         }
         res.update(kwargs)
         return res
@@ -122,9 +125,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
         async with UDM(**udm_kwargs) as udm:
             sc_attrs = school_class_attrs(**kwargs)
             grp_obj = await udm.get("groups/group").new()
-            grp_obj.position = (
-                f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
-            )
+            grp_obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={sc_attrs['school']},{ldap_base}"
             grp_obj.props.name = f"{sc_attrs['school']}-{sc_attrs['name']}"
             grp_obj.props.description = sc_attrs["description"]
             grp_obj.props.users = sc_attrs["users"]
@@ -134,9 +135,7 @@ async def new_school_class(udm_kwargs, ldap_base, school_class_attrs):
             print("Created new SchoolClass: {!r}".format(grp_obj))
 
             share_obj = await udm.get("shares/share").new()
-            share_obj.position = (
-                f"cn=klassen,cn=shares,ou={sc_attrs['school']},{ldap_base}"
-            )
+            share_obj.position = f"cn=klassen,cn=shares,ou={sc_attrs['school']},{ldap_base}"
             share_obj.props.name = grp_obj.props.name
             share_obj.props.host = f"{sc_attrs['school']}.{env_or_ucr('domainname')}"
             share_obj.props.owner = 0
@@ -189,9 +188,7 @@ async def new_user(udm_kwargs, ldap_base, users_user_props, new_school_class, sc
                 create_ucsschool_role_string(role_teacher, school),
             ]
         else:
-            user_props["ucsschoolRole"] = [
-                create_ucsschool_role_string(role, school)
-            ]
+            user_props["ucsschoolRole"] = [create_ucsschool_role_string(role, school)]
         school_search_base = SchoolSearchBase(user_props["school"])
         options = {
             "staff": ("ucsschoolStaff",),

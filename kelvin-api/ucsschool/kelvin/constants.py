@@ -61,9 +61,7 @@ DEFAULT_LOG_LEVELS = {
     "uvicorn.access": logging.INFO,
     "uvicorn.error": logging.INFO,
 }
-IMPORT_CONFIG_FILE_DEFAULT = Path(
-    "/usr/share/ucs-school-import/configs/kelvin_defaults.json"
-)
+IMPORT_CONFIG_FILE_DEFAULT = Path("/usr/share/ucs-school-import/configs/kelvin_defaults.json")
 IMPORT_CONFIG_FILE_USER = Path("/var/lib/ucs-school-import/configs/kelvin.json")
 KELVIN_IMPORTUSER_HOOKS_PATH = Path("/var/lib/ucs-school-import/kelvin-hooks")
 LOG_FILE_PATH = Path("/var/log/univention/ucsschool-kelvin-rest-api/http.log")

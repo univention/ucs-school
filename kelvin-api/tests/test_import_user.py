@@ -44,13 +44,7 @@ from ucsschool.importer.models.import_user import (
     convert_to_teacher_and_staff,
 )
 from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.user import (
-    ExamStudent,
-    Staff,
-    Student,
-    Teacher,
-    TeachersAndStaff,
-)
+from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from udm_rest_client import UDM
 
 UserType = Union[
@@ -91,9 +85,7 @@ def two_roles_id(value: List[Role]) -> str:
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id
-)
+@pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
 async def test_modify_role(
     ldap_base,
     new_school_class,
@@ -168,10 +160,7 @@ async def test_modify_role(
         assert user_new.__class__ is role_to.klass
         # check domain users OU
         for ou in user_new.schools:
-            assert (
-                f"cn=Domain Users {ou},cn=groups,ou={ou},{ldap_base}".lower()
-                in new_groups
-            )
+            assert f"cn=Domain Users {ou},cn=groups,ou={ou},{ldap_base}".lower() in new_groups
         # check non-school role is ignored
         assert non_school_role in user_new_ucsschool_roles
         if isinstance(user_new, ImportStaff):
@@ -184,18 +173,11 @@ async def test_modify_role(
             assert user_new_udm.options.get("ucsschoolStudent", False) is False
             assert user_new_udm.options.get("ucsschoolTeacher", False) is False
             # check position
-            assert (
-                user_new_udm.position
-                == f"cn=mitarbeiter,cn=users,ou={user_new.school},{ldap_base}"
-            )
+            assert user_new_udm.position == f"cn=mitarbeiter,cn=users,ou={user_new.school},{ldap_base}"
             # check roles
-            assert {f"staff:school:{ou}" for ou in user_new.schools}.issubset(
-                user_new_ucsschool_roles
-            )
+            assert {f"staff:school:{ou}" for ou in user_new.schools}.issubset(user_new_ucsschool_roles)
             assert {
-                f"{role}:school:{ou}"
-                for ou in user_new.schools
-                for role in ("student", "teacher")
+                f"{role}:school:{ou}" for ou in user_new.schools for role in ("student", "teacher")
             }.isdisjoint(user_new_ucsschool_roles)
         elif isinstance(user_new, Student):
             assert cls_dn1.lower() in new_groups
@@ -205,13 +187,8 @@ async def test_modify_role(
             assert user_new_udm.options.get("ucsschoolAdministrator", False) is False
             assert user_new_udm.options.get("ucsschoolStaff", False) is False
             assert user_new_udm.options.get("ucsschoolTeacher", False) is False
-            assert (
-                user_new_udm.position
-                == f"cn=schueler,cn=users,ou={user_new.school},{ldap_base}"
-            )
-            assert {f"student:school:{ou}" for ou in user_new.schools}.issubset(
-                user_new_ucsschool_roles
-            )
+            assert user_new_udm.position == f"cn=schueler,cn=users,ou={user_new.school},{ldap_base}"
+            assert {f"student:school:{ou}" for ou in user_new.schools}.issubset(user_new_ucsschool_roles)
             assert {
                 f"{role}:school:{ou}"
                 for ou in user_new.schools
@@ -225,14 +202,11 @@ async def test_modify_role(
             assert user_new_udm.options.get("ucsschoolTeacher") is True
             assert user_new_udm.options.get("ucsschoolStudent", False) is False
             assert (
-                user_new_udm.position
-                == f"cn=lehrer und mitarbeiter,cn=users,ou={user_new.school},"
+                user_new_udm.position == f"cn=lehrer und mitarbeiter,cn=users,ou={user_new.school},"
                 f"{ldap_base}"
             )
             assert {
-                f"{role}:school:{ou}"
-                for ou in user_new.schools
-                for role in ("staff", "teacher")
+                f"{role}:school:{ou}" for ou in user_new.schools for role in ("staff", "teacher")
             }.issubset(user_new_ucsschool_roles)
             assert {f"student:school:{ou}" for ou in user_new.schools}.isdisjoint(
                 user_new_ucsschool_roles
@@ -245,17 +219,10 @@ async def test_modify_role(
             assert user_new_udm.options.get("ucsschoolTeacher") is True
             assert user_new_udm.options.get("ucsschoolStaff", False) is False
             assert user_new_udm.options.get("ucsschoolStudent", False) is False
-            assert (
-                user_new_udm.position
-                == f"cn=lehrer,cn=users,ou={user_new.school},{ldap_base}"
-            )
-            assert {f"teacher:school:{ou}" for ou in user_new.schools}.issubset(
-                user_new_ucsschool_roles
-            )
+            assert user_new_udm.position == f"cn=lehrer,cn=users,ou={user_new.school},{ldap_base}"
+            assert {f"teacher:school:{ou}" for ou in user_new.schools}.issubset(user_new_ucsschool_roles)
             assert {
-                f"{role}:school:{ou}"
-                for ou in user_new.schools
-                for role in ("student", "staff")
+                f"{role}:school:{ou}" for ou in user_new.schools for role in ("student", "staff")
             }.isdisjoint(user_new_ucsschool_roles)
 
 
@@ -274,9 +241,7 @@ async def test_modify_role_forbidden(
     cls_dn, cls_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
         sc_obj = await SchoolClass.from_dn(cls_dn, cls_attr["school"], udm)
-        with pytest.raises(
-            TypeError, match=r"is not an object of a 'ImportUser' subclass"
-        ):
+        with pytest.raises(TypeError, match=r"is not an object of a 'ImportUser' subclass"):
             await convert_to_staff(sc_obj, udm)
 
         dn, attr = await new_user("teacher")
@@ -328,9 +293,7 @@ async def test_modify_role_forbidden(
         user_obj.record_uid = user_obj.name
         user_obj.source_uid = "TESTID"
         await user_obj.modify(udm)
-        with pytest.raises(
-            TypeError, match=r"requires at least one school class per school"
-        ):
+        with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             await ImportUserTypeConverter.convert(user_obj, ImportStudent, udm)
 
         # not enough school_classes for student target
@@ -342,7 +305,5 @@ async def test_modify_role_forbidden(
         user_obj.record_uid = user_obj.name
         user_obj.source_uid = "TESTID"
         await user_obj.modify(udm)
-        with pytest.raises(
-            TypeError, match=r"requires at least one school class per school"
-        ):
+        with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             await ImportUserTypeConverter.convert(user_obj, ImportStudent, udm)

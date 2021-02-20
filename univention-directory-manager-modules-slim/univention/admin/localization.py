@@ -4,8 +4,8 @@
 
 usage::
 
-	translation = univention.admin.localization.translation()
-	_ = translation.translate
+    translation = univention.admin.localization.translation()
+    _ = translation.translate
 """
 # Copyright 2004-2020 Univention GmbH
 #
@@ -38,4 +38,4 @@ from univention.lib.i18n import Translation
 
 translation = Translation
 
-__all__ = ('translation',)
+__all__ = ("translation",)

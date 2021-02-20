@@ -32,137 +32,172 @@
 Default command line frontend for import.
 """
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
+
+from six import string_types
+
+try:
+    from typing import Any, Dict
+except ImportError:
+    pass
 
 
 class ParseUserImportCmdline(object):
-	"""
-	Setup a command line frontend.
-	"""
+    """
+    Setup a command line frontend.
+    """
 
-	def __init__(self):
-		"""
-		Setup the parser. Override to add more arguments or change the defaults.
-		"""
-		self.args = None
-		# TODO: read defaults from user_import_defaults.json
-		self.defaults = dict(
-			dry_run=False,
-			logfile=None,
-			no_delete=False,
-			school=None,
-			source_uid=None,
-			user_role=None,
-			verbose=False
-		)
-		self.parser = ArgumentParser(description="UCS@school import tool")
-		self.parser.add_argument(
-			'-c',
-			'--conffile',
-			help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on configuration "
-			"file stacking).")
-		self.parser.add_argument(
-			'-i',
-			'--infile',
-			dest="infile", help="CSV file with users to import (shortcut for --set input:filename=...).")
-		self.parser.add_argument(
-			'-l',
-			'--logfile',
-			help="Write to additional logfile (shortcut for --set logfile=...).")
-		self.parser.add_argument(
-			"--set",
-			dest="settings",
-			metavar="KEY=VALUE",
-			nargs='*',
-			help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values (e.g. "
-			"'scheme:email=...').")
-		self.parser.add_argument(
-			"-m",
-			"--no-delete",
-			dest="no_delete",
-			action="store_true",
-			help="Do not delete user objects if actions are automatically determined. User objects in input data are "
-			"only added/modified. Please note: if user objects in input data are explicitly marked for deletion "
-			"(__action=D), the objects will be still deleted! (shortcut for --set no_delete=...) [default: %(default)s].")
-		self.parser.add_argument(
-			"-n",
-			"--dry-run",
-			dest="dry_run",
-			action="store_true",
-			help="Dry-run: don't actually commit changes to LDAP (shortcut for --set dry_run=...) [default: %(default)s].")
-		self.parser.add_argument(
-			"--source_uid",
-			help="The ID of the source database (shortcut for --set source_uid=...) [mandatory either here or in the "
-			"configuration file].")
-		self.parser.add_argument(
-			"-s",
-			"--school",
-			help="Name of school. Set only, if the source data does not contain the name of the school and all users "
-			"are from one school (shortcut for --set school=...) [default: %(default)s].")
-		self.parser.add_argument(
-			"-u",
-			"--user_role",
-			help="Set this, if the source data contains users with only one role <student|staff|teacher|teacher_and_staff> "
-			"(shortcut for --set user_role=...) [default: %(default)s].")
-		self.parser.add_argument(
-			"-v",
-			"--verbose",
-			action="store_true",
-			help="Enable debugging output on the console [default: %(default)s].")
-		self.parser.set_defaults(**self.defaults)
+    def __init__(self):
+        """
+        Setup the parser. Override to add more arguments or change the defaults.
+        """
+        self.args = None
+        # TODO: read defaults from user_import_defaults.json
+        self.defaults = dict(
+            dry_run=False,
+            logfile=None,
+            no_delete=False,
+            school=None,
+            source_uid=None,
+            user_role=None,
+            verbose=False,
+        )
+        self.parser = ArgumentParser(description="UCS@school import tool")
+        self.parser.add_argument(
+            "-c",
+            "--conffile",
+            help="Configuration file to use (see /usr/share/doc/ucs-school-import for an explanation on "
+            "configuration file stacking).",
+        )
+        self.parser.add_argument(
+            "-i",
+            "--infile",
+            dest="infile",
+            help="CSV file with users to import (shortcut for --set input:filename=...).",
+        )
+        self.parser.add_argument(
+            "-l", "--logfile", help="Write to additional logfile (shortcut for --set logfile=...)."
+        )
+        self.parser.add_argument(
+            "--set",
+            dest="settings",
+            metavar="KEY=VALUE",
+            nargs="*",
+            help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values "
+            "(e.g. 'scheme:email=...').",
+        )
+        self.parser.add_argument(
+            "-m",
+            "--no-delete",
+            dest="no_delete",
+            action="store_true",
+            help="Do not delete user objects if actions are automatically determined. User objects in "
+            "input data are only added/modified. Please note: if user objects in input data are "
+            "explicitly marked for deletion (__action=D), the objects will be still deleted! "
+            "(shortcut for --set no_delete=...) [default: %(default)s].",
+        )
+        self.parser.add_argument(
+            "-n",
+            "--dry-run",
+            dest="dry_run",
+            action="store_true",
+            help="Dry-run: don't actually commit changes to LDAP (shortcut for --set dry_run=...) "
+            "[default: %(default)s].",
+        )
+        self.parser.add_argument(
+            "--source_uid",
+            help="The ID of the source database (shortcut for --set source_uid=...) [mandatory either "
+            "here or in the configuration file].",
+        )
+        self.parser.add_argument(
+            "-s",
+            "--school",
+            help="Name of school. Set only, if the source data does not contain the name of the school "
+            "and all users are from one school (shortcut for --set school=...) [default: "
+            "%(default)s].",
+        )
+        self.parser.add_argument(
+            "-u",
+            "--user_role",
+            help="Set this, if the source data contains users with only one role "
+            "<student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) "
+            "[default: %(default)s].",
+        )
+        self.parser.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="Enable debugging output on the console [default: %(default)s].",
+        )
+        self.parser.set_defaults(**self.defaults)
 
-	def parse_cmdline(self):
-		"""
-		Parse the command line.
+    def parse_cmdline(self):
+        """
+        Parse the command line.
 
-		:return: the object with the parsed arguments assigned to attributes
-		:rtype: argparse.Namespace
-		"""
-		self.args = self.parser.parse_args()
+        :return: the object with the parsed arguments assigned to attributes
+        :rtype: argparse.Namespace
+        """
+        self.args = self.parser.parse_args()
 
-		if (
-			hasattr(self.args, "user_role") and
-			self.args.user_role and
-			self.args.user_role not in ["none", "student", "staff", "teacher", "teacher_and_staff"]
-		):
-			self.parser.error("Invalid user role. Must be one of none, student, staff, teacher, teacher_and_staff.")
-		if hasattr(self.args, "user_role") and self.args.user_role == "none":
-			self.args.user_role = None
+        if (
+            hasattr(self.args, "user_role")
+            and self.args.user_role
+            and self.args.user_role not in ["none", "student", "staff", "teacher", "teacher_and_staff"]
+        ):
+            self.parser.error(
+                "Invalid user role. Must be one of none, student, staff, teacher, teacher_and_staff."
+            )
+        if hasattr(self.args, "user_role") and self.args.user_role == "none":
+            self.args.user_role = None
 
-		settings = dict()
-		if hasattr(self.args, "infile") and self.args.infile:
-			if not os.access(self.args.infile, os.R_OK):
-				self.parser.error("Cannot read input data file '{}'.".format(self.args.infile))
-			settings["input"] = {"filename": self.args.infile}
+        settings = dict()
+        if hasattr(self.args, "infile") and self.args.infile:
+            if not os.access(self.args.infile, os.R_OK):
+                self.parser.error("Cannot read input data file '{}'.".format(self.args.infile))
+            settings["input"] = {"filename": self.args.infile}
 
-		if hasattr(self.args, "settings") and self.args.settings:
-			for setting in self.args.settings:
-				try:
-					k, v = setting.split("=")
-				except ValueError:
-					self.parser.error("Invalid setting '{}'.".format(setting))
-				start, symb, end = k.rpartition(":")
-				# try to convert to correct type
-				if v.lower() == "true":
-					v = True
-				elif v.lower() == "false":
-					v = False
-				else:
-					try:
-						v = int(v)
-					except ValueError:
-						pass
-				# support nested settings
-				while symb:
-					k = start
-					v = {end: v}
-					start, symb, end = start.rpartition(":")
-				settings[k] = v
-		self.args.settings = settings
+        if hasattr(self.args, "settings") and self.args.settings:
+            for setting in self.args.settings:
+                try:
+                    k, v = setting.split("=")
+                except ValueError:
+                    self.parser.error("Invalid setting '{}'.".format(setting))
+                start, symb, end = k.rpartition(":")
+                # try to convert to correct type
+                if v.lower() == "true":
+                    v = True
+                elif v.lower() == "false":
+                    v = False
+                else:
+                    try:
+                        v = int(v)
+                    except ValueError:
+                        pass
+                # support nested settings
+                while symb:
+                    k = start
+                    v = {end: v}
+                    start, symb, end = start.rpartition(":")
+                settings[k] = v
+        self.args.settings = self.apply_quirks(settings)
 
-		# only set shortcuts if they were set by the user
-		for k, v in self.defaults.items():
-			if getattr(self.args, k) != v:
-				self.args.settings[k] = getattr(self.args, k)
-		return self.args
+        # only set shortcuts if they were set by the user
+        for k, v in self.defaults.items():
+            if getattr(self.args, k) != v:
+                self.args.settings[k] = getattr(self.args, k)
+        return self.args
+
+    def apply_quirks(self, settings):  # type: (Dict[str, Any]) -> Dict[str, Any]
+        """
+        Apply modifications that cannot be done automatically.
+        """
+        # A default for config["disabled_checks"] does not exist in any
+        # official config file, thus setting the value type in
+        # ReadOnlyDict._recursive_typed_update() will not work. Converting the
+        # string from the cmdline to a list here.
+        disabled_checks = settings.get("disabled_checks")
+        if isinstance(disabled_checks, string_types):
+            settings["disabled_checks"] = [s.strip() for s in disabled_checks.split(",")]
+        return settings

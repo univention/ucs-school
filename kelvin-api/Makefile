@@ -55,22 +55,15 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 format: ## format source code
-	isort $(PY_PATHS)
-	black --config .black $(PY_PATHS)
+	make -C .. format
 
-lint-isort:
-	isort --check-only $(PY_PATHS)
-
-lint-black:
-	black --config .black --check $(PY_PATHS)
-
-lint-flake8:
-	flake8 --max-line-length=105 --ignore=W503 $(PY_PATHS)
+lint-linters:
+	make -C .. lint
 
 lint-coverage: .coverage
 	coverage report --show-missing --fail-under=30
 
-lint: lint-isort lint-black lint-flake8 lint-coverage ## check source code style
+lint: lint-linters lint-coverage ## check source code style
 
 test: ## run tests (with the current active Python interpreter)
 	python3 -m pytest -l -v

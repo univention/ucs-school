@@ -36,54 +36,56 @@ Singleton to the factory currently in use.
 import importlib
 
 from .exceptions import InitialisationError
+
 try:
-	from typing import Optional, Type
-	from .default_user_import_factory import DefaultUserImportFactory
+    from typing import Optional, Type
+
+    from .default_user_import_factory import DefaultUserImportFactory
 except ImportError:
-	pass
+    pass
 
 
 def setup_factory(factory_cls_name):  # type: (str) -> DefaultUserImportFactory
-	"""
-	Create import factory.
+    """
+    Create import factory.
 
-	:param str factory_cls_name: full dotted name of class
-	:return: Factory object
-	:rtype: Factory
-	"""
-	fac_class = load_class(factory_cls_name)
-	factory = Factory(fac_class())  # type: DefaultUserImportFactory
-	return factory
+    :param str factory_cls_name: full dotted name of class
+    :return: Factory object
+    :rtype: Factory
+    """
+    fac_class = load_class(factory_cls_name)
+    factory = Factory(fac_class())  # type: DefaultUserImportFactory
+    return factory
 
 
 def load_class(dotted_class_name):  # type: (str) -> type
-	"""
-	Load class from its full dotted name.
+    """
+    Load class from its full dotted name.
 
-	:param dotted_class_name: str: full dotted name of class
-	:return: class
-	:rtype: type
-	"""
-	module_path, _, class_name = dotted_class_name.rpartition(".")
-	module = importlib.import_module(module_path)
-	return getattr(module, class_name)
+    :param dotted_class_name: str: full dotted name of class
+    :return: class
+    :rtype: type
+    """
+    module_path, _, class_name = dotted_class_name.rpartition(".")
+    module = importlib.import_module(module_path)
+    return getattr(module, class_name)
 
 
 class Factory(object):
-	"""
-	Singleton to the global abstract factory object.
-	"""
-	class __SingleFac:
+    """
+    Singleton to the global abstract factory object.
+    """
 
-		def __init__(self, factory):  # type: (Optional[DefaultUserImportFactory]) -> None
-			if not factory:
-				raise InitialisationError("Concrete factory not yet configured.")
-			self.factory = factory
+    class __SingleFac:
+        def __init__(self, factory):  # type: (Optional[DefaultUserImportFactory]) -> None
+            if not factory:
+                raise InitialisationError("Concrete factory not yet configured.")
+            self.factory = factory
 
-	_instance = None  # type: __SingleFac
+    _instance = None  # type: __SingleFac
 
-	def __new__(cls, factory=None):
-		# type: (Type[Factory], Optional[DefaultUserImportFactory]) -> DefaultUserImportFactory
-		if not cls._instance:
-			cls._instance = cls.__SingleFac(factory)
-		return cls._instance.factory
+    def __new__(cls, factory=None):
+        # type: (Type[Factory], Optional[DefaultUserImportFactory]) -> DefaultUserImportFactory
+        if not cls._instance:
+            cls._instance = cls.__SingleFac(factory)
+        return cls._instance.factory

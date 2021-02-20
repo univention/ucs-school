@@ -40,7 +40,9 @@ pytestmark = pytest.mark.skipif(
     "ObjectClass",
     [Staff, Student, Teacher, TeachersAndStaff, ExamStudent, SchoolClass, WorkGroup, ComputerRoom],
 )
-async def test_udm_obj_to_dict(ObjectClass, udm_kwargs, random_first_name, random_last_name,random_user_name):
+async def test_udm_obj_to_dict(
+    ObjectClass, udm_kwargs, random_first_name, random_last_name, random_user_name
+):
     if issubclass(ObjectClass, Group):
         name = "DEMOSCHOOL-{}".format(random_user_name())
     else:

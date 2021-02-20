@@ -181,9 +181,7 @@ def generate_jwt():
     async def _generate_jwt(
         username: str, is_admin: bool, schools: Iterable[str], roles: Iterable[str]
     ) -> str:
-        sub_data = dict(
-            username=username, kelvin_admin=is_admin, schools=schools, roles=roles
-        )
+        sub_data = dict(username=username, kelvin_admin=is_admin, schools=schools, roles=roles)
         return (await create_access_token(data=dict(sub=sub_data))).decode()
 
     return _generate_jwt
@@ -336,9 +334,7 @@ def create_random_user_data(url_fragment, new_school_class):
 def create_random_users(
     create_random_user_data, url_fragment, auth_header, schedule_delete_user_name
 ):  # TODO: Extend with schools and school_classes if resources are done
-    async def _create_random_users(
-        roles: Dict[str, int], **data_kwargs
-    ) -> List[UserCreateModel]:
+    async def _create_random_users(roles: Dict[str, int], **data_kwargs) -> List[UserCreateModel]:
         users = []
         for role, amount in roles.items():
             for i in range(amount):
@@ -349,9 +345,7 @@ def create_random_users(
                     ]
                 else:
                     roles_ulrs = [f"{url_fragment}/roles/{role}"]
-                user_data = await create_random_user_data(
-                    roles=roles_ulrs, **data_kwargs
-                )
+                user_data = await create_random_user_data(roles=roles_ulrs, **data_kwargs)
                 response = requests.post(
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
@@ -381,8 +375,7 @@ def create_exam_user(create_random_users, ldap_base, random_name, udm_kwargs):
         print(f"Modifying student {user.name!r} to be an exam user...")
         async with UDM(**udm_kwargs) as udm:
             udm_users: List[UdmObject] = [
-                user
-                async for user in udm.get("users/user").search(f"username={user.name}")
+                user async for user in udm.get("users/user").search(f"username={user.name}")
             ]
             assert len(udm_users) == 1
             udm_user = udm_users[0]
@@ -409,9 +402,7 @@ def schedule_delete_user_name(auth_header, url_fragment):
     yield _func
 
     for username in usernames:
-        response = requests.delete(
-            f"{url_fragment}/users/{username}", headers=auth_header
-        )
+        response = requests.delete(f"{url_fragment}/users/{username}", headers=auth_header)
         assert response.status_code in (204, 404)
         if response.status_code == 204:
             print(f"Deleted user {username!r} through Kelvin API.")
@@ -463,9 +454,7 @@ async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
     async with UDM(**udm_kwargs) as udm:
         for dn in created_school_classes:
             try:
-                obj = await ucsschool.lib.models.group.SchoolClass.from_dn(
-                    dn, None, udm
-                )
+                obj = await ucsschool.lib.models.group.SchoolClass.from_dn(dn, None, udm)
             except ucsschool.lib.models.base.NoObject:
                 print(f"SchoolClass {dn!r} does not exist (anymore).")
                 continue
@@ -507,9 +496,7 @@ def restart_kelvin_api_server() -> None:
     subprocess.call(["/etc/init.d/ucsschool-kelvin-rest-api", "restart"])
     while True:
         time.sleep(0.5)
-        response = requests.get(
-            f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/api/foobar"
-        )
+        response = requests.get(f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/api/foobar")
         if response.status_code == 404:
             break
         # else: 502 Proxy Error
@@ -554,9 +541,7 @@ def add_to_import_config(restart_kelvin_api_server_session):  # noqa: C901
             with open(IMPORT_CONFIG["active"], "r") as fp:
                 config = json.load(fp)
             if not IMPORT_CONFIG["bak"].exists():
-                print(
-                    f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}."
-                )
+                print(f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}.")
                 shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
             config.update(kwargs)
         else:
@@ -589,9 +574,7 @@ def setup_import_config(add_to_import_config) -> None:
 def import_config(setup_import_config) -> ReadOnlyDict:
     # setup_import_config() is already executed before collecting by setup.cfg
     config = get_import_config()
-    assert set(MAPPED_UDM_PROPERTIES).issubset(
-        set(config.get("mapped_udm_properties", []))
-    )
+    assert set(MAPPED_UDM_PROPERTIES).issubset(set(config.get("mapped_udm_properties", [])))
     assert "username" in config.get("scheme", {})
     return config
 
@@ -649,9 +632,7 @@ def password_hash(check_password, create_random_users):
             "krb5KeyVersionNumber",
             "sambaPwdLastSet",
         ]
-        ldap_results = await ldap_access.search(
-            filter_s=filter_s, attributes=attributes
-        )
+        ldap_results = await ldap_access.search(filter_s=filter_s, attributes=attributes)
         if len(ldap_results) == 1:
             ldap_result = ldap_results[0]
         else:
@@ -662,9 +643,7 @@ def password_hash(check_password, create_random_users):
         if not isinstance(user_password, list):
             user_password = [user_password]
         user_password = [pw.decode("ascii") for pw in user_password]
-        krb_5_key = [
-            base64.b64encode(v).decode("ascii") for v in ldap_result["krb5Key"].value
-        ]
+        krb_5_key = [base64.b64encode(v).decode("ascii") for v in ldap_result["krb5Key"].value]
         return password, PasswordsHashes(
             user_password=user_password,
             samba_nt_password=ldap_result["sambaNTPassword"].value,

@@ -32,10 +32,11 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=23
+VERSION=24
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
+. /usr/share/ucs-school-lib/base.sh
 joinscript_init
 
 eval "$(ucr shell)"
@@ -74,7 +75,7 @@ then
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
 else
     echo "Creating password for unprivileged LDAP user $LDAP_USER_NAME."
-    LDAP_SECRET_PW="$(makepasswd --chars=50)"
+    LDAP_SECRET_PW="$(echo "$(makepasswd --chars=40)$(makepasswd --chars=10 --string=',.-_')" | fold -w1 | shuf | tr -d '\n')"
     write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
 fi
 
@@ -616,6 +617,17 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 23 ] && [ $server_role = domaincontroller_mas
 	if ! is_ucr_true ucsschool/update/skip-slave-object-correction ; then
 		/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves
 	fi
+fi
+
+# Bug #51301: set ucsschoolRole on all Marktplatz shares
+if [ $JS_LAST_EXECUTED_VERSION -lt 24 ] && [ $server_role = domaincontroller_master ]; then
+  echo "Setting ucsschoolRole of all 'Marktplatz' shares..."
+  for DN in $(univention-ldapsearch -LLL '(&(objectClass=univentionShareSamba)(cn=Marktplatz))' dn | cut -f 2- -d ' '); do
+    ouname="$(school_ou "$DN")"
+    udm shares/share modify "$@" \
+      --dn "$DN" \
+      --set "ucsschoolRole=marketplace_share:school:$ouname"
+  done
 fi
 
 stop_udm_cli_server

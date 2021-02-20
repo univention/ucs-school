@@ -72,10 +72,7 @@ class FormatFirstnamePyHook(FormatPyHook):
         import random
 
         fields["lastname"] = "".join(
-            [
-                getattr(char, random.choice(("upper", "lower")))()
-                for char in fields["lastname"]
-            ]
+            [getattr(char, random.choice(("upper", "lower")))() for char in fields["lastname"]]
         )
         return fields
 
@@ -105,9 +102,7 @@ class UserBirthdayPyHook(UserPyHook):
         from ucsschool.lib.models.utils import env_or_ucr
 
         assert isinstance(self, KelvinUserHook)
-        super(UserBirthdayPyHook, self).__init__(
-            lo=lo, dry_run=dry_run, udm=udm, *args, **kwargs
-        )
+        super(UserBirthdayPyHook, self).__init__(lo=lo, dry_run=dry_run, udm=udm, *args, **kwargs)
         self.logger.info("   -> THIS IS A KelvinUserHook")
         self.base_dn = env_or_ucr("ldap/base")
 
@@ -173,9 +168,7 @@ def create_pyhook(restart_kelvin_api_server_module):
 
     def _func(name, text):
         module_names.append(name)
-        hook_path = (
-            ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
-        )
+        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
         with open(hook_path, "w") as fp:
             fp.write(text)
         restart_kelvin_api_server_module()
@@ -183,9 +176,7 @@ def create_pyhook(restart_kelvin_api_server_module):
     yield _func
 
     for name in module_names:
-        hook_path = (
-            ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
-        )
+        hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / f"{name}.py"
         try:
             hook_path.unlink()
         except FileNotFoundError:
@@ -236,9 +227,7 @@ async def test_format_pyhook(
     create_format_pyhook,
     role: Role,
 ):
-    hook_path = (
-        ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
-    )
+    hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
     with open(hook_path, "r") as fp:
         print(f"****** {hook_path!s} ******")
         print(fp.read())
@@ -247,9 +236,7 @@ async def test_format_pyhook(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
-    )
+    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
     data = r_user.json(exclude={"record_uid"})
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
@@ -283,9 +270,7 @@ async def test_user_pyhook(
     schedule_delete_file,
     role: Role,
 ):
-    hook_path = (
-        ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
-    )
+    hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
     with open(hook_path, "r") as fp:
         print(f"****** {hook_path!s} ******")
         print(fp.read())
@@ -294,9 +279,7 @@ async def test_user_pyhook(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
-    )
+    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
     schedule_delete_file(Path("/tmp", r_user.name))
     data = r_user.json()
     print(f"POST data={data!r}")

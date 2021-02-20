@@ -18,26 +18,27 @@
 #
 import os
 import subprocess
+
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 try:
     # initialize import framework in case it's installed
-    if (
-            os.path.exists('/var/lib/ucs-school-import/configs') and
-            not os.path.exists('/var/lib/ucs-school-import/configs/user_import.json')
+    if os.path.exists("/var/lib/ucs-school-import/configs") and not os.path.exists(
+        "/var/lib/ucs-school-import/configs/user_import.json"
     ):
-        with open('/var/lib/ucs-school-import/configs/user_import.json', 'w') as fp:
-            fp.write('{}')
+        with open("/var/lib/ucs-school-import/configs/user_import.json", "w") as fp:
+            fp.write("{}")
 
-    import ucsschool.importer.utils.shell
+    import ucsschool.importer.utils.shell  # noqa: F401
 except ImportError:
     pass
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 try:
     import django
-    from django.conf import settings
+    from django.conf import settings  # noqa: F401
+
     django.setup()
 except ImportError:
     pass
@@ -52,32 +53,32 @@ except ImportError:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.coverage',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.coverage",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'UCS@school HTTP-API import documentation'
-copyright = u'2019, ucsschool-maintainers@univention.de'
-author = u'ucsschool-maintainers@univention.de'
+project = "UCS@school HTTP-API import documentation"
+copyright = "2019, ucsschool-maintainers@univention.de"
+author = "ucsschool-maintainers@univention.de"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -85,12 +86,12 @@ author = u'ucsschool-maintainers@univention.de'
 
 
 def get_deb_version():
-    path = os.path.abspath('.')
+    path = os.path.abspath(".")
     for _ in range(5):
         path = os.path.dirname(path)
     os.chdir(path)
-    cmd = ['dpkg-parsechangelog', '-S', 'version']
-    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()
+    cmd = ["dpkg-parsechangelog", "-S", "version"]
+    out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()  # nosec
     return out.strip()
 
 
@@ -114,7 +115,7 @@ language = None
 # Else, today_fmt is used as the format for a strftime call.
 #
 # today_fmt = '%B %d, %Y'
-today_fmt = '%Y-%m-%d'
+today_fmt = "%Y-%m-%d"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -141,7 +142,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -158,7 +159,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -192,7 +193,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -272,34 +273,36 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'UCSschoolHTTP-APIimportdocumentationdoc'
+htmlhelp_basename = "UCSschoolHTTP-APIimportdocumentationdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
-
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
-
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
-
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'UCSschoolHTTP-APIimportdocumentation.tex', u'UCS@school HTTP-API import documentation Documentation',
-     u'ucsschool-maintainers@univention.de', 'manual'),
+    (
+        master_doc,
+        "UCSschoolHTTP-APIimportdocumentation.tex",
+        "UCS@school HTTP-API import documentation Documentation",
+        "ucsschool-maintainers@univention.de",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -340,8 +343,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'ucsschoolhttp-apiimportdocumentation', u'UCS@school HTTP-API import documentation Documentation',
-     [author], 1)
+    (
+        master_doc,
+        "ucsschoolhttp-apiimportdocumentation",
+        "UCS@school HTTP-API import documentation Documentation",
+        [author],
+        1,
+    )
 ]
 
 # If true, show URL addresses after external links.
@@ -355,9 +363,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'UCSschoolHTTP-APIimportdocumentation', u'UCS@school HTTP-API import documentation Documentation',
-     author, 'UCSschoolHTTP-APIimportdocumentation', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "UCSschoolHTTP-APIimportdocumentation",
+        "UCS@school HTTP-API import documentation Documentation",
+        author,
+        "UCSschoolHTTP-APIimportdocumentation",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -379,8 +393,11 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/2.7/', ('/usr/share/doc/python2.7/html/objects.inv', None)),
-    'django': ('https://docs.djangoproject.com/en/1.10/', 'https://docs.djangoproject.com/en/1.10/_objects/'),
+    "python": ("https://docs.python.org/2.7/", ("/usr/share/doc/python2.7/html/objects.inv", None)),
+    "django": (
+        "https://docs.djangoproject.com/en/1.10/",
+        "https://docs.djangoproject.com/en/1.10/_objects/",
+    ),
 }
 
 autodoc_default_flags = [
@@ -389,5 +406,5 @@ autodoc_default_flags = [
     # 'private-members',
     # 'special-members',
     # 'inherited-members',
-    'show-inheritance',
+    "show-inheritance",
 ]

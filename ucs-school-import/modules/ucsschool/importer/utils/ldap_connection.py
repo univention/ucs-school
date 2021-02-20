@@ -33,16 +33,12 @@
 Create LDAP connections for import.
 """
 
-from univention.admin import uldap
-from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
+from typing import Tuple
 
-try:
-	from typing import Tuple
-	from univention.admin.uldap import access as LoType, position as PoType
-	import univention.admin.handlers
-	UdmObjectType = univention.admin.handlers.simpleLdap
-except ImportError:
-	pass
+from univention.admin import uldap
+from univention.admin.uldap import LoType, PoType
+
+from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 _admin_connection = None
 _admin_position = None
@@ -54,87 +50,88 @@ _read_only_admin_connection = None
 _read_only_admin_position = None
 
 
-def get_admin_connection():  # type: () -> (Tuple[LoType, PoType])
-	"""
-	Read-write cn=admin connection.
+def get_admin_connection() -> Tuple[LoType, PoType]:
+    """
+    Read-write cn=admin connection.
 
-	:rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
-	"""
-	global _admin_connection, _admin_position
-	if not _admin_connection or not _admin_position:
-		try:
-			_admin_connection, _admin_position = uldap.getAdminConnection()
-		except IOError:
-			raise UcsSchoolImportFatalError("This script must be executed on a DC Master.")
-	return _admin_connection, _admin_position
-
-
-def get_machine_connection():  # type: () -> (Tuple[LoType, PoType])
-	"""
-	Read-write machine connection.
-
-	:rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
-	"""
-	global _machine_connection, _machine_position
-	if not _machine_connection or not _machine_position:
-		_machine_connection, _machine_position = uldap.getMachineConnection()
-	return _machine_connection, _machine_position
+    :rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
+    """
+    global _admin_connection, _admin_position
+    if not _admin_connection or not _admin_position:
+        try:
+            _admin_connection, _admin_position = uldap.getAdminConnection()
+        except IOError:
+            raise UcsSchoolImportFatalError("This script must be executed on a DC Master.")
+    return _admin_connection, _admin_position
 
 
-def get_unprivileged_connection():  # type: () -> (Tuple[LoType, PoType])
-	"""
-	Unprivileged read-write connection.
+def get_machine_connection() -> Tuple[LoType, PoType]:
+    """
+    Read-write machine connection.
 
-	:rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
-	"""
-	return get_machine_connection()
-	global _unprivileged_connection, _unprivileged_position
-	if not _unprivileged_connection or not _unprivileged_position:
-		with open('/etc/ucsschool-import/ldap_unprivileged.secret') as fp:
-			dn_pw = fp.read()
-		dn, base, pw = dn_pw.strip().split(':')
-		_unprivileged_connection = uldap.access(base=base, binddn=dn, bindpw=pw)
-		_unprivileged_position = uldap.position(_unprivileged_connection.base)
-	return _unprivileged_connection, _unprivileged_position
+    :rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
+    """
+    global _machine_connection, _machine_position
+    if not _machine_connection or not _machine_position:
+        _machine_connection, _machine_position = uldap.getMachineConnection()
+    return _machine_connection, _machine_position
+
+
+def get_unprivileged_connection() -> Tuple[LoType, PoType]:
+    """
+    Unprivileged read-write connection.
+
+    :rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
+    """
+    return get_machine_connection()
+    # global _unprivileged_connection, _unprivileged_position
+    # if not _unprivileged_connection or not _unprivileged_position:
+    #     with open("/etc/ucsschool-import/ldap_unprivileged.secret") as fp:
+    #         dn_pw = fp.read()
+    #     dn, base, pw = dn_pw.strip().split(":")
+    #     _unprivileged_connection = uldap.access(base=base, binddn=dn, bindpw=pw)
+    #     _unprivileged_position = uldap.position(_unprivileged_connection.base)
+    # return _unprivileged_connection, _unprivileged_position
 
 
 class ReadOnlyAccess(uldap.access):
-	"""
-	LDAP access class that prevents LDAP write access.
+    """
+    LDAP access class that prevents LDAP write access.
 
-	Must be a descendant of :py:class:`univention.admin.uldap.access`, or UDM
-	will raise a :py:exc:`TypeError`.
-	"""
-	def __init__(self, *args, **kwargs):
-		self._real_lo, self._real_po = get_admin_connection()
-		self._real_lo.allow_modify = 1
+    Must be a descendant of :py:class:`univention.admin.uldap.access`, or UDM
+    will raise a :py:exc:`TypeError`.
+    """
 
-	def __getattr__(self, item):
-		if item in ('add', 'modify', 'rename', 'delete'):
-			raise LDAPWriteAccessDenied()
-		return getattr(self._real_lo, item)
+    def __init__(self, *args, **kwargs):
+        self._real_lo, self._real_po = get_admin_connection()
+        self._real_lo.allow_modify = 1
 
-	def add(self, *args, **kwargs):
-		raise LDAPWriteAccessDenied()
+    def __getattr__(self, item):
+        if item in ("add", "modify", "rename", "delete"):
+            raise LDAPWriteAccessDenied()
+        return getattr(self._real_lo, item)
 
-	def modify(self, *args, **kwargs):
-		raise LDAPWriteAccessDenied()
+    def add(self, *args, **kwargs):
+        raise LDAPWriteAccessDenied()
 
-	def rename(self, *args, **kwargs):
-		raise LDAPWriteAccessDenied()
+    def modify(self, *args, **kwargs):
+        raise LDAPWriteAccessDenied()
 
-	def delete(self, *args, **kwargs):
-		raise LDAPWriteAccessDenied()
+    def rename(self, *args, **kwargs):
+        raise LDAPWriteAccessDenied()
+
+    def delete(self, *args, **kwargs):
+        raise LDAPWriteAccessDenied()
 
 
-def get_readonly_connection():  # type: () -> (Tuple[LoType, PoType])
-	"""
-	Read-only cn=admin connection.
+def get_readonly_connection() -> Tuple[LoType, PoType]:
+    """
+    Read-only cn=admin connection.
 
-	:rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
-	"""
-	global _read_only_admin_connection, _read_only_admin_position
-	if not _read_only_admin_connection or not _read_only_admin_position:
-		lo_rw = ReadOnlyAccess()
-		_read_only_admin_connection, _read_only_admin_position = lo_rw, lo_rw._real_po
-	return _read_only_admin_connection, _read_only_admin_position
+    :rtype: tuple(univention.admin.uldap.access, univention.admin.uldap.position)
+    """
+    global _read_only_admin_connection, _read_only_admin_position
+    if not _read_only_admin_connection or not _read_only_admin_position:
+        lo_rw = ReadOnlyAccess()
+        _read_only_admin_connection, _read_only_admin_position = lo_rw, lo_rw._real_po
+    return _read_only_admin_connection, _read_only_admin_position

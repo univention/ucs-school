@@ -32,52 +32,48 @@
 Base class for all Python based pre-read hooks.
 """
 
+from univention.admin.uldap import LoType
+
+from ..configuration import Configuration, ReadOnlyDict
 from .import_pyhook import ImportPyHook
-from ..configuration import Configuration
-try:
-	import typing
-	from ..configuration import ReadOnlyDict
-	import univention.admin.uldap.access
-except ImportError:
-	pass
 
 
 class PreReadPyHook(ImportPyHook):
-	"""
-	Hook that is called before starting to read the input file.
+    """
+    Hook that is called before starting to read the input file.
 
-	The base class' :py:meth:`__init__()` provides the following attributes:
+    The base class' :py:meth:`__init__()` provides the following attributes:
 
-	* self.dry_run     # whether hook is executed during a dry-run (1)
-	* self.lo          # LDAP connection object (2)
-	* self.logger      # Python logging instance
-	* self.config      # read-only import configuration
+    * self.dry_run     # whether hook is executed during a dry-run (1)
+    * self.lo          # LDAP connection object (2)
+    * self.logger      # Python logging instance
+    * self.config      # read-only import configuration
 
-	If multiple hook classes are found, hook functions with higher
-	priority numbers run before those with lower priorities. None disables
-	a function (no need to remove it / comment it out).
+    If multiple hook classes are found, hook functions with higher
+    priority numbers run before those with lower priorities. None disables
+    a function (no need to remove it / comment it out).
 
-	(1) Hooks are only executed during dry-runs, if the class attribute
-	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` must not modify LDAP objects.
-	Therefore the LDAP connection object self.lo will be a read-only connection
-	during a dry-run.
-	(2) Read-write cn=admin connection in a real run, read-only cn=admin
-	connection during a dry-run.
-	"""
-	priority = {
-		'pre_read': None,
-	}
+    (1) Hooks are only executed during dry-runs, if the class attribute
+    :py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
+    with `supports_dry_run == True` must not modify LDAP objects.
+    Therefore the LDAP connection object self.lo will be a read-only connection
+    during a dry-run.
+    (2) Read-write cn=admin connection in a real run, read-only cn=admin
+    connection during a dry-run.
+    """
 
-	def __init__(self, lo=None, dry_run=False, *args, **kwargs):
-		# type: (Optional[univention.admin.uldap.access], Optional[bool], *Any, **Any) -> None
-		super(PreReadPyHook, self).__init__(lo, dry_run, *args, **kwargs)
-		self.config = Configuration()  # type: ReadOnlyDict
+    priority = {
+        "pre_read": None,
+    }
 
-	def pre_read(self):  # type: () -> None
-		"""
-		Run code before starting to read the input file.
+    def __init__(self, lo: LoType = None, dry_run: bool = False, *args, **kwargs) -> None:
+        super(PreReadPyHook, self).__init__(lo, dry_run, *args, **kwargs)
+        self.config: ReadOnlyDict = Configuration()
 
-		:return: None
-		"""
-		return None
+    def pre_read(self) -> None:
+        """
+        Run code before starting to read the input file.
+
+        :return: None
+        """
+        return None

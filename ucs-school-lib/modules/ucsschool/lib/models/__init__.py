@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -32,14 +31,14 @@
 
 import univention.admin.modules as udm_modules
 
-udm_modules.update()
+from .computer import *  # noqa: F401, F403
+from .dhcp import *  # noqa: F401, F403
+from .group import *  # noqa: F401, F403
+from .misc import *  # noqa: F401, F403
+from .network import *  # noqa: F401, F403
+from .policy import *  # noqa: F401, F403
+from .school import *  # noqa: F401, F403
+from .share import *  # noqa: F401, F403
+from .user import *  # noqa: F401, F403
 
-from .school import *
-from .user import *
-from .group import *
-from .computer import *
-from .dhcp import *
-from .network import *
-from .policy import *
-from .misc import *
-from .share import *
+udm_modules.update()

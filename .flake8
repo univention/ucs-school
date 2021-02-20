@@ -1,0 +1,14 @@
+[flake8]
+exclude = doc/doc-common/,venv,ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import
+max-line-length = 105
+
+# https://www.flake8rules.com/
+#
+# C901: Function is too complex (mccabe)
+# E203: Whitespace before ':' (allowed by black)
+# E231: Missing whitespace after ',', ';', or ':' (allowed by black)
+# E266: Too many leading '#' for block comment (ucs-test metadata)
+# W503: Line break occurred before a binary operator (produced by black, flake8 will soon change to
+#       recommended this instead of treating it as an error)
+
+ignore = C901,E203,E231,E266,W503

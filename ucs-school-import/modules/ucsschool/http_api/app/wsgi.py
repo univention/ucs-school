@@ -34,18 +34,19 @@ WSGI
 """
 
 from __future__ import unicode_literals
+
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 
-from django.core.wsgi import get_wsgi_application  # noqa
+from django.core.wsgi import get_wsgi_application  # isort:skip  # noqa: E402
 
 _application = get_wsgi_application()
 
 
 def application(environ, start_response):
-	script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
-	if script_name:
-		environ['SCRIPT_NAME'] = script_name
+    script_name = environ.get("HTTP_X_SCRIPT_NAME", "")
+    if script_name:
+        environ["SCRIPT_NAME"] = script_name
 
-	return _application(environ, start_response)
+    return _application(environ, start_response)

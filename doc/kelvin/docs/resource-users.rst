@@ -429,7 +429,7 @@ While changing the ``name`` attribute is technically also a move, the objects *p
 Changing a users roles
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Since version ``1.3.0`` of the `UCS\@school Kelvin REST API` app it is possible to change a users roles.
+Since version ``1.3.0`` of the *UCS\@school Kelvin REST API* app it is possible to change a users roles.
 Not all role combination or changes are allowed though, and roles may have extra requirements.
 The following lists transitions where the API user has to take extra care:
 

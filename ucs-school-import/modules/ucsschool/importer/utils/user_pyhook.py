@@ -37,148 +37,153 @@ from .import_pyhook import ImportPyHook
 
 
 class KelvinUserHook:
-	...
+    ...
 
 
 class UserPyHook(ImportPyHook, KelvinUserHook):
-	"""
-	Base class for Python based user import hooks.
+    """
+    Base class for Python based user import hooks.
 
-	When calling methods of ucsschool objects (e.g. ``ImportUser``,
-	``SchoolClass`` etc.) ``self.udm`` must be used instead of
-	``self.lo`` and those methods may have to be used with ``await``.
-	Thus hooks methods will be ``async``.
-	For example::
+    When calling methods of ucsschool objects (e.g. ``ImportUser``,
+    ``SchoolClass`` etc.) ``self.udm`` must be used instead of
+    ``self.lo`` and those methods may have to be used with ``await``.
+    Thus hooks methods will be ``async``.
+    For example::
 
-		async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-			user.firstname = "Sam"
-			awaituser.modify(self.udm)
+            async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+                    user.firstname = "Sam"
+                    awaituser.modify(self.udm)
 
-			udm_user_obj = await user.get_udm_object(self.udm)
-			udm_user_obj["foo"] = "bar"
-			await udm_user_obj.save()  # UDM REST Client object: "save", not "modify"
+                    udm_user_obj = await user.get_udm_object(self.udm)
+                    udm_user_obj["foo"] = "bar"
+                    await udm_user_obj.save()  # UDM REST Client object: "save", not "modify"
 
 
-	* self.dry_run     # always ``False`` in the context of the Kelvin API
-	* self.lo          # LDAP connection object (1)
-	* self.logger      # Python logging instance
-	* self.udm         # UDM REST Client instance (2)
+    * self.dry_run     # always ``False`` in the context of the Kelvin API
+    * self.lo          # LDAP connection object (1)
+    * self.logger      # Python logging instance
+    * self.udm         # UDM REST Client instance (2)
 
-	If multiple hook classes are found, hook functions with higher
-	priority numbers run before those with lower priorities. None disables
-	a function (no need to remove it / comment it out).
+    If multiple hook classes are found, hook functions with higher
+    priority numbers run before those with lower priorities. None disables
+    a function (no need to remove it / comment it out).
 
-	(1) Read-write cn=admin LDAP connection, attention: LDAP attributes
-		returned by get() and search() are now ``bytes`´, not ``str``
-	(2) Read-write cn=admin UDM REST API connection, see
-		https://udm-rest-client.readthedocs.io/en/latest/
-	"""
-	priority = {
-		"pre_create": None,
-		"post_create": None,
-		"pre_modify": None,
-		"post_modify": None,
-		"pre_move": None,
-		"post_move": None,
-		"pre_remove": None,
-		"post_remove": None,
-	}
+    (1) Read-write cn=admin LDAP connection, attention: LDAP attributes
+            returned by get() and search() are now ``bytes`´, not ``str``
+    (2) Read-write cn=admin UDM REST API connection, see
+            https://udm-rest-client.readthedocs.io/en/latest/
+    """
 
-	async def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code before creating a user.
+    priority = {
+        "pre_create": None,
+        "post_create": None,
+        "pre_modify": None,
+        "post_modify": None,
+        "pre_move": None,
+        "post_move": None,
+        "pre_remove": None,
+        "post_remove": None,
+    }
 
-		* The user does not exist in LDAP, yet.
-		* `user.dn` is the future DN of the user, if username and school does not change.
-		* `user.input_data` contains the (csv) input data, if the user was create during an import job
-		* set `priority["pre_create"]` to an `int`, to enable this method
+    async def pre_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code before creating a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * The user does not exist in LDAP, yet.
+        * `user.dn` is the future DN of the user, if username and school does not change.
+        * `user.input_data` contains the (csv) input data, if the user was create during an import job
+        * set `priority["pre_create"]` to an `int`, to enable this method
 
-	async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code after creating a user.
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* The hook is only executed if adding the user succeeded.
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
-		* set `priority["post_create"]` to an int, to enable this method
+    async def post_create(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code after creating a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * The hook is only executed if adding the user succeeded.
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
+        * set `priority["post_create"]` to an int, to enable this method
 
-	async def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code before modifying a user.
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* `user` will be a :py:class:`ImportUser`, loaded from LDAP.
-		* set `priority["pre_modify"]` to an int, to enable this method
+    async def pre_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code before modifying a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. :py:class:`ImportUser`)
-		:return: None
-		"""
+        * `user` will be a :py:class:`ImportUser`, loaded from LDAP.
+        * set `priority["pre_modify"]` to an int, to enable this method
 
-	async def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code after modifying a user.
+        :param ImportUser user: User (or a subclass of it, eg. :py:class:`ImportUser`)
+        :return: None
+        """
 
-		* The hook is only executed if modifying the user succeeded.
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
-		* If running in an import job, the user may not have been removed, but merely deactivated. If `user.udm_properties["ucsschoolPurgeTimestamp"]` is set, the user is marked for removal.
-		* set `priority["post_modify"]` to an `int`, to enable this method
+    async def post_modify(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code after modifying a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * The hook is only executed if modifying the user succeeded.
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
+        * If running in an import job, the user may not have been removed, but merely deactivated. If
+            `user.udm_properties["ucsschoolPurgeTimestamp"]` is set, the user is marked for removal.
+        * set `priority["post_modify"]` to an `int`, to enable this method
 
-	async def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code before changing a users primary school (position).
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* set `priority["pre_move"]` to an `int`, to enable this method
+    async def pre_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code before changing a users primary school (position).
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * set `priority["pre_move"]` to an `int`, to enable this method
 
-	async def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code after changing a users primary school (position).
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* The hook is only executed if moving the user succeeded.
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* Do not run :py:meth:`user.modify()`, it will create a recursion. Please use :py:meth:`user.modify_without_hooks()`.
-		* set `priority["post_move"]` to an `int`, to enable this method
+    async def post_move(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code after changing a users primary school (position).
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * The hook is only executed if moving the user succeeded.
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * Do not run :py:meth:`user.modify()`, it will create a recursion. Please use
+            :py:meth:`user.modify_without_hooks()`.
+        * set `priority["post_move"]` to an `int`, to enable this method
 
-	async def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code before deleting a user.
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* set `priority["pre_remove"]` to an `int`, to enable this method
+    async def pre_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code before deleting a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * set `priority["pre_remove"]` to an `int`, to enable this method
 
-	async def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
-		"""
-		Run code after deleting a user.
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """
 
-		* The hook is only executed if the deleting the user succeeded.
-		* `user` will be an :py:class:`ImportUser`, loaded from LDAP.
-		* The user was removed, do not try to :py:meth:`modify()` it.
-		* set `priority["post_remove"]` to an `int`, to enable this method
+    async def post_remove(self, user: "ucsschool.models.import_user.ImportUser") -> None:
+        """
+        Run code after deleting a user.
 
-		:param ImportUser user: User (or a subclass of it, eg. ImportUser)
-		:return: None
-		"""
+        * The hook is only executed if the deleting the user succeeded.
+        * `user` will be an :py:class:`ImportUser`, loaded from LDAP.
+        * The user was removed, do not try to :py:meth:`modify()` it.
+        * set `priority["post_remove"]` to an `int`, to enable this method
+
+        :param ImportUser user: User (or a subclass of it, eg. ImportUser)
+        :return: None
+        """

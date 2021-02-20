@@ -114,18 +114,12 @@ def configure_import():
 
 @app.exception_handler(NoObject)
 async def no_object_exception_handler(request: Request, exc: NoObject):
-    return UJSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)}
-    )
+    return UJSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)})
 
 
 @app.exception_handler(SchooLibValidationError)
-async def school_lib_validation_exception_handler(
-    request: Request, exc: SchooLibValidationError
-):
-    return UJSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)}
-    )
+async def school_lib_validation_exception_handler(request: Request, exc: SchooLibValidationError):
+    return UJSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(exc)})
 
 
 @app.post(URL_TOKEN_BASE, response_model=Token)
@@ -133,9 +127,7 @@ async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     logger: logging.Logger = Depends(get_logger),
 ):
-    user = await ldap_auth_instance.check_auth_and_get_user(
-        form_data.username, form_data.password
-    )
+    user = await ldap_auth_instance.check_auth_and_get_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -145,9 +137,7 @@ async def login_for_access_token(
     sub_data = user.dict(include={"username", "kelvin_admin"})
     sub_data["schools"] = user.attributes.get("ucsschoolSchool", [])
     sub_data["roles"] = user.attributes.get("ucsschoolRole", [])
-    access_token = await create_access_token(
-        data={"sub": sub_data}, expires_delta=access_token_expires
-    )
+    access_token = await create_access_token(data={"sub": sub_data}, expires_delta=access_token_expires)
     logger.debug("User %r retrieved access_token.", user.username)
     return {"access_token": access_token, "token_type": "bearer"}
 

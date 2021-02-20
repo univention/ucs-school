@@ -111,7 +111,7 @@ If a check related to PEP8 fails, run::
 Coverage
 --------
 
-Code coverage is checked during every ``pytest`` run, so also during Docker image build. To start it manually read chapter `Tests`.
+Code coverage is checked during every ``pytest`` run, so also during Docker image build. To start it manually read chapter ``Tests``.
 
 Auto-reload of API server during development
 --------------------------------------------

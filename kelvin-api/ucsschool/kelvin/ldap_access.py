@@ -34,14 +34,7 @@ from typing import Any, Dict, List, Optional
 
 import aiofiles
 from async_property import async_cached_property
-from ldap3 import (
-    AUTO_BIND_TLS_BEFORE_BIND,
-    MODIFY_REPLACE,
-    SIMPLE,
-    Connection,
-    Entry,
-    Server,
-)
+from ldap3 import AUTO_BIND_TLS_BEFORE_BIND, MODIFY_REPLACE, SIMPLE, Connection, Entry, Server
 from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
 from pydantic import BaseModel
@@ -110,9 +103,7 @@ class LDAPAccess:
             pw = await fp.read()
         return pw.strip()
 
-    async def check_auth_and_get_user(
-        self, username: str, password: str
-    ) -> Optional[LdapUser]:
+    async def check_auth_and_get_user(self, username: str, password: str) -> Optional[LdapUser]:
         user_dn = await self.get_dn_of_user(username)
         if user_dn:
             admin_group_members = await self.admin_group_members()
@@ -217,8 +208,7 @@ class LDAPAccess:
             or (
                 "shadowExpire" in ldap_result
                 and ldap_result["shadowExpire"].value is not None
-                and ldap_result["shadowExpire"].value
-                < datetime.now().timestamp() / 3600 / 24
+                and ldap_result["shadowExpire"].value < datetime.now().timestamp() / 3600 / 24
             )
         )
 
@@ -279,7 +269,5 @@ class LDAPAccess:
         if len(results) == 1:
             return results[0]["uniqueMember"].values
         else:
-            self.logger.error(
-                "Reading group %r from LDAP: results=%r", API_USERS_GROUP_NAME, results
-            )
+            self.logger.error("Reading group %r from LDAP: results=%r", API_USERS_GROUP_NAME, results)
             return []

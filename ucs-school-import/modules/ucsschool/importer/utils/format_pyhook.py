@@ -33,80 +33,83 @@ Base class for all Python based format hooks.
 """
 
 from __future__ import absolute_import
+
 import logging
+
 from ucsschool.lib.pyhooks import PyHook
 
 
 class FormatPyHook(PyHook):
-	"""
-	Format hook base class
+    """
+    Format hook base class
 
-	The base class' :py:meth:`__init__()` provides a logger instance:
+    The base class' :py:meth:`__init__()` provides a logger instance:
 
-	self.logger      # Python logging instance
+    self.logger      # Python logging instance
 
-	If multiple hook classes are found, hook functions with higher
-	priority numbers run before those with lower priorities. None disables
-	a function.
-	"""
-	priority = {
-		'patch_fields_staff': None,
-		'patch_fields_student': None,
-		'patch_fields_teacher': None,
-		'patch_fields_teacher_and_staff': None,
-	}
-	# The hook will be run only for property names in this list.
-	properties = ()
+    If multiple hook classes are found, hook functions with higher
+    priority numbers run before those with lower priorities. None disables
+    a function.
+    """
 
-	def __init__(self, *args, **kwargs):
-		super(FormatPyHook, self).__init__(*args, **kwargs)
-		self.logger = logging.getLogger(__name__)
-		"""Python logging instance"""
+    priority = {
+        "patch_fields_staff": None,
+        "patch_fields_student": None,
+        "patch_fields_teacher": None,
+        "patch_fields_teacher_and_staff": None,
+    }
+    # The hook will be run only for property names in this list.
+    properties = ()
 
-	def patch_fields_staff(self, property_name, fields):
-		"""
-		Run code before formatting an property using a schema in
-		format_from_scheme().
+    def __init__(self, *args, **kwargs):
+        super(FormatPyHook, self).__init__(*args, **kwargs)
+        self.logger = logging.getLogger(__name__)
+        """Python logging instance"""
 
-		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and udm_properties
-		:return: fields dictionary that be used by format_from_scheme()
-		:rtype: dict
-		"""
-		return fields
+    def patch_fields_staff(self, property_name, fields):
+        """
+        Run code before formatting an property using a schema in
+        format_from_scheme().
 
-	def patch_fields_student(self, property_name, fields):
-		"""
-		Run code before formatting an property using a schema in
-		format_from_scheme().
+        :param str property_name: Name of property_name that will be formatted
+        :param dict fields: dictionary with the users attributes and udm_properties
+        :return: fields dictionary that be used by format_from_scheme()
+        :rtype: dict
+        """
+        return fields
 
-		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and udm_properties
-		:return: fields dictionary that be used by format_from_scheme()
-		:rtype: dict
-		"""
-		return fields
+    def patch_fields_student(self, property_name, fields):
+        """
+        Run code before formatting an property using a schema in
+        format_from_scheme().
 
-	def patch_fields_teacher(self, property_name, fields):
-		"""
-		Run code before formatting an property using a schema in
-		format_from_scheme().
+        :param str property_name: Name of property_name that will be formatted
+        :param dict fields: dictionary with the users attributes and udm_properties
+        :return: fields dictionary that be used by format_from_scheme()
+        :rtype: dict
+        """
+        return fields
 
-		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and udm_properties
-		:return: fields dictionary that be used by format_from_scheme()
-		:rtype: dict
-		"""
-		return fields
+    def patch_fields_teacher(self, property_name, fields):
+        """
+        Run code before formatting an property using a schema in
+        format_from_scheme().
 
-	def patch_fields_teacher_and_staff(self, property_name, fields):
-		"""
-		Run code before formatting a property using a schema in
-		format_from_scheme().
+        :param str property_name: Name of property_name that will be formatted
+        :param dict fields: dictionary with the users attributes and udm_properties
+        :return: fields dictionary that be used by format_from_scheme()
+        :rtype: dict
+        """
+        return fields
 
-		:param str property_name: Name of property_name that will be formatted
-		:param dict fields: dictionary with the users attributes and udm_properties
-		:return: fields dictionary that be used by format_from_scheme()
-		:rtype: dict
-		"""
-		return fields
+    def patch_fields_teacher_and_staff(self, property_name, fields):
+        """
+        Run code before formatting a property using a schema in
+        format_from_scheme().
+
+        :param str property_name: Name of property_name that will be formatted
+        :param dict fields: dictionary with the users attributes and udm_properties
+        :return: fields dictionary that be used by format_from_scheme()
+        :rtype: dict
+        """
+        return fields

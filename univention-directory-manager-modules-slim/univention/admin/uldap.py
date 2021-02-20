@@ -27,38 +27,44 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from typing import Tuple
 
 import univention.admin.uldap_docker as uldap_docker
 
-class Position(object):
-	def __init__(self, dn):
-		self.dn = dn
-
-	def getDn(self):
-		return self.dn
-
-	def setDn(self, dn):
-		self.dn = dn
-
-	def __repr__(self):
-		return self.dn
-
-
-def getAdminConnection(*args, **kwargs):
-	lo = uldap_docker.getAdminConnection(*args, **kwargs)
-	po = Position(lo.base)
-	return lo, po
-
-
-def getMachineConnection(*args, **kwargs):
-	lo = uldap_docker.getMachineConnection(*args, **kwargs)
-	po = Position(lo.base)
-	return lo, po
-
-
-def position(base):
-	return Position(base)
-
 
 class access(uldap_docker.access):
-	pass
+    pass
+
+
+class Position(object):
+    def __init__(self, dn: str) -> None:
+        self.dn = dn
+
+    def getDn(self) -> str:
+        return self.dn
+
+    def setDn(self, dn: str) -> None:
+        self.dn = dn
+
+    def __repr__(self) -> str:
+        return self.dn
+
+
+def position(base) -> Position:
+    return Position(base)
+
+
+LoType = access
+PoType = Position
+
+
+def getAdminConnection(*args, **kwargs) -> Tuple[LoType, PoType]:
+    lo = uldap_docker.getAdminConnection(*args, **kwargs)
+    po = Position(lo.base)
+    return lo, po
+
+
+def getMachineConnection(*args, **kwargs) -> Tuple[LoType, PoType]:
+    lo = uldap_docker.getMachineConnection(*args, **kwargs)
+    po = Position(lo.base)
+    return lo, po

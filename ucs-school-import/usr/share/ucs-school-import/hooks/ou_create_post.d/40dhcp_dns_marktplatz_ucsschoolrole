@@ -48,7 +48,7 @@ ou_lower="${ou,,}"
 dcname="$(awk -F '\t' '{print $2}' "$1")"
 
 if [[ -z "$dcname" ]]; then
-	dcname="dc${ou}-01.${domainname}"
+	dcname="dc${ou}.${domainname}"
 else
 	dcname="${dcname}.${domainname}"
 fi
@@ -143,34 +143,12 @@ echo "$(date) $(basename $0) ou: '$ou' ou_lower: '$ou_lower' dcname: '$dcname' d
 
 	echo "$(date) $(basename $0): 52marktplatz_create"
 
-	sharepath="$ucsschool_import_generate_share_marktplatz_sharepath"
-	if [[ -z "$sharepath" ]]; then
-		if [[ -z "$ucsschool_import_roleshare" ]] || is_ucr_true "ucsschool/import/roleshare"; then
-			sharepath="/home/$ou/groups/Marktplatz"
-		else
-			sharepath="/home/groups/Marktplatz"
-		fi
-	fi
-
-	sharemode="$ucsschool_import_generate_share_marktplatz_permissions"
-	if [[ -z "$sharemode" ]]; then
-		sharemode="0777"
-	fi
-
-	sharegrp="$ucsschool_import_generate_share_marktplatz_group"
-	if [[ -z "$sharegrp" ]]; then
-		sharegrp="Domain Users"
-	fi
-	grpuidnumber="$(univention-ldapsearch -LLL "(&(objectclass=univentionGroup)(cn=${sharegrp}))" gidNumber | sed -ne 's/^gidNumber: //p')"
-
-	udm shares/share create --ignore_exists \
-		--position "cn=shares,ou=${ou}${district},${ldap_base}" \
-		--set name=Marktplatz \
-		--set "host=${dcname}" \
-		--set "path=${sharepath}" \
-		--set "directorymode=${sharemode}" \
-		--set "group=${grpuidnumber}" || return $?
-
+	if python -m ucsschool.lib.models list MarketplaceShare --name Marktplatz --school "$ou" | grep MarketplaceShare; then
+		echo "MarketplaceShare exists."
+	else
+		python -m ucsschool.lib.models --debug create MarketplaceShare --name Marktplatz --school "$ou" || return $?
+		python -m ucsschool.lib.models list MarketplaceShare --school "$ou"
+  fi
 	echo "$(date) $(basename $0) (52marktplatz_create): done - added new share Markplatz for server ${dcname}"
 }
 

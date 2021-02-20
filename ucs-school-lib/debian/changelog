@@ -1,3 +1,15 @@
+ucs-school-lib (12.2.11) unstable; urgency=medium
+
+  * Bug #52309: add correct hints and replace decorator
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Feb 2021 09:20:46 +0100
+
+ucs-school-lib (12.2.10) unstable; urgency=medium
+
+  * Bug #52309: add validation code for ucsschool objects
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Feb 2021 14:27:09 +0100
+
 ucs-school-lib (12.2.9) unstable; urgency=low
 
   * Bug #52783: fix typo so get_role_info() returns correct context

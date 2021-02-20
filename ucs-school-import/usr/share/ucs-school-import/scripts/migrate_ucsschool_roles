@@ -33,403 +33,488 @@ Attach ucsschool role strings to all supported UCS@school objects and central
 server objects.
 """
 
-import re
-import sys
 import argparse
 import logging
+import re
+import sys
 
 import ldap
 from ldap.filter import filter_format
 from six import string_types
+
 import univention.admin.uldap
-from univention.config_registry import ConfigRegistry
-from univention.admin.uexceptions import ldapError
-from ucsschool.lib.models import (
-	AnyComputer, BasicGroup, ClassShare, WorkGroupShare, ComputerRoom, School, SchoolClass, SchoolDCSlave, User,
-	WorkGroup, SchoolGroup, MacComputer, WindowsComputer, IPComputer)
+from ucsschool.lib.models.computer import IPComputer, MacComputer, SchoolDCSlave, WindowsComputer
+from ucsschool.lib.models.group import (
+    BasicGroup,
+    ClassShare,
+    ComputerRoom,
+    SchoolClass,
+    SchoolGroup,
+    WorkGroup,
+)
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.share import WorkGroupShare
+from ucsschool.lib.models.user import User
+from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from ucsschool.lib.roles import (
-	create_ucsschool_role_string, role_dc_slave_admin, role_dc_slave_edu,
-	role_dc_master, role_memberserver, role_dc_backup, role_memberserver_admin, role_memberserver_edu, role_dc_slave,
-	role_single_master, role_school, role_school_admin, role_school_admin_group, role_school_domain_group,
-	role_school_teacher_group, role_school_student_group, role_school_staff_group)
-from ucsschool.lib.models.utils import get_stream_handler, get_file_handler
+    create_ucsschool_role_string,
+    role_dc_backup,
+    role_dc_master,
+    role_dc_slave,
+    role_dc_slave_admin,
+    role_dc_slave_edu,
+    role_memberserver_admin,
+    role_memberserver_edu,
+    role_school,
+    role_school_admin,
+    role_school_admin_group,
+    role_school_domain_group,
+    role_school_staff_group,
+    role_school_student_group,
+    role_school_teacher_group,
+    role_single_master,
+)
+from univention.admin.uexceptions import ldapError
+from univention.config_registry import ConfigRegistry
 
-
-LOG_FILE = '/var/log/univention/ucsschool-roles-migration.log'
+LOG_FILE = "/var/log/univention/ucsschool-roles-migration.log"
 
 ucr = ConfigRegistry()
 ucr.load()
 
-if ucr['server/role'] != 'domaincontroller_master':
-	print('This script can only be executed on the Domaincontroller Master.')
-	sys.exit(2)
+if ucr["server/role"] != "domaincontroller_master":
+    print("This script can only be executed on the Domaincontroller Master.")
+    sys.exit(2)
 
 lo, po = univention.admin.uldap.getAdminConnection()
 
 
 class UcsSchoolRolesMigration(object):
+    def __init__(self):
+        self.exceptions = []
+        self.modifications = False
+        self.search_classes = []
+        self.schools = []
+        self.stats = {"objects": 0, "modifications": 0, "errors": 0}
+        argp = argparse.ArgumentParser(
+            description=(
+                "Set ucsschoolRole property on UCS@school objects (users, work groups, school classes, "
+                "computer rooms, class shares, school servers) and central server objects."
+            ),
+            epilog="Logfile: {}".format(LOG_FILE),
+        )
+        argp.add_argument(
+            "--modify",
+            action="store_true",
+            help="Enable writing of modifications to LDAP. If unset, the default is to make a dry run.",
+        )
+        argp.add_argument(
+            "--force",
+            action="store_true",
+            help="Overwrite existing role data. If unset, the default is to not modify objects that "
+            "already have data in the role attribute.",
+        )
+        argp.add_argument(
+            "--schools",
+            help="Comma separated list of OUs whose objects should be modified. If unset all OUs will "
+            "be modified.",
+        )
+        argp.add_argument("--all-objects", action="store_true", help="Modify all UCS@school objects.")
+        argp.add_argument(
+            "--school-groups", action="store_true", help="Modify UCS@school specific group objects."
+        )
+        argp.add_argument(
+            "--class-shares", action="store_true", help="Modify UCS@school class share objects."
+        )
+        argp.add_argument(
+            "--work-group-shares",
+            action="store_true",
+            help="Modify UCS@school work group share objects.",
+        )
+        argp.add_argument(
+            "--computer-rooms", action="store_true", help="Modify UCS@school computer room objects."
+        )
+        argp.add_argument(
+            "--school-classes", action="store_true", help="Modify UCS@school school class objects."
+        )
+        argp.add_argument(
+            "--servers-central",
+            action="store_true",
+            help="Modify central server objects (DC master, DC backup, DC slave, memberserver).",
+        )
+        argp.add_argument(
+            "--servers-school",
+            action="store_true",
+            help="Modify UCS@school school server objects (DC slave admin & edu, memberserver).",
+        )
 
-	def __init__(self):
-		self.exceptions = []
-		self.modifications = False
-		self.search_classes = []
-		self.schools = []
-		self.stats = {'objects': 0, 'modifications': 0, 'errors': 0}
-		argp = argparse.ArgumentParser(
-			description=(
-				'Set ucsschoolRole property on UCS@school objects (users, work groups, school classes, computer rooms, '
-				'class shares, school servers) and central server objects.'),
-			epilog='Logfile: {}'.format(LOG_FILE)
-		)
-		argp.add_argument(
-			'--modify',
-			action='store_true',
-			help='Enable writing of modifications to LDAP. If unset, the default is to make a dry run.'
-		)
-		argp.add_argument(
-			'--force',
-			action='store_true',
-			help='Overwrite existing role data. If unset, the default is to not modify objects that already have data in the role attribute.'
-		)
-		argp.add_argument(
-			'--schools',
-			help='Comma separated list of OUs whose objects should be modified. If unset all OUs will be modified.'
-		)
-		argp.add_argument(
-			'--all-objects',
-			action='store_true',
-			help='Modify all UCS@school objects.'
-		)
-		argp.add_argument(
-			'--school-groups',
-			action='store_true',
-			help='Modify UCS@school specific group objects.'
-		)
-		argp.add_argument(
-			'--class-shares',
-			action='store_true',
-			help='Modify UCS@school class share objects.'
-		)
-		argp.add_argument(
-			'--work-group-shares',
-			action='store_true',
-			help='Modify UCS@school work group share objects.'
-		)
-		argp.add_argument(
-			'--computer-rooms',
-			action='store_true',
-			help='Modify UCS@school computer room objects.'
-		)
-		argp.add_argument(
-			'--school-classes',
-			action='store_true',
-			help='Modify UCS@school school class objects.'
-		)
-		argp.add_argument(
-			'--servers-central',
-			action='store_true',
-			help='Modify central server objects (DC master, DC backup, DC slave, memberserver).'
-		)
-		argp.add_argument(
-			'--servers-school',
-			action='store_true',
-			help='Modify UCS@school school server objects (DC slave admin & edu, memberserver).'
-		)
+        argp.add_argument(
+            "--computers-school",
+            action="store_true",
+            help="Modify UCS@school school client computer objects (Win, IP managed and Mac OS "
+            "computers).",
+        )
 
-		argp.add_argument(
-			'--computers-school',
-			action='store_true',
-			help='Modify UCS@school school client computer objects (Win, IP managed and Mac OS computers).'
-		)
+        argp.add_argument("--users", action="store_true", help="Modify UCS@school user objects.")
+        argp.add_argument(
+            "--work-groups", action="store_true", help="Modify UCS@school work group objects."
+        )
+        self.args = argp.parse_args()
 
-		argp.add_argument(
-			'--users',
-			action='store_true',
-			help='Modify UCS@school user objects.'
-		)
-		argp.add_argument(
-			'--work-groups',
-			action='store_true',
-			help='Modify UCS@school work group objects.'
-		)
-		self.args = argp.parse_args()
+        self.logger = logging.getLogger("UcsSchoolRolesMigration")
+        self.logger.setLevel("DEBUG")
+        self.logger.addHandler(get_stream_handler("INFO"))
+        self.logger.addHandler(get_file_handler("DEBUG", LOG_FILE))
+        self.logger.info("Changing")
 
-		self.logger = logging.getLogger('UcsSchoolRolesMigration')
-		self.logger.setLevel('DEBUG')
-		self.logger.addHandler(get_stream_handler('INFO'))
-		self.logger.addHandler(get_file_handler('DEBUG', LOG_FILE))
-		self.logger.info('Changing')
+        self.all_school_objs = School.get_all(lo)
+        all_schools = sorted([s.name for s in self.all_school_objs])
+        if self.args.schools:
+            schools = sorted([s.strip() for s in self.args.schools.split(",") if s.strip()])
+            for school in schools:
+                if school not in all_schools:
+                    print("ERROR: School {!r} does not exist.".format(school))
+                    print("Known schools: {}.".format(", ".join(all_schools)))
+                    sys.exit(2)
+            self.schools = schools
+        else:
+            self.schools = all_schools
 
-		self.all_school_objs = School.get_all(lo)
-		all_schools = sorted([s.name for s in self.all_school_objs])
-		if self.args.schools:
-			schools = sorted([s.strip() for s in self.args.schools.split(',') if s.strip()])
-			for school in schools:
-				if school not in all_schools:
-					print('ERROR: School {!r} does not exist.'.format(school))
-					print('Known schools: {}.'.format(', '.join(all_schools)))
-					sys.exit(2)
-			self.schools = schools
-		else:
-			self.schools = all_schools
+        self.logger.debug("=" * 80)
+        self.logger.debug("=" * 80)
+        self.logger.debug("Started with: %r", sys.argv)
+        self.logger.info("Log file: %r", LOG_FILE)
+        self.logger.info("Searching in school(s): {}.".format(", ".join(self.schools)))
 
-		self.logger.debug('=' * 80)
-		self.logger.debug('=' * 80)
-		self.logger.debug('Started with: %r', sys.argv)
-		self.logger.info('Log file: %r', LOG_FILE)
-		self.logger.info('Searching in school(s): {}.'.format(', '.join(self.schools)))
+        self.search_school_groups = self.args.school_groups or self.args.all_objects
+        self.search_servers_central = self.args.servers_central or self.args.all_objects
+        self.search_servers_school = self.args.servers_school or self.args.all_objects
+        if self.args.computers_school or self.args.all_objects:
+            self.search_classes.append((WindowsComputer, "ucsschoolComputer"))
+            self.search_classes.append((MacComputer, "ucsschoolComputer"))
+            self.search_classes.append((IPComputer, "ucsschoolComputer"))
+            # TODO: missing: computers/linux, computers/ubuntu
+        if self.args.class_shares or self.args.all_objects:
+            self.search_classes.append((ClassShare, "ucsschoolShare"))
+        if self.args.work_group_shares or self.args.all_objects:
+            self.search_classes.append((WorkGroupShare, "ucsschoolShare"))
+        if self.args.computer_rooms or self.args.all_objects:
+            self.search_classes.append((ComputerRoom, "ucsschoolGroup"))
+        if self.args.school_classes or self.args.all_objects:
+            self.search_classes.append((SchoolClass, "ucsschoolGroup"))
+        if self.args.users or self.args.all_objects:
+            self.search_classes.append((User, "ucsschoolType"))
+        if self.args.work_groups or self.args.all_objects:
+            self.search_classes.append((WorkGroup, "ucsschoolGroup"))
 
-		self.search_school_groups = self.args.school_groups or self.args.all_objects
-		self.search_servers_central = self.args.servers_central or self.args.all_objects
-		self.search_servers_school = self.args.servers_school or self.args.all_objects
-		if self.args.computers_school or self.args.all_objects:
-			self.search_classes.append((WindowsComputer, 'ucsschoolComputer'))
-			self.search_classes.append((MacComputer, 'ucsschoolComputer'))
-			self.search_classes.append((IPComputer, 'ucsschoolComputer'))
-			# TODO: missing: computers/linux, computers/ubuntu
-		if self.args.class_shares or self.args.all_objects:
-			self.search_classes.append((ClassShare, 'ucsschoolShare'))
-		if self.args.work_group_shares or self.args.all_objects:
-			self.search_classes.append((WorkGroupShare, 'ucsschoolShare'))
-		if self.args.computer_rooms or self.args.all_objects:
-			self.search_classes.append((ComputerRoom, 'ucsschoolGroup'))
-		if self.args.school_classes or self.args.all_objects:
-			self.search_classes.append((SchoolClass, 'ucsschoolGroup'))
-		if self.args.users or self.args.all_objects:
-			self.search_classes.append((User, 'ucsschoolType'))
-		if self.args.work_groups or self.args.all_objects:
-			self.search_classes.append((WorkGroup, 'ucsschoolGroup'))
+        if not (
+            self.search_school_groups
+            or self.search_classes
+            or self.args.servers_central
+            or self.args.servers_school
+        ):
+            print("ERROR: At least one object type must be enabled.\n")
+            argp.print_help()
+            sys.exit(2)
+        self.logger.info(
+            "Modifying objects of type(s): school%s%s%s%s.",
+            ", school groups, " if self.search_school_groups else "",
+            ", ".join([cls.__name__ for cls, oc in self.search_classes]),
+            ", central servers" if self.search_servers_central or self.args.all_objects else "",
+            ", school servers" if self.search_servers_school or self.args.all_objects else "",
+        )
 
-		if not (self.search_school_groups or self.search_classes or self.args.servers_central or self.args.servers_school):
-			print('ERROR: At least one object type must be enabled.\n')
-			argp.print_help()
-			sys.exit(2)
-		self.logger.info(
-			'Modifying objects of type(s): school%s%s%s%s.',
-			', school groups, ' if self.search_school_groups else '',
-			', '.join([cls.__name__ for cls, oc in self.search_classes]),
-			', central servers' if self.search_servers_central or self.args.all_objects else '',
-			', school servers' if self.search_servers_school or self.args.all_objects else '',
-		)
+    def migrate(self):
+        if self.args.modify:
+            self.logger.info("Running in write mode.")
+        else:
+            self.logger.info("Running in dry-run mode.")
 
-	def migrate(self):
-		if self.args.modify:
-			self.logger.info('Running in write mode.')
-		else:
-			self.logger.info('Running in dry-run mode.')
+        for school in self.schools:
+            self.logger.info("---------------------------------------------------------------")
+            self.logger.info("Checking objects of school %r...", school)
+            self.set_ldap_attr(
+                "school",
+                [create_ucsschool_role_string(role_school, school)],
+                School(name=school).dn,
+                "ucsschoolOrganizationalUnit",
+            )
 
-		for school in self.schools:
-			self.logger.info('---------------------------------------------------------------')
-			self.logger.info('Checking objects of school %r...', school)
-			self.set_ldap_attr(
-				'school',
-				[create_ucsschool_role_string(role_school, school)],
-				School(name=school).dn,
-				'ucsschoolOrganizationalUnit'
-			)
+            if self.search_school_groups:
+                domain_roles = [create_ucsschool_role_string(role_school_domain_group, school)]
+                for group in SchoolGroup.lookup(
+                    lo, school, filter_format("name=Domain Users %s", [school])
+                ):
+                    self.set_ldap_attr("school groups", domain_roles, group.dn, "ucsschoolGroup")
+                admin_roles = [create_ucsschool_role_string(role_school_admin_group, school)]
+                for obj in BasicGroup.get_all(
+                    lo,
+                    None,
+                    filter_format(
+                        "(&(objectClass=ucsschoolAdministratorGroup)(ucsschoolSchool=%s))", (school,)
+                    ),
+                ):
+                    self.set_ldap_attr(
+                        "school groups", admin_roles, obj.dn, "ucsschoolAdministratorGroup"
+                    )
+                for g_type, role in (
+                    ("mitarbeiter", role_school_staff_group),
+                    ("schueler", role_school_student_group),
+                    ("lehrer", role_school_teacher_group),
+                ):
+                    for group in SchoolGroup.lookup(
+                        lo, school, filter_format("name=%s-%s", [g_type, school])
+                    ):
+                        roles = [create_ucsschool_role_string(role, school)]
+                        self.set_ldap_attr("school groups", roles, group.dn, "ucsschoolGroup")
 
-			if self.search_school_groups:
-				domain_roles = [create_ucsschool_role_string(role_school_domain_group, school)]
-				for group in SchoolGroup.lookup(lo, school, filter_format('name=Domain Users %s', [school])):
-					self.set_ldap_attr('school groups', domain_roles, group.dn, 'ucsschoolGroup')
-				admin_roles = [create_ucsschool_role_string(role_school_admin_group, school)]
-				for obj in BasicGroup.get_all(lo, None, filter_format(
-						'(&(objectClass=ucsschoolAdministratorGroup)(ucsschoolSchool=%s))',
-						(school,)
-				)):
-					self.set_ldap_attr('school groups', admin_roles, obj.dn, 'ucsschoolAdministratorGroup')
-				for g_type, role in (('mitarbeiter', role_school_staff_group), ('schueler', role_school_student_group),
-									('lehrer', role_school_teacher_group)):
-					for group in SchoolGroup.lookup(lo, school, filter_format('name=%s-%s', [g_type, school])):
-						roles = [create_ucsschool_role_string(role, school)]
-						self.set_ldap_attr('school groups', roles, group.dn, 'ucsschoolGroup')
+            for cls, oc in self.search_classes:
+                self.logger.info(
+                    "- Looking in school {} for objects of type {}...".format(school, cls.__name__)
+                )
+                objs = cls.get_all(lo, school)
+                for obj in objs:
+                    if cls == User and oc not in lo.get(obj.dn)["objectClass"]:
+                        self.logger.warning(
+                            "    WARN: Ignoring %r, because not a correct school user object.", obj.dn
+                        )
+                        continue
+                    roles = [
+                        create_ucsschool_role_string(role, skool)
+                        for role in obj.default_roles
+                        for skool in getattr(obj, "schools", [obj.school])
+                    ]
+                    if cls == User and obj.is_administrator(lo):
+                        # user is school admin only for OUs in which she is in group admins-$OU
+                        schools = []
+                        for dn, attr in lo.search(
+                            filter_format("(&(cn=admins-*)(uniqueMember=%s))", (obj.dn,))
+                        ):
+                            schools.extend(attr["ucsschoolSchool"])
+                        roles.extend(
+                            [create_ucsschool_role_string(role_school_admin, skool) for skool in schools]
+                        )
+                    self.set_ldap_attr(cls.__name__, roles, obj.dn, oc)
 
-			for cls, oc in self.search_classes:
-				self.logger.info('- Looking in school {} for objects of type {}...'.format(school, cls.__name__))
-				objs = cls.get_all(lo, school)
-				for obj in objs:
-					if cls == User and oc not in lo.get(obj.dn)['objectClass']:
-						self.logger.warn('    WARN: Ignoring %r, because not a correct school user object.', obj.dn)
-						continue
-					roles = [
-						create_ucsschool_role_string(role, skool) for role in obj.default_roles
-						for skool in getattr(obj, 'schools', [obj.school])
-					]
-					if cls == User and obj.is_administrator(lo):
-						# user is school admin only for OUs in which she is in group admins-$OU
-						schools = []
-						for dn, attr in lo.search(filter_format('(&(cn=admins-*)(uniqueMember=%s))', (obj.dn,))):
-							schools.extend(attr['ucsschoolSchool'])
-						roles.extend([create_ucsschool_role_string(role_school_admin, skool) for skool in schools])
-					self.set_ldap_attr(cls.__name__, roles, obj.dn, oc)
+            # Necessary because of Bug #50349
+            if self.args.computers_school or self.args.all_objects:
+                self.logger.info(
+                    "- Looking in school {} for windows, macos or ipmanaged computers without proper "
+                    "objectClass".format(school)
+                )
+                for cls in (WindowsComputer, MacComputer, IPComputer):
+                    roles = [create_ucsschool_role_string(role, school) for role in cls.default_roles]
+                    search_result = lo.searchDn(
+                        filter_format(
+                            "(&(univentionObjectType=%s)(!(objectClass=ucsschoolComputer)))",
+                            (cls.Meta.udm_module,),
+                        ),
+                        base=cls.get_container(school),
+                    )
+                    for dn in search_result:
+                        self.set_ldap_attr(cls.__name__, roles, dn, "ucsschoolComputer")
 
-			# Necessary because of Bug #50349
-			if self.args.computers_school or self.args.all_objects:
-				self.logger.info('- Looking in school {} for windows, macos or ipmanaged computers without proper objectClass'.format(school))
-				for cls in (WindowsComputer, MacComputer, IPComputer):
-					roles = [
-						create_ucsschool_role_string(role, school) for role in cls.default_roles
-					]
-					search_result = lo.searchDn(filter_format('(&(univentionObjectType=%s)(!(objectClass=ucsschoolComputer)))', (cls.Meta.udm_module,)), base=cls.get_container(school))
-					for dn in search_result:
-						self.set_ldap_attr(cls.__name__, roles, dn, 'ucsschoolComputer')
+        if self.search_servers_central:
+            self.logger.info("---------------------------------------------------------------")
+            self.logger.info("Checking central servers...")
 
-		if self.search_servers_central:
-			self.logger.info('---------------------------------------------------------------')
-			self.logger.info('Checking central servers...')
+            self.logger.info("- Looking for DC master...")
+            master_dcs = lo.search(
+                "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
+                "(!(univentionService=UCS@school Education)))"
+            )
+            for dn, attr in master_dcs:
+                self.set_ldap_attr(
+                    "DC master",
+                    [create_ucsschool_role_string(role_dc_master, "-")],
+                    dn,
+                    "ucsschoolServer",
+                )
 
-			self.logger.info('- Looking for DC master...')
-			master_dcs = lo.search(
-				'(&(objectClass=univentionDomainController)(univentionServerRole=master)'
-				'(!(univentionService=UCS@school Education)))')
-			for dn, attr in master_dcs:
-				self.set_ldap_attr('DC master', [create_ucsschool_role_string(role_dc_master, '-')], dn, 'ucsschoolServer')
+            self.logger.info("- Looking for DC master (single server)...")
+            single_dcs = lo.search(
+                "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
+                "(univentionService=UCS@school Education))"
+            )
+            for dn, attr in single_dcs:
+                self.set_ldap_attr(
+                    "DC master (single)",
+                    [create_ucsschool_role_string(role_single_master, "-")],
+                    dn,
+                    "ucsschoolServer",
+                )
 
-			self.logger.info('- Looking for DC master (single server)...')
-			single_dcs = lo.search(
-				'(&(objectClass=univentionDomainController)(univentionServerRole=master)'
-				'(univentionService=UCS@school Education))')
-			for dn, attr in single_dcs:
-				self.set_ldap_attr(
-					'DC master (single)',
-					[create_ucsschool_role_string(role_single_master, '-')],
-					dn,
-					'ucsschoolServer'
-				)
+            self.logger.info("- Looking for DC backups...")
+            backup_dcs = lo.search(
+                "(&(objectClass=univentionDomainController)(univentionServerRole=backup))"
+            )
+            for dn, attr in backup_dcs:
+                self.set_ldap_attr(
+                    "DC backup",
+                    [create_ucsschool_role_string(role_dc_backup, "-")],
+                    dn,
+                    "ucsschoolServer",
+                )
 
-			self.logger.info('- Looking for DC backups...')
-			backup_dcs = lo.search('(&(objectClass=univentionDomainController)(univentionServerRole=backup))')
-			for dn, attr in backup_dcs:
-				self.set_ldap_attr('DC backup', [create_ucsschool_role_string(role_dc_backup, '-')], dn, 'ucsschoolServer')
+            self.logger.info("- Looking for DC slaves...")
+            slave_dcs = lo.searchDn(
+                "(&(objectClass=univentionDomainController)(univentionServerRole=slave))"
+            )
+            for dn in slave_dcs:
+                if not SchoolDCSlave.from_dn(dn, None, lo).school:
+                    self.set_ldap_attr(
+                        "DC slave",
+                        [create_ucsschool_role_string(role_dc_slave, "-")],
+                        dn,
+                        "ucsschoolServer",
+                    )
 
-			self.logger.info('- Looking for DC slaves...')
-			slave_dcs = lo.searchDn('(&(objectClass=univentionDomainController)(univentionServerRole=slave))')
-			for dn in slave_dcs:
-				if not SchoolDCSlave.from_dn(dn, None, lo).school:
-					self.set_ldap_attr('DC slave', [create_ucsschool_role_string(role_dc_slave, '-')], dn, 'ucsschoolServer')
+        if self.search_servers_school:
+            self.logger.info("---------------------------------------------------------------")
+            self.logger.info("Checking school servers...")
 
-		if self.search_servers_school:
-			self.logger.info('---------------------------------------------------------------')
-			self.logger.info('Checking school servers...')
+            ou_regex = re.compile(r"^cn=OU(?P<ou>.+?)-(DC|Member)-(Edukativnetz|Verwaltungsnetz),.*$")
 
-			ou_regex = re.compile(r'^cn=OU(?P<ou>.+?)-(DC|Member)-(Edukativnetz|Verwaltungsnetz),.*$')
+            def grp_dn_to_school(grp_dn):
+                m = ou_regex.match(grp_dn)
+                if m:
+                    mixed_case_ou = m.groupdict().get("ou")
+                    for school in self.all_school_objs:
+                        if school.name.lower() == mixed_case_ou.lower():
+                            return school.name
+                    else:
+                        raise RuntimeError(
+                            "Unknown OU {!r} in group DN {!r}.".format(mixed_case_ou, grp_dn)
+                        )
 
-			def grp_dn_to_school(grp_dn):
-				m = ou_regex.match(grp_dn)
-				if m:
-					mixed_case_ou = m.groupdict().get('ou')
-					for school in self.all_school_objs:
-						if school.name.lower() == mixed_case_ou.lower():
-							return school.name
-					else:
-						raise RuntimeError('Unknown OU {!r} in group DN {!r}.'.format(mixed_case_ou, grp_dn))
+            def host_and_ous(filter_s, attr, grp_type, type_msg):
+                host_dn_to_ous = {}
+                for grp_dn, grp_attr in lo.search(filter_s, attr=attr):
+                    for host_dn in grp_attr["uniqueMember"]:
+                        school = grp_dn_to_school(grp_dn)
+                        if school:
+                            host_dn_to_ous.setdefault(host_dn, []).append(school)
+                        else:
+                            self.logger.warning(
+                                "    WARN: DN in group OU%s-%s does not belong to a %s: %r",
+                                school,
+                                grp_type,
+                                type_msg,
+                                host_dn,
+                            )
+                            self.logger.warning("    WARN: Marking %r as central slave.", host_dn)
+                            self.set_ldap_attr(
+                                "DC slave",
+                                [create_ucsschool_role_string(role_dc_slave, "-")],
+                                host_dn,
+                                "ucsschoolServer",
+                            )
+                return host_dn_to_ous
 
-			def host_and_ous(filter_s, attr, grp_type, type_msg):
-				host_dn_to_ous = {}
-				for grp_dn, grp_attr in lo.search(filter_s, attr=attr):
-					for host_dn in grp_attr['uniqueMember']:
-						school = grp_dn_to_school(grp_dn)
-						if school:
-							host_dn_to_ous.setdefault(host_dn, []).append(school)
-						else:
-							self.logger.warn('    WARN: DN in group OU%s-%s does not belong to a %s: %r', school, grp_type, type_msg,
-										host_dn)
-							self.logger.warn('    WARN: Marking %r as central slave.', host_dn)
-							self.set_ldap_attr(
-								'DC slave',
-								[create_ucsschool_role_string(role_dc_slave, '-')],
-								host_dn,
-								'ucsschoolServer'
-							)
-				return host_dn_to_ous
+            def mark_server(grp_type, type_msg, role, filter_s=None):
+                self.logger.info("- Looking for %s...", type_msg)
+                filter_s = (
+                    filter_s
+                    or "(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-{}))".format(grp_type)
+                )
+                attr = ["uniqueMember"]
+                host_dn_to_ous = host_and_ous(filter_s, attr, grp_type, type_msg)
 
-			def mark_server(grp_type, type_msg, role, filter_s=None):
-				self.logger.info('- Looking for %s...', type_msg)
-				filter_s = filter_s or '(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-{}))'.format(grp_type)
-				attr = ['uniqueMember']
-				host_dn_to_ous = host_and_ous(filter_s, attr, grp_type, type_msg)
+                for host_dn, ous in host_dn_to_ous.items():
+                    self.set_ldap_attr(
+                        type_msg,
+                        [create_ucsschool_role_string(role, school) for school in ous],
+                        host_dn,
+                        "ucsschoolServer",
+                    )
 
-				for host_dn, ous in host_dn_to_ous.items():
-					self.set_ldap_attr(
-						type_msg,
-						[create_ucsschool_role_string(role, school) for school in ous],
-						host_dn,
-						'ucsschoolServer'
-					)
+            # DC-Edukativnetz separate, because have to distinguish between first and secondary slaves
+            self.logger.info("- Looking for DC slave edu...")
+            filter_s = "(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-DC-Edukativnetz))"
+            attr = ["uniqueMember"]
+            host_dn_to_ous = host_and_ous(filter_s, attr, "DC-Edukativnetz", "school slave")
+            for host_dn, ous in host_dn_to_ous.items():
+                slave = SchoolDCSlave.from_dn(host_dn, None, lo)
+                slave_udm = slave.get_udm_object(lo)
+                if "S4 Connector" in slave_udm["service"]:
+                    self.set_ldap_attr(
+                        "DC slave edu",
+                        [create_ucsschool_role_string(role_dc_slave_edu, ou) for ou in ous],
+                        host_dn,
+                        "ucsschoolServer",
+                    )
+                # else: slave not yet joined -> no services -> no role yet
 
-			# DC-Edukativnetz separate, because have to distinguish between first and secondary slaves
-			self.logger.info('- Looking for DC slave edu...')
-			filter_s = '(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-DC-Edukativnetz))'
-			attr = ['uniqueMember']
-			host_dn_to_ous = host_and_ous(filter_s, attr, 'DC-Edukativnetz', 'school slave')
-			for host_dn, ous in host_dn_to_ous.items():
-				slave = SchoolDCSlave.from_dn(host_dn, None, lo)
-				slave_udm = slave.get_udm_object(lo)
-				if 'S4 Connector' in slave_udm['service']:
-					self.set_ldap_attr(
-						'DC slave edu',
-						[create_ucsschool_role_string(role_dc_slave_edu, ou) for ou in ous],
-						host_dn,
-						'ucsschoolServer'
-					)
-				# else: slave not yet joined -> no services -> no role yet
+            mark_server("DC-Verwaltungsnetz", "DC slave admin", role_dc_slave_admin)
+            mark_server("Member-Edukativnetz", "member server edu", role_memberserver_edu)
+            mark_server("Member-Verwaltungsnetz", "member server admin", role_memberserver_admin)
 
-			mark_server('DC-Verwaltungsnetz', 'DC slave admin', role_dc_slave_admin)
-			mark_server('Member-Edukativnetz', 'member server edu', role_memberserver_edu)
-			mark_server('Member-Verwaltungsnetz', 'member server admin', role_memberserver_admin)
+        self.logger.info("---------------------------------------------------------------")
+        self.logger.info("Finished.")
+        self.logger.info(
+            "Considered LDAP objects: %(objects)d modifications: %(modifications)d errors: %(errors)d",
+            self.stats,
+        )
+        self.logger.info("Logfile: %s", LOG_FILE)
 
-		self.logger.info('---------------------------------------------------------------')
-		self.logger.info('Finished.')
-		self.logger.info('Considered LDAP objects: %(objects)d modifications: %(modifications)d errors: %(errors)d', self.stats)
-		self.logger.info('Logfile: %s', LOG_FILE)
+    def set_ldap_attr(self, obj_name, roles, dn, oc):
+        """
+        Set LDAP attribute.
 
-	def set_ldap_attr(self, obj_name, roles, dn, oc):
-		"""
-		Set LDAP attribute.
+        :param str obj_name: type of object (for printing a message)
+        :param list roles: list of strings of the form `x:y:z`
+        :param str dn: DN of object to change
+        :param str oc: objectClass that holds the ucsschoolRole attribute for this LDAP object
+        :return: None
+        """
+        assert isinstance(obj_name, string_types)
+        assert isinstance(roles, list)
+        assert isinstance(dn, string_types)
 
-		:param str obj_name: type of object (for printing a message)
-		:param list roles: list of strings of the form `x:y:z`
-		:param str dn: DN of object to change
-		:param str oc: objectClass that holds the ucsschoolRole attribute for this LDAP object
-		:return: None
-		"""
-		assert isinstance(obj_name, string_types)
-		assert isinstance(roles, list)
-		assert isinstance(dn, string_types)
-
-		self.stats['objects'] += 1
-		attr = lo.get(dn, attr=['objectClass', 'ucsschoolRole'])
-		if attr.get('ucsschoolRole') and not self.args.force:
-			self.logger.info('    Skipping %r, because already has role(s): %r', dn, attr['ucsschoolRole'])
-			return
-		if attr.get('ucsschoolRole'):
-			roles = list(set(roles) - set(attr['ucsschoolRole']))
-		if roles:
-			self.logger.info(
-				'    %s roles for %s at %r: %r%s...',
-				'Adding' if self.args.modify else 'Would be adding',
-				obj_name,
-				dn,
-				roles,
-				' (already has {!r})'.format(attr['ucsschoolRole']) if attr.get('ucsschoolRole') else ''
-			)
-		else:
-			self.logger.info('Nothing to do for %r. Already has role(s): %r', dn, attr['ucsschoolRole'])
-			return
-		if self.args.modify:
-			if oc in attr['objectClass']:
-				ml = [('ucsschoolRole', [], roles)]
-			else:
-				ml = [('objectClass', [], [oc]), ('ucsschoolRole', [], roles)]
-			self.logger.debug('    set_ldap_attr(obj_name=%r, roles=%r, dn=%r, oc=%r): ml=%r', obj_name, roles, dn, oc, ml)
-			try:
-				lo.modify(dn, ml)
-				self.stats['modifications'] += 1
-			except (ldap.LDAPError, ldapError) as exc:
-				self.logger.error('    ERROR: Failed setting roles %r for %s at %r: %s', roles, obj_name, dn, exc)
-				self.stats['errors'] += 1
+        self.stats["objects"] += 1
+        attr = lo.get(dn, attr=["objectClass", "ucsschoolRole"])
+        if attr.get("ucsschoolRole") and not self.args.force:
+            self.logger.info(
+                "    Skipping %r, because already has role(s): %r", dn, attr["ucsschoolRole"]
+            )
+            return
+        if attr.get("ucsschoolRole"):
+            roles = list(set(roles) - set(attr["ucsschoolRole"]))
+        if roles:
+            self.logger.info(
+                "    %s roles for %s at %r: %r%s...",
+                "Adding" if self.args.modify else "Would be adding",
+                obj_name,
+                dn,
+                roles,
+                " (already has {!r})".format(attr["ucsschoolRole"]) if attr.get("ucsschoolRole") else "",
+            )
+        else:
+            self.logger.info("Nothing to do for %r. Already has role(s): %r", dn, attr["ucsschoolRole"])
+            return
+        if self.args.modify:
+            if oc in attr["objectClass"]:
+                ml = [("ucsschoolRole", [], roles)]
+            else:
+                ml = [("objectClass", [], [oc]), ("ucsschoolRole", [], roles)]
+            self.logger.debug(
+                "    set_ldap_attr(obj_name=%r, roles=%r, dn=%r, oc=%r): ml=%r",
+                obj_name,
+                roles,
+                dn,
+                oc,
+                ml,
+            )
+            try:
+                lo.modify(dn, ml)
+                self.stats["modifications"] += 1
+            except (ldap.LDAPError, ldapError) as exc:
+                self.logger.error(
+                    "    ERROR: Failed setting roles %r for %s at %r: %s", roles, obj_name, dn, exc
+                )
+                self.stats["errors"] += 1
 
 
-if __name__ == '__main__':
-	um = UcsSchoolRolesMigration()
-	um.migrate()
+if __name__ == "__main__":
+    um = UcsSchoolRolesMigration()
+    um.migrate()

@@ -38,13 +38,7 @@ from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 from ..opa import OPAClient
 from ..token_auth import oauth2_scheme
 from ..urls import name_from_dn, url_to_dn, url_to_name
-from .base import (
-    APIAttributesMixin,
-    UcsSchoolBaseModel,
-    get_lib_obj,
-    get_logger,
-    udm_ctx,
-)
+from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, get_logger, udm_ctx
 
 router = APIRouter()
 
@@ -87,16 +81,13 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
             request.url_for("get", class_name=kwargs["name"], school=obj.school)
         )
         kwargs["users"] = [
-            cls.scheme_and_quote(request.url_for("get", username=name_from_dn(dn)))
-            for dn in obj.users
+            cls.scheme_and_quote(request.url_for("get", username=name_from_dn(dn))) for dn in obj.users
         ]
         return kwargs
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
-        school_name = url_to_name(
-            request, "school", self.unscheme_and_unquote(kwargs["school"])
-        )
+        school_name = url_to_name(request, "school", self.unscheme_and_unquote(kwargs["school"]))
         kwargs["name"] = f"{school_name}-{self.name}"
         kwargs["users"] = [
             await url_to_dn(request, "user", self.unscheme_and_unquote(user))
@@ -112,9 +103,7 @@ class SchoolClassModel(SchoolClassCreateModel, APIAttributesMixin):
 class SchoolClassPatchDocument(BaseModel):
     name: str = None
     description: str = None
-    ucsschool_roles: List[str] = Field(
-        None, title="Roles of this object. Don't change if unsure."
-    )
+    ucsschool_roles: List[str] = Field(None, title="Roles of this object. Don't change if unsure.")
     users: List[HttpUrl] = None
 
     class Config(UcsSchoolBaseModel.Config):
@@ -141,9 +130,7 @@ class SchoolClassPatchDocument(BaseModel):
             res["ucsschool_roles"] = self.ucsschool_roles
         if self.users:
             res["users"] = [
-                await url_to_dn(
-                    request, "user", UcsSchoolBaseModel.unscheme_and_unquote(user)
-                )
+                await url_to_dn(request, "user", UcsSchoolBaseModel.unscheme_and_unquote(user))
                 for user in (self.users or [])
             ]  # this is expensive :/
         return res
@@ -249,18 +236,14 @@ async def create(
         )
     sc: SchoolClass = await school_class.as_lib_model(request)
     if await sc.exists(udm):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="School class exists."
-        )
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="School class exists.")
     else:
         try:
             await sc.create(udm)
         except (LibValidationError, CreateError) as exc:
             error_msg = f"Failed to create school class {sc!r}: {exc}"
             logger.exception(error_msg)
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
@@ -290,9 +273,7 @@ async def partial_update(
         )
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
-    for attr, new_value in (
-        await school_class.to_modify_kwargs(school, request)
-    ).items():
+    for attr, new_value in (await school_class.to_modify_kwargs(school, request)).items():
         current_value = getattr(sc_current, attr)
         if new_value != current_value:
             setattr(sc_current, attr, new_value)

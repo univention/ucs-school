@@ -20,8 +20,8 @@ except ImportError:
 
 import tempfile
 
-from faker import Faker
 import pytest
+from faker import Faker
 
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
@@ -60,7 +60,7 @@ must_run_in_container = pytest.mark.skipif(
 )
 
 
-def base_user(firstname, lastname):  # type: (str, str) ->  Dict[str, Any]
+def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
     return {
         "dn": "",
         "props": {
@@ -147,7 +147,7 @@ def base_user(firstname, lastname):  # type: (str, str) ->  Dict[str, Any]
     }
 
 
-def student_user():  # type: () ->  Dict[str, Any]
+def student_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
@@ -172,7 +172,7 @@ def student_user():  # type: () ->  Dict[str, Any]
     return user
 
 
-def exam_user():  # type: () -> Dict[str, Any]
+def exam_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
@@ -199,7 +199,7 @@ def exam_user():  # type: () -> Dict[str, Any]
     return user
 
 
-def teacher_user():  # type: () -> Dict[str, Any]
+def teacher_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
@@ -221,7 +221,7 @@ def teacher_user():  # type: () -> Dict[str, Any]
     return user
 
 
-def staff_user():  # type: () -> Dict[str, Any]
+def staff_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
@@ -243,7 +243,7 @@ def staff_user():  # type: () -> Dict[str, Any]
     return user
 
 
-def teacher_and_staff_user():  # type: () -> Dict[str, Any]
+def teacher_and_staff_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
@@ -284,15 +284,16 @@ all_user_role_objects = [
 all_user_roles_names = [role_student, role_teacher, role_staff, role_exam_user, "teacher_and_staff"]
 
 
-def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) -> str
+def filter_log_messages(logs: List[Tuple[str, int, str]], name: str) -> str:
     """
     get all log messages for logger with name
     """
     return "".join([m for n, _, m in logs if n == name])
 
 
-def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
-    # type: (Dict[str, Any], Any, str, str) -> None
+def check_logs(
+    dict_obj: Dict[str, Any], record_tuples: Any, public_logger_name: str, expected_msg: str
+) -> None:
     public_logs = filter_log_messages(record_tuples, public_logger_name)
     secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):

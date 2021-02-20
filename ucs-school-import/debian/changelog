@@ -1,3 +1,209 @@
+ucs-school-import (17.0.52) unstable; urgency=low
+
+  * Bug #52887: create directory for symlinks for log files if missing
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 10 Mar 2021 09:34:50 +0100
+
+ucs-school-import (17.0.51) unstable; urgency=low
+
+  * Bug #52458: fix ValueError raised by doctest (invalid option: '#')
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 16 Feb 2021 14:29:55 +0100
+
+ucs-school-import (17.0.50) unstable; urgency=low
+
+  * Bug #52458: fix ImportError after cleanup of imports
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 15 Feb 2021 14:14:01 +0100
+
+ucs-school-import (17.0.49) unstable; urgency=low
+
+  * Bug #52770: generate password for importhttpapi user/ldap including
+    special chars
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Feb 2021 14:26:37 +0100
+
+ucs-school-import (17.0.48) unstable; urgency=low
+
+  * Bug #52524: replace invalid chars in school_class names in all code paths
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Dec 2020 13:04:53 +0100
+
+ucs-school-import (17.0.47) unstable; urgency=medium
+
+  * Bug #51274: check length of server-name to not exceed 13 characters
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 15 Dec 2020 09:35:20 +0100
+
+ucs-school-import (17.0.46) unstable; urgency=low
+
+  * Bug #51938: only run example result hook if not in dry-run (or forced)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 29 Sep 2020 10:37:37 +0200
+
+ucs-school-import (17.0.45) unstable; urgency=low
+
+  * Bug #51941: add user import hook to pyhooks-available that logs users
+    current attributes before and/or after create/modify/move/delete
+    operations.
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Sep 2020 08:48:26 +0200
+
+ucs-school-import (17.0.44) unstable; urgency=low
+
+  * Bug #51301: use ucsschool.lib cli -> depend on new version
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:12:28 +0200
+
+ucs-school-import (17.0.43) unstable; urgency=low
+
+  * Bug #51301: use new ucsschool.lib cli to create Markplatz share
+  * Bug #51301: be more verbose in ou-post-create hook
+  * Bug #51301: set ucsschoolRole on all existing Marktplatz shares
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 21 Aug 2020 11:06:25 +0200
+
+ucs-school-import (17.0.42) unstable; urgency=low
+
+  * Bug #51724: run hook at pre-create and pre-modify steps
+  * Bug #51724: add note about UCRVs in Kelvin to hook
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 11 Aug 2020 12:55:39 +0200
+
+ucs-school-import (17.0.40) unstable; urgency=medium
+
+  * Bug #51724: Import hook for staff homedrives
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 31 Jul 2020 08:44:06 +0200
+
+ucs-school-import (17.0.39) unstable; urgency=medium
+
+  * Bug #51606: add case insensitive validation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 17 Jul 2020 16:32:54 +0200
+
+ucs-school-import (17.0.38) unstable; urgency=low
+
+  * Bug #51418: add missing school class removal, when user is removed from
+    school in the SiSoPi scenario
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Jul 2020 14:43:43 +0200
+
+ucs-school-import (17.0.37) unstable; urgency=low
+
+  * Bug #51545: make schema checking code more robust
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jul 2020 11:33:48 +0200
+
+ucs-school-import (17.0.36) unstable; urgency=low
+
+  * Bug #51536: add OX context creation hooks to pyhooks-available
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 19 Jun 2020 16:49:07 +0200
+
+ucs-school-import (17.0.35) unstable; urgency=low
+
+  * Bug #50894: include custom username counter variables in schema test
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 05 May 2020 14:57:40 +0200
+
+ucs-school-import (17.0.34) unstable; urgency=medium
+
+  * Bug #51190: fixed missing import
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Thu, 30 Apr 2020 11:32:04 +0200
+
+ucs-school-import (17.0.33) unstable; urgency=medium
+
+  * Bug #50894: added config check function
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Wed, 29 Apr 2020 16:56:09 +0200
+
+ucs-school-import (17.0.32) unstable; urgency=medium
+
+  * Bug #51003: fixed empty no-overwrite-attributes
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Mon, 27 Apr 2020 18:27:36 +0200
+
+ucs-school-import (17.0.31) unstable; urgency=medium
+
+  * Bug #45683: added checks for class name syntax
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Fri, 24 Apr 2020 16:20:05 +0200
+
+ucs-school-import (17.0.30) unstable; urgency=medium
+
+  * Bug #48138: add accepted birthday formats
+
+ -- Toni Uwe Roehmeyer <roehmeyer@univention.de>  Tue, 21 Apr 2020 14:51:11 +0200
+
+ucs-school-import (17.0.29) unstable; urgency=low
+
+  * Bug #50406: add missing dependency
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 20 Mar 2020 12:47:12 +0100
+
+ucs-school-import (17.0.28) unstable; urgency=low
+
+  * Bug #50406: ucs-school-purge-expired-users does not fail anymore in SiSoPi
+    scenario (without 'school' in configuration)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Mar 2020 13:14:01 +0100
+
+ucs-school-import (17.0.27) unstable; urgency=low
+
+  * Bug #50806: remove SiSoPi documentation from package, was moved to
+    official UMC-import manual
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 16 Mar 2020 17:22:41 +0100
+
+ucs-school-import (17.0.26) unstable; urgency=low
+
+  * Bug #50039: improve logging:
+  * create ucs-school-import-error.log
+  * log source of the import job
+  * log first line of the input file (CSV)
+  * create various symlinks in /var/log/univention/ucs-school-import
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 Mar 2020 20:16:43 +0100
+
+ucs-school-import (17.0.25) unstable; urgency=medium
+
+  * Bug #50707: add server/role varaiable to debian/ucs-school-import.univention-config-registry.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 11 Feb 2020 09:55:34 +0100
+
+ucs-school-import (17.0.24) unstable; urgency=medium
+
+  * Bug #50707: add comment to print statement
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 10 Feb 2020 13:52:09 +0100
+
+ucs-school-import (17.0.23) unstable; urgency=medium
+
+  * Bug #50707: run ucs-school-purge-expired-users only on DC master
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 07 Feb 2020 11:50:09 +0100
+
+ucs-school-import (17.0.22) unstable; urgency=low
+
+  * Bug #50689: do not purge OU name cache after every
+    creation/modification/move/deletion of an ImportUser
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 07 Jan 2020 11:31:26 +0100
+
+ucs-school-import (17.0.21) unstable; urgency=low
+
+  * Bug #50515: fix bad function calls leading to wrong logfile ownership
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 20 Dec 2019 11:14:04 +0100
+
+ucs-school-import (17.0.20) unstable; urgency=medium
+
+  * Bug #50280: enhancement of fix_ucs_school_slaves
+
+ -- Julia Bremer <bremer@univention.de>  Fri, 13 Dec 2019 15:10:37 +0100
+
 ucs-school-import (17.0.19) unstable; urgency=medium
 
   * Bug #50280: make fix_ucsschool_slaves fix the userAccountControl attribute

@@ -13,11 +13,11 @@
 #
 import tempfile
 
-from faker import Faker
 import pytest
+from faker import Faker
 
 try:
-    from typing import Any, Dict, Tuple, List
+    from typing import Any, Dict, List, Tuple
 except ImportError:
     pass
 from ucsschool.lib.models import validator as validator
@@ -50,7 +50,7 @@ container_computerrooms = SchoolSearchBase._containerRooms
 container_students = SchoolSearchBase._containerStudents
 
 
-def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) -> str
+def filter_log_messages(logs: List[Tuple[str, int, str]], name: str) -> str:
     """
     get all log messages for logger with name
     """
@@ -63,7 +63,7 @@ def mock_logger_file(mocker):
         mocker.patch.object(validator, "LOG_FILE", f.name)
 
 
-def base_group(name):  # type: (str) -> Dict[str, Any]
+def base_group(name: str) -> Dict[str, Any]:
     return {
         "dn": "",
         "props": {
@@ -93,7 +93,7 @@ def base_group(name):  # type: (str) -> Dict[str, Any]
     }
 
 
-def workgroup():  # type: () -> Dict[str, Any]
+def workgroup() -> Dict[str, Any]:
     name = "DEMOSCHOOL-{}".format(fake.user_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
@@ -102,7 +102,7 @@ def workgroup():  # type: () -> Dict[str, Any]
     return group
 
 
-def schoolclass():  # type: () -> Dict[str, Any]
+def schoolclass() -> Dict[str, Any]:
     name = "DEMOSCHOOL-{}".format(fake.user_name())
     group = base_group(name)
     group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
@@ -113,7 +113,7 @@ def schoolclass():  # type: () -> Dict[str, Any]
     return group
 
 
-def computer_room():  # type: () -> Dict[str, Any]
+def computer_room() -> Dict[str, Any]:
     name = "DEMOSCHOOL-{}".format(fake.user_name())
     group = base_group(name)
     group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
@@ -124,7 +124,7 @@ def computer_room():  # type: () -> Dict[str, Any]
     return group
 
 
-def base_share(name):  # type: (str) -> Dict[str, Any]
+def base_share(name: str) -> Dict[str, Any]:
     return {
         "dn": "",
         "props": {
@@ -191,7 +191,7 @@ def base_share(name):  # type: (str) -> Dict[str, Any]
     }
 
 
-def klassen_share():  # type: () -> Dict[str, Any]
+def klassen_share() -> Dict[str, Any]:
     name = "DEMOSCHOOL-{}".format(fake.user_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -200,7 +200,7 @@ def klassen_share():  # type: () -> Dict[str, Any]
     return share
 
 
-def workgroup_share():  # type: () -> Dict[str, Any]
+def workgroup_share() -> Dict[str, Any]:
     name = "DEMOSCHOOL-{}".format(fake.user_name())
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -209,7 +209,7 @@ def workgroup_share():  # type: () -> Dict[str, Any]
     return share
 
 
-def marktplatz_share():  # type: () -> Dict[str, Any]
+def marktplatz_share() -> Dict[str, Any]:
     name = "Marktplatz"
     share = base_share(name)
     share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
@@ -237,8 +237,9 @@ complete_role_matrix_ids = [
 ]
 
 
-def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
-    # type: (Dict[str, Any], Any, str, str) -> None
+def check_logs(
+    dict_obj: Dict[str, Any], record_tuples: Any, public_logger_name: str, expected_msg: str
+) -> None:
     public_logs = filter_log_messages(record_tuples, public_logger_name)
     secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):

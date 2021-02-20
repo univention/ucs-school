@@ -2,7 +2,7 @@ import random
 import sys
 import time
 from multiprocessing import Pool
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 import requests
 from six.moves.urllib.parse import unquote
@@ -33,9 +33,7 @@ BASE_URL = "http://10.200.3.66/univention/udm/"
 AUTH = ("Administrator", "univention")
 
 
-def random_string(
-    length=10, alpha=True, numeric=True
-):  # type: (Optional[int], Optional[bool], Optional[bool]) -> str
+def random_string(length: int = 10, alpha: bool = True, numeric: bool = True) -> str:  # nosec
     result = ""
     for _ in range(length):
         if alpha and numeric:
@@ -47,10 +45,10 @@ def random_string(
     return str(result)
 
 
-def random_name(length=10):  # type: (Optional[int]) -> str
+def random_name(length: int = 10) -> str:
     """
-	create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
-	"""
+    create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
+    """
     return (
         random_string(length=1, alpha=True, numeric=False)
         + random_string(length=(length - 2), alpha=True, numeric=True)
@@ -59,8 +57,8 @@ def random_name(length=10):  # type: (Optional[int]) -> str
 
 
 def create_objs_via_UDM_HTTP_API_sequential(
-    datas,
-):  # type: (List[Dict[str, str]]) -> List[str]
+    datas: List[Dict[str, str]],
+) -> List[str]:
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
     url = "{}/users/user/".format(BASE_URL)
     res = []
@@ -73,9 +71,7 @@ def create_objs_via_UDM_HTTP_API_sequential(
                 print("resp.json()={!r}".format(resp.json()))
             print("resp.headers={!r}".format(resp.headers))
             raise RuntimeError(
-                "User creation failed. (HTTP {}: {}).".format(
-                    resp.status_code, resp.reason
-                )
+                "User creation failed. (HTTP {}: {}).".format(resp.status_code, resp.reason)
             )
         obj_url = resp.headers["Location"]
         dn = unquote(obj_url.rsplit("/", 1)[-1])
@@ -108,21 +104,19 @@ def user_resource_kwargs(school):
     }
 
 
-def create_objs_via_UDM_HTTP_API_parallel(school, num, parallelism):
-    # type: (str, int, int) -> Tuple[float, List[str]]
+def create_objs_via_UDM_HTTP_API_parallel(
+    school: str, num: int, parallelism: int
+) -> Tuple[float, List[str]]:
     # create `parallelism` amount of processes each working on a `num / parallelism` long list
     assert num % parallelism == 0
     if parallelism == 1:
         t0 = time.time()
         dns = []
         for _ in range(num):
-            dns.extend(
-                create_objs_via_UDM_HTTP_API_sequential([user_resource_kwargs(school)])
-            )
+            dns.extend(create_objs_via_UDM_HTTP_API_sequential([user_resource_kwargs(school)]))
         return time.time() - t0, dns
     kwargs = [
-        [user_resource_kwargs(school) for i in range(int(num / parallelism))]
-        for j in range(parallelism)
+        [user_resource_kwargs(school) for i in range(int(num / parallelism))] for j in range(parallelism)
     ]
     pool = Pool(processes=parallelism)
     t0 = time.time()
@@ -136,7 +130,7 @@ def create_objs_via_UDM_HTTP_API_parallel(school, num, parallelism):
     return t1, dns
 
 
-def read_objs_via_UDM_HTTP_API(dns):  # type: (List[str]) -> None
+def read_objs_via_UDM_HTTP_API(dns: List[str]) -> None:
     headers = {"Accept": "application/json"}
     base_url = "{}/users/user/".format(BASE_URL)
     for dn in dns:
@@ -152,9 +146,7 @@ def read_objs_via_UDM_HTTP_API(dns):  # type: (List[str]) -> None
         assert resp.json()["dn"] == dn, "Wrong DN: {!r}".format(resp.json())
 
 
-def read_objs_via_UDM_HTTP_API_parallel(
-    dns, parallelism
-):  # type: (List[str], int) -> float
+def read_objs_via_UDM_HTTP_API_parallel(dns: List[str], parallelism: int) -> float:
     # create `parallelism` amount of processes each working on a `num / parallelism` long list
     assert len(dns) % parallelism == 0
     if parallelism == 1:
@@ -162,9 +154,7 @@ def read_objs_via_UDM_HTTP_API_parallel(
         for dn in dns:
             read_objs_via_UDM_HTTP_API([dn])
         return time.time() - t0
-    kwargs = [
-        dns[i : i + parallelism] for i in range(0, len(dns), parallelism)
-    ]  # type: List[List[str]]
+    kwargs: List[List[str]] = [dns[i : i + parallelism] for i in range(0, len(dns), parallelism)]
     pool = Pool(processes=parallelism)
     t0 = time.time()
     map_async_result = pool.map_async(read_objs_via_UDM_HTTP_API, kwargs)
@@ -174,7 +164,7 @@ def read_objs_via_UDM_HTTP_API_parallel(
     return res
 
 
-def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -> float
+def modify_objs_via_UDM_HTTP_API(school_dns: Tuple[str, List[str]]) -> float:
     school, dns = school_dns
     base_url = "{}/users/user/".format(BASE_URL)
     t_delta = 0.0
@@ -210,9 +200,7 @@ def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -
                 print("resp.json()={!r}".format(resp.json()))
             print("resp.headers={!r}".format(resp.headers))
             raise RuntimeError(
-                "Modification failed (HTTP {}: {}).".format(
-                    resp.status_code, resp.reason
-                )
+                "Modification failed (HTTP {}: {}).".format(resp.status_code, resp.reason)
             )
         resp = requests.get(obj_url, headers=headers, auth=AUTH)
         if resp.status_code != 200:
@@ -222,9 +210,7 @@ def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -
                 print("resp.json()={!r}".format(resp.json()))
             print("resp.headers={!r}".format(resp.headers))
             raise RuntimeError(
-                "Reading users failed (HTTP {}: {}).".format(
-                    resp.status_code, resp.reason
-                )
+                "Reading users failed (HTTP {}: {}).".format(resp.status_code, resp.reason)
             )
         obj_new = resp.json()
         assert obj_new["properties"]["firstname"] == data["properties"]["firstname"]
@@ -232,18 +218,16 @@ def modify_objs_via_UDM_HTTP_API(school_dns):  # type: (Tuple[str, List[str]]) -
     return t_delta
 
 
-def modify_objs_via_UDM_HTTP_API_parallel(
-    school, dns, parallelism
-):  # type: (str, List[str], int) -> float
+def modify_objs_via_UDM_HTTP_API_parallel(school: str, dns: List[str], parallelism: int) -> float:
     assert len(dns) % parallelism == 0
     if parallelism == 1:
         t0 = time.time()
         for dn in dns:
             modify_objs_via_UDM_HTTP_API((school, [dn]))
         return time.time() - t0
-    kwargs = [
+    kwargs: List[Tuple[str, List[str]]] = [
         (school, dns[i : i + parallelism]) for i in range(0, len(dns), parallelism)
-    ]  # type: List[Tuple[str, List[str]]]
+    ]
     pool = Pool(processes=parallelism)
     map_async_result = pool.map_async(modify_objs_via_UDM_HTTP_API, kwargs)
     results = map_async_result.get()
@@ -251,7 +235,7 @@ def modify_objs_via_UDM_HTTP_API_parallel(
     return sum(results)
 
 
-def delete_obj_via_UDM_HTTP_API(dns):  # type: (List[str]) -> None
+def delete_obj_via_UDM_HTTP_API(dns: List[str]) -> None:
     headers = {"Accept": "application/json"}
     for dn in dns:
         url = "{}/users/user/{}".format(BASE_URL, dn)
@@ -263,24 +247,18 @@ def delete_obj_via_UDM_HTTP_API(dns):  # type: (List[str]) -> None
                 print("resp.json()={!r}".format(resp.json()))
             print("resp.headers={!r}".format(resp.headers))
             raise RuntimeError(
-                "Deleting User failed. (HTTP {}: {}).".format(
-                    resp.status_code, resp.reason
-                )
+                "Deleting User failed. (HTTP {}: {}).".format(resp.status_code, resp.reason)
             )
 
 
-def delete_objs_via_UDM_HTTP_API_parallel(
-    dns, parallelism
-):  # type: (List[str], int) -> float
+def delete_objs_via_UDM_HTTP_API_parallel(dns: List[str], parallelism: int) -> float:
     assert len(dns) % parallelism == 0
     if parallelism == 1:
         t0 = time.time()
         for dn in dns:
             delete_obj_via_UDM_HTTP_API([dn])
         return time.time() - t0
-    kwargs = [
-        dns[i : i + parallelism] for i in range(0, len(dns), parallelism)
-    ]  # type: List[List[str]]
+    kwargs: List[List[str]] = [dns[i : i + parallelism] for i in range(0, len(dns), parallelism)]
     pool = Pool(processes=parallelism)
     t0 = time.time()
     map_async_result = pool.map_async(delete_obj_via_UDM_HTTP_API, kwargs)
@@ -290,13 +268,11 @@ def delete_objs_via_UDM_HTTP_API_parallel(
     return res
 
 
-def main():  # type: () -> None
+def main() -> None:
     print("Starting HTTP tests (parallelism={})...".format(PARALLELISM))
     print("Connection args: {!r} {!r}".format(BASE_URL, AUTH))
     print("Creating {} Users...".format(NUM_USERS))
-    t_1000_1, dns = create_objs_via_UDM_HTTP_API_parallel(
-        SCHOOL_OU, NUM_USERS, PARALLELISM
-    )
+    t_1000_1, dns = create_objs_via_UDM_HTTP_API_parallel(SCHOOL_OU, NUM_USERS, PARALLELISM)
     print("Sleeping 30s to let the system settle down...")
     time.sleep(30)
 

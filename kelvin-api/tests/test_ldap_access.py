@@ -49,11 +49,9 @@ async def test_ldap_access_props(temp_file_func, random_name):
     tmp_file2 = temp_file_func()
     txt2 = random_name()
     tmp_file2.write_text(txt2)
-    with patch.object(
-        ucsschool.kelvin.ldap_access, "CN_ADMIN_PASSWORD_FILE", tmp_file1
-    ), patch("ucsschool.kelvin.ldap_access.MACHINE_PASSWORD_FILE", tmp_file2), patch(
-        "ucsschool.kelvin.ldap_access._udm_kwargs", {}
-    ):
+    with patch.object(ucsschool.kelvin.ldap_access, "CN_ADMIN_PASSWORD_FILE", tmp_file1), patch(
+        "ucsschool.kelvin.ldap_access.MACHINE_PASSWORD_FILE", tmp_file2
+    ), patch("ucsschool.kelvin.ldap_access._udm_kwargs", {}):
         ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
         assert ldap_access.cn_admin == "cn=admin"
         assert txt1 == await ldap_access.cn_admin_password

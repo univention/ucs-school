@@ -34,199 +34,244 @@ structures of UCS@school 4.1 R2.
 # <http://www.gnu.org/licenses/>.
 
 import optparse
-import ldap
-import sys
 import pprint
+import sys
 
-from univention.admin import uldap, uexceptions
+import ldap
+import six
+
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.admin import uexceptions, uldap
 
-ldap_errors = (ldap.LDAPError, uexceptions.base,)
+ldap_errors = (
+    ldap.LDAPError,
+    uexceptions.base,
+)
 
 
 class MigrationFailed(Exception):
+    def __init__(self, errors):
+        super(MigrationFailed, self).__init__(errors)
+        self.errors = errors
 
-	def __init__(self, errors):
-		super(MigrationFailed, self).__init__(errors)
-		self.errors = errors
+    def _format(self):
+        yield "%d error(s) occurred" % (len(self.errors),)
+        for (etype, exc, _), dn in self.errors:
+            yield "%s: %s: %s" % (etype.__name__, dn, exc)
 
-	def _format(self):
-		yield '%d error(s) occurred' % (len(self.errors),)
-		for (etype, exc, _), dn in self.errors:
-			yield '%s: %s: %s' % (etype.__name__, dn, exc)
-
-	def __str__(self):
-		return '\n'.join(self._format())
+    def __str__(self):
+        return "\n".join(self._format())
 
 
 def migrate_users(lo, options):
-	errors = []
-	try:
-		schools = lo.search('objectClass=ucsschoolOrganizationalUnit', attr=['ou'])
-	except ldap_errors:
-		errors.append((sys.exc_info(), None))
-		raise MigrationFailed(errors)
+    errors = []
+    try:
+        schools = lo.search("objectClass=ucsschoolOrganizationalUnit", attr=["ou"])
+    except ldap_errors:
+        errors.append((sys.exc_info(), None))
+        raise MigrationFailed(errors)
 
-	for dn, attrs in schools:
-		school = attrs['ou'][0]
-		yield 'Migrating users of school %r' % (school,)
-		base = SchoolSearchBase([school], dn=dn)
+    for dn, attrs in schools:
+        school = attrs["ou"][0]
+        yield "Migrating users of school %r" % (school,)
+        base = SchoolSearchBase([school], dn=dn)
 
-		mapping = [
-			(base.students, ('ucsschoolType', 'ucsschoolStudent')),
-			(base.teachers, ('ucsschoolType', 'ucsschoolTeacher')),
-			(base.teachersAndStaff, ('ucsschoolType', 'ucsschoolTeacher', 'ucsschoolStaff')),
-			(base.staff, ('ucsschoolType', 'ucsschoolStaff')),
-			(base.admins, ('ucsschoolType', 'ucsschoolAdministrator', 'ucsschoolTeacher')),
-		]
-		for container, object_classes in mapping:
-			yield '\nMigrating users underneath of %r' % (container,)
-			if isinstance(object_classes, basestring):
-				object_classes = [object_classes]
-			try:
-				objects = lo.search(base=container, scope='one')
-			except uexceptions.noObject:
-				yield 'Container %r does not exists' % (container,)
-				continue
-			except ldap_errors:
-				errors.append((sys.exc_info(), container))
-				continue
-			for object_dn, object_attrs in objects:
-				old_schools = object_attrs.get('ucsschoolSchool', [])
-				old_object_classes = object_attrs.get('objectClass', [])
-				new_schools = set(old_schools) | set([school])
-				new_object_classes = set(old_object_classes) | set(object_classes)
-				if (set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes)):
-					yield '%r has already been converted.' % (object_dn,)
-					continue
-				yield 'Adding %r into school %r' % (object_dn, ', '.join(new_schools))
-				try:
-					modlist = [
-						('ucsschoolSchool', list(old_schools), list(new_schools)),
-						('objectClass', list(old_object_classes), list(new_object_classes))
-					]
-					if options.dryrun:
-						if options.verbose:
-							yield 'DRYRUN: DN=%r   modlist=\n%s' % (object_dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-						else:
-							yield 'DRYRUN: doing nothing'
-					else:
-						if options.verbose:
-							yield 'DN=%r   modlist=\n%s' % (object_dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-						lo.modify(object_dn, modlist)
-				except ldap_errors:
-					errors.append((sys.exc_info(), object_dn))
-	if errors:
-		raise MigrationFailed(errors)
+        mapping = [
+            (base.students, ("ucsschoolType", "ucsschoolStudent")),
+            (base.teachers, ("ucsschoolType", "ucsschoolTeacher")),
+            (base.teachersAndStaff, ("ucsschoolType", "ucsschoolTeacher", "ucsschoolStaff")),
+            (base.staff, ("ucsschoolType", "ucsschoolStaff")),
+            (base.admins, ("ucsschoolType", "ucsschoolAdministrator", "ucsschoolTeacher")),
+        ]
+        for container, object_classes in mapping:
+            yield "\nMigrating users underneath of %r" % (container,)
+            if isinstance(object_classes, six.string_types):
+                object_classes = [object_classes]
+            try:
+                objects = lo.search(base=container, scope="one")
+            except uexceptions.noObject:
+                yield "Container %r does not exists" % (container,)
+                continue
+            except ldap_errors:
+                errors.append((sys.exc_info(), container))
+                continue
+            for object_dn, object_attrs in objects:
+                old_schools = object_attrs.get("ucsschoolSchool", [])
+                old_object_classes = object_attrs.get("objectClass", [])
+                new_schools = set(old_schools) | set([school])
+                new_object_classes = set(old_object_classes) | set(object_classes)
+                if set(old_schools) == set(new_schools) and set(old_object_classes) == set(
+                    new_object_classes
+                ):
+                    yield "%r has already been converted." % (object_dn,)
+                    continue
+                yield "Adding %r into school %r" % (object_dn, ", ".join(new_schools))
+                try:
+                    modlist = [
+                        ("ucsschoolSchool", list(old_schools), list(new_schools)),
+                        ("objectClass", list(old_object_classes), list(new_object_classes)),
+                    ]
+                    if options.dryrun:
+                        if options.verbose:
+                            yield "DRYRUN: DN=%r   modlist=\n%s" % (
+                                object_dn,
+                                pprint.PrettyPrinter(indent=3).pformat(modlist),
+                            )
+                        else:
+                            yield "DRYRUN: doing nothing"
+                    else:
+                        if options.verbose:
+                            yield "DN=%r   modlist=\n%s" % (
+                                object_dn,
+                                pprint.PrettyPrinter(indent=3).pformat(modlist),
+                            )
+                        lo.modify(object_dn, modlist)
+                except ldap_errors:
+                    errors.append((sys.exc_info(), object_dn))
+    if errors:
+        raise MigrationFailed(errors)
 
 
 def migrate_admin_groups(lo, options):
-	errors = []
-	try:
-		schools = lo.search('objectClass=ucsschoolOrganizationalUnit', attr=['ou'])
-	except ldap_errors:
-		errors.append((sys.exc_info(), None))
-		raise MigrationFailed(errors)
+    errors = []
+    try:
+        schools = lo.search("objectClass=ucsschoolOrganizationalUnit", attr=["ou"])
+    except ldap_errors:
+        errors.append((sys.exc_info(), None))
+        raise MigrationFailed(errors)
 
-	for dn, attrs in schools:
-		school = attrs['ou'][0]
-		yield 'Migrating administrator group of school %r' % (school,)
-		base = SchoolSearchBase([school], dn=dn)
-		object_dn = 'cn=%s%s,%s' % (base.group_prefix_admins, school, base.globalGroupContainer)
-		try:
-			object_attrs = lo.get(object_dn, attr=['objectClass', 'ucsschoolSchool'])
-		except uexceptions.noObject:
-			yield 'ERROR: Group %r does not exists' % (object_dn,)
-			continue
-		except ldap_errors:
-			errors.append((sys.exc_info(), object_dn))
-			continue
+    for dn, attrs in schools:
+        school = attrs["ou"][0]
+        yield "Migrating administrator group of school %r" % (school,)
+        base = SchoolSearchBase([school], dn=dn)
+        object_dn = "cn=%s%s,%s" % (base.group_prefix_admins, school, base.globalGroupContainer)
+        try:
+            object_attrs = lo.get(object_dn, attr=["objectClass", "ucsschoolSchool"])
+        except uexceptions.noObject:
+            yield "ERROR: Group %r does not exists" % (object_dn,)
+            continue
+        except ldap_errors:
+            errors.append((sys.exc_info(), object_dn))
+            continue
 
-		old_schools = object_attrs.get('ucsschoolSchool', [])
-		old_object_classes = object_attrs.get('objectClass', [])
-		new_schools = set(old_schools) | set([school])
-		new_object_classes = set(old_object_classes) | set(['ucsschoolType', 'ucsschoolAdministratorGroup'])
-		if (set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes)):
-			yield '%r has already been converted.' % (object_dn,)
-			continue
-		yield 'Adding %r into school %r' % (object_dn, ', '.join(new_schools))
-		try:
-			modlist = [
-				('ucsschoolSchool', list(old_schools), list(new_schools)),
-				('objectClass', list(old_object_classes), list(new_object_classes))
-			]
-			if options.dryrun:
-				if options.verbose:
-					yield 'DRYRUN: DN=%r   modlist=\n%s' % (object_dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-				else:
-					yield 'DRYRUN: doing nothing'
-			else:
-				if options.verbose:
-					yield 'DN=%r   modlist=\n%s' % (object_dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-				lo.modify(object_dn, modlist)
-		except ldap_errors:
-			errors.append((sys.exc_info(), object_dn))
+        old_schools = object_attrs.get("ucsschoolSchool", [])
+        old_object_classes = object_attrs.get("objectClass", [])
+        new_schools = set(old_schools) | set([school])
+        new_object_classes = set(old_object_classes) | set(
+            ["ucsschoolType", "ucsschoolAdministratorGroup"]
+        )
+        if set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes):
+            yield "%r has already been converted." % (object_dn,)
+            continue
+        yield "Adding %r into school %r" % (object_dn, ", ".join(new_schools))
+        try:
+            modlist = [
+                ("ucsschoolSchool", list(old_schools), list(new_schools)),
+                ("objectClass", list(old_object_classes), list(new_object_classes)),
+            ]
+            if options.dryrun:
+                if options.verbose:
+                    yield "DRYRUN: DN=%r   modlist=\n%s" % (
+                        object_dn,
+                        pprint.PrettyPrinter(indent=3).pformat(modlist),
+                    )
+                else:
+                    yield "DRYRUN: doing nothing"
+            else:
+                if options.verbose:
+                    yield "DN=%r   modlist=\n%s" % (
+                        object_dn,
+                        pprint.PrettyPrinter(indent=3).pformat(modlist),
+                    )
+                lo.modify(object_dn, modlist)
+        except ldap_errors:
+            errors.append((sys.exc_info(), object_dn))
 
-	if errors:
-		raise MigrationFailed(errors)
+    if errors:
+        raise MigrationFailed(errors)
 
 
 def migrate_ous(lo, options):
-	errors = []
-	try:
-		schools = lo.search('objectClass=ucsschoolOrganizationalUnit', attr=['ou', 'displayName'])
-	except ldap_errors:
-		errors.append((sys.exc_info(), None))
-		raise MigrationFailed(errors)
+    errors = []
+    try:
+        schools = lo.search("objectClass=ucsschoolOrganizationalUnit", attr=["ou", "displayName"])
+    except ldap_errors:
+        errors.append((sys.exc_info(), None))
+        raise MigrationFailed(errors)
 
-	for dn, attrs in schools:
-		ou_name = attrs['ou'][0]
-		if attrs.get('displayName', [''])[0]:
-			yield '%r has already been converted' % (dn,)
-		else:
-			modlist = [('displayName', [], [ou_name])]
-			if options.dryrun:
-				if options.verbose:
-					yield 'DRYRUN: DN=%r   modlist=%s' % (dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-				else:
-					yield 'DRYRUN: doing nothing'
-			else:
-				if options.verbose:
-					yield 'DN=%r   modlist=%s' % (dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
-				try:
-					lo.modify(dn, modlist)
-				except ldap_errors:
-					errors.append((sys.exc_info(), dn))
-	if errors:
-		raise MigrationFailed(errors)
+    for dn, attrs in schools:
+        ou_name = attrs["ou"][0]
+        if attrs.get("displayName", [""])[0]:
+            yield "%r has already been converted" % (dn,)
+        else:
+            modlist = [("displayName", [], [ou_name])]
+            if options.dryrun:
+                if options.verbose:
+                    yield "DRYRUN: DN=%r   modlist=%s" % (
+                        dn,
+                        pprint.PrettyPrinter(indent=3).pformat(modlist),
+                    )
+                else:
+                    yield "DRYRUN: doing nothing"
+            else:
+                if options.verbose:
+                    yield "DN=%r   modlist=%s" % (dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
+                try:
+                    lo.modify(dn, modlist)
+                except ldap_errors:
+                    errors.append((sys.exc_info(), dn))
+    if errors:
+        raise MigrationFailed(errors)
 
 
 def main():
-	parser = optparse.OptionParser()
-	parser.add_option("-n", "--dry-run", dest="dryrun", default=False, action="store_true", help="perform a dry run")
-	parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="show LDAP modlist")
-	parser.add_option("--migrate-users", dest="migrate_users", default=False, action="store_true", help="migrate user objects")
-	parser.add_option("--migrate-admin-groups", dest="migrate_admin_groups", default=False, action="store_true", help="migrate OU admin group objects")
-	parser.add_option("--migrate-ous", dest="migrate_ous", default=False, action="store_true", help="migrate OU objects")
-	(options, _) = parser.parse_args()
+    parser = optparse.OptionParser()
+    parser.add_option(
+        "-n", "--dry-run", dest="dryrun", default=False, action="store_true", help="perform a dry run"
+    )
+    parser.add_option(
+        "-v", "--verbose", dest="verbose", default=False, action="store_true", help="show LDAP modlist"
+    )
+    parser.add_option(
+        "--migrate-users",
+        dest="migrate_users",
+        default=False,
+        action="store_true",
+        help="migrate user objects",
+    )
+    parser.add_option(
+        "--migrate-admin-groups",
+        dest="migrate_admin_groups",
+        default=False,
+        action="store_true",
+        help="migrate OU admin group objects",
+    )
+    parser.add_option(
+        "--migrate-ous",
+        dest="migrate_ous",
+        default=False,
+        action="store_true",
+        help="migrate OU objects",
+    )
+    (options, _) = parser.parse_args()
 
-	try:
-		lo, _ = uldap.getAdminConnection()
-	except IOError:
-		raise SystemExit('This script must be executed on a DC Master.')
-	try:
-		if options.migrate_ous:
-			for message in migrate_ous(lo, options):
-				print message
-		if options.migrate_users:
-			for message in migrate_users(lo, options):
-				print message
-		if options.migrate_admin_groups:
-			for message in migrate_admin_groups(lo, options):
-				print message
-	except MigrationFailed as exc:
-		raise SystemExit(str(exc))
+    try:
+        lo, _ = uldap.getAdminConnection()
+    except IOError:
+        raise SystemExit("This script must be executed on a DC Master.")
+    try:
+        if options.migrate_ous:
+            for message in migrate_ous(lo, options):
+                print(message)
+        if options.migrate_users:
+            for message in migrate_users(lo, options):
+                print(message)
+        if options.migrate_admin_groups:
+            for message in migrate_admin_groups(lo, options):
+                print(message)
+    except MigrationFailed as exc:
+        raise SystemExit(str(exc))
 
 
-if __name__ == '__main__':
-	main()
+if __name__ == "__main__":
+    main()

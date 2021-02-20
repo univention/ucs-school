@@ -14,7 +14,7 @@ It does not support creating, modifying or deleting roles.
 
 Resource representation
 -----------------------
-The following JSON is an example Roles resource in the `UCS\@school Kelvin REST API`::
+The following JSON is an example Roles resource in the *UCS\@school Kelvin REST API*::
 
     {
         "display_name": "staff",
@@ -72,7 +72,7 @@ The response body will be::
     ]
 
 
-Searching for roles (with ``?name=abc*`` or similar) is `not` supported.
+Searching for roles (with ``?name=abc*`` or similar) is *not* supported.
 
 Retrieve
 --------

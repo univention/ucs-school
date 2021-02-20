@@ -40,19 +40,19 @@
 # translation = localization.translation('univention/admin')
 # _ = translation.translate
 
-_ = lambda x: x
+_ = lambda x: x  # noqa: E731
 
 
 class base(Exception):
-	message = ''
+    message = ""
 
 
 class objectExists(base):
-	message = _('Object exists.')
+    message = _("Object exists.")
 
 
 class noObject(base):
-	message = _('No such object.')
+    message = _("No such object.")
 
 
 # class permissionDenied(base):
@@ -80,18 +80,21 @@ class noObject(base):
 
 
 class noProperty(base):
-	message = _('No such property.')
+    message = _("No such property.")
 
 
 class valueError(base):
-	pass
+    pass
 
 
 # class valueMayNotChange(valueError):
 # 	message = _('Value may not change.')
 
+
 class valueInvalidSyntax(valueError):
-	message = _('Invalid syntax.')
+    message = _("Invalid syntax.")
+
+
 #
 #
 # class valueRequired(valueError):
@@ -145,15 +148,15 @@ class valueInvalidSyntax(valueError):
 #
 #
 # class adGroupTypeChangeGlobalToUniversal(base):
-# 	message = _('The AD group type can not be changed from global to universal, because the group is member of another global group.')
+# 	message = _('The AD group type can not be changed from global to universal, because the group is member of another global group.')  # noqa: E501
 #
 #
 # class adGroupTypeChangeDomainLocalToUniversal(base):
-# 	message = _("The AD group type can not be changed from domain local to universal, because the group has another domain local group as member.")
+# 	message = _("The AD group type can not be changed from domain local to universal, because the group has another domain local group as member.")  # noqa: E501
 #
 #
 # class adGroupTypeChangeUniversalToGlobal(base):
-# 	message = _("The AD group type can not be changed from universal to global, because the group has another universal group as member.")
+# 	message = _("The AD group type can not be changed from universal to global, because the group has another universal group as member.")  # noqa: E501
 #
 #
 # class adGroupTypeChangeGlobalToDomainLocal(base):
@@ -177,11 +180,11 @@ class valueInvalidSyntax(valueError):
 #
 #
 # class invalidDhcpEntry(base):
-# 	message = _('The DHCP entry for this host should contain the zone DN, the IP address and the MAC address.')
+# 	message = _('The DHCP entry for this host should contain the zone DN, the IP address and the MAC address.')  # noqa: E501
 #
 #
 # class invalidDNSAliasEntry(base):
-# 	message = _('The DNS alias entry for this host should contain the zone name, the alias zone container DN and the alias.')
+# 	message = _('The DNS alias entry for this host should contain the zone name, the alias zone container DN and the alias.')  # noqa: E501
 #
 #
 # class InvalidDNS_Information(base):
@@ -189,7 +192,7 @@ class valueInvalidSyntax(valueError):
 
 
 class nextFreeIp(base):
-	message = _('Next IP address not found.')
+    message = _("Next IP address not found.")
 
 
 # class ipOverridesNetwork(base):
@@ -381,10 +384,10 @@ class nextFreeIp(base):
 
 
 class templateSyntaxError(base):
-	message = _('Invalid syntax in default value. Check these templates: %s.')
+    message = _("Invalid syntax in default value. Check these templates: %s.")
 
-	def __init__(self, templates):
-		self.templates = templates
+    def __init__(self, templates):
+        self.templates = templates
 
 
 # class nagiosTimeperiodUsed(base):
@@ -400,7 +403,7 @@ class templateSyntaxError(base):
 #
 #
 # class dnsAliasRecordExists(base):
-# 	message = _('The DNS forward entry could not be created. Please remove existing alias records or comparable DNS objects with the same name as this host from the forward zone.')
+# 	message = _('The DNS forward entry could not be created. Please remove existing alias records or comparable DNS objects with the same name as this host from the forward zone.')  # noqa: E501
 #
 #
 # class circularGroupDependency(base):

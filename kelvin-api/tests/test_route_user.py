@@ -100,10 +100,7 @@ async def compare_lib_api_user(  # noqa: C901
             for entry in value:
                 assert entry.split("/")[-1] in getattr(lib_user, key)
         elif key == "url":
-            assert (
-                api_user.unscheme_and_unquote(value)
-                == f"{url_fragment}/users/{lib_user.name}"
-            )
+            assert api_user.unscheme_and_unquote(value) == f"{url_fragment}/users/{lib_user.name}"
         elif key == "record_uid":
             assert value == udm_obj.props.ucsschoolRecordUID
         elif key == "source_uid":
@@ -114,10 +111,7 @@ async def compare_lib_api_user(  # noqa: C901
         elif key == "roles":
             api_roles = set([role.split("/")[-1] for role in value])
             lib_roles = set(
-                [
-                    SchoolUserRole.from_lib_role(role).value
-                    for role in lib_user.ucsschool_roles
-                ]
+                [SchoolUserRole.from_lib_role(role).value for role in lib_user.ucsschool_roles]
             )
             assert api_roles == lib_roles
         elif key == "birthday":
@@ -131,8 +125,7 @@ async def compare_lib_api_user(  # noqa: C901
             for school, classes in value.items():
                 assert school in lib_user.school_classes
                 assert set(classes) == set(
-                    kls.replace(f"{school}-", "")
-                    for kls in lib_user.school_classes[school]
+                    kls.replace(f"{school}-", "") for kls in lib_user.school_classes[school]
                 )
         else:
             assert value == getattr(lib_user, key)
@@ -161,9 +154,7 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
         elif attr == "lastname" and "sn" in ldap_obj:
             assert value == ldap_obj["sn"][0].decode("utf-8")
         elif attr == "school" and "ucsschoolSchool" in ldap_obj:
-            assert value.split("/")[-1] in [
-                s.decode("utf-8") for s in ldap_obj["ucsschoolSchool"]
-            ]
+            assert value.split("/")[-1] in [s.decode("utf-8") for s in ldap_obj["ucsschoolSchool"]]
         elif attr == "udm_properties":
             for k, v in json_resp["udm_properties"].items():
                 if k == "organisation" and "o" in ldap_obj:
@@ -180,9 +171,7 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
 
 
 @pytest.mark.asyncio
-async def test_search_no_filter(
-    auth_header, url_fragment, create_random_users, udm_kwargs
-):
+async def test_search_no_filter(auth_header, url_fragment, create_random_users, udm_kwargs):
     users = await create_random_users(
         {"student": 2, "teacher": 2, "staff": 2, "teacher_and_staff": 2}, disabled=False
     )
@@ -254,9 +243,9 @@ async def test_search_filter(  # noqa: C901
     user = (await create_random_users({role: 1}, **create_kwargs))[0]
     school = user.school.rsplit("/", 1)[-1]
     async with UDM(**udm_kwargs) as udm:
-        import_user: ImportUser = (
-            await ImportUser.get_all(udm, school, filter_str=f"uid={user.name}")
-        )[0]
+        import_user: ImportUser = (await ImportUser.get_all(udm, school, filter_str=f"uid={user.name}"))[
+            0
+        ]
         assert user.name == import_user.name
         assert import_user.role_sting == role  # TODO: add 'r' when #47210 is fixed
         if filter_param == "school":
@@ -315,11 +304,7 @@ async def test_search_filter_udm_properties(
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
     elif filter_param == "phone":
         filter_value = random_name()
-        create_kwargs = {
-            "udm_properties": {
-                filter_param: [random_name(), filter_value, random_name()]
-            }
-        }
+        create_kwargs = {"udm_properties": {filter_param: [random_name(), filter_value, random_name()]}}
     else:
         create_kwargs = {}
     role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
@@ -338,10 +323,7 @@ async def test_search_filter_udm_properties(
                 create_kwargs["udm_properties"][filter_param]
             )
         else:
-            assert (
-                udm_user.props[filter_param]
-                == create_kwargs["udm_properties"][filter_param]
-            )
+            assert udm_user.props[filter_param] == create_kwargs["udm_properties"][filter_param]
         params = {filter_param: filter_value}
         response = requests.get(
             f"{url_fragment}/users",
@@ -356,9 +338,7 @@ async def test_search_filter_udm_properties(
         api_user = api_users[user.name]
         created_value = api_user.udm_properties[filter_param]
         if filter_param == "phone":
-            assert set(created_value) == set(
-                create_kwargs["udm_properties"][filter_param]
-            )
+            assert set(created_value) == set(create_kwargs["udm_properties"][filter_param])
         else:
             assert created_value == filter_value
         await compare_lib_api_user(import_user, api_user, udm, url_fragment)
@@ -368,15 +348,11 @@ async def test_search_filter_udm_properties(
 
 
 @pytest.mark.asyncio
-async def test_search_user_without_firstname(
-    auth_header, url_fragment, create_random_users, udm_kwargs
-):
+async def test_search_user_without_firstname(auth_header, url_fragment, create_random_users, udm_kwargs):
     role = random.choice(("student", "teacher", "staff", "teacher_and_staff"))
     user = (await create_random_users({role: 1}))[0]
     async with UDM(**udm_kwargs) as udm:
-        lib_user = (
-            await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}")
-        )[0]
+        lib_user = (await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={user.name}"))[0]
         assert lib_user.firstname
         response = requests.get(
             f"{url_fragment}/users",
@@ -404,15 +380,11 @@ async def test_search_user_without_firstname(
 
 
 @pytest.mark.asyncio
-async def test_search_returns_no_exam_user(
-    auth_header, url_fragment, create_exam_user, udm_kwargs
-):
+async def test_search_returns_no_exam_user(auth_header, url_fragment, create_exam_user, udm_kwargs):
     exam_user = await create_exam_user()
     school = exam_user.school.split("/")[-1]
     async with UDM(**udm_kwargs) as udm:
-        lib_user: User = (
-            await User.get_all(udm, school, filter_str=f"uid={exam_user.name}")
-        )[0]
+        lib_user: User = (await User.get_all(udm, school, filter_str=f"uid={exam_user.name}"))[0]
         assert lib_user.name == exam_user.name
         assert lib_user.school == school
         assert lib_user.ucsschool_roles == exam_user.ucsschool_roles
@@ -426,11 +398,7 @@ async def test_search_returns_no_exam_user(
         assert response.status_code == 200, (response.reason, response.content)
         json_resp = response.json()
         assert not any(u["name"] == exam_user.name for u in json_resp)
-        assert not any(
-            role.startswith("exam")
-            for user in json_resp
-            for role in user["ucsschool_roles"]
-        )
+        assert not any(role.startswith("exam") for user in json_resp for role in user["ucsschool_roles"])
 
 
 @pytest.mark.asyncio
@@ -458,9 +426,7 @@ async def test_get(
         lib_users = await ImportUser.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
-        response = requests.get(
-            f"{url_fragment}/users/{user.name}", headers=auth_header
-        )
+        response = requests.get(f"{url_fragment}/users/{user.name}", headers=auth_header)
         assert response.status_code == 200, response.reason
         json_resp = response.json()
         assert all(
@@ -515,15 +481,11 @@ async def test_get_empty_udm_properties_are_returned(
 
 
 @pytest.mark.asyncio
-async def test_get_returns_exam_user(
-    auth_header, url_fragment, create_exam_user, udm_kwargs
-):
+async def test_get_returns_exam_user(auth_header, url_fragment, create_exam_user, udm_kwargs):
     exam_user = await create_exam_user()
     school = exam_user.school.split("/")[-1]
     async with UDM(**udm_kwargs) as udm:
-        lib_user: User = (
-            await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={exam_user.name}")
-        )[0]
+        lib_user: User = (await User.get_all(udm, "DEMOSCHOOL", filter_str=f"uid={exam_user.name}"))[0]
         assert lib_user.name == exam_user.name
         assert lib_user.school == school
         assert lib_user.ucsschool_roles == exam_user.ucsschool_roles
@@ -558,9 +520,7 @@ async def test_create(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
-    )
+    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
     title = random_name()
     r_user.udm_properties["title"] = title
     phone = [random_name(), random_name()]
@@ -602,13 +562,8 @@ async def test_create(
             assert user_udm.props.profilepath is None
             assert user_udm.props.sambahome is None
         else:
-            assert (
-                user_udm.props.profilepath
-                == r"%LOGONSERVER%\%USERNAME%\windows-profiles\default"
-            )
-            school = await School.from_dn(
-                School.cache(lib_users[0].school).dn, None, udm
-            )
+            assert user_udm.props.profilepath == r"%LOGONSERVER%\%USERNAME%\windows-profiles\default"
+            school = await School.from_dn(School.cache(lib_users[0].school).dn, None, udm)
             home_share_file_server = school.home_share_file_server
             assert (
                 home_share_file_server
@@ -635,9 +590,7 @@ async def test_create_without_username(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(
-        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
-    )
+    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
     data = r_user.json(exclude={"name"})
     assert "'name'" not in data
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
@@ -832,9 +785,9 @@ async def test_put(
     assert len(lib_users) == 1
     await check_password(lib_users[0].dn, user.password)
     print("OK: can login with old password")
-    new_user_data = (
-        await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict(exclude={"name", "record_uid", "source_uid"})
+    new_user_data = (await create_random_user_data(roles=user.roles, disabled=False)).dict(
+        exclude={"name", "record_uid", "source_uid"}
+    )
     title = random_name()
     phone = [random_name(), random_name()]
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
@@ -875,17 +828,15 @@ async def test_put_with_password_hashes(
     udm_kwargs,
 ):
     role = random.choice(USER_ROLES)
-    user = (
-        await create_random_users({role.name: 1}, disabled=False, school_classes={})
-    )[0]
+    user = (await create_random_users({role.name: 1}, disabled=False, school_classes={}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
     assert len(lib_users) == 1
     await check_password(lib_users[0].dn, user.password)
     print("OK: can login with old password")
-    new_user_data = (
-        await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict(exclude={"name", "password", "record_uid", "source_uid"})
+    new_user_data = (await create_random_user_data(roles=user.roles, disabled=False)).dict(
+        exclude={"name", "password", "record_uid", "source_uid"}
+    )
     for key in ("name", "password", "record_uid", "source_uid"):
         assert key not in new_user_data
     modified_user = UserCreateModel(**{**user.dict(), **new_user_data})
@@ -935,13 +886,11 @@ async def test_patch(
         assert len(lib_users) == 1
     await check_password(lib_users[0].dn, user.password)
     print("OK: can login with old password")
-    new_user_data = (
-        await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict(exclude={"name", "record_uid", "source_uid"})
+    new_user_data = (await create_random_user_data(roles=user.roles, disabled=False)).dict(
+        exclude={"name", "record_uid", "source_uid"}
+    )
     new_user_data["birthday"] = str(new_user_data["birthday"])
-    for key in random.sample(
-        new_user_data.keys(), random.randint(1, len(new_user_data.keys()))
-    ):
+    for key in random.sample(new_user_data.keys(), random.randint(1, len(new_user_data.keys()))):
         del new_user_data[key]
     title = random_name()
     phone = [random_name(), random_name()]
@@ -983,17 +932,15 @@ async def test_patch_with_password_hashes(
     udm_kwargs,
 ):
     role = random.choice(USER_ROLES)
-    user = (
-        await create_random_users({role.name: 1}, disabled=False, school_classes={})
-    )[0]
+    user = (await create_random_users({role.name: 1}, disabled=False, school_classes={}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
     await check_password(lib_users[0].dn, user.password)
     print("OK: can login with old password")
-    new_user_data = (
-        await create_random_user_data(roles=user.roles, disabled=False)
-    ).dict(exclude={"birthday", "name", "password", "record_uid", "source_uid"})
+    new_user_data = (await create_random_user_data(roles=user.roles, disabled=False)).dict(
+        exclude={"birthday", "name", "password", "record_uid", "source_uid"}
+    )
     password_new, password_new_hashes = await password_hash()
     new_user_data["kelvin_password_hashes"] = password_new_hashes.dict()
     print(f"PATCH new_user_data={new_user_data!r}.")
@@ -1019,9 +966,7 @@ async def test_patch_with_password_hashes(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id
-)
+@pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
 @pytest.mark.parametrize("method", ("patch", "put"))
 async def test_role_change(
     auth_header,
@@ -1093,10 +1038,9 @@ async def test_role_change(
         )
     assert response.status_code == 200, response.reason
     json_resp = response.json()
-    assert set(
-        UserCreateModel.unscheme_and_unquote(role_url)
-        for role_url in json_resp["roles"]
-    ) == set(roles_ulrs)
+    assert set(UserCreateModel.unscheme_and_unquote(role_url) for role_url in json_resp["roles"]) == set(
+        roles_ulrs
+    )
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={user.name}")
         assert len(lib_users) == 1
@@ -1202,9 +1146,7 @@ async def test_role_change_fails_for_student_missing_school_class_for_second_sch
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_delete(
-    auth_header, url_fragment, create_random_users, udm_kwargs, role: Role
-):
+async def test_delete(auth_header, url_fragment, create_random_users, udm_kwargs, role: Role):
     r_user = (await create_random_users({role.name: 1}))[0]
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
@@ -1253,9 +1195,9 @@ async def test_rename(
             json={"name": new_name},
         )
     elif method == "put":
-        user_data = (
-            await create_random_user_data(roles=[url_fragment, url_fragment])
-        ).dict(exclude={"roles"})
+        user_data = (await create_random_user_data(roles=[url_fragment, url_fragment])).dict(
+            exclude={"roles"}
+        )
         user = (await create_random_users({role.name: 1}, **user_data))[0]
         new_name = f"t.new.{random_name()}.{random_name()}"
         old_data = user.dict(exclude={"name"})
@@ -1265,9 +1207,7 @@ async def test_rename(
             headers=auth_header,
             data=modified_user.json(),
         )
-    assert (
-        response.status_code == 200
-    ), f"{response.reason} -- {response.content[:4096]}"
+    assert response.status_code == 200, f"{response.reason} -- {response.content[:4096]}"
     api_user = UserModel(**response.json())
     assert api_user.name == new_name
     async with UDM(**udm_kwargs) as udm:
@@ -1299,9 +1239,7 @@ async def test_school_change(
         )
     )[0]
     async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(
-            udm, school1_attr["name"], f"username={user.name}"
-        )
+        lib_users = await User.get_all(udm, school1_attr["name"], f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         assert lib_users[0].school == school1_attr["name"]
@@ -1316,9 +1254,7 @@ async def test_school_change(
         assert set(lib_users[0].ucsschool_roles) == roles
         url = f"{url_fragment}/schools/{school2_attr['name']}"
         _url: SplitResult = urlsplit(url)
-        new_school_url = HttpUrl(
-            url, path=_url.path, scheme=_url.scheme, host=_url.netloc
-        )
+        new_school_url = HttpUrl(url, path=_url.path, scheme=_url.scheme, host=_url.netloc)
         if method == "patch":
             patch_data = dict(school=new_school_url, schools=[new_school_url])
             response = requests.patch(
@@ -1328,9 +1264,7 @@ async def test_school_change(
             )
         elif method == "put":
             old_data = user.dict(exclude={"school", "schools", "school_classes"})
-            modified_user = UserCreateModel(
-                school=new_school_url, schools=[new_school_url], **old_data
-            )
+            modified_user = UserCreateModel(school=new_school_url, schools=[new_school_url], **old_data)
             response = requests.put(
                 f"{url_fragment}/users/{user.name}",
                 headers=auth_header,
@@ -1338,9 +1272,7 @@ async def test_school_change(
             )
         json_response = response.json()
         assert response.status_code == 200, response.reason
-        async for udm_user in udm.get("users/user").search(
-            filter_format("uid=%s", (user.name,))
-        ):
+        async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
             udm_user_schools = udm_user.props.school
             assert udm_user_schools == [school2_attr["name"]]
         api_user = UserModel(**json_response)
@@ -1348,9 +1280,7 @@ async def test_school_change(
             api_user.unscheme_and_unquote(str(api_user.school))
             == f"{url_fragment}/schools/{school2_attr['name']}"
         )
-        lib_users = await User.get_all(
-            udm, school2_attr["name"], f"username={user.name}"
-        )
+        lib_users = await User.get_all(udm, school2_attr["name"], f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
         assert lib_users[0].school == school2_attr["name"]
@@ -1472,13 +1402,9 @@ async def test_change_password(
 
 
 @pytest.mark.asyncio
-async def test_set_password_hashes(
-    check_password, create_random_users, password_hash, udm_kwargs
-):
+async def test_set_password_hashes(check_password, create_random_users, password_hash, udm_kwargs):
     role = random.choice(USER_ROLES)
-    user = (
-        await create_random_users({role.name: 1}, disabled=False, school_classes={})
-    )[0]
+    user = (await create_random_users({role.name: 1}, disabled=False, school_classes={}))[0]
     assert user.disabled is False
     password_old = user.password
     ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()

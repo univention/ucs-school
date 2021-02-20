@@ -138,9 +138,7 @@ class LibModelHelperMixin(BaseModel):
             del kwargs["objectType"]
         kwargs["dn"] = kwargs.pop("$dn$")
         if obj.supports_school():
-            kwargs["school"] = cls.scheme_and_quote(
-                request.url_for("get", school_name=obj.school)
-            )
+            kwargs["school"] = cls.scheme_and_quote(request.url_for("get", school_name=obj.school))
         return kwargs
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:

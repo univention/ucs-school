@@ -129,8 +129,8 @@ all_context_types = (context_type_school, context_type_exam)
 
 
 def create_ucsschool_role_string(
-    role, context, context_type="school", school=""
-):  # type: (str, str, str, str) -> str
+    role: str, context: str, context_type: str = "school", school: str = ""
+) -> str:
     """
     This function takes a role, a context_type and a context to create a valid ucsschoolRole string.
     :param role: The role

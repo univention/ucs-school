@@ -34,9 +34,9 @@ msgid "Invalid Domain Controller name"
 msgstr "Ungültiger Domänencontrollername"
 
 #: models/attributes.py:167
-msgid "A valid NetBIOS hostname can not be longer than 12 characters."
+msgid "A valid NetBIOS hostname can not be longer than 13 characters."
 msgstr ""
-"Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
+"Ein gültiger NetBIOS Rechnername darf nicht länger als 13 Zeichen sein."
 
 #: models/attributes.py:169
 msgid ""
@@ -311,6 +311,10 @@ msgstr ""
 msgid "School class"
 msgstr "Schulklasse"
 
+#: models/share.py:46
+msgid "Work group"
+msgstr "Arbeitsgruppe"
+
 #: models/user.py:62
 msgid "Username"
 msgstr "Benutzername"
@@ -387,6 +391,10 @@ msgstr "Lehrer"
 #: models/user.py:632
 msgid "Staff"
 msgstr "Mitarbeiter"
+
+#: models/user.py:720
+msgid "School Administrator"
+msgstr "Schuladministrator"
 
 #: models/user.py:672
 msgid "Teacher and Staff"

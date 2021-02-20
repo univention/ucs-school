@@ -1,6 +1,6 @@
 import random
 import time
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import Dict, List, Tuple, Type, Union
 
 import requests
 
@@ -17,9 +17,7 @@ STR_ALPHA = "abcdefghijklmnopqrstuvwxyz"
 STR_ALPHANUM = STR_ALPHA + STR_NUMERIC
 
 
-def random_string(
-    length=10, alpha=True, numeric=True
-):  # type: (Optional[int], Optional[bool], Optional[bool]) -> str
+def random_string(length: int = 10, alpha: bool = True, numeric: bool = True) -> str:  # nosec
     result = ""
     for _ in range(length):
         if alpha and numeric:
@@ -31,10 +29,10 @@ def random_string(
     return str(result)
 
 
-def random_name(length=10):  # type: (Optional[int]) -> str
+def random_name(length: int = 10) -> str:
     """
-	create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
-	"""
+    create random name (1 ALPHA, 8 ALPHANUM, 1 ALPHA)
+    """
     return (
         random_string(length=1, alpha=True, numeric=False)
         + random_string(length=(length - 2), alpha=True, numeric=True)
@@ -44,6 +42,7 @@ def random_name(length=10):  # type: (Optional[int]) -> str
 
 try:
     from multiprocessing import Pool  # multiprocessing -> processes
+
     from univention.admin.uldap import access
 
     print("*** UDM via Python ***")
@@ -58,39 +57,38 @@ try:
     print("Connection args: {!r}".format(_lo_kwargs))
 except ImportError:
     from multiprocessing.dummy import Pool  # multiprocessing.dummy -> threading
-    from univention.admin.client import Module, Object, UDM
+
+    from univention.admin.client import UDM, Module, Object
     from univention.admin.modules import ConnectionData, get as udm_modules_get
     from univention.admin.uldap import position
 
     print("*** UDM via HTTP ***")
     API = "UDM via HTTP"
-    _lo_kwargs = dict(
-        uri=ConnectionData.uri(), username="Administrator", password="univention",
+    _lo_kwargs = dict(  # nosec
+        uri=ConnectionData.uri(),
+        username="Administrator",
+        password="univention",
     )
     print("Connection args: {!r}".format(_lo_kwargs))
 
 
-def get_lo():  # type: () -> Union[access, UDM]
+def get_lo() -> Union[access, UDM]:
     if API == "python-udm":
         return access(**_lo_kwargs)
     else:
         return UDM.http(**_lo_kwargs)
 
 
-def groups_kwargs(school):  # type: (str) -> Dict[str, str]
+def groups_kwargs(school: str) -> Dict[str, str]:
     return {
         "name": "{}-test{}".format(school, random_name()),
         "school": school,
         "description": random_name(20),
-        "users": [
-            "uid=demo_student,cn=schueler,cn=users,ou={},{}".format(
-                school, LDAP_BASE_DN
-            )
-        ],
+        "users": ["uid=demo_student,cn=schueler,cn=users,ou={},{}".format(school, LDAP_BASE_DN)],
     }
 
 
-def user_kwargs(school):  # type: (str) -> Dict[str, str]
+def user_kwargs(school: str) -> Dict[str, str]:
     return {
         "name": "test{}".format(random_name()),
         "school": school,
@@ -107,8 +105,9 @@ def user_kwargs(school):  # type: (str) -> Dict[str, str]
     }
 
 
-def create_ucsschool_objs_sequential(kls, num):
-    # type: (Type[UCSSchoolHelperAbstractClass], int) -> Tuple[float, List[str]]
+def create_ucsschool_objs_sequential(
+    kls: Type[UCSSchoolHelperAbstractClass], num: int
+) -> Tuple[float, List[str]]:
     if issubclass(kls, Group):
         kwargs = [groups_kwargs(SCHOOL_OU) for _ in range(num)]
     elif issubclass(kls, User):
@@ -126,10 +125,10 @@ def create_ucsschool_objs_sequential(kls, num):
 
 
 async def read_ucsschool_objs_sequential(
-    kls_name_school_dns,
-):  # type: (Tuple[str, str, List[str]]) -> float
+    kls_name_school_dns: Tuple[str, str, List[str]],
+) -> float:
     kls_name, school, dns = kls_name_school_dns
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     lo = get_lo()
     t0 = time.time()
     for dn in dns:
@@ -139,20 +138,16 @@ async def read_ucsschool_objs_sequential(
 
 
 async def modify_ucsschool_obj(
-    kls_name_school_dn,
-):  # type: (Tuple[str, str, str]) -> float
+    kls_name_school_dn: Tuple[str, str, str],
+) -> float:
     kls_name, school, dn = kls_name_school_dn
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     lo = get_lo()
     obj = await kls.from_dn(dn, school, lo)
     assert obj.name in dn
     if isinstance(obj, Group):
         obj.description = random_string(20)
-        obj.users = [
-            "uid=demo_admin,cn=schueler,cn=users,ou={},{}".format(
-                school, ucr["ldap/base"]
-            )
-        ]
+        obj.users = ["uid=demo_admin,cn=schueler,cn=users,ou={},{}".format(school, ucr["ldap/base"])]
     elif isinstance(obj, User):
         obj.firstname = random_name()
         obj.lastname = random_name()
@@ -174,8 +169,8 @@ async def modify_ucsschool_obj(
 
 
 def modify_ucsschool_objs_sequential(
-    kls_name_school_dns,
-):  # type: (Tuple[str, str, List[str]]) -> float
+    kls_name_school_dns: Tuple[str, str, List[str]],
+) -> float:
     kls_name, school, dns = kls_name_school_dns
     t_delta = 0.0
     for dn in dns:
@@ -183,8 +178,9 @@ def modify_ucsschool_objs_sequential(
     return t_delta
 
 
-async def delete_ucsschool_objs_sequential(kls, dns):
-    # type: (Type[UCSSchoolHelperAbstractClass], List[str]) -> float
+async def delete_ucsschool_objs_sequential(
+    kls: Type[UCSSchoolHelperAbstractClass], dns: List[str]
+) -> float:
     print("Deleting {} {} sequentially...".format(len(dns), kls.__name__))
     lo = get_lo()
     t0 = time.time()
@@ -194,11 +190,9 @@ async def delete_ucsschool_objs_sequential(kls, dns):
 
 
 def sequential_ucsschool_objs_tests(
-    kls,
-):  # type: (Type[UCSSchoolHelperAbstractClass]) -> None
-    print(
-        "Starting sequential tests create {} via ucsschool.lib...".format(kls.__name__)
-    )
+    kls: Type[UCSSchoolHelperAbstractClass],
+) -> None:
+    print("Starting sequential tests create {} via ucsschool.lib...".format(kls.__name__))
     dns_to_delete = []
     print("Creating 1 {} (1st time)...".format(kls.__name__))
     t_1_1, dns = create_ucsschool_objs_sequential(kls, 1)
@@ -289,18 +283,19 @@ def sequential_ucsschool_objs_tests(
 
 
 def create_ucsschool_lib_obj_via_ucsschool_lib(
-    kls_name_kwargs,
-):  # type: (Tuple[str, Dict[str, str]]) -> str
+    kls_name_kwargs: Tuple[str, Dict[str, str]],
+) -> str:
     kls_name, kwargs = kls_name_kwargs
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     lo = get_lo()
     sc = kls(**kwargs)
     sc.create(lo)
     return sc.dn
 
 
-def create_obj_parallel_via_ucsschool_lib(kls, num, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], int, int) -> Tuple[float, List[str]]
+def create_obj_parallel_via_ucsschool_lib(
+    kls: Type[UCSSchoolHelperAbstractClass], num: int, parallelism: int
+) -> Tuple[float, List[str]]:
     if issubclass(kls, Group):
         kwargs = [(kls.__name__, groups_kwargs(SCHOOL_OU)) for _ in range(num)]
     elif issubclass(kls, User):
@@ -309,15 +304,14 @@ def create_obj_parallel_via_ucsschool_lib(kls, num, parallelism):
         raise NotImplementedError("Unknown type {!r}.".format(kls))
     pool = Pool(processes=parallelism)
     t0 = time.time()
-    map_async_result = pool.map_async(
-        create_ucsschool_lib_obj_via_ucsschool_lib, kwargs
-    )
+    map_async_result = pool.map_async(create_ucsschool_lib_obj_via_ucsschool_lib, kwargs)
     results = map_async_result.get()
     return time.time() - t0, results
 
 
-def read_ucsschool_objs_parallel(kls, school, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], str, List[str], int) -> float
+def read_ucsschool_objs_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], school: str, dns: List[str], parallelism: int
+) -> float:
     kwargs = [(kls.__name__, school, [dn]) for dn in dns]
     pool = Pool(processes=parallelism)
     t0 = time.time()
@@ -326,8 +320,9 @@ def read_ucsschool_objs_parallel(kls, school, dns, parallelism):
     return time.time() - t0
 
 
-def modify_ucsschool_objs_parallel(kls, school, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], str, List[str], int) -> float
+def modify_ucsschool_objs_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], school: str, dns: List[str], parallelism: int
+) -> float:
     kwargs = [(kls.__name__, school, dn) for dn in dns]
     pool = Pool(processes=parallelism)
     t0 = time.time()
@@ -336,15 +331,16 @@ def modify_ucsschool_objs_parallel(kls, school, dns, parallelism):
     return time.time() - t0
 
 
-async def delete_obj_via_ucsschool_lib(kls_name_dn):  # type: (Tuple[str, str]) -> None
+async def delete_obj_via_ucsschool_lib(kls_name_dn: Tuple[str, str]) -> None:
     kls_name, dn = kls_name_dn
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     lo = get_lo()
     await kls.from_dn(dn, SCHOOL_OU, lo).remove(lo)
 
 
-def delete_objs_parallel_via_ucsschool_lib(kls, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], List[str], int) -> float
+def delete_objs_parallel_via_ucsschool_lib(
+    kls: Type[UCSSchoolHelperAbstractClass], dns: List[str], parallelism: int
+) -> float:
     print("Deleting {} {} in parallel...".format(len(dns), kls.__name__))
     kwargs = [(kls.__name__, dn) for dn in dns]
     pool = Pool(processes=parallelism)
@@ -355,8 +351,8 @@ def delete_objs_parallel_via_ucsschool_lib(kls, dns, parallelism):
 
 
 def parallel_ucsschool_objs_tests(
-    kls,
-):  # type: (Type[UCSSchoolHelperAbstractClass]) -> None
+    kls: Type[UCSSchoolHelperAbstractClass],
+) -> None:
     print(
         "Starting parallel tests create {} via ucsschool.lib (parallelism={}, {})...".format(
             kls.__name__, PARALLELISM, Pool.__module__
@@ -457,17 +453,11 @@ def groups_resource_kwargs(school):
             "name": "{}-test{}".format(school, random_name()),
             "description": "Text",
             "users": [
-                "uid=demo_student,cn=schueler,cn=users,ou={},{}".format(
-                    school, ucr["ldap/base"]
-                ),
-                "uid=demo_teacher,cn=lehrer,cn=users,ou={},{}".format(
-                    school, ucr["ldap/base"]
-                ),
+                "uid=demo_student,cn=schueler,cn=users,ou={},{}".format(school, ucr["ldap/base"]),
+                "uid=demo_teacher,cn=lehrer,cn=users,ou={},{}".format(school, ucr["ldap/base"]),
             ],
         },
-        "position": "cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
-            school, ucr["ldap/base"]
-        ),
+        "position": "cn=klassen,cn=schueler,cn=groups,ou={},{}".format(school, ucr["ldap/base"]),
         "superordinate": None,
         "options": {"posix": True, "samba": True},
         "policies": {},
@@ -500,10 +490,10 @@ def user_resource_kwargs(school):
 
 
 def create_obj_via_UDM_HTTP_API_sequential(
-    kls_data,
-):  # type: (Tuple[str, Dict[str, str]]) -> str
+    kls_data: Tuple[str, Dict[str, str]],
+) -> str:
     kls_name, data = kls_data
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
     if issubclass(kls, Group):
         url = "{}/groups/group/".format(_lo_kwargs["uri"])
@@ -526,9 +516,7 @@ def create_obj_via_UDM_HTTP_API_sequential(
     obj_url = resp.headers["Location"]
     # OK - now get the DN
     headers = {"Accept": "application/json"}
-    resp = requests.get(
-        obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"])
-    )
+    resp = requests.get(obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"]))
     if resp.status_code != 200:
         print("resp.status_code={!r}".format(resp.status_code))
         print("resp.text={!r}".format(resp.text))
@@ -538,8 +526,9 @@ def create_obj_via_UDM_HTTP_API_sequential(
     return resp.json()["dn"]
 
 
-def create_objs_via_UDM_HTTP_API_sequential(kls, num):
-    # type: (Type[UCSSchoolHelperAbstractClass], int) -> Tuple[float, List[str]]
+def create_objs_via_UDM_HTTP_API_sequential(
+    kls: Type[UCSSchoolHelperAbstractClass], num: int
+) -> Tuple[float, List[str]]:
     t0 = time.time()
     res = []
     for _ in range(num):
@@ -555,7 +544,7 @@ def create_objs_via_UDM_HTTP_API_sequential(kls, num):
     return time.time() - t0, res
 
 
-def read_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
+def read_obj_via_UDM_HTTP_API(kls_name_dn: Tuple[str, str]) -> None:
     kls_name, dn = kls_name_dn
     headers = {"Accept": "application/json"}
     if kls_name == "Group":
@@ -565,9 +554,7 @@ def read_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
     else:
         raise NotImplementedError("Unknown type {!r}.".format(kls_name))
     obj_url = base_url + dn
-    resp = requests.get(
-        obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"])
-    )
+    resp = requests.get(obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"]))
     if resp.status_code != 200:
         print("resp.status_code={!r}".format(resp.status_code))
         print("resp.text={!r}".format(resp.text))
@@ -578,8 +565,8 @@ def read_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
 
 
 def read_objs_via_UDM_HTTP_API_sequential(
-    kls_name_dns,
-):  # type: (Tuple[str, List[str]]) -> float
+    kls_name_dns: Tuple[str, List[str]],
+) -> float:
     kls_name, dns = kls_name_dns
     t0 = time.time()
     for dn in dns:
@@ -588,10 +575,10 @@ def read_objs_via_UDM_HTTP_API_sequential(
 
 
 def modify_obj_via_UDM_HTTP_API(
-    kls_name_school_dn,
-):  # type: (Tuple[str, str, str]) -> float
+    kls_name_school_dn: Tuple[str, str, str],
+) -> float:
     kls_name, school, dn = kls_name_school_dn
-    kls = globals()[kls_name]  # type: Type[UCSSchoolHelperAbstractClass]
+    kls: Type[UCSSchoolHelperAbstractClass] = globals()[kls_name]
     if kls_name == "Group":
         base_url = "{}/groups/group/".format(_lo_kwargs["uri"])
     elif kls_name == "Teacher":
@@ -600,9 +587,7 @@ def modify_obj_via_UDM_HTTP_API(
         raise NotImplementedError("Unknown type of obj {!r}.".format(kls_name))
     obj_url = base_url + dn
     headers = {"Accept": "application/json"}
-    resp = requests.get(
-        obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"])
-    )
+    resp = requests.get(obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"]))
     if resp.status_code != 200:
         print("resp.status_code={!r}".format(resp.status_code))
         print("resp.text={!r}".format(resp.text))
@@ -619,11 +604,7 @@ def modify_obj_via_UDM_HTTP_API(
     if kls_name == "Group":
         data["properties"] = {
             "description": random_string(20),
-            "users": [
-                "uid=demo_admin,cn=schueler,cn=users,ou={},{}".format(
-                    school, ucr["ldap/base"]
-                )
-            ],
+            "users": ["uid=demo_admin,cn=schueler,cn=users,ou={},{}".format(school, ucr["ldap/base"])],
         }
     elif kls_name == "Teacher":
         data["properties"] = {
@@ -646,9 +627,7 @@ def modify_obj_via_UDM_HTTP_API(
         print("resp.json()={!r}".format(resp.json()))
         print("resp.headers={!r}".format(resp.headers))
         raise RuntimeError("Modification failed.")
-    resp = requests.get(
-        obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"])
-    )
+    resp = requests.get(obj_url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"]))
     if resp.status_code != 200:
         print("resp.status_code={!r}".format(resp.status_code))
         print("resp.text={!r}".format(resp.text))
@@ -668,8 +647,8 @@ def modify_obj_via_UDM_HTTP_API(
 
 
 def modify_objs_via_UDM_HTTP_API_sequential(
-    kls_name_school_dns,
-):  # type: (Tuple[str, str, List[str]]) -> float
+    kls_name_school_dns: Tuple[str, str, List[str]],
+) -> float:
     kls_name, school, dns = kls_name_school_dns
     t_delta = 0.0
     for dn in dns:
@@ -677,7 +656,7 @@ def modify_objs_via_UDM_HTTP_API_sequential(
     return t_delta
 
 
-def delete_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
+def delete_obj_via_UDM_HTTP_API(kls_name_dn: Tuple[str, str]) -> None:
     kls_name, dn = kls_name_dn
     headers = {"Accept": "application/json"}
     if kls_name == "Group":
@@ -686,9 +665,7 @@ def delete_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
         url = "{}/users/user/{}".format(_lo_kwargs["uri"], dn)
     else:
         raise NotImplementedError("Unknown type {!r}.".format(kls_name))
-    resp = requests.delete(
-        url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"])
-    )
+    resp = requests.delete(url, headers=headers, auth=(_lo_kwargs["username"], _lo_kwargs["password"]))
     if resp.status_code != 200:
         print("resp.status_code={!r}".format(resp.status_code))
         print("resp.text={!r}".format(resp.text))
@@ -697,13 +674,10 @@ def delete_obj_via_UDM_HTTP_API(kls_name_dn):  # type: (Tuple[str, str]) -> None
         raise RuntimeError("Deleting {} failed.".format(kls_name))
 
 
-def delete_objs_via_UDM_HTTP_API_sequential(kls, dns):
-    # type: (Type[UCSSchoolHelperAbstractClass], List[str]) -> float
-    print(
-        "Deleting {} {} directly via HTTP (sequentially)...".format(
-            kls.__name__, len(dns)
-        )
-    )
+def delete_objs_via_UDM_HTTP_API_sequential(
+    kls: Type[UCSSchoolHelperAbstractClass], dns: List[str]
+) -> float:
+    print("Deleting {} {} directly via HTTP (sequentially)...".format(kls.__name__, len(dns)))
     t0 = time.time()
     for dn in dns:
         delete_obj_via_UDM_HTTP_API((kls.__name__, dn))
@@ -711,13 +685,9 @@ def delete_objs_via_UDM_HTTP_API_sequential(kls, dns):
 
 
 def direct_http_tests_sequential(
-    kls,
-):  # type: (Type[UCSSchoolHelperAbstractClass]) -> None
-    print(
-        "Starting direct, non-restful, sequential HTTP tests create {}...".format(
-            kls.__name__
-        )
-    )
+    kls: Type[UCSSchoolHelperAbstractClass],
+) -> None:
+    print("Starting direct, non-restful, sequential HTTP tests create {}...".format(kls.__name__))
     dns_to_delete = []
     print("Creating 1 {} (1st time)...".format(kls.__name__))
     t_1_1, dns = create_objs_via_UDM_HTTP_API_sequential(kls, 1)
@@ -776,11 +746,7 @@ def direct_http_tests_sequential(
     t_100_53 = modify_objs_via_UDM_HTTP_API_sequential((kls.__name__, SCHOOL_OU, dns3))
     time.sleep(5)
 
-    print(
-        "Results for direct,, non-restful, sequential HTTP tests for {}".format(
-            kls.__name__
-        )
-    )
+    print("Results for direct,, non-restful, sequential HTTP tests for {}".format(kls.__name__))
     print(
         "Seconds for creating   1 {}: {:02.2f} {:02.2f} {:02.2f}".format(
             kls.__name__, t_1_1, t_1_2, t_1_3
@@ -811,8 +777,9 @@ def direct_http_tests_sequential(
     print("({:02.2f} sec)".format(t_delta))
 
 
-def create_objs_via_UDM_HTTP_API_parallel(kls, school, num, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], str, int, int) -> Tuple[float, List[str]]
+def create_objs_via_UDM_HTTP_API_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], school: str, num: int, parallelism: int
+) -> Tuple[float, List[str]]:
     if issubclass(kls, Group):
         kwargs = [(kls.__name__, groups_resource_kwargs(school)) for _ in range(num)]
     elif issubclass(kls, User):
@@ -827,8 +794,9 @@ def create_objs_via_UDM_HTTP_API_parallel(kls, school, num, parallelism):
     return time.time() - t0, results
 
 
-def read_objs_via_UDM_HTTP_API_parallel(kls, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], List[str], int) -> float
+def read_objs_via_UDM_HTTP_API_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], dns: List[str], parallelism: int
+) -> float:
     kwargs = [(kls.__name__, dn) for dn in dns]
     pool = Pool(processes=parallelism)
     t0 = time.time()
@@ -837,8 +805,9 @@ def read_objs_via_UDM_HTTP_API_parallel(kls, dns, parallelism):
     return time.time() - t0
 
 
-def modify_objs_via_UDM_HTTP_API_parallel(kls, school, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], str, List[str], int) -> float
+def modify_objs_via_UDM_HTTP_API_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], school: str, dns: List[str], parallelism: int
+) -> float:
     kwargs = [(kls.__name__, school, dn) for dn in dns]
     pool = Pool(processes=parallelism)
     map_async_result = pool.map_async(modify_obj_via_UDM_HTTP_API, kwargs)
@@ -846,8 +815,9 @@ def modify_objs_via_UDM_HTTP_API_parallel(kls, school, dns, parallelism):
     return sum(results)
 
 
-def delete_objs_via_UDM_HTTP_API_parallel(kls, dns, parallelism):
-    # type: (Type[UCSSchoolHelperAbstractClass], List[str], int) -> float
+def delete_objs_via_UDM_HTTP_API_parallel(
+    kls: Type[UCSSchoolHelperAbstractClass], dns: List[str], parallelism: int
+) -> float:
     print("Deleting {} groups directly via HTTP (parallel)...".format(len(dns)))
     kwargs = [(kls.__name__, dn) for dn in dns]
     pool = Pool(processes=parallelism)
@@ -858,8 +828,8 @@ def delete_objs_via_UDM_HTTP_API_parallel(kls, dns, parallelism):
 
 
 def direct_http_tests_parallel(
-    kls,
-):  # type: (Type[UCSSchoolHelperAbstractClass]) -> None
+    kls: Type[UCSSchoolHelperAbstractClass],
+) -> None:
     print(
         "Starting direct, non-restful, parallel HTTP tests (parallelism={}, {})...".format(
             PARALLELISM, Pool.__module__
@@ -875,9 +845,7 @@ def direct_http_tests_parallel(
     dns_to_delete.extend(dns)
     time.sleep(2)
     print("Creating 100 {} (1st time)...".format(kls.__name__))
-    t_100_1, dns = create_objs_via_UDM_HTTP_API_parallel(
-        kls, SCHOOL_OU, 100, PARALLELISM
-    )
+    t_100_1, dns = create_objs_via_UDM_HTTP_API_parallel(kls, SCHOOL_OU, 100, PARALLELISM)
     dns_to_delete.extend(dns)
     time.sleep(2)
 
@@ -890,9 +858,7 @@ def direct_http_tests_parallel(
     dns_to_delete.extend(dns)
     time.sleep(2)
     print("Creating 100 {} (2nd time)...".format(kls.__name__))
-    t_100_2, dns = create_objs_via_UDM_HTTP_API_parallel(
-        kls, SCHOOL_OU, 100, PARALLELISM
-    )
+    t_100_2, dns = create_objs_via_UDM_HTTP_API_parallel(kls, SCHOOL_OU, 100, PARALLELISM)
     dns_to_delete.extend(dns)
     time.sleep(2)
 
@@ -901,15 +867,11 @@ def direct_http_tests_parallel(
     dns_to_delete.extend(dns1)
     time.sleep(2)
     print("Creating 10 {} (3rd time)...".format(kls.__name__))
-    t_10_3, dns2 = create_objs_via_UDM_HTTP_API_parallel(
-        kls, SCHOOL_OU, 10, PARALLELISM
-    )
+    t_10_3, dns2 = create_objs_via_UDM_HTTP_API_parallel(kls, SCHOOL_OU, 10, PARALLELISM)
     dns_to_delete.extend(dns2)
     time.sleep(2)
     print("Creating 100 {} (3rd time)...".format(kls.__name__))
-    t_100_3, dns3 = create_objs_via_UDM_HTTP_API_parallel(
-        kls, SCHOOL_OU, 100, PARALLELISM
-    )
+    t_100_3, dns3 = create_objs_via_UDM_HTTP_API_parallel(kls, SCHOOL_OU, 100, PARALLELISM)
     dns_to_delete.extend(dns3)
     time.sleep(5)
 
@@ -931,11 +893,7 @@ def direct_http_tests_parallel(
     t_100_53 = modify_objs_via_UDM_HTTP_API_parallel(kls, SCHOOL_OU, dns3, PARALLELISM)
     time.sleep(5)
 
-    print(
-        "Results for direct, non-restful, parallel HTTP tests for {}".format(
-            kls.__name__
-        )
-    )
+    print("Results for direct, non-restful, parallel HTTP tests for {}".format(kls.__name__))
     print(
         "Seconds for creating   1 {}: {:02.2f} {:02.2f} {:02.2f}".format(
             kls.__name__, t_1_1, t_1_2, t_1_3

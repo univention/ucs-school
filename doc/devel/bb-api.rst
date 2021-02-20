@@ -14,7 +14,7 @@ It provides HTTP resources:
 * Schools: create and read (no modify or delete) of school OUs.
 * Users: CRUD operations for ``ImportUser`` objects.
 
-The `user` resource provides objects with the same attributes as in the Python ``ImportUser`` class. The keys in the ``udm_properties`` attribute are however restricted to a configurable set of UDM property names.
+The ``user`` resource provides objects with the same attributes as in the Python ``ImportUser`` class. The keys in the ``udm_properties`` attribute are however restricted to a configurable set of UDM property names.
 
 The type of user (staff, student, teacher or teacher and staff) is determined by the combination of roles in the ``roles`` attribute.
 
@@ -61,7 +61,7 @@ Installation
 	$ service ucs-school-http-api-bb restart
 
 7. Check process (``service ucs-school-http-api-bb status``) and logs (see section below).
-8. Quick tests: see `Examples` section.
+8. Quick tests: see ``Examples`` section.
 
 
 Log files

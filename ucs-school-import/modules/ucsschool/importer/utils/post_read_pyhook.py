@@ -37,59 +37,62 @@ from .import_pyhook import ImportPyHook
 
 
 class PostReadPyHook(ImportPyHook):
-	"""
-	Hook that is called directly after data has been read from CSV/...
+    """
+    Hook that is called directly after data has been read from CSV/...
 
-	The base class' :py:meth:`__init__()` provides the following attributes:
+    The base class' :py:meth:`__init__()` provides the following attributes:
 
-	* self.dry_run     # whether hook is executed during a dry-run (1)
-	* self.lo          # LDAP connection object (2)
-	* self.logger      # Python logging instance
+    * self.dry_run     # whether hook is executed during a dry-run (1)
+    * self.lo          # LDAP connection object (2)
+    * self.logger      # Python logging instance
 
-	If multiple hook classes are found, hook functions with higher
-	priority numbers run before those with lower priorities. None disables
-	a function (no need to remove it / comment it out).
+    If multiple hook classes are found, hook functions with higher
+    priority numbers run before those with lower priorities. None disables
+    a function (no need to remove it / comment it out).
 
-	(1) Hooks are only executed during dry-runs, if the class attribute
-	:py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-	with `supports_dry_run == True` must not modify LDAP objects.
-	Therefore the LDAP connection object self.lo will be a read-only connection
-	during a dry-run.
-	(2) Read-write cn=admin connection in a real run, read-only cn=admin
-	connection during a dry-run.
-	"""
-	priority = {
-		'entry_read': None,
-		'all_entries_read': None,
-	}
+    (1) Hooks are only executed during dry-runs, if the class attribute
+    :py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
+    with `supports_dry_run == True` must not modify LDAP objects.
+    Therefore the LDAP connection object self.lo will be a read-only connection
+    during a dry-run.
+    (2) Read-write cn=admin connection in a real run, read-only cn=admin
+    connection during a dry-run.
+    """
 
-	def entry_read(self, entry_count, input_data, input_dict):
-		"""
-		Run code after an entry has been read and saved in
-		input_data and input_dict. This hook may alter input_data
-		and input_dict to modify the input data. This function may
-		raise the exception UcsSchoolImportSkipImportRecord to ignore
-		the read import data.
+    priority = {
+        "entry_read": None,
+        "all_entries_read": None,
+    }
 
-		:param int entry_count: index of the data entry (e.g. line of the CSV file)
-		:param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The input_data may be changed.
-		:param input_dict: input data mapped to column names. The input_dict may be changed.
-		:type input_dict: dict[str, str]
-		:return: None
-		:raises UcsSchoolImportSkipImportRecord: if an entry (e.g. a CSV line) should be skipped
-		"""
-		return None
+    def entry_read(self, entry_count, input_data, input_dict):
+        """
+        Run code after an entry has been read and saved in
+        input_data and input_dict. This hook may alter input_data
+        and input_dict to modify the input data. This function may
+        raise the exception UcsSchoolImportSkipImportRecord to ignore
+        the read import data.
 
-	def all_entries_read(self, imported_users, errors):
-		"""
-		Run code after all entries have been read. ImportUser objects for all
-		lines are passed to the hook. Also errors are passed. Please note that
-		the "entry_read" hook method may skip one or several input records, so
-		they may be missing in imported_users.
-		errors contains a list of catched errors/exceptions.
+        :param int entry_count: index of the data entry (e.g. line of the CSV file)
+        :param list[str] input_data: input data as raw as possible (e.g. raw CSV columns). The
+            input_data may be changed.
+        :param input_dict: input data mapped to column names. The input_dict may be changed.
+        :type input_dict: dict[str, str]
+        :return: None
+        :raises UcsSchoolImportSkipImportRecord: if an entry (e.g. a CSV line) should be skipped
+        """
+        return None
 
-		:param list[ImportUser] imported_users: list of ImportUser objects created from the input records
-		:param list[Exception] errors: list of exceptions that are caught during processing the input records
-		:return: None
-		"""
-		return None
+    def all_entries_read(self, imported_users, errors):
+        """
+        Run code after all entries have been read. ImportUser objects for all
+        lines are passed to the hook. Also errors are passed. Please note that
+        the "entry_read" hook method may skip one or several input records, so
+        they may be missing in imported_users.
+        errors contains a list of catched errors/exceptions.
+
+        :param list[ImportUser] imported_users: list of ImportUser objects created from the input records
+        :param list[Exception] errors: list of exceptions that are caught during processing the input
+            records
+        :return: None
+        """
+        return None

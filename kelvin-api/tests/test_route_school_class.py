@@ -75,19 +75,14 @@ class RequestFake:
             return f"{self.url_fragment}/users/{username}"
 
 
-async def compare_lib_api_obj(
-    lib_obj: SchoolClass, api_obj: SchoolClassModel, url_fragment
-):
+async def compare_lib_api_obj(lib_obj: SchoolClass, api_obj: SchoolClassModel, url_fragment):
     for attr, lib_value in lib_obj.to_dict().items():
         if attr == "$dn$":
             assert lib_value == api_obj.dn
         elif attr == "objectType":
             assert lib_value == "groups/group"
         elif attr == "school":
-            assert (
-                f"{url_fragment}/schools/{lib_value}"
-                == api_obj.unscheme_and_unquote(api_obj.school)
-            )
+            assert f"{url_fragment}/schools/{lib_value}" == api_obj.unscheme_and_unquote(api_obj.school)
         elif attr == "users":
             lib_users = {dn2username(lu) for lu in lib_value}
             api_users = {url2username(url) for url in api_obj.users}
@@ -130,9 +125,7 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     sc1_dn, sc1_attr = await new_school_class()
     sc2_dn, sc2_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
-        lib_classes: List[SchoolClass] = await SchoolClass.get_all(
-            udm, sc1_attr["school"]
-        )
+        lib_classes: List[SchoolClass] = await SchoolClass.get_all(udm, sc1_attr["school"])
     assert sc1_dn in [c.dn for c in lib_classes]
     assert sc2_dn in [c.dn for c in lib_classes]
     response = requests.get(
@@ -143,8 +136,7 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
     json_resp = response.json()
     assert response.status_code == 200
     api_classes = {
-        f"{sc1_attr['school']}-{data['name']}": SchoolClassModel(**data)
-        for data in json_resp
+        f"{sc1_attr['school']}-{data['name']}": SchoolClassModel(**data) for data in json_resp
     }
     assert sc1_dn in [ac.dn for ac in api_classes.values()]
     assert sc2_dn in [ac.dn for ac in api_classes.values()]
@@ -159,9 +151,7 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
 async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
     sc1_dn, sc1_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
-        lib_obj: SchoolClass = await SchoolClass.from_dn(
-            sc1_dn, sc1_attr["school"], udm
-        )
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
     response = requests.get(
@@ -171,8 +161,7 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
     json_resp = response.json()
     assert response.status_code == 200
     assert all(
-        attr in json_resp
-        for attr in ("description", "dn", "name", "ucsschool_roles", "url", "users")
+        attr in json_resp for attr in ("description", "dn", "name", "ucsschool_roles", "url", "users")
     )
     api_obj = SchoolClassModel(**json_resp)
     await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
@@ -199,17 +188,11 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
         assert response.status_code == 201
         api_obj = SchoolClassModel(**json_resp)
         assert lib_obj.dn == api_obj.dn
-        assert (
-            await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm)
-            is True
-        )
+        assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is True
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
         compare_ldap_json_obj(json_resp["dn"], json_resp, url_fragment)
         await SchoolClass(name=lib_obj.name, school=lib_obj.school).remove(udm)
-        assert (
-            await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm)
-            is False
-        )
+        assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is False
 
 
 async def change_operation(
@@ -221,9 +204,7 @@ async def change_operation(
     operation,
 ):
     assert operation in ("patch", "put")
-    users_data = await create_random_users(
-        {"student": 2, "teacher": 1, "teacher_and_staff": 1}
-    )
+    users_data = await create_random_users({"student": 2, "teacher": 1, "teacher_and_staff": 1})
     student_data = None
     for user_data in users_data:
         for role in user_data.roles:
@@ -236,31 +217,22 @@ async def change_operation(
     async with UDM(**udm_kwargs) as udm:
         students = [
             obj
-            async for obj in udm.get("users/user").search(
-                filter_format("uid=%s", (student_data.name,))
-            )
+            async for obj in udm.get("users/user").search(filter_format("uid=%s", (student_data.name,)))
         ]
         assert len(students) == 1
         first_student_dn = students[0].dn
         sc1_dn, sc1_attr = await new_school_class(users=[first_student_dn])
         # verify class exists in LDAP
-        lib_obj: SchoolClass = await SchoolClass.from_dn(
-            sc1_dn, sc1_attr["school"], udm
-        )
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
         assert lib_obj.description == sc1_attr["description"]
         assert lib_obj.users == [first_student_dn]
         # verify users exist in LDAP
         for user_data in users_data:
-            assert (
-                await User(name=user_data.name, school=user_data.school).exists(udm)
-                is True
-            )
+            assert await User(name=user_data.name, school=user_data.school).exists(udm) is True
         # execute PATCH/PUT
         change_data = {
             "description": fake.text(max_nb_chars=50),
-            "users": [
-                f"{url_fragment}/users/{user_data.name}" for user_data in users_data
-            ],
+            "users": [f"{url_fragment}/users/{user_data.name}" for user_data in users_data],
         }
         if operation == "put":
             change_data["name"] = sc1_attr["name"]
@@ -278,23 +250,17 @@ async def change_operation(
         api_obj = SchoolClassModel(**json_resp)
         assert api_obj.dn == sc1_dn
         assert api_obj.description == change_data["description"]
-        assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(
-            change_data["users"]
-        )
+        assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(change_data["users"])
         usernames_in_response = {url2username(url) for url in api_obj.users}
         # check LDAP content
-        lib_obj: SchoolClass = await SchoolClass.from_dn(
-            sc1_dn, sc1_attr["school"], udm
-        )
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
         assert lib_obj.description == change_data["description"]
         usernames_in_ldap = {dn2username(dn) for dn in lib_obj.users}
         assert usernames_in_response == usernames_in_ldap
 
 
 @pytest.mark.asyncio
-async def test_put(
-    auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
-):
+async def test_put(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users):
     await change_operation(
         auth_header,
         url_fragment,
@@ -306,9 +272,7 @@ async def test_put(
 
 
 @pytest.mark.asyncio
-async def test_patch(
-    auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users
-):
+async def test_patch(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users):
     await change_operation(
         auth_header,
         url_fragment,
@@ -323,9 +287,7 @@ async def test_patch(
 async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
     sc1_dn, sc1_attr = await new_school_class()
     async with UDM(**udm_kwargs) as udm:
-        lib_obj: SchoolClass = await SchoolClass.from_dn(
-            sc1_dn, sc1_attr["school"], udm
-        )
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
         assert await lib_obj.exists(udm) is True
     assert sc1_dn == lib_obj.dn
     url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"

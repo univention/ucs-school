@@ -32,33 +32,14 @@ import logging
 from collections.abc import Sequence
 from functools import lru_cache
 from operator import attrgetter
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic.main import Model
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, status
 from ldap.filter import escape_filter_chars
-from pydantic import (
-    BaseModel,
-    Field,
-    HttpUrl,
-    SecretStr,
-    ValidationError,
-    root_validator,
-    validator,
-)
+from pydantic import BaseModel, Field, HttpUrl, SecretStr, ValidationError, root_validator, validator
 
 from ucsschool.importer.configuration import ReadOnlyDict
 from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
@@ -77,14 +58,7 @@ from ucsschool.importer.models.import_user import (
     convert_to_teacher_and_staff,
 )
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
-from udm_rest_client import (
-    UDM,
-    APICommunicationError,
-    CreateError,
-    ModifyError,
-    MoveError,
-    UdmObject,
-)
+from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError, MoveError, UdmObject
 from univention.admin.filter import conjunction, expression
 
 from ..exceptions import UnknownUDMProperty
@@ -241,9 +215,7 @@ class UserBaseModel(UcsSchoolBaseModel):
 
 def not_both_password_and_hashes(cls, values):
     if values.get("password") and values.get("kelvin_password_hashes"):
-        raise ValueError(
-            "Only one of 'password' and 'kelvin_password_hashes' must be set."
-        )
+        raise ValueError("Only one of 'password' and 'kelvin_password_hashes' must be set.")
     return values
 
 
@@ -263,9 +235,7 @@ class UserCreateModel(UserBaseModel):
             raise ValueError("At least one of 'school' and 'schools' must be set.")
         return values
 
-    _not_both_password_and_hashes = root_validator(allow_reuse=True)(
-        not_both_password_and_hashes
-    )
+    _not_both_password_and_hashes = root_validator(allow_reuse=True)(not_both_password_and_hashes)
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         kwargs = await super()._as_lib_model_kwargs(request)
@@ -285,9 +255,9 @@ class UserCreateModel(UserBaseModel):
             else self.schools
         )
         kwargs["ucsschool_roles"] = [
-            SchoolUserRole(
-                url_to_name(request, "role", self.unscheme_and_unquote(role))
-            ).as_lib_role(school)
+            SchoolUserRole(url_to_name(request, "role", self.unscheme_and_unquote(role))).as_lib_role(
+                school
+            )
             for role in self.roles
             for school in kwargs["schools"]
         ]
@@ -295,8 +265,7 @@ class UserCreateModel(UserBaseModel):
         if not kwargs["email"]:
             del kwargs["email"]
         kwargs["roles"] = [
-            url_to_name(request, "role", self.unscheme_and_unquote(role_url))
-            for role_url in self.roles
+            url_to_name(request, "role", self.unscheme_and_unquote(role_url)) for role_url in self.roles
         ]
         return kwargs
 
@@ -306,21 +275,14 @@ class UserModel(UserBaseModel, APIAttributesMixin):
         ...
 
     @classmethod
-    async def _from_lib_model_kwargs(
-        cls, obj: ImportUser, request: Request, udm: UDM
-    ) -> Dict[str, Any]:
+    async def _from_lib_model_kwargs(cls, obj: ImportUser, request: Request, udm: UDM) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
         kwargs["schools"] = sorted(
-            cls.scheme_and_quote(request.url_for("get", school_name=school))
-            for school in obj.schools
+            cls.scheme_and_quote(request.url_for("get", school_name=school)) for school in obj.schools
         )
-        kwargs["url"] = cls.scheme_and_quote(
-            request.url_for("get", username=kwargs["name"])
-        )
+        kwargs["url"] = cls.scheme_and_quote(request.url_for("get", username=kwargs["name"]))
         udm_obj = await obj.get_udm_object(udm)
-        roles = sorted(
-            {SchoolUserRole.from_lib_role(role) for role in obj.ucsschool_roles}
-        )
+        roles = sorted({SchoolUserRole.from_lib_role(role) for role in obj.ucsschool_roles})
         kwargs["roles"] = [cls.scheme_and_quote(role.to_url(request)) for role in roles]
         kwargs["source_uid"] = udm_obj.props.ucsschoolSourceUID
         kwargs["record_uid"] = udm_obj.props.ucsschoolRecordUID
@@ -328,8 +290,7 @@ class UserModel(UserBaseModel, APIAttributesMixin):
             (
                 school,
                 sorted(
-                    kls.replace("{}-".format(school), "")
-                    for kls in kwargs["school_classes"][school]
+                    kls.replace("{}-".format(school), "") for kls in kwargs["school_classes"][school]
                 ),
             )
             for school in sorted(kwargs["school_classes"].keys())
@@ -355,9 +316,7 @@ class UserPatchModel(BasePatchModel):
     udm_properties: Dict[str, Any] = None
     kelvin_password_hashes: PasswordsHashes = None
 
-    _not_both_password_and_hashes = root_validator(allow_reuse=True)(
-        not_both_password_and_hashes
-    )
+    _not_both_password_and_hashes = root_validator(allow_reuse=True)(not_both_password_and_hashes)
 
     async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:  # noqa: C901
         kwargs = await super().to_modify_kwargs(request)
@@ -369,9 +328,7 @@ class UserPatchModel(BasePatchModel):
                         detail="No or empty list of school URLs in 'schools' property.",
                     )
                 kwargs["schools"] = [
-                    url_to_name(
-                        request, "school", UserCreateModel.unscheme_and_unquote(school)
-                    )
+                    url_to_name(request, "school", UserCreateModel.unscheme_and_unquote(school))
                     for school in value
                 ]
             elif key == "school":
@@ -406,9 +363,7 @@ class UserPatchModel(BasePatchModel):
                         detail="No or empty list of role URLs in 'roles' property.",
                     )
                 kwargs["roles"] = [
-                    url_to_name(
-                        request, "role", UserCreateModel.unscheme_and_unquote(role)
-                    )
+                    url_to_name(request, "role", UserCreateModel.unscheme_and_unquote(role))
                     for role in value
                 ]
         return kwargs
@@ -457,10 +412,7 @@ def search_query_params_to_udm_filter(  # noqa: C901
                 # prevent iterating over string, bool etc
                 values = [values]
             filter_parts.extend(
-                [
-                    expression(udm_name, escape_filter_chars(val).replace(r"\2a", "*"))
-                    for val in values
-                ]
+                [expression(udm_name, escape_filter_chars(val).replace(r"\2a", "*")) for val in values]
             )
     if filter_parts:
         return str(conjunction("&", filter_parts))
@@ -575,10 +527,7 @@ async def search(  # noqa: C901
         school_filter = ""
 
     query_params = all_query_params(request.query_params, locals(), _known_args)
-    filter_str = (
-        search_query_params_to_udm_filter(query_params, user_class, accepted_properties)
-        or ""
-    )
+    filter_str = search_query_params_to_udm_filter(query_params, user_class, accepted_properties) or ""
     if school_filter or filter_str:
         udm_filter = f"(&{user_class.type_filter}{school_filter}{filter_str})"
     else:
@@ -611,9 +560,7 @@ async def search(  # noqa: C901
         except ValidationError as exc:
             msg = f"Validation error when reading user {user.dn!r}: {exc!s}"
             logger.error(msg)
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=msg
-            )
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=msg)
         res.append(obj)
     return res
 
@@ -631,9 +578,7 @@ async def get(
 
     - **username**: name of the school user (required)
     """
-    async for udm_obj in udm.get("users/user").search(
-        f"uid={escape_filter_chars(username)}"
-    ):
+    async for udm_obj in udm.get("users/user").search(f"uid={escape_filter_chars(username)}"):
         break
     else:
         raise HTTPException(
@@ -702,11 +647,7 @@ async def create(
     """
     request_user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
-            SchoolUserRole(
-                url_to_name(
-                    request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)
-                )
-            )
+            SchoolUserRole(url_to_name(request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)))
             for role in request_user.roles
         ]
     )
@@ -722,9 +663,7 @@ async def create(
             detail="Not authorized to create this user.",
         )
     if await user.exists(udm):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="School user exists."
-        )
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="School user exists.")
 
     try:
         user.prepare_uids()
@@ -779,9 +718,7 @@ async def change_school(
     try:
         await user.change_school(new_school, udm)
     except (LibValidationError, MoveError) as exc:
-        error_msg = (
-            f"Moving {user!r} from OU {user.school!r} to OU {new_school!r}: {exc}"
-        )
+        error_msg = f"Moving {user!r} from OU {user.school!r} to OU {new_school!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -790,9 +727,7 @@ async def change_school(
     return await get_import_user(udm, user.dn)
 
 
-async def rename_user(
-    udm: UDM, logger: logging.Logger, user: ImportUser, new_name: str
-) -> ImportUser:
+async def rename_user(udm: UDM, logger: logging.Logger, user: ImportUser, new_name: str) -> ImportUser:
     if user.name == new_name:
         return user
     logger.info("Renaming %r to %r...", user, new_name)
@@ -834,9 +769,7 @@ async def change_roles(
     new_roles: List[str],
     new_school_classes: Dict[str, List[str]] = None,
 ) -> ImportUser:
-    target_cls = SchoolUserRole.get_lib_class(
-        [SchoolUserRole(role_s) for role_s in new_roles]
-    )
+    target_cls = SchoolUserRole.get_lib_class([SchoolUserRole(role_s) for role_s in new_roles])
     if set(user.roles) == set(target_cls.roles):
         return user
     converter_func = conversion_target_to_func[target_cls]
@@ -888,9 +821,7 @@ async def partial_update(  # noqa: C901
         configured in **kelvin.json** in **mapped_udm_properties**, see documentation)
     - **kelvin_password_hashes**: Password hashes to be stored unchanged in OpenLDAP
     """
-    async for udm_obj in udm.get("users/user").search(
-        f"uid={escape_filter_chars(username)}"
-    ):
+    async for udm_obj in udm.get("users/user").search(f"uid={escape_filter_chars(username)}"):
         break
     else:
         raise HTTPException(
@@ -917,9 +848,7 @@ async def partial_update(  # noqa: C901
         pass
     else:
         new_schools = to_change.get("schools", [])
-        user_current = await change_school(
-            udm, logger, user_current, new_school, new_schools
-        )
+        user_current = await change_school(udm, logger, user_current, new_school, new_schools)
 
     # 2. rename
     try:
@@ -936,9 +865,7 @@ async def partial_update(  # noqa: C901
     except KeyError:
         pass
     else:
-        user_current = await change_roles(
-            udm, logger, user_current, new_roles, new_school_classes
-        )
+        user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
 
     # 4. modify
     changed = False
@@ -1015,9 +942,7 @@ async def complete_update(  # noqa: C901
     - **kelvin_password_hashes**: Password hashes to be stored unchanged in
         OpenLDAP (optional)
     """
-    async for udm_obj in udm.get("users/user").search(
-        f"uid={escape_filter_chars(username)}"
-    ):
+    async for udm_obj in udm.get("users/user").search(f"uid={escape_filter_chars(username)}"):
         break
     else:
         raise HTTPException(
@@ -1026,11 +951,7 @@ async def complete_update(  # noqa: C901
         )
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
-            SchoolUserRole(
-                url_to_name(
-                    request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)
-                )
-            )
+            SchoolUserRole(url_to_name(request, "role", UcsSchoolBaseModel.unscheme_and_unquote(role)))
             for role in user.roles
         ]
     )
@@ -1039,9 +960,7 @@ async def complete_update(  # noqa: C901
     if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
-        request=dict(
-            method="PUT", path=["users", username], data=user_request.to_dict()
-        ),
+        request=dict(method="PUT", path=["users", username], data=user_request.to_dict()),
         target=import_user_to_opa(user_current),
     ):
         raise HTTPException(
@@ -1052,9 +971,7 @@ async def complete_update(  # noqa: C901
     # 1. move
     new_school = user_request.school
     new_schools = user_request.schools
-    user_current = await change_school(
-        udm, logger, user_current, new_school, new_schools
-    )
+    user_current = await change_school(udm, logger, user_current, new_school, new_schools)
 
     # 2. rename
     new_name = user_request.name
@@ -1063,9 +980,7 @@ async def complete_update(  # noqa: C901
     # 3. change roles
     new_roles = user_request.roles
     new_school_classes = user_request.school_classes
-    user_current = await change_roles(
-        udm, logger, user_current, new_roles, new_school_classes
-    )
+    user_current = await change_roles(udm, logger, user_current, new_roles, new_school_classes)
 
     # 4. modify
     changed = False
@@ -1115,9 +1030,7 @@ async def delete(
     """
     Delete a school user
     """
-    async for udm_obj in udm.get("users/user").search(
-        f"uid={escape_filter_chars(username)}"
-    ):
+    async for udm_obj in udm.get("users/user").search(f"uid={escape_filter_chars(username)}"):
         break
     else:
         raise HTTPException(

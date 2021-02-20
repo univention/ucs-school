@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -35,157 +34,160 @@ import re
 import shutil
 
 import six
+
 from univention.lib import locking
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 
 try:
-	import ConfigParser  # py2
+    import ConfigParser  # py2
 except ImportError:
-	from configparser import ConfigParser  # py3
+    from configparser import ConfigParser  # py3
 
-LESSONS_FILE = '/var/lib/ucs-school-lib/lessons.ini'
-LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
+LESSONS_FILE = "/var/lib/ucs-school-lib/lessons.ini"
+LESSONS_BACKUP = "/var/lib/ucs-school-lib/lessons.bak"
 
-_ = Translation('python-ucs-school').translate
+_ = Translation("python-ucs-school").translate
 
 
 class Lesson(object):
 
-	TIME_REGEX = re.compile(r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])')
+    TIME_REGEX = re.compile(r"^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])")
 
-	def __init__(self, name, begin, end):
-		self._name = self._check_name(name)
-		self._begin = self._parse_time(begin)
-		self._end = self._parse_time(end)
-		if self._end <= self._begin:
-			raise AttributeError(_('Overlapping lessons are not allowed'))
+    def __init__(self, name, begin, end):
+        self._name = self._check_name(name)
+        self._begin = self._parse_time(begin)
+        self._end = self._parse_time(end)
+        if self._end <= self._begin:
+            raise AttributeError(_("Overlapping lessons are not allowed"))
 
-	def _check_name(self, string):
-		if not isinstance(string, six.string_types):
-			raise TypeError('string expected')
-		for char in '\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f':
-			string = string.replace(char, '')
-		return string
+    def _check_name(self, string):
+        if not isinstance(string, six.string_types):
+            raise TypeError("string expected")
+        for char in (
+            "\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14"
+            "\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f"
+        ):
+            string = string.replace(char, "")
+        return string
 
-	def _parse_time(self, string):
-		if not isinstance(string, six.string_types):
-			raise TypeError('string expected')
-		m = Lesson.TIME_REGEX.match(string)
-		if not m:
-			raise AttributeError('invalid time format: %s' % string)
-		return datetime.time(*map(int, m.groups()))
+    def _parse_time(self, string):
+        if not isinstance(string, six.string_types):
+            raise TypeError("string expected")
+        m = Lesson.TIME_REGEX.match(string)
+        if not m:
+            raise AttributeError("invalid time format: %s" % string)
+        return datetime.time(*map(int, m.groups()))
 
-	@property
-	def name(self):
-		return self._name
+    @property
+    def name(self):
+        return self._name
 
-	@property
-	def begin(self):
-		return self._begin
+    @property
+    def begin(self):
+        return self._begin
 
-	@property
-	def end(self):
-		return self._end
+    @property
+    def end(self):
+        return self._end
 
-	def __cmp__(self, other):
-		if other.end < self.begin:
-			return 1
-		if other.begin > self.end:
-			return -1
-		return 0
+    def __cmp__(self, other):
+        if other.end < self.begin:
+            return 1
+        if other.begin > self.end:
+            return -1
+        return 0
 
-	def intersect(self, lesson):
-		return self.__cmp__(lesson) == 0
+    def intersect(self, lesson):
+        return self.__cmp__(lesson) == 0
 
-	def __str__(self):
-		return '%s: %s - %s' % (self._name, self._begin, self._end)
+    def __str__(self):
+        return "%s: %s - %s" % (self._name, self._begin, self._end)
 
 
 class SchoolLessons(ConfigParser.ConfigParser):
+    def __init__(self, filename=LESSONS_FILE):
+        ConfigParser.ConfigParser.__init__(self)
+        self._lessons = []
+        self.read(filename)
+        self.init()
 
-	def __init__(self, filename=LESSONS_FILE):
-		ConfigParser.ConfigParser.__init__(self)
-		self._lessons = []
-		self.read(filename)
-		self.init()
+    def init(self):
+        for sec in self.sections():
+            try:
+                lession = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
+                self.add(lession)
+            except (AttributeError, TypeError) as exc:
+                MODULE.warn("Lesson %s could not be added: %s" % (sec, str(exc)))
 
-	def init(self):
-		for sec in self.sections():
-			try:
-				l = Lesson(sec, self.get(sec, 'begin'), self.get(sec, 'end'))
-				self.add(l)
-			except (AttributeError, TypeError) as exc:
-				MODULE.warn('Lesson %s could not be added: %s' % (sec, str(exc)))
+    def remove(self, lesson):
+        if isinstance(lesson, Lesson):
+            lesson = lesson.name
 
-	def remove(self, lesson):
-		if isinstance(lesson, Lesson):
-			lesson = lesson.name
+        self._lessons[:] = [les for les in self._lessons if les.name != lesson]
 
-		self._lessons[:] = [l for l in self._lessons if l.name != lesson]
+    def add(self, lesson, begin=None, end=None):
+        if isinstance(lesson, six.string_types):
+            lesson = Lesson(lesson, begin, end)
 
-	def add(self, lesson, begin=None, end=None):
-		if isinstance(lesson, six.string_types):
-			lesson = Lesson(lesson, begin, end)
+        # ensure there is no intersection between the lessons
+        for item in self._lessons:
+            if lesson.intersect(item) or lesson.name == item.name:
+                raise AttributeError(_("Overlapping lessons are not allowed"))
 
-		# ensure there is no intersection between the lessons
-		for item in self._lessons:
-			if lesson.intersect(item) or lesson.name == item.name:
-				raise AttributeError(_('Overlapping lessons are not allowed'))
+        self._lessons.append(lesson)
 
-		self._lessons.append(lesson)
+    def save(self):
+        # remove all sections
+        for sec in self.sections():
+            self.remove_section(sec)
 
-	def save(self):
-		# remove all sections
-		for sec in self.sections():
-			self.remove_section(sec)
+        for lesson in self.lessons:
+            self.add_section(lesson.name)
+            self.set(lesson.name, "begin", str(lesson.begin))
+            self.set(lesson.name, "end", str(lesson.end))
 
-		for lesson in self.lessons:
-			self.add_section(lesson.name)
-			self.set(lesson.name, 'begin', str(lesson.begin))
-			self.set(lesson.name, 'end', str(lesson.end))
+        lock = locking.get_lock("ucs-school-lib-schoollessons")
+        with open(LESSONS_FILE, "w") as fd:
+            shutil.copyfile(LESSONS_FILE, LESSONS_BACKUP)
+            self.write(fd)
+        locking.release_lock(lock)
 
-		lock = locking.get_lock('ucs-school-lib-schoollessons')
-		with open(LESSONS_FILE, 'w') as fd:
-			shutil.copyfile(LESSONS_FILE, LESSONS_BACKUP)
-			self.write(fd)
-		locking.release_lock(lock)
+    @property
+    def lessons(self):
+        self._lessons.sort()
+        return list(self._lessons)
 
-	@property
-	def lessons(self):
-		self._lessons.sort()
-		return list(self._lessons)
+    @property
+    def current(self):
+        now = datetime.datetime.now().time()
 
-	@property
-	def current(self):
-		now = datetime.datetime.now().time()
+        # currently active lesson
+        for lesson in self.lessons:
+            if now >= lesson.begin and now <= lesson.end:
+                return lesson
 
-		# currently active lesson
-		for lesson in self.lessons:
-			if now >= lesson.begin and now <= lesson.end:
-				return lesson
+        return None
 
-		return None
+    @property
+    def next(self):
+        now = datetime.datetime.now().time()
 
-	@property
-	def next(self):
-		now = datetime.datetime.now().time()
+        # currently active lesson
+        for lesson in self.lessons:
+            if now < lesson.begin:
+                return lesson
 
-		# currently active lesson
-		for lesson in self.lessons:
-			if now < lesson.begin:
-				return lesson
+        return None
 
-		return None
+    @property
+    def previous(self):
+        now = datetime.datetime.now().time()
 
-	@property
-	def previous(self):
-		now = datetime.datetime.now().time()
+        self._lessons.sort(reverse=True)
+        # currently active lesson
+        for lesson in self._lessons:
+            if now > lesson.end:
+                return lesson
 
-		self._lessons.sort(reverse=True)
-		# currently active lesson
-		for lesson in self._lessons:
-			if now > lesson.end:
-				return lesson
-
-		return None
+        return None

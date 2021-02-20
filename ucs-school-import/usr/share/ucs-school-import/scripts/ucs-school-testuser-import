@@ -32,17 +32,19 @@ Tool to create lots of test users.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
 import datetime
 import logging
 import os.path
-from argparse import ArgumentParser, REMAINDER
 import subprocess
+import sys
+from argparse import REMAINDER, ArgumentParser
 
-from ucsschool.lib.models.utils import get_stream_handler
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
-from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter, TestUserCsvExporter
-
+from ucsschool.importer.writer.test_user_csv_exporter import (
+    HttpApiTestUserCsvExporter,
+    TestUserCsvExporter,
+)
+from ucsschool.lib.models.utils import get_stream_handler
 
 CONF_FILE_CMDLINE = "/usr/share/ucs-school-import/configs/ucs-school-testuser-import.json"
 CONF_FILE_HTTP = "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json"
@@ -51,109 +53,212 @@ CONF_FILE_TARGET_VAR = os.path.join(CONF_FILE_TARGET_DIR, "user_import.json")
 
 
 def parse_cmdline():
-	defaults = dict(
-		csvfile="test_users_%Y-%m-%d_%H:%M:%S.csv",
-		nostart=False,
-		httpapi=False,
-		staff=0,
-		students=0,
-		teachers=0,
-		staffteachers=0,
-		classes=0,
-		inclasses=2,
-		schools=2,
-		email=False,
-		verbose=False
-	)
-	parser = ArgumentParser(description="UCS@school import test users tool", epilog="When using --create-email-addresses either an email domain must be created in the corresponding " "UMC-module or must be configured on the command line with --set maildomain=...")
-	parser.add_argument("-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s].")
-	parser.add_argument("--httpapi", action="store_true", help="Create CSV suitable for importing via HTTP-API, implies -n and uses only first OU [default: %(default)s].")
-	parser.add_argument("-n", "--nostart", action="store_true", help="Disable automatic start of import script [default: %(default)s].")
-	parser.add_argument("--staff", dest="staff", type=int, help="Number of staff to create [default: %(default)s].")
-	parser.add_argument("--students", dest="students", type=int, help="Number of students to create [default: %(default)s].")
-	parser.add_argument("--teachers", dest="teachers", type=int, help="Number of teachers to create [default: %(default)s].")
-	parser.add_argument("--staffteachers", dest="staffteachers", type=int, help="Number of staff_and_teacher users to create [default: %(default)s].")
-	parser.add_argument("--classes", dest="classes", type=int, help="Number of classes to create [default: %(default)s].")
-	parser.add_argument("--inclasses", dest="inclasses", type=int, help="Number of classes to put users (except students) into per school [default: %(default)s].")
-	parser.add_argument("--schools", dest="schools", type=int, help="Number of schools to put users (except students) into (if #OUs > 1) [default: %(default)s].")
-	parser.add_argument("--create-email-addresses", dest="email", action="store_true", help="Create email addresses for users [default: %(default)s].")
-	parser.add_argument("-v", "--verbose", action="store_true", help="Enable debugging output on the console [default: %(default)s].")
-	parser.add_argument("OU", metavar='OU', nargs='+', help="Name of school (OU) the users will be put into.")
-	parser.add_argument("ImportArguments", nargs=REMAINDER, help="All arguments following the OU names (first one must start with a dash) will be passed to the import script.")
-	parser.set_defaults(**defaults)
+    defaults = dict(
+        csvfile="test_users_%Y-%m-%d_%H:%M:%S.csv",
+        nostart=False,
+        httpapi=False,
+        staff=0,
+        students=0,
+        teachers=0,
+        staffteachers=0,
+        classes=0,
+        inclasses=2,
+        schools=2,
+        email=False,
+        verbose=False,
+    )
+    parser = ArgumentParser(
+        description="UCS@school import test users tool",
+        epilog="When using --create-email-addresses either an email domain must be created in the "
+        "corresponding UMC-module or must be configured on the command line with --set "
+        "maildomain=...",
+    )
+    parser.add_argument(
+        "-c", "--csvfile", dest="csvfile", help="File to write to [default: %(default)s]."
+    )
+    parser.add_argument(
+        "--httpapi",
+        action="store_true",
+        help="Create CSV suitable for importing via HTTP-API, implies -n and uses only first OU "
+        "[default: %(default)s].",
+    )
+    parser.add_argument(
+        "-n",
+        "--nostart",
+        action="store_true",
+        help="Disable automatic start of import script [default: %(default)s].",
+    )
+    parser.add_argument(
+        "--staff", dest="staff", type=int, help="Number of staff to create [default: %(default)s]."
+    )
+    parser.add_argument(
+        "--students",
+        dest="students",
+        type=int,
+        help="Number of students to create [default: %(default)s].",
+    )
+    parser.add_argument(
+        "--teachers",
+        dest="teachers",
+        type=int,
+        help="Number of teachers to create [default: %(default)s].",
+    )
+    parser.add_argument(
+        "--staffteachers",
+        dest="staffteachers",
+        type=int,
+        help="Number of staff_and_teacher users to create [default: %(default)s].",
+    )
+    parser.add_argument(
+        "--classes", dest="classes", type=int, help="Number of classes to create [default: %(default)s]."
+    )
+    parser.add_argument(
+        "--inclasses",
+        dest="inclasses",
+        type=int,
+        help="Number of classes to put users (except students) into per school [default: %(default)s].",
+    )
+    parser.add_argument(
+        "--schools",
+        dest="schools",
+        type=int,
+        help="Number of schools to put users (except students) into (if #OUs > 1) [default: "
+        "%(default)s].",
+    )
+    parser.add_argument(
+        "--create-email-addresses",
+        dest="email",
+        action="store_true",
+        help="Create email addresses for users [default: %(default)s].",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable debugging output on the console [default: %(default)s].",
+    )
+    parser.add_argument(
+        "OU", metavar="OU", nargs="+", help="Name of school (OU) the users will be put into."
+    )
+    parser.add_argument(
+        "ImportArguments",
+        nargs=REMAINDER,
+        help="All arguments following the OU names (first one must start with a dash) will be passed to "
+        "the import script.",
+    )
+    parser.set_defaults(**defaults)
 
-	args = parser.parse_args()
-	if args.staff + args.students + args.teachers + args.staffteachers == 0:
-		parser.error("Please supply number and type of users to create.")
-	if any([num < 0 for num in [args.staff, args.students, args.teachers, args.staffteachers, args.classes, args.inclasses, args.schools]]):
-		parser.error("Negative numbers are not allowed.")
-	if args.students + args.teachers + args.staffteachers > 0 and args.classes == 0:
-		parser.error("Please supply number of classes to create.")
-	args.csvfile = datetime.datetime.now().strftime(args.csvfile)
-	if args.httpapi:
-		args.OU = [args.OU[0]]
-		args.nostart = True
-	args.schools = min(args.schools, len(args.OU))
-	return args
+    args = parser.parse_args()
+    if args.staff + args.students + args.teachers + args.staffteachers == 0:
+        parser.error("Please supply number and type of users to create.")
+    if any(
+        [
+            num < 0
+            for num in [
+                args.staff,
+                args.students,
+                args.teachers,
+                args.staffteachers,
+                args.classes,
+                args.inclasses,
+                args.schools,
+            ]
+        ]
+    ):
+        parser.error("Negative numbers are not allowed.")
+    if args.students + args.teachers + args.staffteachers > 0 and args.classes == 0:
+        parser.error("Please supply number of classes to create.")
+    args.csvfile = datetime.datetime.now().strftime(args.csvfile)
+    if args.httpapi:
+        args.OU = [args.OU[0]]
+        args.nostart = True
+    args.schools = min(args.schools, len(args.OU))
+    return args
 
 
 def log_conf_hint(args, logger):
-	conf_file = CONF_FILE_HTTP if args.httpapi else CONF_FILE_CMDLINE
-	logger.info("")
-	logger.info("Configuration hint:")
-	logger.info("===================")
-	logger.info("Use the configuration file %r or one derived from it.", conf_file)
-	if args.httpapi:
-		logger.info(
-			"When using the graphical UMC module, the configuration file must be copied to %r or '%s.json'.",
-			CONF_FILE_TARGET_VAR, os.path.join(CONF_FILE_TARGET_DIR, args.OU[0].lower()))
-		logger.info("")
-		logger.info("To import the CSV using the command line, run the following command:")
-		logger.info(
-			"%s --school %r --user_role student --source_uid '%s-student' --conffile %r --infile %r",
-			os.path.join(os.path.dirname(__file__), 'ucs-school-user-import'), args.OU[0], args.OU[0].lower(),
-			conf_file, args.csvfile)
-		logger.info(
-			"Replace 'student' in both '--user_role' and '--source_uid' with one of 'student', 'staff', 'teacher' or "
-			"'teacher_and_staff'.")
-	else:
-		logger.info(
-			"Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the file to %r.",
-			CONF_FILE_TARGET_VAR)
+    conf_file = CONF_FILE_HTTP if args.httpapi else CONF_FILE_CMDLINE
+    logger.info("")
+    logger.info("Configuration hint:")
+    logger.info("===================")
+    logger.info("Use the configuration file %r or one derived from it.", conf_file)
+    if args.httpapi:
+        logger.info(
+            "When using the graphical UMC module, the configuration file must be copied to %r or "
+            "'%s.json'.",
+            CONF_FILE_TARGET_VAR,
+            os.path.join(CONF_FILE_TARGET_DIR, args.OU[0].lower()),
+        )
+        logger.info("")
+        logger.info("To import the CSV using the command line, run the following command:")
+        logger.info(
+            "%s --school %r --user_role student --source_uid '%s-student' --conffile %r --infile %r",
+            os.path.join(os.path.dirname(__file__), "ucs-school-user-import"),
+            args.OU[0],
+            args.OU[0].lower(),
+            conf_file,
+            args.csvfile,
+        )
+        logger.info(
+            "Replace 'student' in both '--user_role' and '--source_uid' with one of 'student', 'staff', "
+            "'teacher' or 'teacher_and_staff'."
+        )
+    else:
+        logger.info(
+            "Either use the '--conffile' command line argument to 'ucs-school-user-import' or copy the "
+            "file to %r.",
+            CONF_FILE_TARGET_VAR,
+        )
 
 
 def main():
-	args = parse_cmdline()
-	logger = logging.getLogger('ucsschool.import')
-	if args.verbose:
-		level = 'DEBUG'
-	else:
-		level = 'INFO'
-	logger.setLevel(level)
-	logger.addHandler(get_stream_handler(level))
-	logger.info("------ Creating user information... ------")
-	test_user_creator = TestUserCreator(args.OU, staff=args.staff, students=args.students, teachers=args.teachers, staffteachers=args.staffteachers, classes=args.classes, inclasses=args.inclasses, schools=args.schools, email=args.email)
-	test_user_creator.make_classes()
-	logger.info("------ Writing user information to CSV file '%s'... ------", args.csvfile)
-	if args.httpapi:
-		test_user_exporter = HttpApiTestUserCsvExporter(email=args.email)
-	else:
-		test_user_exporter = TestUserCsvExporter(email=args.email)
-	test_user_exporter.dump(test_user_creator.make_users(), args.csvfile)
-	if args.nostart:
-		logger.info("------ Done. CSV file: '%s'. ------", args.csvfile)
-		log_conf_hint(args, logger)
-		return
-	else:
-		logger.info("------ Starting import of CSV file: '%s'... ------", args.csvfile)
-		cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-c", CONF_FILE_CMDLINE, "-i", args.csvfile]
-		cmd.extend(args.ImportArguments)
-		logger.info("Running: %s", " ".join(cmd))
-		proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
-		proc.communicate()
-		logger.info("------ ucs-school-user-import return with exit code %d ------", proc.returncode)
-		return proc.returncode
+    args = parse_cmdline()
+    logger = logging.getLogger("ucsschool.import")
+    if args.verbose:
+        level = "DEBUG"
+    else:
+        level = "INFO"
+    logger.setLevel(level)
+    logger.addHandler(get_stream_handler(level))
+    logger.info("------ Creating user information... ------")
+    test_user_creator = TestUserCreator(
+        args.OU,
+        staff=args.staff,
+        students=args.students,
+        teachers=args.teachers,
+        staffteachers=args.staffteachers,
+        classes=args.classes,
+        inclasses=args.inclasses,
+        schools=args.schools,
+        email=args.email,
+    )
+    test_user_creator.make_classes()
+    logger.info("------ Writing user information to CSV file '%s'... ------", args.csvfile)
+    if args.httpapi:
+        test_user_exporter = HttpApiTestUserCsvExporter(email=args.email)
+    else:
+        test_user_exporter = TestUserCsvExporter(email=args.email)
+    test_user_exporter.dump(test_user_creator.make_users(), args.csvfile)
+    if args.nostart:
+        logger.info("------ Done. CSV file: '%s'. ------", args.csvfile)
+        log_conf_hint(args, logger)
+        return
+    else:
+        logger.info("------ Starting import of CSV file: '%s'... ------", args.csvfile)
+        cmd = [
+            "/usr/share/ucs-school-import/scripts/ucs-school-user-import",
+            "-c",
+            CONF_FILE_CMDLINE,
+            "-i",
+            args.csvfile,
+        ]
+        cmd.extend(args.ImportArguments)
+        logger.info("Running: %s", " ".join(cmd))
+        proc = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)  # nosec
+        proc.communicate()
+        logger.info("------ ucs-school-user-import return with exit code %d ------", proc.returncode)
+        return proc.returncode
 
 
 if __name__ == "__main__":
-	sys.exit(main())
+    sys.exit(main())

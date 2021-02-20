@@ -97,7 +97,7 @@ class BuildHTMLCommand(setuptools.Command):
     @classmethod
     def check_call(cls, cmd):
         print(f"Executing: {cmd!r}")
-        check_call(cmd)
+        check_call(cmd)  # nosec
 
 
 setuptools.setup(
@@ -111,9 +111,7 @@ setuptools.setup(
     install_requires=requirements,
     setup_requires=["docutils", "pytest-runner"],
     tests_require=requirements_test,
-    extras_require={
-        "development": set(requirements + requirements_dev + requirements_test)
-    },
+    extras_require={"development": set(requirements + requirements_dev + requirements_test)},
     packages=["ucsschool.kelvin", "ucsschool.kelvin.routers"],
     python_requires=">=3.7",
     license="GNU Affero General Public License v3",

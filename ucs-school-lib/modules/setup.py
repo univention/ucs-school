@@ -12,21 +12,25 @@ import os
 import re
 import sys
 import tempfile
+
 try:
     from urllib import urlretrieve  # py2
 except ImportError:
     from urllib.request import urlretrieve  # py3
+
 import setuptools
 
 dir_here = os.path.dirname(os.path.abspath(__file__))
 changelog_path = os.path.join(os.path.dirname(dir_here), "debian", "changelog")
 chlog_regex = re.compile(r"^(?P<package>.+?) \((?P<version>.+?)\) \w+;")
-PIP_FALLBACK_URL = "https://raw.githubusercontent.com/univention/ucs-school/4.4/ucs-school-lib/debian/changelog"
+PIP_FALLBACK_URL = (
+    "https://raw.githubusercontent.com/univention/ucs-school/4.4/ucs-school-lib/debian/changelog"
+)
 
 # when installing using "setup.py install ." the directory is not changed, when using pip, work is done in /tmp
 if not os.path.exists(changelog_path):
     _fp, changelog_path = tempfile.mkstemp()
-    urlretrieve(PIP_FALLBACK_URL, changelog_path)
+    urlretrieve(PIP_FALLBACK_URL, changelog_path)  # nosec
 
 with open(changelog_path) as fp:
     for line in fp:
@@ -55,7 +59,7 @@ setuptools.setup(
     setup_requires=["pytest-runner"],
     tests_require=requirements_test,
     packages=["ucsschool", "ucsschool.lib", "ucsschool.lib.models", "ucsschool.lib.pyhooks"],
-    package_data={'ucsschool.lib': ['*.yaml']},
+    package_data={"ucsschool.lib": ["*.yaml"]},
     license="GNU Affero General Public License v3",
     classifiers=[
         "Development Status :: 5 - Production/Stable",

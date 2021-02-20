@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2012-2021 Univention GmbH
@@ -39,148 +39,157 @@ import sys
 
 from ucsschool.lib.models.utils import get_file_handler
 
-REGEX_LOCKED_FILES = re.compile(r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$')
-REGEX_USERS = re.compile(r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s*')
-REGEX_SERVICES = re.compile(r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$')
+REGEX_LOCKED_FILES = re.compile(
+    r"(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+"
+    r"(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$"
+)
+REGEX_USERS = re.compile(
+    r"(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+"
+    r"\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:"
+    r"(?P<ipv6Address>[0-9a-fA-F:]+))\)\s+(?P<version>\S+)\s*"
+)
+REGEX_SERVICES = re.compile(
+    r"(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$"
+)
 
 
 class SMB_LockedFile(dict):
+    @property
+    def filename(self):
+        return self["filename"]
 
-	@property
-	def filename(self):
-		return self['filename']
+    @property
+    def sharePath(self):
+        return self["sharePath"]
 
-	@property
-	def sharePath(self):
-		return self['sharePath']
+    def __str__(self):
+        if self.filename == ".":
+            return self.sharePath
 
-	def __str__(self):
-		if self.filename == '.':
-			return self.sharePath
-
-		return self.filename
+        return self.filename
 
 
 class SMB_Process(dict):
+    def __init__(self, args):
+        dict.__init__(self, args)
+        self._locked_files = []
+        self._services = []
 
-	def __init__(self, args):
-		dict.__init__(self, args)
-		self._locked_files = []
-		self._services = []
+    @property
+    def username(self):
+        return self["username"]
 
-	@property
-	def username(self):
-		return self['username']
+    @property
+    def pid(self):
+        return self["pid"]
 
-	@property
-	def pid(self):
-		return self['pid']
+    @property
+    def machine(self):
+        return self["machine"]
 
-	@property
-	def machine(self):
-		return self['machine']
+    @property
+    def lockedFiles(self):
+        return self._locked_files
 
-	@property
-	def lockedFiles(self):
-		return self._locked_files
+    @property
+    def services(self):
+        return self._services
 
-	@property
-	def services(self):
-		return self._services
+    @property
+    def ipv4address(self):
+        return self["ipv4Address"]
 
-	@property
-	def ipv4address(self):
-		return self['ipv4Address']
+    @property
+    def ipv6address(self):
+        return self["ipv6Address"]
 
-	@property
-	def ipv6address(self):
-		return self['ipv6Address']
+    @property
+    def ipaddress(self):
+        return self.get("ipAddress") or self.ipv4address or self.ipv6address
 
-	@property
-	def ipaddress(self):
-		return self.get('ipAddress') or self.ipv4address or self.ipv6address
+    def update(self, dictionary):
+        if "sharePath" in dictionary:
+            self._locked_files.append(SMB_LockedFile(dictionary))
+        elif "service" in dictionary:
+            self._services.append(dictionary["service"])
+        else:
+            dict.update(self, dictionary)
 
-	def update(self, dictionary):
-		if 'sharePath' in dictionary:
-			self._locked_files.append(SMB_LockedFile(dictionary))
-		elif 'service' in dictionary:
-			self._services.append(dictionary['service'])
-		else:
-			dict.update(self, dictionary)
-
-	def __str__(self):
-		title = 'Process %(pid)s: User: %(username)s (group: %(group)s)' % self
-		files = '  locked files: %s' % ', '.join(map(str, self.lockedFiles))
-		services = '  services: %s' % ', '.join(self.services)
-		return '\n'.join((title, files, services))
+    def __str__(self):
+        title = "Process %(pid)s: User: %(username)s (group: %(group)s)" % self
+        files = "  locked files: %s" % ", ".join(map(str, self.lockedFiles))
+        services = "  services: %s" % ", ".join(self.services)
+        return "\n".join((title, files, services))
 
 
 class SMB_Status(list):
+    def __init__(self, testdata=None):
+        self.logger = logging.getLogger(__name__)
+        self.logger.addHandler(get_file_handler(logging.DEBUG, "/var/log/univention/smbstatus.log"))
+        list.__init__(self)
+        self.parse(testdata)
 
-	def __init__(self):
-		list.__init__(self)
-		self.logger = logging.getLogger(__name__)
-		self.logger.addHandler(get_file_handler(logging.DEBUG, '/var/log/univention/smbstatus.log'))
+    def parse(self, testdata=None):
+        while self:
+            self.pop()
+        if testdata is None:
+            smbstatus = subprocess.Popen(  # nosec
+                ["/usr/bin/smbstatus"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            data = ["%s\n" % x for x in smbstatus.communicate()[0].splitlines()]
+        else:
+            data = testdata
+        regexps = [REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES]
+        regex = None
+        for line in data:
+            if line.startswith("-----"):
+                regex = regexps.pop(0)
+            if not line.strip() or regex is None:
+                continue
+            match = regex.match(line)
+            if match is None:
+                continue
+            serv = SMB_Process(match.groupdict())
+            self.update(serv)
 
-	def parse(self, testdata=None):
-		while self:
-			self.pop()
-		if testdata is None:
-			smbstatus = subprocess.Popen(['/usr/bin/smbstatus'], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-			data = ['%s\n' % x for x in smbstatus.communicate()[0].splitlines()]
-		else:
-			data = testdata
-		regexps = [REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES]
-		regex = None
-		for line in data:
-			if line.startswith('-----'):
-				regex = regexps.pop(0)
-			if not line.strip() or regex is None:
-				continue
-			match = regex.match(line)
-			if match is None:
-				continue
-			serv = SMB_Process(match.groupdict())
-			self.update(serv)
+        for process in self[:]:
+            if "username" not in process:
+                self.logger.error(
+                    'Invalid SMB process definition (no "username"):\nprocess=%r\ndata=%s',
+                    process,
+                    "".join(data),
+                )
+                self.remove(process)
 
-		for process in self[:]:
-			if 'username' not in process:
-				self.logger.error(
-					'Invalid SMB process definition (no "username"):\nprocess=%r\ndata=%s',
-					process,
-					''.join(data)
-				)
-				self.remove(process)
-
-	def update(self, service):
-		for item in self:
-			if item.pid == service.pid:
-				item.update(service)
-				break
-		else:
-			self.append(service)
+    def update(self, service):
+        for item in self:
+            if item.pid == service.pid:
+                item.update(service)
+                break
+        else:
+            self.append(service)
 
 
 def usage():
-	print('Usage: {} [file]'.format(sys.argv[0]))
-	print('If no file is given, runs smbstatus and parses its output.')
-	print('(Test data: /usr/share/ucs-school-lib/smbstatus_testdata.txt)')
+    print("Usage: {} [file]".format(sys.argv[0]))
+    print("If no file is given, runs smbstatus and parses its output.")
+    print("(Test data: /usr/share/ucs-school-lib/smbstatus_testdata.txt)")
 
 
-if __name__ == '__main__':
-	if len(sys.argv) == 1:
-		status = SMB_Status().parse()
-	elif len(sys.argv) == 2:
-		try:
-			testdata = open(sys.argv[1], 'rb').read()
-		except IOError:
-			print('Error: Cannot read {!r}\n'.format(sys.argv[1]))
-			usage()
-			sys.exit(1)
-		status = SMB_Status().parse(testdata=testdata.split('\n'))
-	else:
-		usage()
-		sys.exit(1)
-	for process in map(str, status):
-		print(process)
-		print('')
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        status = SMB_Status()
+    elif len(sys.argv) == 2:
+        try:
+            testdata = open(sys.argv[1], "rb").read()
+        except IOError:
+            print("Error: Cannot read {!r}\n".format(sys.argv[1]))
+            usage()
+            sys.exit(1)
+        status = SMB_Status(testdata=testdata.split("\n"))
+    else:
+        usage()
+        sys.exit(1)
+    for process in map(str, status):
+        print(process)
+        print("")

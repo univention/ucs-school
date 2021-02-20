@@ -25,7 +25,7 @@ It does not yet support creating, modifying or deleting OUs.
 
 Resource representation
 -----------------------
-The following JSON is an example Schools resource in the `UCS\@school Kelvin REST API`::
+The following JSON is an example Schools resource in the *UCS\@school Kelvin REST API*::
 
     {
         "administrative_servers": [],

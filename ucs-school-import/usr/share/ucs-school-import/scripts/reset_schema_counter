@@ -34,96 +34,113 @@ Reset counter of unique usernames and email addresses.
 
 import sys
 from argparse import ArgumentParser
+
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
+
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
 
 # python-future is in unmaintained, but this works too:
 try:
-	input = raw_input
-	# py2
+    input = raw_input
+    # py2
 except NameError:
-	# py3
-	pass
+    # py3
+    pass
 
 
 def parse_cmdline():
-	defaults = dict(
-		email=False,
-		pattern='*',
-		username=False,
-		write=False,
-	)
-	parser = ArgumentParser(description='UCS@school import tool to reset counters of unique names from schema.')
-	parser.add_argument(
-		'-e', '--email', action='store_true',
-		help='Purge unique email address counters [default: %(default)s].')
-	parser.add_argument(
-		'-u', '--username', action='store_true',
-		help='Purge unique username counters [default: %(default)s].')
-	parser.add_argument(
-		'-p', '--pattern', dest='pattern', type=str,
-		help='Pattern for LDAP filter to lookup which counters to purge [default: %(default)s].')
-	parser.add_argument(
-		'-w', '--write', action='store_true',
-		help='Modify the LDAP. Default is %(default)s: make a dry-run.')
-	parser.set_defaults(**defaults)
-	args = parser.parse_args()
-	if not any((args.email, args.username)):
-		parser.error('Either "--email" or "--username" must be used.')
-	elif args.email and args.username:
-		parser.error('Only one of "--email" and "--username" must be used.')
-	return args
+    defaults = dict(email=False, pattern="*", username=False, write=False)
+    parser = ArgumentParser(
+        description="UCS@school import tool to reset counters of unique names from schema."
+    )
+    parser.add_argument(
+        "-e",
+        "--email",
+        action="store_true",
+        help="Purge unique email address counters [default: %(default)s].",
+    )
+    parser.add_argument(
+        "-u",
+        "--username",
+        action="store_true",
+        help="Purge unique username counters [default: %(default)s].",
+    )
+    parser.add_argument(
+        "-p",
+        "--pattern",
+        dest="pattern",
+        type=str,
+        help="Pattern for LDAP filter to lookup which counters to purge [default: %(default)s].",
+    )
+    parser.add_argument(
+        "-w",
+        "--write",
+        action="store_true",
+        help="Modify the LDAP. Default is %(default)s: make a dry-run.",
+    )
+    parser.set_defaults(**defaults)
+    args = parser.parse_args()
+    if not any((args.email, args.username)):
+        parser.error('Either "--email" or "--username" must be used.')
+    elif args.email and args.username:
+        parser.error('Only one of "--email" and "--username" must be used.')
+    return args
 
 
 def main():
-	args = parse_cmdline()
-	print('Modify LDAP: {!r}'.format(args.write))
-	print('Attribute: {}'.format('email' if args.email else 'username'))
-	print('Pattern: {!r}'.format(args.pattern))
+    args = parse_cmdline()
+    print("Modify LDAP: {!r}".format(args.write))
+    print("Attribute: {}".format("email" if args.email else "username"))
+    print("Pattern: {!r}".format(args.pattern))
 
-	if args.email:
-		attribute_storage_name = 'email'
-	elif args.username:
-		attribute_storage_name = 'usernames'
-	else:
-		# This shouldn't happen, should be checked by parse_cmdline().
-		raise RuntimeError('Missing argument which objects to reset.')
+    if args.email:
+        attribute_storage_name = "email"
+    elif args.username:
+        attribute_storage_name = "usernames"
+    else:
+        # This shouldn't happen, should be checked by parse_cmdline().
+        raise RuntimeError("Missing argument which objects to reset.")
 
-	if args.write:
-		lo, po = get_admin_connection()
-	else:
-		lo, po = get_unprivileged_connection()
-	ldap_base = 'cn=unique-{},cn=ucsschool,cn=univention,{}'.format(escape_dn_chars(attribute_storage_name), lo.base)
-	asterisk_repl = filter_format('%s', ('*',))
-	ldap_filter = filter_format('(&(objectClass=ucsschoolUsername)(cn=%s))', (args.pattern,)).replace(asterisk_repl, '*')
+    if args.write:
+        lo, po = get_admin_connection()
+    else:
+        lo, po = get_unprivileged_connection()
+    ldap_base = "cn=unique-{},cn=ucsschool,cn=univention,{}".format(
+        escape_dn_chars(attribute_storage_name), lo.base
+    )
+    asterisk_repl = filter_format("%s", ("*",))
+    ldap_filter = filter_format("(&(objectClass=ucsschoolUsername)(cn=%s))", (args.pattern,)).replace(
+        asterisk_repl, "*"
+    )
 
-	print('LDAP base: {!r}'.format(ldap_base))
-	print('LDAP filter: {!r}'.format(ldap_filter))
-	print('-' * 79)
+    print("LDAP base: {!r}".format(ldap_base))
+    print("LDAP filter: {!r}".format(ldap_filter))
+    print("-" * 79)
 
-	dns = sorted(lo.searchDn(ldap_filter, base=ldap_base))
-	if not dns:
-		print('No counter objects found.')
-		sys.exit(0)
-	total = len(dns)
-	if args.write:
-		print('Would delete:')
-		print('  {}'.format('\n  '.join(dns)))
-		answer = input('Really reset the above {} counters? [y/N]:'.format(total))
-		if answer.lower() not in ('y', 'yes'):
-			print('Stopping as requested.')
-			sys.exit(1)
+    dns = sorted(lo.searchDn(ldap_filter, base=ldap_base))
+    if not dns:
+        print("No counter objects found.")
+        sys.exit(0)
+    total = len(dns)
+    if args.write:
+        print("Would delete:")
+        print("  {}".format("\n  ".join(dns)))
+        # TODO: replace with raw_input
+        answer = input("Really reset the above {} counters? [y/N]:".format(total))  # nosec
+        if answer.lower() not in ("y", "yes"):
+            print("Stopping as requested.")
+            sys.exit(1)
 
-	num_len = len(str(total))
-	msg = 'Deleting{} {:>%d} / {:>%d}: {!r}' % (num_len, num_len)
-	for num, dn in enumerate(dns, start=1):
-		print(msg.format('' if args.write else ' (dry-run)', num, total, dn))
-		if args.write:
-			lo.delete(dn)
+    num_len = len(str(total))
+    msg = "Deleting{} {:>%d} / {:>%d}: {!r}" % (num_len, num_len)
+    for num, dn in enumerate(dns, start=1):
+        print(msg.format("" if args.write else " (dry-run)", num, total, dn))
+        if args.write:
+            lo.delete(dn)
 
-	print('Done.')
+    print("Done.")
 
 
 if __name__ == "__main__":
-	sys.exit(main())
+    sys.exit(main())

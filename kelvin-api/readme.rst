@@ -6,7 +6,7 @@ UCS\@school Kelvin REST API
 .. This file can be read on the installed system at https://FQDN/ucsschool/kelvin/v1/readme
 .. The changelog can be read on the installed system at https://FQDN/ucsschool/kelvin/v1/changelog
 
-The official documentation of the `UCS\@school Kelvin REST API` can be found at: https://docs.software-univention.de/ucsschool-kelvin-rest-api/
+The official documentation of the *UCS\@school Kelvin REST API* can be found at: https://docs.software-univention.de/ucsschool-kelvin-rest-api/
 
 The changelog can be read on the installed system at ``https://<fqdn>/ucsschool/kelvin/v1/changelog`` (`here <changelog>`_).
 

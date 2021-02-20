@@ -70,25 +70,17 @@ class SchoolModel(SchoolCreateModel, APIAttributesMixin):
         ...
 
     @classmethod
-    async def _from_lib_model_kwargs(
-        cls, obj: School, request: Request, udm: UDM
-    ) -> Dict[str, Any]:
+    async def _from_lib_model_kwargs(cls, obj: School, request: Request, udm: UDM) -> Dict[str, Any]:
         kwargs = await super()._from_lib_model_kwargs(obj, request, udm)
-        kwargs["url"] = cls.scheme_and_quote(
-            request.url_for("get", school_name=kwargs["name"])
-        )
+        kwargs["url"] = cls.scheme_and_quote(request.url_for("get", school_name=kwargs["name"]))
         kwargs["administrative_servers"] = [
             await cls.computer_dn2name(udm, dn) for dn in obj.administrative_servers
         ]
-        kwargs["class_share_file_server"] = await cls.computer_dn2name(
-            udm, obj.class_share_file_server
-        )
+        kwargs["class_share_file_server"] = await cls.computer_dn2name(udm, obj.class_share_file_server)
         kwargs["educational_servers"] = [
             await cls.computer_dn2name(udm, dn) for dn in obj.educational_servers
         ]
-        kwargs["home_share_file_server"] = await cls.computer_dn2name(
-            udm, obj.home_share_file_server
-        )
+        kwargs["home_share_file_server"] = await cls.computer_dn2name(udm, obj.home_share_file_server)
         return kwargs
 
     @classmethod
@@ -107,8 +99,7 @@ async def search(
     name_filter: str = Query(
         None,
         alias="name",
-        description="List schools with this name. '*' can be used for an "
-        "inexact search. (optional)",
+        description="List schools with this name. '*' can be used for an " "inexact search. (optional)",
         title="name",
     ),
     logger: logging.Logger = Depends(get_logger),
@@ -133,15 +124,11 @@ async def search(
             detail="Not authorized to list schools.",
         )
     if name_filter:
-        filter_str = "ou={}".format(
-            escape_filter_chars(name_filter).replace(r"\2a", "*")
-        )
+        filter_str = "ou={}".format(escape_filter_chars(name_filter).replace(r"\2a", "*"))
     else:
         filter_str = None
     schools = await School.get_all(udm, filter_str=filter_str)
-    return [
-        await SchoolModel.from_lib_model(school, request, udm) for school in schools
-    ]
+    return [await SchoolModel.from_lib_model(school, request, udm) for school in schools]
 
 
 @router.get("/{school_name}", response_model=SchoolModel)

@@ -9,7 +9,8 @@ Build-Depends: debhelper (>> 10),
  python-sphinx-rtd-theme,
  make,
  python2.7-doc,
- default-jre
+ default-jre,
+ python-support (>= 0.90),
 Standards-Version: 3.8.2
 XS-Python-Version: 2.7
 
@@ -19,13 +20,15 @@ Depends: univention-directory-manager,
  ucs-school-import-schema (= ${source:Version}),
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
- python-ucs-school (>= 12.1.0-15),
+ python-ucs-school (>= 12.1.17),
  shell-univention-lib,
  univention-config,
  univention-join,
  python-univention,
  python-univention-lib,
  python-lazy-object-proxy,
+ python-ldap,
+ python-univention-config-registry,
 Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.
