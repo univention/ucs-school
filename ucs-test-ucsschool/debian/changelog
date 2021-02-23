@@ -1,20 +1,56 @@
-ucs-test-ucsschool (7.0.1-1) unstable; urgency=medium
+ucs-test-ucsschool (6.0.187) unstable; urgency=medium
 
-  * Bug #52603: use systemctl to restart univention-directory-listener
+  * Bug #52309: correct type hints
 
- -- Sebastian Lobinger <lobinger@univention.de>  Fri, 15 Jan 2021 11:16:32 +0100
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Feb 2021 09:22:02 +0100
 
-ucs-test-ucsschool (7.0.0-1) unstable; urgency=medium
+ucs-test-ucsschool (6.0.186) unstable; urgency=medium
 
-  * Bug #52578: UCS@school 5.0 version bump
+  * Bug #52309: add unit and integration tests for validation
 
- -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:42:53 +0100
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Feb 2021 14:33:40 +0100
+
+ucs-test-ucsschool (6.0.185) unstable; urgency=low
+
+  * Bug #52757: run tests for exam-master only on dc master
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 12 Feb 2021 08:14:47 +0100
+
+ucs-test-ucsschool (6.0.184) unstable; urgency=low
+
+  * Bug #52150: virtualenv not used anymore
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Feb 2021 13:24:28 +0100
+
+ucs-test-ucsschool (6.0.183) unstable; urgency=low
+
+  * Bug #52748: Fix legacy hooks tests due to new model class
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 10 Feb 2021 08:03:21 +0100
+
+ucs-test-ucsschool (6.0.182) unstable; urgency=low
+
+  * Bug #52757: Add tests for school admin creation and admin workaround
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 09 Feb 2021 17:51:02 +0100
+
+ucs-test-ucsschool (6.0.181) unstable; urgency=low
+
+  * Bug #52654: wait for replication of all attributes
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 28 Jan 2021 09:16:34 +0100
+
+ucs-test-ucsschool (6.0.180) unstable; urgency=low
+
+  * Bug #52654: manually wait for replication
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 27 Jan 2021 09:34:41 +0100
 
 ucs-test-ucsschool (6.0.179) unstable; urgency=medium
 
-  * Bug #52600: migrate to dh_python
+  * Bug #52372: added disable user during exam test
 
- -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 26 Jan 2021 14:57:43 +0100
 
 ucs-test-ucsschool (6.0.178) unstable; urgency=medium
 
