@@ -51,6 +51,7 @@ from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
 from .utils import _, ucr
+from .validator import validate
 
 try:
     from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
@@ -212,6 +213,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
             class Meta:
                 hook_path = 'computer'
     """
+
     _cache = {}  # type: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel]
     _machine_connection = None  # type: LoType
     _search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
@@ -327,7 +329,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
         """
         if self.name and self.position:
             name = self._meta.ldap_map_function(self.name)
-            name = name.decode('utf-8')
+            name = name.decode("utf-8")
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
@@ -462,7 +464,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
 
         # create temporary file with data
         with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line.encode('utf-8'))
+            tmpfile.write(line.encode("utf-8"))
             tmpfile.flush()
 
             # invoke hook scripts
@@ -722,7 +724,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
                 name = explode_dn(dn, 1)[0]
             except ldap.DECODING_ERROR:
                 name = ""
-            name = name.encode('utf-8')
+            name = name.encode("utf-8")
             return cls._meta.ldap_unmap_function([name])
 
     @classmethod
@@ -792,6 +794,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
                     self._udm_obj = None
                 else:
                     self._udm_obj.open()
+                    validate(self._udm_obj, self.logger)
             self._udm_obj_searched = True
         return self._udm_obj
 
@@ -945,6 +948,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
                 raise WrongModel(udm_obj.dn, klass, cls)
             return klass.from_udm_obj(udm_obj, school, lo)
         udm_obj.open()
+        validate(udm_obj, cls.logger)
         attrs = {
             "school": cls.get_school_from_dn(udm_obj.dn) or school
         }  # TODO: is this adjustment okay?
@@ -1048,12 +1052,14 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
             filter=str(filter_str),
             superordinate=superordinate,
         )
+
         if len(objs) == 0:
             return None
         if len(objs) > 1:
             raise MultipleObjectsError(objs)
         obj = objs[0]
         obj.open()
+        validate(obj, cls.logger)
         return obj
 
     @classmethod
@@ -1067,6 +1073,7 @@ class UCSSchoolHelperAbstractClass(with_metaclass(UCSSchoolHelperMetaClass)):
         except MultipleObjectsError as exc:
             obj = exc.objs[0]
             obj.open()
+            validate(obj, cls.logger)
             return obj
 
     @classmethod

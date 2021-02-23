@@ -6,6 +6,7 @@ Build-Depends:
  debhelper (>= 8.0.0),
  dh-python,
  ucslint,
+ python-support
 Standards-Version: 3.6.1
 
 Package: ucs-test-ucsschool
@@ -16,6 +17,9 @@ Depends:
  python-mock,
  python-pycurl,
  python-pytest,
+ python-pytest-catchlog,
+ python-mock,
+ python-attr,
  python-requests,
  python-ucs-school (>= 12.1.9),
  python3-attr,
