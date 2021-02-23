@@ -235,7 +235,32 @@ feedback@univention.de
 					<!-- END ucs-school-umc-wizards 11.0.0-13A~4.4.0.202102100826 -->
 <!-- CHANGELOG:2021-02-10:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-02-23" lang="en">
+					<title>Released on 2021-02-23:</title>
+					<!-- START ucs-school-import 17.0.51A~4.4.0.202102161431 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.51A~4.4.0.202102161431</emphasis>:
+						<itemizedlist>
+							<listitem><para>The join script was improved to generate passwords that adhere to MS password policies (<u:bug>52770</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.51A~4.4.0.202102161431 -->
+					<!-- START ucs-school-lib 12.2.11A~4.4.0.202102180925 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.11A~4.4.0.202102180925</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: an error in an internal function was fixed (<u:bug>52783</u:bug>).</para></listitem>
+
+							<listitem><para>UCS@school user and group objects are now validated before usage, when loading them from LDAP. When erroneous objects are found in LDAP errors will be logged to the regular log files. Additionally the complete LDAP object is written to <filename>/var/log/univention/ucs-school-validation.log</filename> which is only readable by the user root. The new UCR-V <envar>ucsschool/validation/logging/backupcount</envar> configures the amount of copies of that logfile which are kept in log rotation, defaults to 60 (<u:bug>52309</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.11A~4.4.0.202102180925 -->
+<!-- CHANGELOG:2021-02-23:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
