@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.189) unstable; urgency=low
+
+  * Bug #52830: Fix test for newly added SchoolAdmin
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 23 Feb 2021 08:28:22 +0100
+
 ucs-test-ucsschool (6.0.188) unstable; urgency=low
 
   * Bug #52309: rename test for ucs-test
