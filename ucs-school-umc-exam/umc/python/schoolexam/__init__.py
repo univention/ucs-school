@@ -653,9 +653,9 @@ class Instance(SchoolBaseModule):
                             exam=request.options["name"],
                         ),
                     ).result
-                    examuser_dn = ires.get("examuserdn")
-                    if not examuser_dn:  # occurs if disabled user gets ignored
+                    if not ires:  # occurs if disabled user gets ignored
                         continue
+                    examuser_dn = ires.get("examuserdn")
                     examUsers.add(examuser_dn)
                     student_dns.add(iuser.dn)
                     logger.info("start_exam() Exam user has been created: %r", examuser_dn)

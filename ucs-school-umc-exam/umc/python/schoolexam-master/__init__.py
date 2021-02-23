@@ -237,8 +237,8 @@ class Instance(SchoolBaseModule):
         user_orig = user.get_udm_object(ldap_admin_write)
 
         if user_orig["disabled"] == "1":
-            logger.info("User ignored because disabled: {}".format(userdn))
-            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=""))
+            logger.info("Ignored disabled user {}".format(userdn))
+            self.finished(request.id, None)
             return
 
         if len(user_orig["sambaUserWorkstations"]) == 0:
