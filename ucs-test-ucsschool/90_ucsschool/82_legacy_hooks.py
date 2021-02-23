@@ -73,6 +73,7 @@ EXPECTED_CLASSES = [
     "OU",
     "Policy",
     "School",
+    "SchoolAdmin",
     "SchoolClass",
     "SchoolComputer",
     "SchoolDC",
@@ -83,7 +84,6 @@ EXPECTED_CLASSES = [
     "Student",
     "Teacher",
     "TeachersAndStaff",
-    "SchoolAdmin",
     "UCCComputer",
     "UMCPolicy",
     "User",
@@ -484,6 +484,7 @@ class TestLegacyHooks(TestCase):
     _setup_Staff = _setup_ExamStudent
     _setup_Student = _setup_ExamStudent
     _setup_Teacher = _setup_ExamStudent
+    _setup_SchoolAdmin = _setup_ExamStudent
     _setup_TeachersAndStaff = _setup_ExamStudent
 
     def _setup_School(self):
