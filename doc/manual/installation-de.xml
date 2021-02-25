@@ -57,6 +57,10 @@
 		  jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese fehlen. Für die Erstinstallation der Pakete wird der Join-Hook
 		  je nach Rolle des Systems und dessen Systemperformance mehrere Minuten benötigen. Der Join-Vorgang darf dabei nicht abgebrochen werden.
 	  </para>
+	  <para>
+		  Der Hostname darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (a-z, 0-9 und -) und zur Trennung nur einzelne Punkte enthalten.
+		  Der Hostname darf außerdem nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt.
+	  </para>
   </caution>
 
   <section id="installation:single">
