@@ -734,12 +734,13 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         """
         ou_lower = ou.lower()
         ldap_hostdn = ucr["ldap/hostdn"]
-        cls.logger.info("set ucsschoolRole")
         udm = UDM(lo).version(1)
         if ucr.is_true("ucsschool/singlemaster", True):
             obj = udm.get("computers/domaincontroller_master").get(ldap_hostdn)
-            obj.props.ucsschoolRole.append("single_master:school:{}".format(ou))
+            role = "single_master:school:{}".format(ou)
+            obj.props.ucsschoolRole.append(role)
             obj.save()
+            cls.logger.info("Append ucsschoolRole {} to {}".format(role, ldap_hostdn))
         else:
             adm_net_dn = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
             edu_net_dn = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
@@ -754,6 +755,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         obj = udm.get("computers/domaincontroller_slave").get(server_dn)
                         obj.props.ucsschoolRole.append("{}:school:{}".format(role, ou))
                         obj.save()
+                        cls.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
                     else:
                         cls.logger.info(
                             "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
@@ -784,7 +786,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 if not success:
                     return
             objs = MarketplaceShare.get_all(lo=lo, school=ou)
-            cls.logger.info("{!r}".format(objs))
+            cls.logger.info("Created {!r}".format(objs))
         else:
             cls.logger.info("MarketplaceShare exists.")
 
@@ -861,7 +863,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             if ucr.is_true("ucsschool/singlemaster", False):
                 if ucr.get("server/role") == "domaincontroller_master":
                     policy = dhcp_dns_mod.get("cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn))
-                    # todo check
                     policy.props.domain_name_servers = str(Interfaces().get_default_ip_address().ip)
                     policy.props.domain_name = ucr["domainname"]
                     policy.save()
