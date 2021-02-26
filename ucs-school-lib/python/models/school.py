@@ -729,54 +729,43 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     def set_ucsschool_role(cls, ou, lo):  # type: (str, LoType) -> None
+        """
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
         ou_lower = ou.lower()
         ldap_hostdn = ucr["ldap/hostdn"]
         cls.logger.info("set ucsschoolRole")
         udm = UDM(lo).version(1)
         if ucr.is_true("ucsschool/singlemaster", True):
-            role = "single_master:school:{}".format(ou)
             obj = udm.get("computers/domaincontroller_master").get(ldap_hostdn)
-            obj.props.ucsschoolRole.append(role)
+            obj.props.ucsschoolRole.append("single_master:school:{}".format(ou))
             obj.save()
         else:
             adm_net_dn = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
             edu_net_dn = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
             base = "cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"])
 
-            res = lo.search(base=base, filter=edu_net_dn, attr=["uniqueMember"])
-            if res:
-                # todo ...
-                edu_server_dn = res[0][1]["uniqueMember"][0]
-                uot = lo.get(edu_server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
-                if uot == "computers/domaincontroller_slave":
-                    obj = udm.get("computers/domaincontroller_slave").get(edu_server_dn)
-                    obj.props.ucsschoolRole.append("dc_slave_edu:school:{}".format(ou))
-                    obj.save()
-                else:
-                    cls.logger.info(
-                        "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
-                            edu_server_dn
+            for net_dn, role in [(adm_net_dn, "dc_slave_admin"), (edu_net_dn, "dc_slave_edu")]:
+                res = lo.search(base=base, filter=net_dn, attr=["uniqueMember"])
+                if res:
+                    server_dn = res[0][1]["uniqueMember"][0]
+                    uot = lo.get(server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
+                    if uot == "computers/domaincontroller_slave":
+                        obj = udm.get("computers/domaincontroller_slave").get(server_dn)
+                        obj.props.ucsschoolRole.append("{}:school:{}".format(role, ou))
+                        obj.save()
+                    else:
+                        cls.logger.info(
+                            "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                                server_dn
+                            )
                         )
-                    )
-
-            res = lo.search(base=base, filter=adm_net_dn, attr=["uniqueMember"])
-            if res:
-                # todo ...
-                adm_server_dn = res[0][1]["uniqueMember"][0]
-                uot = lo.get(adm_server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
-                if uot == "computers/domaincontroller_slave":
-                    obj = udm.get("computers/domaincontroller_slave").get(adm_server_dn)
-                    obj.props.ucsschoolRole.append("dc_slave_admin:school:{}".format(ou))
-                    obj.save()
-                else:
-                    cls.logger.info(
-                        "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
-                            adm_server_dn
-                        )
-                    )
 
     @classmethod
     def create_market_place(cls, ou, lo):  # type: (str, LoType) -> None
+        """
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
         if not ucr.is_true("ucsschool/import/generate/share/marktplatz", False):
             cls.logger.info(
                 "Creation of share 'Marktplatz' has been disabled"
@@ -784,23 +773,26 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             )
             return
         objs = MarketplaceShare.get_all(lo=lo, school=ou)
-        if objs:
-            cls.logger.info("MarketplaceShare exists.")
-        else:
-            obj = MarketplaceShare(name="Marktplatz", school="DEMOSCHOOL2")
+        if not objs:
+            obj = MarketplaceShare(name="Marktplatz", school=ou)
             if obj.exists(lo):
-                cls.logger.critical(
+                cls.logger.warning(
                     "Object of type MarketplaceShare with school=%r and name=Marktplatz exists.", ou
                 )
-                raise ValueError
-            success = obj.create(lo)
-            if not success:
-                return
+            else:
+                success = obj.create(lo)
+                if not success:
+                    return
             objs = MarketplaceShare.get_all(lo=lo, school=ou)
             cls.logger.info("{!r}".format(objs))
+        else:
+            cls.logger.info("MarketplaceShare exists.")
 
     @classmethod
     def create_dhcp_search_base(cls, ou, district, lo):  # type: (str, str, LoType) -> None
+        """
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
         if not ucr.is_true("ucsschool/import/generate/policy/dhcp/searchbase", False):
             cls.logger.info(
                 "Creation of UCR policy for DHCP searchbase has been disabled by"
@@ -836,6 +828,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         """
         Creates a UCR-policy for DHCP DNS settings
         create dhcp dns policies for all local OUs (Bug #31930)
+
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
         """
         if not ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/set_per_ou", False):
             cls.logger.info(
