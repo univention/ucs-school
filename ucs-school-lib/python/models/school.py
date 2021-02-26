@@ -719,9 +719,28 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
 
+    @classmethod
+    def self_service_whitelist_hook(cls,ouname):
+        delimiter = ','
+        ucrv = 'umc/self-service/passwordreset/whitelist/groups'
+        value = "Domain Users {}".format(ouname)  # TODO
+        cls.logger.info("Setting ucrv {} to '{}'".format(ucrv,value))
+        cur_val = ucr.get(ucrv, "")
+        cur_val_list = [v for v in cur_val.split(delimiter) if v]
+
+        if value not in cur_val_list:
+            cur_val_list.append(value)
+        univention.config_registry.handler_set(
+                ["{}={}".format(ucrv,
+                                delimiter.join(cur_val_list))]
+        )
+
+
     def __str__(self):
         return self.name
 
     class Meta:
         udm_module = "container/ou"
         udm_filter = "objectClass=ucsschoolOrganizationalUnit"
+
+

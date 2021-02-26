@@ -56,6 +56,7 @@ import univention.config_registry
 import univention.debug
 import univention.lib.policy_result
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, create_passwd, stopped_notifier
+from ucsschool.lib.models.school import School
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_dc_slave_admin,
@@ -1028,6 +1029,11 @@ def create_school_ou(
     if created:
         # for OUs the temporary file contains the LDAP DN
         hooks.post("ou", "A", dn=ou_base, line=myline)
+
+        # replacing the 10self_service_whitelist hook in
+        # ucs-school-selfservice-support/usr/share/ucs-school-import/hooks/ou_create_post.d/10self_service_whitelist
+
+        School.self_service_whitelist_hook(schoolNr)
 
     if dcNameAdministrative:
         create_dc(co, lo, baseDN, schoolNr, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
