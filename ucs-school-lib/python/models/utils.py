@@ -47,6 +47,7 @@ import ruamel.yaml
 from psutil import NoSuchProcess, process_iter
 from six import string_types
 
+import univention.config_registry
 import univention.debug as ud
 from univention.config_registry import ConfigRegistry
 from univention.lib.i18n import Translation
@@ -86,7 +87,9 @@ class ValidationDataFilter(logging.Filter):
         return record.name != "UCSSchool-Validation"
 
 
-def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
+def _load_logging_config(
+    path=LOGGING_CONFIG_PATH,
+):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
     with open(path, "r") as fp:
         config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
     return config
@@ -112,7 +115,9 @@ ucr_username_max_length = lazy_object_proxy.Proxy(
 )  # type: int
 
 
-def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
+def _remove_password_from_log_record(
+    record,
+):  # type: (logging.LogRecord) -> logging.LogRecord
     def replace_password(obj, attr):
         ori = getattr(obj, attr)
         if isinstance(ori, collections.Mapping) and isinstance(ori.get("password"), string_types):
@@ -427,7 +432,15 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 
 
 def get_file_handler(
-    level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None, backupCount=10000, when="D"
+    level,
+    filename,
+    fmt=None,
+    datefmt=None,
+    uid=None,
+    gid=None,
+    mode=None,
+    backupCount=10000,
+    when="D",
 ):
     # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int], Optional[int],Optional[str]) -> logging.Handler  # noqa: E501
     """
@@ -696,3 +709,23 @@ def get_package_version(package_name):  # type: (str) -> str
     if not package:
         raise NotInstalled("Debian package {!r} ist not installed.".format(package_name))
     return package.installed.version
+
+
+def add_or_remove_ucrv(ucrv, action, value, delimiter):
+    """Adds or removes an uncrv. Delimiter splits the value of the existing ucr."""
+
+    if action == "remove" and ucrv not in ucr.keys():
+        return 0
+    cur_val = ucr.get(ucrv, "")
+    cur_val_list = [v for v in cur_val.split(delimiter) if v]
+    if action == "add":
+        if value not in cur_val_list:
+            cur_val_list.append(value)
+    elif action == "remove":
+        try:
+            cur_val_list.remove(value)
+        except ValueError:
+            return 0
+
+    univention.config_registry.handler_set(["{}={}".format(ucrv, delimiter.join(cur_val_list))])
+    return 0
