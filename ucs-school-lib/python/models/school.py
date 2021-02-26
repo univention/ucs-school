@@ -42,6 +42,7 @@ from ldap.filter import escape_filter_chars, filter_format
 
 import univention.admin.modules
 import univention.admin.objects
+from ucsschool.lib.ucr_utils import add_or_remove_ucrv
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
 
@@ -718,6 +719,20 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
+
+    @classmethod
+    def self_service_whitelist_hook(cls, ouname):
+        # replaces the 10self_service_whitelist 00_hook script:
+        #     /usr/share/ucs-school-lib/modify_ucr_list
+        # ouname is the string name of the ou.
+
+        delimiter = ","
+        ucrv = "umc/self-service/passwordreset/whitelist/groups"
+        value = "Domain Users {}".format(ouname)
+
+        cls.logger.info("Setting ucrv {} to '{}'".format(ucrv, value))
+
+        add_or_remove_ucrv(ucrv, "add", value, delimiter)
 
     def __str__(self):
         return self.name
