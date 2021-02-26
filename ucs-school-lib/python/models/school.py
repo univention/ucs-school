@@ -721,15 +721,24 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     def self_service_whitelist_hook(cls,ouname):
+        # replaces the 10self_service_whitelist 00_hook script.
+        # /usr/share/ucs-school-lib/modify_ucr_list
+        # Maybe move the functionality to a seperate module, that is then
+        # used by the modify_ucr_list?
+        #
+        # ouname is the string name of the ou.
+
         delimiter = ','
         ucrv = 'umc/self-service/passwordreset/whitelist/groups'
         value = "Domain Users {}".format(ouname)  # TODO
-        cls.logger.info("Setting ucrv {} to '{}'".format(ucrv,value))
-        cur_val = ucr.get(ucrv, "")
-        cur_val_list = [v for v in cur_val.split(delimiter) if v]
 
+        cls.logger.info("Setting ucrv {} to '{}'".format(ucrv,value))
+
+        cur_val = ucr.get(ucrv, "") # yes, ucr is a global
+        cur_val_list = [v for v in cur_val.split(delimiter) if v]
         if value not in cur_val_list:
             cur_val_list.append(value)
+
         univention.config_registry.handler_set(
                 ["{}={}".format(ucrv,
                                 delimiter.join(cur_val_list))]
