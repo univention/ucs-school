@@ -28,11 +28,12 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
+import socket
 import subprocess
 
 try:
     from typing import List
+
     from .base import LoType
 except ImportError:
     pass
@@ -44,8 +45,9 @@ from ldap.filter import escape_filter_chars, filter_format
 import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
+from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set
-from univention.udm import UDM, NoObject as UdmNoObject
+from univention.udm import UDM, CreateError, NoObject as UdmNoObject
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -57,6 +59,10 @@ from ..roles import (
     role_school_staff_group,
     role_school_student_group,
     role_school_teacher_group,
+    role_single_master,
+    role_staff,
+    role_student,
+    role_teacher,
 )
 from .attributes import Attribute, DCName, DisplayName, SchoolName, ShareFileServer
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
@@ -65,6 +71,7 @@ from .dhcp import DHCPService
 from .group import BasicGroup, BasicSchoolGroup, Group
 from .misc import OU, Container
 from .policy import DHCPDNSPolicy
+from .share import MarketplaceShare
 from .utils import _, flatten, ucr
 
 
@@ -127,11 +134,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     [self.dc_name.lower()],
                 )
             dcs = lo.search(ldap_filter_str)
-            if len(dcs) and ucr.is_true("ucsschool/singlemaster"):
+            if dcs and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
                 )
-            elif len(dcs):
+            elif dcs:
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup or master server"
                 )
@@ -301,7 +308,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative=False):
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("hostname")
+            return ucr.get("ldap/master").split(".", 1)[0]
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
@@ -406,7 +413,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     [self.dc_name.lower()],
                 )
             )
-            if len(mb_dcs):
+            if mb_dcs:
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
             # Sadly we need this here to access non school specific computers.
@@ -421,7 +428,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     dc_name_l
                 )
             )
-            if len(slave_dcs):
+            if slave_dcs:
                 dn, attr = slave_dcs[0]
                 dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)
                 dc_udm_obj.open()
@@ -730,6 +737,262 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
+
+    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
+        """
+        Runs PyHooks, then ucs-school-libs fork hooks.
+
+        :param str hook_time: `pre` or `post`
+        :param str func_name: `create`, `modify`, `move` or `remove`
+        :return: return code of lib hooks
+        :rtype: bool: result of a legacy hook or None if no legacy hook ran
+        """
+        if hook_time == "post" and func_name == "create":
+            lo, pos = getAdminConnection()
+            self.logger.debug("Starting post-create hooks...")
+            self.set_ucsschool_role_for_dc(lo)
+            self.create_market_place_share(lo)
+            self.create_dhcp_search_base(lo)
+            self.create_dhcp_dns_policy(lo)
+            self.create_import_group(lo)
+            self.create_exam_group(lo)
+            self.logger.debug("Finished post-create hooks.")
+
+        return super(School, self).call_hooks(hook_time, func_name)
+
+    def set_ucsschool_role_for_dc(self, lo):  # type: (LoType) -> None
+        """
+        Set the ucsschool role for the computer on which the
+        school is replicated.
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
+        udm = UDM(lo).version(1)
+        ou_lower = self.name.lower()
+        if ucr.is_true("ucsschool/singlemaster", True):
+            mod = udm.get("computers/domaincontroller_master")
+            # UDM computer object of master can be found with "cn={hostname}", using the hostname
+            # from its fqdn, which is in ucr["ldap/master"].
+            filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
+            obj = [o for o in mod.search(filter_s)][0]
+            role = create_ucsschool_role_string(role_single_master, self.name)
+            if role not in obj.props.ucsschoolRole:
+                obj.props.ucsschoolRole.append(role)
+                obj.save()
+                self.logger.info("Append ucsschoolRole {} to {}".format(role, obj.dn))
+            else:
+                self.logger.warning("ucsschoolRole {} is already appended to {}".format(role, obj.dn))
+        else:
+            adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
+            edu_net_filter = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
+            base = "cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"])
+
+            for ldap_filter, role in [
+                (adm_net_filter, "dc_slave_admin"),
+                (edu_net_filter, "dc_slave_edu"),
+            ]:
+                groups = [grp for grp in udm.get("groups/group").search(ldap_filter, base=base)]
+                if groups:
+                    try:
+                        server_dn = groups[0].props.hosts[0]
+                    except IndexError:
+                        continue
+                    try:
+                        udm.get("computers/domaincontroller_slave").get(server_dn)
+                    except UdmNoObject:
+                        self.logger.info(
+                            "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                                server_dn
+                            )
+                        )
+                        continue
+
+                    obj = SchoolDCSlave.from_dn(lo=lo, dn=server_dn, school=self.name)
+                    ucsschool_role = create_ucsschool_role_string(role, self.name)
+                    if ucsschool_role not in obj.ucsschool_roles:
+                        obj.ucsschool_roles.append(ucsschool_role)
+                        obj.modify(lo)
+                        self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
+
+    def create_market_place_share(self, lo):  # type: (LoType) -> None
+        """
+        Create a share object with the name `Marktplatz` for the school.
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
+        if not ucr.is_true("ucsschool/import/generate/share/marktplatz", False):
+            self.logger.info(
+                "Creation of share 'Marktplatz' has been disabled"
+                "by ucsschool/import/generate/share/marktplatz"
+            )
+            return
+        objs = MarketplaceShare.get_all(lo=lo, school=self.name)
+        if not objs:
+            obj = MarketplaceShare(name="Marktplatz", school=self.name)
+            success = obj.create(lo)
+            if not success:
+                self.logger.error(
+                    "Failed to create MarketplaceShare for school={}.".format(self.name),
+                )
+                return
+            self.logger.info("Created {!r}".format(obj))
+        else:
+            self.logger.warning("MarketplaceShare for {} exists already.".format(self.name))
+
+    def create_dhcp_search_base(self, lo):  # type: (LoType) -> None
+        """
+        Create the policies/registry ou-default-ucr-policy for the school,
+        add the dhcp-ou-dn to it an link to the school.
+
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
+        if not ucr.is_true("ucsschool/import/generate/policy/dhcp/searchbase", False):
+            self.logger.info(
+                "Creation of UCR policy for DHCP searchbase has been disabled by"
+                "ucsschool/import/generate/policy/dhcp/searchbase"
+            )
+            return
+        udm = UDM(lo).version(1)
+        ou_dn = self.dn
+        registry_mod = udm.get("policies/registry")
+        try:
+            policy = registry_mod.new()
+            policy.position = "cn=policies,{}".format(ou_dn)
+            policy.props.name = "ou-default-ucr-policy"
+            policy.save()
+        except CreateError as e:
+            # object exists already.
+            self.logger.error(
+                "Error while creating ou-default-ucr-policy for {}: {}".format(self.name, e)
+            )
+            return
+
+        # add value to policy
+        policy_dn = "cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn)
+        policy = registry_mod.get(policy_dn)
+        if policy.props.registry:
+            policy.props.registry["dhcpd/ldap/base"] = "cn=dhcp,{}".format(ou_dn)
+        else:
+            # empty registry is a list and not a dict.
+            policy.props.registry = {"dhcpd/ldap/base": "cn=dhcp,{}".format(ou_dn)}
+        policy.save()
+        # link to OU
+        obj = self.get_udm_object(lo)
+        obj.policies.append(policy_dn)
+        obj.modify(lo)
+        self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
+
+    def create_dhcp_dns_policy(self, lo):  # type: (LoType) -> None
+        """
+        Add a DHCPDNSPolicy for the school, append it to the respective
+        container/cn object and add domain_name and domain_name_servers
+        in single server environments.
+        formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
+        """
+        if not ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/set_per_ou", False):
+            self.logger.info(
+                "Creation of DHCP DNS policy has been disabled by"
+                "ucsschool/import/generate/policy/dhcp/dns/set_per_ou"
+            )
+            return
+        udm = UDM(lo).version(1)
+        ou = self.name
+        ou_lower = ou.lower()
+        #  Determine list of available OUs.
+        filter_s = filter_format("(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))", [ou_lower])
+        ou_dns = [obj.dn for obj in udm.get(self.Meta.udm_module).search(filter_s)]
+        dhcp_dns_mod = udm.get("policies/dhcp_dns")
+        for ou_dn in ou_dns:
+            policy = DHCPDNSPolicy(
+                name="dhcp-dns-{}".format(ou_lower),
+                school=ou,
+                empty_attributes=["univentionDhcpDomainNameServers"],
+            )
+            if not policy.exists(lo):
+                policy.position = "cn=policies,{}".format(ou_dn)
+                policy.create(lo)
+            else:
+                self.logger.warning("DHCPDNSPolicy for {} exists already.".format(self.name))
+
+            dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn)
+            # In a single server environment, the master is the DNS server.
+            if ucr.is_true("ucsschool/singlemaster", False):
+                policy = dhcp_dns_mod.get(dhcp_dns_policy_dn)
+                policy.props.domain_name_servers = [socket.gethostbyname(ucr["ldap/master"])]
+                policy.props.domain_name = ucr["domainname"]
+                policy.save()
+
+            container_mod = udm.get("container/cn")
+            container = container_mod.get("cn=dhcp,{}".format(ou_dn))
+            container.policies.append(dhcp_dns_policy_dn)
+            container.save()
+
+    def create_import_group(self, lo):  # type: (LoType) -> None
+        """
+        Create the OU-import-all group, which enables user to run
+        an import, add the UMC policy schoolimport-all to it
+        and set roles and options which are used in the import.
+        formerly in shell hook 53importgroup_create
+        """
+        if not ucr.is_true("ucsschool/import/generate/import/group", False):
+            self.logger.info(
+                "creation of the Import Group has been disabled by"
+                "ucsschool/import/generate/import/group"
+            )
+            return
+        udm = UDM(lo).version(1)
+        ou = self.name
+        ou_dn = self.dn
+        ou_import_group = "cn={}-import-all,cn=groups,{}".format(ou, ou_dn)
+        group = Group.cache("{}-import-all".format(ou), ou)
+        group.position = "cn=groups,{}".format(ou_dn)
+        group.name = "{}-import-all".format(ou)
+        group.description = "Default group for UCS@school user imports"
+        group.create(lo)
+        group.add_umc_policy(
+            policy_dn="cn=schoolimport-all,cn=UMC,cn=policies,{}".format(ucr["ldap/base"]), lo=lo
+        )
+
+        group_mod = udm.get("groups/group")
+        group = group_mod.get(ou_import_group)
+        group.options.append("ucsschoolImportGroup")
+        group.props.ucsschoolImportSchool = [ou]
+        # comment: teacher_and_staff is a proper role and only used in the import context.
+        group.props.ucsschoolImportRole.extend(
+            [role_student, role_staff, "teacher_and_staff", role_teacher]
+        )
+        group.save()
+
+    def create_exam_group(self, lo):  # type: (LoType) -> None
+        """
+        Creates the exam users container cn=examusers and the
+        OU-specific group, e.g. DEMOSCHOOL-Klassenarbeit for the school.
+        formerly in shell hook 60schoolexam-master.
+        """
+        ldap_base = ucr["ldap/base"]
+
+        # create exam container
+        examusers = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
+        district = self.get_district()
+        if not district:
+            district = ""
+        exam_container = Container(name=examusers, school=self.school)
+        exam_container.position = "ou={}{},{}".format(self.name, district, ldap_base)
+        exam_container.name = examusers
+        exam_container.create(lo)
+        self.logger.debug("Exam container {} created.".format(exam_container.name))
+
+        # create exam group
+        examgroupname_template = ucr.get(
+            "ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
+        )
+        ucr_value_keywords = {"ou": self.name}
+        examgroupname = examgroupname_template % ucr_value_keywords
+        group = Group.cache(examgroupname, self.name)
+        group.position = "cn=ucsschool,cn=groups,{}".format(ldap_base)
+        group.name = examgroupname
+        group.description = "Default group for UCS@school user imports"
+        group.create(lo)
+        self.logger.debug("Exam group {} created.".format(group.name))
+        return
 
     def __str__(self):
         return self.name

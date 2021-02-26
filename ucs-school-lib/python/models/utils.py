@@ -50,7 +50,7 @@ from psutil import NoSuchProcess, process_iter
 from six import string_types
 
 import univention.debug as ud
-from univention.config_registry import ConfigRegistry
+from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.i18n import Translation
 from univention.lib.policy_result import policy_result
 
@@ -733,3 +733,28 @@ def get_package_version(package_name):  # type: (str) -> str
     if not package:
         raise NotInstalled("Debian package {!r} ist not installed.".format(package_name))
     return package.installed.version
+
+
+def add_or_remove_ucrv_value(ucrv, action, value, delimiter):
+    """Adds or removes a value to a ucrv. Delimiter splits the value of the existing ucr.
+
+    This code was refactored from ucs-school-lib/modify_ucr_list, so that it could also
+    be used in the school_creation listener. Bcause the method is also called from a cli
+    script it returns 0.
+    """
+
+    if action == "remove" and ucrv not in ucr.keys():
+        return 0
+    cur_val = ucr.get(ucrv, "")
+    cur_val_list = [v for v in cur_val.split(delimiter) if v]
+    if action == "add":
+        if value not in cur_val_list:
+            cur_val_list.append(value)
+    elif action == "remove":
+        try:
+            cur_val_list.remove(value)
+        except ValueError:
+            return 0
+
+    handler_set(["{}={}".format(ucrv, delimiter.join(cur_val_list))])
+    return 0

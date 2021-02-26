@@ -39,6 +39,15 @@ then
 fi
 
 . /usr/share/univention-lib/base.sh
+
+# Force pysupport run to make ucsschool.lib.models.utils.add_or_remove_ucrv_value available NOW
+if which update-python-modules >/dev/null 2>&1; then
+	update-python-modules -f
+fi
+
 call_joinscript 67ucs-school-selfservice-support.inst
+
+# conditional restart of univention directory listener
+/etc/init.d/univention-directory-listener crestart
 
 exit 0
