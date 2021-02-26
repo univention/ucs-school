@@ -44,6 +44,8 @@ import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
+from univention.config_registry.interfaces import Interfaces
+from univention.udm import UDM, CreateError
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -63,7 +65,13 @@ from .dhcp import DHCPService
 from .group import BasicGroup, BasicSchoolGroup, Group
 from .misc import OU, Container
 from .policy import DHCPDNSPolicy
+from .share import MarketplaceShare
 from .utils import _, flatten, ucr
+
+try:
+    from .base import LoType
+except ImportError:
+    pass
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
@@ -718,6 +726,156 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
+
+    @classmethod
+    def set_ucsschool_role(cls, ou, lo):  # type: (str, LoType) -> None
+        ou_lower = ou.lower()
+        ldap_hostdn = ucr["ldap/hostdn"]
+        cls.logger.info("set ucsschoolRole")
+        udm = UDM(lo).version(1)
+        if ucr.is_true("ucsschool/singlemaster", True):
+            role = "single_master:school:{}".format(ou)
+            obj = udm.get("computers/domaincontroller_master").get(ldap_hostdn)
+            obj.props.ucsschoolRole.append(role)
+            obj.save()
+        else:
+            adm_net_dn = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
+            edu_net_dn = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
+            base = "cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"])
+
+            res = lo.search(base=base, filter=edu_net_dn, attr=["uniqueMember"])
+            if res:
+                # todo ...
+                edu_server_dn = res[0][1]["uniqueMember"][0]
+                uot = lo.get(edu_server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
+                if uot == "computers/domaincontroller_slave":
+                    obj = udm.get("computers/domaincontroller_slave").get(edu_server_dn)
+                    obj.props.ucsschoolRole.append("dc_slave_edu:school:{}".format(ou))
+                    obj.save()
+                else:
+                    cls.logger.info(
+                        "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                            edu_server_dn
+                        )
+                    )
+
+            res = lo.search(base=base, filter=adm_net_dn, attr=["uniqueMember"])
+            if res:
+                # todo ...
+                adm_server_dn = res[0][1]["uniqueMember"][0]
+                uot = lo.get(adm_server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
+                if uot == "computers/domaincontroller_slave":
+                    obj = udm.get("computers/domaincontroller_slave").get(adm_server_dn)
+                    obj.props.ucsschoolRole.append("dc_slave_admin:school:{}".format(ou))
+                    obj.save()
+                else:
+                    cls.logger.info(
+                        "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                            adm_server_dn
+                        )
+                    )
+
+    @classmethod
+    def create_market_place(cls, ou, lo):  # type: (str, LoType) -> None
+        if not ucr.is_true("ucsschool/import/generate/share/marktplatz", False):
+            cls.logger.info(
+                "Creation of share 'Marktplatz' has been disabled"
+                "by ucsschool/import/generate/share/marktplatz"
+            )
+            return
+        objs = MarketplaceShare.get_all(lo=lo, school=ou)
+        if objs:
+            cls.logger.info("MarketplaceShare exists.")
+        else:
+            obj = MarketplaceShare(name="Marktplatz", school="DEMOSCHOOL2")
+            if obj.exists(lo):
+                cls.logger.critical(
+                    "Object of type MarketplaceShare with school=%r and name=Marktplatz exists.", ou
+                )
+                raise ValueError
+            success = obj.create(lo)
+            if not success:
+                return
+            objs = MarketplaceShare.get_all(lo=lo, school=ou)
+            cls.logger.info("{!r}".format(objs))
+
+    @classmethod
+    def create_dhcp_search_base(cls, ou, district, lo):  # type: (str, str, LoType) -> None
+        if not ucr.is_true("ucsschool/import/generate/policy/dhcp/searchbase", False):
+            cls.logger.info(
+                "Creation of UCR policy for DHCP searchbase has been disabled by"
+                "ucsschool/import/generate/policy/dhcp/searchbase"
+            )
+            return
+
+        ou_lower = ou.lower()
+        ou_dn = "ou={}{},{}".format(ou_lower, district, ucr["ldap/base"])
+        registry_mod = UDM(lo).version(1).get("policies/registry")
+        try:
+            policy = registry_mod.new()
+            policy.position = "cn=policies,{}".format(ou_dn)
+            policy.props.name = "ou-default-ucr-policy"
+            policy.save()
+        except CreateError:
+            # object exists already.
+            pass
+
+        # add value to policy
+        policy = registry_mod.get("cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn))
+        policy.props.registry["dhcpd/ldap/base"] = "cn=dhcp,{}".format(ou_dn)
+        policy.save()
+
+        # link to OU
+        container_ou_mod = UDM(lo).version(1).get("container/ou")
+        ou_obj = container_ou_mod.get(ou_dn)
+        ou_obj.policies.append("cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn))
+        ou_obj.save()
+
+    @classmethod
+    def create_dhcp_dns(cls, ou, lo):  # type: (str, LoType) -> None
+        """
+        Creates a UCR-policy for DHCP DNS settings
+        create dhcp dns policies for all local OUs (Bug #31930)
+        """
+        if not ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/set_per_ou", False):
+            cls.logger.info(
+                "Creation of DHCP DNS policy has been disabled by"
+                "ucsschool/import/generate/policy/dhcp/dns/set_per_ou"
+            )
+            return
+        ou_lower = ou.lower()
+        #  Determine list of available OUs.
+        ous = lo.search(
+            base=ucr["ldap/base"],
+            filter="(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))".format(ou_lower),
+            attr=["dn"],
+        )
+        ou_dns = [ou_dn[0] for ou_dn in ous]
+        udm = UDM(lo).version(1)
+        dhcp_dns_mod = udm.get("policies/dhcp_dns")
+        for ou_dn in ou_dns:
+            try:
+                policy = dhcp_dns_mod.new()
+                policy.position = "cn=policies,{}".format(ou_dn)
+                policy.props.name = "dhcp-dns-{}".format(ou_lower)
+                policy.save()
+            except CreateError:
+                # object exists already.
+                pass
+
+            # In a single server environment, the master is the DNS server.
+            if ucr.is_true("ucsschool/singlemaster", False):
+                if ucr.get("server/role") == "domaincontroller_master":
+                    policy = dhcp_dns_mod.get("cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn))
+                    # todo check
+                    policy.props.domain_name_servers = str(Interfaces().get_default_ip_address().ip)
+                    policy.props.domain_name = ucr["domainname"]
+                    policy.save()
+
+            container_mod = udm.get("container/cn")
+            container = container_mod.get("cn=dhcp,{}".format(ou_dn))
+            container.policies.append("cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn))
+            container.save()
 
     def __str__(self):
         return self.name
