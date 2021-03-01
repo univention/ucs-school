@@ -30,36 +30,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import argparse
-import sys
-
-from ucsschool.lib.ucr_utils import add_or_remove_ucrv
+import univention.config_registry
 
 
-def parse_cmdline():
-    parser = argparse.ArgumentParser(
-        description="Add or remove an item to/from a UCRV list.",
-        epilog="Non-existent UCRVs will be created.",
-    )
-    parser.add_argument("UCRV", help="UCR variable name.")
-    parser.add_argument("action", help='Either "add" or "remove".')
-    parser.add_argument(
-        "delimiter",
-        help='Delimiter to place between items of the list (e.g. " " or ",").',
-    )
-    parser.add_argument("value", help="Item to add to or remove from the value list.")
-    args = parser.parse_args()
+def add_or_remove_ucrv(ucrv, action, value, delimiter):
+    """Adds or removes an uncrv. Delimiter splits the value of the existing ucr."""
+    ucr = univention.config_registry.ConfigRegistry()
+    ucr.load()
 
-    if args.action not in ("add", "remove"):
-        parser.error('"action" must be either "add" or "remove".')
-
-    return args
-
-
-def main():
-    args = parse_cmdline()
-    return add_or_remove_ucrv(args.UCRV, args.action, args.value, args.delimiter)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+    if action == "remove" and ucrv not in ucr.keys():
+        return 0
+    cur_val = ucr.get(ucrv, "")
+    cur_val_list = [v for v in cur_val.split(delimiter) if v]
+    if action == "add":
+        if value not in cur_val_list:
+            cur_val_list.append(value)
+    elif action == "remove":
+        try:
+            cur_val_list.remove(value)
+        except ValueError:
+            return 0
+    univention.config_registry.handler_set(["{}={}".format(ucrv, delimiter.join(cur_val_list))])
+    return 0
