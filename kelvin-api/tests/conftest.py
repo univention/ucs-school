@@ -37,7 +37,7 @@ import time
 from functools import lru_cache
 from pathlib import Path
 from tempfile import mkdtemp, mkstemp
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple
 from unittest.mock import patch
 
 import factory
@@ -53,6 +53,7 @@ import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.import_config import get_import_config
 from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
+from ucsschool.kelvin.token_auth import create_access_token
 from udm_rest_client import UDM, NoObject, UdmObject
 from univention.config_registry import ConfigRegistry
 
@@ -173,6 +174,33 @@ def auth_header(url_fragment):
     response_json = response.json()
     auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
     return auth_header
+
+
+@pytest.fixture
+def generate_jwt():
+    async def _generate_jwt(
+        username: str, is_admin: bool, schools: Iterable[str], roles: Iterable[str]
+    ) -> str:
+        sub_data = dict(
+            username=username, kelvin_admin=is_admin, schools=schools, roles=roles
+        )
+        return (await create_access_token(data=dict(sub=sub_data))).decode()
+
+    return _generate_jwt
+
+
+@pytest.fixture
+def generate_auth_header(generate_jwt):
+    async def _generate_auth_header(
+        username: str,
+        is_admin: bool = False,
+        schools: Iterable[str] = (),
+        roles: Iterable[str] = (),
+    ):
+        generated_token = await generate_jwt(username, is_admin, schools, roles)
+        return {"Authorization": f"Bearer {generated_token}"}
+
+    return _generate_auth_header
 
 
 @pytest.fixture

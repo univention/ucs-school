@@ -68,6 +68,7 @@ IMPORT_CONFIG_FILE_USER = Path("/var/lib/ucs-school-import/configs/kelvin.json")
 KELVIN_IMPORTUSER_HOOKS_PATH = Path("/var/lib/ucs-school-import/kelvin-hooks")
 LOG_FILE_PATH = Path("/var/log/univention/ucsschool-kelvin-rest-api/http.log")
 MACHINE_PASSWORD_FILE = "/etc/machine.secret"
+OPA_URL = "http://localhost:8181/v1/data/ucsschool/kelvin/"
 STATIC_FILES_PATH = Path("/kelvin/kelvin-api/static")
 STATIC_FILE_CHANGELOG = STATIC_FILES_PATH / "changelog.html"
 STATIC_FILE_README = STATIC_FILES_PATH / "readme.html"

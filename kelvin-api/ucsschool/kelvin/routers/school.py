@@ -29,12 +29,14 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from ldap.filter import escape_filter_chars
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
 
+from ..opa import OPAClient
+from ..token_auth import oauth2_scheme
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 
 router = APIRouter()
@@ -111,6 +113,7 @@ async def search(
     ),
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> List[SchoolModel]:
     """
     Search for schools (OUs).
@@ -119,6 +122,16 @@ async def search(
     searches. No other properties can be used to filter.
     """
     logger.debug("Searching for schools with: name_filter=%r", name_filter)
+    if not await OPAClient.instance().check_policy_true(
+        policy="schools",
+        token=token,
+        request=dict(method="GET", path=["schools"]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list schools.",
+        )
     if name_filter:
         filter_str = "ou={}".format(
             escape_filter_chars(name_filter).replace(r"\2a", "*")
@@ -141,12 +154,23 @@ async def get(
         title="name",
     ),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> SchoolModel:
     """
     Fetch a specific school (OU).
 
     - **name**: name of the school (**required**)
     """
+    if not await OPAClient.instance().check_policy_true(
+        policy="schools",
+        token=token,
+        request=dict(method="GET", path=["schools", school_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list schools.",
+        )
     school = await School.from_dn(School(name=school_name).dn, None, udm)
     return await SchoolModel.from_lib_model(school, request, udm)
 

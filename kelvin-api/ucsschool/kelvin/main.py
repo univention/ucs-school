@@ -53,13 +53,9 @@ from .constants import (
 )
 from .import_config import get_import_config
 from .ldap_access import LDAPAccess
+from .opa import OPAClient
 from .routers import role, school, school_class, user
-from .token_auth import (
-    Token,
-    create_access_token,
-    get_current_active_user,
-    get_token_ttl,
-)
+from .token_auth import Token, create_access_token, get_token_ttl
 
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 
@@ -83,6 +79,11 @@ class ValidationDataFilter(logging.Filter):
 @lru_cache(maxsize=1)
 def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
+
+
+@app.on_event("shutdown")
+async def shutdown_opa_client() -> None:
+    await OPAClient.shutdown_instance()
 
 
 @app.on_event("startup")
@@ -141,8 +142,11 @@ async def login_for_access_token(
             detail="Incorrect username or password",
         )
     access_token_expires = timedelta(minutes=get_token_ttl())
+    sub_data = user.dict(include={"username", "kelvin_admin"})
+    sub_data["schools"] = user.attributes.get("ucsschoolSchool", [])
+    sub_data["roles"] = user.attributes.get("ucsschoolRole", [])
     access_token = await create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": sub_data}, expires_delta=access_token_expires
     )
     logger.debug("User %r retrieved access_token.", user.username)
     return {"access_token": access_token, "token_type": "bearer"}
@@ -164,7 +168,6 @@ app.include_router(
     school_class.router,
     prefix=f"{URL_API_PREFIX}/classes",
     tags=["classes"],
-    dependencies=[Depends(get_current_active_user)],
 )
 # app.include_router(
 #     computer_room.router,
@@ -182,13 +185,11 @@ app.include_router(
     role.router,
     prefix=f"{URL_API_PREFIX}/roles",
     tags=["roles"],
-    dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
     school.router,
     prefix=f"{URL_API_PREFIX}/schools",
     tags=["schools"],
-    dependencies=[Depends(get_current_active_user)],
 )
 # app.include_router(
 #     computer_server.router,
@@ -200,7 +201,6 @@ app.include_router(
     user.router,
     prefix=f"{URL_API_PREFIX}/users",
     tags=["users"],
-    dependencies=[Depends(get_current_active_user)],
 )
 app.mount(
     f"{URL_API_PREFIX}/static",

@@ -77,6 +77,7 @@ class LdapUser(BaseModel):
     full_name: str = None
     disabled: bool
     dn: str
+    kelvin_admin: bool = False
     attributes: Dict[str, List[Any]] = None
 
 
@@ -115,15 +116,10 @@ class LDAPAccess:
         user_dn = await self.get_dn_of_user(username)
         if user_dn:
             admin_group_members = await self.admin_group_members()
+            user = await self.get_user(username, user_dn, password, school_only=False)
             if user_dn in admin_group_members:
-                return await self.get_user(
-                    username, user_dn, password, school_only=False
-                )
-            else:
-                self.logger.debug(
-                    "User %r not member of group %r.", username, API_USERS_GROUP_NAME
-                )
-                return None
+                user.kelvin_admin = True
+            return user
         else:
             self.logger.debug("No such user in LDAP: %r.", username)
             return None
@@ -241,6 +237,8 @@ class LDAPAccess:
                 "sambaAcctFlags",
                 "shadowExpire",
                 "uid",
+                "ucsschoolSchool",
+                "ucsschoolRole",
             ]
         filter_s = f"(uid={escape_filter_chars(username)})"
         if school_only:

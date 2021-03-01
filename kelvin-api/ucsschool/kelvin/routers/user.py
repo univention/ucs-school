@@ -90,6 +90,8 @@ from univention.admin.filter import conjunction, expression
 from ..exceptions import UnknownUDMProperty
 from ..import_config import get_import_config, init_ucs_school_import_framework
 from ..ldap_access import LDAPAccess
+from ..opa import OPAClient, import_user_to_opa
+from ..token_auth import oauth2_scheme
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -498,6 +500,7 @@ async def search(  # noqa: C901
     logger: logging.Logger = Depends(get_logger),
     accepted_properties: Set[str] = Depends(accepted_udm_properties),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> List[UserModel]:
     """
     Search for school users.
@@ -591,8 +594,18 @@ async def search(  # noqa: C901
     except APICommunicationError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.reason)
     users.sort(key=attrgetter("name"))
+    allowed_users = await OPAClient.instance().check_policy(
+        policy="allowed_users_list",
+        token=token,
+        request=dict(
+            method="GET",
+            path=["users"],
+            data=[import_user_to_opa(user) for user in users],
+        ),
+        target=dict(),
+    )
     res: List[UserModel] = []
-    for user in users:
+    for user in (element for element in users if element.name in allowed_users):
         try:
             obj = await UserModel.from_lib_model(user, request, udm)
         except ValidationError as exc:
@@ -611,6 +624,7 @@ async def get(
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> UserModel:
     """
     Fetch a specific school user.
@@ -624,9 +638,19 @@ async def get(
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No User with username {username!r} found.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user = await get_import_user(udm, udm_obj.dn)
+    if not await OPAClient.instance().check_policy_true(
+        policy="users",
+        token=token,
+        request=dict(method="GET", path=["users", username]),
+        target=import_user_to_opa(user),
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No object with name={username!r} found or not authorized.",
+        )
     return await UserModel.from_lib_model(user, request, udm)
 
 
@@ -640,6 +664,7 @@ async def create(
     ),
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> UserModel:
     """
     Create a school user with all the information:
@@ -686,6 +711,16 @@ async def create(
         ]
     )
     user: ImportUser = await request_user.as_lib_model(request)
+    if not await OPAClient.instance().check_policy_true(
+        policy="users",
+        token=token,
+        request=dict(method="POST", path=["users"], data=user.to_dict()),
+        target=dict(),
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to create this user.",
+        )
     if await user.exists(udm):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="School user exists."
@@ -827,6 +862,7 @@ async def partial_update(  # noqa: C901
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> UserModel:
     """
     Patch a school user with partial information
@@ -859,10 +895,20 @@ async def partial_update(  # noqa: C901
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No User with username {username!r} found.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     to_change = await user.to_modify_kwargs(request)
     user_current = await get_import_user(udm, udm_obj.dn)
+    if not await OPAClient.instance().check_policy_true(
+        policy="users",
+        token=token,
+        request=dict(method="PATCH", path=["users", username], data=to_change),
+        target=import_user_to_opa(user_current),
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No object with name={username!r} found or not authorized.",
+        )
 
     # 1. move
     try:
@@ -933,6 +979,7 @@ async def complete_update(  # noqa: C901
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> UserModel:
     """
     Update a school user with all the information:
@@ -975,7 +1022,7 @@ async def complete_update(  # noqa: C901
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No User with username {username!r} found.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
@@ -989,6 +1036,18 @@ async def complete_update(  # noqa: C901
     )
     user_request: ImportUser = await user.as_lib_model(request)
     user_current: ImportUser = await get_import_user(udm, udm_obj.dn)
+    if not await OPAClient.instance().check_policy_true(
+        policy="users",
+        token=token,
+        request=dict(
+            method="PUT", path=["users", username], data=user_request.to_dict()
+        ),
+        target=import_user_to_opa(user_current),
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No object with name={username!r} found or not authorized.",
+        )
 
     # 1. move
     new_school = user_request.school
@@ -1051,6 +1110,7 @@ async def delete(
     username: str,
     request: Request,
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> None:
     """
     Delete a school user
@@ -1062,9 +1122,19 @@ async def delete(
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No User with username {username!r} found.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
+    if not await OPAClient.instance().check_policy_true(
+        policy="users",
+        token=token,
+        request=dict(method="DELETE", path=["users", username]),
+        target=import_user_to_opa(user),
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No object with name={username!r} found or not authorized.",
+        )
     await user.remove(udm)
 
 

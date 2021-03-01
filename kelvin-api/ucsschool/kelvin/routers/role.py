@@ -29,7 +29,7 @@ from enum import Enum
 from typing import List, Type
 from urllib.parse import ParseResult, urlparse
 
-from fastapi import APIRouter, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, HttpUrl
 
 from ucsschool.importer.factory import Factory
@@ -46,6 +46,8 @@ from ucsschool.lib.roles import (
 )
 
 from ..import_config import init_ucs_school_import_framework
+from ..opa import OPAClient
+from ..token_auth import oauth2_scheme
 
 router = APIRouter()
 _roles_to_class = {}
@@ -121,10 +123,21 @@ class RoleModel(BaseModel):
 @router.get("/", response_model=List[RoleModel])
 async def search(
     request: Request,
+    token: str = Depends(oauth2_scheme),
 ) -> List[RoleModel]:
     """
     List all available roles.
     """
+    if not await OPAClient.instance().check_policy_true(
+        policy="roles",
+        token=token,
+        request=dict(method="GET", path=["roles"]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list roles.",
+        )
     return [
         RoleModel(name=role.name, display_name=role.name, url=role.to_url(request))
         for role in (
@@ -143,7 +156,18 @@ async def get(
         alias="name",
         title="name",
     ),
+    token: str = Depends(oauth2_scheme),
 ) -> RoleModel:
+    if not await OPAClient.instance().check_policy_true(
+        policy="roles",
+        token=token,
+        request=dict(method="GET", path=["roles", role_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list roles.",
+        )
     return RoleModel(
         name=role_name,
         display_name=role_name,

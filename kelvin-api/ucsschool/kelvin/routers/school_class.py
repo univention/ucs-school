@@ -35,6 +35,8 @@ from ucsschool.lib.models.attributes import ValidationError as LibValidationErro
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
+from ..opa import OPAClient
+from ..token_auth import oauth2_scheme
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from .base import (
     APIAttributesMixin,
@@ -164,6 +166,7 @@ async def search(
         title="name",
     ),
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> List[SchoolClassModel]:
     """
     Search for school classes.
@@ -173,6 +176,16 @@ async def search(
     - **name**: names of school classes to look for, use ``*`` for inexact
         search (optional)
     """
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="GET", path=["classes"]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list school classes.",
+        )
     if class_name:
         filter_str = f"name={school}-{class_name}"
     else:
@@ -186,8 +199,22 @@ async def search(
 
 @router.get("/{school}/{class_name}", response_model=SchoolClassModel)
 async def get(
-    class_name: str, school: str, request: Request, udm: UDM = Depends(udm_ctx)
+    class_name: str,
+    school: str,
+    request: Request,
+    udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="GET", path=["classes", class_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to list school classes.",
+        )
     sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
@@ -198,6 +225,7 @@ async def create(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
+    token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -209,6 +237,16 @@ async def create(
     - **ucsschool_roles**: list of tags of the form
         $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
     """
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="POST", path=["classes"]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to create school classes.",
+        )
     sc: SchoolClass = await school_class.as_lib_model(request)
     if await sc.exists(udm):
         raise HTTPException(
@@ -238,7 +276,18 @@ async def partial_update(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
+    token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="PATCH", path=["classes", class_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to edit school classes.",
+        )
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
     for attr, new_value in (
@@ -277,7 +326,18 @@ async def complete_update(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
+    token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="PUT", path=["classes", class_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to edit school classes.",
+        )
     if school != url_to_name(
         request, "school", UcsSchoolBaseModel.unscheme_and_unquote(school_class.school)
     ):
@@ -319,6 +379,17 @@ async def delete(
     school: str,
     request: Request,
     udm: UDM = Depends(udm_ctx),
+    token: str = Depends(oauth2_scheme),
 ) -> None:
+    if not await OPAClient.instance().check_policy_true(
+        policy="classes",
+        token=token,
+        request=dict(method="DELETE", path=["classes", class_name]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to delete school classes.",
+        )
     sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     await sc.remove(udm)
