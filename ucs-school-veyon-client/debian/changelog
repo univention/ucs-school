@@ -1,3 +1,9 @@
+ucs-school-veyon-client (1.0.1-5) unstable; urgency=medium
+
+  * Bug #52521: Fix unittests
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Mar 2021 08:48:21 +0200
+
 ucs-school-veyon-client (1.0.1-4) unstable; urgency=medium
 
   * Bug #52521: Make veyon client thread safe
