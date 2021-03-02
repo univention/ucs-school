@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-veyon-windows
+fix: 4.5.2.0-0A~4.4.0.202103020759
+desc: |
+ * This package provides Veyon Windows setup binary and SSL keys (Bug #52522).
+bug: [52522]
