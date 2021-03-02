@@ -99,7 +99,12 @@ feedback@univention.de
       </varlistentry>
     </variablelist>
   </para>
-
+  <caution>
+    <para>
+		 Achten Sie darauf, dass der Hostname nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (a-z, 0-9 und -) und zur Trennung nur einzelne Punkte enthalten darf.
+		 Der Hostname darf außerdem nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt.
+    </para>
+  </caution>
 </chapter>
 
 <chapter id="quickstart:ucsschoolinstalation">
