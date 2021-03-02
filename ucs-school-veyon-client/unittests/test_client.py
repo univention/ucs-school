@@ -108,6 +108,10 @@ def monkey_post(*args, **kwargs):
     return response
 
 
+def monkey_delete(*args, **kwargs):
+    return None
+
+
 def test_connection_error_on_unreachable_url(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     with pytest.raises(ConnectionError):
@@ -164,6 +168,7 @@ def test_second_host(monkeypatch):
 def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_screenshot(
         screenshot_format=screenshot_format, quality=quality, compression=compression
@@ -173,6 +178,7 @@ def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
 def test_wrong_image_format(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_screenshot(screenshot_format="gif")
@@ -182,6 +188,7 @@ def test_wrong_image_format(monkeypatch):
 def test_encoding_error(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("encoding_error", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_screenshot()
@@ -191,6 +198,7 @@ def test_encoding_error(monkeypatch):
 def test_invalid_feature(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.set_feature("NON_EXISTENT_FEATURE")
@@ -200,6 +208,7 @@ def test_invalid_feature(monkeypatch):
 def test_invalid_feature_status(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_feature_status("NON_EXISTENT_FEATURE")
@@ -210,6 +219,7 @@ def test_invalid_feature_status(monkeypatch):
 def test_get_feature_status(monkeypatch, feature, expected):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("get_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_feature_status(feature) == expected
 
@@ -217,6 +227,7 @@ def test_get_feature_status(monkeypatch, feature, expected):
 def test_get_user_info(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("user_info", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_user_info() == VeyonUser("LOGIN", "FULLNAME", "SESSION")
 
@@ -224,6 +235,7 @@ def test_get_user_info(monkeypatch):
 def test_idle_timeout(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
     monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("idle_timeout", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     time = datetime.now()
     client._session_cache["localhost"] = VeyonSession(
@@ -234,9 +246,6 @@ def test_idle_timeout(monkeypatch):
 
 
 def test_remove_session(monkeypatch):
-    def monkey_delete(*args, **kwargs):
-        return None
-
     monkeypatch.setattr(requests, "delete", monkey_delete)
     client = VeyonClient("remove_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     time = datetime.now()
