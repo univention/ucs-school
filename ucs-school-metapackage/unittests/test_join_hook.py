@@ -137,13 +137,18 @@ def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
 
 def test_determine_app_version_lower_than_req_for_44v9(join_hook_module):
     primary_node_app_version = "4.4 v9"
-    for local_errata_version in ("3.1.2-999", "4.4.6-999", "4.4.7-840"):
+    for local_errata_version, expected in (
+        ("3.1.2-999", "4.4 v6"),
+        ("4.4.6-761", "4.4 v6"),
+        ("4.4.6-999", "4.4 v8"),
+        ("4.4.7-840", "4.4 v8"),
+    ):
         package.version = local_errata_version
         with mock.patch.object(join_hook_module, "log") as log_mock:
             result_version = join_hook_module.determine_app_version(
                 primary_node_app_version, package_manager
             )
-            assert result_version == "4.4 v8"
+            assert result_version == expected
             assert log_mock.warning.called
 
 

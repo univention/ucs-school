@@ -315,10 +315,10 @@ def determine_app_version(primary_node_app_version, package_manager):
     primary_node_app_loose_version = LooseVersion(primary_node_app_version)
     # Order by which requirements will be checked:
     requirements = OrderedDict(
-        {
-            "4.4 v7": "4.4.6-762",  # Bug #52214 - univention-samba4 package for share permissions
-            "4.4 v9": "4.4.7-841",  # Bug #52551 - univention-docker sec policy for Veyon proxy app
-        }
+        (
+            ("4.4 v7", "4.4.6-762"),  # Bug #52214 - univention-samba4 package for share permissions
+            ("4.4 v9", "4.4.7-841"),  # Bug #52551 - univention-docker sec policy for Veyon proxy app
+        )
     )
     replacements = {
         "4.4 v7": "4.4 v6",
