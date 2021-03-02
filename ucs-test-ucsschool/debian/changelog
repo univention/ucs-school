@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.190) unstable; urgency=low
+
+  * Bug #52522: Add tests for veyon backend
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Mar 2021 07:39:38 +0100
+
 ucs-test-ucsschool (6.0.189) unstable; urgency=low
 
   * Bug #52830: Fix test for newly added SchoolAdmin

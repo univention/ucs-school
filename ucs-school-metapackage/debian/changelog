@@ -1,3 +1,9 @@
+ucs-school-metapackage (12.0.4-10) unstable; urgency=low
+
+  * Bug #52551: add errata dependency for 4.4 v9 to pre-join hook
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Mar 2021 07:31:21 +0100
+
 ucs-school-metapackage (12.0.4-9) unstable; urgency=low
 
   * Bug #52463: make ucsschool installation in pre-join hook more robust

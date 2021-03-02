@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-28) unstable; urgency=medium
+
+  * Bug #52522: Implement veyon backend for computer room
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 02 Mar 2021 07:33:31 +0100
+
 ucs-school-umc-computerroom (11.0.0-27) unstable; urgency=medium
 
   * Bug #52425: added ucr to enable multiple ips in computerroom
