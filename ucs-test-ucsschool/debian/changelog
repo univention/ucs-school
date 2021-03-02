@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.191) unstable; urgency=low
+
+  * Bug #52673: fix tests: limit OU name length to 13 (temporary workaround
+    until a new Docker image is built)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 02 Mar 2021 11:52:27 +0100
+
 ucs-test-ucsschool (6.0.190) unstable; urgency=low
 
   * Bug #52522: Add tests for veyon backend
