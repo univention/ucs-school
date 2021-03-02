@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Univention Management Console
-#  module: Internet Rules Module
-#
-# Copyright 2012-2021 Univention GmbH
+
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -72,6 +69,6 @@ class Feature(enum.Enum):
         return str(self.value)
 
 
-VeyonUser = namedtuple("VeyonUser", ["login", "fullname", "session"])
+VeyonUser = namedtuple("VeyonUser", ["login", "fullName", "session"])
 VeyonSession = namedtuple("VeyonSession", ["connection_uid", "valid_until"])
 Dimension = namedtuple("Dimension", ["width", "height"])

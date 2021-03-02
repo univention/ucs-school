@@ -51,7 +51,7 @@
 					Schüler-PCs und des Internetzugangs während einer Schulstunde.
 					Der Internetzugang kann gesperrt oder freigegeben werden und einzelne
 					Internetseiten können gezielt freigegeben werden. Wenn eine entsprechende Software
-					(iTALC) auf den Schüler-PCs installiert ist, besteht auch die
+					(Veyon) auf den Schüler-PCs installiert ist, besteht auch die
 					Möglichkeit diese PCs zu steuern. So kann beispielsweise der
 					Bildschirm gesperrt werden, so dass in einer
 					Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein Experiment gelenkt werden kann.
@@ -115,6 +115,8 @@
 					Computer einer Schule einem Computerraum zugeordnet. Diese
 					Computerräume können von den Lehrern zentral verwaltet werden,
 					etwa indem der Internetzugang freigegeben wird.
+					Zum Ansprechen der Computer in einem Computerraum kann als Backend entweder <emphasis>iTALC</emphasis> oder
+					<emphasis>Veyon</emphasis> gewählt werden, je nach dem was auf den Windows Computern installiert ist.
 				</simpara>
 			</listitem>
 			<listitem>

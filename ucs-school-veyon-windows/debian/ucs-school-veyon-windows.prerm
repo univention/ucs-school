@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+#!/bin/sh
 
-# Copyright 2020-2021 Univention GmbH
+# Copyright 2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -27,22 +27,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    import typing  # noqa: F401
+#DEBHELPER#
 
-    import requests
-except ImportError:
-    pass
+if [ "$1" = "remove" ]
+then
+	cp /usr/lib/univention-uninstall/63ucs-school-veyon-windows.uinst \
+		/usr/lib/univention-install/
+fi
 
-from .models import VeyonError
-
-
-def check_veyon_error(response):  # type: (requests.Response) -> None
-    if response.status_code == 200:
-        return
-    data = response.json()
-    error = data.get("error", {})
-    error_code = error.get("code", -1)
-    error_message = error.get("message", "")
-    if error_code != 0:
-        raise VeyonError(error_message, error_code)
+exit 0

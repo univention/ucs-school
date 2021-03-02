@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/make -f
 
-# Copyright 2020-2021 Univention GmbH
+# Copyright 2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -25,24 +25,29 @@
 # You should have received a copy of the GNU Affero General Public
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
-# <http://www.gnu.org/licenses/>.
+# <https://www.gnu.org/licenses/>.
 
-try:
-    import typing  # noqa: F401
+PACKAGE := ucs-school-veyon-windows
+SOURCE := veyon-4.5.2.0-win64-setup.exe
+TARGET := veyon-4.5.2.0-win64-setup.exe
 
-    import requests
-except ImportError:
-    pass
+empty :=
+space := $(empty) $(empty)
+INSTALL ?= install
 
-from .models import VeyonError
+.PHONY: all
+all:
 
+.PHONY: install
+install: $(SOURCE)
+	$(INSTALL) -m755 -d $(DESTDIR)/usr/share/$(PACKAGE)
+	$(INSTALL) -m644 "$<" "$(DESTDIR)/usr/share/$(PACKAGE)/$(subst _,$(space),$(TARGET))"
 
-def check_veyon_error(response):  # type: (requests.Response) -> None
-    if response.status_code == 200:
-        return
-    data = response.json()
-    error = data.get("error", {})
-    error_code = error.get("code", -1)
-    error_message = error.get("message", "")
-    if error_code != 0:
-        raise VeyonError(error_message, error_code)
+.PHONY: get-orig-source
+get-orig-source: $(SOURCE)
+veyon-%-win64-setup.exe:
+	wget -O "$@" "https://updates.software-univention.de/download/large-build-files/ucsschool/$@"
+	echo "5ac169c8d70da049e532f0a306652c50b892b3ed562f6a18f9f947103fd8f6d5c9748834c8289e79726730653a0be5082c352c972d661e6eaf9515103bd75fa8 $@" | sha512sum -c
+
+clean:
+	rm -f veyon-*-win64-setup.exe

@@ -1,0 +1,2 @@
+version=4
+https://github.com/veyon/veyon/releases .*/veyon-(.+)-win64-setup\.exe

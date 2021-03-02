@@ -37,6 +37,13 @@ import subprocess
 import tempfile
 import threading
 import time
+import traceback
+import uuid
+
+try:
+    from typing import List, Optional, TypeVar
+except ImportError:
+    pass
 
 import ldap
 import notifier
@@ -50,11 +57,15 @@ from PyQt4.QtCore import QObject, pyqtSlot
 import italc
 from ucsschool.lib.models import ComputerRoom, MultipleObjectsError, User
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
+from ucsschool.veyon_client.client import VeyonClient
+from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules.computerroom import wakeonlan
+
+LV = TypeVar("LV")
 
 _ = Translation("ucs-school-umc-computerroom").translate
 
@@ -63,6 +74,11 @@ ITALC_VNC_PORT = int(ucr.get("ucsschool/umc/computerroom/vnc/port", 11100))
 ITALC_VNC_UPDATE = float(ucr.get("ucsschool/umc/computerroom/vnc/update", 1))
 ITALC_CORE_UPDATE = max(1, int(ucr.get("ucsschool/umc/computerroom/core/update", 1)))
 ITALC_CORE_TIMEOUT = max(1, int(ucr.get("ucsschool/umc/computerroom/core/timeout", 10)))
+
+ITALC_USER_REGEX = r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$"
+VEYON_USER_REGEX = r"(?P<domain>.*)\\(?P<username>[^\(\\]+)$"
+
+VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
 
 italc.ItalcCore.init()
 
@@ -76,12 +92,13 @@ italc.ItalcCore.setRole(italc.ItalcCore.RoleTeacher)
 italc.ItalcCore.initAuthentication(italc.AuthenticationCredentials.PrivateKey)
 
 
-class ITALC_Error(Exception):
+class ComputerRoomError(Exception):
     pass
 
 
 class UserInfo(object):
     def __init__(self, ldap_dn, username, isTeacher=False, hide_screenshot=False):
+        # type: (str, str, Optional[bool], Optional[bool]) -> None
         self.dn = ldap_dn
         self.isTeacher = isTeacher
         self.username = username
@@ -89,32 +106,33 @@ class UserInfo(object):
 
 
 class UserMap(dict):
+    def __init__(self, user_regex):  # type: (str) -> None
+        super(UserMap, self).__init__()
+        self._user_regex = re.compile(user_regex)
 
-    USER_REGEX = re.compile(r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$")
-
-    def __getitem__(self, user):
+    def __getitem__(self, user):  # type: (str) -> UserInfo
         if user not in self:
             self._read_user(user)
         return dict.__getitem__(self, user)
 
-    def validate_userstr(self, userstr):
-        match = self.USER_REGEX.match(userstr)
+    def validate_userstr(self, userstr):  # type: (str) -> str
+        match = self._user_regex.match(userstr)
         if not match or not userstr:
-            raise AttributeError('invalid key "%s"' % userstr)
+            raise AttributeError("invalid key {!r}".format(userstr))
         username = match.groupdict()["username"]
         if not username:
-            raise AttributeError("username missing: %s" % userstr)
+            raise AttributeError("username missing: {!r}".format(userstr))
         return username
 
     @LDAP_Connection()
-    def _read_user(self, userstr, ldap_user_read=None):
+    def _read_user(self, userstr, ldap_user_read=None):  # type: (str, Optional["LoType"]) -> None
         username = self.validate_userstr(userstr)
         lo = ldap_user_read
         try:
             userobj = User.get_only_udm_obj(lo, filter_format("uid=%s", (username,)))
             if userobj is None:
                 raise noObject(username)
-            user = User.from_udm_obj(userobj, None, lo)
+            user = User.from_udm_obj(userobj, None, lo)  # type: User
         except (noObject, MultipleObjectsError):
             MODULE.info('Unknown user "%s"' % username)
             dict.__setitem__(self, userstr, UserInfo("", ""))
@@ -152,22 +170,20 @@ class UserMap(dict):
         )
 
 
-_usermap = UserMap()
-
-
 class LockableAttribute(object):
     def __init__(self, initial_value=None, locking=True):
+        # type: (Optional[LV], Optional[bool]) -> None
         self._lock = locking and threading.Lock() or None
         # MODULE.info('Locking object: %s' % self._lock)
         self._old = initial_value
         self._has_changed = False
         self._current = copy.deepcopy(initial_value)
 
-    def lock(self):
+    def lock(self):  # type: () -> None
         if self._lock is None:
             return
         if not self._lock.acquire(3000):
-            raise ITALC_Error("Could not lock attribute")
+            raise ComputerRoomError("Could not lock attribute")
 
     def unlock(self):
         if self._lock is None:
@@ -175,28 +191,28 @@ class LockableAttribute(object):
         self._lock.release()
 
     @property
-    def current(self):
+    def current(self):  # type: () -> LV
         self.lock()
         tmp = copy.deepcopy(self._current)
         self.unlock()
         return tmp
 
     @property
-    def old(self):
+    def old(self):  # type: () -> LV
         self.lock()
         tmp = copy.deepcopy(self._old)
         self.unlock()
         return tmp
 
     @property
-    def isInitialized(self):
+    def isInitialized(self):  # type: () -> bool
         self.lock()
         ret = self._current is not None
         self.unlock()
         return ret
 
     @property
-    def hasChanged(self):
+    def hasChanged(self):  # type: () -> bool
         self.lock()
         diff = self._has_changed
         self._has_changed = False
@@ -204,13 +220,13 @@ class LockableAttribute(object):
         self.unlock()
         return diff
 
-    def reset(self, inital_value=None):
+    def reset(self, inital_value=None):  # type: (Optional[LV]) -> None
         self.lock()
         self._old = copy.deepcopy(inital_value)
         self._current = copy.deepcopy(inital_value)
         self.unlock()
 
-    def set(self, value, force=False):
+    def set(self, value, force=False):  # type: (LV, Optional[bool]) -> None
         self.lock()
         if value != self._current or force:
             if value != self._current:
@@ -229,7 +245,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         italc.ItalcVncConnection.HostUnreachable: "offline",
     }
 
-    def __init__(self, computer):
+    def __init__(self, computer, user_map):
         QObject.__init__(self)
         notifier.signals.Provider.__init__(self)
 
@@ -241,6 +257,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         self.signal_new("demo-server")
         self.signal_new("message-box")
         self.signal_new("system-tray-icon")
+        self._user_map = user_map
         self._vnc = None
         self._core = None
         self._core_ready = False
@@ -443,7 +460,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
     def ipAddress(self):
         ips = self._computer.info.get("ip")
         if not ips:
-            raise ITALC_Error("Unknown IP address")
+            raise ComputerRoomError("Unknown IP address")
         if not self._active_ip:
             self._active_ip = self.get_active_ip(ips)
         return self._active_ip
@@ -462,14 +479,14 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
     @property
     def isTeacher(self):
         try:
-            return _usermap[str(self._username.current)].isTeacher
+            return self._user_map[str(self._username.current)].isTeacher
         except AttributeError:
             return False
 
     @property
     def hide_screenshot(self):
         try:
-            return _usermap[str(self._username.current)].hide_screenshot
+            return self._user_map[str(self._username.current)].hide_screenshot
         except AttributeError:
             return False
 
@@ -723,18 +740,21 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         return "<%s(%s)>" % (type(self).__name__, self.ipAddress)
 
 
-class ITALC_Manager(dict, notifier.signals.Provider):
+class ComputerRoomManager(dict, notifier.signals.Provider):
     SCHOOL = None
     ROOM = None
     ROOM_DN = None
+    VEYON_BACKEND = False
 
     def __init__(self):
         dict.__init__(self)
         notifier.signals.Provider.__init__(self)
+        self._user_map = UserMap(ITALC_USER_REGEX)
+        self._veyon_client = None  # type: Optional[VeyonClient]
 
     @property
     def room(self):
-        return ITALC_Manager.ROOM
+        return ComputerRoomManager.ROOM
 
     @room.setter
     def room(self, value):
@@ -743,22 +763,40 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 
     @property
     def roomDN(self):
-        return ITALC_Manager.ROOM_DN
+        return ComputerRoomManager.ROOM_DN
 
     @property
     def school(self):
-        return ITALC_Manager.SCHOOL
+        return ComputerRoomManager.SCHOOL
 
     @school.setter
     def school(self, value):
         self._clear()
-        ITALC_Manager.SCHOOL = value
+        ComputerRoomManager.SCHOOL = value
 
     @property
     def users(self):
         return [
-            _usermap[x.user.current].username for x in self.values() if x.user.current and x.connected()
+            self._user_map[x.user.current].username
+            for x in self.values()
+            if x.user.current and x.connected()
         ]
+
+    @property
+    def veyon_backend(self):  # type: () -> bool
+        return ComputerRoomManager.VEYON_BACKEND
+
+    @property
+    def veyon_client(self):  # type: () -> VeyonClient
+        if not self._veyon_client:
+            with open(VEYON_KEY_FILE, "r") as fp:
+                key_data = fp.read().strip()
+            self._veyon_client = VeyonClient(
+                "http://localhost:11080/api/v1",
+                credentials={"keyname": "teacher", "keydata": key_data},
+                auth_method=AuthenticationMethod.AUTH_KEYS,
+            )
+        return self._veyon_client
 
     def ipAddresses(self, students_only=True):
         values = self.values()
@@ -768,14 +806,21 @@ class ITALC_Manager(dict, notifier.signals.Provider):
         return [x.ipAddress for x in values]
 
     def _clear(self):
-        if ITALC_Manager.ROOM:
+        if ComputerRoomManager.ROOM:
             for name, computer in self.items():
                 computer.stop()
                 computer.close()
                 del computer
             self.clear()
-            ITALC_Manager.ROOM = None
-            ITALC_Manager.ROOM_DN = None
+            ComputerRoomManager.ROOM = None
+            ComputerRoomManager.ROOM_DN = None
+            ComputerRoomManager.VEYON_BACKEND = False
+
+    def update_computers(self):
+        if self.veyon_backend:
+            MODULE.info("Triggering update for computers!")
+            for computer in self.values():
+                computer.start()
 
     @LDAP_Connection()
     def _set(self, room, ldap_user_read=None):
@@ -789,32 +834,50 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 
         try:
             if room_dn:
-                computerroom = ComputerRoom.from_dn(room, ITALC_Manager.SCHOOL, lo)
+                computerroom = ComputerRoom.from_dn(room, ComputerRoomManager.SCHOOL, lo)
             else:
                 computerroom = ComputerRoom.get_only_udm_obj(
-                    lo, filter_format("cn=%s-%s", (ITALC_Manager.SCHOOL, room))
+                    lo, filter_format("cn=%s-%s", (ComputerRoomManager.SCHOOL, room))
                 )
                 if computerroom is None:
                     raise noObject(computerroom)
-                computerroom = ComputerRoom.from_udm_obj(computerroom, ITALC_Manager.SCHOOL, lo)
+                computerroom = ComputerRoom.from_udm_obj(computerroom, ComputerRoomManager.SCHOOL, lo)
         except noObject:
-            raise ITALC_Error("Unknown computer room")
+            raise ComputerRoomError("Unknown computer room")
         except MultipleObjectsError as exc:
-            raise ITALC_Error("Did not find exactly 1 group for the room (count: %d)" % len(exc.objs))
+            raise ComputerRoomError(
+                "Did not find exactly 1 group for the room (count: %d)" % len(exc.objs)
+            )
 
-        ITALC_Manager.ROOM = computerroom.get_relative_name()
-        ITALC_Manager.ROOM_DN = computerroom.dn
-
+        ComputerRoomManager.ROOM = computerroom.get_relative_name()
+        ComputerRoomManager.ROOM_DN = computerroom.dn
+        ComputerRoomManager.VEYON_BACKEND = computerroom.veyon_backend
         computers = list(computerroom.get_computers(lo))
         if not computers:
-            raise ITALC_Error("There are no computers in the selected room.")
+            raise ComputerRoomError("There are no computers in the selected room.")
 
+        MODULE.info(
+            "Computerroom {!r} will be initialized with {} Computers.".format(
+                self.ROOM, "VEYON" if self.veyon_backend else "ITALC"
+            )
+        )
+        if self.veyon_backend:
+            self._user_map = UserMap(VEYON_USER_REGEX)
+        else:
+            self._user_map = UserMap(ITALC_USER_REGEX)
         for computer in computers:
-            try:
-                comp = ITALC_Computer(computer.get_udm_object(lo))
-                self.__setitem__(comp.name, comp)
-            except ITALC_Error as exc:
-                MODULE.warn("Computer could not be added: %s" % (exc,))
+            if self.veyon_backend:
+                try:
+                    comp = VeyonComputer(computer.get_udm_object(lo), self.veyon_client, self._user_map)
+                    self.__setitem__(comp.name, comp)
+                except ComputerRoomError as exc:
+                    MODULE.warn("Computer could not be added: {}".format(exc))
+            else:
+                try:
+                    comp = ITALC_Computer(computer.get_udm_object(lo), self._user_map)
+                    self.__setitem__(comp.name, comp)
+                except ComputerRoomError as exc:
+                    MODULE.warn("Computer could not be added: %s" % (exc,))
 
     @property
     def isDemoActive(self):
@@ -849,19 +912,362 @@ class ITALC_Manager(dict, notifier.signals.Provider):
         MODULE.info("Demo client users: %s" % ", ".join(str(x.user.current) for x in clients))
         try:
             teachers = [
-                x.name for x in clients if not x.user.current or _usermap[str(x.user.current)].isTeacher
+                x.name
+                for x in clients
+                if not x.user.current or self._user_map[str(x.user.current)].isTeacher
             ]
         except AttributeError as exc:
             MODULE.error("Could not determine the list of teachers: %s" % (exc,))
             return False
 
         MODULE.info("Demo clients (teachers): %s" % ", ".join(teachers))
-        server.startDemoServer(clients)
-        for client in clients:
-            client.startDemoClient(server, fullscreen=False if client.name in teachers else fullscreen)
+        if self.veyon_backend:
+            demo_access_token = str(uuid.uuid4())
+            server.startDemoServer(token=demo_access_token)
+            for client in clients:
+                client.startDemoClient(
+                    server=server,
+                    token=demo_access_token,
+                    full_screen=False if client.name in teachers else fullscreen,
+                )
+        else:  # Can be deleted as soon as italc is unsupported
+            server.startDemoServer(clients)
+            for client in clients:
+                client.startDemoClient(
+                    server, fullscreen=False if client.name in teachers else fullscreen
+                )
 
     def stopDemo(self):
         if self.demoServer is not None:
             self.demoServer.stopDemoServer()
-        for client in self.demoClients:
+        # This is necessary since Veyon has a considerable delay with exposing its demo client status.
+        # So we just end the demo client on all computers.
+        clients = self.values() if self.veyon_backend else self.demoClients
+        for client in clients:
             client.stopDemoClient()
+
+
+class VeyonComputer:
+    def __init__(
+        self, computer, veyon_client, user_map
+    ):  # type: (udm_computer.object, VeyonClient, UserMap) -> None
+        self._computer = computer  # type: udm_computer.object
+        self._veyon_client = veyon_client  # type: VeyonClient
+        self._user_map = user_map
+        self._ip_addresses = self._computer.info.get("ip", [])  # type: List[str]
+        self._reachable_ip = None
+        self._username = LockableAttribute()
+        self._state = LockableAttribute(initial_value="disconnected")
+        self._teacher = LockableAttribute(initial_value=False)
+        self._screen_lock = LockableAttribute(initial_value=None)
+        self._input_lock = LockableAttribute(initial_value=None)
+        self._demo_server = LockableAttribute(initial_value=None)
+        self._demo_client = LockableAttribute(initial_value=None)
+        self._timer = None
+        self.start()
+
+    @property
+    def name(self):  # type: () -> Optional[str]
+        return self._computer.info.get("name", None)
+
+    @property
+    def user(self):
+        return self._username
+
+    @property
+    def state(self):
+        return self._state
+
+    @property
+    def teacher(self):
+        return self._teacher
+
+    @property
+    def isTeacher(self):
+        try:
+            return self._user_map[str(self._username.current)].isTeacher
+        except AttributeError:
+            return False
+
+    @property
+    def description(self):  # type: () -> Optional[str]
+        return self._computer.info.get("description", None)
+
+    @property
+    def ipAddress(self):
+        if self._reachable_ip:
+            return self._reachable_ip
+        if len(self._ip_addresses) > 0:
+            self._reachable_ip = self._find_reachable_ip()
+            return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
+        raise ComputerRoomError("Unknown IP address")
+
+    @property
+    def macAddress(self):
+        ip_addresses = self._computer.info.get("mac", [""])
+        return ip_addresses[0]
+
+    @property
+    def objectType(self):
+        return self._computer.module
+
+    @property
+    def hasChanged(self):
+        return any(
+            state.hasChanged
+            for state in (
+                self.state,
+                self.user,
+                self.teacher,
+                self._screen_lock,
+                self._input_lock,
+                self._demo_client,
+                self._demo_server,
+            )
+        )
+
+    @property
+    def screenshot(self):
+        if not self.connected():
+            MODULE.warn("{} not connected - skipping screenshot".format(self.name))
+            return None
+        image = None
+        for ip_address in self._ip_addresses:
+            try:
+                image = self._veyon_client.get_screenshot(
+                    host=ip_address, screenshot_format=ScreenshotFormat.JPEG
+                )
+            except VeyonError:
+                pass  # might just be a non reachable IP. TODO: Catch errors other than 404
+            if image:
+                break
+        if image:
+            tmp_file = tempfile.NamedTemporaryFile(delete=False)
+            tmp_file.write(image)
+            return tmp_file
+        else:
+            MODULE.warn("{}: no screenshot available yet".format(self.name))
+            return None
+
+    @property
+    def hide_screenshot(self):
+        try:
+            return self._user_map[str(self._username.current)].hide_screenshot
+        except AttributeError:
+            return False
+
+    @property
+    def flagsDict(self):
+        return {
+            "ScreenLock": self._screen_lock.current,
+            "InputLock": self._input_lock.current,
+            "DemoServer": self._demo_server.current,
+            "DemoClient": self._demo_client.current,
+        }
+
+    @property
+    def dict(self):
+        result = {
+            "id": self.name,
+            "name": self.name,
+            "teacher": self.isTeacher,
+            "connection": self.state.current,
+            "description": self.description,
+            "ip": self.ipAddress,
+            "mac": self.macAddress,
+            "objectType": self.objectType,
+        }
+        result.update(self.flagsDict)
+        if self.user.current:
+            try:
+                result["user"] = self._user_map[self.user.current].username
+            except AttributeError:
+                result["user"] = self.user.current
+        else:
+            result["user"] = self.user.current
+        return result
+
+    @property
+    def screenLock(self):
+        return self._screen_lock.current
+
+    @property
+    def inputLock(self):
+        return self._input_lock.current
+
+    @property
+    def demoServer(self):
+        return self._demo_server.current
+
+    @property
+    def demoClient(self):
+        return self._demo_client.current
+
+    def _find_reachable_ip(self):  # type: () -> Optional[str]
+        for ip_address in self._ip_addresses:
+            try:
+                reachable = self._veyon_client.ping(host=ip_address)
+            except VeyonError:
+                reachable = False
+            if reachable:
+                return ip_address
+        return None
+
+    def _fetch_feature_status(self, feature):  # type: (Feature) -> Optional[bool]
+        try:
+            return self._veyon_client.get_feature_status(feature, host=self.ipAddress)
+        except VeyonError as exc:
+            MODULE.error(
+                "Fetching feature status failed: {}".format(exc)
+            )  # might just be a non reachable IP. TODO: Catch errors other than 404
+        return None
+
+    def connected(self):
+        return self._veyon_client.ping(host=self.ipAddress)
+
+    def update(self):
+        MODULE.info("{}: updating information.".format(self.name))
+        try:
+            # Big try-except block, as python-notifier silently eats exceptions.
+            # Additionally python-notifier will not remove the timer if the function does not return,
+            # resulting in a fast growing number of timer threads!
+            veyon_user = None
+            input_lock = None
+            screen_lock = None
+            demo_server = None
+            demo_client = None
+            if not self._veyon_client.ping(self.ipAddress):
+                MODULE.warn("Ping not successfull for {} with IP {}".format(self.name, self.ipAddress))
+                MODULE.warn("{}: Updating information was not successful.".format(self.name))
+                self.reset_state()
+                return
+            try:
+                veyon_user = self._veyon_client.get_user_info(host=self.ipAddress)
+                input_lock = self._fetch_feature_status(Feature.INPUT_DEVICE_LOCK)
+                screen_lock = self._fetch_feature_status(Feature.SCREEN_LOCK)
+                demo_server = self._fetch_feature_status(Feature.DEMO_SERVER)
+                demo_client = any(
+                    [
+                        self._fetch_feature_status(Feature.DEMO_CLIENT_FULLSCREEN),
+                        self._fetch_feature_status(Feature.DEMO_CLIENT_WINDOWED),
+                    ]
+                )
+            except VeyonError as exc:
+                MODULE.warn("Veyon error on {}: {}".format(self.name, exc))
+            if veyon_user is None:
+                MODULE.warn("{}: Updating information was not successful.".format(self.name))
+                self.reset_state()
+                return
+            self.state.set("connected")
+            self.user.set(veyon_user.login)
+            self._input_lock.set(input_lock)
+            self._screen_lock.set(screen_lock)
+            self.teacher.set(self.isTeacher)
+            self._demo_server.set(demo_server)
+            self._demo_client.set(demo_client)
+        except Exception as exc:
+            MODULE.error(
+                "{}: Error updating information (raise loglevel for full traceback): {}".format(
+                    self.name, exc
+                )
+            )
+            MODULE.info("\n".join(traceback.format_stack()))
+            self.reset_state()
+
+    def start(self):
+        MODULE.info("{}: Starting update timer".format(self.name))
+        notifier.timer_add(ITALC_CORE_UPDATE * 1000, self.update)
+
+    def stop(self):
+        pass
+
+    def reset_state(self):
+        self.state.set("disconnected")
+        self.user.set(None)
+        self.teacher.set(False)
+        self._input_lock.set(None)
+        self._screen_lock.set(None)
+        self._demo_client.set(None)
+        self._demo_server.set(None)
+
+    def open(self):
+        pass  # Nothing to do for the VeyonComputer
+
+    def close(self):
+        for ip_address in self._ip_addresses:
+            self._veyon_client.remove_session(ip_address)
+
+    def _set_feature(self, feature, active=True):  # type: (Feature, bool) -> None
+        if not self.connected():
+            MODULE.warn("{} not connected - skipping setting feature {}".format(self.name, feature))
+            return None
+        try:
+            self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
+        except VeyonError:
+            pass
+
+    def lockScreen(self, lock):  # type: (bool) -> None
+        self._set_feature(Feature.SCREEN_LOCK, lock)
+
+    def lockInput(self, lock):  # type: (bool) -> None
+        self._set_feature(Feature.INPUT_DEVICE_LOCK, lock)
+
+    def startDemoServer(self, token):  # type: (str) -> None
+        MODULE.process("Starting demo server on %s with token: %s" % (self.ipAddress, token))
+        self._veyon_client.set_feature(
+            Feature.DEMO_SERVER, host=self.ipAddress, active=True, arguments={"demoAccessToken": token}
+        )
+
+    def stopDemoServer(self):
+        self._set_feature(Feature.DEMO_SERVER, active=False)
+
+    def startDemoClient(self, server, token, full_screen=False):
+        MODULE.process(
+            "Starting demo client on %s with token %s, server %s and fullscreen: %s"
+            % (self.ipAddress, token, server.ipAddress, full_screen)
+        )
+        arguments = {"demoAccessToken": token, "demoServerHost": server.ipAddress}
+        feature = Feature.DEMO_CLIENT_FULLSCREEN if full_screen else Feature.DEMO_CLIENT_WINDOWED
+        self._veyon_client.set_feature(feature, host=self.ipAddress, active=True, arguments=arguments)
+
+    def stopDemoClient(self):
+        self._set_feature(Feature.DEMO_CLIENT_FULLSCREEN, active=False)
+        self._set_feature(Feature.DEMO_CLIENT_WINDOWED, active=False)
+
+    def powerOff(self):
+        self._set_feature(Feature.POWER_DOWN)
+
+    def powerOn(self):
+        if self.macAddress:
+            blacklisted_interfaces = [
+                x
+                for x in ucr.get(
+                    "ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces", ""
+                ).split()
+                if x
+            ]
+            blacklisted_interface_prefixes = [
+                x
+                for x in ucr.get(
+                    "ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes", ""
+                ).split()
+                if x
+            ]
+            target_broadcast_ips = [
+                x for x in ucr.get("ucsschool/umc/computerroom/wakeonlan/target_nets", "").split() if x
+            ]
+            target_broadcast_ips = target_broadcast_ips or ["255.255.255.255"]
+            wakeonlan.send_wol_packet(
+                self.macAddress,
+                blacklisted_interfaces=blacklisted_interfaces,
+                blacklisted_interface_prefixes=blacklisted_interface_prefixes,
+                target_broadcast_ips=target_broadcast_ips,
+            )
+        else:
+            MODULE.error("%s: no MAC address set - skipping powerOn" % (self.ipAddress,))
+
+    def restart(self):
+        self._set_feature(Feature.REBOOT)
+
+    def logOut(self):
+        self._set_feature(Feature.USER_LOGOFF)

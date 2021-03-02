@@ -107,7 +107,7 @@ feedback@univention.de
     <section id="lehrerdoku:computerraum">
       <title>Salle informatique</title>
       <para>Cette fonctionnalité permet de contrôler les ordinateurs des élèves et l'accès à Internet pendant un cours. L'accès à Internet peut être autorisé ou coupé, et l'accès à certains sites Web particuliers peut être autorisé. </para>
-      <para>Si un logiciel approprié (iTALC) est installé sur les ordinateurs des élèves, il est également possible de contrôler ces ordinateurs. Cela permet par exemple de verrouiller l'écran, de sorte que, pendant un cours de chimie, l'attention des étudiants est entièrement tournée vers une expérience. </para>
+      <para>Si un logiciel approprié (Veyon) est installé sur les ordinateurs des élèves, il est également possible de contrôler ces ordinateurs. Cela permet par exemple de verrouiller l'écran, de sorte que, pendant un cours de chimie, l'attention des étudiants est entièrement tournée vers une expérience. </para>
       <para>De plus, il est possible de diffuser sur d'autres systèmes les éléments affichés sur l'écran d'un ordinateur source. Cela permet aux enseignants de faire des présentations sans nécessiter de vidéoprojecteur. </para>
       <para>
         <figure id="choose-computerroom">
@@ -117,13 +117,13 @@ feedback@univention.de
       </para>
       <para>Après avoir cliqué sur <guimenu>Salle informatique</guimenu> apparaît un formulaire de sélection dans lequel vous pouvez choisir une salle informatique.  </para>
       <para>Si une salle informatique est actuellement sous la responsabilité d'un autre enseignant, un message apparaît. Un clic sur <guimenu>Prendre la main</guimenu> transfère la responsabilité de la salle à l'enseignant actuellement connecté, par exemple lorsque celui-ci doit prendre en charge la seconde moitié d'un cours. </para>
-      <para>Une liste de tous les ordinateurs de cette salle informatique s'affiche alors. La colonne <guimenu>Nom</guimenu> répertorie les noms de tous les ordinateurs. Si vous survolez de la souris le nom d'un ordinateur, un champ supplémentaire apparaît et affiche deux adresses identifiant l'ordinateur au sein du réseau de l'école. Ces informations peuvent être demandées par le centre d'aide mais n'ont pas d'autre signification pour la gestion de l'ordinateur. À côté de chaque PC figure un cercle : si celui-ci est de couleur gris sombre, cela signifie que le logiciel iTALC est installé sur cette machine (voir <xref linkend="lehrerdoku:computerraum"/>) ; s'il est de couleur gris clair, iTALC est absent ou l'ordinateur est éteint. </para>
-      <para>Si iTALC est installé, la colonne <guimenu>Utilisateur</guimenu> affiche le nom de l'élève ou de l'enseignant actuellement connecté sur cette machine. </para>
+      <para>Une liste de tous les ordinateurs de cette salle informatique s'affiche alors. La colonne <guimenu>Nom</guimenu> répertorie les noms de tous les ordinateurs. Si vous survolez de la souris le nom d'un ordinateur, un champ supplémentaire apparaît et affiche deux adresses identifiant l'ordinateur au sein du réseau de l'école. Ces informations peuvent être demandées par le centre d'aide mais n'ont pas d'autre signification pour la gestion de l'ordinateur. À côté de chaque PC figure un cercle : si celui-ci est de couleur gris sombre, cela signifie que le logiciel Veyon est installé sur cette machine (voir <xref linkend="lehrerdoku:computerraum"/>) ; s'il est de couleur gris clair, Veyon est absent ou l'ordinateur est éteint. </para>
+      <para>Si Veyon est installé, la colonne <guimenu>Utilisateur</guimenu> affiche le nom de l'élève ou de l'enseignant actuellement connecté sur cette machine. </para>
       <para>L'onglet <guimenu>plus</guimenu> permet d'allumer les ordinateurs des élèves à travers le réseau au moyen de l'option <guimenu>Allumer l'ordinateur</guimenu>. Les ordinateurs doivent préalablement avoir été configurés pour cela. </para>
       <para>Les enseignants peuvent créer des réglages personnalisés pour la salle informatique dans l'onglet <guimenu>modifier</guimenu>. Cet onglet permet notamment de sélectionner les règles d'accès à Internet (voir <xref linkend="admindoku:internetregeln"/> ou de définir une liste locale de sites web autorisés. Les options <guimenu>Accès aux partages</guimenu> et <guimenu>Mode d'impression</guimenu> permettent d'autoriser ou de bloquer l'accès aux partages et aux imprimantes. Les restrictions définies par l'enseignant peuvent être limitées dans le temps grâce au champ <guimenu>Valide jusqu'au</guimenu>. </para>
-      <section id="lehrerdoku:computerraum:italc">
-        <title>Contrôle des ordinateurs des élèves à l'aide d'iTALC</title>
-        <para>Les options suivantes ne sont disponibles que lorsque le logiciel iTALC est installé sur les ordinateurs des élèves. Pour installer ce logiciel, vous pouvez contacter le centre d'aide (voir <xref linkend="lehrerdoku:helpdesk"/>). </para>
+      <section id="lehrerdoku:computerraum:veyon">
+        <title>Contrôle des ordinateurs des élèves à l'aide de Veyon</title>
+        <para>Les options suivantes ne sont disponibles que lorsque le logiciel Veyon est installé sur les ordinateurs des élèves. Pour installer ce logiciel, vous pouvez contacter le centre d'aide (voir <xref linkend="lehrerdoku:helpdesk"/>). </para>
         <para>
           <figure id="computerraum">
             <title>Supervision d'une salle informatique</title>
@@ -135,7 +135,7 @@ feedback@univention.de
         <para>
           <figure id="screenlock">
             <title>Un écran verrouillé</title>
-            <graphic scalefit="1" width="40%" align="center" fileref="illustrations44/school-italc-lock.png"/>
+            <graphic scalefit="1" width="40%" align="center" fileref="illustrations44/school-veyon-lock.png"/>
           </figure>
         </para>
         <para>L'onglet <guimenu>plus</guimenu> met à votre disposition d'autres actions : </para>
@@ -159,7 +159,7 @@ feedback@univention.de
       </section>
       <section id="lehrerdoku:computerraum:presentation">
         <title>Conduire une présentation</title>
-        <para>Cette fonctionnalité n'est elle aussi disponible que si le logiciel iTALC est installé sur les ordinateurs des élèves. Elle permet de transmettre le contenu de l'écran d'un PC vers les écrans de tous les autres ordinateurs. Ainsi, les élèves et l'enseignant peuvent conduire des présentations sans avoir besoin d'un vidéoprojecteur. </para>
+        <para>Cette fonctionnalité n'est elle aussi disponible que si le logiciel Veyon est installé sur les ordinateurs des élèves. Elle permet de transmettre le contenu de l'écran d'un PC vers les écrans de tous les autres ordinateurs. Ainsi, les élèves et l'enseignant peuvent conduire des présentations sans avoir besoin d'un vidéoprojecteur. </para>
         <para>Lorsqu'une présentation a lieu, tous les ordinateurs de la salle informatique auxquels un élève est connecté affichent la présentation en plein écran, et la souris et le clavier sont bloqués. Sur les ordinateurs auxquel l'enseignant est connecté, la présentation se déroule dans une fenêtre séparée et toutes les entrées sont disponibles comme à l'accoutumée. </para>
         <para>
           <figure id="praesentation">

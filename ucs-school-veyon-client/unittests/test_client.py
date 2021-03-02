@@ -1,10 +1,7 @@
-#!/usr/bin/py.test
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 # -*- coding: utf-8 -*-
-#
-# Univention Management Console
-#  module: Internet Rules Module
-#
-# Copyright 2012-2021 Univention GmbH
+
+# Copyright 2020-2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -50,7 +47,7 @@ def monkey_get(*args, **kwargs):
         raise ConnectionError()
     elif domain in ["user_info"]:
         response.status_code = 200
-        response._content = b'{ "login":"LOGIN", "fullname":"FULLNAME", "session":"SESSION" }'
+        response._content = b'{ "login":"LOGIN", "fullName":"FULLNAME", "session":"SESSION" }'
     elif domain in ["get_feature"]:
         response.status_code = 200
         feature = url_parts[2]
@@ -105,7 +102,7 @@ def monkey_post(*args, **kwargs):
         and method == "authentication"
     ):
         response.status_code = 200
-        response._content = b'{"connection-uid":"42", "validuntil": 0}'
+        response._content = b'{"connection-uid":"42", "validUntil": 0}'
     else:
         raise RuntimeError("Unexpected url for monkeypatch post: {}".format(args[0]))
     return response

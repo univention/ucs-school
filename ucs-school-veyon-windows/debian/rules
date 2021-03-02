@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-
-# Copyright 2020-2021 Univention GmbH
+#!/usr/bin/make -f
+#
+# Copyright 2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -27,22 +27,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    import typing  # noqa: F401
+%:
+	dh $@
 
-    import requests
-except ImportError:
-    pass
+override_dh_auto_test:
+	dh_auto_test
+	ucslint
 
-from .models import VeyonError
-
-
-def check_veyon_error(response):  # type: (requests.Response) -> None
-    if response.status_code == 200:
-        return
-    data = response.json()
-    error = data.get("error", {})
-    error_code = error.get("code", -1)
-    error_message = error.get("message", "")
-    if error_code != 0:
-        raise VeyonError(error_message, error_code)
+get-orig-source:
+	$(MAKE) $@

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+#!/bin/sh
 
-# Copyright 2020-2021 Univention GmbH
+# Copyright 2021 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -27,22 +27,32 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    import typing  # noqa: F401
+## joinscript api: bindpwdfile
 
-    import requests
-except ImportError:
-    pass
+VERSION=1
 
-from .models import VeyonError
+. /usr/share/univention-join/joinscripthelper.lib
 
+joinscript_init
 
-def check_veyon_error(response):  # type: (requests.Response) -> None
-    if response.status_code == 200:
-        return
-    data = response.json()
-    error = data.get("error", {})
-    error_code = error.get("code", -1)
-    error_message = error.get("message", "")
-    if error_code != 0:
-        raise VeyonError(error_message, error_code)
+eval "$(ucr shell)"
+
+# Not removing SSL keys, in case user wants to reuse them and they have already
+# been distrobuted to windows clients.
+
+# remove share providing Veyon binary
+echo "Removing share 'Veyon-Installation${name_suffix}' serving the Veyon installer binary for Windows..."
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ] ; then
+	position="cn=shares,${ldap_base}"
+	name_suffix="-$hostname"
+else
+	ou_base="$(univention-ldapsearch -LLLo ldif-wrap=no "(&(objectClass=ucsschoolOrganizationalUnit)(ucsschoolHomeShareFileServer=$ldap_hostdn))" dn | sed -nre 's/^dn: //p' | head -1)"
+	[ -n "$ou_base" ] || die "ERROR: $(basename "$0"): cannot determine ou ldap base for $ldap_hostdn"
+  position="cn=shares,${ou_base}"
+  name_suffix=""
+fi
+udm shares/share remove "$@" --dn "cn=Veyon-Installation${name_suffix},${position}" || die
+
+joinscript_remove_script_from_status_file ucs-school-veyon-windows
+
+exit 0

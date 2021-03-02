@@ -400,9 +400,15 @@
             konfiguriert werden. In der Standardkonfiguration wird die Prüfung alle 5 Sekunden durchgeführt. Wird der Wert der Variable auf 0 gesetzt, wird die Prüfung abgeschaltet.
         </para>
         <para>
-            Ab Version 4.4v8 werden Rechner mit mehreren IP-Adressen unterstützt. Dazu werden die IP-Adressen des Rechners durchlaufen und die erste verwendet, die erreicht werden kann.
+            Ab &ucsUAS; 4.4v9 wird das Computerraum Backend Veyon mit ausgeliefert, welches iTALC ablösen wird. Da ggf. eine Migration von iTALC zu Veyon auf den Windows Clients vorgenommen werden muss (siehe <ulink url="https://help.univention.com/t/migration-of-the-computer-room-backend-italc-to-veyon/16937"/> und <xref linkend="school:windows:veyon"/>),
+            können Computerräume, die iTALC als Backend verwenden, weiter verwendet werden. Als Standard ist iTALC gesetzt.
+            Wenn für einen Computerraum Veyon verwendet werden soll, muss im UMC-Modul <guimenu>Computerraum</guimenu> das Computerraum Backend <emphasis>Veyon</emphasis> ausgewählt werden.
+        </para>
+        <para>
+            Ab &ucsUAS; 4.4v8 werden Rechner mit mehreren IP-Adressen unterstützt. Wird das Computerraum Backend iTALC verwendet, werden die IP-Adressen des Rechners durchlaufen und die erste verwendet, die erreicht werden kann.
             Dies kann zu längeren Wartezeiten führen, wenn Rechner innerhalb des Computerraums ausgeschaltet sind oder eine Firewall den Befehl blockiert. Das Verhalten ist standardmäßig deaktiviert und kann durch Setzen der &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar>
             aktiviert werden.
+            Wird das Computerraum Backend Veyon verwendet, sind keine Anpassungen notwendig.
         </para>
     </section>
     <section id="school:setup:generic:configureclasslists">
