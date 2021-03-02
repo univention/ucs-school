@@ -1030,12 +1030,6 @@ def create_school_ou(
         # for OUs the temporary file contains the LDAP DN
         hooks.post("ou", "A", dn=ou_base, line=myline)
 
-        district = extract_district(schoolNr) if district_enabled else ""
-        School.create_dhcp_search_base(ou=schoolNr, district=district, lo=lo)
-        School.create_dhcp_dns(ou=schoolNr, lo=lo)
-        School.create_market_place(ou=schoolNr)
-        School.set_ucsschool_role(ou=schoolNr, lo=lo)
-
     if dcNameAdministrative:
         create_dc(co, lo, baseDN, schoolNr, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
         move_dhcp_server(schoolNr, dcNameAdministrative, dhcpd_ldap_base)
