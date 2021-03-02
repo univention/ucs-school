@@ -38,9 +38,11 @@ import sys
 from collections import OrderedDict, namedtuple
 
 try:
-    from typing import Any, List, Optional
+    from typing import Any, List, NamedTuple, Optional
+
+    _HAS_TYPING = True
 except ImportError:
-    pass
+    _HAS_TYPING = False
 
 from distutils.version import LooseVersion
 
@@ -53,8 +55,14 @@ from univention.lib.package_manager import PackageManager
 log = None  # type: Optional[logging.Logger]
 ucr = None  # type: Optional[ConfigRegistry]
 
-StdoutStderr = namedtuple("StdoutStderr", "stdout stderr")
-SchoolMembership = namedtuple("school_membership", "is_edu_school_member is_admin_school_member")
+if _HAS_TYPING:
+    StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
+    SchoolMembership = NamedTuple(
+        "SchoolMembership", [("is_edu_school_member", bool), ("is_admin_school_member", bool)]
+    )
+else:
+    StdoutStderr = namedtuple("StdoutStderr", ["stdout", "stderr"])
+    SchoolMembership = namedtuple("SchoolMembership", ["is_edu_school_member", "is_admin_school_member"])
 
 VEYON_APP_ID = "ucsschool-veyon-proxy"
 MINIMUM_UCSSCHOOL_VERSION_FOR_VEYON = "4.4 v9"

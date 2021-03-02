@@ -45,8 +45,35 @@ else:
     mock_import_func = "__builtin__.__import__"
 
 try:
-    import typing  # noqa: F401
-    from types import ModuleType  # noqa: F401
+    import logging
+    from typing import Any, List, NamedTuple, Optional
+
+    from typing_extensions import Protocol
+
+    from univention.config_registry import ConfigRegistry
+    from univention.lib.package_manager import PackageManager
+
+    StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
+
+    class JoinHookModule(Protocol):
+        log = None  # type: Optional[logging.Logger]
+        ucr = None  # type: Optional[ConfigRegistry]
+        StdoutStderr = None  # type: StdoutStderr
+
+        @staticmethod
+        def call_cmd_locally(*cmd):  # type: (*str) -> StdoutStderr
+            pass
+
+        @staticmethod
+        def determine_app_version(primary_node_app_version, package_manager):
+            # type: (str, PackageManager) -> str
+            pass
+
+        @staticmethod
+        def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None
+            pass
+
+
 except ImportError:
     pass
 
@@ -90,17 +117,18 @@ def import_mock(name, *args):
 
 
 @pytest.fixture(scope="session")
-def join_hook_module():  # type: () -> ModuleType
+def join_hook_module():  # type: () -> JoinHookModule
     info = imp.find_module(JOIN_HOOK_FILE[:-3], [os.path.dirname(os.path.dirname(__file__))])
     with mock.patch(mock_import_func, side_effect=import_mock):
         return imp.load_module(JOIN_HOOK_FILE[:-3], *info)
 
 
-def role_id(roles):  # type: (typing.List[str]) -> str
+def role_id(roles):  # type: (List[str]) -> str
     return roles[0] if roles else "<empty list>"
 
 
 def test_determine_app_version_lower_than_req_for_44v7(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v7"
     for local_errata_version in ("3.1.2-999", "4.4.5-999", "4.4.6-761"):
         package.version = local_errata_version
@@ -113,6 +141,7 @@ def test_determine_app_version_lower_than_req_for_44v7(join_hook_module):
 
 
 def test_determine_app_version_equals_req_for_44v7(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v7"
     package.version = "4.4.6-762"
     with mock.patch.object(join_hook_module, "log") as log_mock:
@@ -124,6 +153,7 @@ def test_determine_app_version_equals_req_for_44v7(join_hook_module):
 
 
 def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v7"
     for local_errata_version in ("4.4.6-763", "4.4.6-999", "4.5.0-0", "4.5", "4.6.0-0", "5.0.0-0"):
         package.version = local_errata_version
@@ -136,6 +166,7 @@ def test_determine_app_version_higher_than_req_for_44v7(join_hook_module):
 
 
 def test_determine_app_version_lower_than_req_for_44v9(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v9"
     for local_errata_version, expected in (
         ("3.1.2-999", "4.4 v6"),
@@ -153,6 +184,7 @@ def test_determine_app_version_lower_than_req_for_44v9(join_hook_module):
 
 
 def test_determine_app_version_equals_req_for_44v9(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v9"
     package.version = "4.4.7-841"
     with mock.patch.object(join_hook_module, "log") as log_mock:
@@ -164,6 +196,7 @@ def test_determine_app_version_equals_req_for_44v9(join_hook_module):
 
 
 def test_determine_app_version_higher_than_req_for_44v9(join_hook_module):
+    # type: (JoinHookModule) -> None
     primary_node_app_version = "4.4 v9"
     for local_errata_version in ("4.4.7-842", "4.4.7-999", "4.5.0-0", "4.5", "4.6.0-0", "5.0.0-0"):
         package.version = local_errata_version
@@ -188,6 +221,7 @@ def test_determine_app_version_higher_than_req_for_44v9(join_hook_module):
     ids=role_id,
 )
 def test_install_veyon_app(roles, join_hook_module):
+    # type: (List[str], JoinHookModule) -> None
     with mock.patch.object(join_hook_module, "log") as log_mock, mock.patch.object(
         join_hook_module, "call_cmd_locally", return_value=join_hook_module.StdoutStderr("{}", "")
     ) as call_cmd_locally_mock, mock.patch.object(join_hook_module, "ucr", ucr_mock):
