@@ -747,6 +747,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.create_dhcp_search_base(lo_machine)
             self.create_dhcp_dns_policy(lo_machine)
             self.create_import_group(lo_machine)
+            self.create_exam_group(lo_machine)
             self.update_http_api()
 
         return super(School, self).call_hooks(hook_time, func_name)
@@ -948,6 +949,34 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         )
         if retval:
             self.logger.warning("Error while updating http api for school {}".format(self.name))
+
+    def create_exam_group(self, lo):  # type: (LoType) -> None
+        ldap_base = ucr["ldap/base"]
+
+        # create exam container
+        examusers = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
+        district = self.get_district()
+        if not district:
+            district = ""
+        exam_container = Container(self)
+        exam_container.position = "ou={}{},{}".format(self.name, district, ldap_base)
+        exam_container.name = examusers
+        exam_container.create(lo)
+        self.logger.debug("Exam container {} created.".format(exam_container.name))
+
+        # create exam group
+        examgroupname_template = ucr.get(
+            "ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
+        )
+        ucr_value_keywords = {"ou": self.name}
+        examgroupname = examgroupname_template % ucr_value_keywords
+        group = Group.cache(examgroupname, self.name)
+        group.position = "cn=ucsschool,cn=groups,{}".format(ldap_base)
+        group.name = examgroupname
+        group.description = "Default group for UCS@school user imports"
+        group.create(lo)
+        self.logger.debug("Exam group {} created.".format(group.name))
+        return
 
     def __str__(self):
         return self.name
