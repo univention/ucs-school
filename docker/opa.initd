@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+
+command=/usr/bin/opa
+command_args=" run --server -w -l debug /kelvin/kelvin-api/opa_policies/"
+name=opa
+description="Open Policy Agent server"
+pidfile="/var/run/opa.pid"
+
+start() {
+    ebegin "Starting $description"
+    start-stop-daemon --start -m -p $pidfile --background --name "$name" --exec $command -- $command_args
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping $description"
+    start-stop-daemon --stop -p $pidfile --exec $command
+    eend $?
+}
+status () {
+    if [ -f "$pidfile" ]; then
+        einfo "status: started"
+        return 0
+    else
+        einfo "status: stopped"
+        return 3
+    fi
+}

@@ -48,7 +48,7 @@ LABEL "description"="Image of UCS app 'UCS@school Kelvin REST API' ('$app_id')."
 
 # package and Python dependency installation, base system configuration,
 # and uninstallation - all in one step to keep image small
-COPY alpine_apk_list.* openapi-generator-cli-*.jar requirements_all.txt /tmp/
+COPY alpine_apk_list.* opa openapi-generator-cli-*.jar requirements_all.txt /tmp/
 RUN apk add --no-cache --virtual mybuilddeps $(cat /tmp/alpine_apk_list.build) && \
     apk add --no-cache $(cat /tmp/alpine_apk_list.runtime) && \
     cp -v /usr/share/zoneinfo/Europe/Berlin /etc/localtime && \
@@ -109,8 +109,12 @@ RUN python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/sim
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
 COPY ucs-school-import/ /kelvin/ucs-school-import
 COPY ucsschool-kelvin-rest-api.initd /tmp/
+COPY opa.initd /tmp/
+COPY opa /usr/bin
 COPY kelvin-api/ /kelvin/kelvin-api
 RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest-api && \
+	mv -v /tmp/opa.initd /etc/init.d/opa && \
+	rc-update add opa default && \
 	rc-update add ucsschool-kelvin-rest-api default && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
