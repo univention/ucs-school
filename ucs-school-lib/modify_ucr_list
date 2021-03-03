@@ -33,7 +33,7 @@
 import argparse
 import sys
 
-from ucsschool.lib.ucr_utils import add_or_remove_ucrv
+from ucsschool.lib.models.utils import add_or_remove_ucrv
 
 
 def parse_cmdline():

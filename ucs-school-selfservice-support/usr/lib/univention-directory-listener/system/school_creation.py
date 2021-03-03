@@ -29,7 +29,7 @@
 
 from __future__ import absolute_import
 
-from ucsschool.lib.ucr_utils import add_or_remove_ucrv
+from ucsschool.lib.models.utils import add_or_remove_ucrv
 from univention.listener import ListenerModuleHandler
 
 
