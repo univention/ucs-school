@@ -958,7 +958,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         district = self.get_district()
         if not district:
             district = ""
-        exam_container = Container(self)
+        exam_container = Container(name=examusers, school=self.school)
         exam_container.position = "ou={}{},{}".format(self.name, district, ldap_base)
         exam_container.name = examusers
         exam_container.create(lo)
