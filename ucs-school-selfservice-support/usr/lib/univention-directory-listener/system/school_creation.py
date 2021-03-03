@@ -46,7 +46,6 @@ class ListenerModuleTemplate(ListenerModuleHandler):
         ldap_filter = "(objectClass=ucsschoolOrganizationalUnit)"
 
     def create(self, dn, new):
-        # ou=didi,dc=wenzel-univention,dc=intranet
         self.logger.debug("dn: %r", dn)
         value = "Domain Users {}".format(new["ou"][0])
         self.logger.info("Adding '{}' to ucrv '{}'".format(value, self.ucrv))
