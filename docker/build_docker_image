@@ -73,7 +73,7 @@ fi
 echo "Copying files to build directory..."
 [ -d build ] || mkdir build
 rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim \
- ../ucs-school-lib ../ucs-school-import ucsschool-kelvin-rest-api.initd alpine_apk_list.* Dockerfile build/
+ ../ucs-school-lib ../ucs-school-import opa.initd ucsschool-kelvin-rest-api.initd alpine_apk_list.* Dockerfile build/
 
 echo "Create empty import configs"
 mkdir -p build/ucs-school-import/empty_configs
@@ -89,6 +89,10 @@ OPENAPI_CLIENT_GENERATOR_JAR="$(wget -O - https://raw.githubusercontent.com/univ
 if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
   wget -P build/ "${OPENAPI_CLIENT_GENERATOR_JAR//\"}"
 fi
+
+echo "Downloading Open Policy Agent..."
+wget https://openpolicyagent.org/downloads/latest/opa_linux_amd64 -O build/opa
+chmod +x build/opa
 
 echo "Collecting all Python dependencies..."
 # ... to minimize Docker image by installing and uninstalling in one step
