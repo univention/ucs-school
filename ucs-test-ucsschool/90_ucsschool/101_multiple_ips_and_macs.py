@@ -44,7 +44,7 @@ from requests import Response
 
 import univention.testing.strings as uts
 from ucsschool.veyon_client import client as veyon_client_module
-from ucsschool.veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
+from ucsschool.veyon_client.models import AuthenticationMethod
 from univention.config_registry import handler_set, handler_unset
 from univention.management.console.config import ucr
 from univention.management.console.modules.computerroom import room_management as room_management_module
@@ -52,7 +52,6 @@ from univention.management.console.modules.computerroom.room_management import (
     ITALC_USER_REGEX,
     VEYON_USER_REGEX,
     ComputerRoomError,
-    ComputerRoomManager,
     ITALC_Computer,
     UserMap,
     VeyonComputer,
@@ -111,7 +110,7 @@ def test_first_valid_italc(mocker, ucr_value):
     assert (mocked_subprocess.call.call_count == 1) is ucr_value_set
     if ucr_value_set:
         args, _ = mocked_subprocess.call.call_args_list[0]
-        assert args[0] == ["timeout", "1", "ping", "-c", "1", ips[0]]
+        assert args[0] == ["/usr/bin/timeout", "1", "ping", "-c", "1", ips[0]]
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
@@ -134,7 +133,7 @@ def test_second_valid_italc(mocker, ucr_value):
     if ucr_value_set:
         for i, ip in enumerate(ips):
             args, _ = mocked_subprocess.call.call_args_list[i]
-            assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
+            assert args[0] == ["/usr/bin/timeout", "1", "ping", "-c", "1", ip]
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
@@ -157,7 +156,7 @@ def test_multiple_ips_last_valid_italc(mocker, ucr_value):
     if ucr_value_set:
         for i, ip in enumerate(ips):
             args, _ = mocked_subprocess.call.call_args_list[i]
-            assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
+            assert args[0] == ["/usr/bin/timeout", "1", "ping", "-c", "1", ip]
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
@@ -180,7 +179,7 @@ def test_no_valid_ip_italc(mocker, ucr_value):
     if ucr_value_set:
         for i, ip in enumerate(ips):
             args, _ = mocked_subprocess.call.call_args_list[i]
-            assert args[0] == ["timeout", "1", "ping", "-c", "1", ip]
+            assert args[0] == ["/usr/bin/timeout", "1", "ping", "-c", "1", ip]
         args, kwargs = mocked_logger.warn.call_args_list[0]
         assert (
             args[0] == "Non of the ips is pingable: ['11.146.186.100', '12.173.49.218']"
