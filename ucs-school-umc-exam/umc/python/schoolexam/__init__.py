@@ -210,7 +210,7 @@ class Instance(SchoolBaseModule):
                 "which can be exploited to share data during the exam.".format(exam_user.dn)
             )
             return
-        with tempfile.NamedTemporaryFile(dir="/tmp") as auth_file:
+        with tempfile.NamedTemporaryFile() as auth_file:
             auth_file.write(
                 """username={}
                    password={}
@@ -653,6 +653,8 @@ class Instance(SchoolBaseModule):
                             exam=request.options["name"],
                         ),
                     ).result
+                    if not ires:  # occurs if disabled user gets ignored
+                        continue
                     examuser_dn = ires.get("examuserdn")
                     examUsers.add(examuser_dn)
                     student_dns.add(iuser.dn)
