@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-49) unstable; urgency=medium
+
+  * Bug #52786: do not add disabled user to exams
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Sat, 06 Mar 2021 12:16:33 +0100
+
 ucs-school-umc-exam (9.0.1-48) unstable; urgency=medium
 
   * Bug #52372: restore original disable user property after exam
