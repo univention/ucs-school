@@ -41,4 +41,7 @@ fi
 . /usr/share/univention-lib/base.sh
 call_joinscript 67ucs-school-selfservice-support.inst
 
+# conditional restart of univention directory listener
+/etc/init.d/univention-directory-listener crestart
+
 exit 0

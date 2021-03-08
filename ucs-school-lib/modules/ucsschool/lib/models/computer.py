@@ -352,7 +352,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     )
 
     @classmethod
-    async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type["SchoolComputer"]]:
+    async def get_class_for_udm_obj(
+        cls, udm_obj: UdmObject, school: str
+    ) -> Optional[Type["SchoolComputer"]]:
         module_to_class = {
             IPComputer.Meta.udm_module: IPComputer,
             MacComputer.Meta.udm_module: MacComputer,

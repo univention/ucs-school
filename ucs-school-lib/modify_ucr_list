@@ -34,6 +34,7 @@ import argparse
 import sys
 
 import univention.config_registry
+from ucsschool.lib.models.utils import add_or_remove_ucrv_value
 
 
 def parse_cmdline():
@@ -56,25 +57,7 @@ def parse_cmdline():
 
 def main():
     args = parse_cmdline()
-    ucr = univention.config_registry.ConfigRegistry()
-    ucr.load()
-
-    if args.action == "remove" and args.UCRV not in ucr.keys():
-        return 0
-    cur_val = ucr.get(args.UCRV, "")
-    cur_val_list = [v for v in cur_val.split(args.delimiter) if v]
-    if args.action == "add":
-        if args.value not in cur_val_list:
-            cur_val_list.append(args.value)
-    elif args.action == "remove":
-        try:
-            cur_val_list.remove(args.value)
-        except ValueError:
-            return 0
-    univention.config_registry.handler_set(
-        ["{}={}".format(args.UCRV, args.delimiter.join(cur_val_list))]
-    )
-    return 0
+    return add_or_remove_ucrv_value(args.UCRV, args.action, args.value, args.delimiter)
 
 
 if __name__ == "__main__":

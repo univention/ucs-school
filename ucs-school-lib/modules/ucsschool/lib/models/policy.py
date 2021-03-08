@@ -29,10 +29,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from udm_rest_client import UDM, ModifyError, UdmObject
+
 from .attributes import EmptyAttributes
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _
-from udm_rest_client import ModifyError, UDM, UdmObject
 
 
 class Policy(UCSSchoolHelperAbstractClass):

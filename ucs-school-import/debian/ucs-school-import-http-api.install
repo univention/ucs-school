@@ -20,4 +20,5 @@ modules/ucsschool/http_api/import_api/views.py           usr/share/pyshared/ucss
 modules/ucsschool/http_api/de.mo                usr/share/locale/de/LC_MESSAGES/
 usr/share/ucs-school-import-http-api/hooks/ou_create_post.d/* usr/share/ucs-school-import/hooks/ou_create_post.d/
 usr/share/ucs-school-import-http-api/templates  usr/share/ucs-school-import-http-api/
+usr/lib/univention-directory-listener/system/*.py         usr/lib/univention-directory-listener/system/
 settings.py                                     etc/ucsschool-import/

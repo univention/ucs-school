@@ -80,4 +80,8 @@ do
 	echo "Restarting $SERVICE..."
     deb-systemd-invoke restart "$SERVICE.service"
 done
+
+# conditional restart of univention directory listener
+/etc/init.d/univention-directory-listener crestart
+
 exit 0
