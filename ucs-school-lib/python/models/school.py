@@ -740,14 +740,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         :return: return code of lib hooks
         :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
-        if hook_time == "post":
-            lo_machine, pos = get_admin_connection()
-            self.set_ucsschool_role(lo_machine)
-            self.create_market_place(lo_machine)
-            self.create_dhcp_search_base(lo_machine)
-            self.create_dhcp_dns_policy(lo_machine)
-            self.create_import_group(lo_machine)
-            self.create_exam_group(lo_machine)
+        if hook_time == "post" and func_name == "create":
+            lo, pos = get_admin_connection()
+            self.set_ucsschool_role(lo)
+            self.create_market_place(lo)
+            self.create_dhcp_search_base(lo)
+            self.create_dhcp_dns_policy(lo)
+            self.create_import_group(lo)
+            self.create_exam_group(lo)
             self.update_http_api()
 
         return super(School, self).call_hooks(hook_time, func_name)
