@@ -70,7 +70,7 @@ from .group import BasicGroup, BasicSchoolGroup, Group
 from .misc import OU, Container
 from .policy import DHCPDNSPolicy
 from .share import MarketplaceShare
-from .utils import _, exec_cmd, flatten, ucr
+from .utils import _, flatten, ucr
 
 try:
     from .base import LoType
@@ -748,7 +748,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.create_dhcp_dns_policy(lo)
             self.create_import_group(lo)
             self.create_exam_group(lo)
-            self.update_http_api()
 
         return super(School, self).call_hooks(hook_time, func_name)
 
@@ -931,24 +930,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             [role_student, role_staff, "teacher_and_staff", role_teacher]
         )
         group.save()
-
-    def update_http_api(self):  # type: () -> None
-        """
-        formerly in shell hook 70http_api_school_create
-        """
-        self.logger.info("Update school {} in http api".format(self.name))
-        retval = exec_cmd(
-            [
-                "python",
-                "/usr/share/pyshared/ucsschool/http_api/manage.py",
-                "updateschools",
-                "--ou",
-                self.name,
-            ],
-            raise_exc=False,
-        )
-        if retval:
-            self.logger.warning("Error while updating http api for school {}".format(self.name))
 
     def create_exam_group(self, lo):  # type: (LoType) -> None
         ldap_base = ucr["ldap/base"]
