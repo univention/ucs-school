@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
 fix: 9.0.1-49A~4.4.0.202103061221
 desc: |
-  * Disabled users will not be added to an exam anymore. This prevents the creation of unnecessary exam-user-accounts and resolves a minor issue with the UCRV <envar>ucsschool/exam/user/disable</envar>. (Bug #52786).
+  * Disabled users will not be added to an exam anymore. This prevents the creation of unnecessary exam-user-accounts and resolves a minor issue with the UCRV <envar>ucsschool/exam/user/disable</envar> (Bug #52786).
 bug: [52786]
