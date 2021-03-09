@@ -260,7 +260,7 @@ class Instance(SchoolBaseModule):
 
         if not os.path.exists(path):
             raise UMC_Error(
-                _("File %r could not be printed as it does not exists (anymore).") % (printjob,)
+                _("File %r could not be printed as it does not exist (anymore).") % (printjob,)
             )
 
         MODULE.process("Printing: %s" % path)

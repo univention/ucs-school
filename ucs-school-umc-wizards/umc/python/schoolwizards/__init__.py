@@ -219,8 +219,8 @@ def iter_objects_in_request(
                 obj = klass.from_dn(dn, obj_props.get("school"), lo)
             except noObject:
                 raise UMC_Error(
-                    _("The %s %r does not exists or might have been removed in the meanwhile.")
-                    % (getattr(klass, "type_name", klass.__name__), obj_props["name"])
+                    _("The %(attr)s %(name)r does not exist or might have been removed in the meantime.")
+                    % ({"attr": getattr(klass, "type_name", klass.__name__), "name": obj_props["name"]})
                 )
             try:
                 object_old_schools = set(obj.schools)
@@ -237,10 +237,10 @@ def iter_objects_in_request(
             ):
                 raise UMC_Error(
                     _(
-                        "You do not have the right to modify the object with the DN %s"
-                        "from the schools %s."
+                        "You do not have the right to modify the object with the DN %(dn)s "
+                        "from the schools %(schools)s."
                     )
-                    % (dn, object_old_schools)
+                    % ({"dn": dn, "schools": object_old_schools})
                 )
             obj.set_attributes(**obj_props)
         if dn:
@@ -490,10 +490,12 @@ class Instance(SchoolBaseModule, SchoolImport):
                 obj = User.from_dn(obj_props["$dn$"], None, ldap_user_write)  # type: User
             except noObject:
                 raise UMC_Error(
-                    _("The %s %r does not exists or might have been removed in the meanwhile.")
+                    _("The %(attr)s %(name)r does not exist or might have been removed in the meantime.")
                     % (
-                        getattr(User, "type_name", None) or User.__name__,
-                        User.get_name_from_dn(obj_props["$dn$"]),
+                        {
+                            "attr": getattr(User, "type_name", None) or User.__name__,
+                            "name": User.get_name_from_dn(obj_props["$dn$"]),
+                        }
                     )
                 )
             school = obj_props["remove_from_school"]
@@ -502,8 +504,11 @@ class Instance(SchoolBaseModule, SchoolImport):
                 school not in self.own_schools() or school not in user_schools
             ):
                 raise UMC_Error(
-                    _("You do not have the right to delete the user with the dn %s from the school %s.")
-                    % (obj_props["$dn$"], school)
+                    _(
+                        "You do not have the right to delete the user with the dn %(dn)s from the "
+                        "school %(school)s."
+                    )
+                    % ({"dn": obj_props["$dn$"], "school": school})
                 )
             success = obj.remove_from_school(school, ldap_user_write)
             # obj.old_dn is None when the ucsschool lib has deleted the user after the last school was
