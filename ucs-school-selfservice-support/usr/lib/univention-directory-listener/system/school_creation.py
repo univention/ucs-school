@@ -29,11 +29,11 @@
 
 from __future__ import absolute_import
 
-from ucsschool.lib.models.utils import add_or_remove_ucrv
+from ucsschool.lib.models.utils import add_or_remove_ucrv, exec_cmd
 from univention.listener import ListenerModuleHandler
 
 
-class ListenerModuleTemplate(ListenerModuleHandler):
+class SchoolCreationListener(ListenerModuleHandler):
     # replaces the 10self_service_whitelist 00_hook script:
     #     /usr/share/ucs-school-lib/modify_ucr_list
 
@@ -46,12 +46,35 @@ class ListenerModuleTemplate(ListenerModuleHandler):
         description = "Handles ucrv for schools in a self-service context"
         ldap_filter = "(objectClass=ucsschoolOrganizationalUnit)"
 
+    def initialize(self):
+        with self.as_root():
+            self.logger.info("Syncing all schools in http api")
+            retval = exec_cmd(
+                ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "-a"],
+                raise_exc=False,  # this looks like a silent fail?
+            )
+            if retval:
+                self.logger.info("http_api says:{} {}".format(retval[1], retval[2]))
+
     def create(self, dn, new):
         self.logger.debug("dn: %r", dn)
-        value = "Domain Users {}".format(new["ou"][0])
+        name = new["ou"][0]
+        value = "Domain Users {}".format(name)
         self.logger.info("Adding '{}' to ucrv '{}'".format(value, self.ucrv))
         with self.as_root():
             add_or_remove_ucrv(self.ucrv, "add", value, self.delimiter)
+
+        # this is from school.py update_http_api
+        # formerly in shell hook 70http_api_school_create
+
+        with self.as_root():
+            self.logger.info("Update school {} in http api".format(name))
+            retval = exec_cmd(
+                ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "--ou", name],
+                raise_exc=False,  # this looks like a silent fail?
+            )
+            if retval:
+                self.logger.info("http_api says for {}:{} {}".format(name, retval[1], retval[2]))
 
     def modify(self, dn, old, new, old_dn):
         pass
