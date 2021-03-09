@@ -22,6 +22,18 @@ ucs-test-ucsschool (7.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
 
+ucs-test-ucsschool (6.0.194) unstable; urgency=low
+
+  * Bug #52843: install openssh-client sshpass for integration tests
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Mar 2021 13:53:08 +0100
+
+ucs-test-ucsschool (6.0.193) unstable; urgency=medium
+
+  * Bug #51976: fix unittest and remove unused imports
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 04 Mar 2021 09:38:56 +0100
+
 ucs-test-ucsschool (6.0.192) unstable; urgency=low
 
   * Bug #52673: fix tests: shorten DC name length of new OU

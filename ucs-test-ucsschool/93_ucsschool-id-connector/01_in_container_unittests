@@ -4,11 +4,8 @@
 ## tags: [ucsschool-id-connector]
 
 APP="ucsschool-id-connector"
-CMD="/usr/bin/python3 -m pytest -l -v tests/unittests"
+CMD="cd /$APP/src; /usr/bin/python3 -m pytest -l -v tests/unittests"
 
-echo "Running in container: sh -c \"cd /$APP/src; $CMD\""
+echo "Running in container: sh -c \"$CMD\""
 
-# remove this after releasing > 2.0.0
-univention-app shell "$APP" sed -i 's#testou-{}".format(random_name())#ou-{}".format(random_name())[:10]#g' src/tests/integration_tests/conftest.py
-
-univention-app shell "$APP" sh -c "cd /$APP/src; $CMD"
+univention-app shell "$APP" sh -c "$CMD"
