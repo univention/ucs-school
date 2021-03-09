@@ -10,11 +10,10 @@ import os
 
 import django
 
-import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
-django.setup()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")  # noqa: E402
+django.setup()  # noqa: E402
+import univention.testing.strings as uts  # noqa: E402
+import univention.testing.ucsschool.ucs_test_school as utu  # noqa: E402
 from ucsschool.http_api.import_api.models import School  # noqa: E402
 
 
