@@ -10,6 +10,12 @@ ucs-school-import (18.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 15:52:14 +0100
 
+ucs-school-import (17.0.52) unstable; urgency=low
+
+  * Bug #52887: create directory for symlinks for log files if missing
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 10 Mar 2021 09:34:50 +0100
+
 ucs-school-import (17.0.51) unstable; urgency=low
 
   * Bug #52458: fix ValueError raised by doctest (invalid option: '#')
