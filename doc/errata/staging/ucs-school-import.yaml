@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.52A~4.4.0.202103100936
+desc: |
+ * The directory containing the symlinks to the last log files (<filename class="directory">/var/log/univention/ucs-school-import</filename>) is now created if it is missing (Bug #52887).
+bug: [52887]
