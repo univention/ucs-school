@@ -32,9 +32,11 @@
 """
 Base class for UCS@school import tool cmdline frontends.
 """
+import grp
 import logging
 import os
 import pprint
+import pwd
 import sys
 from datetime import datetime
 
@@ -229,6 +231,13 @@ class CommandLine(object):
         """
         source = os.path.abspath(os.path.realpath(source))
         self.logger.debug("Creating symlink from %r to %r.", source, link_name)
+        parent_dir = os.path.dirname(link_name)
+        if not os.path.isdir(parent_dir):
+            self.logger.debug("Creating directory %r.", parent_dir)
+            os.mkdir(parent_dir, 0o750)
+            uid = pwd.getpwnam("uas-import").pw_uid
+            gid = grp.getgrnam("uas-import").gr_gid
+            os.chown(parent_dir, uid, gid)
         if os.path.islink(link_name):
             os.remove(link_name)
         os.symlink(source, link_name)
