@@ -5,9 +5,10 @@
 Changelog
 ---------
 
-v1.3.1 (2021-02-23)
+v1.4.0 (2021-02-23)
 ...................
 * The FastAPI framework has been updated to version ``0.63.0``.
+* Open Policy Agent was added for access control and implemented partially for the user resource.
 
 v1.3.0 (2021-02-18)
 ...................
