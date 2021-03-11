@@ -160,15 +160,23 @@ class SchoolSearchBase(object):
 
 	@property
 	def students_group(self):  # type: () -> str
-		return "cn=%s-%s,cn=groups,%s" % (self._containerStudents, self.school.lower(), self.schoolDN)
+		return "cn=%s%s,cn=groups,%s" % (self.group_prefix_students, self.school.lower(), self.schoolDN)
 
 	@property
 	def teachers_group(self):  # type: () -> str
-		return "cn=%s-%s,cn=groups,%s" % (self._containerTeachers, self.school.lower(), self.schoolDN)
+		return "cn=%s%s,cn=groups,%s" % (self.group_prefix_teachers, self.school.lower(), self.schoolDN)
 
 	@property
 	def staff_group(self):  # type: () -> str
-		return "cn=%s-%s,cn=groups,%s" % (self._containerStaff, self.school.lower(), self.schoolDN)
+		return "cn=%s%s,cn=groups,%s" % (self.group_prefix_staff, self.school.lower(), self.schoolDN)
+
+	@property
+	def admins_group(self):  # type: () -> str
+		return "cn=%s%s,cn=ouadmins,cn=groups,%s" % (
+			self.group_prefix_admins,
+			self.school.lower(),
+			self.schoolDN,
+		)
 
 	@property
 	def workgroups(self):  # type: () -> str
