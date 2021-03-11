@@ -22,6 +22,12 @@ ucs-test-ucsschool (7.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
 
+ucs-test-ucsschool (6.0.195) unstable; urgency=low
+
+  * Bug #52883: test validation with uid != 0
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Mar 2021 09:44:53 +0100
+
 ucs-test-ucsschool (6.0.194) unstable; urgency=low
 
   * Bug #52843: install openssh-client sshpass for integration tests
