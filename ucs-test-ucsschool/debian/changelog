@@ -22,6 +22,12 @@ ucs-test-ucsschool (7.0.0) unstable; urgency=medium
 
  -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:27:08 +0100
 
+ucs-test-ucsschool (6.0.196) unstable; urgency=low
+
+  * Bug #52673: fix 51_ucsschool_role_package in 4.3 to 4.4 singleserver job
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 11 Mar 2021 10:52:24 +0100
+
 ucs-test-ucsschool (6.0.195) unstable; urgency=low
 
   * Bug #52883: test validation with uid != 0
