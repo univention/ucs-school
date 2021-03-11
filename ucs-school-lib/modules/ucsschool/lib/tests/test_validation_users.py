@@ -23,6 +23,7 @@ import tempfile
 from faker import Faker
 import pytest
 
+from univention.config_registry import handler_set
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
@@ -37,6 +38,7 @@ from ucsschool.lib.models.validator import (
 )
 from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from performance import random_name
 
 fake = Faker()
 ldap_base = ucr["ldap/base"]
@@ -331,6 +333,42 @@ def test_correct_object(caplog, dict_obj, random_logger):
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
+
+
+@pytest.mark.parametrize(
+    "dict_obj,role,ucr_default",
+    [(student_user(), "pupils", "schueler-"), (teacher_user(), "teachers", "lehrer-"), (staff_user(), "staff", "mitarbeiter-")],
+    ids=["altered_student_group_prefix", "altered_teachers_group_prefix", "altered_staff_group_prefix"],
+)
+def test_altered_group_prefix(caplog, dict_obj, random_logger, role, ucr_default):
+    """
+    Changing the group prefix should not produce validation errors (Bug 52880)
+    """
+    ucr_variable = "ucsschool/ldap/default/groupprefix/{}".format(role)
+    ucr_value_before = ucr.get(ucr_variable, ucr_default)
+    new_value = random_name()
+    handler_set(
+        ["{}={}".format(ucr_variable, new_value)]
+    )
+    # force a reload of the prefixes.
+    SchoolSearchBase.ucr = None
+    SchoolSearchBase._load_containers_and_prefixes()
+    for i, group in enumerate(dict_obj["props"]["groups"]):
+        if ucr_default in group:
+            dict_obj["props"]["groups"][i] = group.replace(ucr_default, new_value)
+            break
+    validate(dict_obj, random_logger)
+    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
+    for log in (public_logs, secret_logs):
+        assert not log
+    assert "{}".format(dict_obj) not in secret_logs
+    handler_set(
+        ["{}={}".format(ucr_variable, ucr_value_before)]
+    )
+    # force a reload of the prefixes.
+    SchoolSearchBase.ucr = None
+    SchoolSearchBase._load_containers_and_prefixes()
 
 
 def test_correct_uuid(caplog, random_logger):
