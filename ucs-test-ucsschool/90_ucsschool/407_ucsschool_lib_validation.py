@@ -24,9 +24,6 @@ TEST_MODULE = """
 import os
 import univention.admin.uldap
 from ucsschool.lib.models.user import Student
-from univention.config_registry import ConfigRegistry
-ucr = ConfigRegistry()
-ucr.load()
 lo = univention.admin.uldap.access(
     host="{hostname}",
     base="{ldap_base}",
