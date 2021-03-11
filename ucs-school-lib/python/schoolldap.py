@@ -171,6 +171,14 @@ class SchoolSearchBase(object):
         return "cn=%s%s,cn=groups,%s" % (self.group_prefix_staff, self.school.lower(), self.schoolDN)
 
     @property
+    def admins_group(self):  # type: () -> str
+        return "cn=%s%s,cn=ouadmins,cn=groups,%s" % (
+            self.group_prefix_admins,
+            self.school.lower(),
+            self.schoolDN,
+        )
+
+    @property
     def workgroups(self):  # type: () -> str
         return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 
