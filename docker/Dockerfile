@@ -104,6 +104,9 @@ RUN python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/sim
 	python3 -m pip install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
 	rm -rf /tmp/*
 
+# this is needed to set ucr-v
+RUN mkdir -p /var/cache/univention-config
+
 # copy and install project - separate last step for fast image rebuilds
 # install packages 'editable', so we can work directly on them
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
@@ -128,3 +131,4 @@ RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest
 	make -C /kelvin/kelvin-api clean && \
 	find /kelvin -name .pytest_cache -exec rm -rf '{}' + && \
 	rm -rf /root/.cache/
+
