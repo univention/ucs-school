@@ -102,6 +102,7 @@ RUN python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/sim
     mkdir -p /etc/univention && \
 	python3 -m pip install --no-cache-dir --compile /tmp/univention-lib-slim && \
 	python3 -m pip install --no-cache-dir --compile /tmp/univention-directory-manager-modules-slim && \
+	mkdir -p /var/cache/univention-config && \
 	rm -rf /tmp/*
 
 # copy and install project - separate last step for fast image rebuilds

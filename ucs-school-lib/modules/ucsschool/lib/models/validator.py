@@ -151,6 +151,7 @@ class UserValidator(SchoolValidator):
     is_exam_user = False
     is_teacher = False
     is_staff = False
+    is_school_admin = False
     attributes = [
         "username",
         "ucsschoolRole",
@@ -255,6 +256,7 @@ class UserValidator(SchoolValidator):
                 (SchoolSearchBase.get_is_student_group_regex().match(dn) and not cls.is_student)
                 or (SchoolSearchBase.get_is_teachers_group_regex().match(dn) and not cls.is_teacher)
                 or (SchoolSearchBase.get_is_staff_group_regex().match(dn) and not cls.is_staff)
+                or (SchoolSearchBase.get_is_admins_group_regex().match(dn) and cls.is_student)
             )
         ]
 
@@ -355,6 +357,16 @@ class TeachersAndStaffValidator(UserValidator):
         return expected_groups
 
 
+class SchoolAdminValidator(UserValidator):
+    position_regex = SchoolSearchBase.get_admins_pos_regex()
+    is_school_admin = True
+    roles = [role_school_admin]
+
+    @classmethod
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
+        return [cls.get_search_base(school).admins_group for school in schools]
+
+
 class GroupAndShareValidator(SchoolValidator):
     attributes = [
         "name",
@@ -440,6 +452,8 @@ def get_class(obj: Dict[str, Any]) -> Optional[Type[SchoolValidator]]:
         return TeacherValidator
     if options.get("ucsschoolStaff", False):
         return StaffValidator
+    if options.get("ucsschoolAdministrator", False):
+        return SchoolAdminValidator
     if SchoolClassValidator.position_regex.match(position):
         return SchoolClassValidator
     if WorkGroupValidator.position_regex.match(position):
