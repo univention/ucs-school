@@ -1,9 +1,9 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.groups and shares validation
-## roles: [domaincontroller_master]
+## roles: []
 ## tags: [apptest,ucsschool,ucsschool_import1]
-## exposure: dangerous
+## exposure: safe
 ## packages:
 ##   - python-ucs-school
 

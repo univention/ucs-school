@@ -160,15 +160,23 @@ class SchoolSearchBase(object):
 
     @property
     def students_group(self):  # type: () -> str
-        return "cn=%s-%s,cn=groups,%s" % (self._containerStudents, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_students, self.school.lower(), self.schoolDN)
 
     @property
     def teachers_group(self):  # type: () -> str
-        return "cn=%s-%s,cn=groups,%s" % (self._containerTeachers, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_teachers, self.school.lower(), self.schoolDN)
 
     @property
     def staff_group(self):  # type: () -> str
-        return "cn=%s-%s,cn=groups,%s" % (self._containerStaff, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_staff, self.school.lower(), self.schoolDN)
+
+    @property
+    def admins_group(self):  # type: () -> str
+        return "cn=%s%s,cn=ouadmins,cn=groups,%s" % (
+            self.group_prefix_admins,
+            self.school.lower(),
+            self._ldapBase,
+        )
 
     @property
     def workgroups(self):  # type: () -> str
@@ -285,6 +293,19 @@ class SchoolSearchBase(object):
         return cls._regex_cache["is_teachers_group"]
 
     @classmethod
+    def get_is_admins_group_regex(cls):  # type: () -> Pattern
+        if "is_admins_group" not in cls._regex_cache:
+            if not cls._containerAdmins:
+                cls._load_containers_and_prefixes()
+            cls._regex_cache["is_admins_group"] = re.compile(
+                r"cn={}-[^,]+?,cn=ouadmins,cn=groups,{}".format(
+                    cls._containerAdmins, cls.ucr["ldap/base"]
+                ),
+                flags=re.IGNORECASE,
+            )
+        return cls._regex_cache["is_admins_group"]
+
+    @classmethod
     def get_is_staff_group_regex(cls):  # type: () -> Pattern
         if "is_staff_group" not in cls._regex_cache:
             if not cls._containerStaff:
@@ -384,6 +405,17 @@ class SchoolSearchBase(object):
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["teachers_and_staff_pos"]
+
+    @classmethod
+    def get_admins_pos_regex(cls):  # type: () -> Pattern
+        if "admins_pos" not in cls._regex_cache:
+            if not cls._containerAdmins:
+                cls._load_containers_and_prefixes()
+            cls._regex_cache["admins_pos"] = re.compile(
+                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerAdmins, cls.ucr["ldap/base"]),
+                flags=re.IGNORECASE,
+            )
+        return cls._regex_cache["admins_pos"]
 
     @classmethod
     def get_exam_users_pos_regex(cls):  # type: () -> Pattern
