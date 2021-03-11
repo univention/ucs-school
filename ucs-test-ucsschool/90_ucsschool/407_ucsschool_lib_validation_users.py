@@ -13,6 +13,8 @@
 #
 import re
 
+from univention.config_registry import handler_set
+
 try:
     from typing import Any, Dict, List, Tuple
 except ImportError:
@@ -23,6 +25,7 @@ import tempfile
 import pytest
 
 import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
@@ -313,6 +316,40 @@ def test_correct_object(caplog, dict_obj, random_logger):
     for log in (public_logs, secret_logs):
         assert not log
     assert "{}".format(dict_obj) not in secret_logs
+
+
+@pytest.mark.parametrize(
+    "dict_obj,role,ucr_default",
+    [
+        (student_user(), "pupils", "schueler-"),
+        (teacher_user(), "teachers", "lehrer-"),
+        (staff_user(), "staff", "mitarbeiter-"),
+    ],
+    ids=["altered_student_group_prefix", "altered_teachers_group_prefix", "altered_staff_group_prefix"],
+)
+def test_altered_group_prefix(caplog, dict_obj, random_logger, role, ucr_default):
+    """
+    Changing the group prefix should not produce validation errors (Bug 52880)
+    """
+    with ucr_test.UCSTestConfigRegistry():
+        new_value = uts.random_name()
+        handler_set(["{}={}".format("ucsschool/ldap/default/groupprefix/{}".format(role), new_value)])
+        # force a reload of the prefixes.
+        SchoolSearchBase.ucr = None
+        SchoolSearchBase._load_containers_and_prefixes()
+        for i, group in enumerate(dict_obj["props"]["groups"]):
+            if ucr_default in group:
+                dict_obj["props"]["groups"][i] = group.replace(ucr_default, new_value)
+                break
+        validate(dict_obj, random_logger)
+        public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+        secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
+        for log in (public_logs, secret_logs):
+            assert not log
+        assert "{}".format(dict_obj) not in secret_logs
+    # force a reload of the prefixes.
+    SchoolSearchBase.ucr = None
+    SchoolSearchBase._load_containers_and_prefixes()
 
 
 def test_correct_uuid(caplog, random_logger):
