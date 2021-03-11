@@ -3,7 +3,7 @@
 ## desc: test ucsschool.lib.models.users validation
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1,unit-test]
-## exposure: dangerous
+## exposure: safe
 ## packages:
 ##   - python-ucs-school
 

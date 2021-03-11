@@ -31,6 +31,8 @@ from ucsschool.lib.roles import (
     role_workgroup_share,
 )
 
+MACHINE_ACCOUNT_PW_FILE = "/etc/machine.secret"
+
 
 class UCSSchoolType(enum.Enum):
     pass
@@ -212,6 +214,17 @@ def admin_password(ucr):
     """Password of the Admin account"""
     ret = os.environ.get("UCS_TEST_ADMIN_PASSWORD")
     return ret or ucr.get("tests/domainadmin/pwd", "univention")
+
+
+@pytest.fixture(scope="session")
+def machine_account_dn(ucr):
+    return ucr["ldap/hostdn"]
+
+
+@pytest.fixture(scope="session")
+def machine_password():
+    with open(MACHINE_ACCOUNT_PW_FILE, "r") as fp:
+        return fp.read().strip()
 
 
 @pytest.fixture
