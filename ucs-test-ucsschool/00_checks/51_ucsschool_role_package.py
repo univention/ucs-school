@@ -18,6 +18,7 @@ role_packages = {
     "dc_slave_edu": "ucs-school-slave",
     "dc_slave": "ucs-school-central-slave",
     "dc_backup": "ucs-school-backup",
+    "single_master": "ucs-school-singlemaster",
 }
 
 # get my role and check role package
