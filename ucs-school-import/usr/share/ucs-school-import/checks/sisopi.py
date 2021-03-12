@@ -65,7 +65,7 @@ class SingleSourcePartialImportConfigurationChecks(ConfigurationChecks):
     def test_deletion_grace(self):
         deletion_grace = max(0, int(self.config.get("deletion_grace_period", {}).get("deletion", 0)))
         if deletion_grace == 0:
-            self.logger.warn(
+            self.logger.warning(
                 "Very dangerous value for deletion_grace_period:deletion = %d! Expected something "
                 "greater than 0.",
                 deletion_grace,

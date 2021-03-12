@@ -84,9 +84,8 @@ class SingleSourcePartialUserImport(UserImport):
         super(SingleSourcePartialUserImport, self).__init__(dry_run)
         self.limbo_ou = self.config.get("limbo_ou")
 
-    def prepare_imported_user(
-        self, imported_user, old_user
-    ):  # type: (ImportUser, Optional[ImportUser]) -> ImportUser
+    def prepare_imported_user(self, imported_user, old_user):
+        # type: (ImportUser, Optional[ImportUser]) -> ImportUser
         """
         Prepare attributes of ``imported_user`` object. Optionally save existing
         user (``old_user``) object reference in ``imported_user.old_user``.

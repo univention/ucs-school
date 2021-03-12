@@ -237,9 +237,8 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
     _school_in_name_prefix = True
     ShareClass = ClassShare
 
-    def __init__(
-        self, name=None, school=None, create_share=True, **kwargs
-    ):  # type: (Optional[str], Optional[str], Optional[bool], **Any) -> None
+    def __init__(self, name=None, school=None, create_share=True, **kwargs):
+        # type: (Optional[str], Optional[str], Optional[bool], **Any) -> None
         super(SchoolClass, self).__init__(name, school, **kwargs)
         self._create_share = create_share
 

@@ -199,9 +199,8 @@ class UserValidator(SchoolValidator):
         return expected_groups
 
     @classmethod
-    def validate_required_groups(
-        cls, groups, expected_groups
-    ):  # type: (List[str], List[Any]) -> Optional[str]
+    def validate_required_groups(cls, groups, expected_groups):
+        # type: (List[str], List[Any]) -> Optional[str]
         """
         Object should be in all groups/ containers.
         E.g.: Students must have at least one group in `cn=klassen,cn=schueler,cn=groups,ou=ou`,
@@ -217,9 +216,8 @@ class UserValidator(SchoolValidator):
             return "is missing groups at positions {!r}".format(missing_groups)
 
     @classmethod
-    def validate_part_of_school(
-        cls, roles, schools
-    ):  # type: (List[List[str]], List[str]) -> Optional[str]
+    def validate_part_of_school(cls, roles, schools):
+        # type: (List[List[str]], List[str]) -> Optional[str]
         """
         Users should not have roles with schools which they don't have.
         """

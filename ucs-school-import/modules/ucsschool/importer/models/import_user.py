@@ -41,9 +41,10 @@ import lazy_object_proxy
 from ldap.filter import filter_format
 from six import iteritems, string_types
 
-from ucsschool.lib.models import School, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.base import NoObject, WrongObjectType
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.utils import create_passwd, ucr
 from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_teacher
 from univention.admin import property as uadmin_property
@@ -116,8 +117,8 @@ class ImportUser(User):
         user = factory.make_import_user(roles)
     """
 
-    source_uid = SourceUID("SourceUID")
-    record_uid = RecordUID("RecordUID")
+    source_uid = SourceUID("SourceUID")  # type: str
+    record_uid = RecordUID("RecordUID")  # type: str
 
     config = lazy_object_proxy.Proxy(lambda: Configuration())  # type: ReadOnlyDict
     no_overwrite_attributes = lazy_object_proxy.Proxy(
@@ -172,12 +173,11 @@ class ImportUser(User):
         :param str school: OU
         :param kwargs: attributes to set on user object
         """
-        self.action = None  # type: str                     # "A", "D" or "M"
+        self.action = None  # type: str  # "A", "D" or "M"
         self.entry_count = 0  # line/node number of input data
-        self.udm_properties = (
-            dict()
-        )  # type: Dict[str, Any]  # UDM properties from input, that are not storedin Attributes
-        self.input_data = list()  # type: List[str]         # raw input data created by SomeReader.read()
+        # UDM properties from input, that are not stored in Attributes:
+        self.udm_properties = {}  # type: Dict[str, Any]
+        self.input_data = []  # type: List[str]         # raw input data created by SomeReader.read()
         self.old_user = None  # type: Optional[ImportUser]  # user in LDAP, when modifying
         self.in_hook = False  # if a hook is currently running
 
@@ -192,9 +192,8 @@ class ImportUser(User):
 
         self._userexpiry = None  # type: str
         self._purge_ts = None  # type: str
-        self._used_methods = defaultdict(
-            list
-        )  # type: Dict[str, List[FunctionSignature]]  # recursion prevention
+        # recursion prevention:
+        self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]
         self.lo = kwargs.pop("lo", None)  # type: LoType
         super(ImportUser, self).__init__(name, school, **kwargs)
 
@@ -217,7 +216,7 @@ class ImportUser(User):
             return super(ImportUser, self).build_hook_line(hook_time, func_name)
 
     @staticmethod
-    def _pyhook_supports_dry_run(kls):
+    def _pyhook_supports_dry_run(kls):  # type: (Type["ImportUser"]) -> bool
         return bool(getattr(kls, "supports_dry_run", False))
 
     def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
@@ -332,9 +331,8 @@ class ImportUser(User):
                 if dn == old_dn:
                     cls._unique_ids[category][value] = new_dn
 
-    def check_schools(
-        self, lo, additional_schools=None
-    ):  # type: (LoType, Optional[Iterable[str]]) -> None
+    def check_schools(self, lo, additional_schools=None):
+        # type: (LoType, Optional[Iterable[str]]) -> None
         """
         Verify that the "school" and "schools" attributes are correct.
         Check is case sensitive (Bug #42456).
@@ -379,7 +377,7 @@ class ImportUser(User):
         self.lo = lo
         if self.in_hook:
             # prevent recursion
-            self.logger.warn("Running create() from within a hook.")
+            self.logger.warning("Running create() from within a hook.")
             res = self.create_without_hooks(lo, validate)
         else:
             res = super(ImportUser, self).create(lo, validate)
@@ -389,7 +387,7 @@ class ImportUser(User):
             )
         return res
 
-    def create_without_hooks_roles(self, lo):
+    def create_without_hooks_roles(self, lo):  # type: (LoType) -> None
         if self.config["dry_run"]:
             self.logger.info("Dry-run: skipping user.create() for %s.", self)
             return True
@@ -661,7 +659,7 @@ class ImportUser(User):
         self.make_record_uid()
         self.make_source_uid()
 
-    def make_birthday(self):  # type: () -> Union[str, None]
+    def make_birthday(self):  # type: () -> Optional[str]
         """
         Set User.birthday attribute.
         """
@@ -1025,7 +1023,7 @@ class ImportUser(User):
         self.lo = lo
         if self.in_hook:
             # prevent recursion
-            self.logger.warn("Running modify() from within a hook.")
+            self.logger.warning("Running modify() from within a hook.")
             res = self.modify_without_hooks(lo, validate, move_if_necessary)
         else:
             res = super(ImportUser, self).modify(lo, validate, move_if_necessary)
@@ -1127,7 +1125,7 @@ class ImportUser(User):
         self.lo = lo
         return super(ImportUser, self).remove(lo)
 
-    def remove_without_hooks(self, lo):
+    def remove_without_hooks(self, lo):  # type: (LoType) -> bool
         if self.config["dry_run"]:
             self.logger.info("Dry-run: skipping user.remove() for %s.", self)
             return True
@@ -1289,7 +1287,7 @@ class ImportUser(User):
         for school, school_classes in self.school_classes.items():
             for sc in school_classes:
                 if sc.startswith("{0}-{0}-".format(school)):
-                    self.logger.warn(
+                    self.logger.warning(
                         "Validation warning: Name of school_class starts with name of school: %r", sc
                     )
                 for school_class in school_classes:
@@ -1418,9 +1416,8 @@ class ImportUser(User):
         # force transcription of german umlauts
         return "<:umlauts>{}".format(scheme)
 
-    def solve_format_dependencies(
-        self, prop_to_format, scheme, **kwargs
-    ):  # type: (str, str, **str) -> None
+    def solve_format_dependencies(self, prop_to_format, scheme, **kwargs):
+        # type: (str, str, **str) -> None
         """
         Call make_*() methods required to create values for <properties> used
         in scheme.
@@ -1512,7 +1509,7 @@ class ImportUser(User):
 
         res = self.prop._replace(scheme, all_fields)
         if not res:
-            self.logger.warn(
+            self.logger.warning(
                 "Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
                     prop_name=prop_name, scheme=scheme, data=all_fields
                 )
@@ -1520,9 +1517,8 @@ class ImportUser(User):
         return res
 
     @classmethod
-    def get_class_for_udm_obj(
-        cls, udm_obj, school
-    ):  # type: (UdmObjectType, str) -> Union[None, Type[ImportUser]]
+    def get_class_for_udm_obj(cls, udm_obj, school):
+        # type: (UdmObjectType, str) -> Union[None, Type["ImportUser"]]
         """
         IMPLEMENTME if you subclass!
         """
@@ -1568,15 +1564,14 @@ class ImportUser(User):
             )
         if "e-mail" in self.udm_properties.keys() and not self.email:
             # this might be an mistake, so let's warn the user
-            self.logger.warn(
+            self.logger.warning(
                 "UDM property 'e-mail' is used for storing contact information. The users mailbox "
                 "address is stored in  the 'email' attribute of the {} object (not in "
                 "udm_properties).".format(self.__class__.__name__)
             )
 
-    def _schema_write_check(
-        self, scheme_attr, ucsschool_attr, ldap_attr
-    ):  # type: (str, str, str) -> bool
+    def _schema_write_check(self, scheme_attr, ucsschool_attr, ldap_attr):
+        # type: (str, str, str) -> bool
         return scheme_attr in self.config["scheme"] and (
             not getattr(self.old_user, ucsschool_attr, None)
             or ldap_attr not in self.no_overwrite_attributes

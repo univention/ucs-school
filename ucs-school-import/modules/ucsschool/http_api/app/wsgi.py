@@ -37,10 +37,9 @@ from __future__ import unicode_literals
 
 import os
 
-from django.core.wsgi import get_wsgi_application
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ucsschool.http_api.app.settings")
 
+from django.core.wsgi import get_wsgi_application  # isort:skip  # noqa: E402
 
 _application = get_wsgi_application()
 

@@ -36,6 +36,13 @@ Used by create_ou script and customer single user HTTP API.
 
 import logging
 
+try:
+    from typing import Optional
+
+    from univention.admin.uldap import access as LoType
+except ImportError:
+    pass
+
 from ldap.filter import filter_format
 
 from ucsschool.lib.models.school import School
@@ -45,16 +52,16 @@ MAX_HOSTNAME_LENGTH = 13
 
 
 def create_ou(
-    ou_name,
-    display_name,
-    edu_name,
-    admin_name,
-    share_name,
-    lo,
-    baseDN,
-    hostname,
-    is_single_master,
-    alter_dhcpd_base=None,
+    ou_name,  # type: str
+    display_name,  # type: str
+    edu_name,  # type: str
+    admin_name,  # type: str
+    share_name,  # type: str
+    lo,  # type: LoType
+    baseDN,  # type: str
+    hostname,  # type: str
+    is_single_master,  # type: bool
+    alter_dhcpd_base=None,  # type: Optional[bool]
 ):
     """
     Create a ucsschool OU.
@@ -64,7 +71,7 @@ def create_ou(
     :param str edu_name: host name of educational school server
     :param str admin_name: host name of administrative school server
     :param str share_name: host name
-    :param univention.uldap.acceess lo: LDAP connection object
+    :param univention.uldap.access lo: LDAP connection object
     :param str baseDN: base DN
     :param str hostname: hostname of master in case of singlemaster
     :param bool is_single_master: whther it is a singlemaster
@@ -127,7 +134,7 @@ def create_ou(
                 "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
             )
         else:
-            logger.warn(
+            logger.warning(
                 "WARNING: share file server name %r not found! Using %r as share file server.",
                 share_name,
                 ucr.get("hostname"),
@@ -141,9 +148,9 @@ def create_ou(
 
     new_school.validate(lo)
     if len(new_school.warnings) > 0:
-        logger.warn("The following fields reported warnings during validation:")
+        logger.warning("The following fields reported warnings during validation:")
         for key, value in new_school.warnings.items():
-            logger.warn("%s: %s", key, value)
+            logger.warning("%s: %s", key, value)
     if len(new_school.errors) > 0:
         error_str = "The following fields reported errors during validation:\n"
         for key, value in new_school.errors.items():

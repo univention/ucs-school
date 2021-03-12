@@ -114,17 +114,21 @@ class ImportPyHookLoader(object):
     before :py:meth:`call_hook()`.
     """
 
-    _pyhook_obj_cache = {}  # type: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[[...], Any]]]]
+    _pyhook_obj_cache = {}  # type: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[..., Any]]]]
 
-    def __init__(self, pyhooks_base_path):
+    def __init__(self, pyhooks_base_path):  # type: (str) -> None
         self.pyhooks_base_path = pyhooks_base_path
         self.logger = logging.getLogger(__name__)  # type: logging.Logger
 
     def init_hook(self, hook_cls, filter_func=None, *args, **kwargs):
-        # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]  # noqa: E501
+        # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[..., Any]]]  # noqa: E501
         """
         Load and initialize hook class `hook_cls`.
 
+        :param hook_cls: class object - load and run hooks that are a
+            subclass of this
+        :param filter_func: function to filter out undesired hook classes (takes a
+            class and returns a bool), passed to PyHooksLoader
         :param tuple args: arguments to pass to __init__ of hooks
         :param dict kwargs: arguments to pass to __init__ of hooks
         :return: mapping from method names to list of methods of initialized
@@ -162,7 +166,7 @@ class ImportPyHookLoader(object):
 
 
 def get_import_pyhooks(hook_cls, filter_func=None, *args, **kwargs):
-    # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[[...], Any]]]  # noqa: E501
+    # type: (Type[ImportPyHookTV], Optional[Callable[[Type[ImportPyHookTV]], bool]], *Any, **Any) -> Dict[str, List[Callable[..., Any]]]  # noqa: E501
     """
     Retrieve (and initialize subclasses of :py:class:`hook_cls`, if not yet
     done) pyhooks of type `hook_cls`. Results are cached.

@@ -399,18 +399,15 @@ class Instance(SchoolBaseModule):
                     value = [exam_user_uid]
                 elif key == "objectClass":
                     value += ["ucsschoolExam"]
-                elif (
-                    key == "ucsschoolSchool" and school
-                ):  # for backwards compatibility with UCS@school < 4.1R2 school might not be set
-                    if (
-                        exam
-                    ):  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+                elif key == "ucsschoolSchool" and school:
+                    # for backwards compatibility with UCS@school < 4.1R2 school might not be set
+                    if exam:
+                        # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
                         value = user.schools
                     else:
                         value = [school]
-                elif (
-                    key == "ucsschoolRole" and exam
-                ):  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
+                elif key == "ucsschoolRole" and exam:
+                    # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
                     value = [create_ucsschool_role_string(role_exam_user, s) for s in user.schools]
                     value.append(
                         create_ucsschool_role_string(

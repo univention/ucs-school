@@ -198,7 +198,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
             except IOError as exc:
                 if exc.errno == errno.ENOENT:
                     # probably /var/lib/..
-                    self.logger.warn("Ignoring not existing configuration file %r.", cf)
+                    self.logger.warning("Ignoring not existing configuration file %r.", cf)
                 else:
                     raise
         num += 1

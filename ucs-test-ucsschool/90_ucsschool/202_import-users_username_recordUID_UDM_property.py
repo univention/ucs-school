@@ -37,9 +37,8 @@ class Test(CLI_Import_v2_Tester):
             exists,
         )
 
-    def test(
-        self,
-    ):  # formerly test_create_modify_delete_user_with_username_and_record_uid_and_UDM_property()
+    def test(self):
+        # formerly test_create_modify_delete_user_with_username_and_record_uid_and_UDM_property()
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config = copy.deepcopy(self.default_config)
         config.update_entry("source_uid", source_uid)
