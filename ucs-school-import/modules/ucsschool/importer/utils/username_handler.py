@@ -335,7 +335,7 @@ class UsernameHandler(object):
 
         bad_chars = "".join(set(name).difference(set(self.allowed_chars)))
         if bad_chars:
-            self.logger.warn(
+            self.logger.warning(
                 "Removing disallowed characters %r from %s %r.",
                 "".join(sorted(bad_chars)),
                 self.attribute_name,
@@ -343,7 +343,7 @@ class UsernameHandler(object):
             )
         for char in self.config["username"]["allowed_special_chars"]:
             if name.startswith(char) or name.endswith(char):
-                self.logger.warn(
+                self.logger.warning(
                     "Removing disallowed character %r from start and end of %s %r.",
                     char,
                     self.attribute_name,
@@ -406,7 +406,7 @@ class UsernameHandler(object):
 
         if not match and len(name) > max_length:
             username = username[:max_length]
-            self.logger.warn("%s %r too long, shortened to %r.", self.attribute_name, name, username)
+            self.logger.warning("%s %r too long, shortened to %r.", self.attribute_name, name, username)
 
         username = username.strip(".")
         return username
@@ -502,7 +502,7 @@ class EmailHandler(UsernameHandler):
         """
         bad_chars = "".join(set(name).intersection(set(string.whitespace)))
         if bad_chars:
-            self.logger.warn(
+            self.logger.warning(
                 "Removing disallowed characters %r from %s %r.",
                 "".join(sorted(bad_chars)),
                 self.attribute_name,

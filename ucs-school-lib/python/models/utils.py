@@ -31,8 +31,10 @@
 
 import collections
 import copy
+import grp
 import logging
 import os
+import pwd
 import string
 import subprocess
 import sys
@@ -53,7 +55,7 @@ from univention.lib.i18n import Translation
 from univention.lib.policy_result import policy_result
 
 try:
-    from typing import Any, AnyStr, Dict, List, Optional, Sequence, Tuple, Union
+    from typing import IO, Any, Dict, List, Optional, Sequence, Tuple, Union
 except ImportError:
     pass
 
@@ -112,6 +114,38 @@ ucr_username_max_length = lazy_object_proxy.Proxy(
 )  # type: int
 
 
+def mkdir_p(dir_name, user, group, mode):
+    # type: (str, Union[str, int], Union[str, int], int) -> None
+    """
+    Recursively create directories (like "mkdir -p").
+
+    :param str dir_name: path to create
+    :param str user: username of owner of new directories
+    :param str group: group name for ownership of new directories
+    :param octal mode: permission bits to set for new directories
+    :returns: None
+    :rtype: None
+    """
+    if not dir_name:
+        return
+
+    parent = os.path.dirname(dir_name)
+    if not os.path.exists(parent):
+        mkdir_p(parent, user, group, mode)
+
+    if not os.path.exists(dir_name):
+        if isinstance(user, str):
+            uid = pwd.getpwnam(user).pw_uid
+        else:
+            uid = user
+        if isinstance(group, str):
+            gid = grp.getgrnam(group).gr_gid
+        else:
+            gid = group
+        os.mkdir(dir_name, mode)
+        os.chown(dir_name, uid, gid)
+
+
 def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
     def replace_password(obj, attr):
         ori = getattr(obj, attr)
@@ -148,11 +182,11 @@ class UniFileHandler(TimedRotatingFileHandler):
 
     def __init__(
         self,
-        filename,  # type: AnyStr
-        when="h",  # type: Optional[AnyStr]
+        filename,  # type: str
+        when="h",  # type: Optional[str]
         interval=1,  # type: Optional[int]
         backupCount=0,  # type: Optional[int]
-        encoding=None,  # type: Optional[AnyStr]
+        encoding=None,  # type: Optional[str]
         delay=False,  # type: Optional[bool]
         utc=False,  # type: Optional[bool]
         fuid=None,  # type: Optional[int]
@@ -167,6 +201,9 @@ class UniFileHandler(TimedRotatingFileHandler):
 
     def _open(self):
         """set file permissions on log file"""
+        parent_dir = os.path.dirname(self.baseFilename)
+        if not os.path.exists(parent_dir):
+            mkdir_p(parent_dir, self._fuid, self._fgid, 0o755)
         stream = super(UniFileHandler, self)._open()
         file_stat = os.fstat(stream.fileno())
         if file_stat.st_uid != self._fuid or file_stat.st_gid != self._fgid:
@@ -189,7 +226,7 @@ class UniStreamHandler(colorlog.StreamHandler):
 
     def __init__(
         self,
-        stream=None,  # type: file
+        stream=None,  # type: IO
         fuid=None,  # type: Optional[int]
         fgid=None,  # type: Optional[int]
         fmode=None,  # type: Optional[int]
@@ -249,7 +286,7 @@ class UCSTTYColoredFormatter(colorlog.TTYColoredFormatter):
 
 
 def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=None, name=None):
-    # type: (Optional[AnyStr], Optional[file], Optional[AnyStr], Optional[AnyStr]) -> logging.Logger
+    # type: (Optional[str], Optional[IO], Optional[str], Optional[str]) -> logging.Logger
     """
     Outputs all log messages of the models code to a stream (default: "stderr")::
 
@@ -292,7 +329,7 @@ def add_module_logger_to_schoollib():
 
 
 def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
-    # type: (Optional[int], Optional[AnyStr], Optional[AnyStr]) -> AnyStr
+    # type: (Optional[int], Optional[str], Optional[str]) -> str
     assert length > 0
 
     if dn:
@@ -397,7 +434,7 @@ def nearest_known_loglevel(level):
 
 
 def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None):
-    # type: (Union[int, str], Optional[file], Optional[str], Optional[str], Optional[type]) -> logging.Handler  # noqa: E501
+    # type: (Union[int, str], Optional[IO], Optional[str], Optional[str], Optional[type]) -> logging.Handler  # noqa: E501
     """
     Create a colored stream handler, usually for the console.
 
@@ -461,11 +498,11 @@ def get_file_handler(
 
 
 def get_logger(
-    name,  # type: AnyStr
-    level="INFO",  # type: Optional[AnyStr]
-    target=sys.stdout,  # type: Optional[file]
-    handler_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
-    formatter_kwargs=None,  # type: Optional[Dict[AnyStr, Any]]
+    name,  # type: str
+    level="INFO",  # type: Optional[str]
+    target=sys.stdout,  # type: Optional[IO]
+    handler_kwargs=None,  # type: Optional[Dict[str, Any]]
+    formatter_kwargs=None,  # type: Optional[Dict[str, Any]]
 ):
     # type: (...) -> logging.Logger
     """
@@ -559,7 +596,7 @@ def get_logger(
         handler.setFormatter(formatter)
         _logger.addHandler(handler)
         _handler_cache[cache_key] = handler
-    _logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
+    _logger.warning('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
     return _logger
 
 

@@ -55,7 +55,7 @@ def get_logger():  # type: () -> logging.Logger
     :rtype: logging.Logger
     """
     logger = logging.getLogger("ucsschool.import")
-    logger.warn('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
+    logger.warning('get_logger() is deprecated, use "logging.getLogger(__name__)" instead.')
     return logger
 
 
@@ -90,7 +90,7 @@ def move_our_handlers_to_lib_logger():  # type: () -> None
         :py:func:`get_file_handler()` for the logger hierarchie required.
     """
     import_logger = logging.getLogger("ucsschool.import")
-    import_logger.warn("move_our_handlers_to_lib_logger() is deprecated.")
+    import_logger.warning("move_our_handlers_to_lib_logger() is deprecated.")
     school_logger = logging.getLogger("ucsschool")
     for handler in import_logger.handlers:
         school_logger.addHandler(handler)

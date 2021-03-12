@@ -42,7 +42,7 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Any, Dict, Iterable, Iterator, List, Optional
+    from typing import Any, Dict, Iterable, Iterator, Optional
 
     from ..models.import_user import ImportUser
 except ImportError:
@@ -116,7 +116,7 @@ class BaseReader(object):
         """
         raise NotImplementedError()
 
-    def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
+    def map(self, input_data, cur_user_roles):  # type: (Dict[str, str], Iterable[str]) -> ImportUser
         """
         IMPLEMENT ME
         Creates a ImportUser object from a users dict (self.cur_entry). Data will not be modified, just

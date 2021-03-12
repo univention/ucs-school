@@ -88,9 +88,8 @@ def LDAP_Connection(*connection_types):
         ...
     """
 
-    if (
-        not connection_types
-    ):  # TODO: remove. We still need this for backwards compatibility with other broken decorators
+    if not connection_types:
+        # TODO: remove. We still need this for backwards compatibility with other broken decorators
         connection_types = (USER_READ,)
 
     def inner_wrapper(func):

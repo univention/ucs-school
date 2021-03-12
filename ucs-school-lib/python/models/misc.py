@@ -29,6 +29,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+try:
+    from typing import Optional
+
+    from .base import LoType
+except ImportError:
+    pass
+
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import objectExists
@@ -50,7 +57,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 
 class OU(UCSSchoolHelperAbstractClass):
-    def create(self, lo, validate=True):
+    def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
         self.logger.info("Creating %r", self)
         pos = udm_uldap.position(ucr.get("ldap/base"))
         pos.setDn(self.position)
@@ -60,18 +67,19 @@ class OU(UCSSchoolHelperAbstractClass):
         try:
             self.do_create(udm_obj, lo)
         except objectExists as exc:
-            return exc.args[0]
+            return exc.args[0]  # should return bool???
         else:
-            return udm_obj.dn
+            return udm_obj.dn  # should return bool???
 
     def modify(self, lo, validate=True, move_if_necessary=None):
+        # type: (LoType, Optional[bool], Optional[bool]) -> bool
         raise NotImplementedError()
 
-    def remove(self, lo):
+    def remove(self, lo):  # type: (LoType) -> bool
         raise NotImplementedError()
 
     @classmethod
-    def get_container(cls, school):
+    def get_container(cls, school):  # type: (str) -> str
         return cls.get_search_base(school).schoolDN
 
     class Meta:

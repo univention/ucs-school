@@ -41,7 +41,7 @@ import traceback
 import uuid
 
 try:
-    from typing import List, Optional, TypeVar
+    from typing import Any, List, Optional, TypeVar
 except ImportError:
     pass
 
@@ -61,6 +61,7 @@ from ucsschool.veyon_client.client import VeyonClient
 from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
+from univention.lib.models.base import LoType
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules.computerroom import wakeonlan
@@ -125,7 +126,7 @@ class UserMap(dict):
         return username
 
     @LDAP_Connection()
-    def _read_user(self, userstr, ldap_user_read=None):  # type: (str, Optional["LoType"]) -> None
+    def _read_user(self, userstr, ldap_user_read=None):  # type: (str, Optional[LoType]) -> None
         username = self.validate_userstr(userstr)
         lo = ldap_user_read
         try:
@@ -948,10 +949,9 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
 
 
 class VeyonComputer:
-    def __init__(
-        self, computer, veyon_client, user_map
-    ):  # type: (udm_computer.object, VeyonClient, UserMap) -> None
-        self._computer = computer  # type: udm_computer.object
+    def __init__(self, computer, veyon_client, user_map):
+        # type: (Any, VeyonClient, UserMap) -> None
+        self._computer = computer  # type: Any
         self._veyon_client = veyon_client  # type: VeyonClient
         self._user_map = user_map
         self._ip_addresses = self._computer.info.get("ip", [])  # type: List[str]

@@ -348,9 +348,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             ]
             is_singlemaster = ucr.get("ucsschool/singlemaster", False)
             for network in networks:
-                if (
-                    is_singlemaster and network[0] == "default" and own_network_ip4 == network[1]
-                ):  # Bug #48099: jump conflict with default network in singleserver environment
+                if is_singlemaster and network[0] == "default" and own_network_ip4 == network[1]:
+                    # Bug #48099: jump conflict with default network in singleserver environment
                     continue
                 if own_network_ip4.overlaps(network[1]):
                     self.add_error(
@@ -379,7 +378,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
         obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
         obj.ip_address = udm_obj["ip"]
-        school_obj = School.cache(obj.school)
+        school_obj = School.cache(obj.school)  # type: School
         edukativnetz_group = school_obj.get_administrative_group_name(
             "educational", domain_controller=False, as_dn=True
         )

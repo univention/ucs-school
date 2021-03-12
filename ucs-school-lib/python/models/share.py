@@ -361,9 +361,8 @@ class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
     default_roles = [role_marketplace_share]
     _school_in_name_prefix = False
 
-    def __init__(
-        self, name="Marktplatz", school=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Any) -> None
+    def __init__(self, name="Marktplatz", school=None, **kwargs):
+        # type: (Optional[str], Optional[str], **Any) -> None
         if name != "Marktplatz":
             raise ValueError("Name of market place must be 'Marktplatz'.")
         super(MarketplaceShare, self).__init__(name, school, **kwargs)

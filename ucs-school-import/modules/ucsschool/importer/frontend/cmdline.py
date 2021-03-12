@@ -255,7 +255,7 @@ class CommandLine(object):
             if self.errors:
                 # at least one non-fatal error
                 msg = "Import finished normally but with errors."
-                self.logger.warn(msg)
+                self.logger.warning(msg)
                 return 2
         except Exception as exc:  # pylint: disable=broad-except
             return 1

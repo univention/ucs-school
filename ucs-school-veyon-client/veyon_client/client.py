@@ -130,7 +130,9 @@ class VeyonClient:
     def remove_session(self, host):  # type: (str) -> None
         """
         This function tries to close the currently cached connection to the host and then purges it
-        from the cache. This function is not thread safe and thus needs to be used in an already thread safe context.
+        from the cache. This function is not thread safe and thus needs to be used in an already thread
+        safe context.
+
         :param str host: The host to remove the session for
         """
         try:
@@ -191,9 +193,8 @@ class VeyonClient:
         except requests.ReadTimeout:
             return False
 
-    def set_feature(
-        self, feature, host=None, active=True, arguments=None
-    ):  # type: (Feature, Optional[str], Optional[bool], Optional[Dict[str, str]]) -> None
+    def set_feature(self, feature, host=None, active=True, arguments=None):
+        # type: (Feature, Optional[str], Optional[bool], Optional[Dict[str, str]]) -> None
         """
         De-/Activates a Veyon feature on the given host
 

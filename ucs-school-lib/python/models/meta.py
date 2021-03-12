@@ -111,6 +111,11 @@ class UCSSchoolHelperMetaClass(type):
                     # allows to remove an attribute from a subclass
                     # hierarchie should better have been architectured differently (e.g. using mixins)
                     del attributes[name]
+                if type(value) is lazy_object_proxy.Proxy:
+                    # The isinstance() below will access the value and create an InitialisationError in
+                    # ImportUser.config and ImportUser.factory, as they are not initialized at import
+                    # time. Interestingly type() does not do that.
+                    continue
                 if isinstance(value, Attribute):
                     attributes[name] = value
 

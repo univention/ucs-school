@@ -50,7 +50,7 @@ from .base_reader import BaseReader
 
 try:
     from csv import Dialect
-    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, List, Optional, Union
+    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, Optional, Union
 
     from ..models.import_user import ImportUser
 except ImportError:
@@ -286,7 +286,7 @@ class CsvReader(BaseReader):
             )
         return roles
 
-    def map(self, input_data, cur_user_roles):  # type: (List[str], Iterable[str]) -> ImportUser
+    def map(self, input_data, cur_user_roles):  # type: (Dict[str, str], Iterable[str]) -> ImportUser
         """
         Creates a ImportUser object from a users dict. Data will not be
         modified, just copied.

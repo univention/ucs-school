@@ -63,7 +63,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
     def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
         udm_obj.options.append("options")
         udm_obj["option"] = ['wpad "http://%s.%s/proxy.pac"' % (self.hostname, self.domainname)]
-        return super(DHCPService, self).do_create(udm_obj, lo)
+        super(DHCPService, self).do_create(udm_obj, lo)
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str

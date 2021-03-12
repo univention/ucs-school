@@ -130,7 +130,7 @@ class RoleFilterBackend(BaseFilterBackend):
             school = "*"
         query = self._build_query(request.user.username, school)
         if not query:
-            logger.warn("User %r has no permissions at all.", request.user)
+            logger.warning("User %r has no permissions at all.", request.user)
             return queryset.none()
         return queryset.filter(query)
 
@@ -163,7 +163,7 @@ class SchoolFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query = self._build_query(request.user.username)
         if not query:
-            logger.warn("User %r has no permissions at all.", request.user)
+            logger.warning("User %r has no permissions at all.", request.user)
             return queryset.none()
         return queryset.filter(query)
 
@@ -206,7 +206,7 @@ class UserImportJobFilterBackend(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         query = self._build_query(request.user.username)
         if not query:
-            logger.warn("User %r has no permissions at all.", request.user)
+            logger.warning("User %r has no permissions at all.", request.user)
             return queryset.none()
         return queryset.filter(query)
 
@@ -222,7 +222,7 @@ class RoleViewPermission(BasePermission):
             username=request.user.username, school="*", role=obj.name
         )
         if not res:
-            logger.warn("Access forbidden for %r to role %r.", request.user.username, obj.name)
+            logger.warning("Access forbidden for %r to role %r.", request.user.username, obj.name)
         return res
 
 
@@ -237,7 +237,7 @@ class SchoolViewPermission(BasePermission):
             username=request.user.username, school=obj.name, role="*"
         )
         if not res:
-            logger.warn("Access forbidden for %r to school %r.", request.user.username, obj.name)
+            logger.warning("Access forbidden for %r to school %r.", request.user.username, obj.name)
         return res
 
 
@@ -262,7 +262,7 @@ class TextArtifactViewPermission(BasePermission):
             role=userimportjob.user_role,
         )
         if not res:
-            logger.warn(
+            logger.warning(
                 "Access forbidden for %r to %r (school=%r role=%r).",
                 request.user.username,
                 obj,
@@ -290,7 +290,7 @@ class UserImportJobViewPermission(BasePermission):
             username=request.user.username, school=obj.school.name, role=obj.user_role
         )
         if not res:
-            logger.warn(
+            logger.warning(
                 "Access forbidden for %r to %r (school=%r role=%r).",
                 request.user.username,
                 obj,

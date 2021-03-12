@@ -151,7 +151,7 @@ class UserImport(object):
             percentage = 10 + 90 * usernum / self.imported_users_len  # 10% - 100%
             self.progress_report(
                 description="Creating and modifying users: {}%.".format(percentage),
-                percentage=percentage,
+                percentage=int(percentage),
                 done=usernum,
                 total=self.imported_users_len,
                 errors=len(self.errors),
@@ -457,7 +457,7 @@ class UserImport(object):
             percentage = 10 * num / len(users)  # 0% - 10%
             self.progress_report(
                 description="Deleting users: {}.".format(percentage),
-                percentage=percentage,
+                percentage=int(percentage),
                 done=num,
                 total=len(users),
                 errors=len(self.errors),

@@ -278,7 +278,7 @@ class UcsSchoolRolesMigration(object):
                 objs = cls.get_all(lo, school)
                 for obj in objs:
                     if cls == User and oc not in lo.get(obj.dn)["objectClass"]:
-                        self.logger.warn(
+                        self.logger.warning(
                             "    WARN: Ignoring %r, because not a correct school user object.", obj.dn
                         )
                         continue
@@ -398,14 +398,14 @@ class UcsSchoolRolesMigration(object):
                         if school:
                             host_dn_to_ous.setdefault(host_dn, []).append(school)
                         else:
-                            self.logger.warn(
+                            self.logger.warning(
                                 "    WARN: DN in group OU%s-%s does not belong to a %s: %r",
                                 school,
                                 grp_type,
                                 type_msg,
                                 host_dn,
                             )
-                            self.logger.warn("    WARN: Marking %r as central slave.", host_dn)
+                            self.logger.warning("    WARN: Marking %r as central slave.", host_dn)
                             self.set_ldap_attr(
                                 "DC slave",
                                 [create_ucsschool_role_string(role_dc_slave, "-")],

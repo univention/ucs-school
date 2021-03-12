@@ -47,7 +47,7 @@ from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
 
 try:
-    from typing import Optional
+    from typing import List, Optional
 except ImportError:
     pass
 
@@ -73,7 +73,7 @@ def roleshare_path(role, school_ou, ucr):  # type: (str, str, ConfigRegistry) ->
 
 def roleshare_home_subdir(
     school_ou, roles, ucr=None
-):  # type: (str, str, Optional[ConfigRegistry]) -> str
+):  # type: (str, List[str], Optional[ConfigRegistry]) -> str
     if not ucr:
         ucr = ConfigRegistry()
         ucr.load()

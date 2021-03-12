@@ -44,6 +44,7 @@ import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
+from univention.udm import UDM
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -368,11 +369,15 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_administrative_server_names(self, lo):
         dn = self.get_administrative_group_name("administrative", ou_specific=True, as_dn=True)
-        return lo.get(dn, ["uniqueMember"]).get("uniqueMember", [])
+        mod = UDM(lo).version(0).get("groups/group")
+        udm_obj = mod.get(dn)
+        return udm_obj.props.hosts
 
     def get_educational_server_names(self, lo):
         dn = self.get_administrative_group_name("educational", ou_specific=True, as_dn=True)
-        return lo.get(dn, ["uniqueMember"]).get("uniqueMember", [])
+        mod = UDM(lo).version(0).get("groups/group")
+        udm_obj = mod.get(dn)
+        return udm_obj.props.hosts
 
     def add_host_to_dc_group(self, lo):
         self.logger.info(

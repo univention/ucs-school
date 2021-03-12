@@ -44,7 +44,7 @@ from six import iteritems
 
 try:
     import logging.Logger
-    from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 
     from ucsschool.lib.pyhooks import PyHook
 
@@ -90,7 +90,7 @@ class PyHooksLoader(object):
                 filter_func
             )
         self._filter_func = filter_func
-        self._pyhook_obj_cache = None  # type: Dict[str, List[Callable[[...], Any]]]
+        self._pyhook_obj_cache = None  # type: Dict[str, List[Callable[..., Any]]]
 
     def drop_cache(self):  # type: () -> None
         """
@@ -140,9 +140,8 @@ class PyHooksLoader(object):
             )
         return self._hook_classes[self.base_class_name]
 
-    def get_hook_objects(
-        self, *args, **kwargs
-    ):  # type: (*Any, **Any) -> Dict[str, List[Callable[[...], Any]]]
+    def get_hook_objects(self, *args, **kwargs):
+        # type: (*Any, **Any) -> Dict[str, List[Callable[..., Any]]]
         """
         Get initialized hook objects, sorted by method and priority.
 
@@ -156,10 +155,10 @@ class PyHooksLoader(object):
             pyhook_objs = [pyhook_cls(*args, **kwargs) for pyhook_cls in self.get_hook_classes()]
 
             # fill cache: find all enabled hook methods
-            methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[[...], Any], int]]]
+            methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[..., Any], int]]]
             for pyhook_obj in pyhook_objs:
                 if not hasattr(pyhook_obj, "priority") or not isinstance(pyhook_obj.priority, dict):
-                    self.logger.warn(
+                    self.logger.warning(
                         'Ignoring hook %r without/invalid "priority" attribute.', pyhook_obj
                     )
                     continue
@@ -173,7 +172,7 @@ class PyHooksLoader(object):
                     elif hasattr(pyhook_obj, meth_name) and pyhook_obj.priority.get(meth_name) is None:
                         pass
                     else:
-                        self.logger.warn("Ignoring invalid priority item (%r : %r).", meth_name, prio)
+                        self.logger.warning("Ignoring invalid priority item (%r : %r).", meth_name, prio)
             # sort by priority
             self._pyhook_obj_cache = dict()
             for meth_name, meth_list in iteritems(methods):
@@ -197,7 +196,7 @@ class PyHooksLoader(object):
 
     @staticmethod
     def _load_hook_class(cls_name, info, super_class):
-        # type: (str, Tuple[file, str, Tuple[str, str, int]], Type[PyHookTV]) -> Optional[Type[PyHookTV]]
+        # type: (str, Tuple[IO, str, Tuple[str, str, int]], Type[PyHookTV]) -> Optional[Type[PyHookTV]]
         res = imp.load_module(cls_name, *info)
         for thing in dir(res):
             candidate = getattr(res, thing)

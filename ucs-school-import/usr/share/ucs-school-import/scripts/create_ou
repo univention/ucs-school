@@ -111,7 +111,7 @@ def main():
                 reader = csv.reader(fd, delimiter=",")
                 for row in reader:
                     if len(row) != 5:
-                        logger.warn("WARNING: Malformed row for {} will be ignored!".format(row[0]))
+                        logger.warning("WARNING: Malformed row for {} will be ignored!".format(row[0]))
                     ou_tuples.append(tuple([e if e != "" else None for e in row]))
         except IOError as e:
             logger.error("ERROR: The given file could not be parsed:")
