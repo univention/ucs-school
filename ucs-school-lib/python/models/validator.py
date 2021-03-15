@@ -489,10 +489,12 @@ def validate(obj, logger=None):  # type: (Dict[str, Any], logging.Logger) -> Non
                 "{!r}".format(options),
                 "\n\t- ".join(errors),
             )
-            if logger:
-                logger.error(errors_str)
-            if private_data_logger:
-                private_data_logger.error(errors_str)
-                private_data_logger.error(dict_obj)
-                stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
-                private_data_logger.error(stack_trace)
+            log_enabled = ucr.is_true("ucsschool/validation/logging/enabled", True)
+            if log_enabled:  # tests: 00_validation_log_enabled
+                if logger:
+                    logger.error(errors_str)
+                if private_data_logger:
+                    private_data_logger.error(errors_str)
+                    private_data_logger.error(dict_obj)
+                    stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
+                    private_data_logger.error(stack_trace)

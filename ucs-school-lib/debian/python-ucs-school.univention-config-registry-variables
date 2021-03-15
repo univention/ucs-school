@@ -9,3 +9,9 @@ Description[de]=Diese Variable steuert, wie viele Kopien der Log-Datei zum Logge
 Description[en]=This variable controls how many copies of the log file, which is used for logging sensitive data, are kept in rotation during the validation of UCS@school objects. These log files can only be read by root (Default: 60)
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/validation/logging/enabled]
+Description[de]=Diese Variable steuert, ob beim Validieren überhaupt in die logfiles geschrieben wird [yes]
+Description[en]=This variable controls if log messages are written at all when validating [yes]
+Type=str
+Categories=ucsschool-base
