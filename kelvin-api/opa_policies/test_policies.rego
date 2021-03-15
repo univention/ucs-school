@@ -94,9 +94,10 @@ test_list_filtering {
 				"schools": ["demo1"],
 				"roles": ["teacher:school:demo1"],
 			},
+			demo_teacher,
 		],
 	}
 
 	result := allowed_users_list with actor as demo_teacher with input.request as request_teacher
-	result == {"1"}
+	result == {"1", "demo_teacher"}
 }

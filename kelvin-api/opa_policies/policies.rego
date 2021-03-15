@@ -78,6 +78,13 @@ allowed_users_list[user.username] {
 	has_role_in_school(user, role_name, user_school)
 }
 
+# This rule ensures that the actor itself is always part of the listing,
+# if he is included in request.data
+allowed_users_list[user.username] {
+	user := input.request.data[_]
+	actor.username == user.username
+}
+
 actor := token.payload.sub
 
 # Helper to get the token payload.
