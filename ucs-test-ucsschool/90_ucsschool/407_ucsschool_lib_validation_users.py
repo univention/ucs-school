@@ -23,6 +23,7 @@ import tempfile
 import pytest
 
 import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
@@ -37,6 +38,7 @@ from ucsschool.lib.models.validator import (
 )
 from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.config_registry import handler_set
 
 ldap_base = ucr["ldap/base"]
 SchoolSearchBase._load_containers_and_prefixes()
@@ -534,3 +536,34 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
             assert group in log
     assert "{}".format(dict_obj) in secret_logs
     assert "{}".format(dict_obj) not in public_logs
+
+
+@pytest.mark.parametrize(
+    "logging_enabled",
+    ["yes", "no"],
+    ids=[
+        "validation_logging_is_enabled",
+        "validation_logging_is_disabled",
+    ],
+)
+def test_validation_log_enabled(caplog, random_logger, logging_enabled):
+    """Tests if logging can be disabled"""
+    # 00_validation_log_enabled
+
+    with ucr_test.UCSTestConfigRegistry():
+        handler_set(["{}={}".format("ucsschool/validation/logging/enabled", logging_enabled)])
+        ucr.load()
+
+        user = student_user()
+        wrong_school = uts.random_name()
+        user["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), wrong_school)]
+        validate(user, logger=random_logger)
+        expected_msg = "is not part of schools: {!r}".format([wrong_school])
+
+        public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
+        secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
+        for log in (public_logs, secret_logs):
+            if logging_enabled == "yes":
+                assert expected_msg in log
+            else:
+                assert expected_msg not in log
