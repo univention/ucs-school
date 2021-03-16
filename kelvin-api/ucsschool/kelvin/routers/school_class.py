@@ -35,7 +35,7 @@ from ucsschool.lib.models.attributes import ValidationError as LibValidationErro
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
-from ..opa import check_policy_true
+from ..opa import OPAClient
 from ..token_auth import oauth2_scheme
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from .base import (
@@ -176,7 +176,7 @@ async def search(
     - **name**: names of school classes to look for, use ``*`` for inexact
         search (optional)
     """
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="GET", path=["classes"]),
@@ -205,7 +205,7 @@ async def get(
     udm: UDM = Depends(udm_ctx),
     token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="GET", path=["classes", class_name]),
@@ -237,7 +237,7 @@ async def create(
     - **ucsschool_roles**: list of tags of the form
         $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
     """
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="POST", path=["classes"]),
@@ -278,7 +278,7 @@ async def partial_update(
     logger: logging.Logger = Depends(get_logger),
     token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="PATCH", path=["classes", class_name]),
@@ -328,7 +328,7 @@ async def complete_update(
     logger: logging.Logger = Depends(get_logger),
     token: str = Depends(oauth2_scheme),
 ) -> SchoolClassModel:
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="PUT", path=["classes", class_name]),
@@ -381,7 +381,7 @@ async def delete(
     udm: UDM = Depends(udm_ctx),
     token: str = Depends(oauth2_scheme),
 ) -> None:
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
         request=dict(method="DELETE", path=["classes", class_name]),

@@ -29,14 +29,13 @@ import logging
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from ldap.filter import escape_filter_chars
-from fastapi import status
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
 
-from ..opa import check_policy_true
+from ..opa import OPAClient
 from ..token_auth import oauth2_scheme
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 
@@ -123,7 +122,7 @@ async def search(
     searches. No other properties can be used to filter.
     """
     logger.debug("Searching for schools with: name_filter=%r", name_filter)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="schools",
         token=token,
         request=dict(method="GET", path=["schools"]),
@@ -162,7 +161,7 @@ async def get(
 
     - **name**: name of the school (**required**)
     """
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="schools",
         token=token,
         request=dict(method="GET", path=["schools", school_name]),

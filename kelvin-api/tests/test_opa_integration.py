@@ -28,7 +28,7 @@ import pytest
 import requests
 
 import ucsschool.kelvin.constants
-from ucsschool.kelvin.opa import check_policy, check_policy_true
+from ucsschool.kelvin.opa import OPAClient
 
 pytestmark = pytest.mark.skipif(
     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
@@ -140,9 +140,11 @@ async def test_policy_list(
         ],
     )
     target = {}
-    assert set(check_policy("allowed_users_list", token, request, target)) == (
-        expected if school == "DEMOSCHOOL" else set()
-    )
+    assert set(
+        await OPAClient.instance().check_policy(
+            "allowed_users_list", token, request, target
+        )
+    ) == (expected if school == "DEMOSCHOOL" else set())
 
 
 @pytest.mark.asyncio
@@ -182,4 +184,7 @@ async def test_policy_password_reset_as_role(
         schools=["DEMOSCHOOL"],
         roles=[f"{target_role}:school:DEMOSCHOOL"],
     )
-    assert check_policy_true("users", token, request, target) == expected
+    assert (
+        await OPAClient.instance().check_policy_true("users", token, request, target)
+        == expected
+    )

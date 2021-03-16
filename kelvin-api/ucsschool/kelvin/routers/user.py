@@ -90,7 +90,7 @@ from univention.admin.filter import conjunction, expression
 from ..exceptions import UnknownUDMProperty
 from ..import_config import get_import_config, init_ucs_school_import_framework
 from ..ldap_access import LDAPAccess
-from ..opa import check_policy, check_policy_true, import_user_to_opa
+from ..opa import OPAClient, import_user_to_opa
 from ..token_auth import oauth2_scheme
 from ..urls import url_to_name
 from .base import (
@@ -594,7 +594,7 @@ async def search(  # noqa: C901
     except APICommunicationError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.reason)
     users.sort(key=attrgetter("name"))
-    allowed_users = check_policy(
+    allowed_users = await OPAClient.instance().check_policy(
         policy="allowed_users_list",
         token=token,
         request=dict(
@@ -641,7 +641,7 @@ async def get(
             detail=f"No user with username {username!r} found or not authorized.",
         )
     user = await get_import_user(udm, udm_obj.dn)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
         request=dict(method="GET", path=["users", username]),
@@ -711,7 +711,7 @@ async def create(
         ]
     )
     user: ImportUser = await request_user.as_lib_model(request)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
         request=dict(method="POST", path=["users"], data=user.to_dict()),
@@ -899,7 +899,7 @@ async def partial_update(  # noqa: C901
         )
     to_change = await user.to_modify_kwargs(request)
     user_current = await get_import_user(udm, udm_obj.dn)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
         request=dict(method="PATCH", path=["users", username], data=to_change),
@@ -1036,7 +1036,7 @@ async def complete_update(  # noqa: C901
     )
     user_request: ImportUser = await user.as_lib_model(request)
     user_current: ImportUser = await get_import_user(udm, udm_obj.dn)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
         request=dict(
@@ -1125,7 +1125,7 @@ async def delete(
             detail=f"No user with username {username!r} found or not authorized.",
         )
     user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
-    if not check_policy_true(
+    if not await OPAClient.instance().check_policy_true(
         policy="users",
         token=token,
         request=dict(method="DELETE", path=["users", username]),
