@@ -23,6 +23,7 @@ import tempfile
 import pytest
 
 import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
@@ -549,24 +550,15 @@ def test_validation_log_enabled(caplog, random_logger, logging_enabled):
     """Tests if logging can be disabled"""
     # 00_validation_log_enabled
 
-    varname = "ucsschool/validation/logging/enabled"
+    with ucr_test.UCSTestConfigRegistry():
+        handler_set(["{}={}".format("ucsschool/validation/logging/enabled", logging_enabled)])
+        ucr.load()
 
-    # we need to restore the old value later on
-    ucr_value_before = ucr.get(varname, "yes")
-    try:
-        ucr.update({varname: logging_enabled})
-        handler_set(["{}={}".format(varname, logging_enabled)])
         user = student_user()
-        klass_group = "dummy"
-        for group in list(user["props"]["groups"]):
-            if "cn=klassen,cn=schueler,cn=groups" in group:
-                user["props"]["groups"].remove(group)
-                klass_group = group
-                break
-        validate(user, random_logger)
-
-        klass_container = re.search(r"(cn=klassen.+)", klass_group).group()
-        expected_msg = "is missing groups at positions {!r}".format([klass_container])
+        wrong_school = uts.random_name()
+        user["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), wrong_school)]
+        validate(user, logger=random_logger)
+        expected_msg = "is not part of schools: {!r}".format([wrong_school])
 
         public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
         secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
@@ -575,5 +567,3 @@ def test_validation_log_enabled(caplog, random_logger, logging_enabled):
                 assert expected_msg in log
             else:
                 assert expected_msg not in log
-    finally:
-        handler_set(["{}={}".format(varname, ucr_value_before)])

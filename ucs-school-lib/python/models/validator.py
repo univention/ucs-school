@@ -489,6 +489,7 @@ def validate(obj, logger=None):  # type: (Dict[str, Any], logging.Logger) -> Non
                 "{!r}".format(options),
                 "\n\t- ".join(errors),
             )
+
             log_enabled = ucr.is_true("ucsschool/validation/logging/enabled", True)
             if log_enabled:  # tests: 00_validation_log_enabled
                 if logger:
