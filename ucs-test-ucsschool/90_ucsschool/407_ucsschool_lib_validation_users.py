@@ -569,7 +569,6 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger
     user_b = get_user_b()
     for group in list(user_b["props"]["groups"]):
         if group not in user_a["props"]["groups"]:
-            print(group)
             user_a["props"]["groups"].append(group)
     validate(user_a, random_logger)
     expected_msg = "Disallowed member of group"
