@@ -36,12 +36,9 @@ import traceback
 import uuid
 import ldap
 
-try:
-	from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
+from udm_rest_client import UdmObject
 
-	from .base import UdmObject
-except ImportError:
-	pass
 
 from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.roles import (
