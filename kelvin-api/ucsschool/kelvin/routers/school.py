@@ -31,7 +31,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from ldap.filter import escape_filter_chars
-from starlette import status
+from fastapi import status
 
 from ucsschool.lib.models.school import School
 from udm_rest_client import UDM
