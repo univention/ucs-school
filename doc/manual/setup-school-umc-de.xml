@@ -25,8 +25,16 @@
 		  Zusätzlich zu den Fehlermeldungen in den regulären Log Dateien wird
 		  eine Ausgabe des gesamten Objekts in die nur vom Benutzer <systemitem class="username">root</systemitem>
 		  lesbare Datei <filename>/var/log/univention/ucs-school-validation.log</filename> geschrieben.
+		</para>
+		<para>
 		  Mit der &ucsUCRV; <envar>ucsschool/validation/logging/backupcount</envar> kann gesetzt werden, wie viele Kopien dieser Datei in Rotation gehalten werden,
 		  bevor die erste gelöscht wird. Als Standard ist 60 gesetzt.
+		</para>
+		<para>
+		  Mit der &ucsUCRV; <envar>ucsschool/validation/logging/enabled</envar> kann an- und abgeschaltet werden,
+		  ob in die beiden Dateien <filename>/var/log/univention/ucs-school-validation.log</filename> und
+		  <filename>/var/log/univention/management-console-module-schoolwizards.log</filename> geloggt werden soll.
+		  Als Standard ist <literal>yes</literal> gesetzt.
 		</para>
 	</note>
 
