@@ -135,6 +135,11 @@ def base_user(firstname, lastname):  # type: (str, str) ->  Dict[str, Any]
     }
 
 
+def get_current_group_prefix(role, default_value):  # type: (str, str) -> str
+    lib_ucr.load()
+    return lib_ucr.get("ucsschool/ldap/default/groupprefix/{}".format(role), default_value)
+
+
 def student_user():  # type: () ->  Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
@@ -142,7 +147,7 @@ def student_user():  # type: () ->  Dict[str, Any]
     user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         user["props"]["username"], SchoolSearchBase._containerStudents, ldap_base
     )
-    group_prefix_students = lib_ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
+    group_prefix_students = get_current_group_prefix("pupils", "schueler-")
     user["props"]["groups"] = [
         "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_students, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
@@ -163,18 +168,19 @@ def exam_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={}.{},cn={},ou=DEMOSCHOOL,{}".format(
-        firstname, lastname, SchoolSearchBase._examUserContainerName, ldap_base
+    user["dn"] = "uid={},cn={},ou=DEMOSCHOOL,{}".format(
+        user["props"]["username"], SchoolSearchBase._examUserContainerName, ldap_base
     )
+    group_prefix_students = get_current_group_prefix("pupils", "schueler-")
     user["props"]["groups"] = [
-        "cn=schueler-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_students, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
         "cn=OUdemoschool-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ldap_base),
         "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
             SchoolSearchBase._containerStudents, ldap_base
         ),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}.{}".format(firstname, lastname)
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}".format(user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
         "student:school:DEMOSCHOOL",
         "exam_user:school:DEMOSCHOOL",
@@ -189,14 +195,15 @@ def teacher_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        firstname, lastname, SchoolSearchBase._containerTeachers, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        user["props"]["username"], SchoolSearchBase._containerTeachers, ldap_base
     )
+    group_prefix_teachers = get_current_group_prefix("teachers", "lehrer-")
     user["props"]["groups"] = [
-        "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_teachers, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}".format(user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
         "teacher:school:DEMOSCHOOL",
     ]
@@ -211,14 +218,15 @@ def staff_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        firstname, lastname, SchoolSearchBase._containerStaff, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        user["props"]["username"], SchoolSearchBase._containerStaff, ldap_base
     )
+    group_prefix_staff = get_current_group_prefix("staff", "mitarbeiter-")
     user["props"]["groups"] = [
-        "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_staff, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}.{}".format(firstname, lastname)
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}".format(user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
         "staff:school:DEMOSCHOOL",
     ]
@@ -233,15 +241,17 @@ def teacher_and_staff_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={}.{},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        firstname, lastname, SchoolSearchBase._containerTeachersAndStaff, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        user["props"]["username"], SchoolSearchBase._containerTeachersAndStaff, ldap_base
     )
+    group_prefix_staff = get_current_group_prefix("staff", "mitarbeiter-")
+    group_prefix_teachers = get_current_group_prefix("teachers", "lehrer-")
     user["props"]["groups"] = [
-        "cn=lehrer-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
-        "cn=mitarbeiter-demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_teachers, ldap_base),
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_staff, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}.{}".format(firstname, lastname)
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}".format(user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
         "teacher:school:DEMOSCHOOL",
         "staff:school:DEMOSCHOOL",
@@ -559,6 +569,7 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger
     user_b = get_user_b()
     for group in list(user_b["props"]["groups"]):
         if group not in user_a["props"]["groups"]:
+            print(group)
             user_a["props"]["groups"].append(group)
     validate(user_a, random_logger)
     expected_msg = "Disallowed member of group"
