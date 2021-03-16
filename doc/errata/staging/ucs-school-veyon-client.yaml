@@ -6,4 +6,5 @@ src: ucs-school-veyon-client
 fix: 1.0.1-5A~4.4.0.202103020852
 desc: |
  * Internal improvement: Make client thread safe (Bug #52521).
-bug: [52521]
+ * Implement the demo mode for computerrooms configured with Veyon (Bug #52563).
+bug: [52521, 52563]
