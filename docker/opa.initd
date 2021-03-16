@@ -6,10 +6,6 @@ name=opa
 description="Open Policy Agent server"
 pidfile="/var/run/opa.pid"
 
-depend() {
-    need opa
-}
-
 start() {
     ebegin "Starting $description"
     start-stop-daemon --start -m -p $pidfile --background --name "$name" --exec $command -- $command_args
