@@ -61,6 +61,7 @@ from ucsschool.lib.roles import (
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
+private_data_logger = None
 if os.geteuid() == 0:
     LOG_FILE = "/var/log/univention/ucs-school-validation.log"
     VALIDATION_LOGGER = "UCSSchool-Validation"
