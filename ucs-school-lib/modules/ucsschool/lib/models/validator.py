@@ -65,7 +65,7 @@ if os.geteuid() == 0:
 	VALIDATION_LOGGER = "UCSSchool-Validation"
 	private_data_logger = logging.getLogger(VALIDATION_LOGGER)
 	private_data_logger.setLevel("DEBUG")
-	backup_count = ucr.get("ucsschool/validation/logging/backupcount", 60)
+	backup_count = int(ucr.get("ucsschool/validation/logging/backupcount", "").strip() or 60)
 	private_data_logger.addHandler(
 		get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
 	)
