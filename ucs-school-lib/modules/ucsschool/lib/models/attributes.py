@@ -30,7 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
-from typing import Any, List, Optional, Type
+from typing import Any, List, Type
 
 from ldap.dn import escape_dn_chars
 

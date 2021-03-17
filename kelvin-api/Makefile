@@ -57,13 +57,24 @@ clean-test: ## remove test and coverage artifacts
 format: ## format source code
 	make -C .. format
 
-lint-linters:
-	make -C .. lint
+linters:  ## run isort, black, flake8 etc
+	@if [ -e ../Makefile ]; then \
+  		# running in dev env (git repo) \
+  		make -C .. lint; \
+	else \
+	  	# running in Docker image build \
+		isort --sp .isort.cfg --check-only $(PY_PATHS) && \
+	  	echo "==> isort ok" && \
+		black --config .black --check $(PY_PATHS) && \
+		echo "==> black ok" && \
+		flake8 --config .flake8 $(PY_PATHS) && \
+		echo "==> flake8 ok"; \
+	fi
 
 lint-coverage: .coverage
 	coverage report --show-missing --fail-under=30
 
-lint: lint-linters lint-coverage ## check source code style
+lint: linters lint-coverage ## check source code style
 
 pytest: ## run pytests (with the current active Python interpreter)
 	python3 -m pytest -l -v

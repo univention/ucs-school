@@ -96,7 +96,6 @@ from ..exceptions import (
     UserValidationError,
 )
 from ..factory import Factory
-from ..reader.base_reader import BaseReader
 from ..utils.format_pyhook import FormatPyHook
 from ..utils.import_pyhook import get_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
@@ -138,7 +137,7 @@ class ImportUser(User):
     _unique_ids: Dict[str, Dict[str, str]] = defaultdict(dict)
     factory: DefaultUserImportFactory = lazy_object_proxy.Proxy(lambda: Factory())
     ucr: ConfigRegistry = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())
-    reader: BaseReader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())
+    reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())
     ldap_lo_ro = lazy_object_proxy.Proxy(lambda: get_readonly_connection()[0])
     ldap_lo_rw = lazy_object_proxy.Proxy(
         lambda: get_readonly_connection()[0]
@@ -699,6 +698,8 @@ class ImportUser(User):
         * If attribute already exists as a dict, it is not changed.
         * Attribute is only written if it is set to a string like 'school1-cls2,school3-cls4'.
         """
+        from ..reader.base_reader import BaseReader  # isort:skip  # prevent cyclic import
+
         char_replacement = self.config["school_classes_invalid_character_replacement"]
         if isinstance(self, Staff):
             self.school_classes = dict()  # type: Dict[str, Dict[str, List[str]]]
@@ -709,6 +710,7 @@ class ImportUser(User):
                     for class_name in classes
                 ]
         elif isinstance(self.school_classes, dict) and not self.school_classes:
+            self.reader = cast(BaseReader, self.reader)
             input_dict = self.reader.get_data_mapping(self.input_data)
             if input_dict.get("school_classes") == "":
                 # mapping exists and csv field is empty -> empty property, except if config says
@@ -825,7 +827,7 @@ class ImportUser(User):
             maildomain = self.config.get("maildomain")
             if not maildomain:
                 try:
-                    # TODO: not availble (yet) in Docker container
+                    # TODO: not available (yet) in Docker container
                     maildomain = ucr["mail/hosteddomains"].split()[0]
                 except (AttributeError, IndexError):
                     if (
@@ -1496,8 +1498,11 @@ class ImportUser(User):
         :return: formatted string
         :rtype: str
         """
+        from ..reader.base_reader import BaseReader  # isort:skip  # prevent cyclic import
+
         self.solve_format_dependencies(prop_name, scheme, **kwargs)
         if self.input_data:
+            self.reader = cast(BaseReader, self.reader)
             all_fields = self.reader.get_data_mapping(self.input_data)
         else:
             all_fields = dict()
@@ -1625,7 +1630,8 @@ class ImportUser(User):
         if not char_replacement or not school_class:
             return school_class
         klass_name_old = school_class  # for debug output at the end
-        school_class = school_class.decode("utf-8")
+        if isinstance(school_class, bytes):
+            school_class = school_class.decode("utf-8")
         for character in school_class:
             if character not in ALLOWED_CHARS_IN_SCHOOL_CLASS_NAME:
                 school_class = school_class.replace(character, char_replacement)

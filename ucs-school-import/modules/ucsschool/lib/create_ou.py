@@ -41,11 +41,12 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 from udm_rest_client import UDM
+from univention.admin.uldap import getAdminConnection
 
 MAX_HOSTNAME_LENGTH = 13
 
 
-def create_ou(
+async def create_ou(
     ou_name: str,
     display_name: str,
     edu_name: str,
@@ -68,9 +69,9 @@ def create_ou(
     :param univention.uldap.access lo: LDAP connection object
     :param str baseDN: base DN
     :param str hostname: hostname of master in case of singlemaster
-    :param bool is_single_master: whther it is a singlemaster
+    :param bool is_single_master: whether it is a singlemaster
     :param bool alter_dhcpd_base: if the DHCP base should be modified
-    :return bool: whether the OU was sucessfully created (or already existed)
+    :return bool: whether the OU was successfully created (or already existed)
     :raises ValueError: on validation errors
     :raises uidAlreadyUsed:
     """
@@ -119,10 +120,12 @@ def create_ou(
     share_dn = ""
     if share_name is None:
         share_name = edu_name
-    # TODO: use UDM instead of LDAP
-    objects = lo.searchDn(
-        filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
-    )
+    objects = [
+        obj.dn
+        async for obj in lo.get("computers/computer").search(
+            filter_s=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
+        )
+    ]
     if not objects:
         if share_name == "dc{}".format(ou_name) or (edu_name and share_name == edu_name):
             share_dn = filter_format(
@@ -141,7 +144,7 @@ def create_ou(
     new_school.class_share_file_server = share_dn
     new_school.home_share_file_server = share_dn
 
-    new_school.validate(lo)
+    await new_school.validate(lo)
     if len(new_school.warnings) > 0:
         logger.warning("The following fields reported warnings during validation:")
         for key, value in new_school.warnings.items():
@@ -152,7 +155,7 @@ def create_ou(
             error_str += "{}: {}\n".format(key, value)
         raise ValueError(error_str)
 
-    res = new_school.create(lo)
+    res = await new_school.create(lo)
     if res:
         logger.info("OU %r created successfully.", new_school.name)
     else:

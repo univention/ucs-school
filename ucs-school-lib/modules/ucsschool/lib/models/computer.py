@@ -30,7 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 from __future__ import annotations
 
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List, Optional, Type
 
 import six
 from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
@@ -47,7 +47,7 @@ from ..roles import (
     role_teacher_computer,
     role_win_computer,
 )
-from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, Roles, SubnetMask
+from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, SubnetMask
 from .base import MultipleObjectsError, RoleSupportMixin, SuperOrdinateType, UCSSchoolHelperAbstractClass
 from .dhcp import AnyDHCPService, DHCPServer
 from .group import BasicGroup
@@ -77,30 +77,27 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
         return "cn=dc,cn=server,%s" % cls.get_search_base(school).computers
 
     @classmethod
-    async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type["SchoolDC"]:
-        try:
-            univention_object_class = udm_obj["univentionObjectClass"]
-        except KeyError:
-            univention_object_class = None
-        if univention_object_class == "computers/domaincontroller_slave":
-            return SchoolDCSlave
-        return cls
+    async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type["SchoolDC"]]:
+        module_to_class = {
+            SchoolDCSlave.Meta.udm_module: SchoolDCSlave,
+        }
+        return module_to_class.get(udm_obj._udm_module.name, cls)
 
 
 class SchoolDCSlave(RoleSupportMixin, SchoolDC):
     groups: List[str] = Groups(_("Groups"))
 
     async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
-        udm_obj["unixhome"] = "/dev/null"
-        udm_obj["shell"] = "/bin/bash"
-        udm_obj["primaryGroup"] = BasicGroup.cache("DC Slave Hosts").dn
+        udm_obj.props.unixhome = "/dev/null"
+        udm_obj.props.shell = "/bin/bash"
+        udm_obj.props.primaryGroup = BasicGroup.cache("DC Slave Hosts").dn
         return await super(SchoolDCSlave, self).do_create(udm_obj, lo)
 
     async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
         if self.groups:
             for group in self.groups:
-                if group not in udm_obj["groups"]:
-                    udm_obj["groups"].append(group)
+                if group not in udm_obj.props.groups:
+                    udm_obj.props.groups.append(group)
         return await super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
     async def get_schools_from_udm_obj(self, udm_obj: UdmObject) -> str:
@@ -121,7 +118,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
             old_dn = udm_obj.dn
             school = await self.get_school_obj(lo)
             group_dn = school.get_administrative_group_name("educational", ou_specific=True, as_dn=True)
-            if group_dn not in udm_obj["groups"]:
+            if group_dn not in udm_obj.props.groups:
                 self.logger.error("%r has no LDAP access to %r", self, school)
                 return False
             if old_dn == self.dn:
@@ -225,17 +222,17 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         await super(SchoolComputer, self)._alter_udm_obj(udm_obj)
         inventory_numbers = self.get_inventory_numbers()
         if inventory_numbers:
-            udm_obj["inventoryNumber"] = inventory_numbers
+            udm_obj.props.inventoryNumber = inventory_numbers
         ipv4_network = self.get_ipv4_network()
-        if ipv4_network and len(udm_obj["ip"]) < 2:
+        if ipv4_network and len(udm_obj.props.ip) < 2:
             if self._ip_is_set_to_subnet(ipv4_network):
                 self.logger.info(
                     "IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: "
                     "Assign next free IP!"
                 )
-                udm_obj["ip"] = []
+                udm_obj.props.ip = []
             else:
-                udm_obj["ip"] = [str(ipv4_network.ip)]
+                udm_obj.props.ip = [str(ipv4_network.ip)]
             # set network after ip. Otherwise UDM does not do any
             #   nextIp magic...
             network = self.get_network()
@@ -243,7 +240,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 # reset network, so that next line triggers free ip
                 udm_obj.old_network = None
                 try:
-                    udm_obj["network"] = network.dn
+                    udm_obj.props.network = network.dn
                 except nextFreeIp:
                     self.logger.error("Tried to set IP automatically, but failed! %r is full", network)
                     raise nextFreeIp(_("There are no free addresses left in the subnet!"))
@@ -333,15 +330,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     "the creation of the computer object."
                 ),
             )
-            # todo -> lo
+            mod = lo.get("networks/network")
             networks = [
                 (
-                    network[1]["cn"][0],
-                    IPv4Network(
-                        network[1]["univentionNetwork"][0] + "/" + network[1]["univentionNetmask"][0]
-                    ),
+                    network.props.name,
+                    IPv4Network(network.props.network + "/" + network.props.netmask),
                 )
-                for network in lo.search("(univentionObjectType=networks/network)")
+                async for network in mod.search()
             ]
             is_singlemaster = ucr.get("ucsschool/singlemaster", False)
             for network in networks:
@@ -357,40 +352,37 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     )
 
     @classmethod
-    async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type[SchoolComputer]:
-        oc = udm_obj.lo.get(udm_obj.dn, ["objectClass"])
-        object_classes = oc.get("objectClass", [])
-        if "univentionWindows" in object_classes:
-            return WindowsComputer
-        if "univentionMacOSClient" in object_classes:
-            return MacComputer
-        if "univentionCorporateClient" in object_classes:
-            return UCCComputer
-        if "univentionClient" in object_classes:
-            return IPComputer
+    async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Optional[Type["SchoolComputer"]]:
+        module_to_class = {
+            IPComputer.Meta.udm_module: IPComputer,
+            MacComputer.Meta.udm_module: MacComputer,
+            UCCComputer.Meta.udm_module: UCCComputer,
+            WindowsComputer.Meta.udm_module: WindowsComputer,
+        }
+        return module_to_class.get(udm_obj._udm_module.name)
 
     @classmethod
-    async def from_udm_obj(cls, udm_obj: UdmObject, school: str, lo: UDM) -> SchoolComputer:
+    async def from_udm_obj(cls, udm_obj: UdmObject, school: str, lo: UDM) -> "SchoolComputer":
         from ucsschool.lib.models.school import School
 
         obj = await super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
-        obj.ip_address = udm_obj["ip"]
-        school_obj = School.cache(obj.school)
+        obj.ip_address = udm_obj.props.ip
+        school_obj: School = School.cache(obj.school)
         edukativnetz_group = school_obj.get_administrative_group_name(
             "educational", domain_controller=False, as_dn=True
         )
-        if edukativnetz_group in udm_obj["groups"]:
+        if edukativnetz_group in udm_obj.props.groups:
             obj.zone = "edukativ"
         verwaltungsnetz_group = school_obj.get_administrative_group_name(
             "administrative", domain_controller=False, as_dn=True
         )
-        if verwaltungsnetz_group in udm_obj["groups"]:
+        if verwaltungsnetz_group in udm_obj.props.groups:
             obj.zone = "verwaltung"
-        network_dn = udm_obj["network"]
+        network_dn = udm_obj.props.network
         if network_dn:
             netmask = await Network.get_netmask(network_dn, school, lo)
             obj.subnet_mask = netmask
-        obj.inventory_number = ", ".join(udm_obj["inventoryNumber"])
+        obj.inventory_number = ", ".join(udm_obj.props.inventoryNumber)
         return obj
 
     def to_dict(self) -> Dict[str, Any]:

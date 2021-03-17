@@ -38,6 +38,7 @@ from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 from six import iteritems
 
+import univention.admin.syntax as syntax
 from udm_rest_client import UDM, UdmObject
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError

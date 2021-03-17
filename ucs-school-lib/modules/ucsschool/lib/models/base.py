@@ -460,7 +460,11 @@ class UCSSchoolHelperAbstractClass(object):
         try:
             pos.setDn(container)
             superordinate_obj = await self.get_superordinate(lo)
-            udm_obj = await lo.get(self._meta.udm_module).new(superordinate=superordinate_obj)
+            if superordinate_obj:  # TODO: fix UDM REST API client
+                superordinate_arg = superordinate_obj._api_obj
+            else:
+                superordinate_arg = None
+            udm_obj = await lo.get(self._meta.udm_module).new(superordinate=superordinate_arg)
             if not udm_obj.superordinate:
                 # TODO: remove this, once new() has been fixed
                 udm_obj.superordinate = superordinate_obj
@@ -727,7 +731,7 @@ class UCSSchoolHelperAbstractClass(object):
             self._udm_obj_searched = True
         return self._udm_obj
 
-    async def get_school_obj(self, lo: UDM) -> "ucsschool.lib.models.school.School":
+    async def get_school_obj(self, lo: UDM) -> Optional[UCSSchoolModel]:
         from ucsschool.lib.models.school import School
 
         if not self.supports_school():

@@ -34,7 +34,6 @@ from typing import Any, AsyncIterator, Dict, List, Optional, Type
 from ldap.dn import str2dn
 
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
-from univention.admin.uexceptions import noObject
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -171,11 +170,11 @@ class BasicGroup(Group):
         # prepare LDAP: create containers where this basic group lives if necessary
         # Does not work correctly for non-school groups: they will be created at the LDAPs root!
         # -> Create containers for non-school group manually before creating the group.
-        if not self.container_exists(lo):
-            self.create_groups_container(lo)
+        if not await self.container_exists(lo):
+            await self.create_groups_container(lo)
         return await super(BasicGroup, self).create_without_hooks(lo, validate)
 
-    def create_groups_container(self, lo: UDM) -> None:
+    async def create_groups_container(self, lo: UDM) -> None:
         container_dn = self.get_own_container()[: -len(ucr.get("ldap/base")) - 1]
         containers = str2dn(container_dn)
         super_container_dn = ucr.get("ldap/base")
@@ -186,18 +185,18 @@ class BasicGroup(Group):
             else:
                 container = Container(name=cn, school="", group_path="1")
             container.position = super_container_dn
-            if not container.exists(lo):
-                container.create(lo, False)
+            if not await container.exists(lo):
+                await container.create(lo, False)
 
     def get_own_container(self) -> Optional[str]:
         return self.container
 
-    def container_exists(self, lo: UDM) -> bool:
-        # TODO: replace with UDM call
+    async def container_exists(self, lo: UDM) -> bool:
         try:
-            lo.searchDn(base=self.get_own_container())
+            mod = lo.get("container/cn")
+            await mod.get(self.get_own_container())
             return True
-        except noObject:
+        except UdmNoObject:
             return False
 
     def build_hook_line(self, hook_time: str, func_name: str) -> Optional[str]:
@@ -283,8 +282,8 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
             return  # is a workgroup
         return cls
 
-    def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
-        super(SchoolClass, self).validate(lo, validate_unlikely_changes)
+    async def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
+        await super(SchoolClass, self).validate(lo, validate_unlikely_changes)
         if not self.name.startswith("{}-".format(self.school)):
             raise ValueError("Missing school prefix in name: {!r}.".format(self))
 

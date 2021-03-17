@@ -470,7 +470,7 @@ def get_class(obj: Dict[str, Any]) -> Optional[Type[SchoolValidator]]:
         return WorkGroupShareValidator
 
 
-def validate(obj: Dict[str, Any], logger: logging.Logger = None) -> None:
+def validate(obj: UdmObject, logger: logging.Logger = None) -> None:
     """
     Objects are validated as dicts and errors are logged to
     the passed logger. Sensitive data is only logged to /var/log/univention/ucs-school-validation.log

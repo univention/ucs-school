@@ -32,33 +32,26 @@
 from .attributes import EmptyAttributes
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _
+from udm_rest_client import ModifyError, UDM, UdmObject
 
 
 class Policy(UCSSchoolHelperAbstractClass):
     @classmethod
-    def get_container(cls, school):
+    def get_container(cls, school: str) -> str:
         return cls.get_search_base(school).policies
 
-    async def attach(self, obj, lo):
-        # add univentionPolicyReference if neccessary
-        oc = lo.get(obj.dn, ["objectClass"])
-        if "univentionPolicyReference" not in oc.get("objectClass", []):
-            try:
-                lo.modify(obj.dn, [("objectClass", "", "univentionPolicyReference")])
-            except:
-                self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
-                return
+    async def attach(self, obj: UdmObject, lo: UDM) -> None:
         # add the missing policy
-        pl = lo.get(obj.dn, ["univentionPolicyReference"])
-        self.logger.info("Attaching %r to %r", self, obj)
-        if self.dn.lower() not in map(lambda x: x.lower(), pl.get("univentionPolicyReference", [])):
-            modlist = [("univentionPolicyReference", "", self.dn)]
-            try:
-                lo.modify(obj.dn, modlist)
-            except:
-                self.logger.warning("Policy %s cannot be referenced to %r", self, obj)
+        if self.dn.lower() not in [dn.lower() for dn in obj.policies[self.Meta.udm_module]]:
+            obj.policies[self.Meta.udm_module].append(self.dn)
         else:
             self.logger.info("Already attached!")
+            return
+        self.logger.info("Attaching %r to %r", self, obj)
+        try:
+            await obj.save()
+        except ModifyError as exc:
+            self.logger.warning("Policy %s cannot be referenced to %r: %s", self, obj, exc)
 
 
 class UMCPolicy(Policy):

@@ -35,9 +35,8 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
-import univention.admin.modules
-import univention.admin.objects
 from udm_rest_client import UDM
+from udm_rest_client import NoObject as UdmNoObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
@@ -82,7 +81,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     _school_in_name = True
     _school_obj_cache: Dict[str, "School"] = {}
 
-    def __init__(self, name=None, school=None, alter_dhcpd_base=None, **kwargs):
+    def __init__(self, name: str = None, school: str = None, alter_dhcpd_base: bool = None, **kwargs):
         super(School, self).__init__(name=name, **kwargs)
         self.display_name = self.display_name or self.name
         self.alter_dhcpd_base = (
@@ -91,7 +90,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             else not bool(ucr.get("dhcpd/ldap/base", ""))
         )
 
-    async def validate(self, lo, validate_unlikely_changes=False):
+    async def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
         await super(School, self).validate(lo, validate_unlikely_changes)
         if self.dc_name and self.dc_name == self.dc_name_administrative:
             self.add_error(
@@ -120,7 +119,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     ")",
                     [self.dc_name.lower()],
                 )
-            dcs = lo.search(ldap_filter_str)
+            dcs = [obj async for obj in lo.get("computers/computer").search(ldap_filter_str)]
             if len(dcs) and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
@@ -180,7 +179,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     last_dn = await _add_container(cn, last_dn, base_dn, path, lo)
             else:
                 container = Container(name=name, school=self.name)
-                setattr(container, path, "1")
+                # Bug 52952: set all attributes of container/cn objects
+                for attr, val in container._attributes.items():  # type: str, Attribute
+                    if attr.endswith("_path") and getattr(container, attr) is None:
+                        setattr(container, attr, False)
+                setattr(container, path, True)
                 container.position = base_dn
                 last_dn = container.dn
                 if not await container.exists(lo):
@@ -250,8 +253,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             admin_option = "ucsschoolAdministratorGroup"
             if udm_obj.options.get(admin_option) is not True:
                 udm_obj.options[admin_option] = True
-            udm_obj["school"] = [self.name]
-            udm_obj.modify()
+            udm_obj.props.school = [self.name]
+            await udm_obj.save()
 
         # cn=schueler
         group = Group.cache(self.group_name("pupils", "schueler-"), self.name)
@@ -370,43 +373,42 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         udm_obj = await mod.get(dn)
         return udm_obj.props.hosts
 
-    async def add_host_to_dc_group(self, lo):
+    async def add_host_to_dc_group(self, lo: UDM):
         self.logger.info(
             "School.add_host_to_dc_group(): ou_name=%r  dc_name=%r", self.name, self.dc_name
         )
         if self.dc_name:
             dc_name_l = self.dc_name.lower()
             dc_udm_obj = None
-            mb_dcs = lo.search(
-                filter_format(
-                    "(&"
-                    "(objectClass=univentionDomainController)"
-                    "(cn=%s)"
-                    "(|"
-                    "(univentionServerRole=backup)"
-                    "(univentionServerRole=master)"
-                    ")"
-                    ")",
-                    [self.dc_name.lower()],
+            mb_dcs = [
+                obj
+                async for obj in lo.get("computers/computer").search(
+                    filter_format(
+                        "(&"
+                        "(objectClass=univentionDomainController)"
+                        "(cn=%s)"
+                        "(|(univentionServerRole=backup)(univentionServerRole=master))"
+                        ")",
+                        [self.dc_name.lower()],
+                    )
                 )
-            )
+            ]
             if len(mb_dcs):
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
             # Sadly we need this here to access non school specific computers.
-            # TODO: Use Daniels simple API if merged into product
-            po = univention.admin.uldap.position(lo.base)
-            univention.admin.modules.update()
-            mod = lo.get("computers/domaincontroller_slave")
-            slave_dcs = lo.search(
-                "(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))".format(
-                    dc_name_l
+            slave_dcs = [
+                obj
+                async for obj in lo.get("computers/domaincontroller_slave").search(
+                    filter_format("(cn=%s)", [dc_name_l])
                 )
-            )
+            ]
             if len(slave_dcs):
                 dn, attr = slave_dcs[0]
-                dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)
-                dc_udm_obj.open()
+                try:
+                    dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(dn)
+                except UdmNoObject:
+                    pass
             if not dc_udm_obj:
                 roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
                 dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
@@ -414,16 +416,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 dc_udm_obj = await dc.get_udm_object(lo)
             else:
                 dc = await SchoolDCSlave.from_udm_obj(
-                    SchoolDCSlave.get_first_udm_obj(lo, "cn={}".format(self.dc_name)), self.name, lo
+                    await SchoolDCSlave.get_first_udm_obj(lo, filter_format("cn=%s", [self.dc_name])),
+                    self.name,
+                    lo,
                 )
                 if dc:
                     dc.ucsschool_roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
                     await dc.modify(lo)
             groups = self.get_administrative_group_name("educational", ou_specific="both", as_dn=True)
             for grp in groups:
-                if grp not in dc_udm_obj["groups"]:
-                    dc_udm_obj["groups"].append(grp)
-            await dc_udm_obj.modify()
+                if grp not in dc_udm_obj.props.groups:
+                    dc_udm_obj.props.groups.append(grp)
+            await dc_udm_obj.save()
 
     def shall_create_administrative_objects(self):
         return ucr.is_true("ucsschool/ldap/noneducational/create/objects", True)
@@ -586,7 +590,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         return success
 
-    def remove_without_hooks(self, lo):
+    async def remove_without_hooks(self, lo):
         from ucsschool.lib.models.user import User
 
         success = super(School, self).remove_without_hooks(lo)
@@ -601,7 +605,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             grpdn = grpdn % {"ou": self.name, "basedn": ucr.get("ldap/base")}
             self._remove_udm_object("groups/group", grpdn, lo)
 
-        for user in User.get_all(lo, self.name):
+        for user in await User.get_all(lo, self.name):
             user.remove_from_school(self.name, lo)
         return success
 
@@ -614,6 +618,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         Return None on success or error message.
         """
         try:
+            # TODO: use UDM instead of LDAP
             dn = lo.searchDn(base=dn)[0]
         except (ldap.NO_SUCH_OBJECT, IndexError, noObject):
             if raise_exceptions:
@@ -623,6 +628,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         msg = None
         cmd = ["udm", module, "remove", "--dn", dn]
         self.logger.info("*** Calling following command: %r", cmd)
+        # TODO: OMG!!
         retval = subprocess.call(cmd)  # nosec
         if retval:
             msg = "*** ERROR: failed to remove UCS@school %s object: %s" % (module, dn)
@@ -635,6 +641,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     async def from_binddn(cls, lo):
+        raise NotImplementedError("Not available in Kelvin API.")
         cls.logger.debug("All local schools: Showing all OUs which DN %s can read.", lo.binddn)
         # get all schools of the user which are present on this server
         user_schools = lo.search(base=lo.binddn, scope="base", attr=["ucsschoolSchool"])[0][1].get(
@@ -693,12 +700,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 filter_str = f"({filter_str})"
             if filter_str:
                 complete_filter = conjunction("&", [complete_filter, filter_str])
-            ldap_lo, ldap_po = cls.get_admin_connection()
             schools = []
-            for dn, attrs in ldap_lo.search(str(complete_filter), attr=["ou"]):
-                ou = attrs["ou"][0].decode()
+            async for obj in lo.get(cls.Meta.udm_module).search(str(complete_filter)):
+                ou = obj.props.name
                 if ou.lower() not in cls._school_obj_cache:
-                    cls._school_obj_cache[ou.lower()] = await School.from_dn(dn, None, lo)
+                    cls._school_obj_cache[ou.lower()] = await School.from_dn(obj.dn, None, lo)
                 schools.append(cls._school_obj_cache[ou.lower()])
         oulist = ucr.get("ucsschool/local/oulist")
         if oulist and respect_local_oulist:
@@ -708,7 +714,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return schools
 
     @classmethod
-    async def _filter_local_schools(cls, schools, lo):
+    async def _filter_local_schools(cls, schools: List["School"], lo: UDM):
         if ucr.get("server/role") in ("domaincontroller_master", "domaincontroller_backup"):
             return schools
         return [
@@ -723,6 +729,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     def _attrs_for_easy_filter(cls):
+        # TODO: BASE._attrs_for_easy_filter() not implemented!
         return super(cls, School)._attrs_for_easy_filter() + ["displayName"]
 
     @classmethod

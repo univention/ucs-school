@@ -36,6 +36,7 @@ from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 
 from udm_rest_client import UDM, UdmObject
+from univention.admin.uldap_docker import parentDn
 
 from .attributes import (
     Attribute,
@@ -57,7 +58,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 
     async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
         udm_obj.options["options"] = True
-        udm_obj["option"] = ['wpad "http://%s.%s/proxy.pac"' % (self.hostname, self.domainname)]
+        udm_obj.props.option = ['wpad "http://%s.%s/proxy.pac"' % (self.hostname, self.domainname)]
         await super(DHCPService, self).do_create(udm_obj, lo)
 
     @classmethod
@@ -84,8 +85,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
         existing_dhcp_server_dn = await DHCPServer.find_any_dn_with_name(dc_name, lo)
         if existing_dhcp_server_dn:
             self.logger.info("DHCP server %s exists!", existing_dhcp_server_dn)
-            # TODO: use UDM instead of lo
-            old_dhcp_server_container = lo.parentDn(existing_dhcp_server_dn)
+            old_dhcp_server_container = parentDn(existing_dhcp_server_dn)
             dhcpd_ldap_base = ucr.get("dhcpd/ldap/base", "")
             # only move if
             # - forced via kwargs OR
@@ -186,6 +186,13 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
     name: str = DHCPServerName(_("Server name"))
     dhcp_service: DHCPService = DHCPServiceAttribute(_("DHCP service"), required=True)
 
+    async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
+        if udm_obj.dn:
+            # Setting udm_obj.superordinate leads to udm_obj.dn being set. That makes the UDM REST API
+            # client believe the object exists and should be moved. For creation it must be None.
+            udm_obj.dn = None
+        await super(DHCPServer, self).do_create(udm_obj, lo)
+
     def get_own_container(self) -> str:
         if self.dhcp_service:
             return self.dhcp_service.dn
@@ -201,13 +208,11 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
     @classmethod
     async def find_any_dn_with_name(cls, name: str, lo: UDM) -> str:
         cls.logger.debug("Searching first dhcpServer with cn=%s", name)
-        # TODO: replace lo with UDM call
-        try:
-            dn = lo.searchDn(
-                filter=filter_format("(&(objectClass=dhcpServer)(cn=%s))", [name]),
-                base=ucr.get("ldap/base"),
-            )[0]
-        except IndexError:
+        mod = lo.get(cls.Meta.udm_module)
+        objs = [obj async for obj in mod.search(filter_format("cn=%s", (name,)))]
+        if objs:
+            dn = objs[0].dn
+        else:
             dn = None
         cls.logger.debug("... %r found", dn)
         return dn
@@ -245,8 +250,8 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
     @classmethod
     async def find_all_dns_below_base(cls, dn: str, lo: UDM) -> List[str]:
         cls.logger.debug("Searching all univentionDhcpSubnet in %r", dn)
-        # TODO: replace lo with UDM call
-        return lo.searchDn(filter="(objectClass=univentionDhcpSubnet)", base=dn)
+        mod = lo.get(cls.Meta.udm_module)
+        return [obj.dn async for obj in mod.search(base=dn)]
 
     class Meta:
         udm_module = "dhcp/subnet"

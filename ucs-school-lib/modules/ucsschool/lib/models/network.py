@@ -29,8 +29,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from typing import Dict, Optional
+
 from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 
+from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
 from univention.admin.uexceptions import noObject
 
 from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
@@ -40,17 +43,17 @@ from .utils import _, ucr
 
 
 class Network(UCSSchoolHelperAbstractClass):
-    netmask = Netmask(_("Netmask"))
-    network = NetworkAttribute(_("Network"))
-    broadcast = NetworkBroadcastAddress(_("Broadcast"))
+    netmask: str = Netmask(_("Netmask"))
+    network: str = NetworkAttribute(_("Network"))
+    broadcast: str = NetworkBroadcastAddress(_("Broadcast"))
 
-    _netmask_cache = {}
+    _netmask_cache: Dict[str, str] = {}
 
     @classmethod
-    def get_container(cls, school):
+    def get_container(cls, school: str) -> str:
         return cls.get_search_base(school).networks
 
-    def get_subnet(self):
+    def get_subnet(self) -> str:
         # WORKAROUND for Bug #14795
         subnetbytes = 0
         netmask_parts = self.netmask.split(".")
@@ -61,11 +64,11 @@ class Network(UCSSchoolHelperAbstractClass):
                 break
         return ".".join(self.network.split(".")[:subnetbytes])
 
-    async def create_without_hooks(self, lo, validate):
+    async def create_without_hooks(self, lo: UDM, validate: bool) -> bool:
         dns_reverse_zone = DNSReverseZone.cache(self.get_subnet())
         await dns_reverse_zone.create(lo)
 
-        dhcp_service = await self.get_school_obj(lo).get_dhcp_service()
+        dhcp_service = (await self.get_school_obj(lo)).get_dhcp_service()
         dhcp_subnet = DHCPSubnet(
             name=self.network,
             school=self.school,
@@ -92,38 +95,38 @@ class Network(UCSSchoolHelperAbstractClass):
 
         return await super(Network, self).create_without_hooks(lo, validate)
 
-    async def do_create(self, udm_obj, lo):
+    async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
         from ucsschool.lib.models.school import School
 
         # TODO:
         # if iprange:
         # 	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
         # TODO: this is a DHCPServer created when school is created (not implemented yet)
-        udm_obj["dhcpEntryZone"] = "cn=%s,cn=dhcp,%s" % (self.school, School.cache(self.school).dn)
-        udm_obj["dnsEntryZoneForward"] = "zoneName=%s,cn=dns,%s" % (
+        udm_obj.props.dhcpEntryZone = "cn=%s,cn=dhcp,%s" % (self.school, School.cache(self.school).dn)
+        udm_obj.props.dnsEntryZoneForward = "zoneName=%s,cn=dns,%s" % (
             ucr.get("domainname"),
             ucr.get("ldap/base"),
         )
         reversed_subnet = ".".join(reversed(self.get_subnet().split(".")))
-        udm_obj["dnsEntryZoneReverse"] = "zoneName=%s.in-addr.arpa,cn=dns,%s" % (
+        udm_obj.props.dnsEntryZoneReverse = "zoneName=%s.in-addr.arpa,cn=dns,%s" % (
             reversed_subnet,
             ucr.get("ldap/base"),
         )
         return await super(Network, self).do_create(udm_obj, lo)
 
     @classmethod
-    def invalidate_cache(cls):
+    def invalidate_cache(cls) -> None:
         super(Network, cls).invalidate_cache()
         cls._netmask_cache.clear()
 
     @classmethod
-    async def get_netmask(cls, dn, school, lo):
+    async def get_netmask(cls, dn: str, school: str, lo: UDM) -> Optional[str]:
         if dn not in cls._netmask_cache:
             try:
                 network = await cls.from_dn(dn, school, lo)
             except noObject:
                 return
-            netmask = network.netmask  # e.g. '24'
+            netmask: str = network.netmask  # e.g. '24'
             network_str = "0.0.0.0/%s" % netmask
             try:
                 ipv4_network = IPv4Network(network_str)
@@ -144,12 +147,12 @@ class DNSReverseZone(UCSSchoolHelperAbstractClass):
     school = None
 
     @classmethod
-    def get_container(cls, school=None):
+    def get_container(cls, school: str = None) -> str:
         return "cn=dns,%s" % ucr.get("ldap/base")
 
-    async def do_create(self, udm_obj, lo):
-        udm_obj["nameserver"] = ucr.get("ldap/master")
-        udm_obj["contact"] = "root@%s" % ucr.get("domainname")
+    async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
+        udm_obj.props.nameserver = ucr.get("ldap/master")
+        udm_obj.props.contact = "root@%s" % ucr.get("domainname")
         return await super(DNSReverseZone, self).do_create(udm_obj, lo)
 
     class Meta:

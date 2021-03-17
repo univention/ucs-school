@@ -113,10 +113,12 @@ COPY ucsschool-kelvin-rest-api.initd /tmp/
 COPY opa.initd /tmp/
 COPY opa /usr/bin
 COPY kelvin-api/ /kelvin/kelvin-api
+COPY .black .isort.cfg .flake8 /kelvin/kelvin-api/
 RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest-api && \
 	mv -v /tmp/opa.initd /etc/init.d/opa && \
 	rc-update add opa default && \
 	rc-update add ucsschool-kelvin-rest-api default && \
+	cp -v /kelvin/ucs-school-import/modules/ucsschool/lib/create_ou.py /kelvin/ucs-school-lib/modules/ucsschool/lib/ && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
 	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \

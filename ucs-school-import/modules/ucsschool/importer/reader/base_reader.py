@@ -33,20 +33,15 @@ Base class of all input readers.
 """
 
 import logging
+from typing import Any, Dict, Iterable, Iterator
 
 from ..configuration import Configuration
 from ..exceptions import UcsSchoolImportSkipImportRecord
 from ..factory import Factory
+from ..models.import_user import ImportUser
 from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.post_read_pyhook import PostReadPyHook
-
-try:
-    from typing import Any, Dict, Iterable, Iterator, List, Optional
-
-    from ..models.import_user import ImportUser
-except ImportError:
-    pass
 
 
 class BaseReader(object):

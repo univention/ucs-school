@@ -72,8 +72,21 @@ fi
 
 echo "Copying files to build directory..."
 [ -d build ] || mkdir build
-rsync -a --delete "${UCR_DIR}" ../kelvin-api ../univention-lib-slim ../univention-directory-manager-modules-slim \
- ../ucs-school-lib ../ucs-school-import opa.initd ucsschool-kelvin-rest-api.initd alpine_apk_list.* Dockerfile build/
+rsync -a --delete \
+    "${UCR_DIR}" \
+    ../.black \
+    ../.isort.cfg \
+    ../.flake8 \
+    ../kelvin-api \
+    ../univention-lib-slim \
+    ../univention-directory-manager-modules-slim \
+   ../ucs-school-lib \
+   ../ucs-school-import \
+   alpine_apk_list.* \
+   Dockerfile \
+   opa.initd \
+   ucsschool-kelvin-rest-api.initd \
+ build/
 
 echo "Create empty import configs"
 mkdir -p build/ucs-school-import/empty_configs

@@ -31,12 +31,13 @@
 
 import grp
 import os.path
-from typing import Any, List, Optional, Type
+from typing import List, Optional, Type
 
 from ldap.filter import filter_format
 from six import iteritems
 
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmObject
+from univention.admin.uldap import getMachineConnection
 from univention.lib.misc import custom_groupname
 
 from ..roles import role_marketplace_share, role_school_class_share, role_workgroup_share
@@ -74,24 +75,25 @@ class SetNTACLsMixin(object):
     https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
     """
 
-    async def get_nt_acls(self, lo: UDM) -> List[str]:
+    def get_nt_acls(self, lo: UDM) -> List[str]:
         return []
 
     @staticmethod
-    async def get_groups_samba_sid(lo: UDM, dn: str) -> str:
+    def get_groups_samba_sid(lo: UDM, dn: str) -> str:
+        ldap_lo, ldap_po = getMachineConnection()
         try:
-            return lo.get(dn)["sambaSID"][0]  # TODO
+            return ldap_lo.get(dn)["sambaSID"][0]  # TODO
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(dn))
 
-    async def get_ou_admin_full_control(self, lo: UDM) -> List[str]:
+    def get_ou_admin_full_control(self, lo: UDM) -> List[str]:
         admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(
             self.school.lower(), ucr.get("ldap/base")
         )
-        samba_sid = await self.get_groups_samba_sid(lo, admin_dn)
+        samba_sid = self.get_groups_samba_sid(lo, admin_dn)
         return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
 
-    async def get_aces_deny_students_change_permissions(self, lo: UDM) -> List[str]:
+    def get_aces_deny_students_change_permissions(self, lo: UDM) -> List[str]:
         """
         Get the schueler-ou sid to deny all students the
         permissions to modify permissions and take ownership.
@@ -105,77 +107,77 @@ class SetNTACLsMixin(object):
         student_group_dn = "cn={}{},cn=groups,{}".format(
             search_base.group_prefix_students, self.school, search_base.schoolDN
         )
-        samba_sid = await self.get_groups_samba_sid(lo, student_group_dn)
+        samba_sid = self.get_groups_samba_sid(lo, student_group_dn)
         return ["(D;OICI;WOWD;;;{})".format(samba_sid)]
 
-    async def get_aces_work_group(self, lo: UDM) -> List[str]:
+    def get_aces_work_group(self, lo: UDM) -> List[str]:
         """
         ACE: deny schueler to change permissions & take ownership
         ACE: allow workgroup-members to read/write/modify
         ACE: allow ou-admins full control
         """
-        res = await self.get_aces_deny_students_change_permissions(lo)
+        res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
             group_dn = self.school_group.dn
         else:
             raise NoSchoolGroup("No schoolgroup set.")
-        samba_sid = await self.get_groups_samba_sid(lo, group_dn)
+        samba_sid = self.get_groups_samba_sid(lo, group_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
-        res.extend(await self.get_ou_admin_full_control(lo))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
-    async def get_aces_market_place(self, lo: UDM) -> List[str]:
+    def get_aces_market_place(self, lo: UDM) -> List[str]:
         """
         ACE: deny schueler to change permissions & take ownership
         ACE: allow Domain Users to read/write/modify
         ACE: allow ou-admins full control
         """
-        res = await self.get_aces_deny_students_change_permissions(lo)
+        res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
         domain_users_dn = "cn=Domain Users %s,%s" % (self.school.lower(), search_base.groups)
-        samba_sid = await self.get_groups_samba_sid(lo, domain_users_dn)
+        samba_sid = self.get_groups_samba_sid(lo, domain_users_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
-        res.extend(await self.get_ou_admin_full_control(lo))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
-    async def get_aces_class_group(self, lo: UDM) -> List[str]:
+    def get_aces_class_group(self, lo: UDM) -> List[str]:
         """
         ACE: deny schueler to change permissions & take ownership
         ACE: allow class-members to read/write/modify
         ACE: allow ou-admins full control
         """
-        res = await self.get_aces_deny_students_change_permissions(lo)
+        res = self.get_aces_deny_students_change_permissions(lo)
         if self.school_group:
             group_dn = self.school_group.dn
         else:
             raise NoSchoolGroup("No schoolgroup set.")
-        samba_sid = await self.get_groups_samba_sid(lo, group_dn)
+        samba_sid = self.get_groups_samba_sid(lo, group_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
-        res.extend(await self.get_ou_admin_full_control(lo))
+        res.extend(self.get_ou_admin_full_control(lo))
         return res
 
-    async def set_nt_acls(self, udm_obj: UdmObject, lo: UDM) -> None:
+    def set_nt_acls(self, udm_obj: UdmObject, lo: UDM) -> None:
         try:
-            udm_obj.props.appendACL = await self.get_nt_acls(lo)
+            udm_obj.props.appendACL = self.get_nt_acls(lo)
         except NoSID as exc:
             self.logger.warning("Not setting NTACLs for %s: %s", self.__class__.__name__, exc)
             return
-        udm_obj.props.sambaInheritOwner = "1"
-        udm_obj.props.sambaInheritPermissions = "1"
+        udm_obj.props.sambaInheritOwner = True
+        udm_obj.props.sambaInheritPermissions = True
 
 
 class Share(UCSSchoolHelperAbstractClass):
     name: str = ShareName(_("Name"))
 
     create_defaults = {
-        "writeable": "1",
-        "sambaWriteable": "1",
-        "sambaBrowseable": "1",
+        "writeable": True,
+        "sambaWriteable": True,
+        "sambaBrowseable": True,
         "sambaForceGroup": "+{name}",
         "sambaCreateMode": "0770",
         "sambaDirectoryMode": "0770",
-        "owner": "0",
-        "group": "0",
+        "owner": 0,
+        "group": 0,
         "directorymode": "0770",
     }
     paths = {
@@ -266,9 +268,8 @@ class Share(UCSSchoolHelperAbstractClass):
                 return "%s.%s" % (result, server_domain_name)
 
         # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
-        # TODO: this is broken! get uldap instance here
-        raise NotImplementedError("TODO: I think univentionLDAPAccessWrite has no UDM property.")
-        ou_attr_ldap_access_write = lo.get(school_dn, ["univentionLDAPAccessWrite"])
+        ldap_lo, ldap_po = getMachineConnection()
+        ou_attr_ldap_access_write = ldap_lo.get(school_dn, ["univentionLDAPAccessWrite"])
         alternative_server_dn = None
         if len(ou_attr_ldap_access_write) > 0:
             alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
@@ -279,7 +280,7 @@ class Share(UCSSchoolHelperAbstractClass):
 
         # build fqdn of alternative server and set serverfqdn
         if alternative_server_dn:
-            alternative_server_attr = lo.get(alternative_server_dn, ["uid"])
+            alternative_server_attr = ldap_lo.get(alternative_server_dn, ["uid"])
             if len(alternative_server_attr) > 0:
                 alternative_server_uid = alternative_server_attr["uid"][0]
                 alternative_server_uid = alternative_server_uid.replace("$", "")
@@ -307,14 +308,14 @@ class GroupShare(SetNTACLsMixin, Share):
     from_school_class = from_school_group  # legacy
 
     async def get_gid_number(self, lo: UDM) -> str:
-        return await self.school_group.get_udm_object(lo)["gidNumber"]
+        return (await self.school_group.get_udm_object(lo)).props.gidNumber
 
     def get_share_path(self, school=None) -> str:
         school = school or self.school_group.school
         return super(GroupShare, self).get_share_path(school)
 
     async def do_create(self, udm_obj, lo) -> None:
-        await self.set_nt_acls(udm_obj, lo)
+        self.set_nt_acls(udm_obj, lo)
         return await super(GroupShare, self).do_create(udm_obj, lo)
 
 
@@ -356,8 +357,8 @@ class WorkGroupShare(RoleSupportMixin, GroupShare):
                     filtered_shares.append(share)
         return filtered_shares
 
-    async def get_nt_acls(self, lo: UDM) -> List[str]:
-        return await self.get_aces_work_group(lo)
+    def get_nt_acls(self, lo: UDM) -> List[str]:
+        return self.get_aces_work_group(lo)
 
 
 class ClassShare(RoleSupportMixin, GroupShare):
@@ -380,8 +381,8 @@ class ClassShare(RoleSupportMixin, GroupShare):
 
         return ClassShare
 
-    async def get_nt_acls(self, lo: UDM) -> List[str]:
-        return await self.get_aces_class_group(lo)
+    def get_nt_acls(self, lo: UDM) -> List[str]:
+        return self.get_aces_class_group(lo)
 
 
 class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
@@ -431,11 +432,11 @@ class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
         self.create_defaults.pop("sambaForceGroup", None)
         self.create_defaults.pop("sambaCreateMode", None)
         self.create_defaults.pop("sambaDirectoryMode", None)
-        await self.set_nt_acls(udm_obj, lo)
+        self.set_nt_acls(udm_obj, lo)
         return await super(MarketplaceShare, self).do_create(udm_obj, lo)
 
-    async def get_nt_acls(self, lo: UDM) -> List[str]:
-        return await self.get_aces_market_place(lo)
+    def get_nt_acls(self, lo: UDM) -> List[str]:
+        return self.get_aces_market_place(lo)
 
     class Meta(Share.Meta):
         udm_filter = "(&(univentionObjectType=shares/share)(cn=Marktplatz))"
