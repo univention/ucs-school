@@ -8,19 +8,26 @@ from .constants import OPA_URL
 
 
 class OPAClient:
+    """
+    Client to access the Open Policy Agaent (OPA).
+
+    * Use py:meth:`instance()` to get a Singleton instance of py:class:`OPAClient`.
+    * The user of this class is expected to call py:meth:`shutdown()` on its instance
+      to cleanly close any open HTTP session.
+    """
 
     _instance: "OPAClient" = None
 
     @classmethod
     def instance(cls):
-        if not OPAClient._instance:
-            OPAClient._instance = cls()
+        if not cls._instance:
+            cls._instance = cls()
         return OPAClient._instance
 
     @classmethod
     async def shutdown_instance(cls):
-        if OPAClient._instance:
-            await OPAClient._instance.shutdown()
+        if cls._instance:
+            await cls._instance.shutdown()
 
     def __init__(self):
         self._session = aiohttp.ClientSession()
