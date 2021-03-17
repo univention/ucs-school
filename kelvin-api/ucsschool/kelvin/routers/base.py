@@ -80,9 +80,13 @@ async def get_lib_obj(
     try:
         return await lib_cls.from_dn(dn, school, udm)
     except NoObject:
+        logger = get_logger()
+        logger.warning(
+            f"No {lib_cls.__name__} with name={name!r} dn={dn!r} and school={school!r} found."
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No {lib_cls.__name__} with name={name!r} dn={dn!r} and school={school!r} found.",
+            detail=f"No object with name={name!r} found or not authorized.",
         )
 
 

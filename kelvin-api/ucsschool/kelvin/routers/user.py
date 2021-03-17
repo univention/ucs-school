@@ -638,7 +638,7 @@ async def get(
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user = await get_import_user(udm, udm_obj.dn)
     if not await OPAClient.instance().check_policy_true(
@@ -649,7 +649,7 @@ async def get(
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     return await UserModel.from_lib_model(user, request, udm)
 
@@ -895,7 +895,7 @@ async def partial_update(  # noqa: C901
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     to_change = await user.to_modify_kwargs(request)
     user_current = await get_import_user(udm, udm_obj.dn)
@@ -907,7 +907,7 @@ async def partial_update(  # noqa: C901
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
 
     # 1. move
@@ -1022,7 +1022,7 @@ async def complete_update(  # noqa: C901
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user.Config.lib_class = SchoolUserRole.get_lib_class(
         [
@@ -1046,7 +1046,7 @@ async def complete_update(  # noqa: C901
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
 
     # 1. move
@@ -1122,7 +1122,7 @@ async def delete(
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     user = await get_lib_obj(udm, ImportUser, dn=udm_obj.dn)
     if not await OPAClient.instance().check_policy_true(
@@ -1133,7 +1133,7 @@ async def delete(
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No user with username {username!r} found or not authorized.",
+            detail=f"No object with name={username!r} found or not authorized.",
         )
     await user.remove(udm)
 
