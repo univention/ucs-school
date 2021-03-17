@@ -56,8 +56,9 @@ from six import iteritems
 
 import univention.debug
 from ucsschool.lib import internetrules
-from ucsschool.lib.models import ComputerRoom, Group, User
 from ucsschool.lib.models.base import WrongObjectType
+from ucsschool.lib.models.group import ComputerRoom, Group
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import (
     ModuleHandler,
     NotInstalled,

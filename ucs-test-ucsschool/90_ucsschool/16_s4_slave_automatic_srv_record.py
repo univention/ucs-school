@@ -25,7 +25,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as testing_ucr
 import univention.testing.udm as testing_udm
 import univention.testing.utils as testing_utils
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection, set_credentials
 from univention.admin.uldap import explodeDn
 

@@ -551,7 +551,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 
 
 def verify_school_ou(schoolNr, co, lo, baseDN):
-    from ucsschool.lib.models import School
+    from ucsschool.lib.models.school import School
 
     if not School(name=schoolNr).get_udm_object(lo):
         raise SystemExit("ERROR: The specified school %r does not exist." % (schoolNr,))

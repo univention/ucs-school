@@ -38,7 +38,7 @@ from six import iteritems
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
 
 try:
-    from ucsschool.lib.models import School
+    from ucsschool.lib.models.school import School
     from ucsschool.lib.models.utils import ucr
     from ucsschool.lib.roles import (
         create_ucsschool_role_string,

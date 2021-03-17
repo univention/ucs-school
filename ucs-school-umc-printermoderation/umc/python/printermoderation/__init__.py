@@ -42,7 +42,8 @@ import six
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_errors
-from ucsschool.lib.models import School, User
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation

@@ -17,7 +17,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
-from ucsschool.lib.models import Student
+from ucsschool.lib.models.user import Student
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
 

@@ -1,8 +1,5 @@
 # -*- coding: iso-8859-15 -*-
 #
-# UCS@school lib
-#  module: Role specific shares
-#
 # Copyright 2014-2021 Univention GmbH
 #
 # http://www.univention.de/
@@ -30,6 +27,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Role specific shares
+"""
 from __future__ import print_function
 
 import os
@@ -39,7 +39,8 @@ import univention.admin.modules as udm_modules
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.models import Group, School
+from ucsschool.lib.models.group import Group
+from ucsschool.lib.models.school import School
 from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
 from univention.admincli.admin import _2utf8

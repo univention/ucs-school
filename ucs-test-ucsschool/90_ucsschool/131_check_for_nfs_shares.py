@@ -8,7 +8,8 @@
 
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models import School, Share
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.share import Share
 
 
 def main():

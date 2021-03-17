@@ -32,13 +32,12 @@
 import inspect
 from functools import wraps
 
-from univention.management.console.ldap import (  # , reset_cache as reset_connection_cache
+from univention.management.console.ldap import (
     get_admin_connection,
     get_machine_connection,
     get_user_connection,
 )
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.message import Message
 
 __bind_callback = None
 
@@ -115,7 +114,8 @@ def LDAP_Connection(*connection_types):
                 kwargs["ldap_position"] = po
             if add_search_base:
                 MODULE.warn("Using deprecated LDAP_Connection.search_base parameter.")
-                from ucsschool.lib.models import School
+                from ucsschool.lib.models.school import School
+                from univention.management.console.protocol.message import Message
 
                 if (
                     len(args) > 1

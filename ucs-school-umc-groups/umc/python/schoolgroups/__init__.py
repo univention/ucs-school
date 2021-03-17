@@ -34,16 +34,10 @@
 from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
-from ucsschool.lib.models import (
-    GroupShare,
-    SchoolClass,
-    SchoolGroup,
-    Teacher,
-    TeachersAndStaff,
-    User,
-    WorkGroup,
-)
 from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.lib.models.group import SchoolClass, SchoolGroup, WorkGroup
+from ucsschool.lib.models.share import GroupShare
+from ucsschool.lib.models.user import Teacher, TeachersAndStaff, User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import (
     MACHINE_WRITE,

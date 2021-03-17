@@ -37,7 +37,7 @@ import ldap
 import notifier
 import notifier.popen
 
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.admin.handlers.users.user import object as User
