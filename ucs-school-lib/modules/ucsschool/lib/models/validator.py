@@ -62,7 +62,7 @@ if os.geteuid() == 0:
 	VALIDATION_LOGGER = "UCSSchool-Validation"
 	private_data_logger = logging.getLogger(VALIDATION_LOGGER)
 	private_data_logger.setLevel("DEBUG")
-	backup_count = int(ucr.get("ucsschool/validation/logging/backupcount").strip() or 60)
+	backup_count = int(ucr.get("ucsschool/validation/logging/backupcount", "").strip() or 60)
 	private_data_logger.addHandler(
 		get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
 	)
@@ -77,7 +77,7 @@ def get_position_from(dn):  # type: (str) -> Optional[str]
 	return ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 
 
-def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
+def obj_to_dict(obj: UdmObject) -> Dict[str, Any]:
 	return obj.to_dict()
 
 
