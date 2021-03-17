@@ -12,7 +12,8 @@ import os.path
 
 import univention.config_registry
 import univention.testing.strings as uts
-from ucsschool.lib.models import SchoolClass, User, WorkGroup
+from ucsschool.lib.models.group import SchoolClass, WorkGroup
+from ucsschool.lib.models.user import User
 from univention.testing import utils
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger

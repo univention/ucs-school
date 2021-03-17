@@ -16,8 +16,8 @@ from multiprocessing import Pool
 import pytest
 import requests
 
-from ucsschool.lib.models import Staff as LibStaff, User as LibUser
 from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.user import Staff as LibStaff, User as LibUser
 from univention.testing.ucsschool.kelvin_api import (
     RESSOURCE_URLS,
     api_call,

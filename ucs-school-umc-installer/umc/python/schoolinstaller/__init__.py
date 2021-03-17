@@ -52,7 +52,8 @@ import ldap
 import notifier
 import notifier.threads
 
-from ucsschool.lib.models import School, SchoolDCSlave
+from ucsschool.lib.models.computer import SchoolDCSlave
+from ucsschool.lib.models.school import School
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
 from univention.lib.package_manager import PackageManager

@@ -13,7 +13,7 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models import User
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room

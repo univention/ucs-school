@@ -18,8 +18,8 @@ import univention.testing.ucr
 import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 import univention.uldap
-from ucsschool.lib.models import (
-    School as SchoolLib,
+from ucsschool.lib.models.school import School as SchoolLib
+from ucsschool.lib.models.user import (
     Staff as StaffLib,
     Student as StudentLib,
     Teacher as TeacherLib,

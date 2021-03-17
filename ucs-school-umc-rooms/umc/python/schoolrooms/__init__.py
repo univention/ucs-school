@@ -36,7 +36,8 @@ try:
 except ImportError:
     pass
 import univention.admin.uexceptions as udm_exceptions
-from ucsschool.lib.models import ComputerRoom, SchoolComputer
+from ucsschool.lib.models.computer import SchoolComputer
+from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.lib.school_umc_base import LDAP_Filter, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import USER_READ, USER_WRITE, LDAP_Connection

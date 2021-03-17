@@ -54,7 +54,8 @@ import logging
 import os.path
 import pprint
 
-from ucsschool.lib.models import *  # noqa: F401, F403
+from ucsschool.lib.models.group import *  # noqa: F401, F403
+from ucsschool.lib.models.school import *  # noqa: F401, F403
 from ucsschool.lib.models.utils import (
     UniStreamHandler as _UniStreamHandler,
     get_stream_handler as _get_stream_handler,

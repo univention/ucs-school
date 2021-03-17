@@ -42,7 +42,7 @@ import univention.admin.uldap
 import univention.config_registry
 import univention.debug as ud
 import univention.uldap
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin.uexceptions import noObject
 from univention.lib.umc import Client, ConnectionError, HTTPError

@@ -46,7 +46,7 @@
 
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.utils.user_pyhook import UserPyHook
-from ucsschool.lib.models import Staff
+from ucsschool.lib.models.user import Staff
 
 
 class UserStaffPyHook(UserPyHook):

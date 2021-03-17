@@ -10,7 +10,8 @@ import time
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models import WorkGroup, WorkGroupShare
+from ucsschool.lib.models.group import WorkGroup
+from ucsschool.lib.models.share import WorkGroupShare
 from univention.admin import localization
 from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set, handler_unset

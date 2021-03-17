@@ -39,7 +39,7 @@ from __future__ import absolute_import
 import ldap
 from ldap.filter import filter_format
 
-from ucsschool.lib.models import AnyComputer
+from ucsschool.lib.models.computer import AnyComputer
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_ip_computer,

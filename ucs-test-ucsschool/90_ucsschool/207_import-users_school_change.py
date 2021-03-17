@@ -15,7 +15,8 @@ import pprint
 from ldap.filter import escape_filter_chars, filter_format
 
 import univention.testing.strings as uts
-from ucsschool.lib.models import SchoolClass, User, WorkGroup as LibWorkGroup
+from ucsschool.lib.models.group import SchoolClass, WorkGroup as LibWorkGroup
+from ucsschool.lib.models.user import User
 from univention.admin.uldap import explodeDn
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importou import get_school_base

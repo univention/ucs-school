@@ -8,7 +8,8 @@
 ##   - python-ucs-school
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models import Container, Group
+from ucsschool.lib.models.group import Group
+from ucsschool.lib.models.misc import Container
 from ucsschool.lib.roles import role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.utils import verify_ldap_object

@@ -19,7 +19,7 @@ from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models import Student
+from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin.uexceptions import noObject
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector

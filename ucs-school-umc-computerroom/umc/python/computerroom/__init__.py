@@ -58,7 +58,9 @@ try:
     from .room_management import ComputerRoomError, ComputerRoomManager
 except ImportError:
     pass
-from ucsschool.lib.models import ComputerRoom, School, User
+from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoollessons import SchoolLessons

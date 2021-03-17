@@ -34,7 +34,7 @@ Configuration checks for SingleSourcePartialImport scenario.
 
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 
 
 class SingleSourcePartialImportConfigurationChecks(ConfigurationChecks):

@@ -13,12 +13,12 @@ import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models import (
+from ucsschool.lib.models.computer import (
     IPComputer as IPComputerLib,
     MacComputer as MacComputerLib,
-    School as SchoolLib,
     WindowsComputer as WindowsComputerLib,
 )
+from ucsschool.lib.models.school import School as SchoolLib
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
