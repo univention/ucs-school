@@ -57,7 +57,7 @@ In this example the OU is called ``SchuleEins`` and the username is ``myteacher`
 
 	$ python -c 'ou = "SchuleEins"; username = "myteacher" \
 	    import univention.admin.uldap; \
-	    from ucsschool.lib.models import Teacher;  \
+	    from ucsschool.lib.models.user import Teacher;  \
 	    lo, po = univention.admin.uldap.getAdminConnection(); \
 	    t = Teacher(name=username, school=ou, firstname="my", lastname="teacher", password="univention"); \
 	    print("Creation success: {!r}".format(t.create(lo))); \

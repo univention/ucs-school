@@ -19,8 +19,9 @@ import univention.testing.strings as uts
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
-from ucsschool.lib.models import Group, School, SchoolClass, WorkGroup
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup
+from ucsschool.lib.models.school import School
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger

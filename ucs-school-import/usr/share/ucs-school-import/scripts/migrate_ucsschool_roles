@@ -43,21 +43,18 @@ from ldap.filter import filter_format
 from six import string_types
 
 import univention.admin.uldap
-from ucsschool.lib.models import (
+from ucsschool.lib.models.computer import IPComputer, MacComputer, SchoolDCSlave, WindowsComputer
+from ucsschool.lib.models.group import (
     BasicGroup,
     ClassShare,
     ComputerRoom,
-    IPComputer,
-    MacComputer,
-    School,
     SchoolClass,
-    SchoolDCSlave,
     SchoolGroup,
-    User,
-    WindowsComputer,
     WorkGroup,
-    WorkGroupShare,
 )
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.share import WorkGroupShare
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,

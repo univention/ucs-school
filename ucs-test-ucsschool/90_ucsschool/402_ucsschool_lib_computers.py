@@ -8,7 +8,7 @@
 ##   - python-ucs-school
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models import SchoolComputer
+from ucsschool.lib.models.computer import SchoolComputer
 from univention.admin.uldap import getAdminConnection
 from univention.testing.ucsschool.importcomputers import ComputerImport, ImportFile
 

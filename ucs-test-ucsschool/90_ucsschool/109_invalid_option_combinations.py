@@ -13,7 +13,7 @@ import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
 import univention.testing.utils as utils
-from ucsschool.lib.models import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
+from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.roles import create_ucsschool_role_string
 from univention.admin.uexceptions import invalidOptions
 from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed

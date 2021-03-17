@@ -38,22 +38,17 @@ from enum import Enum
 import six
 
 import univention.admin.modules as udm_modules
-from ucsschool.lib.models import (
+from ucsschool.lib.models.base import WrongModel
+from ucsschool.lib.models.computer import (
     IPComputer,
     MacComputer,
-    School,
-    SchoolAdmin,
-    SchoolClass,
     SchoolComputer,
-    Staff,
-    Student,
-    Teacher,
-    TeachersAndStaff,
     UCCComputer,
-    User,
     WindowsComputer,
-    WrongModel,
 )
+from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, USER_WRITE, LDAP_Connection

@@ -52,14 +52,11 @@ import univention.admin.uexceptions
 import univention.udm
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
-from ucsschool.lib.models import (
-    ComputerRoom,
-    ExamStudent,
-    MultipleObjectsError,
-    School,
-    SchoolComputer,
-    Student,
-)
+from ucsschool.lib.models.base import MultipleObjectsError
+from ucsschool.lib.models.computer import SchoolComputer
+from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import ExamStudent, Student
 from ucsschool.lib.models.utils import (
     ModuleHandler,
     NotInstalled,

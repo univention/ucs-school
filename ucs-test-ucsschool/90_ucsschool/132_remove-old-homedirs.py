@@ -14,7 +14,8 @@ from pwd import getpwnam
 from ldap.filter import escape_filter_chars
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from ucsschool.lib.models import School, User
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User
 from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester

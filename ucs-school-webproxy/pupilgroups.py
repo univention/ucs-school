@@ -38,7 +38,7 @@ import listener
 import univention.admin.uldap
 import univention.config_registry
 import univention.debug
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from univention.config_registry.frontend import ucr_update
 
 name = "pupilgroups"

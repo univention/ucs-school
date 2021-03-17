@@ -33,12 +33,16 @@ import datetime
 import re
 import shutil
 
-import ConfigParser
 import six
 
 from univention.lib import locking
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+
+try:
+    import ConfigParser  # py2
+except ImportError:
+    from configparser import ConfigParser  # py3
 
 LESSONS_FILE = "/var/lib/ucs-school-lib/lessons.ini"
 LESSONS_BACKUP = "/var/lib/ucs-school-lib/lessons.bak"

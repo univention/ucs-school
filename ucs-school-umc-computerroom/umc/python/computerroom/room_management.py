@@ -55,7 +55,9 @@ from ldap.filter import filter_format
 from PyQt4.QtCore import QObject, pyqtSlot
 
 import italc
-from ucsschool.lib.models import ComputerRoom, MultipleObjectsError, User
+from ucsschool.lib.models.base import MultipleObjectsError
+from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
 from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError

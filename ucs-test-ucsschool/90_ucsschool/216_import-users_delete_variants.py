@@ -18,7 +18,7 @@ from ldap.filter import filter_format
 import univention.admin.uldap
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from ucsschool.lib.models import User
+from ucsschool.lib.models.user import User
 from univention.admin.uexceptions import authFail
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication

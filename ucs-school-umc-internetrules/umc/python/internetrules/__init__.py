@@ -40,7 +40,7 @@ import ucsschool.lib.internetrules as rules
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.config_registry
-from ucsschool.lib.models import Group
+from ucsschool.lib.models.group import Group
 from ucsschool.lib.school_umc_base import LDAP_Filter, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation

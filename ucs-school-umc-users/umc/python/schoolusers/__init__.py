@@ -35,7 +35,7 @@ from math import ceil
 from time import strptime, time
 
 import univention.admin.uexceptions as udm_exceptions
-from ucsschool.lib.models import User
+from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import USER_WRITE, LDAP_Connection
 from univention.admin.handlers.users.user import unmapPasswordExpiry

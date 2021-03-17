@@ -19,7 +19,7 @@ import ucsschool.lib.roleshares as roleshares
 import univention.testing.ucr as testing_ucr
 import univention.testing.ucsschool.ucs_test_school as testing_ucsschool
 import univention.testing.utils as utils
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.roles import role_pupil
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection, set_credentials

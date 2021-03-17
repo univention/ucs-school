@@ -40,8 +40,9 @@ import sys
 from ldap import INVALID_DN_SYNTAX, NO_SUCH_OBJECT
 from ldap.filter import filter_format
 
-from ucsschool.lib.models import School, User
 from ucsschool.lib.models.base import WrongObjectType
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_exam_user,

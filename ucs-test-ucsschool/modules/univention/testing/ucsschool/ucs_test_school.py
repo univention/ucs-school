@@ -54,18 +54,10 @@ import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm as udm_test
 import univention.testing.utils as utils
-from ucsschool.lib.models import (
-    School,
-    SchoolClass,
-    Staff,
-    Student,
-    Teacher,
-    TeachersAndStaff,
-    User,
-    WorkGroup,
-)
 from ucsschool.lib.models.computer import SchoolComputer
-from ucsschool.lib.models.group import ComputerRoom
+from ucsschool.lib.models.group import ComputerRoom, SchoolClass, WorkGroup
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.utils import (
     UniStreamHandler,
     add_stream_logger_to_schoollib,

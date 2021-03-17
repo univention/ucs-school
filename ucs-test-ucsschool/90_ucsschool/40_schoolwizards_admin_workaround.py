@@ -10,7 +10,7 @@ from typing import List
 import pytest
 from conftest import UserType
 
-from ucsschool.lib.models import User
+from ucsschool.lib.models.user import User
 from univention.config_registry import handler_get, handler_set, handler_unset
 from univention.lib.umc import BadRequest, Client
 from univention.udm import UDM

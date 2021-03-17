@@ -15,7 +15,7 @@ from ldap.filter import filter_format
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models import Student
+from ucsschool.lib.models.user import Student
 from univention.config_registry import handler_set
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room

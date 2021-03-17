@@ -23,7 +23,7 @@ import univention.testing.strings as uts
 from ucsschool.http_api.client import Client
 from ucsschool.importer.utils.test_user_creator import TestUserCreator
 from ucsschool.importer.writer.test_user_csv_exporter import HttpApiTestUserCsvExporter
-from ucsschool.lib.models import SchoolClass
+from ucsschool.lib.models.group import SchoolClass
 from univention.testing.ucsschool.importusers_http import HttpApiImportTester
 
 

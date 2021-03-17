@@ -19,8 +19,8 @@ try:
     from typing import Any, Dict, List, Tuple
 except ImportError:
     pass
+import ucsschool.lib.models.validator
 import univention.testing.strings as uts
-from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
@@ -59,7 +59,7 @@ def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) 
 @pytest.fixture(autouse=True)
 def mock_logger_file(mocker):
     with tempfile.NamedTemporaryFile() as f:
-        mocker.patch.object(validator, "LOG_FILE", f.name)
+        mocker.patch.object(ucsschool.lib.models.validator, "LOG_FILE", f.name)
 
 
 def base_group(name):  # type: (str, str) -> Dict[str, Any]

@@ -10,8 +10,8 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import WrongModel
+from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 
 cls_role_map = dict(
     Staff=["is_staff"],

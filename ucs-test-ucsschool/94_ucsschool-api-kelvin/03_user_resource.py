@@ -16,7 +16,7 @@ from unittest import main
 import requests
 
 import univention.testing.strings as uts
-from ucsschool.lib.models import Staff as LibStaff, User as LibUser
+from ucsschool.lib.models.user import Staff as LibStaff, User as LibUser
 from univention.testing.ucsschool.kelvin_api import (
     RESSOURCE_URLS,
     HttpApiUserTestBase,

@@ -22,8 +22,8 @@ import tempfile
 
 import pytest
 
+import ucsschool.lib.models.validator
 import univention.testing.strings as uts
-from ucsschool.lib.models import validator as validator
 from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
@@ -254,7 +254,7 @@ def teacher_and_staff_user():  # type: () -> Dict[str, Any]
 @pytest.fixture(autouse=True)
 def mock_logger_file(mocker):
     with tempfile.NamedTemporaryFile() as f:
-        mocker.patch.object(validator, "LOG_FILE", f.name)
+        mocker.patch.object(ucsschool.lib.models.validator, "LOG_FILE", f.name)
 
 
 all_user_role_objects = [

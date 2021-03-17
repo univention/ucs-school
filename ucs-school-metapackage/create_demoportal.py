@@ -37,7 +37,10 @@ import subprocess
 import sys
 
 import univention.admin.modules as modules
-from ucsschool.lib.models import School, SchoolClass, Staff, Student, Teacher, ucr
+from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import Staff, Student, Teacher
+from ucsschool.lib.models.utils import ucr
 from univention.admin.uldap import position
 from univention.management.console.ldap import get_admin_connection
 

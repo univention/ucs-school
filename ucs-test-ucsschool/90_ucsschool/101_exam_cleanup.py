@@ -14,7 +14,7 @@ from ldap.filter import filter_format
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
-from ucsschool.lib.models import User
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import (

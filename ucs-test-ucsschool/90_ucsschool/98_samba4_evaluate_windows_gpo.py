@@ -22,7 +22,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
 import univention.winexe
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import ConfigRegistry
 from univention.testing.codes import TestCodes
