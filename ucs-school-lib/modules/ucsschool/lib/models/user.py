@@ -32,16 +32,16 @@
 import copy
 import os.path
 from collections.abc import Mapping
-from typing import Callable, Dict, List, Optional, Set, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, TypeVar, Union
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
 from six import iteritems
 
+import univention.admin.syntax as syntax
 from udm_rest_client import UDM, UdmObject
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
-from univention.admin.uldap import LoType, PoType
 
 from ..roles import (
     context_type_school,

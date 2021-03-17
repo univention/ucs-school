@@ -39,18 +39,13 @@ import logging
 import os.path
 from collections import defaultdict
 from os import listdir
+from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
 
 from six import iteritems
 
-try:
-    import logging.Logger
-    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+from ucsschool.lib.pyhooks import PyHook
 
-    from ucsschool.lib.pyhooks import PyHook
-
-    PyHookTV = TypeVar("PyHookTV", bound=PyHook)
-except ImportError:
-    pass
+PyHookTV = TypeVar("PyHookTV", bound=PyHook)
 
 
 class PyHooksLoader(object):
@@ -96,7 +91,7 @@ class PyHooksLoader(object):
                 filter_func
             )
         self._filter_func = filter_func
-        self._pyhook_obj_cache: Dict[str, List[Callable[[...], Any]]] = None
+        self._pyhook_obj_cache: Dict[str, List[Callable[..., Any]]] = None
 
     def drop_cache(self) -> None:
         """
@@ -146,7 +141,7 @@ class PyHooksLoader(object):
             )
         return self._hook_classes[self.base_class_name]
 
-    def get_hook_objects(self, *args: Any, **kwargs: Any) -> Dict[str, List[Callable[[...], Any]]]:
+    def get_hook_objects(self, *args: Any, **kwargs: Any) -> Dict[str, List[Callable[..., Any]]]:
         """
         Get initialized hook objects, sorted by method and priority.
 
@@ -160,7 +155,7 @@ class PyHooksLoader(object):
             pyhook_objs = [pyhook_cls(*args, **kwargs) for pyhook_cls in self.get_hook_classes()]
 
             # fill cache: find all enabled hook methods
-            methods: Dict[str, List[Tuple[Callable[[...], Any], int]]] = defaultdict(list)
+            methods: Dict[str, List[Tuple[Callable[..., Any], int]]] = defaultdict(list)
             for pyhook_obj in pyhook_objs:
                 if not hasattr(pyhook_obj, "priority") or not isinstance(pyhook_obj.priority, dict):
                     self.logger.warning(

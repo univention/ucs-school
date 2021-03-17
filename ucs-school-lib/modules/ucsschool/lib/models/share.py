@@ -31,7 +31,7 @@
 
 import grp
 import os.path
-from typing import Any, List, Optional, Type
+from typing import List, Optional, Type
 
 from ldap.filter import filter_format
 from six import iteritems

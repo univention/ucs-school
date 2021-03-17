@@ -115,7 +115,7 @@ class ImportPyHookLoader(object):
     before :py:meth:`call_hook()`.
     """
 
-    _pyhook_obj_cache: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[[...], Any]]]] = {}
+    _pyhook_obj_cache: Dict[Type[ImportPyHookTV], Dict[str, List[Callable[..., Any]]]] = {}
 
     def __init__(self, pyhooks_base_path: str) -> None:
         self.pyhooks_base_path = pyhooks_base_path
@@ -127,7 +127,7 @@ class ImportPyHookLoader(object):
         filter_func: Callable[[Type[ImportPyHookTV]], bool] = None,
         *args,
         **kwargs,
-    ) -> Dict[str, List[Callable[[...], Any]]]:
+    ) -> Dict[str, List[Callable[..., Any]]]:
         """
         Load and initialize hook class `hook_cls`.
 
@@ -175,7 +175,7 @@ def get_import_pyhooks(
     filter_func: Callable[[Type[ImportPyHookTV]], bool] = None,
     *args,
     **kwargs,
-) -> Dict[str, List[Callable[[...], Any]]]:
+) -> Dict[str, List[Callable[..., Any]]]:
     """
     Retrieve (and initialize subclasses of :py:class:`hook_cls`, if not yet
     done) pyhooks of type `hook_cls`. Results are cached.
