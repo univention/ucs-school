@@ -56,7 +56,9 @@ main () {
     ucsschool/import/set/sambahome="$(ucr get ucsschool/import/set/sambahome)" \
     ucsschool/singlemaster="$(ucr get ucsschool/singlemaster)" \
     ucsschool/import/set/serverprofile/path="$(ucr get ucsschool/import/set/serverprofile/path)" \
-    ucsschool/validation/logging/backupcount="$(ucr get ucsschool/validation/logging/backupcount)"
+    ucsschool/validation/logging/backupcount="$(ucr get ucsschool/validation/logging/backupcount)" \
+    ucsschool/validation/logging/enabled="$(ucr get ucsschool/validation/logging/enabled)"
+
     if ! [ -e "$TOKEN_SIGN_SECRET_FILE" ]; then
         echo "Storing token key in $TOKEN_SIGN_SECRET_FILE."
         touch "$TOKEN_SIGN_SECRET_FILE"
