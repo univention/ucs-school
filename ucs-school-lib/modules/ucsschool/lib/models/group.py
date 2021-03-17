@@ -283,8 +283,8 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
             return  # is a workgroup
         return cls
 
-    def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
-        super(SchoolClass, self).validate(lo, validate_unlikely_changes)
+    async def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
+        await super(SchoolClass, self).validate(lo, validate_unlikely_changes)
         if not self.name.startswith("{}-".format(self.school)):
             raise ValueError("Missing school prefix in name: {!r}.".format(self))
 

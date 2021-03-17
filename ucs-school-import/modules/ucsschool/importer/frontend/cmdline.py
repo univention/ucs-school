@@ -235,8 +235,14 @@ class CommandLine(object):
         if not os.path.isdir(parent_dir):
             self.logger.debug("Creating directory %r.", parent_dir)
             os.mkdir(parent_dir, 0o750)
-            uid = pwd.getpwnam("uas-import").pw_uid
-            gid = grp.getgrnam("uas-import").gr_gid
+            try:
+                uid = pwd.getpwnam("uas-import").pw_uid
+            except KeyError:
+                uid = 0
+            try:
+                gid = grp.getgrnam("uas-import").gr_gid
+            except KeyError:
+                gid = 0
             os.chown(parent_dir, uid, gid)
         if os.path.islink(link_name):
             os.remove(link_name)

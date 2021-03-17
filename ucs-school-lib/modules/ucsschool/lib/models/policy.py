@@ -44,8 +44,9 @@ class Policy(UCSSchoolHelperAbstractClass):
         oc = lo.get(obj.dn, ["objectClass"])
         if "univentionPolicyReference" not in oc.get("objectClass", []):
             try:
+                # TODO: use UDM instead of LDAP
                 lo.modify(obj.dn, [("objectClass", "", "univentionPolicyReference")])
-            except:
+            except:  # TODO: correct exception
                 self.logger.warning("Objectclass univentionPolicyReference cannot be added to %r", obj)
                 return
         # add the missing policy
@@ -54,8 +55,9 @@ class Policy(UCSSchoolHelperAbstractClass):
         if self.dn.lower() not in map(lambda x: x.lower(), pl.get("univentionPolicyReference", [])):
             modlist = [("univentionPolicyReference", "", self.dn)]
             try:
+                # TODO: use UDM instead of LDAP
                 lo.modify(obj.dn, modlist)
-            except:
+            except:  # TODO: correct exception
                 self.logger.warning("Policy %s cannot be referenced to %r", self, obj)
         else:
             self.logger.info("Already attached!")
