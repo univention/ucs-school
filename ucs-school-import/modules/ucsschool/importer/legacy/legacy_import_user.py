@@ -34,7 +34,7 @@ ImportUser subclass for import using legacy CSV format.
 
 from ldap.filter import filter_format
 
-from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
+from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff
 from univention.admin.uexceptions import noObject
 
 from ..exceptions import MissingUid, UnknownAction
