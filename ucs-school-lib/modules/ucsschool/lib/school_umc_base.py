@@ -163,7 +163,7 @@ class SchoolBaseModule(Base):
     def classes(self, request, ldap_user_read=None):
         """Returns a list of all classes of the given school"""
         school = request.options["school"]
-        from ucsschool.lib.models import SchoolClass
+        from ucsschool.lib.models.group import SchoolClass
 
         self.finished(
             request.id,
@@ -177,7 +177,7 @@ class SchoolBaseModule(Base):
     def workgroups(self, request, ldap_user_read=None):
         """Returns a list of all working groups of the given school"""
         school = request.options["school"]
-        from ucsschool.lib.models import WorkGroup
+        from ucsschool.lib.models.group import WorkGroup
 
         self.finished(
             request.id,
@@ -197,7 +197,7 @@ class SchoolBaseModule(Base):
         # use as base the path for 'workgroups', as it incorporates workgroups and classes
         # when searching with scope 'sub'
         school = request.options["school"]
-        from ucsschool.lib.models import WorkGroup
+        from ucsschool.lib.models.group import WorkGroup
 
         self.finished(
             request.id,
@@ -211,7 +211,7 @@ class SchoolBaseModule(Base):
     def rooms(self, request, ldap_user_read=None):
         """Returns a list of all available school"""
         school = request.options["school"]
-        from ucsschool.lib.models import ComputerRoom
+        from ucsschool.lib.models.group import ComputerRoom
 
         self.finished(
             request.id,

@@ -37,7 +37,7 @@ import logging
 import sys
 
 import univention.admin.uldap
-from ucsschool.lib.models import School
+from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from ucsschool.lib.roles import (
     role_dc_slave_admin,
