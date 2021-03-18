@@ -35,6 +35,7 @@ from ldap.filter import escape_filter_chars
 
 from univention.admin.filter import conjunction, expression, parse
 from univention.admin.uexceptions import nextFreeIp
+from univention.udm import UDM
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -337,14 +338,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     "the creation of the computer object."
                 ),
             )
+            mod = UDM(lo).version(0).get("networks/network")
             networks = [
                 (
-                    network[1]["cn"][0],
-                    IPv4Network(
-                        network[1]["univentionNetwork"][0] + "/" + network[1]["univentionNetmask"][0]
-                    ),
+                    network.props.name,
+                    IPv4Network(network.props.network + "/" + network.props.netmask),
                 )
-                for network in lo.search("(univentionObjectType=networks/network)")
+                for network in mod.search()
             ]
             is_singlemaster = ucr.get("ucsschool/singlemaster", False)
             for network in networks:
@@ -361,8 +361,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
-        oc = udm_obj.lo.get(udm_obj.dn, ["objectClass"])
-        object_classes = oc.get("objectClass", [])
+        object_classes = set(key for key, val in udm_obj.options.items() if val is True)
         if "univentionWindows" in object_classes:
             return WindowsComputer
         if "univentionMacOSClient" in object_classes:
