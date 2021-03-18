@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.12) unstable; urgency=medium
+
+  * Bug #52883: fix undefined private logger in validator
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Thu, 18 Mar 2021 12:02:42 +0100
+
 ucs-school-lib (12.2.11) unstable; urgency=medium
 
   * Bug #52309: add correct hints and replace decorator
