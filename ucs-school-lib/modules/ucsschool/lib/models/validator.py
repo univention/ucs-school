@@ -56,6 +56,7 @@ from ucsschool.lib.roles import (
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UdmObject
 
+private_data_logger = None
 if os.geteuid() == 0:
     LOG_FILE = "/var/log/univention/ucsschool-kelvin-rest-api/ucs-school-validation.log"
     VALIDATION_LOGGER = "UCSSchool-Validation"
