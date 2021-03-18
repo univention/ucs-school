@@ -27,8 +27,10 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
 import calendar
+import threading
+import time
+import uuid
 from datetime import datetime
 
 import pytest
@@ -103,6 +105,12 @@ def monkey_post(*args, **kwargs):
     ):
         response.status_code = 200
         response._content = b'{"connection-uid":"42", "validUntil": 0}'
+    elif domain in ["random_uid"] and method == "authentication":
+        response.status_code = 200
+        response._content = b'{"connection-uid":"%s", "validUntil": %s}' % (
+            str(uuid.uuid4()).encode(),
+            str(time.time() + 600).encode(),
+        )  # nosec
     else:
         raise RuntimeError("Unexpected url for monkeypatch post: {}".format(args[0]))
     return response
@@ -264,3 +272,28 @@ def test_invalid_cached_session():
     with pytest.raises(VeyonError) as exc:
         client._get_connection_uid(renew_session=False)
     assert exc.value.code == 2
+
+
+def test_client_thread_safety(monkeypatch):
+    n = 1000
+    results = [None] * n
+
+    def _call_get_connection_uid(j):
+        results[j] = client._get_connection_uid("localhost")
+
+    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests, "post", monkey_post)
+    client = VeyonClient(
+        "random_uid",
+        {},
+        auth_method=AuthenticationMethod.AUTH_LOGON,
+    )
+    threads = []
+    for i in range(n):
+        x = threading.Thread(target=_call_get_connection_uid, args=(i,))
+        threads.append(x)
+        x.start()
+    for thread in threads:
+        thread.join()
+    # all uids must be equal and not equal None
+    assert results[0] and results.count(results[0]) == len(results)
