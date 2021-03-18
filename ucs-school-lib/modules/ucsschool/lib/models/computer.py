@@ -46,7 +46,7 @@ from ..roles import (
     role_teacher_computer,
     role_win_computer,
 )
-from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, Roles, SubnetMask
+from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, SubnetMask
 from .base import MultipleObjectsError, RoleSupportMixin, SuperOrdinateType, UCSSchoolHelperAbstractClass
 from .dhcp import AnyDHCPService, DHCPServer
 from .group import BasicGroup
@@ -332,16 +332,15 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     "the creation of the computer object."
                 ),
             )
-            # todo -> lo
+            mod = lo.get("networks/network")
             networks = [
                 (
-                    network[1]["cn"][0],
+                    network.props.name,
                     IPv4Network(
-                        network[1]["univentionNetwork"][0] + "/" + network[1]["univentionNetmask"][0]
+                        network.props.network + "/" + network.props.netmask
                     ),
                 )
-                # TODO: use UDM instead of LDAP
-                for network in lo.search("(univentionObjectType=networks/network)")
+                async for network in mod.search()
             ]
             is_singlemaster = ucr.get("ucsschool/singlemaster", False)
             for network in networks:
@@ -358,9 +357,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
     @classmethod
     async def get_class_for_udm_obj(cls, udm_obj: UdmObject, school: str) -> Type["SchoolComputer"]:
-        # TODO: use UDM instead of LDAP
-        oc = udm_obj.lo.get(udm_obj.dn, ["objectClass"])
-        object_classes = oc.get("objectClass", [])
+        object_classes = set(key for key, val in udm_obj.options.items() if val is True)
         if "univentionWindows" in object_classes:
             return WindowsComputer
         if "univentionMacOSClient" in object_classes:

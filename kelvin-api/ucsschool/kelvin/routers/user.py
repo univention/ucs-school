@@ -1049,6 +1049,7 @@ async def delete(
             detail=f"No object with name={username!r} found or not authorized.",
         )
     await user.remove(udm)
+    return None
 
 
 async def set_password_hashes(dn: str, kelvin_password_hashes: PasswordsHashes) -> None:

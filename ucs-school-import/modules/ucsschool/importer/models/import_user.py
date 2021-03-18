@@ -827,7 +827,7 @@ class ImportUser(User):
             maildomain = self.config.get("maildomain")
             if not maildomain:
                 try:
-                    # TODO: not availble (yet) in Docker container
+                    # TODO: not available (yet) in Docker container
                     maildomain = ucr["mail/hosteddomains"].split()[0]
                 except (AttributeError, IndexError):
                     if (
@@ -1630,7 +1630,8 @@ class ImportUser(User):
         if not char_replacement or not school_class:
             return school_class
         klass_name_old = school_class  # for debug output at the end
-        school_class = school_class.decode("utf-8")
+        if isinstance(school_class, bytes):
+            school_class = school_class.decode("utf-8")
         for character in school_class:
             if character not in ALLOWED_CHARS_IN_SCHOOL_CLASS_NAME:
                 school_class = school_class.replace(character, char_replacement)
