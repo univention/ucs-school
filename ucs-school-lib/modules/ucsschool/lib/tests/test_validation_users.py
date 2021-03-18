@@ -37,7 +37,7 @@ from ucsschool.lib.models.validator import (
 )
 from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.config_registry import handler_set
+from univention.config_registry import handler_set, handler_unset
 
 fake = Faker()
 ldap_base = ucr["ldap/base"]
@@ -563,23 +563,28 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
 
 @pytest.mark.parametrize(
     "logging_enabled",
-    ["yes", "no"],
+    ["yes", "no","unset", ""],
     ids=[
         "validation_logging_is_enabled",
         "validation_logging_is_disabled",
+        "validation_logging_not_set",
+        "validation_logging_empty_string"
     ],
 )
-def test_validation_log_enabled(caplog, random_logger, logging_enabled, random_user_name):
+def test_validation_log_enabled(caplog, random_logger, random_user_name, logging_enabled):
     """Tests if logging can be disabled"""
     # 00_validation_log_enabled
 
     varname = "ucsschool/validation/logging/enabled"
-
     # we need to restore the old value later on
     ucr_value_before = ucr.get(varname, "yes")
     try:
         ucr.update({varname: logging_enabled})
-        handler_set(["{}={}".format(varname, logging_enabled)])
+        if logging_enabled == "unset":
+            handler_unset([varname])
+            ucr.load() # this seems to be necessary, otherwise ucr.get will return "unset"
+        else:
+            handler_set(["{}={}".format(varname, logging_enabled)])
 
         user = student_user()
         wrong_school = random_user_name()
@@ -590,9 +595,9 @@ def test_validation_log_enabled(caplog, random_logger, logging_enabled, random_u
         public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
         secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
         for log in (public_logs, secret_logs):
-            if logging_enabled == "yes":
-                assert expected_msg in log
-            else:
+            if logging_enabled == "no":
                 assert expected_msg not in log
+            else:
+                assert expected_msg in log
     finally:
         handler_set(["{}={}".format(varname, ucr_value_before)])
