@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
 fix: 12.2.12A~4.4.0.202103181206
 desc: |
-  * When not executing as root, the UCSSchool-Validation could not log which could lead to errors. This fix solves that issue (Bug #52883).
+  * Internal improvement: An error was fixed, which was raised when the UCS@school validation was executed by other users than root. (Bug #52883).
 bug: [52883]
