@@ -336,9 +336,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             networks = [
                 (
                     network.props.name,
-                    IPv4Network(
-                        network.props.network + "/" + network.props.netmask
-                    ),
+                    IPv4Network(network.props.network + "/" + network.props.netmask),
                 )
                 async for network in mod.search()
             ]
