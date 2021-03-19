@@ -41,7 +41,6 @@ from six import iteritems
 from udm_rest_client import UDM, UdmObject
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
-from univention.admin.uldap import LoType, PoType
 
 from ..roles import (
     context_type_school,
