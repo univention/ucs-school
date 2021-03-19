@@ -121,7 +121,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     [self.dc_name.lower()],
                 )
             # TODO: use UDM instead of LDAP
-            dcs = lo.search(ldap_filter_str)
+            from univention.admin.uldap import getAdminConnection
+
+            ldap_lo, ldap_po = getAdminConnection()
+            dcs = ldap_lo.search(ldap_filter_str)
             if len(dcs) and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
@@ -181,7 +184,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     last_dn = await _add_container(cn, last_dn, base_dn, path, lo)
             else:
                 container = Container(name=name, school=self.name)
-                setattr(container, path, "1")
+                # Bug 52952: set all attributes of container/cn objects
+                # TODO: WIP here
+                for attr in container._attributes:
+                    if getattr(container, attr) is None:
+                        setattr(container, attr, False)
+                setattr(container, path, True)
                 container.position = base_dn
                 last_dn = container.dn
                 if not await container.exists(lo):

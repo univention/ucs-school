@@ -41,11 +41,12 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 from udm_rest_client import UDM
+from univention.admin.uldap import getAdminConnection
 
 MAX_HOSTNAME_LENGTH = 13
 
 
-def create_ou(
+async def create_ou(
     ou_name: str,
     display_name: str,
     edu_name: str,
@@ -120,7 +121,8 @@ def create_ou(
     if share_name is None:
         share_name = edu_name
     # TODO: use UDM instead of LDAP
-    objects = lo.searchDn(
+    ldap_lo, ldap_po = getAdminConnection()
+    objects = ldap_lo.searchDn(
         filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
     )
     if not objects:
@@ -141,7 +143,7 @@ def create_ou(
     new_school.class_share_file_server = share_dn
     new_school.home_share_file_server = share_dn
 
-    new_school.validate(lo)
+    await new_school.validate(lo)
     if len(new_school.warnings) > 0:
         logger.warning("The following fields reported warnings during validation:")
         for key, value in new_school.warnings.items():
@@ -152,7 +154,7 @@ def create_ou(
             error_str += "{}: {}\n".format(key, value)
         raise ValueError(error_str)
 
-    res = new_school.create(lo)
+    res = await new_school.create(lo)
     if res:
         logger.info("OU %r created successfully.", new_school.name)
     else:

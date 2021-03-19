@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from udm_rest_client import UDM
+from udm_rest_client import UDM, CreateError
 from univention.admin.uldap import position as uldap_position
 
 from .attributes import ContainerPath
@@ -55,14 +55,11 @@ class OU(UCSSchoolHelperAbstractClass):
         pos.setDn(self.position)
         udm_obj = await lo.get(self._meta.udm_module).new()
         udm_obj.props.name = self.name
-        # try:
-        # 	self.do_create(udm_obj, lo)
-        # except objectExists as exc:
-        # 	return exc.args[0]  # should return bool???
-        # else:
-        # 	return udm_obj.dn
-        await self.do_create(udm_obj, lo)
-        return udm_obj.dn  # should return bool???
+        try:
+            await self.do_create(udm_obj, lo)
+        except CreateError:
+            self.logger.debug("Already exists: %r", self)
+        return True
 
     async def modify(self, lo: UDM, validate: bool = True, move_if_necessary: bool = None) -> bool:
         raise NotImplementedError()
