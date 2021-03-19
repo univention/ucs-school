@@ -564,12 +564,12 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
 
 @pytest.mark.parametrize(
     "logging_enabled",
-    ["yes", "no","unset", ""],
+    ["yes", "no", "unset", ""],
     ids=[
         "validation_logging_is_enabled",
         "validation_logging_is_disabled",
         "validation_logging_not_set",
-        "validation_logging_empty_string"
+        "validation_logging_empty_string",
     ],
 )
 def test_validation_log_enabled(caplog, random_logger, random_user_name, logging_enabled):
@@ -583,7 +583,7 @@ def test_validation_log_enabled(caplog, random_logger, random_user_name, logging
         ucr.update({varname: logging_enabled})
         if logging_enabled == "unset":
             handler_unset([varname])
-            ucr.load() # this seems to be necessary, otherwise ucr.get will return "unset"
+            ucr.load()  # this seems to be necessary, otherwise ucr.get will return "unset"
         else:
             handler_set(["{}={}".format(varname, logging_enabled)])
 

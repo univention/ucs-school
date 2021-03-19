@@ -480,7 +480,10 @@ def validate(obj: Dict[str, Any], logger: logging.Logger = None) -> None:
             # Therefore I had to use this workaround of handling empty strings.
             # TODO fix workaround when 00_sync_to_docker has been improved.
             varname = "ucsschool/validation/logging/enabled"
-            if ucr.is_true(varname, True) or ucr.get(varname) in ("", None):  # tests: 00_validation_log_enabled
+            if ucr.is_true(varname, True) or ucr.get(varname) in (
+                "",
+                None,
+            ):  # tests: 00_validation_log_enabled
                 if logger:
                     logger.error(errors_str)
                 if private_data_logger:
