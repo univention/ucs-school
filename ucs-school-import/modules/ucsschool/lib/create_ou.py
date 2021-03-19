@@ -69,9 +69,9 @@ async def create_ou(
     :param univention.uldap.access lo: LDAP connection object
     :param str baseDN: base DN
     :param str hostname: hostname of master in case of singlemaster
-    :param bool is_single_master: whther it is a singlemaster
+    :param bool is_single_master: whether it is a singlemaster
     :param bool alter_dhcpd_base: if the DHCP base should be modified
-    :return bool: whether the OU was sucessfully created (or already existed)
+    :return bool: whether the OU was successfully created (or already existed)
     :raises ValueError: on validation errors
     :raises uidAlreadyUsed:
     """

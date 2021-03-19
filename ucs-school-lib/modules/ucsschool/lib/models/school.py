@@ -35,9 +35,7 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
-import univention.admin.modules
-import univention.admin.objects
-from udm_rest_client import UDM
+from udm_rest_client import UDM, NoObject as UdmNoObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
@@ -186,8 +184,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 container = Container(name=name, school=self.name)
                 # Bug 52952: set all attributes of container/cn objects
                 # TODO: WIP here
-                for attr in container._attributes:
-                    if getattr(container, attr) is None:
+                for attr, val in container._attributes.items():  # type: str, Attribute
+                    if attr.endswith("_path") and getattr(container, attr) is None:
                         setattr(container, attr, False)
                 setattr(container, path, True)
                 container.position = base_dn
@@ -259,8 +257,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             admin_option = "ucsschoolAdministratorGroup"
             if udm_obj.options.get(admin_option) is not True:
                 udm_obj.options[admin_option] = True
-            udm_obj["school"] = [self.name]
-            udm_obj.modify()
+            udm_obj.props.school = [self.name]
+            await udm_obj.save()
 
         # cn=schueler
         group = Group.cache(self.group_name("pupils", "schueler-"), self.name)
@@ -386,41 +384,43 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if self.dc_name:
             dc_name_l = self.dc_name.lower()
             dc_udm_obj = None
-            # TODO: use UDM REST API
-            mb_dcs = lo.search(
-                filter_format(
-                    "(&"
-                    "(objectClass=univentionDomainController)"
-                    "(cn=%s)"
-                    "(|"
-                    "(univentionServerRole=backup)"
-                    "(univentionServerRole=master)"
-                    ")"
-                    ")",
-                    [self.dc_name.lower()],
+            mb_dcs = [
+                obj
+                async for obj in lo.get("computers/computer").search(
+                    filter_format(
+                        "(&"
+                        "(objectClass=univentionDomainController)"
+                        "(cn=%s)"
+                        "(|(univentionServerRole=backup)(univentionServerRole=master))"
+                        ")",
+                        [self.dc_name.lower()],
+                    )
                 )
-            )
+            ]
             if len(mb_dcs):
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
             # Sadly we need this here to access non school specific computers.
-            # TODO: use UDM instead of LDAP
-            slave_dcs = lo.search(
-                "(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))".format(
-                    dc_name_l
+            slave_dcs = [
+                obj
+                async for obj in lo.get("computers/domaincontroller_slave").search(
+                    filter_format("(cn=%s)", [dc_name_l])
                 )
-            )
+            ]
             if len(slave_dcs):
                 dn, attr = slave_dcs[0]
-                dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(dn)
-            if not dc_udm_obj:  # TODO: except NoObject?
+                try:
+                    dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(dn)
+                except UdmNoObject:
+                    pass
+            if not dc_udm_obj:
                 roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
                 dc = SchoolDCSlave(name=self.dc_name, school=self.name, ucsschool_roles=roles)
                 await dc.create(lo)
                 dc_udm_obj = await dc.get_udm_object(lo)
             else:
                 dc = await SchoolDCSlave.from_udm_obj(
-                    await SchoolDCSlave.get_first_udm_obj(lo, "cn={}".format(self.dc_name)),
+                    await SchoolDCSlave.get_first_udm_obj(lo, filter_format("cn=%s", [self.dc_name])),
                     self.name,
                     lo,
                 )

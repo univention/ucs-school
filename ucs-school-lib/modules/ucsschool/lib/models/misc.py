@@ -49,17 +49,21 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 
 class OU(UCSSchoolHelperAbstractClass):
-    async def create(self, lo: UDM, validate: bool = True) -> bool:
+    async def create(self, lo: UDM, validate: bool = True) -> str:
         self.logger.info("Creating %r", self)
+        if not isinstance(self.position, str):
+            raise RuntimeError(f"type(self.position)={type(self.position)!r}")
         pos = uldap_position(ucr.get("ldap/base"))
         pos.setDn(self.position)
         udm_obj = await lo.get(self._meta.udm_module).new()
+        udm_obj.position = pos.getDn()
         udm_obj.props.name = self.name
         try:
             await self.do_create(udm_obj, lo)
-        except CreateError:
-            self.logger.debug("Already exists: %r", self)
-        return True
+        except CreateError as exc:
+            self.logger.debug("Already exists? self=%r exc=%s", self, exc)
+            return self.dn  # usually create() returns bool!
+        return udm_obj.dn  # usually create() returns bool!
 
     async def modify(self, lo: UDM, validate: bool = True, move_if_necessary: bool = None) -> bool:
         raise NotImplementedError()
