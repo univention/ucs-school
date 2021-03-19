@@ -383,7 +383,7 @@ def test_altered_group_prefix(
     ucr_variable = "ucsschool/ldap/default/groupprefix/{}".format(role)
     ucr_value_before = ucr.get(ucr_variable, ucr_default)
     new_value = random_first_name
-    handler_set(["{}={}".format("ucsschool/ldap/default/groupprefix/{}".format(role), new_value)])
+    handler_set(["{}={}".format(ucr_variable, new_value)])
     reload_school_search_base()
     dict_obj = user_generator()
     # force a reload of the prefixes.
