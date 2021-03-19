@@ -65,8 +65,13 @@ lint-coverage: .coverage
 
 lint: lint-linters lint-coverage ## check source code style
 
-test: ## run tests (with the current active Python interpreter)
+pytest: ## run pytests (with the current active Python interpreter)
 	python3 -m pytest -l -v
+
+opatest: ## run opa test on opa policies
+	opa test opa_policies
+
+test: pytest opatest
 
 .coverage: $(PY_FILES)
 	coverage run --source tests,ucsschool -m pytest

@@ -54,3 +54,10 @@ repos:
     -   id: bandit
         entry: bandit -c .bandit
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/|^ucs-school-import/modules/ucsschool/importer/utils/test_user_creator.py|^kelvin-api/tests/
+-   repo: https://github.com/anderseknert/pre-commit-opa
+    rev: v1.4.0
+    hooks:
+    -   id: opa-fmt
+    -   id: opa-check
+    -   id: opa-test
+        args: ['kelvin-api/opa_policies']
