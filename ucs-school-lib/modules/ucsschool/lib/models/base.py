@@ -41,12 +41,7 @@ from six import add_metaclass, iteritems
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmModule, UdmObject
 from univention.admin.filter import conjunction, expression
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import (
-    access as LoType,
-    getAdminConnection,
-    getMachineConnection,
-    position as PoType,
-)
+from univention.admin.uldap import LoType, PoType, getAdminConnection, getMachineConnection
 
 from ..roles import create_ucsschool_role_string
 from ..schoolldap import SchoolSearchBase
