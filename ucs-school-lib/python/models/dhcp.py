@@ -33,6 +33,9 @@ import ipaddr
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
 
+from univention.udm import UDM
+from univention.uldap import parentDn
+
 from .attributes import (
     Attribute,
     BroadcastAddress,
@@ -90,7 +93,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
         existing_dhcp_server_dn = DHCPServer.find_any_dn_with_name(dc_name, lo)
         if existing_dhcp_server_dn:
             self.logger.info("DHCP server %s exists!", existing_dhcp_server_dn)
-            old_dhcp_server_container = lo.parentDn(existing_dhcp_server_dn)
+            old_dhcp_server_container = parentDn(existing_dhcp_server_dn)
             dhcpd_ldap_base = ucr.get("dhcpd/ldap/base", "")
             # only move if
             # - forced via kwargs OR
@@ -202,12 +205,11 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
     @classmethod
     def find_any_dn_with_name(cls, name, lo):  # type: (str, LoType) -> str
         cls.logger.debug("Searching first dhcpServer with cn=%s", name)
-        try:
-            dn = lo.searchDn(
-                filter=filter_format("(&(objectClass=dhcpServer)(cn=%s))", [name]),
-                base=ucr.get("ldap/base"),
-            )[0]
-        except IndexError:
+        mod = UDM(lo).version(0).get(cls.Meta.udm_module)
+        objs = [obj for obj in mod.search(filter_format("cn=%s", (name,)))]
+        if objs:
+            dn = objs[0].dn
+        else:
             dn = None
         cls.logger.debug("... %r found", dn)
         return dn
@@ -245,7 +247,8 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
     @classmethod
     def find_all_dns_below_base(cls, dn, lo):  # type: (str, LoType) -> List[str]
         cls.logger.debug("Searching all univentionDhcpSubnet in %r", dn)
-        return lo.searchDn(filter="(objectClass=univentionDhcpSubnet)", base=dn)
+        mod = UDM(lo).version(0).get(cls.Meta.udm_module)
+        return [o.dn for o in mod.search(base=dn)]
 
     class Meta:
         udm_module = "dhcp/subnet"

@@ -57,7 +57,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 
 class OU(UCSSchoolHelperAbstractClass):
-    def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
+    def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> str
         self.logger.info("Creating %r", self)
         pos = udm_uldap.position(ucr.get("ldap/base"))
         pos.setDn(self.position)
@@ -67,9 +67,9 @@ class OU(UCSSchoolHelperAbstractClass):
         try:
             self.do_create(udm_obj, lo)
         except objectExists as exc:
-            return exc.args[0]  # should return bool???
+            return exc.args[0]  # usually create() returns bool!
         else:
-            return udm_obj.dn  # should return bool???
+            return udm_obj.dn  # usually create() returns bool!
 
     def modify(self, lo, validate=True, move_if_necessary=None):
         # type: (LoType, Optional[bool], Optional[bool]) -> bool

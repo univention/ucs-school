@@ -393,19 +393,25 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if self.dc_name:
             dc_name_l = self.dc_name.lower()
             dc_udm_obj = None
-            mb_dcs = lo.search(
-                filter_format(
-                    "(&"
-                    "(objectClass=univentionDomainController)"
-                    "(cn=%s)"
-                    "(|"
-                    "(univentionServerRole=backup)"
-                    "(univentionServerRole=master)"
-                    ")"
-                    ")",
-                    [self.dc_name.lower()],
+            mb_dcs = [
+                obj
+                for obj in UDM(lo)
+                .version(0)
+                .get("computers/computer")
+                .search(
+                    filter_format(
+                        "(&"
+                        "(objectClass=univentionDomainController)"
+                        "(cn=%s)"
+                        "(|"
+                        "(univentionServerRole=backup)"
+                        "(univentionServerRole=master)"
+                        ")"
+                        ")",
+                        [self.dc_name.lower()],
+                    )
                 )
-            )
+            ]
             if len(mb_dcs):
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
@@ -416,11 +422,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             mod = univention.admin.modules.get("computers/domaincontroller_slave")
             if not mod.initialized:
                 univention.admin.modules.init(lo, po, mod)
-            slave_dcs = lo.search(
-                "(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))".format(
-                    dc_name_l
-                )
-            )
+            mod = UDM(lo).version(0).get("computers/domaincontroller_slave")
+            slave_dcs = [obj for obj in mod.search(filter_format("(cn=%s)", [dc_name_l]))]
             if len(slave_dcs):
                 dn, attr = slave_dcs[0]
                 dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)

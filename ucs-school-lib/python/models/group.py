@@ -32,6 +32,7 @@
 from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
+from univention.udm import UDM, NoObject as UdmNoObject
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -209,9 +210,10 @@ class BasicGroup(Group):
 
     def container_exists(self, lo):  # type: (LoType) -> bool
         try:
-            lo.searchDn(base=self.get_own_container())
+            mod = UDM(lo).version(0).get("container/cn")
+            mod.get(self.get_own_container())
             return True
-        except noObject:
+        except UdmNoObject:
             return False
 
     def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
