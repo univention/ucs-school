@@ -75,7 +75,7 @@ echo "Copying files to build directory..."
 rsync -a --delete \
     "${UCR_DIR}" \
     ../.black \
-    ../.isort \
+    ../.isort.cfg \
     ../.flake8 \
     ../kelvin-api \
     ../univention-lib-slim \
