@@ -368,7 +368,7 @@ def test_altered_group_prefix(
     """
     with ucr_test.UCSTestConfigRegistry():
         new_value = uts.random_name()
-        handler_set(["{}={}".format("ucsschool/ldap/default/groupprefix/{}".format(role), new_value)])
+        handler_set(["ucsschool/ldap/default/groupprefix/{}={}".format(role, new_value)])
         reload_school_search_base()
         dict_obj = user_generator()
         validate(dict_obj, random_logger)
