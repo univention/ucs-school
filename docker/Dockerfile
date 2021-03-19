@@ -112,6 +112,7 @@ COPY ucsschool-kelvin-rest-api.initd /tmp/
 COPY opa.initd /tmp/
 COPY opa /usr/bin
 COPY kelvin-api/ /kelvin/kelvin-api
+COPY .black .isort .flake8 /kelvin/kelvin-api/
 RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest-api && \
 	mv -v /tmp/opa.initd /etc/init.d/opa && \
 	rc-update add opa default && \
