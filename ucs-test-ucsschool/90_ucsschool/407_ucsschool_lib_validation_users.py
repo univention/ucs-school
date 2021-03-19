@@ -31,6 +31,7 @@ from ucsschool.lib.models.utils import ucr as lib_ucr  # 'ucr' already exists as
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
     ExamStudentValidator,
+    SchoolAdminValidator,
     StaffValidator,
     StudentValidator,
     TeachersAndStaffValidator,
@@ -263,6 +264,28 @@ def teacher_and_staff_user():  # type: () -> Dict[str, Any]
     return user
 
 
+def admin_user():  # type: () -> Dict[str, Any]
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user(firstname, lastname)
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        SchoolSearchBase._containerAdmins, ldap_base
+    )
+    user["dn"] = "uid={},{}".format(user["props"]["username"], user["position"])
+    group_prefix_admins = get_current_group_prefix("admins", "admins-")
+    user["props"]["groups"] = [
+        "cn={}demoschool,cn=ouadmins,cn=groups,{}".format(group_prefix_admins, ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+    ]
+    user["props"]["unixhome"] = "/home/{}".format(user["props"]["username"])
+    user["props"]["ucsschoolRole"] = [
+        "school_admin:school:DEMOSCHOOL",
+    ]
+
+    user["options"] = {"ucsschoolAdministrator": True}
+    return user
+
+
 @pytest.fixture(autouse=True)
 def mock_logger_file(mocker):
     with tempfile.NamedTemporaryFile() as f:
@@ -275,8 +298,16 @@ all_user_role_objects = [
     staff_user(),
     exam_user(),
     teacher_and_staff_user(),
+    admin_user(),
 ]
-all_user_roles_names = [role_student, role_teacher, role_staff, role_exam_user, "teacher_and_staff"]
+all_user_roles_names = [
+    role_student,
+    role_teacher,
+    role_staff,
+    role_exam_user,
+    "teacher_and_staff",
+    role_school_admin,
+]
 
 
 @pytest.fixture
@@ -324,6 +355,7 @@ def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
             StaffValidator,
             ExamStudentValidator,
             TeachersAndStaffValidator,
+            SchoolAdminValidator,
         ],
     ),
     ids=all_user_roles_names,
@@ -351,8 +383,14 @@ def test_correct_object(caplog, dict_obj, random_logger):
         (student_user, "pupils", "schueler-"),
         (teacher_user, "teachers", "lehrer-"),
         (staff_user, "staff", "mitarbeiter-"),
+        (admin_user, "admins", "admins-"),
     ],
-    ids=["altered_student_group_prefix", "altered_teachers_group_prefix", "altered_staff_group_prefix"],
+    ids=[
+        "altered_student_group_prefix",
+        "altered_teachers_group_prefix",
+        "altered_staff_group_prefix",
+        "altered_admins_group_prefix",
+    ],
 )
 def test_altered_group_prefix(
     caplog,
@@ -414,6 +452,7 @@ def test_students_exclusive_role(caplog, dict_obj, random_logger, disallowed_rol
         (staff_user, teacher_user),
         (exam_user, teacher_user),
         (teacher_and_staff_user, student_user),
+        (admin_user, student_user),
     ],
     ids=all_user_roles_names,
 )
@@ -556,12 +595,16 @@ def test_student_missing_class(caplog, dict_obj, random_logger):
         (teacher_user, staff_user),
         (exam_user, teacher_user),
         (teacher_and_staff_user, student_user),
+        (student_user, admin_user),
+        (exam_user, admin_user),
     ],
     ids=[
         "student_has_teacher_groups",
         "exam_student_has_teacher_groups",
         "teacher_has_staff_groups",
         "teacher_has_student_groups",
+        "student_has_admin_groups",
+        "exam_student_has_admin_groups",
     ],
 )
 def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger):
@@ -570,6 +613,7 @@ def test_validate_group_membership(caplog, get_user_a, get_user_b, random_logger
     for group in list(user_b["props"]["groups"]):
         if group not in user_a["props"]["groups"]:
             user_a["props"]["groups"].append(group)
+    print(user_a["props"]["groups"])
     validate(user_a, random_logger)
     expected_msg = "Disallowed member of group"
     check_logs(user_a, caplog.record_tuples, random_logger.name, expected_msg)
