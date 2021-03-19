@@ -66,6 +66,18 @@ The app settings and the join and unjoin scripts are in a ``appcenter`` director
 Tests
 -----
 
+Open Policy Agent tests are run during Docker image build. To run them locally on your machine via ``make opatest``
+the ``opa`` binary has to be in your ``$PATH`::
+
+	$ curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+	$ chmod +x opa
+	$ sudo mv opa /usr/local/bin/ # Or any other path of your choice that is in your $PATH
+	$ sudo chown root:root /usr/local/bin/opa
+	$ make -C kelvin-api opatest
+	$ opa test opa_policies
+	$ PASS: 6/6
+
+
 Unit tests are run during Docker image built.
 Integration tests have to be run manually during development::
 
