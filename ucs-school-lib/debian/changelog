@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.13) unstable; urgency=medium
+
+  * Bug #52884: add validation/logging/enabled ucrv
+
+ -- Joerg Baach <baach@univention.de>  Fri, 19 Mar 2021 09:50:20 +0100
+
 ucs-school-lib (12.2.12) unstable; urgency=medium
 
   * Bug #52883: fix undefined private logger in validator

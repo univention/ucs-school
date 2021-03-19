@@ -6,4 +6,5 @@ src: ucs-school-lib
 fix: 12.2.12A~4.4.0.202103181206
 desc: |
   * Internal improvement: An error was fixed, which was raised when the UCS@school validation was executed by other users than root. (Bug #52883).
-bug: [52883]
+  * Allow to disable the logging of validation errors upon validation of UCS@school objects: use the UCR variable <envar>validation/logging/enabled</envar> to control this. (Bug #52884)
+bug: [52883, 52884]
