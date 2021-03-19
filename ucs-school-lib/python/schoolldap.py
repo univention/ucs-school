@@ -175,7 +175,7 @@ class SchoolSearchBase(object):
         return "cn=%s%s,cn=ouadmins,cn=groups,%s" % (
             self.group_prefix_admins,
             self.school.lower(),
-            self.schoolDN,
+            self._ldapBase,
         )
 
     @property
