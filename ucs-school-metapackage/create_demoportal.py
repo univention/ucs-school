@@ -261,6 +261,7 @@ def create_school():
     admin_udm.options.append("ucsschoolAdministrator")
     admin_udm["groups"].append(admin_group)
     admin_udm["description"] = "School Admin for {} created from teacher account.".format(SCHOOL[0])
+    admin_udm["ucsschoolRole"].append("school_admin:school:{}".format(SCHOOL[0]))
     admin_udm.modify()
 
 
