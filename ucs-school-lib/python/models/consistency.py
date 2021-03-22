@@ -39,8 +39,8 @@ import sys
 from ldap import INVALID_DN_SYNTAX, NO_SUCH_OBJECT
 from ldap.filter import filter_format
 
+from univention.admin.uldap import getMachineConnection
 from univention.config_registry import ConfigRegistry
-from univention.uldap import getAdminConnection
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -69,7 +69,7 @@ class UserCheck(object):
         ucr = ConfigRegistry()
         ucr.load()
         ldap_base = ucr.get("ldap/base")
-        self.lo = getAdminConnection()
+        self.lo, _ = getMachineConnection()
 
         admins_prefix = ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
         teachers_prefix = ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
@@ -288,7 +288,7 @@ def check_mandatory_groups_exist(school=None):
 
     problematic_objects = {}
 
-    lo = getAdminConnection()
+    lo, _ = getMachineConnection()
 
     mandatory_global_groups = [
         "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ldap_base),
@@ -339,7 +339,7 @@ def check_mandatory_groups_exist(school=None):
 def check_containers(school=None):
     problematic_objects = {}
 
-    lo = getAdminConnection()
+    lo, _ = getMachineConnection()
 
     if school:
         all_schools = [school]
@@ -381,7 +381,7 @@ def check_shares(school=None):
 
     problematic_objects = {}
 
-    lo = getAdminConnection()
+    lo, _ = getMachineConnection()
 
     if school:
         all_schools = [school]
@@ -447,7 +447,7 @@ def check_server_group_membership(school=None):
     ldap_base = ucr.get("ldap/base")
     problematic_objects = {}
 
-    lo = getAdminConnection()
+    lo, _ = getMachineConnection()
 
     if school:
         all_schools = [school]
