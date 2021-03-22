@@ -186,6 +186,13 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
     name: str = DHCPServerName(_("Server name"))
     dhcp_service: DHCPService = DHCPServiceAttribute(_("DHCP service"), required=True)
 
+    async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
+        if udm_obj.dn:
+            # Setting udm_obj.superordinate leads to udm_obj.dn being set. That makes the UDM REST API
+            # client believe the object exists and should be moved. For creation it must be None.
+            udm_obj.dn = None
+        await super(DHCPServer, self).do_create(udm_obj, lo)
+
     def get_own_container(self) -> str:
         if self.dhcp_service:
             return self.dhcp_service.dn
