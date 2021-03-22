@@ -47,6 +47,7 @@ from ldap.filter import filter_format
 
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
+from univention.udm import UDM
 
 MAX_HOSTNAME_LENGTH = 13
 
@@ -125,9 +126,15 @@ def create_ou(
     share_dn = ""
     if share_name is None:
         share_name = edu_name
-    objects = lo.searchDn(
-        filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
-    )
+    objects = [
+        obj.dn
+        for obj in UDM(lo)
+        .version(0)
+        .get("computers/computer")
+        .search(
+            filter_s=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
+        )
+    ]
     if not objects:
         if share_name == "dc{}".format(ou_name) or (edu_name and share_name == edu_name):
             share_dn = filter_format(

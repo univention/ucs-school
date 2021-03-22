@@ -126,7 +126,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     ")",
                     [self.dc_name.lower()],
                 )
-            dcs = lo.search(ldap_filter_str)
+            dcs = [obj for obj in UDM(lo).version(0).get("computers/computer").search(ldap_filter_str)]
             if len(dcs) and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
