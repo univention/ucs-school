@@ -580,6 +580,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def set_ucsschool_role(self, udm: UDM, lo: LoType) -> None:
 		"""
+		Set the ucsschool role for the computer on which the
+		school is replicated.
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
 		"""
 		ou_lower = self.name.lower()
@@ -588,9 +590,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			mod = udm.get("computers/domaincontroller_master")
 			obj = await mod.get(ldap_hostdn)
 			role = "single_master:school:{}".format(self.name)
-			obj.props.ucsschoolRole.append(role)
-			obj.save()
-			self.logger.info("Append ucsschoolRole {} to {}".format(role, ldap_hostdn))
+			if role not in obj.props.ucsschoolRole:
+				obj.props.ucsschoolRole.append(role)
+				await obj.save()
+				self.logger.info("Append ucsschoolRole {} to {}".format(role, ldap_hostdn))
+			else:
+				self.logger.warning(
+					"ucsschoolRole {} is already appended to {}".format(role, ldap_hostdn)
+				)
 		else:
 			adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
 			edu_net_filter = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
@@ -604,20 +611,24 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 				if res:
 					server_dn = res[0][1]["uniqueMember"][0]
 					uot = lo.get(server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
-					if uot == "computers/domaincontroller_slave":
-						obj = await SchoolDCSlave.from_dn(lo=lo, dn=server_dn, school=self.name)
-						obj.ucsschool_roles.append("{}:school:{}".format(role, self.name))
-						await obj.modify(lo)
-						self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
-					else:
+					if uot != "computers/domaincontroller_slave":
 						self.logger.info(
 							"A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
 								server_dn
 							)
 						)
+						continue
+
+					obj = await SchoolDCSlave.from_dn(lo=lo, dn=server_dn, school=self.name)
+					role = "{}:school:{}".format(role, self.name)
+					if role in obj.ucsschool_roles:
+						continue
+					await obj.modify(lo)
+					self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
 
 	def create_market_place(self, lo: UDM) -> None:
 		"""
+		Create a share object with the name `Marktplatz` for the school.
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
 		"""
 		if not ucr.is_true("ucsschool/import/generate/share/marktplatz", False):
@@ -631,20 +642,26 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			obj = MarketplaceShare(name="Marktplatz", school=self.name)
 			if await obj.exists(lo):
 				self.logger.warning(
-					"Object of type MarketplaceShare with school=%r and name=Marktplatz exists.",
-					self.name,
+					"Object of type MarketplaceShare with school={} and name=Marktplatz exists.".format(
+						self.name
+					),
 				)
 			else:
 				success = await obj.create(lo)
 				if not success:
+					self.logger.error(
+						"Failed to create MarketplaceShare for school={}.".format(self.name),
+					)
 					return
-			objs = MarketplaceShare.get_all(lo=lo, school=self.name)
-			self.logger.info("Created {!r}".format(objs))
+			self.logger.info("Created {!r}".format(obj))
 		else:
-			self.logger.info("MarketplaceShare exists.")
+			self.logger.warning("MarketplaceShare for {} exists already.".format(self.name))
 
 	def create_dhcp_search_base(self, lo: UDM) -> None:
 		"""
+		Create the policies/registry ou-default-ucr-policy for the school,
+		add the dhcp-ou-dn to it an link to the school.
+
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
 		"""
 		if not ucr.is_true("ucsschool/import/generate/policy/dhcp/searchbase", False):
@@ -662,6 +679,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			await policy.save()
 		except CreateError:
 			# object exists already.
+			self.logger.error("Error while creating ou-default-ucr-policy for {}".format(self.name))
 			pass
 
 		# add value to policy
@@ -681,6 +699,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def create_dhcp_dns_policy(self, lo: LoType, udm: UDM) -> None:
 		"""
+		Add a DHCPDNSPolicy for the school, append it to the respective
+		container/cn object and add domain_name and domain_name_servers
+		in single server environments.
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
 		"""
 		if not ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/set_per_ou", False):
@@ -707,6 +728,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			if not await policy.exists(lo):
 				policy.position = "cn=policies,{}".format(ou_dn)
 				await policy.create(lo)
+			else:
+				self.logger.warning("DHCPDNSPolicy for {} exists already.".format(self.name))
 
 			dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn)
 			# In a single server environment, the master is the DNS server.
@@ -726,6 +749,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 	def create_import_group(self, lo: UDM) -> None:
 		"""
+		Create the OU-import-all group, which enables user to run
+		an import, add the UMC policy schoolimport-all to it
+		and set roles and options which are used in the import.
 		formerly in shell hook 53importgroup_create
 		"""
 		if not ucr.is_true("ucsschool/import/generate/import/group", False):
@@ -750,12 +776,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		group = await group_mod.get(ou_import_group)
 		group.options.append("ucsschoolImportGroup")
 		group.props.ucsschoolImportSchool = ou
+		# comment: teacher_and_staff is a proper role and only used in the import context.
 		group.props.ucsschoolImportRole.extend(
 			[role_student, role_staff, "teacher_and_staff", role_teacher]
 		)
 		await group.save()
 
 	def create_exam_group(self, lo: UDM) -> None:
+		"""
+		Creates the exam users container cn=examusers and the
+		OU-specific group, e.g. DEMOSCHOOL-Klassenarbeit for the school.
+		formerly in shell hook 60schoolexam-master.
+		"""
 		ldap_base = ucr["ldap/base"]
 
 		# create exam container
