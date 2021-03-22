@@ -35,7 +35,12 @@
 
 from __future__ import absolute_import
 
-from ucsschool.lib.models.consistency import check_all
+try:
+    from typing import Dict, List
+except ImportError:
+    pass
+
+from ucsschool.lib.consistency import check_all
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Warning
 
@@ -56,7 +61,7 @@ help_links = {"groups": help_groups_link, "shares": help_shares_link, "users": h
 
 
 def run(_umc_instance):
-    res = check_all()
+    res = check_all()  # type: Dict[str, Dict[str, List[str]]]
     details = ""
     for check, issues in res.items():
         if issues:
@@ -69,7 +74,8 @@ def run(_umc_instance):
                 details += "\n\n" + "For help please visit {}".format(help_links[check])
             except KeyError:
                 pass
-    raise Warning(description + details)
+    if any(res.values()):
+        raise Warning(description + details)
 
 
 if __name__ == "__main__":

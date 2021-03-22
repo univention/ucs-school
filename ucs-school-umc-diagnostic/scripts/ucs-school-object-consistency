@@ -35,7 +35,7 @@ This module check the consistency of USC@school users, shares, containers and gr
 """
 import argparse
 
-import ucsschool.lib.models.consistency as consistency
+import ucsschool.lib.consistency as consistency
 
 
 def print_problematic_objects(objects, entry_string):

@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.14) unstable; urgency=low
+
+  * Bug #52656: add consistency module
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Mar 2021 12:41:29 +0100
+
 ucs-school-lib (12.2.13) unstable; urgency=medium
 
   * Bug #52884: add validation/logging/enabled ucrv

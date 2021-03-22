@@ -36,13 +36,21 @@ This module check the constistency of USC@school users, shares and groups
 import re
 import sys
 
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
+
 from ldap import INVALID_DN_SYNTAX, NO_SUCH_OBJECT
 from ldap.filter import filter_format
 
 from univention.admin.uldap import getMachineConnection
 from univention.config_registry import ConfigRegistry
 
-from ..roles import (
+from .models.base import WrongObjectType
+from .models.school import School
+from .models.user import User
+from .roles import (
     create_ucsschool_role_string,
     role_dc_slave_admin,
     role_dc_slave_edu,
@@ -58,10 +66,7 @@ from ..roles import (
     role_workgroup,
     role_workgroup_share,
 )
-from ..schoolldap import SchoolSearchBase
-from .base import WrongObjectType
-from .school import School
-from .user import User
+from .schoolldap import SchoolSearchBase
 
 
 class UserCheck(object):
@@ -120,6 +125,7 @@ class UserCheck(object):
             )
 
     def check_allowed_membership(self, group_dn, students=False, teachers=False, staff=False):
+        # type: (str, Optional[bool], Optional[bool], Optional[bool]) -> List[str]
         """
         This function is used to check if a group of a user matches the users UCS@School role(s).
         The caller specifies the group dn and the user roles which are allowed by setting them to 'True'.
@@ -138,7 +144,7 @@ class UserCheck(object):
 
         return errors
 
-    def get_users_from_ldap(self, school, users):
+    def get_users_from_ldap(self, school, users):  # type: (str, List[str]) -> List[str]
         ldap_user_list = []
         if users:
             for user_dn in users:
@@ -169,7 +175,7 @@ class UserCheck(object):
 
         return ldap_user_list
 
-    def check_user(self, dn, attrs):
+    def check_user(self, dn, attrs):  # type: (str, Dict[str, Any]) -> List[str]
         issues = []
 
         try:
@@ -281,7 +287,7 @@ class UserCheck(object):
         return issues
 
 
-def check_mandatory_groups_exist(school=None):
+def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[str]]
     ucr = ConfigRegistry()
     ucr.load()
     ldap_base = ucr.get("ldap/base")
@@ -336,7 +342,7 @@ def check_mandatory_groups_exist(school=None):
     return problematic_objects
 
 
-def check_containers(school=None):
+def check_containers(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     problematic_objects = {}
 
     lo, _ = getMachineConnection()
@@ -375,7 +381,7 @@ def check_containers(school=None):
     return problematic_objects
 
 
-def check_shares(school=None):
+def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     ucr = ConfigRegistry()
     ucr.load()
 
@@ -432,7 +438,7 @@ def check_shares(school=None):
     return problematic_objects
 
 
-def check_server_group_membership(school=None):
+def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     def server_in_group_errors(lo, role, members, group_dn):
         problematic_objects = {}
         for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role)):
@@ -517,9 +523,10 @@ def check_server_group_membership(school=None):
 
 
 def check_all(school=None, user_dn=None):
+    # type: (Optional[str], Optional[str]) ->  Dict[str, Dict[str, List[str]]]
     user_check = UserCheck()
     users_from_ldap = user_check.get_users_from_ldap(school, user_dn)
-    user_problematic_objects = {}
+    user_problematic_objects = {}  # type: Dict[str, List[str]]
     for dn, attrs in users_from_ldap:
         user_issues = user_check.check_user(dn, attrs)
         if user_issues:

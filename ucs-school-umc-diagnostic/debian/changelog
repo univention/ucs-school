@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-19) unstable; urgency=low
+
+  * Bug #52147: add constistency checks
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 22 Mar 2021 12:41:59 +0100
+
 ucs-school-umc-diagnostic (1.0.0-18) unstable; urgency=medium
 
   * Bug #51886: fixed diagnostic module 905_ucsschool_check_backend
