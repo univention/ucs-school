@@ -1,9 +1,9 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.users validation
-## roles: [domaincontroller_master]
+## roles: []
 ## tags: [apptest,ucsschool,ucsschool_import1,unit-test]
-## exposure: dangerous
+## exposure: safe
 ## packages:
 ##   - python-ucs-school
 
