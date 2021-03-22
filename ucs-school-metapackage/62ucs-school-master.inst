@@ -185,7 +185,9 @@ fi
 
 # Bug #52970: add 'school_admin' role to user 'demo_admin' (missing prior to 4.4 v9)
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
-	if ! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'; then
+	if univention-ldapsearch -LLL uid=demo_admin dn | grep -q 'uid=demo_admin' && \
+	  ! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
+  then
 		udm users/user modify "$@" \
 			--dn "uid=demo_admin,cn=lehrer,cn=users,ou=DEMOSCHOOL,$ldap_base" \
 			--append "ucsschoolRole=school_admin:school:DEMOSCHOOL" || die
