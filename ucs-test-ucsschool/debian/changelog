@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.199) unstable; urgency=low
+
+  * Bug #52880: add test for school admins and group prefixes
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 22 Mar 2021 13:22:48 +0100
+
 ucs-test-ucsschool (6.0.198) unstable; urgency=low
 
   * Bug #52500: test consistency scrip

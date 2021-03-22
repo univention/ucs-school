@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.15) unstable; urgency=low
+
+  * Bug #52880: honor group prefixes in validation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 22 Mar 2021 13:21:52 +0100
+
 ucs-school-lib (12.2.14) unstable; urgency=low
 
   * Bug #52656: add consistency module
