@@ -13,7 +13,7 @@
 #
 
 try:
-    from typing import Dict, List, Tuple
+    from typing import Tuple
 except ImportError:
     pass
 
@@ -23,16 +23,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.models.utils import exec_cmd
-from ucsschool.lib.roles import (
-    create_ucsschool_role_string,
-    role_exam_user,
-    role_school_admin,
-    role_school_class,
-    role_school_class_share,
-    role_staff,
-    role_student,
-    role_teacher,
-)
+from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.udm import UDM
 
