@@ -27,7 +27,7 @@
 import pytest
 import requests
 
-import ucsschool.kelvin.constants
+# import ucsschool.kelvin.constants
 from ucsschool.kelvin.opa import OPAClient
 
 # pytestmark = pytest.mark.skipif(
