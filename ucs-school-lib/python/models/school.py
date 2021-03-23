@@ -33,6 +33,7 @@ import subprocess
 
 try:
     from typing import List
+    from .base import LoType
 except ImportError:
     pass
 
@@ -44,7 +45,7 @@ import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
-from univention.udm import UDM
+from univention.udm import UDM, NoObject as UdmNoObject
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -367,16 +368,22 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             return name
 
-    def get_administrative_server_names(self, lo):
+    def get_administrative_server_names(self, lo):  # type: (LoType) -> List[str]
         dn = self.get_administrative_group_name("administrative", ou_specific=True, as_dn=True)
         mod = UDM(lo).version(0).get("groups/group")
-        udm_obj = mod.get(dn)
+        try:
+            udm_obj = mod.get(dn)
+        except (noObject, UdmNoObject):
+            return []
         return udm_obj.props.hosts
 
-    def get_educational_server_names(self, lo):
+    def get_educational_server_names(self, lo):  # type: (LoType) -> List[str]
         dn = self.get_administrative_group_name("educational", ou_specific=True, as_dn=True)
         mod = UDM(lo).version(0).get("groups/group")
-        udm_obj = mod.get(dn)
+        try:
+            udm_obj = mod.get(dn)
+        except (noObject, UdmNoObject):
+            return []
         return udm_obj.props.hosts
 
     def add_host_to_dc_group(self, lo):
