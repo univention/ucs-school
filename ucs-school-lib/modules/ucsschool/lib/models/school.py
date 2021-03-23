@@ -557,7 +557,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		super(School, cls).invalidate_cache()
 		User._samba_home_path_cache.clear()
 
-	def call_hooks(self, udm: UDM, hook_time: str, func_name: str) -> bool:
+	async def call_hooks(self, udm: UDM, hook_time: str, func_name: str) -> bool:
 		"""
 		Runs PyHooks, then ucs-school-libs fork hooks.
 
@@ -569,16 +569,16 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		"""
 		if hook_time == "post":
 			lo, pos = get_admin_connection()
-			self.set_ucsschool_role(udm=udm, lo=lo)
-			self.create_market_place(udm)
-			self.create_dhcp_search_base(udm)
-			self.create_dhcp_dns_policy(udm=udm, lo=lo)
-			self.create_import_group(udm)
-			self.create_exam_group(udm)
+			await self.set_ucsschool_role(udm=udm, lo=lo)
+			await self.create_market_place(udm)
+			await self.create_dhcp_search_base(udm)
+			await self.create_dhcp_dns_policy(udm=udm, lo=lo)
+			await self.create_import_group(udm)
+			await self.create_exam_group(udm)
 
 		return await super(School, self).call_hooks(udm, hook_time, func_name)
 
-	def set_ucsschool_role(self, udm: UDM, lo: LoType) -> None:
+	async def set_ucsschool_role(self, udm: UDM, lo: LoType) -> None:
 		"""
 		Set the ucsschool role for the computer on which the
 		school is replicated.
@@ -626,7 +626,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 					await obj.modify(lo)
 					self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
 
-	def create_market_place(self, lo: UDM) -> None:
+	async def create_market_place(self, lo: UDM) -> None:
 		"""
 		Create a share object with the name `Marktplatz` for the school.
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
@@ -657,7 +657,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		else:
 			self.logger.warning("MarketplaceShare for {} exists already.".format(self.name))
 
-	def create_dhcp_search_base(self, lo: UDM) -> None:
+	async def create_dhcp_search_base(self, lo: UDM) -> None:
 		"""
 		Create the policies/registry ou-default-ucr-policy for the school,
 		add the dhcp-ou-dn to it an link to the school.
@@ -697,7 +697,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		await obj.save()
 		self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
 
-	def create_dhcp_dns_policy(self, lo: LoType, udm: UDM) -> None:
+	async def create_dhcp_dns_policy(self, lo: LoType, udm: UDM) -> None:
 		"""
 		Add a DHCPDNSPolicy for the school, append it to the respective
 		container/cn object and add domain_name and domain_name_servers
@@ -747,7 +747,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 			container.policies.append(dhcp_dns_policy_dn)
 			await container.save()
 
-	def create_import_group(self, lo: UDM) -> None:
+	async def create_import_group(self, lo: UDM) -> None:
 		"""
 		Create the OU-import-all group, which enables user to run
 		an import, add the UMC policy schoolimport-all to it
@@ -782,7 +782,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		)
 		await group.save()
 
-	def create_exam_group(self, lo: UDM) -> None:
+	async def create_exam_group(self, lo: UDM) -> None:
 		"""
 		Creates the exam users container cn=examusers and the
 		OU-specific group, e.g. DEMOSCHOOL-Klassenarbeit for the school.
