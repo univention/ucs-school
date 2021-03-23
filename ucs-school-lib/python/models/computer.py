@@ -83,14 +83,12 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
         return "cn=dc,cn=server,%s" % cls.get_search_base(school).computers
 
     @classmethod
-    def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolDC]
-        try:
-            univention_object_class = udm_obj["univentionObjectClass"]
-        except KeyError:
-            univention_object_class = None
-        if univention_object_class == "computers/domaincontroller_slave":
-            return SchoolDCSlave
-        return cls
+    def get_class_for_udm_obj(cls, udm_obj, school):
+        # type: (UdmObject, str) -> Optional[Type[SchoolDC]]
+        module_to_class = {
+            SchoolDCSlave.Meta.udm_module: SchoolDCSlave,
+        }
+        return module_to_class.get(udm_obj.module, cls)
 
 
 class SchoolDCSlave(RoleSupportMixin, SchoolDC):
@@ -360,16 +358,15 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     )
 
     @classmethod
-    def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
-        object_classes = set(key for key, val in udm_obj.options.items() if val is True)
-        if "univentionWindows" in object_classes:
-            return WindowsComputer
-        if "univentionMacOSClient" in object_classes:
-            return MacComputer
-        if "univentionCorporateClient" in object_classes:
-            return UCCComputer
-        if "univentionClient" in object_classes:
-            return IPComputer
+    def get_class_for_udm_obj(cls, udm_obj, school):
+        # type: (UdmObject, str) -> Optional[Type[SchoolComputer]]
+        module_to_class = {
+            IPComputer.Meta.udm_module: IPComputer,
+            MacComputer.Meta.udm_module: MacComputer,
+            UCCComputer.Meta.udm_module: UCCComputer,
+            WindowsComputer.Meta.udm_module: WindowsComputer,
+        }
+        return module_to_class.get(udm_obj.module)
 
     @classmethod
     def from_udm_obj(cls, udm_obj, school, lo):  # type: (UdmObject, str, LoType) -> SchoolComputer
