@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional, Set, Union
 
 import ldap
 from ldap.dn import escape_dn_chars
@@ -134,26 +134,26 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     "dc_name", "The educational DC for the school must not be a backup or master server"
                 )
 
-    def get_district(self):
+    def get_district(self) -> str:
         if ucr.is_true("ucsschool/ldap/district/enable"):
             return self.name[:2]
 
-    def get_own_container(self):
+    def get_own_container(self) -> str:
         district = self.get_district()
         if district:
             return "ou=%s,%s" % (escape_dn_chars(district), self.get_container())
         return self.get_container()
 
     @classmethod
-    def get_container(cls, school=None):
+    def get_container(cls, school: str = None) -> str:
         return ucr.get("ldap/base")
 
     @classmethod
-    def cn_name(cls, name, default):
+    def cn_name(cls, name: str, default: str) -> str:
         ucr_var = "ucsschool/ldap/default/container/%s" % name
         return ucr.get(ucr_var, default)
 
-    async def create_default_containers(self, lo):
+    async def create_default_containers(self, lo: UDM) -> None:
         cn_pupils = self.cn_name("pupils", "schueler")
         cn_teachers = self.cn_name("teachers", "lehrer")
         cn_admins = self.cn_name("admins", "admins")
@@ -177,7 +177,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             "share_path": ["shares", [cn_classes]],
         }
 
-        async def _add_container(name, last_dn, base_dn, path, lo):
+        async def _add_container(name: str, last_dn: str, base_dn: str, path: str, lo: UDM) -> str:
             if isinstance(name, (list, tuple)):
                 base_dn = last_dn
                 for cn in name:
@@ -201,20 +201,20 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             for cn in containers:
                 last_dn = await _add_container(cn, last_dn, self.dn, path, lo)
 
-    def group_name(self, prefix_var, default_prefix):
+    def group_name(self, prefix_var: str, default_prefix: str) -> str:
         ucr_var = "ucsschool/ldap/default/groupprefix/%s" % prefix_var
         name_part = ucr.get(ucr_var, default_prefix)
         school_part = self.name.lower()
         return "%s%s" % (name_part, school_part)
 
-    def get_umc_policy_dn(self, name):
+    def get_umc_policy_dn(self, name: str) -> str:
         # at least the default ones should exist due to the join script
         return ucr.get(
             "ucsschool/ldap/default/policy/umc/%s" % name,
             "cn=ucsschool-umc-%s-default,cn=UMC,cn=policies,%s" % (name, ucr.get("ldap/base")),
         )
 
-    async def create_default_groups(self, lo):
+    async def create_default_groups(self, lo: UDM) -> None:
         # DC groups
         administrative_group_container = "cn=ucsschool,cn=groups,%s" % ucr.get("ldap/base")
 
@@ -289,7 +289,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),), lo
             )
 
-    def get_dc_name_fallback(self, administrative=False):
+    def get_dc_name_fallback(self, administrative: bool = False) -> str:
         if administrative:
             # this is the naming convention, a trailing v for Verwaltungsnetz DC
             # convention changed with Bug #51274
@@ -297,7 +297,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             return "dc%s" % self.name.lower()
 
-    def get_dc_name(self, administrative=False):
+    def get_dc_name(self, administrative: bool = False) -> str:
         if ucr.is_true("ucsschool/singlemaster", False):
             return ucr.get("hostname")
         elif self.dc_name:
@@ -308,7 +308,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             return self.get_dc_name_fallback(administrative=administrative)
 
-    async def get_share_fileserver_dn(self, set_by_self, lo):
+    async def get_share_fileserver_dn(self, set_by_self: str, lo: UDM) -> str:
         if set_by_self:
             set_by_self = self.get_name_from_dn(set_by_self) or set_by_self
         hostname = set_by_self or self.get_dc_name()
@@ -328,15 +328,15 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             )
             return ucr.get("ldap/hostdn")
 
-    async def get_class_share_file_server(self, lo):
+    async def get_class_share_file_server(self, lo: UDM) -> str:
         return await self.get_share_fileserver_dn(self.class_share_file_server, lo)
 
-    async def get_home_share_file_server(self, lo):
+    async def get_home_share_file_server(self, lo: UDM) -> str:
         return await self.get_share_fileserver_dn(self.home_share_file_server, lo)
 
     def get_administrative_group_name(
-        self, group_type, domain_controller=True, ou_specific=False, as_dn=False
-    ):
+        self, group_type: str, domain_controller: bool = True, ou_specific: bool = False, as_dn: bool = False
+    ) -> Union[str, List[str]]:
         if domain_controller == "both":
             return flatten(
                 [
@@ -366,19 +366,19 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             return name
 
-    async def get_administrative_server_names(self, lo: UDM):
+    async def get_administrative_server_names(self, lo: UDM) -> List[str]:
         dn = self.get_administrative_group_name("administrative", ou_specific=True, as_dn=True)
         mod = lo.get("groups/group")
         udm_obj = await mod.get(dn)
         return udm_obj.props.hosts
 
-    async def get_educational_server_names(self, lo: UDM):
+    async def get_educational_server_names(self, lo: UDM) -> List[str]:
         dn = self.get_administrative_group_name("educational", ou_specific=True, as_dn=True)
         mod = lo.get("groups/group")
         udm_obj = await mod.get(dn)
         return udm_obj.props.hosts
 
-    async def add_host_to_dc_group(self, lo: UDM):
+    async def add_host_to_dc_group(self, lo: UDM) -> None:
         self.logger.info(
             "School.add_host_to_dc_group(): ou_name=%r  dc_name=%r", self.name, self.dc_name
         )
@@ -434,10 +434,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     dc_udm_obj.props.groups.append(grp)
             await dc_udm_obj.save()
 
-    def shall_create_administrative_objects(self):
+    def shall_create_administrative_objects(self) -> bool:
         return ucr.is_true("ucsschool/ldap/noneducational/create/objects", True)
 
-    async def create_dc_slave(self, lo, name, administrative=False):
+    async def create_dc_slave(self, lo: UDM, name: str, administrative: bool = False) -> bool:
         if administrative and not self.shall_create_administrative_objects():
             self.logger.warning(
                 "Not creating %s: An administrative DC shall not be created as by UCR variable %r",
@@ -475,7 +475,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 return False
             return await dc.create(lo)
 
-    async def add_domain_controllers(self, lo):
+    async def add_domain_controllers(self, lo: UDM) -> Optional[bool]:
         self.logger.info("School.add_domain_controllers(): ou_name=%r", self.name)
         school_dcs = ucr.get("ucsschool/ldap/default/dcs", "edukativ").split()
         for dc in school_dcs:
@@ -518,12 +518,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             await dhcp_service.add_server(dc_name, lo)
             return True
 
-    def get_dhcp_service(self, hostname=None):
+    def get_dhcp_service(self, hostname: str = None) -> DHCPService:
         return DHCPService.cache(
             self.name.lower(), self.name, hostname=hostname, domainname=ucr.get("domainname")
         )
 
-    async def create_without_hooks(self, lo, validate):
+    async def create_without_hooks(self, lo: UDM, validate: bool) -> bool:
         district = self.get_district()
         if district:
             ou = OU(name=district)
@@ -595,7 +595,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         return success
 
-    async def remove_without_hooks(self, lo):
+    async def remove_without_hooks(self, lo: UDM) -> bool:
         from ucsschool.lib.models.user import User
 
         success = super(School, self).remove_without_hooks(lo)
@@ -614,10 +614,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             user.remove_from_school(self.name, lo)
         return success
 
-    def get_schools(self):
+    def get_schools(self) -> Set[str]:
         return {self.name}
 
-    def _remove_udm_object(self, module, dn, lo, raise_exceptions=False):
+    def _remove_udm_object(self, module: str, dn: str, lo: UDM, raise_exceptions: bool = False) -> str:
         """
         Tries to remove UDM object specified by given dn.
         Return None on success or error message.
@@ -640,7 +640,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.logger.error(msg)
         return msg
 
-    async def _alter_udm_obj(self, udm_obj):
+    async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
         udm_obj.options["UCSschool-School-OU"] = True
         return await super(School, self)._alter_udm_obj(udm_obj)
 
@@ -682,7 +682,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return await School.get_all(lo)
 
     @classmethod
-    async def from_udm_obj(cls, udm_obj, school, lo):
+    async def from_udm_obj(cls, udm_obj: UdmObject, school: str, lo: UDM) -> "School":
         obj = await super(School, cls).from_udm_obj(udm_obj, school, lo)
         obj.educational_servers = await obj.get_educational_server_names(lo)
         obj.administrative_servers = await obj.get_administrative_server_names(lo)
@@ -765,7 +765,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         return await super(School, self).call_hooks(udm, hook_time, func_name)
 
-    async def set_ucsschool_role_for_dc(self, udm: UDM, lo: LoType) -> None:
+    async def set_ucsschool_role_for_dc(self, udm: UDM) -> None:
         """
         Set the ucsschool role for the computer on which the
         school is replicated.
@@ -884,7 +884,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         await obj.save()
         self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
 
-    async def create_dhcp_dns_policy(self, lo: LoType, udm: UDM) -> None:
+    async def create_dhcp_dns_policy(self, udm: UDM) -> None:
         """
         Add a DHCPDNSPolicy for the school, append it to the respective
         container/cn object and add domain_name and domain_name_servers
