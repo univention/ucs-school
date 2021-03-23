@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.16A~4.4.0.202103230924
+fix: 12.2.17A~4.4.0.202103231509
 desc: |
   * Allow to disable the logging of validation errors upon validation of UCS@school objects: use the UCR variable <envar>validation/logging/enabled</envar> to control this (Bug #52884).
   * Code for checking the consistency of UCS@school objects has been added (Bug #52147).
