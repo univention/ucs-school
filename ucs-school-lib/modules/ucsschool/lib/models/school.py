@@ -569,8 +569,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 		"""
 		if hook_time == "post":
 			lo, pos = get_admin_connection()
-			await self.set_ucsschool_role(udm=udm, lo=lo)
-			await self.create_market_place(udm)
+			await self.set_ucsschool_role_for_dc(udm=udm, lo=lo)
+			await self.create_market_place_share(udm)
 			await self.create_dhcp_search_base(udm)
 			await self.create_dhcp_dns_policy(udm=udm, lo=lo)
 			await self.create_import_group(udm)
@@ -578,7 +578,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
 		return await super(School, self).call_hooks(udm, hook_time, func_name)
 
-	async def set_ucsschool_role(self, udm: UDM, lo: LoType) -> None:
+	async def set_ucsschool_role_for_dc(self, udm: UDM, lo: LoType) -> None:
 		"""
 		Set the ucsschool role for the computer on which the
 		school is replicated.
@@ -626,7 +626,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 					await obj.modify(lo)
 					self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
 
-	async def create_market_place(self, lo: UDM) -> None:
+	async def create_market_place_share(self, lo: UDM) -> None:
 		"""
 		Create a share object with the name `Marktplatz` for the school.
 		formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
