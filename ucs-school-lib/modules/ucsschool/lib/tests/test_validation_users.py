@@ -24,7 +24,7 @@ import pytest
 from faker import Faker
 
 from ucsschool.lib.models import validator as validator
-from ucsschool.lib.models.utils import ucr, ucr as lib_ucr  # 'ucr' already exists as fixture
+from ucsschool.lib.models.utils import ucr as lib_ucr  # 'ucr' already exists as fixture
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
     ExamStudentValidator,
@@ -419,7 +419,7 @@ def test_altered_group_prefix(
     Changing the group prefix should not produce validation errors (Bug 52880)
     """
     ucr_variable = "ucsschool/ldap/default/groupprefix/{}".format(role)
-    ucr_value_before = ucr.get(ucr_variable, ucr_default)
+    ucr_value_before = lib_ucr.get(ucr_variable, ucr_default)
     try:
         new_value = random_first_name()
         handler_set(["{}={}".format(ucr_variable, new_value)])
@@ -677,6 +677,7 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
     assert "{}".format(dict_obj) not in public_logs
 
 
+@must_run_in_container
 @pytest.mark.parametrize(
     "logging_enabled",
     ["yes", "no", "unset", ""],
@@ -693,12 +694,11 @@ def test_validation_log_enabled(caplog, random_logger, random_user_name, logging
 
     varname = "ucsschool/validation/logging/enabled"
     # we need to restore the old value later on
-    ucr_value_before = ucr.get(varname, "yes")
+    ucr_value_before = lib_ucr.get(varname, "yes")
     try:
-        ucr.update({varname: logging_enabled})
         if logging_enabled == "unset":
             handler_unset([varname])
-            ucr.load()  # this seems to be necessary, otherwise ucr.get will return "unset"
+            lib_ucr.load()  # this seems to be necessary, otherwise ucr.get will return "unset"
         else:
             handler_set(["{}={}".format(varname, logging_enabled)])
 
