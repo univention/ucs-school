@@ -41,63 +41,63 @@ test_kelvin_admin_access {
 	not roles == true with actor as test_actor
 }
 
-test_list_self {
-	valid_request := {
-		"method": "GET",
-		"path": ["users", "demo_user"],
-	}
-
-	invalid_request := {
-		"method": "GET",
-		"path": ["users", "other_user"],
-	}
-
-	users with actor as demo_user with input.request as valid_request
-	not users with actor as demo_user with input.request as invalid_request
-}
-
-test_pw_reset_self {
-	valid_request := {
-		"method": "PATCH",
-		"data": {"password": "s3cRE1"},
-	}
-
-	invalid_request := {
-		"method": "PATCH",
-		"data": {"password": "s3cRE1", "other_field": "value"},
-	}
-
-	users with actor as demo_user with input.request as valid_request with input.target as demo_user
-	not users with actor as demo_user with input.request as valid_request
-		 with input.target as {"username": "other"}
-
-	not users with actor as demo_user with input.request as invalid_request
-		 with input.target as demo_user
-}
-
-test_list_filtering {
-	request_teacher := {
-		"method": "GET",
-		"data": [
-			{
-				"username": "1",
-				"schools": ["demo1"],
-				"roles": ["student:school:demo1"],
-			},
-			{
-				"username": "2",
-				"schools": ["demo2"],
-				"roles": ["student:school:demo2"],
-			},
-			{
-				"username": "3",
-				"schools": ["demo1"],
-				"roles": ["teacher:school:demo1"],
-			},
-			demo_teacher,
-		],
-	}
-
-	result := allowed_users_list with actor as demo_teacher with input.request as request_teacher
-	result == {"1", "demo_teacher"}
-}
+#test_list_self {
+#	valid_request := {
+#		"method": "GET",
+#		"path": ["users", "demo_user"],
+#	}
+#
+#	invalid_request := {
+#		"method": "GET",
+#		"path": ["users", "other_user"],
+#	}
+#
+#	users with actor as demo_user with input.request as valid_request
+#	not users with actor as demo_user with input.request as invalid_request
+#}
+#
+#test_pw_reset_self {
+#	valid_request := {
+#		"method": "PATCH",
+#		"data": {"password": "s3cRE1"},
+#	}
+#
+#	invalid_request := {
+#		"method": "PATCH",
+#		"data": {"password": "s3cRE1", "other_field": "value"},
+#	}
+#
+#	users with actor as demo_user with input.request as valid_request with input.target as demo_user
+#	not users with actor as demo_user with input.request as valid_request
+#		 with input.target as {"username": "other"}
+#
+#	not users with actor as demo_user with input.request as invalid_request
+#		 with input.target as demo_user
+#}
+#
+#test_list_filtering {
+#	request_teacher := {
+#		"method": "GET",
+#		"data": [
+#			{
+#				"username": "1",
+#				"schools": ["demo1"],
+#				"roles": ["student:school:demo1"],
+#			},
+#			{
+#				"username": "2",
+#				"schools": ["demo2"],
+#				"roles": ["student:school:demo2"],
+#			},
+#			{
+#				"username": "3",
+#				"schools": ["demo1"],
+#				"roles": ["teacher:school:demo1"],
+#			},
+#			demo_teacher,
+#		],
+#	}
+#
+#	result := allowed_users_list with actor as demo_teacher with input.request as request_teacher
+#	result == {"1", "demo_teacher"}
+#}

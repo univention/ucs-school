@@ -30,10 +30,12 @@ import requests
 import ucsschool.kelvin.constants
 from ucsschool.kelvin.opa import OPAClient
 
-pytestmark = pytest.mark.skipif(
-    not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
-    reason="Must run inside Docker container started by appcenter.",
-)
+# pytestmark = pytest.mark.skipif(
+#     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
+#     reason="Must run inside Docker container started by appcenter.",
+# )
+
+pytestmark = pytest.mark.skipif(True, reason="OPA disabled for now")
 
 
 @pytest.mark.asyncio

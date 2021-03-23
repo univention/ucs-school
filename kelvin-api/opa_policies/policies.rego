@@ -25,65 +25,65 @@ roles {
 	actor.kelvin_admin
 }
 
-allowed_users_list[user.username] {
-	actor.kelvin_admin
-	user := input.request.data[_]
-}
-
-# Allow any user to retrieve information about herself
-users {
-	input.request.method == "GET"
-	input.request.path[1] == actor.username
-}
-
-# Allow any user to reset his or her own password
-users {
-	input.request.method == "PATCH"
-	input.request.data.password
-	count(input.request.data) == 1
-	input.target.username == actor.username
-}
-
-# This rule allows the subject to reset the password of any user if they share at least one school
-# and the subject has a role in that school that contains the capability password_reset_$ROLENAME
-# where $ROLENAME is a role the listed user has in the shared school.
-users {
-	input.request.method == "PATCH"
-	input.request.data.password
-	count(input.request.data) == 1
-	target_school := input.target.schools[_]
-	actor_school := actor.schools[_]
-	role_capability_mapping[role_name]
-
-	target_school == actor_school
-	has_capability_in_school(actor, sprintf("password_reset_%v", [role_name]), actor_school)
-	has_role_in_school(input.target, role_name, target_school)
-}
-
-# This rule returns the usernames of all users the subject shares at least one school with
-# and the subject has a role in that school that contains the capability list_$ROLENAME
-# where $ROLENAME is a role the listed user has in the shared school.
+#allowed_users_list[user.username] {
+#	actor.kelvin_admin
+#	user := input.request.data[_]
+#}
 #
-# This rule expects a list of objects to be supplied in the input.object
-allowed_users_list[user.username] {
-	# Vardefs
-	user := input.request.data[_]
-	user_school := user.schools[_]
-	actor_school := actor.schools[_]
-	role_capability_mapping[role_name]
-
-	# Constraints
-	user_school == actor_school
-	has_capability_in_school(actor, sprintf("list_%v", [role_name]), actor_school)
-	has_role_in_school(user, role_name, user_school)
-}
-
-# This rule ensures that the actor itself is always part of the listing,
-# if he is included in request.data
-allowed_users_list[user.username] {
-	user := input.request.data[_]
-	actor.username == user.username
-}
+## Allow any user to retrieve information about herself
+#users {
+#	input.request.method == "GET"
+#	input.request.path[1] == actor.username
+#}
+#
+## Allow any user to reset his or her own password
+#users {
+#	input.request.method == "PATCH"
+#	input.request.data.password
+#	count(input.request.data) == 1
+#	input.target.username == actor.username
+#}
+#
+## This rule allows the subject to reset the password of any user if they share at least one school
+## and the subject has a role in that school that contains the capability password_reset_$ROLENAME
+## where $ROLENAME is a role the listed user has in the shared school.
+#users {
+#	input.request.method == "PATCH"
+#	input.request.data.password
+#	count(input.request.data) == 1
+#	target_school := input.target.schools[_]
+#	actor_school := actor.schools[_]
+#	role_capability_mapping[role_name]
+#
+#	target_school == actor_school
+#	has_capability_in_school(actor, sprintf("password_reset_%v", [role_name]), actor_school)
+#	has_role_in_school(input.target, role_name, target_school)
+#}
+#
+## This rule returns the usernames of all users the subject shares at least one school with
+## and the subject has a role in that school that contains the capability list_$ROLENAME
+## where $ROLENAME is a role the listed user has in the shared school.
+##
+## This rule expects a list of objects to be supplied in the input.object
+#allowed_users_list[user.username] {
+#	# Vardefs
+#	user := input.request.data[_]
+#	user_school := user.schools[_]
+#	actor_school := actor.schools[_]
+#	role_capability_mapping[role_name]
+#
+#	# Constraints
+#	user_school == actor_school
+#	has_capability_in_school(actor, sprintf("list_%v", [role_name]), actor_school)
+#	has_role_in_school(user, role_name, user_school)
+#}
+#
+## This rule ensures that the actor itself is always part of the listing,
+## if he is included in request.data
+#allowed_users_list[user.username] {
+#	user := input.request.data[_]
+#	actor.username == user.username
+#}
 
 actor := token.payload.sub
 
