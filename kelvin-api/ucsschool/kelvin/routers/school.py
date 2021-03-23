@@ -31,8 +31,11 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from ldap.filter import escape_filter_chars
+from pydantic import validator
 
+from ucsschool.lib.create_ou import create_ou
 from ucsschool.lib.models.school import School
+from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
 
 from ..opa import OPAClient
@@ -47,6 +50,9 @@ def get_logger() -> logging.Logger:
     return logging.getLogger(__name__)
 
 
+# not subclassing 'UcsSchoolBaseModel' because that has a 'school' attribute
+
+
 class SchoolCreateModel(LibModelHelperMixin):
     name: str
     display_name: str = None
@@ -56,10 +62,16 @@ class SchoolCreateModel(LibModelHelperMixin):
     dc_name_administrative: str = None
     educational_servers: List[str] = []
     home_share_file_server: str = None
-    ucsschool_roles: List[str] = []
 
     class Config(LibModelHelperMixin.Config):
         lib_class = School
+
+    @validator("name", check_fields=False)
+    def check_name(cls, value: str) -> str:
+        cls.Config.lib_class.name.validate(value)
+        return value
+
+    # TODO: validate all attributes
 
 
 class SchoolModel(SchoolCreateModel, APIAttributesMixin):
@@ -162,11 +174,54 @@ async def get(
     return await SchoolModel.from_lib_model(school, request, udm)
 
 
-# @router.post("/", status_code=HTTP_201_CREATED, response_model=SchoolModel)
-# async def create(school: SchoolCreateModel) -> SchoolModel:
-#     """
-#     **Not implemented yet!**
-#     """
-#     raise HTTPException(
-#         status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail="NotImplementedError"
-#     )
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolModel)
+async def create(
+    school: SchoolCreateModel,
+    request: Request,
+    alter_dhcpd_base: Optional[bool] = None,
+    udm: UDM = Depends(udm_ctx),
+    logger: logging.Logger = Depends(get_logger),
+    token: str = Depends(oauth2_scheme),
+) -> SchoolModel:
+    """
+    Create a school (OU) with all the information:
+
+    - **name**: name of the school class (**required**)
+    - **display_name**: full name (**required**)
+    - **dc_name**: host name of educational DC (optional)
+    - **dc_name_administrative**: host name of administrative DC (optional)
+    - **class_share_file_server**: host name of domain controller for the class shares (optional)
+    - **home_share_file_server**: host name of domain controller for the home shares (optional)
+    """
+    if not await OPAClient.instance().check_policy_true(
+        policy="schools",
+        token=token,
+        request=dict(method="POST", path=["schools"]),
+        target={},
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to create schools.",
+        )
+    school_obj: School = await school.as_lib_model(request)
+    if await school_obj.exists(udm):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="School exists.")
+    try:
+        await create_ou(
+            ou_name=school.name,
+            display_name=school.display_name,
+            edu_name=school.dc_name,
+            admin_name=school.dc_name_administrative,
+            share_name=school.home_share_file_server or school.class_share_file_server,
+            lo=udm,
+            baseDN=env_or_ucr("ldap/base"),
+            hostname=env_or_ucr("ldap/master"),
+            is_single_master=env_or_ucr("ucsschool/singlemaster"),
+            alter_dhcpd_base=alter_dhcpd_base,
+        )
+    except Exception as exc:
+        error_msg = f"Failed to create school {school_obj.name!r}: {exc}"
+        logger.exception(error_msg)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
+    school_obj = await School.from_dn(school_obj.dn, school_obj.name, udm)
+    return await SchoolModel.from_lib_model(school_obj, request, udm)

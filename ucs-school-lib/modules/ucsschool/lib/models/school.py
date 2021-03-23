@@ -35,7 +35,9 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
-from udm_rest_client import UDM, CreateError, NoObject as UdmNoObject, UdmObject
+from udm_rest_client import UDM, CreateError
+from udm_rest_client import NoObject as UdmNoObject
+from udm_rest_client import UdmObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
@@ -331,7 +333,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return await self.get_share_fileserver_dn(self.home_share_file_server, lo)
 
     def get_administrative_group_name(
-        self, group_type: str, domain_controller: bool = True, ou_specific: bool = False, as_dn: bool = False
+        self,
+        group_type: str,
+        domain_controller: bool = True,
+        ou_specific: bool = False,
+        as_dn: bool = False,
     ) -> Union[str, List[str]]:
         if domain_controller == "both":
             return flatten(
@@ -792,7 +798,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             ]:
                 groups = [grp async for grp in udm.get("groups/group").search(ldap_filter, base=base)]
                 if groups:
-                    server_dn: str = groups[0].props.hosts[0]
+                    try:
+                        server_dn: str = groups[0].props.hosts[0]
+                    except IndexError:
+                        continue
                     try:
                         await udm.get("computers/domaincontroller_slave").get(server_dn)
                     except UdmNoObject:

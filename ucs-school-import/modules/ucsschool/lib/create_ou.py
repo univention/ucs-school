@@ -41,7 +41,6 @@ from ldap.filter import filter_format
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 from udm_rest_client import UDM
-from univention.admin.uldap import getAdminConnection
 
 MAX_HOSTNAME_LENGTH = 13
 
@@ -56,7 +55,7 @@ async def create_ou(
     baseDN: str,
     hostname: str,
     is_single_master: bool,
-    alter_dhcpd_base: bool = None,
+    alter_dhcpd_base: bool,
 ):
     """
     Create a ucsschool OU.
