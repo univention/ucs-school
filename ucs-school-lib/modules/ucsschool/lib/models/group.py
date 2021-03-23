@@ -150,7 +150,7 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 "Object to be referenced does not exist (or is no UMC-Policy): %s", policy_dn
             )
         else:
-            policy.attach(self, lo)
+            await policy.attach(self, lo)
 
     class Meta:
         udm_module = "groups/group"
