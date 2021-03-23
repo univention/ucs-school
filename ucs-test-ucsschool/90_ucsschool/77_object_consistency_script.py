@@ -137,7 +137,6 @@ def test_wrong_school_role_for_each_school(schoolenv, ucr_hostname, udm_instance
     stdout, stderr = exec_script(None)
     expected_error = "User does not have UCS@School Role {}:school".format("student")
     assert_error_msg_in_script_output(stdout, student_dn, expected_error)
-    assert_error_msg_in_script_output(stdout, student_dn, expected_error)
 
 
 def input_ids_wrong_group_membership(role_and_container):  # type: (Tuple[str, str, str]) -> str
@@ -198,9 +197,7 @@ def test_not_existing_mandatory_group(udm_instance, ucr_hostname, group, create_
     obj.delete()
 
     stdout, stderr = exec_script(ou_name)
-    for entry in stdout.split("\n\n"):
-        if group_dn in entry:
-            assert "Mandatory group {}".format(expected_error) in entry
+    assert_error_msg_in_script_output(stdout, group_dn, expected_error)
 
 
 def input_ids_not_existing_mandatory_container(containers):  # type: (Tuple[str, str]) -> str

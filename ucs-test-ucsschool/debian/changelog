@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.200) unstable; urgency=medium
+
+  * Bug #52147: fix test_not_existing_mandatory_group
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 23 Mar 2021 14:54:41 +0100
+
 ucs-test-ucsschool (6.0.199) unstable; urgency=low
 
   * Bug #52880: add test for school admins and group prefixes

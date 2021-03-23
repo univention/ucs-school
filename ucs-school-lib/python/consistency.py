@@ -41,9 +41,10 @@ try:
 except ImportError:
     pass
 
-from ldap import INVALID_DN_SYNTAX, NO_SUCH_OBJECT
+from ldap import INVALID_DN_SYNTAX
 from ldap.filter import filter_format
 
+from univention.admin.uexceptions import noObject
 from univention.admin.uldap import getMachineConnection
 from univention.config_registry import ConfigRegistry
 
@@ -150,7 +151,7 @@ class UserCheck(object):
             for user_dn in users:
                 try:
                     ldap_user_list.append(self.lo.search(base=user_dn)[0])
-                except NO_SUCH_OBJECT:
+                except noObject:
                     print("User with DN {} does not exist.".format(user_dn))
                     sys.exit()
                 except INVALID_DN_SYNTAX:
@@ -307,7 +308,7 @@ def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[
     for mandatory_global_group in mandatory_global_groups:
         try:
             lo.searchDn(base=mandatory_global_group)
-        except NO_SUCH_OBJECT:
+        except noObject:
             global_groups_issues.append(
                 "Mandatory group {} does not exist.".format(mandatory_global_group)
             )
@@ -334,7 +335,7 @@ def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[
         for mandatory_group in mandatory_groups:
             try:
                 lo.searchDn(base=mandatory_group)
-            except NO_SUCH_OBJECT:
+            except noObject:
                 issues.append("Mandatory group {} does not exist.".format(mandatory_group))
 
         if issues:
@@ -373,7 +374,7 @@ def check_containers(school=None):  # type: (Optional[str]) -> Dict[str, List[st
         for mandatory_container in mandatory_containers:
             try:
                 lo.searchDn(base=mandatory_container)
-            except NO_SUCH_OBJECT:
+            except noObject:
                 issues.append("Mandatory container {} does not exist.".format(mandatory_container))
 
         if issues:
@@ -402,7 +403,7 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
             marktplatz_share = "cn=Marktplatz,cn=shares,{}".format(search_base.schoolDN)
             try:
                 lo.search(base=marktplatz_share)
-            except NO_SUCH_OBJECT:
+            except noObject:
                 problematic_objects.setdefault(marktplatz_share, []).append(
                     "The 'Marktplatz' share of school %r does not exist." % (ou,)
                 )
@@ -473,7 +474,7 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
         except KeyError:
             members[dn] = ""
             continue
-        except NO_SUCH_OBJECT:
+        except noObject:
             problematic_objects.setdefault(dn, []).append(
                 "Memberships of group {} could not be checked. It does not exist.".format(dn)
             )
@@ -502,7 +503,7 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
                 members[group_dn] = lo.search(base=group_dn)[0][1]["uniqueMember"]
             except KeyError:
                 members[group_dn] = ""
-            except NO_SUCH_OBJECT:
+            except noObject:
                 problematic_objects.setdefault(dn, []).append(
                     "Memberships of group {} could not be checked. It does not exist".format(dn)
                 )
