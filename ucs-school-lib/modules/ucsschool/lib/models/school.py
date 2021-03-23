@@ -35,12 +35,11 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from udm_rest_client import UDM, CreateError, NoObject as UdmNoObject
+from udm_rest_client import UDM, CreateError, NoObject as UdmNoObject, UdmObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import access as LoType
 from univention.config_registry import handler_set
+from univention.config_registry.interfaces import Interfaces
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -52,6 +51,7 @@ from ..roles import (
     role_school_staff_group,
     role_school_student_group,
     role_school_teacher_group,
+    role_single_master,
     role_staff,
     role_student,
     role_teacher,
@@ -184,10 +184,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     last_dn = await _add_container(cn, last_dn, base_dn, path, lo)
             else:
                 container = Container(name=name, school=self.name)
-                # Bug 52952: set all attributes of container/cn objects
-                for attr, val in container._attributes.items():  # type: str, Attribute
-                    if attr.endswith("_path") and getattr(container, attr) is None:
-                        setattr(container, attr, False)
                 setattr(container, path, True)
                 container.position = base_dn
                 last_dn = container.dn
@@ -499,8 +495,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     administrative_type, ou_specific=True, as_dn=True
                 )
                 try:
-                    hostlist = lo.get(group_dn, ["uniqueMember"]).get("uniqueMember", [])
-                except ldap.NO_SUCH_OBJECT:
+                    group = await lo.get("groups/group").get(group_dn)
+                    hostlist = group.props.hosts
+                except UdmNoObject:
                     hostlist = []
                 except Exception as exc:
                     self.logger.error("cannot read %s: %s", group_dn, exc)
@@ -622,6 +619,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         Tries to remove UDM object specified by given dn.
         Return None on success or error message.
         """
+        raise NotImplementedError("Deletion of schools not yet implemented.")
         try:
             # TODO: use UDM instead of LDAP
             dn = lo.searchDn(base=dn)[0]
@@ -755,11 +753,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
         if hook_time == "post":
-            lo, pos = get_admin_connection()
-            await self.set_ucsschool_role_for_dc(udm=udm, lo=lo)
+            await self.set_ucsschool_role_for_dc(udm)
             await self.create_market_place_share(udm)
             await self.create_dhcp_search_base(udm)
-            await self.create_dhcp_dns_policy(udm=udm, lo=lo)
+            await self.create_dhcp_dns_policy(udm)
             await self.create_import_group(udm)
             await self.create_exam_group(udm)
 
@@ -767,8 +764,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     async def set_ucsschool_role_for_dc(self, udm: UDM) -> None:
         """
-        Set the ucsschool role for the computer on which the
-        school is replicated.
+        Set the ucsschool role for the computer on which the school is replicated.
         formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
         """
         ou_lower = self.name.lower()
@@ -776,7 +772,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if ucr.is_true("ucsschool/singlemaster", True):
             mod = udm.get("computers/domaincontroller_master")
             obj = await mod.get(ldap_hostdn)
-            role = "single_master:school:{}".format(self.name)
+            role = create_ucsschool_role_string(role_single_master, self.name)
             if role not in obj.props.ucsschoolRole:
                 obj.props.ucsschoolRole.append(role)
                 await obj.save()
@@ -794,11 +790,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 (adm_net_filter, "dc_slave_admin"),
                 (edu_net_filter, "dc_slave_edu"),
             ]:
-                res = lo.search(base=base, filter=ldap_filter, attr=["uniqueMember"])
-                if res:
-                    server_dn = res[0][1]["uniqueMember"][0]
-                    uot = lo.get(server_dn, attr=["univentionObjectType"])["univentionObjectType"][0]
-                    if uot != "computers/domaincontroller_slave":
+                groups = [grp async for grp in udm.get("groups/group").search(ldap_filter, base=base)]
+                if groups:
+                    server_dn: str = groups[0].props.hosts[0]
+                    try:
+                        await udm.get("computers/domaincontroller_slave").get(server_dn)
+                    except UdmNoObject:
                         self.logger.info(
                             "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
                                 server_dn
@@ -806,12 +803,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         )
                         continue
 
-                    obj = await SchoolDCSlave.from_dn(lo=lo, dn=server_dn, school=self.name)
-                    role = "{}:school:{}".format(role, self.name)
-                    if role in obj.ucsschool_roles:
-                        continue
-                    await obj.modify(lo)
-                    self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
+                    obj = await SchoolDCSlave.from_dn(server_dn, self.name, udm)
+                    ucsschool_role = create_ucsschool_role_string(role, self.name)
+                    if ucsschool_role not in obj.ucsschool_roles:
+                        obj.props.ucsschool_roles.append(ucsschool_role)
+                        await obj.modify(udm)
+                        self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
 
     async def create_market_place_share(self, lo: UDM) -> None:
         """
@@ -900,21 +897,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         ou = self.name
         ou_lower = ou.lower()
         #  Determine list of available OUs.
-        ous = lo.search(
-            base=ucr["ldap/base"],
-            filter="(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))".format(ou_lower),
-            attr=["dn"],
-        )
+        filter_s = filter_format("(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))", [ou_lower])
+        ou_dns = [obj.dn async for obj in udm.get(self.Meta.udm_module).search(filter_s)]
         dhcp_dns_mod = udm.get("policies/dhcp_dns")
-        for ou_dn, name in ous:
+        for ou_dn in ou_dns:
             policy = DHCPDNSPolicy(
                 name="dhcp-dns-{}".format(ou_lower),
                 school=ou,
                 empty_attributes=["univentionDhcpDomainNameServers"],
             )
-            if not await policy.exists(lo):
+            if not await policy.exists(udm):
                 policy.position = "cn=policies,{}".format(ou_dn)
-                await policy.create(lo)
+                await policy.create(udm)
             else:
                 self.logger.warning("DHCPDNSPolicy for {} exists already.".format(self.name))
 

@@ -32,7 +32,7 @@
 from udm_rest_client import UDM, CreateError
 from univention.admin.uldap import position as uldap_position
 
-from .attributes import ContainerPath
+from .attributes import Attribute, ContainerPath
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
@@ -89,3 +89,10 @@ class Container(OU):
 
     class Meta:
         udm_module = "container/cn"
+
+    def __init__(self, name: str = None, school: str = None, **kwargs) -> None:
+        super(Container, self).__init__(name, school, **kwargs)
+        # Bug 52952: set all attributes of container/cn objects
+        for attr, val in self._attributes.items():  # type: str, Attribute
+            if attr.endswith("_path") and getattr(self, attr) is None:
+                setattr(self, attr, False)
