@@ -390,6 +390,7 @@ def test_correct_object(caplog, dict_obj, random_logger):
     assert "{}".format(dict_obj) not in secret_logs
 
 
+@must_run_in_container
 @pytest.mark.parametrize(
     "user_generator,role,ucr_default",
     [
@@ -677,7 +678,6 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
     assert "{}".format(dict_obj) not in public_logs
 
 
-@must_run_in_container
 @pytest.mark.parametrize(
     "logging_enabled",
     ["yes", "no", "unset", ""],
