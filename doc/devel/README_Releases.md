@@ -44,6 +44,7 @@ univention-appcenter-control status ucsschool  # Determine component_id for next
 appcenter-modify-README -a ucsschool -r 4.4 -v "4.4 v9"
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
+cd git/ucsschool/doc/errata/staging
 copy_app_binaries -r 4.4 -v "4.2 v9" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
 univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
