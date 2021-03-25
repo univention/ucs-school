@@ -3,12 +3,20 @@ from pathlib import Path
 from typing import Set
 
 import pytest
+from ldap.filter import filter_format
 
 from ucsschool.kelvin.ldap_access import LDAPAccess
 from ucsschool.lib.create_ou import create_ou
+from ucsschool.lib.models.computer import SchoolDCSlave
 from ucsschool.lib.models.utils import env_or_ucr, exec_cmd, ucr
-from ucsschool.lib.roles import role_staff, role_student, role_teacher
-from udm_rest_client import UDM
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_single_master,
+    role_staff,
+    role_student,
+    role_teacher,
+)
+from udm_rest_client import UDM, NoObject as UdmNoObject
 
 
 def _inside_docker():
@@ -161,3 +169,43 @@ async def test_attached_policies(udm_kwargs):
         assert [ou] == udm_obj.props.ucsschoolImportSchool
         for role in [role_student, role_staff, "teacher_and_staff", role_teacher]:
             assert role in udm_obj.props.ucsschoolImportRole
+
+
+@pytest.mark.asyncio
+async def test_ucsschool_roles(udm_kwargs):
+    """
+    when creating schools, ucsschool roles should get appended to
+    the school server
+    """
+    async with UDM(**udm_kwargs) as udm:
+        ou_name = f"ou{random.randint(100, 999)}"  # nosec
+        await create_test_ou(ou_name, udm)
+        if ucr.is_true("ucsschool/singlemaster", True):
+            filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
+            mod = udm.get("computers/domaincontroller_master")
+            obj = [o async for o in mod.search(filter_s)][0]
+            ucsschool_role = create_ucsschool_role_string(role_single_master, ou_name)
+            assert ucsschool_role in obj.props.ucsschoolRole
+        else:
+            ou_lower = ou_name.lower()
+            adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
+            edu_net_filter = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
+            base = "cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"])
+            for ldap_filter, role in [
+                (adm_net_filter, "dc_slave_admin"),
+                (edu_net_filter, "dc_slave_edu"),
+            ]:
+                groups = [grp async for grp in udm.get("groups/group").search(ldap_filter, base=base)]
+                if groups:
+                    try:
+                        server_dn: str = groups[0].props.hosts[0]
+                    except IndexError:
+                        continue
+                    try:
+                        await udm.get("computers/domaincontroller_slave").get(server_dn)
+                    except UdmNoObject:
+                        assert True is False, "A DC slave was expected at {}".format(server_dn)
+
+                    obj = await SchoolDCSlave.from_dn(server_dn, ou_name, udm)
+                    ucsschool_role = create_ucsschool_role_string(role, ou_name)
+                    assert ucsschool_role in obj.ucsschool_roles
