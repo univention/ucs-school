@@ -29,6 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import socket
 from typing import Dict, Iterable, List, Optional, Set, Union
 
 import ldap
@@ -294,7 +295,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative: bool = False) -> str:
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("hostname")
+            return ucr.get("ldap/master")
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
@@ -476,11 +477,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     async def add_domain_controllers(self, lo: UDM) -> Optional[bool]:
         self.logger.info("School.add_domain_controllers(): ou_name=%r", self.name)
-        school_dcs = ucr.get("ucsschool/ldap/default/dcs").split() or "edukativ"
+        school_dcs = ucr.get("ucsschool/ldap/default/dcs", "").split() or "edukativ"
         for dc in school_dcs:
             administrative = dc == "verwaltung"
             dc_name = self.get_dc_name(administrative=administrative)
-            server = await AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(dc_name))
+            server = await AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", [dc_name]))
             self.logger.info(
                 "School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  "
                 "server=%r",
@@ -773,18 +774,20 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
         """
         ou_lower = self.name.lower()
-        ldap_hostdn = ucr["ldap/hostdn"]
         if ucr.is_true("ucsschool/singlemaster", True):
             mod = udm.get("computers/domaincontroller_master")
-            obj = await mod.get(ldap_hostdn)
+            # UDM computer object of master can be found with "cn={hostname}", using the hostname
+            # from its fqdn, which is in ucr["ldap/master"].
+            filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
+            obj = [o async for o in mod.search(filter_s)][0]
             role = create_ucsschool_role_string(role_single_master, self.name)
             if role not in obj.props.ucsschoolRole:
                 obj.props.ucsschoolRole.append(role)
                 await obj.save()
-                self.logger.info("Append ucsschoolRole {} to {}".format(role, ldap_hostdn))
+                self.logger.info("Append ucsschoolRole {} to {}".format(role, obj.dn))
             else:
                 self.logger.warning(
-                    "ucsschoolRole {} is already appended to {}".format(role, ldap_hostdn)
+                    "ucsschoolRole {} is already appended to {}".format(role, obj.dn)
                 )
         else:
             adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
@@ -921,12 +924,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
             dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn)
             # In a single server environment, the master is the DNS server.
-            if (
-                ucr.is_true("ucsschool/singlemaster", False)
-                and ucr.get("server/role") == "domaincontroller_master"
-            ):
+            if ucr.is_true("ucsschool/singlemaster", False):
                 policy = await dhcp_dns_mod.get(dhcp_dns_policy_dn)
-                policy.props.domain_name_servers = str(Interfaces().get_default_ip_address().ip)
+                policy.props.domain_name_servers = [socket.gethostbyname(ucr["ldap/master"])]
                 policy.props.domain_name = ucr["domainname"]
                 await policy.save()
 
