@@ -1,3 +1,10 @@
+ucs-school-metapackage (12.0.4-14) unstable; urgency=low
+
+  * Bug #52986: handle no OU "DEMOSCHOOL" and no user "demo_admin" for
+    singelmaster
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 25 Mar 2021 17:09:32 +0100
+
 ucs-school-metapackage (12.0.4-13) unstable; urgency=low
 
   * Bug #52970: handle no OU "DEMOSCHOOL" and no user "demo_admin"
