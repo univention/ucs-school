@@ -11,6 +11,20 @@ from ucsschool.lib.roles import role_staff, role_student, role_teacher
 from udm_rest_client import UDM
 
 
+def _inside_docker():
+    try:
+        import ucsschool.kelvin.constants
+    except ImportError:
+        return False
+    return ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists()
+
+
+pytestmark = pytest.mark.skipif(
+    not _inside_docker(),
+    reason="Must run inside Docker container started by appcenter.",
+)
+
+
 def create_school(host: str, ou_name: str):
     # todo refacture as fixture
     print(f"Creating school {ou_name!r} on host {host!r}...")
