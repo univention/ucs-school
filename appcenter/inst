@@ -33,7 +33,7 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=5
+VERSION=6
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
@@ -57,7 +57,15 @@ main () {
     ucsschool/singlemaster="$(ucr get ucsschool/singlemaster)" \
     ucsschool/import/set/serverprofile/path="$(ucr get ucsschool/import/set/serverprofile/path)" \
     ucsschool/validation/logging/backupcount="$(ucr get ucsschool/validation/logging/backupcount)" \
-    ucsschool/validation/logging/enabled="$(ucr get ucsschool/validation/logging/enabled)"
+    ucsschool/validation/logging/enabled="$(ucr get ucsschool/validation/logging/enabled)" \
+    ucsschool/import/generate/share/marktplatz="$(ucr get ucsschool/import/generate/share/marktplatz)" \
+    ucsschool/import/generate/policy/dhcp/searchbase="$(ucr get ucsschool/import/generate/policy/dhcp/searchbase)" \
+    ucsschool/import/generate/policy/dhcp/dns/set_per_ou="$(ucr get ucsschool/import/generate/policy/dhcp/dns/set_per_ou)" \
+    ucsschool/import/generate/import/group="$(ucr get ucsschool/import/generate/import/group)" \
+    ucsschool/ldap/default/container/exam="$(ucr get ucsschool/ldap/default/container/exam)" \
+    groups/default/domainusers="$(ucr get groups/default/domainusers)" \
+    ucsschool/ldap/default/dcs="$(ucr get ucsschool/ldap/default/dcs)" \
+    ucsschool/import/generate/policy/dhcp/dns/clearou="$(ucr get ucsschool/import/generate/policy/dhcp/dns/clearou)"
 
     if ! [ -e "$TOKEN_SIGN_SECRET_FILE" ]; then
         echo "Storing token key in $TOKEN_SIGN_SECRET_FILE."

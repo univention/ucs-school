@@ -142,4 +142,4 @@ def custom_groupname(name, configRegistryInstance=None):
         ucr = univention.config_registry.ConfigRegistry()
         ucr.load()
 
-    return ucr.get("groups/default/" + name.lower().replace(" ", ""), name)
+    return ucr.get("groups/default/" + name.lower().replace(" ", "")) or name

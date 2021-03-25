@@ -35,9 +35,7 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
 
-from udm_rest_client import UDM, CreateError
-from udm_rest_client import NoObject as UdmNoObject
-from udm_rest_client import UdmObject
+from udm_rest_client import UDM, CreateError, NoObject as UdmNoObject, UdmObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
@@ -153,7 +151,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     @classmethod
     def cn_name(cls, name: str, default: str) -> str:
         ucr_var = "ucsschool/ldap/default/container/%s" % name
-        return ucr.get(ucr_var, default)
+        return ucr.get(ucr_var) or default
 
     async def create_default_containers(self, lo: UDM) -> None:
         cn_pupils = self.cn_name("pupils", "schueler")
@@ -201,16 +199,15 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def group_name(self, prefix_var: str, default_prefix: str) -> str:
         ucr_var = "ucsschool/ldap/default/groupprefix/%s" % prefix_var
-        name_part = ucr.get(ucr_var, default_prefix)
+        name_part = ucr.get(ucr_var) or default_prefix
         school_part = self.name.lower()
         return "%s%s" % (name_part, school_part)
 
     def get_umc_policy_dn(self, name: str) -> str:
         # at least the default ones should exist due to the join script
         return ucr.get(
-            "ucsschool/ldap/default/policy/umc/%s" % name,
-            "cn=ucsschool-umc-%s-default,cn=UMC,cn=policies,%s" % (name, ucr.get("ldap/base")),
-        )
+            "ucsschool/ldap/default/policy/umc/%s" % name
+        ) or "cn=ucsschool-umc-%s-default,cn=UMC,cn=policies,%s" % (name, ucr.get("ldap/base"))
 
     async def create_default_groups(self, lo: UDM) -> None:
         # DC groups
@@ -479,7 +476,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     async def add_domain_controllers(self, lo: UDM) -> Optional[bool]:
         self.logger.info("School.add_domain_controllers(): ou_name=%r", self.name)
-        school_dcs = ucr.get("ucsschool/ldap/default/dcs", "edukativ").split()
+        school_dcs = ucr.get("ucsschool/ldap/default/dcs").split() or "edukativ"
         for dc in school_dcs:
             administrative = dc == "verwaltung"
             dc_name = self.get_dc_name(administrative=administrative)
@@ -758,13 +755,15 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         :return: return code of lib hooks
         :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
-        if hook_time == "post":
+        if func_name == "create" and hook_time == "post":
+            self.logger.debug("Starting post-create hooks...")
             await self.set_ucsschool_role_for_dc(udm)
             await self.create_market_place_share(udm)
             await self.create_dhcp_search_base(udm)
             await self.create_dhcp_dns_policy(udm)
             await self.create_import_group(udm)
             await self.create_exam_group(udm)
+            self.logger.debug("Finished post-create hooks.")
 
         return await super(School, self).call_hooks(udm, hook_time, func_name)
 
@@ -830,7 +829,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 "by ucsschool/import/generate/share/marktplatz"
             )
             return
-        objs = MarketplaceShare.get_all(lo=lo, school=self.name)
+        objs = await MarketplaceShare.get_all(lo=lo, school=self.name)
         if not objs:
             obj = MarketplaceShare(name="Marktplatz", school=self.name)
             if await obj.exists(lo):
@@ -853,7 +852,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     async def create_dhcp_search_base(self, lo: UDM) -> None:
         """
         Create the policies/registry ou-default-ucr-policy for the school,
-        add the dhcp-ou-dn to it an link to the school.
+        add the dhcp-ou-dn to it and link to the school.
 
         formerly in shell hook 40dhcp_dns_marktplatz_ucsschoolrole
         """
@@ -873,7 +872,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         except CreateError:
             # object exists already.
             self.logger.error("Error while creating ou-default-ucr-policy for {}".format(self.name))
-            pass
 
         # add value to policy
         policy_dn = "cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn)
@@ -886,7 +884,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         await policy.save()
         # link to OU
         obj = await self.get_udm_object(lo)
-        obj.policies.append(policy_dn)
+        obj.policies["policies/registry"].append(policy_dn)
         await obj.save()
         self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
 
@@ -934,7 +932,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
             container_mod = udm.get("container/cn")
             container = await container_mod.get("cn=dhcp,{}".format(ou_dn))
-            container.policies.append(dhcp_dns_policy_dn)
+            container.policies["policies/dhcp_dns"].append(dhcp_dns_policy_dn)
             await container.save()
 
     async def create_import_group(self, lo: UDM) -> None:
@@ -964,8 +962,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         group_mod = lo.get("groups/group")
         group = await group_mod.get(ou_import_group)
-        group.options.append("ucsschoolImportGroup")
-        group.props.ucsschoolImportSchool = ou
+        group.options["ucsschoolImportGroup"] = True
+        await group.save()
+        group.props.ucsschoolImportSchool = [ou]
         # comment: teacher_and_staff is a proper role and only used in the import context.
         group.props.ucsschoolImportRole.extend(
             [role_student, role_staff, "teacher_and_staff", role_teacher]
@@ -981,7 +980,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         ldap_base = ucr["ldap/base"]
 
         # create exam container
-        examusers = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
+        examusers = ucr.get("ucsschool/ldap/default/container/exam") or "examusers"
         district = self.get_district()
         if not district:
             district = ""
@@ -992,9 +991,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         self.logger.debug("Exam container {} created.".format(exam_container.name))
 
         # create exam group
-        examgroupname_template = ucr.get(
-            "ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
-        )
+        examgroupname_template = ucr.get("ucsschool/ldap/default/groupname") or "OU%(ou)s-Klassenarbeit"
         ucr_value_keywords = {"ou": self.name}
         examgroupname = examgroupname_template % ucr_value_keywords
         group = Group.cache(examgroupname, self.name)

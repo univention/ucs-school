@@ -29,7 +29,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import grp
 import os.path
 from typing import List, Optional, Type
 
@@ -414,8 +413,10 @@ class MarketplaceShare(RoleSupportMixin, SetNTACLsMixin, Share):
         group_name = ucr.get("ucsschool/import/generate/share/marktplatz/group") or custom_groupname(
             "Domain Users"
         )
-        group_entry = grp.getgrnam(group_name)
-        return str(group_entry.gr_gid)
+        mod = lo.get("groups/group")
+        async for group in mod.search(filter_format("cn=%s", [group_name])):
+            return group.props.gidNumber
+        raise RuntimeError(f"Group {group_name!r} for Marktplatz for OU {self.school!r} not found.")
 
     def get_share_path(self, school: str = None) -> str:
         path = ucr.get("ucsschool/import/generate/share/marktplatz/sharepath")
