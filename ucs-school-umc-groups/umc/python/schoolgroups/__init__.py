@@ -377,22 +377,20 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection(USER_READ, USER_WRITE)
     def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
         """Deletes a workgroup"""
-        for group_dn in request.options:
-            group_dn = group_dn["object"][0]
-            break
+        errors = []
+        for group_dn in request.options[0]["object"]:
 
-        group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
-        if not group.school:
-            raise UMC_Error("Group must within the scope of a school OU: %s" % group_dn)
-
-        try:
-            success = group.remove(ldap_user_write)
-        except udm_exceptions.base as exc:
-            MODULE.error('Could not remove group "%s": %s' % (group.dn, exc))
-            self.finished(request.id, [{"success": False, "message": str(exc)}])
-            return
-
-        self.finished(request.id, [{"success": success}])
+            group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
+            if not group.school:
+                errors.append("Group must within the scope of a school OU: %s" % group_dn)
+            try:
+                group.remove(ldap_user_write)
+            except udm_exceptions.base as exc:
+                errors.append(str(exc))
+                MODULE.error('Could not remove group "%s": %s' % (group.dn, exc))
+            if len(errors) > 0:
+                self.finished(request.id, [{"success": False, "message": "\n".join(errors)}])
+            self.finished(request.id, [{"success": True}])
 
     @sanitize(
         **{

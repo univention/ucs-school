@@ -262,7 +262,7 @@ define([
 				label: _('Delete'),
 				description: _('Deleting the selected objects.'),
 				isStandardAction: true,
-				isMultiAction: false,
+				isMultiAction: true,
 				iconClass: 'umcIconDelete',
 				callback: lang.hitch(this, '_deleteObjects')
 			});
@@ -280,7 +280,7 @@ define([
 		},
 
 		_deleteObjects: function(ids, items) {
-			dialog.confirm(lang.replace(_('Should the workgroup {name} be deleted?'), items[0]), [{
+			dialog.confirm(_('Should the selected workgroups be deleted?'), [{
 				name: 'cancel',
 				'default': true,
 				label: _('Cancel')
@@ -294,9 +294,9 @@ define([
 				}
 				this.standbyDuring(this.moduleStore.remove(ids)).then(lang.hitch(this, function(response) {
 					if (response.success === true) {
-						dialog.alert(_('The workgroup has been deleted successfully'));
+						dialog.alert(_('The workgroups have been deleted successfully'));
 					} else {
-						dialog.alert(lang.replace(_('The workgroup could not be deleted ({message})'), response));
+						dialog.alert(lang.replace(_('The workgroups could not be deleted ({message})'), response));
 					}
 				}));
 			}));
