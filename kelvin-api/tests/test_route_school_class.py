@@ -54,27 +54,6 @@ def url2username(url: str) -> str:
     return url.rsplit("/", 1)[-1]
 
 
-class RequestFake:
-    def __init__(self, url_fragment: str):
-        self.url_fragment = url_fragment
-
-    def url_for(self, name: str, **path_params) -> str:
-        assert name == "get"
-        if "class_name" in path_params:
-            # self.url
-            class_name = path_params["class_name"]
-            school = path_params["school"]
-            return f"{self.url_fragment}/classes/{school}/{class_name}"
-        if "school_name" in path_params:
-            # self.school
-            school_name = path_params["school_name"]
-            return f"{self.url_fragment}/schools/{school_name}"
-        if "username" in path_params:
-            # self.users
-            username = path_params["username"]
-            return f"{self.url_fragment}/users/{username}"
-
-
 async def compare_lib_api_obj(lib_obj: SchoolClass, api_obj: SchoolClassModel, url_fragment):
     for attr, lib_value in lib_obj.to_dict().items():
         if attr == "$dn$":
