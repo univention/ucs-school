@@ -93,7 +93,7 @@ feedback@univention.de
 					<para>
 						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.17A~4.4.0.202103231509</emphasis>:
 						<itemizedlist>
-							<listitem><para>Allow to disable the logging of validation errors upon validation of UCS@school objects: use the UCR variable <envar>validation/logging/enabled</envar> to control this (<u:bug>52884</u:bug>).</para></listitem>
+							<listitem><para>Allow to disable the logging of validation errors upon validation of UCS@school objects: use the UCR variable <envar>ucsschool/validation/logging/enabled</envar> to control this (<u:bug>52884</u:bug>).</para></listitem>
 
 							<listitem><para>Code for checking the consistency of UCS@school objects has been added (<u:bug>52147</u:bug>).</para></listitem>
 
