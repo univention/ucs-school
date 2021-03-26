@@ -190,7 +190,21 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-windows 4.5.2.0-0A~4.4.0.202103020759 -->
 <!-- CHANGELOG:2021-03-24:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-03-26" lang="en">
+					<title>Released on 2021-03-26:</title>
+					<!-- START ucs-school-metapackage 12.0.4-14A~4.4.0.202103251712 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-14A~4.4.0.202103251712</emphasis>:
+						<itemizedlist>
+							<listitem><para>Handle non-existent OU "DEMOSCHOOL" and missing user "demo_admin" in join script for singlemaster (<u:bug>52986</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-14A~4.4.0.202103251712 -->
+<!-- CHANGELOG:2021-03-26:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 		</section>
 	</chapter>
