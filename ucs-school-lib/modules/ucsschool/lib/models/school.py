@@ -40,7 +40,6 @@ from udm_rest_client import UDM, CreateError, NoObject as UdmNoObject, UdmObject
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import noObject
 from univention.config_registry import handler_set
-from univention.config_registry.interfaces import Interfaces
 
 from ..roles import (
     create_ucsschool_role_string,
@@ -409,9 +408,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
             ]
             if len(slave_dcs):
-                dn, attr = slave_dcs[0]
                 try:
-                    dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(dn)
+                    dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(slave_dcs[0].dn)
                 except UdmNoObject:
                     pass
             if not dc_udm_obj:
@@ -786,9 +784,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 await obj.save()
                 self.logger.info("Append ucsschoolRole {} to {}".format(role, obj.dn))
             else:
-                self.logger.warning(
-                    "ucsschoolRole {} is already appended to {}".format(role, obj.dn)
-                )
+                self.logger.warning("ucsschoolRole {} is already appended to {}".format(role, obj.dn))
         else:
             adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
             edu_net_filter = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
@@ -817,7 +813,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     obj = await SchoolDCSlave.from_dn(server_dn, self.name, udm)
                     ucsschool_role = create_ucsschool_role_string(role, self.name)
                     if ucsschool_role not in obj.ucsschool_roles:
-                        obj.props.ucsschool_roles.append(ucsschool_role)
+                        obj.ucsschool_roles.append(ucsschool_role)
                         await obj.modify(udm)
                         self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
 
@@ -887,6 +883,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         await policy.save()
         # link to OU
         obj = await self.get_udm_object(lo)
+        # comment: this is a list in 4.4
         obj.policies["policies/registry"].append(policy_dn)
         await obj.save()
         self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
@@ -932,6 +929,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
             container_mod = udm.get("container/cn")
             container = await container_mod.get("cn=dhcp,{}".format(ou_dn))
+            # comment: this is a list in 4.4
             container.policies["policies/dhcp_dns"].append(dhcp_dns_policy_dn)
             await container.save()
 
