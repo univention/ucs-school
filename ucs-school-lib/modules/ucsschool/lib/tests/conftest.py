@@ -1,15 +1,14 @@
 import logging
-import os
 import tempfile
-from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import pytest
 from faker import Faker
 
 import ucsschool.lib.models.user
-from ucsschool.lib.models.utils import get_file_handler
+from ucsschool.lib.create_ou import create_ou
+from ucsschool.lib.models.utils import env_or_ucr, exec_cmd, get_file_handler, ucr
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_school_class,
@@ -19,7 +18,6 @@ from ucsschool.lib.roles import (
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from udm_rest_client import UDM, NoObject as UdmNoObject
-from univention.config_registry import ConfigRegistry
 
 APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
@@ -28,21 +26,6 @@ CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 fake = Faker()
-
-
-@lru_cache(maxsize=1)
-def ucr() -> ConfigRegistry:
-    ucr = ConfigRegistry()
-    ucr.load()
-    return ucr
-
-
-@lru_cache(maxsize=32)
-def env_or_ucr(key: str) -> str:
-    try:
-        return os.environ[key.replace("/", "_").upper()]
-    except KeyError:
-        return ucr()[key]
 
 
 @pytest.fixture(scope="session")
@@ -309,21 +292,12 @@ async def new_ou(udm_kwargs, ldap_base, ou_attrs):
 
 
 @pytest.fixture
-async def demoschool2(udm_kwargs, ldap_base) -> Tuple[str, str]:
-    """Check for existence and return (DN, name) of DEMOSCHOOL2"""
+async def demoschool2(create_ou_using_python, ldap_base) -> Tuple[str, str]:
+    """Create DEMOSCHOOL2, return (DN, name)"""
     name = "DEMOSCHOOL2"
     dn = f"ou={name},{ldap_base}"
 
-    async with UDM(**udm_kwargs) as udm:
-        try:
-            await udm.get("container/ou").get(dn)
-        except UdmNoObject:
-            raise AssertionError(
-                "To run the tests properly you need to have a school named "
-                "DEMOSCHOOL2 at the moment! Execute *on the host*: "
-                "'/usr/share/ucs-school-import/scripts/create_ou DEMOSCHOOL2'"
-            )
-
+    await create_ou_using_python(name)
     return dn, name
 
 
@@ -335,3 +309,130 @@ def random_logger():
         logger.addHandler(handler)
         logger.setLevel("DEBUG")
         yield logger
+
+
+@pytest.fixture(scope="session")
+def installed_ssh():
+    if not Path("/usr/bin/ssh").exists() or not Path("/usr/bin/sshpass").exists():
+        print("Installing 'ssh' and 'sshpass'...")
+        returncode, stdout, stderr = exec_cmd(
+            ["apk", "add", "--no-cache", "openssh", "sshpass"], log=True
+        )
+        print(f"stdout={stdout}")
+        print(f"stderr={stderr}")
+    else:
+        print("'ssh' and 'sshpass' are already installed.")
+
+
+@pytest.fixture(scope="session")
+def exec_with_ssh(installed_ssh):
+    def _func(cmd: List[str], host: str = None) -> Tuple[int, str, str]:
+        host = host or env_or_ucr("docker_host_name")
+        ssh_cmd = [
+            "/usr/bin/sshpass",
+            "-p",
+            "univention",
+            "/usr/bin/ssh",
+            "-o",
+            "StrictHostKeyChecking no",
+            f"root@{host}",
+        ] + cmd
+        print(f"ssh to {host!r} and execute: {cmd!r}...")
+        returncode, stdout, stderr = exec_cmd(ssh_cmd, log=True)
+        print(f"stdout={stdout}")
+        print(f"stderr={stderr}")
+        return returncode, stdout, stderr
+
+    return _func
+
+
+@pytest.fixture
+async def schedule_delete_ou_using_ssh(exec_with_ssh, ldap_base):
+    ous_created: List[Tuple[str, str]] = []
+
+    def _func(ou_name: str, host: str):
+        ous_created.append((ou_name, host))
+
+    yield _func
+
+    for ou_name, host in ous_created:
+        print(f"Deleting OU {ou_name!r} on host {host!r}...")
+        dn = f"ou={ou_name},{ldap_base}"
+        exec_with_ssh(["/usr/sbin/udm", "container/ou", "remove", "--dn", dn], host)
+        group_dns = [
+            f"cn=admins-{ou_name.lower()},cn=ouadmins,cn=groups,{ldap_base}",
+            f"cn=OU{ou_name}-Klassenarbeit,cn=ucsschool,cn=groups,{ldap_base}",
+            f"cn=OU{ou_name.lower()}-DC-Edukativnetz,cn=ucsschool,cn=groups,{ldap_base}",
+            f"cn=OU{ou_name.lower()}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{ldap_base}",
+            f"cn=OU{ou_name.lower()}-Member-Edukativnetz,cn=ucsschool,cn=groups,{ldap_base}",
+            f"cn=OU{ou_name.lower()}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{ldap_base}",
+        ]
+        group_dns_s = " ".join("'{}'".format(dn) for dn in group_dns)
+        cmd = f"'for DN in {group_dns_s}; do /usr/sbin/udm groups/group remove --dn \"$DN\"; done'"
+        print(f"Deleting groups on host {host!r}: {group_dns!r}...")
+        exec_with_ssh(["/bin/bash", "-c", cmd], host)
+
+
+@pytest.fixture
+def create_ou_using_ssh(exec_with_ssh, ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
+    async def _func(ou_name: str = None, host: str = None) -> str:
+        ou_name = ou_name or f"testou{fake.pyint(1000, 9999)}"
+        host = host or env_or_ucr("docker_host_name")
+        print(f"Creating school {ou_name!r} on host {host!r} using SSH...")
+        schedule_delete_ou_using_ssh(ou_name, host)
+        short_ou_name = f"{ou_name}"[:10]
+        returncode, stdout, stderr = exec_with_ssh(
+            [
+                "/usr/share/ucs-school-import/scripts/create_ou",
+                ou_name,
+                f"edu{short_ou_name}",
+                f"adm{short_ou_name}",
+                f"--sharefileserver=edu{short_ou_name}",
+                f"--displayName='displ {ou_name}'",
+                f"--alter-dhcpd-base=false",
+            ]
+        )
+        assert (not stderr) or ("Already attached!" in stderr) or ("created successfully" in stderr)
+        if "Already attached!" in stderr:
+            print(f" => OU {ou_name!r} exists in {host!r}.")
+        else:
+            print(f" => OU {ou_name!r} created in {host!r}.")
+        async with UDM(**udm_kwargs) as udm:
+            try:
+                await udm.get("container/ou").get(f"ou={ou_name},{ldap_base}")
+            except UdmNoObject:
+                raise AssertionError(f"Creation of OU {ou_name} failed.")
+        return ou_name
+
+    return _func
+
+
+@pytest.fixture
+def create_ou_using_python(ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
+    async def _func(ou_name: str = None) -> str:
+        ou_name = ou_name or f"testou{fake.pyint(1000, 9999)}"
+        print(f"Creating school {ou_name!r} using Python...")
+        host = env_or_ucr("docker_host_name")
+        schedule_delete_ou_using_ssh(ou_name, host)
+        short_ou_name = f"{ou_name}"[:10]
+        async with UDM(**udm_kwargs) as udm:
+            await create_ou(
+                ou_name=ou_name,
+                display_name=f"displ {ou_name}",
+                edu_name=f"edu{short_ou_name}",
+                admin_name=f"adm{short_ou_name}",
+                share_name=f"edu{short_ou_name}",
+                lo=udm,
+                baseDN=env_or_ucr("ldap/base"),
+                hostname=env_or_ucr("ldap/master"),
+                is_single_master=ucr.is_true("ucsschool/singlemaster"),
+                alter_dhcpd_base=False,
+            )
+            try:
+                await udm.get("container/ou").get(f"ou={ou_name},{ldap_base}")
+            except UdmNoObject:
+                raise AssertionError(f"Creation of OU {ou_name} failed.")
+
+        return ou_name
+
+    return _func
