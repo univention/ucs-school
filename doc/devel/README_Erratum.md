@@ -18,15 +18,15 @@ This document describes how to prepare and execute an Errata Release for the UCS
   - Upload of binaries to TestAppCenter
   - Moving of advisories to published
 - Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')`.
-  This has to be executed **on dimma or omar**.
+  This has to be executed **on omar**.
 
 ## Publish to production App Center
 
-The following code should be executed on dimma or omar:
+The following code should be executed on omar:
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
+./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to omar and lists all available app center repositories
 ./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
