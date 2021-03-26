@@ -85,23 +85,30 @@ class SchoolSearchBase(object):
     def _load_containers_and_prefixes(cls) -> None:
         if not cls.ucr:
             cls._load_ucr()
-        cls._containerAdmins = cls.ucr.get("ucsschool/ldap/default/container/admins", "admins")
-        cls._containerStudents = cls.ucr.get("ucsschool/ldap/default/container/pupils", "schueler")
-        cls._containerStaff = cls.ucr.get("ucsschool/ldap/default/container/staff", "mitarbeiter")
-        cls._containerTeachersAndStaff = cls.ucr.get(
-            "ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
+        cls._containerAdmins = cls.ucr.get("ucsschool/ldap/default/container/admins") or "admins"
+        cls._containerStudents = cls.ucr.get("ucsschool/ldap/default/container/pupils") or "schueler"
+        cls._containerStaff = cls.ucr.get("ucsschool/ldap/default/container/staff") or "mitarbeiter"
+        cls._containerTeachersAndStaff = (
+            cls.ucr.get("ucsschool/ldap/default/container/teachers-and-staff")
+            or "lehrer und mitarbeiter"
         )
-        cls._containerTeachers = cls.ucr.get("ucsschool/ldap/default/container/teachers", "lehrer")
-        cls._containerClass = cls.ucr.get("ucsschool/ldap/default/container/class", "klassen")
-        cls._containerRooms = cls.ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
-        cls._examUserContainerName = cls.ucr.get("ucsschool/ldap/default/container/exam", "examusers")
-        cls._examGroupNameTemplate = cls.ucr.get(
-            "ucsschool/ldap/default/groupname/exam", "OU%(ou)s-Klassenarbeit"
+        cls._containerTeachers = cls.ucr.get("ucsschool/ldap/default/container/teachers") or "lehrer"
+        cls._containerClass = cls.ucr.get("ucsschool/ldap/default/container/class") or "klassen"
+        cls._containerRooms = cls.ucr.get("ucsschool/ldap/default/container/rooms") or "raeume"
+        cls._examUserContainerName = cls.ucr.get("ucsschool/ldap/default/container/exam") or "examusers"
+        cls._examGroupNameTemplate = (
+            cls.ucr.get("ucsschool/ldap/default/groupname/exam") or "OU%(ou)s-Klassenarbeit"
         )
-        cls.group_prefix_students = cls.ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
-        cls.group_prefix_teachers = cls.ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
-        cls.group_prefix_admins = cls.ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
-        cls.group_prefix_staff = cls.ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
+        cls.group_prefix_students = (
+            cls.ucr.get("ucsschool/ldap/default/groupprefix/pupils") or "schueler-"
+        )
+        cls.group_prefix_teachers = (
+            cls.ucr.get("ucsschool/ldap/default/groupprefix/teachers") or "lehrer-"
+        )
+        cls.group_prefix_admins = cls.ucr.get("ucsschool/ldap/default/groupprefix/admins") or "admins-"
+        cls.group_prefix_staff = (
+            cls.ucr.get("ucsschool/ldap/default/groupprefix/staff") or "mitarbeiter-"
+        )
 
     @classmethod
     def _load_ucr(cls) -> ConfigRegistry:

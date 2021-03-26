@@ -499,6 +499,10 @@ def exec_cmd(
     kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
     process = subprocess.Popen(cmd, **kwargs)  # nosec
     stdout, stderr = process.communicate()
+    if isinstance(stderr, bytes):
+        stderr = stderr.decode()
+    if isinstance(stdout, bytes):
+        stdout = stdout.decode()
     if log:
         logger = logging.getLogger(__name__)
         if stdout:
