@@ -90,9 +90,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         super(School, self).__init__(name=name, **kwargs)
         self.display_name = self.display_name or self.name
         self.alter_dhcpd_base = (
-            alter_dhcpd_base
-            if alter_dhcpd_base is not None
-            else not bool(ucr.get("dhcpd/ldap/base", ""))
+            not bool(ucr.get("dhcpd/ldap/base", ""))
+            if alter_dhcpd_base is None
+            else alter_dhcpd_base
         )
 
     async def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
@@ -397,7 +397,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     )
                 )
             ]
-            if len(mb_dcs):
+            if mb_dcs:
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
             # Sadly we need this here to access non school specific computers.
@@ -407,7 +407,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     filter_format("(cn=%s)", [dc_name_l])
                 )
             ]
-            if len(slave_dcs):
+            if slave_dcs:
                 try:
                     dc_udm_obj = await lo.get("computers/domaincontroller_slave").get(slave_dcs[0].dn)
                 except UdmNoObject:
@@ -883,7 +883,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         await policy.save()
         # link to OU
         obj = await self.get_udm_object(lo)
-        # comment: this is a list in 4.4
+        # UDM object attribute 'policy' is a list in 4.4 and in the UDM REST API it is a dict
         obj.policies["policies/registry"].append(policy_dn)
         await obj.save()
         self.logger.info("Linked ou-default-ucr-policy to {}.".format(ou_dn))
@@ -929,7 +929,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
             container_mod = udm.get("container/cn")
             container = await container_mod.get("cn=dhcp,{}".format(ou_dn))
-            # comment: this is a list in 4.4
+            # UDM object attribute 'policy' is a list in 4.4 and in the UDM REST API it is a dict
             container.policies["policies/dhcp_dns"].append(dhcp_dns_policy_dn)
             await container.save()
 

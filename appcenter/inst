@@ -51,6 +51,7 @@ UDM_CLIENT_UPDATE_SCRIPT="/var/lib/univention-appcenter/apps/$APP_ID/data/update
 
 main () {
     docker exec $appcenter_apps_ucsschool_kelvin_rest_api_container /usr/bin/univention-config-registry set \
+    dhcpd/ldap/base="$(ucr get dhcpd/ldap/base)" \
     ucsschool/import/set/netlogon/script/path="$(ucr get ucsschool/import/set/netlogon/script/path)" \
     ucsschool/import/set/homedrive="$(ucr get ucsschool/import/set/homedrive)" \
     ucsschool/import/set/sambahome="$(ucr get ucsschool/import/set/sambahome)" \
