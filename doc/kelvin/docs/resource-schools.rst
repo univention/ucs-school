@@ -129,11 +129,11 @@ As an example, with the following being the content of ``/tmp/create_ou.json``::
 
     {
         "name": "DEMOSCHOOL",
-        "display_name": "Demo School",
+        "display_name": "Demo School"
     }
 
 
-This ``curl`` command will create a user from the above data::
+This ``curl`` command will create a school from the above data::
 
     $ curl -i -k -X POST "https://<fqdn>/ucsschool/kelvin/v1/schools/" \
         -H "accept: application/json" \
@@ -154,17 +154,15 @@ Response body::
 
     {
         "administrative_servers": [],
-        "class_share_file_server": "dctest-01",
+        "class_share_file_server": "dcDEMOSCHOOL",
         "dc_name": null,
         "dc_name_administrative": null,
         "display_name": "Demo School",
         "dn": "ou=DEMOSCHOOL,dc=uni,dc=ven",
-        "educational_servers": ["dctest-01"],
-        "home_share_file_server": "dctest-01",
+        "educational_servers": ["dcDEMOSCHOOL"],
+        "home_share_file_server": "dcDEMOSCHOOL",
         "name": "DEMOSCHOOL",
-        "ucsschool_roles": [
-            "school:school:DEMOSCHOOL"
-        ],
+        "ucsschool_roles": ["school:school:DEMOSCHOOL"],
         "url": "https://<fqdn>/ucsschool/kelvin/v1/schools/DEMOSCHOOL"
     }
 
