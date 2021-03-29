@@ -133,11 +133,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     [self.dc_name.lower()],
                 )
             dcs = lo.search(ldap_filter_str)
-            if len(dcs) and ucr.is_true("ucsschool/singlemaster"):
+            if dcs and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
                 )
-            elif len(dcs):
+            elif dcs:
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup or master server"
                 )
@@ -412,7 +412,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     [self.dc_name.lower()],
                 )
             )
-            if len(mb_dcs):
+            if mb_dcs:
                 return  # We do not modify the groups of master or backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated
             # Sadly we need this here to access non school specific computers.
@@ -427,7 +427,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     dc_name_l
                 )
             )
-            if len(slave_dcs):
+            if slave_dcs:
                 dn, attr = slave_dcs[0]
                 dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)
                 dc_udm_obj.open()
@@ -867,7 +867,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         except CreateError:
             # object exists already.
             self.logger.error("Error while creating ou-default-ucr-policy for {}".format(self.name))
-            pass
 
         # add value to policy
         policy_dn = "cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn)
