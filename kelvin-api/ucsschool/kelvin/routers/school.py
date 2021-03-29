@@ -56,6 +56,7 @@ def get_logger() -> logging.Logger:
 class SchoolCreateModel(LibModelHelperMixin):
     name: str
     display_name: str = None
+    # TODO: fix 'dc_name_administrative' vs 'administrative_servers'
     administrative_servers: List[str] = []
     class_share_file_server: str = None
     dc_name: str = None
@@ -192,6 +193,8 @@ async def create(
     - **dc_name_administrative**: host name of administrative DC (optional)
     - **class_share_file_server**: host name of domain controller for the class shares (optional)
     - **home_share_file_server**: host name of domain controller for the home shares (optional)
+    - **alter_dhcpd_base**: whether the UCR variable dhcpd/ldap/base should be modified during school
+        creation on singleserver environments. (optional)
     """
     if not await OPAClient.instance().check_policy_true(
         policy="schools",

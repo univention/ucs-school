@@ -55,7 +55,7 @@ async def create_ou(
     baseDN: str,
     hostname: str,
     is_single_master: bool,
-    alter_dhcpd_base: bool,
+    alter_dhcpd_base: bool = None,
 ):
     """
     Create a ucsschool OU.
