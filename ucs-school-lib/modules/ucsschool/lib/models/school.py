@@ -90,9 +90,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         super(School, self).__init__(name=name, **kwargs)
         self.display_name = self.display_name or self.name
         self.alter_dhcpd_base = (
-            not bool(ucr.get("dhcpd/ldap/base", ""))
-            if alter_dhcpd_base is None
-            else alter_dhcpd_base
+            not bool(ucr.get("dhcpd/ldap/base", "")) if alter_dhcpd_base is None else alter_dhcpd_base
         )
 
     async def validate(self, lo: UDM, validate_unlikely_changes: bool = False) -> None:
@@ -550,7 +548,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 await self.modify_without_hooks(lo)
 
             if self.alter_dhcpd_base and ucr.is_true("ucsschool/singlemaster", False):
-                handler_set(["dhcpd/ldap/base=cn=dhcp,%s" % (self.dn)])
+                # TODO: this must be executed on the host!
+                self.logger.error(
+                    "UCRV should be set on the host: 'dhcpd/ldap/base=cn=dhcp,%s'", self.dn
+                )
+                handler_set(["dhcpd/ldap/base=cn=dhcp,%s" % (self.dn,)])
                 ucr.load()
 
             await self.create_default_containers(lo)
