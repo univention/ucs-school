@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.201) unstable; urgency=medium
+
+  * Bug #49655: fix & refactor exam mode & share tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 30 Mar 2021 12:42:49 +0200
+
 ucs-test-ucsschool (6.0.200) unstable; urgency=medium
 
   * Bug #52147: fix test_not_existing_mandatory_group

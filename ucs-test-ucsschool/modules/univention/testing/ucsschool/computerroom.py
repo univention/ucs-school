@@ -29,6 +29,7 @@ from ucsschool.lib.roles import (
     role_win_computer,
 )
 from univention.lib.umc import ConnectionError
+from univention.testing.decorators import SetTimeout
 from univention.testing.ucsschool.importcomputers import (
     IPManagedClient,
     MacOS,
@@ -1091,6 +1092,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
                 os.makedirs(home_dir)
 
 
+@SetTimeout
 def check_create_share_folder(
     share, username, dir_name, samba_workstation=""
 ):  # type: (str, str, str, str) -> None
