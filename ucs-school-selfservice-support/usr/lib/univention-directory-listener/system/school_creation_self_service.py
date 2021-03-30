@@ -46,7 +46,7 @@ class SchoolCreationSelfServiceListener(ListenerModuleHandler):
 
     def create(self, dn, new):
         """
-        Adds a ucrv-value for the school and - unrelated - updates the database for the http_api
+        Adds a ucrv-value for the school
 
         :param dn: the dn of the new school
         :param new: the new school object
