@@ -14,11 +14,10 @@ from datetime import datetime, timedelta
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm
 import univention.testing.utils as utils
 from ucsschool.lib.models.utils import exec_cmd
+from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import (
     Computers,
@@ -29,6 +28,7 @@ from univention.testing.ucsschool.computerroom import (
     retry_cmd,
 )
 from univention.testing.ucsschool.exam import Exam
+from univention.testing.udm import UCSTestUDM
 
 
 def check_nt_acls(filename):  # type: (str) -> None
@@ -114,7 +114,8 @@ def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
 
 
 def main():
-    with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:  # noqa: E501
+    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:  # noqa: E501
+        ucr = schoolenv.ucr
         open_ldap_co = schoolenv.open_ldap_connection()
         ucr.load()
 
@@ -124,10 +125,11 @@ def main():
         else:
             edudc = ucr.get("hostname")
         school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
+        search_base = SchoolSearchBase([school])
         klasse_dn = udm.create_object(
             "groups/group",
             name="%s-AA1" % school,
-            position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
+            position=search_base.classes,
         )
 
         stu1, studn1 = schoolenv.create_user(school)
@@ -160,8 +162,8 @@ def main():
         exam.start()
 
         exam_member_dns = [
-            "uid=exam-%s,cn=examusers,%s" % (stu1, oudn),
-            "uid=exam-%s,cn=examusers,%s" % (stu2, oudn),
+            "uid=exam-%s,%s" % (stu1, search_base.examUsers),
+            "uid=exam-%s,%s" % (stu2, search_base.examUsers),
         ]
         for uid in [stu1, stu2]:
             username = "exam-{}".format(uid)

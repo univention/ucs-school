@@ -12,10 +12,10 @@ from time import sleep
 
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models import Student
+from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room
@@ -23,7 +23,7 @@ from univention.testing.ucsschool.exam import Exam
 from univention.testing.udm import UCSTestUDM
 
 
-def is_user_disabled(udm, user_dn, lo):
+def is_user_disabled(user_dn, lo):
     user = Student.from_dn(user_dn, None, lo)
     obj = user.get_udm_object(lo)
     print("# user disabled value: {}".format(obj["disabled"]))
@@ -31,116 +31,116 @@ def is_user_disabled(udm, user_dn, lo):
 
 
 def main():
-    with UCSTestUDM() as udm:
-        with utu.UCSTestSchool() as schoolenv:
-            with ucr_test.UCSTestConfigRegistry() as ucr:
-                open_ldap_co = schoolenv.open_ldap_connection()
-                ucr.load()
+    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
+        ucr = schoolenv.ucr
+        open_ldap_co = schoolenv.open_ldap_connection()
+        ucr.load()
 
-                print("# create test users and classes")
-                if ucr.is_true("ucsschool/singlemaster"):
-                    edudc = None
-                else:
-                    edudc = ucr.get("hostname")
-                school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
-                klasse_dn = udm.create_object(
-                    "groups/group",
-                    name="%s-AA1" % school,
-                    position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
-                )
-                klasse2_dn = udm.create_object(
-                    "groups/group",
-                    name="%s-BB1" % school,
-                    position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
-                )
-                tea, teadn = schoolenv.create_user(school, is_teacher=True)
-                stu, studn = schoolenv.create_user(school)
-                stu2, studn2 = schoolenv.create_user(school)
-                wait_for_drs_replication(filter_format("cn=%s", (stu,)))
+        print("# create test users and classes")
+        if ucr.is_true("ucsschool/singlemaster"):
+            edudc = None
+        else:
+            edudc = ucr.get("hostname")
+        school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
+        search_base = SchoolSearchBase([school])
+        klasse_dn = udm.create_object(
+            "groups/group",
+            name="%s-AA1" % school,
+            position=search_base.classes,
+        )
+        klasse2_dn = udm.create_object(
+            "groups/group",
+            name="%s-BB1" % school,
+            position=search_base.classes,
+        )
+        tea, teadn = schoolenv.create_user(school, is_teacher=True)
+        stu, studn = schoolenv.create_user(school)
+        stu2, studn2 = schoolenv.create_user(school)
+        wait_for_drs_replication(filter_format("cn=%s", (stu,)))
 
-                udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
-                udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
-                udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [teadn]})
-                udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [studn2]})
+        udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
+        udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
+        udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [teadn]})
+        udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [studn2]})
 
-                print("# import random computers")
-                computers = Computers(open_ldap_co, school, 2, 0, 0)
-                pc1, pc2 = computers.create()
+        print("# import random computers")
+        computers = Computers(open_ldap_co, school, 2, 0, 0)
+        pc1, pc2 = computers.create()
 
-                print("# set 2 computer rooms to contain the created computers")
-                room1 = Room(school, host_members=pc1.dn)
-                room2 = Room(school, host_members=pc2.dn)
-                for room in [room1, room2]:
-                    schoolenv.create_computerroom(
-                        school,
-                        name=room.name,
-                        description=room.description,
-                        host_members=room.host_members,
-                    )
+        print("# set 2 computer rooms to contain the created computers")
+        room1 = Room(school, host_members=pc1.dn)
+        room2 = Room(school, host_members=pc2.dn)
+        for room in [room1, room2]:
+            schoolenv.create_computerroom(
+                school,
+                name=room.name,
+                description=room.description,
+                host_members=room.host_members,
+            )
 
-                # Actual test starts here:
+        # Actual test starts here:
 
-                print("# Set an exam and start it with ucsschool/exam/user/disable=no")
-                current_time = datetime.now()
-                chosen_time = current_time + timedelta(hours=2)
-                exam = Exam(
-                    school=school,
-                    room=room1.dn,  # room dn
-                    examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-                    recipients=[klasse_dn],  # list of classes dns
-                )
+        print("# Set an exam and start it with ucsschool/exam/user/disable=no")
+        current_time = datetime.now()
+        chosen_time = current_time + timedelta(hours=2)
+        exam = Exam(
+            school=school,
+            room=room1.dn,  # room dn
+            examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+            recipients=[klasse_dn],  # list of classes dns
+        )
 
-                # check if user is enabled
-                handler_set(["ucsschool/exam/user/disable=no"])
-                if is_user_disabled(udm, studn, open_ldap_co):
-                    utils.fail("disable=no: User was not enabled before exam")
+        # check if user is enabled
+        handler_set(["ucsschool/exam/user/disable=no"])
+        if is_user_disabled(studn, open_ldap_co):
+            utils.fail("disable=no: User was not enabled before exam")
 
-                exam.start()
-                print(" ** After starting the exam1")
-                wait_for_drs_replication(filter_format("cn=exam-%s", (stu,)))
+        exam.start()
+        print(" ** After starting the exam1")
+        wait_for_drs_replication(filter_format("cn=exam-%s", (stu,)))
 
-                # check if user is still enabled
-                if is_user_disabled(udm, studn, open_ldap_co):
-                    utils.fail("User was not enabled during exam")
+        # check if user is still enabled
+        if is_user_disabled(studn, open_ldap_co):
+            utils.fail("User was not enabled during exam")
 
-                exam.finish()
-                sleep(10)  # ensure this exam is finished before a new one starts
-                print(" ** After finishing the exam1")
+        exam.finish()
+        sleep(10)  # ensure this exam is finished before a new one starts
+        print(" ** After finishing the exam1")
 
-                # check if user is enabled
-                if is_user_disabled(udm, studn, open_ldap_co):
-                    utils.fail("disable=yes: User was not enabled after exam")
+        # check if user is enabled
+        if is_user_disabled(studn, open_ldap_co):
+            utils.fail("disable=yes: User was not enabled after exam")
 
-                print("# Set another exam and start it with ucsschool/exam/user/disable=yes")
-                current_time = datetime.now()
-                chosen_time = current_time + timedelta(hours=2)
-                exam2 = Exam(
-                    school=school,
-                    room=room2.dn,  # room dn
-                    examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-                    recipients=[klasse2_dn],  # list of classes dns
-                )
+        print("# Set another exam and start it with ucsschool/exam/user/disable=yes")
+        current_time = datetime.now()
+        chosen_time = current_time + timedelta(hours=2)
+        exam2 = Exam(
+            school=school,
+            room=room2.dn,  # room dn
+            examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+            recipients=[klasse2_dn],  # list of classes dns
+        )
 
-                # check if user is enabled
-                handler_set(["ucsschool/exam/user/disable=yes"])
-                if is_user_disabled(udm, studn2, open_ldap_co):
-                    utils.fail("disable=yes: User was not enabled before exam")
+        # check if user is enabled
+        handler_set(["ucsschool/exam/user/disable=yes"])
+        if is_user_disabled(studn2, open_ldap_co):
+            utils.fail("disable=yes: User was not enabled before exam")
 
-                exam2.start()
-                print(" ** After starting the exam2")
+        exam2.start()
+        print(" ** After starting the exam2")
 
-                # check if user is disabled
-                if not is_user_disabled(udm, studn2, open_ldap_co):
-                    utils.fail("disable=yes: User was not disabled during exam")
+        # check if user is disabled
+        if not is_user_disabled(studn2, open_ldap_co):
+            utils.fail("disable=yes: User was not disabled during exam")
 
-                exam2.finish()
-                print(" ** After finishing the exam2")
+        exam2.finish()
+        print(" ** After finishing the exam2")
 
-                # check if user is enabled
-                if is_user_disabled(udm, studn2, open_ldap_co):
-                    utils.fail("User was not enabled after exam")
+        # check if user is enabled
+        if is_user_disabled(studn2, open_ldap_co):
+            utils.fail("User was not enabled after exam")
 
-                wait_for_s4connector()
+        wait_for_s4connector()
 
 
 if __name__ == "__main__":
