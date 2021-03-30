@@ -259,12 +259,11 @@ class Share(UCSSchoolHelperAbstractClass):
         class_share_file_server_dn: str = school_udm_obj.props.ucsschoolClassShareFileServer
         if class_share_file_server_dn:
             server_udm = await self.get_server_udm_object(class_share_file_server_dn, lo)
-            server_domain_name = server_udm.props.domain
-            if not server_domain_name:
-                server_domain_name = domainname
-            result = server_udm.props.name
-            if result:
-                return "%s.%s" % (result, server_domain_name)
+            if server_udm:
+                server_domain_name = server_udm.props.domain if server_udm.props.domain else domainname
+                server_hostname = server_udm.props.name
+                if server_hostname:
+                    return "%s.%s" % (server_hostname, server_domain_name)
 
         # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
         ldap_lo, ldap_po = getMachineConnection()

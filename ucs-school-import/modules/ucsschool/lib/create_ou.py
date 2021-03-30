@@ -35,6 +35,7 @@ Used by create_ou script and customer single user HTTP API.
 """
 
 import logging
+from typing import List
 
 from ldap.filter import filter_format
 
@@ -119,7 +120,7 @@ async def create_ou(
     share_dn = ""
     if share_name is None:
         share_name = edu_name
-    objects = [
+    objects: List[str] = [
         obj.dn
         async for obj in lo.get("computers/computer").search(
             filter_s=filter_format("(&(objectClass=univentionHost)(cn=%s))", (share_name,)), base=baseDN
@@ -131,12 +132,19 @@ async def create_ou(
                 "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
             )
         else:
+            host = ucr["ldap/master"].split(".", 1)[0]
             logger.warning(
                 "WARNING: share file server name %r not found! Using %r as share file server.",
                 share_name,
-                ucr.get("hostname"),
+                host,
             )
-            share_dn = ucr.get("ldap/hostdn")
+            objects: List[str] = [
+                obj.dn
+                async for obj in lo.get("computers/computer").search(
+                    filter_s=filter_format("(&(objectClass=univentionHost)(cn=%s))", (host,)),
+                )
+            ]
+            share_dn = objects[0]
     else:
         share_dn = objects[0]
 

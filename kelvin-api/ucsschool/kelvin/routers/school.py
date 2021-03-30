@@ -30,10 +30,12 @@ from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from ldap.filter import escape_filter_chars
+from ldap.dn import explode_dn
+from ldap.filter import escape_filter_chars, filter_format
 from pydantic import validator
 
 from ucsschool.lib.create_ou import create_ou
+from ucsschool.lib.models.computer import AnyComputer, SchoolDCSlave
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
@@ -56,12 +58,9 @@ def get_logger() -> logging.Logger:
 class SchoolCreateModel(LibModelHelperMixin):
     name: str
     display_name: str = None
-    # TODO: fix 'dc_name_administrative' vs 'administrative_servers'
+    educational_servers: List[str] = []
     administrative_servers: List[str] = []
     class_share_file_server: str = None
-    dc_name: str = None
-    dc_name_administrative: str = None
-    educational_servers: List[str] = []
     home_share_file_server: str = None
 
     class Config(LibModelHelperMixin.Config):
@@ -71,8 +70,6 @@ class SchoolCreateModel(LibModelHelperMixin):
     def check_name(cls, value: str) -> str:
         cls.Config.lib_class.name.validate(value)
         return value
-
-    # TODO: validate all attributes
 
 
 class SchoolModel(SchoolCreateModel, APIAttributesMixin):
@@ -104,6 +101,95 @@ class SchoolModel(SchoolCreateModel, APIAttributesMixin):
             obj = await udm.obj_by_dn(dn)
             cls._dn2name[dn] = obj.props.name
         return cls._dn2name[dn]
+
+
+async def computer_name2dn(name: str, udm: UDM) -> Optional[str]:
+    async for obj in udm.get("computers/computer").search(filter_format("cn=%s", (name,))):
+        return obj.dn
+    return None
+
+
+async def fix_school_attributes(
+    school_obj: School, school: SchoolCreateModel, logger: logging.Logger, udm: UDM
+):
+    """
+    Fix attributes of `school_obj` according to `school`, as `create_ou()` does not support multiple DCs.
+
+    Side effect: changes attributes of `school_obj` and saves it to LDAP.
+    """
+    changed = False
+    if len(school_obj.administrative_servers) != len(school.administrative_servers):
+        dns = []
+        for host in school.administrative_servers:
+            if dn := await computer_name2dn(host, udm):
+                dns.append(dn)
+            else:
+                success = await school_obj.create_dc_slave(udm, host, True)
+                if success:
+                    dns.append(SchoolDCSlave(name=host, school=school_obj.name).dn)
+                else:
+                    logger.error("Error creating administrativ DC %r for OU %r.", host, school_obj.name)
+        school_obj.administrative_servers = dns
+        changed = True
+    if school.educational_servers and len(school_obj.educational_servers) != len(
+        school.educational_servers
+    ):
+        dns = []
+        for host in school.educational_servers:
+            if dn := await computer_name2dn(host, udm):
+                dns.append(dn)
+            else:
+                success = await school_obj.create_dc_slave(udm, host, False)
+                if success:
+                    dns.append(SchoolDCSlave(name=host, school=school_obj.name).dn)
+                else:
+                    logger.error("Error creating educational DC %r for OU %r.", host, school_obj.name)
+        school_obj.educational_servers = dns
+        changed = True
+    if (
+        school.class_share_file_server
+        and explode_dn(school_obj.class_share_file_server, True)[0] != school.class_share_file_server
+    ):
+        school_obj.class_share_file_server = await computer_name2dn(school.class_share_file_server, udm)
+        changed = True
+    if (
+        school.home_share_file_server
+        and explode_dn(school_obj.home_share_file_server, True)[0] != school.home_share_file_server
+    ):
+        school_obj.home_share_file_server = await computer_name2dn(school.home_share_file_server, udm)
+        changed = True
+    if changed:
+        await school_obj.modify(udm)
+    else:
+        logger.debug("Nothing to do.")
+
+
+async def validate_create_request_params(school: SchoolCreateModel, logger: logging.Logger, udm: UDM):
+    for attr_name in ("administrative_servers", "educational_servers"):
+        servers = getattr(school, attr_name)
+        if servers and len(servers) > 1:
+            error_msg = f"More than one host in parameter {attr_name!r} is not supported."
+            logger.error(error_msg)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=error_msg)
+    for share_attr_name in ("class_share_file_server", "home_share_file_server"):
+        share_host = getattr(school, share_attr_name)
+        if share_host:
+            # must either exist or must be automatically created by create_ou()
+            host_obj = await AnyComputer.get_first_udm_obj(udm, filter_format("cn=%s", (share_host,)))
+            if (
+                not host_obj
+                and share_host != f"dc{school.name}"
+                and share_host not in school.administrative_servers
+                and share_host not in school.educational_servers
+            ):
+                error_msg = (
+                    f"Host {share_host!r} in parameter {share_attr_name!r} does not exist and will not "
+                    f"be automatically created. Supply the name of an existing host or one from "
+                    f"'administrative_servers' or 'educational_servers' (or none to automatically use "
+                    f"the educational server)."
+                )
+                logger.error(error_msg)
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=error_msg)
 
 
 @router.get("/", response_model=List[SchoolModel])
@@ -187,14 +273,19 @@ async def create(
     """
     Create a school (OU) with all the information:
 
-    - **name**: name of the school class (**required**)
-    - **display_name**: full name (**required**)
-    - **dc_name**: host name of educational DC (optional)
-    - **dc_name_administrative**: host name of administrative DC (optional)
-    - **class_share_file_server**: host name of domain controller for the class shares (optional)
-    - **home_share_file_server**: host name of domain controller for the home shares (optional)
+    - **name**: name of the school class (**required**, only ASCII letters, digits and dashes are allowed, dash not at start or end)
+    - **display_name**: full name (optional, will be set to '$name' if unset)
+    - **educational_servers**: hosts names of educational DCs (optional, each max. 13 chars long,
+        'dc$name' will automatically be created and added if unset, more than one DC is **not**
+        supported)
+    - **administrative_servers**: host names of administrative DCs (optional, each max. 13 chars long,
+        more than one DC is **not** supported)
+    - **class_share_file_server**: host names of DCs for the class shares (optional,
+        will be alphabetically first of '$educational_servers' if unset)
+    - **home_share_file_server**: host names of DCs for the home shares (optional,
+        will be alphabetically first of '$educational_servers' if unset)
     - **alter_dhcpd_base**: whether the UCR variable dhcpd/ldap/base should be modified during school
-        creation on singleserver environments. (optional)
+        creation on singleserver environments. (optional, currently non-functional!)
     """
     if not await OPAClient.instance().check_policy_true(
         policy="schools",
@@ -209,22 +300,34 @@ async def create(
     school_obj: School = await school.as_lib_model(request)
     if await school_obj.exists(udm):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="School exists.")
+    await validate_create_request_params(school, logger, udm)
+    admin_name = sorted(school.administrative_servers)[0] if school.administrative_servers else None
+    edu_name = sorted(school.educational_servers)[0] if school.educational_servers else None
+    share_server = school.home_share_file_server or school.class_share_file_server
+    create_kwargs = {
+        "ou_name": school.name,
+        "display_name": school.display_name,
+        "edu_name": edu_name,
+        "admin_name": admin_name,
+        "share_name": share_server,
+        "lo": udm,
+        "baseDN": env_or_ucr("ldap/base"),
+        "hostname": env_or_ucr("ldap/master"),
+        "is_single_master": env_or_ucr("ucsschool/singlemaster"),
+        "alter_dhcpd_base": alter_dhcpd_base,
+    }
+    logger.debug("Creating school with: %r", create_kwargs)
     try:
-        await create_ou(
-            ou_name=school.name,
-            display_name=school.display_name,
-            edu_name=school.dc_name,
-            admin_name=school.dc_name_administrative,
-            share_name=school.home_share_file_server or school.class_share_file_server,
-            lo=udm,
-            baseDN=env_or_ucr("ldap/base"),
-            hostname=env_or_ucr("ldap/master"),
-            is_single_master=env_or_ucr("ucsschool/singlemaster"),
-            alter_dhcpd_base=alter_dhcpd_base,
-        )
+        await create_ou(**create_kwargs)
+    except ValueError as exc:
+        error_msg = f"Failed to create school with parameters {school.dict()!r}: {exc}"
+        logger.exception(error_msg)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=error_msg)
     except Exception as exc:
         error_msg = f"Failed to create school {school_obj.name!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
     school_obj = await School.from_dn(school_obj.dn, school_obj.name, udm)
+    logger.debug("Finished create_ou(), fixing schools DC attributes...")
+    await fix_school_attributes(school_obj, school, logger, udm)
     return await SchoolModel.from_lib_model(school_obj, request, udm)
