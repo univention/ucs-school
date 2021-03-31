@@ -29,6 +29,11 @@ fake = Faker()
 
 
 @pytest.fixture(scope="session")
+def docker_host_name():
+    return env_or_ucr("docker_host_name")
+
+
+@pytest.fixture(scope="session")
 def ldap_base():
     return env_or_ucr("ldap/base")
 
@@ -325,9 +330,9 @@ def installed_ssh():
 
 
 @pytest.fixture(scope="session")
-def exec_with_ssh(installed_ssh):
+def exec_with_ssh(docker_host_name, installed_ssh):
     def _func(cmd: List[str], host: str = None) -> Tuple[int, str, str]:
-        host = host or env_or_ucr("docker_host_name")
+        host = host or docker_host_name
         ssh_cmd = [
             "/usr/bin/sshpass",
             "-p",
@@ -374,10 +379,12 @@ async def schedule_delete_ou_using_ssh(exec_with_ssh, ldap_base):
 
 
 @pytest.fixture
-def create_ou_using_ssh(exec_with_ssh, ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
+def create_ou_using_ssh(
+    docker_host_name, exec_with_ssh, ldap_base, schedule_delete_ou_using_ssh, udm_kwargs
+):
     async def _func(ou_name: str = None, host: str = None) -> str:
         ou_name = ou_name or f"testou{fake.pyint(1000, 9999)}"
-        host = host or env_or_ucr("docker_host_name")
+        host = host or docker_host_name
         print(f"Creating school {ou_name!r} on host {host!r} using SSH...")
         schedule_delete_ou_using_ssh(ou_name, host)
         short_ou_name = f"{ou_name}"[:10]
@@ -408,12 +415,11 @@ def create_ou_using_ssh(exec_with_ssh, ldap_base, schedule_delete_ou_using_ssh, 
 
 
 @pytest.fixture
-def create_ou_using_python(ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
+def create_ou_using_python(docker_host_name, ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
     async def _func(ou_name: str = None) -> str:
         ou_name = ou_name or f"testou{fake.pyint(1000, 9999)}"
         print(f"Creating school {ou_name!r} using Python...")
-        host = env_or_ucr("docker_host_name")
-        schedule_delete_ou_using_ssh(ou_name, host)
+        schedule_delete_ou_using_ssh(ou_name, docker_host_name)
         short_ou_name = f"{ou_name}"[:10]
         async with UDM(**udm_kwargs) as udm:
             await create_ou(
@@ -423,7 +429,7 @@ def create_ou_using_python(ldap_base, schedule_delete_ou_using_ssh, udm_kwargs):
                 admin_name=f"adm{short_ou_name}",
                 share_name=f"edu{short_ou_name}",
                 lo=udm,
-                baseDN=env_or_ucr("ldap/base"),
+                baseDN=ldap_base,
                 hostname=env_or_ucr("ldap/master"),
                 is_single_master=ucr.is_true("ucsschool/singlemaster"),
                 alter_dhcpd_base=False,

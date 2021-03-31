@@ -219,9 +219,11 @@ async def test_search_filter(  # noqa: C901
     create_random_users,
     udm_kwargs,
     random_name,
-    create_random_schools,
+    create_ou_using_python,
     import_config,
     filter_param: str,
+    ldap_base,
+    new_school_class,
 ):
     if filter_param.startswith("roles_"):
         filter_param, role = filter_param.split("_", 1)
@@ -232,14 +234,17 @@ async def test_search_filter(  # noqa: C901
     elif filter_param == "disabled":
         create_kwargs = {"disabled": random.choice((True, False))}
     elif filter_param == "school":
-        schools = await create_random_schools(2)
-        school1_dn, school1_attr = schools[0]
-        school2_dn, school2_attr = schools[1]
-        school1_url = f"{url_fragment}/schools/{school1_attr['name']}"
-        school2_url = f"{url_fragment}/schools/{school2_attr['name']}"
+        ou1_name = await create_ou_using_python()
+        ou2_name = await create_ou_using_python()
+        school1_url = f"{url_fragment}/schools/{ou1_name}"
+        school2_url = f"{url_fragment}/schools/{ou2_name}"
         create_kwargs = {"school": school2_url, "schools": [school1_url, school2_url]}
     else:
         create_kwargs = {}
+    if role == "student" and "school_classes" not in create_kwargs:
+        sc_dn, sc_attr = await new_school_class()
+        school_classes = {"DEMOSCHOOL": ["Democlass", sc_attr["name"]]}
+        create_kwargs["school_classes"] = {ou1_name: []}
     user = (await create_random_users({role: 1}, **create_kwargs))[0]
     school = user.school.rsplit("/", 1)[-1]
     async with UDM(**udm_kwargs) as udm:
@@ -249,10 +254,10 @@ async def test_search_filter(  # noqa: C901
         assert user.name == import_user.name
         assert import_user.role_sting == role  # TODO: add 'r' when #47210 is fixed
         if filter_param == "school":
-            assert school == school2_attr["name"]
+            assert school == ou2_name
             assert set(school.rsplit("/", 1)[-1] for school in user.schools) == {
-                school1_attr["name"],
-                school2_attr["name"],
+                ou1_name,
+                ou2_name,
             }
 
         param_value = getattr(import_user, filter_param)
@@ -261,7 +266,7 @@ async def test_search_filter(  # noqa: C901
         elif filter_param == "roles":
             param_value = ["student" if p == "pupil" else p for p in param_value]
         elif filter_param == "school":
-            param_value = school2_attr["name"]
+            param_value = ou2_name
 
         if filter_param == "roles":
             # list instead of dict for using same key ("roles") twice
@@ -1225,34 +1230,29 @@ async def test_school_change(
     auth_header,
     url_fragment,
     create_random_users,
-    create_random_schools,
+    create_ou_using_python,
     udm_kwargs,
     role: Role,
     method: str,
 ):
-    schools = await create_random_schools(2)
-    school1_dn, school1_attr = schools[0]
-    school2_dn, school2_attr = schools[1]
-    user = (
-        await create_random_users(
-            {role.name: 1}, school=f"{url_fragment}/schools/{school1_attr['name']}"
-        )
-    )[0]
+    ou1_name = await create_ou_using_python()
+    ou2_name = await create_ou_using_python()
+    user = (await create_random_users({role.name: 1}, school=f"{url_fragment}/schools/{ou1_name}"))[0]
     async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(udm, school1_attr["name"], f"username={user.name}")
+        lib_users = await User.get_all(udm, ou1_name, f"username={user.name}")
         assert len(lib_users) == 1
         assert isinstance(lib_users[0], role.klass)
-        assert lib_users[0].school == school1_attr["name"]
-        assert lib_users[0].schools == [school1_attr["name"]]
+        assert lib_users[0].school == ou1_name
+        assert lib_users[0].schools == [ou1_name]
         if role.name == "teacher_and_staff":
             roles = {
-                f"staff:school:{school1_attr['name']}",
-                f"teacher:school:{school1_attr['name']}",
+                f"staff:school:{ou1_name}",
+                f"teacher:school:{ou1_name}",
             }
         else:
-            roles = {f"{role.name}:school:{school1_attr['name']}"}
+            roles = {f"{role.name}:school:{ou1_name}"}
         assert set(lib_users[0].ucsschool_roles) == roles
-        url = f"{url_fragment}/schools/{school2_attr['name']}"
+        url = f"{url_fragment}/schools/{ou2_name}"
         _url: SplitResult = urlsplit(url)
         new_school_url = HttpUrl(url, path=_url.path, scheme=_url.scheme, host=_url.netloc)
         if method == "patch":
