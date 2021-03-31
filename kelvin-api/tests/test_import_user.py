@@ -77,8 +77,6 @@ USER_ROLES: List[Role] = [
 ]
 random.shuffle(USER_ROLES)
 
-pytest_plugins = ["ucsschool.lib.tests.conftest"]
-
 
 def two_roles_id(value: List[Role]) -> str:
     return f"{value[0].name} -> {value[1].name}"

@@ -343,7 +343,7 @@ class ImportUser(User):
                 # retry for case where create_ou ran parallel to this process
                 # may happen with HTTP-API
                 self.__class__._all_school_names = []
-                all_school_names = await self.get_all_school_names(self.lo)
+                all_school_names = await self.get_all_school_names(lo)
                 if school in all_school_names:
                     continue
                 self.logger.debug("Known schools: %r", all_school_names)

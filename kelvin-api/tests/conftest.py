@@ -52,8 +52,10 @@ import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
 from ucsschool.kelvin.import_config import get_import_config
+from ucsschool.kelvin.routers.school import SchoolCreateModel, SchoolModel
 from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
 from ucsschool.kelvin.token_auth import create_access_token
+from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM, NoObject, UdmObject
 from univention.config_registry import ConfigRegistry
 
@@ -84,6 +86,8 @@ MAPPED_UDM_PROPERTIES = (
     "gidNumber",
 )  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
 
+pytest_plugins = ["ucsschool.lib.tests.conftest"]
+
 fake = Faker()
 
 
@@ -102,17 +106,31 @@ def ucr() -> ConfigRegistry:
     return ucr
 
 
-@lru_cache(maxsize=32)
-def env_or_ucr(key: str) -> str:
-    try:
-        return os.environ[key.replace("/", "_").upper()]
-    except KeyError:
-        return ucr()[key]
+class SchoolCreateModelFactory(factory.Factory):
+    class Meta:
+        model = SchoolCreateModel
+
+    name = factory.Faker("hostname", levels=0)
+    display_name = factory.LazyAttribute(lambda o: f"displ name {o.name}")
+    educational_servers = factory.LazyAttribute(lambda o: [f"edu{o.name[:10]}"])
+    administrative_servers = factory.LazyAttribute(lambda o: [f"adm{o.name[:10]}"])
+    class_share_file_server = factory.LazyAttribute(
+        lambda o: f"{random.choice(('adm', 'edu'))}{o.name[:10]}"
+    )
+    home_share_file_server = factory.LazyAttribute(
+        lambda o: f"{random.choice(('adm', 'edu'))}{o.name[:10]}"
+    )
 
 
-@pytest.fixture(scope="session")
-def ldap_base():
-    return env_or_ucr("ldap/base")
+class SchoolModelFactory(SchoolCreateModelFactory):
+    class Meta:
+        model = SchoolModel
+
+    dn = factory.LazyAttribute(lambda o: f"ou={o.name},dc=ldap,dc=base")
+    url = factory.LazyAttribute(
+        lambda o: f"https://{fake.hostname(2)}/ucsschool/kelvin/v1/schools/{o.name}"
+    )
+    ucsschool_roles = factory.LazyAttribute(lambda o: [f"school:school:{o.name}"])
 
 
 class SchoolClassFactory(factory.Factory):
@@ -292,6 +310,16 @@ def random_name() -> Callable[[], str]:
 
 
 @pytest.fixture
+def random_school_create_model() -> Callable[[], SchoolCreateModel]:
+    return SchoolCreateModelFactory
+
+
+@pytest.fixture
+def random_school_model() -> Callable[[], SchoolModel]:
+    return SchoolModelFactory
+
+
+@pytest.fixture
 def create_random_user_data(url_fragment, new_school_class):
     async def _create_random_user_data(**kwargs) -> UserCreateModel:
         f_name = fake.first_name()
@@ -460,35 +488,6 @@ async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
                 continue
             await obj.remove(udm)
             print(f"Deleted SchoolClass {dn!r} through UDM.")
-
-
-@pytest.fixture
-async def create_random_schools(udm_kwargs):
-    async def _create_random_schools(amount: int) -> List[Tuple[str, Any]]:
-        if amount > 2:
-            assert False, "At the moment only one or two schools can be requested."
-        demo_school = (
-            f"ou=DEMOSCHOOL,{env_or_ucr('ldap/base')}",
-            dict(name="DEMOSCHOOL"),
-        )
-        demo_school_2 = (
-            f"ou=DEMOSCHOOL2,{env_or_ucr('ldap/base')}",
-            dict(name="DEMOSCHOOL2"),
-        )
-        if amount == 1:
-            return [demo_school]
-        async with UDM(**udm_kwargs) as udm:
-            try:
-                await udm.get("container/ou").get(demo_school_2[0])
-            except NoObject:
-                raise AssertionError(
-                    "To run the tests properly you need to have a school named "
-                    "DEMOSCHOOL2 at the moment! Execute *on the host*: "
-                    "'/usr/share/ucs-school-import/scripts/create_ou DEMOSCHOOL2'"
-                )
-        return [demo_school, demo_school_2]
-
-    return _create_random_schools
 
 
 def restart_kelvin_api_server() -> None:
