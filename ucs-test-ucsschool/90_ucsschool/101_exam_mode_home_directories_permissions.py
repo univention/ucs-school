@@ -10,6 +10,7 @@
 import os
 import re
 from datetime import datetime, timedelta
+from typing import List
 
 from ldap.filter import escape_filter_chars
 
@@ -18,8 +19,10 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.admin.uldap import access as LoType
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import (
+    CmdCheckFail,
     Computers,
     Room,
     check_change_permissions,
@@ -44,16 +47,32 @@ def check_nt_acls(filename):  # type: (str) -> None
 
 
 @retry_cmd
-def test_permissions(member_dn_list, open_ldap_co, distribution_data_folder):
+def wait_for_files_to_exist(files):  # type: (List[str]) -> None
+    if not all([os.path.exists(folder) for folder in files]):
+        raise CmdCheckFail("Expected files %r" % (files,))
+
+
+def check_init_windows_profiles(member_dn_list, open_ldap_co):  # type: (List[str], LoType) -> None
+    for dn in member_dn_list:
+        for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
+            print("# init_windows_profiles should log in and create files inside {}.".format(home_dir))
+            print(os.listdir(home_dir))
+            wait_for_files_to_exist(
+                [
+                    os.path.join(home_dir, "windows-profiles"),
+                    os.path.join(home_dir, ".profile"),
+                    os.path.join(home_dir, ".univention-skel.lock"),
+                ]
+            )
+
+
+def check_exam_user_home_dir_permissions(
+    member_dn_list, open_ldap_co, distribution_data_folder
+):  # type: (List[str], LoType, str) -> None
     for dn in member_dn_list:
         samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
             print("# check nt acls for {} and it's subfolders.".format(home_dir))
-            print(os.listdir(home_dir))
-            assert os.path.exists(os.path.join(home_dir, "windows-profiles"))
-            assert os.path.exists(os.path.join(home_dir, ".profile"))
-            assert os.path.exists(os.path.join(home_dir, ".univention-skel.lock"))
-
             for root, sub, files in os.walk(home_dir):
                 check_nt_acls(root)
                 for f in files:
@@ -174,7 +193,8 @@ def main():
         print("# create home directories and check permissions")
         create_homedirs(exam_member_dns, open_ldap_co)
         distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")
-        test_permissions(exam_member_dns, open_ldap_co, distribution_data_folder)
+        check_init_windows_profiles(exam_member_dns, open_ldap_co)
+        check_exam_user_home_dir_permissions(exam_member_dns, open_ldap_co, distribution_data_folder)
         print("# stopping exam")
         exam.finish()
 
