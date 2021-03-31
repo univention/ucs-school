@@ -301,7 +301,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative=False):
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("hostname")
+            return ucr.get("ldap/master")
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
