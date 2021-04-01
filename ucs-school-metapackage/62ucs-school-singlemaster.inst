@@ -192,8 +192,9 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 11 ] ; then
 	if univention-ldapsearch -LLL uid=demo_admin dn | grep -q 'uid=demo_admin' && \
 	  ! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
   then
+    DN="$(univention-ldapsearch -LLL uid=demo_admin dn|sed -n 's/^\s*dn: //p')"
 		udm users/user modify "$@" \
-			--dn "uid=demo_admin,cn=lehrer,cn=users,ou=DEMOSCHOOL,$ldap_base" \
+			--dn "$DN" \
 			--append "ucsschoolRole=school_admin:school:DEMOSCHOOL" || die
 	fi
 fi
