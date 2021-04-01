@@ -107,12 +107,12 @@ append_ucr_policy_to_base() {
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 5 ] ; then
 	if [ -x /etc/init.d/slapd ] &&
-		   [ -x /usr/share/univention-ldap/ldap_setup_index ] &&
-		   [ -e /var/univention-join/joined ] &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
+			[ -x /usr/share/univention-ldap/ldap_setup_index ] &&
+			[ -e /var/univention-join/joined ] &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
 	then
 		echo "Updating LDAP indices..."
 		unset stop_and_start_slapd
@@ -190,9 +190,9 @@ fi
 # Bug #52970: add 'school_admin' role to user 'demo_admin' (missing prior to 4.4 v9)
 if [ $JS_LAST_EXECUTED_VERSION -lt 11 ] ; then
 	if univention-ldapsearch -LLL uid=demo_admin dn | grep -q 'uid=demo_admin' && \
-	  ! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
-  then
-    DN="$(univention-ldapsearch -LLL uid=demo_admin dn|sed -n 's/^\s*dn: //p')"
+		! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
+	then
+		DN="$(univention-ldapsearch -LLL uid=demo_admin dn|sed -n 's/^\s*dn: //p')"
 		udm users/user modify "$@" \
 			--dn "$DN" \
 			--append "ucsschoolRole=school_admin:school:DEMOSCHOOL" || die
@@ -217,26 +217,26 @@ fi
 
 # Set NTACLs on class and work group shares (Bug #42182)
 if [ $JS_LAST_EXECUTED_VERSION -lt 8 ]; then
-  /usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
-  univention-directory-listener-ctrl resync samba-shares
+	/usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
+	univention-directory-listener-ctrl resync samba-shares
 fi
 
 # From 4.4 v9 on force user to (re)run join scripts, which will install the veyon proxy app in the
 # pre-join hooks (Bug #52525, Bug #52660).
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ]; then
-  if python -c '''
+	if python -c '''
 import sys
 from distutils.version import LooseVersion
 from univention.appcenter.app_cache import Apps
 app = Apps().find("ucsschool")
 sys.exit(0 if LooseVersion(app.version) >= LooseVersion("4.4 v9") else 1)
 ''' && ! univention-app status ucsschool-veyon-proxy 1>/dev/null 2>/dev/null; then
-    echo "ERROR: -------------------------------------------------------------------------"
-    echo "ERROR: 'UCS@school Veyon Proxy' (ucsschool-veyon-proxy) app not installed."
-    echo "ERROR: Please execute 'univention-run-join-scripts' or install the app manually."
-    echo "ERROR: -------------------------------------------------------------------------"
-    exit 1
-  fi
+		echo "ERROR: -------------------------------------------------------------------------"
+		echo "ERROR: 'UCS@school Veyon Proxy' (ucsschool-veyon-proxy) app not installed."
+		echo "ERROR: Please execute 'univention-run-join-scripts' or install the app manually."
+		echo "ERROR: -------------------------------------------------------------------------"
+		exit 1
+	fi
 fi
 
 joinscript_save_current_version

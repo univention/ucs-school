@@ -106,12 +106,12 @@ append_ucr_policy_to_base() {
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 5 ] ; then
 	if [ -x /etc/init.d/slapd ] &&
-		   [ -x /usr/share/univention-ldap/ldap_setup_index ] &&
-		   [ -e /var/univention-join/joined ] &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
+			[ -x /usr/share/univention-ldap/ldap_setup_index ] &&
+			[ -e /var/univention-join/joined ] &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
+			univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
 	then
 		echo "Updating LDAP indices..."
 		unset stop_and_start_slapd
@@ -186,9 +186,9 @@ fi
 # Bug #52970: add 'school_admin' role to user 'demo_admin' (missing prior to 4.4 v9)
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 	if univention-ldapsearch -LLL uid=demo_admin dn | grep -q 'uid=demo_admin' && \
-	  ! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
-  then
-    DN="$(univention-ldapsearch -LLL uid=demo_admin dn|sed -n 's/^\s*dn: //p')"
+		! univention-ldapsearch -LLL uid=demo_admin ucsschoolRole | grep -q 'school_admin:school:DEMOSCHOOL'
+	then
+		DN="$(univention-ldapsearch -LLL uid=demo_admin dn|sed -n 's/^\s*dn: //p')"
 		udm users/user modify "$@" \
 			--dn "$DN" \
 			--append "ucsschoolRole=school_admin:school:DEMOSCHOOL" || die
