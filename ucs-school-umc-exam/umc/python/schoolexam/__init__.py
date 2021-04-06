@@ -693,6 +693,19 @@ class Instance(SchoolBaseModule):
                     if not iuser:
                         continue  # not a users/user object
                     logger.info("user has been replicated: %r", idn)
+
+                    # Bug #52307:
+                    # Creating two exams quickly in succession leads to the
+                    # second exam mode using the same UIDs as the first.
+                    # -> clear user name cache to force Samba to get the
+                    # new UID from ldap.
+                    logger.info("Clear user name cache...")
+                    cmd = ["/usr/sbin/nscd", "-i", "passwd"]
+                    if subprocess.call(cmd):  # nosec
+                        logger.error("Clearing user name cache failed: %s", " ".join(cmd))
+                    else:
+                        logger.info("Clearing user name cache finished successfully.")
+
                     # call hook scripts
                     if 0 != subprocess.call(  # nosec
                         [
@@ -1021,18 +1034,6 @@ class Instance(SchoolBaseModule):
 
                     # indicate the user has been processed
                     progress.add_steps(percentPerUser)
-
-                # Bug #52307:
-                # Creating two exams quickly in succession leads to the
-                # second exam mode using the same UIDs as the first.
-                # -> clear user name cache to force Samba to get the
-                # new UID from ldap.
-                logger.info("Clear user name cache...")
-                cmd = ["/usr/sbin/nscd", "-i", "passwd"]
-                if subprocess.call(cmd):  # nosec
-                    logger.error("Clearing user name cache failed: %s", " ".join(cmd))
-                else:
-                    logger.info("Clearing user name cache finished successfully.")
 
                 logger.info("Finished removing exam accounts.")
                 progress.add_steps(percentPerUser)
