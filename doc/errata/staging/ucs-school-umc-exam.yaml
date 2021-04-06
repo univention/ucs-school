@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-exam
+fix: 9.0.1-50A~4.4.0.202104061550
+desc: |
+  * Under circumstances, exam-users could not access their home directories after starting the same exam twice in a short time in a multi-server environment. This patch fixes this issue (Bug #52680).
+bug: [52680]
