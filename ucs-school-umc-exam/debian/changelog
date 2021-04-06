@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-50) unstable; urgency=medium
+
+  * Bug #52680: move cache clear
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 06 Apr 2021 15:48:05 +0200
+
 ucs-school-umc-exam (9.0.1-49) unstable; urgency=medium
 
   * Bug #52786: do not add disabled user to exams
