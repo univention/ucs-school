@@ -5,6 +5,7 @@ from multiprocessing import Pool
 from typing import Dict, List, Tuple
 
 import requests
+from faker import Faker
 from six.moves.urllib.parse import unquote
 
 try:
@@ -23,7 +24,8 @@ if not NUM_USERS % PARALLELISM == 0:
     print("<Number of users> modulus <paralellism> must be zero.")
     sys.exit(1)
 
-SCHOOL_OU = "DEMOSCHOOL"
+fake = Faker()
+SCHOOL_OU = fake.user_name()[:10]
 STR_NUMERIC = "0123456789"
 STR_ALPHA = "abcdefghijklmnopqrstuvwxyz"
 STR_ALPHANUM = STR_ALPHA + STR_NUMERIC
@@ -89,12 +91,8 @@ def user_resource_kwargs(school):
             "birthday": "2015-05-15",
             "disabled": False,
             "groups": [
-                "cn=DEMOSCHOOL-Da,cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
-                    school, LDAP_BASE_DN
-                ),
-                "cn=DEMOSCHOOL-Db,cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
-                    school, LDAP_BASE_DN
-                ),
+                "cn={0}-Da,cn=klassen,cn=schueler,cn=groups,ou={0},{1}".format(school, LDAP_BASE_DN),
+                "cn={0}-Db,cn=klassen,cn=schueler,cn=groups,ou={0},{1}".format(school, LDAP_BASE_DN),
             ],
         },
         "position": "cn=lehrer,cn=users,ou={},{}".format(school, LDAP_BASE_DN),

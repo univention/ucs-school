@@ -52,11 +52,9 @@ async def compare_lib_api_obj(lib_obj: School, api_obj: SchoolModel):
         elif attr == "objectType":
             assert lib_value == "container/ou"
         elif attr in ("class_share_file_server", "home_share_file_server"):
-            assert lib_value
-            assert explode_dn(lib_value, True)[0] == getattr(api_obj, attr)
+            hostname = explode_dn(lib_value, True)[0]
+            assert hostname == getattr(api_obj, attr)
         elif attr in ("administrative_servers", "educational_servers"):
-            if attr == "educational_servers":
-                assert lib_value
             assert {explode_dn(lv, True)[0] for lv in lib_value} == set(getattr(api_obj, attr))
         elif attr in ("dc_name", "dc_name_administrative"):
             continue
@@ -68,7 +66,7 @@ async def compare_lib_api_obj(lib_obj: School, api_obj: SchoolModel):
 
 
 @pytest.mark.asyncio
-async def test_search_no_filter(auth_header, url_fragment, udm_kwargs):
+async def test_search_no_filter(auth_header, retry_http_502, udm_kwargs, url_fragment):
     ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
     ldap_ous: Set[Tuple[str, str]] = {
         (ldap_result["ou"].value, ldap_result.entry_dn)
@@ -80,7 +78,7 @@ async def test_search_no_filter(auth_header, url_fragment, udm_kwargs):
         lib_schools: Iterable[School] = await School.get_all(udm)
     assert {s.name for s in lib_schools} == {ou[0] for ou in ldap_ous}
 
-    response = requests.get(f"{url_fragment}/schools", headers=auth_header)
+    response = retry_http_502(requests.get, f"{url_fragment}/schools", headers=auth_header)
     json_resp = response.json()
     assert response.status_code == 200
     api_schools: Dict[str, SchoolModel] = {data["name"]: SchoolModel(**data) for data in json_resp}
@@ -92,20 +90,25 @@ async def test_search_no_filter(auth_header, url_fragment, udm_kwargs):
 
 
 @pytest.mark.asyncio
-async def test_search_with_filter(auth_header, url_fragment, udm_kwargs, demoschool2):
+async def test_search_with_filter(
+    auth_header, create_ou_using_python, retry_http_502, random_ou_name, url_fragment, udm_kwargs
+):
+    common_name = random_ou_name()[:8]
+    await create_ou_using_python(ou_name=f"{common_name}abc12")
+    await create_ou_using_python(ou_name=f"{common_name}34xyz")
     ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
     ldap_ous: Set[Tuple[str, str]] = {
         (ldap_result["ou"].value, ldap_result.entry_dn)
         for ldap_result in await ldap_access.search(
-            "(&(objectClass=ucsschoolOrganizationalUnit)(ou=demoschool*))", attributes=["ou"]
+            f"(&(objectClass=ucsschoolOrganizationalUnit)(ou={common_name}*))", attributes=["ou"]
         )
     }
     async with UDM(**udm_kwargs) as udm:
-        lib_schools: Iterable[School] = await School.get_all(udm, filter_str="ou=demoschool*")
+        lib_schools: Iterable[School] = await School.get_all(udm, filter_str=f"ou={common_name}*")
     assert {s.name for s in lib_schools} == {ou[0] for ou in ldap_ous}
 
-    response = requests.get(
-        f"{url_fragment}/schools", headers=auth_header, params={"name": "demoschool*"}
+    response = retry_http_502(
+        requests.get, f"{url_fragment}/schools", headers=auth_header, params={"name": f"{common_name}*"}
     )
     json_resp = response.json()
     assert response.status_code == 200
@@ -118,11 +121,14 @@ async def test_search_with_filter(auth_header, url_fragment, udm_kwargs, demosch
 
 
 @pytest.mark.asyncio
-async def test_get(auth_header, url_fragment, udm_kwargs, create_ou_using_python, ldap_base):
+async def test_get(
+    auth_header, create_ou_using_python, retry_http_502, ldap_base, udm_kwargs, url_fragment
+):
     ou_name = await create_ou_using_python()
     async with UDM(**udm_kwargs) as udm:
         lib_obj = await School.from_dn(f"ou={ou_name},{ldap_base}", ou_name, udm)
-    response = requests.get(
+    response = retry_http_502(
+        requests.get,
         f"{url_fragment}/schools/{ou_name}",
         headers=auth_header,
     )
@@ -136,6 +142,7 @@ async def test_get(auth_header, url_fragment, udm_kwargs, create_ou_using_python
 @pytest.mark.asyncio
 async def test_create(
     auth_header,
+    retry_http_502,
     url_fragment,
     udm_kwargs,
     docker_host_name,
@@ -146,7 +153,8 @@ async def test_create(
     school_create_model: SchoolCreateModel = random_school_create_model()
     attrs = school_create_model.dict()
     schedule_delete_ou_using_ssh(school_create_model.name, docker_host_name)
-    response = requests.post(
+    response = retry_http_502(
+        requests.post,
         f"{url_fragment}/schools/",
         headers={"Content-Type": "application/json", **auth_header},
         json=attrs,

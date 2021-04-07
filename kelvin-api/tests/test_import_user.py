@@ -30,6 +30,7 @@ import random
 from typing import List, NamedTuple, Tuple, Type, Union
 
 import pytest
+from faker import Faker
 
 from ucsschool.importer.models.import_user import (
     ImportStaff,
@@ -55,6 +56,7 @@ UserType = Union[
     Type[ImportUser],
 ]
 Role = NamedTuple("Role", [("name", str), ("klass", UserType)])
+fake = Faker()
 
 
 def _inside_docker():
@@ -86,44 +88,44 @@ def two_roles_id(value: List[Role]) -> str:
 @pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
 async def test_modify_role(
     ldap_base,
-    new_school_class,
-    new_user,
+    new_school_class_using_lib,
+    new_udm_user,
     udm_kwargs,
     roles: Tuple[Role, Role],
-    schedule_delete_user_name,
+    schedule_delete_user_name_using_udm,
     import_config,
-    demoschool2,
+    create_multiple_ous,
     random_name,
 ):
     role_from, role_to = roles
-    dn, attr = await new_user(role_from.name)
+    ou1, ou2 = await create_multiple_ous(2)
+    dn, attr = await new_udm_user(ou1, role_from.name)
     async with UDM(**udm_kwargs) as udm:
         use_old_udm = await udm.get("users/user").get(dn)
         # add a school class also to staff users, so we can check if it is kept upon conversion to other
         # role
-        cls_dn1, cls_attr1 = await new_school_class()
-        cls_dn2, cls_attr2 = await new_school_class()
-        demoschool2_dn, demoschool2_name = demoschool2
-        role_demo2 = f"teacher:school:{demoschool2_name}"
-        cls_dn3, cls_attr3 = await new_school_class(school=demoschool2_name)
-        use_old_udm.props.school.append(demoschool2_name)
+        cls_dn1, cls_attr1 = await new_school_class_using_lib(ou1)
+        cls_dn2, cls_attr2 = await new_school_class_using_lib(ou1)
+        role_ou2 = f"teacher:school:{ou2}"
+        cls_dn3, cls_attr3 = await new_school_class_using_lib(ou2)
+        use_old_udm.props.school.append(ou2)
         role_group_prefix = {
             "staff": "mitarbeiter",
             "student": "schueler",
             "teacher": "lehrer",
             "teacher_and_staff": "mitarbeiter",
         }[role_from.name]
-        demoschool2_group_cn = f"cn=groups,ou={demoschool2_name},{ldap_base}"
+        ou2_group_cn = f"cn=groups,ou={ou2},{ldap_base}"
         use_old_udm.props.groups.extend(
             [
                 cls_dn1,
                 cls_dn3,
-                f"cn=Domain Users {demoschool2_name},{demoschool2_group_cn}",
-                f"cn={role_group_prefix}-{demoschool2_name.lower()},{demoschool2_group_cn}",
+                f"cn=Domain Users {ou2},{ou2_group_cn}",
+                f"cn={role_group_prefix}-{ou2.lower()},{ou2_group_cn}",
             ]
         )
-        non_school_role = f"{random_name}:{random_name}:{random_name}"
-        use_old_udm.props.ucsschoolRole.extend([role_demo2, non_school_role])
+        non_school_role = f"{random_name()}:{random_name()}:{random_name()}"
+        use_old_udm.props.ucsschoolRole.extend([role_ou2, non_school_role])
         await use_old_udm.save()
         user_old = await role_from.klass.from_dn(dn, attr["school"][0], udm)
         assert isinstance(user_old, role_from.klass)
@@ -132,7 +134,9 @@ async def test_modify_role(
         if issubclass(role_from.klass, Staff) and issubclass(role_to.klass, Student):
             # Staff user will have no school_class, but for conversion to Student it needs one class per
             # school:
-            addition_class[demoschool2_name] = [cls_attr3["name"]]
+            addition_class[ou2] = [cls_attr3["name"]]
+
+        schedule_delete_user_name_using_udm(user_old.name)
 
         if issubclass(role_to.klass, Staff):
             user_new = await convert_to_staff(user_old, udm, addition_class)
@@ -143,7 +147,6 @@ async def test_modify_role(
         else:
             assert issubclass(role_to.klass, Teacher)
             user_new = await convert_to_teacher(user_old, udm, addition_class)
-        schedule_delete_user_name(user_new.name)
 
         if role_from.klass == role_to.klass:
             assert user_old is user_new
@@ -226,23 +229,23 @@ async def test_modify_role(
 
 @pytest.mark.asyncio
 async def test_modify_role_forbidden(
-    ldap_base,
-    new_school_class,
-    users_user_props,
-    new_user,
+    new_school_class_using_lib,
+    udm_users_user_props,
+    new_udm_user,
     udm_kwargs,
-    schedule_delete_user_name,
+    schedule_delete_user_name_using_udm,
     import_config,
-    demoschool2,
+    create_multiple_ous,
 ):
+    ou1, ou2 = await create_multiple_ous(2)
     # illegal source objects
-    cls_dn, cls_attr = await new_school_class()
+    cls_dn, cls_attr = await new_school_class_using_lib(ou1)
     async with UDM(**udm_kwargs) as udm:
-        sc_obj = await SchoolClass.from_dn(cls_dn, cls_attr["school"], udm)
+        sc_obj = await SchoolClass.from_dn(cls_dn, ou1, udm)
         with pytest.raises(TypeError, match=r"is not an object of a 'ImportUser' subclass"):
             await convert_to_staff(sc_obj, udm)
 
-        dn, attr = await new_user("teacher")
+        dn, attr = await new_udm_user(ou1, "teacher")
         user_obj = await ImportTeacher.from_dn(dn, attr["school"][0], udm)
         user_udm = await user_obj.get_udm_object(udm)
         user_udm.options["ucsschoolAdministrator"] = True
@@ -251,9 +254,9 @@ async def test_modify_role_forbidden(
         await user_udm.save()
         with pytest.raises(TypeError, match=r"not allowed for school administrator"):
             new_user_obj = await convert_to_student(user_obj, udm)
-            schedule_delete_user_name(new_user_obj.name)
+            schedule_delete_user_name_using_udm(new_user_obj.name)
 
-    user_props = users_user_props()
+    user_props = await udm_users_user_props(ou1)
     user_props["name"] = user_props.pop("username")
     user_props["school"] = user_props["school"][0]
     user_props["email"] = user_props.pop("mailPrimaryAddress")
@@ -262,18 +265,18 @@ async def test_modify_role_forbidden(
     user_obj = ImportUser(**user_props)
     with pytest.raises(TypeError, match=r"is not an object of a 'ImportUser' subclass"):
         new_user_obj = await convert_to_staff(user_obj, udm)
-        schedule_delete_user_name(new_user_obj.name)
+        schedule_delete_user_name_using_udm(new_user_obj.name)
 
     user_obj = ExamStudent(**user_props)
     with pytest.raises(TypeError, match=r"is not an object of a 'ImportUser' subclass"):
         new_user_obj = await convert_to_teacher(user_obj, udm)
-        schedule_delete_user_name(new_user_obj.name)
+        schedule_delete_user_name_using_udm(new_user_obj.name)
 
     # illegal convert target
-    dn, attr = await new_user("student")
+    dn, attr = await new_udm_user(ou1, "student")
     async with UDM(**udm_kwargs) as udm:
         user_obj = await ImportStudent.from_dn(dn, attr["school"][0], udm)
-        schedule_delete_user_name(user_obj.name)
+        schedule_delete_user_name_using_udm(user_obj.name)
 
         with pytest.raises(TypeError, match=r"is not a subclass of 'ImportUser'"):
             await ImportUserTypeConverter.convert(user_obj, ImportUser, udm)
@@ -285,9 +288,9 @@ async def test_modify_role_forbidden(
             await ImportUserTypeConverter.convert(user_obj, SchoolClass, udm)
 
         # no school_class for student target
-        dn, attr = await new_user("staff")
+        dn, attr = await new_udm_user(ou1, "staff")
         user_obj = await ImportStaff.from_dn(dn, attr["school"][0], udm)
-        schedule_delete_user_name(user_obj.name)
+        schedule_delete_user_name_using_udm(user_obj.name)
         user_obj.record_uid = user_obj.name
         user_obj.source_uid = "TESTID"
         await user_obj.modify(udm)
@@ -295,11 +298,10 @@ async def test_modify_role_forbidden(
             await ImportUserTypeConverter.convert(user_obj, ImportStudent, udm)
 
         # not enough school_classes for student target
-        demoschool2_dn, demoschool2_name = demoschool2
-        dn, attr = await new_user("teacher")
-        user_obj = await ImportTeacher.from_dn(dn, attr["school"][0], udm)
-        schedule_delete_user_name(user_obj.name)
-        user_obj.schools.append(demoschool2_name)
+        dn, attr = await new_udm_user(ou1, "teacher")
+        user_obj = await ImportTeacher.from_dn(dn, ou1, udm)
+        schedule_delete_user_name_using_udm(user_obj.name)
+        user_obj.schools.append(ou2)
         user_obj.record_uid = user_obj.name
         user_obj.source_uid = "TESTID"
         await user_obj.modify(udm)

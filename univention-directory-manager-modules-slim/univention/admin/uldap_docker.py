@@ -391,7 +391,7 @@ class access(object):
 
     @_fix_reconnect_handling
     def get(self, dn, attr=[], required=False):
-        # type: (str, List[str], bool) -> Dict[str, List[str]]
+        # type: (str, List[str], bool) -> Dict[str, List[bytes]]
         """
         Return multiple attributes of a single LDAP object.
 

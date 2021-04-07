@@ -25,11 +25,11 @@ roles {
 	actor.kelvin_admin
 }
 
-#allowed_users_list[user.username] {
-#	actor.kelvin_admin
-#	user := input.request.data[_]
-#}
-#
+allowed_users_list[user.username] {
+	actor.kelvin_admin
+	user := input.request.data[_]
+}
+
 ## Allow any user to retrieve information about herself
 #users {
 #	input.request.method == "GET"

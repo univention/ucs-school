@@ -3,15 +3,18 @@ import time
 from typing import Dict, List, Tuple, Type, Union
 
 import requests
+from faker import Faker
 
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.user import Teacher, User
 from ucsschool.lib.models.utils import ucr
 
+fake = Faker()
+
 LDAP_BASE_DN = ucr["ldap/base"]
 PARALLELISM = 4
-SCHOOL_OU = "DEMOSCHOOL"
+SCHOOL_OU = fake.user_name()[:10]
 STR_NUMERIC = "0123456789"
 STR_ALPHA = "abcdefghijklmnopqrstuvwxyz"
 STR_ALPHANUM = STR_ALPHA + STR_NUMERIC
@@ -100,7 +103,7 @@ def user_kwargs(school: str) -> Dict[str, str]:
         "password": None,
         "disabled": False,
         "school_classes": {
-            "DEMOSCHOOL": ["{}-Da".format(school), "{}-Db".format(school)],
+            ou: ["{}-Da".format(school), "{}-Db".format(school)],
         },
     }
 
@@ -474,12 +477,8 @@ def user_resource_kwargs(school):
             "birthday": "2015-05-15",
             "disabled": False,
             "groups": [
-                "cn=DEMOSCHOOL-Da,cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
-                    school, ucr["ldap/base"]
-                ),
-                "cn=DEMOSCHOOL-Db,cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
-                    school, ucr["ldap/base"]
-                ),
+                "cn={0}-Da,cn=klassen,cn=schueler,cn=groups,ou={0},{1}".format(school, ucr["ldap/base"]),
+                "cn={0}-Db,cn=klassen,cn=schueler,cn=groups,ou={0},{1}".format(school, ucr["ldap/base"]),
             ],
         },
         "position": "cn=lehrer,cn=users,ou={},{}".format(school, ucr["ldap/base"]),

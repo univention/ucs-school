@@ -220,10 +220,12 @@ def bday_id(bday: datetime.date) -> str:
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_format_pyhook(
     auth_header,
+    retry_http_502,
     url_fragment,
     udm_kwargs,
-    create_random_user_data,
-    schedule_delete_user_name,
+    create_ou_using_python,
+    random_user_create_model,
+    schedule_delete_user_name_using_udm,
     create_format_pyhook,
     role: Role,
 ):
@@ -236,14 +238,19 @@ async def test_format_pyhook(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
+    ou = await create_ou_using_python()
+    lastname = f"{fake.last_name()}-{fake.last_name()}"  # extra long name for reduced flakiness
+    r_user = await random_user_create_model(
+        ou, roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], lastname=lastname
+    )
     data = r_user.json(exclude={"record_uid"})
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
+        lib_users = await User.get_all(udm, ou, f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user_name(r_user.name)
-    response = requests.post(
+    schedule_delete_user_name_using_udm(r_user.name)
+    response = retry_http_502(
+        requests.post,
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
         data=data,
@@ -262,10 +269,12 @@ async def test_format_pyhook(
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_user_pyhook(
     auth_header,
+    retry_http_502,
     url_fragment,
     udm_kwargs,
-    create_random_user_data,
-    schedule_delete_user_name,
+    create_ou_using_python,
+    random_user_create_model,
+    schedule_delete_user_name_using_udm,
     create_user_pyhook,
     schedule_delete_file,
     role: Role,
@@ -279,15 +288,19 @@ async def test_user_pyhook(
         roles = ["staff", "teacher"]
     else:
         roles = [role.name]
-    r_user = await create_random_user_data(roles=[f"{url_fragment}/roles/{role_}" for role_ in roles])
+    ou = await create_ou_using_python()
+    r_user = await random_user_create_model(
+        ou, roles=[f"{url_fragment}/roles/{role_}" for role_ in roles]
+    )
     schedule_delete_file(Path("/tmp", r_user.name))
     data = r_user.json()
     print(f"POST data={data!r}")
     async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
+        lib_users = await User.get_all(udm, ou, f"username={r_user.name}")
     assert len(lib_users) == 0
-    schedule_delete_user_name(r_user.name)
-    response = requests.post(
+    schedule_delete_user_name_using_udm(r_user.name)
+    response = retry_http_502(
+        requests.post,
         f"{url_fragment}/users/",
         headers={"Content-Type": "application/json", **auth_header},
         data=data,
@@ -297,7 +310,8 @@ async def test_user_pyhook(
     api_user = UserModel(**response_json)
     assert api_user.birthday == datetime.date.today()
 
-    response = requests.patch(
+    response = retry_http_502(
+        requests.patch,
         f"{url_fragment}/users/{r_user.name}",
         headers=auth_header,
         json={"birthday": "2013-12-11"},
@@ -306,13 +320,14 @@ async def test_user_pyhook(
     api_user = UserModel(**response.json())
     assert api_user.record_uid == api_user.lastname
 
-    response = requests.delete(
+    response = retry_http_502(
+        requests.delete,
         f"{url_fragment}/users/{r_user.name}",
         headers=auth_header,
     )
     assert response.status_code == 204, response.reason
     async with UDM(**udm_kwargs) as udm:
-        lib_users = await User.get_all(udm, "DEMOSCHOOL", f"username={r_user.name}")
+        lib_users = await User.get_all(udm, ou, f"username={r_user.name}")
     assert len(lib_users) == 0
 
     assert Path("/tmp", r_user.name).exists()

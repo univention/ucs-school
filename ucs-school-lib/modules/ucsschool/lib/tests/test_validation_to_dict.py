@@ -41,14 +41,20 @@ pytestmark = pytest.mark.skipif(
     [Staff, Student, Teacher, TeachersAndStaff, ExamStudent, SchoolClass, WorkGroup, ComputerRoom],
 )
 async def test_udm_obj_to_dict(
-    ObjectClass, udm_kwargs, random_first_name, random_last_name, random_user_name
+    ObjectClass,
+    udm_kwargs,
+    random_first_name,
+    random_last_name,
+    random_user_name,
+    create_ou_using_python,
 ):
+    ou = await create_ou_using_python()
     if issubclass(ObjectClass, Group):
-        name = "DEMOSCHOOL-{}".format(random_user_name())
+        name = "{}-{}".format(ou, random_user_name())
     else:
         name = random_user_name()
     user = ObjectClass(
-        school="DEMOSCHOOL",
+        school=ou,
         name=name,
         firstname=random_first_name(),
         lastname=random_last_name(),
@@ -69,19 +75,20 @@ async def test_udm_obj_to_dict(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("GroupShareClass", [ClassShare, WorkGroupShare])  # MarketplaceShare
-async def test_udm_share_to_dict(GroupShareClass, udm_kwargs, random_user_name):
+async def test_udm_share_to_dict(GroupShareClass, udm_kwargs, random_user_name, create_ou_using_python):
+    ou = await create_ou_using_python()
     async with UDM(**udm_kwargs) as udm:
         if GroupShareClass in [ClassShare, WorkGroupShare]:
-            name = "DEMOSCHOOL-{}".format(random_user_name())
+            name = "{}-{}".format(ou, random_user_name())
             if GroupShareClass == ClassShare:
                 group = SchoolClass(
-                    school="DEMOSCHOOL",
+                    school=ou,
                     name=name,
                 )
                 await group.create(udm)
             elif GroupShareClass == WorkGroupShare:
                 group = WorkGroup(
-                    school="DEMOSCHOOL",
+                    school=ou,
                     name=name,
                 )
                 await group.create(udm)
@@ -89,7 +96,7 @@ async def test_udm_share_to_dict(GroupShareClass, udm_kwargs, random_user_name):
             name = "Marktplatz"
 
         share = GroupShareClass(
-            school="DEMOSCHOOL",
+            school=ou,
             name=name,
         )
         await share.create(udm)

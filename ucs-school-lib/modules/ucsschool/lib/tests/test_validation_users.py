@@ -3,7 +3,7 @@
 ## desc: test ucsschool.lib.models.users validation
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1,unit-test]
-## exposure: dangerous
+## exposure: safe
 ## packages:
 ##   - python-ucs-school
 
@@ -61,6 +61,8 @@ must_run_in_container = pytest.mark.skipif(
     reason="Must run inside Docker container started by appcenter.",
 )
 
+ou = fake.user_name()[:10]
+
 
 def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
     return {
@@ -80,7 +82,7 @@ def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
             "postcode": None,
             "scriptpath": "ucs-school-logon.vbs",
             "sambaPrivileges": [],
-            "primaryGroup": "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+            "primaryGroup": "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
             "ucsschoolPurgeTimestamp": None,
             "city": None,
             "mailForwardCopyToSelf": "0",
@@ -98,7 +100,7 @@ def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
             "sambaUserWorkstations": [],
             "preferredLanguage": None,
             "username": "{}.{}".format(firstname, lastname)[:13],
-            "departmentNumber": ["DEMOSCHOOL"],
+            "departmentNumber": [ou],
             "homeTelephoneNumber": [],
             "shell": "/bin/bash",
             "homePostalAddress": [],
@@ -116,9 +118,7 @@ def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
             "ucsschoolRole": [],
             "password": None,
             "lockedTime": "0",
-            "school": [
-                "DEMOSCHOOL",
-            ],
+            "school": [ou],
             "overridePWHistory": None,
             "mailPrimaryAddress": None,
             "secretary": [],
@@ -158,21 +158,21 @@ def student_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        user["props"]["username"], SchoolSearchBase._containerStudents, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou={},{}".format(
+        user["props"]["username"], SchoolSearchBase._containerStudents, ou, ldap_base
     )
     group_prefix_students = get_current_group_prefix("pupils", "schueler-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_students, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
-        "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
-            SchoolSearchBase._containerStudents, ldap_base
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_students, ou.lower(), ou, ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
+        "cn={0}-Democlass,cn=klassen,cn={1},cn=groups,ou={0},{2}".format(
+            ou, SchoolSearchBase._containerStudents, ldap_base
         ),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}".format(user["props"]["username"])
-    user["props"]["ucsschoolRole"] = ["student:school:DEMOSCHOOL"]
-    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        SchoolSearchBase._containerStudents, ldap_base
+    user["props"]["unixhome"] = "/home/{}/schueler/{}".format(ou, user["props"]["username"])
+    user["props"]["ucsschoolRole"] = ["student:school:{}".format(ou)]
+    user["position"] = "cn={},cn=users,ou={},{}".format(
+        SchoolSearchBase._containerStudents, ou, ldap_base
     )
     user["options"]["ucsschoolStudent"] = True
     return user
@@ -182,25 +182,25 @@ def exam_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={},cn={},ou=DEMOSCHOOL,{}".format(
-        user["props"]["username"], SchoolSearchBase._examUserContainerName, ldap_base
+    user["dn"] = "uid={},cn={},ou={},{}".format(
+        user["props"]["username"], SchoolSearchBase._examUserContainerName, ou, ldap_base
     )
     group_prefix_students = get_current_group_prefix("pupils", "schueler-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_students, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
-        "cn=OUdemoschool-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ldap_base),
-        "cn=DEMOSCHOOL-Democlass,cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
-            SchoolSearchBase._containerStudents, ldap_base
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_students, ou.lower(), ou, ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
+        "cn=OU{}-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ou.lower(), ldap_base),
+        "cn={0}-Democlass,cn=klassen,cn={1},cn=groups,ou={0},{2}".format(
+            ou, SchoolSearchBase._containerStudents, ldap_base
         ),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/schueler/{}".format(user["props"]["username"])
+    user["props"]["unixhome"] = "/home/{}/schueler/{}".format(ou, user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
-        "student:school:DEMOSCHOOL",
-        "exam_user:school:DEMOSCHOOL",
-        "exam_user:exam:demo-exam-DEMOSCHOOL",
+        "student:school:{}".format(ou),
+        "exam_user:school:{}".format(ou),
+        "exam_user:exam:demo-exam-{}".format(ou),
     ]
-    user["position"] = "cn=examusers,ou=DEMOSCHOOL,{}".format(ldap_base)
+    user["position"] = "cn=examusers,ou={},{}".format(ou, ldap_base)
     user["options"]["ucsschoolStudent"] = True
     user["options"]["ucsschoolExam"] = True
     return user
@@ -210,18 +210,18 @@ def teacher_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        user["props"]["username"], SchoolSearchBase._containerTeachers, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou={},{}".format(
+        user["props"]["username"], SchoolSearchBase._containerTeachers, ou, ldap_base
     )
     group_prefix_teachers = get_current_group_prefix("teachers", "lehrer-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_teachers, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_teachers, ou.lower(), ou, ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}".format(user["props"]["username"])
-    user["props"]["ucsschoolRole"] = ["teacher:school:DEMOSCHOOL"]
-    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        SchoolSearchBase._containerTeachers, ldap_base
+    user["props"]["unixhome"] = "/home/{}/lehrer/{}".format(ou, user["props"]["username"])
+    user["props"]["ucsschoolRole"] = ["teacher:school:{}".format(ou)]
+    user["position"] = "cn={},cn=users,ou={},{}".format(
+        SchoolSearchBase._containerTeachers, ou, ldap_base
     )
     user["options"]["ucsschoolTeacher"] = True
     return user
@@ -231,19 +231,17 @@ def staff_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        user["props"]["username"], SchoolSearchBase._containerStaff, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou={},{}".format(
+        user["props"]["username"], SchoolSearchBase._containerStaff, ou, ldap_base
     )
     group_prefix_staff = get_current_group_prefix("staff", "mitarbeiter-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_staff, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_staff, ou.lower(), ou, ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/mitarbeiter/{}".format(user["props"]["username"])
-    user["props"]["ucsschoolRole"] = ["staff:school:DEMOSCHOOL"]
-    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        SchoolSearchBase._containerStaff, ldap_base
-    )
+    user["props"]["unixhome"] = "/home/{}/mitarbeiter/{}".format(ou, user["props"]["username"])
+    user["props"]["ucsschoolRole"] = ["staff:school:{}".format(ou)]
+    user["position"] = "cn={},cn=users,ou={},{}".format(SchoolSearchBase._containerStaff, ou, ldap_base)
     user["options"]["ucsschoolStaff"] = True
     return user
 
@@ -252,23 +250,23 @@ def teacher_and_staff_user() -> Dict[str, Any]:
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        user["props"]["username"], SchoolSearchBase._containerTeachersAndStaff, ldap_base
+    user["dn"] = "uid={},cn={},cn=users,ou={},{}".format(
+        user["props"]["username"], SchoolSearchBase._containerTeachersAndStaff, ou, ldap_base
     )
     group_prefix_staff = get_current_group_prefix("staff", "mitarbeiter-")
     group_prefix_teachers = get_current_group_prefix("teachers", "lehrer-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_teachers, ldap_base),
-        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_staff, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_teachers, ou.lower(), ou, ldap_base),
+        "cn={}{},cn=groups,ou={},{}".format(group_prefix_staff, ou.lower(), ou, ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
     ]
-    user["props"]["unixhome"] = "/home/DEMOSCHOOL/lehrer/{}".format(user["props"]["username"])
+    user["props"]["unixhome"] = "/home/{}/lehrer/{}".format(ou, user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
-        "teacher:school:DEMOSCHOOL",
-        "staff:school:DEMOSCHOOL",
+        "teacher:school:{}".format(ou),
+        "staff:school:{}".format(ou),
     ]
-    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        SchoolSearchBase._containerTeachersAndStaff, ldap_base
+    user["position"] = "cn={},cn=users,ou={},{}".format(
+        SchoolSearchBase._containerTeachersAndStaff, ou, ldap_base
     )
     user["options"]["ucsschoolStaff"] = True
     user["options"]["ucsschoolTeacher"] = True
@@ -279,18 +277,16 @@ def admin_user():  # type: () -> Dict[str, Any]
     firstname = fake.first_name()
     lastname = fake.last_name()
     user = base_user(firstname, lastname)
-    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
-        SchoolSearchBase._containerAdmins, ldap_base
-    )
+    user["position"] = "cn={},cn=users,ou={},{}".format(SchoolSearchBase._containerAdmins, ou, ldap_base)
     user["dn"] = "uid={},{}".format(user["props"]["username"], user["position"])
     group_prefix_admins = get_current_group_prefix("admins", "admins-")
     user["props"]["groups"] = [
-        "cn={}demoschool,cn=ouadmins,cn=groups,{}".format(group_prefix_admins, ldap_base),
-        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+        "cn={}{},cn=ouadmins,cn=groups,{}".format(group_prefix_admins, ou.lower(), ldap_base),
+        "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
     ]
     user["props"]["unixhome"] = "/home/{}".format(user["props"]["username"])
     user["props"]["ucsschoolRole"] = [
-        "school_admin:school:DEMOSCHOOL",
+        "school_admin:school:{}".format(ou),
     ]
 
     user["options"] = {"ucsschoolAdministrator": True}
@@ -465,7 +461,7 @@ def test_correct_uuid(caplog, random_logger):
 @pytest.mark.parametrize("dict_obj", [student_user(), exam_user()], ids=[role_student, role_exam_user])
 @pytest.mark.parametrize("disallowed_role", [role_staff, role_teacher])
 def test_students_exclusive_role(caplog, dict_obj, random_logger, disallowed_role):
-    dict_obj["props"]["ucsschoolRole"].append("{}:school:DEMOSCHOOL".format(disallowed_role))
+    dict_obj["props"]["ucsschoolRole"].append("{}:school:{}".format(disallowed_role, ou))
     validate(dict_obj, logger=random_logger)
     expected_msg = "must not have these roles: {!r}.".format(
         [role_teacher, role_staff, role_school_admin]

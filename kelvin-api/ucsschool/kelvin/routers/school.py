@@ -273,7 +273,8 @@ async def create(
     """
     Create a school (OU) with all the information:
 
-    - **name**: name of the school class (**required**, only ASCII letters, digits and dashes are allowed, dash not at start or end)
+    - **name**: name of the school class (**required**, only ASCII letters, digits and dashes are
+        allowed, dash not at start or end)
     - **display_name**: full name (optional, will be set to '$name' if unset)
     - **educational_servers**: hosts names of educational DCs (optional, each max. 13 chars long,
         'dc$name' will automatically be created and added if unset, more than one DC is **not**
