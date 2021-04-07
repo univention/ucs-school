@@ -25,9 +25,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import asyncio
 import base64
 import datetime
+import inspect
 import json
 import os
 import random
@@ -51,12 +51,14 @@ import ucsschool.lib.models.base
 import ucsschool.lib.models.group
 import ucsschool.lib.models.user
 from ucsschool.importer.configuration import Configuration, ReadOnlyDict
+from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.kelvin.import_config import get_import_config
-from ucsschool.kelvin.routers.school import SchoolCreateModel, SchoolModel
+from ucsschool.kelvin.routers.school import SchoolCreateModel
 from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
 from ucsschool.kelvin.token_auth import create_access_token
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import env_or_ucr
-from udm_rest_client import UDM, NoObject, UdmObject
+from udm_rest_client import UDM, UdmObject
 from univention.config_registry import ConfigRegistry
 
 # handle RuntimeError: Directory '/kelvin/kelvin-api/static' does not exist
@@ -76,7 +78,7 @@ IMPORT_CONFIG = {
         )
     ),
 }
-MAPPED_UDM_PROPERTIES = (
+MAPPED_UDM_PROPERTIES = [
     "title",
     "description",
     "employeeType",
@@ -84,19 +86,14 @@ MAPPED_UDM_PROPERTIES = (
     "phone",
     "uidNumber",
     "gidNumber",
-)  # keep in sync with test_route_user.py::MAPPED_UDM_PROPERTIES
+]  # keep in sync with ucsschool[4.4]/ucs-test-ucsschool/ \
+# 94_ucsschool-api-kelvin/conftest.py::MAPPED_UDM_PROPERTIES
 
+# import fixtures from ucsschool.lib tests
+# this also imports a fixture "event_loop()" that stabilizes async teardowns
 pytest_plugins = ["ucsschool.lib.tests.conftest"]
 
 fake = Faker()
-
-
-@pytest.fixture(scope="session")
-def event_loop(request):
-    """Create an instance of the default event loop for each test case."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
 
 
 @lru_cache(maxsize=1)
@@ -122,44 +119,14 @@ class SchoolCreateModelFactory(factory.Factory):
     )
 
 
-class SchoolModelFactory(SchoolCreateModelFactory):
-    class Meta:
-        model = SchoolModel
-
-    dn = factory.LazyAttribute(lambda o: f"ou={o.name},dc=ldap,dc=base")
-    url = factory.LazyAttribute(
-        lambda o: f"https://{fake.hostname(2)}/ucsschool/kelvin/v1/schools/{o.name}"
-    )
-    ucsschool_roles = factory.LazyAttribute(lambda o: [f"school:school:{o.name}"])
-
-
 class SchoolClassFactory(factory.Factory):
     class Meta:
         model = ucsschool.lib.models.group.SchoolClass
 
-    name = factory.LazyFunction(lambda: f"DEMOSCHOOL-test.{fake.user_name()}")
-    school = "DEMOSCHOOL"
+    name = factory.LazyAttribute(lambda o: f"{o.school}-test.{fake.user_name()}")
+    school = factory.LazyFunction(lambda: fake.user_name()[:10])
     description = factory.Faker("text", max_nb_chars=50)
     users = factory.List([])
-
-
-class UserFactory(factory.Factory):
-    class Meta:
-        model = ucsschool.lib.models.user.User
-
-    name = factory.Faker("user_name")
-    school = "DEMOSCHOOL"
-    schools = factory.List(["DEMOSCHOOL"])
-    firstname = factory.Faker("first_name")
-    lastname = factory.Faker("last_name")
-    birthday = factory.LazyFunction(
-        lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d")
-    )
-    email = None
-    description = factory.Faker("text", max_nb_chars=50)
-    password = factory.Faker("password", length=20)
-    disabled = False
-    school_classes = factory.Dict({})
 
 
 @pytest.fixture(scope="session")
@@ -180,18 +147,21 @@ def url_fragment():
     return f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/v1"
 
 
-@pytest.fixture(scope="session")
-def auth_header(url_fragment):
-    url = url_fragment.replace("v1", "token")
+def get_access_token(username: str = "Administrator", password: str = "univention") -> str:
     response = requests.post(
-        url,
+        url=f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/token",
         headers={"Content-Type": "application/x-www-form-urlencoded"},
-        data=dict(username="Administrator", password="univention"),
+        data=dict(username=username, password=password),
     )
     assert response.status_code == 200, f"{response.__dict__!r}"
     response_json = response.json()
-    auth_header = {"Authorization": f"Bearer {response_json['access_token']}"}
-    return auth_header
+    return response_json["access_token"]
+
+
+@pytest.fixture(scope="session")
+def auth_header():
+    token = get_access_token()
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture
@@ -315,37 +285,38 @@ def random_school_create_model() -> Callable[[], SchoolCreateModel]:
 
 
 @pytest.fixture
-def random_school_model() -> Callable[[], SchoolModel]:
-    return SchoolModelFactory
-
-
-@pytest.fixture
-def create_random_user_data(url_fragment, new_school_class):
-    async def _create_random_user_data(**kwargs) -> UserCreateModel:
-        f_name = fake.first_name()
-        l_name = fake.last_name()
-        name = f"test.{f_name[:8]}{fake.pyint(10, 99)}.{l_name}"[:15].rstrip(".")
+def random_user_create_model(url_fragment, new_school_class_using_lib, udm_users_user_props):
+    async def _create_random_user_data(ou_name: str, **kwargs) -> UserCreateModel:
+        user_props = await udm_users_user_props(ou_name)
         domainname = env_or_ucr("domainname")
+        try:
+            school = kwargs.pop("school")
+        except KeyError:
+            school = f"{url_fragment}/schools/{ou_name}"
+        try:
+            schools = kwargs.pop("schools")
+        except KeyError:
+            schools = [school]
         try:
             school_classes = kwargs.pop("school_classes")
         except KeyError:
             if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
                 school_classes = {}
             else:
-                sc_dn, sc_attr = await new_school_class()
-                school_classes = {"DEMOSCHOOL": ["Democlass", sc_attr["name"]]}
+                sc_dn, sc_attr = await new_school_class_using_lib(ou_name)
+                school_classes = {ou_name: [sc_attr["name"]]}
         data = dict(
-            email=f"{name}mail{fake.pyint()}@{domainname}".lower(),
-            record_uid=name,
+            email=f"{user_props['username']}mail{fake.pyint()}@{domainname}".lower(),
+            record_uid=user_props["username"],
             source_uid="Kelvin",
             birthday=fake.date(),
             disabled=random.choice([True, False]),
-            name=name,
-            firstname=f_name,
-            lastname=l_name,
+            name=user_props["username"],
+            firstname=user_props["firstname"],
+            lastname=user_props["lastname"],
             udm_properties={},
-            school=f"{url_fragment}/schools/DEMOSCHOOL",
-            schools=[f"{url_fragment}/schools/DEMOSCHOOL"],
+            school=school,
+            schools=schools,
             school_classes=school_classes,
             password=fake.password(length=20),
         )
@@ -360,10 +331,18 @@ def create_random_user_data(url_fragment, new_school_class):
 
 @pytest.fixture
 def create_random_users(
-    create_random_user_data, url_fragment, auth_header, schedule_delete_user_name
-):  # TODO: Extend with schools and school_classes if resources are done
-    async def _create_random_users(roles: Dict[str, int], **data_kwargs) -> List[UserCreateModel]:
+    auth_header,
+    retry_http_502,
+    random_user_create_model,
+    schedule_delete_user_name_using_udm,
+    url_fragment,
+):
+    async def _create_random_users(
+        ou_name: str, roles: Dict[str, int], **data_kwargs
+    ) -> List[UserCreateModel]:
         users = []
+        if "school" not in data_kwargs:
+            data_kwargs["school"] = f"{url_fragment}/schools/{ou_name}"
         for role, amount in roles.items():
             for i in range(amount):
                 if role == "teacher_and_staff":
@@ -373,8 +352,9 @@ def create_random_users(
                     ]
                 else:
                     roles_ulrs = [f"{url_fragment}/roles/{role}"]
-                user_data = await create_random_user_data(roles=roles_ulrs, **data_kwargs)
-                response = requests.post(
+                user_data = await random_user_create_model(ou_name, roles=roles_ulrs, **data_kwargs)
+                response = retry_http_502(
+                    requests.post,
                     f"{url_fragment}/users/",
                     headers={"Content-Type": "application/json", **auth_header},
                     data=user_data.json(),
@@ -385,43 +365,54 @@ def create_random_users(
                     f"with {user_data.dict()!r}."
                 )
                 users.append(user_data)
-                schedule_delete_user_name(user_data.name)
+                schedule_delete_user_name_using_udm(user_data.name)
         return users
 
     return _create_random_users
 
 
 @pytest.fixture
-def create_exam_user(create_random_users, ldap_base, random_name, udm_kwargs):
-    async def _func(**kwargs) -> UserCreateModel:
-        user = (await create_random_users({"student": 1}, **kwargs))[0]
-        school = user.school.split("/")[-1]
-        user.ucsschool_roles = [
+def create_exam_user(new_udm_user, ldap_base, random_name, udm_kwargs):
+    async def _func(school: str, **school_user_kwargs) -> Tuple[str, Dict[str, Any]]:
+        dn, user = await new_udm_user(school, "student", **school_user_kwargs)
+        user["ucsschoolRole"] = [
             f"exam_user:school:{school}",
             f"exam_user:exam:{random_name()}-{school}",
         ]
-        print(f"Modifying student {user.name!r} to be an exam user...")
+        print(f"Modifying student {user['username']!r} to be an exam user...")
         async with UDM(**udm_kwargs) as udm:
-            udm_users: List[UdmObject] = [
-                user async for user in udm.get("users/user").search(f"username={user.name}")
-            ]
-            assert len(udm_users) == 1
-            udm_user = udm_users[0]
+            udm_user: UdmObject = await udm.get("users/user").get(dn)
             udm_user.options["ucsschoolExam"] = True
             udm_user.position = f"cn=examusers,ou={school},{ldap_base}"
             udm_user.props.groups.append(
                 f"cn=OU{school.lower()}-Klassenarbeit,cn=ucsschool,cn=groups,{ldap_base}"
             )
-            udm_user.props.ucsschoolRole = user.ucsschool_roles
+            udm_user.props.ucsschoolRole = user["ucsschoolRole"]
             await udm_user.save()
-        print(f"Done: {udm_user.dn!r}")
-        return user
+        print(f"Done: {dn!r}")
+        return dn, user
 
     return _func
 
 
 @pytest.fixture
-def schedule_delete_user_name(auth_header, url_fragment):
+def new_import_user(new_school_user, udm_kwargs):
+    """Create a new import user using UDM."""
+
+    async def _func(
+        school: str, role: str, udm_properties: Dict[str, Any] = None, **school_user_kwargs
+    ) -> ImportUser:
+        lib_user: User = await new_school_user(school, role, udm_properties, **school_user_kwargs)
+        async with UDM(**udm_kwargs) as udm:
+            user = await ImportUser.from_dn(lib_user.dn, school, udm)
+            user.password = lib_user.password
+            return user
+
+    return _func
+
+
+@pytest.fixture
+def schedule_delete_user_name_using_kelvin(auth_header, retry_http_502, url_fragment):
     usernames = []
 
     def _func(username: str):
@@ -430,8 +421,10 @@ def schedule_delete_user_name(auth_header, url_fragment):
     yield _func
 
     for username in usernames:
-        response = requests.delete(f"{url_fragment}/users/{username}", headers=auth_header)
-        assert response.status_code in (204, 404)
+        response = retry_http_502(
+            requests.delete, f"{url_fragment}/users/{username}", headers=auth_header
+        )
+        assert response.status_code in (204, 404), response.reason
         if response.status_code == 204:
             print(f"Deleted user {username!r} through Kelvin API.")
         else:
@@ -455,19 +448,21 @@ def schedule_delete_file():
 
 
 @pytest.fixture
-def new_school_class_obj():
-    return lambda: SchoolClassFactory()
+def new_school_class_using_lib_obj():
+    def _func(school: str, **kwargs) -> ucsschool.lib.models.group.SchoolClass:
+        return SchoolClassFactory.build(school=school, **kwargs)
+
+    return _func
 
 
 @pytest.fixture
-async def new_school_class(udm_kwargs, ldap_base, new_school_class_obj):
+async def new_school_class_using_lib(ldap_base, new_school_class_using_lib_obj, udm_kwargs):
     """Create a new school class"""
     created_school_classes = []
 
-    async def _func(**kwargs) -> Tuple[str, Dict[str, Any]]:
-        sc: ucsschool.lib.models.group.SchoolClass = new_school_class_obj()
-        for k, v in kwargs.items():
-            setattr(sc, k, v)
+    async def _func(school: str, **kwargs) -> Tuple[str, Dict[str, Any]]:
+        sc: ucsschool.lib.models.group.SchoolClass = new_school_class_using_lib_obj(school, **kwargs)
+        assert sc.name.startswith(f"{sc.school}-")
 
         async with UDM(**udm_kwargs) as udm:
             success = await sc.create(udm)
@@ -495,10 +490,12 @@ def restart_kelvin_api_server() -> None:
     subprocess.call(["/etc/init.d/ucsschool-kelvin-rest-api", "restart"])
     while True:
         time.sleep(0.5)
-        response = requests.get(f"http://{os.environ['DOCKER_HOST_NAME']}/ucsschool/kelvin/api/foobar")
-        if response.status_code == 404:
+        try:
+            get_access_token()
             break
-        # else: 502 Proxy Error
+        except AssertionError:
+            # Kelvin API not ready -> 502 Proxy Error
+            pass
 
 
 @pytest.fixture(scope="module")
@@ -524,7 +521,7 @@ def add_to_import_config(restart_kelvin_api_server_session):  # noqa: C901
             for k, v in kwargs.items():
                 if isinstance(v, list):
                     new_value = set(v)
-                    old_value = set(config.get(k))
+                    old_value = set(config.get(k, []))
                     if new_value.issubset(old_value):
                         no_restart = True
                 else:
@@ -611,19 +608,17 @@ def check_password():
 
 
 @pytest.fixture
-def password_hash(check_password, create_random_users):
+def password_hash(check_password, create_ou_using_python, new_udm_user):
     async def _func(password: str = None) -> Tuple[str, PasswordsHashes]:
         password = password or fake.password(length=20)
-        user = (
-            await create_random_users(
-                {"student": 1}, disabled=False, password=password, school_classes={}
-            )
-        )[0]
+        ou = await create_ou_using_python()
+        user_dn, user = await new_udm_user(
+            ou, "student", disabled=False, password=password, school_classes={}
+        )
         ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
-        user_dn = await ldap_access.get_dn_of_user(user.name)
         await check_password(user_dn, password)
         # get hashes of user2
-        filter_s = f"(uid={user.name})"
+        filter_s = f"(uid={user['username']})"
         attributes = [
             "userPassword",
             "sambaNTPassword",
@@ -650,5 +645,44 @@ def password_hash(check_password, create_random_users):
             krb5_key_version_number=ldap_result["krb5KeyVersionNumber"].value,
             samba_pwd_last_set=ldap_result["sambaPwdLastSet"].value,
         )
+
+    return _func
+
+
+@pytest.fixture(scope="session")
+def log_http_502():
+    msgs = []
+    log_file = "/tmp/http502.log"
+
+    def _func(caller, func, args, kwargs):
+        msg = (
+            f"=> HTTP 502 in {caller}() by request.{func}({', '.join(repr(a) for a in args)}, "
+            f"{', '.join(f'{k!r}={v!r}'for k, v in kwargs.items())})"
+        )
+        print(msg)
+        msgs.append(msg)
+
+    yield _func
+
+    if not msgs:
+        return
+    print(f" *** HTTP 502: {len(msgs)} times, see {log_file!r}. ***")
+    with open(log_file, "w") as fp:
+        fp.write("\n".join(msgs))
+
+
+@pytest.fixture
+def retry_http_502(log_http_502):
+    def _func(request_method: Callable[..., requests.Response], *args, **kwargs) -> requests.Response:
+        retries = 5
+        while retries > 0:
+            response = request_method(*args, **kwargs)
+            if response.status_code == 502:
+                caller = inspect.stack()[1].function
+                log_http_502(caller, request_method.__name__, args, kwargs)
+                retries -= 1
+                time.sleep(2)
+                continue
+            return response
 
     return _func

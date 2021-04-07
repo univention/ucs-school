@@ -49,6 +49,8 @@ ldap_base = ucr["ldap/base"]
 container_computerrooms = SchoolSearchBase._containerRooms
 container_students = SchoolSearchBase._containerStudents
 
+fake_ou = fake.user_name()[:10]
+
 
 def filter_log_messages(logs: List[Tuple[str, int, str]], name: str) -> str:
     """
@@ -94,33 +96,33 @@ def base_group(name: str) -> Dict[str, Any]:
 
 
 def workgroup() -> Dict[str, Any]:
-    name = "DEMOSCHOOL-{}".format(fake.user_name())
+    name = "{}-{}".format(fake_ou, fake.user_name())
     group = base_group(name)
-    group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(name, container_students, ldap_base)
-    group["position"] = "cn={},cn=groups,ou=DEMOSCHOOL,{}".format(container_students, ldap_base)
-    group["props"]["ucsschoolRole"] = ["workgroup:school:DEMOSCHOOL"]
+    group["dn"] = "cn={},cn={},cn=groups,ou={},{}".format(name, container_students, fake_ou, ldap_base)
+    group["position"] = "cn={},cn=groups,ou={},{}".format(container_students, fake_ou, ldap_base)
+    group["props"]["ucsschoolRole"] = ["workgroup:school:{}".format(fake_ou)]
     return group
 
 
 def schoolclass() -> Dict[str, Any]:
-    name = "DEMOSCHOOL-{}".format(fake.user_name())
+    name = "{}-{}".format(fake_ou, fake.user_name())
     group = base_group(name)
-    group["position"] = "cn=klassen,cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
-        container_students, ldap_base
+    group["position"] = "cn=klassen,cn={},cn=groups,ou={},{}".format(
+        container_students, fake_ou, ldap_base
     )
     group["dn"] = "cn={}{}".format(name, group["position"])
-    group["props"]["ucsschoolRole"] = ["school_class:school:DEMOSCHOOL"]
+    group["props"]["ucsschoolRole"] = ["school_class:school:{}".format(fake_ou)]
     return group
 
 
 def computer_room() -> Dict[str, Any]:
-    name = "DEMOSCHOOL-{}".format(fake.user_name())
+    name = "{}-{}".format(fake_ou, fake.user_name())
     group = base_group(name)
-    group["dn"] = "cn={},cn={},cn=groups,ou=DEMOSCHOOL,{}".format(
-        name, container_computerrooms, ldap_base
+    group["dn"] = "cn={},cn={},cn=groups,ou={},{}".format(
+        name, container_computerrooms, fake_ou, ldap_base
     )
-    group["position"] = "cn={},cn=groups,ou=DEMOSCHOOL,{}".format(container_computerrooms, ldap_base)
-    group["props"]["ucsschoolRole"] = ["computer_room:school:DEMOSCHOOL"]
+    group["position"] = "cn={},cn=groups,ou={},{}".format(container_computerrooms, fake_ou, ldap_base)
+    group["props"]["ucsschoolRole"] = ["computer_room:school:{}".format(fake_ou)]
     return group
 
 
@@ -192,29 +194,29 @@ def base_share(name: str) -> Dict[str, Any]:
 
 
 def klassen_share() -> Dict[str, Any]:
-    name = "DEMOSCHOOL-{}".format(fake.user_name())
+    name = "{}-{}".format(fake_ou, fake.user_name())
     share = base_share(name)
-    share["dn"] = "cn={},cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
-    share["position"] = "cn=klassen,cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["props"]["ucsschoolRole"] = ["school_class_share:school:DEMOSCHOOL"]
+    share["dn"] = "cn={},cn=klassen,cn=shares,ou={},{}".format(name, fake_ou, ldap_base)
+    share["position"] = "cn=klassen,cn=shares,ou={},{}".format(fake_ou, ldap_base)
+    share["props"]["ucsschoolRole"] = ["school_class_share:school:{}".format(fake_ou)]
     return share
 
 
 def workgroup_share() -> Dict[str, Any]:
-    name = "DEMOSCHOOL-{}".format(fake.user_name())
+    name = "{}-{}".format(fake_ou, fake.user_name())
     share = base_share(name)
-    share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
-    share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["props"]["ucsschoolRole"] = ["workgroup_share:school:DEMOSCHOOL"]
+    share["dn"] = "cn={},cn=shares,ou={},{}".format(name, fake_ou, ldap_base)
+    share["position"] = "cn=shares,ou={},{}".format(fake_ou, ldap_base)
+    share["props"]["ucsschoolRole"] = ["workgroup_share:school:{}".format(fake_ou)]
     return share
 
 
 def marktplatz_share() -> Dict[str, Any]:
     name = "Marktplatz"
     share = base_share(name)
-    share["dn"] = "cn={},cn=shares,ou=DEMOSCHOOL,{}".format(name, ldap_base)
-    share["position"] = "cn=shares,ou=DEMOSCHOOL,{}".format(ldap_base)
-    share["props"]["ucsschoolRole"] = ["marketplace_share:school:DEMOSCHOOL"]
+    share["dn"] = "cn={},cn=shares,ou={},{}".format(name, fake_ou, ldap_base)
+    share["position"] = "cn=shares,ou={},{}".format(fake_ou, ldap_base)
+    share["props"]["ucsschoolRole"] = ["marketplace_share:school:{}".format(fake_ou)]
     return share
 
 
@@ -361,5 +363,5 @@ def test_missing_role(caplog, get_dict_obj, expected_role, random_logger):
 def test_missing_school_prefix(caplog, dict_obj, random_logger):
     dict_obj["props"]["name"] = fake.user_name()
     validate(dict_obj, logger=random_logger)
-    expected_msg = "has an incorrect school prefix for school DEMOSCHOOL."
+    expected_msg = "has an incorrect school prefix for school {}.".format(fake_ou)
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)

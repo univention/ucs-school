@@ -292,7 +292,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative: bool = False) -> str:
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("ldap/master")
+            return ucr.get("ldap/master").split(".", 1)[0]
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
@@ -541,11 +541,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         try:
             success = await super(School, self).create_without_hooks(lo, validate)
             if not success:
-                self.logger.warning(
-                    "Creating %r failed (maybe it already exists?)! Trying to set it up nonetheless",
-                    self,
-                )
-                await self.modify_without_hooks(lo)
+                if await self.exists(lo):
+                    self.logger.warning(
+                        "Creating %r failed, it already exists! Trying to modify it...", self
+                    )
+                    await self.modify_without_hooks(lo)
 
             if self.alter_dhcpd_base and ucr.is_true("ucsschool/singlemaster", False):
                 # TODO: this must be executed on the host!

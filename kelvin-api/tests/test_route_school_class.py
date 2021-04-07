@@ -30,13 +30,12 @@ from typing import List
 import pytest
 import requests
 from faker import Faker
-from ldap.filter import filter_format
 
 import ucsschool.kelvin.constants
 from ucsschool.kelvin.routers.school_class import SchoolClassModel
 from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.group import SchoolClass
-from ucsschool.lib.models.user import User
+from ucsschool.lib.models.user import Student, User
 from udm_rest_client import UDM
 
 fake = Faker()
@@ -70,7 +69,7 @@ async def compare_lib_api_obj(lib_obj: SchoolClass, api_obj: SchoolClassModel, u
             if lib_value:
                 assert lib_value == api_obj.ucsschool_roles
             else:
-                assert api_obj.ucsschool_roles == ["school_class:school:DEMOSCHOOL"]
+                assert api_obj.ucsschool_roles == [f"school_class:school:{lib_obj.school}"]
         else:
             assert lib_value == getattr(api_obj, attr)
 
@@ -83,7 +82,7 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):
 
     for attr, value in json_resp.items():
         if attr == "ucsschool_roles":
-            assert value[0] == ldap_obj["ucsschoolRole"][0].decode("utf-8")
+            assert set(value) == set(r.decode("utf-8") for r in ldap_obj["ucsschoolRole"])
         elif attr == "description" and "description" in ldap_obj:
             assert value == ldap_obj["description"][0].decode("utf-8")
         elif attr == "users":
@@ -100,23 +99,30 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):
 
 
 @pytest.mark.asyncio
-async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
-    sc1_dn, sc1_attr = await new_school_class()
-    sc2_dn, sc2_attr = await new_school_class()
+async def test_search(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib,
+    create_ou_using_python,
+):
+    ou = await create_ou_using_python()
+    sc1_dn, sc1_attr = await new_school_class_using_lib(ou)
+    sc2_dn, sc2_attr = await new_school_class_using_lib(ou)
     async with UDM(**udm_kwargs) as udm:
-        lib_classes: List[SchoolClass] = await SchoolClass.get_all(udm, sc1_attr["school"])
+        lib_classes: List[SchoolClass] = await SchoolClass.get_all(udm, ou)
     assert sc1_dn in [c.dn for c in lib_classes]
     assert sc2_dn in [c.dn for c in lib_classes]
-    response = requests.get(
+    response = retry_http_502(
+        requests.get,
         f"{url_fragment}/classes",
         headers=auth_header,
-        params={"school": "DEMOSCHOOL"},
+        params={"school": ou},
     )
     json_resp = response.json()
     assert response.status_code == 200
-    api_classes = {
-        f"{sc1_attr['school']}-{data['name']}": SchoolClassModel(**data) for data in json_resp
-    }
+    api_classes = {f"{ou}-{data['name']}": SchoolClassModel(**data) for data in json_resp}
     assert sc1_dn in [ac.dn for ac in api_classes.values()]
     assert sc2_dn in [ac.dn for ac in api_classes.values()]
     for lib_obj in lib_classes:
@@ -127,16 +133,21 @@ async def test_search(auth_header, url_fragment, udm_kwargs, new_school_class):
 
 
 @pytest.mark.asyncio
-async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
-    sc1_dn, sc1_attr = await new_school_class()
+async def test_get(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib,
+    create_ou_using_python,
+):
+    ou = await create_ou_using_python()
+    sc1_dn, sc1_attr = await new_school_class_using_lib(ou)
     async with UDM(**udm_kwargs) as udm:
-        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, ou, udm)
     assert sc1_dn == lib_obj.dn
-    url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
-    response = requests.get(
-        url,
-        headers=auth_header,
-    )
+    url = f"{url_fragment}/classes/{ou}/{sc1_attr['name']}"
+    response = retry_http_502(requests.get, url, headers=auth_header)
     json_resp = response.json()
     assert response.status_code == 200
     assert all(
@@ -148,8 +159,16 @@ async def test_get(auth_header, url_fragment, udm_kwargs, new_school_class):
 
 
 @pytest.mark.asyncio
-async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_obj):
-    lib_obj: SchoolClass = new_school_class_obj()
+async def test_create(
+    auth_header,
+    create_ou_using_python,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib_obj,
+):
+    school = await create_ou_using_python()
+    lib_obj: SchoolClass = new_school_class_using_lib_obj(school)
     attrs = {
         "name": lib_obj.name[len(lib_obj.school) + 1 :],  # noqa: E203
         "school": f"{url_fragment}/schools/{lib_obj.school}",
@@ -158,7 +177,8 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
     }
     async with UDM(**udm_kwargs) as udm:
         assert await lib_obj.exists(udm) is False
-        response = requests.post(
+        response = retry_http_502(
+            requests.post,
             f"{url_fragment}/classes/",
             headers={"Content-Type": "application/json", **auth_header},
             json=attrs,
@@ -176,49 +196,43 @@ async def test_create(auth_header, url_fragment, udm_kwargs, new_school_class_ob
 
 async def change_operation(
     auth_header,
+    retry_http_502,
     url_fragment,
     udm_kwargs,
-    new_school_class,
-    create_random_users,
-    operation,
+    new_school_class_using_lib,
+    new_school_users,
+    operation: str,
+    school: str,
 ):
     assert operation in ("patch", "put")
-    users_data = await create_random_users({"student": 2, "teacher": 1, "teacher_and_staff": 1})
-    student_data = None
-    for user_data in users_data:
-        for role in user_data.roles:
-            if role.endswith("student"):
-                student_data = user_data
-        if student_data:
-            break
-    else:
+    users: List[User] = await new_school_users(
+        school, {"student": 2, "teacher": 1, "teacher_and_staff": 1}
+    )
+    students = [user for user in users if isinstance(user, Student)]
+    if not students:
         raise RuntimeError("No student in user data.")
     async with UDM(**udm_kwargs) as udm:
-        students = [
-            obj
-            async for obj in udm.get("users/user").search(filter_format("uid=%s", (student_data.name,)))
-        ]
-        assert len(students) == 1
         first_student_dn = students[0].dn
-        sc1_dn, sc1_attr = await new_school_class(users=[first_student_dn])
+        sc1_dn, sc1_attr = await new_school_class_using_lib(school, users=[first_student_dn])
         # verify class exists in LDAP
-        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, school, udm)
         assert lib_obj.description == sc1_attr["description"]
         assert lib_obj.users == [first_student_dn]
         # verify users exist in LDAP
-        for user_data in users_data:
-            assert await User(name=user_data.name, school=user_data.school).exists(udm) is True
+        for user in users:
+            assert await User(name=user.name, school=user.school).exists(udm) is True
         # execute PATCH/PUT
         change_data = {
             "description": fake.text(max_nb_chars=50),
-            "users": [f"{url_fragment}/users/{user_data.name}" for user_data in users_data],
+            "users": [f"{url_fragment}/users/{user.name}" for user in users],
         }
         if operation == "put":
             change_data["name"] = sc1_attr["name"]
-            change_data["school"] = f"{url_fragment}/schools/{sc1_attr['school']}"
-        url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
+            change_data["school"] = f"{url_fragment}/schools/{school}"
+        url = f"{url_fragment}/classes/{school}/{sc1_attr['name']}"
         requests_method = getattr(requests, operation)
-        response = requests_method(
+        response = retry_http_502(
+            requests_method,
             url,
             headers=auth_header,
             json=change_data,
@@ -232,49 +246,80 @@ async def change_operation(
         assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(change_data["users"])
         usernames_in_response = {url2username(url) for url in api_obj.users}
         # check LDAP content
-        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, school, udm)
         assert lib_obj.description == change_data["description"]
         usernames_in_ldap = {dn2username(dn) for dn in lib_obj.users}
         assert usernames_in_response == usernames_in_ldap
 
 
 @pytest.mark.asyncio
-async def test_put(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users):
+async def test_put(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib,
+    create_ou_using_python,
+    new_school_users,
+):
+    ou = await create_ou_using_python()
     await change_operation(
         auth_header,
+        retry_http_502,
         url_fragment,
         udm_kwargs,
-        new_school_class,
-        create_random_users,
+        new_school_class_using_lib,
+        new_school_users,
         operation="put",
+        school=ou,
     )
 
 
 @pytest.mark.asyncio
-async def test_patch(auth_header, url_fragment, udm_kwargs, new_school_class, create_random_users):
+async def test_patch(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib,
+    create_ou_using_python,
+    new_school_users,
+):
+    ou = await create_ou_using_python()
     await change_operation(
         auth_header,
+        retry_http_502,
         url_fragment,
         udm_kwargs,
-        new_school_class,
-        create_random_users,
+        new_school_class_using_lib,
+        new_school_users,
         operation="patch",
+        school=ou,
     )
 
 
 @pytest.mark.asyncio
-async def test_delete(auth_header, url_fragment, udm_kwargs, new_school_class):
-    sc1_dn, sc1_attr = await new_school_class()
+async def test_delete(
+    auth_header,
+    create_ou_using_python,
+    retry_http_502,
+    url_fragment,
+    udm_kwargs,
+    new_school_class_using_lib,
+):
+    ou = await create_ou_using_python()
+    sc1_dn, sc1_attr = await new_school_class_using_lib(ou)
     async with UDM(**udm_kwargs) as udm:
-        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
+        lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, ou, udm)
         assert await lib_obj.exists(udm) is True
     assert sc1_dn == lib_obj.dn
-    url = f"{url_fragment}/classes/{sc1_attr['school']}/{sc1_attr['name']}"
-    response = requests.delete(
+    url = f"{url_fragment}/classes/{ou}/{sc1_attr['name']}"
+    response = retry_http_502(
+        requests.delete,
         url,
         headers=auth_header,
     )
     assert response.status_code == 204
     async with UDM(**udm_kwargs) as udm:
         with pytest.raises(NoObject):
-            await SchoolClass.from_dn(sc1_dn, sc1_attr["school"], udm)
+            await SchoolClass.from_dn(sc1_dn, ou, udm)

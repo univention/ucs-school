@@ -26,6 +26,7 @@
 # <http://www.gnu.org/licenses/>.
 import pytest
 import requests
+from faker import Faker
 
 # import ucsschool.kelvin.constants
 from ucsschool.kelvin.opa import OPAClient
@@ -36,36 +37,38 @@ from ucsschool.kelvin.opa import OPAClient
 # )
 
 pytestmark = pytest.mark.skipif(True, reason="OPA disabled for now")
+fake = Faker()
+ou = fake.user_name()[:10]
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("route", ("classes", "roles", "schools"))
 @pytest.mark.parametrize("role", ("student", "teacher", "staff", "school_admin"))
 async def test_unhandled_routes_non_kelvin_admin(
-    route: str, role: str, generate_auth_header, url_fragment
+    route: str, role: str, generate_auth_header, retry_http_502, url_fragment
 ):
     """
     This test is just to ensure that routes that are not yet handled by OPA are
     inaccessible by non kelvin admins. It is just checked for the GET method
     """
-    headers = await generate_auth_header(
-        "dummy", False, schools=["DEMOSCHOOL"], roles=[f"{role}:school:DEMOSCHOOL"]
-    )
+    headers = await generate_auth_header("dummy", False, schools=[ou], roles=[f"{role}:school:{ou}"])
     params = dict()
     if route == "classes":
-        params["school"] = "DEMOSCHOOL"
-    response = requests.get(f"{url_fragment}/{route}", headers=headers, params=params)
+        params["school"] = ou
+    response = retry_http_502(requests.get, f"{url_fragment}/{route}", headers=headers, params=params)
     assert response.status_code == 401
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("route", ("classes", "roles", "schools"))
-async def test_unhandled_routes_kelvin_admin(route: str, generate_auth_header, url_fragment):
+async def test_unhandled_routes_kelvin_admin(
+    route: str, retry_http_502, generate_auth_header, url_fragment
+):
     headers = await generate_auth_header("dummy", True, schools=[], roles=[])
     params = dict()
     if route == "classes":
-        params["school"] = "DEMOSCHOOL"
-    response = requests.get(f"{url_fragment}/{route}", headers=headers, params=params)
+        params["school"] = ou
+    response = retry_http_502(requests.get, f"{url_fragment}/{route}", headers=headers, params=params)
     assert response.status_code == 200
 
 
@@ -79,14 +82,23 @@ async def test_unhandled_routes_kelvin_admin(route: str, generate_auth_header, u
     ),
 )
 async def test_reset_own_password(
-    role, json, expected, url_fragment, generate_auth_header, create_random_users
+    role,
+    json,
+    expected,
+    retry_http_502,
+    url_fragment,
+    generate_auth_header,
+    new_user,
+    create_ou_using_python,
 ):
-    user = (await create_random_users({role: 1}, disabled=False))[0]
+    ou = await create_ou_using_python()
+    user = await new_user(ou, role, disabled=False)
     headers = await generate_auth_header(
-        user.name, False, schools=["DEMOSCHOOL"], roles=[f"{role}:school:DEMOSCHOOL"]
+        user["name"], False, schools=[ou], roles=[f"{role}:school:{ou}"]
     )
-    response = requests.patch(
-        f"{url_fragment}/users/{user.name}",
+    response = retry_http_502(
+        requests.patch,
+        f"{url_fragment}/users/{user['name']}",
         headers=headers,
         json=json,
     )
@@ -103,14 +115,14 @@ async def test_reset_own_password(
         ("school_admin", {"teacher", "student", "school_admin", "staff"}),
     ),
 )
-@pytest.mark.parametrize("school", ("DEMOSCHOOL", "OTHERSCHOOL"))
+@pytest.mark.parametrize("school", (ou, "OTHERSCHOOL"))
 async def test_policy_list(
     role: str,
     expected: set,
     school: str,
     generate_jwt,
 ):
-    token = await generate_jwt("actor", False, ["DEMOSCHOOL"], [f"{role}:school:DEMOSCHOOL"])
+    token = await generate_jwt("actor", False, [ou], [f"{role}:school:{ou}"])
     request = dict(
         method="GET",
         path=["users"],
@@ -140,7 +152,7 @@ async def test_policy_list(
     target = {}
     assert set(
         await OPAClient.instance().check_policy("allowed_users_list", token, request, target)
-    ) == (expected if school == "DEMOSCHOOL" else set())
+    ) == (expected if school == ou else set())
 
 
 @pytest.mark.asyncio
@@ -165,15 +177,15 @@ async def test_policy_list(
         ("school_admin", "school_admin", False),
     ),
 )
-@pytest.mark.parametrize("school", ("DEMOSCHOOL", "OTHERSCHOOL"))
+@pytest.mark.parametrize("school", (ou, "OTHERSCHOOL"))
 async def test_policy_password_reset_as_role(
     actor_role: str, target_role: str, expected: bool, school: str, generate_jwt
 ):
-    token = await generate_jwt("actor", False, ["DEMOSCHOOL"], [f"{actor_role}:school:DEMOSCHOOL"])
+    token = await generate_jwt("actor", False, [ou], [f"{actor_role}:school:{ou}"])
     request = dict(method="PATCH", path=["users", "target"], data={"password": "new_password"})
     target = dict(
         username="target",
-        schools=["DEMOSCHOOL"],
-        roles=[f"{target_role}:school:DEMOSCHOOL"],
+        schools=[ou],
+        roles=[f"{target_role}:school:{ou}"],
     )
     assert await OPAClient.instance().check_policy_true("users", token, request, target) == expected

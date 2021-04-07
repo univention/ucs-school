@@ -31,25 +31,22 @@ from typing import List
 
 import pytest
 import requests
-from pydantic import ValidationError
+from faker import Faker
 
 import ucsschool.kelvin.constants
 from ucsschool.kelvin.routers.school_class import SchoolClass
 from ucsschool.lib.models.utils import ucr
+from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class
 from udm_rest_client import UDM
-from udm_rest_client.exceptions import CreateError
-
-lower_case_chars = f"{string.ascii_lowercase}"
-digits = "".join(str(i) for i in range(10))
-
 
 must_run_in_container = pytest.mark.skipif(
     not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists(),
     reason="Must run inside Docker container started by appcenter.",
 )
+fake = Faker()
 
 
-def random_names(name_lengths: list, chars: str) -> List:
+def random_names(name_lengths: List[int], chars: str) -> List[str]:
     names = []
     for n in name_lengths:
         names.append("".join(random.choice(chars) for _ in range(n)))
@@ -58,53 +55,45 @@ def random_names(name_lengths: list, chars: str) -> List:
 
 @pytest.mark.parametrize(
     "name",
-    random_names(random.choices(range(1, 33), k=100), f"{lower_case_chars}{digits}"),
+    random_names(random.choices(range(1, 33), k=100), f"{string.ascii_lowercase}{string.digits}"),
 )
+@must_run_in_container
 @pytest.mark.asyncio
-async def test_schoolclass_module(name):
-    try:
-        SchoolClass(name=name, school="DEMOSCHOOL")
-    except ValidationError as e:
-        raise e
+async def test_schoolclass_module(name: str, udm_kwargs):
+    school = fake.user_name()
+    async with UDM(**udm_kwargs) as udm:
+        await SchoolClass(name=f"{school}-{name}", school=school).validate(udm)
 
 
 @must_run_in_container
 @pytest.mark.asyncio
-async def test_check_class_name(auth_header, url_fragment, udm_kwargs):
-    school_name = "DEMOSCHOOL"
-    attrs = {
-        "school": school_name,
-    }
-    names = []
-    names.append("1a")
-    names.append("1-a")
+async def test_check_class_name(
+    auth_header, create_ou_using_python, retry_http_502, url_fragment, udm_kwargs
+):
+    school_name = await create_ou_using_python()
+    names = {"1a", "1-a"}
     name_lengths = random.sample(range(1, 33), 3) + [1] * 3
-    names.extend(random_names(name_lengths, lower_case_chars))
-    names.extend(random_names(name_lengths, digits))
-    class_names = names
-    names = [f"DEMOSCHOOL-{name}" for name in names]
+    names.update(set(random_names(name_lengths, string.ascii_lowercase)))
+    names.update(set(random_names(name_lengths, string.digits)))
 
     async with UDM(**udm_kwargs) as udm:
         group_mod = udm.get("groups/group")
         for name in names:
             obj = await group_mod.new()
-            obj.props.name = name
-            obj.props.ucsschoolRole = [f"school_class:school:{school_name}"]
+            obj.props.name = f"{school_name}-{name}"
+            obj.props.ucsschoolRole = [create_ucsschool_role_string(role_school_class, school_name)]
             obj.props.school = [school_name]
             obj.position = f"cn=klassen,cn=schueler,cn=groups,ou={school_name},{ucr.get('ldap/base')}"
-            try:
-                await obj.save()
-            except CreateError:
-                # obj already exists, that's ok.
-                pass
-        response = requests.get(
-            f"{url_fragment}/classes/",
-            headers={"Content-Type": "application/json", **auth_header},
-            params=attrs,
-        )
-        json_resp = response.json()
-        assert response.status_code == 200
-        # make sure all classes were created.
-        expected = set(class_names)
-        received = set([r["name"] for r in json_resp if r["name"] in class_names])
-        assert expected == received
+            await obj.save()
+
+    response = retry_http_502(
+        requests.get,
+        f"{url_fragment}/classes/",
+        headers={"Content-Type": "application/json", **auth_header},
+        params={"school": school_name},
+    )
+    json_resp = response.json()
+    assert response.status_code == 200, response.reason
+    # make sure all classes were created.
+    received = set(r["name"] for r in json_resp if r["name"] in names)
+    assert names == received

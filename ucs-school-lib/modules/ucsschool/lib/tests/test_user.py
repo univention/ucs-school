@@ -1,6 +1,6 @@
 import itertools
 import random
-from typing import List, NamedTuple, Tuple, Type, Union
+from typing import Any, Dict, List, NamedTuple, Tuple, Type, Union
 
 import pytest
 from faker import Faker
@@ -48,7 +48,7 @@ USER_ROLES: List[Role] = [
 random.shuffle(USER_ROLES)
 
 
-def compare_attr_and_lib_user(attr, user):
+def compare_attr_and_lib_user(attr: Dict[str, Any], user: User):
     for k, v in attr.items():
         if k in ("description", "password", "ucsschoolRole"):
             continue
@@ -64,6 +64,9 @@ def compare_attr_and_lib_user(attr, user):
         elif k == "mailPrimaryAddress":
             val1 = v
             val2 = getattr(user, "email")
+        elif k == "e-mail":
+            val1 = set(v)
+            val2 = {getattr(user, "email")}
         else:
             val1 = v
             val2 = getattr(user, k)
@@ -83,57 +86,59 @@ def two_roles_id(value: List[Role]) -> str:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_exists(new_user, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_exists(create_ou_using_python, new_udm_user, udm_kwargs, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
         for kls in (role.klass, User):
-            user0 = await kls.from_dn(dn, attr["school"][0], udm)
+            user0 = await kls.from_dn(dn, ou, udm)
             assert await user0.exists(udm) is True
-            user1 = kls(name=attr["username"], school=attr["school"][0])
+            user1 = kls(name=attr["username"], school=ou)
             assert await user1.exists(udm) is True
-            user2 = kls(name=fake.pystr(), school=attr["school"][0])
+            user2 = kls(name=fake.pystr(), school=ou)
             assert await user2.exists(udm) is False
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_from_dn(new_user, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_from_dn(create_ou_using_python, new_udm_user, udm_kwargs, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as lo_udm:
         for kls in (role.klass, User):
-            user = await kls.from_dn(dn, attr["school"][0], lo_udm)
+            user = await kls.from_dn(dn, ou, lo_udm)
             assert isinstance(user, role.klass)
             compare_attr_and_lib_user(attr, user)
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_from_udm_obj(new_user, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_from_udm_obj(create_ou_using_python, new_udm_user, udm_kwargs, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
         for kls in (role.klass, User):
             udm_mod = udm.get(kls._meta.udm_module)
             udm_obj = await udm_mod.get(dn)
-            user = await kls.from_udm_obj(udm_obj, attr["school"][0], udm)
+            user = await kls.from_udm_obj(udm_obj, ou, udm)
             assert isinstance(user, role.klass)
             compare_attr_and_lib_user(attr, user)
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_get_all(new_user, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_get_all(create_ou_using_python, new_udm_user, udm_kwargs, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
         for kls in (role.klass, User):
-            for obj in await kls.get_all(udm, attr["school"][0]):
+            for obj in await kls.get_all(udm, ou):
                 if obj.dn == dn:
                     break
             else:
-                raise AssertionError(
-                    f"DN {dn!r} not found in {kls.__name__}.get_all(udm, {attr['school'][0]})."
-                )
+                raise AssertionError(f"DN {dn!r} not found in {kls.__name__}.get_all(udm, {ou}).")
             filter_str = filter_format("(uid=%s)", (attr["username"],))
-            objs = await kls.get_all(udm, attr["school"][0], filter_str=filter_str)
+            objs = await kls.get_all(udm, ou, filter_str=filter_str)
             assert len(objs) == 1
             assert isinstance(objs[0], role.klass)
             compare_attr_and_lib_user(attr, objs[0])
@@ -141,27 +146,33 @@ async def test_get_all(new_user, udm_kwargs, role: Role):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_get_class_for_udm_obj(new_user, role2class, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_get_class_for_udm_obj(
+    create_ou_using_python, new_udm_user, role2class, udm_kwargs, role: Role
+):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
         udm_obj = await udm.get(User._meta.udm_module).get(dn)
-        klass = await User.get_class_for_udm_obj(udm_obj, attr["school"][0])
+        klass = await User.get_class_for_udm_obj(udm_obj, ou)
         assert klass is role.klass
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_create(new_school_class, users_user_props, udm_kwargs, role: Role):
+async def test_create(
+    create_ou_using_python, new_school_class_using_udm, udm_users_user_props, udm_kwargs, role: Role
+):
+    school = await create_ou_using_python()
     async with UDM(**udm_kwargs) as udm:
-        user_props = users_user_props()
+        user_props = await udm_users_user_props(school)
         user_props["name"] = user_props["username"]
         user_props["email"] = user_props["mailPrimaryAddress"]
-        school = user_props["school"][0]
         user_props["school"] = school
         user_props["birthday"] = str(user_props["birthday"])
+        del user_props["e-mail"]
         if role.klass != Staff:
-            cls_dn1, cls_attr1 = await new_school_class()
-            cls_dn2, cls_attr2 = await new_school_class()
+            cls_dn1, cls_attr1 = await new_school_class_using_udm(school=school)
+            cls_dn2, cls_attr2 = await new_school_class_using_udm(school=school)
             user_props["school_classes"] = {
                 school: [
                     f"{school}-{cls_attr1['name']}",
@@ -178,10 +189,11 @@ async def test_create(new_school_class, users_user_props, udm_kwargs, role: Role
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_modify(new_user, udm_kwargs, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_modify(create_ou_using_python, new_udm_user, udm_kwargs, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
-        user = await role.klass.from_dn(dn, attr["school"][0], udm)
+        user = await role.klass.from_dn(dn, ou, udm)
         description = fake.text(max_nb_chars=50)
         user.description = description
         firstname = fake.first_name()
@@ -192,7 +204,7 @@ async def test_modify(new_user, udm_kwargs, role: Role):
         user.birthday = birthday
         success = await user.modify(udm)
         assert success is True
-        user = await role.klass.from_dn(dn, attr["school"][0], udm)
+        user = await role.klass.from_dn(dn, ou, udm)
     attr["firstname"] = firstname
     attr["lastname"] = lastname
     attr["birthday"] = birthday
@@ -203,42 +215,42 @@ async def test_modify(new_user, udm_kwargs, role: Role):
 @pytest.mark.parametrize("roles", itertools.product(USER_ROLES, USER_ROLES), ids=two_roles_id)
 async def test_modify_role(
     ldap_base,
-    new_school_class,
-    new_user,
+    new_school_class_using_udm,
+    new_udm_user,
     udm_kwargs,
     roles: Tuple[Role, Role],
     schedule_delete_user_dn,
-    demoschool2,
+    create_multiple_ous,
 ):
     role_from, role_to = roles
-    dn, attr = await new_user(role_from.name)
+    ou1, ou2 = await create_multiple_ous(2)
+    dn, attr = await new_udm_user(ou1, role_from.name)
     async with UDM(**udm_kwargs) as udm:
         use_old_udm = await udm.get("users/user").get(dn)
         # add a school class also to staff users, so we can check if it is kept upon conversion to other
         # role
-        cls_dn1, cls_attr1 = await new_school_class()
-        cls_dn2, cls_attr2 = await new_school_class()
-        demoschool2_dn, demoschool2_name = demoschool2
-        role_demo2 = f"teacher:school:{demoschool2_name}"
-        cls_dn3, cls_attr3 = await new_school_class(school=demoschool2_name)
-        use_old_udm.props.school.append(demoschool2_name)
+        cls_dn1, cls_attr1 = await new_school_class_using_udm(school=ou1)
+        cls_dn2, cls_attr2 = await new_school_class_using_udm(school=ou1)
+        role_ou2 = f"teacher:school:{ou2}"
+        cls_dn3, cls_attr3 = await new_school_class_using_udm(school=ou2)
+        use_old_udm.props.school.append(ou2)
         role_group_prefix = {
             "staff": "mitarbeiter",
             "student": "schueler",
             "teacher": "lehrer",
             "teacher_and_staff": "mitarbeiter",
         }[role_from.name]
-        demoschool2_group_cn = f"cn=groups,ou={demoschool2_name},{ldap_base}"
+        ou2_group_cn = f"cn=groups,ou={ou2},{ldap_base}"
         use_old_udm.props.groups.extend(
             [
                 cls_dn1,
                 cls_dn3,
-                f"cn=Domain Users {demoschool2_name},{demoschool2_group_cn}",
-                f"cn={role_group_prefix}-{demoschool2_name.lower()},{demoschool2_group_cn}",
+                f"cn=Domain Users {ou2},{ou2_group_cn}",
+                f"cn={role_group_prefix}-{ou2.lower()},{ou2_group_cn}",
             ]
         )
         non_school_role = f"{fake.first_name()}:{fake.last_name()}:{fake.user_name()}"
-        use_old_udm.props.ucsschoolRole.extend([role_demo2, non_school_role])
+        use_old_udm.props.ucsschoolRole.extend([role_ou2, non_school_role])
         await use_old_udm.save()
         user_old = await role_from.klass.from_dn(dn, attr["school"][0], udm)
         assert isinstance(user_old, role_from.klass)
@@ -247,7 +259,7 @@ async def test_modify_role(
         if issubclass(role_from.klass, Staff) and issubclass(role_to.klass, Student):
             # Staff user will have no school_class, but for conversion to Student it needs one class per
             # school:
-            addition_class[demoschool2_name] = [cls_attr3["name"]]
+            addition_class[ou2] = [cls_attr3["name"]]
 
         if issubclass(role_to.klass, Staff):
             user_new = await convert_to_staff(user_old, udm, addition_class)
@@ -342,34 +354,36 @@ async def test_modify_role(
 @pytest.mark.asyncio
 async def test_modify_role_forbidden(
     ldap_base,
-    new_school_class,
-    users_user_props,
-    new_user,
+    new_school_class_using_udm,
+    udm_users_user_props,
+    new_udm_user,
     udm_kwargs,
     schedule_delete_user_dn,
-    demoschool2,
+    create_multiple_ous,
 ):
+    ou1, ou2 = await create_multiple_ous(2)
     # illegal source objects
-    cls_dn, cls_attr = await new_school_class()
+    cls_dn, cls_attr = await new_school_class_using_udm(school=ou1)
     async with UDM(**udm_kwargs) as udm:
         sc_obj = await SchoolClass.from_dn(cls_dn, cls_attr["school"], udm)
         with pytest.raises(TypeError, match=r"is not an object of a 'User' subclass"):
             new_user_obj = await convert_to_staff(sc_obj, udm)
             schedule_delete_user_dn(new_user_obj.dn)
 
-        dn, attr = await new_user("teacher")
-        user_obj = await Teacher.from_dn(dn, attr["school"][0], udm)
+        dn, attr = await new_udm_user(ou1, "teacher")
+        user_obj = await Teacher.from_dn(dn, ou1, udm)
         user_udm = await user_obj.get_udm_object(udm)
         user_udm.options["ucsschoolAdministrator"] = True
         with pytest.raises(TypeError, match=r"not allowed for school administrator"):
             new_user_obj = await convert_to_student(user_obj, udm)
             schedule_delete_user_dn(new_user_obj.dn)
 
-    user_props = users_user_props()
+    user_props = await udm_users_user_props(ou1)
     user_props["name"] = user_props.pop("username")
-    user_props["school"] = user_props["school"][0]
+    user_props["school"] = ou1
     user_props["email"] = user_props.pop("mailPrimaryAddress")
     del user_props["description"]
+    del user_props["e-mail"]
 
     user_obj = User(**user_props)
     with pytest.raises(TypeError, match=r"is not an object of a 'User' subclass"):
@@ -382,7 +396,7 @@ async def test_modify_role_forbidden(
         schedule_delete_user_dn(new_user_obj.dn)
 
     # illegal convert target
-    dn, attr = await new_user("student")
+    dn, attr = await new_udm_user(ou1, "student")
     async with UDM(**udm_kwargs) as udm:
         user_obj = await Student.from_dn(dn, attr["school"][0], udm)
 
@@ -399,35 +413,49 @@ async def test_modify_role_forbidden(
             schedule_delete_user_dn(new_user_obj.dn)
 
         # no school_class for student target
-        dn, attr = await new_user("staff")
+        dn, attr = await new_udm_user(ou1, "staff")
         user_obj = await Staff.from_dn(dn, attr["school"][0], udm)
         with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             new_user_obj = await UserTypeConverter.convert(user_obj, Student, udm)
             schedule_delete_user_dn(new_user_obj.dn)
 
         # not enough school_classes for student target
-        demoschool2_dn, demoschool2_name = demoschool2
-        dn, attr = await new_user("teacher")
-        user_obj = await Teacher.from_dn(dn, attr["school"][0], udm)
-        user_obj.schools.append(demoschool2_name)
+        dn, attr = await new_udm_user(ou1, "teacher")
+        user_obj = await Teacher.from_dn(dn, ou1, udm)
+        user_obj.schools.append(ou2)
         with pytest.raises(TypeError, match=r"requires at least one school class per school"):
             new_user_obj = await UserTypeConverter.convert(user_obj, Student, udm)
             schedule_delete_user_dn(new_user_obj.dn)
 
 
-@pytest.mark.xfail(reason="new_ou() NotImplementedYet")
 @pytest.mark.asyncio
-async def test_move(new_ou, ldap_base, udm_kwargs):
-    # TODO: just use "DEMOSCHOOL2", like we do in the Kelvin tests
-    raise NotImplementedError
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+async def test_move(create_multiple_ous, new_udm_user, role: Role, udm_kwargs):
+    ou1, ou2 = await create_multiple_ous(2)
+    dn, attr = await new_udm_user(ou1, role.name)
+    assert attr["school"][0] == ou1
+    async with UDM(**udm_kwargs) as udm:
+        user = await role.klass.from_dn(dn, ou1, udm)
+        user.school = ou2
+        user.schools = [ou2]
+        success = await user.change_school(ou2, udm)
+        assert success is True
+        users = await role.klass.get_all(udm, ou2, f"uid={user.name}")
+    assert len(users) == 1
+    user = users[0]
+    assert user.school == ou2
+    assert user.schools == [ou2]
+    assert f"ou={ou1}" not in user.dn
+    assert f"ou={ou2}" in user.dn
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-async def test_remove(udm_kwargs, new_user, role: Role):
-    dn, attr = await new_user(role.name)
+async def test_remove(create_ou_using_python, udm_kwargs, new_udm_user, role: Role):
+    ou = await create_ou_using_python()
+    dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
-        user = await role.klass.from_dn(dn, attr["school"][0], udm)
+        user = await role.klass.from_dn(dn, ou, udm)
         assert await user.exists(udm)
         success = await user.remove(udm)
         assert success is True
