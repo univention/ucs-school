@@ -119,8 +119,8 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, result)
 
     @sanitize(pattern=StringSanitizer(default=""), school=SchoolSanitizer(required=True))
-    @LDAP_Connection()
-    def query(self, request, ldap_user_read=None, ldap_position=None):
+    @LDAP_Connection(USER_WRITE)
+    def query(self, request, ldap_user_write=None, ldap_position=None):
         klasses = [get_group_class(request)]
         if klasses[0] is Teacher:
             klasses.append(TeachersAndStaff)
@@ -128,7 +128,7 @@ class Instance(SchoolBaseModule):
         for klass in klasses:
             groups.extend(
                 klass.get_all(
-                    ldap_user_read,
+                    ldap_user_write,
                     request.options["school"],
                     filter_str=request.options["pattern"],
                     easy_filter=True,
