@@ -111,19 +111,21 @@ class UserCheck(object):
 
         self.all_schools = [ou.name for ou in School.get_all(self.lo)]
         for ou in self.all_schools:
-            self.domain_users_ou[ou] = "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base)
+            self.domain_users_ou[ou] = "cn=Domain Users {0},cn=groups,ou={0},{1}".format(
+                ou, ldap_base
+            ).lower()
             self.students_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
                 students_prefix, ou.lower(), ldap_base, ou
-            )
+            ).lower()
             self.teachers_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
                 teachers_prefix, ou.lower(), ldap_base, ou
-            )
+            ).lower()
             self.staff_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
                 staff_prefix, ou.lower(), ldap_base, ou
-            )
+            ).lower()
             self.admins_ou[ou] = "cn={0}{1},cn=ouadmins,cn=groups,{2}".format(
                 admins_prefix, ou.lower(), ldap_base
-            )
+            ).lower()
 
     def check_allowed_membership(self, group_dn, students=False, teachers=False, staff=False):
         # type: (str, Optional[bool], Optional[bool], Optional[bool]) -> List[str]
@@ -208,13 +210,15 @@ class UserCheck(object):
                 pass
 
         for role in user_roles:
+            # ucsschool_roles are validated case-insensitive
+            user_obj.ucsschool_roles = [r.lower() for r in user_obj.ucsschool_roles]
             for school in user_obj.schools:
-                ucsschool_role_string = create_ucsschool_role_string(role, school)
+                ucsschool_role_string = create_ucsschool_role_string(role, school).lower()
                 if ucsschool_role_string not in user_obj.ucsschool_roles:
                     issues.append("User does not have UCS@School Role {}".format(ucsschool_role_string))
 
-        # check appropriate group memberships
-        users_group_dns = self.lo.searchDn(filter="uniqueMember={}".format(dn))
+        # check appropriate group memberships (case-insensitive)
+        users_group_dns = [_dn.lower() for _dn in self.lo.searchDn(filter="uniqueMember={}".format(dn))]
 
         # further checks require all of user_obj.schools to exist
         for school in user_obj.schools:
