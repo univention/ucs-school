@@ -75,6 +75,19 @@ feedback@univention.de
 				gefunden werden.
 			</para>
 		</section>
+		<section id="changelog:diagnosemodul-consisteny">
+			<title>Neues Diagnosemodul Consistency Check</title>
+			<para>
+				Mit dieser Version wird ein neues Diagnosemodul <emphasis>UCS@school Consistency Check</emphasis> eingeführt. Dieses Modul überprüft die UCS@school Nutzer der Domäne
+				auf Fehler und Inkonsistenzen, wie etwa fehlende oder falsche Gruppenzugehörigkeiten und UCS@school Rollen. In der Zukunft wird dieses Modul auf weitere UCS@school Objekte
+				erweitert und die Tests allgemein verfeinert werden.
+			</para>
+			<para>
+				Sollte dieses Diagnosemodul Fehler anzeigen, bedeutet dies nicht zwangsläufig, dass die UCS@school Systeme nicht funktionieren. Es warnt vielmehr vor Objekten, die nicht
+				so aussehen, wie es von UCS@school erwartet wird und zukünftig Probleme bei der Nutzung hervorrufen können. Daher ist es angeraten die Objekte zeitnah zu reparieren. Ein erster
+				Anhaltspunkt dazu ist der folgende Artikel: <ulink url="https://help.univention.com/t/how-a-ucs-school-user-should-look-like/15630"/>
+			</para>
+		</section>
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
