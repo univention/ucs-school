@@ -63,14 +63,20 @@ def assert_error_msg_in_script_output(script_output, dn, error_msg):
         assert False, "No line containing DN {!r} found.".format(dn)
 
 
+def assert_error_msg_not_in_script_output(script_output, dn, error_msg):
+    for line in script_output.split("\n\n"):
+        if dn in line:
+            assert error_msg not in line
+
+
 def test_no_errors_exec_script(schoolenv, ucr_hostname):
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
     stdout, stderr = exec_script(ou_name)
     assert stdout == ""
 
 
-def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str, str]) -> str
-    role_str, bad_value, expected = role_and_bad_value
+def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str]) -> str
+    role_str, expected = role_and_bad_value
     return role_str
 
 
@@ -169,6 +175,59 @@ def test_wrong_group_membership(create_ou, schoolenv, udm_instance, ucr_hostname
 
     stdout, stderr = exec_script(ou_name)
     assert_error_msg_in_script_output(stdout, user_dn, expected_error)
+
+
+@pytest.mark.parametrize(
+    "role_and_container",
+    (
+        ("student", container_students, "Not member of group cn={}".format(container_students)),
+        ("teacher", container_teachers, "Not member of group cn={}".format(container_teachers)),
+        ("staff", container_staff, "Not member of group cn={}".format(container_staff)),
+        ("teacher_and_staff", container_staff, "Not member of group cn={}".format(container_staff)),
+    ),
+    ids=input_ids_wrong_group_membership,
+)
+def test_case_insensitive_group_membership(
+    create_ou, schoolenv, udm_instance, ucr_hostname, role_and_container
+):
+    role_str, container, expected_error = role_and_container
+    ou_name, ou_dn = create_ou(name_edudc=ucr_hostname)
+    create_func = getattr(schoolenv, "create_{}".format(role_str))
+    name, user_dn = create_func(ou_name, wait_for_replication=False)
+    user_mod = udm_instance("users/user")
+    obj = user_mod.get(user_dn)
+    obj.props.groups = [group.lower() for group in list(obj.props.groups)]
+    obj.save()
+    stdout, stderr = exec_script(ou_name)
+    assert_error_msg_not_in_script_output(stdout, user_dn, expected_error)
+
+
+@pytest.mark.parametrize(
+    # the 2nd value is the expected missing role. It is necessary for combined roles
+    # E.g.: create teacher_and_staff; its (only!) role is set to staff -> teacher is missing
+    "role_and_expected_value",
+    (
+        ("student", role_student),
+        ("teacher", role_teacher),
+        ("staff", role_staff),
+        ("teacher_and_staff", role_teacher),
+    ),
+    ids=input_ids_wrong_school_role,
+)
+def test_case_insensitive_school_roles(schoolenv, ucr_hostname, udm_instance, role_and_expected_value):
+    role_str, expected = role_and_expected_value
+    ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
+    create_func = getattr(schoolenv, "create_{}".format(role_str))
+
+    name, dn = create_func(ou_name, wait_for_replication=False)
+    user_mod = udm_instance("users/user")
+    obj = user_mod.get(dn)
+    obj.props.ucsschoolRole = [r.lower() for r in obj.props.ucsschoolRole]
+    obj.save()
+
+    stdout, stderr = exec_script(ou_name)
+    expected_error = "User does not have UCS@School Role {}:school".format(expected)
+    assert_error_msg_not_in_script_output(stdout, dn, expected_error)
 
 
 def input_ids_not_existing_mandatory_group(group):  # type: (Tuple[str, str]) -> str

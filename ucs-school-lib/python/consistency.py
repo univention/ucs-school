@@ -207,14 +207,16 @@ class UserCheck(object):
             except ValueError:
                 pass
 
+        # ucsschool_roles are validated case-insensitive
+        ucsschool_roles = {r.lower() for r in user_obj.ucsschool_roles}
         for role in user_roles:
             for school in user_obj.schools:
                 ucsschool_role_string = create_ucsschool_role_string(role, school)
-                if ucsschool_role_string not in user_obj.ucsschool_roles:
+                if ucsschool_role_string.lower() not in ucsschool_roles:
                     issues.append("User does not have UCS@School Role {}".format(ucsschool_role_string))
 
-        # check appropriate group memberships
-        users_group_dns = self.lo.searchDn(filter="uniqueMember={}".format(dn))
+        # check appropriate group memberships (case-insensitive)
+        users_group_dns = [_dn.lower() for _dn in self.lo.searchDn(filter="uniqueMember={}".format(dn))]
 
         # further checks require all of user_obj.schools to exist
         for school in user_obj.schools:
@@ -227,12 +229,12 @@ class UserCheck(object):
                 return issues
 
         for school in user_obj.schools:
-            if self.domain_users_ou[school] not in users_group_dns:
+            if self.domain_users_ou[school].lower() not in users_group_dns:
                 issues.append("Not member of group {}".format(self.domain_users_ou[school]))
         # check students
         if user_obj.is_student(self.lo):
             for school in user_obj.schools:
-                if self.students_ou[school] not in users_group_dns:
+                if self.students_ou[school].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.students_ou[school]))
             for group_dn in users_group_dns:
                 issues += self.check_allowed_membership(group_dn, students=True)
@@ -240,7 +242,7 @@ class UserCheck(object):
         # check admins
         if user_obj.is_administrator(self.lo):
             for ou in user_obj.schools:
-                if self.admins_ou[ou] not in users_group_dns:
+                if self.admins_ou[ou].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.admins_ou[ou]))
             for group_dn in users_group_dns:
                 if self.students_regex.match(group_dn):
@@ -249,9 +251,9 @@ class UserCheck(object):
         # check teachers and staff
         if user_obj.is_teacher(self.lo) and user_obj.is_staff(self.lo):
             for ou in user_obj.schools:
-                if self.teachers_ou[ou] not in users_group_dns:
+                if self.teachers_ou[ou].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.teachers_ou[ou]))
-                if self.staff_ou[ou] not in users_group_dns:
+                if self.staff_ou[ou].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.staff_ou[ou]))
             for group_dn in users_group_dns:
                 issues += self.check_allowed_membership(group_dn, teachers=True, staff=True)
@@ -259,7 +261,7 @@ class UserCheck(object):
         # check teachers
         elif user_obj.is_teacher(self.lo):
             for ou in user_obj.schools:
-                if self.teachers_ou[ou] not in users_group_dns:
+                if self.teachers_ou[ou].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.teachers_ou[ou]))
             for group_dn in users_group_dns:
                 issues += self.check_allowed_membership(group_dn, teachers=True)
@@ -267,7 +269,7 @@ class UserCheck(object):
         # check staff
         elif user_obj.is_staff(self.lo):
             for ou in user_obj.schools:
-                if self.staff_ou[ou] not in users_group_dns:
+                if self.staff_ou[ou].lower() not in users_group_dns:
                     issues.append("Not member of group {}".format(self.staff_ou[ou]))
             for group_dn in users_group_dns:
                 issues += self.check_allowed_membership(group_dn, staff=True)
