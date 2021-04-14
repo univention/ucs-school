@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.203) unstable; urgency=medium
+
+  * Bug #47393: added test for deleting multiple workgroups
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Wed, 14 Apr 2021 14:15:07 +0200
+
 ucs-test-ucsschool (6.0.202) unstable; urgency=medium
 
   * Bug #49655: fix & refactor exam home dir tests
