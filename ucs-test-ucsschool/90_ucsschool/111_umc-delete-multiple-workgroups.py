@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: test deleting multiple workgroups
 ## roles: [domaincontroller_slave]
-## tags: [ucsschool]
+## tags: [ucsschool,apptest,ucsschool_base1]
 ## bugs: [47393]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
