@@ -66,7 +66,7 @@ def create_ou_user(user_school_attributes, lo, model_school_object_class):
 @pytest.fixture()
 def create_umc_client(ucr):
     def _create_umc_client(username, password="univention", host_name=None):
-        return Client(username=username, password=password, hostname=host_name)
+        return Client(username=username, password=password, hostname=host_name, language="en_US")
 
     return _create_umc_client
 
