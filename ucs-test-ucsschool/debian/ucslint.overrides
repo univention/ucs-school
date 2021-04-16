@@ -1,3 +1,11 @@
 0010-2:
 0011-3:
 0002-3: debian/changelog
+0008-7: modules/univention/testing/ucsschool/kelvin_api.py
+0008-7: modules/univention/testing/ucsschool/ucs_test_school.py
+0008-7: modules/univention/testing/ucsschool/conftest.py
+0008-7: 94_ucsschool-api-kelvin/conftest.py
+0008-7: 90_ucsschool/98_samba4_evaluate_windows_gpo.py
+0015-2: 91_ucsschool-selenium/01_password_reset
+0015-2: 91_ucsschool-selenium/01_password_reset
+0009-13: modules/univention/testing/ucsschool/ucs_test_school.py

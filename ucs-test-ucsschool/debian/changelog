@@ -208,7 +208,7 @@ ucs-test-ucsschool (6.0.171) unstable; urgency=medium
 
   * Bug #49655: add retry_cmd
 
-   -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Dec 2020 17:38:00 +0100
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Dec 2020 17:38:00 +0100
 
 ucs-test-ucsschool (6.0.170) unstable; urgency=medium
 
@@ -823,7 +823,7 @@ ucs-test-ucsschool (6.0.64) unstable; urgency=low
 
   * Bug #50321: add test for migrate_ucsschool_import_user
 
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Oct 2019 16:34:33 +0200
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 07 Oct 2019 16:34:33 +0200
 
 ucs-test-ucsschool (6.0.63) unstable; urgency=medium
 
@@ -1292,7 +1292,7 @@ ucs-test-ucsschool (6.0.0-54) unstable; urgency=low
 
   * Bug #48924: add/update LDAP ACL test script for edu/adm slave
 
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 06 May 2019 13:58:58 +0200
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 May 2019 13:58:58 +0200
 
 ucs-test-ucsschool (6.0.0-53) unstable; urgency=medium
 
@@ -1512,7 +1512,7 @@ ucs-test-ucsschool (6.0.0-18) unstable; urgency=medium
 
   * Bug #48651: Do not wait for staff replication on slave
 
- -- Jürn Brodersen <brodersen@univention.de>  Sun, 17 Feb 2019 19:05:24 +0100
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 18 Feb 2019 08:05:39 +0100
 
 ucs-test-ucsschool (6.0.0-17) unstable; urgency=medium
 
@@ -2052,7 +2052,7 @@ ucs-test-ucsschool (5.0.2-38) unstable; urgency=low
 
   * Bug #46771: revert fallback
 
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 05 Apr 2018 16:30:07 +0200
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 06 Apr 2018 16:30:07 +0200
 
 ucs-test-ucsschool (5.0.2-37) unstable; urgency=low
 
@@ -3147,13 +3147,13 @@ ucs-test-ucsschool (3.0.16-44) unstable; urgency=low
 
  -- Daniel Troeder <troeder@univention.de>  Sun, 13 Nov 2016 17:37:38 +0100
 
-ucs-test-ucsschool (3.0.16-43) unstable; urgency=medium
+ucs-test-ucsschool (3.0.16-43.2) unstable; urgency=medium
 
   * Bug #42478: adjust test case
 
  -- Florian Best <best@univention.de>  Fri, 11 Nov 2016 12:36:49 +0100
 
-ucs-test-ucsschool (3.0.16-43) unstable; urgency=low
+ucs-test-ucsschool (3.0.16-43.1) unstable; urgency=low
 
   * Bug #42863: adjusted essential/user.py to reproduce UMC behaviour
 
@@ -3579,32 +3579,32 @@ ucs-test-ucsschool (3.0.15-15) unstable; urgency=low
 
  -- Daniel Troeder <troeder@univention.de>  Mon, 05 Sep 2016 14:03:44 +0200
 
-ucs-test-ucsschool (3.0.15-14) unstable; urgency=low
+ucs-test-ucsschool (3.0.15-14.6) unstable; urgency=low
 
   * Bug #41282: fixed 34_import-users_via_cli_v2
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 16:47:14 +0200
 
-ucs-test-ucsschool (3.0.15-13) unstable; urgency=low
+ucs-test-ucsschool (3.0.15-14.5) unstable; urgency=low
 
   * Bug #42224: fixed a bug in UCS@school test lib when creating a new OU
     on a DC backup
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 12:35:41 +0200
 
-ucs-test-ucsschool (3.0.15-12) unstable; urgency=low
+ucs-test-ucsschool (3.0.15-14.4) unstable; urgency=low
 
   * Bug #42033: fixed order of test case setup and debug output
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 11:27:30 +0200
 
-ucs-test-ucsschool (3.0.15-11) unstable; urgency=low
+ucs-test-ucsschool (3.0.15-14.3) unstable; urgency=low
 
   * Bug #35447, #42033: domain admin is allowed to reset all passwords
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 Sep 2016 10:46:33 +0200
 
-ucs-test-ucsschool (3.0.15-15) unstable; urgency=medium
+ucs-test-ucsschool (3.0.15-14.2) unstable; urgency=medium
 
   * 93_samba4_check_dc_selection: Disable test case again (Bug #34223)
 
@@ -5222,7 +5222,7 @@ ucs-test-ucsschool (1.0.47-1) unstable; urgency=low
 
  -- Stefan Gohmann <gohmann@univention.de>  Wed, 14 May 2014 06:44:36 +0200
 
-ucs-test-ucsschool (1.0.46-1) unstable; urgency=low
+ucs-test-ucsschool (1.0.46-2) unstable; urgency=low
 
   * Bug #34551: Corrected API calls
 
@@ -5399,7 +5399,7 @@ ucs-test-ucsschool (1.0.23-1) unstable; urgency=low
 
   * Bug #26137: fixed confusing variable names
 
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 May 2014 21:58:25 +0200
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 09:42:30 +0200
 
 ucs-test-ucsschool (1.0.22-2) unstable; urgency=low
 

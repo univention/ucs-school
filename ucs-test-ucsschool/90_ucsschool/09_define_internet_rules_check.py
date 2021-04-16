@@ -36,13 +36,13 @@ def main():
 
         # New rule values (hard coded)
         name = rule.name
-        type = "blacklist"
+        new_type = "blacklist"
         priority = 8
         wlan = True
         domains = sorted(["asda.de", "kjnasd.sy", "nmxcvbl.gp"])
 
         # Modifying the rule
-        rule.put(name, type, domains, wlan, priority)
+        rule.put(name, new_type, domains, wlan, priority)
 
         # check internetrules/get
         rule.get(should_exist=True)

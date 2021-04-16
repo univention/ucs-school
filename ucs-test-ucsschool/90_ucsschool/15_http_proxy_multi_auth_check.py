@@ -19,7 +19,7 @@ from univention.config_registry import handler_set, handler_unset
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 
 
-def checkAuths(host, passwd, url, (basic, ntlm, gneg), expect_wrong_password):
+def checkAuths(host, passwd, url, basic, ntlm, gneg, expect_wrong_password):
     # in case all auth are disabled, all return 200
     http_basic, http_ntlm, http_gneg = (200, 200, 200)
     if basic or ntlm or gneg:
@@ -67,7 +67,7 @@ def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
             utils.fail("kinit: correct Password used but did not work")
 
 
-def setAuthVariables((basic, ntlm, gneg)):
+def setAuthVariables(basic, ntlm, gneg):
     """set ucr variables according to the auth states, and restart Squid"""
     if basic:
         handler_set(["squid/basicauth=yes"])
@@ -105,14 +105,14 @@ def main():
         authStates = list(itertools.product([0, 1], repeat=3))
 
         for passwd, expect_wrong_password in passwords:
-            for state in authStates:
-                printHeader(state, passwd, expect_wrong_password)
+            for basic, ntlm, gneg in authStates:
+                printHeader((basic, ntlm, gneg), passwd, expect_wrong_password)
 
                 # set ucr variables according to the auth states
-                setAuthVariables(state)
+                setAuthVariables(basic, ntlm, gneg)
 
                 # Perform the checks
-                checkAuths(host, passwd, url, state, expect_wrong_password)
+                checkAuths(host, passwd, url, basic, ntlm, gneg, expect_wrong_password)
 
 
 if __name__ == "__main__":

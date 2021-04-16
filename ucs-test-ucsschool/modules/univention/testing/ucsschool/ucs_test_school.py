@@ -151,7 +151,7 @@ class Bunch(object):
 
 class UCSTestSchool(object):
     ucr = lazy_object_proxy.Proxy(lambda: univention.testing.ucr.UCSTestConfigRegistry().__enter__())
-    _test_ous = dict()  # type: Dict[str, List[Tuple[str]]]
+    _test_ous = dict()  # type: Dict[Tuple[str, str, str, str, str, str], List[Tuple[str]]]
 
     LDAP_BASE = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr["ldap/base"])
 

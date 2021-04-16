@@ -107,8 +107,8 @@ class Test:
             res = ldap_machine_read.search(
                 base=ucr["ldap/hostdn"], scope="base", attr=("univentionService",)
             )
-        except udm_errors.ldapError, e:
-            testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
+        except udm_errors.ldapError as exc:
+            testing_utils.fail(log_message="Error accessing LDAP: %s" % (exc,))
 
         (record_dn, obj) = res[0]
         services = obj["univentionService"]
@@ -127,8 +127,8 @@ class Test:
             )
             attrs = ["cn", "associatedDomain"]
             res = ldap_machine_read.search(base=ldap_position.getDn(), filter=ldap_filter, attr=attrs)
-        except udm_errors.ldapError, e:
-            testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
+        except udm_errors.ldapError as exc:
+            testing_utils.fail(log_message="Error accessing LDAP: %s" % (exc,))
 
         for (record_dn, obj) in res:
             if "associatedDomain" in obj:
