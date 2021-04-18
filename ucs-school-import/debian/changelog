@@ -1,3 +1,9 @@
+ucs-school-import (17.0.53) unstable; urgency=medium
+
+  * Bug #47841: shorten import summary to two lines per role
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Sun, 18 Apr 2021 11:51:03 +0200
+
 ucs-school-import (17.0.52) unstable; urgency=low
 
   * Bug #52887: create directory for symlinks for log files if missing
