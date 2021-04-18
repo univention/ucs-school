@@ -43,6 +43,7 @@ import random
 import subprocess
 import sys
 import tempfile
+import time
 from collections import defaultdict
 
 import lazy_object_proxy
@@ -486,12 +487,13 @@ class UCSTestSchool(object):
 
         # create random OU name
         if not ou_name:
-            ou_name = uts.random_string(length=random.randint(3, 12))
+            ou_name = "testou{}".format(random.randint(1000, 9999))
 
         # remember OU name for cleanup
         if not use_cache:
             self._cleanup_ou_names.add(ou_name)
 
+        t0 = time.time()
         if not use_cli:
             kwargs = {"name": ou_name, "dc_name": name_edudc}
             if name_admindc:
@@ -522,6 +524,8 @@ class UCSTestSchool(object):
             retval = subprocess.call(cmd)
             if retval:
                 utils.fail("create_ou failed with exitcode %s" % retval)
+
+        logger.info("*** Finished in {:.2f} seconds.".format(time.time() - t0))
 
         if wait_for_replication:
             utils.wait_for_replication()
@@ -579,6 +583,28 @@ class UCSTestSchool(object):
         name_edudc = self.check_name_edudc(name_edudc)
         cache_key = (None, name_edudc, name_admindc, displayName, name_share_file_server, use_cli)
         while len(self._test_ous.setdefault(cache_key, [])) < num:
+            # if self._test_ous.get(cache_key):
+            #     template_ou = random.choice(self._test_ous[cache_key])
+            #     ou_name = "testou{}".format(random.randint(1000, 9999))
+            #     ou_dn = "ou={},{}".format(ou_name, self.ucr["ldap/base"])
+            #     logger.info("*** Creating cloned OU %r from %r...", ou_name, template_ou[0])
+            #     from .conftest import OUCloner
+            #
+            #     oc = OUCloner(self.lo)
+            #     oc.clone_ou(template_ou[0], ou_name)
+            # else:
+            #     logger.info("*** Creating fresh OU...")
+            #     ou_name, ou_dn = self.create_ou(
+            #         None,
+            #         name_edudc,
+            #         name_admindc,
+            #         displayName,
+            #         name_share_file_server,
+            #         use_cli,
+            #         wait_for_replication,
+            #         False,
+            #     )
+            #     self._cleanup_ou_names.remove(ou_name)
             ou_name, ou_dn = self.create_ou(
                 None,
                 name_edudc,

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test operations on school resource
 ## tags: [ucs_school_kelvin]
@@ -9,16 +9,23 @@
 from __future__ import unicode_literals
 
 import logging
-from unittest import TestCase, main
+import random
+
+import pytest
+
+try:
+    from typing import Set
+except ImportError:
+    pass
 
 import requests
+from ldap.filter import filter_format
 from six import string_types
 
 import univention.testing.strings as uts
-from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.school import School as LibSchool
-from univention.testing.ucsschool.kelvin_api import RESSOURCE_URLS, HttpApiUserTestBase
-from univention.udm import UDM
+from univention.testing.ucsschool.kelvin_api import RESSOURCE_URLS
+from univention.udm import UDM, NoObject as UdmNoObject
 
 try:
     from urlparse import urljoin  # py2
@@ -26,159 +33,174 @@ except ImportError:
     from urllib.parse import urljoin  # py3
 
 
+_cached_ous = set()  # type: Set[str]
 logger = logging.getLogger("univention.testing.ucsschool")
 
+EXPECTED_SCHOOL_RESSOURCE_ATTRS = {
+    "administrative_servers",
+    "class_share_file_server",
+    "display_name",
+    "dn",
+    "educational_servers",
+    "home_share_file_server",
+    "name",
+    "ucsschool_roles",
+    "url",
+}
 
-class Test(TestCase):
-    delete_ous = []
 
-    @classmethod
-    def setUpClass(cls):
-        cls.lo, _po = get_admin_connection()
-        cls.auth_headers = {"Authorization": "{} {}".format(*HttpApiUserTestBase.get_token())}
-        print("*** auth_headers={!r}".format(cls.auth_headers))
-
-    @classmethod
-    def tearDownClass(cls):
-        schools = LibSchool.get_all(cls.lo)
-        for ou_name in cls.delete_ous:
-            for school in schools:
-                if school.name == ou_name:
-                    school.remove(cls.lo)
-
-    def test_01_list_unauth_connection(self):
-        response = requests.get(RESSOURCE_URLS["schools"])
-        self.assertEqual(
-            response.status_code,
-            401,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
+@pytest.fixture(scope="session")
+def delete_ou_cleanup(ucr_ldap_base, ucr):
+    def _func(ou_name):  # type (str) -> None
+        udm = UDM.admin().version(0)
+        group_dns = [
+            "cn=admins-{},cn=ouadmins,cn=groups,{}".format(ou_name.lower(), ucr_ldap_base),
+            "cn=OU{}-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(ou_name, ucr_ldap_base),
+            "cn=OU{}-DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ou_name.lower(), ucr_ldap_base),
+            "cn=OU{}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
+                ou_name.lower(), ucr_ldap_base
             ),
-        )
-
-    def test_02_list_auth_connection(self):
-        response = requests.get(RESSOURCE_URLS["schools"], headers=self.auth_headers)
-        self.assertEqual(
-            response.status_code,
-            200,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
+            "cn=OU{}-Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(
+                ou_name.lower(), ucr_ldap_base
             ),
+            "cn=OU{}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
+                ou_name.lower(), ucr_ldap_base
+            ),
+        ]
+        mod = udm.get("groups/group")
+        for dn in group_dns:
+            print("Deleting group: {!r}...".format(dn))
+            try:
+                obj = mod.get(dn)
+                obj.delete()
+            except UdmNoObject:
+                print("Error: group does not exist: {!r}".format(dn))
+        if ucr.is_true("ucsschool/singlemaster"):
+            master_hostname = ucr["hostname"]
+            mod = udm.get("computers/domaincontroller_master")
+            for obj in mod.search("cn={}".format(master_hostname)):
+                print(
+                    "Removing 'ucsschoolRole=single_master:school:{}' from {!r}...".format(
+                        ou_name, obj.dn
+                    )
+                )
+                try:
+                    obj.props.ucsschoolRole.remove("single_master:school:{}".format(ou_name))
+                    obj.save()
+                except ValueError:
+                    print("Error: role was no set: ucsschoolRole={!r}".format(obj.props.ucsschoolRole))
+
+    return _func
+
+
+@pytest.fixture(scope="session")
+def schedule_delete_ou_at_end_of_session(delete_ou, delete_ou_cleanup):
+    def _func(ou_name):  # type: (str) -> None
+        _cached_ous.add(ou_name)
+
+    yield _func
+
+    for ou_name in _cached_ous:
+        delete_ou(ou_name)
+        delete_ou_cleanup(ou_name)
+
+
+def test_not_authenticated_connection():
+    response = requests.get(RESSOURCE_URLS["schools"])
+    assert response.status_code == 401, "response.status_code = {} for URL {!r} -> {!r}".format(
+        response.status_code, response.url, response.text
+    )
+
+
+def test_list(auth_header):
+    print(" ** auth_header={!r}".format(auth_header))
+    response = requests.get(RESSOURCE_URLS["schools"], headers=auth_header)
+    assert response.status_code == 200, "response.status_code = {} for URL {!r} -> {!r}".format(
+        response.status_code, response.url, response.text
+    )
+    json_response = response.json()
+    assert isinstance(json_response, list)
+    for obj in json_response:
+        assert EXPECTED_SCHOOL_RESSOURCE_ATTRS.issubset(set(obj.keys()))
+        for k, v in obj.items():
+            assert k in obj
+            if k in ("administrative_servers", "educational_servers", "ucsschool_roles"):
+                assert isinstance(obj[k], list)
+            else:
+
+                assert isinstance(obj[k], (string_types, type(None)))
+
+
+def test_get(auth_header, lo):
+    schools = LibSchool.get_all(lo)
+    if len(schools) < 1:
+        raise RuntimeError("No school was not found.")
+
+    udm = UDM.admin().version(1)
+    for school in schools:
+        logger.info("*** school.to_dict()=%r", school.to_dict())
+        school_url = urljoin(RESSOURCE_URLS["schools"], school.name)
+        response = requests.get(school_url, headers=auth_header)
+        assert response.status_code == 200, "response.status_code = {} for URL {!r} -> {!r}".format(
+            response.status_code, response.url, response.text
         )
-        res = response.json()
-        self.assertIsInstance(res, list)
-        obj = res[0]
-        for attr in (
-            "dn",
-            "name",
-            "display_name",
-            "dc_name",
-            "dc_name_administrative",
-            "class_share_file_server",
-            "home_share_file_server",
-        ):
-            self.assertIn(attr, obj)
-            self.assertIsInstance(obj[attr], (string_types, type(None)))
-        for attr in ("educational_servers", "administrative_servers", "ucsschool_roles"):
-            self.assertIn(attr, obj)
-            self.assertIsInstance(obj[attr], list)
-
-    def test_04_get_existing_ous(self):
-        res = LibSchool.get_all(self.lo)
-        if len(res) < 1:
-            raise RuntimeError("No school was not found.")
-
-        udm = UDM.admin().version(1)
-        for school in res:
-            logger.info("*** school.to_dict()=%r", school.to_dict())
-            response = requests.get(
-                urljoin(RESSOURCE_URLS["schools"], school.name), headers=self.auth_headers
-            )
-            self.assertEqual(
-                response.status_code,
-                200,
-                "response.status_code = {} for URL {!r} -> {!r}".format(
-                    response.status_code, response.url, response.text
-                ),
-            )
-            for k, v in response.json().items():
-                if k == "url":
-                    continue
-                elif (
-                    k
-                    in (
-                        "class_share_file_server",
-                        "home_share_file_server",
-                        "administrative_servers",
-                        "educational_servers",
-                    )
-                    and v
-                ):
-                    logger.info("*** Looking up object for %r = %r...", k, v)
-                    ldap_val = getattr(school, k)
-                    if not ldap_val:
-                        self.fail("getattr({!r}, {!r})={!r}".format(school, k, ldap_val))
-                    if k in ("administrative_servers", "educational_servers"):
-                        logger.info("*** Looking up objects with DNs %r...", ldap_val)
-                        objs = [udm.obj_by_dn(lv) for lv in ldap_val]
-                        v_new = [o.props.name for o in objs]
-                    else:
-                        logger.info("*** Looking up object with DN %r...", ldap_val)
-                        obj = udm.obj_by_dn(ldap_val)
-                        v_new = obj.props.name
-                    self.assertEqual(
-                        v,
-                        v_new,
-                        "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} "
-                        "({!r}).".format(k, ldap_val, v_new, v, school.dn),
-                    )
+        json_response = response.json()
+        assert EXPECTED_SCHOOL_RESSOURCE_ATTRS.issubset(set(json_response.keys()))
+        for k, v in json_response.items():
+            if k == "url":
+                assert v == school_url
+            elif (
+                k
+                in (
+                    "administrative_servers",
+                    "class_share_file_server",
+                    "educational_servers",
+                    "home_share_file_server",
+                )
+                and v
+            ):
+                logger.info("*** Looking up object for %r = %r...", k, v)
+                ldap_val = getattr(school, k)
+                assert ldap_val, "getattr({!r}, {!r})={!r}".format(school, k, ldap_val)
+                if k in ("administrative_servers", "educational_servers"):
+                    logger.info("*** Looking up objects with DNs %r...", ldap_val)
+                    objs = [udm.obj_by_dn(lv) for lv in ldap_val]
+                    v_new = [o.props.name for o in objs]
                 else:
-                    self.assertEqual(
-                        v,
-                        getattr(school, k),
-                        "Value of attribute {!r} in LDAP is {!r} and in resource is {!r} ({!r}).".format(
-                            k, getattr(school, k), v, school.dn
-                        ),
-                    )
-
-    def test_05_create_ou(self):
-        attrs = {
-            "display_name": uts.random_username(),
-            "name": uts.random_username(),
-        }
-        self.delete_ous.append(attrs["name"])
-
-        response = requests.post(RESSOURCE_URLS["schools"], headers=self.auth_headers, json=attrs)
-        logger.info("*** response=%r", response)
-        self.assertEqual(
-            response.status_code,
-            405,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
-            ),
-        )
-        # logger.info('*** response.json()=%r', response.json())
-        # self.assertEqual(
-        #   response.status_code, 201, 'response.status_code = {} for URL  -> {!r}'.format(
-        # 	response.status_code, response.url, response.text))
-        #
-        # filter_s = filter_format(
-        #       '(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))', (attrs['name'],))
-        # res = self.lo.search(filter=filter_s)
-        # if len(res) != 1:
-        # 	logger.error(
-        #       'School {!r} not found: search with filter={!r} did not return 1 result:\n{}'.format(
-        # 		attrs['name'], filter_s, res))
-        # school_dn = res[0][0]
-        # school_attrs = res[0][1]
-        # LibSchool.from_dn(school_dn, None, self.lo).remove(self.lo)
-        # self.assertDictEqual(
-        # 	{
-        # 		'name': school_attrs['ou'][0],
-        # 		'display_name': school_attrs['displayName'][0]
-        # 	},
-        # 	attrs)
+                    logger.info("*** Looking up object with DN %r...", ldap_val)
+                    obj = udm.obj_by_dn(ldap_val)
+                    v_new = obj.props.name
+                assert v == v_new, (
+                    "Value of attribute {!r} in LDAP is {!r} -> {!r} and in resource is {!r} "
+                    "({!r}).".format(k, ldap_val, v_new, v, school.dn)
+                )
+            else:
+                assert v == getattr(
+                    school, k
+                ), "Value of attribute {!r} in LDAP is {!r} and in resource is {!r} ({!r}).".format(
+                    k, getattr(school, k), v, school.dn
+                )
 
 
-if __name__ == "__main__":
-    main(verbosity=2)
+def test_create(auth_header, lo, schedule_delete_ou_at_end_of_session):
+    attrs = {
+        "display_name": uts.random_username(),
+        "name": "testou{}".format(random.randint(1000, 9999)),
+    }
+    schedule_delete_ou_at_end_of_session(attrs["name"])
+
+    response = requests.post(RESSOURCE_URLS["schools"], headers=auth_header, json=attrs)
+    assert response.status_code == 201, "response.status_code = {} for URL {!r} -> {!r}".format(
+        response.status_code, response.url, response.text
+    )
+    logger.info("*** response.json()=%r", response.json())
+    filter_s = filter_format("(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))", (attrs["name"],))
+    res = lo.search(filter=filter_s)
+    assert (
+        len(res) == 1
+    ), "School {!r} not found: search with filter={!r} did not return 1 result:\n{}".format(
+        attrs["name"], filter_s, res
+    )
+    logger.info("")
+    school_attrs = res[0][1]
+    assert {"name": school_attrs["ou"][0], "display_name": school_attrs["displayName"][0]} == attrs

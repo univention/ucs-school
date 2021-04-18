@@ -45,6 +45,7 @@ import shutil
 import subprocess
 import sys
 import time
+import uuid
 from typing import Any, Dict, List, Optional, Text, Tuple
 from unittest import TestCase
 
@@ -448,19 +449,33 @@ class HttpApiUserTestBase(TestCase):
 
 def api_call(method, url, auth=None, headers=None, json_data=None):
     # type: (Text, Text, Optional[Any], Optional[Dict[Text, Any]], Optional[Dict[Text, Any]]) -> Dict[Text, Any]  # noqa: E501
+    pid = os.getpid()
+    req_id = uuid.uuid4()
     HttpApiUserTestBase.logger.debug(
-        "*** [%r] method=%r url=%r json_data=%r", os.getpid(), method, url, json_data
+        "*** [%r] method=%r url=%r json_data=%r (%s)", pid, method, url, json_data, req_id
     )
     meth = getattr(requests, method)
     response = meth(url, auth=auth, headers=headers, json=json_data)
-    HttpApiUserTestBase.logger.debug(
-        "*** [%r] status_code=%r reason=%r", os.getpid(), response.status_code, response.reason
-    )
+    if response.status_code >= 400:
+        log = HttpApiUserTestBase.logger.error
+    else:
+        log = HttpApiUserTestBase.logger.debug
+    log("*** [%r] status_code=%r reason=%r (%s)", pid, response.status_code, response.reason, req_id)
     if hasattr(response, "json"):
-        res = response.json() if callable(response.json) else response.json
+        try:
+            res = response.json() if callable(response.json) else response.json
+        except ValueError as exc:
+            HttpApiUserTestBase.logger.exception(
+                "*** [%r] (%s) ValueError (%s) decoding response.text=%r",
+                pid,
+                req_id,
+                exc,
+                response.text,
+            )
+            raise
     else:
         res = response.reason
-    HttpApiUserTestBase.logger.debug("*** [%r] res=%r", os.getpid(), res)
+    HttpApiUserTestBase.logger.debug("*** [%r] res=%r", pid, res)
     return res
 
 

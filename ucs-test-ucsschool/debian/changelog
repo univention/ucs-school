@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.206) unstable; urgency=low
+
+  * Bug #53006: fix kelvin tests
+
+ -- Daniel Troeder <troeder@univention.de>  Sun, 18 Apr 2021 23:05:30 +0200
+
 ucs-test-ucsschool (6.0.205) unstable; urgency=medium
 
   * Bug #44699: specified output language in test
