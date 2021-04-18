@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-printermoderation\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-03-27 18:47+0200\n"
+"POT-Creation-Date: 2021-03-09 11:24+0100\n"
 "PO-Revision-Date: 2012-03-01 14:04+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/printermoderation.js:269
+#: umc/js/printermoderation.js:274
 msgid ""
 "A printer must be selected on which the document <i>{printjob}</i> should be "
 "printed."
@@ -20,30 +20,30 @@ msgstr ""
 "Ein Drucker muss ausgewählt werden auf dem das Dokument <i>{printjob}</i> "
 "gedruckt werden soll"
 
-#: umc/js/printermoderation.js:271
+#: umc/js/printermoderation.js:276
 msgid ""
 "A printer must be selected on which the {0} documents should be printed."
 msgstr ""
 "Ein Drucker muss ausgewählt werden auf dem die {0} Dokumente gedruckt werden "
 "sollen"
 
-#: umc/js/printermoderation.js:159
+#: umc/js/printermoderation.js:164
 msgid "All classes and workgroups"
 msgstr "Alle Klassen und Arbeitsgruppen"
 
-#: umc/js/printermoderation.js:226 umc/js/printermoderation.js:305
+#: umc/js/printermoderation.js:231 umc/js/printermoderation.js:310
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/printermoderation.js:156
+#: umc/js/printermoderation.js:161
 msgid "Class or workroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-#: umc/js/printermoderation.js:127
+#: umc/js/printermoderation.js:131
 msgid "Date"
 msgstr "Datum"
 
-#: umc/js/printermoderation.js:104 umc/js/printermoderation.js:200
+#: umc/js/printermoderation.js:104 umc/js/printermoderation.js:205
 msgid "Delete"
 msgstr "Löschen"
 
@@ -51,36 +51,36 @@ msgstr "Löschen"
 msgid "Delete the print job."
 msgstr "Löschen des Druckauftrags"
 
-#: umc/js/printermoderation.js:210
+#: umc/js/printermoderation.js:215
 msgid "Deleting print jobs ..."
 msgstr "Lösche Druckaufträge"
 
-#: umc/js/printermoderation.js:203 umc/js/printermoderation.js:244
+#: umc/js/printermoderation.js:208 umc/js/printermoderation.js:249
 msgid "Finished"
 msgstr "Fertiggestellt"
 
-#: umc/js/printermoderation.js:170
+#: umc/js/printermoderation.js:175
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/printermoderation.js:123
+#: umc/js/printermoderation.js:127
 msgid "Pages"
 msgstr "Seiten"
 
-#: umc/js/printermoderation.js:97 umc/js/printermoderation.js:296
-#: umc/js/printermoderation.js:312
+#: umc/js/printermoderation.js:97 umc/js/printermoderation.js:301
+#: umc/js/printermoderation.js:317
 msgid "Print"
 msgstr "Drucken"
 
-#: umc/js/printermoderation.js:119
+#: umc/js/printermoderation.js:123
 msgid "Print job"
 msgstr "Druckauftrag"
 
-#: umc/js/printermoderation.js:254
+#: umc/js/printermoderation.js:259
 msgid "Print job <i>{printjob}</i> of <i>{user}</i>"
 msgstr "Druckauftrag <i>{printjob}</i> des Benutzers <i>{user}</i>"
 
-#: umc/js/printermoderation.js:216
+#: umc/js/printermoderation.js:221
 msgid "Print job {0} from {1}"
 msgstr "Druckauftrag {0} von {1}"
 
@@ -88,35 +88,35 @@ msgstr "Druckauftrag {0} von {1}"
 msgid "Print the document."
 msgstr "Drucken des Dokumentes"
 
-#: umc/js/printermoderation.js:292
+#: umc/js/printermoderation.js:297
 msgid "Printer"
 msgstr "Drucker"
 
-#: umc/js/printermoderation.js:248
+#: umc/js/printermoderation.js:253
 msgid "Printing ..."
 msgstr "Verarbeitung der Druckaufträge ..."
 
-#: umc/js/printermoderation.js:148 umc/js/printermoderation.js:283
+#: umc/js/printermoderation.js:153 umc/js/printermoderation.js:288
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/printermoderation.js:167
+#: umc/js/printermoderation.js:172
 msgid "Search..."
 msgstr "Suche..."
 
-#: umc/js/printermoderation.js:155
+#: umc/js/printermoderation.js:160
 msgid "Select a class or workgroup."
 msgstr "Auswahl einer Klasse oder Arbeitsgruppe"
 
-#: umc/js/printermoderation.js:147
+#: umc/js/printermoderation.js:152
 msgid "Select the school."
 msgstr "Auswahl der Klassen."
 
-#: umc/js/printermoderation.js:199
+#: umc/js/printermoderation.js:204
 msgid "Should the selected print jobs be deleted?"
 msgstr "Sollen die ausgewählten Druckaufträge gelöscht werden?"
 
-#: umc/js/printermoderation.js:169
+#: umc/js/printermoderation.js:174
 msgid ""
 "Specifies the substring pattern which is searched for in the first name, "
 "surname and username"
@@ -124,7 +124,7 @@ msgstr ""
 "Definiert eine Zeichenkette, die im Vorname, Nachnamen und Benutzernamen "
 "gesucht wird"
 
-#: umc/js/printermoderation.js:115
+#: umc/js/printermoderation.js:119
 msgid "User"
 msgstr "Benutzer"
 

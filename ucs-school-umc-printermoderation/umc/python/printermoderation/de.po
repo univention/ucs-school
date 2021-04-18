@@ -2,8 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-printermoderation\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-30 09:41+0200\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2021-03-09 11:27+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,36 +12,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/printermoderation/__init__.py:88
-#: umc/python/printermoderation/__init__.py:167
+#: umc/python/printermoderation/__init__.py:276
+#, python-format
+msgid "Failed to connect to print server %(printserver)s."
+msgstr ""
+"Die Verbindung zum Druck-Server %(printserver)s konnte nicht hergestellt "
+"werden."
+
+#: umc/python/printermoderation/__init__.py:286
+#, python-format
+msgid "Failed to print on %(printer)s: %(stderr)s (error %(errno)d)."
+msgstr ""
+"Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s (Fehler "
+"%(errno)d)."
+
+#: umc/python/printermoderation/__init__.py:263
+#, fuzzy, python-format
+msgid "File %r could not be printed as it does not exist (anymore)."
+msgstr ""
+"Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert."
+
+#: umc/python/printermoderation/__init__.py:96
+#: umc/python/printermoderation/__init__.py:201
 msgid "Invalid file"
 msgstr "Ungültige Datei"
 
-#: umc/python/printermoderation/__init__.py:220
+#: umc/python/printermoderation/__init__.py:259
 msgid "Invalid printer URI"
 msgstr "Ungültige Drucker-URI"
 
-#: umc/python/printermoderation/__init__.py:226
-#, python-format
-msgid "File %r could not be printed as it does not exists (anymore)."
-msgstr "Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert."
-
-#: umc/python/printermoderation/__init__.py:252
-#, python-format
-msgid "Failed to print on %(printer)s: %(stderr)s (error %(errno)d)."
-msgstr "Auf Drucker %(printer)s konnte nicht gedruckt werden: %(stderr)s (Fehler %(errno)d)."
-
-#: umc/python/printermoderation/__init__.py:252
-#, python-format
-msgid "Failed to connect to print server %(printserver)s."
-msgstr "Die Verbindung zum Druck-Server %(printserver)s konnte nicht hergestellt werden."
-
-#: umc/python/printermoderation/__init__.py:252
-#, python-format
+#: umc/python/printermoderation/__init__.py:282
 msgid "No permission to print"
 msgstr "Keine Berechtigung für diesen Drucker"
 
-#: umc/python/printermoderation/__init__.py:252
-#, python-format
+#: umc/python/printermoderation/__init__.py:283
 msgid "Wrong password"
 msgstr "Falsches Passwort"
