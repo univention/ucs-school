@@ -712,22 +712,34 @@ class UserImport(object):
         cls_names.extend(self.deleted_users.keys())
         cls_names = set(cls_names)
         columns = 4
+        lines_allowed = 2
+        allowed_user_print_cnt = columns * lines_allowed
         for cls_name in sorted(cls_names):
             lines.append("Created {}: {}".format(cls_name, len(self.added_users.get(cls_name, []))))
-            for i in range(0, len(self.added_users[cls_name]), columns):
-                lines.append(
-                    "  {}".format([iu["name"] for iu in self.added_users[cls_name][i : i + columns]])
-                )
+            added_users_len = len(self.added_users[cls_name])
+            if added_users_len <= allowed_user_print_cnt:
+                for i in range(0, added_users_len, columns):
+                    lines.append(
+                        "  {}".format([iu["name"] for iu in self.added_users[cls_name][i : i + columns]])
+                    )
             lines.append("Modified {}: {}".format(cls_name, len(self.modified_users.get(cls_name, []))))
-            for i in range(0, len(self.modified_users[cls_name]), columns):
-                lines.append(
-                    "  {}".format([iu["name"] for iu in self.modified_users[cls_name][i : i + columns]])
-                )
+            modified_users_len = len(self.modified_users[cls_name])
+            if modified_users_len <= allowed_user_print_cnt:
+                for i in range(0, modified_users_len, columns):
+                    lines.append(
+                        "  {}".format(
+                            [iu["name"] for iu in self.modified_users[cls_name][i : i + columns]]
+                        )
+                    )
             lines.append("Deleted {}: {}".format(cls_name, len(self.deleted_users.get(cls_name, []))))
-            for i in range(0, len(self.deleted_users[cls_name]), columns):
-                lines.append(
-                    "  {}".format([iu["name"] for iu in self.deleted_users[cls_name][i : i + columns]])
-                )
+            deleted_users_len = len(self.deleted_users[cls_name])
+            if deleted_users_len <= allowed_user_print_cnt:
+                for i in range(0, deleted_users_len, columns):
+                    lines.append(
+                        "  {}".format(
+                            [iu["name"] for iu in self.deleted_users[cls_name][i : i + columns]]
+                        )
+                    )
         lines.append("Errors: {}".format(len(self.errors)))
         if self.errors:
             username_width = max(
