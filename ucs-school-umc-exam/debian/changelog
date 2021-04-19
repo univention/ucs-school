@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-51) unstable; urgency=medium
+
+  * Bug #52853: migrate create_ou post hook to listener module
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 19 Apr 2021 19:08:40 +0200
+
 ucs-school-umc-exam (9.0.1-50) unstable; urgency=medium
 
   * Bug #52680: move cache clear

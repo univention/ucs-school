@@ -1,3 +1,9 @@
+ucs-school-import (17.0.54) unstable; urgency=medium
+
+  * Bug #52853: migrate create_ou post hook to listener modules
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 19 Apr 2021 19:09:26 +0200
+
 ucs-school-import (17.0.53) unstable; urgency=medium
 
   * Bug #47841: shorten import summary to two lines per role

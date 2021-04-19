@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.209) unstable; urgency=medium
+
+  * Bug #52853: ucs-tests for migrated hooks
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 19 Apr 2021 19:05:00 +0200
+
 ucs-test-ucsschool (6.0.208) unstable; urgency=low
 
   * Bug #53006: cleanup
