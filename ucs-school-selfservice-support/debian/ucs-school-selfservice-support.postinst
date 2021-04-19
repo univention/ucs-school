@@ -42,7 +42,7 @@ fi
 
 # Force pysupport run to make ucsschool.lib.models.utils.add_or_remove_ucrv_value available NOW
 if which update-python-modules >/dev/null 2>&1; then
-	update-python-modules --post-install
+	update-python-modules -f
 fi
 
 call_joinscript 67ucs-school-selfservice-support.inst
