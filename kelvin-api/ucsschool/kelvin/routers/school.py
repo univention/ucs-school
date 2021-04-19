@@ -313,7 +313,7 @@ async def create(
         "share_name": share_server,
         "lo": udm,
         "baseDN": env_or_ucr("ldap/base"),
-        "hostname": env_or_ucr("ldap/master"),
+        "hostname": env_or_ucr("ldap/master").split(".", 1)[0],
         "is_single_master": env_or_ucr("ucsschool/singlemaster"),
         "alter_dhcpd_base": alter_dhcpd_base,
     }
