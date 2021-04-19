@@ -42,7 +42,7 @@ eval "$(ucr shell ldap/base server/role)"
 
 for OU in $(univention-ldapsearch -LLL objectClass=ucsschoolOrganizationalUnit ou | sed -nre 's/^ou: //p');
 do
-	/usr/share/ucs-school-lib/modify_ucr_list umc/self-service/passwordreset/whitelist/groups add , "Domain Users $OU"
+	/usr/share/ucs-school-lib/modify_ucr_list umc/self-service/passwordreset/whitelist/groups add , "Domain Users $OU" || die
 done
 
 if [ "$server_role" == "domaincontroller_master" ] || [ "$server_role" == "domaincontroller_backup" ];
