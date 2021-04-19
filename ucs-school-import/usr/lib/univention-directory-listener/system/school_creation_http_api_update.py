@@ -44,12 +44,12 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
     def _update_http_api(self):
         with self.as_root():
             self.logger.info("Syncing all schools in http api")
-            retval = exec_cmd(
+            returncode, stdout, stderr = exec_cmd(
                 ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "-a"],
-                raise_exc=False,  # this looks like a silent fail?
+                raise_exc=False,
             )
-            if retval:
-                self.logger.info("http_api says:{} {}".format(retval[1], retval[2]))
+            if returncode:
+                self.logger.info("http_api says: %r", (returncode, stdout, stderr))
 
     def initialize(self):
         self._update_http_api()
@@ -66,14 +66,13 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
         name = new["ou"][0]
         with self.as_root():
             self.logger.info("Update school {} in http api".format(name))
-            retval = exec_cmd(
+            returncode, stdout, stderr = exec_cmd(
                 ["/usr/share/pyshared/ucsschool/http_api/manage.py", "updateschools", "--ou", name],
-                raise_exc=False,  # this looks like a silent fail?
+                raise_exc=False,
             )
-            if retval:
-                self.logger.info("http_api says for {}:{} {}".format(name, retval[1], retval[2]))
+            if returncode:
+                self.logger.info("http_api says: %r", (returncode, stdout, stderr))
 
     def remove(self, dn, old):
-        # TODO or use a -rm later on
-        # self._update_http_api()
-        pass
+        self.logger.debug("dn: %r", dn)
+        self._update_http_api()

@@ -49,9 +49,8 @@ import ruamel.yaml
 from psutil import NoSuchProcess, process_iter
 from six import string_types
 
-import univention.config_registry
 import univention.debug as ud
-from univention.config_registry import ConfigRegistry
+from univention.config_registry import ConfigRegistry, handler_set
 from univention.lib.i18n import Translation
 from univention.lib.policy_result import policy_result
 
@@ -757,5 +756,5 @@ def add_or_remove_ucrv_value(ucrv, action, value, delimiter):
         except ValueError:
             return 0
 
-    univention.config_registry.handler_set(["{}={}".format(ucrv, delimiter.join(cur_val_list))])
+    handler_set(["{}={}".format(ucrv, delimiter.join(cur_val_list))])
     return 0

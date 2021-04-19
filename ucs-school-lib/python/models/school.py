@@ -33,6 +33,7 @@ import subprocess
 
 try:
     from typing import List
+
     from .base import LoType
 except ImportError:
     pass
@@ -44,8 +45,8 @@ from ldap.filter import escape_filter_chars, filter_format
 import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
+from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set
-from univention.management.console.ldap import get_admin_connection
 from univention.udm import UDM, CreateError, NoObject as UdmNoObject
 
 from ..roles import (
@@ -307,7 +308,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative=False):
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("ldap/master")
+            return ucr.get("ldap/master").split(".", 1)[0]
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
@@ -747,7 +748,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
         if hook_time == "post" and func_name == "create":
-            lo, pos = get_admin_connection()
+            lo, pos = getAdminConnection()
             self.logger.debug("Starting post-create hooks...")
             self.set_ucsschool_role_for_dc(lo)
             self.create_market_place_share(lo)
@@ -826,19 +827,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         objs = MarketplaceShare.get_all(lo=lo, school=self.name)
         if not objs:
             obj = MarketplaceShare(name="Marktplatz", school=self.name)
-            if obj.exists(lo):
-                self.logger.warning(
-                    "Object of type MarketplaceShare with school={} and name=Marktplatz exists.".format(
-                        self.name
-                    ),
+            success = obj.create(lo)
+            if not success:
+                self.logger.error(
+                    "Failed to create MarketplaceShare for school={}.".format(self.name),
                 )
-            else:
-                success = obj.create(lo)
-                if not success:
-                    self.logger.error(
-                        "Failed to create MarketplaceShare for school={}.".format(self.name),
-                    )
-                    return
+                return
             self.logger.info("Created {!r}".format(obj))
         else:
             self.logger.warning("MarketplaceShare for {} exists already.".format(self.name))
@@ -864,9 +858,12 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             policy.position = "cn=policies,{}".format(ou_dn)
             policy.props.name = "ou-default-ucr-policy"
             policy.save()
-        except CreateError:
+        except CreateError as e:
             # object exists already.
-            self.logger.error("Error while creating ou-default-ucr-policy for {}".format(self.name))
+            self.logger.error(
+                "Error while creating ou-default-ucr-policy for {}: {}".format(self.name, e)
+            )
+            return
 
         # add value to policy
         policy_dn = "cn=ou-default-ucr-policy,cn=policies,{}".format(ou_dn)
@@ -958,7 +955,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         group = group_mod.get(ou_import_group)
         group.options.append("ucsschoolImportGroup")
         group.props.ucsschoolImportSchool = [ou]
-        group.save()
         # comment: teacher_and_staff is a proper role and only used in the import context.
         group.props.ucsschoolImportRole.extend(
             [role_student, role_staff, "teacher_and_staff", role_teacher]
