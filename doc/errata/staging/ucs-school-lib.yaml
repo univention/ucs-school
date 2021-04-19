@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix:
+fix: 12.2.18A~4.4.0.202104191927
 desc: |
  * Internal improvement: The code of the shell hooks, which is used to modify ou groups and objects after their creation, was migrated to the <package>ucs-school-lib</package> (Bug #52853).
 bug: [52853]
