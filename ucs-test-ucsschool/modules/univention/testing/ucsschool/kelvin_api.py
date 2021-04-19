@@ -36,6 +36,7 @@ Test base code.
 from __future__ import unicode_literals
 
 import datetime
+import inspect
 import json
 import logging
 import os
@@ -46,7 +47,7 @@ import subprocess
 import sys
 import time
 import uuid
-from typing import Any, Dict, List, Optional, Text, Tuple
+from typing import Any, Callable, Dict, List, Optional, Text, Tuple
 from unittest import TestCase
 
 import requests
@@ -97,6 +98,7 @@ RESSOURCE_URLS = {
     "users": urljoin(API_ROOT_URL, "users/"),
 }
 KELVIN_TOKEN_URL = API_ROOT_URL.replace("/v1/", "/token")
+HTTP_502_ERRORS = []
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
@@ -447,6 +449,28 @@ class HttpApiUserTestBase(TestCase):
         return obj
 
 
+def retry_http_502(request_method, *args, **kwargs):
+    # type: (Callable[..., requests.Response], *Any, **Any) -> requests.Response
+    retries = 5
+    while retries > 0:
+        response = request_method(*args, **kwargs)
+        if response.status_code == 502:
+            caller = inspect.stack()[1][3]
+            msg = "=> HTTP 502 #{} in {}() by request.{}({}, {})".format(
+                len(HTTP_502_ERRORS) + 1,
+                caller,
+                request_method.__name__,
+                ", ".join(repr(a) for a in args),
+                ", ".join("{!r}={!r}".format(k, v) for k, v in kwargs.items()),
+            )
+            HTTP_502_ERRORS.append(msg)
+            print(msg)
+            retries -= 1
+            time.sleep(2)
+            continue
+        return response
+
+
 def api_call(method, url, auth=None, headers=None, json_data=None):
     # type: (Text, Text, Optional[Any], Optional[Dict[Text, Any]], Optional[Dict[Text, Any]]) -> Dict[Text, Any]  # noqa: E501
     pid = os.getpid()
@@ -455,7 +479,7 @@ def api_call(method, url, auth=None, headers=None, json_data=None):
         "*** [%r] method=%r url=%r json_data=%r (%s)", pid, method, url, json_data, req_id
     )
     meth = getattr(requests, method)
-    response = meth(url, auth=auth, headers=headers, json=json_data)
+    response = retry_http_502(meth, url, auth=auth, headers=headers, json=json_data)
     if response.status_code >= 400:
         log = HttpApiUserTestBase.logger.error
     else:

@@ -23,7 +23,7 @@ import six
 
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.conftest import IMPORT_CONFIG_KWARGS
-from univention.testing.ucsschool.kelvin_api import API_ROOT_URL, KELVIN_TOKEN_URL, RESSOURCE_URLS
+from univention.testing.ucsschool.kelvin_api import HTTP_502_ERRORS, KELVIN_TOKEN_URL, RESSOURCE_URLS
 
 pytest_plugins = ["univention.testing.ucsschool.conftest"]
 logger = logging.getLogger("univention.testing.ucsschool")
@@ -283,3 +283,13 @@ def add_to_import_config():  # noqa: C901
 def setup_import_config(add_to_import_config):
     add_to_import_config(**IMPORT_CONFIG_KWARGS)
 
+
+@pytest.fixture(autouse=True, scope="session")
+def log_http_502_amount():
+    log_file = "/tmp/http502.log"
+    msg = "{} HTTP 502: {} times".format(datetime.datetime.now().isoformat(), len(HTTP_502_ERRORS))
+    print("{}, see {!r}.".format(msg, log_file))
+    with open(log_file, "a") as fp:
+        fp.write("{}.\n".format(msg))
+        for msg in HTTP_502_ERRORS:
+            fp.write("{}\n".format(msg))
