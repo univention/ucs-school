@@ -238,7 +238,7 @@ def restart_kelvin_api_server():  # type: () -> None
 def add_to_import_config():  # noqa: C901
     def _func(**kwargs):
         if os.path.exists(IMPORT_CONFIG["active"]):
-            logger.info("Checing if %r contains %r...", IMPORT_CONFIG["active"], kwargs)
+            logger.info("Checking if %r contains %r...", IMPORT_CONFIG["active"], kwargs)
             restart = False
             with open(IMPORT_CONFIG["active"], "r") as fp:
                 config = json.load(fp)
@@ -256,10 +256,6 @@ def add_to_import_config():  # noqa: C901
             if not restart:
                 logger.info("Not restarting server, import config already contains: %r", kwargs)
                 return
-
-        if os.path.exists(IMPORT_CONFIG["active"]):
-            with open(IMPORT_CONFIG["active"], "r") as fp:
-                config = json.load(fp)
             if not os.path.exists(IMPORT_CONFIG["bak"]):
                 logger.info("Moving %r to %r.", IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
                 shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])

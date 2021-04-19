@@ -127,7 +127,6 @@ def test_list(auth_header):
             if k in ("administrative_servers", "educational_servers", "ucsschool_roles"):
                 assert isinstance(obj[k], list)
             else:
-
                 assert isinstance(obj[k], (string_types, type(None)))
 
 
@@ -201,6 +200,5 @@ def test_create(auth_header, lo, schedule_delete_ou_at_end_of_session):
     ), "School {!r} not found: search with filter={!r} did not return 1 result:\n{}".format(
         attrs["name"], filter_s, res
     )
-    logger.info("")
     school_attrs = res[0][1]
     assert {"name": school_attrs["ou"][0], "display_name": school_attrs["displayName"][0]} == attrs

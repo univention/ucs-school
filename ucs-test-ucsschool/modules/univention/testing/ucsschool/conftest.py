@@ -373,7 +373,9 @@ def ucr_ldap_base(ucr):
 
 
 @pytest.fixture(scope="session")
-def user_ldap_attributes(random_username, model_ucsschool_roles, model_ldap_object_classes, user_groups):
+def user_ldap_attributes(
+    random_username, model_ucsschool_roles, model_udm_module, model_ldap_object_classes, user_groups
+):
     def _func(ous, user_type):  # type: (List[str], UserType) -> Dict[str, List[str]]
         """First OU in `ous` will be the users LDAP position -> `school`."""
         assert isinstance(ous, list)
@@ -398,7 +400,7 @@ def user_ldap_attributes(random_username, model_ucsschool_roles, model_ldap_obje
             "ucsschoolRole": model_ucsschool_roles(user_type, ous),
             "departmentNumber": [ous[0]],
             "ucsschoolSchool": ous,
-            "univentionObjectType": ["users/user"],
+            "univentionObjectType": [model_udm_module(user_type)],
         }
 
     return _func
@@ -430,6 +432,7 @@ def workgroup_ldap_attributes(
     random_username,
     ucr_ldap_base,
     model_ucsschool_roles,
+    model_udm_module,
     model_ldap_container,
     model_ldap_object_classes,
 ):
@@ -448,7 +451,7 @@ def workgroup_ldap_attributes(
             "univentionAllowedEmailGroups": [group_dn],
             "univentionAllowedEmailUsers": [user_dn],
             "uniqueMember": [user_dn],
-            "univentionObjectType": ["groups/group"],
+            "univentionObjectType": [model_udm_module(GroupType.WorkGroup)],
         }
 
     return _func
@@ -480,6 +483,7 @@ def workgroup_share_ldap_attributes(
     ucr_ldap_base,
     model_ldap_object_classes,
     model_ucsschool_roles,
+    model_udm_module,
 ):
     def _func(ou):  # type: (str) -> Dict[str, Any]
         name = random_username()
@@ -491,7 +495,7 @@ def workgroup_share_ldap_attributes(
             "cn": ["{}-{}".format(ou, name)],
             "objectClass": model_ldap_object_classes(ShareType.WorkGroupShare),
             "ucsschoolRole": model_ucsschool_roles(ShareType.WorkGroupShare, [ou]),
-            "univentionObjectType": ["shares/share"],
+            "univentionObjectType": [model_udm_module(ShareType.WorkGroupShare)],
             "univentionShareDirectoryMode": ["0770"],
             "univentionShareHost": [share_host],
             "univentionSharePath": ["/home/{0}/groups/{0}-{1}".format(ou, name)],
@@ -650,7 +654,7 @@ class OUCloner(object):
             elif k == "uidNumber":
                 attrs_new[k] = str(self.next_uid)
                 self.next_uid += 1
-        print("Adding {!r}...".format(dn_new, attrs_new.items()))
+        print("Adding {!r}...".format(dn_new))
         self.lo.add(dn_new, attrs_new.items())
 
     def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
