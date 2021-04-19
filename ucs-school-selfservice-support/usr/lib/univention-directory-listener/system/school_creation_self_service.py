@@ -55,13 +55,13 @@ class SchoolCreationSelfServiceListener(ListenerModuleHandler):
         self.logger.debug("dn: %r", dn)
         name = new["ou"][0]
         value = "Domain Users {}".format(name)
-        self.logger.info("Adding '{}' to ucrv '{}'".format(value, self.ucrv))
+        self.logger.info("Adding %r to ucrv %r.", value, self.ucrv)
         with self.as_root():
             add_or_remove_ucrv_value(self.ucrv, "add", value, self.delimiter)
 
     def remove(self, dn, old):
         self.logger.debug("dn: %r", dn)
         value = "Domain Users {}".format(old["ou"][0])
-        self.logger.info("Removing '{}' from ucrv '{}'".format(value, self.ucrv))
+        self.logger.info("Removing %r from ucrv %r.", value, self.ucrv)
         with self.as_root():
             add_or_remove_ucrv_value(self.ucrv, "remove", value, self.delimiter)
