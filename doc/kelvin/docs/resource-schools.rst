@@ -33,7 +33,7 @@ The following JSON is an example Schools resource in the *UCS\@school Kelvin RES
         "ucsschool_roles": ["school:school:test"],
         "name": "test",
         "display_name": "Test School",
-        "educational_servers": ["cn=dctest-01"],
+        "educational_servers": ["dctest-01"],
         "administrative_servers": [],
         "class_share_file_server": "dctest-01",
         "home_share_file_server": "dctest-01"
