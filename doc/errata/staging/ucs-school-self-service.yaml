@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-selfservice-support
-fix: 3.0.0-3A~4.4.0.202104191933
+fix: 3.0.0-4A~4.4.0.202104200833
 desc: |
-  * Internal improvement: The code of the shell hooks which runs after the ou creation was migrated inside listener modules (Bug #52853).
+  * Internal improvement: The code of the hooks which ran after the creation of OUs was migrated to listener modules (Bug #52853).
 bug: [52853]

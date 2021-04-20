@@ -5,6 +5,6 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.54A~4.4.0.20210419192
 desc: |
-  * In order to improve readability, the textual summary of an import job does not list users if there are more than 2 lines per role (Bug #47841).
-  * Internal improvement: The code of the shell hooks which runs after the ou creation was migrated inside listener modules (Bug #52853).
+  * In order to improve readability, the textual summary of an import job does not list users anymore, if there are more than 8 per role (Bug #47841).
+  * Internal improvement: The code of the shell hooks which ran after the creation of OUs was migrated to listener modules (Bug #52853).
 bug: [47841,52853]
