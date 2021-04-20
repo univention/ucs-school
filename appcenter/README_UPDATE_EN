@@ -1,11 +1,14 @@
 <h1>Changelog</h1>
-<h2>v1.4.0 (2021-03-11)</h2>
+<h2>v1.4.0 (2021-04-20)</h2>
 <ul>
     <li>
        The FastAPI framework has been updated to version <code>0.63.0</code>.
     </li>
     <li>
        Open Policy Agent was added for access control and implemented partially for the user resource.
+    </li>
+    <li>
+        The Kelvin API now supports creating schools (<a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/resource-schools.html#create">manual</a>).
     </li>
 </ul>
 <h2>v1.3.0 (2021-02-18)</h2>

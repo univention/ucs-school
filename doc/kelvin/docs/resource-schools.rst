@@ -112,6 +112,8 @@ The response body will be the first element of the list in the search example ab
 Create
 ------
 
+Since version ``1.4.0`` of the *UCS\@school Kelvin REST API* app it is possible to create school objects (OUs).
+
 When creating a school, two attributes must be set:
 
 * ``name``
