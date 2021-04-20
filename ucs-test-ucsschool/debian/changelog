@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.212) unstable; urgency=medium
+
+  * Bug #52853: don't execute school creation tests on replication node
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 20 Apr 2021 15:17:46 +0200
+
 ucs-test-ucsschool (6.0.211) unstable; urgency=low
 
   * Bug #52853: fix imports

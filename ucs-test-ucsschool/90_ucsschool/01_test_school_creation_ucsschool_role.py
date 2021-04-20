@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test if ucsschool role is set correct
+## roles: [domaincontroller_master, domaincontroller_backup]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:

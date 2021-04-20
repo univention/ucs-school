@@ -1,6 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Modify ucrv on school creation/deletion
+## roles: [domaincontroller_master, domaincontroller_backup]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
