@@ -152,10 +152,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             return self.name[:2]
 
     def get_own_container(self):
+        container = self.get_container()
         district = self.get_district()
         if district:
-            return "ou=%s,%s" % (escape_dn_chars(district), self.get_container())
-        return self.get_container()
+            return "ou=%s,%s" % (escape_dn_chars(district), container)
+        return container
 
     @classmethod
     def get_container(cls, school=None):
@@ -971,11 +972,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         # create exam container
         examusers = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
-        district = self.get_district()
-        if not district:
-            district = ""
         exam_container = Container(name=examusers, school=self.school)
-        exam_container.position = "ou={}{},{}".format(self.name, district, ldap_base)
+        exam_container.position = self.get_own_container()
         exam_container.name = examusers
         exam_container.create(lo)
         self.logger.debug("Exam container {} created.".format(exam_container.name))

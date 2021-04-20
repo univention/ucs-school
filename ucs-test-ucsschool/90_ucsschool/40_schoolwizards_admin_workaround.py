@@ -8,7 +8,7 @@
 from typing import List
 
 import pytest
-from conftest import UserType
+from univention.testing.ucsschool.conftest import UserType
 
 from ucsschool.lib.models import User
 from univention.config_registry import handler_get, handler_set, handler_unset

@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.20) unstable; urgency=low
+
+  * Bug #52853: fix container path
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 20 Apr 2021 11:06:06 +0200
+
 ucs-school-lib (12.2.19) unstable; urgency=low
 
   * Bug #52853: bump for Python module build
