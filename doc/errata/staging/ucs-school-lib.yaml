@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.19A~4.4.0.202104200831
+fix: 12.2.20A~4.4.0.202104201107
 desc: |
  * Internal improvement: The code of the hooks, which was used to create and modify groups, policies and UCR variables after the creation of new schools (OUs), was migrated from Shell code to Python code (Bug #52853).
 bug: [52853]
