@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.211) unstable; urgency=low
+
+  * Bug #52853: fix imports
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 20 Apr 2021 13:32:54 +0200
+
 ucs-test-ucsschool (6.0.210) unstable; urgency=low
 
   * Bug #52853: fix imports

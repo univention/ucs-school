@@ -21,19 +21,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
-from ucsschool.importer.configuration import Configuration, setup_configuration as _setup_configuration
-from ucsschool.importer.exceptions import UcsSchoolImportError
-from ucsschool.importer.factory import setup_factory as _setup_factory
-from ucsschool.importer.frontend.user_import_cmdline import (
-    UserImportCommandLine as _UserImportCommandLine,
-)
-from ucsschool.importer.models.import_user import (
-    ImportStaff,
-    ImportStudent,
-    ImportTeacher,
-    ImportTeachersAndStaff,
-    ImportUser,
-)
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
@@ -315,6 +302,15 @@ def udm_session():
 
 @pytest.fixture
 def create_import_user(lo):
+    # ucs-test-ucsschool must not depend on ucs-school-import package
+    from ucsschool.importer.models.import_user import (
+        ImportStaff,
+        ImportStudent,
+        ImportTeacher,
+        ImportTeachersAndStaff,
+        ImportUser,
+    )
+
     def _func(**kwargs):  # type: (**Any) -> ImportUser
         kls = random.choice((ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff))
         obj = kls(**kwargs)
@@ -328,6 +324,9 @@ def create_import_user(lo):
 
 @pytest.fixture
 def get_import_user(import_config, lo):
+    # ucs-test-ucsschool must not depend on ucs-school-import package
+    from ucsschool.importer.models.import_user import ImportUser
+
     def _func(dn, school=None):  # type: (str, Optional[str]) -> ImportUser
         user = ImportUser.from_dn(dn, school, lo)
         udm_obj = user.get_udm_object(lo)
@@ -536,6 +535,17 @@ def random_logger():
 
 @pytest.fixture(scope="session")
 def init_ucs_school_import_framework():
+    # ucs-test-ucsschool must not depend on ucs-school-import package
+    from ucsschool.importer.configuration import (
+        Configuration,
+        setup_configuration as _setup_configuration,
+    )
+    from ucsschool.importer.exceptions import UcsSchoolImportError
+    from ucsschool.importer.factory import setup_factory as _setup_factory
+    from ucsschool.importer.frontend.user_import_cmdline import (
+        UserImportCommandLine as _UserImportCommandLine,
+    )
+
     def _func(**config_kwargs):
         global _ucs_school_import_framework_initialized, _ucs_school_import_framework_error
 
