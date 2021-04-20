@@ -4,7 +4,7 @@
     <li>
        The FastAPI framework has been updated to version <code>0.63.0</code>.
     </li>
-    </li>
+    <li>
        Open Policy Agent was added for access control and implemented partially for the user resource.
     </li>
     <li>
