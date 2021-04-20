@@ -28,11 +28,12 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+import os
 import socket
 import subprocess
 
 try:
-    from typing import List
+    from typing import List, Optional
 
     from .base import LoType
 except ImportError:
@@ -739,7 +740,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
 
-    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
+    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> Optional[bool]
         """
         Runs PyHooks, then ucs-school-libs fork hooks.
 
@@ -748,6 +749,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         :return: return code of lib hooks
         :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
+        # code for hooks is only executed on master & backup
+        if not os.path.exists("/etc/ldap.secret"):
+            return
         if hook_time == "post" and func_name == "create":
             lo, pos = getAdminConnection()
             self.logger.debug("Starting post-create hooks...")
