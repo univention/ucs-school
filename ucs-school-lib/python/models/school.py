@@ -28,12 +28,11 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-import os
 import socket
 import subprocess
 
 try:
-    from typing import List, Optional
+    from typing import List
 
     from .base import LoType
 except ImportError:
@@ -46,7 +45,6 @@ from ldap.filter import escape_filter_chars, filter_format
 import univention.admin.modules
 import univention.admin.objects
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set
 from univention.udm import UDM, CreateError, NoObject as UdmNoObject
 
@@ -611,6 +609,13 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             policy.create(lo)
             policy.attach(self, lo)
 
+        self.set_ucsschool_role_for_dc(lo)
+        self.create_market_place_share(lo)
+        self.create_dhcp_search_base(lo)
+        self.create_dhcp_dns_policy(lo)
+        self.create_import_group(lo)
+        self.create_exam_group(lo)
+
         return success
 
     def remove_without_hooks(self, lo):
@@ -739,31 +744,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         super(School, cls).invalidate_cache()
         User._samba_home_path_cache.clear()
-
-    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> Optional[bool]
-        """
-        Runs PyHooks, then ucs-school-libs fork hooks.
-
-        :param str hook_time: `pre` or `post`
-        :param str func_name: `create`, `modify`, `move` or `remove`
-        :return: return code of lib hooks
-        :rtype: bool: result of a legacy hook or None if no legacy hook ran
-        """
-        # code for hooks is only executed on master & backup
-        if not os.path.exists("/etc/ldap.secret"):
-            return
-        if hook_time == "post" and func_name == "create":
-            lo, pos = getAdminConnection()
-            self.logger.debug("Starting post-create hooks...")
-            self.set_ucsschool_role_for_dc(lo)
-            self.create_market_place_share(lo)
-            self.create_dhcp_search_base(lo)
-            self.create_dhcp_dns_policy(lo)
-            self.create_import_group(lo)
-            self.create_exam_group(lo)
-            self.logger.debug("Finished post-create hooks.")
-
-        return super(School, self).call_hooks(hook_time, func_name)
 
     def set_ucsschool_role_for_dc(self, lo):  # type: (LoType) -> None
         """
