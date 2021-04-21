@@ -186,7 +186,9 @@ class TestLegacyHooks(TestCase):
     def setUpClass(cls):
         cls.ucs_test_school = UCSTestSchool()
         cls.lo = cls.ucs_test_school.lo
-        (cls.ou_name, cls.ou_dn), (cls.ou2_name, cls.ou2_dn) = cls.ucs_test_school.create_multiple_ous(2)
+        (cls.ou_name, cls.ou_dn), (cls.ou2_name, cls.ou2_dn) = cls.ucs_test_school.create_multiple_ous(
+            2, use_cache=False
+        )
         logger.info("Using OUs %r and %r.", cls.ou_name, cls.ou2_name)
 
     @classmethod

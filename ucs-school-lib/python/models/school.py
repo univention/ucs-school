@@ -976,9 +976,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         # create exam container
         examusers = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
-        exam_container = Container(name=examusers, school=self.school)
-        exam_container.position = self.get_own_container()
-        exam_container.name = examusers
+        exam_container = Container(name=examusers, school=self.name)
         exam_container.create(lo)
         self.logger.debug("Exam container {} created.".format(exam_container.name))
 

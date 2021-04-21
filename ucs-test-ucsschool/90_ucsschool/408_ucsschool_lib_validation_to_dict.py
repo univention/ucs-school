@@ -25,13 +25,14 @@ from ucsschool.lib.models.validator import get_position_from, obj_to_dict
     "ObjectClass",
     [Staff, Student, Teacher, TeachersAndStaff, ExamStudent, SchoolClass, WorkGroup, ComputerRoom],
 )
-def test_udm_obj_to_dict(ObjectClass, schoolenv):
+def test_udm_obj_to_dict(create_ou, ObjectClass, schoolenv, ucr):
+    school, oudn = schoolenv.create_ou(name_edudc=ucr["hostname"])
     if issubclass(ObjectClass, Group):
-        name = "DEMOSCHOOL-{}".format(uts.random_name())
+        name = "{}-{}".format(school, uts.random_name())
     else:
         name = uts.random_name()
     user = ObjectClass(
-        school="DEMOSCHOOL",
+        school=school,
         name=name,
         firstname=uts.random_name(),
         lastname=uts.random_name(),
@@ -50,18 +51,19 @@ def test_udm_obj_to_dict(ObjectClass, schoolenv):
 
 
 @pytest.mark.parametrize("GroupShareClass", [ClassShare, WorkGroupShare, MarketplaceShare])
-def test_udm_share_to_dict(GroupShareClass, schoolenv):
+def test_udm_share_to_dict(GroupShareClass, schoolenv, ucr):
+    school, oudn = schoolenv.create_ou(name_edudc=ucr["hostname"])
     if GroupShareClass in [ClassShare, WorkGroupShare]:
-        name = "DEMOSCHOOL-{}".format(uts.random_name())
+        name = "{}-{}".format(school, uts.random_name())
         if GroupShareClass == ClassShare:
             group = SchoolClass(
-                school="DEMOSCHOOL",
+                school=school,
                 name=name,
             )
             group.create(schoolenv.lo)
         elif GroupShareClass == WorkGroupShare:
             group = WorkGroup(
-                school="DEMOSCHOOL",
+                school=school,
                 name=name,
             )
             group.create(schoolenv.lo)
@@ -69,7 +71,7 @@ def test_udm_share_to_dict(GroupShareClass, schoolenv):
         name = "Marktplatz"
 
     share = GroupShareClass(
-        school="DEMOSCHOOL",
+        school=school,
         name=name,
     )
     share.create(schoolenv.lo)

@@ -35,9 +35,7 @@ def test_create_exam_group():
         ldap_base = ucr["ldap/base"]
         ou_name, ou_dn = schoolenv.create_ou()
         exam_users = ucr.get("ucsschool/ldap/default/container/exam", "examusers")
-        district = schoolenv.get_district(ou_name) or ""
         exam_container = Container(name=exam_users, school=ou_name)
-        exam_container.position = "ou={}{},{}".format(ou_name, district, ldap_base)
         exam_container.name = exam_users
         assert exam_container.exists(schoolenv.lo)
         search_base = SchoolSearchBase([ou_dn], school=ou_name)
