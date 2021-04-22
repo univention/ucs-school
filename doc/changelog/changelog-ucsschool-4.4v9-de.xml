@@ -240,7 +240,41 @@ feedback@univention.de
 					<!-- END ucs-school-umc-groups 9.0.0-11A~4.4.0.202104141418 -->
 <!-- CHANGELOG:2021-04-21:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-04-22" lang="en">
+					<title>Released on 2021-04-22:</title>
+					<!-- START ucs-school-import 17.0.54A~4.4.0.202104191929 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.54A~4.4.0.202104191929</emphasis>:
+						<itemizedlist>
+							<listitem><para>In order to improve readability, the textual summary of an import job does not list users anymore, if there are more than 8 per role (<u:bug>47841</u:bug>).</para></listitem>
+
+							<listitem><para>Internal improvement: The code of the shell hooks which ran after the creation of OUs was migrated to listener modules (<u:bug>52853</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.54A~4.4.0.202104191929 -->
+					<!-- START ucs-school-lib 12.2.22A~4.4.0.202104210959 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.22A~4.4.0.202104210959</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: The code of the hooks, which was used to create and modify groups, policies and UCR variables after the creation of new schools (OUs), was migrated from Shell code to Python code (<u:bug>52853</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.22A~4.4.0.202104210959 -->
+					<!-- START ucs-school-selfservice-support 3.0.0-4A~4.4.0.202104200833 -->
+					<para>
+						Source package <emphasis>ucs-school-selfservice-support</emphasis> in version <emphasis>3.0.0-4A~4.4.0.202104200833</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: The code of the hooks which ran after the creation of OUs was migrated to listener modules (<u:bug>52853</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-selfservice-support 3.0.0-4A~4.4.0.202104200833 -->
+<!-- CHANGELOG:2021-04-22:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
