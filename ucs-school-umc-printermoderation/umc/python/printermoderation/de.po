@@ -27,7 +27,7 @@ msgstr ""
 "%(errno)d)."
 
 #: umc/python/printermoderation/__init__.py:263
-#, fuzzy, python-format
+#, python-format
 msgid "File %r could not be printed as it does not exist (anymore)."
 msgstr ""
 "Die Datei %r konnte nicht gedruckt werden da sie nicht (mehr) existiert."

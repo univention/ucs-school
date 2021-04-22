@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (16.0.0-4) unstable; urgency=medium
+
+  * removed fuzzy string
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Thu, 22 Apr 2021 12:14:15 +0200
+
 ucs-school-umc-printermoderation (16.0.0-3) unstable; urgency=medium
 
   * Bug #44699: removed typos
