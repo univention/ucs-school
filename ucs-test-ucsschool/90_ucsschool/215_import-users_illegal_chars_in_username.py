@@ -8,6 +8,7 @@
 ##   - ucs-school-import
 ## bugs: [42313]
 
+import argparse
 import copy
 import random
 import string
@@ -49,9 +50,17 @@ class Test(UniqueObjectTester):
         * "Username must only contain numbers, letters and dots, and may not be 'admin'!"
         * but no dot at beginning
         """
-        self.import_test1()
-        self.import_test2()
-        self.unit_tests()
+
+        testnames = ["import_test1", "import_test2", "unit_tests", "umlaut_tests"]
+        chosen_tests = testnames
+
+        # _testmethods is set in main
+        if getattr(self, "_user_testmethods", []):
+            chosen_tests = self._user_testmethods
+
+        for testname in chosen_tests:
+            if testname in testnames and hasattr(self, testname):
+                getattr(self, testname)()
 
     def import_test1(self):
         config = copy.deepcopy(self.default_config)
@@ -309,11 +318,48 @@ class Test(UniqueObjectTester):
                     % (input_name, out, expected)
                 )
 
+    def umlaut_tests(self):
+        """test if umlauts from other languages are correctly transliterated to ascii equivalents."""
+        # 00_i18n
+
+        from ucsschool.importer.utils.shell import config as _config
+
+        assert _config
+
+        # dry_run suffices, because we only want to check umlaut conversion, no persistence required
+        unh = UsernameHandler(20, dry_run=True)
+
+        usernames = [
+            # known examples from bugs
+            (u"Pınar Ağrı", "pinar.agri1"),
+            (u"ÇçĞğİıŞş", "ccggiiss"),
+            # some usernames created by faker, transliterated by unidecode
+            (u"สามโกเศศ นากกนก", "saamokess naakknk"),
+            (u"Fryderyk Krępa", "Fryderyk Krepa"),
+            (u"მაკა შალამბერიძე", "maka shalamberiz'e"),
+            (u"Зиновьев Селиверст Терентьевич", "Zinov'ev Seliverst Terent'evich"),
+            (u"السيدة ايمان الزيتاوي", "lsyd@ ymn lzytwy"),  # left to right name
+        ]
+
+        for input_name, expected in usernames:
+            out = unh.format_username(input_name.encode("utf-8"))
+            if out != expected:
+                self.fail(
+                    "UsernameHandler.format_username(%r) returned %r, expected %r."
+                    % (input_name, out, expected)
+                )
+
 
 def main():
+    # we want to be able to run methods selectively
+    parser = argparse.ArgumentParser(description="Run tests")
+    parser.add_argument("testmethod", nargs="*", help="only run these test methods")
+    args = parser.parse_args()
+
     tester = Test()
+    tester._user_testmethods = args.testmethod
     try:
-        tester.run()
+        tester.run()  # setup and call tester.test()
     finally:
         tester.cleanup()
 
