@@ -134,6 +134,14 @@ class DefaultConfigurationChecks(ConfigurationChecks):
                 "Using 'user_role' setting and '__role' mapping at the same time is not allowed."
             )
 
+    def test_maildomain_is_set(self):
+        if "<maildomain>" in self.config.get("scheme", {}).get("email", ""):
+            hosted_domains = ucr.get("mail/hosteddomains")
+            if not self.config["maildomain"] and not hosted_domains:
+                raise InitialisationError(
+                    "No domain could be found in the configuration or under locally hosted domains."
+                )
+
     def test_scheme_valid_format(self):
         """
         Check validity of "scheme" entries.
