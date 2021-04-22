@@ -7,4 +7,4 @@ fix: 9.0.1-51A~4.4.0.202104191935
 desc: |
   * In some situations exam-users could not access their home directories after starting the same exam twice in a short time interval in a multi-server environment. This patch fixes this issue (Bug #52680).
   * Internal improvement: The code of the hooks which runs after the creation of OUs, was migrated to the package <package>ucs-school-lib</package> (Bug #52853).
-bug: [52680]
+bug: [52680,52853]
