@@ -50,6 +50,7 @@ from collections import defaultdict
 import lazy_object_proxy
 import ldap
 import six
+from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 
 import univention.admin.uldap as udm_uldap
@@ -73,6 +74,7 @@ from ucsschool.lib.models.utils import (
     UniStreamHandler,
     add_stream_logger_to_schoollib,
     get_stream_handler,
+    ucr as lib_ucr,
 )
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
@@ -1424,6 +1426,9 @@ class OUCloner(object):
     def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
         """Create the school OU `new_ou` from LDAP data related to`ori_ou`."""
         t0 = time.time()
+        # make sure to have the right name (case sensitive)
+        ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(ori_ou), lib_ucr["ldap/base"]))
+        ori_ou = ou_attrs["ou"][0]
         print("Creating copy of OU {!r} as {!r}...".format(ori_ou, new_ou))
         self.clone_ou_objects(ori_ou, new_ou)
         self.clone_global_groups(ori_ou, new_ou)
@@ -1436,8 +1441,12 @@ class OUCloner(object):
         """
         Replace the string `ori` in `s` with `new`. Do it both case-sensitive and with both lower-case.
         """
-        new_s = s.replace(ori, new)
-        return new_s.replace(ori.lower(), new.lower())
+        try:
+            new_s = s.replace(ori, new)
+            return new_s.replace(ori.lower(), new.lower())
+        except UnicodeDecodeError:
+            # all important keys and values enforce ASCII, so let's ignore this one
+            return s
 
     def get_max_rid(self):  # type: () -> Tuple[str, int]
         """Find the highest Samba RID in the domain."""
@@ -1500,7 +1509,7 @@ class OUCloner(object):
             ]
             for key, values in six.iteritems(attrs_ori)
         }
-        for k, v in six.iteritems(attrs_new):
+        for k, v in attrs_new.items():
             if k == "displayName":
                 attrs_new[k] = "{} ({})".format(v[0], new_ou)
             elif k == "sambaSID":
@@ -1542,7 +1551,7 @@ class OUCloner(object):
                 else:
                     new_id = self.new_username(old_id, ori_ou, new_ou)
                 attrs_new[k] = new_id
-                if k == "cn":
+                if k == "cn" and "uid" in attrs_ori:
                     attrs_new["uid"] = "{}$".format(new_id)
                 if dn_new.startswith(k):
                     dn_new = dn_new.replace("{}={},".format(k, old_id), "{}={},".format(k, new_id))
@@ -1563,6 +1572,8 @@ class OUCloner(object):
             attrs_new["krb5PrincipalName"] = old_value.replace(attrs_ori[id_k][0], attrs_new[id_k])
         if attrs_new["univentionObjectType"][0] == "users/user":
             for k in ("homeDirectory", "sambaHomePath"):
+                if k not in attrs_ori:
+                    continue
                 attrs_new[k] = attrs_ori[k][0].replace(attrs_ori["uid"][0], attrs_new["uid"])
 
         self.id_mapping["dn"][dn_ori] = dn_new
