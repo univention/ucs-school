@@ -36,7 +36,7 @@
 
 univention-config-registry set ucsschool/wizards/schoolwizards/users/optional_visible_fields?"schools ucsschool_roles password email disabled birthday"
 
-if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 11.0.0-11; then
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" le 11.0.0-15; then
 	python2 - << END
 from univention.config_registry import ConfigRegistry, handler_set # "$@" comment necessary to satisfy ucslint.
 ucr = ConfigRegistry()
