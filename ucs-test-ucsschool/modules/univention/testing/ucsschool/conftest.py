@@ -6,7 +6,6 @@ import pprint
 import random
 import sys
 import tempfile
-import time
 
 try:
     from typing import Any, Dict, List, Optional, Tuple, Type
@@ -15,7 +14,6 @@ except ImportError:
 
 import pytest
 import six
-from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
@@ -589,144 +587,3 @@ def init_ucs_school_import_framework():
 @pytest.fixture(scope="session")
 def import_config(init_ucs_school_import_framework):
     return init_ucs_school_import_framework()
-
-
-class OUCloner(object):
-    """
-    Create a OU bypassing UDM.
-
-    Objects are mostly OK. There might be a few inconsistencies with groups, shares and Samba IDs.
-
-    oc = OUCloner(lo)
-    oc.clone_ou("DEMOSCHOOL", "testou1234")
-    """
-
-    def __init__(self, lo):
-        self.lo = lo
-        self.sid_base, max_rid = self.get_max_rid()
-        self.next_rid = max_rid + 2000
-        max_gid, max_uid = self.get_max_gid_uid()
-        self.next_gid = max_gid + 2000
-        self.next_uid = max_uid + 2000
-
-    @staticmethod
-    def replace_case_sesitive_and_lower(s, ori, new):  # type: (str, str, str) -> str
-        new_s = s.replace(ori, new)
-        return new_s.replace(ori.lower(), new.lower())
-
-    def get_max_rid(self):  # type: () -> Tuple[str, int]
-        sid_base = self.lo.search("sambaDomainName=*", attr=["sambaSID"])[0][1]["sambaSID"][0]
-        max_rid = 0
-        for _, v in self.lo.search(filter_format("sambaSID=%s-*", (sid_base,)), attr=["sambaSID"]):
-            rid = int(v["sambaSID"][0].rsplit("-", 1)[1])
-            max_rid = max(rid, max_rid)
-        return sid_base, max_rid
-
-    def get_max_gid_uid(self):  # type: () -> Tuple[int, int]
-        max_gid = max_uid = 0
-        for _, v in self.lo.search(
-            "(&(|(objectClass=posixAccount)(objectClass=posixGroup))(|(gidNumber=*)(uidNumber=*)))",
-            attr=["gidNumber", "uidNumber"],
-        ):
-            try:
-                gid = int(v["gidNumber"][0])
-                max_gid = max(gid, max_gid)
-            except KeyError:
-                pass
-            try:
-                uid = int(v["uidNumber"][0])
-                max_uid = max(uid, max_uid)
-            except KeyError:
-                pass
-        return max_gid, max_uid
-
-    def clone_object(self, dn_ori, attrs_ori, ori_ou, new_ou):
-        # type: (str, Dict[str, List[str]], str, str) -> None
-        dn_new = self.replace_case_sesitive_and_lower(dn_ori, ori_ou, new_ou)
-        attrs_new = {
-            self.replace_case_sesitive_and_lower(key, ori_ou, new_ou): [
-                self.replace_case_sesitive_and_lower(v, ori_ou, new_ou) for v in values
-            ]
-            for key, values in six.iteritems(attrs_ori)
-        }
-        for k, v in six.iteritems(attrs_new):
-            if k == "displayName":
-                attrs_new[k] = "{} ({})".format(v[0], new_ou)
-            elif k == "sambaSID":
-                attrs_new[k] = "{}-{}".format(self.sid_base, self.next_rid)
-                self.next_rid += 1
-            elif k == "gidNumber" and "cn=computers" not in dn_ori:
-                attrs_new[k] = str(self.next_gid)
-                self.next_gid += 1
-            elif k == "uid" and dn_ori.startswith("uid="):
-                attrs_new[k] = "{}_{}".format(v[0], new_ou)
-                dn_new = dn_new.replace("uid={},".format(v[0]), "uid={},".format(attrs_new[k]))
-            elif k == "uidNumber":
-                attrs_new[k] = str(self.next_uid)
-                self.next_uid += 1
-        print("Adding {!r}...".format(dn_new))
-        self.lo.add(dn_new, attrs_new.items())
-
-    def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
-        t0 = time.time()
-        print("Creating copy of OU {!r} as {!r}...".format(ori_ou, new_ou))
-        self.clone_ou_objects(ori_ou, new_ou)
-        self.clone_global_groups(ori_ou, new_ou)
-        self.update_global_groups(ori_ou, new_ou)
-        print("Finished in {:.2f} seconds.".format(time.time() - t0))
-
-    def clone_ou_objects(self, ori_ou, new_ou):  # type: (str, str) -> None
-        filter_s = filter_format("ou=%s,%s", (ori_ou, self.lo.base))
-        ori_data = self.lo.search(base=filter_s, scope="sub")
-        ori_data.sort(key=lambda x: len(x[0]))
-        # create users last, so their primary group already exists
-        ori_data.sort(key=lambda x: x[0].startswith("uid="))
-        for dn_ori, attrs_ori in ori_data:
-            self.clone_object(dn_ori, attrs_ori, ori_ou, new_ou)
-
-    def clone_global_groups(self, ori_ou, new_ou):  # type: (str, str) -> None
-        group_dns = [
-            dn.format(ou=ori_ou, basedn=self.lo.base)
-            for dn in (
-                "cn=OU{ou}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{basedn}",
-                "cn=OU{ou}-Member-Edukativnetz,cn=ucsschool,cn=groups,{basedn}",
-                "cn=OU{ou}-Klassenarbeit,cn=ucsschool,cn=groups,{basedn}",
-                "cn=OU{ou}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{basedn}",
-                "cn=OU{ou}-DC-Edukativnetz,cn=ucsschool,cn=groups,{basedn}",
-            )
-        ]
-        group_dns.append(
-            "cn=admins-{ou},cn=ouadmins,cn=groups,{basedn}".format(
-                ou=ori_ou.lower(), basedn=self.lo.base
-            )
-        )
-        for dn_ori in group_dns:
-            attrs_ori = self.lo.get(dn_ori)
-            self.clone_object(dn_ori, attrs_ori, ori_ou, new_ou)
-
-    def update_global_groups(self, ori_ou, new_ou):  # type: (str, str) -> None
-        for group_dn in (
-            dn.format(self.lo.base)
-            for dn in (
-                "cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
-                "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}",
-                "cn=Member-Edukativnetz,cn=ucsschool,cn=groups,{}",
-                "cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
-            )
-        ):
-            attrs_ori = self.lo.get(group_dn, attr=["memberUid", "uniqueMember"])
-            attrs_new = {}
-            for key, ori_values in six.iteritems(attrs_ori):
-                new_values = [
-                    self.replace_case_sesitive_and_lower(v, ori_ou, new_ou) for v in ori_values
-                ]
-                if new_values != ori_values:
-                    # DN of original value was replaced but should be kept. Keep original order.
-                    new_values = ori_values + [v for v in new_values if v not in ori_values]
-                    attrs_new[key] = new_values
-            if attrs_new:
-                ml = [(k, v, attrs_new[k]) for k, v in six.iteritems(attrs_ori)]
-                print("Modifying {!r}...".format(group_dn))
-                self.lo.modify(group_dn, ml)
-            else:
-                print("Unchanged: {!r}.".format(group_dn))

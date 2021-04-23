@@ -36,6 +36,7 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
+import datetime
 import json
 import logging
 import os
@@ -48,8 +49,9 @@ from collections import defaultdict
 
 import lazy_object_proxy
 import ldap
+import six
+from ldap.filter import filter_format
 
-import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 import univention.testing.strings as uts
 import univention.testing.ucr
@@ -86,10 +88,13 @@ from univention.admin.uexceptions import ldapError, noObject
 
 try:
     from typing import Dict, List, Optional, Set, Tuple
+
+    from univention.admin.uldap import access as LoType
 except ImportError:
     pass
 
 
+TEMPLATE_OU_NAME_PREFIX = "testtempl"
 TEST_OU_CACHE_FILE = "/var/lib/ucs-test/ucsschool-test-ous.json"
 
 
@@ -185,6 +190,7 @@ class UCSTestSchool(object):
         self._ldap_objects_in_test_ous = dict()  # type: Dict[str, Set[str]]
         self.lo = self.open_ldap_connection()
         self.udm = udm_test.UCSTestUDM()
+        self.ou_cloner = OUCloner(self.lo)
 
     def __enter__(self):
         return self
@@ -193,6 +199,7 @@ class UCSTestSchool(object):
         if exc_type:
             logger.exception("*** Cleanup after exception: %s %r", exc_type, exc_value)
         try:
+            self.cleanup_old_template_ous()
             self.cleanup()
         except Exception as exc:
             logger.exception("*** Error during cleanup: %s", exc)
@@ -442,6 +449,7 @@ class UCSTestSchool(object):
         wait_for_replication=True,
         use_cache=True,
     ):
+        # type: (Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[bool], Optional[bool]) -> Tuple[str, str]  # noqa: E501
         """
         Creates a new OU with random or specified name. The function may also set a specified
         displayName. If "displayName" is None, a random displayName will be set. If "displayName"
@@ -462,6 +470,17 @@ class UCSTestSchool(object):
             ou_name: name of the created OU
             ou_dn:   DN of the created OU object
         """
+        # if no special settings are used create a cloned OU
+        if (
+            not ou_name
+            and (not name_edudc or name_edudc == self.ucr["hostname"])
+            and not name_admindc
+            and not displayName
+            and not name_share_file_server
+            and not use_cli
+            and use_cache
+        ):
+            return self.cloned_ou()
         # it is not allowed to set the master as name_edudc ==> resetting name_edudc
         name_edudc = self.check_name_edudc(name_edudc)
         if use_cache and not self._test_ous:
@@ -553,6 +572,7 @@ class UCSTestSchool(object):
         wait_for_replication=True,
         use_cache=True,
     ):
+        # type: (int, Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[bool], Optional[bool]) -> List[Tuple[str, str]]  # noqa: E501
         """
         Create `num` OUs with each the same arguments and a random ou_name,
         without either effectively dodging the OU-cache or each time getting
@@ -577,6 +597,16 @@ class UCSTestSchool(object):
                 )
                 for _ in range(num)
             ]
+
+        # if no special settings are used create cloned OUs
+        if (
+            (not name_edudc or name_edudc == self.ucr["hostname"])
+            and not name_admindc
+            and not displayName
+            and not name_share_file_server
+            and not use_cli
+        ):
+            return [self.cloned_ou() for _ in range(num)]
 
         if not self._test_ous:
             self.load_test_ous()
@@ -611,6 +641,36 @@ class UCSTestSchool(object):
             res,
         )
         return res
+
+    @staticmethod
+    def _current_test_ou_template_name():  # type: () -> str
+        return "{}{:%m%d%H}".format(TEMPLATE_OU_NAME_PREFIX, datetime.datetime.now())
+
+    def cleanup_old_template_ous(self):  # type: () -> None
+        current_template_name = self._current_test_ou_template_name()
+        for ou_dn, ou_attrs in self.lo.search(
+            "(&(objectClass=ucsschoolOrganizationalUnit)(ou={}*))".format(TEMPLATE_OU_NAME_PREFIX),
+            attr=["ou"],
+        ):
+            ou_name = ou_attrs["ou"][0]
+            if ou_name != current_template_name:
+                logger.info("*** Removing old template OU %r...", ou_name)
+                self.cleanup_ou(ou_name)
+
+    def cloned_ou(self, ou_name=None):  # type: (Optional[str]) -> Tuple[str, str]
+        ou_name = ou_name or "testou{}".format(random.randint(1000, 9999))
+        assert ou_name not in self._cleanup_ou_names
+        current_template_name = self._current_test_ou_template_name()
+        logger.info("*** Current OU template name: %r", current_template_name)
+        template_name, template_dn = self.create_ou(
+            ou_name=current_template_name,
+            name_edudc=self.ucr["hostname"],
+            wait_for_replication=True,
+            use_cache=True,
+        )
+        self._cleanup_ou_names.add(ou_name)
+        self.ou_cloner.clone_ou(template_name, ou_name)
+        return ou_name, "ou={},{}".format(ou_name, self.ucr["ldap/base"])
 
     def get_district(self, ou_name):
         try:
@@ -1332,6 +1392,269 @@ class AutoMultiSchoolEnv(UCSTestSchool):
             school.room1 = NameDnObj(
                 *self.create_computerroom(school.name, name="room1", description="Test room1")
             )
+
+
+class OUCloner(object):
+    """
+    Create a OU bypassing UDM.
+
+    Objects are mostly OK. As UDM is bypasswd, GIDs, UIDs, Samba IDs are not trustworthy.
+
+    oc = OUCloner(lo)
+    oc.clone_ou("DEMOSCHOOL", "testou1234")
+    """
+
+    def __init__(self, lo):  # type: (LoType) -> None
+        self.lo = lo
+        self.sid_base, max_rid = self.get_max_rid()
+        self.next_rid = max_rid + 2000
+        max_gid, max_uid = self.get_max_gid_uid()
+        self.next_gid = max_gid + 2000
+        self.next_uid = max_uid + 2000
+        self.id_mapping = {
+            "dn": {},
+            "gidNum": {},
+            "groups_memberUid": {},
+            "groups_uniqueMember": {},
+            "sid": {},
+            "username": {},
+            "uidNum": {},
+        }
+
+    def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
+        """Create the school OU `new_ou` from LDAP data related to`ori_ou`."""
+        t0 = time.time()
+        print("Creating copy of OU {!r} as {!r}...".format(ori_ou, new_ou))
+        self.clone_ou_objects(ori_ou, new_ou)
+        self.clone_global_groups(ori_ou, new_ou)
+        self.update_group_members(ori_ou, new_ou)
+        self.update_global_groups(ori_ou, new_ou)
+        print("Finished in {:.2f} seconds.".format(time.time() - t0))
+
+    @staticmethod
+    def replace_case_sesitive_and_lower(s, ori, new):  # type: (str, str, str) -> str
+        """
+        Replace the string `ori` in `s` with `new`. Do it both case-sensitive and with both lower-case.
+        """
+        new_s = s.replace(ori, new)
+        return new_s.replace(ori.lower(), new.lower())
+
+    def get_max_rid(self):  # type: () -> Tuple[str, int]
+        """Find the highest Samba RID in the domain."""
+        sid_base = self.lo.search("sambaDomainName=*", attr=["sambaSID"])[0][1]["sambaSID"][0]
+        max_rid = 0
+        for _, v in self.lo.search(filter_format("sambaSID=%s-*", (sid_base,)), attr=["sambaSID"]):
+            rid = int(v["sambaSID"][0].rsplit("-", 1)[1])
+            max_rid = max(rid, max_rid)
+        return sid_base, max_rid
+
+    def get_max_gid_uid(self):  # type: () -> Tuple[int, int]
+        """Find the highest gidNumber and uidNumber in the domain."""
+        max_gid = max_uid = 0
+        for _, v in self.lo.search(
+            "(&(|(objectClass=posixAccount)(objectClass=posixGroup))(|(gidNumber=*)(uidNumber=*)))",
+            attr=["gidNumber", "uidNumber"],
+        ):
+            try:
+                gid = int(v["gidNumber"][0])
+                max_gid = max(gid, max_gid)
+            except KeyError:
+                pass
+            try:
+                uid = int(v["uidNumber"][0])
+                max_uid = max(uid, max_uid)
+            except KeyError:
+                pass
+        return max_gid, max_uid
+
+    def new_username(self, old_username, ori_ou, new_ou):  # type: (str, str, str) -> str
+        if ori_ou in old_username:
+            return old_username.replace(ori_ou, new_ou)
+        try:
+            new_username = self.id_mapping["username"][old_username]
+        except KeyError:
+            if old_username.endswith("$"):
+                new_username = "{}_{}$".format(old_username[:-1], new_ou)
+            else:
+                new_username = "{}_{}".format(old_username, new_ou)
+            self.id_mapping["username"][old_username] = new_username
+        return new_username
+
+    def new_computer_name(self, old_name, ori_ou, new_ou):  # type: (str, str, str) -> str
+        return self.new_username(old_name, ori_ou, new_ou).replace("_", "-")
+
+    def clone_object(self, dn_ori, attrs_ori, ori_ou, new_ou):
+        # type: (str, Dict[str, List[str]], str, str) -> None
+        """
+        Create a clone of the object at `dn_ori` in the OU `new_ou`.
+
+        Attributes are kept unchanged, except: cn, displayName, gidNumber, krb5PrincipalName, memberUid,
+        sambaSID, uid, uidNumber and uniqueMember.
+        Group members are removed and added later in update_group_members().
+        """
+        print("Cloning {!r}...".format(dn_ori))
+        dn_new = self.replace_case_sesitive_and_lower(dn_ori, ori_ou, new_ou)
+        attrs_new = {
+            self.replace_case_sesitive_and_lower(key, ori_ou, new_ou): [
+                self.replace_case_sesitive_and_lower(v, ori_ou, new_ou) for v in values
+            ]
+            for key, values in six.iteritems(attrs_ori)
+        }
+        for k, v in six.iteritems(attrs_new):
+            if k == "displayName":
+                attrs_new[k] = "{} ({})".format(v[0], new_ou)
+            elif k == "sambaSID":
+                old_rid = int(v[0].rsplit("-", 1)[1])
+                try:
+                    new_rid = self.id_mapping["sid"][old_rid]
+                except KeyError:
+                    new_rid = self.next_rid
+                    self.id_mapping["sid"][old_rid] = self.next_rid
+                    self.next_rid += 1
+                attrs_new[k] = "{}-{}".format(self.sid_base, new_rid)
+            elif k == "gidNumber" and attrs_new["univentionObjectType"][0] in (
+                "groups/group",
+                "users/user",
+            ):
+                old_gid = int(v[0])
+                try:
+                    new_gid = self.id_mapping["gidNum"][old_gid]
+                except KeyError:
+                    new_gid = self.next_gid
+                    self.id_mapping["gidNum"][old_gid] = self.next_gid
+                    self.next_gid += 1
+                attrs_new[k] = str(new_gid)
+            elif k == "memberUid" and v:
+                # Users will be added last, thus we don't know the new usernames to map to yet.
+                # So we just memorize the DNs and the old values that need fixing and empty the group.
+                self.id_mapping["groups_memberUid"][dn_new] = attrs_ori[k]
+                attrs_new[k] = []
+            elif k == "uniqueMember":
+                # Same as 'memberUid'.
+                self.id_mapping["groups_uniqueMember"][dn_new] = attrs_ori[k]
+                attrs_new[k] = []
+            elif (k == "uid" and attrs_new["univentionObjectType"][0] == "users/user") or (
+                k == "cn" and attrs_new["univentionObjectType"][0].startswith("computers/")
+            ):
+                old_id = v[0]
+                if attrs_new["univentionObjectType"][0].startswith("computers/"):
+                    new_id = self.new_computer_name(old_id, ori_ou, new_ou)
+                else:
+                    new_id = self.new_username(old_id, ori_ou, new_ou)
+                attrs_new[k] = new_id
+                if k == "cn":
+                    attrs_new["uid"] = "{}$".format(new_id)
+                if dn_new.startswith(k):
+                    dn_new = dn_new.replace("{}={},".format(k, old_id), "{}={},".format(k, new_id))
+                # changed UIDs and DNs in groups are updated later in update_group_members()
+            elif k == "uidNumber":
+                old_id = int(v[0])
+                try:
+                    new_id = self.id_mapping["uidNum"][old_id]
+                except KeyError:
+                    new_id = self.next_uid
+                    self.id_mapping["uidNum"][old_id] = self.next_uid
+                    self.next_uid += 1
+                attrs_new[k] = str(new_id)
+
+        if "krb5PrincipalName" in attrs_ori:
+            old_value = attrs_ori["krb5PrincipalName"][0]
+            id_k = "cn" if attrs_new["univentionObjectType"][0].startswith("computers/") else "uid"
+            attrs_new["krb5PrincipalName"] = old_value.replace(attrs_ori[id_k][0], attrs_new[id_k])
+        if attrs_new["univentionObjectType"][0] == "users/user":
+            for k in ("homeDirectory", "sambaHomePath"):
+                attrs_new[k] = attrs_ori[k][0].replace(attrs_ori["uid"][0], attrs_new["uid"])
+
+        self.id_mapping["dn"][dn_ori] = dn_new
+        self.lo.add(dn_new, attrs_new.items())
+        print("> Added {!r}...".format(dn_new))
+
+    def clone_ou_objects(self, ori_ou, new_ou):  # type: (str, str) -> None
+        """Clone the LDAP nodes below ou=$ori_ou,$ldap_base to ou=$new_ou,$ldap_base."""
+        filter_s = filter_format("ou=%s,%s", (ori_ou, self.lo.base))
+        ori_data = self.lo.search(base=filter_s, scope="sub")
+        ori_data.sort(key=lambda x: len(x[0]))
+        # create users last, so their primary group already exists
+        ori_data.sort(key=lambda x: x[0].startswith("uid="))
+        for dn_ori, attrs_ori in ori_data:
+            self.clone_object(dn_ori, attrs_ori, ori_ou, new_ou)
+
+    def update_group_members(self, ori_ou, new_ou):  # type: (str, str) -> None
+        for dn_new, member_uids in six.iteritems(self.id_mapping["groups_memberUid"]):
+            print("Updating members of {!r}...".format(dn_new))
+            new_attrs = {}
+            member_uids = [self.new_username(uid, ori_ou, new_ou) for uid in member_uids]
+            if member_uids:
+                new_attrs["memberUid"] = member_uids
+            unique_member_dns = self.id_mapping["groups_uniqueMember"].get(dn_new, [])
+            unique_member_dns = [self.id_mapping["dn"].get(dn, dn) for dn in unique_member_dns]
+            if unique_member_dns:
+                new_attrs["uniqueMember"] = unique_member_dns
+            old_values = self.lo.get(dn_new, attr=["memberUid", "uniqueMember"])
+            ml = [(k, old_values.get(k, []), v) for k, v in six.iteritems(new_attrs)]
+            self.lo.modify(dn_new, ml)
+
+    def clone_global_groups(self, ori_ou, new_ou):  # type: (str, str) -> None
+        group_dns = [
+            dn.format(ou=ori_ou, basedn=self.lo.base)
+            for dn in (
+                "cn=OU{ou}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{basedn}",
+                "cn=OU{ou}-Member-Edukativnetz,cn=ucsschool,cn=groups,{basedn}",
+                "cn=OU{ou}-Klassenarbeit,cn=ucsschool,cn=groups,{basedn}",
+                "cn=OU{ou}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{basedn}",
+                "cn=OU{ou}-DC-Edukativnetz,cn=ucsschool,cn=groups,{basedn}",
+            )
+        ]
+        # 00_inconsistent_naming: cn=admins-$ou <- "ou" lowercase
+        group_dns.append(
+            "cn=admins-{ou},cn=ouadmins,cn=groups,{basedn}".format(
+                ou=ori_ou.lower(), basedn=self.lo.base
+            )
+        )
+        for dn_ori in group_dns:
+            attrs_ori = self.lo.get(dn_ori)
+            self.clone_object(dn_ori, attrs_ori, ori_ou, new_ou)
+
+    def update_global_groups(self, ori_ou, new_ou):  # type: (str, str) -> None
+        """Add DCs and member servers to global groups."""
+        global_group_dns = (
+            dn.format(self.lo.base)
+            for dn in (
+                "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}",
+                "cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
+                "cn=Member-Edukativnetz,cn=ucsschool,cn=groups,{}",
+                "cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
+            )
+        )
+        ou_group_dns = (
+            dn.format(new_ou, self.lo.base)
+            for dn in (
+                "cn=OU{}-DC-Edukativnetz,cn=ucsschool,cn=groups,{}",
+                "cn=OU{}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
+                "cn=OU{}-Member-Edukativnetz,cn=ucsschool,cn=groups,{}",
+                "cn=OU{}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}",
+            )
+        )
+        for global_grp_dn, ou_grp_dn in zip(global_group_dns, ou_group_dns):
+            ou_grp_attrs = self.lo.get(ou_grp_dn, attr=["memberUid", "uniqueMember"])
+            new_attrs = {}
+            try:
+                new_attrs["memberUid"] = ou_grp_attrs["memberUid"]
+            except KeyError:
+                pass
+            try:
+                new_attrs["uniqueMember"] = ou_grp_attrs["uniqueMember"]
+            except KeyError:
+                pass
+            if new_attrs:
+                print("Updating members of {!r}...".format(global_grp_dn))
+                global_grp_attrs = self.lo.get(global_grp_dn, attr=["memberUid", "uniqueMember"])
+                for k, v in six.iteritems(new_attrs):
+                    v.extend(global_grp_attrs.get(k, []))
+                ml = [(k, global_grp_attrs[k], v) for k, v in six.iteritems(new_attrs)]
+                self.lo.modify(global_grp_dn, ml)
+            else:
+                print("No member change for {!r}...".format(global_grp_dn))
 
 
 if __name__ == "__main__":
