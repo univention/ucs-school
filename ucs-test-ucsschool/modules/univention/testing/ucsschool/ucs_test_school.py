@@ -89,7 +89,7 @@ from ucsschool.lib.roles import (
 from univention.admin.uexceptions import ldapError, noObject
 
 try:
-    from typing import Dict, List, Optional, Set, Tuple
+    from typing import Any, Dict, List, Optional, Set, Tuple
 
     from univention.admin.uldap import access as LoType
 except ImportError:
@@ -1400,7 +1400,9 @@ class OUCloner(object):
     """
     Create a OU bypassing UDM.
 
-    Objects are mostly OK. As UDM is bypasswd, GIDs, UIDs, Samba IDs are not trustworthy.
+    Objects are mostly OK to work with. As UDM is bypasswd, GIDs, UIDs, Samba IDs, usernames and
+    krb5PrincipalName are not trustworthy.
+    Do *NOT* use this in production!
 
     oc = OUCloner(lo)
     oc.clone_ou("DEMOSCHOOL", "testou1234")
@@ -1413,7 +1415,27 @@ class OUCloner(object):
         max_gid, max_uid = self.get_max_gid_uid()
         self.next_gid = max_gid + 2000
         self.next_uid = max_uid + 2000
-        self.id_mapping = {
+        self.id_mapping = {}  # type: Dict[str, Dict[str, Any]]
+
+    def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
+        """Create the school OU `new_ou` from LDAP data related to`ori_ou`."""
+        t0 = time.time()
+        ori_ou = self.pre_clone(ori_ou, new_ou)
+        print("Creating copy of OU {!r} as {!r}...".format(ori_ou, new_ou))
+        self.clone_ou_objects(ori_ou, new_ou)
+        self.clone_global_groups(ori_ou, new_ou)
+        self.update_group_members(ori_ou, new_ou)
+        self.update_global_groups(ori_ou, new_ou)
+        self.post_clone(ori_ou, new_ou)
+        print("Finished cloning to {!r} in {:.2f} seconds.".format(new_ou, time.time() - t0))
+
+    def pre_clone(self, ori_ou, new_ou):  # type: (str, str) -> str
+        # make sure `new_ou` doesn't already exist
+        new_ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(new_ou), lib_ucr["ldap/base"]))
+        if new_ou_attrs:
+            raise ValueError("Target OU ({!r}) exists.".format(new_ou_attrs["ou"][0]))
+        # every cloning uses a fresh mapping
+        self.id_mapping[new_ou] = {
             "dn": {},
             "gidNum": {},
             "groups_memberUid": {},
@@ -1422,19 +1444,12 @@ class OUCloner(object):
             "username": {},
             "uidNum": {},
         }
-
-    def clone_ou(self, ori_ou, new_ou):  # type: (str, str) -> None
-        """Create the school OU `new_ou` from LDAP data related to`ori_ou`."""
-        t0 = time.time()
         # make sure to have the right name (case sensitive)
-        ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(ori_ou), lib_ucr["ldap/base"]))
-        ori_ou = ou_attrs["ou"][0]
-        print("Creating copy of OU {!r} as {!r}...".format(ori_ou, new_ou))
-        self.clone_ou_objects(ori_ou, new_ou)
-        self.clone_global_groups(ori_ou, new_ou)
-        self.update_group_members(ori_ou, new_ou)
-        self.update_global_groups(ori_ou, new_ou)
-        print("Finished in {:.2f} seconds.".format(time.time() - t0))
+        ori_ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(ori_ou), lib_ucr["ldap/base"]))
+        return ori_ou_attrs["ou"][0]
+
+    def post_clone(self, ori_ou, new_ou):  # type: (str, str) -> None
+        del self.id_mapping[new_ou]
 
     @staticmethod
     def replace_case_sesitive_and_lower(s, ori, new):  # type: (str, str, str) -> str
@@ -1480,13 +1495,13 @@ class OUCloner(object):
         if ori_ou in old_username:
             return old_username.replace(ori_ou, new_ou)
         try:
-            new_username = self.id_mapping["username"][old_username]
+            new_username = self.id_mapping[new_ou]["username"][old_username]
         except KeyError:
             if old_username.endswith("$"):
                 new_username = "{}_{}$".format(old_username[:-1], new_ou)
             else:
                 new_username = "{}_{}".format(old_username, new_ou)
-            self.id_mapping["username"][old_username] = new_username
+            self.id_mapping[new_ou]["username"][old_username] = new_username
         return new_username
 
     def new_computer_name(self, old_name, ori_ou, new_ou):  # type: (str, str, str) -> str
@@ -1515,10 +1530,10 @@ class OUCloner(object):
             elif k == "sambaSID":
                 old_rid = int(v[0].rsplit("-", 1)[1])
                 try:
-                    new_rid = self.id_mapping["sid"][old_rid]
+                    new_rid = self.id_mapping[new_ou]["sid"][old_rid]
                 except KeyError:
                     new_rid = self.next_rid
-                    self.id_mapping["sid"][old_rid] = self.next_rid
+                    self.id_mapping[new_ou]["sid"][old_rid] = self.next_rid
                     self.next_rid += 1
                 attrs_new[k] = "{}-{}".format(self.sid_base, new_rid)
             elif k == "gidNumber" and attrs_new["univentionObjectType"][0] in (
@@ -1527,20 +1542,20 @@ class OUCloner(object):
             ):
                 old_gid = int(v[0])
                 try:
-                    new_gid = self.id_mapping["gidNum"][old_gid]
+                    new_gid = self.id_mapping[new_ou]["gidNum"][old_gid]
                 except KeyError:
                     new_gid = self.next_gid
-                    self.id_mapping["gidNum"][old_gid] = self.next_gid
+                    self.id_mapping[new_ou]["gidNum"][old_gid] = self.next_gid
                     self.next_gid += 1
                 attrs_new[k] = str(new_gid)
             elif k == "memberUid" and v:
                 # Users will be added last, thus we don't know the new usernames to map to yet.
                 # So we just memorize the DNs and the old values that need fixing and empty the group.
-                self.id_mapping["groups_memberUid"][dn_new] = attrs_ori[k]
+                self.id_mapping[new_ou]["groups_memberUid"][dn_new] = attrs_ori[k]
                 attrs_new[k] = []
             elif k == "uniqueMember":
                 # Same as 'memberUid'.
-                self.id_mapping["groups_uniqueMember"][dn_new] = attrs_ori[k]
+                self.id_mapping[new_ou]["groups_uniqueMember"][dn_new] = attrs_ori[k]
                 attrs_new[k] = []
             elif (k == "uid" and attrs_new["univentionObjectType"][0] == "users/user") or (
                 k == "cn" and attrs_new["univentionObjectType"][0].startswith("computers/")
@@ -1559,10 +1574,10 @@ class OUCloner(object):
             elif k == "uidNumber":
                 old_id = int(v[0])
                 try:
-                    new_id = self.id_mapping["uidNum"][old_id]
+                    new_id = self.id_mapping[new_ou]["uidNum"][old_id]
                 except KeyError:
                     new_id = self.next_uid
-                    self.id_mapping["uidNum"][old_id] = self.next_uid
+                    self.id_mapping[new_ou]["uidNum"][old_id] = self.next_uid
                     self.next_uid += 1
                 attrs_new[k] = str(new_id)
 
@@ -1576,7 +1591,7 @@ class OUCloner(object):
                     continue
                 attrs_new[k] = attrs_ori[k][0].replace(attrs_ori["uid"][0], attrs_new["uid"])
 
-        self.id_mapping["dn"][dn_ori] = dn_new
+        self.id_mapping[new_ou]["dn"][dn_ori] = dn_new
         self.lo.add(dn_new, attrs_new.items())
         print("> Added {!r}...".format(dn_new))
 
@@ -1591,14 +1606,14 @@ class OUCloner(object):
             self.clone_object(dn_ori, attrs_ori, ori_ou, new_ou)
 
     def update_group_members(self, ori_ou, new_ou):  # type: (str, str) -> None
-        for dn_new, member_uids in six.iteritems(self.id_mapping["groups_memberUid"]):
+        for dn_new, member_uids in six.iteritems(self.id_mapping[new_ou]["groups_memberUid"]):
             print("Updating members of {!r}...".format(dn_new))
             new_attrs = {}
             member_uids = [self.new_username(uid, ori_ou, new_ou) for uid in member_uids]
             if member_uids:
                 new_attrs["memberUid"] = member_uids
-            unique_member_dns = self.id_mapping["groups_uniqueMember"].get(dn_new, [])
-            unique_member_dns = [self.id_mapping["dn"].get(dn, dn) for dn in unique_member_dns]
+            unique_member_dns = self.id_mapping[new_ou]["groups_uniqueMember"].get(dn_new, [])
+            unique_member_dns = [self.id_mapping[new_ou]["dn"].get(dn, dn) for dn in unique_member_dns]
             if unique_member_dns:
                 new_attrs["uniqueMember"] = unique_member_dns
             old_values = self.lo.get(dn_new, attr=["memberUid", "uniqueMember"])

@@ -1,3 +1,11 @@
+ucs-test-ucsschool (6.0.216) unstable; urgency=low
+
+  * Bug #53151: allow parallel cloning and fix references in consequtive
+    cloning
+  * Bug #53151: add missing CLI module
+
+ -- Daniel Troeder <troeder@univention.de>  Sat, 24 Apr 2021 09:25:00 +0200
+
 ucs-test-ucsschool (6.0.215) unstable; urgency=low
 
   * Bug #53151: add CLI
