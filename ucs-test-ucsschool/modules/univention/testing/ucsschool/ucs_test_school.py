@@ -190,6 +190,7 @@ class UCSTestSchool(object):
         random.seed()
         self._cleanup_ou_names = set()
         self._ldap_objects_in_test_ous = dict()  # type: Dict[str, Set[str]]
+        self.ldap_base = self.ucr["ldap/base"]
         self.lo = self.open_ldap_connection()
         self.udm = udm_test.UCSTestUDM()
         self.ou_cloner = OUCloner(self.lo)
@@ -341,22 +342,22 @@ class UCSTestSchool(object):
         logger.info("UCSTestSchool cleanup done")
 
     def cleanup_ou(self, ou_name, wait_for_replication=True, retry=True):
-        # type: (str, bool, bool) -> bool
+        # type: (str, Optional[bool], Optional[bool]) -> bool
         """ Removes the given school ou and all its corresponding objects like groups """
 
         logger.info("*** Purging OU %r and related objects", ou_name)
         # remove OU specific groups
-        for grpdn in (
-            "cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
-            "cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
-            "cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s",
-            "cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
-            "cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
-            "cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s",
-        ):
-            grpdn = grpdn % {"ou": ou_name, "basedn": self.ucr.get("ldap/base")}
-            self._remove_udm_object("groups/group", grpdn)
-
+        group_dns = [
+            grpdn % {"ou": ou_name, "basedn": self.ucr["ldap/base"]}
+            for grpdn in (
+                "cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
+                "cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
+                "cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s",
+                "cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
+                "cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
+                "cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s",
+            )
+        ]
         # remove OU recursively
         if self.ucr.is_true("ucsschool/ldap/district/enable"):
             district_ou_dn = "ou=%(district)s,%(basedn)s" % {
@@ -372,7 +373,7 @@ class UCSTestSchool(object):
         ok = True
         logger.info("*** Removing school %r (%s) and its children ...", ou_name, oudn)
         try:
-            obj_list = self.lo.searchDn(base=oudn, scope="sub")
+            obj_list = self.lo.searchDn(base=oudn, scope="sub")  # type: List[str]
         except noObject:
             logger.warn("*** OU has already been removed.")
             ok = False
@@ -381,6 +382,7 @@ class UCSTestSchool(object):
             obj_list.sort(key=lambda x: len(x), reverse=True)
             # delete users 1st, so their primary group can be deleted
             obj_list.sort(key=lambda x: x.startswith("uid="), reverse=True)
+            obj_list = group_dns + obj_list
             for obj_dn in obj_list:
                 try:
                     self.lo.delete(obj_dn)
@@ -394,7 +396,9 @@ class UCSTestSchool(object):
                 if not ok and retry:
                     logger.info("*** Retrying cleanup_ou(%r)...", ou_name)
                     ok = self.cleanup_ou(ou_name, wait_for_replication, retry=False)
-
+        self.remove_dcs_from_global_groups(ou_name)
+        self.remove_ucsschool_role_from_dcs(ou_name)
+        self.cleanup_default_containers(ou_name)
         log_func = logger.info if ok else logger.error
         log_func(
             "*** Purging OU %r and its children objects (%s): %s\n\n",
@@ -413,10 +417,78 @@ class UCSTestSchool(object):
             logger.info("*** Deleting district OU %s (%s)...", ou_name[0:2], district_ou_dn)
             self._remove_udm_object("container/ou", district_ou_dn)
 
-            if wait_for_replication:
-                utils.wait_for_replication()
+        if wait_for_replication:
+            utils.wait_for_replication()
 
         return ok
+
+    def remove_dcs_from_global_groups(self, ou_name):  # type: (str) -> None
+        """Remove DCs from cn=DC-Edukativnetz etc."""
+        for group_dn, attrs in self.lo.search(
+            "(|(cn=DC-*netz)(cn=Member-*netz)(cn=DC Slave Hosts))".format(ou_name),
+            attr=["memberUid", "uniqueMember"],
+        ):
+            unique_member_attr = attrs.get("uniqueMember", [])
+            member_uid_attr = attrs.get("memberUid", [])
+            ou_member_dns = [
+                dn
+                for dn in unique_member_attr
+                if dn.endswith(",ou={},{}".format(ou_name, self.ldap_base))
+            ]
+            ou_member_uids = ["{}$".format(udm_uldap.explodeDn(dn, 1)[0]) for dn in ou_member_dns]
+            ml = []
+            if ou_member_dns:
+                ml.append(
+                    (
+                        "uniqueMember",
+                        unique_member_attr,
+                        [dn for dn in unique_member_attr if dn not in ou_member_dns],
+                    )
+                )
+            if ou_member_uids:
+                ml.append(
+                    (
+                        "memberUid",
+                        member_uid_attr,
+                        [uid for uid in member_uid_attr if uid not in ou_member_uids],
+                    )
+                )
+            if ml:
+                logger.info("*** Updating members of %r...", group_dn)
+                self.lo.modify(group_dn, ml)
+
+    def remove_ucsschool_role_from_dcs(self, ou_name):  # type: (str) -> None
+        """Remove ucschoolRole on DCs (only in case of singleserver and name_edudc != ucr["hostname"])"""
+        filter_s = "(&(ucsschoolRole=*:school:{})(objectClass=univentionHost))".format(ou_name)
+        for dn, attrs in self.lo.search(filter_s):
+            logger.info("*** Updating 'ucsschoolRole' of %r...", dn)
+            old_value = attrs["ucsschoolRole"]
+            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name))]
+            self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
+
+    def cleanup_default_containers(self, ou_name):  # type: (str) -> None
+        con_dn = "cn=default containers,cn=univention,{}".format(self.ldap_base)
+        attrs = self.lo.get(con_dn)
+        ml = []
+        for attr in (
+            "univentionComputersObject",
+            "univentionDhcpObject",
+            "univentionGroupsObject",
+            "univentionNetworksObject",
+            "univentionPolicyObject",
+            "univentionPrintersObject",
+            "univentionSharesObject",
+            "univentionUsersObject",
+        ):
+            old_value = attrs.get(attr, [])
+            new_value = [
+                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base))
+            ]
+            if old_value != new_value:
+                ml.append((attr, old_value, new_value))
+        if ml:
+            logger.info("*** Cleaning default containers...")
+            self.lo.modify(con_dn, ml)
 
     @classmethod
     def check_name_edudc(cls, name_edudc):
@@ -1449,6 +1521,12 @@ class OUCloner(object):
         return ori_ou_attrs["ou"][0]
 
     def post_clone(self, ori_ou, new_ou):  # type: (str, str) -> None
+        if lib_ucr.is_true("ucsschool/singlemaster", False):
+            for dn, attrs in self.lo.search("univentionServerRole=master"):
+                old_value = attrs["ucsschoolRole"]
+                new_value = old_value + ["single_master:school:{}".format(new_ou)]
+                print("Updating 'ucsschoolRole' of singlemaster {!r}...".format(dn))
+                self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
         del self.id_mapping[new_ou]
 
     @staticmethod
@@ -1527,15 +1605,6 @@ class OUCloner(object):
         for k, v in attrs_new.items():
             if k == "displayName":
                 attrs_new[k] = "{} ({})".format(v[0], new_ou)
-            elif k == "sambaSID":
-                old_rid = int(v[0].rsplit("-", 1)[1])
-                try:
-                    new_rid = self.id_mapping[new_ou]["sid"][old_rid]
-                except KeyError:
-                    new_rid = self.next_rid
-                    self.id_mapping[new_ou]["sid"][old_rid] = self.next_rid
-                    self.next_rid += 1
-                attrs_new[k] = "{}-{}".format(self.sid_base, new_rid)
             elif k == "gidNumber" and attrs_new["univentionObjectType"][0] in (
                 "groups/group",
                 "users/user",
@@ -1590,6 +1659,18 @@ class OUCloner(object):
                 if k not in attrs_ori:
                     continue
                 attrs_new[k] = attrs_ori[k][0].replace(attrs_ori["uid"][0], attrs_new["uid"])
+        if attrs_new["univentionObjectType"][0] in ("groups/group", "users/user"):
+            # don't change the SIDs of computer objects
+            for k in ("sambaPrimaryGroupSID", "sambaSID"):
+                # funny how RIDs are still calculated this way...
+                if k in attrs_ori:
+                    if k == "sambaPrimaryGroupSID":
+                        rid = int(attrs_new["gidNumber"]) * 2 + 1
+                    else:
+                        # if it's a user: uidNumber, else it'll be a group: gidNumber
+                        rid = int(attrs_new.get("uidNumber", attrs_new["gidNumber"])) * 2
+                    attrs_new[k] = "{}-{}".format(self.sid_base, rid)
+                    self.id_mapping[new_ou]["sid"][attrs_ori[k][0]] = attrs_new[k]
 
         self.id_mapping[new_ou]["dn"][dn_ori] = dn_new
         self.lo.add(dn_new, attrs_new.items())

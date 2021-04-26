@@ -34,8 +34,11 @@ CLI for OU cloning:
 $ python -m univention.testing.ucsschool DEMOSCHOOL testou1234
 """
 
+import sys
+
 import click
 
+from ucsschool.lib.models.utils import ucr
 from univention.admin.uldap import getAdminConnection
 from univention.testing.ucsschool.ucs_test_school import OUCloner
 
@@ -50,4 +53,7 @@ def cli(source_ou, target_ou):
 
 
 if __name__ == "__main__":
+    if not ucr["server/role"] in ("domaincontroller_master", "domaincontroller_backup"):
+        click.echo("This script must be executed on a DC master or backup.")
+        sys.exit(1)
     cli()
