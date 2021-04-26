@@ -10,6 +10,7 @@
 
 import copy
 import random
+from itertools import cycle
 
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
@@ -70,10 +71,57 @@ class Test(CLI_Import_v2_Tester):
                     "lastname": "Mästérfrâü",
                 },
             },
+            {
+                "firstname": u"Pınar",
+                "lastname": u"Ağrı",
+                "expected": {
+                    "username": "p.agri",
+                    "firstname": "Pınar",
+                    "lastname": "Ağrı",
+                },
+            },
+            {
+                "firstname": u"Fryderyk",
+                "lastname": u"Krępa",
+                "expected": {
+                    "username": "f.krepa",
+                    "lastname": "Krępa",
+                    "firstname": "Fryderyk",
+                },
+            },
+            {
+                "firstname": u"Kübra",
+                "lastname": u"Gümuşay",
+                "expected": {
+                    "username": "k.guemusay",
+                    "firstname": "Kübra",
+                    "lastname": "Gümuşay",
+                },
+            },
+            {
+                "firstname": u"ÇçĞğ",
+                "lastname": u"İıŞş",
+                "expected": {
+                    "username": "c.iiss",
+                    "firstname": "ÇçĞğ",
+                    "lastname": "İıŞş",
+                },
+            },
+            {
+                "firstname": u"Зиновьев Селиверст",
+                "lastname": u"Терентьевич",
+                "expected": {
+                    # the unidecode transliteration would be "z.terent'evich",
+                    # but ucsschool does it differently
+                    "username": "z.terentevich",
+                    "firstname": "Зиновьев Селиверст",
+                    "lastname": "Терентьевич",
+                },
+            },
         ]
         random.shuffle(names)
         person_list = []
-        for role, name in zip(roles, names):
+        for role, name in zip(cycle(roles), names):
             person = Person(self.ou_A.name, role)
             person.update(username=None, firstname=name["firstname"], lastname=name["lastname"])
             person._expected_names = name["expected"]
@@ -85,7 +133,7 @@ class Test(CLI_Import_v2_Tester):
         fn_config = self.create_config_json(config=config)
         self.save_ldap_status()
         self.run_import(["-c", fn_config])
-        self.check_new_and_removed_users(4, 0)
+        self.check_new_and_removed_users(len(person_list), 0)
         for person in person_list:
             person.update(
                 username=person._expected_names["username"],
