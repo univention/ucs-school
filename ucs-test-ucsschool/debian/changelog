@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.217) unstable; urgency=low
+
+  * Bug #53151: start tests also on replication nodes
+  * Bug #53151: improve tests to check different UCRV states
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 26 Apr 2021 16:23:16 +0200
+
 ucs-test-ucsschool (6.0.216) unstable; urgency=low
 
   * Bug #53151: allow parallel cloning and fix references in consequtive

@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test if ucsschool role is set correct
-## roles: [domaincontroller_master, domaincontroller_backup]
+## roles: []
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
@@ -13,11 +13,11 @@ from univention.testing.utils import verify_ldap_object
 
 def test_set_ucsschool_role():
     with utu.UCSTestSchool() as schoolenv:
-        ou_name, ou_dn = schoolenv.create_ou()
-        ou_lower = ou_name.lower()
         ucr = schoolenv.ucr
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr["hostname"], use_cache=False)
+        ou_lower = ou_name.lower()
         ldap_hostdn = ucr["ldap/hostdn"]
-        if ucr.is_true("ucsschool/singlemaster", True):
+        if ucr.is_true("ucsschool/singlemaster", False):
             expected_attr = {"ucsschoolRole": ["single_master:school:{}".format(ou_name)]}
             verify_ldap_object(ldap_hostdn, expected_attr=expected_attr, strict=False)
         else:
@@ -27,7 +27,7 @@ def test_set_ucsschool_role():
                 ("cn=OU{}-DC-Edukativnetz".format(ou_lower), "dc_slave_edu"),
             ]:
                 res = schoolenv.lo.search(base=base, filter=ldap_filter, attr=["uniqueMember"])
-                if res:
+                if res and res[0][1]:
                     server_dn = res[0][1]["uniqueMember"][0]
                     uot = schoolenv.lo.get(server_dn, attr=["univentionObjectType"])[
                         "univentionObjectType"

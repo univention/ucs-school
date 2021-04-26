@@ -14,7 +14,7 @@ from univention.testing.utils import verify_ldap_object
 
 def test_dhcp_search_base():
     with utu.UCSTestSchool() as schoolenv, udm_test.UCSTestUDM() as udm:
-        ou_name, ou_dn = schoolenv.create_ou()
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"], use_cache=False)
         objs = udm.list_objects("policies/registry")
         policy_name = "ou-default-ucr-policy"
         policy_dn = "cn={},cn=policies,{}".format(policy_name, ou_dn)
@@ -33,7 +33,7 @@ def test_dhcp_search_base():
 def test_dhcp_dns_policy():
     with utu.UCSTestSchool() as schoolenv:
         ucr = schoolenv.ucr
-        ou_name, ou_dn = schoolenv.create_ou()
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr["hostname"], use_cache=False)
         ou_lower = ou_name.lower()
         policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn)
         expected_attr = {
