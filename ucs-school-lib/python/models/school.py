@@ -528,6 +528,25 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     continue
 
                 self.create_dc_slave(lo, dc_name, administrative=administrative)
+            else:
+                if server:
+                    server_dn = server.dn
+                else:
+                    server_dn = lo.searchDn(filter_format("cn=%s", (self.dc_name,)))[0]
+                udm_obj = UDM(lo).version(0).obj_by_dn(server_dn)
+                if udm_obj._udm_module.name == "computers/domaincontroller_master":
+                    roles = [create_ucsschool_role_string(role_single_master, self.name)]
+                elif udm_obj._udm_module.name == "computers/domaincontroller_slave":
+                    roles = [
+                        create_ucsschool_role_string(
+                            role_dc_slave_admin if administrative else role_dc_slave_edu, self.name
+                        )
+                    ]
+                else:
+                    roles = []
+
+                udm_obj.props.ucsschoolRole.extend(roles)
+                udm_obj.save()
 
             dhcp_service = self.get_dhcp_service(dc_name)
             dhcp_service.create(lo)
@@ -753,7 +772,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         """
         udm = UDM(lo).version(1)
         ou_lower = self.name.lower()
-        if ucr.is_true("ucsschool/singlemaster", True):
+        if ucr.is_true("ucsschool/singlemaster", False):
             mod = udm.get("computers/domaincontroller_master")
             # UDM computer object of master can be found with "cn={hostname}", using the hostname
             # from its fqdn, which is in ucr["ldap/master"].
@@ -763,9 +782,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             if role not in obj.props.ucsschoolRole:
                 obj.props.ucsschoolRole.append(role)
                 obj.save()
-                self.logger.info("Append ucsschoolRole {} to {}".format(role, obj.dn))
+                self.logger.debug("Append ucsschoolRole {!r} to {!r}.".format(role, obj.dn))
             else:
-                self.logger.warning("ucsschoolRole {} is already appended to {}".format(role, obj.dn))
+                self.logger.debug("ucsschoolRole {!r} is already appended to {!r}.".format(role, obj.dn))
         else:
             adm_net_filter = "cn=OU{}-DC-Verwaltungsnetz".format(ou_lower)
             edu_net_filter = "cn=OU{}-DC-Edukativnetz".format(ou_lower)
@@ -796,7 +815,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     if ucsschool_role not in obj.ucsschool_roles:
                         obj.ucsschool_roles.append(ucsschool_role)
                         obj.modify(lo)
-                        self.logger.info("Append ucsschoolRole {} to {}".format(role, server_dn))
+                        self.logger.debug("Append ucsschoolRole {!r} to {!r}.".format(role, server_dn))
 
     def create_market_place_share(self, lo):  # type: (LoType) -> None
         """
