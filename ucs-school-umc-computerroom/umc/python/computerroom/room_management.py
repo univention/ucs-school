@@ -741,7 +741,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
         return "<%s(%s)>" % (type(self).__name__, self.ipAddress)
 
 
-class ComputerRoomManager(dict, notifier.signals.Provider):
+class ComputerRoomManager(dict):
     SCHOOL = None
     ROOM = None
     ROOM_DN = None
@@ -749,7 +749,6 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
 
     def __init__(self):
         dict.__init__(self)
-        notifier.signals.Provider.__init__(self)
         self._user_map = UserMap(ITALC_USER_REGEX)
         self._veyon_client = None  # type: Optional[VeyonClient]
 
@@ -817,12 +816,6 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
             ComputerRoomManager.ROOM_DN = None
             ComputerRoomManager.VEYON_BACKEND = False
 
-    def update_computers(self):
-        if self.veyon_backend:
-            MODULE.info("Triggering update for computers!")
-            for computer in self.values():
-                computer.start()
-
     @LDAP_Connection()
     def _set(self, room, ldap_user_read=None):
         lo = ldap_user_read
@@ -870,6 +863,7 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
             if self.veyon_backend:
                 try:
                     comp = VeyonComputer(computer.get_udm_object(lo), self.veyon_client, self._user_map)
+                    comp.start()
                     self.__setitem__(comp.name, comp)
                 except ComputerRoomError as exc:
                     MODULE.warn("Computer could not be added: {}".format(exc))
@@ -948,9 +942,10 @@ class ComputerRoomManager(dict, notifier.signals.Provider):
             client.stopDemoClient()
 
 
-class VeyonComputer:
+class VeyonComputer(threading.Thread):
     def __init__(self, computer, veyon_client, user_map):
         # type: (Any, VeyonClient, UserMap) -> None
+        super(VeyonComputer, self).__init__()
         self._computer = computer  # type: Any
         self._veyon_client = veyon_client  # type: VeyonClient
         self._user_map = user_map
@@ -964,7 +959,12 @@ class VeyonComputer:
         self._demo_server = LockableAttribute(initial_value=None)
         self._demo_client = LockableAttribute(initial_value=None)
         self._timer = None
-        self.start()
+        self.should_run = True
+
+    def run(self):
+        while self.should_run:
+            self.update()
+            time.sleep(1.0)
 
     @property
     def name(self):  # type: () -> Optional[str]
@@ -1174,12 +1174,8 @@ class VeyonComputer:
             MODULE.info("\n".join(traceback.format_stack()))
             self.reset_state()
 
-    def start(self):
-        MODULE.info("{}: Starting update timer".format(self.name))
-        notifier.timer_add(ITALC_CORE_UPDATE * 1000, self.update)
-
     def stop(self):
-        pass
+        self.should_run = False
 
     def reset_state(self):
         self.state.set("disconnected")
