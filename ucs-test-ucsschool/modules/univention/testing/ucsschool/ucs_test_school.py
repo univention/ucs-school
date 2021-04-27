@@ -193,7 +193,7 @@ class UCSTestSchool(object):
         self.ldap_base = self.ucr["ldap/base"]
         self.lo = self.open_ldap_connection()
         self.udm = udm_test.UCSTestUDM()
-        self.ou_cloner = OUCloner(self.lo)
+        # self.ou_cloner = OUCloner(self.lo)  # Bug #53151: deactived code for now.
 
     def __enter__(self):
         return self
@@ -425,7 +425,7 @@ class UCSTestSchool(object):
     def remove_dcs_from_global_groups(self, ou_name):  # type: (str) -> None
         """Remove DCs from cn=DC-Edukativnetz etc."""
         for group_dn, attrs in self.lo.search(
-            "(|(cn=DC-*netz)(cn=Member-*netz)(cn=DC Slave Hosts))".format(ou_name),
+            "(|(cn=DC-*netz)(cn=Member-*netz)(cn=DC Slave Hosts))",
             attr=["memberUid", "uniqueMember"],
         ):
             unique_member_attr = attrs.get("uniqueMember", [])
@@ -544,17 +544,22 @@ class UCSTestSchool(object):
             ou_name: name of the created OU
             ou_dn:   DN of the created OU object
         """
-        # if no special settings are used create a cloned OU
-        if (
-            not ou_name
-            and (not name_edudc or name_edudc == self.ucr["hostname"])
-            and not name_admindc
-            and not displayName
-            and not name_share_file_server
-            and not use_cli
-            and use_cache
-        ):
-            return self.cloned_ou()
+        # Bug #53151: Tests in Jenkins keep failing, but in dev-VMs it works. Mostly DRS-replication
+        # problems. Work on this was timeboxed, so this code is now deactivated and free to be worked on
+        # during hackathons etc.
+        #
+        # # if no special settings are used create a cloned OU
+        # if (
+        #     not ou_name
+        #     and (not name_edudc or name_edudc == self.ucr["hostname"])
+        #     and not name_admindc
+        #     and not displayName
+        #     and not name_share_file_server
+        #     and not use_cli
+        #     and use_cache
+        # ):
+        #     return self.cloned_ou()
+
         # it is not allowed to set the master as name_edudc ==> resetting name_edudc
         name_edudc = self.check_name_edudc(name_edudc)
         if use_cache and not self._test_ous:
@@ -672,15 +677,17 @@ class UCSTestSchool(object):
                 for _ in range(num)
             ]
 
-        # if no special settings are used create cloned OUs
-        if (
-            (not name_edudc or name_edudc == self.ucr["hostname"])
-            and not name_admindc
-            and not displayName
-            and not name_share_file_server
-            and not use_cli
-        ):
-            return [self.cloned_ou() for _ in range(num)]
+        # Deactived code. See comment above regarding Bug #53151.
+        #
+        # # if no special settings are used create cloned OUs
+        # if (
+        #     (not name_edudc or name_edudc == self.ucr["hostname"])
+        #     and not name_admindc
+        #     and not displayName
+        #     and not name_share_file_server
+        #     and not use_cli
+        # ):
+        #     return [self.cloned_ou() for _ in range(num)]
 
         if not self._test_ous:
             self.load_test_ous()
@@ -1468,6 +1475,7 @@ class AutoMultiSchoolEnv(UCSTestSchool):
             )
 
 
+# Class `OUCloner` is currently not used. See comment above regarding Bug #53151.
 class OUCloner(object):
     """
     Create a OU bypassing UDM.
