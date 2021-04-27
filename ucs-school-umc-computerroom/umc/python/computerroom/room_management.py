@@ -995,6 +995,8 @@ class VeyonComputer(threading.Thread):
 
     @property
     def ipAddress(self):
+        if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
+            self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
         if self._reachable_ip:
             return self._reachable_ip
         if len(self._ip_addresses) > 0:
