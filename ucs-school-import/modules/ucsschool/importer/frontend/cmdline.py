@@ -121,7 +121,7 @@ class CommandLine(object):
         try:
             self.config = setup_configuration(configs, **self.args.settings)
         except InitialisationError as exc:
-            self.logger.exception("Error setting up or checking the configuration: %s", exc)
+            self.logger.error("Error setting up or checking the configuration: %s", exc)
             self.logger.error("Used configuration files: %s.", configs)
             self.logger.error("Using command line arguments: %r", self.args.settings)
             try:
@@ -130,7 +130,7 @@ class CommandLine(object):
                 self.logger.error("Configuration is:\n%s", pprint.pformat(config))
             except InitialisationError:
                 pass
-            raise
+            raise exc
         return self.config
 
     @property
@@ -242,20 +242,15 @@ class CommandLine(object):
             os.remove(link_name)
         os.symlink(source, link_name)
 
-    def main(self):
+    def main(self):  # type: () -> int
         try:
             self.prepare_import()
-        except InitialisationError as exc:
-            msg = "InitialisationError: {}".format(exc)
-            self.logger.exception(msg)
-            return 1
-        try:
             self.do_import()
-
             if self.errors:
                 # at least one non-fatal error
                 msg = "Import finished normally but with errors."
                 self.logger.warning(msg)
                 return 2
         except Exception as exc:  # pylint: disable=broad-except
+            self.logger.exception("{}: {!s}".format(exc.__class__.__name__, exc))
             return 1
