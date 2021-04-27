@@ -6,4 +6,5 @@ src: ucs-school-umc-wizards
 fix: 11.0.0-14A~4.4.0.202104182154
 desc: |
   * Fixed typos in an info message (Bug #44699).
-bug: [44699]
+  * The creation of school administrators without the staff or teacher roles was introduced in version 11.0.0-11. The correct default value, which is deactivated, is now set by modifying <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> (Bug #53002).
+bug: [44699, 53002]

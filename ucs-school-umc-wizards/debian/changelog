@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.0-15) unstable; urgency=medium
+
+  * Bug #53002: add schoolAdmin to UCR-V in version 11.0.0-15
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 27 Apr 2021 14:13:49 +0200
+
 ucs-school-umc-wizards (11.0.0-14) unstable; urgency=medium
 
   * Bug #44699: removed typos
