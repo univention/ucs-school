@@ -60,8 +60,8 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
 from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
 from univention.admin.uexceptions import noObject
+from univention.admin.uldap import access as LoType
 from univention.lib.i18n import Translation
-from univention.lib.models.base import LoType
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules.computerroom import wakeonlan
