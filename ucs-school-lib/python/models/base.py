@@ -602,7 +602,7 @@ class UCSSchoolHelperAbstractClass(object):
         if move_if_necessary is None:
             move_if_necessary = self._meta.allow_school_change
 
-        self.update_ucsschool_roles()
+        self.update_ucsschool_roles(lo)
 
         if validate:
             self.validate(lo, validate_unlikely_changes=True)
@@ -639,7 +639,7 @@ class UCSSchoolHelperAbstractClass(object):
         """Run by py:meth:`modify_without_hooks()` before py:meth:`do_modify()`."""
         pass
 
-    def update_ucsschool_roles(self):  # type: () -> None
+    def update_ucsschool_roles(self, lo):  # type: (LoType) -> None
         """Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`."""
         pass
 
@@ -696,7 +696,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     def do_move_roles(self, udm_obj, lo, old_school, new_school):
         # type: (UdmObject, LoType, str, str) -> None
-        self.update_ucsschool_roles()
+        self.update_ucsschool_roles(lo)
 
     def change_school(self, school, lo):  # type: (str, LoType) -> bool
         if self.school in self.schools:
@@ -1229,8 +1229,11 @@ class RoleSupportMixin(object):
         # for now different roles in different schools are not supported
         schools = self.get_schools()
         for role in self.roles_as_dicts:
-            if role["context_type"] != "school":
+            if role["context_type"] != "school" or self._meta.udm_module.startswith(
+                "computers/domaincontroller_"
+            ):
                 # check only context_type == 'school' for now
+                # DCs have roles for all schools they handle, but have no 'schools' attribute
                 continue
             if role["context"] != "-" and role["context"] not in schools:
                 self.add_error(
@@ -1255,7 +1258,7 @@ class RoleSupportMixin(object):
                 for school in schools
             ]
 
-    def update_ucsschool_roles(self):  # type: () -> None
+    def update_ucsschool_roles(self, lo):  # type: (LoType) -> None
         """
         Run by py:meth:`modify_without_hooks()` before py:meth:`validate()`.
 

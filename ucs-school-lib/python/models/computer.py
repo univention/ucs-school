@@ -29,6 +29,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
+
 import six
 from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 from ldap.filter import escape_filter_chars
@@ -38,6 +40,8 @@ from univention.admin.uexceptions import nextFreeIp
 
 from ..roles import (
     create_ucsschool_role_string,
+    role_dc_slave_admin,
+    role_dc_slave_edu,
     role_ip_computer,
     role_mac_computer,
     role_teacher_computer,
@@ -173,6 +177,29 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
         finally:
             self.invalidate_cache()
         return True
+
+    def update_ucsschool_roles(self, lo):  # type: (LoType) -> None
+        """
+        Update roles using membership in groups 'OU*-DC-Edukativnetz' and 'OU*-DC-Verwaltungsnetz'
+        instead of a 'schools' attribute.
+        """
+        filter_s = "(&(objectClass=univentionGroup)(memberUid={}$)(cn=OU*-DC-*netz))".format(
+            escape_filter_chars(self.name)
+        )
+        groups = BasicGroup.get_all(lo, None, filter_s)
+        # handle only dc_admin and dc_edu roles, ignore others
+        self.ucsschool_roles = [
+            role
+            for role in self.ucsschool_roles
+            if not (role.startswith(role_dc_slave_admin) or role.startswith(role_dc_slave_edu))
+        ]
+        for group in groups:
+            matches = re.match(r"OU(?P<ou>.+)-DC-(?P<type>.+)", group.name)
+            if matches:
+                ou = matches.groupdict()["ou"]
+                dc_type = matches.groupdict()["type"]
+                role = role_dc_slave_admin if dc_type == "Verwaltungsnetz" else role_dc_slave_edu
+                self.ucsschool_roles.append(create_ucsschool_role_string(role, ou))
 
     class Meta:
         udm_module = "computers/domaincontroller_slave"
