@@ -132,8 +132,7 @@ class SchoolValidator(object):
     @classmethod
     def required_roles(cls, roles, expected_roles):  # type: (List[str], List[str]) -> Optional[str]
         roles = [r.lower() for r in roles]
-        expected_roles = [r.lower() for r in expected_roles]
-        missing_roles = [role for role in expected_roles if role not in roles]
+        missing_roles = [role for role in expected_roles if role.lower() not in roles]
         if missing_roles:
             return "is missing roles {!r}".format(missing_roles)
 
@@ -211,11 +210,10 @@ class UserValidator(SchoolValidator):
         For groups like `cn=schueler-ou` endwith is the same as equal.
         """
         groups = [g.lower() for g in groups]
-        expected_groups = [g.lower() for g in expected_groups]
         missing_groups = [
             exp_group
             for exp_group in expected_groups
-            if not any([g.endswith(exp_group) for g in groups])
+            if not any([g.endswith(exp_group.lower()) for g in groups])
         ]
         if missing_groups:
             return "is missing groups at positions {!r}".format(missing_groups)
@@ -227,8 +225,7 @@ class UserValidator(SchoolValidator):
         Users should not have roles with schools which they don't have.
         """
         schools = [s.lower() for s in schools]
-        roles = [(r.lower(), c.lower(), s.lower()) for r, c, s in roles]
-        missing_schools = set([s for r, c, s in roles if c == "school" and s not in schools])
+        missing_schools = set([s for r, c, s in roles if c == "school" and s.lower() not in schools])
         if missing_schools:
             return "is not part of schools: {!r}.".format(list(missing_schools))
 
