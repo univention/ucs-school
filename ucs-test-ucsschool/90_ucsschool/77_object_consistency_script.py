@@ -75,8 +75,8 @@ def test_no_errors_exec_script(schoolenv, ucr_hostname):
     assert stdout == ""
 
 
-def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str, str]) -> str
-    role_str, bad_value, expected = role_and_bad_value
+def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str]) -> str
+    role_str, expected = role_and_bad_value
     return role_str
 
 
@@ -203,7 +203,7 @@ def test_case_insensitive_group_membership(
 
 
 @pytest.mark.parametrize(
-    # the third value is the expected missing role. It is necessary for combined roles
+    # the 2nd value is the expected missing role. It is necessary for combined roles
     # E.g.: create teacher_and_staff; its (only!) role is set to staff -> teacher is missing
     "role_and_expected_value",
     (
