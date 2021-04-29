@@ -1,4 +1,10 @@
 <h1>Changelog</h1>
+<h2>v1.4.1 (2021-04-29)</h2>
+<ul>
+    <li>
+       No error message is logged anymore after the deletion of an object (Bug #52896).
+    </li>
+</ul>
 <h2>v1.4.0 (2021-04-20)</h2>
 <ul>
     <li>

@@ -5,6 +5,10 @@
 Changelog
 ---------
 
+v1.4.1 (2021-04-29)
+...................
+* No error message is logged anymore after the deletion of an object (Bug #52896).
+
 v1.4.0 (2021-04-20)
 ...................
 * The FastAPI framework has been updated to version ``0.63.0``.

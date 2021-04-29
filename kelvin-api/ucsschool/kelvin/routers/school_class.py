@@ -28,7 +28,7 @@
 import logging
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from pydantic import BaseModel, Field, HttpUrl, root_validator, validator
 
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
@@ -361,7 +361,7 @@ async def delete(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     token: str = Depends(oauth2_scheme),
-) -> None:
+) -> Response:
     if not await OPAClient.instance().check_policy_true(
         policy="classes",
         token=token,
@@ -374,3 +374,4 @@ async def delete(
         )
     sc = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     await sc.remove(udm)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

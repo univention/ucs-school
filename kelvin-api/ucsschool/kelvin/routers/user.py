@@ -37,7 +37,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, 
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic.main import Model
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, Response, status
 from ldap.filter import escape_filter_chars
 from pydantic import BaseModel, Field, HttpUrl, SecretStr, ValidationError, root_validator, validator
 
@@ -1026,7 +1026,7 @@ async def delete(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     token: str = Depends(oauth2_scheme),
-) -> None:
+) -> Response:
     """
     Delete a school user
     """
@@ -1049,6 +1049,7 @@ async def delete(
             detail=f"No object with name={username!r} found or not authorized.",
         )
     await user.remove(udm)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 async def set_password_hashes(dn: str, kelvin_password_hashes: PasswordsHashes) -> None:
