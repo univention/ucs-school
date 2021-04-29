@@ -524,7 +524,7 @@ def test_missing_role_group(caplog, dict_obj, container, random_logger):
             role_group = group
             break
     validate(dict_obj, logger=random_logger)
-    expected_msg = "is missing groups at positions {!r}".format([role_group.lower()])
+    expected_msg = "is missing groups at positions {!r}".format([role_group])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
@@ -538,7 +538,7 @@ def test_exam_student_missing_exam_group(caplog, random_logger):
             exam_group = group
             break
     validate(dict_obj, logger=random_logger)
-    expected_msg = "is missing groups at positions {!r}".format([exam_group.lower()])
+    expected_msg = "is missing groups at positions {!r}".format([exam_group])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
@@ -552,7 +552,7 @@ def test_missing_role_teachers_and_staff(caplog, random_logger):
     for log in (public_logs, secret_logs):
         assert "is missing roles" in log
         for role in missing_roles:
-            assert role.lower() in log
+            assert role in log
     assert "{}".format(dict_obj) in secret_logs
     assert "{}".format(dict_obj) not in public_logs
 
@@ -566,7 +566,7 @@ def test_missing_domain_users_group(caplog, dict_obj, random_logger):
             domain_users_group = group
             break
     validate(dict_obj, logger=random_logger)
-    expected_msg = "is missing groups at positions {!r}".format([domain_users_group.lower()])
+    expected_msg = "is missing groups at positions {!r}".format([domain_users_group])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
@@ -603,7 +603,7 @@ def test_student_missing_class(caplog, dict_obj, random_logger):
             klass_group = group
             break
     validate(dict_obj, random_logger)
-    klass_container = re.search(r"(cn=klassen.+)", klass_group).group().lower()
+    klass_container = re.search(r"(cn=klassen.+)", klass_group).group()
     expected_msg = "is missing groups at positions {!r}".format([klass_container])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
@@ -658,7 +658,7 @@ def test_missing_teachers_and_staff_group(caplog, dict_obj, random_logger, remov
     for log in (public_logs, secret_logs):
         assert "is missing groups at positions" in log
         for group in missing_groups:
-            assert group.lower() in log
+            assert group in log
     assert "{}".format(dict_obj) in secret_logs
     assert "{}".format(dict_obj) not in public_logs
 
