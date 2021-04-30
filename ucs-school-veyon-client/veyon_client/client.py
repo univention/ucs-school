@@ -70,7 +70,7 @@ class VeyonClient:
         self._auth_method = auth_method
         self._default_host = default_host
         self._idle_timeout = max(idle_timeout - 1, 1)
-        self._ping_timeout = 0.5
+        self._ping_timeout = 5.0
         self._session_cache = dict()  # type: Dict[str, VeyonSession]
         self._last_used = dict()  # type: Dict[str, float]
         self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]

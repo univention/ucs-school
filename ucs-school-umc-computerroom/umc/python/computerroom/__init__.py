@@ -39,6 +39,7 @@ import itertools
 import os
 import signal
 import subprocess
+import time
 import traceback
 from pipes import quote
 from random import Random
@@ -374,6 +375,11 @@ class Instance(SchoolBaseModule):
                     "Removing lock file for room %s (%s)" % (self._italc.room, self._italc.roomDN)
                 )
                 _freeRoom(self._italc.roomDN, self.user_dn)
+            for comp in self._italc.values():
+                comp.should_run = False
+            while any([comp.is_alive() for comp in self._italc.values()]):
+                time.sleep(0.1)
+            MODULE.info("All threads dead!")
         _exit(0)
 
     def lessons(self, request):
@@ -534,7 +540,6 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None):
         """Searches for entries. This is not allowed if the room could not be acquired."""
-
         if not self._italc.school or not self._italc.room:
             raise UMC_Error("no room selected")
 
@@ -585,7 +590,6 @@ class Instance(SchoolBaseModule):
                 result["settingEndsIn"] = diff.seconds / 60
 
         MODULE.info("Update: result: %s" % str(result))
-        self._italc.update_computers()
         self.finished(request.id, result)
 
     def _positiveTimeDiff(self):
