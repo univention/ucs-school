@@ -76,11 +76,16 @@ def run(_umc_instance):
         except KeyError:
             continue
 
-    group_filter = "(&(univentionObjectType=groups/group)(cn=admins-*)(uniqueMember=*))"
+    group_filter = "(&(univentionObjectType=groups/group)(cn=admins-*))"
     groups = lo.search(filter=group_filter, attr=["uniqueMember", "ucsschoolSchool"])
 
     # check if each group member is a ucsschoolAdministrator
     for dn, attr in groups:
+        try:
+            attr["uniqueMember"]
+        except KeyError:
+            # this group has no members
+            attr["uniqueMember"] = []
         for member in attr["uniqueMember"]:
             if member not in admins_dn:
                 problematic_objects.setdefault(member, []).append(
@@ -94,18 +99,12 @@ def run(_umc_instance):
     for admin in admins:
         for dn, attr in groups:
             if attr["ucsschoolSchool"][0] in admin["schools"]:
-                if admin["dn"] in attr["uniqueMember"]:
-                    admin["schools"].remove(attr["ucsschoolSchool"][0])
+                if not admin["dn"] in attr["uniqueMember"]:
+                    problematic_objects.setdefault(admin["dn"], []).append(
+                        _("is registered as admin but no member of the following groups: {}".format(dn))
+                    )
                 if not admin["schools"]:
                     break
-        if admin["schools"]:
-            problematic_objects.setdefault(admin["dn"], []).append(
-                _(
-                    "is registered as admin but no member of the following schools: {}".format(
-                        admin["schools"]
-                    )
-                )
-            )
 
     if problematic_objects:
         details = "\n\n" + _("The following problems were found:")
