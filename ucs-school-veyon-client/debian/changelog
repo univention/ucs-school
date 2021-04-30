@@ -1,8 +1,14 @@
+ucs-school-veyon-client (1.0.1-7) unstable; urgency=medium
+
+  * Bug #53055: Fix build problem
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 30 Apr 2021 08:19:11 +0100
+
 ucs-school-veyon-client (1.0.1-6) unstable; urgency=medium
 
   * Bug #53055: Increase timeout for ping
 
- -- Ole Schwiegert <schwiegert@univention.de>  Fri, 30 Apr 2021 08:12:32 +0200
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 30 Apr 2021 08:12:32 +0100
 
 ucs-school-veyon-client (1.0.1-5) unstable; urgency=medium
 
