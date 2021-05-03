@@ -39,4 +39,6 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt 11.0.0-12 ; then
 		"ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes?tun docker"
 fi
 
+systemctl reload univention-management-console-server
+
 exit 0

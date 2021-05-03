@@ -1139,8 +1139,8 @@ class VeyonComputer(threading.Thread):
             demo_server = None
             demo_client = None
             if not self._veyon_client.ping(self.ipAddress):
-                MODULE.warn("Ping not successfull for {} with IP {}".format(self.name, self.ipAddress))
-                MODULE.warn("{}: Updating information was not successful.".format(self.name))
+                MODULE.info("Ping not successfull for {} with IP {}".format(self.name, self.ipAddress))
+                MODULE.info("{}: Updating information was not successful.".format(self.name))
                 self.reset_state()
                 return
             try:
