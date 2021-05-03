@@ -5,9 +5,10 @@
 Changelog
 ---------
 
-v1.4.1 (2021-04-29)
+v1.4.1 (2021-05-03)
 ...................
 * No error message is logged anymore after the deletion of an object (Bug #52896).
+* Repeated restarts of the Kelvin server have been fixed.
 
 v1.4.0 (2021-04-20)
 ...................
