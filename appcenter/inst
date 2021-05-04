@@ -33,7 +33,7 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=6
+VERSION=7
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
@@ -173,6 +173,10 @@ The "__pycache__" directory can be safely ignored.
   echo "Restarting UDM REST API service."
   service univention-directory-manager-rest restart || die
   sleep 1  # prevent [502] Proxy Error, in case of access before UDM REST API is ready
+
+  # Bug #53218: update listener module
+  echo "Restarting Univention Directory Listener service."
+  service univention-directory-listener restart || die
 }
 
 check_openapi_client_knows_ucssschool() {
