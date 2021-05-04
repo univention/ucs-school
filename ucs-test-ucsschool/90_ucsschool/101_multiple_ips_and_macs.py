@@ -347,7 +347,9 @@ def test_connected_veyon(monkeypatch):
     assert computer.connected()
 
 
-def test_first_valid_veyon(monkeypatch):
+def test_second_valid_veyon(monkeypatch):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
+    ucr.load()
     monkeypatch.setattr(requests, "get", monkey_get)
     ips = ["invalid", "valid"]
     computer = get_dummy_veyon_computer(ips)
@@ -356,7 +358,13 @@ def test_first_valid_veyon(monkeypatch):
     assert computer._veyon_client.ping(ips[1])
 
 
-def test_second_valid_veyon(monkeypatch):
+@pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
+def test_first_valid_veyon(monkeypatch, ucr_value):
+    if ucr_value == "unset":
+        handler_unset(["ucsschool/umc/computerroom/ping-client-ip-addresses"])
+    else:
+        handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
+    ucr.load()
     monkeypatch.setattr(requests, "get", monkey_get)
     ips = ["valid", "invalid"]
     computer = get_dummy_veyon_computer(ips)
@@ -366,11 +374,14 @@ def test_second_valid_veyon(monkeypatch):
 
 
 def test_multiple_ips_last_valid_veyon(monkeypatch):
+    handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
+    ucr.load()
     monkeypatch.setattr(requests, "get", monkey_get)
     ips = ["invalid"] * 10
     ips.append("valid")
     computer = get_dummy_veyon_computer(ips)
     assert computer.connected()
+    print(computer.connected())
     for ip in ips[:-1]:
         assert computer._veyon_client.ping(ip) is False
     assert computer._veyon_client.ping(ips[-1])

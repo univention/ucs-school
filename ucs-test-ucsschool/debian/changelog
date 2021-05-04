@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.220) unstable; urgency=medium
+
+  * Bug #53055: set ucr in test and add test cases
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 04 May 2021 12:17:39 +0200
+
 ucs-test-ucsschool (6.0.219) unstable; urgency=medium
 
   * Bug #53044: make validation case insensitive
