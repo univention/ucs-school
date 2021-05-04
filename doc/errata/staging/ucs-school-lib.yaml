@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.23A~4.4.0.202104280914
+fix: 12.2.24A~4.4.0.202105041013
 desc: |
  * The value of the <envar>ucschoolRole</envar> property was incorrect set on primary and replication nodes (DC master and DC slave) in certain situations. This has been fixed (Bug #53162).
  * The UCS@school object validation and the diagnostic module UCS@school consistency now validate groups, schools and roles case-insensitive (Bug #53044).
