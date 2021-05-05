@@ -78,10 +78,16 @@ def main():
         user_issues = user_check.check_user(dn, attrs)
         if user_issues:
             user_problematic_objects[dn] = user_issues
-    group_problematic_objects = consistency.check_mandatory_groups_exist(school)
-    container_problematic_objects = consistency.check_containers(school)
-    share_problematic_objects = consistency.check_shares(school)
-    server_group_problematic_objects = consistency.check_server_group_membership(school)
+
+    group_problematic_objects = {}
+    container_problematic_objects = {}
+    share_problematic_objects = {}
+    server_group_problematic_objects = {}
+    if school or not user_dn:
+        group_problematic_objects = consistency.check_mandatory_groups_exist(school)
+        container_problematic_objects = consistency.check_containers(school)
+        share_problematic_objects = consistency.check_shares(school)
+        server_group_problematic_objects = consistency.check_server_group_membership(school)
 
     print_problematic_objects(user_problematic_objects, "The following USER PROBLEMS were found:")
     print_problematic_objects(group_problematic_objects, "The following GROUP PROBLEMS were found:")
