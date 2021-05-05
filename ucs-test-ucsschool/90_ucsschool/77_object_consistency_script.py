@@ -75,8 +75,8 @@ def test_no_errors_exec_script(schoolenv, ucr_hostname):
     assert stdout == ""
 
 
-def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str]) -> str
-    role_str, expected = role_and_bad_value
+def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str, str]) -> str
+    role_str, bad_value, expected = role_and_bad_value
     return role_str
 
 
@@ -232,7 +232,7 @@ def test_case_insensitive_school_roles(schoolenv, ucr_hostname, udm_instance, ro
 
 def input_ids_not_existing_mandatory_group(group):  # type: (Tuple[str, str]) -> str
     group, expected = group
-    return group
+    return group.split(",", 1)[0].rsplit("=", 1)[-1]
 
 
 @pytest.mark.parametrize(
