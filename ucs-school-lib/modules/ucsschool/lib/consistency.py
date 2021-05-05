@@ -44,7 +44,7 @@ except ImportError:
 from ldap import INVALID_DN_SYNTAX
 from ldap.filter import filter_format
 
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import noObject, permissionDenied
 from univention.admin.uldap import getMachineConnection
 from univention.config_registry import ConfigRegistry
 
@@ -183,6 +183,9 @@ class UserCheck(object):
             user_obj = User.from_dn(dn, None, self.lo)
         except WrongObjectType as exc:
             issues.append("Expected a user object, but is not: {}".format(exc))
+            return issues
+        except permissionDenied as exc:
+            issues.append("Could not access this user  {}".format(exc))
             return issues
 
         # check if objectClass is correctly set
