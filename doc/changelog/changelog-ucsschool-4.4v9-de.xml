@@ -273,7 +273,72 @@ feedback@univention.de
 					<!-- END ucs-school-selfservice-support 3.0.0-4A~4.4.0.202104200833 -->
 <!-- CHANGELOG:2021-04-22:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-05-06" lang="en">
+					<title>Released on 2021-05-06:</title>
+					<!-- START ucs-school-import 17.0.56A~4.4.0.202104281532 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.56A~4.4.0.202104281532</emphasis>:
+						<itemizedlist>
+							<listitem><para>When performing a user import with an email in the scheme, a maildomain is required in the JSON config or in the UCRV <envar>mail/hosteddomains</envar>. This fix ensures, that the import only is performed when these requirements are met. Otherwise, an error will be raised (<u:bug>48243</u:bug>).</para></listitem>
+
+							<listitem><para>Having syntax errors in the configuration lead to unhelpful and unclear tracebacks. This fix shortens the error message to the important information (<u:bug>49578</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.56A~4.4.0.202104281532 -->
+					<!-- START ucs-school-lib 12.2.24A~4.4.0.202105041013 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.24A~4.4.0.202105041013</emphasis>:
+						<itemizedlist>
+							<listitem><para>The value of the <envar>ucschoolRole</envar> property was incorrect set on primary and replication nodes (DC master and DC slave) in certain situations. This has been fixed (<u:bug>53162</u:bug>).</para></listitem>
+
+							<listitem><para>The UCS@school object validation and the diagnostic module UCS@school consistency now validate groups, schools and roles case-insensitive (<u:bug>53044</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.24A~4.4.0.202105041013 -->
+					<!-- START ucs-school-metapackage 12.0.4-15A~4.4.0.202105050929 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-15A~4.4.0.202105050929</emphasis>:
+						<itemizedlist>
+							<listitem><para>The join script can now handle a moved demo_admin user (<u:bug>53014</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-15A~4.4.0.202105050929 -->
+					<!-- START ucs-school-umc-printermoderation 16.0.0-4A~4.4.0.202104221447 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-printermoderation</emphasis> in version <emphasis>16.0.0-4A~4.4.0.202104221447</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed a typo in a warning message (<u:bug>44699</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-printermoderation 16.0.0-4A~4.4.0.202104221447 -->
+					<!-- START ucs-school-umc-wizards 11.0.0-15A~4.4.0.202104271423 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.0-15A~4.4.0.202104271423</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fixed typos in an info message (<u:bug>44699</u:bug>).</para></listitem>
+
+							<listitem><para>The creation of school administrators without the staff or teacher roles was introduced in version 11.0.0-11. The correct default value, which is deactivated, is now set by modifying <envar>ucsschool/wizards/schoolwizards/users/roles/disabled</envar> (<u:bug>53002</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.0-15A~4.4.0.202104271423 -->
+					<!-- START ucs-school-veyon-client 1.0.1-7A~4.4.0.202104300920 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-client</emphasis> in version <emphasis>1.0.1-7A~4.4.0.202104300920</emphasis>:
+						<itemizedlist>
+							<listitem><para>Extend the ping timeout to 5 seconds and make ping behavior more stable (<u:bug>53055</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-client 1.0.1-7A~4.4.0.202104300920 -->
+<!-- CHANGELOG:2021-05-06:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
