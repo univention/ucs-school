@@ -50,7 +50,7 @@ from .utils import _, ucr
 try:
     from typing import Any, Dict, Generator, List, Optional, Type
 
-    from .base import LoType, UdmObject
+    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject
 except ImportError:
     pass
 
@@ -295,6 +295,27 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
         if not cls.is_school_class(school, udm_obj.dn):
             return  # is a workgroup
         return cls
+
+    @classmethod
+    def hook_init(cls, hook):  # type: (PYHOOKS_BASE_CLASS) -> None
+        """
+        Add method :py:func:`get_share` to SchoolClass hooks, to make the
+        associated share easily accessible in hooks.
+
+        :param hook: instance of a subclass of :py:class:`ucsschool.lib.model.hook.Hook`
+        :return: None
+        :rtype: None
+        """
+
+        def get_share(grp):
+            share = cls.ShareClass.from_school_group(grp)
+            if not share.school_group:
+                # fix empty attr
+                # TODO: investigate if this should be generally fixed
+                share.school_group = grp
+            return share
+
+        hook.get_share = get_share
 
     def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
         super(SchoolClass, self).validate(lo, validate_unlikely_changes)
