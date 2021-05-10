@@ -39,8 +39,9 @@ import logging
 import os.path
 from collections import defaultdict
 from os import listdir
+import sys
 
-from six import iteritems
+from six import iteritems, reraise
 
 try:
     import logging.Logger
@@ -157,7 +158,15 @@ class PyHooksLoader(object):
         :rtype: Dict[str, List[Callable]]
         """
         if self._pyhook_obj_cache is None:
-            pyhook_objs = [pyhook_cls(*args, **kwargs) for pyhook_cls in self.get_hook_classes()]
+            pyhook_objs = []
+            for pyhook_cls in self.get_hook_classes():
+                try:
+                    pyhook_objs.append(pyhook_cls(*args, **kwargs))
+                except Exception as exc:
+                    self.logger.exception(
+                        'Initilizing hook class %r with args=%r and kwargs=%r: %s', pyhook_cls, args,
+                        kwargs, exc)
+                    reraise(*sys.exc_info())
 
             # fill cache: find all enabled hook methods
             methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[..., Any], int]]]
