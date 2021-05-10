@@ -100,14 +100,14 @@ def _ucr():  # type: () -> ConfigRegistry
     return ucr
 
 
-_logging_config = lazy_object_proxy.Proxy(_load_logging_config)
-CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])
-FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])
-LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])
-LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])
+_logging_config = lazy_object_proxy.Proxy(_load_logging_config)  # type: Dict[str, Dict[str, str]]
+CMDLINE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["cmdline"])  # type: Dict[str, str]
+FILE_LOG_FORMATS = lazy_object_proxy.Proxy(lambda: _logging_config["file"])  # type: Dict[str, str]
+LOG_DATETIME_FORMAT = lazy_object_proxy.Proxy(lambda: _logging_config["date"])  # type: str
+LOG_COLORS = lazy_object_proxy.Proxy(lambda: _logging_config["colors"])  # type: Dict[str, str]
 
-_handler_cache = dict()
-_pw_length_cache = dict()
+_handler_cache = dict()  # type: Dict[str, logging.Handler]
+_pw_length_cache = dict()  # type: Dict[str, int]
 ucr = lazy_object_proxy.Proxy(_ucr)  # type: ConfigRegistry  # "global" ucr for ucsschool.lib.models
 ucr_username_max_length = lazy_object_proxy.Proxy(
     lambda: int(ucr.get("ucsschool/username/max_length", 20))
