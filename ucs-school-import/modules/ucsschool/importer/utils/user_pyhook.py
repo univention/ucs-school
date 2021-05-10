@@ -92,6 +92,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def post_create(self, user):  # type: (ImportUser) -> None
         """
@@ -106,6 +107,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def pre_modify(self, user):  # type: (ImportUser) -> None
         """
@@ -117,6 +119,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. :py:class:`ImportUser`)
         :return: None
         """
+        pass
 
     def post_modify(self, user):  # type: (ImportUser) -> None
         """
@@ -133,6 +136,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def pre_move(self, user):  # type: (ImportUser) -> None
         """
@@ -144,6 +148,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def post_move(self, user):  # type: (ImportUser) -> None
         """
@@ -158,6 +163,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def pre_remove(self, user):  # type: (ImportUser) -> None
         """
@@ -169,6 +175,7 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
 
     def post_remove(self, user):  # type: (ImportUser) -> None
         """
@@ -182,3 +189,4 @@ class UserPyHook(ImportPyHook):
         :param ImportUser user: User (or a subclass of it, eg. ImportUser)
         :return: None
         """
+        pass
