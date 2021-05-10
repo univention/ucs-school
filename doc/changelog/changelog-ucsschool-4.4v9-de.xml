@@ -337,7 +337,21 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-client 1.0.1-7A~4.4.0.202104300920 -->
 <!-- CHANGELOG:2021-05-06:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-05-10" lang="en">
+					<title>Released on 2021-05-10:</title>
+					<!-- START ucs-school-umc-computerroom 11.0.0-30A~4.4.0.202105031321 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-30A~4.4.0.202105031321</emphasis>:
+						<itemizedlist>
+							<listitem><para>Vastly improve the performance when using the Veyon backend for the computerroom (<u:bug>53055</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-30A~4.4.0.202105031321 -->
+<!-- CHANGELOG:2021-05-10:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
