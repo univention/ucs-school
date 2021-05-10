@@ -439,7 +439,7 @@ class UCSSchoolHelperAbstractClass(object):
             return False
         return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-    def call_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
+    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> bool
         """
         Calls run-parts in
         os.path.join(self.hook_path, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
@@ -453,6 +453,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         :param str hook_time: `pre` or `post`
         :param str func_name: `create`, `modify`, `move` or `remove`
+        :param univention.admin.uldap.access lo: LDAP connection object
         :return: return code of hooks or True if no hook ran
         :rtype: bool
         """
@@ -520,10 +521,10 @@ class UCSSchoolHelperAbstractClass(object):
         If the object does not yet exist, creates it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "create")
+        self.call_hooks("pre", "create", lo)
         success = self.create_without_hooks(lo, validate)
         if success:
-            self.call_hooks("post", "create")
+            self.call_hooks("post", "create", lo)
         return success
 
     def create_without_hooks(self, lo, validate):  # type: (LoType, bool) -> bool
@@ -586,10 +587,10 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, modifies it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "modify")
+        self.call_hooks("pre", "modify", lo)
         success = self.modify_without_hooks(lo, validate, move_if_necessary)
         if success:
-            self.call_hooks("post", "modify")
+            self.call_hooks("post", "modify", lo)
         return success
 
     def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
@@ -653,10 +654,10 @@ class UCSSchoolHelperAbstractClass(object):
 
     def move(self, lo, udm_obj=None, force=False):
         # type: (LoType, Optional[UdmObject], Optional[bool]) -> bool
-        self.call_hooks("pre", "move")
+        self.call_hooks("pre", "move", lo)
         success = self.move_without_hooks(lo, udm_obj, force)
         if success:
-            self.call_hooks("post", "move")
+            self.call_hooks("post", "move", lo)
         return success
 
     def move_without_hooks(self, lo, udm_obj, force=False):
@@ -715,10 +716,10 @@ class UCSSchoolHelperAbstractClass(object):
         If the object exists, removes it, returns True and
         calls post-hooks.
         """
-        self.call_hooks("pre", "remove")
+        self.call_hooks("pre", "remove", lo)
         success = self.remove_without_hooks(lo)
         if success:
-            self.call_hooks("post", "remove")
+            self.call_hooks("post", "remove", lo)
         return success
 
     def remove_without_hooks(self, lo):  # type: (LoType) -> bool
