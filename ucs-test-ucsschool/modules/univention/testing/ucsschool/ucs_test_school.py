@@ -59,7 +59,9 @@ from univention.admin.uexceptions import noObject
 from ucsschool.lib.roles import (
 	create_ucsschool_role_string, role_computer_room, role_school_admin, role_school_class, role_student, role_staff,
 	role_teacher, role_workgroup)
-from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass, WorkGroup
+from ucsschool.lib.models.group import SchoolClass, WorkGroup
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User, Student, Teacher, TeachersAndStaff, Staff\
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, get_stream_handler, UniStreamHandler
 from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.computer import SchoolComputer

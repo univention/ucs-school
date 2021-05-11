@@ -14,11 +14,13 @@ import univention.testing.udm as udm_test
 from univention.testing.decorators import SetTimeout
 import univention.uldap
 import univention.config_registry
-from ucsschool.lib.models import Student as StudentLib
-from ucsschool.lib.models import Teacher as TeacherLib
-from ucsschool.lib.models import Staff as StaffLib
-from ucsschool.lib.models import TeachersAndStaff as TeachersAndStaffLib
-from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.models.user import (
+	Student as StudentLib,
+	Teacher as TeacherLib,
+	Staff as StaffLib,
+	TeachersAndStaff as TeachersAndStaffLib,
+ )
+from ucsschool.lib.models.school import School as SchoolLib
 from ucsschool.lib.roles import role_student, role_teacher, role_staff, create_ucsschool_role_string
 import ucsschool.lib.models.utils
 

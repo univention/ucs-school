@@ -21,7 +21,9 @@ import univention.config_registry
 from univention.config_registry.interfaces import Interfaces
 
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
-from ucsschool.lib.models import School, User, DHCPServer
+from ucsschool.lib.models.dhcp import DHCPServer
+from ucsschool.lib.models.school import School
+from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
 

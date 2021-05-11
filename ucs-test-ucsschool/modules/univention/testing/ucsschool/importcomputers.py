@@ -12,11 +12,13 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.importou import get_school_base
 # from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
-from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-from ucsschool.lib.models import MacComputer as MacComputerLib
-from ucsschool.lib.models import IPComputer as IPComputerLib
+from ucsschool.lib.models.computer import (
+	WindowsComputer as WindowsComputerLib,
+	MacComputer as MacComputerLib,
+	IPComputer as IPComputerLib,
+)
 # from ucsschool.lib.models import UCCComputer as UCCComputerLib
-from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.models.school import School as SchoolLib
 import ucsschool.lib.models.utils
 
 

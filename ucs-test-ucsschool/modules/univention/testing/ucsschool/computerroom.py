@@ -3,9 +3,11 @@ from univention.testing.ucsschool.importcomputers import Windows, MacOS, IPManag
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 from univention.testing.ucsschool.workgroup import Workgroup
-from ucsschool.lib.models import IPComputer as IPComputerLib
-from ucsschool.lib.models import MacComputer as MacComputerLib
-from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
+from ucsschool.lib.models.computer import (
+	IPComputer as IPComputerLib,
+	MacComputer as MacComputerLib,
+	WindowsComputer as WindowsComputerLib,
+)
 from ucsschool.lib.roles import create_ucsschool_role_string, role_ip_computer, role_mac_computer, role_win_computer
 from univention.testing.umc import Client
 from univention.lib.umc import ConnectionError
