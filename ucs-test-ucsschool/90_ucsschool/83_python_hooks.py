@@ -1,0 +1,716 @@
+#!/usr/share/ucs-test/runner python
+# -*- coding: utf-8 -*-
+## desc: Test execution of Python based hooks
+## exposure: dangerous
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool,ucsschool_base1]
+## packages: [python-ucs-school, ucs-school-import]
+## bugs: [49557]
+
+import importlib
+import inspect
+import os
+import os.path
+import pprint
+import random
+import re
+from unittest import TestCase, main
+
+import ucsschool.lib.models.user
+import univention.testing.strings as uts
+from ucsschool.importer.configuration import setup_configuration
+from ucsschool.importer.factory import setup_factory
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, _pyhook_loader
+from ucsschool.lib.models.dhcp import DHCPService
+from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup
+from ucsschool.lib.models.school import School
+from univention.testing.ucsschool.importcomputers import random_ip, random_mac
+from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
+
+MODULE_PATHS = (
+    ("/usr/share/pyshared/ucsschool/lib/models", "ucsschool.lib.models"),
+    ("/usr/share/pyshared/ucsschool/importer/models", "ucsschool.importer.models"),
+    ("/usr/share/pyshared/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
+)
+BASE_CLASS = UCSSchoolHelperAbstractClass
+TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hook.py")  # TODO: remove -.py
+LEGACY_HOOK_BASE_PATH = "/usr/share/ucs-school-import/hooks"
+PYHOOK_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
+RESULTFILE = "/tmp/test83_result.txt"
+EXPECTED_CLASSES = [
+    "AnyComputer",
+    "AnyDHCPService",
+    "BasicGroup",
+    "BasicSchoolGroup",
+    "ClassShare",
+    "ComputerRoom",
+    "Container",
+    "DHCPDNSPolicy",
+    "DHCPServer",
+    "DHCPService",
+    "DHCPSubnet",
+    "DNSReverseZone",
+    "ExamStudent",
+    "Group",
+    "GroupShare",
+    "IPComputer",
+    "ImportStaff",
+    "ImportStudent",
+    "ImportTeacher",
+    "ImportTeachersAndStaff",
+    "ImportUser",
+    "LegacyImportStaff",
+    "LegacyImportStudent",
+    "LegacyImportTeacher",
+    "LegacyImportTeachersAndStaff",
+    "LegacyImportUser",
+    "MacComputer",
+    "MailDomain",
+    "MarketplaceShare",
+    "Network",
+    "OU",
+    "Policy",
+    "School",
+    "SchoolAdmin",
+    "SchoolClass",
+    "SchoolComputer",
+    "SchoolDC",
+    "SchoolDCSlave",
+    "SchoolGroup",
+    "Share",
+    "Staff",
+    "Student",
+    "Teacher",
+    "TeachersAndStaff",
+    "UCCComputer",
+    "UMCPolicy",
+    "User",
+    "WindowsComputer",
+    "WorkGroup",
+    "WorkGroupShare",
+]
+CLASSES_WITH_SCHOOL_NONE = ("AnyDHCPService", "BasicGroup", "MailDomain", "DNSReverseZone", "School")
+CLASSES_NOT_FOR_INSTANTIATION = (
+    "AnyComputer",
+    "BasicSchoolGroup",
+    "ImportUser",
+    "LegacyImportUser",
+    "SchoolComputer",
+    "Share",
+    "UCCComputer",
+    "User",
+)
+
+logger = get_ucsschool_logger()
+
+
+def get_ucsschool_model_classes():
+    # Will not find "printer" and "router" as they are not implemented in
+    # ucsschool.lib.models, only in the legacy-import.
+    classes = []
+    for path, package in MODULE_PATHS:
+        logger.info("Looking for subclass of %r in %r...", BASE_CLASS.__name__, path)
+        for filename in os.listdir(path):
+            if filename.endswith(".py"):
+                module = importlib.import_module("{}.{}".format(package, filename[:-3]))
+                mod_classes = []
+                for thing in dir(module):
+                    candidate = getattr(module, thing)
+                    if (
+                        inspect.isclass(candidate)
+                        and issubclass(candidate, BASE_CLASS)
+                        and candidate is not BASE_CLASS
+                    ):
+                        mod_classes.append(candidate)
+                logger.debug("Found in %r: %r.", filename, [c.__name__ for c in mod_classes])
+                classes.extend(mod_classes)
+    res = sorted(set(classes), key=lambda x: x.__name__.lower())
+    logger.info("Loaded %d classes: %r.", len(res), [c.__name__ for c in res])
+    return res
+
+
+def check_lines_for_pattern_and_words(lines, pattern, *words):
+    regex = re.compile(pattern)
+    for line in lines:
+        if regex.match(line) and all(str(word) in line for word in words):
+            return True
+    return False
+
+
+class TestPythonHooksMeta(type):
+    def __new__(mcls, cls_name, bases, attrs):
+        logger.debug("Creating test methods...")
+        cls = super(TestPythonHooksMeta, mcls).__new__(
+            mcls, cls_name, bases, attrs
+        )  # type: TestPythonHooks
+        models = get_ucsschool_model_classes()
+        cls.func2model = {}
+        cls.ignored_classes = list(CLASSES_NOT_FOR_INSTANTIATION)
+        for model in models:
+            if not hasattr(model, "Meta"):
+                # skip base classes without a "Meta" class: Policy, SchoolDC
+                logger.info('Model %r without inner class "Meta", skipping.', model.__name__)
+                cls.ignored_classes.append(model.__name__)
+                continue
+            if model.__name__ in cls.ignored_classes:
+                # skip base classes with a "Meta" class
+                logger.info("Model %r not meant to be used directly, skipping.", model.__name__)
+                continue
+            cls.models.append(model)
+            for action, func in (
+                ("create", cls._test_create),
+                ("modify", cls._test_modify),
+                ("move", cls._test_move),
+                ("remove", cls._test_remove),
+            ):
+                # luckily the functions names sort alphabetically in just the right order
+                method_name = "test_{}_{}".format(model.__name__, action)
+                setattr(cls, method_name, func)
+                cls.func2model[method_name] = model
+                logger.debug("Created method %r.", method_name)
+        logger.debug("Created %d test methods.", len(cls.func2model))
+        return cls
+
+
+class TestPythonHooks(TestCase):
+    ucs_test_school = None
+    lo = None
+    models = []  # populated in metaclass
+    methods = ("create", "modify", "move", "remove")
+    times = ("pre", "post")
+    objects = {}
+    ou_name = ou_dn = None
+    ou2_name = ou2_dn = None
+    import_config = None
+    progress_counter = 0
+    _created_hook = None
+    _dhcp_service = None
+    _import_line_class2module = {
+        "ImportStaff": "ucsschool.importer.models.import_user",
+        "ImportStudent": "ucsschool.importer.models.import_user",
+        "ImportTeacher": "ucsschool.importer.models.import_user",
+        "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
+        "LegacyImportStaff": "ucsschool.importer.legacy.legacy_import_user",
+        "LegacyImportStudent": "ucsschool.importer.legacy.legacy_import_user",
+        "LegacyImportTeacher": "ucsschool.importer.legacy.legacy_import_user",
+        "LegacyImportTeachersAndStaff": "ucsschool.importer.legacy.legacy_import_user",
+    }
+
+    __metaclass__ = TestPythonHooksMeta
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ucs_test_school = UCSTestSchool()
+        cls.lo = cls.ucs_test_school.lo
+        (cls.ou_name, cls.ou_dn), (cls.ou2_name, cls.ou2_dn) = cls.ucs_test_school.create_multiple_ous(2)
+        logger.info("Using OUs %r and %r.", cls.ou_name, cls.ou2_name)
+        assert cls.ou_name != cls.ou2_name
+
+        # Fill _empty_hook_paths with all possible hook paths, so legacy hooks
+        # won't be executed (cleaner and faster environment for this test).
+        for model in cls.models[:20]:
+            try:
+                hook_type = model.Meta.hook_path  # 'group'
+            except AttributeError:
+                hook_type = model.Meta.udm_module.split("/")[-1]  # 'group'
+            for dir_name in (
+                "{}_{}_{}.d".format(hook_type.lower(), m, t) for m in cls.methods for t in cls.times
+            ):
+                path = os.path.join(LEGACY_HOOK_BASE_PATH, dir_name)
+                UCSSchoolHelperAbstractClass._empty_hook_paths.add(path)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls._dhcp_service:
+            logger.debug("Removing object %r...", cls._dhcp_service)
+            cls._dhcp_service.remove(cls.ucs_test_school.lo)
+        cls.ucs_test_school.cleanup()
+        try:
+            os.remove(RESULTFILE)
+        except OSError:
+            pass
+        cls._delete_hook(cls._created_hook)
+
+    def setUp(self):
+        self.__class__.progress_counter += 1
+        test_method_name = self.id().rsplit(".", 1)[-1]  # 'test_ComputerRoom_create'
+        logger.debug("setUp() %r", test_method_name)  # create line break
+        logger.info(
+            "#################  %s (%d/%d)  #################",
+            test_method_name,
+            self.progress_counter,
+            len(self.func2model) + 2,
+        )
+        with open(RESULTFILE, "w") as fp:
+            fp.truncate()
+        self._created_lib_objects = []
+        if test_method_name == "test_001_all_known_classes":
+            self.operation_name = ""
+            return
+        elif test_method_name == "test_002_subclassing":
+            test_method_name = "test_Teacher_create"
+        self.operation_name = test_method_name.rsplit("_", 1)[-1]  # 'create'
+        self.model = self.func2model[test_method_name]  # <class ComputerRoom>
+        if self.operation_name == "create":
+            # create hook only once per class, as it contains code for
+            # all of (pre, post) x (create, modify, move, remove)
+            _pyhook_loader.drop_cache()
+            with open(TEST_HOOK_SOURCE, "r") as fpr:
+                hook_source_text = fpr.read()
+            hook_file_path = os.path.join(
+                PYHOOK_BASE_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
+            )
+            try:
+                imp_txt = "from {} import {}".format(
+                    self._import_line_class2module[self.model.__name__], self.model.__name__
+                )
+            except KeyError:
+                imp_txt = "from ucsschool.lib.models import {}".format(self.model.__name__)
+            with open(hook_file_path, "w") as fpw:
+                text = (
+                    hook_source_text.replace("MODEL_CLASS_VAR", self.model.__name__)
+                    .replace("TARGET_FILE_VAR", RESULTFILE)
+                    .replace("IMPORT_VAR", imp_txt)
+                )
+                fpw.write(text)
+                os.fchmod(fpw.fileno(), 0o755)
+            self.__class__._created_hook = hook_file_path
+            logger.info("Created %r.", hook_file_path)
+
+    def tearDown(self):
+        for obj in self._created_lib_objects:
+            logger.debug("Removing object %r...", obj)
+            obj.remove(self.lo)
+        # remove hook only once per model, as it contains code for
+        # all of (pre, post) x (create, modify, move, remove):
+        if self.operation_name == "remove":
+            self._delete_hook(self._created_hook)
+
+    @staticmethod
+    def _delete_hook(path):
+        for pat in (path, path + "c"):
+            try:
+                os.remove(pat)
+                logger.info("Deleted %r.", pat)
+            except OSError:
+                pass
+
+    def test_001_all_known_classes(self):
+        model_names = sorted([m.__name__ for m in self.models] + self.ignored_classes)
+        diff = set(model_names).symmetric_difference(set(EXPECTED_CLASSES))
+        self.assertSequenceEqual(
+            model_names,
+            EXPECTED_CLASSES,
+            "=====> Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}\n"
+            "Diff: {!r}".format(EXPECTED_CLASSES, model_names, sorted(diff)),
+        )
+
+    def test_002_subclassing(self):
+        # setUp() has created a hook for "Teacher"
+        # now create Student, Teacher and TeachersAndStaff objects
+        # hooks are expected to run for Teacher and TeachersAndStaff
+        self._check_test_setup()
+        patterns_and_words = []
+        for klass in ("Student", "Teacher", "TeachersAndStaff"):
+            self.model = getattr(ucsschool.lib.models.user, klass)
+            obj = getattr(self, "_setup_{}".format(klass))()
+            words = klass, obj.name, obj.school
+            logger.debug("** Creating %s object with name %r in school %r...", *words)
+            obj.create(self.lo)
+            if klass != "Student":
+                patterns_and_words.extend([(r"^pre_create", words), (r"^post_create", words)])
+        with open(RESULTFILE, "r") as fp:
+            txt = fp.read()
+        logger.debug("Content of result file: ---\n%s\n---", txt)
+        for pattern, words in patterns_and_words:
+            self.assertTrue(
+                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
+                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
+                "---\n{}\n---".format(pattern, words, txt.strip()),
+            )
+
+    def _check_test_setup(self):
+        hook_file_path = os.path.join(
+            PYHOOK_BASE_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
+        )
+        self.assertTrue(
+            os.path.isfile(hook_file_path), "Not a / not existing file: {!r}".format(hook_file_path)
+        )
+        with open(RESULTFILE, "r") as fp:
+            self.assertEqual(len(fp.read()), 0, "Result file {!r} is not empty.".format(RESULTFILE))
+
+    def _test_create(self):
+        logger.info(
+            "** Test %d/%d create() of model %r...",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+        self._check_test_setup()
+
+        try:
+            obj = getattr(self, "_setup_{}".format(self.model.__name__))()
+        except AttributeError:
+            name = uts.random_username()
+            obj = self.model(school=self.ou_name, name=name)
+        logger.debug(
+            "Creating %s object with name %r in school %r...",
+            self.model.__name__,
+            obj.name,
+            self.ou_name,
+        )
+        obj.create(self.lo)
+        with open(RESULTFILE, "r") as fp:
+            txt = fp.read()
+        logger.debug("Content of result file: ---\n%s\n---", txt)
+        if self.model.__name__ in CLASSES_WITH_SCHOOL_NONE:
+            # hard coded: school = None
+            patterns_and_words = (
+                (r"^pre_create", (obj.__class__.__name__, obj.name, "None")),
+                (r"^post_create", (obj.__class__.__name__, obj.name, "None")),
+            )
+        else:
+            # pre_create MacComputer w7pe5ki4in cozns23ss
+            patterns_and_words = (
+                (r"^pre_create", (obj.__class__.__name__, obj.name, obj.school)),
+                (r"^post_create", (obj.__class__.__name__, obj.name, obj.school)),
+            )
+        for pattern, words in patterns_and_words:
+            self.assertTrue(
+                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
+                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
+                "---\n{}\n---".format(pattern, words, txt.strip()),
+            )
+
+        self.objects[self.model] = obj
+        logger.info(
+            "** OK %d/%d create() of model %r.\n------------------------------------------------------",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+
+    def _test_modify(self):
+        logger.info(
+            "** Test %d/%d modify() of model %r...",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+        self._check_test_setup()
+
+        if self.model.__name__ in ("Container", "OU"):
+            logger.info("Model {!r} does not support modify() method.".format(self.model.__name__))
+            return
+        try:
+            obj = self.objects[self.model]
+        except KeyError:
+            raise KeyError(
+                "No object found for class {!r}. Probably create() failed.".format(self.model.__name__)
+            )
+        # try to change an attribute, not that it'd be necessary, but it can't hurt either
+        if hasattr(obj, "display_name"):
+            obj.display_name = uts.random_name()
+        elif hasattr(obj, "description"):
+            obj.description = uts.random_name()
+        elif hasattr(obj, "inventory_number"):
+            obj.inventory_number = uts.random_name()
+        elif hasattr(obj, "firstname"):
+            obj.firstname = uts.random_name()
+        elif obj.__class__.__name__ == "DHCPServer":
+            obj.name = "{}b".format(obj.name)  # change something
+            obj.dhcp_service = self._dhcp_service  # not loaded automatically, but required
+        elif obj.__class__.__name__ == "Network":
+            logger.info("*** obj=%r", obj.to_dict())
+            obj.netmask = "21"  # prevent UDM valueMayNotChange exception (value is 255.255.248.0)
+            obj.broadcast = "12.40.232.255"  # change something (was None)
+        obj.modify(self.lo)
+        with open(RESULTFILE, "r") as fp:
+            txt = fp.read()
+        logger.debug("Content of result file:\n---\n%s---", txt)
+        if self.model is School:
+            logger.info("Model School does not support modify hooks.")
+            patterns_and_words = ((r"^$", ()),)
+        elif self.model.__name__ in CLASSES_WITH_SCHOOL_NONE:
+            # hard coded: AnyDHCPService.school = None
+            patterns_and_words = (
+                (r"^pre_modify", (obj.__class__.__name__, obj.name, "None")),
+                (r"^post_modify", (obj.__class__.__name__, obj.name, "None")),
+            )
+        elif issubclass(self.model, Group):
+            logger.warn(
+                "Model %r does not support modify hooks, if obj.name does not change.",
+                self.model.__name__,
+            )
+            # TODO: this might be a bug, investigate.
+            patterns_and_words = ((r"^$", ()),)
+        else:
+            patterns_and_words = (
+                (r"^pre_modify", (obj.__class__.__name__, obj.name, self.ou_name)),
+                (r"^post_modify", (obj.__class__.__name__, self.ou_name, obj.name)),
+            )
+        for pattern, words in patterns_and_words:
+            self.assertTrue(
+                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
+                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
+                "---\n{}\n---".format(pattern, words, txt.strip()),
+            )
+        logger.info(
+            "** OK %d/%d modify() of model %r.",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+
+    def _test_move(self):
+        logger.info(
+            "** Test %d/%d move() of model %r from OU %r to %r ...",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+            self.ou_name,
+            self.ou2_name,
+        )
+        self._check_test_setup()
+
+        try:
+            obj = self.objects[self.model]
+        except KeyError:
+            raise KeyError(
+                "No object found for class {!r}. Probably create() failed.".format(self.model.__name__)
+            )
+        if hasattr(obj, "schools"):
+            obj.change_school(self.ou2_name, self.lo)
+            move_success = True
+        else:
+            obj.school = self.ou2_name
+            # the move will fail - that's expected - see patterns_and_words below
+            move_success = obj.move(self.lo)
+            self.assertFalse(
+                move_success,
+                "=====> Move of {!r} model succeeded unexpectedly.".format(self.model.__name__),
+            )
+            obj.school = self.ou_name
+
+        with open(RESULTFILE, "r") as fp:
+            txt = fp.read()
+        logger.debug("Content of result file: ---\n%s\n---", txt)
+        if self.model is School:
+            logger.info("Model School does not support move hooks.")
+            patterns_and_words = ((r"^$", ()),)
+        elif move_success:
+            patterns_and_words = (
+                (r"^pre_move", (obj.__class__.__name__, self.ou2_name, obj.name)),
+                (r"^post_move", (obj.__class__.__name__, self.ou2_name, obj.name)),
+            )
+        else:
+            # move operation failed, post hook won't be executed
+            patterns_and_words = ((r"^pre_move", (obj.__class__.__name__, self.ou2_name, obj.name)),)
+        for pattern, words in patterns_and_words:
+            self.assertTrue(
+                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
+                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
+                "---\n{}\n---".format(pattern, words, txt.strip()),
+            )
+        logger.info(
+            "** OK %d/%d move() of model %r.",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+
+    def _test_remove(self):
+        logger.info(
+            "** Test %d/%d remove() of model %r...",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+        self._check_test_setup()
+
+        if self.model.__name__ in ("School", "Container", "OU"):
+            logger.info("Model {!r} does not support remove() method.".format(self.model.__name__))
+            return
+
+        try:
+            obj = self.objects[self.model]
+        except KeyError:
+            raise KeyError(
+                "No object found for class {!r}. Probably create() failed.".format(self.model.__name__)
+            )
+        obj.remove(self.lo)
+        with open(RESULTFILE, "r") as fp:
+            txt = fp.read()
+        logger.debug("Content of result file: ---\n%s\n---", txt)
+        patterns_and_words = (
+            (r"^pre_remove", (obj.__class__.__name__, obj.school, obj.name)),
+            (r"^post_remove", (obj.__class__.__name__, obj.school, obj.name)),
+        )
+        for pattern, words in patterns_and_words:
+            self.assertTrue(
+                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
+                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
+                "---\n{}\n---".format(pattern, words, txt.strip()),
+            )
+        logger.info(
+            "** OK %d/%d remove() of model %r.",
+            self.progress_counter,
+            len(self.func2model) + 2,
+            self.model.__name__,
+        )
+
+    def _setup_ExamStudent(self):
+        return self.model(
+            school=self.ou_name,
+            name=uts.random_username(),
+            firstname=uts.random_username(),
+            lastname=uts.random_username(),
+        )
+
+    _setup_SchoolAdmin = _setup_ExamStudent
+    _setup_Staff = _setup_ExamStudent
+    _setup_Student = _setup_ExamStudent
+    _setup_Teacher = _setup_ExamStudent
+    _setup_TeachersAndStaff = _setup_ExamStudent
+
+    def _setup_School(self):
+        return self.model(
+            name=uts.random_username(),
+        )
+
+    def _setup_IPComputer(self):
+        return self.model(
+            school=self.ou_name,
+            name=uts.random_username(),
+            ip_address=[random_ip()],
+            mac_address=[random_mac()],
+        )
+
+    _setup_MacComputer = _setup_IPComputer
+    _setup_WindowsComputer = _setup_IPComputer
+
+    def _setup_Share(self):
+        group_model = random.choice((SchoolClass, WorkGroup))
+        logger.debug(
+            "Creating a %r object for the [Class/Group/Workgroup]Share...", group_model.__name__
+        )
+        school_group = group_model(
+            school=self.ou_name, name="{}-{}".format(self.ou_name, uts.random_username())
+        )
+        if not school_group.create(self.lo):
+            raise RuntimeError("Failed to create school group required for [...]Share object.")
+        self._created_lib_objects.append(school_group)
+        logger.debug("Created %r for [...]Share.", school_group)
+        # use different (random) name for ClassShare, as school_group will
+        # have automatically created a ClassShare with its own name
+        return self.model(
+            school=self.ou_name,
+            name=uts.random_username(),
+            school_group=school_group,
+        )
+
+    _setup_ClassShare = _setup_Share
+    _setup_GroupShare = _setup_Share
+    _setup_WorkGroupShare = _setup_Share
+
+    def _setup_MarketplaceShare(self):
+        # there can be only one MarketplaceShare, and the test OU already has one
+        self.model(school=self.ou_name).remove(self.lo)
+        return self.model(school=self.ou_name)
+
+    def _setup_Container_(self):
+        # regular setup works, but the wait_for_drs_removal() in udm.cleanup()
+        # always fails, so remove it before the cleanup manually (add it to
+        # self._created_lib_objects)
+        # TODO: investigate why this happens
+        obj = self.model(
+            school=self.ou_name,
+            name=uts.random_username(),
+        )
+        self._created_lib_objects.append(obj)
+        return obj
+
+    def _setup_DHCPServer(self):
+        logger.debug("Creating a DHCPService object for the DHCPServer...")
+        name = uts.random_username()
+        self.__class__._dhcp_service = DHCPService(
+            school=self.ou_name,
+            name="{}d".format(name),
+        )
+        if not self.__class__._dhcp_service.create(self.lo):
+            raise RuntimeError("Failed creating DHCPService required for DHCPServer object.")
+        # not adding dhcp_service to self._created_lib_objects, as we need it in modify() as well
+        return self.model(
+            school=self.ou_name,
+            name=name,
+            dhcp_service=self.__class__._dhcp_service,
+        )
+
+    def _setup_DHCPSubnet(self):
+        return self.model(
+            school=self.ou_name,
+            name="11.40.232.0",
+            dhcp_service=self.__class__._dhcp_service,
+            subnet_mask="255.255.248.0",  # /21
+        )
+
+    def _setup_DNSReverseZone(self):
+        return self.model(
+            school=self.ou_name,
+            name=uts.random_ip().rsplit(".", 1)[0],
+        )
+
+    def _setup_Network(self):
+        return self.model(
+            school=self.ou_name,
+            name="12.40.232.0",
+            netmask="255.255.248.0",
+            network="12.40.232.0",
+        )
+
+    def _setup_SchoolClass(self):
+        return self.model(school=self.ou_name, name="{}-{}".format(self.ou_name, uts.random_username()))
+
+    _setup_ComputerRoom = _setup_SchoolClass
+    _setup_SchoolGroup = _setup_SchoolClass
+    _setup_WorkGroup = _setup_SchoolClass
+
+    @classmethod
+    def _setup_import_framework(cls):
+        if cls.import_config:
+            return
+        logger.info("Setting up import framework...")
+        import_config_args = {"dry_run": False, "source_uid": "TestDB", "verbose": True}
+        ui = UserImportCommandLine()
+        config_files = ui.configuration_files
+        cls.import_config = setup_configuration(config_files, **import_config_args)
+        # ui.setup_logging(cls.import_config['verbose'], cls.import_config['logfile'])
+        setup_factory(cls.import_config["factory"])
+        logger.info("------ UCS@school import tool configured ------")
+        logger.info("Used configuration files: %s.", cls.import_config.conffiles)
+        logger.info("Using command line arguments: %r", import_config_args)
+        logger.info("Configuration is:\n%s", pprint.pformat(cls.import_config))
+
+    def _setup_ImportStaff(self):
+        self._setup_import_framework()
+        return self.model(
+            school=self.ou_name,
+            name=uts.random_username(),
+            firstname=uts.random_username(),
+            lastname=uts.random_username(),
+            source_uid=self.import_config["source_uid"],
+            record_uid=uts.random_username(),
+        )
+
+    _setup_ImportStudent = _setup_ImportStaff
+    _setup_ImportTeacher = _setup_ImportStaff
+    _setup_ImportTeachersAndStaff = _setup_ImportStaff
+    _setup_LegacyImportStaff = _setup_ImportStaff
+    _setup_LegacyImportStudent = _setup_ImportStaff
+    _setup_LegacyImportTeacher = _setup_ImportStaff
+    _setup_LegacyImportTeachersAndStaff = _setup_ImportStaff
+
+
+if __name__ == "__main__":
+    main(failfast=True, verbosity=2)

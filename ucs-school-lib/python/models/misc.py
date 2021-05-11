@@ -57,7 +57,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 
 
 class OU(UCSSchoolHelperAbstractClass):
-    def create(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
+    def create_without_hooks(self, lo, validate=True):  # type: (LoType, Optional[bool]) -> bool
         self.logger.info("Creating %r", self)
         pos = udm_uldap.position(ucr.get("ldap/base"))
         pos.setDn(self.position)
