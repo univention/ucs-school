@@ -405,10 +405,9 @@
             Wenn für einen Computerraum Veyon verwendet werden soll, muss im UMC-Modul <guimenu>Computerraum</guimenu> das Computerraum Backend <emphasis>Veyon</emphasis> ausgewählt werden.
         </para>
         <para>
-            Ab &ucsUAS; 4.4v8 werden Rechner mit mehreren IP-Adressen unterstützt. Wird das Computerraum Backend iTALC verwendet, werden die IP-Adressen des Rechners durchlaufen und die erste verwendet, die erreicht werden kann.
+            Ab &ucsUAS; 4.4v8 werden Rechner mit mehreren IP-Adressen unterstützt. Die IP-Adressen des jeweiligen Rechners werden durchlaufen und die erste verwendet, die erreicht werden kann.
             Dies kann zu längeren Wartezeiten führen, wenn Rechner innerhalb des Computerraums ausgeschaltet sind oder eine Firewall den Befehl blockiert. Das Verhalten ist standardmäßig deaktiviert und kann durch Setzen der &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar>
             aktiviert werden.
-            Wird das Computerraum Backend Veyon verwendet, sind keine Anpassungen notwendig.
         </para>
     </section>
     <section id="school:setup:generic:configureclasslists">
