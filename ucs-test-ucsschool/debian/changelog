@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.222) unstable; urgency=medium
+
+  * Bug #52654: correct set operation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 11 May 2021 15:32:32 +0200
+
 ucs-test-ucsschool (6.0.221) unstable; urgency=low
 
   * Bug #53055: fix and improve test case id output

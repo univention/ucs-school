@@ -42,7 +42,7 @@ def check_uids(member_dn_list, open_ldap_co):
         while timeout > 0:
             try:
                 attrs = open_ldap_co.get(dn, attr=get_attrs)
-                if set(attrs.keys()).issubset(set(get_attrs)):
+                if set(get_attrs).issubset(set(attrs.keys())):
                     print("Replication complete: {!r} -> {!r}".format(dn, attrs))
                     replicated = True
                 else:
