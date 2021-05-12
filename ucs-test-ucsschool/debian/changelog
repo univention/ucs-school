@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.224) unstable; urgency=medium
+
+  * Bug #52853: ucs-test add package
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 12 May 2021 09:14:20 +0200
+
 ucs-test-ucsschool (6.0.223) unstable; urgency=low
 
   * Bug #52945: use full path to model imports

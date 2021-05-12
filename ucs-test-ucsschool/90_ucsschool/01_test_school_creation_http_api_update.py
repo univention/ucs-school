@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - python-ucs-school
-##   - ucs-school-import
+##   - ucs-school-import-http-api
 import os
 
 import django
