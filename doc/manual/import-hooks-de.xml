@@ -18,6 +18,13 @@
 	davon jeweils unterstützten Operationen können mehrere Skripte definiert
 	werden, die dann vor und nach den Operationen Anpassungen vornehmen.
   </para>
+  <caution>
+    <para>
+      Hook-Skripte werden zu &ucsUAS; Version 5.0 abgekündigt.
+      Mit &ucsUAS; Version 4.4 v9 wurden Python-basierte Hooks eingeführt, welche ihre Funktion übernehmen.
+      Ihre Funktionaliät wird unten, in <xref linkend="import:pyhooks"/> erklärt.
+    </para>
+  </caution>
   <para>
 	Damit die Import-Skripte die Hook-Skripte finden können, müssen diese unterhalb
 	des Verzeichnisses <filename>/usr/share/ucs-school-import/hooks/</filename> abgelegt
@@ -108,10 +115,11 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  anzulegen, auf die alle Benutzer Zugriff erhalten.
 	</para>
 	<para>
-	  Das Hook-Skript <command>ou_create_post.d/52marktplatz_create</command> wird ab &ucsUAS;
-	  für UCS 2.4 mitgeliefert und legt beim Aufruf von <command>create_ou</command> die
-	  Freigabe ``Marktplatz'' automatisch an. Über
-	  die &ucsUCRV; <envar>ucsschool/import/generate/share/marktplatz</envar> kann der Hook
+	  Das Hook-Skript <command>ou_create_post.d/52marktplatz_create</command> wurde ab &ucsUAS;
+	  für UCS 2.4 mitgeliefert und legte beim Aufruf von <command>create_ou</command> die
+	  Freigabe ``Marktplatz'' automatisch an.
+      Seit &ucsUAS; 4.4 v8 existiert der Hook nicht mehr als separate Datei, da er in den Kern von &ucsUAS; übernommen wurde. Über
+	  die &ucsUCRV; <envar>ucsschool/import/generate/share/marktplatz</envar> kann das Anlegen der Freigabe
 	  de-/aktiviert werden, indem der Variable der Wert <literal>no</literal> bzw. <literal>yes</literal>
 	  zugeordnet wird.
 	</para>
@@ -161,14 +169,203 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  Auf den Schul-DCs wird ein abweichender Container für DHCP-Objekte
 	  verwendet, weshalb die &ucsUCRV; <envar>dhcpd/ldap/base</envar> entsprechend gesetzt werden
 	  muss. Um das manuelle Setzen der UCR-Variable für jede neue OU bzw. jeden
-	  neuen Schul-DC zu vermeiden, wird über den Standard-Hook
-	  <command>ou_create_post.d/40dhcpsearchbase_create</command> automatisch beim Erstellen einer OU die
+	  neuen Schul-DC zu vermeiden, wird automatisch beim Erstellen einer OU die
 	  UCR-Richtlinie <uri>ou-default-ucr-policy</uri> im Container
 	  <uri>cn=policies,ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri> angelegt und anschließend mit dem OU-Objekt <uri>ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri>
-	  verknüpft. Über die Richtlinie wird die &ucsUCRV; <envar>dhcpd/ldap/base</envar>
+	  verknüpft. Bis &ucsUAS; 4.4 v8 tat dies der Hook <command>ou_create_post.d/40dhcpsearchbase_create</command>, mittlerweile ist diese Funktion im Kern.
+      Über die Richtlinie wird die &ucsUCRV; <envar>dhcpd/ldap/base</envar>
 	  entsprechend gesetzt. Dadurch wird sichergestellt, dass die in der Richtlinie
 	  gesetzten UCR-Variablen auf allen UCS-Systemen der OU
 	  automatisch übernommen werden.
 	</para>
+  </section>
+
+  <section id="import:pyhooks">
+      <title>Python-Hooks</title>
+      <para>
+          Ab &ucsUAS; 4.4 v9 kann vor und nach dem Anlegen, Ändern, Verschieben und Löschen von &ucsUAS; Objekten Python-Code ausgeführt werden.
+          Hook-Skripte werden ab &ucsUAS; 5.0 nicht mehr unterstützt.
+      </para>
+      <para>
+          Python-Hooks werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranularere Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+      </para>
+      <para>
+          Python-Hooks für &ucsUAS; Objekte ähneln sehr stark den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>).
+          Das meiste was in der Dokumentation über diese steht, gilt auch hier.
+      </para>
+      <para>
+          Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet.
+          In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname>, etc. definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
+          Der Name der Datei mit der eigenen Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
+          Zwei Beispiele finden sich auf einem Primary Node (DC Master) in <filename>hook_example1.py</filename> und <filename>hook_example2.py</filename> unter <filename class="directory">/usr/share/doc/python-ucs-school/</filename> bzw. online auf <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example1.py">https://github.com/.../hook_example1.py</ulink> und <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example2.py">https://github.com/.../hook_example2.py</ulink>.
+          Im folgenden wird an Hand des Beispiels in <filename>hook_example2.py</filename> erklärt, wie mit Hilfe eines Hooks jeder Schulklasse eine Emailadresse zugeordnet werden kann.
+      </para>
+      <caution>
+          <para>
+              Das Beispiel ist lauffähig, aber nicht produktionsreif.
+              Dafür bräuchte es u.a. zusätzlichen Code um robust mit existierende Email-Adressen umzugehen.
+          </para>
+      </caution>
+      <para>
+          Ein Python-Hook ist eine Klasse die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet und einige Attribute und Methoden definiert.
+          <programlisting language="python">
+from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.hook import Hook
+
+class MailForSchoolClass(Hook):
+    model = SchoolClass
+    priority = {
+        "post_create": 10,
+        "post_modify": 10,
+    }
+
+    def post_create(self, obj):  # type: (SchoolClass) -> None
+        ...
+
+    def post_modify(self, obj):  # type: (SchoolClass) -> None
+        ...
+          </programlisting>
+      </para>
+      <para>
+          Das Klassenattribut <code class="literal">model</code> bestimmt, für welche Objekte welchen Typs der Hook ausgeführt wird.
+          Der Hook wird auch für Objekte von Klassen ausgeführt, die von der angegebenen ableiten.
+          Wäre <code class="literal">code = Teacher</code> (aus <classname>ucsschool.lib.models</classname>), so würde der Hook auch für Objekte der Klasse <classname>TeachersAndStaff</classname> ausgeführt, nicht aber für solche vom Typ <classname>Staff</classname> oder <classname>Student</classname>.
+      </para>
+      <para>
+          Das Klassenattribut <code class="literal">priority</code> bestimmt die Reihenfolge in der Methoden von Hooks für den gleichen Typ ausgeführt werden, bzw. deaktiviert sie.
+          Methoden mit höheren Zahlen werden zu erst ausgeführt.
+          Ist der Wert <code class="literal">None</code> oder die Methode nicht aufgeführt, wird sie deaktiviert.
+          Angenommen es gäbe eine weitere Klasse mit einem Hook mit <code class="literal">model = SchoolClass</code> und diese würde <code class="literal">priority = {"post_create": 20}</code> definieren, so würde deren <methodname>post_create()</methodname> Methode <emphasis>vor</emphasis> <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
+      </para>
+      <para>
+          Alle Methoden der Klasse (<methodname>pre_create()</methodname>, <methodname>post_create()</methodname> etc.) empfangen ein Objekt vom Typ (oder davon abgeleiteten Typ), der in <code class="literal">model</code> dfiniert wurde, als Argument <code class="literal">obj</code> und geben nichts zurück.
+      </para>
+      <para>
+          Die <methodname>post_create()</methodname> Methode sieht folgendermaßen aus:
+          <programlisting language="python">
+def post_create(self, obj):  # type: (SchoolClass) -> None
+"""
+Create an email address for the new school class.
+
+:param SchoolClass obj: the SchoolClass instance, that was just created.
+:return: None
+"""
+    ml_name = self.name_for_mailinglist(obj)
+    self.logger.info("Setting email address %r on school class %r...", ml_name, obj.name)
+    # The SchoolClass object does not have an email attribute, so we'll have to access the underlying
+    # UDM object.
+    udm_obj = obj.get_udm_object(self.lo)
+    udm_obj["mailAddress"] = ml_name
+    udm_obj.modify()
+          </programlisting>
+          Die Klasse <classname>SchoolClass</classname> bietet leider kein Attribut an, um eine Email-Adresse anzugeben.
+          Die Klassen in <classname>ucsschool.lib.models</classname> sind jedoch tatsächlich eine Abstraktion regulärer &ucsUDM; Objekte.
+          Um auf diese "low level" Objekte zuzugreifen, wird die Methode <code class="literal">get_udm_object()</code> verwendet.
+          Als Argument muss ihr ein "LDAP Verbindungsobjekt" (<code class="literal">lo</code>) mitgegeben werden.
+          Dieses wird verwendet um den "low level" Zugriff auf das LDAP zu steuern.
+      </para>
+      <para>
+          Die Instanzvariablen <code class="literal">self.lo</code>, <code class="literal">self.logger</code> und <code class="literal">self.ucr</code> sind nach der Ausführung von <code class="literal">__init__()</code> verfügbar.
+          Es handelt sich bei ihnen um eine Instanzen eines LDAP Verbindungsobjekts, einer Python Logging Instanz und einer Instanz von &ucsUCR;.
+          Soll eigener Code zur Initialisierung ausgeführt werden, so sollte <code class="literal">__init__()</code> folgendermaßen implemeniert werden:
+          <programlisting language="python">
+class MailForSchoolClass(Hook):
+    def __init__(self, lo, *args, **kwargs):
+        super(MailForSchoolClass, self).__init__(*args, **kwargs)
+        # self.lo, self.logger und self.ucr sind jetzt verfügbar
+        # Ihr Code ab hier.
+          </programlisting>
+      </para>
+      <para>
+          Zwei Funktionen helfen dabei, aus dem Namen der Schulklasse und einem Domänennamen, eine Email-Adresse zu erzeugen:
+          <programlisting language="python">
+def name_for_mailinglist(self, obj):  # type: (SchoolClass) -> str
+    return "{}@{}".format(obj.name, self.domainname).lower()
+
+@property
+def domainname(self):  # type: () -> str
+    try:
+        return self.ucr["mail/hosteddomains"].split()[0]
+    except (AttributeError, IndexError):
+        return self.ucr["domainname"]
+          </programlisting>
+      </para>
+      <para>
+          Um Email-Adresse auch für umbenannte Schulklassen zu ändern, wird <methodname>post_modify</methodname> implementiert:
+          <programlisting language="python">
+def post_modify(self, obj):  # type: (SchoolClass) -> None
+    """
+    Change the email address of an existing school class.
+
+    :param SchoolClass obj: the SchoolClass instance, that was just modified.
+    :return: None
+    """
+    udm_obj = obj.get_udm_object(self.lo)
+    ml_name = self.name_for_mailinglist(obj)
+    if udm_obj["mailAddress"] != ml_name:  # this also works if it doesn't have an email address
+        self.logger.info(
+            "Changing the email address of school class %r from %r to %r...",
+            obj.name,
+            udm_obj["mailAddress"],
+            ml_name,
+        )
+        udm_obj["mailAddress"] = ml_name
+        udm_obj.modify()
+          </programlisting>
+      </para>
+      <para>
+          Die Datei mit obigem Python Code kann nun im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
+          Soll der Hook von einem UMC-Modul verwendet werden, muss zu erst der UMC-Server neu gestartet werden:
+          <programlisting language="sh">
+service univention-management-console-server restart
+          </programlisting>
+          Um den Hook zu testen, kann eine interaktive Python Shell verwendet werden.
+          Aus den folgenden Ausgaben wurde die Zeilen über das automatisch miterzeugte <classname>ClassShare</classname>, sowie einige nicht relevante Debug-Ausgaben entfernt, um den Text zu kürzen:
+          <programlisting language="python">
+>>> import logging
+>>> from ucsschool.lib.models.group import SchoolClass
+>>> from univention.admin.uldap import getAdminConnection
+
+>>> logging.basicConfig(level=logging.DEBUG, format="%(message)s", handlers=[logging.StreamHandler()])
+>>> lo, _ = getAdminConnection()
+
+>>> sc = SchoolClass(name="DEMOSCHOOL-igel", school="DEMOSCHOOL")
+>>> sc.create(lo)
+
+Starting SchoolClass.call_hooks('pre', 'create', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
+Hook directory /usr/share/ucs-school-import/hooks/group_create_pre.d not found or empty.
+Searching for hooks of type 'Hook' in: /usr/share/ucs-school-import/pyhooks...
+Found hook classes: MailForSchoolClass
+Loaded hooks: {'post_modify': ['MailForSchoolClass.post_modify'], 'post_create': ['MailForSchoolClass.post_create']}.
+Creating SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple')
+SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple') successfully created
+Starting SchoolClass.call_hooks('post', 'create', lo('cn=admin,dc=uni,dc=dtr')) for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=uni,dc=dtr').
+Hook directory /usr/share/ucs-school-import/hooks/group_create_post.d not found or empty.
+Running post_create hook MailForSchoolClass.post_create for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple')...
+Setting email address 'demoschool-igel@uni.dtr' on SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple')...
+True
+
+>>> sc.name = "DEMOSCHOOL-hase"
+>>> sc.modify(lo)
+
+Starting SchoolClass.call_hooks('pre', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple', old_dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
+Hook directory /usr/share/ucs-school-import/hooks/group_modify_pre.d not found or empty.
+Modifying SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple', old_dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple')
+SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple') successfully modified
+Starting SchoolClass.call_hooks('post', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
+Hook directory /usr/share/ucs-school-import/hooks/group_modify_post.d not found or empty.
+Running post_modify hook MailForSchoolClass.post_modify for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple')...
+Changing the email address of SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple') from 'demoschool-igel@example.com' to 'demoschool-hase@example.com'...
+True
+          </programlisting>
+          Vor dem Anlegen des Objekts wird in <filename class="directory">/usr/share/ucs-school-import/hooks/group_create_pre.d/</filename> nach den Hook-Skripte  gesucht, welche ab &ucsUAS; 5.0 nicht mehr unterstützt werden.
+          Anschließend wird in <filename class="directory">/usr/share/ucs-school-import/pyhooks/</filename> nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
+          Nach dem Laden aller Hooks wird angezeigt, in welcher Reihenfolge welche Methoden für welche Phase ausgeführt werden.
+          Da es keine <code>pre-create</code> Hooks gibt, wird nun das Objekt angelegt.
+          Anschließend werden <code>post-create</code> Hooks ausgeführt.
+          Erneut wird zu erst nach Hook-Skripten gesucht.
+          Anschließend wird <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
+          Beim <methodname>sc.modify(lo)</methodname> passiert das gleiche.
+      </para>
   </section>
 </chapter>

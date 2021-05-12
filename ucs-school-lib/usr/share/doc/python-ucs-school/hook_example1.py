@@ -38,8 +38,8 @@ import datetime
 import os
 import shutil
 
-from ucsschool.lib.models.group import ClassShare
 from ucsschool.lib.models.hook import Hook
+from ucsschool.lib.models.share import ClassShare
 
 BACKUP_BASE_PATH = "/var/backups/class_shares"
 
