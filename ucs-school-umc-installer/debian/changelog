@@ -1,3 +1,9 @@
+ucs-school-umc-installer (7.0.1) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:43:19 +0200
+
 ucs-school-umc-installer (7.0.0-7) unstable; urgency=low
 
   * Bug #52465: Install the Veyon proxy app during singlemaster installation

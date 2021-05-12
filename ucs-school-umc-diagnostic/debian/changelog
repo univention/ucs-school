@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-20) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:42:21 +0200
+
 ucs-school-umc-diagnostic (1.0.0-19) unstable; urgency=low
 
   * Bug #52147: add constistency checks

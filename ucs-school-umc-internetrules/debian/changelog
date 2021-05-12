@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (15.0.1) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:43:49 +0200
+
 ucs-school-umc-internetrules (15.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module

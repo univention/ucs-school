@@ -1,8 +1,14 @@
+ucs-school-umc-users (15.0.1) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:44:45 +0200
+
 ucs-school-umc-users (15.0.0-8) unstable; urgency=medium
 
   * Bug 52247: change a description in the password reset module
 
- -- Tobias Wenzel <wenzel@univention.de>  Mo, 09 Nov 2020 09:25:42 +0100
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 09 Nov 2020 09:25:42 +0100
 
 ucs-school-umc-users (15.0.0-7) unstable; urgency=medium
 

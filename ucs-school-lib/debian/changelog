@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.25) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:40:52 +0200
+
 ucs-school-lib (12.2.24) unstable; urgency=medium
 
   * Bug #53044: make validation case insensitive

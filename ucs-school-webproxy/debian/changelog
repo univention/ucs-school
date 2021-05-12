@@ -1,3 +1,9 @@
+ucs-school-webproxy (15.0.1) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:45:54 +0200
+
 ucs-school-webproxy (15.0.0-1) unstable; urgency=low
 
   * Bug #50197: fix missing UCR headers

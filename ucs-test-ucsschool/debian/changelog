@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.223) unstable; urgency=low
+
+  * Bug #52945: use full path to model imports
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 May 2021 08:46:05 +0200
+
 ucs-test-ucsschool (6.0.222) unstable; urgency=medium
 
   * Bug #52654: correct set operation
