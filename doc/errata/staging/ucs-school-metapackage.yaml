@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-metapackage
-fix:
+fix: 12.0.4-16A~4.4.0.202105120911
 desc: |
  * Importing model classes from the Python package <tt>ucsschool.lib.models</tt> has been deprecated for UCS@school 5.0. The packages <tt>__init__.py</tt> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <tt>from ucsschool.lib.models import Student</tt> must now be written as <tt>from ucsschool.lib.models.user import Student</tt>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (Bug #52945).
 bug: [52945]
