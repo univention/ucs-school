@@ -2,3 +2,4 @@ ipaddr
 python-ldap
 requests
 univention-lib
+Unidecode
