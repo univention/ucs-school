@@ -291,9 +291,9 @@ def add_stream_logger_to_schoollib(level="DEBUG", stream=sys.stderr, log_format=
     Outputs all log messages of the models code to a stream (default: "stderr")::
 
         from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
-        add_module_logger_to_schoollib()
+        add_stream_logger_to_schoollib()
         # or:
-        add_module_logger_to_schoollib(level='ERROR', stream=sys.stdout,
+        add_stream_logger_to_schoollib(level='ERROR', stream=sys.stdout,
             log_format='ERROR (or worse): %(message)s')
     """
     logger = logging.getLogger(name or "ucsschool")
@@ -570,7 +570,7 @@ def get_logger(
         fmt = FILE_LOG_FORMATS[level]
         fmt_cls = logging.Formatter
     handler_defaults.update(handler_kwargs)
-    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=LOG_DATETIME_FORMAT)
+    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=str(LOG_DATETIME_FORMAT))
     fmt_kwargs.update(formatter_kwargs)
     if issubclass(fmt_cls, colorlog.ColoredFormatter):
         fmt_kwargs["log_colors"] = LOG_COLORS
