@@ -104,7 +104,12 @@ def run_import_job(task, importjob_id):
     try:
         runner.prepare_import()
     except Exception as exc:
-        logger.exception("An error occurred while preparing the import job: {}".format(exc))
+        # log.exception unless it's a InitialisationError with a 'log_traceback' attribute set to False
+        if getattr(exc, "log_traceback", True):
+            log = logger.exception
+        else:
+            log = logger.error
+        log("An error occurred while preparing the import job: {}".format(exc))
     else:
         # from here on we can log with the import logger
         runner.logger.info("-- Starting import job... --")
