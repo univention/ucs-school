@@ -316,7 +316,7 @@ def post_modify(self, obj):  # type: (SchoolClass) -> None
 service univention-management-console-server restart
           </programlisting>
           Um den Hook zu testen, kann eine interaktive Python Shell verwendet werden.
-          Einige Ausgaben wurden im folgenden Beipiel zur Verbesserung der Lesbarkeit gekürzt:
+          Einige Ausgaben wurden im folgenden Beispiel zur Verbesserung der Lesbarkeit gekürzt:
           <programlisting language="python">
 >>> import logging
 >>> from ucsschool.lib.models.group import SchoolClass
