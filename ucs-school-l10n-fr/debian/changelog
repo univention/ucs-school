@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (4.0.0-3) unstable; urgency=low
+
+  * Bug #53271: fix ucslint complaints
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 May 2021 15:05:08 +0200
+
 ucs-school-l10n-fr (4.0.0-2) unstable; urgency=low
 
   * Bug #47418: remove UMC code from schoolldap module

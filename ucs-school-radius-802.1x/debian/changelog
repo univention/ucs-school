@@ -1,8 +1,14 @@
+ucs-school-radius-802.1x (7.0.1-7) unstable; urgency=low
+
+  * Bug #53271: fix ucslint complaints
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 May 2021 15:05:19 +0200
+
 ucs-school-radius-802.1x (7.0.1-6) unstable; urgency=medium
 
   * Bug #46018: fix syntax error and update wording of debug output
 
- -- Jürn Brodersen <brodersen@univention.de>  Mon, 18 Feb 2019 16:51:05 +0100
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 26 Feb 2019 17:26:01 +0100
 
 ucs-school-radius-802.1x (7.0.1-5) unstable; urgency=medium
 
