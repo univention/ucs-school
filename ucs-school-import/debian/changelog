@@ -1,3 +1,9 @@
+ucs-school-import (17.0.59) unstable; urgency=medium
+
+  * Bug #49102: allow null for not set schema values
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 17 May 2021 13:43:25 +0200
+
 ucs-school-import (17.0.58) unstable; urgency=medium
 
   * Bug #49102: added json schmema for user_import configuration checking

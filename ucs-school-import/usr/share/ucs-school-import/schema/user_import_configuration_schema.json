@@ -30,7 +30,7 @@
 		"csv": {
 			"type": "object",
 			"properties": {
-				"delimiter": {"type": "string"},
+				"delimiter": {"type": ["string", "null"]},
 				"mapping": {"type": "object"},
 				"header_lines": {"type": "integer"},
 				"incell-delimiter": {
@@ -70,10 +70,10 @@
 						"teacher_and_staff": {"type": "string"}
 					}
 				},
-				"<udm attribute name>": {"type": "string"}
+				"<udm attribute name>": {"type": ["string", "null"]}
 			}
 		},
-		"maildomain": {"type": "string"},
+		"maildomain": {"type": ["string", "null"]},
 		"mandatory_attributes": {
 			"type": "array",
 			"items": {"type": "string"}
@@ -82,16 +82,15 @@
 		"output": {
 			"type": "object",
 			"properties": {
-				"new_user_passwords": {"type": "string"},
+				"new_user_passwords": {"type": ["string", "null"]},
 				"user_import_summary": {"type": "string"}
 			}
 		},
 		"password_length": {"type": "integer"},
-		"school": {"type": "string"},
-		"source_uid": {"type": "string"},
+		"school": {"type": ["string", "null"]},
+		"source_uid": {"type": ["string", "null"]},
 		"tolerate_errors": {"type": "integer"},
-		"user_deletion": {"type": "object"},
-		"user_role": {"type": "string"},
+		"user_role": {"type": ["string", "null"]},
 		"username": {
 			"type": "object",
 			"properties": {
