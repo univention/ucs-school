@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.5.2.0-1) unstable; urgency=low
+
+  * Bug #52522: set language during build to make ucslint happy
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 17 May 2021 09:54:00 +0200
+
 ucs-school-veyon-windows (4.5.2.0-0) unstable; urgency=low
 
   * Bug #52522: provide Veyon Windows setup binary and SSL keys
