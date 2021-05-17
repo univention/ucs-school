@@ -227,18 +227,18 @@ class MailForSchoolClass(Hook):
           </programlisting>
       </para>
       <para>
-          Das Klassenattribut <code class="literal">model</code> bestimmt, für welche Objekte welchen Typs der Hook ausgeführt wird.
+          Das Klassenattribut <property>model</property> bestimmt, für welche Objekte welchen Typs der Hook ausgeführt wird.
           Der Hook wird auch für Objekte von Klassen ausgeführt, die von der angegebenen ableiten.
-          Wäre <code class="literal">code = Teacher</code> (aus <classname>ucsschool.lib.models</classname>), so würde der Hook auch für Objekte der Klasse <classname>TeachersAndStaff</classname> ausgeführt, nicht aber für solche vom Typ <classname>Staff</classname> oder <classname>Student</classname>.
+          Wäre <code>code = Teacher</code> (aus <classname>ucsschool.lib.models</classname>), so würde der Hook auch für Objekte der Klasse <classname>TeachersAndStaff</classname> ausgeführt, nicht aber für solche vom Typ <classname>Staff</classname> oder <classname>Student</classname>.
       </para>
       <para>
-          Das Klassenattribut <code class="literal">priority</code> bestimmt die Reihenfolge in der Methoden von Hooks für den gleichen Typ ausgeführt werden, bzw. deaktiviert sie.
+          Das Klassenattribut <property>priority</property> bestimmt die Reihenfolge in der Methoden von Hooks für den gleichen Typ ausgeführt werden, bzw. deaktiviert sie.
           Methoden mit höheren Zahlen werden zu erst ausgeführt.
-          Ist der Wert <code class="literal">None</code> oder die Methode nicht aufgeführt, wird sie deaktiviert.
-          Angenommen es gäbe eine weitere Klasse mit einem Hook mit <code class="literal">model = SchoolClass</code> und diese würde <code class="literal">priority = {"post_create": 20}</code> definieren, so würde deren <methodname>post_create()</methodname> Methode <emphasis>vor</emphasis> <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
+          Ist der Wert <varname>None</varname> oder die Methode nicht aufgeführt, wird sie deaktiviert.
+          Angenommen es gäbe eine weitere Klasse mit einem Hook mit <code>model = SchoolClass</code> und diese würde <code>priority = {"post_create": 20}</code> definieren, so würde deren <methodname>post_create()</methodname> Methode <emphasis>vor</emphasis> <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
       </para>
       <para>
-          Alle Methoden der Klasse (<methodname>pre_create()</methodname>, <methodname>post_create()</methodname> etc.) empfangen ein Objekt vom Typ (oder davon abgeleiteten Typ), der in <code class="literal">model</code> dfiniert wurde, als Argument <code class="literal">obj</code> und geben nichts zurück.
+          Alle Methoden der Klasse (<property>pre_create()</property>, <methodname>post_create()</methodname> etc.) empfangen ein Objekt vom Typ (oder davon abgeleiteten Typ), der in <property>model</property> definiert wurde, als Argument <varname>obj</varname> und geben nichts zurück.
       </para>
       <para>
           Die <methodname>post_create()</methodname> Methode sieht folgendermaßen aus:
@@ -260,14 +260,14 @@ Create an email address for the new school class.
           </programlisting>
           Die Klasse <classname>SchoolClass</classname> bietet leider kein Attribut an, um eine Email-Adresse anzugeben.
           Die Klassen in <classname>ucsschool.lib.models</classname> sind jedoch tatsächlich eine Abstraktion regulärer &ucsUDM; Objekte.
-          Um auf diese "low level" Objekte zuzugreifen, wird die Methode <code class="literal">get_udm_object()</code> verwendet.
-          Als Argument muss ihr ein "LDAP Verbindungsobjekt" (<code class="literal">lo</code>) mitgegeben werden.
+          Um auf diese "low level" Objekte zuzugreifen, wird die Methode <methodname>get_udm_object()</methodname> verwendet.
+          Als Argument muss ihr ein "LDAP Verbindungsobjekt" (<varname>lo</varname>) mitgegeben werden.
           Dieses wird verwendet um den "low level" Zugriff auf das LDAP zu steuern.
       </para>
       <para>
-          Die Instanzvariablen <code class="literal">self.lo</code>, <code class="literal">self.logger</code> und <code class="literal">self.ucr</code> sind nach der Ausführung von <code class="literal">__init__()</code> verfügbar.
+          Die Instanzvariablen <property>self.lo</property>, <property>self.logger</property> und <property>self.ucr</property> sind nach der Ausführung von <methodname>__init__()</methodname> verfügbar.
           Es handelt sich bei ihnen um eine Instanzen eines LDAP Verbindungsobjekts, einer Python Logging Instanz und einer Instanz von &ucsUCR;.
-          Soll eigener Code zur Initialisierung ausgeführt werden, so sollte <code class="literal">__init__()</code> folgendermaßen implemeniert werden:
+          Soll eigener Code zur Initialisierung ausgeführt werden, so sollte <methodname>__init__()</methodname> folgendermaßen implemeniert werden:
           <programlisting language="python">
 class MailForSchoolClass(Hook):
     def __init__(self, lo, *args, **kwargs):
@@ -361,8 +361,8 @@ True
           Vor dem Anlegen des Objekts wird in <filename class="directory">/usr/share/ucs-school-import/hooks/group_create_pre.d/</filename> nach den Hook-Skripte  gesucht, welche ab &ucsUAS; 5.0 nicht mehr unterstützt werden.
           Anschließend wird in <filename class="directory">/usr/share/ucs-school-import/pyhooks/</filename> nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
           Nach dem Laden aller Hooks wird angezeigt, in welcher Reihenfolge welche Methoden für welche Phase ausgeführt werden.
-          Da es keine <code>pre-create</code> Hooks gibt, wird nun das Objekt angelegt.
-          Anschließend werden <code>post-create</code> Hooks ausgeführt.
+          Da es keine <varname>pre-create</varname> Hooks gibt, wird nun das Objekt angelegt.
+          Anschließend werden <varname>post-create</varname> Hooks ausgeführt.
           Erneut wird zu erst nach Hook-Skripten gesucht.
           Anschließend wird <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
           Beim <methodname>sc.modify(lo)</methodname> passiert das gleiche.
