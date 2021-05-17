@@ -190,8 +190,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
           Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
-          Hooks für &ucsUAS; Objekte ähneln sehr stark den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>).
-          Das meiste, was in der Dokumentation über diese steht, gilt auch hier.
+          Hooks für &ucsUAS; Objekte ähneln den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>).
       </para>
       <para>
           Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet.
@@ -232,7 +231,7 @@ class MailForSchoolClass(Hook):
           Wäre <code>model = Teacher</code> (aus <classname>ucsschool.lib.models</classname>), so würde der Hook auch für Objekte der Klasse <classname>TeachersAndStaff</classname> ausgeführt, nicht aber für solche vom Typ <classname>Staff</classname> oder <classname>Student</classname>.
       </para>
       <para>
-          Das Klassenattribut <property>priority</property> bestimmt die Reihenfolge in der Methoden von Hooks, des gleichen Typs (gleiches <property>model</property>) ausgeführt werden, bzw. deaktiviert sie.
+          Das Klassenattribut <property>priority</property> bestimmt die Reihenfolge in der Methoden von Hooks des gleichen Typs (gleiches <property>model</property>) ausgeführt werden bzw. deaktiviert sie.
           Methoden mit höheren Zahlen werden zuerst ausgeführt.
           Ist der Wert <varname>None</varname> oder die Methode nicht aufgeführt, wird sie deaktiviert.
           Angenommen es gäbe eine weitere Klasse mit einem Hook mit <code>model = SchoolClass</code> und diese würde <code>priority = {"post_create": 20}</code> definieren, so würde deren <methodname>post_create()</methodname> Methode <emphasis>vor</emphasis> <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
