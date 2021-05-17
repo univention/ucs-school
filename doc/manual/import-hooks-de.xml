@@ -22,7 +22,7 @@
     <para>
       Hook-Skripte werden zu &ucsUAS; Version 5.0 abgekündigt.
       Mit &ucsUAS; Version 4.4 v9 wurden Python-basierte Hooks eingeführt, welche ihre Funktion übernehmen.
-      Ihre Funktionaliät wird unten, in <xref linkend="import:pyhooks"/> erklärt.
+      Ihre Funktionalität wird unten, in <xref linkend="import:pyhooks"/> erklärt.
     </para>
   </caution>
   <para>
@@ -187,7 +187,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
           Hook-Skripte werden ab &ucsUAS; 5.0 nicht mehr unterstützt.
       </para>
       <para>
-          Python-Hooks werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranularere Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+          Python-Hooks werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
           Python-Hooks für &ucsUAS; Objekte ähneln sehr stark den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>).
@@ -198,12 +198,12 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
           In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname>, etc. definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
           Der Name der Datei mit der eigenen Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
           Zwei Beispiele finden sich auf einem Primary Node (DC Master) in <filename>hook_example1.py</filename> und <filename>hook_example2.py</filename> unter <filename class="directory">/usr/share/doc/python-ucs-school/</filename> bzw. online auf <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example1.py">https://github.com/.../hook_example1.py</ulink> und <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example2.py">https://github.com/.../hook_example2.py</ulink>.
-          Im folgenden wird an Hand des Beispiels in <filename>hook_example2.py</filename> erklärt, wie mit Hilfe eines Hooks jeder Schulklasse eine Emailadresse zugeordnet werden kann.
+          Im folgenden wird an Hand des Beispiels in <filename>hook_example2.py</filename> erklärt, wie mit Hilfe eines Hooks jeder Schulklasse eine Email-Adresse zugeordnet werden kann.
       </para>
       <caution>
           <para>
-              Das Beispiel ist lauffähig, aber nicht produktionsreif.
-              Dafür bräuchte es u.a. zusätzlichen Code um robust mit existierende Email-Adressen umzugehen.
+              Das Beispiel ist lauffähig, aber nicht für den Produktivbetrieb geeignet.
+              Dafür bräuchte es u.a. zusätzlichen Code um robust mit existierenden Email-Adressen umzugehen.
           </para>
       </caution>
       <para>
@@ -238,7 +238,7 @@ class MailForSchoolClass(Hook):
           Angenommen es gäbe eine weitere Klasse mit einem Hook mit <code>model = SchoolClass</code> und diese würde <code>priority = {"post_create": 20}</code> definieren, so würde deren <methodname>post_create()</methodname> Methode <emphasis>vor</emphasis> <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
       </para>
       <para>
-          Alle Methoden der Klasse (<property>pre_create()</property>, <methodname>post_create()</methodname> etc.) empfangen ein Objekt vom Typ (oder davon abgeleiteten Typ), der in <property>model</property> definiert wurde, als Argument <varname>obj</varname> und geben nichts zurück.
+          Alle Methoden der Klasse (<methodname>pre_create()</methodname>, <methodname>post_create()</methodname> etc.) empfangen ein Objekt vom Typ (oder davon abgeleiteten Typ), der in <property>model</property> definiert wurde, als Argument <varname>obj</varname> und geben nichts zurück.
       </para>
       <para>
           Die <methodname>post_create()</methodname> Methode sieht folgendermaßen aus:
@@ -266,13 +266,13 @@ Create an email address for the new school class.
       </para>
       <para>
           Die Instanzvariablen <property>self.lo</property>, <property>self.logger</property> und <property>self.ucr</property> sind nach der Ausführung von <methodname>__init__()</methodname> verfügbar.
-          Es handelt sich bei ihnen um eine Instanzen eines LDAP Verbindungsobjekts, einer Python Logging Instanz und einer Instanz von &ucsUCR;.
-          Soll eigener Code zur Initialisierung ausgeführt werden, so sollte <methodname>__init__()</methodname> folgendermaßen implemeniert werden:
+          Es handelt sich bei ihnen um die Instanz eines LDAP Verbindungsobjekts, einer Python <classname>Logging</classname> Instanz und einer Instanz von &ucsUCR;.
+          Soll eigener Code zur Initialisierung ausgeführt werden, so sollte <methodname>__init__()</methodname> folgendermaßen implementiert werden:
           <programlisting language="python">
 class MailForSchoolClass(Hook):
     def __init__(self, lo, *args, **kwargs):
-        super(MailForSchoolClass, self).__init__(*args, **kwargs)
-        # self.lo, self.logger und self.ucr sind jetzt verfügbar
+        super(MailForSchoolClass, self).__init__(lo, *args, **kwargs)
+        # Ab jetzt sind self.lo, self.logger und self.ucr verfügbar.
         # Ihr Code ab hier.
           </programlisting>
       </para>
@@ -320,7 +320,7 @@ def post_modify(self, obj):  # type: (SchoolClass) -> None
 service univention-management-console-server restart
           </programlisting>
           Um den Hook zu testen, kann eine interaktive Python Shell verwendet werden.
-          Aus den folgenden Ausgaben wurde die Zeilen über das automatisch miterzeugte <classname>ClassShare</classname>, sowie einige nicht relevante Debug-Ausgaben entfernt, um den Text zu kürzen:
+          Aus den folgenden Ausgaben wurde die Zeilen über das automatisch mit erzeugte <classname>ClassShare</classname>, sowie einige nicht relevante Debug-Ausgaben entfernt, um den Text zu kürzen:
           <programlisting language="python">
 >>> import logging
 >>> from ucsschool.lib.models.group import SchoolClass
