@@ -123,7 +123,10 @@ class LdapStorageBackend(NameCounterStorageBackend):
         try:
             self.lo.add(
                 "cn={},{}".format(escape_dn_chars(name), self.ldap_base),
-                [("objectClass", "ucsschoolUsername"), ("ucsschoolUsernameNextNumber", str(value))],
+                [
+                    ("objectClass", [b"ucsschoolUsername"]),
+                    ("ucsschoolUsernameNextNumber", [str(value).encode("utf-8")]),
+                ],
             )
         except objectExists:
             raise NameKeyExists("Cannot create key {!r} - already exists.".format(name))
@@ -132,7 +135,13 @@ class LdapStorageBackend(NameCounterStorageBackend):
         try:
             self.lo.modify(
                 "cn={},{}".format(escape_dn_chars(name), self.ldap_base),
-                [("ucsschoolUsernameNextNumber", str(old_value), str(new_value))],
+                [
+                    (
+                        "ucsschoolUsernameNextNumber",
+                        str(old_value).encode("utf-8"),
+                        str(new_value).encode("utf-8"),
+                    )
+                ],
             )
         except noObject:
             raise NoValueStored("Name {!r} not found.".format(name))
