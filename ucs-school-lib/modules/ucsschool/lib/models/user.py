@@ -563,7 +563,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         school = cls.get_school_from_dn(group_dn)
         if school is None and name.startswith(cls.get_search_base(school).group_prefix_admins):
             # Should only happen for ouadmin groups
-            group = BasicGroup.from_dn(group_dn, None, lo)
+            group = await BasicGroup.from_dn(group_dn, None, lo)
         elif Group.is_school_class(school, group_dn):
             group = SchoolClass.cache(name, school)
         else:
