@@ -355,24 +355,32 @@ def new_school_users(new_school_user):
 
 
 @pytest.fixture
-async def schedule_delete_user_dn(udm_kwargs):
-    dns = []
+async def schedule_delete_udm_obj(udm_kwargs):
+    objs: List[Tuple[str, str]] = []
 
-    def _func(dn: str):
-        dns.append(dn)
+    def _func(dn: str, udm_mod: str):
+        objs.append((dn, udm_mod))
 
     yield _func
 
     async with UDM(**udm_kwargs) as udm:
-        user_mod = udm.get("users/user")
-        for dn in dns:
+        for dn, udm_mod_name in objs:
+            mod = udm.get(udm_mod_name)
             try:
-                user_obj = await user_mod.get(dn)
+                udm_obj = await mod.get(dn)
             except UdmNoObject:
-                print(f"User {dn!r} does not exist (anymore).")
+                print(f"UDM {udm_mod_name!r} object {dn!r} does not exist (anymore).")
                 continue
-            await user_obj.delete()
-            print(f"Deleted user {dn!r} through UDM.")
+            await udm_obj.delete()
+            print(f"Deleted UDM {udm_mod_name!r} object {dn!r} through UDM.")
+
+
+@pytest.fixture
+async def schedule_delete_user_dn(schedule_delete_udm_obj):
+    def _func(dn: str):
+        schedule_delete_udm_obj(dn, "users/user")
+
+    yield _func
 
 
 @pytest.fixture
