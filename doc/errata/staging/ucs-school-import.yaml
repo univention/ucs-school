@@ -7,5 +7,5 @@ fix: 17.0.60A~4.4.0.202105190918
 desc: |
  * Importing model classes from the Python package <tt>ucsschool.lib.models</tt> has been deprecated for UCS@school 5.0. The packages <tt>__init__.py</tt> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <tt>from ucsschool.lib.models import Student</tt> must now be written as <tt>from ucsschool.lib.models.user import Student</tt>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (Bug #52945).
  * This fix introduces an automatism to check the type sanity of a user_import configuration with jsonschema. The file <envar>/usr/share/ucs-school-import/schema/user_import_configuration_schema.json</envar> declares the expected data types for all valid json configuration fields. An error message will be shown on mismatches with this schema (Bug #49102).
- * Internal changes: adapted to changed in the hook halndling code of the ucsschool.lib.model base class (Bug #49557).
+ * Internal changes: adapted to changes in the hook handling code of the ucsschool.lib.model base class (Bug #49557).
 bug: [52945, 49102, 49557]

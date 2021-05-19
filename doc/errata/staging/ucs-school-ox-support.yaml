@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-ox-support
 fix: 3.0.1A~4.4.0.202105190922
 desc: |
- * Internal changes: adapted to changed in the hook halndling code of the ucsschool.lib.model base class (Bug #49557).
+ * Internal changes: adapted to changes in the hook handling code of the ucsschool.lib.model base class (Bug #49557).
 bug: [49557]
