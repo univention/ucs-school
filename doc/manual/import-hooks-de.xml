@@ -184,13 +184,25 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
       <title>Python-Hooks</title>
       <para>
           Ab &ucsUAS; 4.4 v9 kann vor und nach dem Anlegen, Ändern, Verschieben und Löschen von &ucsUAS; Objekten Python-Code ausgeführt werden.
-          Hook-Skripte werden ab &ucsUAS; 5.0 nicht mehr unterstützt.
+          Die im vorherigen Kapitel beschriebenen Hook-Skripte werden ab &ucsUAS; 5.0 nicht mehr unterstützt.
       </para>
       <para>
           Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
-          Hooks für &ucsUAS; Objekte ähneln den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>).
+          Die Hooks werden für alle Klassen, von denen Objekte erzeugt werden können und die von <classname>ucsschool.lib.models.base.UCSSchoolHelperAbstractClass</classname> ableiten, ausgeführt.
+          Diese Klassen finden sich in im Python Paket <classname>ucsschool.lib.models</classname> (z.B. <classname>Student</classname>, <classname>SchoolClass</classname>, <classname>Workgroup</classname>).
+      </para>
+      <caution>
+          <para>
+              Hooks werden nur auf dem System ausgeführt, auf dem sie installiert sind.
+              In der Regel ist das der Primary Node (DC Master), sowie alle Backup Nodes (DC Backups).
+              Sollen Hooks auch auf Replication Nodes (DC Slave) ausgeführt werden, so müssen sie auch dort installiert werden.
+              Eine automatische Verteilung der Hook Dateien findet nicht statt.
+          </para>
+      </caution>
+      <para>
+          Hooks für &ucsUAS; Objekte ähneln den bekannten Hooks für den Benutzerimport (siehe <biblioref linkend="ucs-school-cli-import"/>), werden jedoch auch ohne den Import zu verwenden ausgeführt und haben einige andere Attribute.
       </para>
       <para>
           Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet.
