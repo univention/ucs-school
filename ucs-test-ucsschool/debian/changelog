@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.226) unstable; urgency=low
+
+  * Bug #49557: change path for Python based hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 20 May 2021 09:47:10 +0200
+
 ucs-test-ucsschool (6.0.225) unstable; urgency=low
 
   * Bug #49557: add support for Python based hooks

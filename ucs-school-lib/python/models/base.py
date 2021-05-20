@@ -70,7 +70,7 @@ try:
 except ImportError:
     pass
 
-PYHOOKS_PATH = "/usr/share/ucs-school-import/pyhooks"
+PYHOOKS_PATH = "/var/lib/ucs-school-lib/hooks"
 PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"
 _pyhook_loader = lazy_object_proxy.Proxy(
     lambda: PyHooksLoader(PYHOOKS_PATH, PYHOOKS_BASE_CLASS)

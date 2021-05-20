@@ -17,12 +17,13 @@ import re
 from unittest import TestCase, main
 
 from six import add_metaclass
+
 import ucsschool.lib.models.user
 import univention.testing.strings as uts
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, _pyhook_loader
+from ucsschool.lib.models.base import PYHOOKS_PATH, UCSSchoolHelperAbstractClass, _pyhook_loader
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
@@ -37,7 +38,6 @@ MODULE_PATHS = (
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hook.py")  # TODO: remove -.py
 LEGACY_HOOK_BASE_PATH = "/usr/share/ucs-school-import/hooks"
-PYHOOK_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
 RESULTFILE = "/tmp/test83_result.txt"
 EXPECTED_CLASSES = {
     "AnyComputer": "ucsschool.lib.models.computer",
@@ -266,14 +266,16 @@ class TestPythonHooks(TestCase):
             with open(TEST_HOOK_SOURCE, "r") as fpr:
                 hook_source_text = fpr.read()
             hook_file_path = os.path.join(
-                PYHOOK_BASE_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
+                PYHOOKS_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
             )
             try:
                 imp_txt = "from {} import {}".format(
                     self._import_line_class2module[self.model.__name__], self.model.__name__
                 )
             except KeyError:
-                imp_txt = "from {} import {}".format(EXPECTED_CLASSES[self.model.__name__], self.model.__name__)
+                imp_txt = "from {} import {}".format(
+                    EXPECTED_CLASSES[self.model.__name__], self.model.__name__
+                )
             with open(hook_file_path, "w") as fpw:
                 text = (
                     hook_source_text.replace("MODEL_CLASS_VAR", self.model.__name__)
@@ -338,7 +340,7 @@ class TestPythonHooks(TestCase):
 
     def _check_test_setup(self):
         hook_file_path = os.path.join(
-            PYHOOK_BASE_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
+            PYHOOKS_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
         )
         self.assertTrue(
             os.path.isfile(hook_file_path), "Not a / not existing file: {!r}".format(hook_file_path)

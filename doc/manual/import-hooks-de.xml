@@ -195,7 +195,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
       <para>
           Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet.
           In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname>, etc. definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
-          Der Name der Datei mit der abgeleiteten Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
+          Der Name der Datei mit der abgeleiteten Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/var/lib/ucs-school-lib/hooks</filename> abgespeichert werden.
           Zwei Beispiele finden sich auf Servern der Rolle Primary Node (DC Master) in <filename>hook_example1.py</filename> und <filename>hook_example2.py</filename> unter <filename class="directory">/usr/share/doc/python-ucs-school/</filename> bzw. online auf <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example1.py">https://github.com/.../hook_example1.py</ulink> und <ulink url="https://github.com/univention/ucs-school/blob/4.4/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example2.py">https://github.com/.../hook_example2.py</ulink>.
           Im Folgenden wird anhand des Beispiels in <filename>hook_example2.py</filename> erklärt, wie mit Hilfe eines Hooks jeder Schulklasse eine Email-Adresse zugeordnet werden kann.
       </para>
@@ -310,7 +310,7 @@ def post_modify(self, obj):  # type: (SchoolClass) -> None
           </programlisting>
       </para>
       <para>
-          Die Datei mit obigem Python Code kann nun im Verzeichnis <filename class="directory">/usr/share/ucs-school-import/pyhooks</filename> abgespeichert werden.
+          Die Datei mit obigem Python Code kann nun im Verzeichnis <filename class="directory">/var/lib/ucs-school-lib/hooks</filename> abgespeichert werden.
           Soll der Hook von einem UMC-Modul verwendet werden, muss zuerst der UMC-Server neu gestartet werden:
           <programlisting language="sh">
 service univention-management-console-server restart
@@ -330,7 +330,7 @@ service univention-management-console-server restart
 
 Starting SchoolClass.call_hooks('pre', 'create', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
 Hook directory /usr/share/ucs-school-import/hooks/group_create_pre.d not found or empty.
-Searching for hooks of type 'Hook' in: /usr/share/ucs-school-import/pyhooks...
+Searching for hooks of type 'Hook' in: /var/lib/ucs-school-lib/hooks...
 Found hook classes: MailForSchoolClass
 Loaded hooks: {'post_modify': ['MailForSchoolClass.post_modify'], 'post_create': ['MailForSchoolClass.post_create']}.
 Creating SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...')
@@ -355,7 +355,7 @@ Changing the email address of SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSC
 True
           </programlisting>
           Vor dem Anlegen des Objekts wird in <filename class="directory">/usr/share/ucs-school-import/hooks/group_create_pre.d/</filename> nach den Hook-Skripte  gesucht, welche ab &ucsUAS; 5.0 nicht mehr unterstützt werden.
-          Anschließend wird in <filename class="directory">/usr/share/ucs-school-import/pyhooks/</filename> nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
+          Anschließend wird in <filename class="directory">/var/lib/ucs-school-lib/hooks/</filename> nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
           Nach dem Laden aller Hooks wird angezeigt, in welcher Reihenfolge welche Methoden für welche Phase ausgeführt werden.
           Da es keine <varname>pre-create</varname> Hooks gibt, wird nun das Objekt angelegt.
           Anschließend werden <varname>post-create</varname> Hooks ausgeführt.
