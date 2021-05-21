@@ -126,6 +126,7 @@ RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest
 	cp kelvin-api/usr/share/ucs-school-import/checks/*.py /usr/share/ucs-school-import/checks/ && \
 	mkdir -p /usr/share/ucs-school-import/pyhooks && \
 	mkdir -p /var/lib/ucs-school-import && \
+	mkdir -p /var/lib/ucs-school-lib/kelvin-hooks && \
 	cp -r /kelvin/ucs-school-import/empty_configs /var/lib/ucs-school-import/configs && \
 	python3 /kelvin/kelvin-api/setup.py build_html && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/kelvin-api[development] && \

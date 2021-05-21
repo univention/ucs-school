@@ -1,4 +1,13 @@
 <h1>Changelog</h1>
+<h2>v1.4.2 (2021-05-26)</h2>
+<ul>
+    <li>
+       Support for hooks for objekts managed by classes from the package ``ucsschool.lib.models`` was added. See manual section <a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#python-hooks-for-pre-and-post-object-modification-actions">Python hooks for pre- and post-object-modification actions</a> for details (Bug #49557).
+    </li>
+    <li>
+        An error when creating usernames with templates was fixed (Bug #52925).
+    </li>
+</ul>
 <h2>v1.4.1 (2021-05-03)</h2>
 <ul>
     <li>

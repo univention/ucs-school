@@ -1,3 +1,4 @@
+import copy
 import importlib
 import os
 import tempfile
@@ -6,6 +7,7 @@ from typing import Any, Dict, Tuple
 from faker import Faker
 import pytest
 
+from ldap.dn import explode_dn
 from ucsschool.lib.models.base import PYHOOKS_PATH, _pyhook_loader
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.group import SchoolClass
@@ -71,10 +73,46 @@ CLASSES_MODULES = {
     "WorkGroup": "ucsschool.lib.models.group",
     "WorkGroupShare": "ucsschool.lib.models.share",
 }
-
 #
 # (*1) Uncaught exception PUT /udm/dhcp/subnet/cn=april86d,cn=dhcp,ou=... -> why PUT, should be POST?
 # (*2) IndexError in GET /udm/dns/reverse_zone/add
+#
+CLASSES_WITH_SCHOOL_NONE = ("AnyDHCPService", "BasicGroup", "MailDomain", "DNSReverseZone", "School")
+
+MODIFY_MODULES = copy.deepcopy(CLASSES_MODULES)
+del MODIFY_MODULES["Container"]  # (*1)
+del MODIFY_MODULES["OU"]  # (*1)
+del MODIFY_MODULES["DHCPDNSPolicy"]  # (*2)
+del MODIFY_MODULES["School"]  # (*1)
+del MODIFY_MODULES["SchoolClass"]  # (*3)
+del MODIFY_MODULES["WorkGroup"]  # (*3)
+#
+# (*1) model does not support modify operation
+# (*2) possibly a bug in the UDM REST API OpenAPI schema properties->emptyAttributes->nullable=true? -> udm_rest_client.exceptions.ModifyError: Unprocessable Entity: {'emptyAttributes': 'The property emptyAttributes has an invalid value: Invalid syntax. The property Empty attribute must be a list'}
+# (*3) possibly a bug in the UDM REST API: PATCH /udm/groups/group/cn=DEMOSCHOOL-dvargas,cn=klassen,cn=schueler,cn=groups,ou=... -> udm_rest_client.exceptions.APICommunicationError: [HTTP 401] Credentials invalid or no permissions for operation 'update' on 'groups/group' with arguments {'groups_group': {'options': {'ucsschoolAdministratorGroup': False, 'samba': True, 'posix': True, 'ucsschoolImportGroup': False}, 'position': 'cn=klassen,cn=schueler,cn=groups,ou=...', 'properties': {'description': 'jeremydawson'}}, 'dn': 'cn=DEMOSCHOOL-dvargas,cn=klassen,cn=schueler,cn=groups,ou=...'}.
+#
+
+MOVE_MODULES = copy.deepcopy(CLASSES_MODULES)
+del MOVE_MODULES["OU"]  # (*1)
+del MOVE_MODULES["School"]  # (*1)
+del MOVE_MODULES["ExamStudent"]  # (*2)
+del MOVE_MODULES["SchoolAdmin"]  # (*3)
+del MOVE_MODULES["Staff"]  # (*3)
+del MOVE_MODULES["Student"]  # (*3)
+del MOVE_MODULES["Teacher"]  # (*3)
+del MOVE_MODULES["TeachersAndStaff"]  # (*3)
+#
+# (*1) model does not support move operation
+# (*2) Bug in UDM REST API: Uncaught exception PUT /udm/users/user/uid=geraldbenitez,cn=examusers,ou=...; UDM_Error: This operation is not allowed on this object. Destination object can't have sub objects.
+# (*3) Bug in ucsschool.lib!! TB starts at "await obj.change_school(ou2, udm)" -> udm_rest_client.exceptions.MoveError: Error moving UdmObject('users/user', 'uid=smithkyle,cn=admins,cn=users,ou=testou2176,...') to 'cn=admins,cn=users,ou=testou1991,...': [401] Unauthorized
+#
+
+REMOVE_MODULES = copy.deepcopy(CLASSES_MODULES)
+del REMOVE_MODULES["Container"]  # (*1)
+del REMOVE_MODULES["OU"]  # (*1)
+del REMOVE_MODULES["School"]  # (*1)
+#
+# (*1) model does not support remove operation
 #
 
 fake = Faker()
@@ -181,7 +219,7 @@ def creation_kwargs(random_first_name, random_last_name, random_user_name, sched
                 "netmask": "255.255.248.0",
                 "network": "12.40.232.0",
             })
-        elif model == "School":
+        elif model in ("School", "OU"):
             del result["school"]
         return result
 
@@ -231,3 +269,137 @@ async def test_create_hooks(
         assert not result
     else:
         assert f"{method} {model} {obj.name} {obj.school}" in result
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("model", MODIFY_MODULES.keys())
+@pytest.mark.parametrize("method", ("pre_modify", "post_modify"))
+async def test_modify_hooks(
+    create_hook_file, creation_kwargs, create_ou_using_python, model, method, random_first_name, random_user_name, udm_kwargs
+):
+    ou = await create_ou_using_python()
+    hook_file, target_file = create_hook_file(model, method)
+    module = importlib.import_module(CLASSES_MODULES[model])
+    cls = getattr(module, model)
+    kwargs = await creation_kwargs(ou, model)
+    obj = cls(**kwargs)
+    async with UDM(**udm_kwargs) as udm:
+        await obj.create(udm)
+
+    # try to change an attribute, not that it'd be necessary, but it can't hurt either
+    if hasattr(obj, "display_name"):
+        obj.display_name = random_user_name()
+    elif hasattr(obj, "description"):
+        obj.description = random_user_name()
+    elif hasattr(obj, "inventory_number"):
+        obj.inventory_number = random_user_name()
+    elif hasattr(obj, "firstname"):
+        obj.firstname = random_first_name()
+    elif obj.__class__.__name__ == "DHCPServer":
+        dhcp_service_dn = ",".join(explode_dn(obj.dn, False)[1:])
+        obj.name = "{}b".format(obj.name)  # change something
+        # not loaded automatically, but required:
+        async with UDM(**udm_kwargs) as udm:
+            obj.dhcp_service = await DHCPService.from_dn(dhcp_service_dn, ou, udm)
+    elif obj.__class__.__name__ == "Network":
+        obj.netmask = "21"  # prevent UDM valueMayNotChange exception (value is 255.255.248.0)
+        obj.broadcast = "12.40.232.255"  # change something (was None)
+
+    # required for group objects:
+    for attr in ("hosts", "users"):
+        if hasattr(obj, attr) and getattr(obj, attr) is None:
+            setattr(obj, attr, [])
+
+    async with UDM(**udm_kwargs) as udm:
+        await obj.modify(udm)
+
+    with open(target_file, "r") as fp:
+        result = fp.read()
+    print(f"target_file content: {result}")
+    if model in CLASSES_WITH_SCHOOL_NONE:
+        assert obj.school is None
+    else:
+        assert obj.school == ou
+    assert f"{method} {model} {obj.name} {obj.school}" in result
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("model", MOVE_MODULES.keys())
+@pytest.mark.parametrize("method", ("pre_move", "post_move"))
+async def test_move_hooks(
+    create_hook_file, creation_kwargs, create_multiple_ous, ldap_base, model, method, random_first_name, random_user_name, udm_kwargs
+):
+    ou1, ou2 = await create_multiple_ous(2)
+    print(f"** ou1={ou1!r} ou2={ou2!r}")
+    hook_file, target_file = create_hook_file(model, method)
+    module = importlib.import_module(CLASSES_MODULES[model])
+    cls = getattr(module, model)
+    kwargs = await creation_kwargs(ou1, model)
+    obj = cls(**kwargs)
+    async with UDM(**udm_kwargs) as udm:
+        await obj.create(udm)
+
+    async with UDM(**udm_kwargs) as udm:
+        obj = await cls.from_dn(obj.dn, ou1, udm)
+
+    if model == "SchoolAdmin":
+        async with UDM(**udm_kwargs) as udm:
+            # check that target container exists
+            target_cn = await udm.get("container/cn").get(f"cn=admins,cn=users,ou={ou2},{ldap_base}")
+            print(f"Trying to move to existing {target_cn!r}.")
+
+    if hasattr(obj, "schools"):
+        async with UDM(**udm_kwargs) as udm:
+            await obj.change_school(ou2, udm)
+        move_success = True
+    else:
+        # the move will fail - that's expected!
+        obj.school = ou2
+        async with UDM(**udm_kwargs) as udm:
+            move_success = await obj.move(udm)
+        assert not move_success, f"=====> Move of model {model!r} succeeded unexpectedly."
+        # obj.school = ou1
+
+    with open(target_file, "r") as fp:
+        result = fp.read()
+    print(f"target_file content: {result}")
+
+    if model == "Group":
+        # see Group.get_class_for_udm_obj()
+        model = "SchoolGroup"
+
+    if method == "pre_move" or method == "post_move" and move_success:
+        assert f"{method} {model} {obj.name} {obj.school}" in result
+    else:
+        # most models don't support move(), so post_move() isn't executed
+        assert not result
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("model", REMOVE_MODULES.keys())
+@pytest.mark.parametrize("method", ("pre_remove", "post_remove"))
+async def test_remove_hooks(
+    create_hook_file, creation_kwargs, create_ou_using_python, model, method, random_first_name, random_user_name, udm_kwargs
+):
+    ou = await create_ou_using_python()
+    hook_file, target_file = create_hook_file(model, method)
+    module = importlib.import_module(CLASSES_MODULES[model])
+    cls = getattr(module, model)
+    kwargs = await creation_kwargs(ou, model)
+    obj = cls(**kwargs)
+    async with UDM(**udm_kwargs) as udm:
+        await obj.create(udm)
+
+    async with UDM(**udm_kwargs) as udm:
+        obj = await cls.from_dn(obj.dn, ou, udm)
+        await obj.remove(udm)
+
+    with open(target_file, "r") as fp:
+        result = fp.read()
+    print(f"target_file content: {result}")
+
+    if model == "Group":
+        # see Group.get_class_for_udm_obj()
+        model = "SchoolGroup"
+
+    assert f"{method} {model} {obj.name} {obj.school}" in result

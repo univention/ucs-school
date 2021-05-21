@@ -71,7 +71,7 @@ SuperOrdinateType = Union[str, UdmObject]
 UldapFilter = Union[str, conjunction, expression]
 UCSSchoolModel = TypeVar("UCSSchoolModel", bound="UCSSchoolHelperAbstractClass")
 
-PYHOOKS_PATH = "/var/lib/ucs-school-import/kelvin-hooks/"
+PYHOOKS_PATH = "/var/lib/ucs-school-lib/kelvin-hooks"
 PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"
 _pyhook_loader: PyHooksLoader = lazy_object_proxy.Proxy(
     lambda: PyHooksLoader(

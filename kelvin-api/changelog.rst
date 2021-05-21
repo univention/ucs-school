@@ -5,6 +5,11 @@
 Changelog
 ---------
 
+v1.4.2 (2021-05-26)
+...................
+* Support for hooks for objekts managed by classes from the package ``ucsschool.lib.models`` was added. See manual section `Python hooks for pre- and post-object-modification actions <https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#python-hooks-for-pre-and-post-object-modification-actions>`_ for details (Bug #49557).
+* An error when creating usernames with templates was fixed (Bug #52925).
+
 v1.4.1 (2021-05-03)
 ...................
 * No error message is logged anymore after the deletion of an object (Bug #52896).

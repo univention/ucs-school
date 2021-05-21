@@ -110,7 +110,7 @@ To use the hook functionality a Python class deriving from ``ucsschool.lib.model
 
 In the class methods ``pre_create()``, ``post_create()``, ``pre_modify()`` and so on can be implemented. They will be executed at the specified time.
 
-The Python module with the hook class must be stored in the directory ``/var/lib/ucs-school-import/kelvin-hooks``.
+The Python module with the hook class must be stored in the directory ``/var/lib/ucs-school-lib/kelvin-hooks``. Please note that it is a different directory than the one from the previous chapter.
 
 Two examples can be found at `https://github.com/.../hook_example1.py
 <https://github.com/univention/ucs-school/blob/feature/kelvin/ucs-school-lib/usr/share/doc/python-ucs-school/hook_example1.py>`_ and `https://github.com/.../hook_example2.py
@@ -171,8 +171,8 @@ The directory contains the file ``kelvin.json``, which is the top level configur
 Python hooks
 ^^^^^^^^^^^^
 
-``/var/lib/ucs-school-import/kelvin-hooks`` is a volume mounted into the docker container, so it can be accessed from the host.
-Its purpose is explained above in chapters `Python hooks for user object management (import hooks)`_ and `Python hooks for pre- and post-object-modification actions`_.
+``/var/lib/ucs-school-import/kelvin-hooks`` and ``/var/lib/ucs-school-lib/kelvin-hooks`` are volumes mounted into the docker container, so they can be accessed from the host.
+Their purpose is explained above in chapters `Python hooks for user object management (import hooks)`_ and `Python hooks for pre- and post-object-modification actions`_.
 
 
 .. _`Handbuch zur CLI-Import-Schnittstelle`: https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html

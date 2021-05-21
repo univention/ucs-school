@@ -30,9 +30,13 @@
 #
 
 KELVIN_IMPORTUSER_HOOKS_PATH="/var/lib/ucs-school-import/kelvin-hooks"
+KELVIN_SCHOOL_LIB_HOOKS_PATH="/var/lib/ucs-school-lib/kelvin-hooks"
 
 if ! [ -e "$KELVIN_IMPORTUSER_HOOKS_PATH" ]; then
     mkdir -pv -m 755 "$KELVIN_IMPORTUSER_HOOKS_PATH"
+fi
+if ! [ -e "$KELVIN_SCHOOL_LIB_HOOKS_PATH" ]; then
+    mkdir -pv -m 755 "$KELVIN_SCHOOL_LIB_HOOKS_PATH"
 fi
 
 # restart UDM REST API to ensure the OpenAPI schema is up to date
