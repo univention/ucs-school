@@ -115,6 +115,19 @@ del REMOVE_MODULES["School"]  # (*1)
 # (*1) model does not support remove operation
 #
 
+def _inside_docker():
+    try:
+        import ucsschool.kelvin.constants
+    except ImportError:
+        return False
+    return ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists()
+
+
+pytestmark = pytest.mark.skipif(
+    not _inside_docker(),
+    reason="Must run inside Docker container started by appcenter.",
+)
+
 fake = Faker()
 
 
