@@ -26,6 +26,9 @@ Depends:
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},
+Provides:
+ ${python3:Provides},
+ ${python:Provides},
 Description: UMC modules to reset account passwords
  This package contains two UMC modules for resetting
  passwods of teacher and student accounts.

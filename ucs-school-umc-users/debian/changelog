@@ -1,9 +1,15 @@
+ucs-school-umc-users (16.0.2) unstable; urgency=medium
+
+  * Bug #52634:  Migrate ucs-school-umc-users to Python 3
+
+ -- Håkan Källberg <kaellberg@univention.de>  Mon, 31 May 2021 08:44:46 +0200
+
 ucs-school-umc-users (16.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
   * Bug #52597: migrate to dh_python
 
- -- Florian Best <best@univention.de>  Tue, 12 Jan 2021 16:25:09 +0100
+ -- Florian Best <best@univention.de>  Wed, 12 May 2021 08:44:46 +0200
 
 ucs-school-umc-users (15.0.1) unstable; urgency=low
 
