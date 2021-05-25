@@ -52,12 +52,13 @@ def main():
     parser = argparse.ArgumentParser(
         description="UCS@School Object Consistency Check", formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument(
+    exclusive_group = parser.add_mutually_exclusive_group()
+    exclusive_group.add_argument(
         "--school",
         help="When specified, only objects of this school get checked.\n"
         "Give the desired school abbreviation.",
     )
-    parser.add_argument(
+    exclusive_group.add_argument(
         "--user_dn",
         help="When specified, only the given user(s) gets checked.\n"
         "Give the desired DN(s) of the user(s) seperated by spaces.",
@@ -83,7 +84,7 @@ def main():
     container_problematic_objects = {}
     share_problematic_objects = {}
     server_group_problematic_objects = {}
-    if school or not user_dn:
+    if not user_dn:
         group_problematic_objects = consistency.check_mandatory_groups_exist(school)
         container_problematic_objects = consistency.check_containers(school)
         share_problematic_objects = consistency.check_shares(school)
