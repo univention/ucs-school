@@ -48,7 +48,7 @@ univention-config-registry set \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
 	ucsschool/import/generate/mail/domain?yes \
-	ucsschool/import/purge-expired-users/cron='50 4 * * *' \
+	ucsschool/import/purge-expired-users/cron?'50 4 * * *' \
 	|| die
 
 eval "$(univention-config-registry shell)"
