@@ -350,7 +350,164 @@ feedback@univention.de
 					<!-- END ucs-school-umc-computerroom 11.0.0-30A~4.4.0.202105031321 -->
 <!-- CHANGELOG:2021-05-10:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-05-26" lang="en">
+					<title>Released on 2021-05-26:</title>
+					<!-- START ucs-school-import 17.0.60A~4.4.0.202105190918 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.60A~4.4.0.202105190918</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+							<listitem><para>This fix introduces an automatism to check the type sanity of a user_import configuration with jsonschema. The file <envar>/usr/share/ucs-school-import/schema/user_import_configuration_schema.json</envar> declares the expected data types for all valid json configuration fields. An error message will be shown on mismatches with this schema (<u:bug>49102</u:bug>).</para></listitem>
+
+							<listitem><para>Internal changes: adapted to changes in the hook handling code of the ucsschool.lib.model base class (<u:bug>49557</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.60A~4.4.0.202105190918 -->
+					<!-- START ucs-school-lib 12.2.27A~4.4.0.202105200950 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.27A~4.4.0.202105200950</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0 (<u:bug>52945</u:bug>).</para></listitem>
+
+							<listitem><para>The UCS@school model classes from the Python package <code>ucsschool.lib.models</code> now support executing custom Python code before and after create, modify, move and delete operations. See documentation at https://docs.software-univention.de/ucsschool-handbuch-4.4.html#import:pyhooks (<u:bug>49557</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.27A~4.4.0.202105200950 -->
+					<!-- START ucs-school-metapackage 12.0.4-16A~4.4.0.202105120911 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-16A~4.4.0.202105120911</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-16A~4.4.0.202105120911 -->
+					<!-- START ucs-school-ox-support 3.0.1A~4.4.0.202105190922 -->
+					<para>
+						Source package <emphasis>ucs-school-ox-support</emphasis> in version <emphasis>3.0.1A~4.4.0.202105190922</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal changes: adapted to changes in the hook handling code of the ucsschool.lib.model base class (<u:bug>49557</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ox-support 3.0.1A~4.4.0.202105190922 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-31A~4.4.0.202105120913 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-31A~4.4.0.202105120913</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-31A~4.4.0.202105120913 -->
+					<!-- START ucs-school-umc-diagnostic 1.0.0-20A~4.4.0.202105120915 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-20A~4.4.0.202105120915</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-diagnostic 1.0.0-20A~4.4.0.202105120915 -->
+					<!-- START ucs-school-umc-exam 9.0.1-53A~4.4.0.202105190924 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-53A~4.4.0.202105190924</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+							<listitem><para>Internal changes: adapted to changes in the hook handling code of the ucsschool.lib.model base class (<u:bug>49557</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-53A~4.4.0.202105190924 -->
+					<!-- START ucs-school-umc-groups 9.0.0-12A~4.4.0.202105120918 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-12A~4.4.0.202105120918</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-groups 9.0.0-12A~4.4.0.202105120918 -->
+					<!-- START ucs-school-umc-helpdesk 15.0.0-3A~4.4.0.202105120920 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-helpdesk</emphasis> in version <emphasis>15.0.0-3A~4.4.0.202105120920</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-helpdesk 15.0.0-3A~4.4.0.202105120920 -->
+					<!-- START ucs-school-umc-installer 7.0.1A~4.4.0.202105120922 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-installer</emphasis> in version <emphasis>7.0.1A~4.4.0.202105120922</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-installer 7.0.1A~4.4.0.202105120922 -->
+					<!-- START ucs-school-umc-internetrules 15.0.1A~4.4.0.202105120923 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-internetrules</emphasis> in version <emphasis>15.0.1A~4.4.0.202105120923</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-internetrules 15.0.1A~4.4.0.202105120923 -->
+					<!-- START ucs-school-umc-printermoderation 16.0.1A~4.4.0.202105120925 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-printermoderation</emphasis> in version <emphasis>16.0.1A~4.4.0.202105120925</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-printermoderation 16.0.1A~4.4.0.202105120925 -->
+					<!-- START ucs-school-umc-rooms 16.1.1A~4.4.0.202105120927 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.1A~4.4.0.202105120927</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-rooms 16.1.1A~4.4.0.202105120927 -->
+					<!-- START ucs-school-umc-users 15.0.1A~4.4.0.202105120928 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.1A~4.4.0.202105120928</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.1A~4.4.0.202105120928 -->
+					<!-- START ucs-school-umc-wizards 11.0.1A~4.4.0.202105120930 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.1A~4.4.0.202105120930</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.1A~4.4.0.202105120930 -->
+					<!-- START ucs-school-webproxy 15.0.1A~4.4.0.202105120932 -->
+					<para>
+						Source package <emphasis>ucs-school-webproxy</emphasis> in version <emphasis>15.0.1A~4.4.0.202105120932</emphasis>:
+						<itemizedlist>
+							<listitem><para>Importing model classes from the Python package <code>ucsschool.lib.models</code> has been deprecated for UCS@school 5.0. The packages <code>__init__.py</code> file does not import all classes from its submodules anymore. From UCS@school 5.0 on, the classes must be imported directly. For example <code>from ucsschool.lib.models import Student</code> must now be written as <code>from ucsschool.lib.models.user import Student</code>. This patch updates the code in 4.4, so it will run unchanged in 5.0  (<u:bug>52945</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-webproxy 15.0.1A~4.4.0.202105120932 -->
+<!-- CHANGELOG:2021-05-26:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
