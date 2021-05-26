@@ -76,3 +76,17 @@ https://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
 
 If this error occurs again, please clone this bug.
 </pre>
+
+## QA Errata Release
+
+Do the following checks and document the result in Taiga/Bugzilla/Gitlab:
+
+* OK: all packages have been uploaded to the public appcenter (http://appcenter.software-univention.de/univention-repository/4.4/maintained/component/ucsschool_20201208103021/)
+* OK: successfully updated in a multi-server env dc master and dc slave
+* OK: all bugs have been closed (52945, 49102, 49557)
+* OK: all yaml files have been renamed (`doc/errata/published/2021-05-26-*`)
+* OK: manual updated (https://docs.software-univention.de/ucsschool-handbuch-4.4.html)
+* OK: the changelog has been build and uploaded (http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html)
+* OK: help.univention.com text updated (https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-26-05-2021/12064)
+* OK: internal announcement mail
+* OK: new git tag (`release-4.4v10`) OR no new git tag, as the apps version didn't change
