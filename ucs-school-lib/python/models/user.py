@@ -41,7 +41,15 @@ import univention.admin.syntax as syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
+from ..roles import (
+    create_ucsschool_role_string,
+    role_exam_user,
+    role_pupil,
+    role_school_admin,
+    role_staff,
+    role_student,
+    role_teacher,
+)
 from .attributes import (
     Birthday,
     Disabled,
@@ -327,6 +335,17 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if groups_to_add:
             self.logger.debug("Adding %r to groups %r.", self, groups_to_add)
             udm_obj["groups"].extend(groups_to_add)
+
+        # see Bug #53203
+        if self.is_administrator:
+            for group_dn in udm_obj["groups"]:
+                if group_dn.endswith("cn=ouadmins,cn=groups,{}".format(ucr["ldap/base"])):
+                    udm_group = Group.from_dn(group_dn, None, lo).get_udm_object(lo)
+                    if udm_group["school"][0] in self.schools:
+                        self.ucsschool_roles.append(
+                            create_ucsschool_role_string(role_school_admin, udm_group["school"][0])
+                        )
+
         return super(User, self).do_modify(udm_obj, lo)
 
     def do_school_change(self, udm_obj, lo, old_school):  # type: (UdmObject, LoType, str) -> None
