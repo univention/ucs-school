@@ -1,3 +1,9 @@
+ucs-school-import (17.0.62) unstable; urgency=medium
+
+  * Bug #52604: make UCR templates Python 3 compatible
+
+ -- Florian Best <best@univention.de>  Tue, 01 Jun 2021 22:55:32 +0200
+
 ucs-school-import (17.0.61) unstable; urgency=medium
 
   * Bug #52658: migrate UDM hooks to be python3 compatible
