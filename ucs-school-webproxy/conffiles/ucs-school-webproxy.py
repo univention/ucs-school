@@ -94,7 +94,9 @@ def quote(string):
         if byte in quote.safeBytes:
             newstring += byte
         else:
-            newstring += "-" + codecs.encode(byte.encode("utf-8"), 'hex').decode('ASCII')
+            newstring += "-" + codecs.encode(
+                byte if isinstance(byte, bytes) else byte.encode("utf-8"), 'hex'
+            ).decode('ASCII')
     return newstring
 
 
