@@ -52,6 +52,7 @@
 
 from __future__ import print_function
 
+import codecs
 import os
 import re
 import shutil
@@ -86,14 +87,14 @@ def move_file(fnsrc, fndst):
 
 def quote(string):
     "Replace every unsafe byte with hex value"
-    if type(string) is unicode:
+    if not isinstance(string, str):  # Py 2
         string = string.encode("utf-8")
     newstring = ""
     for byte in string:
         if byte in quote.safeBytes:
             newstring += byte
         else:
-            newstring += "-" + byte.encode("hex")
+            newstring += "-" + codecs.encode(byte.encode("utf-8"), 'hex').decode('ASCII')
     return newstring
 
 
@@ -137,7 +138,7 @@ def signalReloadProcess():
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
         s.settimeout(0)
-        s.sendto("reload squid", RELOAD_SOCKET_PATH)
+        s.sendto(b"reload squid", RELOAD_SOCKET_PATH)
         print("Delayed reload triggered")
         return True
     except socket.error:
@@ -145,7 +146,7 @@ def signalReloadProcess():
 
 
 def reloadSquidDirectly():
-    subprocess.call(("/etc/init.d/squid", "reload"))  # nosec
+    subprocess.call(("systemctl", "reload", "squid"), close_fds=True)  # nosec
 
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
@@ -202,7 +203,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
     usergroupSetting = []  # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
     for key in keylist:
         if key.startswith("proxy/filter/hostgroup/blacklisted/"):
-            room = key[len("proxy/filter/hostgroup/blacklisted/") :]
+            room = key[len("proxy/filter/hostgroup/blacklisted/"):]
             if room[0].isdigit():
                 room = "univention-%s" % room
             roomlist.append(room)
@@ -242,7 +243,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
     f.write("}\n\n")
     touchfnlist.extend(["whitelisted-domain", "whitelisted-url"])
 
-    for proxy_setting in map(quote, proxy_settinglist) + [
+    for proxy_setting in [quote(x) for x in proxy_settinglist] + [
         quote(username) + "-user" for username in roomRule
     ]:
         f.write("dest blacklist-%s {\n" % proxy_setting)
@@ -349,13 +350,13 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
     # NOTE: touch all referenced database files to prevent squidguard
     #       from shutting down due to missing files
     for fn in touchfnlist:
-        open(os.path.join(DIR_TEMP, fn), "a+")
+        open(os.path.join(DIR_TEMP, fn), "a+").close()
 
 
 def checkGlobalBlacklist(configRegistry, DIR_DATA, changes):
     for listtype in ("domains", "urls"):
         dst_fn = os.path.join(DIR_DATA, "%s-%s" % (FN_GLOBAL_BLACKLIST_PREFIX, listtype))
-        if not "proxy/filter/global/blacklists/%s" % (listtype,) in changes:
+        if "proxy/filter/global/blacklists/%s" % (listtype,) not in changes:
             if not os.path.exists(dst_fn):
                 # the database file does not exist in final data directory, so a recreation is triggered
                 changes["proxy/filter/global/blacklists/%s" % (listtype,)] = ""
@@ -366,7 +367,7 @@ def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
         dst_fn = os.path.join(DIR_TEMP, "%s-%s" % (FN_GLOBAL_BLACKLIST_PREFIX, listtype))
         # recreate the blacklist db file only if the corresponding UCR variable has been changed/set
         # larger blacklists take several seconds to be converted into a db file
-        if not "proxy/filter/global/blacklists/%s" % (listtype,) in changes:
+        if "proxy/filter/global/blacklists/%s" % (listtype,) not in changes:
             continue
         with open(dst_fn, "w") as fout:
             for fn in set(
@@ -409,14 +410,14 @@ def writeSettinglist(configRegistry, DIR_TEMP):
                     ):
                         value = configRegistry[key]
                         if value.startswith("http://"):
-                            value = value[len("http://") :]
+                            value = value[len("http://"):]
                         if value.startswith("https://"):
-                            value = value[len("https://") :]
+                            value = value[len("https://"):]
                         if value.startswith("ftp://"):
-                            value = value[len("ftp://") :]
+                            value = value[len("ftp://"):]
                         if filtertype == "url":
                             if value.startswith("www."):
-                                value = value[len("www.") :]
+                                value = value[len("www."):]
                         f.write("%s\n" % value)
                 f.close()
 
@@ -431,14 +432,14 @@ def writeBlackWhiteLists(configRegistry, DIR_TEMP):
                 if key.startswith("proxy/filter/%s/%s/" % (filtertype, itemtype)):
                     value = configRegistry[key]
                     if value.startswith("http://"):
-                        value = value[len("http://") :]
+                        value = value[len("http://"):]
                     if value.startswith("https://"):
-                        value = value[len("https://") :]
+                        value = value[len("https://"):]
                     if value.startswith("ftp://"):
-                        value = value[len("ftp://") :]
+                        value = value[len("ftp://"):]
                     if filtertype == "url":
                         if value.startswith("www."):
-                            value = value[len("www.") :]
+                            value = value[len("www."):]
                     f.write("%s\n" % value)
             f.close()
 
@@ -460,18 +461,18 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
     # create all db files
     subprocess.call(  # nosec
-        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r")
+        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"),
+        close_fds=True
     )
     # fix permissions
-    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config))  # nosec
-    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config))  # nosec
+    subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config), close_fds=True)  # nosec
+    subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config), close_fds=True)  # nosec
     # fix squidguard config (replace DIR_TEMP with DIR_DATA)
     content = open(fn_temp_config, "r").read()
     content = content.replace("\ndbhome %s/\n" % DIR_TEMP, "\ndbhome %s/\n" % DIR_DATA)
     content = content.replace(TXT_GLOBAL_BLACKLIST_COMMENT, "")  # reenable global blacklist entries
-    tempConfig = open(fn_temp_config, "w")
-    tempConfig.write(content)
-    tempConfig.close()
+    with open(fn_temp_config, "w") as tempConfig:
+        tempConfig.write(content)
 
 
 def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
