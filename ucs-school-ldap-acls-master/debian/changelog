@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (17.0.4-10) unstable; urgency=medium
+
+  * Bug #52604: migrate UCR ACL templates to be python3 compatible
+
+ -- Florian Best <best@univention.de>  Tue, 01 Jun 2021 23:03:58 +0200
+
 ucs-school-ldap-acls-master (17.0.4-9) unstable; urgency=low
 
   * Bug #42138: Remove school admin access to replication node password data
