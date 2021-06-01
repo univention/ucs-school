@@ -124,29 +124,33 @@ def main():
         "dry_run": uic.args.dry_run,
         "verbose": uic.args.verbose,
     }
-    # early logging configured by cmdline
-    uic.setup_logging(uic.args.verbose, uic.args.logfile)
-    logger = uic.logger
-    if uic.args.quiet:
-        loglevel = logging.ERROR
-    elif uic.args.verbose:
-        loglevel = logging.DEBUG
-    else:
-        loglevel = logging.INFO
-    logger.setLevel(loglevel)
-    for handler in logger.handlers:
-        if isinstance(handler, UniStreamHandler):
-            handler.setLevel(loglevel)
 
-    logger.info("------ UCS@school import tool starting ------")
     if uic.args.conffile:
         uic.configuration_files.append(uic.args.conffile)
     else:
         # prevent InitialisationError
         uic.args.settings["source_uid"] = "PurgeExpiredUsers"
     config = uic.setup_config()
-    # logging configured by config file
-    uic.setup_logging(config["verbose"], config["logfile"])
+    verbose = uic.args.verbose if uic.args.verbose else config["verbose"]
+    logfile = uic.args.logfile if uic.args.logfile else config["logfile"]
+
+    # early logging configured by cmdline
+    uic.setup_logging(verbose, logfile)
+
+    logger = uic.logger
+
+    if uic.args.quiet:
+        loglevel = logging.ERROR
+    elif uic.args.verbose or not uic.args.verbose and config["verbose"]:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+    logger.setLevel(loglevel)
+    logger.info("------ UCS@school import tool starting ------")
+
+    for handler in logger.handlers:
+        if isinstance(handler, UniStreamHandler):
+            handler.setLevel(loglevel)
 
     logger.info("------ UCS@school import tool configured ------")
     logger.debug("Configuration is:\n%s", pprint.pformat(config))
