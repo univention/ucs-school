@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=24
+VERSION=25
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -115,11 +115,11 @@ univention-directory-manager container/cn      create "$@" --ignore_exists --set
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-email" --position "cn=ucsschool,cn=univention,$ldap_base"
 
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
-ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \

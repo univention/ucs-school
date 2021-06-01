@@ -31,12 +31,13 @@
 import univention.debug as ud
 from univention.admin.hook import simpleHook
 
-OBJECTCLASS_SCHOOLOU = "ucsschoolOrganizationalUnit"
+OBJECTCLASS_SCHOOLOU = b"ucsschoolOrganizationalUnit"
 OPTION_SCHOOLOU = "UCSschool-School-OU"
 ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer", "displayName")
 
 
 class schoolOU(simpleHook):
+
     def hook_open(self, module):
         ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU: _open called")
 
@@ -61,7 +62,7 @@ class schoolOU(simpleHook):
 
         # compute new accumulated objectClass
         old_ocs = module.oldattr.get("objectClass", [])
-        ocs = set(old_ocs)
+        ocs = set(x.decode('UTf-8') for x in old_ocs)
 
         is_school = OPTION_SCHOOLOU in module.options
 
@@ -75,7 +76,7 @@ class schoolOU(simpleHook):
 
                 if not isinstance(add_val, list):
                     add_val = set([add_val])
-                    add_val.discard("")
+                    add_val.discard(b"")
                 ocs |= set(add_val)
 
                 ml.remove(modification)
@@ -88,8 +89,7 @@ class schoolOU(simpleHook):
         else:
             ocs.discard(OBJECTCLASS_SCHOOLOU)
             for attr in ATTRIBUTE_LIST:
-                ml.append((attr, module.oldattr.get(attr, ""), ""))
+                ml.append((attr, module.oldattr.get(attr, []), [b""]))
 
-        ml.append(("objectClass", old_ocs, list(ocs)))
-
+        ml.append(("objectClass", old_ocs, list(x.encode('UTF-8') for x in ocs)))
         return ml

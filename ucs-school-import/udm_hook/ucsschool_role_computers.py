@@ -56,32 +56,35 @@ except ImportError:
 else:
     _UDM_MODULE_NAME2OC_ROLE = {
         "computers/domaincontroller_backup": (
-            "ucsschoolServer",
+            b"ucsschoolServer",
             "ignore",
         ),  # ignore, done in join script
         "computers/domaincontroller_master": (
-            "ucsschoolServer",
+            b"ucsschoolServer",
             "ignore",
         ),  # ignore, done in join script
-        "computers/domaincontroller_slave": ("ucsschoolServer", "ignore"),  # ignore, done in join script
+        "computers/domaincontroller_slave": (
+            b"ucsschoolServer",
+            "ignore"
+        ),  # ignore, done in join script
         "computers/memberserver": (
-            "ucsschoolServer",
+            b"ucsschoolServer",
             "member",
         ),  # only centrals are handled, others ignored
-        "computers/linux": ("ucsschoolComputer", role_linux_computer),
-        "computers/macos": ("ucsschoolComputer", role_mac_computer),
-        "computers/windows": ("ucsschoolComputer", role_win_computer),
-        "computers/ipmanagedclient": ("ucsschoolComputer", role_ip_computer),
-        "computers/ubuntu": ("ucsschoolComputer", role_ubuntu_computer),
+        "computers/linux": (b"ucsschoolComputer", role_linux_computer),
+        "computers/macos": (b"ucsschoolComputer", role_mac_computer),
+        "computers/windows": (b"ucsschoolComputer", role_win_computer),
+        "computers/ipmanagedclient": (b"ucsschoolComputer", role_ip_computer),
+        "computers/ubuntu": (b"ucsschoolComputer", role_ubuntu_computer),
     }
 try:
-    from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union
+    from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union  # noqa: F401
 
     if TYPE_CHECKING:
-        import univention.admin.handlers.simpleComputer
+        import univention.admin.handlers.simpleComputer  # noqa: F401
 
-    AddType = Tuple[str, List[str]]  # pylint: disable=invalid-name
-    ModType = Tuple[str, List[str], List[str]]  # pylint: disable=invalid-name
+    AddType = Tuple[str, List[bytes]]  # pylint: disable=invalid-name
+    ModType = Tuple[str, List[bytes], List[bytes]]  # pylint: disable=invalid-name
 except ImportError:
     pass
 
@@ -149,8 +152,10 @@ class UcsschoolRoleComputers(simpleHook):
                 role_str = role_memberserver
             else:
                 return aml
-
-        roles = {create_ucsschool_role_string(role_str, school) for school in obj_schools}
+        roles = {
+            create_ucsschool_role_string(role_str, school).encode('utf-8')
+            for school in obj_schools
+        }
         missing_roles = roles - existing_roles
         if missing_roles:
             if operation == "add":
@@ -169,7 +174,7 @@ class UcsschoolRoleComputers(simpleHook):
         :return: school name (OU) if obj is located inside one, else '-'
         :rtype: str
         """
-        if obj.has_key("school"):  # noqa: W601
+        if obj.has_property("school"):
             schools = obj.get("school")
         else:
             schools = []
@@ -184,10 +189,10 @@ class UcsschoolRoleComputers(simpleHook):
 
     @staticmethod
     def _existing_ocs_roles(obj, aml):
-        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[str], Set[str]]  # noqa: E501
+        # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[bytes], Set[bytes]]  # noqa: E501
         """Get objectClasses and ucsschoolRoles from obj."""
         existing_ocs = set(obj.oldattr.get("objectClass", []))
-        existing_roles = set(obj.get("ucsschoolRole", []))
+        existing_roles = set(x.encode('UTF-8') for x in obj.get("ucsschoolRole", []))
         for things in aml:
             attr = things[0]
             val = things[-1]

@@ -31,7 +31,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=7
+VERSION=8
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
 
@@ -47,7 +47,7 @@ univention-directory-manager settings/service create "$@" --ignore_exists \
 	--position "cn=services,cn=univention,$ldap_base" \
 	--set name="Windows Profile Server" || die
 
-ucs_registerLDAPExtension "$@" --udm_syntax /usr/share/ucs-school-import/schema/syntax.ucs-school-import.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_syntax /usr/share/ucs-school-import/schema/syntax.ucs-school-import.py || die
 
 joinscript_save_current_version
 
