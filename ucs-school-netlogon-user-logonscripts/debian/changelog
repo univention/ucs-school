@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (15.0.0-2) unstable; urgency=medium
+
+  * Bug #52604: migrate UCR template to Python 3
+
+ -- Florian Best <best@univention.de>  Tue, 01 Jun 2021 23:42:11 +0200
+
 ucs-school-netlogon-user-logonscripts (15.0.0-1) unstable; urgency=medium
 
   * Bug #48699: Add reworked logo
