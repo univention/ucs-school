@@ -31,14 +31,14 @@
 
 import json
 import logging
-import optparse
+import argparse
 import os
 import subprocess
 import sys
 from collections import OrderedDict, namedtuple
 
 try:
-    from typing import Any, List, NamedTuple, Optional
+    from typing import Any, List, NamedTuple, Optional  # noqa: F401
 
     _HAS_TYPING = True
 except ImportError:
@@ -56,7 +56,7 @@ log = None  # type: Optional[logging.Logger]
 ucr = None  # type: Optional[ConfigRegistry]
 
 if _HAS_TYPING:
-    StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
+    StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", str)])
     SchoolMembership = NamedTuple(
         "SchoolMembership", [("is_edu_school_member", bool), ("is_admin_school_member", bool)]
     )
@@ -191,6 +191,7 @@ def call_cmd_locally(*cmd):  # type: (*str) -> StdoutStderr
     log.info("Calling %r ...", cmd)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = proc.communicate()
+    stdout, stderr = stdout.decode('UTF-8', 'replace'), stderr.decode('UTF-8', 'replace')
     if proc.returncode:
         raise CallCommandError(
             "{!r} returned with exitcode {}:\n{}\n{}".format(cmd, proc.returncode, stderr, stdout)
@@ -290,7 +291,7 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
             "--do-not-revert",
         ]
         if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-            username = options.lo.getAttr(options.binddn, "uid")[0]
+            username = options.lo.getAttr(options.binddn, "uid")[0].decode('UTF-8')
             cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
         call_cmd_locally(*cmd)
 
@@ -398,7 +399,7 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
         "--noninteractive",
     ]
     if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-        username = options.lo.getAttr(options.binddn, "uid")[0]
+        username = options.lo.getAttr(options.binddn, "uid")[0].decode('UTF-8')
         cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
     try:
         call_cmd_locally(*cmd)
@@ -417,34 +418,27 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
 def main():  # type: () -> None
     global log, ucr
 
-    parser = optparse.OptionParser()
-    parser.add_option(
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "--server-role",
-        dest="server_role",
-        default=None,
-        action="store",
         help="server role of this system",
     )
-    parser.add_option(
+    parser.add_argument(
         "--master",
         dest="master_fqdn",
-        action="store",
-        default=None,
         help="FQDN of the UCS master domaincontroller",
     )
-    parser.add_option("--binddn", dest="binddn", action="store", default=None, help="LDAP binddn")
-    parser.add_option(
-        "--bindpwdfile", dest="bindpwdfile", action="store", default=None, help="path to password file"
+    parser.add_argument("--binddn", help="LDAP binddn")
+    parser.add_argument(
+        "--bindpwdfile", help="path to password file"
     )
-    parser.add_option(
+    parser.add_argument(
         "--hooktype",
         dest="hook_type",
-        action="store",
-        default=None,
         help='join hook type (currently only "join/pre-joinscripts" supported)',
     )
-    parser.add_option("-v", "--verbose", action="count", default=3, help="Increase verbosity")
-    (options, args) = parser.parse_args()
+    parser.add_argument("-v", "--verbose", action="count", default=3, help="Increase verbosity")
+    options = parser.parse_args()
 
     if not options.server_role:
         parser.error("Please specify a server role")
@@ -461,7 +455,7 @@ def main():  # type: () -> None
     if options.hook_type in ("join/post-joinscripts",):
         parser.error("The specified hook type is not supported by this script")
 
-    options.bindpw = open(options.bindpwdfile, "r").read()
+    options.bindpw = open(options.bindpwdfile, "r").read().strip()
 
     LEVELS = [logging.FATAL, logging.ERROR, logging.WARN, logging.INFO, logging.DEBUG]
     try:
