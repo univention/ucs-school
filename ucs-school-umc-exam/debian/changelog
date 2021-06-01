@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-54) unstable; urgency=medium
+
+  * Bug #52604: migrate UCR templates to Python 3
+
+ -- Florian Best <best@univention.de>  Tue, 01 Jun 2021 23:46:27 +0200
+
 ucs-school-umc-exam (9.0.1-53) unstable; urgency=low
 
   * Bug #49557: add support for Python based hooks
