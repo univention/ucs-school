@@ -57,5 +57,3 @@ umc_policy_append "ucsschool-umc-teachers-default" "schoolexam-all"
 joinscript_save_current_version
 
 exit 0
-
-

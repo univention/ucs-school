@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7 -u
+#!/usr/bin/python3 -u
 #
 # Copyright 2016-2021 Univention GmbH
 #
@@ -28,14 +28,15 @@
 # <http://www.gnu.org/licenses/>.
 #
 
+import argparse
 import grp
-import optparse
 import os
 import shutil
 import sys
 import traceback
 
 from ldap import LDAPError
+from ldap.dn import str2dn
 from ldap.filter import escape_filter_chars, filter_format
 
 import univention.admin.uldap
@@ -57,7 +58,7 @@ class ExamCleanupHelper(object):
         self.options = options
         self.ucr = univention.config_registry.ConfigRegistry()
         self.ucr.load()
-        self.hostname = "{}.{}".format(self.ucr["hostname"], self.ucr["domainname"])
+        self.hostname = f"{self.ucr['hostname']}.{self.ucr['domainname']}"
         self.umcp = self.get_UMCP_connection()
         self.lo, self.po = self.get_LDAP_connection()
         self.exam_prefix = self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
@@ -76,28 +77,26 @@ class ExamCleanupHelper(object):
             sys.exit(1)
 
     def get_UMCP_connection(self):
-        ud.debug(
-            ud.MAIN, ud.INFO, "Opening UMCP connection to %s with machine account" % (self.hostname,)
-        )
+        ud.debug(ud.MAIN, ud.INFO, f"Opening UMCP connection to {self.hostname} with machine account")
         try:
             client = Client(self.hostname)
             client.authenticate_with_machine_account()
         except (ConnectionError, HTTPError) as exc:
-            ud.debug(ud.MAIN, ud.ERROR, "Could not connect to UMC on %s: %s" % (self.hostname, exc))
+            ud.debug(ud.MAIN, ud.ERROR, f"Could not connect to UMC on {self.hostname}: {exc}")
             sys.exit(1)
         return client
 
     def running_exam_iter(self):
         ou_list = self.lo.search(filter="(objectClass=ucsschoolOrganizationalUnit)")
         for ou_dn, ou_attrs in ou_list:
-            ou_name = ou_attrs.get("ou")[0]
+            ou_name = ou_attrs.get("ou")[0].decode("UTF-8")
             try:
                 room_list = self.umcp.umc_command("computerroom/rooms", {"school": ou_name}).result
             except (ConnectionError, HTTPError) as exc:
-                ud.debug(ud.MAIN, ud.ERROR, "Cannot get room list for OU %r:\n%s" % (ou_name, exc))
+                ud.debug(ud.MAIN, ud.ERROR, f"Cannot get room list for OU {ou_name!r}:\n{exc}")
                 continue
             for room in room_list:
-                ud.debug(ud.MAIN, ud.INFO, "%s: %r" % (ou_name, room))
+                ud.debug(ud.MAIN, ud.INFO, f"{ou_name}: {room!r}")
                 if room.get("exam"):
                     ud.debug(ud.MAIN, ud.INFO, "Running exam found")
                     yield room
@@ -111,8 +110,7 @@ class ExamCleanupHelper(object):
             ud.debug(
                 ud.MAIN,
                 ud.PROCESS,
-                "Stopping exam %r in room %r (%r)"
-                % (room.get("exam"), room.get("label"), room.get("id")),
+                f"Stopping exam {room.get('exam')!r} in room {room.get('label')!r} ({room.get('id')!r})",
             )
             if self.options.dryrun:
                 ud.debug(ud.MAIN, ud.PROCESS, "dry-run: skipping stop of exam")
@@ -122,17 +120,17 @@ class ExamCleanupHelper(object):
                 result = self.umcp.umc_command(
                     "schoolexam/exam/finish", {"exam": room.get("exam"), "room": room.get("id")}
                 ).result
-                ud.debug(ud.MAIN, ud.INFO, "result of schoolexam/exam/finish: %r" % (result,))
+                ud.debug(ud.MAIN, ud.INFO, f"result of schoolexam/exam/finish: {result!r}")
             except (ConnectionError, HTTPError) as exc:
                 ud.debug(
                     ud.MAIN,
                     ud.ERROR,
-                    "Cannot stop exam %r in room %r:\n%s" % (room.get("exam"), room.get("id"), exc),
+                    f"Cannot stop exam {room.get('exam')!r} in room {room.get('id')!r}:\n{exc}",
                 )
                 continue
 
     def restore_original_user(self, dn):
-        user_uid = dn.split(",")[0][len("uid={}".format(self.exam_prefix)) :]
+        user_uid = str2dn(dn)[0][0][1].replace(self.exam_prefix, "", 1)
         mod_user = univention.udm.UDM(self.lo, 1).get("users/user")
         search_result = list(mod_user.search(filter_format("uid=%s", [user_uid])))
         if len(search_result) == 1:
@@ -143,17 +141,15 @@ class ExamCleanupHelper(object):
                 orig_udm.props.disabled = False
                 orig_udm.save()
                 ud.debug(
-                    ud.MAIN, ud.PROCESS, "Original user access has been restored for %r." % (orig_udm,)
+                    ud.MAIN, ud.PROCESS, f"Original user access has been restored for {orig_udm!r}."
                 )
             except univention.admin.uexceptions.noObject:
-                ud.debug(
-                    ud.MAIN, ud.ERROR, "Exam student %r not found." % (dn[len(self.exam_prefix) :],)
-                )
+                ud.debug(ud.MAIN, ud.ERROR, f"Exam student {dn[len(self.exam_prefix) :]!r} not found.")
         elif len(search_result) == 0:
             ud.debug(
                 ud.MAIN,
                 ud.ERROR,
-                "Exam student %r not found.\n%s" % (dn[len(self.exam_prefix) :], traceback.format_exc()),
+                f"Exam student {dn[len(self.exam_prefix) :]!r} not found.\n{traceback.format_exc()}",
             )
 
     def remove_exam_user(self):
@@ -173,7 +169,7 @@ class ExamCleanupHelper(object):
 
             ou_list = self.lo.search(filter="(objectClass=ucsschoolOrganizationalUnit)")
             for ou_dn, ou_attrs in ou_list:
-                ou_name = ou_attrs["ou"][0]
+                ou_name = ou_attrs["ou"][0].decode("UTF-8")
                 searchbase = SchoolSearchBase([ou_name], dn=ou_dn)
                 try:
                     userlist = mod_user.lookup(
@@ -198,7 +194,7 @@ class ExamCleanupHelper(object):
             ud.debug(
                 ud.MAIN,
                 ud.ERROR,
-                "Removing remaining exam user failed with traceback:\n%s" % (traceback.format_exc(),),
+                f"Removing remaining exam user failed with traceback:\n{traceback.format_exc()}",
             )
 
     @classmethod
@@ -227,14 +223,13 @@ class ExamCleanupHelper(object):
                 try:
                     exam_group = self.get_udm_group(exam_group_dn, lo, po)
                 except noObject:
-                    ud.debug(ud.MAIN, ud.WARN, "No exam group found in school %r." % (school.name,))
+                    ud.debug(ud.MAIN, ud.WARN, f"No exam group found in school {school.name!r}.")
                     continue
                 if exam_group["hosts"]:
                     ud.debug(
                         ud.MAIN,
                         ud.PROCESS,
-                        "Removing computers from exam group %r: %r"
-                        % (exam_group["name"], exam_group["hosts"]),
+                        f"Removing computers from exam group {exam_group['name']!r}: {exam_group['hosts']!r}",
                     )
                     exam_group["hosts"] = []
                     exam_group.modify()
@@ -242,8 +237,7 @@ class ExamCleanupHelper(object):
             ud.debug(
                 ud.MAIN,
                 ud.ERROR,
-                "Removing remaining exam computers failed with traceback:\n%s"
-                % (traceback.format_exc(),),
+                f"Removing remaining exam computers failed with traceback:\n{traceback.format_exc()}",
             )
 
     def remove_ucr_debris(self):
@@ -300,7 +294,7 @@ class ExamCleanupHelper(object):
 
         for entry in os.listdir(self.DIR_EXAMS):
             fn = os.path.join(self.DIR_EXAMS, entry)
-            ud.debug(ud.MAIN, ud.PROCESS, "Removing %r" % (fn,))
+            ud.debug(ud.MAIN, ud.PROCESS, f"Removing {fn!r}")
             if not self.options.dryrun:
                 try:
                     if os.path.isdir(fn):
@@ -308,7 +302,7 @@ class ExamCleanupHelper(object):
                     else:
                         os.remove(fn)
                 except (IOError, OSError) as ex:
-                    ud.debug(ud.MAIN, ud.ERROR, "Unable to remove %r: %s" % (fn, ex))
+                    ud.debug(ud.MAIN, ud.ERROR, f"Unable to remove {fn!r}: {ex}")
             else:
                 ud.debug(ud.MAIN, ud.PROCESS, "dry-run: leaving file/directory untouched")
 
@@ -332,7 +326,7 @@ class ExamCleanupHelper(object):
                 try:
                     os.remove(fn)
                 except (IOError, OSError) as ex:
-                    ud.debug(ud.MAIN, ud.ERROR, "Unable to remove %r: %s" % (fn, ex))
+                    ud.debug(ud.MAIN, ud.ERROR, f"Unable to remove {fn!r}: {ex}")
             else:
                 ud.debug(ud.MAIN, ud.PROCESS, "dry-run: leaving file untouched")
 
@@ -351,8 +345,8 @@ exams and computer rooms.
 WARNING: if a running exam cannot be shutdown cleanly, data in the home
 directory may be lost.
 This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.log."""
-    parser = optparse.OptionParser(description=description)
-    parser.add_option(
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(
         "-n",
         "--dry-run",
         dest="dryrun",
@@ -360,57 +354,54 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
         action="store_true",
         help="do not change anything",
     )
-    parser.add_option(
+    parser.add_argument(
         "-d",
         "--debug",
-        dest="debug",
         default=False,
         action="store_true",
         help="write additional debug output to logfile",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-exam-shutdown",
         dest="skip_stop_running_exams",
         default=False,
         action="store_true",
         help="do not try to shutdown running exams gracefully",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-exam-user-removal",
-        dest="skip_exam_user_removal",
         default=False,
         action="store_true",
         help="do not remove all existing exam users (only on DC master / DC backup)",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-exam-computer-removal",
-        dest="skip_exam_computer_removal",
         default=False,
         action="store_true",
         help="do not remove all existing exam computers (only on DC master / DC backup)",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-ucr-cleanup",
         dest="skip_remove_ucr_debris",
         default=False,
         action="store_true",
         help="do not purge exam/room related UCR variables",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-exam-cleanup",
         dest="skip_remove_exam_file_debris",
         default=False,
         action="store_true",
         help="do not purge exam data/metadata files",
     )
-    parser.add_option(
+    parser.add_argument(
         "--skip-room-cleanup",
         dest="skip_remove_room_debris",
         default=False,
         action="store_true",
         help="do not purge room metadata files",
     )
-    (options, _) = parser.parse_args()
+    options = parser.parse_args()
 
     debug_level = ud.ALL if options.debug else ud.PROCESS
     ud.init(LOGFILE, ud.FLUSH, ud.NO_FUNCTION)

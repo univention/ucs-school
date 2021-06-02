@@ -5,7 +5,6 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- python-all,
  python3-all,
  ucslint,
  univention-config-dev,
@@ -17,11 +16,14 @@ Package: ucs-school-umc-exam
 Architecture: all
 Depends:
  python-ucs-school (>= 12.1.11),
+ python3-ucsschool-lib,
+ python3-ldap,
+ python3-notifier,
+ python3-samba,
  ucs-school-umc-distribution,
  univention-management-console-server (>= 11.0.4-37),
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ${python3:Provides},
  ${python:Provides},
@@ -40,13 +42,16 @@ Breaks:
  ucs-school-lib (<< 12.2.28),
 Depends:
  python-ucs-school (>= 12.1.11),
+ python3-ucsschool-lib,
+ python3-ldap,
+ python3-six,
  shell-univention-lib,
  ucs-school-import,
  univention-ldap-config (>= 9.0.27-3),
  univention-management-console-server (>= 11.0.4-37),
  ${misc:Depends},
- ${python3:Depends},
  ${python:Depends},
+ ${python3:Depends},
 Provides:
  ${python3:Provides},
  ${python:Provides},

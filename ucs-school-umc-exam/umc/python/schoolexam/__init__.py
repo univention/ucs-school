@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console
@@ -42,17 +42,14 @@ import time
 import traceback
 from itertools import chain
 
-try:
-    from typing import List
-except ImportError:
-    pass
-
 import ldap
 import notifier
+from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
+from samba.auth_util import system_session_unix
 from samba.ntacls import getntacl, setntacl
 from samba.param import LoadParm
-from six import iteritems
+from samba.samba3 import param
 
 import univention.debug
 from ucsschool.lib import internetrules
@@ -77,7 +74,6 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from ucsschool.lib.schoollessons import SchoolLessons
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import access as LoType
 from univention.lib.i18n import Translation
 from univention.lib.misc import custom_groupname
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
@@ -94,6 +90,13 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 from univention.management.console.modules.schoolexam import util
+
+try:
+    from typing import List  # noqa: F401
+
+    from univention.admin.uldap import access as LoType  # noqa: F401
+except ImportError:
+    pass
 
 _ = Translation("ucs-school-umc-exam").translate
 
@@ -119,7 +122,9 @@ def deny_owner_change_permissions(filename):  # type: (str) -> None
     """
     lp = LoadParm()
     lp.load_default()
-    dacl = getntacl(lp, file=filename, direct_db_access=False)
+    s3conf = param.get_context()
+    s3conf.load(lp.configfile)
+    dacl = getntacl(lp, filename, system_session_unix(), direct_db_access=False)
     old_sddl = dacl.as_sddl()
     owner_sid = dacl.owner_sid
     res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
@@ -143,7 +148,7 @@ def deny_owner_change_permissions(filename):  # type: (str) -> None
         new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
         if new_sddl != old_sddl:
             logger.debug("set nt acls {} on {}".format(new_sddl, filename))
-            setntacl(lp, filename, new_sddl, owner_sid)
+            setntacl(lp, filename, new_sddl, owner_sid, system_session_unix())
 
 
 class Instance(SchoolBaseModule):
@@ -151,7 +156,7 @@ class Instance(SchoolBaseModule):
         SchoolBaseModule.__init__(self)
         self._log_package_version("ucs-school-umc-exam")
         self._tmpDir = None
-        self._progress_state = util.Progress(logger=logger)
+        self._progress_state = util.Progress(logger=logger)  # TODO: replace with mixins.Progress
         self._lessons = SchoolLessons()
 
     def init(self):
@@ -201,23 +206,21 @@ class Instance(SchoolBaseModule):
         :param ldap_user_read:
         """
         ldap_user = ldap_user_read.get(exam_user.dn)
-        workstation = ldap_user.get("sambaUserWorkstations", "")
-        password = ldap_user.get("sambaNTPassword", "")
+        workstation = ldap_user.get("sambaUserWorkstations", [b""])[0].decode("UTF-8")
+        password = ldap_user.get("sambaNTPassword", [b""])[0].decode("ASCII")
 
         if not password:
             logger.warning(
-                "User {} is missing a password."
+                f"User {exam_user.dn} is missing a password."
                 "They will be allowed to modify the permissions of their distribution folder,"
-                "which can be exploited to share data during the exam.".format(exam_user.dn)
+                "which can be exploited to share data during the exam."
             )
             return
-        with tempfile.NamedTemporaryFile() as auth_file:
+        with tempfile.NamedTemporaryFile("w+") as auth_file:
             auth_file.write(
-                """username={}
-                   password={}
-                   domain={}""".format(
-                    exam_user.username, password[0], ucr["domainname"]
-                )
+                f"""username={exam_user.username}
+                   password={password}
+                   domain={ucr['domainname']}"""
             )
             auth_file.flush()
 
@@ -229,19 +232,17 @@ class Instance(SchoolBaseModule):
                 "localhost",
             ]
             if workstation:
-                workstation = workstation[0].split(",")[0]
-                cmd.append("--netbiosname={}".format(workstation))
+                workstation = workstation.split(",")[0]
+                cmd.append(f"--netbiosname={workstation}")
             else:
                 logger.debug(
-                    "{} is missing a workstation. The exam-user will be able to login to workstations "
-                    "outside the computerroom.".format(exam_user.dn)
+                    f"{exam_user.dn} is missing a workstation. The exam-user will be able to login to workstations "
+                    "outside the computerroom."
                 )
             rv, stdout, stderr = exec_cmd(cmd)
             if rv != 0:
                 logger.error(
-                    "Error while initiating windows-profiles for {} rv: {} {} {}".format(
-                        exam_user.dn, rv, stderr, stdout
-                    )
+                    f"Error while initiating windows-profiles for {exam_user.dn} rv: {rv} {stderr!r} {stdout!r}"
                 )
 
     @staticmethod
@@ -295,43 +296,19 @@ class Instance(SchoolBaseModule):
             logger.info("upload() Created temporary directory: %r", self._tmpDir)
 
         for file in request.options:
-            filename = self.__workaround_filename_bug(file)
+            filename = file["filename"]
+            if "\\" in filename:  # filename seems to be a UNC / windows path
+                filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
+                logger.info(
+                    "Filename seems to contain Windows path name or UNC - " "fixing filename: %r as %r",
+                    file["filename"],
+                    filename,
+                )
             destPath = os.path.join(self._tmpDir, filename)
             logger.info("upload() Received file %r, saving it to %r", file["tmpfile"], destPath)
             shutil.move(file["tmpfile"], destPath)
 
         self.finished(request.id, None)
-
-    def __workaround_filename_bug(self, file):
-        logger.info("file=%r", file)
-        # the following code block is a heuristic to support both: fixed and unfixed Bug #37716
-        filename = file["filename"]
-        try:
-            # The UMC-Webserver decodes filename in latin-1, need to revert
-            filename = filename.encode("ISO8859-1")
-        except UnicodeEncodeError:
-            # we got non-latin characters, Bug #37716 is fixed and string contains e.g. '→'
-            filename = file["filename"].encode("UTF-8")
-        else:
-            # the string contains at least no non-latin1 characters
-            try:
-                # try if the bytes could be UTF-8
-                # can't fail if Bug #37716 is fixed
-                filename.decode("UTF-8")
-            except UnicodeDecodeError:
-                filename = file["filename"].encode("UTF-8")  # Bug #37716 was fixed
-        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8')
-        # after Bug #37716
-        # Bug 46709/46710: start
-        if "\\" in filename:  # filename seems to be a UNC / windows path
-            logger.info(
-                "__workaround_filename_bug() Filename seems to contain Windows path name or UNC - "
-                "fixing filename"
-            )
-            filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
-        # Bug 46709/46710: end
-        logger.info("__workaround_filename_bug() Detected filename %r as %r", file["filename"], filename)
-        return filename
 
     @simple_response
     def internetrules(self):
@@ -370,12 +347,11 @@ class Instance(SchoolBaseModule):
             and len(set(sender_user.schools).intersection(user.schools)) != 0
         ):
             return True
-        admin_group_dn = "cn={},cn=groups,{}".format(
-            custom_groupname("Domain Admins", ucr), ucr["ldap/base"]
+        admin_group_dn = "cn=%s,cn=groups,%s" % (
+            escape_dn_chars(custom_groupname("Domain Admins", ucr)),
+            ucr["ldap/base"],
         )
-        if admin_group_dn in user.get_udm_object(ldap_user_read)["groups"]:
-            return True
-        return False
+        return admin_group_dn in user.get_udm_object(ldap_user_read)["groups"]
 
     @LDAP_Connection()
     def _save_exam(self, request, update=False, ldap_user_read=None):
@@ -661,7 +637,7 @@ class Instance(SchoolBaseModule):
                     student_dns.add(iuser.dn)
                     logger.info("start_exam() Exam user has been created: %r", examuser_dn)
                 except (ConnectionError, HTTPError) as exc:
-                    logger.warn(
+                    logger.warning(
                         "start_exam() Could not create exam user account for %r: %s", iuser.dn, exc
                     )
 
@@ -671,7 +647,7 @@ class Instance(SchoolBaseModule):
             logger.info("start_exam() Sending DNs to add to group to master: %r", student_dns)
             client.umc_command(
                 "schoolexam-master/add-exam-users-to-groups",
-                dict(users=list(student_dns), school=request.options["school"]),
+                {"users": list(student_dns), "school": request.options["school"]},
             )
 
             progress.add_steps(percentPerUser)
@@ -720,7 +696,7 @@ class Instance(SchoolBaseModule):
                             iuser.homedir,
                         ]
                     ):
-                        raise ValueError("failed to run hook scripts for user %r" % (iuser.username))
+                        raise ValueError(f"failed to run hook scripts for user {iuser.username!r}")
 
                     # store User object in list of final recipients
                     recipients.append(iuser)
@@ -728,14 +704,7 @@ class Instance(SchoolBaseModule):
                     # mark the user as replicated
                     usersReplicated.add(idn)
                     progress.info(
-                        "(%02d/%02d) %s, %s (%s)"
-                        % (
-                            len(usersReplicated),
-                            len(examUsers),
-                            iuser.lastname,
-                            iuser.firstname,
-                            iuser.username,
-                        )
+                        f"({len(usersReplicated):02d}/{len(examUsers):02d}) {iuser.lastname}, {iuser.firstname} ({iuser.username})"
                     )
                     progress.add_steps(percentPerUser)
 
@@ -788,7 +757,7 @@ class Instance(SchoolBaseModule):
             progress.add_steps(1)
             logger.info(
                 "Adjust room settings:\n%s",
-                "\n".join(["  %s=%s" % (k, v) for k, v in iteritems(request.options)]),
+                "\n".join(f"  {k}={v}" for k, v in request.options.items()),
             )
             room_module._start_exam(
                 room, directory, request.options["name"], request.options.get("examEndTime")
@@ -808,17 +777,7 @@ class Instance(SchoolBaseModule):
             progress.add_steps(5)
 
         def _finished(thread, result, request):
-            if isinstance(result, BaseException):
-                logger.error(
-                    "Error in start_exam()->_thread(): %s\n%s",
-                    result,
-                    "".join(thread.trace + traceback.format_exception_only(*thread.exc_info[:2])),
-                )
-                raise UMC_Error(_("Error starting exam: %s") % (result,))
-
             logger.info("result=%r", result)
-            my.project.starttime = datetime.datetime.now()
-            my.project.save()
 
             # mark the progress state as finished
             progress.info(_("finished..."))
@@ -827,21 +786,32 @@ class Instance(SchoolBaseModule):
             # finish the request at the end in order to force the module to keep
             # running until all actions have been completed
             success = not isinstance(result, BaseException)
-            response = dict(success=success)
+
+            try:
+                if my.project:
+                    my.project.starttime = datetime.datetime.now()
+                    my.project.save()
+            except Exception:
+                logger.exception("Could not save new project starttime.")
+
             if success:
+                response = {'success': True}
                 # remove uploaded files from cache
                 self._cleanTmpDir()
             else:
                 msg = str(result)
                 if not isinstance(result, UMC_Error):
                     response = result
-                    msg = "".join(traceback.format_exception(*thread.exc_info))
+                    msg = "".join(traceback.format_exception(*thread.exc_info))  # FIXME
                 progress.error(msg)
 
-                # in case a distribution project has already be written to disk, purge it
-                if my.project:
-                    logger.info("purge my.project=%r", my.project)
-                    my.project.purge()
+                try:
+                     # in case a distribution project has already be written to disk, purge it
+                     if my.project:
+                         logger.info("purge my.project=%r", my.project)
+                         my.project.purge()
+                except Exception:
+                     logger.exception("Could not purge project.")
 
             self.thread_finished_callback(thread, response, request)
 
@@ -895,7 +865,7 @@ class Instance(SchoolBaseModule):
         logger.info("loaded project=%r", project)
         if not project:
             # the project file does not exist... ignore problem
-            logger.warn(
+            logger.warning(
                 "The project file for exam %s does not exist. Ignoring and finishing exam mode.",
                 request.options.get("exam"),
             )
@@ -932,7 +902,7 @@ class Instance(SchoolBaseModule):
             if project:
                 # get a list of user accounts in parallel exams
                 exam_role_str = create_ucsschool_role_string(
-                    role_exam_user, "{}-{}".format(project.name, school), context_type_exam
+                    role_exam_user, f"{project.name}-{school}", context_type_exam
                 )
                 recipients = ldap_user_read.search(
                     filter_format("ucsschoolRole=%s", (exam_role_str,)), attr=["ucsschoolRole", "uid"]
@@ -946,7 +916,7 @@ class Instance(SchoolBaseModule):
                         [
                             role
                             for role in user[1]["ucsschoolRole"]
-                            if get_role_info(role)[1] == context_type_exam
+                            if get_role_info(role.decode("UTF-8"))[1] == context_type_exam
                         ]
                     )
                     > 0
@@ -984,7 +954,7 @@ class Instance(SchoolBaseModule):
                     exam_roles = [
                         role
                         for role in recipient_attrs["ucsschoolRole"]
-                        if get_role_info(role)[1] == context_type_exam
+                        if get_role_info(role.decode("UTF-8"))[1] == context_type_exam
                     ]
                     if len(exam_roles) == 1:
                         users_to_reduce.append(recipient_dn)
@@ -1014,8 +984,7 @@ class Instance(SchoolBaseModule):
                 logger.info("Deleting %d recipients...", len(project.recipients))
                 for num, iuser in enumerate(project.recipients, start=1):
                     progress.info(
-                        "(%02d/%02d) %s, %s (%s)"
-                        % (num, len(project.recipients), iuser.lastname, iuser.firstname, iuser.username)
+                        f"({num:02d}/{len(project.recipients):02d}) {iuser.lastname}, {iuser.firstname} ({iuser.username})"
                     )
                     try:
                         if exam_roles_exist or iuser.dn not in parallel_users_local:
@@ -1031,7 +1000,7 @@ class Instance(SchoolBaseModule):
                                 shutil.rmtree(iuser.unixhome, ignore_errors=True)
                             logger.info("Exam user has been removed: %r", iuser.dn)
                     except (ConnectionError, HTTPError) as e:
-                        logger.warn("Could not remove exam user account %r: %s", iuser.dn, e)
+                        logger.warning("Could not remove exam user account %r: %s", iuser.dn, e)
 
                     # indicate the user has been processed
                     progress.add_steps(percentPerUser)
@@ -1043,23 +1012,27 @@ class Instance(SchoolBaseModule):
             # mark the progress state as finished
             logger.info("result=%r", result)
             progress.info(_("finished..."))
-            progress.finish()
 
             # running until all actions have been completed
             if isinstance(result, BaseException):
-                msg = "".join(traceback.format_exception(*thread.exc_info))
-                logger.error("Exception during exam_finish: %s", msg)
-                self.finished(request.id, dict(success=False))
+                logger.error("Exception during exam_finish: %s", result)
                 progress.error(_("An unexpected error occurred during the preparation: %s") % result)
+                response = {"success": False}
             else:
-                self.finished(request.id, dict(success=True))
+                response = {"success": True}
 
                 if project:
                     logger.info("purge project=%r", project)
-                    project.purge()
+                    try:
+                        project.purge()
+                    except Exception:
+                        logger.exception("Could not purge project.")
 
                 # remove uploaded files from cache
                 self._cleanTmpDir()
+
+            progress.finish()
+            self.thread_finished_callback(thread, response, request)
 
         thread = notifier.threads.Simple("start_exam", _thread, _finished)
         thread.run()
@@ -1116,7 +1089,7 @@ class Instance(SchoolBaseModule):
             try:
                 user_obj = User.from_dn(student[1], None, lo)
             except noObject:
-                logger.warn(
+                logger.warning(
                     "DN %r is stored as part of project %r but does not exist.", student[1], project.name
                 )
                 continue
@@ -1159,7 +1132,7 @@ class Instance(SchoolBaseModule):
                 try:
                     user_obj = User.from_dn(user_dn, None, ldap_user_read)
                 except (WrongObjectType, noObject) as exc:
-                    logger.warn(
+                    logger.warning(
                         "Ignoring DN %r - it does not exist or is not a school user: %s", user_dn, exc
                     )
                     continue
