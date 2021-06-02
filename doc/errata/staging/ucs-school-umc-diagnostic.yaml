@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-diagnostic
+fix:
+desc: |
+ * The python-support debhelper has been removed from the package <package>ucs-school-umc-diagnostic</package> (Bug #53386).
+bug: [53386]

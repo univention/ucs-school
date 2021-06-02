@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-21) unstable; urgency=medium
+
+  * Bug #53386: drop python-support for ucs-school-umc-diagnostic
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jun 2021 00:09:43 +0200
+
 ucs-school-umc-diagnostic (1.0.0-20) unstable; urgency=low
 
   * Bug #52945: use full path to model imports

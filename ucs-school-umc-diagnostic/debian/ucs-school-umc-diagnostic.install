@@ -1,2 +1,1 @@
-umc/python/diagnostic/plugins/* /usr/share/pyshared/univention/management/console/modules/diagnostic/plugins/
 scripts/* /usr/share/ucs-school-umc-diagnostic/scripts/
