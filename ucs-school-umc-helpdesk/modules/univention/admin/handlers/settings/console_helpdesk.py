@@ -47,10 +47,10 @@ childs = False
 short_description = _("Settings: Console Helpdesk")
 long_description = _("Settings for Univention Console Helpdesk Module")
 options = {
-    'default': univention.admin.option(
+    "default": univention.admin.option(
         short_description=short_description,
         default=True,
-        objectClasses=["top", "univentionUMCHelpdeskClass"]
+        objectClasses=["top", "univentionUMCHelpdeskClass"],
     )
 }
 
