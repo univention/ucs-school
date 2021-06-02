@@ -95,8 +95,8 @@ def quote(string):
             newstring += byte
         else:
             newstring += "-" + codecs.encode(
-                byte if isinstance(byte, bytes) else byte.encode("utf-8"), 'hex'
-            ).decode('ASCII')
+                byte if isinstance(byte, bytes) else byte.encode("utf-8"), "hex"
+            ).decode("ASCII")
     return newstring
 
 
@@ -205,7 +205,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
     usergroupSetting = []  # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
     for key in keylist:
         if key.startswith("proxy/filter/hostgroup/blacklisted/"):
-            room = key[len("proxy/filter/hostgroup/blacklisted/"):]
+            room = key[len("proxy/filter/hostgroup/blacklisted/") :]
             if room[0].isdigit():
                 room = "univention-%s" % room
             roomlist.append(room)
@@ -412,14 +412,14 @@ def writeSettinglist(configRegistry, DIR_TEMP):
                     ):
                         value = configRegistry[key]
                         if value.startswith("http://"):
-                            value = value[len("http://"):]
+                            value = value[len("http://") :]
                         if value.startswith("https://"):
-                            value = value[len("https://"):]
+                            value = value[len("https://") :]
                         if value.startswith("ftp://"):
-                            value = value[len("ftp://"):]
+                            value = value[len("ftp://") :]
                         if filtertype == "url":
                             if value.startswith("www."):
-                                value = value[len("www."):]
+                                value = value[len("www.") :]
                         f.write("%s\n" % value)
                 f.close()
 
@@ -434,14 +434,14 @@ def writeBlackWhiteLists(configRegistry, DIR_TEMP):
                 if key.startswith("proxy/filter/%s/%s/" % (filtertype, itemtype)):
                     value = configRegistry[key]
                     if value.startswith("http://"):
-                        value = value[len("http://"):]
+                        value = value[len("http://") :]
                     if value.startswith("https://"):
-                        value = value[len("https://"):]
+                        value = value[len("https://") :]
                     if value.startswith("ftp://"):
-                        value = value[len("ftp://"):]
+                        value = value[len("ftp://") :]
                     if filtertype == "url":
                         if value.startswith("www."):
-                            value = value[len("www."):]
+                            value = value[len("www.") :]
                     f.write("%s\n" % value)
             f.close()
 
@@ -463,8 +463,7 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
     # create all db files
     subprocess.call(  # nosec
-        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"),
-        close_fds=True
+        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"), close_fds=True
     )
     # fix permissions
     subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config), close_fds=True)  # nosec
