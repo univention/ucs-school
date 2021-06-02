@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # UCS@School UMC module schoolexam-master
 #  UMC module delivering backend services for ucs-school-umc-exam
@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 """
-UCS@School UMC module schoolexam-master
+UCS@school UMC module schoolexam-master
 UMC module delivering backend services for ucs-school-umc-exam
 """
 
@@ -41,9 +41,10 @@ import os.path
 import re
 import traceback
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple  # noqa: F401
 
 import ldap
+from ldap.dn import escape_dn_chars, str2dn
 from ldap.filter import filter_format
 from six import iteritems
 
@@ -80,7 +81,6 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import DNSanitizer, ListSanitizer, StringSanitizer
 
 _ = Translation("ucs-school-umc-exam-master").translate
-univention.admin.modules.update()
 
 CREATE_USER_PRE_HOOK_DIR = "/usr/share/ucs-school-exam-master/pyhooks/create_exam_user_pre/"
 logger = logging.getLogger(__name__)
@@ -100,6 +100,7 @@ class Instance(SchoolBaseModule):
 
     def __init__(self):
         SchoolBaseModule.__init__(self)
+        univention.admin.modules.update()
         self._log_package_version("ucs-school-umc-exam-master")
         self._examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         self._examGroupExcludeRegEx = None
@@ -114,7 +115,7 @@ class Instance(SchoolBaseModule):
             )
 
         # cache objects
-        self._udm_modules = dict()
+        self._udm_modules = {}
         self._examGroup = None
         self.exam_user_pre_create_hooks = None
 
@@ -256,7 +257,7 @@ class Instance(SchoolBaseModule):
         # uid and DN of exam_user
         exam_user_uid = "".join((self._examUserPrefix, user_orig["username"]))
         exam_user_dn = "uid=%s,%s" % (
-            exam_user_uid,
+            escape_dn_chars(exam_user_uid),
             self.examUserContainerDN(ldap_admin_write, ldap_position, user.school or school),
         )
 
@@ -280,7 +281,7 @@ class Instance(SchoolBaseModule):
                 exam_user.ucsschool_roles.append(role_str)
                 exam_user.modify(ldap_admin_write)
             else:
-                logger.warn(
+                logger.warning(
                     "The exam user %r already participates in the exam %r. Do not add role.",
                     exam_user.name,
                     exam,
@@ -393,26 +394,29 @@ class Instance(SchoolBaseModule):
                     continue
                 # handle special cases
                 if key == "uid":
-                    value = [exam_user_uid]
+                    value = [exam_user_uid.encode("UTF-8")]
                 elif key == "objectClass":
-                    value += ["ucsschoolExam"]
+                    value += [b"ucsschoolExam"]
                 elif key == "ucsschoolSchool" and school:
                     # for backwards compatibility with UCS@school < 4.1R2 school might not be set
                     if exam:
                         # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
-                        value = user.schools
+                        value = [s.encode("UTF-8") for s in user.schools]
                     else:
-                        value = [school]
+                        value = [school.encode("UTF-8")]
                 elif key == "ucsschoolRole" and exam:
                     # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
-                    value = [create_ucsschool_role_string(role_exam_user, s) for s in user.schools]
+                    value = [
+                        create_ucsschool_role_string(role_exam_user, s).encode("UTF-8")
+                        for s in user.schools
+                    ]
                     value.append(
                         create_ucsschool_role_string(
                             role_exam_user, "{}-{}".format(exam, school), context_type_exam
-                        )
+                        ).encode("UTF-8")
                     )
                 elif key == "homeDirectory":
-                    user_orig_homeDirectory = value[0]
+                    user_orig_homeDirectory = value[0].decode("UTF-8")
                     _tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
                     if len(_tmp_split_path) != 2:
                         english_error_detail = "Failed parsing homeDirectory of original user: %s" % (
@@ -426,30 +430,40 @@ class Instance(SchoolBaseModule):
                         exam_user_uid,
                         datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
                     )
-                    value = [os.path.join(_tmp_split_path[0], "exam-homes", exam_user_unixhome)]
-                elif key == "sambaHomePath":
-                    user_orig_sambaHomePath = value[0]
-                    value = [user_orig_sambaHomePath.replace(user_orig["username"], exam_user_uid)]
-                elif key == "krb5PrincipalName":
-                    user_orig_krb5PrincipalName = value[0]
                     value = [
-                        "%s%s"
-                        % (
-                            exam_user_uid,
-                            user_orig_krb5PrincipalName[user_orig_krb5PrincipalName.find("@") :],
+                        os.path.join(_tmp_split_path[0], "exam-homes", exam_user_unixhome).encode(
+                            "UTF-8"
                         )
                     ]
+                elif key == "sambaHomePath":
+                    user_orig_sambaHomePath = value[0].decode("UTF-8")
+                    value = [
+                        user_orig_sambaHomePath.replace(user_orig["username"], exam_user_uid).encode(
+                            "UTF-8"
+                        )
+                    ]
+                elif key == "krb5PrincipalName":
+                    user_orig_krb5PrincipalName = value[0].decode("UTF-8")
+                    value = [
+                        (
+                            "%s%s"
+                            % (
+                                exam_user_uid,
+                                user_orig_krb5PrincipalName[user_orig_krb5PrincipalName.find("@") :],
+                            )
+                        ).encode("UTF-8")
+                    ]
                 elif key == "uidNumber":
-                    value = [uidNum]
+                    value = [uidNum.encode("UTF-8")]
                 elif key == "sambaSID":
-                    value = [userSid]
+                    value = [userSid.encode("ASCII")]
                 elif key == "description":
-                    value = [exam_user_description]
+                    value = [exam_user_description.encode("UTF-8")]
                     exam_user_description = None  # that's done
                 elif key == "univentionObjectFlag":
                     foundUniventionObjectFlag = True
-                    if "temporary" not in value:
-                        value += ["temporary"]
+                    if b"temporary" not in value:
+                        value += [b"temporary"]
                 al.append((key, value))
                 if room:
                     if room not in self._room_host_cache:
@@ -457,15 +471,15 @@ class Instance(SchoolBaseModule):
                     al.append(
                         (
                             "sambaUserWorkstations",
-                            ",".join([c.name for c in self._room_host_cache[room]]),
+                            ",".join([c.name for c in self._room_host_cache[room]]).encode("UTF-8"),
                         )
                     )
 
             if not foundUniventionObjectFlag and "univentionObjectFlag" not in blacklisted_attributes:
-                al.append(("univentionObjectFlag", ["temporary"]))
+                al.append(("univentionObjectFlag", [b"temporary"]))
 
             if exam_user_description and "description" not in blacklisted_attributes:
-                al.append(("description", [exam_user_description]))
+                al.append(("description", [exam_user_description.encode("UTF-8")]))
 
             # call hook scripts
             al = self.run_pre_create_hooks(exam_user_dn, al, ldap_admin_write)
@@ -582,8 +596,8 @@ class Instance(SchoolBaseModule):
         logger.info("Collecting non-primary groups of %d users...", len(userdns))
         for user_dn in userdns:
             user_ldap_obj = ldap_user_read.get(user_dn, attr=["uid", "gidNumber"])
-            user_name = user_ldap_obj["uid"][0]
-            users_primary_gid = user_ldap_obj["gidNumber"][0]
+            user_name = user_ldap_obj["uid"][0].decode("UTF-8")
+            users_primary_gid = user_ldap_obj["gidNumber"][0]  # type: bytes
             for group_dn, group_attrs in ldap_user_read.search(
                 filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"]
             ):
@@ -626,7 +640,7 @@ class Instance(SchoolBaseModule):
         # Might be put into the lib at some point:
         # https://git.knut.univention.de/univention/ucsschool/commit/26be4bbe899d02593d946054c396c17b7abc624f  # noqa: E501
         examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
-        user_uid = userdn.split(",")[0][len("uid={}".format(examUserPrefix)) :]
+        user_uid = str2dn(userdn)[0][0][1].replace(examUserPrefix, "", 1)
         user_module = univention.udm.UDM(ldap_admin_write, 1).get("users/user")
         search_result = list(user_module.search(filter_format("uid=%s", [user_uid])))
         if len(search_result) == 1:
@@ -666,7 +680,7 @@ class Instance(SchoolBaseModule):
                     user.remove(ldap_admin_write)
                     logger.info("Exam user was removed: %r", user)
                 else:
-                    logger.warn(
+                    logger.warning(
                         "remove_exam_user() User %r will not be removed as he currently participates "
                         "in another exam.",
                         user.dn,
@@ -724,7 +738,7 @@ class Instance(SchoolBaseModule):
             raise
 
         teacher_pc_role = create_ucsschool_role_string(role_teacher_computer, room.school)
-        exam_hosts = list()
+        exam_hosts = []
         for host in room.hosts:
             host_obj = SchoolComputer.from_dn(
                 host, None, ldap_user_read
@@ -733,9 +747,7 @@ class Instance(SchoolBaseModule):
             if teacher_pc_role not in host_obj.ucsschool_roles:
                 exam_hosts.append(host)
         # Add all host members of room to examGroup
-        host_uid_list = [
-            univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + "$" for uniqueMember in exam_hosts
-        ]
+        host_uid_list = [str2dn(uniqueMember)[0][0][1] + "$" for uniqueMember in exam_hosts]
         examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
         examGroup.fast_member_add(
             exam_hosts, host_uid_list
@@ -760,9 +772,7 @@ class Instance(SchoolBaseModule):
             raise
 
         # Remove all host members of room from examGroup
-        host_uid_list = [
-            univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + "$" for uniqueMember in room.hosts
-        ]
+        host_uid_list = [str2dn(uniqueMember)[0][0][1] + "$" for uniqueMember in room.hosts]
         examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
         examGroup.fast_member_remove(
             room.hosts, host_uid_list
