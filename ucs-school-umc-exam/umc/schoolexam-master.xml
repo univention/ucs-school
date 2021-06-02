@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-  <module id="schoolexam-master" version="1.0" priority="7">
+  <module id="schoolexam-master" version="1.0" priority="7" python="3">
 	<name>Exams</name>
 	<description>Create and list school exams</description>
 
