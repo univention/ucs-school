@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Management Console
 #  utility code for the UMC exam module
@@ -76,7 +76,7 @@ class Progress(object):
         self._info = info
 
     def error(self, err):
-        self.logger.warn("%s - %s", self._component, err)
+        self.logger.warning("%s - %s", self._component, err)
         self._errors.append(err)
 
     def add_steps(self, steps=1):

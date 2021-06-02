@@ -11,11 +11,12 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupname/exam]
-default="OU% (ou)s-Klassenarbeit"
-Description[de]=Standard-Gruppenname für den Klassenarbeitsmodus (in Python string syntax, Vorgabe: %(default)s)
-Description[en]=Default group name for the exam mode (in Python string syntax, default: %(default)s)
+Description[de]=Standard-Gruppenname für den Klassenarbeitsmodus (in Python string syntax)
+Description[en]=Default group name for the exam mode (in Python string syntax)
 Type=str
 Categories=ucsschool-base
+Default=OU%(ou)s-Klassenarbeit
+ou=% (ou)s
 
 [ucsschool/exam/group/ldap/blacklist/regex]
 Description[de]=Regulärer Ausdruck für Gruppen-DNs, die nicht für die Prüfungsbenutzer übernommen werden sollen (Vorgabe: keine)
