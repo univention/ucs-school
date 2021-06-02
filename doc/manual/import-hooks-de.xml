@@ -340,30 +340,41 @@ service univention-management-console-server restart
 >>> sc = SchoolClass(name="DEMOSCHOOL-igel", school="DEMOSCHOOL")
 >>> sc.create(lo)
 
-Starting SchoolClass.call_hooks('pre', 'create', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
+Starting SchoolClass.call_hooks('pre', 'create', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
+    name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,
+    cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
 Hook directory /usr/share/ucs-school-import/hooks/group_create_pre.d not found or empty.
 Searching for hooks of type 'Hook' in: /var/lib/ucs-school-lib/hooks...
 Found hook classes: MailForSchoolClass
-Loaded hooks: {'post_modify': ['MailForSchoolClass.post_modify'], 'post_create': ['MailForSchoolClass.post_create']}.
+Loaded hooks: {'post_modify': ['MailForSchoolClass.post_modify'], 'post_create': [
+    'MailForSchoolClass.post_create']}.
 Creating SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...')
 SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...') successfully created
-Starting SchoolClass.call_hooks('post', 'create', lo('cn=admin,dc=uni,dc=dtr')) for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...').
+Starting SchoolClass.call_hooks('post', 'create', lo('cn=admin,dc=uni,dc=dtr')) for SchoolClass(
+    name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...').
 Hook directory /usr/share/ucs-school-import/hooks/group_create_post.d not found or empty.
-Running post_create hook MailForSchoolClass.post_create for SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...')...
-Setting email address 'demoschool-igel@uni.dtr' on SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...')...
+Running post_create hook MailForSchoolClass.post_create for SchoolClass(name='DEMOSCHOOL-igel',
+    school='DEMOSCHOOL', dn='...')...
+Setting email address 'demoschool-igel@uni.dtr' on SchoolClass(name='DEMOSCHOOL-igel',
+    school='DEMOSCHOOL', dn='...')...
 True
 
 >>> sc.name = "DEMOSCHOOL-hase"
 >>> sc.modify(lo)
 
-Starting SchoolClass.call_hooks('pre', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...', old_dn='cn=DEMOSCHOOL-igel,...').
+Starting SchoolClass.call_hooks('pre', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
+    name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...', old_dn='cn=DEMOSCHOOL-igel,...').
 Hook directory /usr/share/ucs-school-import/hooks/group_modify_pre.d not found or empty.
-Modifying SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...', old_dn='cn=DEMOSCHOOL-igel,...')
+Modifying SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...',
+    old_dn='cn=DEMOSCHOOL-igel,...')
 SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...') successfully modified
-Starting SchoolClass.call_hooks('post', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...').
+Starting SchoolClass.call_hooks('post', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
+    name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...').
 Hook directory /usr/share/ucs-school-import/hooks/group_modify_post.d not found or empty.
-Running post_modify hook MailForSchoolClass.post_modify for SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...')...
-Changing the email address of SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...') from 'demoschool-igel@example.com' to 'demoschool-hase@example.com'...
+Running post_modify hook MailForSchoolClass.post_modify for SchoolClass(name='DEMOSCHOOL-hase',
+    school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...')...
+Changing the email address of SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', ...)
+    from 'demoschool-igel@example.com' to 'demoschool-hase@example.com'...
 True
           </programlisting>
           Vor dem Anlegen des Objekts wird in <filename class="directory">/usr/share/ucs-school-import/hooks/group_create_pre.d/</filename> nach den Hook-Skripte  gesucht, welche ab &ucsUAS; 5.0 nicht mehr unterstützt werden.
