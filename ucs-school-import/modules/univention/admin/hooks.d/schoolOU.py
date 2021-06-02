@@ -37,7 +37,6 @@ ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer
 
 
 class schoolOU(simpleHook):
-
     def hook_open(self, module):
         ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU: _open called")
 
@@ -62,7 +61,7 @@ class schoolOU(simpleHook):
 
         # compute new accumulated objectClass
         old_ocs = module.oldattr.get("objectClass", [])
-        ocs = set(x.decode('UTf-8') for x in old_ocs)
+        ocs = set(x.decode("UTF-8") for x in old_ocs)
 
         is_school = OPTION_SCHOOLOU in module.options
 
@@ -91,5 +90,5 @@ class schoolOU(simpleHook):
             for attr in ATTRIBUTE_LIST:
                 ml.append((attr, module.oldattr.get(attr, []), [b""]))
 
-        ml.append(("objectClass", old_ocs, list(x.encode('UTF-8') for x in ocs)))
+        ml.append(("objectClass", old_ocs, list(x.encode("UTF-8") for x in ocs)))
         return ml

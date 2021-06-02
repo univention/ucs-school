@@ -65,7 +65,7 @@ else:
         ),  # ignore, done in join script
         "computers/domaincontroller_slave": (
             b"ucsschoolServer",
-            "ignore"
+            "ignore",
         ),  # ignore, done in join script
         "computers/memberserver": (
             b"ucsschoolServer",
@@ -153,8 +153,7 @@ class UcsschoolRoleComputers(simpleHook):
             else:
                 return aml
         roles = {
-            create_ucsschool_role_string(role_str, school).encode('utf-8')
-            for school in obj_schools
+            create_ucsschool_role_string(role_str, school).encode("utf-8") for school in obj_schools
         }
         missing_roles = roles - existing_roles
         if missing_roles:
@@ -192,7 +191,7 @@ class UcsschoolRoleComputers(simpleHook):
         # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[bytes], Set[bytes]]  # noqa: E501
         """Get objectClasses and ucsschoolRoles from obj."""
         existing_ocs = set(obj.oldattr.get("objectClass", []))
-        existing_roles = set(x.encode('UTF-8') for x in obj.get("ucsschoolRole", []))
+        existing_roles = set(x.encode("UTF-8") for x in obj.get("ucsschoolRole", []))
         for things in aml:
             attr = things[0]
             val = things[-1]

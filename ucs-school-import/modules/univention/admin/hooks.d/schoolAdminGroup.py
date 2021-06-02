@@ -38,5 +38,5 @@ class schoolAdminGroup(simpleHook):
 
         objectClass = module.oldattr.get("objectClass", [])
         name = "ucsschoolAdministratorGroup"
-        if name.encode('UTF-8') in objectClass and name not in module.options:
+        if name.encode("UTF-8") in objectClass and name not in module.options:
             module.options.append(name)

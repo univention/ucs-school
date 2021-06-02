@@ -42,7 +42,7 @@ class UcsschoolPurgeTimestamp(simpleHook):
     def hook_open(self, module):
         old_purge_ts = module.get("ucsschoolPurgeTimestamp")
         if old_purge_ts and not self.udm_date_format_pattern.match(old_purge_ts):
-            module["ucsschoolPurgeTimestamp"] = self.ldap2udm(old_purge_ts.encode('UTF-8'))
+            module["ucsschoolPurgeTimestamp"] = self.ldap2udm(old_purge_ts.encode("UTF-8"))
             module.save()
 
     def hook_ldap_addlist(self, module, al=None):
@@ -70,8 +70,8 @@ class UcsschoolPurgeTimestamp(simpleHook):
             else:
                 attr, remove_val, add_val = item
 
-            new_val = cls.udm2ldap(add_val.decode('UTF-8'))
-            if cls.udm_date_format_pattern.match(remove_val.decode('UTF-8')):
+            new_val = cls.udm2ldap(add_val.decode("UTF-8"))
+            if cls.udm_date_format_pattern.match(remove_val.decode("UTF-8")):
                 # LDAP value was converted on open(), convert back to original value
                 remove_val = cls.udm2ldap(remove_val)
             add_mod_list.remove(item)
@@ -81,7 +81,7 @@ class UcsschoolPurgeTimestamp(simpleHook):
     @classmethod
     def ldap2udm(cls, ldap_val):
         """Convert b'20090101000000Z' to u'2009-01-01'. Ignores timezones."""
-        ldap_val = ldap_val.decode('utf-8')
+        ldap_val = ldap_val.decode("utf-8")
         if not ldap_val:
             return u""
         ldap_date = datetime.datetime.strptime(ldap_val, cls.ldap_date_format)
@@ -94,4 +94,4 @@ class UcsschoolPurgeTimestamp(simpleHook):
             return b""
         udm_date = datetime.datetime.strptime(udm_val, cls.udm_date_format)
         udm_date = udm_date.strftime(cls.ldap_date_format)
-        return udm_date.encode('ASCII')
+        return udm_date.encode("ASCII")
