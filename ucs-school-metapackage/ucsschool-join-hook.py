@@ -29,9 +29,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import argparse
 import json
 import logging
-import argparse
 import os
 import subprocess
 import sys
@@ -191,7 +191,7 @@ def call_cmd_locally(*cmd):  # type: (*str) -> StdoutStderr
     log.info("Calling %r ...", cmd)
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = proc.communicate()
-    stdout, stderr = stdout.decode('UTF-8', 'replace'), stderr.decode('UTF-8', 'replace')
+    stdout, stderr = stdout.decode("UTF-8", "replace"), stderr.decode("UTF-8", "replace")
     if proc.returncode:
         raise CallCommandError(
             "{!r} returned with exitcode {}:\n{}\n{}".format(cmd, proc.returncode, stderr, stdout)
@@ -291,7 +291,7 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
             "--do-not-revert",
         ]
         if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-            username = options.lo.getAttr(options.binddn, "uid")[0].decode('UTF-8')
+            username = options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8")
             cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
         call_cmd_locally(*cmd)
 
@@ -399,7 +399,7 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
         "--noninteractive",
     ]
     if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-        username = options.lo.getAttr(options.binddn, "uid")[0].decode('UTF-8')
+        username = options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8")
         cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
     try:
         call_cmd_locally(*cmd)
@@ -429,9 +429,7 @@ def main():  # type: () -> None
         help="FQDN of the UCS master domaincontroller",
     )
     parser.add_argument("--binddn", help="LDAP binddn")
-    parser.add_argument(
-        "--bindpwdfile", help="path to password file"
-    )
+    parser.add_argument("--bindpwdfile", help="path to password file")
     parser.add_argument(
         "--hooktype",
         dest="hook_type",
