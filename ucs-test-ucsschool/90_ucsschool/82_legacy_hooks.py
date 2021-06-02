@@ -32,7 +32,7 @@ except ImportError:
     pass
 
 MODULE_PATHS = (
-    ("/usr/share/pyshared/ucsschool/lib/models", "ucsschool.lib.models"),
+    ("/usr/lib/python2.7/dist-packages/ucsschool/lib/models", "ucsschool.lib.models"),
     ("/usr/lib/python2.7/dist-packages/ucsschool/importer/models", "ucsschool.importer.models"),
     ("/usr/lib/python2.7/dist-packages/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
 )
