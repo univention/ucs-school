@@ -1,7 +1,7 @@
 [
 	{
 		"input_files": [
-			"python/.*py"
+			"modules/ucsschool/lib/.*\\.py"
 		],
 		"po_subdir": "python",
 		"target_type": "mo",

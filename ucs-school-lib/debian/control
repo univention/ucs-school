@@ -2,24 +2,26 @@ Source: ucs-school-lib
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 10),
- ucslint,
- univention-config-dev,
+Build-Depends:
+ debhelper (>= 10),
+ dh-python,
  python-all,
  python3-all,
- dh-python,
+ ucslint,
+ univention-config-dev,
+ univention-ucs-translation-template,
 Standards-Version: 3.8.2
 
 Package: python-ucs-school
 Architecture: all
 Depends:
+ python-ucsschool-lib (>= 12.2.29),
  ${misc:Depends},
  ${python:Depends},
- python-ucsschool-lib (>= 12.2.29),
 Breaks:
  ucs-school-import (<< 17.0.64),
 Provides:
- ${python:Provides}
+ ${python:Provides},
 Description: UCS@school - common Python modules
  This package contains Python modules used by various
  components of UCS@school.
@@ -32,8 +34,6 @@ Description: UCS@school - common Python modules
 Package: python-ucsschool-lib
 Architecture: all
 Depends:
- ${misc:Depends},
- ${python:Depends},
  python-apt,
  python-click,
  python-colorlog,
@@ -48,12 +48,14 @@ Depends:
  python-univention-management-console,
  ucs-school-lib-common,
  univention-management-console,
+ ${misc:Depends},
+ ${python:Depends},
 Breaks:
  python-ucs-school (<< 12.2.29),
 Replaces:
  python-ucs-school (<< 12.2.29),
 Provides:
- ${python:Provides}
+ ${python:Provides},
 Description: UCS@school - common Python modules
  This package contains Python modules used by various
  components of UCS@school.
@@ -66,8 +68,6 @@ Description: UCS@school - common Python modules
 Package: python3-ucsschool-lib
 Architecture: all
 Depends:
- ${misc:Depends},
- ${python3:Depends},
  python3-apt,
  python3-click,
  python3-colorlog,
@@ -81,8 +81,10 @@ Depends:
  python3-univention-lib,
  ucs-school-lib-common,
  univention-management-console,
+ ${misc:Depends},
+ ${python3:Depends},
 Provides:
- ${python3:Provides}
+ ${python3:Provides},
 Description: UCS@school - common Python 3 modules
  This package contains Python modules used by various
  components of UCS@school.
@@ -95,7 +97,7 @@ Description: UCS@school - common Python 3 modules
 Package: shell-ucs-school
 Architecture: all
 Depends:
- ${misc:Depends}
+ ${misc:Depends},
 Description: UCS@school - common shell functions
  This package contains shell functions used by various
  components of UCS@school.
@@ -108,8 +110,9 @@ Description: UCS@school - common shell functions
 Package: ucs-school-lib-common
 Architecture: all
 Depends:
- ${misc:Depends}
-Breaks: python-ucs-school (<< 12.2.28),
+ ${misc:Depends},
+Breaks:
+ python-ucs-school (<< 12.2.28),
 Description: UCS@school - common files of ucs-school-lib
  This package contains files used by multiple ucs-school-lib
  packages.

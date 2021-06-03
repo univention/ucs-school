@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.30) unstable; urgency=medium
+
+  * Bug #52582: move python/ → modules/ucsschool/lib
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jun 2021 13:35:14 +0200
+
 ucs-school-lib (12.2.29) unstable; urgency=medium
 
   * Bug #52582: split python-ucs-school into python-ucsschool-lib
