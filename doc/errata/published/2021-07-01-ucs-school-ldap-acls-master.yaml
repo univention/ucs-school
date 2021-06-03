@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-ldap-acls-master
-fix: 17.0.4-10A~4.4.0.202106020037
-desc: |
- * The LDAP-ACL UCR templates are now Python 3 compatible (Bug #52604).
-bug: [52604]

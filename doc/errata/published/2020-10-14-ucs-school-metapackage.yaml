@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-metapackage
-fix: 12.0.4-2A~4.4.0.202010141322
-desc: |
- * UCS@school version 4.4 v7 requires UCS to be updated to at least <emphasis>4.4-6 errata762</emphasis>. On the DVD installation media that is not the case, and thus the installation of new systems fails when the pre-join hook tries to install <emphasis>UCS@school 4.4 v7</emphasis>. The pre-join hook has been modified to detect that situation and install <emphasis>UCS@school version 4.4 v6</emphasis> instead. The user can update to <emphasis>4.4 v7</emphasis> after the installation finishes (Bug #52214).
-bug: [52214]

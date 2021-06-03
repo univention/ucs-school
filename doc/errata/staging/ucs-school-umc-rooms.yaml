@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-rooms
-fix: 16.1.3A~4.4.0.202107201118
-desc: |
- * A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (Bug #53026, Bug #32177).
-bug: [53026,32177]
