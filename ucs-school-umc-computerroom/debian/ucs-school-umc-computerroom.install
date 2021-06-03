@@ -1,5 +1,3 @@
 ucs-school-deactivate-rules usr/share/ucs-school-umc-computerroom/
 ultravnc.vnc usr/share/ucs-school-umc-computerroom/
-umc/python/computerroom/plugins usr/lib/python2.7/dist-packages/univention/management/console/modules/computerroom
 screenshot*jpg usr/share/ucs-school-umc-computerroom/
-italc_integration/*.py usr/lib/python2.7/dist-packages/ucsschool/italc_integration/
