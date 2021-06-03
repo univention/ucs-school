@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-metapackage
-fix: 12.0.2-2A~4.4.0.201905161706
-desc: |
- * The installation of school slaves and backups failed, if the join is performed directly within the UCS installer. This problem has now been fixed by activating the online repository during installation if this is not the case (Bug #49475).
-bug: [49475]

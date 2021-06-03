@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-internetrules
-fix: 15.0.2A~4.4.0.202106030032
-desc: |
- * The package <package>ucs-school-umc-internetrules</package> has been migrated to dh_python (Bug #52592).
-bug: [52592]

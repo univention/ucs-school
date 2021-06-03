@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-groups
-fix: 9.0.0-11A~4.4.0.202104141418
-desc: |
- * It is now possible to select multiple workgroups in the UMC and delete them with one click (Bug #47393).
-bug: [47393]

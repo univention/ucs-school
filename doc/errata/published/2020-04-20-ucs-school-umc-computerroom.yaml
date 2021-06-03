@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-18A~4.4.0.202004161150
-desc: |
- * Teacher computers are now properly exempt from the share restrictions in the computer room. This is valid during exams as well (Bug #50852).
-bug: [50852]
