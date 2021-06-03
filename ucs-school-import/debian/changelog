@@ -1,3 +1,9 @@
+ucs-school-import (17.0.64) unstable; urgency=medium
+
+  * Bug #52582: split python-ucs-school into python-ucsschool-lib
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jun 2021 11:45:11 +0200
+
 ucs-school-import (17.0.63) unstable; urgency=medium
 
   * Bug #52582: migrate ucsschool.lib.create_ou to dh-python
