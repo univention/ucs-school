@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-diagnostic
-fix: 1.0.0-13A~4.4.0.202010021658
-desc: |
-  * A new diagnosis module was added. It checks if UCS@school admin accounts are correctly configured. It checks if each registered <envar>ucsschoolAdministrator</envar> is a member of their corresponding admins-school group(s) (Bug #45332).
-bug: [45332]
