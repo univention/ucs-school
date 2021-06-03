@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-19A~4.4.0.202004241449
-desc: |
- * The UMC checks the computer room settings before finishing an exam now to prevent wrong behavior due to de-sync of the room state (Bug #51165).
-bug: [51165]

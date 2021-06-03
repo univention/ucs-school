@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-installer
-fix: 7.0.2A~4.4.0.202106030029
-desc: |
- * The package <package>ucs-school-umc-installer</package> has been migrated to dh_python (Bug #52591).
-bug: [52591]

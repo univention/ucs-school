@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-32A~4.4.0.202106032157
-desc: |
- * The package <package>ucs-school-umc-computerroom</package> has been migrated to dh_python (Bug #52585).
-bug: [52585]

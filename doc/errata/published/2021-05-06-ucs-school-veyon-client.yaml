@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-veyon-client
-fix: 1.0.1-7A~4.4.0.202104300920
-desc: |
- * Extend the ping timeout to 5 seconds and make ping behavior more stable (Bug #53055).
-bug: [53055]

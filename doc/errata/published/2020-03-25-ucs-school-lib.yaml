@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-lib
-fix: 12.1.10A~4.4.0.202002211437
-desc: |
- * Internal change: within the UCS@school LDAP attribute <literal>ucsschoolRole</literal> are now additional context types allowed. Besides the existing <literal>school</literal> the new type <literal>exam</literal> has been added (Bug #50819).
-bug: [50819]
