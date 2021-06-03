@@ -1,0 +1,14 @@
+modules/ucsschool/http_api/app/*.py ucsschool.http_api.app
+modules/ucsschool/http_api/import_api/management/*.py ucsschool.http_api.management
+modules/ucsschool/http_api/import_api/management/commands/*.py ucsschool.http_api.management.commands
+modules/ucsschool/http_api/import_api/migrations/*.py ucsschool.http_api.migrations
+modules/ucsschool/http_api/manage.py ucsschool.http_api
+modules/ucsschool/http_api/import_api/admin.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/apps.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/http_api_import_frontend.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/import_logging.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/models.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/serializers.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/tasks.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/utils.py ucsschool.http_api.import_api
+modules/ucsschool/http_api/import_api/views.py ucsschool.http_api.import_api

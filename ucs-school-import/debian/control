@@ -115,13 +115,7 @@ Package: ucs-school-import-http-api
 Architecture: all
 Depends:
  gunicorn (>=19.0-1),
- python-django (>=1.8),
- python-django-celery (>=3.1.16-1),
- python-django-filter (>=1.0.1-1),
- python-django-pam (>=1.2.0-1),
- python-djangorestframework (>= 3.4.0-2),
- python-pampy (>=1.8.2-1),
- python-psycopg2 (>=2.5.4),
+ python-ucsschool-importer-http-api (>= 17.0.65),
  ucs-school-import (= ${source:Version}),
  ucs-school-import-http-api-common (= ${source:Version}),
  univention-celery (>=1.0.0-1),
@@ -133,6 +127,50 @@ Recommends:
 Conflicts:
  python-django-filters (<<1.0.0),
  python3-celery,
+Description: UCS@school: RESTful API for importing users
+ This package provides a service for importing users using a RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python-ucsschool-importer-http-api
+Architecture: all
+Depends:
+ python-django (>=1.8),
+ python-django-celery (>=3.1.16-1),
+ python-django-filter (>=1.0.1-1),
+ python-django-pam (>=1.2.0-1),
+ python-djangorestframework (>= 3.4.0-2),
+ python-pampy (>=1.8.2-1),
+ python-psycopg2 (>=2.5.4),
+ ${misc:Depends},
+Breaks:
+ ucs-school-import-http-api (<< 17.0.65),
+Replaces:
+ ucs-school-import-http-api (<< 17.0.65),
+Description: UCS@school: RESTful API for importing users
+ This package provides a service for importing users using a RESTful HTTP API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: python3-ucsschool-importer-http-api
+Architecture: all
+Depends:
+ python3-django (>=1.8),
+ python3-django-celery (>=3.1.16-1),
+ python3-django-filter (>=1.0.1-1),
+ python3-django-pam (>=1.2.0-1),
+ python3-djangorestframework (>= 3.4.0-2),
+ python3-pampy (>=1.8.2-1),
+ python3-psycopg2 (>=2.5.4),
+ ${misc:Depends},
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .
