@@ -31,10 +31,22 @@
 # <http://www.gnu.org/licenses/>.
 
 export LC_ALL=C.UTF-8
+export PYBUILD_NAME=italc
 
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
 
 %:
-	dh $@ --with python2,python3
+	dh $@ --with python2,python3 --buildsystem=pybuild
+
+
+override_dh_auto_build:
+	dh_auto_build --buildsystem=pybuild
+	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install --buildsystem=pybuild
+	dh_auto_install
+	make install DESTDIR=$(CURDIR)/debian/python-italc/ AM_UPDATE_INFO_DIR=no
+	make install DESTDIR=$(CURDIR)/debian/python3-italc/ AM_UPDATE_INFO_DIR=no
