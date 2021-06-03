@@ -131,28 +131,27 @@ def main():
         # prevent InitialisationError
         uic.args.settings["source_uid"] = "PurgeExpiredUsers"
     config = uic.setup_config()
+
+    # prioritize CLI arguments
     verbose = uic.args.verbose if uic.args.verbose else config["verbose"]
     logfile = uic.args.logfile if uic.args.logfile else config["logfile"]
 
-    # early logging configured by cmdline
+    # configure logging
     uic.setup_logging(verbose, logfile)
-
     logger = uic.logger
-
     if uic.args.quiet:
         loglevel = logging.ERROR
-    elif uic.args.verbose or not uic.args.verbose and config["verbose"]:
+    elif verbose:
         loglevel = logging.DEBUG
     else:
         loglevel = logging.INFO
     logger.setLevel(loglevel)
-    logger.info("------ UCS@school import tool starting ------")
 
     for handler in logger.handlers:
         if isinstance(handler, UniStreamHandler):
             handler.setLevel(loglevel)
 
-    logger.info("------ UCS@school import tool configured ------")
+    logger.info("------ UCS@school import tool starting ------")
     logger.debug("Configuration is:\n%s", pprint.pformat(config))
     factory = setup_factory(config["factory"])
     lo, po = get_admin_connection()
