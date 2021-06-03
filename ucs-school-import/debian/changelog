@@ -1,3 +1,10 @@
+ucs-school-import (17.0.65) unstable; urgency=medium
+
+  * Bug #52580: Migrate ucs-school-import to dh_python
+  * Bug #52580: slpit ucs-school-import into python-ucsschool-importer
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jun 2021 13:53:29 +0200
+
 ucs-school-import (17.0.64) unstable; urgency=medium
 
   * Bug #52582: split python-ucs-school into python-ucsschool-lib
