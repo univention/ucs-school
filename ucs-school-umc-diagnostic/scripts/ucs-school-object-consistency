@@ -72,6 +72,13 @@ def main():
     if args.school:
         school = args.school
 
+    if school:
+        if not consistency.check_if_school_exists(school):
+            print(
+                "The given school {} does not exist. "
+                "Maybe you specified the school name instead of the school abbreviation.".format(school)
+            )
+            return
     user_check = consistency.UserCheck()
     users_from_ldap = user_check.get_users_from_ldap(school, user_dn)
     user_problematic_objects = {}
