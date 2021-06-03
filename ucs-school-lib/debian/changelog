@@ -1,3 +1,10 @@
+ucs-school-lib (12.2.31) unstable; urgency=medium
+
+  * Bug #52580: move ucsschool.lib.create_ou from ucs-school-import into
+    python-ucsschool-lib
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jun 2021 15:59:15 +0200
+
 ucs-school-lib (12.2.30) unstable; urgency=medium
 
   * Bug #52582: move python/ → modules/ucsschool/lib

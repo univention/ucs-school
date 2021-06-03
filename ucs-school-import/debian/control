@@ -24,7 +24,7 @@ Depends:
  python-ldap,
  python-ucs-school (>= 12.1.17),
  python-ucsschool-importer (>= 17.0.65),
- python-ucsschool-lib,
+ python-ucsschool-lib (>= 12.2.31),
  python-univention,
  python-univention-config-registry,
  python-univention-lib,
