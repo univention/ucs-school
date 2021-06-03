@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-27A~4.4.0.202011251212
-desc: |
- * In version 4.4 v8 we introduced a feature, which allowed the usage of clients with multiple IP addresses. This can lead to long waiting times if computers inside a computer room are not running. The feature is now disabled by default and can be activated by setting the UCR-V <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar> (Bug #52425).
-bug: [52425]

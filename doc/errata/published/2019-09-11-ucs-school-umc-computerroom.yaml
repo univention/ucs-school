@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-4A~4.4.0.201908081356
-desc: |
- * The execution of arbitrary code from "at" jobs inside the UMC computerroom module is now prevented (Bug #40367).
-bug: [40367]

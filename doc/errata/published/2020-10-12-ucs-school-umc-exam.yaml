@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-exam
-fix: 9.0.1-41A~4.4.0.202009281152
-desc: |
- * If the creation of an exam failed, user accounts could be left in a state, where they cannot log into Windows workstation. (Technically: the value of <envar>sambaUserWorkstations</envar> of the original user remained with a prepended dollar sign.) The script <command>exam-and-room-cleanup</command>, now also restores the users original values, allowing them to log into Windows machines. (Bug #50636).
-bug: [50636]

@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-lib
-fix: 12.1.19A~4.4.0.202008261000
-desc: |
- * Internal improvement: the "Marktplatz" share is now created by a new software model (Bug #51301).
-bug: [51301]

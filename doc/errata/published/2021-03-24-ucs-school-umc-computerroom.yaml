@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-28A~4.4.0.202103020757
-desc: |
- * The computerroom module now supports Veyon as a new backend (Bug #52522, Bug #52563).
-bug: [52522, 52563]
