@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-computerroom
-fix: 11.0.0-30A~4.4.0.202105031321
-desc: |
- * Vastly improve the performance when using the Veyon backend for the computerroom (Bug #53055).
-bug: [53055]

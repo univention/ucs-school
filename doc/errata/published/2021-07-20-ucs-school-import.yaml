@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-import
-fix: 17.0.71A~4.4.0.202107141220
-desc: |
- * During the dh-python migration some python packages were installed in the wrong location. This has been repaired (Bug #53576).
-bug: [53576]

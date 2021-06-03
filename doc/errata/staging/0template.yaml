@@ -1,7 +1,7 @@
 product: ucsschool
-release: "4.4"
+release: "5.0"
 version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
+scope: ucs_5.0-0-ucs-school-5.0
 src:
 fix:
 desc: |

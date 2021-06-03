@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-roleshares
-fix: 7.0.0-5A~4.4.0.202106030017
-desc: |
- * The package <package>ucs-school-roleshares</package> has been migrated to dh_python (Bug #52583).
-bug: [52583]

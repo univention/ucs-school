@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-lists
-fix: 2.0.0-7A~4.4.0.202106030035
-desc: |
- * The package <package>ucs-school-umc-lists</package> has been migrated to dh_python (Bug #52594).
-bug: [52594]

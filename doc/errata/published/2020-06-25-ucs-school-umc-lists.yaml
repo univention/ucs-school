@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-lists
-fix: 2.0.0-6A~4.4.0.202006170938
-desc: |
- * The UCR-V <envar>ucsschool/umc/lists/class/attributes</envar> was added to set the displayed UDM properties and the column names in the csv file, which is downloaded in the UMC classlists module (Bug #50773).
-bug: [50773]

@@ -1,9 +1,0 @@
-product: ucsschool
-release: "4.4"
-version: [0]
-scope: ucs_4.4-0-ucs-school-4.4
-src: ucs-school-umc-exam
-fix: 9.0.1-40A~4.4.0.202005042218
-desc: |
- * The time to finish an exam has been drastically reduced by optimizing the way exam users are deleted (Bug #51199).
-bug: [51199]
