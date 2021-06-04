@@ -5,6 +5,8 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper (>= 10),
  dh-python,
+ python-all,
+ python3-all,
  ucslint,
 Standards-Version: 3.6.1
 
@@ -29,5 +31,7 @@ Depends:
  ${python:Depends},
 Provides:
  ucs-test-module,
+ ${python3:Provides},
+ ${python:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
