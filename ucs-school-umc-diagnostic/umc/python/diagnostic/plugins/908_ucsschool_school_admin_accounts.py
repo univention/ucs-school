@@ -81,12 +81,7 @@ def run(_umc_instance):
 
     # check if each group member is a ucsschoolAdministrator
     for dn, attr in groups:
-        try:
-            attr["uniqueMember"]
-        except KeyError:
-            # this group has no members
-            attr["uniqueMember"] = []
-        for member in attr["uniqueMember"]:
+        for member in attr.get("uniqueMember", []):
             if member not in admins_dn:
                 problematic_objects.setdefault(member, []).append(
                     _(
@@ -97,14 +92,22 @@ def run(_umc_instance):
 
     # check if found admins are member in admins-ou group
     for admin in admins:
+        if not admin["schools"]:
+            continue
+        missing_group_dns = []
         for dn, attr in groups:
             if attr["ucsschoolSchool"][0] in admin["schools"]:
-                if not admin["dn"] in attr["uniqueMember"]:
-                    problematic_objects.setdefault(admin["dn"], []).append(
-                        _("is registered as admin but no member of the following groups: {}".format(dn))
+                if not admin["dn"] in attr.get("uniqueMember", []):
+                    missing_group_dns.append(dn)
+
+        if missing_group_dns:
+            problematic_objects.setdefault(admin["dn"], []).append(
+                _(
+                    "is registered as admin but no member of the following groups: {}".format(
+                        missing_group_dns
                     )
-                if not admin["schools"]:
-                    break
+                )
+            )
 
     if problematic_objects:
         details = "\n\n" + _("The following problems were found:")
