@@ -36,6 +36,8 @@ This module checks the consistency of USC@school users, shares, containers and g
 import argparse
 
 import ucsschool.lib.consistency as consistency
+from ucsschool.lib.models.school import School
+from univention.admin.uldap import getMachineConnection
 
 
 def print_problematic_objects(objects, entry_string):
@@ -72,13 +74,10 @@ def main():
     if args.school:
         school = args.school
 
-    if school:
-        if not consistency.check_if_school_exists(school):
-            print(
-                "The given school {} does not exist. "
-                "Maybe you specified the school name instead of the school abbreviation.".format(school)
-            )
-            return
+    if not School(name=school).exists(getMachineConnection()[0]) and school:
+        print("The given school abbreviation '{}' does not exist. ".format(school))
+        return
+
     user_check = consistency.UserCheck()
     users_from_ldap = user_check.get_users_from_ldap(school, user_dn)
     user_problematic_objects = {}

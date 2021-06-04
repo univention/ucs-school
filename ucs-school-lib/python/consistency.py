@@ -528,19 +528,6 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
     return problematic_objects
 
 
-def check_if_school_exists(school):
-    lo, _ = getMachineConnection()
-    ucr = ConfigRegistry()
-    ucr.load()
-    ldap_base = ucr.get("ldap/base")
-    try:
-        lo.search(base="ou={},{}".format(school, ldap_base))
-    except noObject:
-        return False
-    else:
-        return True
-
-
 def check_all(school=None, user_dn=None):
     # type: (Optional[str], Optional[str]) ->  Dict[str, Dict[str, List[str]]]
     user_check = UserCheck()
