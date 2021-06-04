@@ -124,24 +124,12 @@ def main():
         "dry_run": uic.args.dry_run,
         "verbose": uic.args.verbose,
     }
-
-    if uic.args.conffile:
-        uic.configuration_files.append(uic.args.conffile)
-    else:
-        # prevent InitialisationError
-        uic.args.settings["source_uid"] = "PurgeExpiredUsers"
-    config = uic.setup_config()
-
-    # prioritize CLI arguments
-    verbose = uic.args.verbose if uic.args.verbose else config["verbose"]
-    logfile = uic.args.logfile if uic.args.logfile else config["logfile"]
-
-    # configure logging
-    uic.setup_logging(verbose, logfile)
+    # early logging configured by cmdline
+    uic.setup_logging(uic.args.verbose, uic.args.logfile)
     logger = uic.logger
     if uic.args.quiet:
         loglevel = logging.ERROR
-    elif verbose:
+    elif uic.args.verbose:
         loglevel = logging.DEBUG
     else:
         loglevel = logging.INFO
@@ -152,6 +140,28 @@ def main():
             handler.setLevel(loglevel)
 
     logger.info("------ UCS@school import tool starting ------")
+    if uic.args.conffile:
+        uic.configuration_files.append(uic.args.conffile)
+    else:
+        # prevent InitialisationError
+        uic.args.settings["source_uid"] = "PurgeExpiredUsers"
+    config = uic.setup_config()
+
+    # logging configured by config file (but prioritize cli arguments if specified)
+    verbose = uic.args.verbose if uic.args.verbose else config["verbose"]
+    logfile = uic.args.logfile if uic.args.logfile else config["logfile"]
+    uic.setup_logging(verbose, logfile)
+    # setup_logging sets the loglevel
+    # -> we have to readjust it so that the quiet option can take effect (Bug #50331)
+    if uic.args.quiet:
+        loglevel = logging.ERROR
+    elif verbose:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+    logger.setLevel(loglevel)
+
+    logger.info("------ UCS@school import tool configured ------")
     logger.debug("Configuration is:\n%s", pprint.pformat(config))
     factory = setup_factory(config["factory"])
     lo, po = get_admin_connection()
