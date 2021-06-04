@@ -49,6 +49,9 @@ Depends:
 Provides:
  ${python:Provides},
  ${python3:Provides},
+Replaces:
+ ucs-school-import (<< 17.0.63),
+ ucs-school-lib (<< 12.2.28),
 Description: UMC module delivering backend services for ucs-school-umc-exam
  UMC module delivering backend services for ucs-school-umc-exam
  .
