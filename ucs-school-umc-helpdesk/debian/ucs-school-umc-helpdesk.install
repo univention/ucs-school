@@ -1,3 +1,1 @@
 38ucs-school-umc-helpdesk.inst usr/lib/univention-install/
-modules/univention/admin/ usr/lib/python2.7/dist-packages/univention/
-modules/univention/admin/ usr/lib/python3/dist-packages/univention/
