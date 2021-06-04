@@ -22,7 +22,7 @@ def test_school_creation():
     schoolenv = utu.UCSTestSchool()
     name = uts.random_name()
     schoolenv.create_ou(ou_name=name, use_cache=False)
-    assert name in School.objects.all().values_list("name", flat=True)
+    assert name in list(School.objects.all().values_list("name", flat=True))
 
 
 if __name__ == "__main__":
