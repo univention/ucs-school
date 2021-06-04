@@ -1,6 +1,7 @@
 0010-2:
 0011-3:
 0002-3: debian/changelog
+0002-3: debian/ucs-test-ucsschool.pyinstall
 0008-7: modules/univention/testing/ucsschool/kelvin_api.py
 0008-7: modules/univention/testing/ucsschool/ucs_test_school.py
 0008-7: modules/univention/testing/ucsschool/conftest.py
