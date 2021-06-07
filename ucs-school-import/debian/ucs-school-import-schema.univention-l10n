@@ -1,0 +1,18 @@
+[
+	{
+		"input_files": [
+			"udm_hook/.*\\.py"
+		],
+		"po_subdir": "udm_hook",
+		"target_type": "mo",
+		"destination": "/usr/share/ucs-school-import/schema/{lang}.mo"
+	},
+	{
+		"input_files": [
+			"syntax/.*\\.py"
+		],
+		"po_subdir": "syntax",
+		"target_type": "mo",
+		"destination": "/usr/share/locale/{lang}/LC_MESSAGES/univention-admin-syntax-ucsschool_import.mo"
+	}
+]
