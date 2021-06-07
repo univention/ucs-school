@@ -42,11 +42,6 @@ if [ "$1" = configure -a -z "$2" ]; then
 			samba/share/netlogon/path=/var/lib/samba/netlogon \
 			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	fi
-
-	if dpkg --compare-versions "$2" lt 12.0.2-8 && is_ucr_true nss/group/cachefile/check_member; then
-		# Bug #50905: increase performance by not checking group members by default in ldap-group-to-file.py
-		univention-config-registry unset nss/group/cachefile/check_member
-	fi
 fi
 
 univention-config-registry set \
@@ -60,4 +55,3 @@ univention-config-registry set \
 #DEBHELPER#
 
 exit 0
-

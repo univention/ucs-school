@@ -75,95 +75,7 @@ if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
 		### Defaults for new installations of Slave PDCs
 		univention-config-registry set samba4/ignore/mixsetup?yes samba3/ignore/mixsetup?yes	## necessary for migration of Samba3 to Samba4
-	else
-		if dpkg --compare-versions "$2" lt 4.0.37-1.68 ; then
-			eval "$(ucr shell)"
-
-			if [ -n "$domainname" ]; then
-				ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location?"100 0 3268 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"100 0 88 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"100 0 389 $hostname.$domainname." \
-						connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"100 0 3268 $hostname.$domainname."
-			fi
-		fi
-
-		if dpkg --compare-versions "$2" lt 6.0.7-26 ; then
-			## for ucs-school-umc-groups
-			univention-config-registry set \
-				ucsschool/import/roleshare=no \
-				update/reboot/required=yes
-		fi
-
-		if dpkg --compare-versions "$2" lt 7.0.0-2 && is_ucr_true connector/s4/mapping/gpo && is_ucr_true connector/s4/mapping/gpo/ntsd; then
-			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector restart
-			fi
-			## Write the GPO Security Descriptors from Samba 4 to UCS
-			if is_ucr_true 'connector/s4/allow/secondary'; then # Slave PDC
-				# First sync from UCS to S4 to avoid surprises for already upgraded Slave PDCs
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_ucs.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_ucs.py \
-						--filter "(&(objectClass=msGPOContainer)(msNTSecurityDescriptor=*))"
-				fi
-			fi
-			if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
-				/usr/share/univention-s4-connector/resync_object_from_s4.py \
-					--filter "(objectClass=groupPolicyContainer)"
-			fi
-		fi
-
-		## resync msprintconnection objects during update
-		if dpkg --compare-versions "$2" lt 8.0.1-6 && is_ucr_true connector/s4/mapping/msprintconnectionpolicy; then
-			if [ -e /var/univention-join/joined ] && is_ucr_true connector/s4/autostart; then
-				if [ -x /etc/init.d/univention-s4-connector ]; then
-					invoke-rc.d univention-s4-connector crestart
-				fi
-				# First sync from UCS to S4 to avoid surprises for already upgraded Slave PDCs
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_ucs.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_ucs.py --filter '(objectClass=msPrintConnectionPolicy)'
-				fi
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_s4.py --filter '(objectClass=msPrint-ConnectionPolicy)'
-				fi
-			fi
-		fi
 	fi
-fi
-
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 11.0.1-1; then
-	# Add some local groups to the ignore list
-	# Note: This must be in sync with univention-s4-connector.postinst (Bug #40418):
-	# TODO: Exceptions of Bug 29486 Comment 3
-	group_ignorelist="$(ucr get connector/s4/mapping/group/ignorelist)"
-	updated_group_ignorelist="$group_ignorelist"
-	for g in "Console Logon"; do
-		echo "$group_ignorelist" | egrep -q "(,${g},|^${g},|,${g}$)" \
-			|| updated_group_ignorelist="$updated_group_ignorelist,$g"
-	done
-	if [ "$updated_group_ignorelist" != "$group_ignorelist" ]; then
-			ucr set connector/s4/mapping/group/ignorelist="$updated_group_ignorelist"
-			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector crestart
-			fi
-	fi
-fi
-
-# Bug 33883: restart S4 connector during *update* if installed to activate connector/s4/mapping/group/syncmode change
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
-	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 fi
 
 # Bug 48534: remove dns-$hostname from ignore list
@@ -200,12 +112,8 @@ fi
 
 call_joinscript 00ucs-school-app-version-check.inst
 call_joinscript 00ucs-school-slave-check-ou.inst
-call_joinscript 62ucs-school-slave.inst
-call_joinscript 63ucs-school-portal-entry.inst
+#DEBHELPER#
 call_joinscript 96univention-samba4slavepdc.inst
 call_joinscript 98univention-samba4slavepdc-dns.inst
 
-#DEBHELPER#
-
 exit 0
-
