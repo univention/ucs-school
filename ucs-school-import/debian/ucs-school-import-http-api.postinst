@@ -30,17 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
-
-if [ "$1" = "configure" ]; then
-	uinst=/usr/lib/univention-install/60ucs-school-import-http-api.uinst
-	[ -e "$uinst" ] && rm "$uinst"
-fi
-
 univention-config-registry set ucsschool/import/generate/import/group?true
 
-. /usr/share/univention-lib/base.sh
-call_joinscript 40ucs-school-import-http-api.inst
+#DEBHELPER#
 
 if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt 16.0.2-12 ; then
 	chown -c uas-import:uas-import \

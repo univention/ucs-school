@@ -30,7 +30,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
 . /usr/share/univention-lib/all.sh
 
 univention-config-registry set \
@@ -95,7 +94,7 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 8.0.47-1; then
 	fi
 fi
 
-call_joinscript 35ucs-school-import.inst
+#DEBHELPER#
 
 # Bug #27549: no longer required after update to UCS@school 3.1
 if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 9.0.5; then
