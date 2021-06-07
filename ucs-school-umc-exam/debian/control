@@ -3,12 +3,13 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  python-all,
  python3-all,
  ucslint,
  univention-config-dev,
+ univention-join-dev,
  univention-management-console-dev (>= 11.0.4-37),
 Standards-Version: 3.7.2
 
@@ -22,8 +23,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Description: Starts a new exam for a specified computer room
  Starts a new exam for a specified computer room
  .
@@ -47,8 +48,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Replaces:
  ucs-school-import (<< 17.0.63),
  ucs-school-lib (<< 12.2.28),
