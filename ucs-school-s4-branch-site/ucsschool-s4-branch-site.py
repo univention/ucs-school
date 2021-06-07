@@ -78,7 +78,9 @@ def load_hooks():
         modulename = ".".join((name.replace("-", "_"), filename[:-3].replace("-", "_")))
         ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
         try:
-            spec = importlib.util.spec_from_file_location(os.path.basename(file_path).rsplit('.', 1)[0], file_path)
+            spec = importlib.util.spec_from_file_location(
+                os.path.basename(file_path).rsplit(".", 1)[0], file_path
+            )
             hook = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(hook)
         except Exception:
@@ -134,7 +136,9 @@ def on_load(ldap_machine_read=None, ldap_position=None):
 
     for service_id in (b"UCS@school Education", b"UCS@school Administration"):
         if service_id in services:
-            _ucsschool_service_specialization_filter = ldap.filter.filter_format("(univentionService=%s)", [service_id.decode('UTF-8')])
+            _ucsschool_service_specialization_filter = ldap.filter.filter_format(
+                "(univentionService=%s)", [service_id.decode("UTF-8")]
+            )
             break
 
 
@@ -207,10 +211,10 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
         # select only school branches and exclude a modrdn 'r' phase DN which still exists
         if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
             if "associatedDomain" in obj:
-                domainname = obj["associatedDomain"][0].decode('UTF-8')
+                domainname = obj["associatedDomain"][0].decode("UTF-8")
             else:
                 domainname = _local_domainname
-            _visible_samba4_school_dcs.append(".".join((obj["cn"][0].decode('UTF-8'), domainname)))
+            _visible_samba4_school_dcs.append(".".join((obj["cn"][0].decode("UTF-8"), domainname)))
 
     return _visible_samba4_school_dcs
 
@@ -287,7 +291,11 @@ def update_ucr_overrides(excludeDN=None):
                 ucr_locations_list.append("%s %s." % (_prio_weight_port_str, server_fqdn))
                 done_list.append(server_fqdn)
             else:
-                ud.debug(ud.LISTENER, ud.ALL, "%s: server in UCR not visible in LDAP: %s" % (name, server_fqdn))
+                ud.debug(
+                    ud.LISTENER,
+                    ud.ALL,
+                    "%s: server in UCR not visible in LDAP: %s" % (name, server_fqdn),
+                )
         # append the ones visible in LDAP but not yet in UCR:
         for server_fqdn in server_fqdn_list:
             if server_fqdn not in done_list:
@@ -325,7 +333,9 @@ def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
             relativeDomainName,
         )
         try:
-            ud.debug(ud.LISTENER, ud.PROCESS, "%s: trigger s4 connector: %s" % (name, relativeDomainName))
+            ud.debug(
+                ud.LISTENER, ud.PROCESS, "%s: trigger s4 connector: %s" % (name, relativeDomainName)
+            )
             res = ldap_machine_read.search(
                 base=ldap_position.getDn(), filter=ldap_filter, attr=["*", "+"]
             )
@@ -364,10 +374,16 @@ def delete(old_dn, old, command):
 
 def handler(dn, new, old, command):
     if not _ucsschool_service_specialization_filter:
-        ud.debug(ud.LISTENER, ud.INFO, "%s: Local UCS@school server type still unknown, ignoring." % (name,))
+        ud.debug(
+            ud.LISTENER, ud.INFO, "%s: Local UCS@school server type still unknown, ignoring." % (name,)
+        )
         return
 
-    ud.debug(ud.LISTENER, ud.ALL, "%s: command: %s, dn: %s, new? %s, old? %s" % (name, command, dn, bool(new), bool(old)))
+    ud.debug(
+        ud.LISTENER,
+        ud.ALL,
+        "%s: command: %s, dn: %s, new? %s, old? %s" % (name, command, dn, bool(new), bool(old)),
+    )
 
     if new:
         if ",ou=" not in dn.lower():  # only handle DCs in school branch sites
@@ -392,7 +408,11 @@ def postrun():
     global _relativeDomainName_trigger_set
 
     if not listener.configRegistry.is_true("connector/s4/autostart", True):
-        ud.debug(ud.LISTENER, ud.PROCESS, "%s: S4 Connector restart skipped, disabled via connector/s4/autostart." % (name,))
+        ud.debug(
+            ud.LISTENER,
+            ud.PROCESS,
+            "%s: S4 Connector restart skipped, disabled via connector/s4/autostart." % (name,),
+        )
         return
 
     if os.path.isfile("/etc/init.d/univention-s4-connector"):
