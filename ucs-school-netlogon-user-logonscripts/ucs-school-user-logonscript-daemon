@@ -30,9 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import argparse
 import copy
 import logging
-import argparse
 import os
 import pwd
 import re
@@ -493,7 +493,7 @@ class QueueHandler:
                     os.remove(vbs_path)
             return
 
-        uid = new.get("uid", [b"$"])[0].decode('UTF-8')
+        uid = new.get("uid", [b"$"])[0].decode("UTF-8")
         if uid.endswith("$") or b"univentionHost" in new.get("objectClass", []):
             # if uid ends with '$', it is a machine account
             Log.debug("%s is a computer object - skipping queue item", dn)
@@ -503,7 +503,7 @@ class QueueHandler:
             return
 
         membershipIDs = set()  # set of gidNumbers of groups the user is member of
-        newGidNumber = new.get("gidNumber", [b""])[0].decode('UTF-8')
+        newGidNumber = new.get("gidNumber", [b""])[0].decode("UTF-8")
         if not newGidNumber:
             Log.debug("User %r has no gidNumber set - skipping queue item" % (uid,))
             return
@@ -544,16 +544,16 @@ class QueueHandler:
         for ID in membershipIDs:
             for share in self.get_shares_with_specific_gidNumber(ID):
                 # linkname is identical to the sharename
-                linkname = share[1]["cn"][0].decode('UTF-8')
+                linkname = share[1]["cn"][0].decode("UTF-8")
                 if "univentionShareSambaName" in share[1]:
-                    linkname = share[1]["univentionShareSambaName"][0].decode('UTF-8')
+                    linkname = share[1]["univentionShareSambaName"][0].decode("UTF-8")
 
                 # ignore link if already in global links
                 if links.get(linkname):
                     continue
 
                 # hostname_ is either an IP or an FQDN
-                hostname_ = share[1]["univentionShareHost"][0].decode('UTF-8')
+                hostname_ = share[1]["univentionShareHost"][0].decode("UTF-8")
                 if hostname_.strip("0123456789."):  # no IP-Address
                     hostname_ = hostname_.split(".", 1)[0]  # use only hostname not FQDN
 
@@ -572,7 +572,7 @@ class QueueHandler:
         # create logon script for OSX systems
         if self.ucr.is_true("ucsschool/userlogon/mac"):
             self.write_mac_link_scripts(
-                uid, new.get("homeDirectory", [b"NO-HOMEDIRECTORY-SET"])[0].decode('UTF-8'), links
+                uid, new.get("homeDirectory", [b"NO-HOMEDIRECTORY-SET"])[0].decode("UTF-8"), links
             )
 
     def setup_signal_handling(self):
@@ -797,9 +797,7 @@ class QueueHandler:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-d", "--debug", default=False, action="store_true", help="show debug output"
-    )
+    parser.add_argument("-d", "--debug", default=False, action="store_true", help="show debug output")
     options = parser.parse_args()
 
     if options.debug:
