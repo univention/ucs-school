@@ -2,7 +2,10 @@ Source: italc-windows
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0), ucslint
+Build-Depends:
+ debhelper-compat (= 12),
+ ucslint,
+ univention-join-dev,
 Standards-Version: 3.7.3
 Homepage: http://italc.sourceforge.net/home.php
 
