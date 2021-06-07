@@ -3,13 +3,14 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  dh-systemd,
  python-all,
  python3-all,
  ucslint,
  univention-config-dev,
+ univention-join-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon-user-logonscripts
