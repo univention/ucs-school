@@ -139,7 +139,7 @@ def warn(msg):
 
 def handler(dn, new, old, command):
     if old and not new and command != "r":  # user was deleted or moved to another OU
-        uid = old["uid"][0].decode('UTF-8')
+        uid = old["uid"][0].decode("UTF-8")
         if not exam_remove and b"ucsschoolExam" in old["objectClass"]:
             warn(
                 "ignoring exam user {!r}, as ucsschool/exam/user/homedir/autoremove is set to "
@@ -147,7 +147,7 @@ def handler(dn, new, old, command):
             )
             return
 
-        home_dir = old.get("homeDirectory", [b''])[0].decode('UTF-8')
+        home_dir = old.get("homeDirectory", [b""])[0].decode("UTF-8")
         if not home_dir:
             warn("not removing home of user %s: homeDirectory not set" % uid)
             return
