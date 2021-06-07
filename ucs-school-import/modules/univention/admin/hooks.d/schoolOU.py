@@ -58,11 +58,11 @@ class schoolOU(simpleHook):
 
             if attr == "objectClass":
                 if not isinstance(remove_val, list):
-                    remove_val = set([remove_val])
+                    remove_val = {remove_val}
                 ocs -= set(remove_val)
 
                 if not isinstance(add_val, list):
-                    add_val = set([add_val])
+                    add_val = {add_val}
                     add_val.discard(b"")
                 ocs |= set(add_val)
 

@@ -148,7 +148,7 @@ class UserImport(object):
         while imported_users:
             imported_user = imported_users.pop(0)
             usernum += 1
-            percentage = 10 + 90 * usernum / self.imported_users_len  # 10% - 100%
+            percentage = 10 + 90 * usernum // self.imported_users_len  # 10% - 100%
             self.progress_report(
                 description="Creating and modifying users: {}%.".format(percentage),
                 percentage=int(percentage),
@@ -454,7 +454,7 @@ class UserImport(object):
         self.logger.info("------ Deleting %d users... ------", len(users))
         a_user = self.factory.make_import_user([])
         for num, (source_uid, record_uid, input_data) in enumerate(users, start=1):
-            percentage = 10 * num / len(users)  # 0% - 10%
+            percentage = 10 * num // len(users)  # 0% - 10%
             self.progress_report(
                 description="Deleting users: {}.".format(percentage),
                 percentage=int(percentage),

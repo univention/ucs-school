@@ -160,7 +160,7 @@ class TestUserCreator(object):
         for num, kind in jobs:
             if num == 0:
                 continue
-            for user_num in xrange(num):
+            for user_num in range(num):
                 given_name = next(self._get_new_given_name())
                 family_name = next(self._get_new_family_name())
                 user = dict(
