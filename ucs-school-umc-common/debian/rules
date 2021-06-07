@@ -31,14 +31,13 @@
 
 export LC_ALL=C.UTF-8
 
+%:
+	dh $@ --with umc
+
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
 
-override_dh_auto_build:
-	dh-umc-module-build
-	dh_auto_build
-	mv de.mo ucs-school-common.mo
-
-%:
-	dh $@
+override_dh_auto_install:
+	dh_auto_install
+	mv debian/ucs-school-umc-common/usr/share/univention-management-console/i18n/de/umc-core.mo debian/ucs-school-umc-common/usr/share/univention-management-console/i18n/de/ucs-school-common.mo
