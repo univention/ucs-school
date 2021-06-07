@@ -1020,11 +1020,11 @@ class UmcComputer(object):
 
     def type_name(self):
         if self.typ == "windows":
-            return "Windows-System"
+            return "Windows system"
         elif self.typ == "macos":
             return "Mac OS X"
         elif self.typ == "ipmanagedclient":
-            return "Gerät mit IP-Adresse"
+            return "Device with IP address"
 
     def edit(
         self, name=None, ip_address=None, subnet_mask=None, mac_address=None, inventory_number=None
