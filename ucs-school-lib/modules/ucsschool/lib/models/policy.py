@@ -53,8 +53,10 @@ class Policy(UCSSchoolHelperAbstractClass):
         # add the missing policy
         pl = lo.get(obj.dn, ["univentionPolicyReference"])
         self.logger.info("Attaching %r to %r", self, obj)
-        if self.dn.lower() not in map(lambda x: x.decode('UTF-8').lower(), pl.get("univentionPolicyReference", [])):
-            modlist = [("univentionPolicyReference", b"", self.dn.encode('utf-8'))]
+        if self.dn.lower() not in map(
+            lambda x: x.decode("UTF-8").lower(), pl.get("univentionPolicyReference", [])
+        ):
+            modlist = [("univentionPolicyReference", b"", self.dn.encode("utf-8"))]
             try:
                 lo.modify(obj.dn, modlist)
             except ldap.LDAPError:

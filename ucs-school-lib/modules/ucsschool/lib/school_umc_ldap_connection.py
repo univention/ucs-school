@@ -30,10 +30,12 @@
 # <http://www.gnu.org/licenses/>.
 
 import inspect
+
 try:
     from inspect import getfullargspec as get_arguments
 except ImportError:
     from inspect import getargspec as get_arguments
+
 from functools import wraps
 
 from univention.management.console.ldap import (

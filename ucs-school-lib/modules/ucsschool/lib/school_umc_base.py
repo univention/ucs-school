@@ -246,7 +246,9 @@ class SchoolBaseModule(Base):
                 if pattern:
                     search_filter_list.append(LDAP_Filter.forUsers(pattern))
                 # concatenate LDAP filters
-                search_filter = u"{}".format(conjunction("&", [parse(subfilter) for subfilter in search_filter_list]))
+                search_filter = u"{}".format(
+                    conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
+                )
                 for cls in classes:
                     try:
                         udm_obj = cls.get_only_udm_obj(ldap_connection, search_filter, base=userdn)

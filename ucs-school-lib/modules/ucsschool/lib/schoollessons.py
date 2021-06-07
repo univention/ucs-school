@@ -32,6 +32,7 @@
 import datetime
 import re
 import shutil
+
 from six import string_types
 
 from univention.lib import locking

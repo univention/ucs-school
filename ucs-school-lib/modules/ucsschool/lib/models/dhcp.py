@@ -130,7 +130,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
                             ucr["interfaces/%s/address" % interface_name],
                             ucr["interfaces/%s/netmask" % interface_name],
                         ),
-                        strict=False
+                        strict=False,
                     )
                     interfaces.append(address)
                 except ValueError as exc:

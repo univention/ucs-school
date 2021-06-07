@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+
 from six import string_types
 
 import univention.config_registry
