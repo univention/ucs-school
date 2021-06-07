@@ -1,0 +1,11 @@
+[
+	{
+		"input_files": [
+			"modules/ucsschool/http_api/.*\\.py"
+		],
+		"po_subdir": "modules/ucsschool/http_api/",
+		"target_type": "mo",
+		"destination": "/usr/share/locale/{lang}/LC_MESSAGES/ucs-school-import-http-api.mo"
+	}
+]
+
