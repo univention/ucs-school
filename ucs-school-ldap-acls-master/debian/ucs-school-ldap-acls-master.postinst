@@ -32,11 +32,7 @@
 
 #DEBHELPER#
 
-. /usr/share/univention-lib/all.sh
-
-eval "$(univention-config-registry shell)"
-
-call_joinscript 70ucsschool-ldap-acls-master.inst
+# after 70ucsschool-ldap-acls-master.inst
 test -x /etc/init.d/slapd && /etc/init.d/slapd restart
 
 exit 0
