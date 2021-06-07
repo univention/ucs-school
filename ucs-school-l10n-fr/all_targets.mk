@@ -45,7 +45,8 @@ ALL_TARGETS = $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-helpdesk
 	$(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/schoolusers.json \
 	$(DESTDIR)/usr/share/univention-management-console/i18n/fr/schoolusers.mo \
 	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/univention-admin-handlers-settings-helpdesk.mo \
-	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/python-ucs-school.mo
+	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/python-ucs-school.mo \
+	$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-ucr-l10n.mo
 
 $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-umc-helpdesk.mo: fr/ucs-school-umc-helpdesk/umc/python/helpdesk/fr.po
 $(DESTDIR)/usr/share/univention-management-console-frontend/js/umc/modules/i18n/fr/helpdesk.json: fr/ucs-school-umc-helpdesk/umc/js/fr.po
