@@ -30,12 +30,9 @@
 
 export LC_ALL=C.UTF-8
 
-override_dh_auto_build:
-	ucslint
-	dh_auto_build
-
-override_dh_install:
-	dh_install -Xsvn
-
 %:
 	dh $@
+
+override_dh_auto_test:
+	dh_auto_test
+	ucslint
