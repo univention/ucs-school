@@ -135,10 +135,10 @@ def handle_share(dn, new, old, lo, user_queue):
 
     if not old and new:
         # update all members of new group
-        add_group_change_to_queue(new.get("univentionShareGid", [b''])[0].decode('UTF-8'))
+        add_group_change_to_queue(new.get("univentionShareGid", [b""])[0].decode("UTF-8"))
     elif old and not new:
         # update all members of old group
-        add_group_change_to_queue(old.get("univentionShareGid", [b''])[0].decode('UTF-8'))
+        add_group_change_to_queue(old.get("univentionShareGid", [b""])[0].decode("UTF-8"))
     if old and new:
         attr_list = [
             "univentionShareSambaName",
@@ -149,8 +149,8 @@ def handle_share(dn, new, old, lo, user_queue):
             Log.info("handle_share: no relevant attribute change")
             return
         # update all members of old and new group
-        add_group_change_to_queue(old.get("univentionShareGid", [b''])[0].decode('UTF-8'))
-        add_group_change_to_queue(new.get("univentionShareGid", [b''])[0].decode('UTF-8'))
+        add_group_change_to_queue(old.get("univentionShareGid", [b""])[0].decode("UTF-8"))
+        add_group_change_to_queue(new.get("univentionShareGid", [b""])[0].decode("UTF-8"))
 
 
 def handle_group(dn, new, old, lo, user_queue):
@@ -161,7 +161,7 @@ def handle_group(dn, new, old, lo, user_queue):
     old_members = set(old.get("uniqueMember", []))
     new_members = set(new.get("uniqueMember", []))
     Log.info("handle_group: dn: %s" % (dn,))
-    newGidNumber = new.get("gidNumber", [b""])[0].decode('UTF-8')
+    newGidNumber = new.get("gidNumber", [b""])[0].decode("UTF-8")
     if new and newGidNumber:
         # performance optimization:
         # the group members only have to be processed if there is at least one share object
@@ -182,7 +182,7 @@ def handle_group(dn, new, old, lo, user_queue):
     # "uid=" to filter out computer or group objects (computers in groups resp. groups in groups)
     user_queue.add(
         [
-            (user_dn.decode('UTF-8'), None)
+            (user_dn.decode("UTF-8"), None)
             for user_dn in old_members.symmetric_difference(new_members)
             if user_dn.startswith(b"uid=")
         ]
@@ -205,7 +205,7 @@ def handle_user(dn, new, old, lo, user_queue):
             Log.debug("no relevant attribute has changed - skipping user object")
             return
     username = new.get("uid", old.get("uid", [None]))[0]
-    user_queue.add([(dn, username.decode('UTF-8') if username is not None else username)])
+    user_queue.add([(dn, username.decode("UTF-8") if username is not None else username)])
 
 
 def handler(dn, new, old):  # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]]) -> None
@@ -284,7 +284,10 @@ def run_daemon(cmd):  # type: (List[str]) -> None
     if cmd_proc.returncode:
         Log.error(
             "Command {!r} returned with exit code {!r}. stdout={!r} stderr={!r}".format(
-                cmd, cmd_proc.returncode, cmd_out.decode('UTF-8', 'replace'), cmd_err.decode('UTF-8', 'replace')
+                cmd,
+                cmd_proc.returncode,
+                cmd_out.decode("UTF-8", "replace"),
+                cmd_err.decode("UTF-8", "replace"),
             )
         )
 
