@@ -31,7 +31,7 @@
 import univention.debug as ud
 from univention.admin.hook import simpleHook
 
-OBJECTCLASS_SCHOOLOU = "ucsschoolOrganizationalUnit"
+OBJECTCLASS_SCHOOLOU = b"ucsschoolOrganizationalUnit"
 OPTION_SCHOOLOU = "UCSschool-School-OU"
 ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer", "displayName")
 
@@ -49,7 +49,7 @@ class schoolOU(simpleHook):
 
         # compute new accumulated objectClass
         old_ocs = module.oldattr.get("objectClass", [])
-        ocs = set(x.decode("UTF-8") for x in old_ocs)
+        ocs = set(old_ocs)
 
         is_school = OPTION_SCHOOLOU in module.options
 
@@ -78,5 +78,5 @@ class schoolOU(simpleHook):
             for attr in ATTRIBUTE_LIST:
                 ml.append((attr, module.oldattr.get(attr, []), None))
 
-        ml.append(("objectClass", old_ocs, list(x.encode("UTF-8") for x in ocs)))
+        ml.append(("objectClass", old_ocs, list(ocs)))
         return ml
