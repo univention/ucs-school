@@ -10,6 +10,7 @@ import os
 import time
 
 import pycurl
+
 try:
     import StringIO
 except ImportError:

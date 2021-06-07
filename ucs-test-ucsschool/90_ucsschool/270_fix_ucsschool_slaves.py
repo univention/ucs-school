@@ -44,17 +44,13 @@ def main():
                 [
                     "objectClass",
                     attrs.get("objectClass", []),
-                    list(
-                        set(attrs.get("objectClass", []))
-                        | {"univentionWindows", "ucsschoolComputer"}
-                    ),
+                    list(set(attrs.get("objectClass", [])) | {"univentionWindows", "ucsschoolComputer"}),
                 ],
                 [
                     "ucsschoolRole",
                     attrs.get("ucsschoolRole", []),
                     list(
-                        set(attrs.get("ucsschoolRole", []))
-                        | {"win_computer:school:{}".format(school)}
+                        set(attrs.get("ucsschoolRole", [])) | {"win_computer:school:{}".format(school)}
                     ),
                 ],
             ],

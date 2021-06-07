@@ -312,7 +312,7 @@ class UCSTestSchool(object):
                     if objs:
                         univention_object_type = objs[0][1].get("univentionObjectType")
                         if univention_object_type:
-                            object_type = univention_object_type[0].decode('UTF-8')
+                            object_type = univention_object_type[0].decode("UTF-8")
                             self.udm._cleanup.setdefault(object_type, []).append(dn)
                         else:
                             logger.info(

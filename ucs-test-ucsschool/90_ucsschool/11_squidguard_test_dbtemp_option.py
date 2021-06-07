@@ -196,8 +196,10 @@ def main():
             elif i % 3 == 2:
                 username = "-"
             p.stdin.write(
-                ("http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
-                % (random_string(), random_string(), username)).encode('utf-8')
+                (
+                    "http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
+                    % (random_string(), random_string(), username)
+                ).encode("utf-8")
             )
             p.stdout.readline()
         print()
