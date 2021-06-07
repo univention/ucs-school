@@ -26,6 +26,9 @@ Depends:
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},
+Provides:
+ ${python3:Provides},
+ ${python:Provides},
 Description: UMC module to administrate rooms and their computers
  This package provides a Univention Management Console module that allows to
  administrate school rooms and their associated computers.

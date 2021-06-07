@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (17.0.2) unstable; urgency=medium
+
+  * Bug #52635: Migrate ucs-school-umc-rooms to Python 3 
+
+ -- Håkan Källberg <kaellberg@univention.de>  Mon, 07 Jun 2021 11:54:52 +0200
+
 ucs-school-umc-rooms (17.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
