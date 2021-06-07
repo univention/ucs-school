@@ -32,17 +32,9 @@
 
 export LC_ALL=C.UTF-8
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-l10n-install de
-	univention-install-config-registry-info
-
-override_dh_auto_build:
-	dh_auto_build
-	univention-l10n-build de
+%:
+	dh $@ --with python2,python3,ucr,univention-l10n
 
 override_dh_auto_test:
+	dh_auto_test
 	ucslint
-
-%:
-	dh $@ --with python2,python3
