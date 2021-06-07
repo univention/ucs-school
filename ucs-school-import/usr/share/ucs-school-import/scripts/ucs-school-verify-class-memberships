@@ -206,7 +206,7 @@ def parse_line(lo, line):
     invalid_groups = set()
     for gdn, group in groups:  # pylint: disable=W0612
         if not gdn.endswith(",cn=klassen,cn=schueler,cn=groups,%s" % (oubase,)):
-            if not gdn.endswith(oubase) and re.search(",ou=[^,]+,%s$" % (ucr["ldap/base"],), gdn, re.I):
+            if not gdn.endswith(oubase) and re.search(r",ou=[^,]+,%s$" % (ucr["ldap/base"],), gdn, re.I):
                 raise StudentIsInAnotherClassInAnotherSchool(line, uid, dn, gdn)
             continue  # ignore workgroups / Domain Users
         if gdn.startswith("cn=%s," % (line["school_class"],)):

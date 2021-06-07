@@ -23,7 +23,7 @@ class UCSSchool_Server_DN(UDM_Objects):
 class ucsschoolSchools(UDM_Objects):
     udm_modules = ("container/ou",)
     udm_filter = "objectClass=ucsschoolOrganizationalUnit"
-    regex = re.compile("^.+$")
+    regex = re.compile(r"^.+$")
     key = "%(name)s"
     label = "%(displayName)s"
     use_objects = False

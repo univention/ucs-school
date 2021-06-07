@@ -39,6 +39,7 @@ import copy
 import inspect
 import logging
 import os.path
+from io import IOBase
 
 import dateutil.parser
 import magic
@@ -629,7 +630,7 @@ class Client(object):
             assert isinstance(school, string_types) or school is None
             assert isinstance(user_role, string_types) or user_role is None
             assert isinstance(dryrun, bool)
-            assert isinstance(file_obj, file) or file_obj is None
+            assert isinstance(file_obj, IOBase) or file_obj is None
 
             data = {
                 "dryrun": dryrun,

@@ -98,7 +98,7 @@ def migrate_users(lo, options):
             for object_dn, object_attrs in objects:
                 old_schools = object_attrs.get("ucsschoolSchool", [])
                 old_object_classes = object_attrs.get("objectClass", [])
-                new_schools = set(old_schools) | set([school])
+                new_schools = set(old_schools) | {school}
                 new_object_classes = set(old_object_classes) | set(object_classes)
                 if set(old_schools) == set(new_schools) and set(old_object_classes) == set(
                     new_object_classes
@@ -157,9 +157,7 @@ def migrate_admin_groups(lo, options):
         old_schools = object_attrs.get("ucsschoolSchool", [])
         old_object_classes = object_attrs.get("objectClass", [])
         new_schools = set(old_schools) | set([school])
-        new_object_classes = set(old_object_classes) | set(
-            ["ucsschoolType", "ucsschoolAdministratorGroup"]
-        )
+        new_object_classes = set(old_object_classes) | {b"ucsschoolType", b"ucsschoolAdministratorGroup"}
         if set(old_schools) == set(new_schools) and set(old_object_classes) == set(new_object_classes):
             yield "%r has already been converted." % (object_dn,)
             continue

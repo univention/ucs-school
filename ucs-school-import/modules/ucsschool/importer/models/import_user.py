@@ -97,6 +97,11 @@ try:
 except ImportError:
     pass
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+
 
 FunctionSignature = namedtuple("FunctionSignature", ["name", "args", "kwargs"])
 UsernameUniquenessTuple = namedtuple("UsernameUniquenessTuple", ["record_uid", "source_uid", "dn"])
