@@ -48,60 +48,6 @@ univention-config-registry set \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true
 
 if [ "$1" = "configure" -a -n "$2" ]; then
-	if dpkg --compare-versions "$2" lt 5.0.2-1 ; then
-		eval "$(ucr shell)"
-
-		if [ -n "$domainname" ]; then
-			ucr unset connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location \
-					connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location
-		fi
-	fi
-
-	if dpkg --compare-versions "$2" lt 6.0.7-26 ; then
-		## for ucs-school-import and ucs-school-umc-groups
-		univention-config-registry set \
-			ucsschool/import/roleshare=no \
-			update/reboot/required=yes
-	fi
-
-	if dpkg --compare-versions "$2" lt 7.0.0-2 && is_ucr_true connector/s4/mapping/gpo && is_ucr_true connector/s4/mapping/gpo/ntsd; then
-		if [ -x /etc/init.d/univention-s4-connector ]; then
-			invoke-rc.d univention-s4-connector restart
-		fi
-		## Write the GPO Security Descriptors from Samba 4 to UCS
-		if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
-			/usr/share/univention-s4-connector/resync_object_from_s4.py \
-				--filter "(objectClass=groupPolicyContainer)"
-		fi
-	fi
-
-	## resync msprintconnection objects during update
-	if dpkg --compare-versions "$2" lt 8.0.1-6 && is_ucr_true connector/s4/mapping/msprintconnectionpolicy; then
-		if [ -e /var/univention-join/joined ] && is_ucr_true connector/s4/autostart; then
-			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector crestart
-				if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
-					/usr/share/univention-s4-connector/resync_object_from_s4.py --filter '(objectClass=msPrint-ConnectionPolicy)'
-				fi
-			fi
-		fi
-	fi
-
 	if dpkg --compare-versions "$2" lt 12.0.2-8 && is_ucr_true nss/group/cachefile/check_member; then
 		# Bug #50905: increase performance by not checking group members by default in ldap-group-to-file.py
 		univention-config-registry unset nss/group/cachefile/check_member
@@ -117,29 +63,6 @@ if [ "$1" = configure -a -z "$2" ]; then
 			ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	fi
 	univention-config-registry set ucsschool/join/create_demo?yes
-fi
-
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 11.0.1-1; then
-	# Add some local groups to the ignore list
-	# Note: This must be in sync with univention-s4-connector.postinst (Bug #40418):
-	# TODO: Exceptions of Bug 29486 Comment 3
-	group_ignorelist="$(ucr get connector/s4/mapping/group/ignorelist)"
-	updated_group_ignorelist="$group_ignorelist"
-	for g in "Console Logon"; do
-		echo "$group_ignorelist" | egrep -q "(,${g},|^${g},|,${g}$)" \
-			|| updated_group_ignorelist="$updated_group_ignorelist,$g"
-	done
-	if [ "$updated_group_ignorelist" != "$group_ignorelist" ]; then
-			ucr set connector/s4/mapping/group/ignorelist="$updated_group_ignorelist"
-			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector crestart
-			fi
-	fi
-fi
-
-# Bug 33883: restart S4 connector during *update* if installed to activate connector/s4/mapping/group/syncmode change
-if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
-	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 fi
 
 # Bug 48534: remove dns-$hostname from ignore list
@@ -192,9 +115,6 @@ fi
 /etc/init.d/univention-directory-listener crestart
 
 call_joinscript 00ucs-school-app-version-check.inst
-call_joinscript 62ucs-school-master.inst
-call_joinscript 63ucs-school-portal-entry.inst
-
 #DEBHELPER#
 
 exit 0
