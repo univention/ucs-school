@@ -36,10 +36,5 @@ export LC_ALL=C.UTF-8
 	dh $@
 
 override_dh_auto_test:
+	dh_auto_test
 	ucslint
-
-override_dh_auto_build:
-	dh_auto_build
-
-override_dh_auto_install:
-	dh_auto_install
