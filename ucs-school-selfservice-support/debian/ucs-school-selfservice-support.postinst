@@ -32,22 +32,6 @@
 
 #DEBHELPER#
 
-if [ "$1" = "configure" ]
-then
-	uinst=/usr/lib/univention-install/33ucs-school-selfservice-support.uinst
-	[ -e "$uinst" ] && rm "$uinst"
-fi
-
-. /usr/share/univention-lib/base.sh
-
-# Force pysupport run to make ucsschool.lib.models.utils.add_or_remove_ucrv_value available NOW
-if which update-python-modules >/dev/null 2>&1; then
-	update-python-modules python-ucs-school.public
-	update-python-modules --post-install
-fi
-
-call_joinscript 67ucs-school-selfservice-support.inst
-
 # conditional restart of univention directory listener
 /etc/init.d/univention-directory-listener crestart
 
