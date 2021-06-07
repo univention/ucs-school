@@ -90,16 +90,26 @@ def handler(dn, new, old):
     configRegistry.load()
 
     if all_local_schools is None:
-        ud.debug(ud.LISTENER, ud.ERROR, "pupilgroups: Could not detect local schools",)
+        ud.debug(
+            ud.LISTENER,
+            ud.ERROR,
+            "pupilgroups: Could not detect local schools",
+        )
     elif not any(dn.lower().endswith(",cn=groups,%s" % school.lower()) for school in all_local_schools):
-        ud.debug(ud.LISTENER, ud.INFO, "pupilgroups: dn: %s does not belong to local schools %r" % (dn, all_local_schools))
+        ud.debug(
+            ud.LISTENER,
+            ud.INFO,
+            "pupilgroups: dn: %s does not belong to local schools %r" % (dn, all_local_schools),
+        )
         return  # the object doesn't belong to this school
 
     changes = {}
     if new and new.get("memberUid"):
-        changes[keyPattern % new["cn"][0].decode('UTF-8')] = b",".join(new.get("memberUid", [])).decode('UTF-8')
+        changes[keyPattern % new["cn"][0].decode("UTF-8")] = b",".join(new.get("memberUid", [])).decode(
+            "UTF-8"
+        )
     elif old:  # old lost its last memberUid OR old was removed
-        changes[keyPattern % old["cn"][0].decode('UTF-8')] = None
+        changes[keyPattern % old["cn"][0].decode("UTF-8")] = None
     ud.debug(ud.LISTENER, ud.INFO, "pupilgroups: %r" % (changes,))
 
     listener.setuid(0)
