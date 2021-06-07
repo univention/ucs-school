@@ -3,7 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>> 10),
+ debhelper-compat (= 12),
  default-jre,
  dh-python,
  make,
@@ -14,6 +14,8 @@ Build-Depends:
  python3-all,
  ucslint,
  univention-config-dev,
+ univention-join-dev,
+ univention-l10n-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-import
@@ -236,8 +238,8 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 Package: ucs-school-import-http-api-common
 Architecture: all
 Depends:
- ${misc:Depends},
  python-ucsschool-importer-http-api-common (>= 17.0.65),
+ ${misc:Depends},
 Replaces:
  ucs-school-import-http-api (<< 17.0.6-15),
 Breaks:
