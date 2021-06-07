@@ -31,24 +31,12 @@
 import univention.debug as ud
 from univention.admin.hook import simpleHook
 
-OBJECTCLASS_SCHOOLOU = b"ucsschoolOrganizationalUnit"
+OBJECTCLASS_SCHOOLOU = "ucsschoolOrganizationalUnit"
 OPTION_SCHOOLOU = "UCSschool-School-OU"
 ATTRIBUTE_LIST = ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer", "displayName")
 
 
 class schoolOU(simpleHook):
-    def hook_open(self, module):
-        ud.debug(ud.ADMIN, ud.ALL, "admin.hook.schoolOU: _open called")
-
-        objectClass = module.oldattr.get("objectClass", [])
-
-        # FIXME: handlers.contains.ou.object does not have options
-        if not hasattr(module, "options"):
-            module.options = []
-
-        if OBJECTCLASS_SCHOOLOU in objectClass and OPTION_SCHOOLOU not in module.options:
-            module.options.append(OPTION_SCHOOLOU)
-
     def hook_ldap_modlist(self, module, ml=None):
         """
         Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or
@@ -88,7 +76,7 @@ class schoolOU(simpleHook):
         else:
             ocs.discard(OBJECTCLASS_SCHOOLOU)
             for attr in ATTRIBUTE_LIST:
-                ml.append((attr, module.oldattr.get(attr, []), [b""]))
+                ml.append((attr, module.oldattr.get(attr, []), None))
 
         ml.append(("objectClass", old_ocs, list(x.encode("UTF-8") for x in ocs)))
         return ml
