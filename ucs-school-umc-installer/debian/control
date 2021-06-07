@@ -3,7 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper (>= 10),
+ debhelper-compat (= 12),
  dh-python,
  python-all,
  python3-all,
@@ -28,8 +28,8 @@ Depends:
  ${python3:Depends},
  ${python:Depends},
 Provides:
- ${python:Provides},
  ${python3:Provides},
+ ${python:Provides},
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain
  .
