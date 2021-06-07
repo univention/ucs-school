@@ -32,14 +32,15 @@
 from __future__ import absolute_import
 
 import os
+import pipes
 import shutil
 import time
-import pipes
 
 try:
     from subprocess import getstatusoutput
 except ImportError:
     from commands import getstatusoutput
+
 import listener
 
 import univention.debug as ud
@@ -123,7 +124,7 @@ def check_filesystem(directory):
 
     ret, out = getstatusoutput("LC_ALL=C stat -f %s" % pipes.quote(directory))
     myFs = ""
-    for line in out.decode('UTF-8', 'replace').split("\n"):
+    for line in out.decode("UTF-8", "replace").split("\n"):
         tmp = line.split("Type: ")
         if len(tmp) == 2:
             myFs = tmp[1].strip()
@@ -156,14 +157,18 @@ def handler(dn, new, old, command):
     """remove empty share directories
     if object is really removed (not renamed)"""
     if old and not new and not command == "r":
-        name = old["cn"][0].decode('UTF-8')
+        name = old["cn"][0].decode("UTF-8")
 
         # check object
         if not old.get("univentionShareHost") or not old.get("univentionSharePath"):
-            ud.debug(ud.LISTENER, ud.WARN, "not removing directory of share %s: univentionShareHost(Path) ist not set" % name)
+            ud.debug(
+                ud.LISTENER,
+                ud.WARN,
+                "not removing directory of share %s: univentionShareHost(Path) ist not set" % name,
+            )
             return
 
-        share_dir = old["univentionSharePath"][0].decode('UTF-8')
+        share_dir = old["univentionSharePath"][0].decode("UTF-8")
 
         # check if target directory is okay
         ret = check_target_dir(target_dir)
@@ -180,4 +185,9 @@ def handler(dn, new, old, command):
         # move it
         ret = move_dir(share_dir, target_dir, listener)
         if ret:
-            ud.debug(ud.LISTENER, ud.ERROR, "failed to move directory of share %s from %s to %s: %s" % (name, share_dir, target_dir, ret))
+            ud.debug(
+                ud.LISTENER,
+                ud.ERROR,
+                "failed to move directory of share %s from %s to %s: %s"
+                % (name, share_dir, target_dir, ret),
+            )
