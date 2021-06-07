@@ -43,58 +43,58 @@ from univention.management.console.modules.computerroom import reset_room_settin
 
 
 def deactivate_rules(roomDN):
-	lo, po = getMachineConnection()
-	try:
-		room = ComputerRoom.from_dn(roomDN, None, lo)
-	except udm_exceptions.noObject:
-		return
-	hosts = list()
-	for pc in room.get_computers(lo):
-		hosts += pc.ip_address
-	reset_room_settings(room.get_relative_name(), hosts)
-	# reload cups
-	subprocess.call(['service', 'cups', 'reload'])
+    lo, po = getMachineConnection()
+    try:
+        room = ComputerRoom.from_dn(roomDN, None, lo)
+    except udm_exceptions.noObject:
+        return
+    hosts = list()
+    for pc in room.get_computers(lo):
+        hosts += pc.ip_address
+    reset_room_settings(room.get_relative_name(), hosts)
+    # reload cups
+    subprocess.call(["service", "cups", "reload"])
 
 
 def deprecated_deactivate_rules(options, hosts):
-	ucr = ConfigRegistry()
-	ucr.load()
+    ucr = ConfigRegistry()
+    ucr.load()
 
-	hosts = set(hosts)
-	vset = {}
+    hosts = set(hosts)
+    vset = {}
 
-	# extract values
-	for variable in options.extract:
-		if ucr.get(variable):
-			old = set(ucr[variable].split(' '))
-		else:
-			old = set()
-		new = old.difference(hosts)
-		if new:
-			vset[variable] = ' '.join(new)
-		else:
-			options.remove.append(variable)
+    # extract values
+    for variable in options.extract:
+        if ucr.get(variable):
+            old = set(ucr[variable].split(" "))
+        else:
+            old = set()
+        new = old.difference(hosts)
+        if new:
+            vset[variable] = " ".join(new)
+        else:
+            options.remove.append(variable)
 
-	handler_set(map(lambda x: '%s=%s' % x, vset.items()))
+    handler_set(map(lambda x: "%s=%s" % x, vset.items()))
 
-	# remove values
-	handler_unset(options.remove)
+    # remove values
+    handler_unset(options.remove)
 
-	# reload cups
-	if os.path.exists('/etc/init.d/cups'):
-		subprocess.call(['/etc/init.d/cups', 'reload'])
+    # reload cups
+    if os.path.exists("/etc/init.d/cups"):
+        subprocess.call(["/etc/init.d/cups", "reload"])
 
 
-if __name__ == '__main__':
-	parser = OptionParser()
+if __name__ == "__main__":
+    parser = OptionParser()
 
-	parser.add_option('-r', '--remove', action='append', dest='remove', default=[])  # Deprecated
-	parser.add_option('-e', '--extract', action='append', dest='extract', default=[])  # Deprecated
-	parser.add_option('-o', '--room', action='append', dest='rooms', default=[])
+    parser.add_option("-r", "--remove", action="append", dest="remove", default=[])  # Deprecated
+    parser.add_option("-e", "--extract", action="append", dest="extract", default=[])  # Deprecated
+    parser.add_option("-o", "--room", action="append", dest="rooms", default=[])
 
-	options, hosts = parser.parse_args()
+    options, hosts = parser.parse_args()
 
-	for room in options.rooms:
-		deactivate_rules(room)
-	else:
-		deprecated_deactivate_rules(options, hosts)
+    for room in options.rooms:
+        deactivate_rules(room)
+    else:
+        deprecated_deactivate_rules(options, hosts)
