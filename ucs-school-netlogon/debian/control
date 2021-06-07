@@ -3,9 +3,10 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
- debhelper,
+ debhelper-compat (= 12),
  ucslint,
  univention-config-dev,
+ univention-join-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon
