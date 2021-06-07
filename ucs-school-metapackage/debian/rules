@@ -31,10 +31,10 @@
 
 export LC_ALL=C.UTF-8
 
+%:
+	dh $@ --with univention-join
+
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
 	univention-unittest
-
-%:
-	dh $@
