@@ -1,5 +1,6 @@
 Module: umc-core
+Definition: data/none
 Category: data/ucs-school-common.xml
-Definition:
-Python:
-Javascript:
+Python: 
+Javascript: none
+Icons: data/icons
