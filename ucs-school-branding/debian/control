@@ -2,15 +2,17 @@ Source: ucs-school-branding
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends:
  build-essential,
+ debhelper-compat (= 12),
  ucslint,
- univention-management-console-dev
+ univention-management-console-dev,
 Standards-Version: 3.7.3
 
 Package: ucs-school-branding
 Architecture: all
-Depends: univention-management-console-frontend
+Depends:
+ univention-management-console-frontend,
 Description: UCS@school - branding for UMC frontend
  This package installs the UCS@school branding for the Univention
  Corporate Server (UCS) Univention Management Console (UMC).
@@ -19,4 +21,3 @@ Description: UCS@school - branding for UMC frontend
  an integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
-
