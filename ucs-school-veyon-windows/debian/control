@@ -4,14 +4,15 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  ca-certificates,
- debhelper,
- wget,
+ debhelper-compat (= 12),
  ucslint,
+ wget,
 Standards-Version: 3.8.2
 
 Package: ucs-school-veyon-windows
 Architecture: all
-Depends: ${misc:Depends},
+Depends:
+ ${misc:Depends},
 Description: This package provides the Veyon Windows setup binary and SSL keys
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
