@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.32) unstable; urgency=medium
+
+  * Bug #53211: handle inaccessible users in consistency check
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 08 Jun 2021 13:54:45 +0200
+
 ucs-school-lib (12.2.31) unstable; urgency=medium
 
   * Bug #52580: move ucsschool.lib.create_ou from ucs-school-import into

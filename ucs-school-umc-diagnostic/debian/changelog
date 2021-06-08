@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-22) unstable; urgency=medium
+
+  * Bug #53211: fix issues with consistency script parametrization
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 08 Jun 2021 13:56:38 +0200
+
 ucs-school-umc-diagnostic (1.0.0-21) unstable; urgency=medium
 
   * Bug #53386: drop python-support for ucs-school-umc-diagnostic
