@@ -74,8 +74,9 @@ def main():
     if args.school:
         school = args.school
 
-    if not School(name=school).exists(getMachineConnection()[0]) and school:
-        print("The given school abbreviation '{}' does not exist. ".format(school))
+    connection = getMachineConnection()[0]
+    if not School(name=school).exists(connection) and school:
+        print("The given school with abbreviation '{}' does not exist.".format(school))
         return
 
     user_check = consistency.UserCheck()
