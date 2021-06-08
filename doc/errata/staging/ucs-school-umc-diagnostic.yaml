@@ -3,8 +3,9 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
-fix: 1.0.0-22A~4.4.0.202106081405
+fix: 1.0.0-23A~4.4.0.202106081652
 desc: |
   * The python-support debhelper has been removed from the package <package>ucs-school-umc-diagnostic</package> (Bug #53386).
   * The UCS@school object consistency script parametrization did not behave intuitively in certain cases. This fix resolves those issues (Bug #53211).
-bug: [53386, 53211]
+  * The diagnostic check <envar>UCS@school Check admin accounts</envar> gave misleading output when an admin was missing in a schools admin group. This fix improves the output messages and additionally adds a check, which ensures that an admin is not in a wrong admin group (Bug #53139).
+bug: [53386, 53211, 53139]
