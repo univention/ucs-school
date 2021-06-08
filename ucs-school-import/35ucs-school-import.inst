@@ -111,6 +111,7 @@ univention-directory-manager container/cn      create "$@" --ignore_exists --set
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Home Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Profile Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="ucsschool" --position "cn=univention,$ldap_base"
+univention-directory-manager container/cn      create "$@" --ignore_exists --set name="ucsschool" --position "cn=groups,$ldap_base"
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-usernames" --position "cn=ucsschool,cn=univention,$ldap_base"
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-email" --position "cn=ucsschool,cn=univention,$ldap_base"
 
