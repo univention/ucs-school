@@ -39,7 +39,6 @@ import univention.admin.modules as udm_modules
 import univention.config_registry
 from ucsschool.lib.roleshares import create_roleshares
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, LDAP_Connection, set_credentials
-from univention.admincli.admin import _2utf8
 
 udm_modules.update()
 
@@ -63,7 +62,7 @@ def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=N
     except IndexError:
         return None
     else:
-        return _2utf8(udm_obj.dn)
+        return udm_obj.dn
 
 
 if __name__ == "__main__":
