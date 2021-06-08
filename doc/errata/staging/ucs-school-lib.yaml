@@ -6,5 +6,5 @@ src: ucs-school-lib
 fix: 12.2.32A~4.4.0.202106081359
 desc: |
   * The package <package>ucs-school-lib</package> has been migrated to dh_python (Bug #52582).
-  * UCS@school consistency-checks now handle exceptions caused by inaccessible users (Bug #53211).
+  * UCS@school consistency-checks now handles exceptions caused by inaccessible users (Bug #53211).
 bug: [52582, 53211]
