@@ -39,6 +39,7 @@
 
 from __future__ import absolute_import
 
+from ucsschool.lib.roles import get_role_info, role_school_admin
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
@@ -68,10 +69,10 @@ def run(_umc_instance):
     # search for admin objects with object class ucsschoolAdministrator
     admins = []  # type: List[Dict[str, List[str]]]
     admins_dn = []
-    for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool"]):
+    for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool", "ucsschoolRole"]):
         admins_dn.append(dn)
         try:
-            admin = {"dn": dn, "schools": attr["ucsschoolSchool"]}
+            admin = {"dn": dn, "schools": attr["ucsschoolSchool"], "roles": attr["ucsschoolRole"]}
             admins.append(admin)
         except KeyError:
             continue
@@ -92,13 +93,14 @@ def run(_umc_instance):
 
     # check if found admins are member in admins-ou group
     for admin in admins:
-        if not admin["schools"]:
-            continue
         missing_group_dns = []
-        for dn, attr in groups:
-            if attr["ucsschoolSchool"][0] in admin["schools"]:
-                if not admin["dn"] in attr.get("uniqueMember", []):
-                    missing_group_dns.append(dn)
+        for role in admin["roles"]:
+            if role_school_admin in role:
+                school = get_role_info(role)[2]  # eg. "DEMOSCHOOL" from school_admin:school:DEMOSCHOOL
+                for dn, attr in groups:
+                    if attr["ucsschoolSchool"][0] == school:
+                        if not admin["dn"] in attr.get("uniqueMember", []):
+                            missing_group_dns.append(dn)
 
         if missing_group_dns:
             problematic_objects.setdefault(admin["dn"], []).append(
