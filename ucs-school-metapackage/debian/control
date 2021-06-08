@@ -25,6 +25,8 @@ Depends:
  makepasswd,
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
+ python3-univention,
+ python3-univention-lib,
  shell-ucs-school (>= 5.0.38),
  shell-univention-lib (>= 1.0.51-3),
  ucs-school-import,
@@ -70,6 +72,9 @@ Depends:
  python-ucs-school (>= 5.0.3-17),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
+ python3-ucsschool-lib,
+ python3-univention,
+ python3-univention-lib,
  shell-ucs-school,
  shell-ucs-school (>= 5.0.38),
  shell-univention-lib (>= 1.0.51-3),
@@ -133,6 +138,9 @@ Depends:
  python-ucs-school (>= 5.0.3-17),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
+ python3-ucsschool-lib,
+ python3-univention,
+ python3-univention-lib,
  shell-ucs-school (>= 5.0.38),
  shell-univention-lib (>= 1.0.51-3),
  ucs-school-import,
@@ -188,6 +196,7 @@ Package: ucs-school-nonedu-slave
 Architecture: all
 Depends:
  python-ucs-school (>= 5.0.3-17),
+ python3-ucsschool-lib,
  shell-ucs-school (>= 5.0.38),
  ucs-school-s4-branch-site | univention-samba,
  univention-config,
@@ -205,6 +214,7 @@ Package: ucs-school-central-slave
 Architecture: all
 Depends:
  python-ucs-school (>= 5.0.3-17),
+ python3-ucsschool-lib,
  shell-ucs-school (>= 5.0.38),
  univention-config,
  ${misc:Depends},
