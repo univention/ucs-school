@@ -89,7 +89,7 @@ Depends:
  python3-jsonschema,
  python3-lazy-object-proxy,
  python3-ldap,
- python3-ucs-school,
+ python3-ucsschool,
  python3-ucsschool-lib,
  python3-univention,
  python3-univention-config-registry,
