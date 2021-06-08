@@ -43,7 +43,6 @@ from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.school import School
 from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
-from univention.admincli.admin import _2utf8
 from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
 
@@ -132,7 +131,7 @@ def create_roleshare_on_server(
     except univention.admin.uexceptions.objectExists as exc:
         print("Object exists: %s" % (exc.args[0],))
     else:
-        print("Object created: %s" % _2utf8(udm_obj.dn))
+        print("Object created: %s" % udm_obj.dn)
 
 
 @LDAP_Connection(MACHINE_READ)
