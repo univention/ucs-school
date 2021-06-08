@@ -39,6 +39,11 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+die () {
+	# FIXME: Bug #53399
+	echo FAIL "$@"
+}
+
 #
 # This join script is for all roles except non-edu slaves.
 #
