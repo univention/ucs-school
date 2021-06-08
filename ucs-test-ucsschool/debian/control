@@ -23,7 +23,6 @@ Depends:
  python-passlib,
  python-pycurl,
  python-pytest,
- python-pytest-catchlog,
  python-requests,
  python-ucs-school (>= 12.1.9),
  python3-attr,
