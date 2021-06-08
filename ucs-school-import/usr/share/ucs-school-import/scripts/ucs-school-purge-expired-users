@@ -124,7 +124,7 @@ def main():
         "dry_run": uic.args.dry_run,
         "verbose": uic.args.verbose,
     }
-    # early logging configured by cmdline
+    # set logging configured by cmdline
     uic.setup_logging(uic.args.verbose, uic.args.logfile)
     logger = uic.logger
     if uic.args.quiet:
@@ -145,8 +145,6 @@ def main():
         # prevent InitialisationError
         uic.args.settings["source_uid"] = "PurgeExpiredUsers"
     config = uic.setup_config()
-    # logging configured by config file
-    uic.setup_logging(config["verbose"], config["logfile"])
 
     logger.info("------ UCS@school import tool configured ------")
     logger.debug("Configuration is:\n%s", pprint.pformat(config))
