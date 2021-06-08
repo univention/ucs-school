@@ -235,7 +235,7 @@ sys.exit(0 if LooseVersion(app.version) >= LooseVersion("4.4 v9") else 1)
 		echo "ERROR: 'UCS@school Veyon Proxy' (ucsschool-veyon-proxy) app not installed."
 		echo "ERROR: Please execute 'univention-run-join-scripts' or install the app manually."
 		echo "ERROR: -------------------------------------------------------------------------"
-		exit 1
+#		exit 1
 	fi
 fi
 
