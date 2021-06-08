@@ -91,9 +91,10 @@ def run(_umc_instance):
                     )
                 )
 
-    # check if found admins are member in admins-ou group
+    # check if found admins are member in corresponding admins-ou group
     for admin in admins:
         missing_group_dns = []
+        forbidden_groups = []
         for role in admin["roles"]:
             if role_school_admin in role:
                 school = get_role_info(role)[2]  # eg. "DEMOSCHOOL" from school_admin:school:DEMOSCHOOL
@@ -101,6 +102,9 @@ def run(_umc_instance):
                     if attr["ucsschoolSchool"][0] == school:
                         if not admin["dn"] in attr.get("uniqueMember", []):
                             missing_group_dns.append(dn)
+                    else:
+                        if admin["dn"] in attr.get("uniqueMember", []):
+                            forbidden_groups.append(dn)
 
         if missing_group_dns:
             problematic_objects.setdefault(admin["dn"], []).append(
@@ -108,6 +112,13 @@ def run(_umc_instance):
                     "is registered as admin but no member of the following groups: {}".format(
                         missing_group_dns
                     )
+                )
+            )
+        if forbidden_groups:
+            problematic_objects.setdefault(admin["dn"], []).append(
+                _(
+                    "should not be member of the following groups "
+                    "(missing school_admin role!): {}".format(forbidden_groups)
                 )
             )
 
