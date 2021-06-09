@@ -9,5 +9,5 @@ desc: |
   * The UCR templates for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52604).
   * The package <package>ucs-school-import</package> has been migrated to dh_python (Bug #52580).
   * The package <package>ucs-school-lib</package> has been migrated to dh_python (Bug #52582).
-  * The <envar>quiet</envar> parameter for the ucs-school-purge-expired-users script did not function properly, causing a mail being sent to root each time the respective cron job has run. This fix resolves that issue (Bug #50331).
+  * The <envar>quiet</envar> parameter for the <command>ucs-school-purge-expired-users</command> script did not function properly, causing a mail being sent to root each time the respective cron job has run. This fix resolves that issue (Bug #50331).
 bug: [52658, 52604, 52580, 52582, 50331]
