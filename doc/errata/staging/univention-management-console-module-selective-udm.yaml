@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: univention-management-console-module-selective-udm
-fix:
+fix: 8.0.0-3A~4.4.0.202106030048
 desc: |
  * The package <package>univention-management-console-module-selective-udm</package> has been migrated to dh_python (Bug #52602).
 bug: [52602]

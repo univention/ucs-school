@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-rooms
-fix:
+fix: 16.1.2A~4.4.0.202106030038
 desc: |
  * The package <package>ucs-school-umc-rooms</package> has been migrated to dh_python (Bug #52596).
 bug: [52596]

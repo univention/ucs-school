@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix:
+fix: 9.0.1-55A~4.4.0.202106041427
 desc: |
  * The UCR templates are now Python 3 compatible (Bug #52604).
  * The package <package>ucs-school-umc-exam</package> has been migrated to dh_python (Bug #52587).
