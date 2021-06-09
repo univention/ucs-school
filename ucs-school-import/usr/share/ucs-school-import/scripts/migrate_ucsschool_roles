@@ -257,13 +257,22 @@ class UcsSchoolRolesMigration(object):
                     self.set_ldap_attr(
                         "school groups", admin_roles, obj.dn, "ucsschoolAdministratorGroup"
                     )
-                for g_type, role in (
-                    ("mitarbeiter", role_school_staff_group),
-                    ("schueler", role_school_student_group),
-                    ("lehrer", role_school_teacher_group),
+                for g_prefix, role in (
+                    (
+                        ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-"),
+                        role_school_staff_group,
+                    ),
+                    (
+                        ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-"),
+                        role_school_student_group,
+                    ),
+                    (
+                        ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-"),
+                        role_school_teacher_group,
+                    ),
                 ):
                     for group in SchoolGroup.lookup(
-                        lo, school, filter_format("name=%s-%s", [g_type, school])
+                        lo, school, filter_format("name=%s%s", [g_prefix, school])
                     ):
                         roles = [create_ucsschool_role_string(role, school)]
                         self.set_ldap_attr("school groups", roles, group.dn, "ucsschoolGroup")
@@ -287,8 +296,11 @@ class UcsSchoolRolesMigration(object):
                     if cls == User and obj.is_administrator(lo):
                         # user is school admin only for OUs in which she is in group admins-$OU
                         schools = []
+                        admin_grp_prefix = ucr.get(
+                            "ucsschool/ldap/default/groupprefix/admins", "admins-"
+                        )
                         for dn, attr in lo.search(
-                            filter_format("(&(cn=admins-*)(uniqueMember=%s))", (obj.dn,))
+                            filter_format("(&(cn=%s*)(uniqueMember=%s))", (admin_grp_prefix, obj.dn))
                         ):
                             schools.extend(attr["ucsschoolSchool"])
                         roles.extend(
