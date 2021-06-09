@@ -2780,14 +2780,7 @@ def import_computer():
 
             success = True
             if "/" not in IP:
-                ip = ipaddress.IPv4Network(
-                    u"%s/%s"
-                    % (
-                        IP,
-                        default_prefixlen,
-                    ),
-                    strict=False,
-                )
+                ip = ipaddress.IPv4Network(u"%s/%s" % (IP, default_prefixlen), strict=False)
                 print("WARNING: no netmask specified for ip address %s using %s" % (ip.ip, ip.netmask))
 
             module = univention.admin.modules.get("computers/%s" % ctype)
