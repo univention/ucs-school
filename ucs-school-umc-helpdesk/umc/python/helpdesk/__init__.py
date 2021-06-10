@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Management Console
 #  module: Helpdesk Module
@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import codecs
 import smtplib
 import traceback
 
@@ -81,7 +82,9 @@ class Instance(SchoolBaseModule):
 
             msg = u"From: %s\r\n" % (sanitize_header(sender),)
             msg += u"To: %s\r\n" % (sanitize_header(", ".join(recipients)),)
-            msg += u"Subject: =?UTF-8?Q?%s?=\r\n" % (sanitize_header(subject).encode("quopri"),)
+            msg += u"Subject: =?UTF-8?Q?%s?=\r\n" % (
+                codecs.encode(sanitize_header(subject).encode("utf-8"), "quopri")
+            ).decode("ASCII")
             msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
             msg += u"\r\n"
             msg += message
@@ -107,7 +110,7 @@ class Instance(SchoolBaseModule):
             user = User(None, ldap_user_read, ldap_position, self.user_dn)
             user.open()
         except ldap.LDAPError:
-            MODULE.error("Errror receiving user information: %s" % (traceback.format_exception(),))
+            MODULE.error("Error receiving user information: %s" % (traceback.format_exception(),))
             user = {
                 "displayName": self.username,
                 "mailPrimaryAddress": "",
@@ -137,7 +140,7 @@ class Instance(SchoolBaseModule):
         msg = u"\r\n".join(u"%s: %s" % (key, value) for key, value in data)
 
         MODULE.info(
-            "sending message: %s" % ("\n".join(map(lambda x: repr(x.strip()), msg.splitlines()))),
+            "sending message: %s" % ("\n".join(repr(x.strip()) for x in msg.splitlines())),
         )
 
         func = notifier.Callback(_send_thread, sender, recipients, subject, msg)
@@ -157,4 +160,6 @@ class Instance(SchoolBaseModule):
         if res and res[0]:
             categories = ldap_user_read.getAttr(res[0], "univentionUMCHelpdeskCategory")
 
-        self.finished(request.id, map(lambda x: {"id": x, "label": x}, categories))
+        self.finished(
+            request.id, [{"id": x.decode("utf-8"), "label": x.decode("utf-8")} for x in categories]
+        )
