@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (16.0.2) unstable; urgency=medium
+
+  * Bug #6252641: Migrate ucs-school-umc-helpdesk to Python3
+
+ -- Håkan Källberg <kaellberg@univention.de>  Thu, 17 Jun 2021 12:48:41 +0200
+
 ucs-school-umc-helpdesk (16.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
