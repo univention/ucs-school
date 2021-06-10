@@ -5,6 +5,10 @@
 Changelog
 ---------
 
+v2.0.0 (2021-06-09)
+...................
+* Switch routes for proper versioning support
+
 v1.4.2 (2021-05-26)
 ...................
 * Support for hooks for objekts managed by classes from the package ``ucsschool.lib.models`` was added. See manual section `Python hooks for pre- and post-object-modification actions <https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#python-hooks-for-pre-and-post-object-modification-actions>`_ for details (Bug #49557).

@@ -40,7 +40,7 @@ from ..token_auth import oauth2_scheme
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, get_logger, udm_ctx
 
-router = APIRouter()
+router_v1 = APIRouter()
 
 
 def check_name(value: str) -> str:
@@ -136,7 +136,7 @@ class SchoolClassPatchDocument(BaseModel):
         return res
 
 
-@router.get("/", response_model=List[SchoolClassModel])
+@router_v1.get("/", response_model=List[SchoolClassModel])
 async def search(
     request: Request,
     school: str = Query(
@@ -184,7 +184,7 @@ async def search(
     return [await SchoolClassModel.from_lib_model(sc, request, udm) for sc in scs]
 
 
-@router.get("/{school}/{class_name}", response_model=SchoolClassModel)
+@router_v1.get("/{school}/{class_name}", response_model=SchoolClassModel)
 async def get(
     class_name: str,
     school: str,
@@ -206,7 +206,7 @@ async def get(
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolClassModel)
+@router_v1.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolClassModel)
 async def create(
     school_class: SchoolClassCreateModel,
     request: Request,
@@ -247,7 +247,7 @@ async def create(
     return await SchoolClassModel.from_lib_model(sc, request, udm)
 
 
-@router.patch(
+@router_v1.patch(
     "/{school}/{class_name}",
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
@@ -295,7 +295,7 @@ async def partial_update(
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
-@router.put(
+@router_v1.put(
     "/{school}/{class_name}",
     status_code=status.HTTP_200_OK,
     response_model=SchoolClassModel,
@@ -354,7 +354,7 @@ async def complete_update(
     return await SchoolClassModel.from_lib_model(sc_current, request, udm)
 
 
-@router.delete("/{school}/{class_name}", status_code=status.HTTP_204_NO_CONTENT)
+@router_v1.delete("/{school}/{class_name}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(
     class_name: str,
     school: str,

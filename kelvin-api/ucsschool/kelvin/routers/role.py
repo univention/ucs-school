@@ -49,7 +49,7 @@ from ..import_config import init_ucs_school_import_framework
 from ..opa import OPAClient
 from ..token_auth import oauth2_scheme
 
-router = APIRouter()
+router_v1 = APIRouter()
 _roles_to_class = {}
 
 
@@ -118,7 +118,7 @@ class RoleModel(BaseModel):
     url: HttpUrl
 
 
-@router.get("/", response_model=List[RoleModel])
+@router_v1.get("/", response_model=List[RoleModel])
 async def search(
     request: Request,
     token: str = Depends(oauth2_scheme),
@@ -146,7 +146,7 @@ async def search(
     ]
 
 
-@router.get("/{role_name}", response_model=RoleModel)
+@router_v1.get("/{role_name}", response_model=RoleModel)
 async def get(
     request: Request,
     role_name: SchoolUserRole = Query(

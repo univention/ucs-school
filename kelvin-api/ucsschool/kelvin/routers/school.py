@@ -44,7 +44,7 @@ from ..opa import OPAClient
 from ..token_auth import oauth2_scheme
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 
-router = APIRouter()
+router_v1 = APIRouter()
 
 
 @lru_cache(maxsize=1)
@@ -192,7 +192,7 @@ async def validate_create_request_params(school: SchoolCreateModel, logger: logg
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=error_msg)
 
 
-@router.get("/", response_model=List[SchoolModel])
+@router_v1.get("/", response_model=List[SchoolModel])
 async def search(
     request: Request,
     name_filter: str = Query(
@@ -230,7 +230,7 @@ async def search(
     return [await SchoolModel.from_lib_model(school, request, udm) for school in schools]
 
 
-@router.get("/{school_name}", response_model=SchoolModel)
+@router_v1.get("/{school_name}", response_model=SchoolModel)
 async def get(
     request: Request,
     school_name: str = Query(
@@ -261,7 +261,7 @@ async def get(
     return await SchoolModel.from_lib_model(school, request, udm)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolModel)
+@router_v1.post("/", status_code=status.HTTP_201_CREATED, response_model=SchoolModel)
 async def create(
     school: SchoolCreateModel,
     request: Request,

@@ -77,7 +77,7 @@ from .base import (
 )
 from .role import SchoolUserRole
 
-router = APIRouter()
+router_v1 = APIRouter()
 
 
 @lru_cache(maxsize=1)
@@ -420,7 +420,7 @@ def search_query_params_to_udm_filter(  # noqa: C901
         return None
 
 
-@router.get("/", response_model=List[UserModel])
+@router_v1.get("/", response_model=List[UserModel])
 async def search(  # noqa: C901
     request: Request,
     school: str = Query(
@@ -565,7 +565,7 @@ async def search(  # noqa: C901
     return res
 
 
-@router.get("/{username}", response_model=UserModel)
+@router_v1.get("/{username}", response_model=UserModel)
 async def get(
     username: str,
     request: Request,
@@ -599,7 +599,7 @@ async def get(
     return await UserModel.from_lib_model(user, request, udm)
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserModel)
+@router_v1.post("/", status_code=status.HTTP_201_CREATED, response_model=UserModel)
 async def create(
     request: Request,
     request_user: UserCreateModel = Body(
@@ -788,7 +788,7 @@ async def change_roles(
         ) from exc
 
 
-@router.patch("/{username}", status_code=status.HTTP_200_OK, response_model=UserModel)
+@router_v1.patch("/{username}", status_code=status.HTTP_200_OK, response_model=UserModel)
 async def partial_update(  # noqa: C901
     username: str,
     user: UserPatchModel,
@@ -899,7 +899,7 @@ async def partial_update(  # noqa: C901
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
-@router.put("/{username}", status_code=status.HTTP_200_OK, response_model=UserModel)
+@router_v1.put("/{username}", status_code=status.HTTP_200_OK, response_model=UserModel)
 async def complete_update(  # noqa: C901
     username: str,
     user: UserCreateModel,
@@ -1020,7 +1020,7 @@ async def complete_update(  # noqa: C901
     return await UserModel.from_lib_model(user_current, request, udm)
 
 
-@router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT)
+@router_v1.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(
     username: str,
     request: Request,

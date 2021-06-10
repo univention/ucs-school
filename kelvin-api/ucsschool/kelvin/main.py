@@ -155,8 +155,8 @@ async def get_readme():
 
 
 app.include_router(
-    school_class.router,
-    prefix=f"{URL_API_PREFIX}/classes",
+    school_class.router_v1,
+    prefix=f"{URL_API_PREFIX}/v1/classes",
     tags=["classes"],
 )
 # app.include_router(
@@ -172,13 +172,13 @@ app.include_router(
 #     dependencies=[Depends(get_current_active_user)],
 # )
 app.include_router(
-    role.router,
-    prefix=f"{URL_API_PREFIX}/roles",
+    role.router_v1,
+    prefix=f"{URL_API_PREFIX}/v1/roles",
     tags=["roles"],
 )
 app.include_router(
-    school.router,
-    prefix=f"{URL_API_PREFIX}/schools",
+    school.router_v1,
+    prefix=f"{URL_API_PREFIX}/v1/schools",
     tags=["schools"],
 )
 # app.include_router(
@@ -188,12 +188,12 @@ app.include_router(
 #     dependencies=[Depends(get_current_active_user)],
 # )
 app.include_router(
-    user.router,
-    prefix=f"{URL_API_PREFIX}/users",
+    user.router_v1,
+    prefix=f"{URL_API_PREFIX}/v1/users",
     tags=["users"],
 )
 app.mount(
-    f"{URL_API_PREFIX}/static",
+    f"{URL_API_PREFIX}/v1/static",
     StaticFiles(directory=str(STATIC_FILES_PATH)),
     name="static",
 )
