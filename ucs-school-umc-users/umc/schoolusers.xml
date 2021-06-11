@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="schoolusers" version="1.0">
+	<module id="schoolusers" version="1.0" python="3">
 	<flavor id="student" priority="41">
 	  <name>Passwords (students)</name>
 	  <description>Reset passwords of student accounts</description>
