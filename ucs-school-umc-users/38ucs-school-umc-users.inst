@@ -59,5 +59,3 @@ umc_policy_append "ucsschool-umc-teachers-default" "schoolusers-student"
 joinscript_save_current_version
 
 exit 0
-
-
