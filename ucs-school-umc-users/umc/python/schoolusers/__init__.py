@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Management Console
 #  module: school accounts Module
@@ -55,8 +55,6 @@ _ = Translation("ucs-school-umc-schoolusers").translate
 def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089, 30088
     msg = getattr(exc, "message", "")
     for arg in exc.args:
-        if isinstance(arg, unicode):
-            arg = arg.encode("utf-8")
         if str(arg) not in msg:
             msg = "%s %s" % (msg, arg)
     return msg
@@ -128,8 +126,7 @@ class Instance(SchoolBaseModule):
             raise UMC_Error(_("permission denied"))
         except udm_exceptions.base as exc:
             MODULE.process("dn=%r" % (userdn,))
-            MODULE.process("exception=%s" % (type(exc),))
-            MODULE.process("exception=%s" % (exc.message,))
+            MODULE.process("exception=%s" % (exc,))
             raise UMC_Error("%s" % (get_exception_msg(exc)))
 
     def passwordexpiry_to_days(self, timestr):
