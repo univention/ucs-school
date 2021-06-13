@@ -8,8 +8,8 @@
 ##   - ucs-school-import
 ## bugs: [42373]
 ## versions:
-##  4.1: skip
-##  4.2: skip
+##  "4.1-0": skip
+##  "4.2-0": skip
 
 import copy
 import os
