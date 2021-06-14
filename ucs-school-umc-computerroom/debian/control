@@ -13,7 +13,6 @@ Standards-Version: 3.7.2
 Package: ucs-school-umc-computerroom
 Architecture: all
 Recommends:
- italc-windows,
  ucs-school-umc-exam,
 Replaces:
  ucs-school-umc-roomadmin,
@@ -22,9 +21,7 @@ Breaks:
  ucs-school-lib (<< 12.2.28),
  ucs-school-umc-roomadmin (<< 8.0.0),
 Depends:
- italc-master,
  python-ipaddr,
- python-italc,
  python-psutil,
  python-ucs-school (>= 12.1.9),
  python-univention-directory-manager,

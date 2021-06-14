@@ -13,6 +13,14 @@ Standards-Version: 3.8.2
 Package: ucs-school-master
 Architecture: all
 Conflicts:
+ italc-client,
+ italc-dbg,
+ italc-management-console,
+ italc-master,
+ italc-windows,
+ libitalc,
+ libitalc-dev,
+ python-italc,
  ucs-school-singlemaster,
  ucs-school-umc-csv-import,
 Breaks:
@@ -68,6 +76,15 @@ Description: UCS@school meta package for UCS DC Master System (multi server envi
 
 Package: ucs-school-slave
 Architecture: all
+Conflicts:
+ italc-client,
+ italc-dbg,
+ italc-management-console,
+ italc-master,
+ italc-windows,
+ libitalc,
+ libitalc-dev,
+ python-italc,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python-univention (>= 6.0.21-1),
@@ -125,6 +142,14 @@ Description: UCS@school meta package for UCS DC Slave System
 Package: ucs-school-singlemaster
 Architecture: all
 Conflicts:
+ italc-client,
+ italc-dbg,
+ italc-management-console,
+ italc-master,
+ italc-windows,
+ libitalc,
+ libitalc-dev,
+ python-italc,
  ucs-school-master,
  ucs-school-umc-csv-import,
 Replaces:
@@ -194,6 +219,15 @@ Description: UCS@school meta package for UCS DC Master System (single server env
 
 Package: ucs-school-nonedu-slave
 Architecture: all
+Conflicts:
+ italc-client,
+ italc-dbg,
+ italc-management-console,
+ italc-master,
+ italc-windows,
+ libitalc,
+ libitalc-dev,
+ python-italc,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python3-ucsschool-lib,
@@ -212,6 +246,15 @@ Description: UCS@school meta package for non-educational Slave servers
 
 Package: ucs-school-central-slave
 Architecture: all
+Conflicts:
+ italc-client,
+ italc-dbg,
+ italc-management-console,
+ italc-master,
+ italc-windows,
+ libitalc,
+ libitalc-dev,
+ python-italc,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python3-ucsschool-lib,

@@ -200,7 +200,6 @@ define([
 
 		_addObject: function() {
 			this._detailPage._form.clearFormValues();
-			this._detailPage._form.getWidget("italc").setAttribute('checked', true);
 			this._detailPage.set('school', this._searchForm.getWidget('school').get('value'));
 			this._detailPage.disable('school', false);
 

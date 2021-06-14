@@ -33,7 +33,6 @@
 
 import copy
 import re
-import subprocess
 import tempfile
 import threading
 import time
@@ -46,15 +45,9 @@ except ImportError:
     pass
 
 import ldap
-import notifier
-import notifier.signals
-import notifier.threads
-import sip
 from ldap.dn import explode_dn
 from ldap.filter import filter_format
-from PyQt4.QtCore import QObject, pyqtSlot
 
-import italc
 from ucsschool.lib.models.base import MultipleObjectsError
 from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.user import User
@@ -72,27 +65,9 @@ LV = TypeVar("LV")
 
 _ = Translation("ucs-school-umc-computerroom").translate
 
-ITALC_DEMO_PORT = int(ucr.get("ucsschool/umc/computerroom/demo/port", 11400))
-ITALC_VNC_PORT = int(ucr.get("ucsschool/umc/computerroom/vnc/port", 11100))
-ITALC_VNC_UPDATE = float(ucr.get("ucsschool/umc/computerroom/vnc/update", 1))
-ITALC_CORE_UPDATE = max(1, int(ucr.get("ucsschool/umc/computerroom/core/update", 1)))
-ITALC_CORE_TIMEOUT = max(1, int(ucr.get("ucsschool/umc/computerroom/core/timeout", 10)))
-
-ITALC_USER_REGEX = r"(?P<username>[^\(]*?)(\((?P<realname>.*?)\))$"
 VEYON_USER_REGEX = r"(?P<domain>.*)\\(?P<username>[^\(\\]+)$"
 
 VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
-
-italc.ItalcCore.init()
-
-italc.ItalcCore.config.setLogLevel(italc.Logger.LogLevelDebug)
-italc.ItalcCore.config.setLogToStdErr(True)
-italc.ItalcCore.config.setLogFileDirectory("/var/log/univention/")
-italc.Logger("ucs-school-umc-computerroom")
-italc.ItalcCore.config.setLogonAuthenticationEnabled(False)
-
-italc.ItalcCore.setRole(italc.ItalcCore.RoleTeacher)
-italc.ItalcCore.initAuthentication(italc.AuthenticationCredentials.PrivateKey)
 
 
 class ComputerRoomError(Exception):
@@ -239,510 +214,6 @@ class LockableAttribute(object):
         self.unlock()
 
 
-class ITALC_Computer(notifier.signals.Provider, QObject):
-    CONNECTION_STATES = {
-        italc.ItalcVncConnection.Disconnected: "disconnected",
-        italc.ItalcVncConnection.Connected: "connected",
-        italc.ItalcVncConnection.ConnectionFailed: "error",
-        italc.ItalcVncConnection.AuthenticationFailed: "autherror",
-        italc.ItalcVncConnection.HostUnreachable: "offline",
-    }
-
-    def __init__(self, computer, user_map):
-        QObject.__init__(self)
-        notifier.signals.Provider.__init__(self)
-
-        self.signal_new("connected")
-        self.signal_new("screen-lock")
-        self.signal_new("input-lock")
-        self.signal_new("access-dialog")
-        self.signal_new("demo-client")
-        self.signal_new("demo-server")
-        self.signal_new("message-box")
-        self.signal_new("system-tray-icon")
-        self._user_map = user_map
-        self._vnc = None
-        self._core = None
-        self._core_ready = False
-        self._computer = computer
-        self._dn = self._computer.dn
-        self._active_ip = self.get_active_ip(self._computer.info.get("ip"))
-        self._active_mac = self.mac_from_ip(self._active_ip)
-        self.objectType = self._computer.module
-        self._timer = None
-        self._resetUserInfoTimeout()
-        self._username = LockableAttribute()
-        self._homedir = LockableAttribute()
-        self._flags = LockableAttribute()
-        self._state = LockableAttribute(initial_value="disconnected")
-        self._teacher = LockableAttribute(initial_value=False)
-        self._allowedClients = []
-        self.open()
-
-    def open(self):
-        MODULE.info("Opening VNC connection to %s" % (self.ipAddress))
-        self._vnc = italc.ItalcVncConnection()
-        # transfer responsibility for cleaning self._vnc up from python garbarge collector to C++/QT
-        # (Bug #27534)
-        sip.transferto(self._vnc, None)
-        self._vnc.setHost(self.ipAddress)
-        self._vnc.setPort(ITALC_VNC_PORT)
-        self._vnc.setQuality(italc.ItalcVncConnection.ThumbnailQuality)
-        self._vnc.setFramebufferUpdateInterval(int(1000 * ITALC_VNC_UPDATE))
-        self._vnc.start()
-        self._vnc.stateChanged.connect(self._stateChanged)
-
-    def __del__(self):
-        self.close()
-
-    def close(self):
-        MODULE.info("Closing VNC connection to %s" % (self.ipAddress))
-        if self._vnc:
-            self._vnc.stateChanged.disconnect(self._stateChanged)
-        if self._core:
-            self._core.receivedUserInfo.disconnect(self._userInfo)
-            self._core.receivedSlaveStateFlags.disconnect(self._slaveStateFlags)
-            # WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call
-            # the stop() function again!
-            del self._core
-            self._core = None
-            self._core_ready = False
-        elif self._vnc:
-            # WARNING: only call stop() if we didn't removed self._core
-            self._vnc.stop()
-        del self._vnc
-        self._vnc = None
-        self._state.set(ITALC_Computer.CONNECTION_STATES[italc.ItalcVncConnection.Disconnected])
-
-    @pyqtSlot(int)
-    def _stateChanged(self, state):
-        self._state.set(ITALC_Computer.CONNECTION_STATES[state])
-
-        # Comments for bug #41752:
-        # The iTALC core connection is used on top of the iTALC VNC connection.
-        # The core connection is set up after the VNC connection emits a state change ??? ==> connected.
-        # Tests have shown that the core connection is not ready/usable right after setup.
-        # That's why _core_ready is set to False.
-        # After the first usage of the core connection, two state changes are triggered:
-        # connected ==> disconnected ==> connected.
-        # Now the core connection is ready for use ==> _core_ready is set to True and the
-        # "connected" signal is emitted.
-        #
-        # self.connected() checks by default if _core_ready==True if not specified by argument to
-        # ignore this variable.
-        # (used to send initial sendGetUserInformationRequest() via core connection to trigger
-        # connection state change).
-
-        if not self._core and self._state.current == "connected" and self._state.old != "connected":
-            MODULE.process("%s: VNC connection established" % (self.ipAddress,))
-            if self._vnc is None:
-                MODULE.error("%s: self._vnc is None!" % (self.ipAddress,))
-                return
-            self._core = italc.ItalcCoreConnection(self._vnc)
-            self._core.receivedUserInfo.connect(self._userInfo)
-            self._core.receivedSlaveStateFlags.connect(self._slaveStateFlags)
-            self._core_ready = False
-            self.start()
-        elif self._core and self._state.current == "connected" and self._state.old != "connected":
-            MODULE.process(
-                "%s: iTALC connection on top of VNC connection established" % (self.ipAddress,)
-            )
-            self._core_ready = True
-            self.signal_emit("connected", self)
-        # lost connection ...
-        elif self._state.current != "connected" and self._state.old == "connected":
-            MODULE.process("%s: lost connection: new state=%r" % (self.ipAddress, self._state.current))
-            self._core_ready = False
-            self._username.reset()
-            self._homedir.reset()
-            self._flags.reset()
-            self._teacher.reset(False)
-
-    def _resetUserInfoTimeout(self, guardtime=ITALC_CORE_TIMEOUT):
-        self._usernameLastUpdate = time.time() + guardtime
-
-    @pyqtSlot(str, str)
-    def _userInfo(self, username, homedir):
-        self._resetUserInfoTimeout(0)
-        self._username.set(str(username))
-        self._homedir.set(str(homedir))
-        self._teacher.set(self.isTeacher)
-        if self._username.current:
-            self._core.reportSlaveStateFlags()
-
-    def _emit_flag(self, diff, flag, signal):
-        if diff & flag:
-            self.signal_emit(signal, bool(self._flags.current & flag))
-
-    @pyqtSlot(int)
-    def _slaveStateFlags(self, flags):
-        # MODULE.info(
-        #     '%s: received slave state flags: (old=%r, new=%r)' % (
-        #         self.ipAddress, self._flags.old, flags))
-        self._flags.set(flags)
-        if self._flags.old is None:
-            diff = self._flags.current
-        else:
-            # which flags have changed: old xor current
-            diff = self._flags.old ^ self._flags.current
-        self._flags.set(flags, force=True)
-        self._emit_flag(diff, italc.ItalcCore.ScreenLockRunning, "screen-lock")
-        self._emit_flag(diff, italc.ItalcCore.InputLockRunning, "input-lock")
-        self._emit_flag(diff, italc.ItalcCore.AccessDialogRunning, "access-dialog")
-        self._emit_flag(diff, italc.ItalcCore.DemoClientRunning, "demo-client")
-        self._emit_flag(diff, italc.ItalcCore.DemoServerRunning, "demo-server")
-        self._emit_flag(diff, italc.ItalcCore.MessageBoxRunning, "message-box")
-        self._emit_flag(diff, italc.ItalcCore.SystemTrayIconRunning, "system-tray-icon")
-
-    def update(self):
-        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for
-        # self.connected()
-        if not self.connected(ignore_core_ready=True):
-            MODULE.warn("%s: not connected - skipping update" % (self.ipAddress,))
-            return True
-
-        if self._usernameLastUpdate + ITALC_CORE_TIMEOUT < time.time():
-            MODULE.process(
-                "connection to %s is dead for %.2fs - reconnecting (timeout=%d)"
-                % (self.ipAddress, (time.time() - self._usernameLastUpdate), ITALC_CORE_TIMEOUT)
-            )
-            self.close()
-            self._username.reset()
-            self._homedir.reset()
-            self._flags.reset()
-            self._resetUserInfoTimeout()
-            self.open()
-            return True
-        elif self._usernameLastUpdate + max(ITALC_CORE_TIMEOUT / 2, 1) < time.time():
-            MODULE.process(
-                "connection to %s seems to be dead for %.2fs"
-                % (self.ipAddress, (time.time() - self._usernameLastUpdate))
-            )
-
-        self._core.sendGetUserInformationRequest()
-        return True
-
-    def start(self):
-        self.stop()
-        self._resetUserInfoTimeout()
-        self.update()
-        self._timer = notifier.timer_add(ITALC_CORE_UPDATE * 1000, self.update)
-
-    def stop(self):
-        if self._timer is not None:
-            notifier.timer_remove(self._timer)
-            self._timer = None
-
-    @property
-    def dict(self):
-        item = {
-            "id": self.name,
-            "name": self.name,
-            "user": self.user.current,
-            "teacher": self.isTeacher,
-            "connection": self.state.current,
-            "description": self.description,
-            "ip": self.ipAddress,
-            "mac": self.macAddress,
-            "objectType": self.objectType,
-        }
-        item.update(self.flagsDict)
-        return item
-
-    @property
-    def hasChanged(self):
-        states = (self.state, self.flags, self.user, self.teacher)
-        return any(state.hasChanged for state in states)
-
-    # UDM properties
-    @property
-    def name(self):
-        return self._computer.info.get("name", None)
-
-    @property
-    def ipAddress(self):
-        ips = self._computer.info.get("ip")
-        if not ips:
-            raise ComputerRoomError("Unknown IP address")
-        if not self._active_ip:
-            self._active_ip = self.get_active_ip(ips)
-        return self._active_ip
-
-    @property
-    def macAddress(self):
-        udm_macs = self._computer.info.get("mac")
-        if not self._active_mac and self._active_ip:
-            active_mac = self.mac_from_ip(self._active_ip)
-            if active_mac in udm_macs:
-                self._active_mac = active_mac
-            elif ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-                MODULE.warn("Active mac {} is not in udm computer object.".format(active_mac))
-        return self._active_mac or (self._computer.info.get("mac") or [""])[0]
-
-    @property
-    def isTeacher(self):
-        try:
-            return self._user_map[str(self._username.current)].isTeacher
-        except AttributeError:
-            return False
-
-    @property
-    def hide_screenshot(self):
-        try:
-            return self._user_map[str(self._username.current)].hide_screenshot
-        except AttributeError:
-            return False
-
-    @property
-    def teacher(self):
-        return self._teacher
-
-    # iTalc properties
-    @property
-    def user(self):
-        return self._username
-
-    @property
-    def description(self):
-        return self._computer.info.get("description", None)
-
-    @property
-    def screenLock(self):
-        if not self._core:
-            return None
-        return self._core.isScreenLockRunning()
-
-    @property
-    def inputLock(self):
-        if not self._core:
-            return None
-        return self._core.isInputLockRunning()
-
-    @property
-    def demoServer(self):
-        if not self._core:
-            return None
-        return self._core.isDemoServerRunning()
-
-    @property
-    def demoClient(self):
-        if not self._core:
-            return None
-        return self._core.isDemoClientRunning()
-
-    @property
-    def messageBox(self):
-        if not self._core:
-            return None
-        return self._core.isMessageBoxRunning()
-
-    @property
-    def flags(self):
-        return self._flags
-
-    @property
-    def flagsDict(self):
-        return {
-            "ScreenLock": self.screenLock,
-            "InputLock": self.inputLock,
-            "DemoServer": self.demoServer,
-            "DemoClient": self.demoClient,
-            "MessageBox": self.messageBox,
-        }
-
-    @property
-    def state(self):
-        """Returns a LockableAttribute containing an abstracted
-        connection state. Possible values: conntected, disconnected,
-        error"""
-        return self._state
-
-    def connected(self, ignore_core_ready=False):
-        # bug 41752: have a look at _stateChanged() why ignore_core_ready is required for
-        # self.connected()
-        return (
-            self._core
-            and self._vnc.isConnected()
-            and self._state.current == "connected"
-            and (self._core_ready or ignore_core_ready)
-        )
-
-    # iTalc: screenshots
-    @property
-    def screenshot(self):
-        if not self.connected():
-            MODULE.warn("%s: not connected - skipping screenshot" % (self.ipAddress,))
-            return None
-        image = self._vnc.image()
-        if not image.byteCount():
-            MODULE.info("%s: no screenshot available yet" % (self.ipAddress,))
-            return None
-        tmpfile = tempfile.NamedTemporaryFile(delete=False)
-        tmpfile.close()
-
-        if image.save(tmpfile.name, "JPG"):
-            return tmpfile
-
-    @property
-    def screenshotQImage(self):
-        return self._vnc.image()
-
-    # iTalc: screen locking
-    def lockScreen(self, value):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping lockScreen" % (self.ipAddress,))
-            return
-        if value:
-            self._core.lockScreen()
-        else:
-            self._core.unlockScreen()
-
-    # iTalc: input device locking
-    def lockInput(self, value):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping lockInput" % (self.ipAddress,))
-            return
-        if value:
-            self._core.lockInput()
-        else:
-            self._core.unlockInput()
-
-    # iTalc: message box
-    def message(self, title, text):
-        if not self.connected():
-            MODULE.warn("%s: not connected - skipping message" % (self.ipAddress,))
-            return
-        self._core.displayTextMessage(title, text)
-
-    # iTalc: Demo
-    def denyClients(self):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping denyClients" % (self.ipAddress,))
-            return
-        for client in self._allowedClients[:]:
-            self._core.demoServerUnallowHost(client.ipAddress)
-            self._allowedClients.remove(client)
-
-    def allowClients(self, clients):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping allowClients" % (self.ipAddress,))
-            return
-        self.denyClients()
-        for client in clients:
-            self._core.demoServerAllowHost(client.ipAddress)
-            self._allowedClients.append(client)
-
-    def startDemoServer(self, allowed_clients=[]):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping startDemoServer" % (self.ipAddress,))
-            return
-        self._core.stopDemoServer()
-        self._core.startDemoServer(ITALC_VNC_PORT, ITALC_DEMO_PORT)
-        self.allowClients(allowed_clients)
-
-    def stopDemoServer(self):
-        if not self.connected():
-            MODULE.warn("%s: not connected - skipping stopDemoServer" % (self.ipAddress,))
-            return
-        self.denyClients()
-        self._core.stopDemoServer()
-
-    def startDemoClient(self, server, fullscreen=True):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping startDemoClient" % (self.ipAddress,))
-            return
-        self._core.stopDemo()
-        self._core.unlockScreen()
-        self._core.unlockInput()
-        self._core.startDemo(server.ipAddress, ITALC_DEMO_PORT, fullscreen)
-
-    def stopDemoClient(self):
-        if not self.connected():
-            MODULE.warn("%s: not connected - skipping stopDemoClient" % (self.ipAddress,))
-            return
-        self._core.stopDemo()
-
-    # iTalc: computer control
-    def powerOff(self):
-        if not self.connected():
-            MODULE.warn("%s: not connected - skipping powerOff" % (self.ipAddress,))
-            return
-        self._core.powerDownComputer()
-
-    def powerOn(self):
-        # do not use the italc trick
-        # if self._core and self.macAddress:
-        # 	self._core.powerOnComputer( self.macAddress )
-        if self.macAddress:
-            blacklisted_interfaces = [
-                x
-                for x in ucr.get(
-                    "ucsschool/umc/computerroom/wakeonlan/blacklisted/interfaces", ""
-                ).split()
-                if x
-            ]
-            blacklisted_interface_prefixes = [
-                x
-                for x in ucr.get(
-                    "ucsschool/umc/computerroom/wakeonlan/blacklisted/interface_prefixes", ""
-                ).split()
-                if x
-            ]
-            target_broadcast_ips = [
-                x for x in ucr.get("ucsschool/umc/computerroom/wakeonlan/target_nets", "").split() if x
-            ]
-            target_broadcast_ips = target_broadcast_ips or ["255.255.255.255"]
-            wakeonlan.send_wol_packet(
-                self.macAddress,
-                blacklisted_interfaces=blacklisted_interfaces,
-                blacklisted_interface_prefixes=blacklisted_interface_prefixes,
-                target_broadcast_ips=target_broadcast_ips,
-            )
-        else:
-            MODULE.error("%s: no MAC address set - skipping powerOn" % (self.ipAddress,))
-
-    @staticmethod
-    def mac_from_ip(ip):
-        if ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-            pid = subprocess.Popen(["/usr/sbin/arp", "-n", ip], stdout=subprocess.PIPE)  # nosec
-            s = pid.communicate()[0]
-            res = re.search(r"(([a-f\d]{1,2}\:){5}[a-f\d]{1,2})", s)
-            mac = ""
-            if res:
-                mac = res.group(0)
-            else:
-                MODULE.warn("Ip %r is not in arp cache." % ip)
-            return mac
-        return ""
-
-    @staticmethod
-    def get_active_ip(ips):
-        if ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-            for ip in ips:
-                command = ["/usr/bin/timeout", "1", "ping", "-c", "1", ip]
-                if subprocess.call(command) == 0:  # nosec
-                    return ip
-            else:
-                MODULE.warn("Non of the ips is pingable: %r" % ips)
-        return ips[0] if ips else ""
-
-    def restart(self):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping restart" % (self.ipAddress,))
-            return
-        self._core.restartComputer()
-
-    # iTalc: user functions
-    def logOut(self):
-        if not self.connected():
-            MODULE.error("%s: not connected - skipping logOut" % (self.ipAddress,))
-            return
-        self._core.logoutUser()
-
-    def __repr__(self):
-        return "<%s(%s)>" % (type(self).__name__, self.ipAddress)
-
-
 class ComputerRoomManager(dict):
     SCHOOL = None
     ROOM = None
@@ -751,7 +222,7 @@ class ComputerRoomManager(dict):
 
     def __init__(self):
         dict.__init__(self)
-        self._user_map = UserMap(ITALC_USER_REGEX)
+        self._user_map = UserMap(VEYON_USER_REGEX)
         self._veyon_client = None  # type: Optional[VeyonClient]
 
     @property
@@ -853,28 +324,18 @@ class ComputerRoomManager(dict):
             raise ComputerRoomError("There are no computers in the selected room.")
 
         MODULE.info(
-            "Computerroom {!r} will be initialized with {} Computers.".format(
-                self.ROOM, "VEYON" if self.veyon_backend else "ITALC"
+            "Computerroom {!r} will be initialized with Computers.".format(
+                self.ROOM
             )
         )
-        if self.veyon_backend:
-            self._user_map = UserMap(VEYON_USER_REGEX)
-        else:
-            self._user_map = UserMap(ITALC_USER_REGEX)
+        self._user_map = UserMap(VEYON_USER_REGEX)
         for computer in computers:
-            if self.veyon_backend:
-                try:
-                    comp = VeyonComputer(computer.get_udm_object(lo), self.veyon_client, self._user_map)
-                    comp.start()
-                    self.__setitem__(comp.name, comp)
-                except ComputerRoomError as exc:
-                    MODULE.warn("Computer could not be added: {}".format(exc))
-            else:
-                try:
-                    comp = ITALC_Computer(computer.get_udm_object(lo), self._user_map)
-                    self.__setitem__(comp.name, comp)
-                except ComputerRoomError as exc:
-                    MODULE.warn("Computer could not be added: %s" % (exc,))
+            try:
+                comp = VeyonComputer(computer.get_udm_object(lo), self.veyon_client, self._user_map)
+                comp.start()
+                self.__setitem__(comp.name, comp)
+            except ComputerRoomError as exc:
+                MODULE.warn("Computer could not be added: {}".format(exc))
 
     @property
     def isDemoActive(self):
@@ -918,28 +379,21 @@ class ComputerRoomManager(dict):
             return False
 
         MODULE.info("Demo clients (teachers): %s" % ", ".join(teachers))
-        if self.veyon_backend:
-            demo_access_token = str(uuid.uuid4())
-            server.startDemoServer(token=demo_access_token)
-            for client in clients:
-                client.startDemoClient(
-                    server=server,
-                    token=demo_access_token,
-                    full_screen=False if client.name in teachers else fullscreen,
-                )
-        else:  # Can be deleted as soon as italc is unsupported
-            server.startDemoServer(clients)
-            for client in clients:
-                client.startDemoClient(
-                    server, fullscreen=False if client.name in teachers else fullscreen
-                )
+        demo_access_token = str(uuid.uuid4())
+        server.startDemoServer(token=demo_access_token)
+        for client in clients:
+            client.startDemoClient(
+                server=server,
+                token=demo_access_token,
+                full_screen=False if client.name in teachers else fullscreen,
+            )
 
     def stopDemo(self):
         if self.demoServer is not None:
             self.demoServer.stopDemoServer()
         # This is necessary since Veyon has a considerable delay with exposing its demo client status.
         # So we just end the demo client on all computers.
-        clients = self.values() if self.veyon_backend else self.demoClients
+        clients = self.values()
         for client in clients:
             client.stopDemoClient()
 

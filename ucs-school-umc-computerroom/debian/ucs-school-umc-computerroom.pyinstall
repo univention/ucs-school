@@ -1,2 +1,1 @@
 umc/python/computerroom/plugins/*.py univention.management.console.modules.computerroom.plugins
-italc_integration/*.py ucsschool.italc_integration
