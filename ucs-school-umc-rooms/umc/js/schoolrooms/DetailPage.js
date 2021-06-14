@@ -38,13 +38,12 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
-	"umc/widgets/RadioButton",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/MultiSelect",
 	"umc/widgets/Grid",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, RadioButton, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
+], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
 		moduleStore: null,
@@ -94,22 +93,6 @@ define([
 				label: _('Description'),
 				description: _('Verbose description of the current group')
 			}, {
-				type: Text,
-				name: "room_type_label",
-				content: '<h2>' + _('Computerroom backend') + '</h2>'
-			}, {
-				type: RadioButton,
-				name: 'italc',
-				label: _("Italc (Default)"),
-				description: _("This is the default backend for the computerroom module."),
-				radioButtonGroup: 'room_type',
-			}, {
-				type: RadioButton,
-				name: 'veyon',
-				label: _("Veyon"),
-				description: _("This is the new computerroom backend."),
-				radioButtonGroup: 'room_type',
-			}, {
 				type: MultiObjectSelect,
 				name: 'computers',
 				label: _('Computers in the room'),
@@ -150,7 +133,7 @@ define([
 			// together into title panes
 			var layout = [{
 				label: _('Properties'),
-				layout: [ 'school', 'name', 'description', 'room_type_label', 'italc', 'veyon' ]
+				layout: [ 'school', 'name', 'description' ]
 			}, {
 				label: _('Computers'),
 				layout: [ 'computers' ]

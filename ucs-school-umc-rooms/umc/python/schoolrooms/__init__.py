@@ -109,8 +109,6 @@ class Instance(SchoolBaseModule):
         result = room.to_dict()
         result["computers"] = result.get("hosts")
         result["teacher_computers"] = list()
-        result["veyon"] = room.veyon_backend
-        result["italc"] = not room.veyon_backend
         for host_dn in result.get("hosts"):
             host = SchoolComputer.from_dn(host_dn, None, ldap_user_read)  # Please remove with Bug #49611
             host = SchoolComputer.from_dn(host_dn, None, ldap_user_read)
@@ -125,7 +123,7 @@ class Instance(SchoolBaseModule):
         group_props = request.options[0].get("object", {})
         group_props["hosts"] = group_props.get("computers")
         room = ComputerRoom(**group_props)
-        room.veyon_backend = group_props.get("veyon", False)
+        room.veyon_backend = True
         if room.get_relative_name() == room.name:
             room.name = "%(school)s-%(name)s" % group_props
             room.set_dn(room.dn)
@@ -146,7 +144,7 @@ class Instance(SchoolBaseModule):
         group_props["hosts"] = group_props.get("computers")
 
         room = ComputerRoom(**group_props)
-        room.veyon_backend = group_props.get("veyon", False)
+        room.veyon_backend = True
         if room.get_relative_name() == room.name:
             room.name = "%(school)s-%(name)s" % group_props
         room.set_dn(group_props["$dn$"])

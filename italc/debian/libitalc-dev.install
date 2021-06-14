@@ -1,4 +1,0 @@
-../../lib/include/Configuration/*.h usr/include/libitalc/Configuration/
-../../lib/include/Ipc/*.h usr/include/libitalc/Ipc/
-../../lib/include/*.h usr/include/libitalc/
-../../lib/include/rfb/*.h usr/include/libitalc/rfb
