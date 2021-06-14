@@ -80,16 +80,6 @@ feedback@univention.de
 		</itemizedlist>
 	</section>
 
-	<section id="relnotes:changelog:italc">
-		<title>iTALC</title>
-		<itemizedlist>
-			<listitem>
-				<simpara>
-				</simpara>
-			</listitem>
-		</itemizedlist>
-	</section>
-
 	<section id="relnotes:changelog:proxy">
 		<title>Proxy</title>
 		<itemizedlist>

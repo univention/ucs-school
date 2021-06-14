@@ -54,7 +54,6 @@ class ComputerRoom(object):
         host_members=[],
         teacher_computers=[],
         connection=None,
-        is_veyon=False,
     ):
         self.school = school
         self.name = name if name else uts.random_name()
@@ -64,8 +63,6 @@ class ComputerRoom(object):
         self.ucr = ucr_test.UCSTestConfigRegistry()
         self.ucr.load()
         self.client = connection if connection else Client.get_test_connection()
-        self.veyon = is_veyon
-        self.italc = not is_veyon
 
     def dn(self):
         return "cn=%s-%s,cn=raeume,cn=groups,%s" % (
@@ -83,8 +80,6 @@ class ComputerRoom(object):
                     "description": self.description,
                     "computers": self.host_members,
                     "teacher_computers": self.teacher_computers,
-                    "italc": self.italc,
-                    "veyon": self.veyon,
                 },
                 "options": None,
             }
@@ -101,11 +96,10 @@ class ComputerRoom(object):
             else:
                 print("School room (%r) addition failed as expected." % (self.name,))
 
-    def assert_backend_role(self, is_veyon):  # type: (bool) -> None
+    def assert_backend_role(self):  # type: () -> None
         """
         Checks for the presence/absence of the veyon backend role in the rooms ldap object.
 
-        :param is_veyon: If True veyon role is expected, otherwise it must not exist.
         :raises AssertionError: If the assertion is not fulfilled.
         """
         lo = utils.get_ldap_connection()
@@ -113,7 +107,7 @@ class ComputerRoom(object):
         veyon_role = create_ucsschool_role_string(
             role_computer_room_backend_veyon, "-", context_type_school
         )
-        assert (veyon_role in roles) == is_veyon
+        assert veyon_role in roles
 
     def verify_ldap(self, must_exist=True):
         # TODO: verify all attributes of object
@@ -174,8 +168,6 @@ class ComputerRoom(object):
         new_host_members = (
             new_attributes.get("computers") if new_attributes.get("computers") else self.host_members
         )
-        veyon = new_attributes.get("veyon", self.veyon)
-        italc = not veyon
 
         param = [
             {
@@ -186,8 +178,6 @@ class ComputerRoom(object):
                     "computers": new_host_members,
                     "teacher_computers": new_attributes.get("teacher_computers", self.teacher_computers),
                     "$dn$": self.dn(),
-                    "veyon": veyon,
-                    "italc": italc,
                 },
                 "options": None,
             }
@@ -219,8 +209,6 @@ class ComputerRoom(object):
                 "name": self.name,
                 "$dn$": self.dn(),
                 "ucsschool_roles": [create_ucsschool_role_string(role_computer_room, self.school)],
-                "veyon": self.veyon,
-                "italc": self.italc,
             }
         )
         if current_attributes != new_attributes:
