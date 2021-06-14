@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-rooms\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2020-11-23 22:01+0100\n"
+"POT-Creation-Date: 2021-06-14 18:48+0200\n"
 "PO-Revision-Date: 2012-05-08 15:53+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,8 +16,8 @@ msgstr ""
 msgid "Add room"
 msgstr "Raum hinzufügen"
 
-#: umc/js/schoolrooms/DetailPage.js:72 umc/js/schoolrooms.js:185
-#: umc/js/schoolrooms.js:228
+#: umc/js/schoolrooms.js:185 umc/js/schoolrooms.js:228
+#: umc/js/schoolrooms/DetailPage.js:71
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -25,15 +25,11 @@ msgstr "Abbrechen"
 msgid "Choose the school"
 msgstr "Schule auswählen"
 
-#: umc/js/schoolrooms/DetailPage.js:99
-msgid "Computerroom backend"
-msgstr "Computerraum Backend"
-
-#: umc/js/schoolrooms/DetailPage.js:155 umc/js/schoolrooms/DetailPage.js:182
+#: umc/js/schoolrooms/DetailPage.js:138 umc/js/schoolrooms/DetailPage.js:165
 msgid "Computers"
 msgstr "Computer"
 
-#: umc/js/schoolrooms/DetailPage.js:115
+#: umc/js/schoolrooms/DetailPage.js:98
 msgid "Computers in the room"
 msgstr "Computer in dem Raum"
 
@@ -53,7 +49,7 @@ msgstr "Löschen"
 msgid "Deleting the selected objects."
 msgstr "Löschen der ausgewählten Objekte"
 
-#: umc/js/schoolrooms/DetailPage.js:94 umc/js/schoolrooms.js:99
+#: umc/js/schoolrooms.js:99 umc/js/schoolrooms/DetailPage.js:93
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -73,11 +69,7 @@ msgstr "Raum bearbeiten und Computer zuweisen"
 msgid "Edit the selected object"
 msgstr "Bearbeiten des ausgewählten Raums"
 
-#: umc/js/schoolrooms/DetailPage.js:103
-msgid "Italc (Default)"
-msgstr "Italc (Standard)"
-
-#: umc/js/schoolrooms/DetailPage.js:89 umc/js/schoolrooms.js:95
+#: umc/js/schoolrooms.js:95 umc/js/schoolrooms/DetailPage.js:88
 msgid "Name"
 msgstr "Name"
 
@@ -89,25 +81,25 @@ msgstr "Keine Räume gefunden"
 msgid "No rooms were found."
 msgstr "Es wurden keine Räume gefunden."
 
-#: umc/js/schoolrooms/DetailPage.js:152
+#: umc/js/schoolrooms/DetailPage.js:135
 msgid "Properties"
 msgstr "Eigenschaft"
 
-#: umc/js/schoolrooms/DetailPage.js:224
+#: umc/js/schoolrooms/DetailPage.js:207
 #, javascript-format
 msgid "Room %s not created. It already exists."
 msgstr "Raum %s wurde nicht angelegt. Er existiert bereits."
 
-#: umc/js/schoolrooms/DetailPage.js:65
+#: umc/js/schoolrooms/DetailPage.js:64
 msgid "Save"
 msgstr "Speichern"
 
-#: umc/js/schoolrooms/DetailPage.js:84 umc/js/schoolrooms/DetailPage.js:119
-#: umc/js/schoolrooms.js:116
+#: umc/js/schoolrooms.js:116 umc/js/schoolrooms/DetailPage.js:83
+#: umc/js/schoolrooms/DetailPage.js:102
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolrooms/DetailPage.js:125 umc/js/schoolrooms.js:126
+#: umc/js/schoolrooms.js:126 umc/js/schoolrooms/DetailPage.js:108
 msgid "Search pattern"
 msgstr "Suchmuster"
 
@@ -125,7 +117,7 @@ msgid ""
 msgstr ""
 "Legt die Zeichenketten die in dem angezeigten Namen gesucht werden soll fest "
 
-#: umc/js/schoolrooms/DetailPage.js:198
+#: umc/js/schoolrooms/DetailPage.js:181
 msgid "Teacher computer"
 msgstr "Lehrercomputer"
 
@@ -137,25 +129,28 @@ msgstr "Der Raum konnte nicht gelöscht werden ({message})"
 msgid "The room has been deleted successfully"
 msgstr "Der Raum wurde erfolgreich gelöscht"
 
-#: umc/js/schoolrooms/DetailPage.js:104
-msgid "This is the default backend for the computerroom module."
-msgstr "Das ist das Standard-Backend für das Computerraum-Modul"
-
-#: umc/js/schoolrooms/DetailPage.js:110
-msgid "This is the new computerroom backend."
-msgstr "Das ist das neue Backend für das Computerraum-Modul"
-
-#: umc/js/schoolrooms/DetailPage.js:95
+#: umc/js/schoolrooms/DetailPage.js:94
 msgid "Verbose description of the current group"
 msgstr "Ausführliche Beschreibung der Gruppe"
-
-#: umc/js/schoolrooms/DetailPage.js:109
-msgid "Veyon"
-msgstr "Veyon"
 
 #: umc/js/schoolrooms.js:182
 msgid "Would you like to create a room now?"
 msgstr "Möchten Sie jetzt einen Raum anlegen?"
 
+#~ msgid "Computerroom backend"
+#~ msgstr "Computerraum Backend"
+
+#~ msgid "Italc (Default)"
+#~ msgstr "Italc (Standard)"
+
 #~ msgid "Search results"
 #~ msgstr "Suchergebnisse"
+
+#~ msgid "This is the default backend for the computerroom module."
+#~ msgstr "Das ist das Standard-Backend für das Computerraum-Modul"
+
+#~ msgid "This is the new computerroom backend."
+#~ msgstr "Das ist das neue Backend für das Computerraum-Modul"
+
+#~ msgid "Veyon"
+#~ msgstr "Veyon"
