@@ -19,6 +19,7 @@ Depends:
  eapol,
  python-attr,
  python-mock,
+ python-passlib,
  python-pycurl,
  python-pytest,
  python-pytest-catchlog,

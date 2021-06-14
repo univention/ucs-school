@@ -8,8 +8,8 @@ import subprocess
 import tempfile
 
 import ldap
-import smbpasswd
 from ldap.filter import filter_format
+import passlib.hash
 
 import ucsschool.lib.models.utils
 import univention.config_registry
@@ -313,7 +313,7 @@ class Person(object):
         )
 
         if self.password:
-            attr["sambaNTPassword"] = [smbpasswd.nthash(self.password)]
+            attr["sambaNTPassword"] = [passlib.hash.nthash.hash(self.password).upper()]
 
         return attr
 

@@ -11,8 +11,8 @@
 
 import copy
 
-import smbpasswd
 from ldap.filter import filter_format
+import passlib.hash
 
 import univention.admin.uldap
 import univention.testing.strings as uts
@@ -60,7 +60,7 @@ class Test(CLI_Import_v2_Tester):
 
             utils.verify_ldap_object(
                 person.dn,
-                expected_attr={"sambaNTPassword": [smbpasswd.nthash(person.password)]},
+                expected_attr={"sambaNTPassword": [passlib.hash.nthash.hash(person.password).upper()]},
                 strict=True,
                 should_exist=True,
             )
