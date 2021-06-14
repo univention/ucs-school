@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: http_proxy_auth_after_passwd_reset_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## versions:
@@ -16,7 +16,6 @@ from functools import wraps
 import pycurl
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.config_registry import handler_set, handler_unset
@@ -46,8 +45,7 @@ def resetPasswd(host, userdn, flavor, nextLogin):
     admin = account.username
     passwd = account.bindpw
     connection.authenticate(admin, passwd)
-    if not connection.umc_command("schoolusers/password/reset", options, flavor).result:
-        utils.fail("Password reset for (%r) unsuccessful" % (userdn,))
+    assert connection.umc_command("schoolusers/password/reset", options, flavor).result
     utils.wait_for_listener_replication()
     subprocess.check_call(["service", "squid", "reload"])  # reset squid credential cache (basic auth)
     time.sleep(2)  # reset ntlm auth helper cache
@@ -67,10 +65,9 @@ def authProxy(host, url, name, passwd, authTyp, expected_response):
         )
 
 
-def main():
+def test_http_proxy_auth_after_password_reset_check(ucr):
     url = "http://www.univention.de"
     try:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
             host = "%s.%s" % (ucr.get("hostname"), ucr.get("domainname"))
             handler_set(
                 [
@@ -123,8 +120,4 @@ def main():
                 authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
                 authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
     finally:
-        subprocess.Popen(["/etc/init.d/squid", "restart"], stdin=subprocess.PIPE).communicate()
-
-
-if __name__ == "__main__":
-    main()
+        subprocess.call(["systemctl", "restart", "squid"])

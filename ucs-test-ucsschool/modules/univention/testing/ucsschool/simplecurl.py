@@ -7,10 +7,11 @@
 from __future__ import print_function
 
 import os
+import tempfile
 import time
+from io import BytesIO
 
 import pycurl
-import StringIO
 
 import univention.testing.utils as utils
 
@@ -62,14 +63,15 @@ class SimpleCurl(object):
         username = username if username else account.username
         password = password if password else account.bindpw
         self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
-        self.cookieFilename = os.tempnam()
+        with tempfile.NamedTemporaryFile() as tmp:
+            self.cookieFilename = tmp.name
         self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
         self.curl.setopt(pycurl.COOKIEFILE, self.cookieFilename)
 
     def cookies(self):
         return self.curl.getinfo(pycurl.INFO_COOKIELIST)
 
-    def getPage(self, url, bVerbose=False, postData=None):
+    def getPage(self, url, bVerbose=False, postData=None, encoding="UTF-8"):
         """Gets a http page
         this method keep trying to fetch the page for 60secs then stops
         raising and exception if not succeeded.\n
@@ -85,10 +87,10 @@ class SimpleCurl(object):
         self.curl.setopt(pycurl.VERBOSE, bVerbose)
         if postData:
             self.curl.setopt(pycurl.HTTPPOST, postData)
-        buf = StringIO.StringIO()
+        buf = BytesIO()
         self.curl.setopt(pycurl.WRITEFUNCTION, buf.write)
         print("getting page:", url)
-        for i in xrange(60):
+        for i in range(60):
             try:
                 self.curl.perform()
                 break
@@ -102,7 +104,7 @@ class SimpleCurl(object):
         page = buf.getvalue()
         # print page[1:150]
         buf.close()
-        return page
+        return page.decode(encoding)
 
     def httpCode(self):
         """HTTP status code\n

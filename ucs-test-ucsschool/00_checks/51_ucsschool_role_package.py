@@ -1,16 +1,10 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check for correct school role package
 ## tags: [apptest, ucsschool]
 ## exposure: safe
 
-import sys
-
-import univention.config_registry
 import univention.testing.utils as utils
-
-ucr = univention.config_registry.ConfigRegistry()
-ucr.load()
 
 role_packages = {
     "dc_multi_master": "ucs-school-master",
@@ -21,14 +15,14 @@ role_packages = {
     "single_master": "ucs-school-singlemaster",
 }
 
-# get my role and check role package
-lo = utils.get_ldap_connection()
-role = lo.get(ucr["ldap/hostdn"]).get("ucsschoolRole")[0]
-role = role.split(":", 1)[0]
-if role == "dc_master":
-    role = "dc_single_master" if ucr.is_true("ucsschool/singlemaster") else "dc_multi_master"
-package = role_packages[role]
-if not utils.package_installed(package):
-    utils.fail("{} is not installed for role {}!".format(package, role))
 
-sys.exit(0)
+def test_ucsschool_role_package(ucr):
+    # get my role and check role package
+    ucr.load()
+    lo = utils.get_ldap_connection()
+    role = lo.get(ucr["ldap/hostdn"])["ucsschoolRole"][0].decode("utf-8")
+    role = role.split(":", 1)[0]
+    if role == "dc_master":
+        role = "dc_single_master" if ucr.is_true("ucsschool/singlemaster") else "dc_multi_master"
+    package = role_packages[role]
+    assert utils.package_installed(package), "{} is not installed for role {}!".format(package, role)

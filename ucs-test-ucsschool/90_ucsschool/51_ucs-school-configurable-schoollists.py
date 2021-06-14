@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: Test umc calls to generate school class lists with altered attributes.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
@@ -27,11 +27,11 @@ def random_properties(udm_user, klass_name, n=5):
     udm_properties = []
     expected_values = []
     while len(udm_properties) < n:
-        key = random.choice(udm_user.keys())
+        key = random.choice(list(udm_user.keys()))
         value = udm_user.get(key)
         if value:
             udm_properties.append(key)
-            if type(value) is list:
+            if isinstance(value, list):
                 value = " ".join(udm_user.get(key))
             expected_values.append(value)
     udm_properties.append("Class")

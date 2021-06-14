@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: distribute materials with encoding
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
@@ -9,17 +9,13 @@
 ## packages: [ucs-school-umc-distribution]
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.distribution import Distribution
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_distribute_materials_encoding(schoolenv, ucr):
             host = ucr.get("hostname")
             connection = Client(host)
 
@@ -31,17 +27,17 @@ def main():
             group.create()
             utils.wait_for_replication_and_postrun()
 
-            filename1 = "%s%s%s%s" % (
+            filename1 = b"%s%s%s%s" % (
                 u"\xc4".encode("UTF-8"),  # Ä
-                uts.random_name_special_characters(3),
+                uts.random_name_special_characters(3).encode("UTF-8"),
                 u"\u2192".encode("UTF-8"),  # →
-                uts.random_name_special_characters(3),
+                uts.random_name_special_characters(3).encode("UTF-8"),
             )
-            filename2 = "%s%s" % (u"\xc4".encode("UTF-8"), uts.random_name_special_characters(6))
-            filename3 = "%s%s%s" % (
-                uts.random_name_special_characters(3),
+            filename2 = b"%s%s" % (u"\xc4".encode("UTF-8"), uts.random_name_special_characters(6).encode("UTF-8"))
+            filename3 = b"%s%s%s" % (
+                uts.random_name_special_characters(3).encode("ASCII"),
                 u"\xc4".encode("ISO8859-1"),
-                uts.random_name_special_characters(3),
+                uts.random_name_special_characters(3).encode("ASCII"),
             )
             filename4 = uts.random_name()
 
@@ -70,7 +66,3 @@ def main():
 
             project.remove()
             project.check_remove()
-
-
-if __name__ == "__main__":
-    main()

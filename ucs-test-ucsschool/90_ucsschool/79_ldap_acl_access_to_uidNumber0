@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python2.7
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: Test hijacking uidNumber=0
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles:
@@ -10,19 +10,18 @@
 ##  - ucs-test-ldap
 ## exposure: dangerous
 
+from __future__ import print_function
+
 import imp
 import sys
 
 import ldap.filter
 
-ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
-
 import univention.admin.uldap
 from univention.testing.strings import random_name
-from univention.testing.ucr import UCSTestConfigRegistry
-from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
-from univention.testing.udm import UCSTestUDM
 from univention.testing.utils import get_ldap_connection
+
+ucshacklib = imp.load_source('ucshacklib', '/usr/share/ucs-test/10_ldap/90_acl_access_to_uidNumber0')
 
 PASSWORD = 'univention'
 
@@ -106,8 +105,8 @@ def create_environment(self, udm, ucr):
 	return env
 
 
-def main():
-	with UCSTestSchool() as schoolenv, UCSTestUDM() as udm, UCSTestConfigRegistry() as ucr:
+def test_ldap_acl_access_to_uid_number0(schoolenv, udm_session, ucr):
+		udm = udm_session
 		env = create_environment(schoolenv, udm, ucr)
 
 		def get_connections():
@@ -145,7 +144,7 @@ def main():
 						bindpw=PASSWORD,
 					)
 				except (univention.admin.uexceptions.base, ldap.LDAPError) as exc:
-					print >> sys.stderr, 'SKIP: Authentication as %r failed: %s' % (dn, exc)
+					print('SKIP: Authentication as %r failed: %s' % (dn, exc), file=sys.stderr)
 
 		def do_hacks(connections):
 			hacks = []
@@ -159,7 +158,3 @@ def main():
 				raise ucshacklib.Hacked('\n\n\n'.join(map(str, hacks)))
 
 		do_hacks(get_connections())
-
-
-if __name__ == "__main__":
-	main()

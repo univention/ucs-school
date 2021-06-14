@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: tests for exam-cleanup script
 ## roles: [domaincontroller_master]
@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
@@ -22,13 +21,12 @@ from univention.testing.ucsschool.exam import (
     get_s4_rejected,
     wait_replications_check_rejected_uniqueMember,
 )
-from univention.testing.udm import UCSTestUDM
 from univention.udm import UDM as SysUDM
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 
-    from univention.udm.modules.users_user import UsersUserModule
+    from univention.udm.modules.users_user import UsersUserModule  # noqa: F401
 except ImportError:
     pass
 
@@ -40,11 +38,11 @@ def get_user_work_stations(mod_user, stu):  # type: (UsersUserModule, str) -> Li
     return orig_udm.props.sambaUserWorkstations
 
 
-def test_user_restore_after_exam():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
+def test_user_restore_after_exam(udm_session, schoolenv):
+        udm = udm_session
         # UCSTestUDM does not search, so I have to use the normal UDM
         mod_user = SysUDM(schoolenv.lo, 1).get("users/user")
-        open_ldap_co = schoolenv.open_ldap_connection()
+        lo = schoolenv.open_ldap_connection()
         schoolenv.ucr.load()
         existing_rejects = get_s4_rejected()
         if schoolenv.ucr.is_true("ucsschool/singlemaster"):
@@ -70,7 +68,7 @@ def test_user_restore_after_exam():
 
         wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-        computers = Computers(open_ldap_co, school, 1, 0, 0)
+        computers = Computers(lo, school, 1, 0, 0)
         created_computers = computers.create()
         created_computers_dn = computers.get_dns(created_computers)
 

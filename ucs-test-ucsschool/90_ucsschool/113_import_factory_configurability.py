@@ -18,10 +18,11 @@ import tempfile
 import time
 from csv import QUOTE_ALL, DictReader, DictWriter, excel, reader as csvreader
 
+import pytest
+
 import univention.testing.strings as uts
-import univention.testing.utils as utils
-from ucsschool.importer.utils.test_user_creator import TestUserCreator
-from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter
+from ucsschool.importer.utils.test_user_creator import TestUserCreator as _TestUserCreator
+from ucsschool.importer.writer.test_user_csv_exporter import TestUserCsvExporter as _TestUserCsvExporter
 from univention.admin.uldap import explodeDn
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
@@ -35,9 +36,11 @@ class Bunch(object):
         self.__dict__.update(kwds)
 
 
-class FactoryConfTest(object):
-    def __init__(self, tmpdir):
-        self.tmpdir = tmpdir
+class Test_FactoryConf(object):
+    @pytest.fixture(scope="class", autouse=True)
+    def _setup(self, request):
+        self = request.cls
+        self.tmpdir = tempfile.mkdtemp(prefix="113factest.", dir="/tmp")
         self.ldap_status = None
         self.ou_name = None
         self.ou_dn = None
@@ -45,8 +48,37 @@ class FactoryConfTest(object):
         self.ou_dn2 = None
         self.lo = None
         self.logger = get_ucsschool_logger()
-        self.test_user_exporter = TestUserCsvExporter()
-        self.test_user_creator = None
+        self.test_user_exporter = _TestUserCsvExporter()
+        self._test_user_creator = None
+        try:
+            with UCSTestConfigRegistry() as ucr, UCSTestSchool() as schoolenv, UCSTestUDM() as udm:
+                if not ucr.get("mail/hosteddomains"):
+                    self.logger.info("\n\n*** Creating mail domain...\n")
+                    udm.create_object(
+                        "mail/domain",
+                        position="cn=domain,cn=mail,{}".format(ucr["ldap/base"]),
+                        name="{}.{}.{}".format(uts.random_name(), uts.random_name(), uts.random_name()),
+                    )
+
+                self.logger.info("\n\n*** Creating OUs...\n")
+                (self.ou_name, self.ou_dn), (self.ou_name2, self.ou_dn2) = schoolenv.create_multiple_ous(
+                    2, name_edudc=ucr.get("hostname")
+                )
+                self.lo = schoolenv.open_ldap_connection(admin=True)
+                self._test_user_creator = _TestUserCreator(
+                    [self.ou_name, self.ou_name2],
+                    staff=2,
+                    students=2,
+                    teachers=2,
+                    staffteachers=2,
+                    classes=2,
+                    inclasses=2,
+                    schools=2,
+                )
+                self._test_user_creator.make_classes()
+                yield
+        finally:
+            shutil.rmtree(self.tmpdir, ignore_errors=True)
 
     def save_ldap_status(self):
         self.logger.debug("Saving LDAP status...")
@@ -72,7 +104,7 @@ class FactoryConfTest(object):
                 len(new_users),
                 new_users,
             )
-            utils.fail("Stopping because of invalid number of new users.")
+        assert len(new_users) == exp_new
         removed_users = [x for x in ldap_diff.removed if x.startswith("uid=")]
         if len(removed_users) != exp_removed:
             self.logger.error(
@@ -81,7 +113,7 @@ class FactoryConfTest(object):
                 len(removed_users),
                 removed_users,
             )
-            utils.fail("Stopping because of invalid number of removed users.")
+        assert len(removed_users) == exp_removed
 
     def run_import(self, args, fail_on_error=True):
         cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import"] + args
@@ -96,9 +128,9 @@ class FactoryConfTest(object):
         return exitcode
 
     def create_csv(self):
-        csvfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        csvfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.logger.info("*** Writing user information to CSV file '%s'...", csvfile.name)
-        users = list(self.test_user_creator.make_users())
+        users = list(self._test_user_creator.make_users())
         self.test_user_exporter.dump(users, csvfile.name)
         return users, csvfile
 
@@ -127,7 +159,7 @@ class FactoryConfTest(object):
             "\n\n*** Starting import with password_exporter=UniventionPasswordExporter...\n"
         )
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -153,14 +185,17 @@ class FactoryConfTest(object):
             if num == 0:
                 # header
                 continue
-            if row[1] != "univention":
-                utils.fail("Password should be 'univention', is %r. Line %d: %r" % (row[1], num, row))
+            assert row[1] == "univention", "Password should be 'univention', is %r. Line %d: %r" % (
+                row[1],
+                num,
+                row,
+            )
         self.logger.info("\n\n*** OK: passwords are 'univention'.\n\n")
 
     def test_result_exporter(self):
         self.logger.info("\n\n*** Starting import with result_exporter=AnonymizeResultExporter...\n\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -206,17 +241,16 @@ class FactoryConfTest(object):
                 # header
                 continue
             found = dict(firstname=row["firstname"], lastname=row["lastname"], birthday=row["birthday"])
-            if expected != found:
-                utils.fail("Output not as expected: expected=%r found=%r" % (expected, found))
+            assert expected == found, "Output not as expected: expected=%r found=%r" % (expected, found)
         self.logger.info("\n\n*** OK: result is anonymized.\n\n")
 
     def test_user_importer(self):
         self.logger.info("\n\n*** Starting import with user_importer=BirthdayUserImport...\n\n")
-        csvfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        csvfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.logger.info("*** Writing user information to CSV file '%s'...", csvfile.name)
-        users = list(self.test_user_creator.make_users())
-        today_birthday_users = list()
-        random_birthday_users = list()
+        users = list(self._test_user_creator.make_users())
+        today_birthday_users = []
+        random_birthday_users = []
         today = time.strftime("%Y-%m-%d")
         for user in users:
             if random.choice([True, False]):
@@ -227,7 +261,7 @@ class FactoryConfTest(object):
                     uts.random_int(1900, 2000), uts.random_int(1, 12), uts.random_int(1, 27)
                 )
                 random_birthday_users.append(user)
-        test_user_exporter_with_birthday = TestUserCsvExporter()
+        test_user_exporter_with_birthday = _TestUserCsvExporter()
         field_names = list(test_user_exporter_with_birthday.field_names)
         field_names.append("Geburtstag")
         test_user_exporter_with_birthday.field_names = field_names
@@ -254,7 +288,7 @@ class FactoryConfTest(object):
             "\n\n*** OK: imported 8 users. Will delete them now (except whose with birthday=today)\n\n"
         )
         # create empty CSV file
-        with tempfile.NamedTemporaryFile(dir=self.tmpdir, delete=False) as csvfile:
+        with tempfile.NamedTemporaryFile("w+", dir=self.tmpdir, delete=False) as csvfile:
             dialect = excel()
             dialect.doublequote = True
             dialect.quoting = QUOTE_ALL
@@ -279,13 +313,13 @@ class FactoryConfTest(object):
         try:
             os.remove(csvfile_name)
         except OSError as exc:
-            self.logger.warn("Could not delete %r: %s", csvfile_name, exc)
+            self.logger.warning("Could not delete %r: %s", csvfile_name, exc)
         self.logger.info("*** OK: only %d users were deleted.\n", len(random_birthday_users))
 
     def test_username_handler(self):
         self.logger.info("\n\n*** Starting import with username_handler=FooUsernameHandler...\n\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -306,14 +340,15 @@ class FactoryConfTest(object):
         ldap_diff = self.diff_ldap_status()
         new_users = [x for x in ldap_diff.new if x.startswith("uid=")]
         self.logger.debug("new_users=%r", new_users)
-        if not all([explodeDn(user)[0].endswith("foo") for user in new_users]):
-            utils.fail("Not all usernames end with 'foo': %r", new_users)
+        assert all(
+            [explodeDn(user)[0].endswith("foo") for user in new_users]
+        ), "Not all usernames end with 'foo': %r" % (new_users,)
         self.logger.info("\n\n*** OK: all usernames end with 'foo'.\n\n")
 
     def test_json_writer(self):
         self.logger.info("\n\n*** Starting import with user_writer=JsonWriter...\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -330,59 +365,21 @@ class FactoryConfTest(object):
             ]
         )
         self.check_new_and_removed_users(8, 0)
-        outfile.seek(0)
-        jsout = json.load(outfile)
-        if len(jsout) != 8:
-            utils.fail("Expected %d objects in export, found %d." % (8, len(jsout)))
+        try:
+            outfile.seek(0)
+            jsout = json.load(outfile)
+        except ValueError:
+            self.logger.exception(repr(open(outfile.name).read()))
+            raise
+
+        assert len(jsout) == 8, "Expected %d objects in export, found %d." % (8, len(jsout))
         vn_in = {x["Vorname"] for x in users}
-        vn_out = {x["firstname"].encode("utf-8") for x in jsout}
-        if vn_in.difference(vn_out):
-            utils.fail(
-                "Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r"
-                % (vn_in, vn_out, vn_in.difference(vn_out))
-            )
+        vn_out = {x["firstname"].encode("utf-8") if str is bytes else x["firstname"] for x in jsout}
+        assert not vn_in.difference(
+            vn_out
+        ), "Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r" % (
+            vn_in,
+            vn_out,
+            vn_in.difference(vn_out),
+        )
         self.logger.info("\n\n*** OK: JSON output.\n\n")
-
-    def run_all_tests(self):
-        with UCSTestConfigRegistry() as ucr, UCSTestSchool() as schoolenv, UCSTestUDM() as udm:
-            if not ucr.get("mail/hosteddomains"):
-                self.logger.info("\n\n*** Creating mail domain...\n")
-                udm.create_object(
-                    "mail/domain",
-                    position="cn=domain,cn=mail,{}".format(ucr["ldap/base"]),
-                    name="{}.{}.{}".format(uts.random_name(), uts.random_name(), uts.random_name()),
-                )
-
-            self.logger.info("\n\n*** Creating OUs...\n")
-            (self.ou_name, self.ou_dn), (self.ou_name2, self.ou_dn2) = schoolenv.create_multiple_ous(
-                2, name_edudc=ucr.get("hostname")
-            )
-            self.lo = schoolenv.open_ldap_connection(admin=True)
-            self.test_user_creator = TestUserCreator(
-                [self.ou_name, self.ou_name2],
-                staff=2,
-                students=2,
-                teachers=2,
-                staffteachers=2,
-                classes=2,
-                inclasses=2,
-                schools=2,
-            )
-            self.test_user_creator.make_classes()
-            self.test_mass_importer()
-            self.test_password_exporter()
-            self.test_result_exporter()
-            self.test_user_importer()
-            self.test_username_handler()
-            self.test_json_writer()
-
-            self.logger.info("All tests were successful.\n\n")
-
-
-if __name__ == "__main__":
-    tmpdir = tempfile.mkdtemp(prefix="113factest.", dir="/tmp")
-    try:
-        fct = FactoryConfTest(tmpdir)
-        fct.run_all_tests()
-    finally:
-        shutil.rmtree(tmpdir, ignore_errors=True)

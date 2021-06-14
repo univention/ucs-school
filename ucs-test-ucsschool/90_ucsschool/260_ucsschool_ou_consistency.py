@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: Check ucschool ou consistency diagnostic tool
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]
@@ -27,9 +27,9 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
             filter="ou={}".format(self.schoolC.name), base=self.ucr.get("ldap/base"), scope="one"
         )
         ou_c_dn, ou_c_attrs = ou_list[0]
-        assert "ucsschoolOrganizationalUnit" in ou_a_attrs.get("objectClass", [])
-        assert "ucsschoolOrganizationalUnit" in ou_b_attrs.get("objectClass", [])
-        assert "ucsschoolOrganizationalUnit" in ou_c_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_a_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_b_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_c_attrs.get("objectClass", [])
 
         logger.info("Change ldap-values of A-C, such that the diagnostic tool should raise a warning.")
         expected_warnings = []
@@ -158,11 +158,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
         logger.info("Ran diagnostic tool {} successfully.".format(module_name))
 
 
-def main():
+def test_ou_consistency():
     with UCSSchoolOuConsistencyCheck() as test_suite:
         test_suite.create_multi_env_school_objects()
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

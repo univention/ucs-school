@@ -1,10 +1,11 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the check constraints function for the admin workaround in the schoolwizard modules
 ## roles: [domaincontroller_master]
 ## exposure: safe
 ## tags: [apptest, ucsschool, unittest, base1]
 ## bugs: [52757]
+
 import pytest
 
 from univention.management.console.modules.schoolwizards import (

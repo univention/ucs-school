@@ -157,7 +157,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         """
         for _ in range(5):
             try:
-                gp_link = self.ldap.getAttr(container_dn, "msGPOLink", required=True)
+                gp_link = self.ldap.getAttr(container_dn, "msGPOLink", required=True)[0].decode("UTF-8")
             except ldap.NO_SUCH_OBJECT:
                 print("GPO Link not yet replicated, sleeping..")
                 sleep(5)
@@ -183,7 +183,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         # https://github.com/samba-team/samba/blob/87afc3aee1ea/python/samba/netcmd/gpo.py#L86-L97
 
         # The first and last chars must be `[` and `]`, so strip them
-        links = (g.rsplit(";", 1) for g in gp_link[0][1:-1].split("]["))
+        links = (g.rsplit(";", 1) for g in gp_link[1:-1].split("]["))
         return [dn[len("LDAP://") :] for (dn, _options) in links]
 
 

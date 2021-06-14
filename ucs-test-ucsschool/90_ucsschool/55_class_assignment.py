@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the class assignment umc module
 ## exposure: dangerous

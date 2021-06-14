@@ -1,12 +1,10 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check ucs config in ucs@school
 ## tags: [apptest, ucsschool]
 ## exposure: safe
 
-import sys
-
-from six import iteritems
+import pytest
 
 import univention.config_registry
 import univention.testing.utils as utils
@@ -16,10 +14,9 @@ ucr.load()
 
 
 def check_setting(setting, value):
-    if ucr[setting] != value:
-        utils.fail(
-            "{} not correctly configured (is {}, should be {})".format(setting, value, ucr[setting])
-        )
+    assert ucr[setting] == value, "{} not correctly configured (is {}, should be {})".format(
+        setting, value, ucr[setting]
+    )
 
 
 settings_connector = {
@@ -43,8 +40,10 @@ settings_school_slave = {
 }
 
 
-if utils.package_installed("univention-samba4"):
-    for setting, value in iteritems(settings_samba):
+def test_settings_univention_samba4():
+    if not utils.package_installed("univention-samba4"):
+        pytest.skip("Missing univention-samba4")
+    for setting, value in settings_samba.items():
         if setting == "samba4/ldb/sam/module/prepend" and not any(
             (
                 utils.package_installed("ucs-school-singlemaster"),
@@ -56,12 +55,16 @@ if utils.package_installed("univention-samba4"):
             continue
         check_setting(setting, value)
 
-if utils.package_installed("univention-s4-connector"):
-    for setting, value in iteritems(settings_connector):
+
+def test_settings_s4connector():
+    if not utils.package_installed("univention-s4-connector"):
+        pytest.skip("Missing univention-s4-connector")
+    for setting, value in settings_connector.items():
         check_setting(setting, value)
 
-if utils.package_installed("ucs-school-slave"):
-    for setting, value in iteritems(settings_school_slave):
-        check_setting(setting, value)
 
-sys.exit(0)
+def test_settings_ucs_school_slave():
+    if not utils.package_installed("ucs-school-slave"):
+        pytest.skip("Missing ucs-school-slave")
+    for setting, value in settings_school_slave.items():
+        check_setting(setting, value)

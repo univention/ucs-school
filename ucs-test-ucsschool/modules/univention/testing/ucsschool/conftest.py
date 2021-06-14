@@ -8,7 +8,9 @@ import sys
 import tempfile
 
 try:
-    from typing import Any, Dict, List, Optional, Tuple, Type
+    from typing import Any, Dict, List, Optional, Tuple, Type  # noqa: F401
+
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass  # noqa: F401
 except ImportError:
     pass
 
@@ -19,7 +21,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff
@@ -301,7 +302,7 @@ def udm_session():
 @pytest.fixture
 def create_import_user(lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
-    from ucsschool.importer.models.import_user import (
+    from ucsschool.importer.models.import_user import (  # noqa: F401
         ImportStaff,
         ImportStudent,
         ImportTeacher,
@@ -373,7 +374,7 @@ def ucr_ldap_base(ucr):
 def user_ldap_attributes(
     random_username, model_ucsschool_roles, model_udm_module, model_ldap_object_classes, user_groups
 ):
-    def _func(ous, user_type):  # type: (List[str], UserType) -> Dict[str, List[str]]
+    def _func(ous, user_type):  # type: (List[str], UserType) -> Dict[str, List[bytes]]
         """First OU in `ous` will be the users LDAP position -> `school`."""
         assert isinstance(ous, list)
         name = random_username()[:15]
@@ -381,23 +382,23 @@ def user_ldap_attributes(
         for ou in ous:
             groups.extend(user_groups(user_type, ou))
         return {
-            "givenName": [name[: len(name) / 2]],
-            "sn": [name[len(name) / 2 :]],
-            "uid": [name],
+            "givenName": [name[: len(name) // 2].encode("UTF-8")],
+            "sn": [name[len(name) // 2 :].encode("UTF-8")],
+            "uid": [name.encode("UTF-8")],
             "univentionBirthday": [
                 "19{}-0{}-{}{}".format(
                     2 * uts.random_int(),
                     uts.random_int(1, 9),
                     uts.random_int(0, 2),
                     uts.random_int(1, 8),
-                )
+                ).encode("UTF-8")
             ],
-            "groups": groups,
-            "objectClass": model_ldap_object_classes(user_type),
-            "ucsschoolRole": model_ucsschool_roles(user_type, ous),
-            "departmentNumber": [ous[0]],
-            "ucsschoolSchool": ous,
-            "univentionObjectType": [model_udm_module(user_type)],
+            "groups": [x.encode("UTF-8") for x in groups],
+            "objectClass": [x.encode("UTF-8") for x in model_ldap_object_classes(user_type)],
+            "ucsschoolRole": [x.encode("UTF-8") for x in model_ucsschool_roles(user_type, ous)],
+            "departmentNumber": [ous[0].encode("UTF-8")],
+            "ucsschoolSchool": [x.encode("UTF-8") for x in ous],
+            "univentionObjectType": [model_udm_module(user_type).encode("UTF-8")],
         }
 
     return _func
@@ -411,13 +412,13 @@ def user_school_attributes(user_ldap_attributes):
         assert isinstance(ous, list)
         attrs = ldap_attrs or user_ldap_attributes(ous, user_type)
         return {
-            "name": attrs["uid"][0],
-            "firstname": attrs["givenName"][0],
-            "lastname": attrs["sn"][0],
-            "birthday": attrs["univentionBirthday"][0],
+            "name": attrs["uid"][0].decode("UTF-8"),
+            "firstname": attrs["givenName"][0].decode("UTF-8"),
+            "lastname": attrs["sn"][0].decode("UTF-8"),
+            "birthday": attrs["univentionBirthday"][0].decode("UTF-8"),
             "school": ous[0],
             "schools": ous,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
         }
 
     return _func
@@ -439,16 +440,18 @@ def workgroup_ldap_attributes(
         user_name = "demo_student"
         user_dn = "uid={},cn=schueler,cn=users,ou={},{}".format(user_name, ou, ucr_ldap_base)
         return {
-            "cn": ["{}-{}".format(ou, name)],
-            "description": ["{} {}".format(random_username(), random_username())],
-            "mailPrimaryAddress": ["wg-{}@{}".format(name, mail_domain)],
-            "memberUid": [user_name],
-            "objectClass": model_ldap_object_classes(GroupType.WorkGroup),
-            "ucsschoolRole": model_ucsschool_roles(GroupType.WorkGroup, [ou]),
-            "univentionAllowedEmailGroups": [group_dn],
-            "univentionAllowedEmailUsers": [user_dn],
-            "uniqueMember": [user_dn],
-            "univentionObjectType": [model_udm_module(GroupType.WorkGroup)],
+            "cn": ["{}-{}".format(ou, name).encode("UTF-8")],
+            "description": ["{} {}".format(random_username(), random_username()).encode("UTF-8")],
+            "mailPrimaryAddress": ["wg-{}@{}".format(name, mail_domain).encode("UTF-8")],
+            "memberUid": [user_name.encode("UTF-8")],
+            "objectClass": [x.encode("UTF-8") for x in model_ldap_object_classes(GroupType.WorkGroup)],
+            "ucsschoolRole": [
+                x.encode("UTF-8") for x in model_ucsschool_roles(GroupType.WorkGroup, [ou])
+            ],
+            "univentionAllowedEmailGroups": [group_dn.encode("UTF-8")],
+            "univentionAllowedEmailUsers": [user_dn.encode("UTF-8")],
+            "uniqueMember": [user_dn.encode("UTF-8")],
+            "univentionObjectType": [model_udm_module(GroupType.WorkGroup).encode("UTF-8")],
         }
 
     return _func
@@ -459,14 +462,18 @@ def workgroup_school_attributes(workgroup_ldap_attributes):
     def _func(ou, ldap_attrs=None):  # type: (str, Optional[Dict[str, Any]]) -> Dict[str, Any]
         attrs = ldap_attrs or workgroup_ldap_attributes(ou)
         return {
-            "name": attrs["cn"][0],
-            "description": attrs["description"][0],
-            "email": attrs["mailPrimaryAddress"][0],
-            "allowed_email_senders_users": attrs["univentionAllowedEmailUsers"],
-            "allowed_email_senders_groups": attrs["univentionAllowedEmailGroups"],
+            "name": attrs["cn"][0].decode("UTF-8"),
+            "description": attrs["description"][0].decode("UTF-8"),
+            "email": attrs["mailPrimaryAddress"][0].decode("UTF-8"),
+            "allowed_email_senders_users": [
+                x.decode("UTF-8") for x in attrs["univentionAllowedEmailUsers"]
+            ],
+            "allowed_email_senders_groups": [
+                x.decode("UTF-8") for x in attrs["univentionAllowedEmailGroups"]
+            ],
             "school": ou,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
-            "users": attrs["uniqueMember"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
+            "users": [x.decode("UTF-8") for x in attrs["uniqueMember"]],
         }
 
     return _func
@@ -489,20 +496,24 @@ def workgroup_share_ldap_attributes(
         else:
             share_host = "dc{}-01.{}".format(ou, ucr_domainname)
         return {
-            "cn": ["{}-{}".format(ou, name)],
-            "objectClass": model_ldap_object_classes(ShareType.WorkGroupShare),
-            "ucsschoolRole": model_ucsschool_roles(ShareType.WorkGroupShare, [ou]),
-            "univentionObjectType": [model_udm_module(ShareType.WorkGroupShare)],
-            "univentionShareDirectoryMode": ["0770"],
-            "univentionShareHost": [share_host],
-            "univentionSharePath": ["/home/{0}/groups/{0}-{1}".format(ou, name)],
-            "univentionShareSambaBrowseable": "yes",
-            "univentionShareSambaCreateMode": "0770",
-            "univentionShareSambaDirectoryMode": "0770",
-            "univentionShareSambaForceGroup": "+{}-{}".format(ou, name),
-            "univentionShareSambaName": "{}-{}".format(ou, name),
-            "univentionShareSambaNtAclSupport": "1",
-            "univentionShareSambaWriteable": "yes",
+            "cn": ["{}-{}".format(ou, name).encode("UTF-8")],
+            "objectClass": [
+                x.encode("UTF-8") for x in model_ldap_object_classes(ShareType.WorkGroupShare)
+            ],
+            "ucsschoolRole": [
+                x.encode("UTF-8") for x in model_ucsschool_roles(ShareType.WorkGroupShare, [ou])
+            ],
+            "univentionObjectType": [model_udm_module(ShareType.WorkGroupShare).encode("UTF-8")],
+            "univentionShareDirectoryMode": [b"0770"],
+            "univentionShareHost": [share_host.encode("UTF-8")],
+            "univentionSharePath": ["/home/{0}/groups/{0}-{1}".format(ou, name).encode("UTF-8")],
+            "univentionShareSambaBrowseable": [b"yes"],
+            "univentionShareSambaCreateMode": [b"0770"],
+            "univentionShareSambaDirectoryMode": [b"0770"],
+            "univentionShareSambaForceGroup": ["+{}-{}".format(ou, name).encode("UTF-8")],
+            "univentionShareSambaName": ["{}-{}".format(ou, name).encode("UTF-8")],
+            "univentionShareSambaNtAclSupport": [b"1"],
+            "univentionShareSambaWriteable": [b"yes"],
         }
 
     return _func
@@ -513,9 +524,9 @@ def workgroup_share_school_attributes(workgroup_share_ldap_attributes):
     def _func(ou, ldap_attrs=None):  # type: (str, Optional[Dict[str, Any]]) -> Dict[str, Any]
         attrs = ldap_attrs or workgroup_share_ldap_attributes(ou)
         return {
-            "name": attrs["cn"][0],
+            "name": attrs["cn"][0].decode("UTF-8"),
             "school": ou,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
         }
 
     return _func

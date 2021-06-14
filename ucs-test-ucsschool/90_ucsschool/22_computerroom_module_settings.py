@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: computerroom module settings checks
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -6,15 +6,13 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.network import NetworkRedirector
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.umc import Client
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr, NetworkRedirector() as nethelper:  # noqa: E501
+def computerroom_module_settings(schoolenv, ucr):
+    with NetworkRedirector() as nethelper:
         school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"), use_cache=False)
         teacher, teacher_dn = schoolenv.create_user(school, is_teacher=True)
         open_ldap_co = schoolenv.open_ldap_connection()
@@ -37,7 +35,3 @@ def main():
 
         # the actual test
         room.test_settings(school, teacher, teacher_dn, created_computers[1].ip[0], ucr, client)
-
-
-if __name__ == "__main__":
-    main()

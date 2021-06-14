@@ -26,7 +26,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         self.log.info("*** 1. Importing (create in %r) new users of each role....", self.ou_A.name)
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)

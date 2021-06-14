@@ -35,13 +35,15 @@ class Test(UniqueObjectTester):
         allowed_chars = string.ascii_letters + string.digits + "."
         bad_chars = "".join(set(name).difference(set(allowed_chars)))
         if bad_chars:
-            self.log.warn(
+            self.log.warning(
                 "Removing disallowed characters %r from username %r.", "".join(sorted(bad_chars)), name
             )
         if name.startswith(".") or name.endswith("."):
-            self.log.warn("Removing disallowed dot from start and end of username %r.", name)
+            self.log.warning("Removing disallowed dot from start and end of username %r.", name)
             name = name.strip(".")
-        return name.translate(None, bad_chars)
+        if str is bytes:  # Py 2
+            return name.translate(None, bad_chars)
+        return name.translate(str.maketrans("", "", bad_chars))
 
     def test(self):  # formally test_create_with_illegal_chars_in_username()
         """
@@ -62,8 +64,8 @@ class Test(UniqueObjectTester):
         config.update_entry("scheme:username:default", "<lastname>[ALWAYSCOUNTER]")
         config.update_entry("user_role", None)
 
-        persons = list()
-        names = dict()
+        persons = []
+        names = {}
         lastnames = []
         for role in ("student", "teacher", "teacher_and_staff"):
             random_puncts = list(string.punctuation)
@@ -180,7 +182,7 @@ class Test(UniqueObjectTester):
         config.update_entry("username:allowed_special_chars", "-_")
         config.update_entry("scheme:username:default", "<firstname><lastname><:umlauts>")
 
-        persons = list()
+        persons = []
         for role, schar in (
             ("teacher", "-"),
             ("student", "."),
@@ -284,7 +286,10 @@ class Test(UniqueObjectTester):
         self.log.info("*** Starting unit test for UsernameHandler.format_username() (4/5)")
         for i in range(1000):
             name = uts.random_name_special_characters(20)
-            name = name.translate(None, "[]")  # those are reserved for counter vars
+            if str is bytes:  # Py 2
+                name = name.translate(None, "[]")
+            else:
+                name = name.translate(str.maketrans("", "", "[]"))  # those are reserved for counter vars
             self.unique_basenames_to_remove.append(name)
             out = unh.format_username(name)
             if out.startswith(".") or out.endswith(".") or len(out) > 15:

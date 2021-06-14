@@ -72,8 +72,8 @@ class Test(CLI_Import_v2_Tester):
             except KeyError as exc:
                 self.log.exception("Error searching for user: %s res=%r", exc, res)
                 raise
-            username = attrs["uid"][0]
-            email = attrs["mailPrimaryAddress"][0]
+            username = attrs["uid"][0].decode("UTF-8")
+            email = attrs["mailPrimaryAddress"][0].decode("UTF-8")
             self.log.debug("role=%r username=%r email=%r dn=%r", person.role, username, email, dn)
             person.update(dn=dn, username=username, mail=email)
             person.update(firstname=person.firstname.strip(), lastname=person.lastname.strip())

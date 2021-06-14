@@ -16,9 +16,9 @@ import time
 import traceback
 from collections import Mapping
 
-import six
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
+from six import iteritems, string_types
 
 import univention.testing.strings as uts
 import univention.testing.ucr
@@ -35,7 +35,7 @@ except ImportError:
     DRSReplicationFailed = Exception
 
 try:
-    from typing import Set
+    from typing import Set  # noqa: F401
 except ImportError:
     pass
 
@@ -56,7 +56,7 @@ class ConfigDict(dict):
         update_entry('foo:bar:baz', 'my value')
         update_entry('foo:bar:ding', False)
         """
-        if isinstance(value, six.string_types):
+        if isinstance(value, string_types):
             if value.lower() == "false":
                 value = False
             elif value.lower() == "true":
@@ -246,7 +246,7 @@ class ImportTestbase(object):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
         dateformat = cls.syntax_date2_dateformat(userexpirydate)
-        return str(long(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
+        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) // 3600 // 24 + 1))
 
     def check_new_and_removed_users(self, exp_new, exp_removed):
         ldap_diff = self.diff_ldap_status()
@@ -357,7 +357,7 @@ class ImportTestbase(object):
             self.log.error("DRSReplicationFailed: %s", exc)
             res = None
         if not res:
-            self.log.warn("No result from wait_for_drs_replication().")
+            self.log.warning("No result from wait_for_drs_replication().")
             if try_resync:
                 cmd = ["/usr/share/univention-s4-connector/resync_object_from_ucs.py", group_dn]
                 self.log.info("Running subprocess.call(%r)...", cmd)
@@ -443,7 +443,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
         if not config:
             config = copy.deepcopy(self.default_config)
         if values:
-            for config_option, value in values.iteritems():
+            for config_option, value in iteritems(values):
                 config.update_entry(config_option, value)
         with open(fn, "w") as fd:
             json.dump(config, fd)
@@ -469,9 +469,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
         else:
             header2properties = self.default_config["csv"]["mapping"]
 
-        properties2headers = {v: k for k, v in header2properties.iteritems()}
+        properties2headers = {v: k for k, v in iteritems(header2properties)}
 
-        header_row = header2properties.keys()
+        header_row = list(header2properties)
         random.shuffle(header_row)
         self.log.info("Header row = %r", header_row)
 
@@ -506,9 +506,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
                     if raise_exc:
                         raise ImportException(msg)
                     else:
-                        self.log.warn("*" * 40)
-                        self.log.warn(msg)
-                        self.log.warn("*" * 40)
+                        self.log.warning("*" * 40)
+                        self.log.warning(msg)
+                        self.log.warning("*" * 40)
 
     def check_for_non_empty_pyhooks(self, raise_exc=True):
         path = "/usr/share/ucs-school-import/pyhooks"
@@ -521,9 +521,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
             if raise_exc:
                 raise ImportException(msg)
             else:
-                self.log.warn("*" * 40)
-                self.log.warn(msg)
-                self.log.warn("*" * 40)
+                self.log.warning("*" * 40)
+                self.log.warning(msg)
+                self.log.warning("*" * 40)
 
     def run_import(
         self, args, fail_on_error=True, fail_on_preexisting_config=True, fail_on_preexisting_pyhook=True
@@ -534,11 +534,18 @@ class CLI_Import_v2_Tester(ImportTestbase):
         self.log.info("Starting import: %r", cmd)
         sys.stdout.flush()
         sys.stderr.flush()
-        exitcode = subprocess.call(cmd)
+        if fail_on_error:
+            try:
+                exitcode = subprocess.check_call(cmd)
+            except subprocess.CalledProcessError as exc:
+                self.log.error("As requested raising an exception due to non-zero exit code")
+                raise ImportException(
+                    "Command '%r' returned non-zero exit status %r (output=%r)"
+                    % (exc.cmd, exc.returncode, exc.output)
+                )
+        else:
+            exitcode = subprocess.call(cmd)
         self.log.info("Import process exited with exit code %r", exitcode)
-        if fail_on_error and exitcode:
-            self.log.error("As requested raising an exception due to non-zero exit code")
-            raise ImportException("Non-zero exit code %r" % (exitcode,))
         return exitcode
 
 

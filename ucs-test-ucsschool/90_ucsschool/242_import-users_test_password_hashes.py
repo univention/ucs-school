@@ -11,8 +11,8 @@
 
 import copy
 
-from ldap.filter import filter_format
 import passlib.hash
+from ldap.filter import filter_format
 
 import univention.admin.uldap
 import univention.testing.strings as uts

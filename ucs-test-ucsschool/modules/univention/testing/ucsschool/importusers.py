@@ -3,13 +3,12 @@
 from __future__ import print_function
 
 import os
-import string
 import subprocess
 import tempfile
 
 import ldap
-from ldap.filter import filter_format
 import passlib.hash
+from ldap.filter import filter_format
 
 import ucsschool.lib.models.utils
 import univention.config_registry
@@ -31,7 +30,7 @@ from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
 
 try:
-    from typing import List, Optional
+    from typing import List, Optional  # noqa: F401
 except ImportError:
     pass
 
@@ -39,10 +38,6 @@ utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportUser(Exception):
-    pass
 
 
 class UserHookResult(Exception):
@@ -169,28 +164,28 @@ class Person(object):
             self.move_school_classes(old_school, self.school)
 
     def update(self, **kwargs):
-        for key in kwargs:
+        for key, value in kwargs.items():
             if key == "dn":
-                self.username = ldap.explode_rdn(kwargs[key], notypes=1)[0]
-                self.dn = kwargs[key]
+                self.username = ldap.explode_rdn(value, notypes=True)[0]
+                self.dn = value
             if key == "username":
-                self.username = kwargs[key]
+                self.username = value
                 self.dn = self.make_dn()
             elif key == "school":
-                self._set_school(kwargs[key])
+                self._set_school(value)
             elif key == "schools":
                 if not self.school and "school" not in kwargs:
-                    self._set_school(sorted(kwargs[key])[0])
-                self.schools = kwargs[key]
+                    self._set_school(sorted(value)[0])
+                self.schools = value
             elif hasattr(self, key):
-                setattr(self, key, kwargs[key])
+                setattr(self, key, value)
             else:
-                print("ERROR: cannot update Person(): unknown option %r=%r" % (key, kwargs[key]))
+                print("ERROR: cannot update Person(): unknown option %r=%r" % (key, value))
 
     def move_school_classes(self, old_school, new_school):
         assert new_school in self.schools
 
-        for school, classes in self.school_classes.items():
+        for school, classes in list(self.school_classes.items()):
             if school == old_school:
                 new_classes = [
                     cls.replace("{}-".format(old_school), "{}-".format(new_school)) for cls in classes
@@ -210,7 +205,7 @@ class Person(object):
             value_map.get("source_uid", "__EMPTY__"): self.source_uid,
             value_map.get("description", "__EMPTY__"): self.description,
             value_map.get("school_classes", "__EMPTY__"): ",".join(
-                [x for school_, classes in self.school_classes.iteritems() for x in classes]
+                [x for school_, classes in self.school_classes.items() for x in classes]
             ),
             value_map.get("email", "__EMPTY__"): self.mail,
             value_map.get("__action", "__EMPTY__"): self.mode,
@@ -233,7 +228,7 @@ class Person(object):
             self.lastname,
             self.firstname,
             self.school,
-            ",".join([x for school_, classes in self.school_classes.iteritems() for x in classes]),
+            ",".join([x for school_, classes in self.school_classes.items() for x in classes]),
             "",
             self.mail,
             str(int(self.is_teacher() or self.is_teacher_staff())),
@@ -324,8 +319,10 @@ class Person(object):
             base=school_base, scope=ldap.SCOPE_BASE, attr=["ucsschoolHomeShareFileServer"]
         )
         if query_result:
-            share_file_server_dn = query_result[0][1].get("ucsschoolHomeShareFileServer")[0]
-            res = ldap.explode_rdn(share_file_server_dn, notypes=1)[0]
+            share_file_server_dn = (
+                query_result[0][1].get("ucsschoolHomeShareFileServer")[0].decode("UTF-8")
+            )
+            res = ldap.explode_rdn(share_file_server_dn, True)[0]
         else:
             res = None
         self._samba_info[school_base]["ucsschoolHomeShareFileServer"] = res
@@ -334,7 +331,7 @@ class Person(object):
             base=self.school_base, filter="univentionService=Windows Profile Server", attr=["cn"]
         )
         if query_result:
-            server = "\\\\%s" % query_result[0][1].get("cn")[0]
+            server = "\\\\%s" % query_result[0][1].get("cn")[0].decode("UTF-8")
         else:
             server = "%LOGONSERVER%"
         self._samba_info[school_base][
@@ -399,7 +396,7 @@ class Person(object):
             should_exist=True,
         )
 
-        for school, classes in self.school_classes.iteritems():
+        for school, classes in self.school_classes.items():
             for cl in classes:
                 cl_group_dn = "cn=%s,cn=klassen,cn=%s,cn=groups,%s" % (
                     cl,
@@ -469,7 +466,7 @@ class Person(object):
                     key = ldap2person[attr]
                 except KeyError:
                     raise NotImplementedError("Mapping for {!r} not yet implemented.".format(attr))
-                value = attrs_from_ldap.get(key, [None])[0]
+                value = attrs_from_ldap.get(key, [None])[0].decode("UTF-8")
             kwargs[attr] = value
         self.update(**kwargs)
 
@@ -512,7 +509,7 @@ class ImportFile:
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, str(self.user_import))
+        os.write(self.import_fd, str(self.user_import).encode("utf-8"))
         os.close(self.import_fd)
 
     def run_import(self, user_import):
@@ -530,7 +527,7 @@ class ImportFile:
             print("POST HOOK result:\n%s" % post_result)
             print("SCHOOL DATA     :\n%s" % str(self.user_import))
             if pre_result != post_result != str(self.user_import):
-                raise UserHookResult()
+                raise UserHookResult(pre_result, post_result, self.user_import)
         finally:
             hooks.cleanup()
             try:
@@ -542,11 +539,7 @@ class ImportFile:
         cmd_block = [self.cli_path, self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportUser(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
         # reload UCR

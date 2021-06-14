@@ -35,9 +35,13 @@ class Test(HttpApiImportTester):
         if len(users) != 1:
             self.fail("Could not find user from filter {!r}. Got: {!r}".format(filter_s, users))
         school_classes = SchoolClass.get_all(
-            self.lo, self.ou_A.name, filter_format("memberUid=%s", (users[0][1]["uid"][0],))
+            self.lo,
+            self.ou_A.name,
+            filter_format("memberUid=%s", (users[0][1]["uid"][0].decode("UTF-8"),)),
         )
-        self.log.debug("Got school classes for user %r: %r", users[0][1]["uid"], school_classes)
+        self.log.debug(
+            "Got school classes for user %r: %r", users[0][1]["uid"][0].decode("UTF-8"), school_classes
+        )
         return school_classes
 
     def test(self):
@@ -57,7 +61,10 @@ class Test(HttpApiImportTester):
         time.sleep(4)
 
         self.log.info("------ Connecting to HTTP-API... ------")
-        client = Client(username.decode("utf-8"), password.decode("utf-8"), log_level=logging.DEBUG)
+        if str is bytes:  # py 2
+            username = username.decode("UTF-8")
+            password = password.decode("UTF-8")
+        client = Client(username, password, log_level=logging.DEBUG)
 
         self.log.info("------ Creating user information... ------")
         test_user_creator = TestUserCreator(
@@ -123,7 +130,7 @@ class Test(HttpApiImportTester):
             self.log.info("------ Writing user information to CSV file %r... ------", tmpfile1.name)
             test_user_exporter.dump(test_user_creator.make_users(), tmpfile1.name)
             self.log.info("------ Manipulating CSV data... ------")
-            with open(tmpfile1.name) as fp_in, open(tmpfile2.name, "wb") as fp_out:
+            with open(tmpfile1.name) as fp_in, open(tmpfile2.name, "w") as fp_out:
                 reader = DictReader(fp_in)
                 writer = None  # need the field names, will get them with the first line below
                 for row in reader:
@@ -131,7 +138,7 @@ class Test(HttpApiImportTester):
                         ["{}-{}".format(self.ou_A.name, kl) for kl in row["Klassen"].split(",")]
                     )
                     if not writer:
-                        writer = DictWriter(fp_out, fieldnames=row.keys(), dialect=csv_dialect)
+                        writer = DictWriter(fp_out, fieldnames=list(row.keys()), dialect=csv_dialect)
                         writer.writeheader()
                     writer.writerow(row)
             self.log.info(
@@ -189,7 +196,7 @@ class Test(HttpApiImportTester):
             self.log.info("------ Writing user information to CSV file %r... ------", tmpfile1.name)
             test_user_exporter.dump(test_user_creator.make_users(), tmpfile1.name)
             self.log.info("------ Manipulating CSV data... ------")
-            with open(tmpfile1.name) as fp_in, open(tmpfile2.name, "wb") as fp_out:
+            with open(tmpfile1.name) as fp_in, open(tmpfile2.name, "w") as fp_out:
                 reader = DictReader(fp_in)
                 writer = None  # need the field names, will get them with the first line below
                 for row in reader:
@@ -197,7 +204,7 @@ class Test(HttpApiImportTester):
                         ["{}-{}".format(self.ou_B.name, kl) for kl in row["Klassen"].split(",")]
                     )
                     if not writer:
-                        writer = DictWriter(fp_out, fieldnames=row.keys(), dialect=csv_dialect)
+                        writer = DictWriter(fp_out, fieldnames=list(row.keys()), dialect=csv_dialect)
                         writer.writeheader()
                     writer.writerow(row)
             self.log.info(

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: ucs-school-assign-internet-rules-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -7,8 +7,6 @@
 
 import random
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.internetrule import Check, InternetRule
 from univention.testing.ucsschool.klasse import Klasse
@@ -27,9 +25,7 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
     return assignedGroups
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_assign_internet_rules(schoolenv, ucr):
             umc_connection = Client.get_test_connection()
             if ucr.get("server/role") == "domaincontroller_master":
                 umc_connection_master = umc_connection
@@ -39,7 +35,7 @@ def main():
 
             # define many random internet rules
             newRules = []
-            for _ in xrange(8):
+            for _ in range(8):
                 rule = InternetRule(ucr=ucr, connection=umc_connection)
                 rule.define()
                 rule.get(should_exist=True)
@@ -48,7 +44,7 @@ def main():
 
             # Create random workgroups
             newWorkgroups = []
-            for _ in xrange(2):
+            for _ in range(2):
                 group = Workgroup(school, ucr=ucr, connection=umc_connection)
                 group.create()
                 newWorkgroups.append(group)
@@ -99,7 +95,7 @@ def main():
 
             # Create random classs
             newclasses = []
-            for _ in xrange(2):
+            for _ in range(2):
                 klasse = Klasse(school, ucr=ucr, connection=umc_connection_master)
                 klasse.create()
                 newclasses.append(klasse)
@@ -143,7 +139,3 @@ def main():
             check1.checkRules()
             # check ucr variables
             check1.checkUcr()
-
-
-if __name__ == "__main__":
-    main()

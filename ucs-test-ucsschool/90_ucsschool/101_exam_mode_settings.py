@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -15,8 +15,6 @@ import tempfile
 from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room
@@ -28,11 +26,9 @@ from univention.testing.ucsschool.exam import (
 from univention.testing.ucsschool.internetrule import InternetRule
 
 
-def main():
-    with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
-        open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
+def test_exam_mode_settings(udm_session, schoolenv, ucr):
+        udm = udm_session
+        lo = schoolenv.open_ldap_connection()
 
         print(" ** Initial Status")
         existing_rejects = get_s4_rejected()
@@ -59,7 +55,7 @@ def main():
             lastname=uts.random_name(),
         )
         student2.position = search_base.students
-        student2.create(open_ldap_co)
+        student2.create(lo)
 
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
@@ -69,7 +65,7 @@ def main():
         wait_replications_check_rejected_uniqueMember(existing_rejects)
 
         # importing random computers
-        computers = Computers(open_ldap_co, school, 2, 0, 0)
+        computers = Computers(lo, school, 2, 0, 0)
         created_computers = computers.create()
         created_computers_dn = computers.get_dns(created_computers)
 
@@ -91,7 +87,7 @@ def main():
         rule1.define()
 
         # Preparing tempfile to upload
-        f = tempfile.NamedTemporaryFile(suffix=".exam")  # , dir='/tmp')
+        f = tempfile.NamedTemporaryFile("w+", suffix=".exam")  # , dir='/tmp')
         print("Tempfile created %s" % f.name)
         f.write("Temp exam file to upload")
         f.flush()
@@ -137,8 +133,4 @@ def main():
         exam.finish()
         print(" ** After finishing the exam")
         wait_replications_check_rejected_uniqueMember(existing_rejects)
-        student2.remove(open_ldap_co)
-
-
-if __name__ == "__main__":
-    main()
+        student2.remove(lo)

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Schools module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -10,16 +10,15 @@ from __future__ import print_function
 
 import time
 
-import univention.testing.udm as udm_test
 from univention.lib.umc import BadRequest
 from univention.testing.ucsschool.school import School, create_dc_slave
 
 
-def main():
-    with udm_test.UCSTestUDM() as udm:
+def test_schools_module(udm_session):
+        udm = udm_session
         schools = []
         try:
-            for i in xrange(2):
+            for i in range(2):
                 school = School()
                 school.create()
                 school.verify_ldap(True)
@@ -63,7 +62,7 @@ def main():
                 school.verify_ldap(True)
                 school.remove()
 
-                for wait in xrange(30):
+                for wait in range(30):
                     try:
                         school.verify_ldap(False)
                     except Exception as e:
@@ -84,7 +83,3 @@ def main():
                     school.remove()
                 except BadRequest:
                     print("Failed to remove remaining school %s after failed test." % school.name)
-
-
-if __name__ == "__main__":
-    main()

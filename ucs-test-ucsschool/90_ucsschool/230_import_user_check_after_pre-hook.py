@@ -13,6 +13,7 @@ import os
 import os.path
 import random
 
+import pytest
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
@@ -35,7 +36,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -43,9 +44,9 @@ class Test(CLI_Import_v2_Tester):
 
     def create_pyhook(self, action, code):
         self.log.info("*** Creating PyHook for action %r (%r)...", action, TESTHOOKTARGET)
-        with open(TESTHOOKSOURCE, "rb") as fp:
+        with open(TESTHOOKSOURCE, "r") as fp:
             text = fp.read()
-        with open(TESTHOOKTARGET, "wb") as fp:
+        with open(TESTHOOKTARGET, "w") as fp:
             fp.write(text.replace("%ACTION%", action).replace("%CODE%", code))
 
     def test(self):
@@ -58,7 +59,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         self.log.info("*** 1/6 Importing a user from each role, pre_create without error...")
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
@@ -126,11 +127,9 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
         self.create_pyhook("create", 'user.birthday = "190706-05"')
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
         for person in person_list:
             utils.verify_ldap_object(person.dn, strict=False, should_exist=False)
 
@@ -153,11 +152,9 @@ class Test(CLI_Import_v2_Tester):
             )
         self.log.info("*** 5/6 Now importing again for pre_modify with error...")
         self.create_pyhook("modify", 'user.birthday = "1908-0706"')
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
         for person in person_list:
             utils.verify_ldap_object(
                 person.dn,
@@ -182,11 +179,9 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
         # check they have not been moved
         for person in person_list:
             utils.verify_ldap_object(person.dn, strict=False, should_exist=False)

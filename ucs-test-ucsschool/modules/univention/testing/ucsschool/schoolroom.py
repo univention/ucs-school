@@ -13,38 +13,6 @@ from ucsschool.lib.roles import (
 from univention.testing.umc import Client, ClientSaml
 
 
-class FailQuery(Exception):
-    pass
-
-
-class FailPut(Exception):
-    pass
-
-
-class FailGet(Exception):
-    pass
-
-
-class FailAdd(Exception):
-    pass
-
-
-class FailCheckPut(Exception):
-    pass
-
-
-class FailCheckGet(Exception):
-    pass
-
-
-class FailCheckQuery(Exception):
-    pass
-
-
-class FailRemove(Exception):
-    pass
-
-
 class ComputerRoom(object):
     def __init__(
         self,
@@ -93,13 +61,11 @@ class ComputerRoom(object):
         print("param = %r" % (param,))
         reqResult = self.client.umc_command("schoolrooms/add", param).result
         utils.wait_for_replication()
-        if reqResult[0] and should_pass:
+        assert bool(reqResult[0]) == should_pass
+        if should_pass:
             print("School room created successfully: %s" % (self.name,))
         else:
-            if should_pass:
-                raise FailAdd("Unable to add school room (%r)" % (param,))
-            else:
-                print("School room (%r) addition failed as expected." % (self.name,))
+            print("School room (%r) addition failed as expected." % (self.name,))
 
     def assert_backend_role(self, is_veyon):  # type: (bool) -> None
         """
@@ -113,7 +79,7 @@ class ComputerRoom(object):
         veyon_role = create_ucsschool_role_string(
             role_computer_room_backend_veyon, "-", context_type_school
         )
-        assert (veyon_role in roles) == is_veyon
+        assert (veyon_role.encode("UTF-8") in roles) == is_veyon
 
     def verify_ldap(self, must_exist=True):
         # TODO: verify all attributes of object
@@ -125,41 +91,38 @@ class ComputerRoom(object):
         :type should_exist: bool"""
         print("Calling %s for %s" % ("schoolrooms/get", self.dn()))
         reqResult = self.client.umc_command("schoolrooms/get", [self.dn()]).result
-        if bool(reqResult[0]["name"]) != should_exist:
-            raise FailGet("Unexpected fetching result for school room (%r)" % (self.dn()))
-        else:
-            return reqResult[0]
+        assert (
+            bool(reqResult[0]["name"]) == should_exist
+        ), "Unexpected fetching result for school room (%r)" % (self.dn())
+        return reqResult[0]
 
     def check_get(self, expected_attrs):
         """checks if the result of get command matches the
         expected attributes.
         """
         current_attrs = self.get()
-        if current_attrs != expected_attrs:
-            raise FailCheckGet(
-                "The current attrbutes (%r) do not match the expected ones (%r)"
-                % (current_attrs, expected_attrs)
-            )
+        assert (
+            current_attrs == expected_attrs
+        ), "The current attrbutes (%r) do not match the expected ones (%r)" % (
+            current_attrs,
+            expected_attrs,
+        )
 
     def query(self):
         """Get all school rooms via UMCP\n
         :returns: [str] list of school rooms names
         """
         print("Calling %s = get all school rooms" % ("schoolrooms/query"))
-        try:
-            rooms = self.client.umc_command(
-                "schoolrooms/query", {"school": self.school, "pattern": ""}
-            ).result
-            return [x["name"] for x in rooms]
-        except FailQuery:
-            raise
+        rooms = self.client.umc_command(
+            "schoolrooms/query", {"school": self.school, "pattern": ""}
+        ).result
+        return [x["name"] for x in rooms]
 
     def check_query(self, rooms):
         current_rooms = self.query()
-        if not set(rooms).issubset(set(current_rooms)):
-            raise FailCheckQuery(
-                "Rooms query result: %r, expected to contain at least:%r" % (current_rooms, rooms)
-            )
+        assert set(rooms).issubset(
+            set(current_rooms)
+        ), "Rooms query result: %r, expected to contain at least:%r" % (current_rooms, rooms)
 
     def put(self, new_attributes):
         """Modify school room via UMCP\n
@@ -195,13 +158,11 @@ class ComputerRoom(object):
         print("Modifying school room %s with UMCP:%s" % (self.dn(), "schoolrooms/put"))
         print("param = %r" % (param,))
         reqResult = self.client.umc_command("schoolrooms/put", param).result
-        if not reqResult:
-            raise FailPut("Unable to modify school room (%r)" % (param,))
-        else:
-            self.name = new_name
-            self.description = new_description
-            self.host_members = new_host_members
-            utils.wait_for_replication()
+        assert reqResult, "Unable to modify school room (%r)" % (param,)
+        self.name = new_name
+        self.description = new_description
+        self.host_members = new_host_members
+        utils.wait_for_replication()
 
     def check_put(self, new_attributes):
         new_attributes.update(
@@ -223,11 +184,15 @@ class ComputerRoom(object):
                 "italc": self.italc,
             }
         )
-        if current_attributes != new_attributes:
-            raise FailCheckPut(
-                "Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r"
-                % (self.name, current_attributes, new_attributes)
-            )
+        diff = "\n".join(
+            "%s (got=%r; expected=%r)" % (key, current_attributes.get(key), new_attributes.get(key))
+            for key in set(current_attributes.keys()) | set(new_attributes.keys())
+            if current_attributes.get(key) != new_attributes.get(key)
+        )
+        assert set(current_attributes) == set(new_attributes), (
+            "Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r\ndiff: %s"
+            % (self.name, current_attributes, new_attributes, diff)
+        )
 
     def remove(self):
         """removes school room via UMCP"""
@@ -235,8 +200,7 @@ class ComputerRoom(object):
         options = [{"object": [self.dn()], "options": None}]
         reqResult = self.client.umc_command("schoolrooms/remove", options).result
         utils.wait_for_replication()
-        if not reqResult[0]["success"]:
-            raise FailRemove("Unable to remove school room (%r)" % (self.dn(),))
+        assert reqResult[0]["success"], "Unable to remove school room (%r)" % (self.dn(),)
 
 
 class ComputerRoomSaml(ComputerRoom):

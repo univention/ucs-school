@@ -11,6 +11,8 @@ from __future__ import print_function
 import os
 import time
 
+import six
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
@@ -89,7 +91,7 @@ class Distribution(object):
         self.collectDate = collectDate if collectDate else time.strftime("%Y-%m-%d")
         self.distributeType = distributeType
         self.collectType = collectType
-        self.files = files
+        self.filename_encodings = files
         self.recipients = recipients
         self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
         self.sender = sender if sender else admin
@@ -99,6 +101,22 @@ class Distribution(object):
         else:
             self.client = Client(None, admin, passwd)
         self.distributed_version = 1
+
+    @property
+    def files(self):
+        return [file_name for file_name, encoding in self.filename_encodings]
+
+    @property
+    def files_encoded(self):
+        if six.PY2:
+            return [
+                file_name.decode(encoding).encode("UTF-8")
+                for file_name, encoding in self.filename_encodings
+            ]
+        return [
+            file_name.decode(encoding) if isinstance(file_name, bytes) else file_name
+            for file_name, encoding in self.filename_encodings
+        ]
 
     def query(self, filt="private", pattern=""):
         """Calles 'distribution/query'
@@ -187,7 +205,7 @@ html5
         """
         # creatng and uploading the files
         content_type = "text/plain"
-        for filename, encoding in self.files:
+        for filename in self.files:
             with open(filename, "w") as g:
                 g.write("test_content")
             self.uploadFile(filename, content_type)
@@ -197,7 +215,6 @@ html5
         for item in self.recipients:
             recipients.append(item.dn())
         print("recipients=", recipients)
-        files = [file_name.decode(encoding).encode("UTF-8") for file_name, encoding in self.files]
         param = [
             {
                 "object": {
@@ -208,7 +225,7 @@ html5
                     "distributeDate": self.distributeDate,
                     "distributeTime": self.distributeTime,
                     "distributeType": self.distributeType,
-                    "files": files,
+                    "files": self.files_encoded,
                     "name": self.name,
                     "recipients": recipients,
                 },
@@ -279,7 +296,7 @@ html5
         collectType = collectType if collectType else self.collectType
         collectTime = collectTime if collectTime else self.collectTime
         collectDate = collectDate if collectDate else self.collectDate
-        files = files if files else [x for x, y in self.files]
+        files = files if files else self.files
         recipients = recipients if recipients else self.recipients
         new_recipients = []
         for item in recipients:
@@ -314,7 +331,7 @@ html5
             self.collectType = collectType
             self.collectTime = collectTime
             self.collectDate = collectDate
-            self.files = [(x, "utf8") for x in files]
+            self.filename_encodings = [(x, "utf8") for x in files]
             self.recipients = recipients
 
     def check_put(self, previousGetResult):
@@ -348,7 +365,7 @@ html5
         else:
             dTime = "%s %s" % (self.collectDate, self.collectTime)
         current = {
-            "files": [x for x, y in self.files],
+            "files": self.files,
             "sender": self.sender,
             "description": self.description,
             "recipients": recips,
@@ -362,9 +379,9 @@ html5
         print("supposed = ", supposed)
         print("current = ", current)
 
-        fail_state = supposed != current
-        if fail_state:
-            utils.fail("Project %s was not modified successfully,supposed!=current" % (self.name,))
+        assert supposed == current, "Project %s was not modified successfully,supposed!=current" % (
+            self.name,
+        )
 
         # check distribute
         check = "distribution"
@@ -374,14 +391,15 @@ html5
         after_time = found["starttime"]
         before_atJob = previousGetResult["atJobNumDistribute"]
         after_atJob = found["atJobNumDistribute"]
-        fail_state = fail_state or self.put_fail(
+        fail_state = self.put_fail(
             before_type, after_type, before_time, after_time, before_atJob, after_atJob
         )
-        if fail_state:
-            utils.fail(
-                "Project %s was not modified successfully, %s: %s -> %s"
-                % (self.name, check, before_type, after_type)
-            )
+        assert not fail_state, "Project %s was not modified successfully, %s: %s -> %s" % (
+            self.name,
+            check,
+            before_type,
+            after_type,
+        )
 
         # check collect
         check = "collection"
@@ -391,14 +409,15 @@ html5
         after_time = found["deadline"]
         before_atJob = previousGetResult["atJobNumCollect"]
         after_atJob = found["atJobNumCollect"]
-        fail_state = fail_state or self.put_fail(
+        fail_state = self.put_fail(
             before_type, after_type, before_time, after_time, before_atJob, after_atJob
         )
-        if fail_state:
-            utils.fail(
-                "Project %s was not modified successfully, %s: %s -> %s"
-                % (self.name, check, before_type, after_type)
-            )
+        assert not fail_state, "Project %s was not modified successfully, %s: %s -> %s" % (
+            self.name,
+            check,
+            before_type,
+            after_type,
+        )
 
     def put_fail(self, before_type, after_type, before_time, after_time, before_atJob, after_atJob):
         """Checks if the atjobs are in the expected formats
@@ -424,17 +443,17 @@ html5
         # manual -> automatic
         # atJobs don't care -> int
         if before_type == "manual" and after_type == "automatic":
-            fail_state = not (isinstance(after_atJob, (int, long)))
+            fail_state = not (isinstance(after_atJob, int))
 
         # automatic -> manual
         # atJobs int -> don't care
         if before_type == "automatic" and after_type == "manual":
-            fail_state = not (isinstance(before_atJob, (int, long)))
+            fail_state = not (isinstance(before_atJob, int))
 
         # automatic -> automatic
         # atJobs int1 -> int2 & int1 < int2
         if before_type == "automatic" and after_type == "automatic":
-            fail1 = not (isinstance(before_atJob, (int, long)) and isinstance(after_atJob, (int, long)))
+            fail1 = not (isinstance(before_atJob, int) and isinstance(after_atJob, int))
             fail2 = not (before_time != after_time and (before_atJob < after_atJob))
             fail_state = fail1 or fail2
         return fail_state
@@ -444,8 +463,7 @@ html5
         print("Distributing Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/distribute", [self.name], flavor).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to distribute project (%r)" % (self.name,))
+        assert reqResult[0]["success"], "Unable to distribute project (%r)" % (self.name,)
 
     def check_distribute(self, users):
         """Checks if the distribution was successful
@@ -459,7 +477,7 @@ html5
             print("file_path=", path)
             existingFiles = self.idir(path)
             print("existingFiles=", existingFiles)
-            files = [x for x, y in self.files]
+            files = self.files
             assert files == existingFiles, "Project files were not distributed for user %s:\n%r!=%r" % (
                 user,
                 files,
@@ -471,13 +489,12 @@ html5
         print("Collecting Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/collect", [self.name], flavor).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to collect project (%r)" % (self.name,))
+        assert reqResult[0]["success"], "Unable to collect project (%r)" % (self.name,)
 
     def check_collect(self, users):
         """Checks if the collection was successful
         by checking the file system.\n
-        :param users: names of users to have the material collected form
+        :param users: names of users to have the material collected from
         :type users: list of str
         """
         print("Checking %s collection" % (self.name,))
@@ -486,7 +503,7 @@ html5
             print("file_path=", path)
             existingFiles = self.idir(path)
             print("existingFiles=", existingFiles)
-            files = [x for x, y in self.files]
+            files = self.files
             assert files == existingFiles, "Project files were not collected for user %s:\n%r!=%r" % (
                 user,
                 files,
@@ -499,8 +516,7 @@ html5
         flavor = self.flavor
         param = [{"object": self.name, "options": None}]
         reqResult = self.client.umc_command("distribution/remove", param, flavor).result
-        if reqResult:
-            utils.fail("Unable to remove project (%r)" % (param,))
+        assert not reqResult, "Unable to remove project (%r)" % (param,)
 
     def check_remove(self):
         """Calls 'distribution/query'
@@ -508,8 +524,7 @@ html5
         """
         print("Checking %s removal" % (self.name,))
         current = self.query(pattern=self.name)
-        if self.name in current:
-            utils.fail("Project %s was not removed successfully" % (self.name,))
+        assert self.name not in current, "Project %s was not removed successfully" % (self.name,)
 
     def checkFiles(self, files):
         """Calls 'distribution/checkfiles'"""
@@ -517,22 +532,19 @@ html5
         flavor = self.flavor
         param = {"project": self.name, "filenames": files}
         reqResult = self.client.umc_command("distribution/checkfiles", param, flavor).result
-        if reqResult:
-            utils.fail("Unable to chack files for project (%r)" % (param,))
+        assert not reqResult, "Unable to chack files for project (%r)" % (param,)
 
     def adopt(self, project_name):
         """Calls 'distribute/adopt'"""
         print("Adopting project", self.name)
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/adopt", [project_name], flavor).result
-        if reqResult:
-            utils.fail("Failed to adopt project (%r)" % (project_name,))
+        assert not reqResult, "Failed to adopt project (%r)" % (project_name,)
 
     def check_adopt(self, project_name):
         print("Checking adopting")
         q = self.query(pattern=project_name)
-        if not (project_name in q):
-            utils.fail("Project %s was not adopted successfully" % (project_name,))
+        assert project_name in q, "Project %s was not adopted successfully" % (project_name,)
 
     def getUserFilesPath(self, user, purpose="distribute", version=1):
         """Gets the correct files path for a specific user depending on

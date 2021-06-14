@@ -14,7 +14,7 @@ import random
 import pytest
 
 try:
-    from typing import Set
+    from typing import Set  # noqa: F401
 except ImportError:
     pass
 

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: Rename Class Function
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -16,7 +16,6 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.share import ClassShare
@@ -25,9 +24,9 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class,
 from univention.uldap import getMachineConnection
 
 try:
-    from typing import Dict, Optional, Tuple
+    from typing import Dict, List, Optional, Tuple  # noqa: F401
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
     MegaSuperDuperPermissionTuple = Tuple[Tuple[Tuple[str, str], str], Dict[str, Tuple[str, str, str]]]
 except ImportError:
@@ -36,7 +35,7 @@ except ImportError:
 BACKUP_PATH = "/home/backup/groups"
 
 
-def ldap_info(cn):  # type: (str) -> Dict[str, str]
+def ldap_info(cn):  # type: (str) -> Dict[str, List[bytes]]
     with ucr_test.UCSTestConfigRegistry() as ucr:
         basedn = ucr.get("ldap/base")
         lo = getMachineConnection()
@@ -55,8 +54,7 @@ def ldap_info(cn):  # type: (str) -> Dict[str, str]
 def check_backup(cn):  # type: (str) -> None
     print("*** Checking backup.. ")
     for _dir in glob.glob("%s/*" % BACKUP_PATH):
-        if os.path.exists(_dir) and cn in _dir:
-            utils.fail("%s was moved to backup" % cn)
+        assert not os.path.exists(_dir) and cn not in _dir
 
 
 def check_ldap(school, old_name, new_name):  # type: (str, str, str) -> None
@@ -116,7 +114,7 @@ def permissions(dir_path, lo):  # type: (str, LoType) -> MegaSuperDuperPermissio
     res = lo.search(filter_s, attr=["cn"])
     if len(res) != 1:
         raise RuntimeError("Could not find group with fileter {!r} in LDAP.".format(filter_s))
-    grp_name2 = res[0][1]["cn"][0]
+    grp_name2 = res[0][1]["cn"][0].decode("UTF-8")
     print("*** Found group {!r} with gidNumber={!r} in LDAP.".format(grp_name2, st.st_gid))
     if grp_name1:
         assert grp_name1 == grp_name2
@@ -145,34 +143,25 @@ def check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions
     # type: (str, MegaSuperDuperPermissionTuple, str, MegaSuperDuperPermissionTuple) -> None
     current = old_dir_permissions[0][1]
     expected = os.path.basename(old_dir)
-    if current != expected:
-        utils.fail("%r is owned by the wrong group: %r, expected: %r" % (expected, current, expected))
+    assert current == expected
 
     current = new_dir_permissions[0][1]
     expected = os.path.basename(new_dir)
-    if current != expected:
-        utils.fail("%r is owned by the wrong group: %r, expected: %r" % (expected, current, expected))
+    assert current == expected
 
-    if old_dir_permissions[0][0] != new_dir_permissions[0][0]:
-        utils.fail(
-            "Permissions are changed old= %r, new= %r"
-            % (old_dir_permissions[0][0], new_dir_permissions[0][0])
-        )
-    if old_dir_permissions[1] != new_dir_permissions[1]:
-        utils.fail(
-            "Permissions are changed old= %r, new= %r" % (old_dir_permissions[1], new_dir_permissions[1])
-        )
+    assert old_dir_permissions[0][0] == new_dir_permissions[0][0]
+    assert old_dir_permissions[1] == new_dir_permissions[1]
 
 
-def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
+def _test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
     # type: (utu.UCSTestSchool, str, str, str, Optional[bool]) -> None
     old_dir = share_path(old_name, school)
 
     if os.path.exists(old_dir):
-        fp = tempfile.NamedTemporaryFile(suffix=".import", dir=old_dir)
+        fp = tempfile.NamedTemporaryFile("w+", suffix=".import", dir=old_dir)
     else:
         if should_fail:
-            fp = tempfile.NamedTemporaryFile(suffix=".import")
+            fp = tempfile.NamedTemporaryFile("w+", suffix=".import")
         else:
             utils.fail("Share path does not exist: %s" % old_dir)
     fp.write("%s\t%s" % (old_name, new_name))
@@ -200,9 +189,10 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
     pprint([(cs.name, cs.get_udm_object(lo)["path"]) for cs in ClassShare.get_all(lo, school)])
     exec_cmd(["find", "/home/{}/groups/klassen/".format(school), "-ls"], log=True)
 
-    if "ERROR" in out and not should_fail:
-        utils.fail("Error not detected:\n%s" % out)
-    elif "ERROR" not in out:
+    if not should_fail:
+        assert "ERROR" not in out, "Error not detected:\n%s" % out
+        return
+    if "ERROR" not in out:
         utils.wait_for_replication_and_postrun()
 
         # obvious check: old objects are renamed to new names in ldap
@@ -215,11 +205,7 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
         # the renamed group object should use the same gidNumber
         # the renamed group should still include the same users as before
         new_ldap_info = ldap_info(new_name)
-        if old_ldap_info != new_ldap_info:
-            utils.fail(
-                "%s has changed after renaming the class"
-                % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0]
-            )
+        assert old_ldap_info == new_ldap_info, "%s has changed after renaming the class" % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0]
 
         # the renamed share object should be still accessible
         new_dir = share_path(new_name, school)
@@ -236,24 +222,18 @@ def create_two_users(schoolenv, school, class_name):  # type: (utu.UCSTestSchool
     return tea, stu
 
 
-def main():  # type: () -> None
-    with ucr_test.UCSTestConfigRegistry() as ucr:
-        with utu.UCSTestSchool() as schoolenv:
+def test_rename_class(ucr, schoolenv):  # type: () -> None
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
             old_name = "%s-%s" % (school, uts.random_name())
             new_name = "%s-%s" % (school, uts.random_name())
-            test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
+            _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
 
             old_name = "%s-%s" % (school, uts.random_name())
             new_name = "%s-%s" % (school, uts.random_name())
             create_two_users(schoolenv, school, old_name)
-            test_rename_class(schoolenv, school, old_name, new_name)
+            _test_rename_class(schoolenv, school, old_name, new_name)
 
             old_name = "%s-%s" % (school, uts.random_name())
             create_two_users(schoolenv, school, old_name)
-            test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
-
-
-if __name__ == "__main__":
-    main()
+            _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)

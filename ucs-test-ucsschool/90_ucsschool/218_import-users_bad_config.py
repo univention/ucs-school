@@ -15,6 +15,8 @@ import copy
 import os
 import re
 
+import pytest
+
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
@@ -35,18 +37,16 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=[person], mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(config=config)
-        with open(fn_config, "rb+") as fp:
+        with open(fn_config, "r+") as fp:
             fp.seek(-3, os.SEEK_END)
             fp.write("foo")
         self.log.info("*** Running import with broken configuration file...\n*")
-        try:
+        with pytest.raises(ImportException) as exc:
             self.run_import(["-c", fn_config])
-            self.fail("Import ran with broken configuration.")
-        except ImportException as exc:
-            self.log.info("*** OK - error was expected: %r", exc)
+        self.log.info("*** OK - error was expected: %r", exc.value)
         # look for error message in logfile
         msg = r"InitialisationError.*Error in configuration file '{}'".format(fn_config)
-        for line in open("/var/log/univention/ucs-school-import.log", "rb"):
+        for line in open("/var/log/univention/ucs-school-import.log", "r"):
             found = re.findall(msg, line)
             if found:
                 self.log.info("Found in logfile: %r", found[0])

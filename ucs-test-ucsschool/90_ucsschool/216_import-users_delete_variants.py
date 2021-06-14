@@ -154,7 +154,7 @@ class Test(CLI_Import_v2_Tester):
                 person.dn,
                 expected_attr={
                     # DISABLED DUE TO BUG #41574
-                    # 					'shadowExpire': [udm_value],
+                    # "shadowExpire": [udm_value],
                     "krb5KDCFlags": ["254"],
                     "sambaAcctFlags": ["[UD         ]"],
                     "ucsschoolPurgeTimestamp": [ldap_exp_date],

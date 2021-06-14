@@ -5,6 +5,7 @@ import copy
 import datetime
 import itertools
 import os
+import pipes
 import re
 import subprocess
 import tempfile
@@ -43,35 +44,7 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-class GetFail(Exception):
-    pass
-
-
-class GetCheckFail(Exception):
-    pass
-
-
-class CreateFail(Exception):
-    pass
-
-
-class QueryCheckFail(Exception):
-    pass
-
-
-class RemoveFail(Exception):
-    pass
-
-
-class EditFail(Exception):
-    pass
-
-
 class CmdCheckFail(Exception):
-    pass
-
-
-class CupsNotRunningError(Exception):
     pass
 
 
@@ -178,11 +151,12 @@ class Room(object):
         current_computers = self.get_room_computers(client)
         print("Current computers in room %s are %r" % (self.name, current_computers))
         for i, computer in enumerate(sorted(current_computers)):
-            if computer not in sorted(expected_computer_list)[i]:
-                utils.fail(
-                    "Computers found %r do not match the expected: %r"
-                    % (current_computers, expected_computer_list)
-                )
+            assert (
+                computer in sorted(expected_computer_list)[i]
+            ), "Computers found %r do not match the expected: %r" % (
+                current_computers,
+                expected_computer_list,
+            )
 
     def set_room_settings(self, client, new_settings):
         print("Executing command: computerroom/settings/set")
@@ -202,17 +176,10 @@ class Room(object):
             d = dict(expected_settings)  # copy dictionary
             d["period"] = current_settings["period"]
             d["customRule"] = current_settings["customRule"]  # TODO Bug 35258 remove
-            if current_settings != d:
-                print(
-                    "FAIL: Current settings (%r) do not match expected ones (%r)"
-                    % (
-                        current_settings,
-                        d,
-                    )
-                )
-                utils.fail(
-                    "Current settings (%r) do not match expected ones (%r)" % (current_settings, d)
-                )
+            assert current_settings == d, "Current settings (%r) do not match expected ones (%r)" % (
+                current_settings,
+                d,
+            )
         except ConnectionError as exc:
             if "[Errno 4] " in str(exc):
                 print("failed to check room (%s) settings, exception [Errno4]" % self.name)
@@ -233,45 +200,38 @@ class Room(object):
         rule = InternetRule()
         current_rules = rule.allRules()
         internetRules = self.get_internetRules(client)
-        if sorted(current_rules) != sorted(internetRules):
-            utils.fail(
-                "Fetched internetrules %r, do not match the existing ones %r"
-                % (internetRules, current_rules)
-            )
+        assert sorted(current_rules) == sorted(
+            internetRules
+        ), "Fetched internetrules %r, do not match the existing ones %r" % (internetRules, current_rules)
 
     def check_atjobs(self, period, expected_existence):
         exist = False
-        for item in ula.list():
+        jobs = ula.list()
+        for item in jobs:
             if period == datetime.time.strftime(item.execTime.time(), "%H:%M"):
                 exist = True
                 break
-        if exist == expected_existence:
-            print("Atjob result at(%r) existance is expected (%r)" % (period, exist))
-        else:
-            print(
-                "FAIL: Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)"
-                % (
-                    period,
-                    expected_existence,
-                    exist,
-                )
+        print("Atjob result at(%r) existance: %r" % (period, exist))
+        print(
+            "\n".join(
+                "Job %s: %s  owner=%s\n%s" % (i, item, item.owner, item.command)
+                for i, item in enumerate(jobs)
             )
-            print("Found the following atjobs:")
-            for i, item in enumerate(ula.list()):
-                print("Job %s: %s  owner=%s\n%s" % (i, item, item.owner, item.command))
-            utils.fail(
-                "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)"
-                % (period, expected_existence, exist)
-            )
+        )
+        assert (
+            exist == expected_existence
+        ), "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)" % (
+            period,
+            expected_existence,
+            exist,
+        )
 
     def check_displayTime(self, client, period):
         displayed_period = self.get_room_settings(client)["period"][0:-3]
-        if period == displayed_period:
-            print("Time displayed (%r) is same as time at Atjobs (%r)" % (displayed_period, period))
-        else:
-            utils.fail(
-                "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
-            )
+        print("Time displayed (%r) - Atjobs (%r)" % (displayed_period, period))
+        assert (
+            period == displayed_period
+        ), "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
 
     def test_time_settings(self, client):
         self.aquire_room(client)
@@ -290,7 +250,7 @@ class Room(object):
         ula_length = len(ula.list())
         time_out = 30  # seconds
         self.set_room_settings(client, new_settings)
-        for i in xrange(time_out, 0, -1):
+        for i in range(time_out, 0, -1):
             print(i)
             if len(ula.list()) > ula_length:
                 break
@@ -310,11 +270,12 @@ class Room(object):
 
         # Time field is not considered in the comparision
         current_settings["period"] = settings["period"]
-        if current_settings != settings:
-            utils.fail(
-                "Current settings (%r) are not reset back after the time out, expected (%r)"
-                % (current_settings, settings)
-            )
+        assert (
+            current_settings == settings
+        ), "Current settings (%r) are not reset back after the time out, expected (%r)" % (
+            current_settings,
+            settings,
+        )
 
         # Checking Atjobs list
         self.check_atjobs(period, False)
@@ -326,11 +287,10 @@ class Room(object):
         read = run_commands(
             [cmd_read_home], {"ip": ip_address, "username": user, "user": "{0}%{1}".format(user, passwd)}
         )
-        if read[0] != expected_result:
-            print("FAIL .. Read home directory result (%r), expected (%r)" % (read[0], expected_result))
-            raise CmdCheckFail(
-                "Read home directory result (%r), expected (%r)" % (read[0], expected_result)
-            )
+        assert read[0] == expected_result, "Read home directory result (%r), expected (%r)" % (
+            read[0],
+            expected_result,
+        )
 
     @retry_cmd
     def check_home_write(self, user, ip_address, passwd="univention", expected_result=0):
@@ -481,9 +441,8 @@ class Room(object):
         ucr.load()
         cups_status = subprocess.check_output(
             ["lpstat", "-h", ucr.get("cups/server", ""), "-r"], env={"LC_ALL": "C"}
-        )
-        if cups_status != "scheduler is running\n":
-            raise CupsNotRunningError('CUPS status reported: "{}"'.format(cups_status))
+        ).decode("UTF-8")
+        assert cups_status == "scheduler is running\n", 'CUPS status reported: "{}"'.format(cups_status)
         f = tempfile.NamedTemporaryFile(dir="/tmp")
         cmd_print = ["smbclient", "//%(ip)s/%(printer)s", "-U", "%(user)s", "-c", "print %(filename)s"]
         result = run_commands(
@@ -528,7 +487,7 @@ class Room(object):
             t = 600
 
             # Testing loop
-            for i in xrange(settings_len):
+            for i in range(settings_len):
                 period = datetime.time.strftime(
                     (datetime.datetime.now() + datetime.timedelta(0, t)).time(), "%H:%M"
                 )
@@ -583,11 +542,9 @@ class Room(object):
 
         localCurl.close()
         print("RULE IN CONTROL = ", rule_in_control)
-        if rule_in_control != expected_rule:
-            utils.fail(
-                "rule in control (%s) does not match the expected one (%s)"
-                % (rule_in_control, expected_rule)
-            )
+        assert (
+            rule_in_control == expected_rule
+        ), "rule in control (%s) does not match the expected one (%s)" % (rule_in_control, expected_rule)
 
     def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, client):
         # Create new workgroup and assign new internet rule to it
@@ -612,7 +569,7 @@ class Room(object):
             t = 600
 
             # Testing loop
-            for i in xrange(settings_len):
+            for i in range(settings_len):
                 period = datetime.time.strftime(
                     (datetime.datetime.now() + datetime.timedelta(0, t)).time(), "%H:%M"
                 )
@@ -887,7 +844,7 @@ class Computers(object):
         for computer in computer_import.ipmanagedclients:
             created_computers.append(computer)
 
-        return sorted(created_computers)
+        return sorted(created_computers, key=lambda x: x.name)
 
     def get_dns(self, computers):
         return [x.dn for x in computers]
@@ -964,18 +921,16 @@ class UmcComputer(object):
                 )
             )
         else:
-            raise CreateFail("Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult))
+            assert False, "Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult)
 
     def remove(self):
         """Remove computer"""
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/computers/remove", param, flavor).result
-        if not reqResult[0] is True:
-            raise RemoveFail("Unable to remove computer (%s): %r" % (self.name, reqResult))
-        else:
-            utils.wait_for_replication()
-            utils.wait_for_s4connector_replication()
+        assert reqResult[0] is True, "Unable to remove computer (%s): %r" % (self.name, reqResult)
+        utils.wait_for_replication()
+        utils.wait_for_s4connector_replication()
 
     def dn(self):
         return "cn=%s,cn=computers,%s" % (self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -985,10 +940,8 @@ class UmcComputer(object):
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}}]
         reqResult = self.client.umc_command("schoolwizards/computers/get", param, flavor).result
-        if not reqResult[0]:
-            raise GetFail("Unable to get computer (%s): %r" % (self.name, reqResult))
-        else:
-            return reqResult[0]
+        assert reqResult[0], "Unable to get computer (%s): %r" % (self.name, reqResult)
+        return reqResult[0]
 
     def check_get(self):
         typ2roles = {
@@ -1013,10 +966,10 @@ class UmcComputer(object):
         get_result = self.get()
         if get_result != info:
             diff = set(x for x in get_result if get_result[x] != info[x])
-            raise GetCheckFail(
-                "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
-                "Difference = %r" % (self.name, get_result, info, diff)
-            )
+        assert get_result == info, (
+            "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
+            "Difference = %r" % (self.name, get_result, info, diff)
+        )
 
     def type_name(self):
         if self.typ == "windows":
@@ -1049,17 +1002,16 @@ class UmcComputer(object):
         print("Editing computer %s" % (self.name,))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/computers/put", param, flavor).result
-        if reqResult[0] is not True:
-            raise EditFail(
-                "Unable to edit computer (%s) with the parameters (%r): %r"
-                % (self.name, param, reqResult)
-            )
-        else:
-            self.ip_address = ip_address
-            self.mac_address = mac_address.lower() if mac_address else None
-            self.subnet_mask = subnet_mask
-            self.inventory_number = inventory_number
-            utils.wait_for_replication()
+        assert reqResult[0] is True, "Unable to edit computer (%s) with the parameters (%r): %r" % (
+            self.name,
+            param,
+            reqResult,
+        )
+        self.ip_address = ip_address
+        self.mac_address = mac_address.lower() if mac_address else None
+        self.subnet_mask = subnet_mask
+        self.inventory_number = inventory_number
+        utils.wait_for_replication()
 
     def query(self):
         """get the list of existing computer in the school"""
@@ -1071,11 +1023,12 @@ class UmcComputer(object):
     def check_query(self, computer_names):
         reqResult = self.query()
         names_in_result = {x["name"] for x in reqResult}
-        if not set(computer_names).issubset(names_in_result):
-            raise QueryCheckFail(
-                "computers from query do not contain the existing computers, found (%r), expected (%r)"
-                % (names_in_result, computer_names)
-            )
+        assert set(computer_names).issubset(
+            names_in_result
+        ), "computers from query do not contain the existing computers, found (%r), expected (%r)" % (
+            names_in_result,
+            computer_names,
+        )
 
     def verify_ldap(self, should_exist):
         print("verifying computer %s" % self.name)
@@ -1085,11 +1038,13 @@ class UmcComputer(object):
 def create_homedirs(member_dn_list, open_ldap_co):
     for dn in member_dn_list:
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            if not home_dir:
-                utils.fail("No homeDirectory attribute found for %r" % (dn,))
+            home_dir = home_dir.decode("UTF-8")
             if not os.path.exists(home_dir):
                 print("# Creating %r for %r" % (home_dir, dn))
                 os.makedirs(home_dir)
+            break
+        else:
+            assert False, "No homeDirectory attribute found for %r" % (dn,)
 
 
 @SetTimeout
@@ -1099,12 +1054,15 @@ def check_create_share_folder(
     """
     test if a user can create folders inside a given share, i.e. they have edit rights.
     """
-    cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(username, share, dir_name)
+    cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(
+        pipes.quote(username), pipes.quote(share), dir_name
+    )
     if samba_workstation:
-        cmd += " --netbiosname='{}'".format(samba_workstation)
+        cmd += " --netbiosname={}".format(pipes.quote(samba_workstation))
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)
-    if "NT_STATUS_ACCESS_DENIED" in stdout:
-        utils.fail("Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout))
+    assert (
+        "NT_STATUS_ACCESS_DENIED" not in stdout
+    ), "Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout)
 
 
 def check_change_permissions(

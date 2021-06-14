@@ -26,30 +26,6 @@ from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
 
 
-class GetFail(Exception):
-    pass
-
-
-class GetCheckFail(Exception):
-    pass
-
-
-class CreateFail(Exception):
-    pass
-
-
-class QueryCheckFail(Exception):
-    pass
-
-
-class RemoveFail(Exception):
-    pass
-
-
-class EditFail(Exception):
-    pass
-
-
 #  This code does not create correct school replication nodes. Do not use this for new tests!
 def create_dc_slave(udm, school=None):
     with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -143,10 +119,8 @@ class School(object):
         print("Creating school %s" % (self.name,))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/schools/add", param, flavor).result
-        if reqResult[0] is not True:
-            raise CreateFail("Unable to create school (%r)" % (reqResult,))
-        else:
-            utils.wait_for_replication()
+        assert reqResult[0], "Unable to create school (%r)" % (reqResult,)
+        utils.wait_for_replication()
 
     def get(self):
         """get the list of existing schools in the school"""
@@ -159,10 +133,10 @@ class School(object):
         current_attrs = self.get()[0]
         expected = dict(current_attrs)
         expected.update(attrs)
-        if current_attrs != expected:
-            raise GetCheckFail(
-                "Attributes do not match,\nfound (%r)\nexpected (%r)" % (current_attrs, expected)
-            )
+        assert current_attrs == expected, "Attributes do not match,\nfound (%r)\nexpected (%r)" % (
+            current_attrs,
+            expected,
+        )
 
     def query(self):
         """get the list of existing schools in the school"""
@@ -174,11 +148,12 @@ class School(object):
     def check_query(self, names):
         q = self.query()
         k = [x["name"] for x in q]
-        if not set(names).issubset(set(k)):
-            raise QueryCheckFail(
-                "schools from query do not contain the existing schools, found (%r), expected (%r)"
-                % (k, names)
-            )
+        assert set(names).issubset(
+            set(k)
+        ), "schools from query do not contain the existing schools, found (%r), expected (%r)" % (
+            k,
+            names,
+        )
 
     def dn(self):
         return UCSTestSchool().get_ou_base_dn(self.name)
@@ -189,10 +164,8 @@ class School(object):
         flavor = "schoolwizards/schools"
         param = [{"object": {"$dn$": self.dn()}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/schools/remove", param, flavor).result
-        if not reqResult[0]:
-            raise RemoveFail("Unable to remove school (%s)" % self.name)
-        else:
-            utils.wait_for_replication()
+        assert reqResult[0], "Unable to remove school (%s)" % self.name
+        utils.wait_for_replication()
 
     def edit(self, new_attributes):
         """Edit object school"""
@@ -239,13 +212,11 @@ class School(object):
         print("Editing school %s" % (self.name,))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/schools/put", param, flavor).result
-        if not reqResult[0]:
-            raise EditFail("Unable to edit school (%s) with the parameters (%r)" % (self.name, param))
-        else:
-            self.home_share_file_server = home_share
-            self.class_share_file_server = class_share
-            self.display_name = new_attributes["display_name"]
-            utils.wait_for_replication()
+        assert reqResult[0], "Unable to edit school (%s) with the parameters (%r)" % (self.name, param)
+        self.home_share_file_server = home_share
+        self.class_share_file_server = class_share
+        self.display_name = new_attributes["display_name"]
+        utils.wait_for_replication()
 
     def verify_ldap(self, should_exist):
         homeshare = ""
@@ -295,23 +266,21 @@ class School(object):
 
         homesharefileserver_dn = dc_dn
         if homesharefileserver:
-            result = lo.search(
+            result = lo.searchDn(
                 filter="(&(objectClass=univentionDomainController)(cn=%s))" % homesharefileserver,
                 base=base_dn,
-                attr=["cn"],
             )
             if result:
-                homesharefileserver_dn = result[0][0]
+                homesharefileserver_dn = result[0]
 
         classsharefileserver_dn = dc_dn
         if classsharefileserver:
-            result = lo.search(
+            result = lo.searchDn(
                 filter="(&(objectClass=univentionDomainController)(cn=%s))" % classsharefileserver,
                 base=base_dn,
-                attr=["cn"],
             )
             if result:
-                classsharefileserver_dn = result[0][0]
+                classsharefileserver_dn = result[0]
 
         utils.verify_ldap_object(
             ou_base,
@@ -574,15 +543,15 @@ class School(object):
             if not dhcpd_ldap_base or "ou=" not in dhcpd_ldap_base:
                 raise DhcpdLDAPBase('dhcpd/ldap/base=%r contains no "ou="' % (dhcpd_ldap_base,))
 
+            # use the UCR value and check if the DHCP service exists
+            dhcp_dn = dhcpd_ldap_base
+
             if not old_dhcpd_ldap_base:
                 # seems to be the first OU, so check the variable settings
                 if ucr.get("dhcpd/ldap/base") != "cn=dhcp,%s" % (ou_base,):
                     print("ERROR: dhcpd/ldap/base =", ucr.get("dhcpd/ldap/base"))
                     print("ERROR: expected base =", dhcp_dn)
                     raise DhcpdLDAPBase()
-
-            # use the UCR value and check if the DHCP service exists
-            dhcp_dn = dhcpd_ldap_base
 
         # dhcp
         print("LDAP base of dhcpd = %r" % dhcp_dn)

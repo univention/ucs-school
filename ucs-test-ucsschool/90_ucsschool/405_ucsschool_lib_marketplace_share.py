@@ -1,21 +1,18 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.share.MarketplaceShare
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python-ucsschool-lib
 
 #
 # Hint: When debugging interactively, disable output capturing:
 # $ pytest -s -l -v ./404_ucsschool_lib_models_main.py
 #
 
-try:
-    from typing import Dict, List
-except ImportError:
-    pass
+import sys
 
 import pytest
 
@@ -24,6 +21,11 @@ import univention.testing.utils as utils
 from ucsschool.lib.models.share import MarketplaceShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_marketplace_share
+
+try:
+    from typing import Dict, List  # noqa: F401
+except ImportError:
+    pass
 
 
 @pytest.fixture(scope="session")
@@ -59,7 +61,7 @@ def test_create(exp_ldap_attr, ucr_hostname, ucr_ldap_base):
         ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
         dn = "cn=Marktplatz,cn=shares,ou={},{}".format(ou_name, ucr_ldap_base)
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "--debug",

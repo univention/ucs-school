@@ -126,13 +126,13 @@ class JsonWriter(BaseWriter):
         logger.info("*** JsonWrite.__init()")
         self._filename = None
         self._mode = None
-        self._objects = list()
+        self._objects = []
         super(JsonWriter, self).__init__()
 
     def open(self, filename, mode="wb"):
         self._filename = filename
         self._mode = mode
-        return tempfile.SpooledTemporaryFile()
+        return tempfile.SpooledTemporaryFile(mode=mode)
 
     def write_obj(self, obj):
         self._objects.append(obj)

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: Check if an internet rule may be assigned to 2 rooms
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## bugs: [32544]
@@ -8,24 +8,25 @@
 
 from __future__ import print_function
 
+import codecs
 import re
 
 import univention.config_registry as uc
-import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
 
 
 # copied from ucs-school-webproxy.py
 def quote(string):
     "Replace every unsafe byte with hex value"
-    if type(string) is unicode:
+    if not isinstance(string, str):  # Py 2
         string = string.encode("utf-8")
     newstring = ""
     for byte in string:
         if byte in quote.safeBytes:
             newstring += byte
         else:
-            newstring += "-" + byte.encode("hex")
+            newstring += "-" + codecs.encode(
+                byte if isinstance(byte, bytes) else byte.encode("utf-8"), "hex"
+            ).decode("ASCII")
     return newstring
 
 
@@ -54,7 +55,7 @@ def prepare_UCR_setup(ucr):
     uc.handler_set(changes)
 
 
-def test_ruleset(ucr, test_settings):
+def _test_ruleset(ucr, test_settings):
     print("*** Testing with following test settings: %r" % test_settings)
 
     # assign different rules to each room
@@ -66,9 +67,9 @@ def test_ruleset(ucr, test_settings):
 
     # read and normalize content of squidGuard.conf
     content = open("/etc/squidguard/squidGuard.conf", "r").read()
-    content = re.sub("[ \t]+", " ", content)  # merge whitespaces
-    content = re.sub("\n +", "\n", content)  # remove leading whitespace
-    content = re.sub(" +\n", "\n", content)  # remove trailing whitespace
+    content = re.sub(r"[ \t]+", " ", content)  # merge whitespaces
+    content = re.sub(r"\n +", "\n", content)  # remove leading whitespace
+    content = re.sub(r" +\n", "\n", content)  # remove trailing whitespace
 
     for room, rule in test_settings.items():
         # do a rough check if all required lines are present
@@ -91,34 +92,28 @@ def test_ruleset(ucr, test_settings):
             expected_strings.append("src room-%s {\nip %s" % (quote(room), "\nip ".join(addr_list)))
 
         for line in expected_strings:
-            if line not in content:
-                # print '---[expected strings]----------------------------------------------------------'
-                # print expected_strings
-                # print '---[/etc/squidguard/squidGuard.conf]-------------------------------------------'
-                # print content
-                # print '-------------------------------------------------------------------------------'
-                utils.fail("Cannot find string %r in squidGuard.conf" % line)
+            assert line in content, "Cannot find string %r in squidGuard.conf" % line
+            # print '---[expected strings]----------------------------------------------------------'
+            # print expected_strings
+            # print '---[/etc/squidguard/squidGuard.conf]-------------------------------------------'
+            # print content
+            # print '-------------------------------------------------------------------------------'
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_squidguard_assign_rule_to_two_rooms(ucr):
         # setup filter rules for squidguard
         prepare_UCR_setup(ucr)
 
         # test with different rules for each room
-        test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur-Univention"})
+        _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur-Univention"})
         # test with the same rule for both rooms
-        test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia"})
+        _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia"})
         # test with the same rule for both rooms
-        test_ruleset(ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention"})
+        _test_ruleset(ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention"})
         # test with the same rule for three rooms
-        test_ruleset(
+        _test_ruleset(
             ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention", "Raum-Drei": "Nur-Univention"}
         )
-        test_ruleset(
+        _test_ruleset(
             ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia", "Raum-Drei": "Nur Wikipedia"}
         )
-
-
-if __name__ == "__main__":
-    main()

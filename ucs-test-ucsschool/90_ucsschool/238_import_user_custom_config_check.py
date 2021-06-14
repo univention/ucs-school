@@ -14,6 +14,7 @@ import os.path
 import random
 import shutil
 
+import pytest
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
@@ -36,7 +37,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -91,11 +92,9 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=[person], mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("*** OK: import failed.")
+        self.log.info("*** OK: import failed.")
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ Breaks:
 Depends:
  eapol,
  python-attr,
+ python-ipaddress,
  python-mock,
  python-passlib,
  python-pycurl,
@@ -25,7 +26,9 @@ Depends:
  python-pytest-catchlog,
  python-requests,
  ucs-test-framework (>= 9.0.7-59),
+ ucs-test-ldap,
  ucs-test-libs,
+ ucs-test-selenium-runner,
  univention-unittests,
  ${misc:Depends},
  ${python3:Depends},

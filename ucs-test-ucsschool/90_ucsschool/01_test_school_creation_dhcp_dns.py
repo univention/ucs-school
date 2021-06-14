@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test if dhcp search base and dhcp dns policy are correct
 ## tags: [apptest, ucsschool]
 ## roles: [domaincontroller_master, domaincontroller_backup]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python-ucsschool-lib
 
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test

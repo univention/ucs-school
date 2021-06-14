@@ -10,7 +10,7 @@ class Test241ResultHook(ResultPyHook):
 	}
 
 	def user_result(self, user_import_data):
-		with open(RESULTFILE, 'wb') as fp:
+		with open(RESULTFILE, 'w') as fp:
 			fp.write('errors={}\n'.format(len(user_import_data.errors)))
 			fp.write('added_staff={}\n'.format(len(user_import_data.added_users.get('ImportStaff', []))))
 			fp.write('added_student={}\n'.format(len(user_import_data.added_users.get('ImportStudent', []))))

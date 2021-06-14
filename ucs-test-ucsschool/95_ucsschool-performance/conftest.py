@@ -1,8 +1,9 @@
 import csv
+
 import pytest
 
 try:
-    from typing import Dict, Generator
+    from typing import Dict, Generator  # noqa: F401
 except ImportError:
     pass
 
@@ -24,7 +25,9 @@ def get_one_row(rows):
         for row in rows(csv_file):
             if row[column_name] == column_value:
                 return row
-        raise ValueError("No row found that had a column {!r} with value {!r}.".format(column_name, column_value))
+        raise ValueError(
+            "No row found that had a column {!r} with value {!r}.".format(column_name, column_value)
+        )
 
     return _func
 

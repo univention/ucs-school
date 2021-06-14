@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check diagnostic tool 904_ucsschool_remove_from_school_consistenceny
 ## tags: [ucsschool, diagnostic_test]
@@ -63,11 +63,7 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
                     logger.error("Failed to remove %r from %r: %r", user.dn, class_dn, exc)
 
 
-def main():
+def test_diagnostics_module_all_tests():
     with UCSSchoolSchoolConsistency() as test_suite:
         test_suite.create_multi_env_school_objects()
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

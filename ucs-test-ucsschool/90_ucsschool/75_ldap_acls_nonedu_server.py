@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if non-edu slaves have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
@@ -10,8 +10,6 @@
 import attr
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import Acl
 
 
@@ -29,11 +27,9 @@ class OUObj(object):
     admin_server = attr.ib()
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry():
+def test_ldap_acls_nonedu_server(schoolenv, ucr):
             schools = []
-            for i in xrange(2):
+            for i in range(2):
                 name_edudc = "e-myschool{}".format(i)
                 name_admindc = "a-myschool{}".format(i)
                 name, dn = schoolenv.create_ou(
@@ -108,7 +104,3 @@ def main():
                     (stu_dn, "DENIED"),
                 ):
                     acl.assert_acl(user_dn, "read", attr_list, allowance)
-
-
-if __name__ == "__main__":
-    main()

@@ -19,18 +19,6 @@ from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.umc import Client, ClientSaml
 
 
-class StartFail(Exception):
-    pass
-
-
-class FinishFail(Exception):
-    pass
-
-
-class SaveFail(Exception):
-    pass
-
-
 def get_dir_files(dir_path, recursive=True):
     result = []
     for f in glob.glob("%s/*" % dir_path):
@@ -44,6 +32,7 @@ def get_dir_files(dir_path, recursive=True):
 def get_s4_rejected():
     cmd = ["univention-s4connector-list-rejected"]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    out, err = out.decode("UTF-8"), err.decode("UTF-8")
     print("rejected Objects:", out, err)
     found = re.findall(r"DN:\s\w{2,4}=.*", out)
     return set(found)
@@ -52,18 +41,17 @@ def get_s4_rejected():
 def check_s4_rejected(existing_rejects):
     new_rejects = get_s4_rejected()
     fail = [x for x in new_rejects if x not in existing_rejects]
-    if fail:
-        utils.fail("There is at least one new rejected object: %r" % fail)
+    assert not fail, "There is at least one new rejected object: %r" % (fail,)
 
 
 def check_proof_uniqueMember():
     cmd = ["/usr/share/univention-directory-manager-tools/proof_uniqueMembers"]
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = popen.communicate()
+    out, err = out.decode("UTF-8"), err.decode("UTF-8")
     returncode = popen.returncode
     print(out, err, returncode)
-    if returncode != 0:
-        utils.fail("Proof unique members failed")
+    assert returncode == 0, "Proof unique members failed"
 
 
 def wait_replications_check_rejected_uniqueMember(existing_rejects):
@@ -150,8 +138,7 @@ class Exam(object):
         print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/start", param).result
         print("Start exam response = ", reqResult)
-        if not reqResult["success"]:
-            raise StartFail("Unable to start exam (%r)" % (param,))
+        assert reqResult["success"], "Unable to start exam (%r)" % (param,)
 
     def save(self, update=False, fields=None):
         """Saves an exam. If fields is a list only the given values are set in the request"""
@@ -187,8 +174,7 @@ class Exam(object):
         command = "put" if update else "add"
         reqResult = self.client.umc_command("schoolexam/exam/{}".format(command), param).result
         print("Save exam response = {}".format(reqResult))
-        if not reqResult:
-            raise SaveFail("Unable to {} exam {!r}".format(command, param))
+        assert reqResult, "Unable to {} exam {!r}".format(command, param)
 
     def get(self):
         """Gets an exam and returns result"""
@@ -207,8 +193,7 @@ class Exam(object):
         print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/finish", param).result
         print("Finish exam response = ", reqResult)
-        if not reqResult["success"]:
-            raise FinishFail("Unable to finish exam (%r)" % param)
+        assert reqResult["success"], "Unable to finish exam (%r)" % param
 
     def genData(self, file_name, content_type, boundary, override_file_name=None):
         """Generates data in the form to be sent via http POST request.\n
@@ -274,8 +259,10 @@ html5
         return schools
 
     def fetch_school(self, school):
-        if school not in self.get_schools():
-            utils.fail("Exam %s was not able to fetch school %s" % (self.name, school))
+        assert school in self.get_schools(), "Exam %s was not able to fetch school %s" % (
+            self.name,
+            school,
+        )
 
     def get_groups(self):
         """Get groups"""
@@ -288,8 +275,7 @@ html5
         return groups
 
     def fetch_groups(self, group):
-        if group not in self.get_groups():
-            utils.fail("Exam %s was not able to fetch group %s" % (self.name, group))
+        assert group in self.get_groups(), "Exam %s was not able to fetch group %s" % (self.name, group)
 
     def get_lessonEnd(self):
         """Get lessonEnd"""
@@ -298,8 +284,10 @@ html5
         return reqResult
 
     def fetch_lessonEnd(self, lessonEnd):
-        if lessonEnd not in self.get_lessonEnd():
-            utils.fail("Exam %s was not able to fetch lessonEnd %s" % (self.name, lessonEnd))
+        assert lessonEnd in self.get_lessonEnd(), "Exam %s was not able to fetch lessonEnd %s" % (
+            self.name,
+            lessonEnd,
+        )
 
     def collect(self):
         """Collect results"""
@@ -312,20 +300,26 @@ html5
         admin = account.username
         path = "/home/%s/Klassenarbeiten/%s-Ergebnisse" % (admin, self.name)
         path_files = get_dir_files(path)
-        if not set(self.files).issubset(set(path_files)):
-            utils.fail("%r were not collected to %r" % (self.files, path))
+        assert set(self.files).issubset(set(path_files)), "%r were not collected to %r" % (
+            self.files,
+            path,
+        )
 
     def check_upload(self):
         path = "/tmp/ucsschool-exam-upload*"
         path_files = get_dir_files(path)
-        if not set(self.files).issubset(set(path_files)):
-            utils.fail("%r were not uploaded to %r" % (self.files, path))
+        assert set(self.files).issubset(set(path_files)), "%r were not uploaded to %r" % (
+            self.files,
+            path,
+        )
 
     def check_distribute(self):
         path = "/home/%s/schueler" % self.school
         path_files = get_dir_files(path)
-        if not set(self.files).issubset(set(path_files)):
-            utils.fail("%r were not uploaded to %r" % (self.files, path))
+        assert set(self.files).issubset(set(path_files)), "%r were not uploaded to %r" % (
+            self.files,
+            path,
+        )
 
 
 class ExamSaml(Exam):

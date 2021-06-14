@@ -13,6 +13,7 @@ import os
 import os.path
 import shutil
 
+import pytest
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
@@ -35,7 +36,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -51,7 +52,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         roles = ("staff", "student", "teacher", "teacher_and_staff")
-        person_list = list()
+        person_list = []
         for role in roles:
             person = Person(self.ou_A.name, role)
             person.update(record_uid="recordUID-{}".format(uts.random_string()), source_uid=source_uid)
@@ -67,11 +68,9 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** Importing users without Pre-Read PyHook (should fail)...")
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         self.log.info("*** Importing users with Pre-Read PyHook...")
         self.log.info("Creating PyHook %r...", TESTHOOKTARGET)

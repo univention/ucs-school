@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: smbstatus parser
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -11,13 +11,11 @@ import socket
 import subprocess
 import time
 
-import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from ucsschool.lib.smbstatus import SMB_Status
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_smbstatus_parser(ucr):
         account = utils.UCSTestDomainAdminCredentials()
         admin = account.username
         passwd = account.bindpw
@@ -44,9 +42,8 @@ def main():
         time.sleep(10)
 
         status = SMB_Status()
-        if not status:
-            utils.fail("smbclient was not able to open any connection to host (%s)" % host)
         print("smbstatus = ", status)
+        assert status, "smbclient was not able to open any connection to host (%s)" % host
 
         def get_proccess_by_services(services):
             for process in status:
@@ -62,11 +59,7 @@ def main():
         for expected_values in expected_process_values:
             expected_values.update({"username": admin, "ipaddress": ipaddress})
             process = get_proccess_by_services(expected_values["services"])
-            if not process:
-                utils.fail(
-                    "The process with services %s was not recognized by smbstatus"
-                    % (expected_values["services"])
-                )
+            assert process, "The process with services %s was not recognized by smbstatus" % (expected_values["services"],)
             check_attributes(process, expected_values)
         pop1.terminate()
         pop2.terminate()
@@ -91,17 +84,8 @@ def check_attributes(process, expected_values):
             value = getattr(process, attr)
         except AttributeError:
             value = process.get(attr)
-            if not value:
-                utils.fail("Could not fetch the attribute %s" % (attr,))
+            assert value, "Could not fetch the attribute %s" % (attr,)
         if attr in expected_values:
             if attr == "ipaddress":
                 value = value.rsplit(":", 1)[0]
-            if value != expected_values[attr]:
-                utils.fail(
-                    "Attribute (%s) is parsed wrong as (%s), expected in (%r)"
-                    % (attr, value, expected_values[attr])
-                )
-
-
-if __name__ == "__main__":
-    main()
+            assert value == expected_values[attr], "Attribute (%s) is parsed wrong as (%s), expected in (%r)" % (attr, value, expected_values[attr])

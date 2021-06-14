@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check exam adding, putting and getting
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -8,7 +8,8 @@
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
-from unittest import TestCase, main
+
+import pytest
 
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
@@ -18,13 +19,12 @@ from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import (
     Exam,
     ExamSaml,
-    SaveFail,
     get_s4_rejected,
     wait_replications_check_rejected_uniqueMember,
 )
 
 
-class TestExamPrepare(TestCase):
+class Test_ExamPrepare(object):
     def __test_exam_prepare(self, Exam=Exam):
         with univention.testing.udm.UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
             ucr = schoolenv.ucr
@@ -87,13 +87,8 @@ class TestExamPrepare(TestCase):
                 examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
                 recipients=[klasse_dn],  # list of classes dns
             )
-            try:
+            with pytest.raises((AssertionError, HTTPError)):
                 exam.save(fields=["recipients", "school"])
-                raise Exception("Exam should not have been saved due to missing name")
-            except HTTPError:
-                print(" ** Save failed as expected")
-            except SaveFail:
-                print(" ** Save failed as expected")
             exam.save()
             try:
                 exam.save()
@@ -121,7 +116,3 @@ class TestExamPrepare(TestCase):
 
     def test_classic_login(self):
         self.__test_exam_prepare()
-
-
-if __name__ == "__main__":
-    main(verbosity=2)

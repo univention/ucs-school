@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: schoolwizards/school/create
 ## roles: [domaincontroller_master]
@@ -36,7 +36,7 @@ def schoolwizards_schools_create(ou_name, dc_name=None, dc_name_administrative=N
     )
 
 
-def main():
+def test_schoolwizard_school_create():
     with UCSTestSchool() as testschool:
         logger = get_ucsschool_logger()
         msg = "new random OU, no DC specified"
@@ -303,7 +303,3 @@ def main():
                     strict=False,
                     should_exist=True,
                 )
-
-
-if __name__ == "__main__":
-    main()

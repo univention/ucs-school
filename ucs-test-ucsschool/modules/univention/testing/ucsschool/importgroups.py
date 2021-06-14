@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 import os
-import string
 import subprocess
 import tempfile
 
@@ -18,10 +17,6 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class,
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportGroup(Exception):
-    pass
 
 
 class GroupHookResult(Exception):
@@ -98,7 +93,7 @@ class ImportFile:
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, str(self.group_import))
+        os.write(self.import_fd, str(self.group_import).encode("UTF-8"))
         os.close(self.import_fd)
 
     def run_import(self, group_import):
@@ -116,7 +111,7 @@ class ImportFile:
             print("POST HOOK result:\n%s" % post_result)
             print("SCHOOL DATA     :\n%s" % str(self.group_import))
             if pre_result != post_result != str(self.group_import):
-                raise GroupHookResult()
+                raise GroupHookResult(pre_result, post_result, self.group_import)
         finally:
             hooks.cleanup()
             try:
@@ -128,14 +123,9 @@ class ImportFile:
         cmd_block = ["/usr/share/ucs-school-import/scripts/import_group", self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportGroup(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
-
         # reload UCR
         ucsschool.lib.models.utils.ucr.load()
 

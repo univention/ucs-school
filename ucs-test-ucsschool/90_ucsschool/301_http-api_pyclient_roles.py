@@ -67,8 +67,7 @@ class Test(HttpApiImportTester):
         received_schools = set(s.name for s in schools)
         self.log.info("Expected schools: %r", expected_schools)
         self.log.info("Received schools: %r", received_schools)
-        if expected_schools != received_schools:
-            self.fail("expected schools != found schools.")
+        assert expected_schools == received_schools
 
         self.log.info("*** Checking roles via Python-API...")
         for ou in ous:
@@ -77,10 +76,7 @@ class Test(HttpApiImportTester):
             received_roles = set(r.name for r in roles_from_api)
             self.log.info("Expected roles: %r", expected_roles)
             self.log.info("Received roles: %r", received_roles)
-            if expected_roles == received_roles:
-                self.log.info("OK.")
-            else:
-                self.fail("expected roles != found roles.")
+            assert expected_roles == received_roles
 
 
 if __name__ == "__main__":

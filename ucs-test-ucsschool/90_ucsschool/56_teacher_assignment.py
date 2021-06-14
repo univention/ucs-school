@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the teacher assignment umc module
 ## exposure: dangerous
@@ -21,7 +21,7 @@ def schoolenv():
     with UCSTestSchool() as schoolenv:
         hostname = schoolenv.ucr["hostname"]
         schoolenv.schools = schoolenv.create_multiple_ous(2, name_edudc=hostname)
-        schoolenv.teachers = dict()
+        schoolenv.teachers = {}
         for school, school_dn in schoolenv.schools:
             school_class, _ = schoolenv.create_school_class(school, uts.random_string())
             _, schoolenv.teachers[school] = schoolenv.create_teacher(

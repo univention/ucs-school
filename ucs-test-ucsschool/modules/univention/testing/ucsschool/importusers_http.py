@@ -9,9 +9,9 @@ import univention.testing.utils as utils
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 try:
-    from typing import Dict, List, Optional, Tuple
+    from typing import Dict, List, Optional, Tuple  # noqa: F401
 
-    from ucsschool.http_api.client import Client, ResourceRepresentation
+    from ucsschool.http_api.client import Client, ResourceRepresentation  # noqa: F401
 except ImportError:
     pass
 
@@ -97,7 +97,7 @@ class HttpApiImportTester(ImportTestbase):
         :rtype: ResourceRepresentation.UserImportJobResource
         """
         if not config and config is not None:
-            self.log.warn('Empty "config" passed!')
+            self.log.warning('Empty "config" passed!')
         with TempHttpApiConfig(config):
             t0 = time.time()
             import_job = client.userimportjob.create(

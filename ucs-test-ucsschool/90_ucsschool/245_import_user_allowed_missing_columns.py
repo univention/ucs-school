@@ -10,6 +10,7 @@
 
 import copy
 
+import pytest
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
@@ -32,7 +33,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         roles = ("staff", "student", "teacher", "teacher_and_staff")
-        person_list = list()
+        person_list = []
         for role in roles:
             person = Person(self.ou_A.name, role)
             person.update(record_uid="recordUID-{}".format(uts.random_string()), source_uid=source_uid)
@@ -47,11 +48,9 @@ class Test(CLI_Import_v2_Tester):
         missing_column = uts.random_name()
         config.update_entry("csv:mapping:{}".format(missing_column), "MissingColumn")
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         self.log.info(
             "*** Importing users with csv:allowed_missing_columns containing missing column..."

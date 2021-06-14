@@ -1,6 +1,11 @@
 import datetime
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
 
+try:
+	unicode
+except NameError:
+	unicode = str
+
 
 class FormatTestPyHook(FormatPyHook):
 	priority = {
@@ -21,6 +26,8 @@ class FormatTestPyHook(FormatPyHook):
 
 	@classmethod
 	def my_translate(cls, s, del_chars):
+		if str is not bytes:  # py3
+			return s.translate(str.maketrans("", "", del_chars))
 		if isinstance(s, unicode):
 			translate_table = dict((ord(x), None) for x in del_chars)
 			return s.translate(translate_table)

@@ -14,30 +14,6 @@ from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 from univention.testing.umc import Client
 
 
-class GetFail(Exception):
-    pass
-
-
-class GetCheckFail(Exception):
-    pass
-
-
-class CreateFail(Exception):
-    pass
-
-
-class QueryCheckFail(Exception):
-    pass
-
-
-class RemoveFail(Exception):
-    pass
-
-
-class EditFail(Exception):
-    pass
-
-
 class Klasse(object):
 
     """Contains the needed functionality for classes in an already created OU,
@@ -84,8 +60,7 @@ class Klasse(object):
         print("Creating class %s in school %s" % (self.name, self.school))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/add", param, flavor).result
-        if not reqResult[0]:
-            raise CreateFail("Unable to create class (%r)" % (param,))
+        assert reqResult[0], "Unable to create class (%r)" % (param,)
 
     def query(self):
         """get the list of existing classes in the school"""
@@ -97,11 +72,12 @@ class Klasse(object):
     def check_query(self, classes_names):
         q = self.query()
         k = [x["name"] for x in q]
-        if set(classes_names) != set(k):
-            raise QueryCheckFail(
-                "Classes from query do not match existing ones\nfound (%r)\nexpected (%r)"
-                % (k, classes_names)
-            )
+        assert set(classes_names) == set(
+            k
+        ), "Classes from query do not match existing ones\nfound (%r)\nexpected (%r)" % (
+            k,
+            classes_names,
+        )
 
     def dn(self):
         return "cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s" % (
@@ -123,10 +99,8 @@ class Klasse(object):
         flavor = "schoolwizards/classes"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}}]
         reqResult = self.client.umc_command("schoolwizards/classes/get", param, flavor).result
-        if not reqResult[0]:
-            raise GetFail("Unable to get class (%s)" % self.name)
-        else:
-            return reqResult[0]
+        assert reqResult[0], "Unable to get class (%s)" % self.name
+        return reqResult[0]
 
     def check_get(self):
         info = {
@@ -139,11 +113,13 @@ class Klasse(object):
             "ucsschool_roles": [create_ucsschool_role_string(role_school_class, self.school)],
         }
         get_result = self.get()
-        if get_result != info:
-            raise GetCheckFail(
-                "Failed get request for class %s. Returned result: %r. Expected result: %r"
-                % (self.name, get_result, info)
-            )
+        assert (
+            get_result == info
+        ), "Failed get request for class %s. Returned result: %r. Expected result: %r" % (
+            self.name,
+            get_result,
+            info,
+        )
 
     def remove(self):
         """Remove class"""
@@ -151,8 +127,7 @@ class Klasse(object):
         param = [{"object": {"$dn$": self.dn(), "school": self.school}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/classes/remove", param, flavor).result
 
-        if not reqResult[0]:
-            raise RemoveFail("Unable to remove class (%s)" % self.name)
+        assert reqResult[0], "Unable to remove class (%s)" % self.name
 
     def edit(self, new_attributes):
         """Edit object class"""
@@ -171,11 +146,9 @@ class Klasse(object):
         print("Editing class %s in school %s" % (self.name, self.school))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/classes/put", param, flavor).result
-        if not reqResult[0]:
-            raise EditFail("Unable to edit class (%s) with the parameters (%r)" % (self.name, param))
-        else:
-            self.name = new_attributes["name"]
-            self.description = new_attributes["description"]
+        assert reqResult[0], "Unable to edit class (%s) with the parameters (%r)" % (self.name, param)
+        self.name = new_attributes["name"]
+        self.description = new_attributes["description"]
 
     def check_existence(self, should_exist):
         utils.verify_ldap_object(self.dn(), should_exist=should_exist)

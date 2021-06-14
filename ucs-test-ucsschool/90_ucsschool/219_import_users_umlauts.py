@@ -89,7 +89,7 @@ class Test(CLI_Import_v2_Tester):
         for person in person_list:
             person.update(
                 username=person._expected_names["username"],
-                record_uid="%s;%s;%s" % (str(person.firstname), str(person.lastname), person.mail),
+                record_uid="%s;%s;%s" % (person.firstname, person.lastname, person.mail),
                 source_uid=source_uid,
                 firstname=person._expected_names["firstname"],
                 lastname=person._expected_names["lastname"],

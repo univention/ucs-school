@@ -43,7 +43,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
         super(Test, self).cleanup()
 
     def test(self):
@@ -66,7 +66,7 @@ class Test(CLI_Import_v2_Tester):
         del config["csv"]["mapping"]["E-Mail"]
 
         self.log.info("Importing a user from each role...")
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)
@@ -103,7 +103,10 @@ class Test(CLI_Import_v2_Tester):
             # The format hook for generaing the email attribute should have
             # removed all vowels from the lastname of these three roles.
             if person.role in ("student", "teacher", "teacher_and_staff"):
-                lastname = person.lastname.translate(None, "aeiou")
+                if str is bytes:  # Py 2
+                    lastname = person.lastname.translate(None, "aeiou")
+                else:
+                    lastname = person.lastname.translate(str.maketrans("", "", "aeiou"))
             else:
                 # staffs lastname was not modified
                 lastname = person.lastname

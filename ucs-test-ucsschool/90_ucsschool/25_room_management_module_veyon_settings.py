@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Schoolrooms management module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -36,41 +36,24 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
 import pytest
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.computerroom import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 
 @pytest.fixture(scope="module")
-def ucr():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
-        yield ucr
+def school(ucr_hostname):
+    with utu.UCSTestSchool() as schoolenv:
+        yield schoolenv.create_ou(name_edudc=ucr_hostname)
 
 
 @pytest.fixture(scope="module")
-def school_env():
-    with utu.UCSTestSchool() as school_env:
-        yield school_env
-
-
-@pytest.fixture(scope="module")
-def lo(school_env):
-    return school_env.open_ldap_connection()
-
-
-@pytest.fixture(scope="module")
-def school(ucr, school_env):
-    school, ou_dn = school_env.create_ou(name_edudc=ucr.get("hostname"))
-    return school, ou_dn
-
-
-@pytest.fixture(scope="module")
-def create_win_computer(school, lo):
+def create_win_computer(school):
     def _create_win_computer():
-        computers = Computers(lo, school[0], 1, 0, 0)
+        computers = Computers(utu.UCSTestSchool().lo, school[0], 1, 0, 0)
         created_computers = computers.create()
         return computers.get_dns(created_computers)[0]
 

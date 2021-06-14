@@ -4,7 +4,6 @@ from __future__ import print_function
 
 import os
 import random
-import string
 import subprocess
 import tempfile
 
@@ -18,10 +17,6 @@ from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportNetwork(Exception):
-    pass
 
 
 class NetworkHookResult(Exception):
@@ -49,7 +44,7 @@ def get_reverse_net(network, netmask):
     )
     (stdout, stderr) = p.communicate()
 
-    output = stdout.strip().split(".")
+    output = stdout.decode("UTF-8").strip().split(".")
     output.reverse()
 
     return ".".join(output)
@@ -190,7 +185,7 @@ class ImportFile:
 
     def write_import(self, data):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, data)
+        os.write(self.import_fd, data.encode("utf-8"))
         os.close(self.import_fd)
 
     def run_import(self, data):
@@ -207,7 +202,7 @@ class ImportFile:
             print("POST HOOK result: %s" % post_result)
             print("SCHOOL DATA     : %s" % data)
             if pre_result != post_result != data:
-                raise NetworkHookResult()
+                raise NetworkHookResult(pre_result, post_result, data)
         finally:
             hooks.cleanup()
             os.remove(self.import_file)
@@ -219,14 +214,10 @@ class ImportFile:
             cmd_block = ["/usr/share/ucs-school-import/scripts/import_networks", self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportNetwork(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def set_mode_to_router(self):
         self.router_mode = True

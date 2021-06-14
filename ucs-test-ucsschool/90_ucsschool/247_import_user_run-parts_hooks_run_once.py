@@ -43,14 +43,13 @@ class Test(CLI_Import_v2_Tester):
     def ou_cleanup(self):
         self.run_cmd(["udm", "container/ou", "remove", "--ignore_not_exists", "--dn", self.my_ou_dn])
         try:
-            objs = self.lo.search(base=self.my_ou_dn, attr=[])
-            dns = [x[0] for x in objs]
+            dns = self.lo.searchDn(base=self.my_ou_dn)
         except noObject:
             dns = []
         dns.append(
             "cn=admins-{},cn=ouadmins,cn=groups,{}".format(self.my_ou_name, self.ucr["ldap/base"])
         )
-        dns.extend([x[0] for x in self.lo.search("cn=OU{}-*".format(self.my_ou_name), attr=[])])
+        dns.extend(self.lo.searchDn("cn=OU{}-*".format(self.my_ou_name)))
         dns = sorted(dns, key=lambda x: x.count(","), reverse=True)
         for dn in dns:
             print("*** Removing {!r}...".format(dn))
@@ -66,7 +65,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.hooks_cleanup()
@@ -77,11 +76,7 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("Executing command: %r", cmd)
         sys.stdout.flush()
         sys.stderr.flush()
-        exitcode = subprocess.call(cmd)
-        if exitcode:
-            self.fail("Non-zero exit code {!r} from command {!r}.".format(exitcode, cmd))
-        else:
-            self.log.info("OK: Process exited with exit code %r.", exitcode)
+        subprocess.check_call(cmd)
 
     def test_ou_create_post_hook(self):
         self.log.info(

@@ -38,7 +38,7 @@ class Test(CLI_Import_v2_Tester):
                     os.remove(path)
                     self.log.info("*** Deleted %s.", path)
                 except OSError:
-                    self.log.warn("*** Could not delete %s.", path)
+                    self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -52,15 +52,15 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** Creating PyHook with dry-run support (%r)...", TESTHOOKTARGETWITHSUPPORT)
         with open(TESTHOOKTARGETWITHSUPPORT, "wb") as fp:
             fp.write(
-                text.replace("%CLASSNAME%", "HookSupportsDryRun").replace(
-                    "%DRYRUNSUPPORT%", "supports_dry_run = True"
+                text.replace(b"%CLASSNAME%", b"HookSupportsDryRun").replace(
+                    b"%DRYRUNSUPPORT%", b"supports_dry_run = True"
                 )
             )
         self.log.info(
             "*** Creating PyHook without dry-run support (%r)...", TESTHOOKTARGETWITHOUTSUPPORT
         )
         with open(TESTHOOKTARGETWITHOUTSUPPORT, "wb") as fp:
-            fp.write(text.replace("%CLASSNAME%", "HookNoDryRun").replace("%DRYRUNSUPPORT%", ""))
+            fp.write(text.replace(b"%CLASSNAME%", b"HookNoDryRun").replace(b"%DRYRUNSUPPORT%", b""))
 
     @staticmethod
     def get_path(has_support, dry_run, hook_name):
@@ -94,40 +94,28 @@ class Test(CLI_Import_v2_Tester):
                 os.rmdir(log_dir)
                 self.log.info("*** Deleted %s.", log_dir)
             except OSError:
-                self.log.warn("*** Could not delete %s.", log_dir)
+                self.log.warning("*** Could not delete %s.", log_dir)
             parent_path = os.path.dirname(log_dir)
             try:
                 os.rmdir(parent_path)
                 self.log.info("*** Deleted %s.", parent_path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", parent_path)
+                self.log.warning("*** Could not delete %s.", parent_path)
 
     def check_hook_log_exists(self, with_support, no_support, dry_run, hooks_expected_to_run):
         for hook_expected_to_run in hooks_expected_to_run:
             # check HookSupportsDryRun
             path = self.get_path(True, dry_run, hook_expected_to_run)
             if with_support:
-                if os.path.exists(path):
-                    self.log.info("##### OK: %r exists", path)
-                else:
-                    self.fail("Expected path does not exist: {!r}".format(path))
+                assert os.path.exists(path)
             else:
-                if os.path.exists(path):
-                    self.fail("Path expected to not exist: {!r}".format(path))
-                else:
-                    self.log.info("##### OK: %r does not exist", path)
+                assert not os.path.exists(path)
             # check HookNoDryRun
             path = self.get_path(False, dry_run, hook_expected_to_run)
             if no_support:
-                if os.path.exists(path):
-                    self.log.info("##### OK: %r exists", path)
-                else:
-                    self.fail("Expected does not exist: {!r}".format(path))
+                assert os.path.exists(path)
             else:
-                if os.path.exists(path):
-                    self.fail("Path expected to not exist: {!r}".format(path))
-                else:
-                    self.log.info("##### OK: %r does not exist", path)
+                assert not os.path.exists(path)
 
     def purge_hook_logs(self):
         for log_dir in self.get_log_dirs():
@@ -137,7 +125,7 @@ class Test(CLI_Import_v2_Tester):
                     os.remove(file_path)
                     self.log.info("*** Deleted %s.", file_path)
             except OSError:
-                self.log.warn("*** Could not delete file(s) in %s.", log_dir)
+                self.log.warning("*** Could not delete file(s) in %s.", log_dir)
 
     def test(self):
         source_uid = "source_uid-{}".format(uts.random_string())

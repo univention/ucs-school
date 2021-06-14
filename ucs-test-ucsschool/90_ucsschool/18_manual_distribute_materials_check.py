@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: manual_distribute_materials_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -8,8 +8,6 @@
 import time
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.distribution import Distribution
 from univention.testing.ucsschool.workgroup import Workgroup
@@ -26,9 +24,7 @@ def getDateTime(starttime, deadline):
     return distTime, distDate, collTime, collDate
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_manual_distribution_materials_check(schoolenv, ucr):
             host = ucr.get("hostname")
             connection = Client(host)
 
@@ -108,7 +104,3 @@ def main():
 
             project.remove()
             project.check_remove()
-
-
-if __name__ == "__main__":
-    main()

@@ -11,6 +11,8 @@
 import random
 import string
 
+import pytest
+
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
@@ -19,9 +21,9 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 class Test(CLI_Import_v2_Tester):
     def test(self):
         for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
-            while not any(c in string.letters for c in ori_ou.name):
+            while not any(c in string.ascii_letters for c in ori_ou.name):
                 # test won't work: only digits -> upper case == lower case
-                self.log.warn("OU does not contain any letters, creating new one.")
+                self.log.warning("OU does not contain any letters, creating new one.")
                 ori_ou.name, ori_ou.dn = self.schoolenv.create_ou(
                     name_edudc=self.ucr.get("hostname"), use_cache=False
                 )
@@ -70,11 +72,9 @@ class Test(CLI_Import_v2_Tester):
                 "user_role": role,
             }
             fn_config = self.create_config_json(values=config)
-            try:
+            with pytest.raises(ImportException):
                 self.run_import(["-c", fn_config])
-                self.fail("Import ran with bad OU.")
-            except ImportException:
-                self.log.info("*** OK - import stopped.")
+            self.log.info("*** OK - import stopped.")
 
 
 if __name__ == "__main__":

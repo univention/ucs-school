@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -12,15 +12,12 @@ from time import sleep
 
 from ldap.filter import filter_format
 
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
-from univention.testing.udm import UCSTestUDM
 
 
 def is_user_disabled(user_dn, lo):
@@ -30,11 +27,9 @@ def is_user_disabled(user_dn, lo):
     return obj["disabled"] == "1"
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
-        open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
+def test_exam_mode_deactivate_user(udm_session, schoolenv, ucr):
+        udm = udm_session
+        lo = schoolenv.open_ldap_connection()
 
         print("# create test users and classes")
         if ucr.is_true("ucsschool/singlemaster"):
@@ -64,7 +59,7 @@ def main():
         udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [studn2]})
 
         print("# import random computers")
-        computers = Computers(open_ldap_co, school, 2, 0, 0)
+        computers = Computers(lo, school, 2, 0, 0)
         pc1, pc2 = computers.create()
 
         print("# set 2 computer rooms to contain the created computers")
@@ -92,24 +87,21 @@ def main():
 
         # check if user is enabled
         handler_set(["ucsschool/exam/user/disable=no"])
-        if is_user_disabled(studn, open_ldap_co):
-            utils.fail("disable=no: User was not enabled before exam")
+        assert not is_user_disabled(studn, lo), "disable=no: User was not enabled before exam"
 
         exam.start()
         print(" ** After starting the exam1")
         wait_for_drs_replication(filter_format("cn=exam-%s", (stu,)))
 
         # check if user is still enabled
-        if is_user_disabled(studn, open_ldap_co):
-            utils.fail("User was not enabled during exam")
+        assert not is_user_disabled(studn, lo), "User was not enabled during exam"
 
         exam.finish()
         sleep(10)  # ensure this exam is finished before a new one starts
         print(" ** After finishing the exam1")
 
         # check if user is enabled
-        if is_user_disabled(studn, open_ldap_co):
-            utils.fail("disable=yes: User was not enabled after exam")
+        assert not is_user_disabled(studn, lo), "disable=yes: User was not enabled after exam"
 
         print("# Set another exam and start it with ucsschool/exam/user/disable=yes")
         current_time = datetime.now()
@@ -123,25 +115,18 @@ def main():
 
         # check if user is enabled
         handler_set(["ucsschool/exam/user/disable=yes"])
-        if is_user_disabled(studn2, open_ldap_co):
-            utils.fail("disable=yes: User was not enabled before exam")
+        assert not is_user_disabled(studn2, lo), "disable=yes: User was not enabled before exam"
 
         exam2.start()
         print(" ** After starting the exam2")
 
         # check if user is disabled
-        if not is_user_disabled(studn2, open_ldap_co):
-            utils.fail("disable=yes: User was not disabled during exam")
+        assert is_user_disabled(studn2, lo), "disable=yes: User was not disabled during exam"
 
         exam2.finish()
         print(" ** After finishing the exam2")
 
         # check if user is enabled
-        if is_user_disabled(studn2, open_ldap_co):
-            utils.fail("User was not enabled after exam")
+        assert not is_user_disabled(studn2, lo), "User was not enabled after exam"
 
         wait_for_s4connector()
-
-
-if __name__ == "__main__":
-    main()

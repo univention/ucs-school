@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: squidguard - check dbtemp option and position of BDB backing files
 ## roles: [domaincontroller_master,domaincontroller_backup,domaincontroller_slave]
 ## bugs: [40541]
@@ -14,7 +14,6 @@ import os
 import subprocess
 import tempfile
 
-import univention.testing.utils as utils
 from univention.testing.strings import random_string
 
 CONF_SQUIDGUARD = """logdir %(tempdir)s
@@ -43,7 +42,7 @@ acl {
 """
 
 
-def main():
+def test_squidguard_test_dbtemp_option():
     def write_sg_cfg(prefix=""):
         with open(fn_cfg, "w") as fd:
             fd.write("\n".join([prefix, CONF_SQUIDGUARD % {"tempdir": tempdir}]))
@@ -58,7 +57,7 @@ def main():
 
     def write_lists():
         with open(fn_userlist, "w") as fd:
-            for i in xrange(1000):
+            for i in range(1000):
                 for name in (
                     "anton",
                     "berta",
@@ -73,11 +72,11 @@ def main():
                 ):
                     fd.write("%s%d\nMYDOMAIN\\%s%d\n" % (name, i, name, i))
         with open(fn_whitelist_domains, "w") as fd:
-            for i in xrange(5000):
+            for i in range(5000):
                 for name in ("univention.de", "software-univention.de"):
                     fd.write("%d.%s\nsmtp%d.%s\n" % (i, name, i, name))
         with open(fn_whitelist_urls, "w") as fd:
-            for i in xrange(10000):
+            for i in range(10000):
                 fd.write(
                     "http://updates.software-univention.de/%s/%s.html\n"
                     % (random_string(), random_string())
@@ -110,10 +109,8 @@ def main():
             stderr=open(fn_log, "a+"),
         )
         print_sg_log()
-        if exitcode:
-            utils.fail("Creating databases failed")
-        if exists_in_sg_log("dbtemp"):
-            utils.fail('"dbtemp" should not be mentioned after db creation')
+        assert not exitcode, "Creating databases failed"
+        assert not exists_in_sg_log("dbtemp"), '"dbtemp" should not be mentioned after db creation'
 
         # normal run
         truncate_sg_log()
@@ -126,10 +123,8 @@ def main():
             stderr=open(fn_log, "a+"),
         )
         print_sg_log()
-        if exitcode:
-            utils.fail("squidguard run 1 failed")
-        if exists_in_sg_log("dbtemp"):
-            utils.fail('"dbtemp" should not be mentioned in run 1')
+        assert not exitcode, "squidguard run 1 failed"
+        assert not exists_in_sg_log("dbtemp"), '"dbtemp" should not be mentioned in run 1'
         cnt_new_vartmp = count_bdb_files("/var/tmp")
         cnt_new_tempdir = count_bdb_files(tempdir)
         print(
@@ -142,9 +137,10 @@ def main():
                 cnt_new_tempdir,
             )
         )
-        if not (cnt_old_vartmp < cnt_new_vartmp and cnt_old_tempdir == cnt_new_tempdir):
-            utils.fail("Unexpected number of temporary backing files")
-            # tempdir should not change; at least one new file in /var/tmp/
+        assert (
+            cnt_old_vartmp < cnt_new_vartmp and cnt_old_tempdir == cnt_new_tempdir
+        ), "Unexpected number of temporary backing files"
+        # tempdir should not change; at least one new file in /var/tmp/
 
         # run with special dbtemp option
         truncate_sg_log()
@@ -158,10 +154,8 @@ def main():
             stderr=open(fn_log, "a+"),
         )
         print_sg_log()
-        if exitcode:
-            utils.fail("squidguard run 2 failed")
-        if not exists_in_sg_log("dbtemp"):
-            utils.fail('"dbtemp" should be mentioned in run 2')
+        assert not exitcode, "squidguard run 2 failed"
+        assert exists_in_sg_log("dbtemp"), '"dbtemp" should be mentioned in run 2'
         cnt_new_vartmp = count_bdb_files("/var/tmp")
         cnt_new_tempdir = count_bdb_files(tempdir)
         print(
@@ -174,9 +168,10 @@ def main():
                 cnt_new_tempdir,
             )
         )
-        if not (cnt_old_vartmp == cnt_new_vartmp and cnt_old_tempdir < cnt_new_tempdir):
-            utils.fail("Unexpected number of temporary backing files")
-            # /var/tmp should not change; at least one new file in $tempdir
+        assert (
+            cnt_old_vartmp == cnt_new_vartmp and cnt_old_tempdir < cnt_new_tempdir
+        ), "Unexpected number of temporary backing files"
+        # /var/tmp should not change; at least one new file in $tempdir
 
         # short functional test
         truncate_sg_log()
@@ -187,7 +182,7 @@ def main():
             stdout=subprocess.PIPE,
             stderr=open(fn_log, "a+"),
         )
-        for i in xrange(100000):
+        for i in range(100000):
             if not i % 5000:
                 print("%d/100000" % i)
             username = random_string(length=8)
@@ -196,22 +191,17 @@ def main():
             elif i % 3 == 2:
                 username = "-"
             p.stdin.write(
-                "http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
-                % (random_string(), random_string(), username)
+                (
+                    "http://www.univention.de/%s/%s.html 10.20.30.40/- %s GET\n"
+                    % (random_string(), random_string(), username)
+                ).encode("utf-8")
             )
             p.stdout.readline()
-        print()
+        print("")
         # p.stdin.close()
         p.communicate()
         print_sg_log()
-        if p.returncode:
-            utils.fail("squidguard run 3 failed")
-        if not exists_in_sg_log("dbtemp"):
-            utils.fail('"dbtemp" should be mentioned in run 3')
-
+        assert not p.returncode, "squidguard run 3 failed"
+        assert exists_in_sg_log("dbtemp"), '"dbtemp" should be mentioned in run 3'
     finally:
         subprocess.call(["rm", "-Rf", tempdir])
-
-
-if __name__ == "__main__":
-    main()

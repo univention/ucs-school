@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: test UCRV ucsschool/ldap/replicate_staff_to_edu and LDAP ACLs
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -128,7 +128,7 @@ class TestCases(object):
             "(&(cn=%s)(univentionObjectType=computers/domaincontroller_slave))", (self.slave1.name,)
         )
         self.slave1.dn = lo.searchDn(filter=filter_s)[0]
-        subprocess.call(
+        subprocess.check_call(
             [
                 "/usr/sbin/udm-test",
                 "computers/domaincontroller_slave",
@@ -205,7 +205,7 @@ class TestCases(object):
             print("----- success ------")
 
 
-def main():
+def test_ldap_acl_staff2edu():
     # when exiting the 3 with statements, the following steps are achieved:
     # - UCR variables are cleaned up
     # - slapd.conf is committed/recreated
@@ -216,7 +216,3 @@ def main():
                 with utu.UCSTestSchool() as schoolenv:
                     testcases = TestCases(ucr, schoolenv)
                     testcases.run()
-
-
-if __name__ == "__main__":
-    main()

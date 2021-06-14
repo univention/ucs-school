@@ -1,21 +1,13 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.__main__
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python-ucsschool-lib
 
-#
-# Hint: When debugging interactively, disable output capturing:
-# $ pytest -s -l -v ./404_ucsschool_lib_models_main.py
-#
-
-try:
-    from typing import Dict, List, Tuple
-except ImportError:
-    pass
+import sys
 
 import pytest
 
@@ -24,6 +16,11 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.importusers import Person
+
+try:
+    from typing import Dict, List, Tuple  # noqa: F401
+except ImportError:
+    pass
 
 
 @pytest.fixture(scope="session")
@@ -38,7 +35,7 @@ def cmd_line_role():
 
 
 def test_list_models():
-    cmd = ["python", "-m", "ucsschool.lib.models", "list-models"]
+    cmd = [sys.executable, "-m", "ucsschool.lib.models", "list-models"]
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
     # space saving list (black would make it completely vertical):
     for model in (
@@ -54,7 +51,7 @@ def test_list_models():
 
 def test_list_models_details():
     # checking just a few samples
-    cmd = ["python", "-m", "ucsschool.lib.models", "list-models", "--attributes"]
+    cmd = [sys.executable, "-m", "ucsschool.lib.models", "list-models", "--attributes"]
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
     assert (
         "Student\n    birthday\n    disabled\n    email\n    firstname [required]\n    "
@@ -92,7 +89,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
             user_name, user_dn = create_func(ou_name, use_cli=False, wait_for_replication=False)
             user_names.setdefault(role, []).append(user_name)
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "list",
@@ -121,7 +118,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
             user_name, user_dn = create_func(ou_name, use_cli=False, wait_for_replication=False)
             user_names.setdefault(role, []).append(user_name)
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "list",
@@ -143,7 +140,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
             for _ in range(3):
                 school_class_name = "{}-{}".format(ou, uts.random_username())
                 cmd = [
-                    "python",
+                    sys.executable,
                     "-m",
                     "ucsschool.lib.models",
                     "--debug",
@@ -161,7 +158,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
                 assert dn in stdout
                 school_classes.setdefault(ou, []).append((school_class_name, dn))
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "list",
@@ -180,7 +177,7 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
             person = Person(ou_name, role)
             person.set_random_birthday()
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "--debug",
@@ -241,7 +238,7 @@ def test_create_school_class(ucr_hostname, ucr_ldap_base):
         school_class_name = "{}-{}".format(ou_name, uts.random_username())
         description = uts.random_username()
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "--debug",
@@ -290,7 +287,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
 
             # get by DN and modify
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "--debug",
@@ -331,7 +328,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             person = Person(ou_name, role)
             person.set_random_birthday()
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "--debug",
@@ -374,7 +371,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
         school_class_name = "{}-{}".format(ou_name, uts.random_username())
         description = uts.random_username()
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "--debug",
@@ -412,7 +409,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             ou_name, use_cli=False, wait_for_replication=False
         )
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "--debug",
@@ -454,7 +451,7 @@ def test_delete(cmd_line_role, ucr_hostname):
             create_func = getattr(schoolenv, "create_{}".format(role))
             user_name, user_dn = create_func(ou_name, use_cli=False, wait_for_replication=False)
             cmd = [
-                "python",
+                sys.executable,
                 "-m",
                 "ucsschool.lib.models",
                 "--debug",

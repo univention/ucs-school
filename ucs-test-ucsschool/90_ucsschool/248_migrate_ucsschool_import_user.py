@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test migration from legacy/manual import to new import
 ## tags: [apptest,ucsschool,ucsschool_import2]
@@ -19,13 +19,11 @@ import tempfile
 import attr
 
 import univention.testing.strings as uts
-import univention.testing.ucr
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import User
-from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 
@@ -39,8 +37,7 @@ class MyUser(object):
     record_uid = attr.ib()  # type: str
 
 
-def main():
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, UCSTestSchool() as schoolenv:
+def test_migrate_ucsschool_import_user(ucr, schoolenv):
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         lo = schoolenv.open_ldap_connection(admin=True)
 
@@ -98,9 +95,9 @@ def main():
         next_record_uid += 1
 
         # create CSV file for guessing
-        with tempfile.NamedTemporaryFile(mode="wb") as fd_guess, tempfile.NamedTemporaryFile(
-            mode="rb"
-        ) as fd_target, tempfile.NamedTemporaryFile(mode="wb") as fd_migrate:
+        with tempfile.NamedTemporaryFile(mode="w") as fd_guess, tempfile.NamedTemporaryFile(
+            mode="r"
+        ) as fd_target, tempfile.NamedTemporaryFile(mode="w") as fd_migrate:
             os.remove(fd_target.name)
 
             writer = csv.writer(fd_guess, dialect="excel")
@@ -110,7 +107,7 @@ def main():
             fd_guess.flush()
 
             # test user guessing
-            subprocess.call(
+            subprocess.check_call(
                 [
                     "/usr/share/ucs-school-import/scripts/migrate_ucsschool_import_user",
                     "--guess-usernames",
@@ -127,15 +124,15 @@ def main():
             print("*******************")
 
             # check CSV file from guessing
-            fd_target2 = open(fd_target.name, "rb")
+            fd_target2 = open(fd_target.name, "r")
             reader = csv.reader(fd_target2, dialect="excel")
             # drop CSV header and comments
-            row = reader.next()
+            row = next(reader)
             while row[0] != "username":
-                row = reader.next()
+                row = next(reader)
             # check lines against expected content
             for i, user in enumerate(ambiguous_users + unambiguous_users):
-                row = reader.next()
+                row = next(reader)
                 print("Reading entry {:2d}: {!r}".format(i, row))
                 print("  Expected entry: {}".format(user))
                 if not user.username:  # no or multiple matches
@@ -168,26 +165,37 @@ def main():
                         cmd.append("--source-uid={}".format(source_uid))
                     if dry_run:
                         cmd.append(dry_run)
-                    subprocess.call(cmd)
+                    subprocess.check_call(cmd)
 
                     # check users
                     for user in unambiguous_users:
                         result = lo.search(base=user.dn)
                         assert result, "Could not find {} in LDAP".format(user.dn)
                         if dry_run:
-                            assert result[0][1].get("ucsschoolSourceUID", [""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [""])[0] != user.record_uid
-                            assert result[0][1].get("uid", [""])[0] == user.username
+                            assert (
+                                result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                != source_uid
+                            )
+                            assert (
+                                result[0][1].get("ucsschoolRecordUID", [b""])[0].decode("UTF-8")
+                                != user.record_uid
+                            )
+                            assert result[0][1].get("uid", [b""])[0].decode("UTF-8") == user.username
                         else:
                             if source_uid is not None:
-                                assert result[0][1].get("ucsschoolSourceUID", [""])[0] == source_uid
+                                assert (
+                                    result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                    == source_uid
+                                )
                             else:
-                                assert result[0][1].get("ucsschoolSourceUID", [""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [""])[0] == user.record_uid
-                            assert result[0][1].get("uid", [""])[0] == user.username
+                                assert (
+                                    result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                    != source_uid
+                                )
+                            assert (
+                                result[0][1].get("ucsschoolRecordUID", [b""])[0].decode("UTF-8")
+                                == user.record_uid
+                            )
+                            assert result[0][1].get("uid", [b""])[0].decode("UTF-8") == user.username
 
             print("*\n*** Test was successful.\n*")
-
-
-if __name__ == "__main__":
-    main()

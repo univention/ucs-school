@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test settings in kelvin app ini file
 ## roles: [domaincontroller_master]
@@ -9,22 +9,16 @@ import itertools
 import re
 
 try:
-    from typing import Iterable
+    from typing import Iterable  # noqa: F401
 except ImportError:
     pass
-try:
-    from ConfigParser import ConfigParser  # py2
-except ImportError:
-    from configparser import ConfigParser  # py3
-try:
-    from urlparse import urljoin  # py2
-except ImportError:
-    from urllib.parse import urljoin  # py3
 
 import tempfile
 
 import pytest
 import requests
+from six.moves.configparser import ConfigParser
+from six.moves.urllib_parse import urljoin
 
 APPCENTER_SERVERS = ("appcenter.software-univention.de", "appcenter-test.software-univention.de")
 INI_PARENT_PATH = "/meta-inf/4.4/ucsschool-kelvin-rest-api"

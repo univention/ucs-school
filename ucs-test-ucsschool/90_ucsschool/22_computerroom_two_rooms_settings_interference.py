@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -14,8 +14,6 @@ import datetime
 import itertools
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.lib.umc import ConnectionError
 from univention.testing.network import NetworkRedirector
 from univention.testing.ucsschool.computerroom import (
@@ -53,9 +51,7 @@ def print_header(
     )
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_computerroom_two_room_settings_interference(schoolenv, ucr):
             with NetworkRedirector() as nethelper:
                 school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
                 tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
@@ -117,7 +113,7 @@ def main():
                     room2_time = room1_time + 10 * 60
 
                     # Testing loop over room1 settings
-                    for i in xrange(24):
+                    for i in range(24):
                         room1_period = datetime.time.strftime(
                             (datetime.datetime.now() + datetime.timedelta(0, room1_time)).time(), "%H:%M"
                         )
@@ -140,7 +136,7 @@ def main():
 
                         # Testing loop over room2 settings
                         room2_settings = itertools.product(rules, printmodes, sharemodes)
-                        for j in xrange(24):
+                        for j in range(24):
                             try:
                                 room2_period = datetime.time.strftime(
                                     (datetime.datetime.now() + datetime.timedelta(0, room2_time)).time(),
@@ -204,7 +200,3 @@ def main():
                                     raise
                 finally:
                     remove_printer(printer_name, school, ucr.get("ldap/base"))
-
-
-if __name__ == "__main__":
-    main()

@@ -21,6 +21,7 @@ class TestSamba4(object):
         Test class constructor
         """
         self.UCR = ConfigRegistry()
+        self.UCR.load()
         self.client = None
 
         self.admin_username = ""
@@ -53,10 +54,14 @@ class TestSamba4(object):
         print("\n create_and_run_process(%r, shell=%r)" % (cmd, shell))
         proc = Popen(cmd, stdin=stdin, stdout=stdout, stderr=PIPE, shell=shell, close_fds=True)
 
-        stdout, stderr = proc.communicate(input=std_input)
+        stdout, stderr = proc.communicate(std_input if std_input is None else std_input.encode("UTF-8"))
 
+        if stderr is not None:
+            stderr = stderr.decode("UTF-8")
         if stderr:
             stderr = self.remove_samba_warnings(stderr)
+        if stdout is not None:
+            stdout = stdout.decode("UTF-8")
         if stdout:
             stdout = self.remove_samba_warnings(stdout)
 
@@ -205,20 +210,9 @@ class TestSamba4(object):
         """
         Loads the UCR to get credentials for the test.
         """
-        print("\nObtaining Administrator username and password for the test from the UCR")
-        try:
-            self.UCR.load()
-
-            self.admin_username = self.UCR["tests/domainadmin/account"]
-            # extracting the 'uid' value of the administrator username string:
-            self.admin_username = self.admin_username.split(",")[0][len("uid=") :]
-            self.admin_password = self.UCR["tests/domainadmin/pwd"]
-        except KeyError as exc:
-            print(
-                "\nAn exception while trying to read data from the UCR for the test: '%s'. Skipping "
-                "the test." % exc
-            )
-            self.return_code_result_skip()
+        account = utils.UCSTestDomainAdminCredentials()
+        self.admin_username = account.username
+        self.admin_password = account.bindpw
 
     def create_umc_connection_authenticate(self):
         """

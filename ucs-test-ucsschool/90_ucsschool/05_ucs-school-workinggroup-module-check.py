@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## desc: ucs-school-workinggroup-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
@@ -9,18 +9,13 @@ from __future__ import print_function
 
 import time
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-def main():
-    ucr = ucr_test.UCSTestConfigRegistry()
-    ucr.load()
-    host = ucr.get("hostname")
-    with utu.UCSTestSchool() as schoolenv:
+def test_workingroup_module(ucr, schoolenv):
+        host = ucr.get("hostname")
         schoolName, oudn = schoolenv.create_ou(name_edudc=host)
         tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
         stu, studn = schoolenv.create_user(schoolName)
@@ -67,7 +62,7 @@ def main():
             group.removeMembers([memberListdn[0]])
 
             # 10 checking if the atrriputes for the group is correct in ldap
-            for wait in xrange(30):
+            for wait in range(30):
                 try:
                     group.verify_ldap_attributes()
                 except Exception as e:
@@ -84,7 +79,7 @@ def main():
             group.set_members([memberListdn[0]])
 
             # 11 checking if the atrriputes for the group is correct in ldap
-            for wait in xrange(30):
+            for wait in range(30):
                 try:
                     group.verify_ldap_attributes()
                 except Exception as e:
@@ -122,7 +117,3 @@ def main():
             email_group.verify_ldap_attributes()
             email_group.deactivate_email()
             email_group.verify_ldap_attributes()
-
-
-if __name__ == "__main__":
-    main()

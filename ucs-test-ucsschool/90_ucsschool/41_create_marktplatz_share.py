@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -lsv
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -s -v
 ## -*- coding: utf-8 -*-
 ## desc: markplatz share creation check
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [python-ucs-school]
+## packages: [python-ucsschool-lib]
 ## bugs: [40785]
 
 from __future__ import print_function

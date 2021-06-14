@@ -35,7 +35,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -58,7 +58,7 @@ class Test(CLI_Import_v2_Tester):
             '*** Importing a user from each role, two with firstname starting with "M" should not be '
             "created..."
         )
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)

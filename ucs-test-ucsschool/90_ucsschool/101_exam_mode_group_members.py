@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Simple exam group memberUid & uniqueMember check
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -10,21 +10,16 @@
 from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
-from univention.testing.udm import UCSTestUDM
 from univention.uldap import getMachineConnection
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
+def test_exam_mode_group_members(udm_session, schoolenv, ucr):
+        udm = udm_session
         open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
 
         if ucr.is_true("ucsschool/singlemaster"):
             edudc = None
@@ -79,11 +74,15 @@ def main():
         exam.start()
 
         try:
-            expected_memberUid = ["%s$" % pc3.name, "exam-%s" % stu, "exam-%s" % student2.name]
+            expected_memberUid = [
+                b"%s$" % pc3.name.encode("UTF-8"),
+                b"exam-%s" % stu.encode("UTF-8"),
+                b"exam-%s" % student2.name.encode("UTF-8")
+            ]
             expected_uniqueMember = [
-                "%s" % pc3.dn,
-                "uid=exam-%s,%s" % (stu, search_base.examUsers),
-                "uid=exam-%s,%s" % (student2.name, search_base.examUsers),
+                ("%s" % pc3.dn).encode("UTF-8"),
+                ("uid=exam-%s,%s" % (stu, search_base.examUsers)).encode("UTF-8"),
+                ("uid=exam-%s,%s" % (student2.name, search_base.examUsers)).encode("UTF-8"),
             ]
 
             # Get the current attributes values
@@ -95,17 +94,9 @@ def main():
             memberUid = lo.search(base=exam_group_dn)[0][1].get("memberUid")
             uniqueMember = lo.search(base=exam_group_dn)[0][1].get("uniqueMember")
 
-            if set(memberUid) != set(expected_memberUid):
-                utils.fail("Current memberUid = %r\nExpected = %r" % (memberUid, expected_memberUid))
-            if set(uniqueMember) != set(expected_uniqueMember):
-                utils.fail(
-                    "Current uniqueMember = %r\nExpected= %r" % (uniqueMember, expected_uniqueMember)
-                )
+            assert set(memberUid) == set(expected_memberUid)
+            assert set(uniqueMember) == set(expected_uniqueMember)
 
         finally:
             exam.finish()
             student2.remove(open_ldap_co)
-
-
-if __name__ == "__main__":
-    main()

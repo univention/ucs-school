@@ -38,7 +38,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -46,7 +46,7 @@ class Test(CLI_Import_v2_Tester):
             os.remove(RESULTFILE)
             self.log.info("*** Deleted %s.", RESULTFILE)
         except OSError:
-            self.log.warn("*** Could not delete %s.", RESULTFILE)
+            self.log.warning("*** Could not delete %s.", RESULTFILE)
         super(Test, self).cleanup()
 
     def test(self):
@@ -60,7 +60,7 @@ class Test(CLI_Import_v2_Tester):
 
         roles = ("staff", "student", "teacher", "teacher_and_staff")
         user_num = dict((role, random.randint(1, 4)) for role in roles)
-        _roles = user_num.keys()
+        _roles = list(user_num.keys())
         random.shuffle(_roles)  # moar random
         roles1 = dict((k, user_num[k]) for k in _roles[:2])
         roles2 = dict((k, user_num[k]) for k in _roles[1:])  # overlap 1
@@ -123,11 +123,9 @@ class Test(CLI_Import_v2_Tester):
             expected_result.append(r"^deleted_{}={}$".format(role, deleted(role)))
         self.log.debug("expected_result:\n%s", "\n".join(expected_result))
 
-        for num, line in enumerate(open(RESULTFILE, "rb")):
-            if re.match(expected_result[num], line):
-                self.log.debug("OK: {!r}".format(line.strip("\n")))
-            else:
-                self.fail("Expected {!r} found {!r}.".format(expected_result[num], line))
+        for num, line in enumerate(open(RESULTFILE, "r")):
+            assert re.match(expected_result[num], line)
+            self.log.debug("OK: {!r}".format(line.strip("\n")))
 
 
 if __name__ == "__main__":

@@ -22,7 +22,6 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 class Test(CLI_Import_v2_Tester):
     def test(self):
-
         # import a teacher
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config = copy.deepcopy(self.default_config)
@@ -33,7 +32,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         self.log.info("*** 1. Importing (create in %r) new user with teacher role....", self.ou_A.name)
-        person_list = list()
+        person_list = []
         person = Person(self.ou_A.name, "teacher")
         person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
         person_list.append(person)
@@ -55,9 +54,9 @@ class Test(CLI_Import_v2_Tester):
         # TODO: use udm.modify_object instead (requires caching of udm object in TestUDM!)
         # admin_modifications = {"ucsschoolRole": [admin_role], "groups": [admin_group]}
         # self.udm.modify_object("users/user", dn=person.dn, append=admin_modifications)
-        self.schoolenv.lo.modify(admin_group, [("uniqueMember", "", person.dn)])
-        self.schoolenv.lo.modify(person.dn, [("ucsschoolRole", "", admin_role)])
-        self.schoolenv.lo.modify(person.dn, [("objectClass", "", "ucsschoolAdministrator")])
+        self.schoolenv.lo.modify(admin_group, [("uniqueMember", b"", person.dn.encode("UTF-8"))])
+        self.schoolenv.lo.modify(person.dn, [("ucsschoolRole", b"", admin_role.encode("UTF-8"))])
+        self.schoolenv.lo.modify(person.dn, [("objectClass", b"", b"ucsschoolAdministrator")])
         wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
 
         # run same import again
@@ -66,10 +65,8 @@ class Test(CLI_Import_v2_Tester):
 
         # check if admin properties still exist
         user = User.from_dn(person.dn, person.school, self.lo).get_udm_object(self.lo)
-        if admin_role not in user["ucsschoolRole"]:
-            self.fail("UCS@School Role '{}' has been overwritten.".format(admin_role))
-        if admin_group not in user["groups"]:
-            self.fail("User is not membermodify_object of admin group {} anymore.".format(admin_group))
+        assert admin_role in user["ucsschoolRole"]
+        assert admin_group in user["groups"]
 
 
 if __name__ == "__main__":
