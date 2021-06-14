@@ -36,7 +36,7 @@ import tempfile
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_CommandError
+from univention.management.console.modules import UMC_Error
 
 _ = Translation("ucs-school-umc-wizards").translate
 
@@ -67,7 +67,7 @@ class SchoolImport(object):
                     MODULE.warn(stdout)
             except (OSError, ValueError) as err:
                 MODULE.warn(str(err))
-                raise UMC_CommandError(_("Execution of command failed"))
+                raise UMC_Error(_("Execution of command failed"))
             else:
                 return process.returncode, stdout
         else:
@@ -87,7 +87,7 @@ class SchoolImport(object):
                     MODULE.process(info)
             except (OSError, ValueError) as err:
                 MODULE.warn(str(err))
-                raise UMC_CommandError(_("Execution of command failed"))
+                raise UMC_Error(_("Execution of command failed"))
             else:
                 return process.returncode, stdout
             finally:
