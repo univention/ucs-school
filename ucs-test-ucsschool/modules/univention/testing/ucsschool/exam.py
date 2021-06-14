@@ -44,6 +44,7 @@ def get_dir_files(dir_path, recursive=True):
 def get_s4_rejected():
     cmd = ["univention-s4connector-list-rejected"]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    out, err = out.decode("UTF-8"), err.decode("UTF-8")
     print("rejected Objects:", out, err)
     found = re.findall(r"DN:\s\w{2,4}=.*", out)
     return set(found)
@@ -60,6 +61,7 @@ def check_proof_uniqueMember():
     cmd = ["/usr/share/univention-directory-manager-tools/proof_uniqueMembers"]
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = popen.communicate()
+    out, err = out.decode("UTF-8"), err.decode("UTF-8")
     returncode = popen.returncode
     print(out, err, returncode)
     if returncode != 0:
