@@ -50,7 +50,7 @@ from collections import defaultdict
 import lazy_object_proxy
 import ldap
 import six
-from ldap.dn import escape_dn_chars
+from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import filter_format
 
 import univention.admin.uldap as udm_uldap
@@ -424,18 +424,20 @@ class UCSTestSchool(object):
             unique_member_attr = attrs.get("uniqueMember", [])
             member_uid_attr = attrs.get("memberUid", [])
             ou_member_dns = [
-                dn
+                dn.decode("UTF-8")
                 for dn in unique_member_attr
-                if dn.endswith(",ou={},{}".format(ou_name, self.ldap_base))
+                if dn.decode("UTF-8").endswith(",ou={},{}".format(ou_name, self.ldap_base))
             ]
-            ou_member_uids = ["{}$".format(udm_uldap.explodeDn(dn, 1)[0]) for dn in ou_member_dns]
+            ou_member_uids = [
+                "{}$".format(explode_rdn(dn.decode("UTF-8"), True)[0]) for dn in ou_member_dns
+            ]
             ml = []
             if ou_member_dns:
                 ml.append(
                     (
                         "uniqueMember",
                         unique_member_attr,
-                        [dn for dn in unique_member_attr if dn not in ou_member_dns],
+                        [dn for dn in unique_member_attr if dn.decode("UTF-8") not in ou_member_dns],
                     )
                 )
             if ou_member_uids:
@@ -443,7 +445,7 @@ class UCSTestSchool(object):
                     (
                         "memberUid",
                         member_uid_attr,
-                        [uid for uid in member_uid_attr if uid not in ou_member_uids],
+                        [uid for uid in member_uid_attr if uid.decode("UTF-8") not in ou_member_uids],
                     )
                 )
             if ml:
