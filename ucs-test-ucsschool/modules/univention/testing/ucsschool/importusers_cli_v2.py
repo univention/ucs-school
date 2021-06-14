@@ -18,7 +18,7 @@ from collections import Mapping
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format
-from six import string_types
+from six import iteritems, string_types
 
 import univention.testing.strings as uts
 import univention.testing.ucr
@@ -452,7 +452,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
         if not config:
             config = copy.deepcopy(self.default_config)
         if values:
-            for config_option, value in values.iteritems():
+            for config_option, value in iteritems(values):
                 config.update_entry(config_option, value)
         with open(fn, "w") as fd:
             json.dump(config, fd)
@@ -478,7 +478,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
         else:
             header2properties = self.default_config["csv"]["mapping"]
 
-        properties2headers = {v: k for k, v in header2properties.iteritems()}
+        properties2headers = {v: k for k, v in iteritems(header2properties)}
 
         header_row = header2properties.keys()
         random.shuffle(header_row)
