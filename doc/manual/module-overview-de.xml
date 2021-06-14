@@ -115,8 +115,6 @@
 					Computer einer Schule einem Computerraum zugeordnet. Diese
 					Computerräume können von den Lehrern zentral verwaltet werden,
 					etwa indem der Internetzugang freigegeben wird.
-					Zum Ansprechen der Computer in einem Computerraum kann als Backend entweder <emphasis>iTALC</emphasis> oder
-					<emphasis>Veyon</emphasis> gewählt werden, je nach dem was auf den Windows Computern installiert ist.
 				</simpara>
 			</listitem>
 			<listitem>

@@ -359,7 +359,7 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 
     @property
     def veyon_backend(self):  # type: () -> bool
-        """True if the computerroom is configured to use the new veyon backend instead of italc."""
+        """True if the computerroom is configured to use the new veyon backend."""
         return (
             create_ucsschool_role_string(role_computer_room_backend_veyon, "-") in self.ucsschool_roles
         )

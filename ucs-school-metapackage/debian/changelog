@@ -1,3 +1,9 @@
+ucs-school-metapackage (13.0.3) unstable; urgency=medium
+
+  * Bug #53364: remove iTALC support
+
+ -- Florian Best <best@univention.de>  Mon, 14 Jun 2021 19:16:54 +0200
+
 ucs-school-metapackage (13.0.2) unstable; urgency=medium
 
   * Bug #52603: use systemctl to restart UDL in ucs-school-metapackage

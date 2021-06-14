@@ -39,19 +39,10 @@
 	daher nicht unterstützt.
   </para>
   <note>
-	<para>
-	In &ucsUAS; 4.4 v9 wird iTALC von Veyon abgelöst. iTALC wird bis UCS@school 5.0 weiterhin unterstützt. Wir empfehlen mit dem Umstieg auf Veyon so bald wie möglich zu starten.
-	Der parallele Betrieb von iTALC und Veyon wird unterstützt. Pro Computerraum müssen aber alle PCs auf eine von beiden Varianten eingestellt werden.
-	Die iTALC Dokumentation kann unter <ulink url="https://docs.software-univention.de/ucsschool-handbuch-4-4v8.html"/> abgerufen werden.
-  </para>
   <para>
 	Die App <emphasis>&ucsUAS; Veyon Proxy</emphasis> wird in Single-Server-Umgebungen,
 	sowie auf edukativen Schulservern automatisch installiert. Sie wird von &ucsUAS; angesprochen und ist nicht zur manuellen Verwendung gedacht.
 	Die App sollte nicht manuell deinstalliert werden.
-  </para>
-  <para>
-	Sollte sich noch eine iTALC Installation auf dem Windows Client befinden, muss diese zunächst deinstalliert werden,
-	damit Veyon verwendet werden kann.
   </para>
   </note>
 

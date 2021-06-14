@@ -77,18 +77,16 @@ def create_win_computer(school, lo):
     return _create_win_computer
 
 
-@pytest.mark.parametrize("is_veyon", [False, True])
-def test_veyon_setting(create_win_computer, school, is_veyon):
+def test_veyon_setting(create_win_computer, school):
     computer_dn = create_win_computer()
-    room = ComputerRoom(school[0], host_members=[computer_dn], teacher_computers=[], is_veyon=is_veyon)
+    room = ComputerRoom(school[0], host_members=[computer_dn], teacher_computers=[])
     room.add()
-    room.assert_backend_role(is_veyon)
+    room.assert_backend_role()
 
 
-@pytest.mark.parametrize("is_veyon", [False, True])
-def test_veyon_add_setting(create_win_computer, school, is_veyon):
+def test_veyon_add_setting(create_win_computer, school):
     computer_dn = create_win_computer()
-    room = ComputerRoom(school[0], host_members=[computer_dn], teacher_computers=[], is_veyon=is_veyon)
+    room = ComputerRoom(school[0], host_members=[computer_dn], teacher_computers=[])
     room.add()
-    room.put({"veyon": not is_veyon})
-    room.assert_backend_role(not is_veyon)
+    room.put({})
+    room.assert_backend_role()
