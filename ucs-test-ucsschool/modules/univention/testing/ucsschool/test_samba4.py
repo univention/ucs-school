@@ -56,8 +56,10 @@ class TestSamba4(object):
         stdout, stderr = proc.communicate(input=std_input)
 
         if stderr:
+            stderr = stderr.decode("UTF-8")
             stderr = self.remove_samba_warnings(stderr)
         if stdout:
+            stdout = stdout.decode("UTF-8")
             stdout = self.remove_samba_warnings(stdout)
 
         return stdout, stderr
