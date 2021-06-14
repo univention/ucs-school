@@ -16,6 +16,8 @@ import sys
 import tempfile
 import time
 
+from six import iteritems
+
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -39,7 +41,7 @@ class Bunch(object):
 
     def __str__(self):
         result = []
-        for key, value in self.__dict__.iteritems():
+        for key, value in iteritems(self.__dict__):
             result.append("%s=%r" % (key, value))
         return "Bunch(" + ", ".join(result) + ")"
 
