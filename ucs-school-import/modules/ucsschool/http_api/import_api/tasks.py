@@ -48,7 +48,7 @@ import time
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.exceptions import ObjectDoesNotExist
-from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from django_celery_results.models import TaskResult
 
 from ucsschool.importer.exceptions import (
     InitialisationError,
@@ -89,7 +89,7 @@ def run_import_job(task, importjob_id):
     importjob.status = JOB_STARTED
     runner.update_job_state(description="Initializing: 0%.")
     try:
-        task_result = TaskMeta.objects.get(task_id=importjob.task_id)
+        task_result = TaskResult.objects.get(task_id=importjob.task_id)
         importjob.result = task_result
     except ObjectDoesNotExist:
         logger.error(

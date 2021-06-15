@@ -153,8 +153,7 @@ Package: python-ucsschool-importer-http-api
 Architecture: all
 Depends:
  python-django (>=1.8),
- python-django-celery (>=3.1.16-1),
- python-django-filter (>=1.0.1-1),
+ python-django-filters (>=1.0.1-1),
  python-django-pam (>=1.2.0-1),
  python-djangorestframework (>= 3.4.0-2),
  python-pampy (>=1.8.2-1),
@@ -177,8 +176,8 @@ Package: python3-ucsschool-importer-http-api
 Architecture: all
 Depends:
  python3-django (>=1.8),
- python3-django-celery (>=3.1.16-1),
- python3-django-filter (>=1.0.1-1),
+ python3-django-celery-results,
+ python3-django-filters (>=1.0.1-1),
  python3-django-pam (>=1.2.0-1),
  python3-djangorestframework (>= 3.4.0-2),
  python3-pampy (>=1.8.2-1),
@@ -315,6 +314,7 @@ Package: ucs-school-celery
 Architecture: all
 Depends:
  python-celery,
+ python-celery-common,
  python3-celery,
  rabbitmq-server,
  ${misc:Depends},

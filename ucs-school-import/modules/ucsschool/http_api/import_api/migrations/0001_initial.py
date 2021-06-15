@@ -40,7 +40,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("djcelery", "__first__"),
+        ("django_celery_results", "__first__"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
                         blank=True,
-                        to="djcelery.TaskMeta",
+                        to="django_celery_results.TaskResult",
                     ),
                 ),
                 ("school", models.ForeignKey(to="import_api.School", blank=True)),
