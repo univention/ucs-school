@@ -130,7 +130,7 @@ Depends:
  python3-ucsschool-importer-http-api,
  ucs-school-import (= ${source:Version}),
  ucs-school-import-http-api-common (= ${source:Version}),
- univention-celery (>=1.0.0-1),
+ ucs-school-celery,
  univention-config,
  univention-postgresql,
  ${misc:Depends},
@@ -138,7 +138,6 @@ Recommends:
  ucs-school-umc-import,
 Conflicts:
  python-django-filters (<<1.0.0),
- python3-celery,
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .
@@ -309,3 +308,16 @@ Description: UCS@school: HTTP API documentation
  corporate environments. For more information about UCS,
  refer to: https://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: ucs-school-celery
+Architecture: all
+Depends:
+ python-celery,
+ python3-celery,
+ rabbitmq-server,
+ ${misc:Depends},
+Description: UCS@school Celery integration package
+ Code to administer and use Celery.
+ .
+ For more information about UCS,
+ refer to: https://www.univention.de/
