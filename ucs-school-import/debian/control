@@ -306,6 +306,7 @@ Homepage: https://www.univention.de/produkte/ucsschool/
 Package: ucs-school-celery
 Architecture: all
 Depends:
+ python-celery,
  python3-celery,
  rabbitmq-server,
  ${misc:Depends},
