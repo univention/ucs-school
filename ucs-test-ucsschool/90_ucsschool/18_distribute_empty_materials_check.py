@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Distribute empty project and check collection
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]

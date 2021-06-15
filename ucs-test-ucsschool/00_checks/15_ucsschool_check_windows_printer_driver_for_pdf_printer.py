@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Check windows printer driver default for PDF printer in UCS@school
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool]

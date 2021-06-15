@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## bugs: [40471]
 ## desc: Check that the group "Domain Users $SCHOOL" is connected to the policy "default-umc-users"
 ## exposure: dangerous
