@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -63,7 +64,7 @@ POSTGRES_PORT = "5432"
 RABBITMQ_VHOST = "importhttpapi"
 
 
-with open(os.path.join(CONF_DIR, "django_key.secret"), "rb") as fp:
+with open(os.path.join(CONF_DIR, "django_key.secret"), "r") as fp:
     SECRET_KEY = fp.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -86,7 +87,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django_pam",
     "rest_framework",
-    "djcelery",
+    "django_celery_results",
     "django_filters",
     "ucsschool.http_api.import_api",
 )
@@ -122,7 +123,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ucsschool.http_api.app.wsgi.application"
 
-with open(os.path.join(CONF_DIR, "postgres.secret"), "rb") as fp:
+with open(os.path.join(CONF_DIR, "postgres.secret"), "r") as fp:
     _postgres_pw = fp.read().strip()
 
 DATABASES = {
@@ -194,7 +195,7 @@ REST_FRAMEWORK = {
 
 
 # Celery settings
-with open(os.path.join(CONF_DIR, "rabbitmq.secret"), "rb") as fp:
+with open(os.path.join(CONF_DIR, "rabbitmq.secret"), "r") as fp:
     _celery_broker_credentials = fp.read().strip()
 
 BROKER_URL = "amqp://{}@localhost:5672/{}".format(_celery_broker_credentials, RABBITMQ_VHOST)
@@ -207,7 +208,7 @@ CELERY_EVENT_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ENABLE_UTC = True
-CELERY_RESULT_BACKEND = "djcelery.backends.database:DatabaseBackend"
+CELERY_RESULT_BACKEND = "django_celery_results.backends.database:DatabaseBackend"
 CELERY_TASK_RESULT_EXPIRES = 0
 CELERY_ROUTES = {
     "ucsschool.http_api.import_api.tasks.dry_run": {"queue": "dryrun"},

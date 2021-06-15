@@ -38,13 +38,14 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
+import json
 import logging
 import os
 
 import lazy_object_proxy
 from django.conf import settings
 from django.contrib.auth.models import User
-from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from django_celery_results.models import TaskResult
 from ldap.filter import filter_format
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError, PermissionDenied
@@ -64,7 +65,7 @@ except ImportError:
 
 class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = TaskMeta
+        model = TaskResult
         fields = ("status", "result", "date_done", "traceback")
         # exclude = (,)
         read_only_fields = (
@@ -78,7 +79,7 @@ class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
         # Internal representation of TaskResult.result isn't getting converted
         # automatically.
         res = super(TaskResultSerializer, self).to_representation(instance)
-        res["result"] = instance.result
+        res["result"] = json.loads(instance.result)
         # TODO: check if .result->status and .status match
         return res
 

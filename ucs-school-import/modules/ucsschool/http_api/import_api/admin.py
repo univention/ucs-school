@@ -39,7 +39,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from djcelery.models import TaskMeta
+from django_celery_results.models import TaskResult
 
 from .models import Logfile, PasswordsFile, School, SummaryFile, UserImportJob
 
@@ -98,7 +98,10 @@ class SummaryFileAdmin(ProxyModelFilterMixin, admin.ModelAdmin):
     pass
 
 
-@admin.register(TaskMeta)
+admin.site.unregister(TaskResult)
+
+
+@admin.register(TaskResult)
 class TaskMetaAdmin(UserQueryFilterMixin, admin.ModelAdmin):
     ordering = ("-id",)
 

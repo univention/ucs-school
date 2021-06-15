@@ -33,7 +33,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=3
+VERSION=4
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -182,24 +182,33 @@ else
 fi
 
 unset DJANGO_SETTINGS_MODULE
-python -m ucsschool.http_api.manage check --no-color --deploy || die
+python3 -m ucsschool.http_api.manage check --no-color --deploy || die
 echo "Collecting static files..."
-python -m ucsschool.http_api.manage collectstatic --no-color --noinput --link || die
+python3 -m ucsschool.http_api.manage collectstatic --no-color --noinput --link || die
 if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 	echo "Handling django-celerys upgrade (faking DB schema migration)..."
-	python -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial djcelery
+	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial djcelery
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 4 ]; then
+	echo "Upgrading schema from UCS@school 4.4 to UCS@school 5.0"
+	su - postgres -c "psql -d '$POSTGRES_DB' -c \"delete from django_migrations where app='import_api';\"" || die 'Failed removing django migrations'
+	python3 -m ucsschool.http_api.manage migrate --no-color --noinput django_celery_results || die 'Failed initializing django_celery_results'
+	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" DROP CONSTRAINT "import_api_userimportj_result_id_7383b884_fk_celery_taskmeta_id";'" || die 'Failed to drop djcelery constraint'
+	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" ADD CONSTRAINT "impor_result_id_7383b884_fk_django_celery_results_taskresult_id" FOREIGN KEY ("result_id") REFERENCES "django_celery_results_taskresult" ("id") DEFERRABLE INITIALLY DEFERRED;'" || die 'Failed to create django_celery_results constraint'
+	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial import_api
 fi
 echo "Migrating DB schema..."
-python -m ucsschool.http_api.manage migrate --no-color --noinput || die
-if python -m ucsschool.http_api.manage superuserexists "$ADMINISTRATOR_UID";
+python3 -m ucsschool.http_api.manage migrate --no-color --noinput || die
+if python3 -m ucsschool.http_api.manage superuserexists "$ADMINISTRATOR_UID";
 then
     printf "\nSuper user exists.\n"
 else
     printf "\nCreating super user...\n"
-    python -m ucsschool.http_api.manage createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
+    python3 -m ucsschool.http_api.manage createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
 fi
 echo "Seeding DB with School entries..."
-python -m ucsschool.http_api.manage updateschools --all
+python3 -m ucsschool.http_api.manage updateschools --all
 
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf

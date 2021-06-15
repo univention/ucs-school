@@ -39,17 +39,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    replaces = [
+        ("import_api", "0001_initial"),
+        ("import_api", "0002_auto_20180309_1104"),
+        ("import_api", "0003_auto_20180601_0848"),
+    ]
+
     dependencies = [
-        ("django_celery_results", "__first__"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("django_celery_results", "__first__"),
     ]
 
     operations = [
         migrations.CreateModel(
             name="School",
             fields=[
-                ("name", models.CharField(max_length=255, serialize=False, primary_key=True)),
-                ("displayName", models.CharField(max_length=255, blank=True)),
+                ("name", models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ("displayName", models.CharField(blank=True, max_length=255)),
             ],
         ),
         migrations.CreateModel(
@@ -58,13 +64,15 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
-                ("path", models.CharField(unique=True, max_length=255)),
+                ("path", models.CharField(max_length=255, unique=True)),
                 ("text", models.TextField(blank=True)),
             ],
-            options={"ordering": ("-pk",)},
+            options={
+                "ordering": ("-pk",),
+            },
         ),
         migrations.CreateModel(
             name="UserImportJob",
@@ -72,16 +80,14 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
-                        verbose_name="ID", serialize=False, auto_created=True, primary_key=True
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
                     ),
                 ),
                 ("dryrun", models.BooleanField(default=True)),
-                ("source_uid", models.CharField(max_length=255, blank=True)),
+                ("source_uid", models.CharField(blank=True, max_length=255)),
                 (
                     "status",
                     models.CharField(
-                        default="New",
-                        max_length=10,
                         choices=[
                             ("New", "New"),
                             ("Scheduled", "Scheduled"),
@@ -89,58 +95,85 @@ class Migration(migrations.Migration):
                             ("Aborted", "Aborted"),
                             ("Finished", "Finished"),
                         ],
+                        default="New",
+                        max_length=10,
                     ),
                 ),
                 (
                     "user_role",
                     models.CharField(
                         blank=True,
-                        max_length=20,
                         choices=[
                             ("staff", "staff"),
                             ("student", "student"),
                             ("teacher", "teacher"),
                             ("teacher_and_staff", "teacher_and_staff"),
                         ],
+                        max_length=20,
                     ),
                 ),
-                ("task_id", models.CharField(max_length=40, blank=True)),
+                ("task_id", models.CharField(blank=True, max_length=40)),
                 ("basedir", models.CharField(max_length=255)),
                 ("date_created", models.DateTimeField(auto_now_add=True)),
                 ("input_file", models.FileField(upload_to="uploads/%Y-%m-%d/")),
-                ("principal", models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                (
+                    "principal",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+                    ),
+                ),
                 (
                     "result",
                     models.OneToOneField(
+                        blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        blank=True,
                         to="django_celery_results.TaskResult",
                     ),
                 ),
-                ("school", models.ForeignKey(to="import_api.School", blank=True)),
+                (
+                    "school",
+                    models.ForeignKey(
+                        blank=True, on_delete=django.db.models.deletion.CASCADE, to="import_api.School"
+                    ),
+                ),
             ],
-            options={"ordering": ("pk",)},
+            options={
+                "ordering": ("pk",),
+            },
         ),
         migrations.CreateModel(
-            name="Logfile", fields=[], options={"proxy": True}, bases=("import_api.textartifact",)
+            name="Logfile",
+            fields=[],
+            options={
+                "proxy": True,
+            },
+            bases=("import_api.textartifact",),
         ),
         migrations.CreateModel(
             name="PasswordsFile",
             fields=[],
-            options={"proxy": True},
+            options={
+                "proxy": True,
+            },
             bases=("import_api.textartifact",),
         ),
         migrations.CreateModel(
-            name="SummaryFile", fields=[], options={"proxy": True}, bases=("import_api.textartifact",)
+            name="SummaryFile",
+            fields=[],
+            options={
+                "proxy": True,
+            },
+            bases=("import_api.textartifact",),
         ),
         migrations.AddField(
             model_name="userimportjob",
             name="log_file",
             field=models.OneToOneField(
+                blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                blank=True,
+                related_name="userimportjob_log_file",
                 to="import_api.Logfile",
             ),
         ),
@@ -148,9 +181,10 @@ class Migration(migrations.Migration):
             model_name="userimportjob",
             name="password_file",
             field=models.OneToOneField(
+                blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                blank=True,
+                related_name="userimportjob_password_file",
                 to="import_api.PasswordsFile",
             ),
         ),
@@ -158,10 +192,25 @@ class Migration(migrations.Migration):
             model_name="userimportjob",
             name="summary_file",
             field=models.OneToOneField(
+                blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                blank=True,
+                related_name="userimportjob_summary_file",
                 to="import_api.SummaryFile",
             ),
+        ),
+        migrations.CreateModel(
+            name="Role",
+            fields=[
+                ("name", models.CharField(max_length=255, primary_key=True, serialize=False)),
+                ("displayName", models.CharField(blank=True, max_length=255)),
+            ],
+            options={
+                "ordering": ("name",),
+            },
+        ),
+        migrations.AlterModelOptions(
+            name="school",
+            options={"ordering": ("name",)},
         ),
     ]
