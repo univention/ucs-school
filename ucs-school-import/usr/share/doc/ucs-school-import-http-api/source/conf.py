@@ -77,7 +77,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"UCS@school HTTP-API import documentation"
-copyright = u"2019, ucsschool-maintainers@univention.de"
+copyright = u"2019-2021, ucsschool-maintainers@univention.de"
 author = u"ucsschool-maintainers@univention.de"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -92,7 +92,7 @@ def get_deb_version():
     os.chdir(path)
     cmd = ["dpkg-parsechangelog", "-S", "version"]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()  # nosec
-    return out.strip()
+    return out.decode("utf-8").strip()
 
 
 # The short X.Y version.
