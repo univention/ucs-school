@@ -137,7 +137,6 @@ Recommends:
  ucs-school-umc-import,
 Conflicts:
  python-django-filters (<<1.0.0),
- python3-celery,
 Description: UCS@school: RESTful API for importing users
  This package provides a service for importing users using a RESTful HTTP API.
  .
