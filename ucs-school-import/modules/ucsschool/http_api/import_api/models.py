@@ -42,7 +42,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
+from django_celery_results.models import TaskResult
 from ldap.filter import filter_format
 
 import univention.admin.localization
@@ -332,7 +332,7 @@ class UserImportJob(models.Model):
     # TODO: user_role = models.ForeignKey(Role, blank=True)
 
     task_id = models.CharField(max_length=40, blank=True)
-    result = models.OneToOneField(TaskMeta, on_delete=models.SET_NULL, null=True, blank=True)
+    result = models.OneToOneField(TaskResult, on_delete=models.SET_NULL, null=True, blank=True)
     log_file = models.OneToOneField(
         Logfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="userimportjob_log_file"
     )
