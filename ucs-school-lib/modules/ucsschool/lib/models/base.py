@@ -30,6 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+import re
 import tempfile
 from copy import deepcopy
 
@@ -969,6 +970,9 @@ class UCSSchoolHelperAbstractClass(object):
         If filter_str is given, all udm properties with include_in_default_search are
         queried for that string (so that it should be the value)
         """
+        # replace 2 or more consecutive "*"-symbols from filter (Bug #53026)
+        if filter_str:
+            filter_str = re.sub(r"\*{2,}", "*", filter_str)
         cls.init_udm_module(lo)
         complete_filter = cls._meta.udm_filter
         if complete_filter and not complete_filter.startswith("("):
