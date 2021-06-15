@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Check ucschool ou consistency diagnostic tool
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]

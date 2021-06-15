@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: check availability of umc modules
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]

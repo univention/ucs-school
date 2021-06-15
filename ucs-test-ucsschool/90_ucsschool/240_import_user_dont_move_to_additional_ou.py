@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: when importing into an additional school with alphanum lower name the user is not moved
 ## tags: [apptest,ucsschool,ucsschool_import1]

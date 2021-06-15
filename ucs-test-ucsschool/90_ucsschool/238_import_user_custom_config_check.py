@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Test UcsSchoolImportSkipImportRecord by raising it in a PyHook
 ## tags: [apptest,ucsschool,ucsschool_import1]

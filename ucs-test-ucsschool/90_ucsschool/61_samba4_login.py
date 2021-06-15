@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Create an user and check the samba login
 ## roles:
 ##  - domaincontroller_master

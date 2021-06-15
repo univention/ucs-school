@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: ucs-school-printermoderator-module-check
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: do not modify group memberships if no group specified (Bug 42288)
 ## tags: [apptest,ucsschool,ucsschool_import1]

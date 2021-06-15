@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Check if the --no-delete option works as expected (Bug #41775, #41350)
 ## tags: [apptest,ucsschool,ucsschool_import1]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Check diagnostic tool ucschool slave groupmemberships
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]

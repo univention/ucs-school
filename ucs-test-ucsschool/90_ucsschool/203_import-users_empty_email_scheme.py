@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Test creation of email addresses from an empty scheme (Bug #45972)
 ## tags: [apptest,ucsschool,ucsschool_import1]

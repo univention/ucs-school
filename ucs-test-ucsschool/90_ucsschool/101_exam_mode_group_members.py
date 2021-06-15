@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Simple exam group memberUid & uniqueMember check
 ## roles: [domaincontroller_master, domaincontroller_slave]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -lsv
+#!/usr/share/ucs-test/runner /usr/bin/pytest -lsv
 ## -*- coding: utf-8 -*-
 ## desc: markplatz share creation check
 ## roles: [domaincontroller_master]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Check the consistency of exam users in unix, ldap and the ownership of their home directories
 ## roles: [domaincontroller_master, domaincontroller_slave]

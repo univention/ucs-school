@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Test configurability feature of import factory
 ## tags: [apptest,ucsschool,ucsschool_base1]

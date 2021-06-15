@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Make sure :umlauts work as expected
 ## tags: [apptest,ucsschool,ucsschool_import1]

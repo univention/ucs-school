@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Check ucschool import counter diagnose module
 ## tags: [ucsschool, diagnostic_test]
 ## roles: [domaincontroller_master]

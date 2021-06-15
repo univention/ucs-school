@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Test username scheme with <:lower> and [COUNTER2] (Bug 41645)
 ## tags: [apptest,ucsschool,ucsschool_import1]

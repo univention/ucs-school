@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 # -*- coding: utf-8 -*-
 ## desc: schoolwizards/school/create
 ## roles: [domaincontroller_master]

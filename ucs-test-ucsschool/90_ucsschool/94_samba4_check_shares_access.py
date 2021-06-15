@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Test the DC Locator Master shares access from DC-Slave.
 ## bugs: [34224, 37977]
 ## roles:

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: remove illegal characters from username (Bug 42313)
 ## tags: [apptest,ucsschool,ucsschool_import1]
