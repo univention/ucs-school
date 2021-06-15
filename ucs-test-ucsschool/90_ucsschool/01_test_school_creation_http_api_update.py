@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Modify ucrv on school creation/deletion
 ## roles: [domaincontroller_master, domaincontroller_backup]
