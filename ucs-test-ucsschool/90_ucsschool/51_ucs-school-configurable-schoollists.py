@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Test umc calls to generate school class lists with altered attributes.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Check diagnostic tool 904_ucsschool_remove_from_school_consistenceny
 ## tags: [ucsschool, diagnostic_test]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Check if a new user gets a domain sid
 ## tags: [apptest,ucsschool,ucsschool_base1]

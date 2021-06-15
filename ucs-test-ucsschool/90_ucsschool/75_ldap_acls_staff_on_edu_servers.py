@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 # coding=utf-8
 ## desc: check if staff users can optionally be replicated to edu slaves
 ## roles: [domaincontroller_slave]

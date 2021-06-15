@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Unittests for veyon multiple ips and macs
 ## roles: [domaincontroller_master, domaincontroller_slave]

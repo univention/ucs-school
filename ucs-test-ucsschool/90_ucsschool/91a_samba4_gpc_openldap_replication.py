@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Test the Samba4 GPC objects and links replication from DC-Slave to DC-Master OpenLDAP.
 ## bugs: [34214]
 ## roles: [domaincontroller_slave]

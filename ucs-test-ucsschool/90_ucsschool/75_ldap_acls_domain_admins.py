@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 # coding=utf-8
 ## desc: users in domain admin group & OC ucsschoolAdministrator can create school & non-school users
 ## roles: [domaincontroller_master]

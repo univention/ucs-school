@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: ucs-school-webproxy - pupilgroups listener updates UCRVs
 ## roles: [domaincontroller_slave]
 ## tags: [SKIP-UCSSCHOOL,apptest,ucsschool,ucsschool_base1]

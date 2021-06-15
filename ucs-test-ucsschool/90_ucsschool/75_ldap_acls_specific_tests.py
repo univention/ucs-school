@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 # coding=utf-8
 ## desc: check specific LDAP access permissions
 ## roles: [domaincontroller_master]

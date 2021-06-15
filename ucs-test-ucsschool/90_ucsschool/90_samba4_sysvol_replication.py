@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Test the Samba SYSVOL replication with multi-school domain setup
 ## bugs: [34225]
 ## roles: [domaincontroller_slave, domaincontroller_backup]

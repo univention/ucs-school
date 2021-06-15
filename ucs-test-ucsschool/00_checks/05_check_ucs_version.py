@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Check if UCS 4.4 is installed
 ## tags: [apptest,ucsschool]
 ## exposure: safe

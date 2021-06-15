@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Import printers via CLI
 ## tags: [apptest,ucsschool,ucsschool_import1]

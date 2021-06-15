@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Verify that checks on existing usernames are executed in dry-run
 ## tags: [apptest,ucsschool,ucsschool_import1]

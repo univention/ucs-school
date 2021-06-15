@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Test creation of usernames from a special username scheme (Bug #41243, #41244)
 ## tags: [apptest,ucsschool,ucsschool_import1]

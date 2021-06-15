@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: test --no-delete option and force mode=D (Bug 41775, 41350)
 ## tags: [apptest,ucsschool,ucsschool_import1]

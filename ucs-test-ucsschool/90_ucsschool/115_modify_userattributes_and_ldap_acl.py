@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## desc: Self service user attributes ACL generation and enforcement
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles:

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Import users without class via legacy CLI
 ## tags: [apptest,ucsschool,ucsschool_import2]
