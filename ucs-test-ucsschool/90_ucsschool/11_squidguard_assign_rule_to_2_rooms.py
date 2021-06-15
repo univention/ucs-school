@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Check if an internet rule may be assigned to 2 rooms
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## bugs: [32544]

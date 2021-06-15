@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -s -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -s -l -v
 ## desc: Test umc calls to generate school class lists with altered attributes.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
