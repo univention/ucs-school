@@ -82,7 +82,7 @@ def main():
                 ]
             )
             handler_unset(["squid/ntlmauth/keepalive"])
-            subprocess.Popen(["/etc/init.d/squid", "restart"], stdin=subprocess.PIPE).communicate()
+            subprocess.call(["systemctl", "restart", "squid"])
             with utu.UCSTestSchool() as schoolenv:
                 school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
                 stu, studn = schoolenv.create_user(school)
@@ -123,7 +123,7 @@ def main():
                 authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
                 authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
     finally:
-        subprocess.Popen(["/etc/init.d/squid", "restart"], stdin=subprocess.PIPE).communicate()
+        subprocess.call(["systemctl", "restart", "squid"])
 
 
 if __name__ == "__main__":
