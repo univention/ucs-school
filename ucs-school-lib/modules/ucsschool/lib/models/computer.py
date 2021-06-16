@@ -394,8 +394,6 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             return WindowsComputer
         if "univentionMacOSClient" in object_classes:
             return MacComputer
-        if "univentionCorporateClient" in object_classes:
-            return UCCComputer
         if "univentionClient" in object_classes:
             return IPComputer
 
@@ -470,12 +468,4 @@ class IPComputer(RoleSupportMixin, SchoolComputer):
 
     class Meta(SchoolComputer.Meta):
         udm_module = "computers/ipmanagedclient"
-        hook_path = "computer"
-
-
-class UCCComputer(SchoolComputer):
-    type_name = _("Univention Corporate Client")
-
-    class Meta(SchoolComputer.Meta):
-        udm_module = "computers/ucc"
         hook_path = "computer"

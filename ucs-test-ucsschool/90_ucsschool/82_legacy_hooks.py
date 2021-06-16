@@ -85,7 +85,6 @@ EXPECTED_CLASSES = [
     "Student",
     "Teacher",
     "TeachersAndStaff",
-    "UCCComputer",
     "UMCPolicy",
     "User",
     "WindowsComputer",
@@ -149,7 +148,6 @@ class TestLegacyHooksMeta(type):
                 "ImportUser",
                 "LegacyImportUser",
                 "SchoolComputer",
-                "UCCComputer",
                 "User",
             ):
                 logger.debug("Model %r not meant to be used directly, skipping.", model.__name__)
