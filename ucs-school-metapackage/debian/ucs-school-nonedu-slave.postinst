@@ -92,7 +92,7 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.0-6; then
 		else
 			ucr unset connector/s4/mapping/user/ignorelist
 		fi
-		[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
+		systemctl try-restart univention-s4-connector || true
 	fi
 	IFS="$OIFS"
 fi
@@ -100,7 +100,7 @@ fi
 # Bug 52049: deactivate sync of msgpipsec, msgpsi
 if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 12.0.3-7; then
 	ucr unset connector/s4/mapping/msgpipsec connector/s4/mapping/msgpsi
-	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
+	systemctl try-restart univention-s4-connector || true
 fi
 
 call_joinscript 00ucs-school-app-version-check.inst
