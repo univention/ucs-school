@@ -33,6 +33,6 @@
 #DEBHELPER#
 
 # conditional restart of univention directory listener
-/etc/init.d/univention-directory-listener crestart
+systemctl try-restart univention-directory-listener
 
 exit 0

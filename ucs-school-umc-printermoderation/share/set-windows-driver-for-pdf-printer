@@ -81,7 +81,7 @@ member: $s4_host_dn
 				udm groups/group modify "$@" --ignore_exists \
 					--dn "cn=$group,cn=groups,$ldap_base" \
 					--append hosts="$ldap_hostdn" || exit $?
-				test -x /etc/init.d/nscd && invoke-rc.d nscd restart
+				systemctl restart nscd.service
 				remove="$group"
 			fi
 		fi
