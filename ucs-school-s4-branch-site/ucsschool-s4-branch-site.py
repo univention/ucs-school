@@ -52,7 +52,9 @@ from ucsschool.lib.schoolldap import SchoolSearchBase
 sys.dont_write_bytecode = True
 # import s4-connector listener module code, but don't generate pyc file
 s4_connector_listener_path = "/usr/lib/univention-directory-listener/system/s4-connector.py"
-s4_connector_listener = imp.load_source("s4_connector", s4_connector_listener_path)
+spec = importlib.util.spec_from_file_location('s4-connector', s4_connector_listener_path)
+s4_connector_listener = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(s4_connector_listener)
 
 # Listener registration data
 name = "ucsschool-s4-branch-site"
