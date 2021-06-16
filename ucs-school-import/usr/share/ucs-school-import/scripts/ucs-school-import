@@ -169,13 +169,15 @@ TYPE_DC_EDUCATIONAL = "educational"
 default_prefixlen = 24
 
 if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff):
-    print("""ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
+    print(
+        """ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
     ucsschool/ldap/default/container/pupils
     ucsschool/ldap/default/container/teachers
     ucsschool/ldap/default/container/teachers-and-staff
     ucsschool/ldap/default/container/staff
     ucsschool/ldap/default/container/admins
-""")
+"""
+    )
     sys.exit(1)
 
 
@@ -412,8 +414,10 @@ def extract_district(schoolNr):
         return schoolNr[:2]
     except IndexError:
         # TODO: add more debug output
-        print("ERROR: Unable to extract district from school number: %s' % schoolNr + \
-            '\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable")
+        print(
+            "ERROR: Unable to extract district from school number: %s' % schoolNr + \
+            '\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable"
+        )
 
 
 def getDN(schoolNr, base="school", basedn=baseDN):
@@ -431,7 +435,10 @@ def getDN(schoolNr, base="school", basedn=baseDN):
     if district_enabled:
         district = extract_district(schoolNr)
         if not district:
-            print("ERROR: Unable to continue execution without district number. School number: %s" % schoolNr)
+            print(
+                "ERROR: Unable to continue execution without district number. School number: %s"
+                % schoolNr
+            )
             sys.exit(1)
         values["district"] = "ou=%s," % district
     if base == "district":
@@ -719,10 +726,13 @@ def create_school_ou(
                     getDN(schoolNr),
                 )
             else:
-                print('WARNING: sharefileserver "%s" not found! Using "%s" as sharefileserver' % (
-                    ShareFileServer,
-                    configRegistry.get("hostname"),
-                ))
+                print(
+                    'WARNING: sharefileserver "%s" not found! Using "%s" as sharefileserver'
+                    % (
+                        ShareFileServer,
+                        configRegistry.get("hostname"),
+                    )
+                )
                 ShareFileServer = configRegistry.get("ldap/hostdn")
         else:
             # use found dn
@@ -927,11 +937,17 @@ def create_school_ou(
                 # manual dc name has been specified by user
 
                 if not is_master_or_backup and not is_slave:
-                    print("WARNING: given system name %s is already in use and no domaincontroller system. Please choose another name" % dcName)
+                    print(
+                        "WARNING: given system name %s is already in use and no domaincontroller system. Please choose another name"
+                        % dcName
+                    )
                     sys.exit(1)
 
                 if is_master_or_backup and is_slave:
-                    print("ERROR: implementation error: %s seems to be dc slave and dc master at the same time" % dcName)
+                    print(
+                        "ERROR: implementation error: %s seems to be dc slave and dc master at the same time"
+                        % dcName
+                    )
                     sys.exit(1)
 
                 if len(slaveobjs) > 1:
@@ -1128,10 +1144,13 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
                 )
                 interfaces.append(address)
             except ValueError, error:
-                print("Skipping invalid interface %s:\n%s" % (
-                    interface_name,
-                    error,
-                ))
+                print(
+                    "Skipping invalid interface %s:\n%s"
+                    % (
+                        interface_name,
+                        error,
+                    )
+                )
         objects = lo.searchDn(filter="(objectClass=univentionDhcpSubnet)", base=dhcpServerContainer)
         for objectDN in objects:
             object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position="", dn=objectDN)
@@ -1143,15 +1162,21 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
                     filter="(&(objectClass=univentionDhcpSubnet)(cn=%s))" % object["subnet"],
                     base=position.getDn(),
                 ):
-                    print("do not need to copy dhcp subnet %s: %s (target already exists)" % (
-                        subnet,
-                        object.dn,
-                    ))
+                    print(
+                        "do not need to copy dhcp subnet %s: %s (target already exists)"
+                        % (
+                            subnet,
+                            object.dn,
+                        )
+                    )
                 else:
-                    print("need to copy dhcp subnet %s: %s" % (
-                        subnet,
-                        object.dn,
-                    ))
+                    print(
+                        "need to copy dhcp subnet %s: %s"
+                        % (
+                            subnet,
+                            object.dn,
+                        )
+                    )
                     newobject = dhcp_subnet_module.object(
                         co, lo, position=position, superordinate=dhcp_service_object
                     )
@@ -1162,10 +1187,13 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
                     try:
                         create_object(newobject)
                     except:
-                        print("Failed to copy dhcp subnet %s to %s" % (
-                            object.dn,
-                            position.getDn(),
-                        ))
+                        print(
+                            "Failed to copy dhcp subnet %s to %s"
+                            % (
+                                object.dn,
+                                position.getDn(),
+                            )
+                        )
                         problem_hints = (
                             problem_hints + "there were problems verifying this ou %s\n" % schoolNr
                         )
@@ -1404,7 +1432,10 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
             if (
                 len(ou_attr_LDAPAccessWrite) > 1
             ):  # TODO FIXME This doesn't look correct to me - ou_attr_LDAPAccessWrite is a dict and not a list!
-                print("WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s" % schoolNr)
+                print(
+                    "WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s"
+                    % schoolNr
+                )
 
         # build fqdn of alternative server and set serverfqdn
         if alternativeServer_dn:
@@ -1515,7 +1546,7 @@ def verify_group(
             create_what = "school class"
         else:
             create_what = "group"
-        print ("need to create {} {}".format(create_what, position_dn))
+        print("need to create {} {}".format(create_what, position_dn))
         position = univention.admin.uldap.position(base)
         position.setDn(position_dn[string.find(position_dn, ",") + 1 :])
         object = group_module.object(co, lo, position, superordinate=superordinate)
@@ -1913,7 +1944,7 @@ def import_user():
                 print("Skipping empty line")
                 continue
 
-            print("Processing line %d: %s" % (linecnt, line), end=' ')
+            print("Processing line %d: %s" % (linecnt, line), end=" ")
             try:
                 main_person = ucsschool_person_modify(line)
             except:
@@ -2011,7 +2042,7 @@ def import_user():
                                 success = False
                         else:
                             try:
-                                print("WARNING: user to modify not found, ", end=' ')
+                                print("WARNING: user to modify not found, ", end=" ")
                                 result = create_user(person, baseDN, user_module, passwd, OUT, line)
                             except:
                                 msg = "ERROR: There were problems creating this user: " + str(
@@ -2326,10 +2357,13 @@ def import_networks(router_only=False):
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
                     continue
-                print("WARNING: no netmask specified for network %s using %s" % (
-                    network.network,
-                    network.netmask,
-                ))
+                print(
+                    "WARNING: no netmask specified for network %s using %s"
+                    % (
+                        network.network,
+                        network.netmask,
+                    )
+                )
             else:
                 try:
                     network = ipaddr.IPv4Network(network)
@@ -2526,9 +2560,9 @@ def set_policy_for_dhcp_subnet(
                 dhcp_subnet_object = dhcp_subnet
 
     if not dhcp_subnet_object:
-        print("ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % (
-            dhcp_subnet,
-        ))
+        print(
+            "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % (dhcp_subnet,)
+        )
         return (False, dn)
 
     objects = univention.admin.modules.lookup(
@@ -2581,10 +2615,13 @@ def set_policy_for_dhcp_subnet(
 
             lob = lo.get(dhcp_subnet_object.dn, ["univentionPolicyReference"])
             if policy_object.dn not in lob.get("univentionPolicyReference", []):
-                print("connecting dhcp subnet (%s) with policy (%s)" % (
-                    dhcp_subnet_object.dn,
-                    policy_object.dn,
-                ))
+                print(
+                    "connecting dhcp subnet (%s) with policy (%s)"
+                    % (
+                        dhcp_subnet_object.dn,
+                        policy_object.dn,
+                    )
+                )
                 lo.modify(dhcp_subnet_object.dn, [("univentionPolicyReference", "", policy_object.dn)])
         except:
             print("WARNING: Error modifying policy %s" % policy_object.dn)
@@ -2690,7 +2727,7 @@ def import_computer():
                 print("Skipping empty line")
                 continue
 
-            print("Processing line %d: %s" % (linecnt, line), end=' ')
+            print("Processing line %d: %s" % (linecnt, line), end=" ")
             parsed = line.strip("\r\n").split(sepchar)
             ctype = parsed[0]
             name = parsed[1].lower()
@@ -2754,11 +2791,14 @@ def import_computer():
                     print("computer %s already exists (school %s)" % (name, schoolNr))
                     success = False
                 elif check_macAddress(MAC):
-                    print("mac %s for computer %s already used (school %s)" % (
-                        MAC,
-                        name,
-                        schoolNr,
-                    ))
+                    print(
+                        "mac %s for computer %s already used (school %s)"
+                        % (
+                            MAC,
+                            name,
+                            schoolNr,
+                        )
+                    )
                     success = False
                 else:
                     print("generate computer %s (school %s)" % (name, schoolNr))
@@ -3098,11 +3138,11 @@ def activate_groupmembers():
 
                     memberobj["disabled"] = disabled
 
-                    print(memberdn, end=' ')
+                    print(memberdn, end=" ")
                     if status == 0:
-                        print("deactivated", end=' ')
+                        print("deactivated", end=" ")
                     else:
-                        print("activated", end=' ')
+                        print("activated", end=" ")
 
                     passwd = "*"
                     if chpasswd:
@@ -3110,7 +3150,7 @@ def activate_groupmembers():
                         memberobj["password"] = passwd
                         memberobj["overridePWHistory"] = "1"
                         memberobj["overridePWLength"] = "1"
-                        print("and set random password", end=' ')
+                        print("and set random password", end=" ")
 
                     memberobj.modify()
 
@@ -3500,18 +3540,24 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
         group_module, co, lo, scope="sub", base=baseDN, filter=group_filter
     )
     if not groups:
-        print('ERROR: cannot move domaincontroller slave with hostname "%s" to OU "%s"' % (
-            options.dcname,
-            options.ou,
-        ))
+        print(
+            'ERROR: cannot move domaincontroller slave with hostname "%s" to OU "%s"'
+            % (
+                options.dcname,
+                options.ou,
+            )
+        )
         print("ERROR: The system has no LDAP access to the OU")
         sys.exit(1)
 
     if slave.dn.endswith(",%s" % ouDn):
-        print('domaincontroller slave "%s" is already located below ou "%s" - stopping here' % (
-            options.dcname,
-            options.ou,
-        ))
+        print(
+            'domaincontroller slave "%s" is already located below ou "%s" - stopping here'
+            % (
+                options.dcname,
+                options.ou,
+            )
+        )
         sys.exit(0)
 
     REis_in_ou = re.compile("^.+,ou=[^,]+,%s$" % baseDN)
@@ -3524,7 +3570,10 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
     cnDn = "cn=dc,cn=server,cn=computers,%s" % (getDN(options.ou),)
     containers = univention.admin.modules.lookup(cn_module, co, lo, scope="base", base=cnDn)
     if not containers:
-        print("ERROR: cannot move domaincontroller slave object - target container does not exist: %s" % cnDn)
+        print(
+            "ERROR: cannot move domaincontroller slave object - target container does not exist: %s"
+            % cnDn
+        )
         sys.exit(1)
 
     oldDn = slave.dn
@@ -3597,7 +3646,9 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
     if dc_type == TYPE_DC_ADMINISTRATIVE and not configRegistry.is_true(
         "ucsschool/ldap/noneducational/create/objects", True
     ):
-        print("ERROR: cannot create administrative DC - noneducational objects disabled via ucsschool/ldap/noneducational/create/objects")
+        print(
+            "ERROR: cannot create administrative DC - noneducational objects disabled via ucsschool/ldap/noneducational/create/objects"
+        )
         sys.exit(1)
 
     if not dc_name or not is_valid_hostname(dc_name):
@@ -3651,16 +3702,22 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
         filter=univention.admin.filter.expression("cn", dc_name),
     )
     if host_objects and not slave_objects:
-        print('ERROR: given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.' % dc_name)
+        print(
+            'ERROR: given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.'
+            % dc_name
+        )
         sys.exit(1)
 
     if slave_objects:
         # slave object does exist
         if len(slave_objects) > 1:
-            print("ERROR: more than one domaincontroller slave with cn=%s found in LDAP: %r" % (
-                dc_name,
-                slave_objects,
-            ))
+            print(
+                "ERROR: more than one domaincontroller slave with cn=%s found in LDAP: %r"
+                % (
+                    dc_name,
+                    slave_objects,
+                )
+            )
             sys.exit(1)
 
         slave_object = slave_objects[0]
@@ -3862,7 +3919,10 @@ Arguments:
                 filter="(&(objectClass=univentionHost)(cn=%s))" % options.ShareFileServer, base=baseDN
             )
             if not objects:
-                print('ERROR: cannot find share server object with given name "%s"' % options.ShareFileServer)
+                print(
+                    'ERROR: cannot find share server object with given name "%s"'
+                    % options.ShareFileServer
+                )
                 sys.exit(1)
 
         # In a single server environment the default school DC is the master
