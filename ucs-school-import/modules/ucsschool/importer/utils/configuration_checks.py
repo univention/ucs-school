@@ -117,7 +117,7 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
     for kls in config_check_classes:
         cc = kls(config)
         test_methods = inspect.getmembers(
-            cc, lambda x: inspect.ismethod(x) and x.func_name.startswith("test_")
+            cc, lambda x: inspect.ismethod(x) and x.__name__.startswith("test_")
         )
         test_methods.sort(key=itemgetter(0))
         for name, method in test_methods:

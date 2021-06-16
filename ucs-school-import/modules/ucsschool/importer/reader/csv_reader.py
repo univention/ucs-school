@@ -33,6 +33,7 @@ CSV reader for CSV files using the new import format.
 """
 
 import codecs
+from io import IOBase
 import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 
@@ -99,10 +100,15 @@ class CsvReader(BaseReader):
         :return: encoding of filename_or_file
         :rtype: str
         """
+        try:
+            FileType = file
+        except NameError:
+            FileType = IOBase
+
         if isinstance(filename_or_file, string_types):
             with open(filename_or_file, "rb") as fp:
                 txt = fp.read()
-        elif isinstance(filename_or_file, file):
+        elif isinstance(filename_or_file, FileType):
             old_pos = filename_or_file.tell()
             txt = filename_or_file.read()
             filename_or_file.seek(old_pos)
@@ -110,6 +116,7 @@ class CsvReader(BaseReader):
             raise ValueError(
                 'Argument "filename_or_file" has unknown type {!r}.'.format(type(filename_or_file))
             )
+
         if hasattr(magic, "from_file"):
             encoding = magic.Magic(mime_encoding=True).from_buffer(txt)
         elif hasattr(magic, "detect_from_filename"):

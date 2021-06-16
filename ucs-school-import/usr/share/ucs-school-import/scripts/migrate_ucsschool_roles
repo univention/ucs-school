@@ -237,7 +237,7 @@ class UcsSchoolRolesMigration(object):
                 "school",
                 [create_ucsschool_role_string(role_school, school)],
                 School(name=school).dn,
-                "ucsschoolOrganizationalUnit",
+                b"ucsschoolOrganizationalUnit",
             )
 
             if self.search_school_groups:

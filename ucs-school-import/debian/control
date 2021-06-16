@@ -127,6 +127,7 @@ Architecture: all
 Depends:
  gunicorn (>=19.0-1),
  python-ucsschool-importer-http-api (>= 17.0.65),
+ python3-ucsschool-importer-http-api,
  ucs-school-import (= ${source:Version}),
  ucs-school-import-http-api-common (= ${source:Version}),
  ucs-school-celery,
@@ -194,6 +195,7 @@ Package: ucs-school-import-http-api-client
 Architecture: all
 Depends:
  python-ucsschool-importer-http-api-client (>= 17.0.65),
+ python3-ucsschool-importer-http-api-client,
  ucs-school-import-http-api-common (= ${source:Version}),
  ${misc:Depends},
 Description: UCS@school: Python client library for the US@school API
@@ -211,6 +213,9 @@ Depends:
  python-magic,
  python-requests,
  python-univention-config-registry,
+ python3-magic,
+ python3-requests,
+ python3-univention-config-registry,
  ucs-school-import-http-api-common (= ${source:Version}),
  ${misc:Depends},
 Breaks:
@@ -247,6 +252,7 @@ Package: ucs-school-import-http-api-common
 Architecture: all
 Depends:
  python-ucsschool-importer-http-api-common (>= 17.0.65),
+ python3-ucsschool-importer-http-api-common,
  ${misc:Depends},
 Replaces:
  ucs-school-import-http-api (<< 17.0.6-15),
