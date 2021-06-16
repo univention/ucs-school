@@ -24,10 +24,6 @@ msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready_de.jpg"
 msgid "A different user is already running a computer room session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:202
-msgid "Action unavailable for UCC clients."
-msgstr "Aktion nicht verfügbar für UCC-Klienten."
-
 #: umc/python/computerroom/__init__.py:710
 msgid ""
 "In this room an exam is currently already written. Please select another "

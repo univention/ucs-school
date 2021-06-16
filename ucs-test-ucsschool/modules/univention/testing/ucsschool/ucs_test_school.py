@@ -1184,9 +1184,6 @@ class UCSTestSchool(object):
     def create_mac(self):
         pass
 
-    def create_ucc(self):
-        pass
-
     def create_ip_managed_client(self):
         pass
 
