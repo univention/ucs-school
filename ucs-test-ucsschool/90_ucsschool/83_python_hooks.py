@@ -86,7 +86,6 @@ EXPECTED_CLASSES = {
     "Student": "ucsschool.lib.models.user",
     "Teacher": "ucsschool.lib.models.user",
     "TeachersAndStaff": "ucsschool.lib.models.user",
-    "UCCComputer": "ucsschool.lib.models.computer",
     "UMCPolicy": "ucsschool.lib.models.policy",
     "User": "ucsschool.lib.models.user",
     "WindowsComputer": "ucsschool.lib.models.computer",
@@ -102,7 +101,6 @@ CLASSES_NOT_FOR_INSTANTIATION = (
     "LegacyImportUser",
     "SchoolComputer",
     "Share",
-    "UCCComputer",
     "User",
 )
 
