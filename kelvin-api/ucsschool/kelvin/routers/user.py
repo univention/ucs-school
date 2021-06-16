@@ -65,7 +65,7 @@ from ..exceptions import UnknownUDMProperty
 from ..import_config import get_import_config, init_ucs_school_import_framework
 from ..ldap_access import LDAPAccess
 from ..opa import OPAClient, import_user_to_opa
-from ..token_auth import oauth2_scheme
+from ..token_auth import get_token
 from ..urls import url_to_name
 from .base import (
     APIAttributesMixin,
@@ -452,7 +452,7 @@ async def search(  # noqa: C901
     logger: logging.Logger = Depends(get_logger),
     accepted_properties: Set[str] = Depends(accepted_udm_properties),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> List[UserModel]:
     """
     Search for school users.
@@ -571,7 +571,7 @@ async def get(
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> UserModel:
     """
     Fetch a specific school user.
@@ -609,7 +609,7 @@ async def create(
     ),
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> UserModel:
     """
     Create a school user with all the information:
@@ -795,7 +795,7 @@ async def partial_update(  # noqa: C901
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> UserModel:
     """
     Patch a school user with partial information
@@ -906,7 +906,7 @@ async def complete_update(  # noqa: C901
     request: Request,
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> UserModel:
     """
     Update a school user with all the information:
@@ -1025,7 +1025,7 @@ async def delete(
     username: str,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> Response:
     """
     Delete a school user

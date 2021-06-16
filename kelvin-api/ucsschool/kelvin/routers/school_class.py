@@ -36,7 +36,7 @@ from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
 from ..opa import OPAClient
-from ..token_auth import oauth2_scheme
+from ..token_auth import get_token
 from ..urls import name_from_dn, url_to_dn, url_to_name
 from .base import APIAttributesMixin, UcsSchoolBaseModel, get_lib_obj, get_logger, udm_ctx
 
@@ -153,7 +153,7 @@ async def search(
         title="name",
     ),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> List[SchoolClassModel]:
     """
     Search for school classes.
@@ -190,7 +190,7 @@ async def get(
     school: str,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolClassModel:
     if not await OPAClient.instance().check_policy_true(
         policy="classes",
@@ -212,7 +212,7 @@ async def create(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolClassModel:
     """
     Create a school class with all the information:
@@ -259,7 +259,7 @@ async def partial_update(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolClassModel:
     if not await OPAClient.instance().check_policy_true(
         policy="classes",
@@ -307,7 +307,7 @@ async def complete_update(
     request: Request,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolClassModel:
     if not await OPAClient.instance().check_policy_true(
         policy="classes",
@@ -360,7 +360,7 @@ async def delete(
     school: str,
     request: Request,
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> Response:
     if not await OPAClient.instance().check_policy_true(
         policy="classes",

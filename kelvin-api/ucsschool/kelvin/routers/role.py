@@ -47,7 +47,7 @@ from ucsschool.lib.roles import (
 
 from ..import_config import init_ucs_school_import_framework
 from ..opa import OPAClient
-from ..token_auth import oauth2_scheme
+from ..token_auth import get_token
 
 router = APIRouter()
 _roles_to_class = {}
@@ -121,7 +121,7 @@ class RoleModel(BaseModel):
 @router.get("/", response_model=List[RoleModel])
 async def search(
     request: Request,
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> List[RoleModel]:
     """
     List all available roles.
@@ -154,7 +154,7 @@ async def get(
         alias="name",
         title="name",
     ),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> RoleModel:
     if not await OPAClient.instance().check_policy_true(
         policy="roles",
