@@ -6,7 +6,6 @@ Build-Depends:
  debhelper-compat (= 12),
  dh-python,
  ucslint,
- univention-config-dev,
 
 Package: ucs-school-radius-802.1x
 Architecture: any
