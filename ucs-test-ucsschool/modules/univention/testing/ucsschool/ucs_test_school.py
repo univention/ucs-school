@@ -961,7 +961,7 @@ class UCSTestSchool(object):
         schools = schools if schools else [ou_name]
         assert ou_name in schools
         groups = [
-            "cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, self.LDAP_BASE) for school in schools
+            u"cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, self.LDAP_BASE) for school in schools
         ]
         if is_staff is None:
             is_staff = random.choice((True, False))
@@ -1028,7 +1028,7 @@ class UCSTestSchool(object):
         password="univention",  # type: Optional[str]
     ):  # type: (...) -> Tuple[str, str]
         position = "cn=admins,cn=users,%s" % (self.get_ou_base_dn(ou_name))
-        groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
+        groups = [u"cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
         if username is None:
             username = uts.random_username()
         kwargs = {
