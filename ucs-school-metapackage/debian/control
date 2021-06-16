@@ -22,6 +22,7 @@ Conflicts:
  libitalc-dev,
  python-italc,
  ucs-school-singlemaster,
+ ucs-school-ucc-integration,
  ucs-school-umc-csv-import,
 Breaks:
  ucs-school-umc-csv-import,
@@ -85,6 +86,7 @@ Conflicts:
  libitalc,
  libitalc-dev,
  python-italc,
+ ucs-school-ucc-integration,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python-univention (>= 6.0.21-1),
@@ -116,7 +118,6 @@ Depends:
 Recommends:
  ucs-school-branding,
  ucs-school-portal-entry,
- ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
@@ -151,6 +152,7 @@ Conflicts:
  libitalc-dev,
  python-italc,
  ucs-school-master,
+ ucs-school-ucc-integration,
  ucs-school-umc-csv-import,
 Replaces:
  ucs-school-umc-csv-import,
@@ -190,7 +192,6 @@ Recommends:
  ucs-school-branding,
  ucs-school-import-http-api,
  ucs-school-portal-entry,
- ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
  ucs-school-umc-diagnostic,
  ucs-school-umc-distribution,
@@ -228,6 +229,7 @@ Conflicts:
  libitalc,
  libitalc-dev,
  python-italc,
+ ucs-school-ucc-integration,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python3-ucsschool-lib,
@@ -255,6 +257,7 @@ Conflicts:
  libitalc,
  libitalc-dev,
  python-italc,
+ ucs-school-ucc-integration,
 Depends:
  python-ucs-school (>= 5.0.3-17),
  python3-ucsschool-lib,

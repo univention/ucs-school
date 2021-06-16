@@ -425,15 +425,6 @@ msgstr "Computer einschalten"
 msgid "Take over"
 msgstr "Übernehmen"
 
-#: umc/js/computerroom.js:88
-#, javascript-format
-msgid ""
-"The action is unavailable for UCC computers.<br>The following computers will "
-"be omitted: %s"
-msgstr ""
-"Die Aktion ist nicht für UCC-Computer verfügbar.<br>Die folgenden Computer "
-"werden ausgelassen: %s"
-
 #: umc/js/computerroom.js:912
 msgid ""
 "The allowed time for this examination has been reached. The exam can now be "
@@ -555,10 +546,6 @@ msgstr "Zeit ist abgelaufen"
 #: umc/js/computerroom/ScreenshotView.js:270
 msgid "Tiny"
 msgstr "Winzig"
-
-#: umc/js/computerroom.js:456
-msgid "UCC clients can not serve presentations."
-msgstr "UCC-Klienten können keine Präsentation halten."
 
 #: umc/js/computerroom.js:709
 msgid "Univention Corporate Client"

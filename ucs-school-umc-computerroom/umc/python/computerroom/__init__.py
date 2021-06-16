@@ -210,22 +210,6 @@ def check_room_access(func):
     return _decorated
 
 
-def prevent_ucc(func=None, condition=None):
-    """Prevent method from being called for UCC clients"""
-
-    if func is None:
-        return lambda f: prevent_ucc(f, condition)
-
-    def _decorated(self, request, *args, **kwargs):
-        if request.options["computer"].objectType == "computers/ucc":
-            if condition is None or condition(request):
-                MODULE.warn("Requested unavailable action (%s) for UCC client" % (func.__name__))
-                raise UMC_Error(_("Action unavailable for UCC clients."))
-        return func(self, request, *args, **kwargs)
-
-    return _decorated
-
-
 def reset_room_settings(room, hosts):
     unset_vars = [
         "samba/printmode/room/{}",
@@ -619,7 +603,6 @@ class Instance(SchoolBaseModule):
     @allow_get_request
     @check_room_access
     @sanitize(computer=ComputerSanitizer(required=True))
-    @prevent_ucc
     def screenshot(self, request):
         """Returns a JPEG image containing a screenshot of the given computer."""
 
@@ -973,7 +956,6 @@ class Instance(SchoolBaseModule):
         computer=ComputerSanitizer(required=True),
     )
     @check_room_access
-    @prevent_ucc(condition=lambda request: request.options["state"] != "poweron")
     @simple_response
     def computer_state(self, computer, state):
         """Stops, starts or restarts a computer"""
@@ -988,7 +970,6 @@ class Instance(SchoolBaseModule):
 
     @check_room_access
     @sanitize(computer=ComputerSanitizer(required=True))
-    @prevent_ucc
     @simple_response
     def user_logout(self, computer):
         """Log out the user at the given computer"""

@@ -43,7 +43,6 @@ from ucsschool.lib.models.computer import (
     IPComputer,
     MacComputer,
     SchoolComputer,
-    UCCComputer,
     WindowsComputer,
 )
 from ucsschool.lib.models.group import SchoolClass
@@ -101,7 +100,6 @@ USER_TYPES = {
 COMPUTER_TYPES = {
     "windows": WindowsComputer,
     "macos": MacComputer,
-    "ucc": UCCComputer,
     "ipmanagedclient": IPComputer,
 }
 
@@ -326,14 +324,6 @@ class Instance(SchoolBaseModule, SchoolImport):
     def computer_types(self):
         ret = []
         computer_types = [WindowsComputer, MacComputer, IPComputer]
-        try:
-            import univention.admin.handlers.computers.ucc as ucc
-
-            del ucc
-        except ImportError:
-            pass
-        else:
-            computer_types.insert(1, UCCComputer)
         for computer_type in computer_types:
             ret.append({"id": computer_type._meta.udm_module_short, "label": computer_type.type_name})
         return ret

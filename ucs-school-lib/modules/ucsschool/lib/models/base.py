@@ -222,7 +222,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         ``/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/``
         are called with the name of a temporary file containing the hook_line via run-parts.
-        ``%(module)s`` is ``'ucc'`` for ``cls._meta.udm_module == 'computers/ucc'`` by default and
+        ``%(module)s`` is ``'windows'`` for ``cls._meta.udm_module == 'computers/windows'`` by default and
         can be explicitely set with::
 
             class Meta:

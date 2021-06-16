@@ -80,26 +80,6 @@ define([
 	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
 	var isConnected = function(item) { return item.connection === 'connected'; };
-	var isUCC = function(item) { return item.objectType === 'computers/ucc'; };
-	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
-	var alert_UCC_unavailable = function(items) {
-		var clients = array.filter(items, lang.clone(isUCC));
-		if (clients.length) {
-			dialog.alert(_('The action is unavailable for UCC computers.<br>The following computers will be omitted: %s', array.map(clients, function(comp) { return comp.id; }).join(', ')));
-		}
-	};
-
-	var disabledUCCActions = ['screenshot', 'logout', 'computerShutdown', 'computerRestart', 'demoStart', 'viewVNC'];
-	var checkUCC = function(action, callback) {
-		var _decorated = function(item) {
-			if (isUCC(item) && disabledUCCActions.indexOf(action) !== -1) {
-				return false;
-			}
-			return callback(item);
-		};
-		return _decorated;
-	};
-
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// make sure the computerroom module can only be opened once
@@ -255,7 +235,7 @@ define([
 				name: 'screenshot',
 				label: _('Watch'),
 				isContextAction: false,
-//				canExecute: checkUCC('screenshot', function(item) { return isConnected(item); }),
+//				canExecute: function(item) { return isConnected(item); },
 				callback: lang.hitch(this, '_screenshot')
 			}, {
 				name: 'logout',
@@ -263,9 +243,9 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('logout', function(item) {
+				canExecute: function(item) {
 					return isConnected(item) && item.user;
-				}),
+				},
 				callback: lang.hitch(this, '_logout')
 			}, {
 				name: 'computerShutdown',
@@ -274,7 +254,7 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('computerShutdown', function(item) { return isConnected(item); }),
+				canExecute: function(item) { return isConnected(item); },
 				callback: lang.hitch(this, '_computerChangeState', 'poweroff')
 			}, {
 				name: 'computerStart',
@@ -283,9 +263,9 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('computerStart', function(item) {
+				canExecute: function(item) {
 					return (item.connection === 'disconnected' || item.connection === 'error' || item.connection === 'autherror' || item.connection === 'offline') && item.mac;
-				}),
+				},
 				callback: lang.hitch(this, '_computerStart')
 			}, {
 				name: 'computerRestart',
@@ -294,7 +274,7 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('computerRestart', function(item) { return isConnected(item); }),
+				canExecute: function(item) { return isConnected(item); },
 				callback: lang.hitch(this, '_computerChangeState', 'restart')
 			}, {
 				name: 'lockInput',
@@ -302,9 +282,9 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('lockInput', lang.hitch(this, function(item) {
+				canExecute: lang.hitch(this, function(item) {
 					return !this._demo.running && this._canExecuteLockInput(item, false);
-				})),
+				}),
 				callback: lang.hitch(this, '_lockInput', true)
 			}, {
 				name: 'unlockInput',
@@ -312,9 +292,9 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('unlockInput', lang.hitch(this, function(item) {
+				canExecute: lang.hitch(this, function(item) {
 					return !this._demo.running && this._canExecuteLockInput(item, true);
-				})),
+				}),
 				callback: lang.hitch(this, '_lockInput', false)
 			}, {
 				name: 'demoStart',
@@ -322,9 +302,9 @@ define([
 				isStandardAction: false,
 				isContextAction: true,
 				isMultiAction: false,
-				canExecute: checkUCC('demoStart', function(item) {
+				canExecute: function(item) {
 					return isConnected(item) && item.user && item.DemoServer !== true;
-				}),
+				},
 				callback: lang.hitch(this, '_demoStart')
 			}, {
 				name: 'ScreenLock',
@@ -333,9 +313,9 @@ define([
 				isStandardAction: true,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('ScreenLock', lang.hitch(this, function(item) {
+				canExecute: lang.hitch(this, function(item) {
 					return !this._demo.running && this._canExecuteLockScreen(item, false);
-				})),
+				}),
 				callback: lang.hitch(this, '_lockScreen', true)
 			}, {
 				name: 'ScreenUnLock',
@@ -344,9 +324,9 @@ define([
 				isStandardAction: true,
 				isMultiAction: true,
 				enablingMode: "some",
-				canExecute: checkUCC('ScreenUnLock', lang.hitch(this, function(item) {
+				canExecute: lang.hitch(this, function(item) {
 					return !this._demo.running && this._canExecuteLockScreen(item, true);
-				})),
+				}),
 				callback: lang.hitch(this, '_lockScreen', false)
 			}];
 		},
@@ -384,14 +364,14 @@ define([
 			if (!items.length) {
 				items = this._grid.getSelectedItems();
 			}
-			items = array.filter(items, function(item) { return isConnected(item) && !isUCC(item); });
+			items = array.filter(items, function(item) { return isConnected(item); });
 			if (items.length === 0) {
 				items = this._grid.getAllItems();
-				items = array.filter(items, function(item) { return isConnected(item) && !isUCC(item); });
+				items = array.filter(items, function(item) { return isConnected(item); });
 			}
 			this.selectChild(this._screenshotView);
 			this._screenshotView.load(array.map(array.filter(items, function(item) {
-				return isConnected(item) && !isUCC(item);
+				return isConnected(item);
 			}), function(item) {
 				return {
 					computer: item.id,
@@ -401,8 +381,6 @@ define([
 		},
 
 		_logout: function(ids, items) {
-			alert_UCC_unavailable(items);
-			items = filterUCC(items);
 			if (items.length === 0) {
 				return;
 			}
@@ -414,8 +392,6 @@ define([
 		},
 
 		_computerChangeState: function(state, ids, items) {
-			alert_UCC_unavailable(items);
-			items = filterUCC(items);
 			if (items.length === 0) {
 				return;
 			}
@@ -452,10 +428,6 @@ define([
 		},
 
 		_demoStart: function(ids, items) {
-			if (isUCC(items[0])) {
-				dialog.alert(_("UCC clients can not serve presentations."));
-				return;
-			}
 			this.umcpCommand('computerroom/demo/start', { server: ids[0] });
 			dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 		},
@@ -665,9 +637,9 @@ define([
 					label: _('VNC-Access'),
 					isStandardAction: false,
 					isMultiAction: false,
-					canExecute: checkUCC('viewVNC', function(item) {
+					canExecute: function(item) {
 						return isConnected(item) && item.user;
-					}),
+					},
 					callback: lang.hitch(this, function(item) {
 						window.open('/univention/command/computerroom/vnc?computer=' + encodeURIComponent(item));
 					})
@@ -706,7 +678,6 @@ define([
 
 					var computertype = {
 						'computers/windows': _('Windows'),
-						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support all iTALC features)')
 					}[item.objectType] || _('Unknown');
 
 					var label = '<table>';
@@ -742,7 +713,7 @@ define([
 				name: '_watch',
 				label: ' ',
 				formatter: lang.hitch(this, function(v, item) {
-					if (isUCC(item) || !isConnected(item)) {
+					if (!isConnected(item)) {
 						return '';
 					}
 					var id = item.id;
