@@ -124,7 +124,7 @@ case "$1" in
 		fi
 
 		# shellcheck disable=SC2015
-		dpkg --compare-versions "${2:-}" lt-nl 16.0.2-1 &&
+		dpkg --compare-versions "${2:-}" lt-nl 16.0.1 &&
 			update-rc.d -f univention-reload-service remove ||
 			:
 
