@@ -410,7 +410,11 @@ def postrun():
         )
         return
 
-    if os.path.isfile("/etc/init.d/univention-s4-connector"):
+    if not subprocess.call(
+        ["systemctl", "is-enabled", "--quiet", "univention-s4-connector.service"],
+        stderr=subprocess.STDOUT,
+        stdout=open("/dev/null", "w"),
+    ):
         if _s4_connector_restart:
             univention.debug.debug(
                 univention.debug.LISTENER,
