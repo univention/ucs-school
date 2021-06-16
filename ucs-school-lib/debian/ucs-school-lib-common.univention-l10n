@@ -3,7 +3,7 @@
 		"input_files": [
 			"modules/ucsschool/lib/.*\\.py"
 		],
-		"po_subdir": "python",
+		"po_subdir": "modules/ucsschool/lib",
 		"target_type": "mo",
 		"destination": "usr/share/locale/{lang}/LC_MESSAGES/python-ucs-school.mo"
 	}
