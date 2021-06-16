@@ -39,13 +39,7 @@ import six
 
 import univention.admin.modules as udm_modules
 from ucsschool.lib.models.base import WrongModel
-from ucsschool.lib.models.computer import (
-    IPComputer,
-    MacComputer,
-    SchoolComputer,
-    UCCComputer,
-    WindowsComputer,
-)
+from ucsschool.lib.models.computer import IPComputer, MacComputer, SchoolComputer, WindowsComputer
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff, User
@@ -69,11 +63,11 @@ from univention.management.console.modules.schoolwizards.SchoolImport import Sch
 from univention.udm import UDM
 
 try:
-    from typing import Any, Iterator, Optional, Set, Union
+    from typing import Any, Iterator, Optional, Set, Union  # noqa: F401
 
     LibModel = Union[School, User, SchoolComputer, SchoolClass]
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 except ImportError:
     pass
 
@@ -102,7 +96,6 @@ USER_TYPES = {
 COMPUTER_TYPES = {
     "windows": WindowsComputer,
     "macos": MacComputer,
-    "ucc": UCCComputer,
     "ipmanagedclient": IPComputer,
 }
 
@@ -206,8 +199,8 @@ def iter_objects_in_request(
                 )
             ):
                 raise UMC_Error(
-                    _("You do not have the rights to create an object for the schools %s")
-                    % object_new_schools
+                    _("You do not have the rights to create an object for the schools [%s].")
+                    % ", ".join(object_new_schools)
                 )
             obj = klass(**obj_props)
         else:
@@ -236,7 +229,7 @@ def iter_objects_in_request(
                         "You do not have the right to modify the object with the DN %(dn)s "
                         "from the schools %(schools)s."
                     )
-                    % ({"dn": dn, "schools": object_old_schools})
+                    % ({"dn": dn, "schools": ", ".join(object_old_schools)})
                 )
             obj.set_attributes(**obj_props)
         if dn:
@@ -327,14 +320,6 @@ class Instance(SchoolBaseModule, SchoolImport):
     def computer_types(self):
         ret = []
         computer_types = [WindowsComputer, MacComputer, IPComputer]
-        try:
-            import univention.admin.handlers.computers.ucc as ucc
-
-            del ucc
-        except ImportError:
-            pass
-        else:
-            computer_types.insert(1, UCCComputer)
         for computer_type in computer_types:
             ret.append({"id": computer_type._meta.udm_module_short, "label": computer_type.type_name})
         return ret

@@ -363,7 +363,7 @@ class ComputerRoomManager(dict):
         clients = [
             comp
             for comp in self.values()
-            if comp.name != demo_server and comp.connected() and comp.objectType != "computers/ucc"
+            if comp.name != demo_server and comp.connected()
         ]
         MODULE.info("Demo server is %s" % (demo_server,))
         MODULE.info("Demo clients: %s" % ", ".join(x.name for x in clients))

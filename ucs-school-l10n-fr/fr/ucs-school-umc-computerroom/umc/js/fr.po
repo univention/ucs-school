@@ -386,15 +386,6 @@ msgstr "Démarrer l'ordinateur"
 msgid "Take over"
 msgstr "Prendre la main"
 
-#: umc/js/computerroom.js:79
-#, javascript-format
-msgid ""
-"The action is unavailable for UCC computers.<br>The following computers will "
-"be omitted: %s"
-msgstr ""
-"Cette action n'est pas disponible pour les ordinateurs UCC.<br>Les "
-"ordinateurs suivants seront ignorés : %s"
-
 #: umc/js/computerroom.js:851
 msgid ""
 "The allowed time for this examination has been reached. The exam can now be "
@@ -503,10 +494,6 @@ msgstr "Fin du temps imparti"
 #: umc/js/computerroom/ScreenshotView.js:270
 msgid "Tiny"
 msgstr "Minuscule"
-
-#: umc/js/computerroom.js:404
-msgid "UCC clients can not serve presentations."
-msgstr "Les clients UCC ne peuvent pas servir des présentations."
 
 #: umc/js/computerroom.js:651
 msgid "Univention Corporate Client"

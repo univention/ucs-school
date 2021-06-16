@@ -43,7 +43,7 @@ def test_list_models():
         "DHCPDNSPolicy DHCPServer DHCPService DHCPSubnet DNSReverseZone ExamStudent Group GroupShare "
         "IPComputer ImportStaff ImportStudent ImportTeacher ImportTeachersAndStaff MacComputer "
         "MailDomain MarketplaceShare Network Policy School SchoolAdmin SchoolClass SchoolComputer "
-        "SchoolDC SchoolDCSlave SchoolGroup Staff Student Teacher TeachersAndStaff UCCComputer "
+        "SchoolDC SchoolDCSlave SchoolGroup Staff Student Teacher TeachersAndStaff "
         "UMCPolicy WindowsComputer WorkGroup WorkGroupShare"
     ).split():
         assert model in stdout

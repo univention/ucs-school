@@ -68,7 +68,6 @@ class UCSSchoolHelperOptions(object):
             module = udm_modules.get(self.udm_module)
             if not module:
                 # happens when the udm_module is not in the standard package
-                #   i.e. computers/ucc
                 return
             for key, attr in iteritems(klass._attributes):
                 # sanity checks whether we specified everything correctly
