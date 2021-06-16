@@ -939,9 +939,9 @@ class Instance(SchoolBaseModule):
         self.reload_cups()
 
     def reload_cups(self):
-        if os.path.exists("/etc/init.d/cups"):
+        if not subprocess.call(["systemctl", "is-active", "--quiet", "cups.service"]):
             MODULE.info("Reloading cups")
-            if subprocess.call(["/etc/init.d/cups", "reload"]) != 0:  # nosec
+            if subprocess.call(["systemctl", "reload", "cups.service"]) != 0:  # nosec
                 MODULE.error("Failed to reload cups! Printer settings not applied.")
 
     def reset_smb_connections(self):

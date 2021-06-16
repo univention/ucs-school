@@ -81,7 +81,7 @@ def setAuthVariables(basic, ntlm, gneg):
         handler_set(["squid/krb5auth=yes", "squid/krb5auth/keepalive=yes"])
     else:
         handler_unset(["squid/krb5auth", "squid/krb5auth/keepalive"])
-    subprocess.Popen(["/etc/init.d/squid", "restart"], stdin=subprocess.PIPE).communicate()
+    subprocess.call(["systemctl", "restart", "squid"])
 
 
 def printHeader(state, passwd, expect_wrong_password):

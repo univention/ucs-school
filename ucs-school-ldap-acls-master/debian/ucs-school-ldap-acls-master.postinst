@@ -33,6 +33,6 @@
 #DEBHELPER#
 
 # after 70ucs-school-ldap-acls-master.inst
-test -x /etc/init.d/slapd && /etc/init.d/slapd restart
+systemctl restart slapd
 
 exit 0

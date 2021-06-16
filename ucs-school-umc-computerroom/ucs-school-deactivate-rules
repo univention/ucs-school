@@ -31,7 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os
 import subprocess
 from optparse import OptionParser
 
@@ -81,8 +80,8 @@ def deprecated_deactivate_rules(options, hosts):
     handler_unset(options.remove)
 
     # reload cups
-    if os.path.exists("/etc/init.d/cups"):
-        subprocess.call(["/etc/init.d/cups", "reload"])
+    if not subprocess.call(["systemctl", "is-active", "--quiet", "cups.service"]):
+        subprocess.call(["systemctl", "reload", "cups.service"])
 
 
 if __name__ == "__main__":
