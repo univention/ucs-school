@@ -41,7 +41,7 @@ from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
 
 from ..opa import OPAClient
-from ..token_auth import oauth2_scheme
+from ..token_auth import get_token
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
 
 router = APIRouter()
@@ -203,7 +203,7 @@ async def search(
     ),
     logger: logging.Logger = Depends(get_logger),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> List[SchoolModel]:
     """
     Search for schools (OUs).
@@ -240,7 +240,7 @@ async def get(
         title="name",
     ),
     udm: UDM = Depends(udm_ctx),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolModel:
     """
     Fetch a specific school (OU).
@@ -268,7 +268,7 @@ async def create(
     alter_dhcpd_base: Optional[bool] = None,
     udm: UDM = Depends(udm_ctx),
     logger: logging.Logger = Depends(get_logger),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(get_token),
 ) -> SchoolModel:
     """
     Create a school (OU) with all the information:

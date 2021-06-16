@@ -81,6 +81,26 @@ async def create_access_token(*, data: dict, expires_delta: timedelta = None) ->
     return encoded_jwt
 
 
+async def get_token(token: str = Depends(oauth2_scheme)) -> str:
+    """
+    This function serves as a Depends that returns the jwt provided in the Auth headers.
+
+    If the tokens signature cannot be verified, an HTTPException is raised.
+
+    :return: The jwt token as a string
+    :raises HTTPException: If the token cannot be decoded or the signature cannot be verified.
+    """
+    try:
+        jwt.decode(token, await get_secret_key(), algorithms=[TOKEN_HASH_ALGORITHM])
+    except PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return token
+
+
 async def get_current_user(token: str = Depends(oauth2_scheme)) -> LdapUser:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

@@ -5,6 +5,11 @@
 Changelog
 ---------
 
+v1.4.3 (2021-06-16)
+...................
+* A security error was fixed, that allowed the unrestricted use of the Kelvin API with unsigned authentication tokens.
+  Please update as fast as possible (Bug #53454)!
+
 v1.4.2 (2021-05-26)
 ...................
 * Support for hooks for objekts managed by classes from the package ``ucsschool.lib.models`` was added. See manual section `Python hooks for pre- and post-object-modification actions <https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#python-hooks-for-pre-and-post-object-modification-actions>`_ for details (Bug #49557).
