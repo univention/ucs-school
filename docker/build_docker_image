@@ -104,7 +104,7 @@ if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
 fi
 
 echo "Downloading Open Policy Agent..."
-wget https://openpolicyagent.org/downloads/latest/opa_linux_amd64 -O build/opa
+wget https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static -O build/opa
 chmod +x build/opa
 
 echo "Collecting all Python dependencies..."
