@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -31,10 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    from typing import List
-except ImportError:
-    pass
 import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.computer import SchoolComputer
 from ucsschool.lib.models.group import ComputerRoom
@@ -51,10 +47,10 @@ from univention.management.console.modules.sanitizers import (
 )
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import List, TYPE_CHECKING  # noqa: F401
 
     if TYPE_CHECKING:
-        import univention.admin.uldap.access
+        import univention.admin.uldap.access  # noqa: F401
 except ImportError:
     pass
 
@@ -77,9 +73,7 @@ class Instance(SchoolBaseModule):
             {"label": x.name, "id": x.dn, "teacher_computer": x.teacher_computer}
             for x in SchoolComputer.get_all(ldap_user_read, request.options["school"], pattern)
         ]
-        result = sorted(
-            result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x["label"]
-        )  # TODO: still necessary?
+        result = sorted(result, key=lambda x: x["label"])  # TODO: still necessary?
 
         self.finished(request.id, result)
 
@@ -95,9 +89,7 @@ class Instance(SchoolBaseModule):
             {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)
         ]
-        result = sorted(
-            result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x["name"]
-        )  # TODO: still necessary?
+        result = sorted(result, key=lambda x: x["name"])  # TODO: still necessary?
 
         self.finished(request.id, result)
 
