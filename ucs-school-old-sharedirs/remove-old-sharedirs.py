@@ -124,8 +124,8 @@ def check_filesystem(directory):
 
     ret, out = getstatusoutput("LC_ALL=C stat -f %s" % pipes.quote(directory))
     myFs = ""
-    for line in out.decode("UTF-8", "replace").split("\n"):
-        tmp = line.split("Type: ")
+    for line in out.splitlines():
+        tmp = line.split("Type: ", 1)
         if len(tmp) == 2:
             myFs = tmp[1].strip()
             for fs in fs_types:
