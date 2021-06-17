@@ -411,5 +411,8 @@ class UTF8Recoder(object):
     def __iter__(self):  # type: () -> UTF8Recoder
         return self
 
-    def next(self):  # type: () -> str
-        return self.reader.next().encode("utf-8")
+    def next(self):  # type: () -> bytes
+        return next(self.reader).encode("utf-8")
+
+    def __next__(self):  # type: () -> str
+        return next(self.reader)
