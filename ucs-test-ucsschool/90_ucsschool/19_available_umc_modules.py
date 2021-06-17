@@ -144,9 +144,12 @@ def checkModules(modules, userType, serverRole, singleMaster):
     else:
         success = contains(modules, res)
     if not success:
-        utils.fail(
-            'Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r'
-            % ((userType, serverRole, singleMaster), expected - found, found - expected)
+        assert (
+            False
+        ), 'Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r' % (
+            (userType, serverRole, singleMaster),
+            expected - found,
+            found - expected,
         )
 
 
