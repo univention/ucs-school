@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school RADIUS 802.1X
@@ -86,15 +86,15 @@ class SchoolNetworkAccess(NetworkAccess):
         if groups is None:
             self.logger.debug("DENY: No proxy rules for user {} found".format(username))
             return False
-        matching_groups = {group: info for group, info in self.group_info.iteritems() if group in groups}
+        matching_groups = {group: info for group, info in self.group_info.items() if group in groups}
         if not matching_groups:
             self.logger.debug("DENY: user {} not found in any WLAN enabled group".format(username))
             self.logger.debug("DENY: user {} groups={}".format(username, groups))
-            self.logger.debug("DENY: WLAN enabled groups={}".format(self.group_info.keys()))
+            self.logger.debug("DENY: WLAN enabled groups={}".format(list(self.group_info.keys())))
             return False
         max_priority = max(rule[0] for rule in matching_groups.values())
         max_priority_groups = {
-            group: info for group, info in matching_groups.iteritems() if info[0] == max_priority
+            group: info for group, info in matching_groups.items() if info[0] == max_priority
         }
         if any(wlan_enabled for priority, wlan_enabled in max_priority_groups.values()):
             self.logger.debug(
