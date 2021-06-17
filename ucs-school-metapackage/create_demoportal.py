@@ -87,19 +87,25 @@ CATEGORIES = [
             "ucsschool_demo_eduFunctions",
         ],
     ),
-    ("ucsschool_demo_creativity", "Creativity", "Kreativität",
+    (
+        "ucsschool_demo_creativity",
+        "Creativity",
+        "Kreativität",
         [
             "ucsschool_demo_home",
             "ucsschool_demo_share",
             "ucsschool_demo_workOnline",
         ],
     ),
-    ("ucsschool_demo_admin", "Administration", "Verwaltung",
+    (
+        "ucsschool_demo_admin",
+        "Administration",
+        "Verwaltung",
         [
             "ucsschool_demo_pwReset",
             "ucsschool_demo_users",
             "ucsschool_demo_admin",
-        ]
+        ],
     ),
 ]
 
