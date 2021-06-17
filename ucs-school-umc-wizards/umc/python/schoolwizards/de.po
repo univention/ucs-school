@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2021-03-11 09:46+0100\n"
+"POT-Creation-Date: 2021-06-17 23:25+0200\n"
 "PO-Revision-Date: 2016-11-17 17:04+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,13 +12,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:396
-#: umc/python/schoolwizards/__init__.py:569
+#: umc/python/schoolwizards/__init__.py:381
+#: umc/python/schoolwizards/__init__.py:554
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
 
-#: umc/python/schoolwizards/__init__.py:444
+#: umc/python/schoolwizards/__init__.py:429
 #, python-format
 msgid "\"%s\" does not exist!"
 msgstr "\"%s\" existiert nicht!"
@@ -40,12 +40,12 @@ msgstr "Der Benutzer konnte nicht erstellt werden"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:519
+#: umc/python/schoolwizards/__init__.py:504
 msgid "Failed to remove user from school."
 msgstr "Konnte den Benutzer nicht aus der Schule entfernen."
 
-#: umc/python/schoolwizards/__init__.py:222
-#: umc/python/schoolwizards/__init__.py:493
+#: umc/python/schoolwizards/__init__.py:215
+#: umc/python/schoolwizards/__init__.py:478
 #, python-format
 msgid ""
 "The %(attr)s %(name)r does not exist or might have been removed in the "
@@ -53,7 +53,7 @@ msgid ""
 msgstr ""
 "%(attr)s %(name)r existiert nicht oder wurde in der Zwischenzeit gelöscht."
 
-#: umc/python/schoolwizards/__init__.py:508
+#: umc/python/schoolwizards/__init__.py:493
 #, python-format
 msgid ""
 "You do not have the right to delete the user with the dn %(dn)s from the "
@@ -62,18 +62,17 @@ msgstr ""
 "Sie haben nicht die Nutzerrechte, um den Nutzer mit der DN %(dn)s von der "
 "Schule %(school)s zu löschen."
 
-#: umc/python/schoolwizards/__init__.py:240
-#, python-format
+#: umc/python/schoolwizards/__init__.py:233
 msgid ""
 "You do not have the right to modify the object with the DN %(dn)s from the "
-"schools %(schools)s."
+"schools [%(schools)s]."
 msgstr ""
 "Sie haben nicht die Nutzerrechte, um das Objekt mit der DN %(dn)s von den "
-"Schulen %(schools)s zu modifizieren."
+"Schulen [%(schools)s] zu modifizieren."
 
-#: umc/python/schoolwizards/__init__.py:213
+#: umc/python/schoolwizards/__init__.py:206
 #, python-format
-msgid "You do not have the rights to create an object for the schools %s"
+msgid "You do not have the rights to create an object for the schools [%s]."
 msgstr ""
-"Sie haben nicht die Nutzerrechte, um ein Objekt auf den Schulen %s zu "
+"Sie haben nicht die Nutzerrechte, um ein Objekt auf den Schulen [%s] zu "
 "erstellen."
