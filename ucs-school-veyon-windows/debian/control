@@ -6,6 +6,7 @@ Build-Depends:
  ca-certificates,
  debhelper-compat (= 12),
  ucslint,
+ univention-join-dev,
  wget,
 Standards-Version: 3.8.2
 
