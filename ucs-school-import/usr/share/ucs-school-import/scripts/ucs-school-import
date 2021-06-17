@@ -2030,7 +2030,7 @@ def import_computer():
             verify_school_ou(schoolNr, None, lo, baseDN)
 
             try:
-                ip = ipaddress.IPv4Network(u"%s" % IP, strict=False)
+                ip = ipaddress.IPv4Interface(u"%s" % IP, strict=False)
             except ipaddress.AddressValueError as e:
                 print(line)
                 print("%s is not a valid ip address" % e)
@@ -2061,7 +2061,7 @@ def import_computer():
 
             success = True
             if "/" not in IP:
-                ip = ipaddress.IPv4Network(u"%s/%s" % (IP, default_prefixlen), strict=False)
+                ip = ipaddress.IPv4Interface(u"%s/%s" % (IP, default_prefixlen), strict=False)
                 print("WARNING: no netmask specified for ip address %s using %s" % (ip.ip, ip.netmask))
 
             module = univention.admin.modules.get("computers/%s" % ctype)
