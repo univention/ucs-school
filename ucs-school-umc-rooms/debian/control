@@ -19,6 +19,8 @@ Breaks:
 Depends:
  python-ucs-school (>= 12.1.9),
  python-univention-directory-manager,
+ python3-ucsschool-lib,
+ python3-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,
  univention-config-registry,
@@ -32,23 +34,6 @@ Provides:
 Description: UMC module to administrate rooms and their computers
  This package provides a Univention Management Console module that allows to
  administrate school rooms and their associated computers.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
-Package: ucs-school-umc-roomadmin
-Depends:
- ucs-school-umc-computerroom,
- ucs-school-umc-rooms,
- ${misc:Depends},
-Architecture: all
-Description: transitional dummy package
- Package to ease upgrading from ucs-school-umc-roomadmin to
- ucs-school-umc-rooms and -computerroom. This package can be purged at
- anytime once the ucs-school-umc-internetrules package has been
- installed.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
