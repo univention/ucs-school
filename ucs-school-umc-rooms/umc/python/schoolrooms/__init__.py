@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -75,9 +75,7 @@ class Instance(SchoolBaseModule):
             {"label": x.name, "id": x.dn, "teacher_computer": x.teacher_computer}
             for x in SchoolComputer.get_all(ldap_user_read, request.options["school"], pattern)
         ]
-        result = sorted(
-            result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x["label"]
-        )  # TODO: still necessary?
+        result = sorted(result, key=lambda x: x["label"])  # TODO: still necessary?
 
         self.finished(request.id, result)
 
@@ -91,9 +89,7 @@ class Instance(SchoolBaseModule):
             {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)
         ]
-        result = sorted(
-            result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x["name"]
-        )  # TODO: still necessary?
+        result = sorted(result, key=lambda x: x["name"])  # TODO: still necessary?
 
         self.finished(request.id, result)
 
