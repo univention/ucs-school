@@ -116,7 +116,7 @@ def test_create_user_other_school(
         client.umc_command("schoolwizards/users/add", params, "schoolwizards/users")
     assert (
         exc_info.value.message
-        == "You do not have the rights to create an object for the schools set([u'B'])"
+        == "You do not have the rights to create an object for the schools [B]."
     )
 
 
@@ -215,6 +215,6 @@ def test_edit_user_other_school(
         client.umc_command("schoolwizards/users/put", params, "schoolwizards/users")
     assert (
         exc_info.value.message
-        == "You do not have the right to modify the object with the DN %s from the schools set(['B'])."
+        == "You do not have the right to modify the object with the DN %s from the schools [B]."
         % ou2_teacher.dn
     )

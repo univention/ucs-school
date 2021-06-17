@@ -227,7 +227,7 @@ def iter_objects_in_request(
                 raise UMC_Error(
                     _(
                         "You do not have the right to modify the object with the DN %(dn)s "
-                        "from the schools %(schools)s."
+                        "from the schools [%(schools)s]."
                     )
                     % ({"dn": dn, "schools": ", ".join(object_old_schools)})
                 )

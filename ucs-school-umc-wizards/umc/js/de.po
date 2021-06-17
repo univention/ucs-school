@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2021-03-09 11:10+0100\n"
+"POT-Creation-Date: 2021-06-17 23:25+0200\n"
 "PO-Revision-Date: 2019-02-24 01:06+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr "%s hinzufügen"
 msgid "Administrative servers"
 msgstr "Verwaltungsserver"
 
-#: umc/js/schoolwizards/SchoolWizard.js:134 umc/js/schoolwizards/Wizard.js:89
+#: umc/js/schoolwizards/Wizard.js:89 umc/js/schoolwizards/SchoolWizard.js:134
 msgid "Advanced settings"
 msgstr "Erweiterte Einstellungen"
 
@@ -49,9 +49,9 @@ msgstr ""
 "Stellen gespeichert wurde, ist jetzt überholt. Das kann zu (harmlosen, aber "
 "störenden) Fehlermeldungen führen. Möchten Sie sich abmelden?"
 
-#: umc/js/schoolwizards/ClassGrid.js:70 umc/js/schoolwizards/utils.js:56
-#: umc/js/schoolwizards/UserGrid.js:109 umc/js/schoolwizards/ComputerGrid.js:79
-#: umc/js/schoolwizards/ComputerGrid.js:98
+#: umc/js/schoolwizards/utils.js:56 umc/js/schoolwizards/ComputerGrid.js:79
+#: umc/js/schoolwizards/ComputerGrid.js:98 umc/js/schoolwizards/UserGrid.js:109
+#: umc/js/schoolwizards/ClassGrid.js:70
 msgid "All"
 msgstr "Alle"
 
@@ -63,9 +63,9 @@ msgstr "Zurück"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/js/schoolwizards/Grid.js:233 umc/js/schoolwizards/Grid.js:339
-#: umc/js/schoolwizards/SchoolGrid.js:149 umc/js/schoolwizards/Wizard.js:81
-#: umc/js/schoolwizards/ComputerWizard.js:145
+#: umc/js/schoolwizards/Wizard.js:81 umc/js/schoolwizards/ComputerWizard.js:145
+#: umc/js/schoolwizards/SchoolGrid.js:149 umc/js/schoolwizards/Grid.js:233
+#: umc/js/schoolwizards/Grid.js:339
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -107,11 +107,11 @@ msgstr ""
 msgid "Computer type"
 msgstr "Rechnertyp"
 
-#: umc/js/schoolwizards/Grid.js:237 umc/js/schoolwizards/ComputerWizard.js:144
+#: umc/js/schoolwizards/ComputerWizard.js:144 umc/js/schoolwizards/Grid.js:237
 msgid "Create"
 msgstr "Erstellen"
 
-#: umc/js/schoolwizards/ClassWizard.js:43 umc/js/schoolwizards/UserWizard.js:98
+#: umc/js/schoolwizards/UserWizard.js:98 umc/js/schoolwizards/ClassWizard.js:43
 msgid "Create a new class"
 msgstr "Neue Klasse erstellen"
 
@@ -145,7 +145,7 @@ msgstr ""
 msgid "Deleting the selected %s."
 msgstr "Ausgewählte %s löschen."
 
-#: umc/js/schoolwizards/ClassGrid.js:59 umc/js/schoolwizards/ClassWizard.js:57
+#: umc/js/schoolwizards/ClassWizard.js:57 umc/js/schoolwizards/ClassGrid.js:59
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -198,9 +198,9 @@ msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Computers an."
 msgid "Enter details to create a new user"
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 
-#: umc/js/schoolwizards/ClassGrid.js:83 umc/js/schoolwizards/SchoolGrid.js:107
-#: umc/js/schoolwizards/UserGrid.js:129
 #: umc/js/schoolwizards/ComputerGrid.js:108
+#: umc/js/schoolwizards/UserGrid.js:129 umc/js/schoolwizards/ClassGrid.js:83
+#: umc/js/schoolwizards/SchoolGrid.js:107
 msgid "Filter"
 msgstr "Filter"
 
@@ -264,8 +264,8 @@ msgstr ""
 "nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren "
 "Benutzernamen."
 
-#: umc/js/schoolwizards/ClassGrid.js:56 umc/js/schoolwizards/ClassWizard.js:52
-#: umc/js/schoolwizards/UserGrid.js:61 umc/js/schoolwizards/ComputerGrid.js:56
+#: umc/js/schoolwizards/ComputerGrid.js:56 umc/js/schoolwizards/UserGrid.js:61
+#: umc/js/schoolwizards/ClassWizard.js:52 umc/js/schoolwizards/ClassGrid.js:56
 #: umc/js/schoolwizards/ComputerWizard.js:72
 msgid "Name"
 msgstr "Name"
@@ -401,10 +401,10 @@ msgstr "Rolle des %s."
 msgid "Save"
 msgstr "Speichern"
 
-#: umc/js/schoolwizards/Grid.js:173 umc/js/schoolwizards/ClassGrid.js:76
-#: umc/js/schoolwizards/Wizard.js:229 umc/js/schoolwizards/UserGrid.js:114
-#: umc/js/schoolwizards/ComputerGrid.js:85
+#: umc/js/schoolwizards/ComputerGrid.js:85 umc/js/schoolwizards/UserGrid.js:114
+#: umc/js/schoolwizards/Wizard.js:229 umc/js/schoolwizards/ClassGrid.js:76
 #: umc/js/schoolwizards/UserGridChooseSchool.js:81
+#: umc/js/schoolwizards/Grid.js:173
 msgid "School"
 msgstr "Schule"
 
@@ -434,9 +434,9 @@ msgstr "Suchen"
 msgid "Search for %s"
 msgstr "%s suchen"
 
-#: umc/js/schoolwizards/ClassGrid.js:84 umc/js/schoolwizards/SchoolGrid.js:108
-#: umc/js/schoolwizards/UserGrid.js:130
 #: umc/js/schoolwizards/ComputerGrid.js:109
+#: umc/js/schoolwizards/UserGrid.js:130 umc/js/schoolwizards/ClassGrid.js:84
+#: umc/js/schoolwizards/SchoolGrid.js:108
 msgid "Search..."
 msgstr "Suche..."
 
