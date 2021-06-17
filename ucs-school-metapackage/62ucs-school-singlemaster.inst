@@ -199,22 +199,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 11 ] ; then
 	fi
 fi
 
-# Fixes a typo in existing DEMOSCHOOL portals
-if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
-	python2 - << END
-from univention.udm import UDM # "$@" comment necessary to satisfy ucslint.
-pm = UDM.admin().version(1).get('settings/portal')
-portals = list(pm.search('name=ucsschool_demo_portal'))
-if len(portals) == 1:
-	portal = portals[0]
-	if 'de_DE' in portal.props.displayName:
-		portal.props.displayName['de_DE'] = portal.props.displayName['de_DE'].replace('UCS@School', 'UCS@school')
-	if 'en_US' in portal.props.displayName:
-		portal.props.displayName['en_US'] = portal.props.displayName['en_US'].replace('UCS@School', 'UCS@school')
-	portal.save()
-END
-fi
-
 # Set NTACLs on class and work group shares (Bug #42182)
 if [ $JS_LAST_EXECUTED_VERSION -lt 8 ]; then
 	/usr/share/ucs-school-metapackage/scripts/set_nt_acl_on_shares "$@"
