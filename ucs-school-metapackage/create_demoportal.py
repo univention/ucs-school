@@ -29,7 +29,6 @@
 # <http://www.gnu.org/licenses/>.
 
 import base64
-import json
 import os
 import random
 import string
@@ -46,9 +45,9 @@ from univention.management.console.ldap import get_admin_connection
 
 lo, pos = get_admin_connection()
 modules.update()
-module_portal = modules.get("settings/portal")
-module_portal_c = modules.get("settings/portal_category")
-module_portal_e = modules.get("settings/portal_entry")
+module_portal = modules.get("portals/portal")
+module_portal_c = modules.get("portals/category")
+module_portal_e = modules.get("portals/entry")
 module_groups = modules.get("groups/group")
 module_users = modules.get("users/user")
 
@@ -72,15 +71,41 @@ else:
 # (name, displayName)
 SCHOOL = ("DEMOSCHOOL", "Demo School")
 
-# (name, en, de)
+# (name, en, de, entry_names)
 CATEGORIES = [
     (
         "ucsschool_demo_collaboration_communication",
         "Collaboration & Communication",
         "Kollaboration & Kommunikation",
+        [
+            "ucsschool_demo_mail",
+            "ucsschool_demo_chat",
+            "ucsschool_demo_calendar",
+            "ucsschool_demo_bookResources",
+            "ucsschool_demo_subPlan",
+            "ucsschool_demo_eduFunctions",
+        ],
     ),
-    ("ucsschool_demo_creativity", "Creativity", "Kreativität"),
-    ("ucsschool_demo_admin", "Administration", "Verwaltung"),
+    (
+        "ucsschool_demo_creativity",
+        "Creativity",
+        "Kreativität",
+        [
+            "ucsschool_demo_home",
+            "ucsschool_demo_share",
+            "ucsschool_demo_workOnline",
+        ],
+    ),
+    (
+        "ucsschool_demo_admin",
+        "Administration",
+        "Verwaltung",
+        [
+            "ucsschool_demo_pwReset",
+            "ucsschool_demo_users",
+            "ucsschool_demo_admin",
+        ],
+    ),
 ]
 
 # (name, name_en, name_de, descr_en, descr_de, link, icon, group)
@@ -271,7 +296,9 @@ def create_school():
 def create_portal():
     to_create = list()
     pos_portal = position(pos.getBase())
+    pos_entry = position(pos.getBase())
     pos_category = position(pos.getBase())
+    pos_folder = position(pos.getBase())
 
     entry_groups = dict(domainadmin="", schooladmin="", teacher="", everyone="")
     try:
@@ -291,32 +318,35 @@ def create_portal():
         )
         sys.exit(1)
 
-    pos_portal.setDn("cn=portal,cn=univention")
+    pos_portal.setDn("cn=portal,cn=portals,cn=univention")
+    pos_entry.setDn("cn=entry,cn=portals,cn=univention")
     for name, en, de, descr_en, descr_de, link, icon, group in ENTRIES:
         iconpath = (
             "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/"
             "ucsschool_demo_{}.png".format(icon)
         )
-        entry_obj = module_portal_e.object(None, lo, pos_portal)
+        entry_obj = module_portal_e.object(None, lo, pos_entry)
         entry_obj.open()
         entry_obj["name"] = name
         entry_obj["displayName"] = [("en_US", en), ("de_DE", de)]
         entry_obj["description"] = [("en_US", descr_en), ("de_DE", descr_de)]
-        entry_obj["link"] = link
+        entry_obj["link"] = [("en_US", link)]
         with open(iconpath, "r") as fd:
             content = fd.read()
             entry_obj["icon"] = base64.b64encode(content)
         entry_obj["allowedGroups"] = [entry_groups[group]]
         to_create.append(entry_obj)
 
-    pos_category.setDn("cn=categories,cn=portal,cn=univention")
-    for dn, en, de in CATEGORIES:
+    pos_category.setDn("cn=category,cn=portals,cn=univention")
+    for dn, en, de, entries in CATEGORIES:
         category_obj = module_portal_c.object(None, lo, pos_category)
         category_obj.open()
         category_obj["name"] = dn
         category_obj["displayName"] = [("en_US", en), ("de_DE", de)]
+        category_obj["entries"] = ["cn={},{}".format(entry, pos_entry.getDn()) for entry in entries]
         to_create.append(category_obj)
 
+    pos_folder.setDn("cn=folder,cn=portals,cn=univention")
     portal_obj = module_portal.object(None, lo, pos_portal)
     portal_obj.open()
     portal_obj["name"] = "ucsschool_demo_portal"
@@ -324,38 +354,15 @@ def create_portal():
         ("en_US", "UCS@school Demo Portal"),
         ("de_DE", "UCS@school Demo Portal"),
     ]
-    portal_obj["showApps"] = "FALSE"
-    portal_obj["portalComputers"] = hostdn
-    portal_content = [
-        [
-            "cn=ucsschool_demo_collaboration_communication,{}".format(pos_category.getDn()),
-            [
-                "cn=ucsschool_demo_mail,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_chat,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_calendar,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_bookResources,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_subPlan,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_eduFunctions,{}".format(pos_portal.getDn()),
-            ],
-        ],
-        [
-            "cn=ucsschool_demo_creativity,{}".format(pos_category.getDn()),
-            [
-                "cn=ucsschool_demo_home,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_share,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_workOnline,{}".format(pos_portal.getDn()),
-            ],
-        ],
-        [
-            "cn=ucsschool_demo_admin,{}".format(pos_category.getDn()),
-            [
-                "cn=ucsschool_demo_pwReset,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_users,{}".format(pos_portal.getDn()),
-                "cn=ucsschool_demo_admin,{}".format(pos_portal.getDn()),
-            ],
-        ],
+    portal_obj["categories"] = [
+        "cn=ucsschool_demo_collaboration_communication,{}".format(pos_category.getDn()),
+        "cn=ucsschool_demo_creativity,{}".format(pos_category.getDn()),
+        "cn=ucsschool_demo_admin,{}".format(pos_category.getDn()),
     ]
-    portal_obj["content"] = json.dumps(portal_content)
+    portal_obj["menuLinks"] = [
+        "cn=certificates,{}".format(pos_folder.getDn()),
+        "cn=help,{}".format(pos_folder.getDn()),
+    ]
     with open("/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.jpg", "r") as fd:
         content = fd.read()
         portal_obj["background"] = base64.b64encode(content)
