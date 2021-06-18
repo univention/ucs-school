@@ -13,7 +13,7 @@ import ucsschool.lib.models.user
 from ucsschool.lib.create_ou import create_ou
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import User
-from ucsschool.lib.models.utils import env_or_ucr, exec_cmd, get_file_handler, ucr
+from ucsschool.lib.models.utils import env_or_ucr, exec_cmd, get_file_handler, get_ssl_ca_cert_path, ucr
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
     role_school_class,
@@ -28,7 +28,6 @@ APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 _cached_ous: Set[Tuple[str, str]] = set()
 fake = Faker()
@@ -86,7 +85,7 @@ def udm_kwargs() -> Dict[str, Any]:
         "username": "cn=admin",
         "password": cn_admin_password,
         "url": f"https://{host}/univention/udm/",
-        "ssl_ca_cert": UCS_SSL_CA_CERT,
+        "ssl_ca_cert": get_ssl_ca_cert_path(),
     }
 
 

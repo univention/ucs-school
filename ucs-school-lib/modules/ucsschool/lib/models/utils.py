@@ -115,7 +115,7 @@ APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
+DEFAULT_UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 _handler_cache: Dict[str, logging.Handler] = {}
 _pw_length_cache: Dict[str, int] = {}
@@ -124,6 +124,14 @@ ucr: ConfigRegistry = lazy_object_proxy.Proxy(_ucr)  # "global" ucr for ucsschoo
 ucr_username_max_length: int = lazy_object_proxy.Proxy(
     lambda: int(ucr.get("ucsschool/username/max_length", 20))
 )
+
+
+def get_ssl_ca_cert_path() -> str:
+    custom_crt_path = "/usr/local/share/ca-certificates/custom.crt"
+    if os.path.exists(custom_crt_path):
+        return custom_crt_path
+    else:
+        return DEFAULT_UCS_SSL_CA_CERT
 
 
 def mkdir_p(dir_name: str, user: Union[str, int], group: Union[str, int], mode: int) -> None:
@@ -552,7 +560,7 @@ def udm_rest_client_cn_admin_kwargs() -> Dict[str, str]:
             "username": "cn=admin",
             "password": cn_admin_password,
             "url": f"https://{host}/univention/udm/",
-            "ssl_ca_cert": UCS_SSL_CA_CERT,
+            "ssl_ca_cert": get_ssl_ca_cert_path(),
         }
     return _udm_kwargs
 

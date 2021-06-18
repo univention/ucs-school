@@ -50,6 +50,14 @@ __EOF__
 
   "$UDM_CLIENT_UPDATE_SCRIPT" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
 
+  container_CA_path="/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/custom_trusted_CA/custom.crt"
+  if [ -f "$container_CA_path"]; then
+    cp --verbose "$container_CA_path" /usr/local/share/ca-certificates/
+    update-ca-certificates
+  else
+    echo "No custom CA configured, using ucsCA"
+  fi
+
   echo "Adding UCS certificate to certifi store..."
   CERTIFI_STORE="$(/usr/bin/python3 -m certifi)"
   UCS_CERT="/usr/local/share/ca-certificates/ucs.crt"

@@ -60,6 +60,7 @@ from ucsschool.lib.models.school import *  # noqa: F401, F403
 from ucsschool.lib.models.utils import (
     UniStreamHandler as _UniStreamHandler,
     env_or_ucr,
+    get_ssl_ca_cert_path,
     get_stream_handler as _get_stream_handler,
 )
 
@@ -128,7 +129,6 @@ _udm_kwargs: Dict[str, str] = {}
 CN_ADMIN_PASSWORD_FILE = Path(
     "/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf/cn_admin.secret"
 )
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 
 def udm_kwargs():
@@ -144,7 +144,7 @@ def udm_kwargs():
                 "username": "cn=admin",
                 "password": cn_admin_password(CN_ADMIN_PASSWORD_FILE),
                 "url": f"https://{host}/univention/udm/",
-                "ssl_ca_cert": UCS_SSL_CA_CERT,
+                "ssl_ca_cert": get_ssl_ca_cert_path(),
             }
         )
     return _udm_kwargs
