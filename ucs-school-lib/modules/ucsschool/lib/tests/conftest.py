@@ -28,7 +28,6 @@ APP_ID = "ucsschool-kelvin-rest-api"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 _cached_ous: Set[Tuple[str, str]] = set()
 fake = Faker()
@@ -86,7 +85,6 @@ def udm_kwargs() -> Dict[str, Any]:
         "username": "cn=admin",
         "password": cn_admin_password,
         "url": f"https://{host}/univention/udm/",
-        "ssl_ca_cert": UCS_SSL_CA_CERT,
     }
 
 

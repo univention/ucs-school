@@ -1,11 +1,17 @@
 <h1>Changelog</h1>
-<h2>v1.4.4 (2021-06-24)</h2>
+<h2>v1.4.4 (2021-06-29)</h2>
 <ul>
     <li>
-         The Kelvin API now supports LDAP servers using certificates, which are not signed by the UCS-CA. (Bug #52766)
+         The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)
     </li>
      <li>
          The UCS@school object validation now validate groups, schools and roles case-insensitive. (Bug #53044)
+    </li>
+</ul>
+<h2>v1.4.4 (2021-06-24)</h2>
+<ul>
+    <li>
+         The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)
     </li>
 </ul>
 <h2>v1.4.3 (2021-06-16)</h2>

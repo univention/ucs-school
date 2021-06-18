@@ -128,7 +128,6 @@ _udm_kwargs: Dict[str, str] = {}
 CN_ADMIN_PASSWORD_FILE = Path(
     "/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf/cn_admin.secret"
 )
-UCS_SSL_CA_CERT = "/usr/local/share/ca-certificates/ucs.crt"
 
 
 def udm_kwargs():
@@ -144,7 +143,6 @@ def udm_kwargs():
                 "username": "cn=admin",
                 "password": cn_admin_password(CN_ADMIN_PASSWORD_FILE),
                 "url": f"https://{host}/univention/udm/",
-                "ssl_ca_cert": UCS_SSL_CA_CERT,
             }
         )
     return _udm_kwargs
