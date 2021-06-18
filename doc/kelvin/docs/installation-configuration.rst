@@ -36,8 +36,7 @@ All HTTP requests to resources must carry a valid JWT token. The number of minut
 Custom CA Certificates
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If Apache2 is configured to use a different certificate than the default certificate by provided by UCS,
-the path to the certificate can be set through the *app settings* of the *UCS\@school Kelvin REST API* app in the *Univention App Center* UMC module.
+By default the *UCS\@school Kelvin REST API* only connects to an LDAP server which is using the CA provided by UCS. If the LDAP server uses a different CA, that CA needs to be configured through the *app settings* in the *Univention App Center* UMC module.
 
 Log level
 ^^^^^^^^^
