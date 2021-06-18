@@ -50,12 +50,6 @@ __EOF__
 
   "$UDM_CLIENT_UPDATE_SCRIPT" || echo "==> Error can be ignored, if updating from version 1.0.x. The join script will rebuild the library."
 
-  if [ -f "/usr/local/share/ca-certificates/custom.crt" ]; then
-    update-ca-certificates
-  else
-    echo "No custom CA configured, using ucsCA"
-  fi
-
   echo "Adding UCS certificate to certifi store..."
   CERTIFI_STORE="$(/usr/bin/python3 -m certifi)"
   UCS_CERT="/usr/local/share/ca-certificates/ucs.crt"
@@ -68,4 +62,12 @@ __EOF__
 
   echo "Restating UCS@school Kelvin REST API server..."
   /etc/init.d/ucsschool-kelvin-rest-api restart
+fi
+
+if [ "$1" = "settings" ]; then
+  if [ -f "/usr/local/share/ca-certificates/custom.crt" ]; then
+    update-ca-certificates
+  else
+    echo "No custom CA configured, using ucsCA"
+  fi
 fi
