@@ -799,9 +799,7 @@ def parametrization_id_base64_decode(val):
         try:
             return val.decode("base64").strip().decode("ascii", errors="replace")
         except ValueError:
-            return val
-    else:
-        return val
+            pass
 
 
 def generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False):
