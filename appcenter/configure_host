@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+custom_trusted_CA_path="$(ucr get ucsschool/kelvin/trusted_CA_path)"
+
+if [[ -n "$custom_trusted_CA_path" ]]; then
+	mkdir -p /var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/custom_trusted_CA/
+	rm /var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/custom_trusted_CA/*
+	cp "$custom_trusted_CA_path" /var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/data/custom_trusted_CA/
+fi
