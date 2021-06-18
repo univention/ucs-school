@@ -33,6 +33,11 @@ Token validity
 
 All HTTP requests to resources must carry a valid JWT token. The number of minutes a token is valid can be configured. The default is ``60``. The value can be changed through the *app settings* of the *UCS\@school Kelvin REST API* app in the *Univention App Center* UMC module.
 
+Custom CA Certificates
+^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, the *UCS\@school Kelvin REST API* only connects to an LDAP server which is using the CA provided by UCS. If the LDAP server uses a different CA, that CA needs to be configured through the *app settings* in the *Univention App Center* UMC module.
+
 Log level
 ^^^^^^^^^
 

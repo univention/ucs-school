@@ -13,5 +13,5 @@ InitialValue = INFO
 [ucsschool/kelvin/trusted_CA_path]
 Type = File
 Filename = /usr/local/share/ca-certificates/custom.crt
-Description = By default the UCS@school Kelvin REST API only connects to an LDAP server which is using the "ucsCA". If the LDAP server uses a different CA, that CA needs to be configured here as well.
-Description[de] = Standardmäßig verbindet sich die UCS@school Kelvin REST API nur mit LDAP-Servern welche die "ucsCA" verwenden. Nutzt der LDAP-Server eine andere CA, muss diese hier angegeben werden.
+Description = By default, the UCS@school Kelvin REST API only connects to an LDAP server which is using the "UCS-CA". If the LDAP server uses a different CA, that CA needs to be configured here as well.
+Description[de] = Standardmäßig verbindet sich die UCS@school Kelvin REST API nur mit LDAP-Servern, welche die "UCS-CA" verwenden. Nutzt der LDAP-Server eine andere CA, muss diese hier angegeben werden.
