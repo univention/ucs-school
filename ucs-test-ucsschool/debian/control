@@ -17,6 +17,7 @@ Depends: ucs-test-libs,
  python-attr,
  python-requests,
  eapol,
+ jq,
  ${misc:Depends},
  python-ucs-school (>= 12.1.9),
 Provides: ucs-test-module

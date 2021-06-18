@@ -60,6 +60,16 @@ __EOF__
     fi
   done < "$UCS_CERT"
 
-  echo "Restating UCS@school Kelvin REST API server..."
+  echo "Restarting UCS@school Kelvin REST API server..."
   /etc/init.d/ucsschool-kelvin-rest-api restart
+fi
+
+if [ "$1" = "settings" ]; then
+  if [ -f "/usr/local/share/ca-certificates/custom.crt" ]; then
+    update-ca-certificates
+	echo "Restarting UCS@school Kelvin REST API server..."
+	/etc/init.d/ucsschool-kelvin-rest-api restart
+  else
+    echo "No custom CA configured, using ucsCA"
+  fi
 fi
