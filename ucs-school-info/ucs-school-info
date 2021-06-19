@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -33,19 +33,18 @@
 
 from __future__ import print_function
 
+from argparse import ArgumentParser
 import sys
-from optparse import OptionParser
+import ipaddress
 
-import ipaddr
+from ldap.filter import filter_format
 
-import univention.admin.config
 import univention.admin.modules
 import univention.admin.objects
 import univention.admin.uldap
 from univention.config_registry import ConfigRegistry
 
 baseDN = None
-co = None
 lo = None
 
 univention.admin.modules.update()
@@ -56,36 +55,27 @@ def _print(_str):
 	print('-' * len(_str))
 
 
-def get_object(dn, module, superordinate=None):
+def get_object(dn, module):
 	"""Get a single object.
 
-	@param	dn	Object dn
+	@param dn Object dn
 	"""
 	_module = univention.admin.modules.get(module)
 	position = univention.admin.uldap.position(baseDN)
 	univention.admin.modules.init(lo, position, _module)
 
-	return univention.admin.objects.get(_module, co, lo, position=position, superordinate=superordinate, dn=dn)
+	return univention.admin.objects.get(_module, None, lo, position=position, dn=dn)
 
 
-def get_objects(module, base=baseDN, _filter=None, superordinate=None):
+def get_objects(module, base=baseDN):
 	"""Get objects.
 
-	@param	ou	School OU
+	@param ou School OU
 	"""
 	_module = univention.admin.modules.get(module)
 	position = univention.admin.uldap.position(baseDN)
 	univention.admin.modules.init(lo, position, _module)
-	if not _filter:
-		return univention.admin.modules.lookup(_module, co, lo, superordinate=superordinate, base=base, scope='sub')
-	else:
-		if len(_filter) != 2:
-			raise ValueError('_filter consists of other than two arguments!')
-		return univention.admin.modules.lookup(
-			_module, co, lo,
-			base=base, scope='sub', superordinate=superordinate,
-			filter=univention.admin.filter.expression(*_filter)
-		)
+	return univention.admin.modules.lookup(_module, None, lo, base=base, scope='sub')
 
 
 def user(base=baseDN):
@@ -95,7 +85,7 @@ def user(base=baseDN):
 	for u in users:
 		u.open()
 
-	users = sorted(users, cmp=lambda x, y: cmp(x['username'], y['username']))
+	users = sorted(users, key=lambda x: x['username'])
 
 	for u in users:
 		_str = '\t%s' % u["username"]
@@ -131,7 +121,7 @@ def computer(base=baseDN):
 	for c in computers:
 		c.open()
 
-	computers = sorted(computers, cmp=lambda x, y: cmp(x['name'], y['name']))
+	computers = sorted(computers, key=lambda x: x['name'])
 
 	for c in computers:
 		_str = '\t%s' % c["name"]
@@ -157,26 +147,26 @@ def network(base=baseDN):
 	for n in networks:
 		n.open()
 
-	networks = sorted(networks, cmp=lambda x, y: cmp(x['name'], y['name']))
+	networks = sorted(networks, key=lambda x: x['name'])
 
 	for n in networks:
 		print('\t%s' % n['name'])
 		print('\tNetwork:\t%s' % n["network"])
 
-		net_ip = ipaddr.IPv4Network('%s/%s' % (n['network'], n['netmask']))
+		net_ip = ipaddress.IPv4Interface(u'%s/%s' % (n['network'], n['netmask']))
 		netmask = str(net_ip.netmask)
 		print('\tNetmask:\t%s' % netmask)
 
 		if n['dhcpEntryZone']:
 			_base = base
 			dnx = univention.admin.uldap.explodeDn(n.dn)
-			if dnx.count('cn=networks'):
+			if 'cn=networks' in dnx:
 				_base = ','.join(dnx[dnx.index('cn=networks') + 1:])
 
 			for subnet in get_objects('dhcp/subnet', base=_base):
 				subnet.open()
-				brd_ip = ipaddr.IPv4Address(subnet['broadcastaddress'])
-				if brd_ip not in net_ip:
+				brd_ip = ipaddress.IPv4Address(subnet['broadcastaddress'])
+				if brd_ip not in net_ip.network:
 					continue
 
 				print('\tBroadcast:\t%s' % subnet['broadcastaddress'])
@@ -185,8 +175,7 @@ def network(base=baseDN):
 
 				# FIXME: This is very ugly but it seems like you can't get the
 				# type of a policy object easily
-				policy_dns = lo.get(subnet.dn, ['univentionPolicyReference']).get('univentionPolicyReference', [])
-				policy_dns.sort()
+				policy_dns = sorted(x.decode('UTF-8') for x in lo.get(subnet.dn, ['univentionPolicyReference']).get('univentionPolicyReference', []))
 
 				for dn in policy_dns:
 					dnx = univention.admin.uldap.explodeDn(dn)
@@ -196,13 +185,13 @@ def network(base=baseDN):
 							print('\tRouters:\t%s' % '; '.join(policy['routers']))
 						elif dnx[1] == 'cn=netbios':
 							policy = get_object(dn, 'policies/dhcp_netbios')
-							# print '\tNetBIOS Scope:\t%s' % policy['netbios_scope']
+							# print('\tNetBIOS Scope:\t%s' % (policy['netbios_scope'],))
 							print('\tNetBIOS Server:\t%s' % '; '.join(policy['netbios_name_servers']))
 						elif dnx[1] == 'cn=dns':
 							policy = get_object(dn, 'policies/dhcp_dns')
 							print('\tDomain Name:\t%s' % policy['domain_name'])
 							print('\tDNS Server:\t%s' % '; '.join(policy['domain_name_servers']))
-					except:
+					except Exception:
 						pass
 
 		for iprange in n['ipRange']:
@@ -212,22 +201,16 @@ def network(base=baseDN):
 
 
 if __name__ == '__main__':
-	# parse arguments
-	usage = "%prog [options] <ou> [<ou>...]"
-
-	parser = OptionParser(usage=usage)
-	parser.add_option("-u", "--user", dest="user", action="store_true", help="Display user information")
-	parser.add_option("-n", "--network", action="store_true", dest="network", help="Display network information")
-	parser.add_option("-c", "--computer", action="store_true", dest="computer", help="Display computer information")
-	parser.add_option("-a", "--all", action="store_true", dest="all", help="Display all available information (user, network, computer) [default]")
+	parser = ArgumentParser()
+	parser.add_argument("-u", "--user", action="store_true", help="Display user information")
+	parser.add_argument("-n", "--network", action="store_true", help="Display network information")
+	parser.add_argument("-c", "--computer", action="store_true", help="Display computer information")
+	parser.add_argument("-a", "--all", action="store_true", help="Display all available information (user, network, computer) [default]")
+	parser.add_argument('ou', nargs='+')
 
 	parser.set_defaults(user=False, network=False, computer=False, all=False)
 
-	(options, args) = parser.parse_args()
-
-	if not args:
-		parser.print_help()
-		parser.error('No argument <ou> given.')
+	options = parser.parse_args()
 
 	# start execution
 	configRegistry = ConfigRegistry()
@@ -235,30 +218,21 @@ if __name__ == '__main__':
 
 	baseDN = configRegistry['ldap/base']
 
-	secretFile = open('/etc/machine.secret', 'r')
-	machinepwd = secretFile.readline().replace('\n', '')
-	machinedn = configRegistry.get('ldap/hostdn')
-	if not machinedn or not machinepwd:
-		print('Cannot get machine account dn or machine credentials')
-		sys.exit(1)
-
-	co = univention.admin.config.config()
 	try:
-		lo = univention.admin.uldap.access(host=configRegistry['ldap/server/name'], base=baseDN, binddn=machinedn, bindpw=machinepwd, start_tls=2)
+		lo = univention.admin.uldap.getMachineConnection(ldap_master=False)[0]
 	except Exception as exc:
-		univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(exc))
 		print('ERROR: authentication error: %s' % str(exc))
 		sys.exit(1)
 
 	exitcode = 0
-	for _ou in args:
-		res = lo.search('ou=%s' % _ou)
+	for _ou in options.ou:
+		res = lo.search(filter_format('ou=%s', [_ou]))
 		if not res:
-			print('WARNING: Unable to find OU %s.' % _ou, file=sys.stderr)
+			print('WARNING: Unable to find OU %s.' % (_ou,), file=sys.stderr)
 			exitcode = 1
 			continue
 		elif len(res) > 1:
-			print('WARNING: Multiple OUs found for %s, ignoring request.' % _ou, file=sys.stderr)
+			print('WARNING: Multiple OUs found for %s, ignoring request.' % (_ou,), file=sys.stderr)
 			exitcode = 2
 			continue
 		search_base = res[0][0]
