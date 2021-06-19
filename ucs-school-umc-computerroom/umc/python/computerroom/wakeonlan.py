@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # WakeOnLan/WOL helpers
@@ -38,7 +38,7 @@ import socket
 import netifaces
 
 try:
-    from typing import Iterable, Optional, Set
+    from typing import Iterable, Optional, Set  # noqa: F401
 except ImportError:
     pass
 
@@ -110,12 +110,12 @@ def send_wol_packet(
     if len(addr) != 12:
         raise ValueError("Invalid MAC address specified: {}".format(mac_address))
     try:
-        bytearray.fromhex(addr.encode())
+        bytearray.fromhex(addr)
     except ValueError as exc:
         raise ValueError("Invalid MAC address specified: {}: {}".format(mac_address, exc))
 
     # generate payload
-    payload_hex = "FFFFFFFFFFFF" + (addr * 16).encode()
+    payload_hex = "FFFFFFFFFFFF" + (addr * 16)
     payload = bytes(bytearray.fromhex(payload_hex))
 
     for local_addr in get_local_ip_addresses(blacklisted_interfaces, blacklisted_interface_prefixes):
