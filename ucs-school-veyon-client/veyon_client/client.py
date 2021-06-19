@@ -26,6 +26,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -37,10 +38,10 @@ from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSes
 from .utils import check_veyon_error
 
 try:
-    from typing import TYPE_CHECKING, Dict, Optional
+    from typing import TYPE_CHECKING, Dict, Optional  # noqa: F401
 
     if TYPE_CHECKING:
-        from .models import Dimension, Feature
+        from .models import Dimension, Feature  # noqa: F401
 except ImportError:
     pass
 
@@ -71,8 +72,8 @@ class VeyonClient:
         self._default_host = default_host
         self._idle_timeout = max(idle_timeout - 1, 1)
         self._ping_timeout = 5.0
-        self._session_cache = dict()  # type: Dict[str, VeyonSession]
-        self._last_used = dict()  # type: Dict[str, float]
+        self._session_cache = {}  # type: Dict[str, VeyonSession]
+        self._last_used = {}  # type: Dict[str, float]
         self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]
         self._locks_lock = Lock()  # type: Lock
         """This lock is needed to ensure thread safe operation of the defaultdict for the individual

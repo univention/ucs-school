@@ -30,7 +30,7 @@
 try:
     import typing  # noqa: F401
 
-    import requests
+    import requests  # noqa: F401
 except ImportError:
     pass
 
