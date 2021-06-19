@@ -128,7 +128,7 @@ class TestS4SIDAllocation(TestSamba4):
         """
         print("\nLooking for a 'sambaSID' of a user with a DN: '%s' in the LDAP" % user_dn)
         try:
-            samba_sid = self.LdapConnection.get(user_dn)["sambaSID"][0]
+            samba_sid = self.LdapConnection.get(user_dn)["sambaSID"][0].decode("UTF-8")
             if not samba_sid:
                 utils.fail("The 'sambaSID' is empty in the LDAP.")
         except (KeyError, IndexError) as exc:
