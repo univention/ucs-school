@@ -12,7 +12,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-l10n-fr
 Architecture: all
 Depends:
- univention-l10n-tools,
+ univention-l10n-dev,
  ${misc:Depends},
 Description: UCS Management Console translation files
  This package is part of Univention Corporate Server (UCS),
