@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 
 # Copyright 2020-2021 Univention GmbH
@@ -27,6 +27,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
 import calendar
 import threading
 import time
@@ -67,9 +68,9 @@ def monkey_get(*args, **kwargs):
             response._content = b'{"error":{"code":9,"message":"Unsupported image format"}}'
         else:
             response.status_code = 200
-            response._content = b"{}-{}-{}".format(
+            response._content = "{}-{}-{}".format(
                 params["format"], params["compression"], params["quality"]
-            )
+            ).encode("UTF-8")
     else:
         raise RuntimeError("Unexpected url for monkeypatch get: {}".format(args[0]))
     return response
@@ -180,7 +181,7 @@ def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
     client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_screenshot(
         screenshot_format=screenshot_format, quality=quality, compression=compression
-    ) == "{}-{}-{}".format(screenshot_format, compression, quality)
+    ) == "{}-{}-{}".format(screenshot_format, compression, quality).encode("UTF-8")
 
 
 def test_wrong_image_format(monkeypatch):

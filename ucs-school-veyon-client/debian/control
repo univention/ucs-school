@@ -6,6 +6,7 @@ Build-Depends:
  debhelper-compat (= 12),
  dh-python,
  python-requests,
+ python3-requests,
  ucslint,
  univention-unittests,
 Standards-Version: 3.7.2
@@ -17,6 +18,7 @@ Breaks:
  ucs-school-lib (<< 12.2.28),
 Depends:
  python-requests,
+ python3-requests,
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},
