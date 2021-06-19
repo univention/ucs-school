@@ -1,3 +1,9 @@
+ucs-school-ox-support (4.0.3) unstable; urgency=medium
+
+  * Bug #52644: migrate ucs-school-ox-support to Python 3
+
+ -- Florian Best <best@univention.de>  Sat, 19 Jun 2021 05:06:21 +0200
+
 ucs-school-ox-support (4.0.2) unstable; urgency=medium
 
   * Bug #52605 ucs-school-ox-support: use new debhelper sequences

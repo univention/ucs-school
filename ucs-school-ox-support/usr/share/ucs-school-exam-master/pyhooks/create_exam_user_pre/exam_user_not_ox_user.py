@@ -56,7 +56,7 @@ class NoOXExamUserPyHook(ExamUserPyHook):
         Deactivate OX user flag.
         """
         for num, (k, v) in enumerate(al):
-            if k == "isOxUser" and v == ["OK"]:
-                al[num] = (k, ["Not"])
+            if k == "isOxUser" and v == [b"OK"]:
+                al[num] = (k, [b"Not"])
                 break
         return al
