@@ -1,5 +1,5 @@
-#!/usr/bin/python2.7
-# -*- coding: iso-8859-15 -*-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # UCS@school lib
 #  module: Create role specific shares
@@ -66,19 +66,17 @@ def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=N
 
 
 if __name__ == "__main__":
-    from optparse import OptionParser
+    from argparse import ArgumentParser
 
-    parser = OptionParser()
-    parser.add_option("--create", dest="roleshares", action="append", help="create role share")
-    parser.add_option("--school", dest="schools", action="append", help="select school")
-    parser.add_option("--binddn", dest="binddn", help="udm binddn")
-    parser.add_option("--bindpwd", dest="bindpwd", help="udm bindpwd")
-    parser.add_option("--bindpwdfile", dest="bindpwdfile", help="udm bindpwdfile")
-    (opts, args) = parser.parse_args()
-
-    if not opts.roleshares:
-        print("Required option missing: --create")
-        sys.exit(2)
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--create", required=True, dest="roleshares", action="append", help="create role share"
+    )
+    parser.add_argument("--school", dest="schools", action="append", help="select school")
+    parser.add_argument("--binddn", help="udm binddn")
+    parser.add_argument("--bindpwd", help="udm bindpwd")
+    parser.add_argument("--bindpwdfile", help="udm bindpwdfile")
+    opts = parser.parse_args()
 
     ucr = univention.config_registry.ConfigRegistry()
     ucr.load()
