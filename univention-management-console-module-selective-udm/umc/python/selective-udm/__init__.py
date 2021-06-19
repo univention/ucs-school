@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console
@@ -35,14 +35,9 @@ import base64
 
 import ldap.filter
 
-import univention.admin.config
 import univention.admin.handlers.computers.windows
-import univention.admin.handlers.users.user
 import univention.admin.modules
-import univention.admin.objects
 import univention.admin.uexceptions
-import univention.admin.uldap
-import univention.config_registry
 from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, LDAP_Connection
 from univention.lib.i18n import Translation
@@ -52,15 +47,17 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 
-univention.admin.modules.update()
-
-# update choices-lists which are defined in LDAP
-univention.admin.syntax.update_choices()
-
 _ = Translation("univention-management-console-selective-udm").translate
 
 
 class Instance(SchoolBaseModule):
+    def init(self):
+        super(Instance, self).init()
+        univention.admin.modules.update()
+
+        # update choices-lists which are defined in LDAP
+        univention.admin.syntax.update_choices()
+
     def _check_usersid_join_permissions(self, lo, usersid):
         allowed_groups = ucr.get("ucsschool/windows/join/groups", "Domain Admins").split(",")
 
@@ -76,7 +73,7 @@ class Instance(SchoolBaseModule):
             raise UMC_Error("No group memberships for SID %s found." % (usersid,))
 
         for dn, attr in result:
-            if attr.get("cn", [])[0] in allowed_groups:
+            if attr["cn"][0].decode("UTF-8") in allowed_groups:
                 return
 
         raise UMC_Error(
@@ -99,20 +96,21 @@ class Instance(SchoolBaseModule):
 
         self._check_usersid_join_permissions(ldap_user_read, request.options.get("usersid"))
 
+        # TODO: univention.admin.modules.init()
         # Create the computer account
-        computer = univention.admin.handlers.computers.windows.object(
-            None, ldap_admin_write, position=ldap_position, superordinate=None
-        )
+        windows = univention.admin.modules.get("computers/windows")
+        computer = windows.object(None, ldap_admin_write, position=ldap_position, superordinate=None)
         computer.open()
         name = request.options.get("name")
-        if name[-1] == "$":
+        if name.endswith("$"):
             # Samba 3 calls the name in this way
             name = name[:-1]
 
         # In Samba 3 the samba attributes must be set by Samba itself
         samba3_mode = request.options.get("samba3_mode")
         if samba3_mode and samba3_mode.lower() in ["true", "yes"]:
-            computer.options = ["posix"]
+            computer.options.remove("samba")
+            computer.options.remove("kerberos")
 
         computer["name"] = name
 
@@ -121,7 +119,7 @@ class Instance(SchoolBaseModule):
             decode_password = request.options.get("decode_password")
             if decode_password and decode_password.lower() in ["true", "yes"]:
                 # the password is base64 encoded
-                password = base64.decodestring(password)
+                password = base64.b64decode(password.encode("ASCII"))
                 # decode from utf-16le
                 password = password.decode("utf-16le")
                 # and remove the quotes
