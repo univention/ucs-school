@@ -33,9 +33,9 @@
 
 from __future__ import print_function
 
-from argparse import ArgumentParser
-import sys
 import ipaddress
+import sys
+from argparse import ArgumentParser
 
 from ldap.filter import filter_format
 
@@ -51,200 +51,210 @@ univention.admin.modules.update()
 
 
 def _print(_str):
-	print(_str)
-	print('-' * len(_str))
+    print(_str)
+    print("-" * len(_str))
 
 
 def get_object(dn, module):
-	"""Get a single object.
+    """Get a single object.
 
-	@param dn Object dn
-	"""
-	_module = univention.admin.modules.get(module)
-	position = univention.admin.uldap.position(baseDN)
-	univention.admin.modules.init(lo, position, _module)
+    @param dn Object dn
+    """
+    _module = univention.admin.modules.get(module)
+    position = univention.admin.uldap.position(baseDN)
+    univention.admin.modules.init(lo, position, _module)
 
-	return univention.admin.objects.get(_module, None, lo, position=position, dn=dn)
+    return univention.admin.objects.get(_module, None, lo, position=position, dn=dn)
 
 
 def get_objects(module, base=baseDN):
-	"""Get objects.
+    """Get objects.
 
-	@param ou School OU
-	"""
-	_module = univention.admin.modules.get(module)
-	position = univention.admin.uldap.position(baseDN)
-	univention.admin.modules.init(lo, position, _module)
-	return univention.admin.modules.lookup(_module, None, lo, base=base, scope='sub')
+    @param ou School OU
+    """
+    _module = univention.admin.modules.get(module)
+    position = univention.admin.uldap.position(baseDN)
+    univention.admin.modules.init(lo, position, _module)
+    return univention.admin.modules.lookup(_module, None, lo, base=base, scope="sub")
 
 
 def user(base=baseDN):
-	"""List user information for specified ou."""
-	users = get_objects('users/user', base=base)
-	print('Users:')
-	for u in users:
-		u.open()
+    """List user information for specified ou."""
+    users = get_objects("users/user", base=base)
+    print("Users:")
+    for u in users:
+        u.open()
 
-	users = sorted(users, key=lambda x: x['username'])
+    users = sorted(users, key=lambda x: x["username"])
 
-	for u in users:
-		_str = '\t%s' % u["username"]
-		_options = []
-		_o2 = []
-		if u["lastname"]:
-			_o2.append(u['lastname'])
-		if u["firstname"]:
-			_o2.append(u['firstname'])
-		if _o2:
-			_options.append('name: %s' % ', '.join(_o2))
-		if u['disabled'] != '0':
-			_options.append('disabled=%s' % u["disabled"])
-		if u['locked'] != '0':
-			_options.append('locked=%s' % u["locked"])
-		if u["passwordexpiry"]:
-			_options.append('password expires: %s' % u["passwordexpiry"])
+    for u in users:
+        _str = "\t%s" % u["username"]
+        _options = []
+        _o2 = []
+        if u["lastname"]:
+            _o2.append(u["lastname"])
+        if u["firstname"]:
+            _o2.append(u["firstname"])
+        if _o2:
+            _options.append("name: %s" % ", ".join(_o2))
+        if u["disabled"] != "0":
+            _options.append("disabled=%s" % u["disabled"])
+        if u["locked"] != "0":
+            _options.append("locked=%s" % u["locked"])
+        if u["passwordexpiry"]:
+            _options.append("password expires: %s" % u["passwordexpiry"])
 
-		if _options:
-			tabs = '\t'
-			if len(_str) <= 8:
-				tabs += '\t'
-			print(_str + '%s(%s)' % (tabs, '; '.join(_options)))
-		else:
-			print(_str)
-	print('')
+        if _options:
+            tabs = "\t"
+            if len(_str) <= 8:
+                tabs += "\t"
+            print(_str + "%s(%s)" % (tabs, "; ".join(_options)))
+        else:
+            print(_str)
+    print("")
 
 
 def computer(base=baseDN):
-	"""List computer information for specified ou."""
-	computers = get_objects('computers/computer', base=base)
-	print('Computers:')
-	for c in computers:
-		c.open()
+    """List computer information for specified ou."""
+    computers = get_objects("computers/computer", base=base)
+    print("Computers:")
+    for c in computers:
+        c.open()
 
-	computers = sorted(computers, key=lambda x: x['name'])
+    computers = sorted(computers, key=lambda x: x["name"])
 
-	for c in computers:
-		_str = '\t%s' % c["name"]
-		_options = []
-		if c["ip"] and c["ip"] != ['']:
-			_options.append('IP: %s' % ', '.join(c['ip']))
-		if c["mac"] and c["mac"] != ['']:
-			_options.append('MAC: %s' % ', '.join(c["mac"]))
-		if c["inventoryNumber"] and c["inventoryNumber"] != ['']:
-			_options.append('inv. number: %s' % ', '.join(c["inventoryNumber"]))
+    for c in computers:
+        _str = "\t%s" % c["name"]
+        _options = []
+        if c["ip"] and c["ip"] != [""]:
+            _options.append("IP: %s" % ", ".join(c["ip"]))
+        if c["mac"] and c["mac"] != [""]:
+            _options.append("MAC: %s" % ", ".join(c["mac"]))
+        if c["inventoryNumber"] and c["inventoryNumber"] != [""]:
+            _options.append("inv. number: %s" % ", ".join(c["inventoryNumber"]))
 
-		if _options:
-			print(_str + '\t(%s)' % '; '.join(_options))
-		else:
-			print(_str)
-	print('')
+        if _options:
+            print(_str + "\t(%s)" % "; ".join(_options))
+        else:
+            print(_str)
+    print("")
 
 
 def network(base=baseDN):
-	"""List network information for specified ou."""
-	networks = get_objects('networks/network', base=base)
-	print('Network:')
-	for n in networks:
-		n.open()
+    """List network information for specified ou."""
+    networks = get_objects("networks/network", base=base)
+    print("Network:")
+    for n in networks:
+        n.open()
 
-	networks = sorted(networks, key=lambda x: x['name'])
+    networks = sorted(networks, key=lambda x: x["name"])
 
-	for n in networks:
-		print('\t%s' % n['name'])
-		print('\tNetwork:\t%s' % n["network"])
+    for n in networks:
+        print("\t%s" % n["name"])
+        print("\tNetwork:\t%s" % n["network"])
 
-		net_ip = ipaddress.IPv4Interface(u'%s/%s' % (n['network'], n['netmask']))
-		netmask = str(net_ip.netmask)
-		print('\tNetmask:\t%s' % netmask)
+        net_ip = ipaddress.IPv4Interface(u"%s/%s" % (n["network"], n["netmask"]))
+        netmask = str(net_ip.netmask)
+        print("\tNetmask:\t%s" % netmask)
 
-		if n['dhcpEntryZone']:
-			_base = base
-			dnx = univention.admin.uldap.explodeDn(n.dn)
-			if 'cn=networks' in dnx:
-				_base = ','.join(dnx[dnx.index('cn=networks') + 1:])
+        if n["dhcpEntryZone"]:
+            _base = base
+            dnx = univention.admin.uldap.explodeDn(n.dn)
+            if "cn=networks" in dnx:
+                _base = ",".join(dnx[dnx.index("cn=networks") + 1 :])
 
-			for subnet in get_objects('dhcp/subnet', base=_base):
-				subnet.open()
-				brd_ip = ipaddress.IPv4Address(subnet['broadcastaddress'])
-				if brd_ip not in net_ip.network:
-					continue
+            for subnet in get_objects("dhcp/subnet", base=_base):
+                subnet.open()
+                brd_ip = ipaddress.IPv4Address(subnet["broadcastaddress"])
+                if brd_ip not in net_ip.network:
+                    continue
 
-				print('\tBroadcast:\t%s' % subnet['broadcastaddress'])
-				if subnet['range']:
-					print('\tDynamic Range:\t%s' % subnet['range'])
+                print("\tBroadcast:\t%s" % subnet["broadcastaddress"])
+                if subnet["range"]:
+                    print("\tDynamic Range:\t%s" % subnet["range"])
 
-				# FIXME: This is very ugly but it seems like you can't get the
-				# type of a policy object easily
-				policy_dns = sorted(x.decode('UTF-8') for x in lo.get(subnet.dn, ['univentionPolicyReference']).get('univentionPolicyReference', []))
+                # FIXME: This is very ugly but it seems like you can't get the
+                # type of a policy object easily
+                policy_dns = sorted(
+                    x.decode("UTF-8")
+                    for x in lo.get(subnet.dn, ["univentionPolicyReference"]).get(
+                        "univentionPolicyReference", []
+                    )
+                )
 
-				for dn in policy_dns:
-					dnx = univention.admin.uldap.explodeDn(dn)
-					try:
-						if dnx[1] == 'cn=routing':
-							policy = get_object(dn, 'policies/dhcp_routing')
-							print('\tRouters:\t%s' % '; '.join(policy['routers']))
-						elif dnx[1] == 'cn=netbios':
-							policy = get_object(dn, 'policies/dhcp_netbios')
-							# print('\tNetBIOS Scope:\t%s' % (policy['netbios_scope'],))
-							print('\tNetBIOS Server:\t%s' % '; '.join(policy['netbios_name_servers']))
-						elif dnx[1] == 'cn=dns':
-							policy = get_object(dn, 'policies/dhcp_dns')
-							print('\tDomain Name:\t%s' % policy['domain_name'])
-							print('\tDNS Server:\t%s' % '; '.join(policy['domain_name_servers']))
-					except Exception:
-						pass
+                for dn in policy_dns:
+                    dnx = univention.admin.uldap.explodeDn(dn)
+                    try:
+                        if dnx[1] == "cn=routing":
+                            policy = get_object(dn, "policies/dhcp_routing")
+                            print("\tRouters:\t%s" % "; ".join(policy["routers"]))
+                        elif dnx[1] == "cn=netbios":
+                            policy = get_object(dn, "policies/dhcp_netbios")
+                            # print('\tNetBIOS Scope:\t%s' % (policy['netbios_scope'],))
+                            print("\tNetBIOS Server:\t%s" % "; ".join(policy["netbios_name_servers"]))
+                        elif dnx[1] == "cn=dns":
+                            policy = get_object(dn, "policies/dhcp_dns")
+                            print("\tDomain Name:\t%s" % policy["domain_name"])
+                            print("\tDNS Server:\t%s" % "; ".join(policy["domain_name_servers"]))
+                    except Exception:
+                        pass
 
-		for iprange in n['ipRange']:
-			print('\tIP-Range:\t%s' % '-'.join(iprange))
+        for iprange in n["ipRange"]:
+            print("\tIP-Range:\t%s" % "-".join(iprange))
 
-		print('')
+        print("")
 
 
-if __name__ == '__main__':
-	parser = ArgumentParser()
-	parser.add_argument("-u", "--user", action="store_true", help="Display user information")
-	parser.add_argument("-n", "--network", action="store_true", help="Display network information")
-	parser.add_argument("-c", "--computer", action="store_true", help="Display computer information")
-	parser.add_argument("-a", "--all", action="store_true", help="Display all available information (user, network, computer) [default]")
-	parser.add_argument('ou', nargs='+')
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("-u", "--user", action="store_true", help="Display user information")
+    parser.add_argument("-n", "--network", action="store_true", help="Display network information")
+    parser.add_argument("-c", "--computer", action="store_true", help="Display computer information")
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Display all available information (user, network, computer) [default]",
+    )
+    parser.add_argument("ou", nargs="+")
 
-	parser.set_defaults(user=False, network=False, computer=False, all=False)
+    parser.set_defaults(user=False, network=False, computer=False, all=False)
 
-	options = parser.parse_args()
+    options = parser.parse_args()
 
-	# start execution
-	configRegistry = ConfigRegistry()
-	configRegistry.load()
+    # start execution
+    configRegistry = ConfigRegistry()
+    configRegistry.load()
 
-	baseDN = configRegistry['ldap/base']
+    baseDN = configRegistry["ldap/base"]
 
-	try:
-		lo = univention.admin.uldap.getMachineConnection(ldap_master=False)[0]
-	except Exception as exc:
-		print('ERROR: authentication error: %s' % str(exc))
-		sys.exit(1)
+    try:
+        lo = univention.admin.uldap.getMachineConnection(ldap_master=False)[0]
+    except Exception as exc:
+        print("ERROR: authentication error: %s" % str(exc))
+        sys.exit(1)
 
-	exitcode = 0
-	for _ou in options.ou:
-		res = lo.search(filter_format('ou=%s', [_ou]))
-		if not res:
-			print('WARNING: Unable to find OU %s.' % (_ou,), file=sys.stderr)
-			exitcode = 1
-			continue
-		elif len(res) > 1:
-			print('WARNING: Multiple OUs found for %s, ignoring request.' % (_ou,), file=sys.stderr)
-			exitcode = 2
-			continue
-		search_base = res[0][0]
+    exitcode = 0
+    for _ou in options.ou:
+        res = lo.search(filter_format("ou=%s", [_ou]))
+        if not res:
+            print("WARNING: Unable to find OU %s." % (_ou,), file=sys.stderr)
+            exitcode = 1
+            continue
+        elif len(res) > 1:
+            print("WARNING: Multiple OUs found for %s, ignoring request." % (_ou,), file=sys.stderr)
+            exitcode = 2
+            continue
+        search_base = res[0][0]
 
-		_print('OU %s: %s' % (_ou, search_base))
+        _print("OU %s: %s" % (_ou, search_base))
 
-		if options.user or not (options.network or options.user or options.computer) or options.all:
-			user(search_base)
+        if options.user or not (options.network or options.user or options.computer) or options.all:
+            user(search_base)
 
-		if options.network or not (options.network or options.user or options.computer) or options.all:
-			network(search_base)
+        if options.network or not (options.network or options.user or options.computer) or options.all:
+            network(search_base)
 
-		if options.computer or not (options.network or options.user or options.computer) or options.all:
-			computer(search_base)
-	sys.exit(exitcode)
+        if options.computer or not (options.network or options.user or options.computer) or options.all:
+            computer(search_base)
+    sys.exit(exitcode)
