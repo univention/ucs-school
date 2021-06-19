@@ -53,7 +53,7 @@ class SchoolCreationSelfServiceListener(ListenerModuleHandler):
         :return:
         """
         self.logger.debug("dn: %r", dn)
-        name = new["ou"][0]
+        name = new["ou"][0].decode("UTF-8")
         value = "Domain Users {}".format(name)
         self.logger.info("Adding %r to ucrv %r.", value, self.ucrv)
         with self.as_root():
@@ -61,7 +61,7 @@ class SchoolCreationSelfServiceListener(ListenerModuleHandler):
 
     def remove(self, dn, old):
         self.logger.debug("dn: %r", dn)
-        value = "Domain Users {}".format(old["ou"][0])
+        value = "Domain Users {}".format(old["ou"][0].decode("UTF-8"))
         self.logger.info("Removing %r from ucrv %r.", value, self.ucrv)
         with self.as_root():
             add_or_remove_ucrv_value(self.ucrv, "remove", value, self.delimiter)
