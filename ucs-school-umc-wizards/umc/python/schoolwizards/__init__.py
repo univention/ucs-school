@@ -439,7 +439,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     @sanitize(
         school=StringSanitizer(required=True),
-        type=ChoicesSanitizer(["all"] + USER_TYPES.keys(), required=True),
+        type=ChoicesSanitizer(["all"] + list(USER_TYPES), required=True),
         filter=StringSanitizer(default=""),
     )
     @response
@@ -502,7 +502,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     @sanitize(
         school=StringSanitizer(required=True),
-        type=ChoicesSanitizer(["all"] + COMPUTER_TYPES.keys(), required=True),
+        type=ChoicesSanitizer(["all"] + list(COMPUTER_TYPES), required=True),
         filter=StringSanitizer(default=""),
     )
     @response

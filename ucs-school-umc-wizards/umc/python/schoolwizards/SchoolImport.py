@@ -63,6 +63,7 @@ class SchoolImport(object):
                 MODULE.process("Executing command: %s" % " ".join(entry))
                 process = subprocess.Popen(entry, stdout=subprocess.PIPE)  # nosec
                 stdout, stderr = process.communicate()
+                stdout = stdout.decode("UTF-8", "replace")
                 if stdout and process.returncode > 0:
                     MODULE.warn(stdout)
             except (OSError, ValueError) as err:
@@ -80,6 +81,7 @@ class SchoolImport(object):
                 MODULE.process("Executing command: %s" % script)
                 process = subprocess.Popen([script, tmpfile.name], stdout=subprocess.PIPE)  # nosec
                 stdout, stderr = process.communicate()
+                stdout = stdout.decode("UTF-8", "replace")
                 if stdout:
                     info = "\n".join(
                         [line for line in stdout.splitlines() if not line.startswith("Processing line ")]
