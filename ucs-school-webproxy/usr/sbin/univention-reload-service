@@ -1,5 +1,5 @@
-#!/usr/bin/python2.7
-# coding: utf-8
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # Univention Reload Service
 #  restart services centrally for rate limiting
@@ -31,39 +31,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ctypes import CDLL, POINTER, Structure, byref, c_int, c_long, get_errno
 from errno import ENOENT
-from os import strerror, umask, unlink
+from os import umask, unlink
 from socket import AF_UNIX, SOCK_DGRAM, socket, timeout
 from subprocess import call
 from sys import stdout
-from time import strftime
+from time import monotonic, strftime
 
 RECV_BUFFER_SIZE = 128
 RELOAD_SOCKET_PATH = "/var/run/univention-reload-service.socket"
-
-CLOCK_MONOTONIC = 1  # see <linux/time.h>
-
-
-class timespec(Structure):
-    _fields_ = [
-        ("tv_sec", c_long),
-        ("tv_nsec", c_long),
-    ]
-
-
-librt = CDLL("librt.so.1", use_errno=True)
-clock_gettime = librt.clock_gettime
-clock_gettime.restype = c_int
-clock_gettime.argtypes = [c_int, POINTER(timespec)]
-
-
-def monotonic_time():
-    t = timespec()
-    if clock_gettime(CLOCK_MONOTONIC, byref(t)):
-        errno_ = get_errno()
-        raise OSError(errno_, strerror(errno_))
-    return t.tv_sec + t.tv_nsec * 1e-9
 
 
 def timestamp():
@@ -77,7 +53,7 @@ def log(message):
 
 def reload_squid():
     log("Reloading %r now" % (reload_squid.name,))
-    reload_squid.last = monotonic_time()
+    reload_squid.last = monotonic()
     call(("systemctl", "reload", "squid"))  # nosec
 
 
@@ -89,7 +65,7 @@ QUEUE = {}  # reloader → when-to-reload
 
 
 def queue(reloader):
-    now = monotonic_time()
+    now = monotonic()
     if reloader not in QUEUE:
         when = max(reloader.last + reloader.delay, now)
         log("Reloading %r in %f s" % (reloader.name, when - now))
@@ -97,8 +73,8 @@ def queue(reloader):
 
 
 def process_queue():
-    now = monotonic_time()
-    for reloader, when in QUEUE.items():
+    now = monotonic()
+    for reloader, when in list(QUEUE.items()):
         if when <= now:
             reloader()
             del QUEUE[reloader]
@@ -115,7 +91,7 @@ def handle(message):
 def time_to_next():
     if not QUEUE:
         return None  # no timeout
-    now = monotonic_time()
+    now = monotonic()
     next = min(QUEUE.values())
     return max(next - now, 0.1)  # minimal delay 100 ms to not busy-wait
 
@@ -146,7 +122,7 @@ def main():
         except timeout:
             pass
         else:
-            handle(message)
+            handle(message.decode("UTF-8", "ignore"))
 
 
 if __name__ == "__main__":
