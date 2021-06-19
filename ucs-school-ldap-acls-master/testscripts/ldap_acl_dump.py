@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # UCS@School
 #
@@ -36,7 +36,6 @@ import subprocess
 import sys
 
 import ldif
-import six
 
 import univention.admin.uldap
 
@@ -60,24 +59,20 @@ def normalize_permission(perms):
 
 
 def parse_acls(args, lo):
-    if isinstance(args.output, six.string_types):
-        args.output = open(args.output, "wb")
-    entries = lo.search(base=args.base)
-
     writer = ldif.LDIFWriter(args.output)
     code = 0
-    for dn, attrs in entries:
+    for dn, attrs in lo.search(base=args.base):
         entry = {}
         for attr in attrs:
-            # TODO: replace subprocess by some C calls to improove speed
+            # TODO: replace subprocess with some C calls to improove speed
             process = subprocess.Popen(  # nosec
                 ["/usr/sbin/slapacl", "-d0", "-D", args.binddn, "-b", dn, attr], stderr=subprocess.PIPE
             )
             _, stderr = process.communicate()
-            for line in stderr.splitlines():
+            for line in stderr.decode("UTf-8").splitlines():
                 if line.startswith("%s: " % (attr,)):
                     entry.setdefault(attr, []).append(
-                        normalize_permission(line.split(": ", 1)[-1].strip())
+                        normalize_permission(line.split(": ", 1)[-1].strip()).encode("UTF-8")
                     )
             try:
                 entry[attr]
@@ -91,7 +86,7 @@ def parse_acls(args, lo):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--base")
-    parser.add_argument("-o", "--output", default=sys.stdout)
+    parser.add_argument("-o", "--output", type=argparse.FileType('w'), default='-')
     parser.add_argument("binddn")
     args = parser.parse_args()
     lo, po = univention.admin.uldap.getAdminConnection()
