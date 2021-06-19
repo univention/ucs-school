@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.233) unstable; urgency=low
+
+  * Bug #53437: add performance analysis tests
+
+ -- Daniel Troeder <troeder@univention.de>  Sat, 19 Jun 2021 12:23:39 +0200
+
 ucs-test-ucsschool (6.0.232) unstable; urgency=medium
 
   * Bug #52654: add attrs in test
