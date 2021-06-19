@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Config Registry
 #  enable/disable internet access in squidguard config

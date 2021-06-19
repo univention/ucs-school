@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.0.3) unstable; urgency=medium
+
+  * Bug #52632: migrate ucs-school-webproxy to Python 3
+
+ -- Florian Best <best@univention.de>  Sat, 19 Jun 2021 05:01:10 +0200
+
 ucs-school-webproxy (16.0.2) unstable; urgency=medium
 
   * Bug #52652: Migrate pupilgroups.py listener to Python 3
