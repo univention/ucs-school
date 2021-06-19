@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (9.0.2) unstable; urgency=medium
+
+  * Bug #52628: migrate univention-management-console-module-selective-
+    udm to Python 3
+
+ -- Florian Best <best@univention.de>  Sat, 19 Jun 2021 03:35:36 +0200
+
 univention-management-console-module-selective-udm (9.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
