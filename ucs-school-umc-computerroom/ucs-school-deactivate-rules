@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -32,7 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import subprocess
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.group import ComputerRoom
@@ -47,19 +47,19 @@ def deactivate_rules(roomDN):
         room = ComputerRoom.from_dn(roomDN, None, lo)
     except udm_exceptions.noObject:
         return
-    hosts = list()
+    hosts = []
     for pc in room.get_computers(lo):
         hosts += pc.ip_address
     reset_room_settings(room.get_relative_name(), hosts)
     # reload cups
-    subprocess.call(["service", "cups", "reload"])
+    subprocess.call(["systemctl", "reload", "cups.service"])
 
 
-def deprecated_deactivate_rules(options, hosts):
+def deprecated_deactivate_rules(options):
     ucr = ConfigRegistry()
     ucr.load()
 
-    hosts = set(hosts)
+    hosts = set(options.hosts)
     vset = {}
 
     # extract values
@@ -74,7 +74,7 @@ def deprecated_deactivate_rules(options, hosts):
         else:
             options.remove.append(variable)
 
-    handler_set(map(lambda x: "%s=%s" % x, vset.items()))
+    handler_set(["%s=%s" % x for x in vset.items()])
 
     # remove values
     handler_unset(options.remove)
@@ -85,15 +85,16 @@ def deprecated_deactivate_rules(options, hosts):
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
+    parser = ArgumentParser()
 
-    parser.add_option("-r", "--remove", action="append", dest="remove", default=[])  # Deprecated
-    parser.add_option("-e", "--extract", action="append", dest="extract", default=[])  # Deprecated
-    parser.add_option("-o", "--room", action="append", dest="rooms", default=[])
+    parser.add_argument("-r", "--remove", action="append", default=[])  # Deprecated
+    parser.add_argument("-e", "--extract", action="append", default=[])  # Deprecated
+    parser.add_argument("-o", "--room", action="append", dest="rooms", default=[])
+    parser.add_argument("hosts", nargs="*")
 
-    options, hosts = parser.parse_args()
+    options = parser.parse_args()
 
     for room in options.rooms:
         deactivate_rules(room)
     else:
-        deprecated_deactivate_rules(options, hosts)
+        deprecated_deactivate_rules(options)

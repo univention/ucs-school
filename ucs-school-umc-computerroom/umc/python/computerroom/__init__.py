@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -41,14 +41,14 @@ import signal
 import subprocess
 import time
 import traceback
+from ipaddress import ip_address
 from pipes import quote
 from random import Random
 
 import ldap
 import psutil
-import urlparse
-from ipaddr import IPAddress
 from ldap.filter import filter_format
+from six.moves.urllib_parse import urlsplit
 
 import ucsschool.lib.internetrules as internetrules
 import univention.admin.uexceptions as udm_exceptions
@@ -126,7 +126,7 @@ def _readRoomInfo(roomDN):
                 # the room file contains key-value pairs, separated by '='
                 # ... parse the file as dict
                 lines = f.readlines()
-                info = dict([iline.strip().split("=", 1) for iline in lines if "=" in iline])
+                info = dict(iline.strip().split("=", 1) for iline in lines if "=" in iline)
         except (OSError, IOError, ValueError) as exc:
             MODULE.warn("Failed to read file %s: %s" % (roomFile, exc))
 
@@ -146,7 +146,7 @@ def _readRoomInfo(roomDN):
 def _updateRoomInfo(roomDN, **kwargs):
     """Update infos for a room, i.e., leave unspecified values untouched."""
     info = _readRoomInfo(roomDN)
-    new_info = dict()
+    new_info = {}
     for key in ("user", "exam", "examDescription", "examEndTime", "atjobID"):
         # set the specified value (can also be None for deleting the attribute)
         # or fallback to currently set value
@@ -171,7 +171,7 @@ def _writeRoomInfo(roomDN, user=None, exam=None, examDescription=None, examEndTi
         with open(_getRoomFile(roomDN), "w") as fd:
             fcntl.lockf(fd, fcntl.LOCK_EX)
             try:
-                for key, val in info.iteritems():
+                for key, val in info.items():
                     if val is not None:
                         fd.write("%s=%s\n" % (key, val))
             finally:
@@ -243,7 +243,7 @@ def reset_room_settings(room, hosts):
 class IPAddressSanitizer(Sanitizer):
     def _sanitize(self, value, name, further_fields):
         try:
-            return IPAddress(value)
+            return ip_address(value)
         except ValueError as exc:
             self.raise_validation_error("%s" % (exc,))
 
@@ -280,7 +280,7 @@ class ComputerRoomDNSanitizer(DNSanitizer):
     def _sanitize(self, value, name, further_args):
         value = super(ComputerRoomDNSanitizer, self)._sanitize(value, name, further_args)
         try:
-            room_name = unicode(ldap.dn.str2dn(value)[0][0][1])
+            room_name = ldap.dn.str2dn(value)[0][0][1]
         except (KeyError, ldap.DECODING_ERROR):
             raise UMC_Error(_("Invalid room DN: %s") % (value,))
         try:
@@ -354,15 +354,16 @@ class Instance(SchoolBaseModule):
         if self._computerroom.room:
             # do not remove lock file during exam mode
             info = _readRoomInfo(self._computerroom.roomDN)
-            MODULE.info("room info: %s" % info)
+            MODULE.info("room info: %s" % (info,))
             if info and not info.get("exam"):
                 MODULE.info(
-                    "Removing lock file for room %s (%s)" % (self._computerroom.room, self._computerroom.roomDN)
+                    "Removing lock file for room %s (%s)"
+                    % (self._computerroom.room, self._computerroom.roomDN)
                 )
                 _freeRoom(self._computerroom.roomDN, self.user_dn)
             for comp in self._computerroom.values():
                 comp.should_run = False
-            while any([comp.is_alive() for comp in self._computerroom.values()]):
+            while any(comp.is_alive() for comp in self._computerroom.values()):
                 time.sleep(0.1)
             MODULE.info("All threads dead!")
 
@@ -412,7 +413,7 @@ class Instance(SchoolBaseModule):
                 success = False
                 message = "ALREADY_LOCKED"
 
-        info = dict()
+        info = {}
         if success:
             info = _readRoomInfo(roomDN)
         return success, message, info
@@ -497,9 +498,9 @@ class Instance(SchoolBaseModule):
             for school in School.get_all(ldap_user_read):
                 school = school.name
                 for room in ComputerRoom.get_all(ldap_user_read, school, room_filter):
-                    self.finished(request.id, dict(school=school, room=room.dn))
+                    self.finished(request.id, {"school": school, "room": room.dn})
                     return
-        self.finished(request.id, dict(school=None, room=None))
+        self.finished(request.id, {"school": None, "room": None})
 
     def _get_room_filter(self, computers):
         return "(|(%s))" % ")(".join(
@@ -571,9 +572,9 @@ class Instance(SchoolBaseModule):
         if self._ruleEndAt is not None:
             diff = self._positiveTimeDiff()
             if diff is not None:
-                result["settingEndsIn"] = diff.seconds / 60
+                result["settingEndsIn"] = diff.seconds // 60
 
-        MODULE.info("Update: result: %s" % str(result))
+        MODULE.info("Update: result: %s" % (result,))
         self.finished(request.id, result)
 
     def _positiveTimeDiff(self):
@@ -683,7 +684,7 @@ class Instance(SchoolBaseModule):
             rule = "custom"
         shareMode = ucr.get("samba/sharemode/room/%s" % self._computerroom.room, "all")
         # load custom rule:
-        key_prefix = "proxy/filter/setting-user/%s/domain/whitelisted/" % self._username
+        key_prefix = "proxy/filter/setting-user/%s/domain/whitelisted/" % self.username
         custom_rules = []
         for key in ucr:
             if key.startswith(key_prefix):
@@ -739,7 +740,10 @@ class Instance(SchoolBaseModule):
             )
 
         _updateRoomInfo(
-            self._computerroom.roomDN, exam=exam, examDescription=examDescription, examEndTime=examEndTime
+            self._computerroom.roomDN,
+            exam=exam,
+            examDescription=examDescription,
+            examEndTime=examEndTime,
         )
 
     @sanitize(
@@ -827,29 +831,29 @@ class Instance(SchoolBaseModule):
                 # remove old rules
                 i = 1
                 while True:
-                    var = "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self._username, i)
+                    var = "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                     if var in ucr:
                         vunset_now.append(var)
                         i += 1
                     else:
                         break
-                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = self._username
-                vset["proxy/filter/setting-user/%s/filtertype" % self._username] = "whitelist-block"
+                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = self.username
+                vset["proxy/filter/setting-user/%s/filtertype" % self.username] = "whitelist-block"
                 i = 1
                 for domain in (customRule or "").split("\n"):
                     MODULE.info("Setting whitelist entry for domain %s" % domain)
                     if not domain:
                         continue
-                    parsed = urlparse.urlsplit(domain)
+                    parsed = urlsplit(domain)
                     MODULE.info("Setting whitelist entry for domain %s" % str(parsed))
                     if parsed.netloc:
                         vset[
-                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self._username, i)
+                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                         ] = parsed.netloc
                         i += 1
                     elif parsed.path:
                         vset[
-                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self._username, i)
+                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                         ] = parsed.path
                         i += 1
             else:
@@ -889,7 +893,7 @@ class Instance(SchoolBaseModule):
                 vset[varname] = '""'
         else:
             # remove empty items ('""') in list
-            vset[varname] = " ".join([x for x in vset[varname].split(" ") if x != '""'])
+            vset[varname] = " ".join(x for x in vset[varname].split(" ") if x != '""')
 
         # set values
         ucr_vars = sorted("%s=%s" % x for x in vset.items())

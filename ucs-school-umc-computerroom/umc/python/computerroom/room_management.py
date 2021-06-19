@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -40,12 +40,12 @@ import traceback
 import uuid
 
 try:
-    from typing import Any, List, Optional, TypeVar
+    from typing import Any, List, Optional, TypeVar  # noqa: F401
 except ImportError:
     pass
 
 import ldap
-from ldap.dn import explode_dn
+from ldap.dn import explode_rdn
 from ldap.filter import filter_format
 
 from ucsschool.lib.models.base import MultipleObjectsError
@@ -55,7 +55,7 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
 from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import access as LoType
+from univention.admin.uldap import access as LoType  # noqa: F401
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -124,7 +124,7 @@ class UserMap(dict):
                 ).split(",")
             ]
         )
-        users_groupmemberships = set([explode_dn(x, True)[0].lower() for x in userobj["groups"]])
+        users_groupmemberships = set(explode_rdn(x, True)[0].lower() for x in userobj["groups"])
         MODULE.info(
             "UserMap: %s: hide screenshots for following groups: %s" % (username, blacklisted_groups)
         )
@@ -283,7 +283,7 @@ class ComputerRoomManager(dict):
             for name, computer in self.items():
                 computer.stop()
                 computer.close()
-                del computer
+                del computer  # FIXME: no-op, needs to be removed from dict
             self.clear()
             ComputerRoomManager.ROOM = None
             ComputerRoomManager.ROOM_DN = None
@@ -323,11 +323,7 @@ class ComputerRoomManager(dict):
         if not computers:
             raise ComputerRoomError("There are no computers in the selected room.")
 
-        MODULE.info(
-            "Computerroom {!r} will be initialized with Computers.".format(
-                self.ROOM
-            )
-        )
+        MODULE.info("Computerroom {!r} will be initialized with Computers.".format(self.ROOM))
         self._user_map = UserMap(VEYON_USER_REGEX)
         for computer in computers:
             try:
@@ -360,11 +356,7 @@ class ComputerRoomManager(dict):
             raise AttributeError("unknown system %s" % demo_server)
 
         # start demo server
-        clients = [
-            comp
-            for comp in self.values()
-            if comp.name != demo_server and comp.connected()
-        ]
+        clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected()]
         MODULE.info("Demo server is %s" % (demo_server,))
         MODULE.info("Demo clients: %s" % ", ".join(x.name for x in clients))
         MODULE.info("Demo client users: %s" % ", ".join(str(x.user.current) for x in clients))
