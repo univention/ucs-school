@@ -10,8 +10,7 @@ Build-Depends:
 Package: ucs-school-info
 Architecture: all
 Depends:
- python (>= 2.7),
- python-ipaddr,
+ python3-ldap,
 Description: UCS@school: provides info script
  This package provides a script for listing users, computers
  and networks in UCS@school environment.
