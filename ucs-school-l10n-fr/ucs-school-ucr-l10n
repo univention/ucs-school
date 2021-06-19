@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2016-2021 Univention GmbH
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     ucrvs_translated = {}
     for ucrv, value in overview_ucrvs.items():
         translation = _(value)  # noqa: F821
-        if not translation == value:
+        if translation != value:
             ucrvs_translated["{}/{}".format(ucrv, args.language_code)] = translation
     ucr.update(ucrvs_translated)
     ucr.save()
