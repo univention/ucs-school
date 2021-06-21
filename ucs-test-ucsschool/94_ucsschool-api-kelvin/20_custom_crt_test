@@ -10,12 +10,24 @@ import os
 
 import requests
 import subprocess
+import tempfile
+import shutil
+from contextlib import contextmanager
 
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.ucsschool.kelvin_api import HttpApiUserTestBase
 from univention.config_registry import handler_set, handler_unset
 from generate_certificate import create_CA, create_cert
 from unittest import main, TestCase
+
+
+@contextmanager
+def create_temp_dir():
+    try:
+        temp_dir = tempfile.mkdtemp(dir="/var/cache")
+    	yield temp_dir
+    finally:
+        shutil.rmtree(temp_dir)
 
 
 class Test(TestCase):
@@ -43,32 +55,32 @@ class Test(TestCase):
         with UCSTestConfigRegistry() as ucr:
             fqdn = "{}.{}".format(ucr.get("hostname"), ucr.get("domainname"))
             # certificates are dumped in current folder, cd to keep everything clean.
-            # todo tmp/tmpdir
-            os.chdir('/tmp')
-            create_CA(name="myCA")
-            create_cert(fqdn, "myCA")
-            handler_set(
-                [
-                    "apache2/ssl/key=/tmp/{}.key".format(fqdn),
-                    "apache2/ssl/ca=/tmp/myCA.pem",
-                    "apache2/ssl/certificate=/tmp/{}.crt".format(fqdn),
-                ]
-            )
-            subprocess.check_call(["service", "apache2", "restart"])
-            subprocess.check_call(
-                [
-                    "univention-app",
-                    "configure",
-                    "ucsschool-kelvin-rest-api",
-                    "--set",
-                    "ucsschool/kelvin/trusted_CA_path=/tmp/myCA.pem",
-                ]
-            )
-            requests.get(
-                "http://{}/ucsschool/kelvin/v1/schools/demoschool".format(fqdn),
-                headers=self.auth_headers,
-                verify=True,
-            )
+            with create_temp_dir() as tmpdir:
+              os.chdir(str(tmpdir))
+              create_CA(name="myCA")
+              create_cert(fqdn, "myCA")
+              handler_set(
+                  [
+                      "apache2/ssl/key={}/{}.key".format(tmpdir, fqdn),
+                      "apache2/ssl/ca={}/myCA.pem".format(tmpdir),
+                      "apache2/ssl/certificate={}/{}.crt".format(tmpdir, fqdn),
+                  ]
+              )
+              subprocess.check_call(["service", "apache2", "restart"])
+              subprocess.check_call(
+                  [
+                      "univention-app",
+                      "configure",
+                      "ucsschool-kelvin-rest-api",
+                      "--set",
+                      "ucsschool/kelvin/trusted_CA_path={}/myCA.pem".format(tmpdir),
+                  ]
+              )
+              requests.get(
+                  "http://{}/ucsschool/kelvin/v1/schools/demoschool".format(fqdn),
+                  headers=self.auth_headers,
+                  verify=True,
+              )
 
 
 if __name__ == "__main__":
