@@ -1,0 +1,75 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: test if using a different certificate works
+## tags: [ucs_school_kelvin]
+## exposure: dangerous
+## packages: []
+## bugs: []
+
+import os
+
+import requests
+import subprocess
+
+from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.ucsschool.kelvin_api import HttpApiUserTestBase
+from univention.config_registry import handler_set, handler_unset
+from generate_certificate import create_CA, create_cert
+from unittest import main, TestCase
+
+
+class Test(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.auth_headers = {
+            "Authorization": "{} {}".format(*HttpApiUserTestBase.get_token())
+        }
+
+    @classmethod
+    def tearDownClass(cls):
+          subprocess.check_call(
+              [
+                  "univention-app",
+                  "configure",
+                  "ucsschool-kelvin-rest-api",
+                  "--unset",
+                  "ucsschool/kelvin/trusted_CA_path",
+              ]
+          )
+          subprocess.check_call(["service", "apache2", "restart"])
+
+
+    def test_custom_certificate(self):
+        with UCSTestConfigRegistry() as ucr:
+            fqdn = "{}.{}".format(ucr.get("hostname"), ucr.get("domainname"))
+            # certificates are dumped in current folder, cd to keep everything clean.
+            # todo tmp/tmpdir
+            os.chdir('/tmp')
+            create_CA(name="myCA")
+            create_cert(fqdn, "myCA")
+            handler_set(
+                [
+                    "apache2/ssl/key=/tmp/{}.key".format(fqdn),
+                    "apache2/ssl/ca=/tmp/myCA.pem",
+                    "apache2/ssl/certificate=/tmp/{}.crt".format(fqdn),
+                ]
+            )
+            subprocess.check_call(["service", "apache2", "restart"])
+            subprocess.check_call(
+                [
+                    "univention-app",
+                    "configure",
+                    "ucsschool-kelvin-rest-api",
+                    "--set",
+                    "ucsschool/kelvin/trusted_CA_path=/tmp/myCA.pem",
+                ]
+            )
+            requests.get(
+                "http://{}/ucsschool/kelvin/v1/schools/demoschool".format(fqdn),
+                headers=self.auth_headers,
+                verify=True,
+            )
+
+
+if __name__ == "__main__":
+    main(verbosity=2)
