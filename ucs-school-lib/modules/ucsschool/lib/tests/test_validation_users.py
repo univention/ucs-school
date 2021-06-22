@@ -36,8 +36,7 @@ from ucsschool.lib.models.validator import (
     get_class,
     validate,
 )
-from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher, \
-    create_ucsschool_role_string, get_role_info
+from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set, handler_unset
 
@@ -474,10 +473,12 @@ def test_correct_uuid(caplog, random_logger):
 @pytest.mark.parametrize("user_generator", all_user_role_generators, ids=all_user_roles_names)
 def test_group_and_role_case_insensitivity(caplog, user_generator, random_logger):
     dict_obj = user_generator()
-    dict_obj["props"]["groups"] = [group[:3]+group[3:].lower().capitalize() for group in list(dict_obj["props"]["groups"])]
+    dict_obj["props"]["groups"] = [
+        group[:3] + group[3:].lower().capitalize() for group in list(dict_obj["props"]["groups"])
+    ]
     new_roles = []
     for role in list(dict_obj["props"]["ucsschoolRole"]):
-        r, c, s = role.split(':')
+        r, c, s = role.split(":")
         new_roles.append("{}:{}:{}".format(r, c, s.capitalize()))
     dict_obj["props"]["ucsschoolRole"] = new_roles
     validate(dict_obj, logger=random_logger)
