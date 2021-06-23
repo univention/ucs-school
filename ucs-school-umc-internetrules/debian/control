@@ -13,8 +13,12 @@ Standards-Version: 3.8.2
 Package: ucs-school-umc-internetrules
 Architecture: all
 Depends:
+ python-six,
  python-ucs-school (>= 12.1.9),
  python-univention-directory-manager,
+ python3-six,
+ python3-ucsschool-lib,
+ python3-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,
  univention-config-registry,
@@ -25,28 +29,9 @@ Depends:
 Provides:
  ${python3:Provides},
  ${python:Provides},
-Replaces:
- ucs-school-umc-proxysettings,
-Breaks:
- ucs-school-umc-proxysettings (<< 7.0.0),
 Description: UMC module to administrate internet rules
  This package contains two UMC modules for administrating
  internet rules and for associating them with groups.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
-Package: ucs-school-umc-proxysettings
-Depends:
- ucs-school-umc-internetrules,
- ${misc:Depends},
-Architecture: all
-Description: transitional dummy package
- Package to ease upgrading from ucs-school-umc-proxysettings to
- ucs-school-umc-internetrules. This package can be purged at anytime
- once the ucs-school-umc-internetrules package has been installed.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
