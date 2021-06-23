@@ -4,10 +4,10 @@ import os
 import tempfile
 from typing import Any, Dict, Tuple
 
-from faker import Faker
 import pytest
-
+from faker import Faker
 from ldap.dn import explode_dn
+
 from ucsschool.lib.models.base import PYHOOKS_PATH, _pyhook_loader
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.group import SchoolClass
@@ -115,6 +115,7 @@ del REMOVE_MODULES["School"]  # (*1)
 # (*1) model does not support remove operation
 #
 
+
 def _inside_docker():
     try:
         import ucsschool.kelvin.constants
@@ -165,7 +166,9 @@ def create_hook_file():
 
 
 @pytest.fixture
-def creation_kwargs(random_first_name, random_last_name, random_user_name, schedule_delete_udm_obj, udm_kwargs):
+def creation_kwargs(
+    random_first_name, random_last_name, random_user_name, schedule_delete_udm_obj, udm_kwargs
+):
     async def _create_dhcp_service(ou: str, name: str) -> DHCPService:
         print("Creating DHCPService...")
         dhcp_service = DHCPService(school=ou, name=name)
@@ -181,18 +184,13 @@ def creation_kwargs(random_first_name, random_last_name, random_user_name, sched
             "school": ou,
             "name": random_user_name(),
         }
-        if model in (
-            "ExamStudent",
-            "SchoolAdmin",
-            "Staff",
-            "Student",
-            "Teacher",
-            "TeachersAndStaff"
-        ):
-            result.update({
-                "firstname": random_first_name(),
-                "lastname": random_last_name(),
-            })
+        if model in ("ExamStudent", "SchoolAdmin", "Staff", "Student", "Teacher", "TeachersAndStaff"):
+            result.update(
+                {
+                    "firstname": random_first_name(),
+                    "lastname": random_last_name(),
+                }
+            )
         elif model in ("ComputerRoom", "SchoolGroup", "SchoolClass", "WorkGroup"):
             result.update({"name": f"{ou}-{random_user_name()}", "users": [], "allowedEmailGroups": []})
         elif model in ("Share", "ClassShare", "GroupShare", "WorkGroupShare"):
@@ -227,11 +225,13 @@ def creation_kwargs(random_first_name, random_last_name, random_user_name, sched
                 await MarketplaceShare(school=ou).remove(udm)
             del result["name"]
         elif model == "Network":
-            result.update({
-                "name": "12.40.232.0",
-                "netmask": "255.255.248.0",
-                "network": "12.40.232.0",
-            })
+            result.update(
+                {
+                    "name": "12.40.232.0",
+                    "netmask": "255.255.248.0",
+                    "network": "12.40.232.0",
+                }
+            )
         elif model in ("School", "OU"):
             del result["school"]
         return result
@@ -288,7 +288,14 @@ async def test_create_hooks(
 @pytest.mark.parametrize("model", MODIFY_MODULES.keys())
 @pytest.mark.parametrize("method", ("pre_modify", "post_modify"))
 async def test_modify_hooks(
-    create_hook_file, creation_kwargs, create_ou_using_python, model, method, random_first_name, random_user_name, udm_kwargs
+    create_hook_file,
+    creation_kwargs,
+    create_ou_using_python,
+    model,
+    method,
+    random_first_name,
+    random_user_name,
+    udm_kwargs,
 ):
     ou = await create_ou_using_python()
     hook_file, target_file = create_hook_file(model, method)
@@ -340,7 +347,15 @@ async def test_modify_hooks(
 @pytest.mark.parametrize("model", MOVE_MODULES.keys())
 @pytest.mark.parametrize("method", ("pre_move", "post_move"))
 async def test_move_hooks(
-    create_hook_file, creation_kwargs, create_multiple_ous, ldap_base, model, method, random_first_name, random_user_name, udm_kwargs
+    create_hook_file,
+    creation_kwargs,
+    create_multiple_ous,
+    ldap_base,
+    model,
+    method,
+    random_first_name,
+    random_user_name,
+    udm_kwargs,
 ):
     ou1, ou2 = await create_multiple_ous(2)
     print(f"** ou1={ou1!r} ou2={ou2!r}")
@@ -392,7 +407,14 @@ async def test_move_hooks(
 @pytest.mark.parametrize("model", REMOVE_MODULES.keys())
 @pytest.mark.parametrize("method", ("pre_remove", "post_remove"))
 async def test_remove_hooks(
-    create_hook_file, creation_kwargs, create_ou_using_python, model, method, random_first_name, random_user_name, udm_kwargs
+    create_hook_file,
+    creation_kwargs,
+    create_ou_using_python,
+    model,
+    method,
+    random_first_name,
+    random_user_name,
+    udm_kwargs,
 ):
     ou = await create_ou_using_python()
     hook_file, target_file = create_hook_file(model, method)
