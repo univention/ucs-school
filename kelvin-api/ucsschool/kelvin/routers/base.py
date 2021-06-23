@@ -225,6 +225,7 @@ async def udm_ctx():
 
 async def lib_ctx() -> UDMDataAccess:
     kwargs = await udm_kwargs()
-    del kwargs["ssl_ca_cert"]
-    async with UDMDataAccess(**kwargs) as data_access:
+    async with UDMDataAccess(
+        url=kwargs["url"], username=kwargs["username"], password=kwargs["password"]
+    ) as data_access:
         yield data_access
