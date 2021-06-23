@@ -7,7 +7,7 @@
 ## bugs: [53437]
 
 CSV_FILE = "/root/udm_user_search_stats.csv"
-URL_NAME = "/univention/udm/users/user/"
+URL_NAME = "/univention/udm/users/user"
 
 
 def test_failure_count(check_failure_count):

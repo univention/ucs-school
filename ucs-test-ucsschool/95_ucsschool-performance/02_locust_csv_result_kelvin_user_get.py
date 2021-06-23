@@ -15,7 +15,7 @@ def test_failure_count(check_failure_count):
 
 
 def test_rps(check_rps):
-    check_rps(CSV_FILE, URL_NAME, 35.0)
+    check_rps(CSV_FILE, URL_NAME, 30.0)
 
 
 def test_95_percentile(check_95_percentile):
