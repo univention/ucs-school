@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -34,7 +34,7 @@
 import re
 
 import six
-from urlparse import urlparse
+from six.moves.urllib_parse import urlparse
 
 import ucsschool.lib.internetrules as rules
 import univention.admin.modules as udm_modules
@@ -60,7 +60,7 @@ from univention.management.console.modules.sanitizers import (
 _ = Translation("ucs-school-umc-internetrules").translate
 
 _filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST)
-_filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
+_filterTypesInv = dict((_i[1], _i[0]) for _i in _filterTypes.items())
 
 
 class Instance(SchoolBaseModule):
@@ -72,7 +72,7 @@ class Instance(SchoolBaseModule):
         requests.options = {}
         'pattern' -- pattern to match within the rule name or the list of domains
         """
-        MODULE.info("internetrules.query: options: %s" % str(request.options))
+        MODULE.info("internetrules.query: options: %s" % (request.options,))
         pattern = request.options.get("pattern", "").lower()
 
         def _matchDomain(domains):
@@ -93,7 +93,7 @@ class Instance(SchoolBaseModule):
             if pattern in irule.name.lower() or _matchDomain(irule.domains)
         ]
 
-        MODULE.info("internetrules.query: results: %s" % str(result))
+        MODULE.info("internetrules.query: results: %s" % (result,))
         self.finished(request.id, result)
 
     @sanitize(StringSanitizer())
@@ -101,10 +101,10 @@ class Instance(SchoolBaseModule):
         """Returns the specified rules
         requests.options = [ <ruleName>, ... ]
         """
-        MODULE.info("internetrules.get: options: %s" % str(request.options))
+        MODULE.info("internetrules.get: options: %s" % (request.options,))
         result = []
         # fetch all rules with the given names (we need to make sure that "name" is UTF8)
-        names = set(iname.encode("utf8") for iname in request.options)
+        names = set(request.options)
         result = [
             dict(
                 name=irule.name,
@@ -117,7 +117,7 @@ class Instance(SchoolBaseModule):
             if irule.name in names
         ]
 
-        MODULE.info("internetrules.get: results: %s" % str(result))
+        MODULE.info("internetrules.get: results: %s" % (result,))
         self.finished(request.id, result)
 
     @sanitize(DictSanitizer(dict(object=StringSanitizer()), required=True))
@@ -125,7 +125,7 @@ class Instance(SchoolBaseModule):
         """Removes the specified rules
         requests.options = [ { "object": <ruleName> }, ... ]
         """
-        MODULE.info("internetrules.remove: options: %s" % str(request.options))
+        MODULE.info("internetrules.remove: options: %s" % (request.options,))
         result = []
         # fetch all rules with the given names
         for ientry in request.options:
@@ -135,7 +135,7 @@ class Instance(SchoolBaseModule):
                 success = rules.remove(iname)
             result.append(dict(name=iname, success=success))
 
-        MODULE.info("internetrules.remove: results: %s" % str(result))
+        MODULE.info("internetrules.remove: results: %s" % (result,))
         self.finished(request.id, result)
 
     @staticmethod
@@ -156,15 +156,13 @@ class Instance(SchoolBaseModule):
             if not isinstance(iprops[ikey], itype):
                 typeStr = ""
                 if isinstance(itype, tuple):
-                    typeStr = ", ".join([i.__name__ for i in itype])
+                    typeStr = ", ".join(i.__name__ for i in itype)
                 else:
                     typeStr = itype.__name__
                 raise ValueError(_('The key "%s" needs to be of type: %s') % (ikey, typeStr))
 
         # validate name
-        if "name" in iprops and not univention.config_registry.validate_key(
-            iprops["name"].encode("utf-8")
-        ):
+        if "name" in iprops and not univention.config_registry.validate_key(iprops["name"]):
             raise ValueError(
                 _(
                     'Invalid rule name "%s". The name needs to be a string, the following special '
@@ -187,10 +185,7 @@ class Instance(SchoolBaseModule):
 
                 def _validValueChar():
                     # helper function to check for invalid characters
-                    for ichar in idomain:
-                        if ichar in univention.config_registry.backend.INVALID_VALUE_CHARS:
-                            return False
-                    return True
+                    return not set(idomain) & set(univention.config_registry.backend.INVALID_VALUE_CHARS)
 
                 if not isinstance(idomain, six.string_types) or not _validValueChar():
                     raise ValueError(_("Invalid domain "))
@@ -415,7 +410,7 @@ class Instance(SchoolBaseModule):
             }
             for i in groups
         ]
-        result.sort(cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x["name"])
+        result.sort(key=lambda x: x["name"])
 
         self.finished(request.id, result)
 
