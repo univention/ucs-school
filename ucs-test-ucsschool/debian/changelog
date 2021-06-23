@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.234) unstable; urgency=low
+
+  * Bug #53437: install section ucsschool-performance
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 23 Jun 2021 07:21:51 +0200
+
 ucs-test-ucsschool (6.0.233) unstable; urgency=low
 
   * Bug #53437: add performance analysis tests
