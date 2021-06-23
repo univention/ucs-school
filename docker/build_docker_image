@@ -65,15 +65,23 @@ else
   REPO_URI="https://git.knut.univention.de/univention/ucs.git"
   GIT_ARGS="-c http.sslVerify=false"
 fi
-if ! [ -d "$UCR_DIR" ]; then
-  git $GIT_ARGS clone --depth=1 -b "$UCS_BRANCH" "$REPO_URI" "$UCS_REPO_DIR"
+echo "Updating/Downloading patched UCS@school lib..."
+LIB_REPO_DIR="ucsschool-lib"
+LIB_BRANCH="main"
+LIB_REPO_URI="https://git.knut.univention.de/oschwieg/ucsschool-lib.git"
+GIT_ARGS="-c http.sslVerify=false"
+LIB_DIR="ucsschool-lib"
+if [ -d "$LIB_DIR" ]; then
+  rm -rf "$LIB_DIR"
 fi
-(cd "$UCS_REPO_DIR" && git checkout "$UCS_BRANCH" && git $GIT_ARGS pull)
+git $LIB_GIT_ARGS clone --depth=1 -b "$LIB_BRANCH" "$LIB_REPO_URI" "$LIB_DIR"
+(cd "$LIB_DIR" && git checkout "$LIB_BRANCH" && git $GIT_ARGS pull)
 
 echo "Copying files to build directory..."
 [ -d build ] || mkdir build
 rsync -a --delete \
     "${UCR_DIR}" \
+    "${LIB_DIR}" \
     ../.black \
     ../.isort.cfg \
     ../.flake8 \

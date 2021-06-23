@@ -108,6 +108,7 @@ RUN python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/sim
 # copy and install project - separate last step for fast image rebuilds
 # install packages 'editable', so we can work directly on them
 COPY ucs-school-lib/ /kelvin/ucs-school-lib
+COPY ucsschool-lib/ /kelvin/ucsschool-lib
 COPY ucs-school-import/ /kelvin/ucs-school-import
 COPY ucsschool-kelvin-rest-api.initd /tmp/
 COPY opa.initd /tmp/
@@ -120,6 +121,7 @@ RUN	mv -v /tmp/ucsschool-kelvin-rest-api.initd /etc/init.d/ucsschool-kelvin-rest
 	rc-update add ucsschool-kelvin-rest-api default && \
 	cp -v /kelvin/ucs-school-import/modules/ucsschool/lib/create_ou.py /kelvin/ucs-school-lib/modules/ucsschool/lib/ && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-lib/modules && \
+	python3 -m pip install --no-cache-dir /kelvin/ucsschool-lib && \
 	python3 -m pip install --no-cache-dir --editable /kelvin/ucs-school-import/modules && \
 	cp -r /kelvin/ucs-school-import/usr/share/ucs-school-import /usr/share/ && \
 	cp kelvin-api/usr/share/ucs-school-import/configs/kelvin_defaults.json /usr/share/ucs-school-import/configs/ && \
