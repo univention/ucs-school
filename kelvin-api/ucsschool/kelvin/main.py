@@ -192,6 +192,13 @@ app.include_router(
     prefix=f"{URL_API_PREFIX}/v1/users",
     tags=["users"],
 )
+
+app.include_router(
+    user.router_v2,
+    prefix=f"{URL_API_PREFIX}/v2/users",
+    tags=["users"],
+)
+
 app.mount(
     f"{URL_API_PREFIX}/v1/static",
     StaticFiles(directory=str(STATIC_FILES_PATH)),

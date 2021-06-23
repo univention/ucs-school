@@ -35,6 +35,7 @@ import psutil
 import ujson
 from fastapi import HTTPException, Request, status
 from pydantic import BaseModel, HttpUrl, validator
+from ucsschool_lib.dal import UDMDataAccess
 
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
 from udm_rest_client import UDM
@@ -220,3 +221,10 @@ class BasePatchModel(BaseModel):
 async def udm_ctx():
     async with UDM(**await udm_kwargs()) as udm:
         yield udm
+
+
+async def lib_ctx() -> UDMDataAccess:
+    kwargs = await udm_kwargs()
+    del kwargs["ssl_ca_cert"]
+    async with UDMDataAccess(**kwargs) as data_access:
+        yield data_access

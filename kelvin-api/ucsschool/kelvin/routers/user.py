@@ -34,6 +34,9 @@ from functools import lru_cache
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
+from ucsschool_lib.dal import UDMDataAccess
+from ucsschool_lib.models import User
+
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic.main import Model
 
@@ -74,10 +77,12 @@ from .base import (
     get_lib_obj,
     get_logger,
     udm_ctx,
+    lib_ctx,
 )
 from .role import SchoolUserRole
 
 router_v1 = APIRouter()
+router_v2 = APIRouter()
 
 
 @lru_cache(maxsize=1)
@@ -597,6 +602,23 @@ async def get(
             detail=f"No object with name={username!r} found or not authorized.",
         )
     return await UserModel.from_lib_model(user, request, udm)
+
+
+@router_v2.get("/{username}", response_model=User)
+async def get_v2(username: str, data_access: UDMDataAccess = Depends(lib_ctx)) -> User:
+    users = [user async for user in data_access.search(User, f"(uid={username})")]
+    if len(users) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No object with name={username!r} found or not authorized.",
+        )
+    elif len(users) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"More than one object with name={username!r} was found.",
+        )
+    else:
+        return users[0]
 
 
 @router_v1.post("/", status_code=status.HTTP_201_CREATED, response_model=UserModel)
