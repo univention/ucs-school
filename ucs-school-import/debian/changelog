@@ -1,3 +1,9 @@
+ucs-school-import (17.0.69) unstable; urgency=medium
+
+  * Bug #53326: added print brackets
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Thu, 24 Jun 2021 09:45:19 +0200
+
 ucs-school-import (17.0.68) unstable; urgency=medium
 
   * Bug #53326: deactivation of cron job survives update
