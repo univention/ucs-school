@@ -430,10 +430,14 @@ def test_altered_group_prefix(
 @pytest.mark.parametrize("user_generator", all_user_role_generators, ids=all_user_roles_names)
 def test_group_and_role_case_insensitivity(caplog, user_generator, random_logger):
     dict_obj = user_generator()
-    dict_obj["props"]["groups"] = [group.lower() for group in list(dict_obj["props"]["groups"])]
-    dict_obj["props"]["ucsschoolRole"] = [
-        role.lower() for role in list(dict_obj["props"]["ucsschoolRole"])
+    dict_obj["props"]["groups"] = [
+        group[:3] + group[3:].lower().capitalize() for group in list(dict_obj["props"]["groups"])
     ]
+    new_roles = []
+    for role in list(dict_obj["props"]["ucsschoolRole"]):
+        r, c, s = role.split(":")
+        new_roles.append("{}:{}:{}".format(r, c, s.capitalize()))
+    dict_obj["props"]["ucsschoolRole"] = new_roles
     validate(dict_obj, logger=random_logger)
     check_did_not_log_any_error(dict_obj, caplog.record_tuples, random_logger.name)
 
