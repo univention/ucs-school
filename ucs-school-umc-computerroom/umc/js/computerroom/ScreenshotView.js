@@ -34,7 +34,8 @@ define([
 	"dojo/_base/array",
 	"dojo/aspect",
 	"dojo/dom",
-	"dojo/dom-geometry",
+	"dojo/dom-style",
+	"dojo/dom-class",
 	"dojox/html/entities",
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
@@ -45,7 +46,7 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, geometry, entities, ContentPane, _Contained, Tooltip, ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
+], function(declare, lang, array, aspect, dom, domStyle, domClass, entities, ContentPane, _Contained, Tooltip, ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
 
 	// README: This is an alternative view
 	// var Item = declare( "umc.modules.computerroom.Item", [ dijit.TitlePane, _Contained ], {
@@ -130,8 +131,6 @@ define([
 		// random extension to the URL to avoid caching
 		random: null,
 
-		style: 'float: left; padding: 8px; position: relative;',
-
 		// pattern for the image URI
 		_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}',
 
@@ -167,7 +166,10 @@ define([
 
 			if ( this.domNode ) {
 				if ( size !== undefined ) {
-					geometry.setContentSize( this.domNode, { w: size, h:size * 0.9 } );
+					domStyle.set(this.domNode, {
+						'width': size + 'px',
+						'max-height': size + 'px'
+					});
 				}
 			}
 			if ( em ) {
@@ -186,11 +188,10 @@ define([
 
 		buildRendering: function() {
 			this.inherited( arguments );
-
+			domClass.add(this.domNode, 'screenShotView__imgThumbnail');
 			lang.mixin( this, {
-				content: lang.replace('<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}" alt="{alternative}"></img>', {
+				content: lang.replace('<em class="screenShotView__userTag" id="em-{computer}"></em><img class="screenShotView__img" id="img-{computer}" alt="{alternative}"></img>', {
 					computer: entities.encode(this.computer),
-					width: this.defaultSize,
 					alternative: entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 				})
 			} );
@@ -199,7 +200,7 @@ define([
 			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
 			var tooltip = new Tooltip({
 				'class': 'umcTooltip',
-				label: lang.replace('<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img alt="{1}" id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [
+				label: lang.replace('<div class="screenShotView__imgTooltip"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="" /></div>', [
 					entities.encode(this.computer),
 					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 				]),
@@ -250,7 +251,7 @@ define([
 			var headerButtons = [{
 				name: 'close',
 				label: _('Back to overview'),
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				onClick: lang.hitch(this, function() {
 					this._cleanup();
 					this.onClose();
@@ -259,13 +260,10 @@ define([
 
 			this.set('headerButtons', headerButtons);
 
-			var header = new ContainerWidget( {
-				'class': 'umcPageHeader',
-				region: 'top'
-			} );
 			this._cbxSize = new ComboBox( {
+				region: 'nav',
 				name: _( 'Size' ),
-				style: 'float: left',
+				'class': 'umcTextBoxOnBody',
 				staticValues: [
 					{ id: 200, label: _( 'Tiny' ) },
 					{ id: 250, label: _( 'Small' ) },
@@ -274,7 +272,7 @@ define([
 				],
 				value: 250,
 				onChange: lang.hitch( this, function( newValue ) {
-					console.log( 'ComboBox.onChange: ' + newValue );
+					// console.log( 'ComboBox.onChange: ' + newValue );
 					if ( this._container.hasChildren() ) {
 						array.forEach( this._container.getChildren(), lang.hitch( this, function( child ) {
 							child._updateImage( newValue );
@@ -282,14 +280,12 @@ define([
 					}
 				} )
 			} );
-			header.addChild( this._cbxSize );
-			this.addChild( header );
+			this.addChild(this._cbxSize);
 
 			this._container = new ContainerWidget({
-					scrollable: true
+				'class': 'screenShotView__screenshotContainer'
 			});
 			this.addChild( this._container );
-			this.startup();
 		},
 
 		_cleanup: function() {

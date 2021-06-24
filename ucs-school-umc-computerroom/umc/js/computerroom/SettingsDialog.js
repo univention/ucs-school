@@ -31,15 +31,15 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dijit/Dialog",
 	"umc/tools",
+	"umc/widgets/Dialog",
 	"umc/widgets/Form",
 	"umc/widgets/ComboBox",
 	"umc/widgets/TimeBox",
 	"umc/widgets/TextArea",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, Dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
+], function(declare, lang, tools, Dialog, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
 	return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {
 		// summary:
@@ -109,10 +109,23 @@ define([
 				label: _('Valid until')
 			}];
 
-			var buttons = [ {
+			var buttons = [{
+				align: 'left',
+				name: 'cancel',
+				label: _('Cancel'),
+				onClick: lang.hitch(this, function() {
+					dijit.hideTooltip(this._form.getWidget('customRule').domNode);
+					this.hide();
+					this.update();
+					this.onClose();
+				})
+			}, {
+				name: 'reset_to_default',
+				label: _('Reset'),
+				onClick: lang.hitch(this, 'reset')
+			}, {
 				name: 'submit',
 				label: _('Set'),
-				style: 'float: right',
 				onClick: lang.hitch(this, function() {
 					var customRule = this._form.getWidget('customRule');
 					if (!customRule.validate()) {
@@ -123,21 +136,7 @@ define([
 					this.hide();
 					this.save();
 				})
-			} , {
-				name: 'reset_to_default',
-				label: _('Reset'),
-				style: 'float: right',
-				onClick: lang.hitch(this, 'reset')
-			} , {
-				name: 'cancel',
-				label: _('Cancel'),
-				onClick: lang.hitch(this, function() {
-					dijit.hideTooltip(this._form.getWidget('customRule').domNode);
-					this.hide();
-					this.update();
-					this.onClose();
-				})
-			} ];
+			}];
 
 			// generate the search form
 			this._form = new Form({

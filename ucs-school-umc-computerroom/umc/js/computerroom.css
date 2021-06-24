@@ -1,15 +1,97 @@
 .computerroomGrid .umcGridHeader {
-	display: block !important;
+	display: grid !important;
+	grid-template-columns: auto auto;
+	grid-template-rows: auto auto auto;
+	grid-template-areas: 	"exam exam"
+							"standard extra"
+							"status status";
 }
 
-.computerroomGrid .umcGrid__toolbar {
-	float: left !important;
-}
-.computerroomGrid .umcGrid__contextWrapper {
-	float: left !important;
-}
-
-.computerroomGrid .umcGridStatus {
-	width: 100% !important;
+.computerroomGrid .computerroomGrid__examButtons {
+	grid-area: exam;
+	margin-bottom: var(--layout-spacing-unit);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--layout-spacing-unit) 0;
 }
 
+.computerroomGrid .umcGrid__actionButtonsWrapper {
+	grid-area: standard;
+}
+
+.computerroomGrid .computerroomGrid__extraButtons {
+	grid-area: extra;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--layout-spacing-unit) 0;
+	justify-content: flex-end;
+}
+.computerroomGrid .computerroomGrid__extraButtons .ucsButton:not(:first-child) {
+	margin-left: var(--layout-spacing-unit);
+}
+.computerroomGrid .computerroomGrid__extraButtons .ucsButton:not(:last-child) {
+	margin-right: 0 !important;
+}
+
+.computerroomGrid .umcGridStatusWrapper {
+	grid-area: status;
+	margin-top: var(--layout-spacing-unit);
+}
+
+@media (max-width: 991px) {
+	.computerroomGrid .umcGridHeader {
+		grid-template-columns: auto;
+		grid-template-rows: auto auto auto auto;
+		grid-template-areas: 	"exam"
+								"standard"
+								"extra"
+								"status";
+	}
+	.computerroomGrid .computerroomGrid__extraButtons {
+		margin-top: var(--layout-spacing-unit);
+	}
+}
+
+.examEndTimeNote {
+	padding: 0 calc(2 * var(--layout-spacing-unit)) 0 var(--layout-spacing-unit);
+}
+
+.examEndTimeNote--warning {
+	color: var(--font-color-error);
+}
+
+.screenShotView__screenshotContainer {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.screenShotView__imgThumbnail {
+	position: relative;
+	padding: var(--layout-spacing-unit);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.screenShotView__userTag {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: var(--layout-spacing-unit-small);
+	background: var(--bgc-popup);
+	border: var(--popup-border);
+	border-radius: var(--border-radius-tooltip);
+}
+
+.screenShotView__img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.screenShotView__imgTooltip {
+	width: 100%;
+}
+.screenShotView__imgTooltip--grid {
+	width: 240px;
+}
