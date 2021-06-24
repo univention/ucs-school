@@ -149,8 +149,8 @@ Type=bool
 Categories=ucsschool-base
 
 [ucsschool/import/purge-expired-users/cron]
-Description[de]=Definiert das Prüfintervall für das Löschen von UCS@school-Benutzer, deren geplantes Löschdatum überschritten ist. Die Konfigiuration erfolgt in Cron-Syntax, siehe auch 'man 5 crontab'. Ist die Variable nicht gesetzt, werden keine Benutzer gelöscht. Der Standardwert ist '50 4 * * *'.
-Description[en]=Defines the check interval for deleting UCS@school users whose scheduled deletion date is exceeded. The configuration is done in Cron syntax, see 'man 5 crontab'. If the variable is unset, the check is disabled. Default is '50 4 * * *'.
+Description[de]=Definiert das Prüfintervall für das Löschen von UCS@school-Benutzer, deren geplantes Löschdatum überschritten ist. Die Konfigiuration erfolgt in Cron-Syntax, siehe auch 'man 5 crontab'. Um die Prüfung zu deaktivieren, kann die Variable auf einen leeren Wert gesetzt werden. Der Standardwert ist '50 4 * * *'.
+Description[en]=Defines the check interval for deleting UCS@school users whose scheduled deletion date is exceeded. The configuration is done in Cron syntax, see 'man 5 crontab'. If the variable is set to an empty value, the check is disabled. Default is '50 4 * * *'.
 Type=str
 Categories=ucsschool-base
 
