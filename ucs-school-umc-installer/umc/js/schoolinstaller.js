@@ -511,6 +511,8 @@ define([
 					return pageName;
 				}
 
+				this.onInstallationStarted();
+
 				// show the progress bar
 				this._progressBar.reset(_('Starting the configuration process...' ));
 				this._progressBar._progressBar.set('value', Infinity); // TODO: Remove when this is done automatically by .reset()
@@ -519,6 +521,7 @@ define([
 				// clear entered password and make sure that no error is indicated
 				this.getWidget('credentials', 'password').set('value', '');
 				this.getWidget('credentials', 'password').set('state', 'Incomplete');
+
 
 				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function() {
 					this._progressBar.setInfo(null, null, 0); // 0%
@@ -533,6 +536,7 @@ define([
 					);
 					return deferred;
 				}), lang.hitch(this, function(error) {
+					this.onInstallationError();
 					this.getWidget('error', 'info').set('content', entities.encode(tools.parseError(error).message));
 					return 'error';
 				}));
@@ -600,8 +604,15 @@ define([
 		// only DC master, DC backup, and DC slave are valid system roles for this module
 		_validServerRole: function() {
 			return this._serverRole === 'domaincontroller_master' || this._serverRole === 'domaincontroller_backup' || this._serverRole === 'domaincontroller_slave';
-		}
+		},
 
+		onInstallationStarted: function() {
+
+		},
+
+		onInstallationError: function() {
+
+		}
 	});
 
 	return declare("umc.modules.schoolinstaller", [ Module ], {
@@ -613,7 +624,7 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this._installer = new Installer({ 'class': 'umcCard' });
+			this._installer = new Installer({});
 			this.addChild(this._installer);
 
 			this._installer.on('finished', lang.hitch(this, function() {
@@ -621,6 +632,12 @@ define([
 			}));
 			this._installer.on('cancel', lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
+			}));
+			this._installer.on('installationStarted', lang.hitch(this, function() {
+				this.set('closable', false);
+			}));
+			this._installer.on('installationError', lang.hitch(this, function() {
+				this.set('closable', true);
 			}));
 		}
 	});
