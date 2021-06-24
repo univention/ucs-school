@@ -33,7 +33,6 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/io-query",
-	"dojo/aspect",
 	"dojo/on",
 	"dojo/topic",
 	"dojo/dom",
@@ -42,14 +41,13 @@ define([
 	"dojo/store/Observable",
 	"dojo/store/Memory",
 	"dojo/promise/all",
-	"dijit/ProgressBar",
-	"dijit/Dialog",
-	"dijit/Tooltip",
+	"umc/widgets/Tooltip",
 	"dojox/html/styles",
 	"dojox/html/entities",
 	"umc/app",
 	"umc/dialog",
 	"umc/tools",
+	"umc/widgets/Dialog",
 	"umc/widgets/Grid",
 	"umc/widgets/Button",
 	"umc/widgets/Module",
@@ -63,21 +61,19 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom",
 	"xstyle/css!./computerroom.css"
-], function(declare, lang, array, ioQuery, aspect, on, topic, dom, domClass, Deferred, Observable, Memory, all, DijitProgressBar,
-			Dialog, Tooltip, styles, entities, UMCApp, dialog, tools, Grid, Button, Module, Page, Form,
-			ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
+], function(declare, lang, array, ioQuery, on, topic, dom, domClass, Deferred, Observable, Memory, all,
+			Tooltip, styles, entities, UMCApp, dialog, tools, Dialog, Grid, Button, Module, Page,
+			Form, ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
-	styles.insertCssRule('.umc .dojoxGridCell .dijitButtonText', 'text-decoration: none;');
 	styles.insertCssRule(
-		'.umcIconCollectFiles',
-		lang.replace('background-image: url({0}); width: 16px; height: 16px;', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-collect-files.png')])
+		'.icon-umcIconCollectFiles',
+		lang.replace('background: url({0});', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-collect-files.png')])
 	);
 	styles.insertCssRule(
-		'.umcIconFinishExam',
-		lang.replace('background-image: url({0}); width: 16px; height: 16px;', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-finish-exam.png')])
+		'.icon-umcIconFinishExam',
+		lang.replace('background: url({0});', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-finish-exam.png')])
 	);
-	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
 	var isConnected = function(item) { return item.connection === 'connected'; };
 
@@ -106,6 +102,10 @@ define([
 
 		// internal reference to the search page
 		_searchPage: null,
+
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
+		},
 
 		_progressBar: null,
 
@@ -196,8 +196,7 @@ define([
 			this._headActionsTop = [{
 				type: Text,
 				name: 'examEndTime',
-				'class': 'dijitButtonText umcExamEndTimeButton',
-				style: 'display: inline-block; vertical-align: middle; padding: 0 16px;',
+				'class': 'dijitButtonText examEndTimeNote',
 				visible: false
 			}, {
 				name: 'collect',
@@ -210,7 +209,6 @@ define([
 				iconClass: 'umcIconFinishExam',
 				visible: false,
 				label: _('Finish exam'),
-				style: 'margin-right: 2.5em;',
 				callback: lang.hitch(this, '_finishExam')
 			}];
 			this._headActions = [{
@@ -679,7 +677,6 @@ define([
 						mac: item.mac ? item.mac : ''
 					});
 					var tooltip = new Tooltip({
-						'class': 'umcTooltip',
 						label: label,
 						connectId: [widget.domNode]
 					});
@@ -699,13 +696,14 @@ define([
 						return '';
 					}
 					var id = item.id;
-					var label = lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" alt="{1}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', [
+					var label = lang.replace('<div class="screenShotView__imgTooltip--grid"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="" /></div>', [
 						id,
 						entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 					]);
 
 					var widget = new Button({
 						label: _('Watch'),
+						'class': 'ucsLinkButton',
 						onClick: lang.hitch(this, function() {
 							this._screenshot([id], [item]);
 						})
@@ -713,7 +711,6 @@ define([
 					this.own(widget);
 
 					var tooltip = new Tooltip({
-						'class': 'umcTooltip',
 						label: label,
 						connectId: [widget.domNode],
 						onShow: function() {
@@ -735,7 +732,6 @@ define([
 				'class': 'computerroomGrid',
 				moduleStore: this._objStore,
 				actions: lang.clone(this._actions),
-				dontUpdateActionsVisibility: true,
 				columns: columns,
 				sortIndex: 1,
 				footerFormatter: function(nItems, nItemsTotal) {
@@ -754,18 +750,16 @@ define([
 			this._grid.watch('actions', lang.hitch(this, function() {
 				this.addHeaderContainer();
 			}));
-
-			// we need to call page's startup method manually as all widgets have
-			// been added to the page container object
-			this._searchPage.startup();
 		},
 
 		addHeaderContainer: function() {
 			// add a toolbar for buttons above the grid
-			var _containerRight = new ContainerWidget({ style: 'float: right' });
-			this._grid.own(_containerRight);
-			var _containerTop = new ContainerWidget({ style: 'width: 100%; padding-bottom: 5px;' });
-			this._grid.own(_containerTop);
+			var _containerRight = new ContainerWidget({
+				'class': 'computerroomGrid__extraButtons'
+			});
+			var _containerTop = new ContainerWidget({
+				'class': 'computerroomGrid__examButtons'
+			});
 			this._headButtons = {};
 
 			var addButtonTo = lang.hitch(this, function(container) {
@@ -781,8 +775,7 @@ define([
 			array.forEach(this._headActions, addButtonTo(_containerRight));
 			array.forEach(this._headActionsTop, addButtonTo(_containerTop));
 
-			this._grid._header.addChild(_containerRight);
-			this._grid._header.addChild(this._grid._statusMessage);
+			this._grid._header.addChild(_containerRight, 1);
 			this._grid._header.addChild(_containerTop, 0);
 		},
 
@@ -870,16 +863,16 @@ define([
 					this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), 5 * 60 * 1000);
 				})
 			}, {
-				name: 'finish_exam',
-				label: _('Finish exam'),
-				callback: lang.hitch(this, '_finishExam')
-			}, {
 				name: 'dont_remember',
 				label: _("Do not remind again"),
 				callback: lang.hitch(this, function() {
 					window.clearTimeout(this._examEndTimer);
 					this._examEndTimer = null;
 				})
+			}, {
+				name: 'finish_exam',
+				label: _('Finish exam'),
+				callback: lang.hitch(this, '_finishExam')
 			}], _('Remind'));
 		},
 
@@ -908,22 +901,15 @@ define([
 					exam: info.exam
 				});
 
-				// create container with spinning ProgressBar
-				var container = new ContainerWidget({});
-				container.addChild(new Text({
-					content: _('Please wait while all exam documents are being collected.')
-				}));
-				container.addChild(new DijitProgressBar({
-					indeterminate: true
-				}));
+				var progressBar = new ProgressBar({});
+				progressBar.setInfo(_('Please wait while all exam documents are being collected.'), null, Infinity);
 
 				// start standby animation
-				this.standby(false);
-				this.standbyDuring(deferred, container).then(lang.hitch(this, function() {
-					container.destroyRecursive();
+				this.standbyDuring(deferred, progressBar).then(lang.hitch(this, function() {
+					progressBar.destroyRecursive();
 					dialog.alert(_("All related exam documents have been collected successfully from the students' home directories."));
 				}), lang.hitch(this, function() {
-					container.destroyRecursive();
+					progressBar.destroyRecursive();
 				}));
 			}));
 		},
@@ -999,10 +985,8 @@ define([
 			var _dialog = null, form = null, okButton = null;
 			var _cleanup = function() {
 				if (_dialog) {
-					_dialog.hide().always(function() {
-						_dialog.destroyRecursive();
-						_dialog = null;
-					});
+					_dialog.close();
+					_dialog = null;
 				}
 				if (form) {
 					form.destroyRecursive();
@@ -1072,31 +1056,40 @@ define([
 					var room = _getRoom(roomDN);
 					if (room && room.exam) {
 						if (room.locked) {
-							msg += '<p>' + _('<b>Note:</b> In this computer room the exam "%s" is currently being conducted by %s.', room.examDescription, room.user) + '</p>';
-						}
-						else {
-							msg += '<p>' + _('<b>Note:</b> In this computer room the exam "%s" is currently being written.', room.examDescription) + '</p>';
+							msg += _('<b>Note:</b> In this computer room the exam "%s" is currently being conducted by %s.',
+								entities.encode(room.examDescription),
+								entities.encode(room.user)
+							);
+						} else {
+							msg += _('<b>Note:</b> In this computer room the exam "%s" is currently being written.',
+								entities.encode(room.examDescription)
+							);
 						}
 					} else if (room && room.locked) {
-						msg += '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
+						msg += _('<b>Note:</b> This computer room is currently in use by %s.', entities.encode(room.user));
 					}
-					form.getWidget('message').set('content', msg);
+					
+					var messageWidgets = form.getWidget('message');
+					messageWidgets.set('content', msg);
+					messageWidgets.set('visible', !!msg);
+					_dialog.position();
 				})
 			}, {
 				type: Text,
 				name: 'message',
-				'class': 'umcSize-One'
+				size: 'One',
+				visible: false
 			}];
 
 			var buttons = [{
-				name: 'submit',
-				label: _('Select room'),
-				style: 'float:right',
-				callback: _callback
-			}, {
+				align: 'left',
 				name: 'cancel',
 				label: _('Cancel'),
 				callback: _cleanup
+			}, {
+				name: 'submit',
+				label: _('Select room'),
+				callback: _callback
 			}];
 
 			form = new Form({
@@ -1127,11 +1120,11 @@ define([
 				}
 			}));
 
+
 			_dialog = new Dialog({
 				title: _('Select computer room'),
 				content: form,
-				'class': 'umcPopup',
-				style: 'max-width: 400px;'
+				style: 'width: 400px;'
 			});
 			_dialog.show();
 			okButton.set('disabled', true);
@@ -1289,7 +1282,7 @@ define([
 					var now = new Date();
 					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
 					if (this._headButtons.examEndTime.domNode) {
-						domClass.toggle(this._headButtons.examEndTime.domNode, 'umcRedColor', (delta < 5*1000*60));
+						domClass.toggle(this._headButtons.examEndTime.domNode, 'examEndTimeNote--warning', (delta < 5*1000*60));
 					}
 
 					var content = _('Time is up');
