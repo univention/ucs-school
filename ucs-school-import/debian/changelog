@@ -1,3 +1,9 @@
+ucs-school-import (17.0.68) unstable; urgency=medium
+
+  * Bug #53326: deactivation of cron job survives update
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Thu, 24 Jun 2021 09:09:37 +0200
+
 ucs-school-import (17.0.67) unstable; urgency=medium
 
   * Bug #50331: fix quiet option in ucs-school-purge-expired-users script
