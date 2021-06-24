@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.237) unstable; urgency=low
+
+  * Bug #53437: fix performance tests
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 24 Jun 2021 09:05:07 +0200
+
 ucs-test-ucsschool (6.0.236) unstable; urgency=medium
 
   * Bug #53044: correct case insensitivity test
