@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.68A~4.4.0.202106240912
+fix: 17.0.69A~4.4.0.202106240947
 desc: |
   * UDM extensions for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52658).
   * The UCR templates for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52604).
