@@ -16,7 +16,6 @@
 	<command name="computerroom/settings/get" function="settings_get"/>
 	<command name="computerroom/settings/set" function="settings_set"/>
 	<command name="computerroom/screenshot" function="screenshot"/>
-	<command name="computerroom/vnc" function="vnc"/>
 	<command name="computerroom/demo/start" function="demo_start"/>
 	<command name="computerroom/demo/stop" function="demo_stop"/>
 	<command name="computerroom/computer/state" function="computer_state"/>
