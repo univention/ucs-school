@@ -630,27 +630,6 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, response, mimetype="image/jpeg")
 
-    @check_room_access
-    @sanitize(computer=ComputerSanitizer(required=True))
-    def vnc(self, request):
-        """Returns a ultraVNC file for the given computer."""
-
-        # check whether VNC is enabled
-        if ucr.is_false("ucsschool/umc/computerroom/ultravnc/enabled", True):
-            raise UMC_Error("VNC is disabled")
-
-        try:
-            with open("/usr/share/ucs-school-umc-computerroom/ultravnc.vnc", "rb") as fd:
-                content = fd.read()
-        except (IOError, OSError):
-            raise UMC_Error("VNC template file does not exists")
-
-        port = ucr.get("ucsschool/umc/computerroom/vnc/port", "11100")
-        hostname = request.options["computer"].ipAddress
-
-        response = content.replace("@%@HOSTNAME@%@", hostname).replace("@%@PORT@%@", port)
-        self.finished(request.id, response, mimetype="application/x-vnc")
-
     def _read_rules_end_at(self):
         room_file = _getRoomFile(self._computerroom.roomDN)
         rule_end_at = None
