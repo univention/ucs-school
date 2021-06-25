@@ -127,7 +127,6 @@ define([
 
 		_nUpdateFailures: 0,
 
-		_vncEnabled: false,
 		_showRebootNote: false,
 
 		// buttons above grid
@@ -512,9 +511,8 @@ define([
 
 		_loadUCR: function() {
 			// get UCR Variable for enabled VNC
-			var getUCR = tools.ucr(['ucsschool/umc/computerroom/ultravnc/enabled', 'ucsschool/exam/default/show/restart', 'ucsschool/umc/computerroom/screenlock/interval']);
+			var getUCR = tools.ucr(['ucsschool/exam/default/show/restart', 'ucsschool/umc/computerroom/screenlock/interval']);
 			getUCR.then(lang.hitch(this, function(result) {
-				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
 				this._showRebootNote = tools.isTrue(result['ucsschool/exam/default/show/restart']);
 				this._screenLockIntervalTime = result['ucsschool/umc/computerroom/screenlock/interval'] * 1000 || 5000;
 			}));
@@ -629,22 +627,6 @@ define([
 			this.addChild(this._searchPage);
 
 			this._updateHeader();
-
-			// add VNC button to actionlist
-			if (this._vncEnabled) {
-				this._actions.push({
-					name: 'viewVNC',
-					label: _('VNC-Access'),
-					isStandardAction: false,
-					isMultiAction: false,
-					canExecute: function(item) {
-						return isConnected(item) && item.user;
-					},
-					callback: lang.hitch(this, function(item) {
-						window.open('/univention/command/computerroom/vnc?computer=' + encodeURIComponent(item));
-					})
-				});
-			}
 
 			var columns = [{
 				name: 'name',
