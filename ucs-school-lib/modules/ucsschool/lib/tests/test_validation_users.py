@@ -307,6 +307,15 @@ all_user_role_objects = [
     teacher_and_staff_user(),
     admin_user(),
 ]
+all_user_role_generators = [
+    student_user,
+    teacher_user,
+    staff_user,
+    exam_user,
+    teacher_and_staff_user,
+    admin_user,
+]
+
 all_user_roles_names = [
     role_student,
     role_teacher,
@@ -353,6 +362,16 @@ def check_logs(
     assert "{}".format(dict_obj) not in public_logs
 
 
+def check_did_not_log_any_error(
+    dict_obj, record_tuples, public_logger_name
+):  # type: (dict ,Any, str) -> None
+    public_logs = filter_log_messages(record_tuples, public_logger_name)
+    secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
+    for log in (public_logs, secret_logs):
+        assert not log
+    assert "{}".format(dict_obj) not in secret_logs
+
+
 @pytest.mark.parametrize(
     "dict_obj,ObjectClass",
     zip(
@@ -379,11 +398,7 @@ def test_correct_object(caplog, dict_obj, random_logger):
     correct objects should not produce validation errors (logs).
     """
     validate(dict_obj, logger=random_logger)
-    public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-    secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
-    for log in (public_logs, secret_logs):
-        assert not log
-    assert "{}".format(dict_obj) not in secret_logs
+    check_did_not_log_any_error(dict_obj, caplog.record_tuples, random_logger.name)
 
 
 @must_run_in_container
@@ -430,11 +445,7 @@ def test_altered_group_prefix(
                 dict_obj["props"]["groups"][i] = group.replace(ucr_default, new_value)
                 break
         validate(dict_obj, random_logger)
-        public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
-        secret_logs = filter_log_messages(caplog.record_tuples, VALIDATION_LOGGER)
-        for log in (public_logs, secret_logs):
-            assert not log
-        assert "{}".format(dict_obj) not in secret_logs
+        check_did_not_log_any_error(dict_obj, caplog.record_tuples, random_logger.name)
     finally:
         handler_set(["{}={}".format(ucr_variable, ucr_value_before)])
         # force a reload of the prefixes.
@@ -456,6 +467,22 @@ def test_correct_uuid(caplog, random_logger):
         uuids.append(re.search(r"^([0-9a-f\-]+)", log).group(1))
     assert len(uuids) == 2
     assert uuids[0] == uuids[1]
+
+
+@must_run_in_container
+@pytest.mark.parametrize("user_generator", all_user_role_generators, ids=all_user_roles_names)
+def test_group_and_role_case_insensitivity(caplog, user_generator, random_logger):
+    dict_obj = user_generator()
+    dict_obj["props"]["groups"] = [
+        group[:3] + group[3:].lower().capitalize() for group in list(dict_obj["props"]["groups"])
+    ]
+    new_roles = []
+    for role in list(dict_obj["props"]["ucsschoolRole"]):
+        r, c, s = role.split(":")
+        new_roles.append("{}:{}:{}".format(r, c, s.capitalize()))
+    dict_obj["props"]["ucsschoolRole"] = new_roles
+    validate(dict_obj, logger=random_logger)
+    check_did_not_log_any_error(dict_obj, caplog.record_tuples, random_logger.name)
 
 
 @pytest.mark.parametrize("dict_obj", [student_user(), exam_user()], ids=[role_student, role_exam_user])
@@ -566,14 +593,14 @@ def test_missing_role_teachers_and_staff(caplog, random_logger):
 @must_run_in_container
 @pytest.mark.parametrize("dict_obj", all_user_role_objects, ids=all_user_roles_names)
 def test_missing_domain_users_group(caplog, dict_obj, random_logger):
-    domain_users_groups = "dummy"
+    domain_users_group = "dummy"
     for group in list(dict_obj["props"]["groups"]):
         if re.match(r"cn=Domain Users.+", group):
             dict_obj["props"]["groups"].remove(group)
-            domain_users_groups = group
+            domain_users_group = group
             break
     validate(dict_obj, logger=random_logger)
-    expected_msg = "is missing groups at positions {!r}".format([domain_users_groups])
+    expected_msg = "is missing groups at positions {!r}".format([domain_users_group])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
 
