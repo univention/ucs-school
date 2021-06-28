@@ -43,10 +43,18 @@ from six import iteritems, string_types
 
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
 from ucsschool.lib.models.base import NoObject, WrongObjectType
+from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.utils import create_passwd, ucr
-from ucsschool.lib.roles import create_ucsschool_role_string, role_pupil, role_staff, role_teacher
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    get_role_info,
+    role_pupil,
+    role_school_admin,
+    role_staff,
+    role_teacher,
+)
 from univention.admin import property as uadmin_property
 from univention.admin.syntax import gid as gid_syntax
 from univention.admin.uexceptions import noProperty, valueError, valueInvalidSyntax
@@ -968,6 +976,23 @@ class ImportUser(User):
             for role in self.default_roles
             for school in self.schools
         ]  # type: List[str]
+
+        # see Bug #53203
+        if self.old_user and self.old_user.is_administrator(self.lo):
+            udm_user = self.old_user.get_udm_object(self.lo)
+            for group_dn in self.get_school_admin_groups():
+                if group_dn in udm_user["groups"]:
+                    udm_group = Group.from_dn(group_dn, None, self.lo).get_udm_object(self.lo)
+                    self.ucsschool_roles.append(
+                        create_ucsschool_role_string(role_school_admin, udm_group["school"][0])
+                    )
+
+        # keep non ucsschool roles:
+        if self.old_user:
+            self.ucsschool_roles.extend(
+                role for role in self.old_user.ucsschool_roles if get_role_info(role)[1] != "school"
+            )
+
         return self.ucsschool_roles
 
     def make_udm_property(self, property_name):  # type: (str) -> Union[str, None]
