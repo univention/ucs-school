@@ -141,10 +141,10 @@ define([
 						deferred.resolve(false);
 					} else if (response.result.warning) {
 						dialog.confirm(entities.encode(response.result.warning), [
-							{label: _('Create')},
-							{label: _('Cancel')}
+							{label: _('Cancel'), default: true},
+							{label: _('Create'), name: 'create'},
 						]).then(lang.hitch(this, function(choice) {
-							if (choice === 0) {
+							if (choice === 'create') {
 								this._createObject(true, deferred)
 							} else {
 								deferred.resolve(false);
@@ -164,8 +164,7 @@ define([
 		addNote: function() {
 			var name = this.getWidget('item', 'name').get('value');
 			var message = _('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
-			this.getPage('item').clearNotes();
-			this.getPage('item').addNote(message);
+			dialog.contextNotify(message);
 		}
 	});
 });

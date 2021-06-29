@@ -32,14 +32,12 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array",
-	"dojo/topic",
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/ClassWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, SearchBox, ComboBox, ClassWizard, Grid, _) {
+], function(declare, lang, SearchBox, ComboBox, ClassWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.ClassGrid", [Grid], {
 
@@ -71,6 +69,7 @@ define([
 			}
 			return [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				size: 'TwoThirds',
 				name: 'school',
 				label: _('School'),
@@ -78,6 +77,7 @@ define([
 				autoHide: true
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				size: 'TwoThirds',
 				name: 'filter',
 				label: _('Filter'),
