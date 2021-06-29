@@ -7,7 +7,7 @@ Changelog
 
 v1.4.4 (2021-06-24)
 ...................
-* The Kelvin API now supports LDAP servers using certificates, which are not signed by the UCS-CA. (Bug #52766)
+* The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)
 
 v1.4.3 (2021-06-16)
 ...................
