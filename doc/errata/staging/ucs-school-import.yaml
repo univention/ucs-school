@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
-fix: 17.0.69A~4.4.0.202106240947
+fix: 17.0.70A~4.4.0.202106291122
 desc: |
   * UDM extensions for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52658).
   * The UCR templates for <package>ucs-school-import</package> are now Python 3 compatible (Bug #52604).
@@ -11,4 +11,5 @@ desc: |
   * The package <package>ucs-school-lib</package> has been migrated to dh_python (Bug #52582).
   * The <envar>quiet</envar> parameter for the <command>ucs-school-purge-expired-users</command> script did not function properly, causing a mail being sent to root each time the respective cron job has run. This fix resolves that issue (Bug #50331).
   * The postinst of the package <package>ucs-school-import</package> overwrote certain UCRV to defaults, which is not desired behavior. This fix resolves that issue (Bug #53326).
-bug: [52658, 52604, 52580, 52582, 50331, 53326]
+  * The Importer removes non-UCS@school roles or the admin role if the imported user already exists. This fix resolves that issue (Bug #53203).
+bug: [52658, 52604, 52580, 52582, 50331, 53326, 53203]
