@@ -66,6 +66,8 @@ import inspect
 import logging
 from operator import itemgetter
 
+import lazy_object_proxy
+
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
 
 from ..exceptions import UcsSchoolImportFatalError
@@ -99,11 +101,16 @@ class ConfigurationChecks(object):
 
     def __init__(self, config):  # type: (ReadOnlyDict) -> None
         self.config = config
-        try:
-            self.lo, po = get_readonly_connection()
-        except UcsSchoolImportFatalError:
-            self.lo, po = get_unprivileged_connection()
+        self.lo = None  # will be an LDAP access object, when tests are started
         self.logger = logging.getLogger(__name__)
+
+
+def lo():
+    try:
+        _lo, po = get_readonly_connection()
+    except UcsSchoolImportFatalError:
+        _lo, po = get_unprivileged_connection()
+    return _lo
 
 
 def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
@@ -116,9 +123,13 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
     disabled_checks = config.get("disabled_checks", [])
     for kls in config_check_classes:
         cc = kls(config)
+        # inspect.getmembers() would retrieve the value of cc.lo and that would start
+        # getAdminConnection(), even when no LDAP connection is required. So the "lo" member is set after
+        # this.
         test_methods = inspect.getmembers(
             cc, lambda x: inspect.ismethod(x) and x.__name__.startswith("test_")
         )
+        cc.lo = lazy_object_proxy.Proxy(lo)
         test_methods.sort(key=itemgetter(0))
         for name, method in test_methods:
             if name in disabled_checks:

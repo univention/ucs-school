@@ -44,11 +44,12 @@ import lazy_object_proxy
 from ldap.dn import escape_dn_chars
 from six import string_types
 
+from ucsschool.lib.models.utils import env_or_ucr
 from univention.admin.uexceptions import noObject, objectExists
 
 from ..configuration import Configuration
 from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStored
-from .ldap_connection import LoType, PoType, get_admin_connection, get_unprivileged_connection
+from .ldap_connection import LoType, get_admin_connection, get_unprivileged_connection
 
 
 class NameCounterStorageBackend(object):
@@ -110,13 +111,13 @@ class LdapStorageBackend(NameCounterStorageBackend):
     'cn=unique-<attribute_name>,cn=ucsschool,cn=univention,<base>'.
     """
 
-    def __init__(self, attribute_storage_name: str, lo: LoType = None, pos: PoType = None) -> None:
-        if lo and pos:
-            self.lo, _pos = lo, pos
+    def __init__(self, attribute_storage_name: str, read_only: bool = False) -> None:
+        if read_only:
+            self.lo: LoType = lazy_object_proxy.Proxy(lambda: get_unprivileged_connection()[0])
         else:
-            self.lo, _pos = get_admin_connection()
+            self.lo: LoType = lazy_object_proxy.Proxy(lambda: get_admin_connection()[0])
         self.ldap_base = "cn=unique-{},cn=ucsschool,cn=univention,{}".format(
-            escape_dn_chars(attribute_storage_name), self.lo.base
+            escape_dn_chars(attribute_storage_name), env_or_ucr("ldap/base")
         )
 
     def create(self, name: str, value: int) -> None:
@@ -180,8 +181,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
 class MemoryStorageBackend(NameCounterStorageBackend):
     def __init__(self, attribute_storage_name: str) -> None:
         self._mem_store: Dict[str, int] = dict()
-        lo, po = get_unprivileged_connection()
-        self.ldap_backend = LdapStorageBackend(attribute_storage_name, lo, po)
+        self.ldap_backend = LdapStorageBackend(attribute_storage_name, True)
 
     def create(self, name: str, value: int) -> None:
         self._mem_store[name] = value
