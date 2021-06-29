@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2013-2021 Univention GmbH
@@ -40,16 +40,17 @@ import sys
 import tempfile
 import time
 import traceback
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 from ldap.filter import filter_format
+from six.moves import input
 
 import univention.admin.uldap
 import univention.lib.umc
 from univention.config_registry import ConfigRegistry
 
 try:
-    from typing import Any
+    from typing import Any  # noqa: F401
 except ImportError:
     pass
 
@@ -90,9 +91,9 @@ def configure_ucsschool(options):  # type: (Any) -> None
     print("Starting configuration of UCS@school (ou=%r) ... this might take a while ..." % (options.ou,))
     sys.stdout.flush()
 
-    result = connection.umc_command("schoolinstaller/install", params).decode_body()
+    result = connection.umc_command("schoolinstaller/install", params).data
     if options.debug:
-        print("CMD: schoolinstaller/install\nRESPONSE: " + repr(result))
+        print("CMD: schoolinstaller/install\nRESPONSE: %r" % (result,))
     fd.write("CMD: schoolinstaller/install\nRESPONSE: %r\n" % (result,))
     if result["status"] != 200 or result.get("errors") or result.get("error"):
         print("ERROR: Failed to start UCS@school installation!")
@@ -112,9 +113,9 @@ def configure_ucsschool(options):  # type: (Any) -> None
 
     while not result["finished"]:
         try:
-            msg_body = connection.umc_command("schoolinstaller/progress").decode_body()
+            msg_body = connection.umc_command("schoolinstaller/progress").data
             if options.debug:
-                print("CMD: schoolinstaller/progress\nRESPONSE: " + repr(msg_body))
+                print("CMD: schoolinstaller/progress\nRESPONSE: %r" % (msg_body,))
             if msg_body["status"] != 200:
                 failcount += 1
                 check_failcount("schoolinstaller/progress returned with an error:\n%r" % (msg_body,))
@@ -143,7 +144,7 @@ def configure_ucsschool(options):  # type: (Any) -> None
     print("UCS@school successfully configured.")
 
     print("Restarting UMC ...")
-    msg_body = connection.umc_command("lib/server/restart").decode_body()
+    msg_body = connection.umc_command("lib/server/restart").data
     fd.write("CMD: lib/server/restart\nRESPONSE: %r\n" % (msg_body,))
     if options.debug:
         print("CMD: lib/server/restart\nRESPONSE: %r" % (msg_body,))
@@ -163,6 +164,7 @@ def install_app(options):  # type: (Any) -> None
         ["/usr/bin/univention-app", "info", "--as-json"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     stdout, stderr = proc.communicate()
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
     if proc.returncode:
         fatal(
             1,
@@ -188,8 +190,9 @@ def install_app(options):  # type: (Any) -> None
         sys.stdout.flush()
         fd.flush()
 
-        with tempfile.NamedTemporaryFile() as tmpfn:
+        with tempfile.NamedTemporaryFile("w+") as tmpfn:
             tmpfn.write(options.password)
+            tmpfn.flush()
             cmd = [
                 "/usr/bin/univention-app",
                 "install",
@@ -222,8 +225,8 @@ def fatal(exitcode, msg):
 
 
 def main():  # type: () -> None
-    parser = OptionParser()
-    parser.add_option(
+    parser = ArgumentParser()
+    parser.add_argument(
         "-q",
         "--non-interactive",
         dest="noninteractive",
@@ -231,7 +234,7 @@ def main():  # type: () -> None
         action="store_true",
         help="Do not ask for missing config options but simply fail",
     )
-    parser.add_option(
+    parser.add_argument(
         "-H",
         "--host",
         dest="hostname",
@@ -239,33 +242,33 @@ def main():  # type: () -> None
         help="host to connect to (default is the local system)",
         metavar="HOST",
     )
-    parser.add_option("-u", "--user", dest="username", help="username", metavar="UID", default=None)
-    parser.add_option("-p", "--password", dest="password", help="password", metavar="PASSWORD")
-    parser.add_option(
+    parser.add_argument("-u", "--user", dest="username", help="username", metavar="UID", default=None)
+    parser.add_argument("-p", "--password", help="password", metavar="PASSWORD")
+    parser.add_argument(
         "-f",
         "--passwordfile",
         dest="password_fn",
         help="path to file that contains the password",
         metavar="FILENAME",
     )
-    parser.add_option("-o", "--ou", dest="ou", help="ou name of the school", metavar="OU")
-    parser.add_option(
-        "-d", "--debug", dest="debug", default=False, action="store_true", help="show some debug output"
+    parser.add_argument("-o", "--ou", help="ou name of the school", metavar="OU")
+    parser.add_argument(
+        "-d", "--debug", default=False, action="store_true", help="show some debug output"
     )
     # DISABLED FOR NOW - THE FIRST VERSION ONLY SUPPORTS "EDU-SLAVES"
-    # 	parser.add_option(
+    # 	parser.add_argument(
     # 		'-E', '--educational-server-name', dest='name_edu_server',
     # 		help='name of the educational server', metavar='NAME_EDU_SLAVE')
-    # 	parser.add_option(
+    # 	parser.add_argument(
     # 		'-e', '--educational-server', dest='server_type',
     # 		action='store_const', const='educational',
     # 		help='install a dc slave in educational network (DEFAULT)')
-    # 	parser.add_option(
+    # 	parser.add_argument(
     # 		'-a', '--administrative-server', dest='server_type',
     # 		action='store_const', const='administrative',
     # 		help='install a dc slave in administrative network')
 
-    (options, _) = parser.parse_args()
+    options = parser.parse_args()
 
     # hardcoded settings
     options.server_type = "educational"
@@ -296,7 +299,7 @@ def main():  # type: () -> None
     else:
         if not options.username:
             print("Please enter the username of a user who is able to join UCS@school systems.")
-            options.username = raw_input("Username: ")
+            options.username = input("Username: ")
         if not options.password:
             print('Please enter the password for user "%s".' % (options.username,))
             options.password = getpass.getpass("Password: ")
@@ -306,7 +309,7 @@ def main():  # type: () -> None
                     "Please enter the school name (school OU name) this system shall be responsible "
                     "for."
                 )
-                options.ou = raw_input("OU: ")
+                options.ou = input("OU: ")
                 if not is_valid_ou_name(options.ou):
                     print("This is not a valid OU name!")
                 else:
@@ -315,8 +318,8 @@ def main():  # type: () -> None
     # test credentials
     try:
         lo = univention.admin.uldap.getMachineConnection()[0]
-        filter_s = filter_format("(uid=%s)", (options.username,))
-        binddn = lo.search(filter=filter_s)[0][0]
+        filter_s = filter_format("(&(objectClass=person)(uid=%s))", (options.username,))
+        binddn = lo.searchDn(filter=filter_s)[0]
         print("Connecting as %s to LDAP..." % (binddn,))
         lo = univention.admin.uldap.access(
             host=ucr.get("ldap/master"),
@@ -335,12 +338,12 @@ def main():  # type: () -> None
         ou_results = lo.search(filter=filter_s, base=ucr.get("ldap/base"), scope="one")
         if ou_results:
             ou_attrs = ou_results[0][1]
-            if "ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass"):
+            if b"ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass"):
                 fatal(6, "ERROR: the given OU exists, but is no UCS@school OU")
         else:
             answer = ""
             while answer.lower().strip() not in ("y", "n"):
-                answer = raw_input(
+                answer = input(
                     'The school OU "%s" does not exist yet. Create this school OU [yn]? ' % (options.ou,)
                 )
             if answer == "n":
@@ -348,12 +351,12 @@ def main():  # type: () -> None
                 sys.exit(7)
             print('The OU "%s" will be created during installation.' % (options.ou,))
 
-    print()
+    print("")
     print("During package installation and configuration, a detailed log")
     print("is written to the following files:")
     print("- /var/log/univention/ucsschool-slave-installer.log")
     print("- /var/log/univention/management-console-module-schoolinstaller.log")
-    print()
+    print("")
     install_app(options)
     configure_ucsschool(options)
 
