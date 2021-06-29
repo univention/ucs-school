@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-  <module id="schoolinstaller" version="1.0">
+  <module id="schoolinstaller" version="1.0" python="3">
 	<name>UCS@school configuration wizard</name>
 	<description>This configuration wizard guides the basic configuration of UCS@school in the domain</description>
 	<categories>
