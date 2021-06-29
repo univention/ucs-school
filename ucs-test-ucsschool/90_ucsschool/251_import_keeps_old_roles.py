@@ -51,15 +51,17 @@ class Test(CLI_Import_v2_Tester):
         admin_group = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(
             self.ou_A.name, self.ucr["ldap/base"]
         )
-        admin_modifications = {"ucsschoolRole": [admin_role], "groups": [admin_group]}
-        self.udm.modify_object("users/user", dn=person.dn, append=admin_modifications)
+
+        # TODO: use udm.modify_object instead (requires caching of udm object in TestUDM!)
+        # admin_modifications = {"ucsschoolRole": [admin_role], "groups": [admin_group]}
+        # self.udm.modify_object("users/user", dn=person.dn, append=admin_modifications)
+        self.schoolenv.lo.modify(admin_group, [("uniqueMember", "", person.dn)])
+        self.schoolenv.lo.modify(person.dn, [("ucsschoolRole", "", admin_role)])
         self.schoolenv.lo.modify(person.dn, [("objectClass", "", "ucsschoolAdministrator")])
-        wait_for_drs_replication(filter_format("cn=%s", (person.name,)))
+        wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
 
         # run same import again
         self.run_import(["-c", fn_config, "-i", fn_csv])
-        for person in person_list:
-            person.verify()
         self.log.info("OK: import (modify) succeeded.")
 
         # check if admin properties still exist
@@ -67,7 +69,7 @@ class Test(CLI_Import_v2_Tester):
         if admin_role not in user["ucsschoolRole"]:
             self.fail("UCS@School Role '{}' has been overwritten.".format(admin_role))
         if admin_group not in user["groups"]:
-            self.fail("User is not member of admin group {} anymore.".format(admin_group))
+            self.fail("User is not membermodify_object of admin group {} anymore.".format(admin_group))
 
 
 if __name__ == "__main__":
