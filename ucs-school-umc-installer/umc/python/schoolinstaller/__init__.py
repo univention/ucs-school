@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Management Console
 #  This installation wizard guides the installation of UCS@school in the domain
@@ -43,14 +43,13 @@ import socket
 import subprocess
 import tempfile
 import threading
-import traceback
-import urllib
 
 import dns.exception
 import dns.resolver
 import ldap
 import notifier
 import notifier.threads
+from six.moves.urllib_request import urlretrieve
 
 from ucsschool.lib.models.computer import SchoolDCSlave
 from ucsschool.lib.models.school import School
@@ -166,6 +165,7 @@ def create_ou_local(ou, display_name):
 
     # check for errors
     if process.returncode != 0:
+        stdout, stderr = stdout.decode("UTF-8", "ignore"), stderr.decode("UTF-8", "ignore")
         raise SchoolInstallerError("Failed to execute create_ou: %s\n%s%s" % (cmd, stderr, stdout))
 
 
@@ -207,7 +207,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
     subprocess.call(CMD_DISABLE_EXEC)  # nosec
 
     try:
-        with tempfile.NamedTemporaryFile() as password_file:
+        with tempfile.NamedTemporaryFile("w+") as password_file:
             password_file.write("%s" % password)
             password_file.flush()
 
@@ -223,7 +223,6 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                 MODULE.process("Performing system join...")
                 process = subprocess.Popen(  # nosec
                     ["/usr/sbin/univention-join", "-dcaccount", username, "-dcpwd", password_file.name],
-                    shell=False,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     close_fds=True,
@@ -239,7 +238,6 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                         "-dcpwd",
                         password_file.name,
                     ],
-                    shell=False,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     close_fds=True,
@@ -301,7 +299,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                         continue
                     raise
                 # get the next line
-                line = fd.read()
+                line = fd.read().decode("UTF-8", "replace")
 
                 if not line:
                     break  # no more text from stdout
@@ -316,9 +314,10 @@ def system_join(username, password, info_handler, error_handler, step_handler):
 
             # get all remaining output
             stdout, stderr = process.communicate()
+            stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
             if stderr:
                 # write stderr into the log file
-                MODULE.warn("stderr from univention-join: %s" % stderr)
+                MODULE.warn("stderr from univention-join: %s" % (stderr,))
 
             # check for errors
             if process.returncode != 0:
@@ -345,7 +344,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
     finally:
         # make sure that UMC servers and apache can be restarted again
         MODULE.info("enabling UMC and apache server restart")
-        subprocess.call(CMD_ENABLE_EXEC)  # nosec
+        subprocess.call(CMD_ENABLE_EXEC, close_fds=True)  # nosec
 
 
 class Progress(object):
@@ -750,7 +749,9 @@ class Instance(Base):
         def _thread(_self, packages):
             MODULE.process("Start Veyon proxy app installation")
             app_info = json.loads(
-                subprocess.check_output(["/usr/bin/univention-app", "info", "--as-json"])  # nosec
+                subprocess.check_output(["/usr/bin/univention-app", "info", "--as-json"]).decode(
+                    "UTF-8"
+                )  # nosec
             )
             veyon_installed = any(
                 (
@@ -765,7 +766,7 @@ class Instance(Base):
                     "The output for the installation of the Veyon proxy app can be found in "
                     "/var/log/univention/appcenter.log"
                 )
-                with tempfile.NamedTemporaryFile() as pw_file:
+                with tempfile.NamedTemporaryFile("w+") as pw_file:
                     pw_file.write(self.password)
                     pw_file.flush()
                     cmd = [
@@ -778,7 +779,7 @@ class Instance(Base):
                         pw_file.name,
                         "--noninteractive",
                     ]
-                    return_code = subprocess.call(cmd)  # nosec
+                    return_code = subprocess.call(cmd, close_fds=True)  # nosec
                 if return_code != 0:
                     MODULE.warn(
                         "The Veyon proxy app could not be installed. Please install manually to ensure "
@@ -795,6 +796,7 @@ class Instance(Base):
                         close_fds=True,
                     )
                     stdout, stderr = proc.communicate()
+                    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
                     MODULE.info(
                         "Output of apt-get update:\nSTDOUT:\n%s\n\nSTDERR:\n%s\n" % (stdout, stderr)
                     )
@@ -894,7 +896,7 @@ class Instance(Base):
                 progress_state.error_handler(str(result))
             elif isinstance(result, BaseException):
                 self.restore_original_certificate()
-                msg = "".join(traceback.format_exception(*thread.exc_info))
+                msg = "Traceback (most recent call last):\n" + "".join(thread.trace)
                 MODULE.error("Exception during installation: %s" % msg)
                 progress_state.error_handler(
                     _("An unexpected error occurred during installation: %s") % result
@@ -926,7 +928,7 @@ class Instance(Base):
         certificate_uri = "http://%s/ucs-root-ca.crt" % (master,)
         MODULE.info("Downloading root certificate from: %s" % (master,))
         try:
-            certificate_file, headers = urllib.urlretrieve(certificate_uri)  # nosec
+            certificate_file, headers = urlretrieve(certificate_uri)  # nosec
 
             if not filecmp.cmp(CERTIFICATE_PATH, certificate_file):
                 # we need to update the certificate file...
@@ -937,7 +939,7 @@ class Instance(Base):
                     count += 1
                     original_certificate_file = CERTIFICATE_PATH + ".orig%s" % count
                 os.rename(CERTIFICATE_PATH, original_certificate_file)
-                MODULE.info("Backing up old root certificate as: %s" % original_certificate_file)
+                MODULE.info("Backing up old root certificate as: %s" % (original_certificate_file,))
 
                 # place the downloaded certificate at the original position
                 os.rename(certificate_file, CERTIFICATE_PATH)
