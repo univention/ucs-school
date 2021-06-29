@@ -32,12 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"umc/dialog",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, TextBox, Text, HiddenInput, Wizard, _) {
+], function(declare, lang, dialog, TextBox, Text, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ClassWizard", [Wizard], {
 		description: _('Create a new class'),
@@ -70,8 +71,7 @@ define([
 		addNote: function() {
 			var name = this.getWidget('item', 'name').get('value');
 			var message = _('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
-			this.getPage('item').clearNotes();
-			this.getPage('item').addNote(message);
+			dialog.contextNotify(message);
 		}
 	});
 });

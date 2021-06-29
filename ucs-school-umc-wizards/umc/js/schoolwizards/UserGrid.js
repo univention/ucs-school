@@ -110,6 +110,7 @@ define([
 			}
 			return [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				label: _('School'),
 				size: 'TwoThirds',
@@ -117,6 +118,7 @@ define([
 				autoHide: true
 			}, {
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'type',
 				label: _('Role'),
 				size: 'TwoThirds',
@@ -124,6 +126,7 @@ define([
 				dynamicValues: utils.getStaticValuesUserRolesWithAll
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				size: 'TwoThirds',
 				name: 'filter',
 				label: _('Filter'),
