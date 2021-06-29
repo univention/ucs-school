@@ -1,3 +1,9 @@
+ucs-school-import (17.0.70) unstable; urgency=medium
+
+  * Bug #53203: keep admin- and non-school roles on import
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 29 Jun 2021 11:18:36 +0200
+
 ucs-school-import (17.0.69) unstable; urgency=medium
 
   * Bug #53326: added print brackets
