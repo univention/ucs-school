@@ -79,7 +79,7 @@ define([
 			buttons.push({
 				name: 'close',
 				label: _('Cancel'),
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				callback: lang.hitch(this, 'onCancel')
 			});
 

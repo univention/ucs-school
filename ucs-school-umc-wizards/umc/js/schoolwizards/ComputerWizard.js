@@ -164,8 +164,7 @@ define([
 		addNote: function() {
 			var name = this.getWidget('item', 'name').get('value');
 			var message = _('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
-			this.getPage('item').clearNotes();
-			this.getPage('item').addNote(message);
+			dialog.contextNotify(message);
 		}
 	});
 });
