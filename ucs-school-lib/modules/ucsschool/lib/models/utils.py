@@ -126,14 +126,6 @@ ucr_username_max_length: int = lazy_object_proxy.Proxy(
 )
 
 
-def get_ssl_ca_cert_path() -> str:
-    custom_crt_path = "/usr/local/share/ca-certificates/custom.crt"
-    if os.path.exists(custom_crt_path):
-        return custom_crt_path
-    else:
-        return DEFAULT_UCS_SSL_CA_CERT
-
-
 def mkdir_p(dir_name: str, user: Union[str, int], group: Union[str, int], mode: int) -> None:
     """
     Recursively create directories (like "mkdir -p").
@@ -560,7 +552,6 @@ def udm_rest_client_cn_admin_kwargs() -> Dict[str, str]:
             "username": "cn=admin",
             "password": cn_admin_password,
             "url": f"https://{host}/univention/udm/",
-            "ssl_ca_cert": get_ssl_ca_cert_path(),
         }
     return _udm_kwargs
 

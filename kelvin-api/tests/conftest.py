@@ -57,7 +57,7 @@ from ucsschool.kelvin.routers.school import SchoolCreateModel
 from ucsschool.kelvin.routers.user import PasswordsHashes, UserCreateModel
 from ucsschool.kelvin.token_auth import create_access_token
 from ucsschool.lib.models.user import User
-from ucsschool.lib.models.utils import env_or_ucr, get_ssl_ca_cert_path
+from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM, UdmObject
 from univention.config_registry import ConfigRegistry
 
@@ -137,7 +137,6 @@ def udm_kwargs() -> Dict[str, Any]:
         "username": "cn=admin",
         "password": cn_admin_password,
         "url": f"https://{host}/univention/udm/",
-        "ssl_ca_cert": get_ssl_ca_cert_path(),
     }
 
 

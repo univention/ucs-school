@@ -39,7 +39,7 @@ from ldap3.core.exceptions import LDAPBindError, LDAPExceptionError
 from ldap3.utils.conv import escape_filter_chars
 from pydantic import BaseModel
 
-from ucsschool.lib.models.utils import env_or_ucr, get_ssl_ca_cert_path
+from ucsschool.lib.models.utils import env_or_ucr
 
 from .constants import API_USERS_GROUP_NAME, CN_ADMIN_PASSWORD_FILE, MACHINE_PASSWORD_FILE
 
@@ -54,7 +54,6 @@ async def udm_kwargs():
                 "username": ldap_access.cn_admin,
                 "password": await ldap_access.cn_admin_password,
                 "url": f"https://{ldap_access.host}/univention/udm/",
-                "ssl_ca_cert": get_ssl_ca_cert_path(),
             }
         )
     return _udm_kwargs
