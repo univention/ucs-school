@@ -33,19 +33,21 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/widgets/Form",
 	"umc/widgets/Page",
-	"umc/widgets/Button",
 	"umc/widgets/ComboBox",
 	"umc/widgets/Text",
 	"umc/modules/schoolwizards/UserGrid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, Form, Page, Button, ComboBox, Text, UserGrid, _) {
+], function(declare, lang, array, entities, Form, Page, ComboBox, Text, UserGrid, _) {
 
 	return declare("umc.modules.schoolwizards.UserGridChooseSchool", [Page], {
 		userGrid: null,
 		baseTitle: null,
 		_form: null,
+
+		mainContentClass: 'umcCard2',
 
 		postMixInProperties: function() {
 			this.baseTitle = this.module.get('title');
@@ -54,32 +56,27 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			var headerTextWidget = this.createHeader();
 			this._form = this.createForm();
 			this._form.on('submit', lang.hitch(this, 'buildGrid'));
 
-			this.addChild(headerTextWidget);
 			this.addChild(this._form);
 			if (this.schools.length <= 1) {
 				this._form.ready().then(lang.hitch(this, 'buildGrid'));
 			}
 		},
 
-		createHeader: function() {
-			var headerText = _("Please select a school");
-			return new Text({
-				content: '<h1>' + headerText + '<h1>',
-				'class': 'umcPageHeader'
-			});
-		},
-
 		createForm: function() {
 			return new Form({
 				widgets: [{
+					type: Text,
+					size: 'One',
+					name: 'headerText',
+					content: '<h2>' + entities.encode(_('Please select a school')) + '<h2>'
+				}, {
 					type: ComboBox,
 					name: 'schools',
 					label: _('School'),
-					size: 'OneThirds',
+					size: 'TwoThirds',
 					staticValues: this.schools
 				}],
 				buttons: [{
@@ -87,6 +84,7 @@ define([
 					label: _('Next')
 				}],
 				layout: [
+					['headerText'],
 					['schools', 'submit']
 				]
 			});
@@ -101,7 +99,7 @@ define([
 				label: _('Change school'),
 				callback: lang.hitch(this, 'chooseDifferentSchool')
 			}] : null;
-			var userGrid = new UserGrid({
+			this.userGrid = new UserGrid({
 				description: this.description,
 				schools: [selectedSchool],
 				school: selectedSchool.id,
@@ -115,14 +113,11 @@ define([
 			});
 
 			// add UserGrid to module
-			this.module.addChild(userGrid);
-			this.module.selectChild(userGrid);
+			this.module.addChild(this.userGrid);
+			this.module.selectChild(this.userGrid);
 
 			// append title with the selected school
-			var titleAppendix = lang.replace(": {0}", [selectedSchool.label]);
-			this.module.set('title', this.baseTitle + titleAppendix);
-
-			this.userGrid = userGrid;
+			this.module.addBreadCrumb(selectedSchool.label);
 		},
 
 		chooseDifferentSchool: function() {

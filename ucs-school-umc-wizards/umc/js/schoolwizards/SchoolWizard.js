@@ -32,20 +32,17 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"umc/dialog",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, TextBox, ComboBox, Wizard, _) {
+], function(declare, lang, dialog, TextBox, ComboBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolWizard", [Wizard], {
 		getGeneralPage: function() {
 			// no need for "school" and "type" widgets
 			return null;
-		},
-
-		addUDMLink: function() {
-			// no link to UDM module
 		},
 
 		getItemPage: function() {
@@ -129,9 +126,11 @@ define([
 			if (this.editMode) {
 				return [{
 					label: _('School information'),
+					'class': 'umcTitlePaneOnContainer',
 					layout: layout
 				}, {
 					label: _('Advanced settings'),
+					'class': 'umcTitlePaneOnContainer',
 					open: false,
 					layout: ['home_share_file_server', 'class_share_file_server']
 				}];
@@ -150,8 +149,7 @@ define([
 		addNote: function() {
 			var display_name = this.getWidget('item', 'display_name').get('value');
 			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', display_name);
-			this.getPage('item').clearNotes();
-			this.getPage('item').addNote(message);
+			dialog.contextNotify(message);
 		}
 	});
 });

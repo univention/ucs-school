@@ -33,21 +33,17 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
-	"dojo/topic",
-	"dojo/query",
 	"dojo/aspect",
 	"dojox/html/entities",
 	"umc/tools",
 	"umc/dialog",
 	"umc/store",
 	"umc/widgets/Grid",
-	"umc/widgets/Text",
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/SearchForm",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, query, aspect, entities, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
+], function(declare, lang, array, aspect, entities, tools, dialog, store, Grid, Page, StandbyMixin, SearchForm, _) {
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
@@ -63,14 +59,11 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			var titlePane = this.getTitlePane();
-			this.addChild(titlePane);
-
 			this._grid = this.getGrid();
-
 			this.buildSearchForm();
-			titlePane.addChild(this._grid);
-			titlePane.addChild(this._searchForm);
+
+			this.addChild(this._searchForm);
+			this.addChild(this._grid);
 		},
 
 		startup: function() {
@@ -100,13 +93,6 @@ define([
 			}
 		},
 
-		getTitlePane: function() {
-			return new ExpandingTitlePane({
-				title: _('Search for %s', this.objectNamePlural),
-				design: 'sidebar'
-			});
-		},
-
 		getGrid: function() {
 			var grid = new Grid({
 				region: 'center',
@@ -134,7 +120,7 @@ define([
 				name: 'add',
 				label: _('Add'),
 				description: _('Add a new %s', this.objectNameSingular),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, 'createObject')
@@ -146,7 +132,7 @@ define([
 				name: 'edit',
 				label: _('Edit'),
 				description: _('Edit the %s.', this.objectNameSingular),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isStandardAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, 'editObjects')
@@ -160,7 +146,7 @@ define([
 				description: _('Deleting the selected %s.', this.objectNamePlural),
 				isStandardAction: true,
 				isMultiAction: true,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, 'confirmObjectDeletion')
 			};
 		},

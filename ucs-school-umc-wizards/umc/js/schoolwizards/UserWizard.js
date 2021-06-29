@@ -35,6 +35,7 @@ define([
 	"dojo/_base/array",
 	"dojo/topic",
 	"umc/tools",
+	"umc/dialog",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiInput",
@@ -44,7 +45,7 @@ define([
 	"umc/modules/schoolwizards/Wizard",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, CheckBox, DateBox, PasswordInputBox, Wizard, utils, _) {
+], function(declare, lang, array, topic, tools, dialog, TextBox, ComboBox, MultiInput, CheckBox, DateBox, PasswordInputBox, Wizard, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -208,8 +209,7 @@ define([
 		addNote: function() {
 			var name = this.getWidget('item', 'name').get('value');
 			var message = _('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
-			this.getPage('item').clearNotes();
-			this.getPage('item').addNote(message);
+			dialog.contextNotify(message);
 		},
 
 		updateWidgets: function(/*String*/ currentPage) {

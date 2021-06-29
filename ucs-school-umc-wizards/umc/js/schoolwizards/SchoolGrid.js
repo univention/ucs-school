@@ -103,6 +103,7 @@ define([
 		getSearchWidgets: function() {
 			return [{
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'filter',
 				label: _('Filter'),
 				inlineLabel: _('Search...'),
