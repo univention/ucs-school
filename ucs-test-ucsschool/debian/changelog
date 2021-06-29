@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.238) unstable; urgency=medium
+
+  * Bug #53203: added test 251_import_keeps_old_roles
+
+ -- Toni Röhmeyer <roehmeyer@univention.de>  Tue, 29 Jun 2021 11:19:53 +0200
+
 ucs-test-ucsschool (6.0.237) unstable; urgency=low
 
   * Bug #53437: fix performance tests
