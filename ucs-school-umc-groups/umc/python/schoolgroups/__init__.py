@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from ldap.dn import explode_rdn
 from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
@@ -74,6 +75,16 @@ def get_group_class(request):
     elif request.flavor == "teacher":
         return Teacher
     return SchoolClass
+
+
+# TODO: remove once this is implemented in uexceptions, see Bug #30088
+def get_exception_msg(e):
+    msg = getattr(e, "message", "")
+    if getattr(e, "args", False):
+        if e.args[0] != msg or len(e.args) != 1:
+            for arg in e.args:
+                msg += " " + arg
+    return msg
 
 
 class Instance(SchoolBaseModule):
@@ -158,10 +169,10 @@ class Instance(SchoolBaseModule):
         if request.flavor == "workgroup-admin":
             result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
             result["allowed_email_senders_groups"] = [
-                {"id": dn, "label": dn.split(",")[0][3:]}
+                {"id": dn, "label": explode_rdn(dn, True)[0]}
                 for dn in result["allowed_email_senders_groups"]
             ]
-            umc_users = list()
+            umc_users = []
             for user_dn in result["allowed_email_senders_users"]:
                 user = User.from_dn(user_dn, None, ldap_user_read)
                 umc_users.append(
@@ -332,9 +343,10 @@ class Instance(SchoolBaseModule):
             MODULE.info("Modified, group has now members: %s" % (group_from_ldap.users,))
         except udm_exceptions.base as exc:
             MODULE.process(
-                'An error occurred while modifying "%s": %s' % (group_from_umc["$dn$"], exc.message)
+                'An error occurred while modifying "%s": %s'
+                % (group_from_umc["$dn$"], get_exception_msg(exc))
             )
-            raise UMC_Error(_("Failed to modify group (%s).") % exc.message)
+            raise UMC_Error(_("Failed to modify group (%s).") % get_exception_msg(exc))
 
         self.finished(request.id, success)
 
@@ -372,9 +384,10 @@ class Instance(SchoolBaseModule):
                 raise UMC_Error(_("The workgroup %r already exists!") % grp.name)
         except udm_exceptions.base as exc:
             MODULE.process(
-                'An error occurred while creating the group "%s": %s' % (group["name"], exc.message)
+                'An error occurred while creating the group "%s": %s'
+                % (group["name"], get_exception_msg(exc))
             )
-            raise UMC_Error(_("Failed to create group (%s).") % exc.message)
+            raise UMC_Error(_("Failed to create group (%s).") % get_exception_msg(exc))
 
         self.finished(request.id, success)
 
@@ -392,7 +405,7 @@ class Instance(SchoolBaseModule):
             try:
                 group.remove(ldap_user_write)
             except udm_exceptions.base as exc:
-                errors.append(str(exc))
+                errors.append(get_exception_msg(exc))
                 MODULE.error('Could not remove group "%s": %s' % (group.dn, exc))
             if len(errors) > 0:
                 self.finished(request.id, [{"success": False, "message": "\n".join(errors)}])
@@ -451,6 +464,9 @@ class Instance(SchoolBaseModule):
                         % (teacher.dn, classdn)
                     )
             except udm_exceptions.base as exc:
-                MODULE.error("Could not add teacher %s to class %s: %s" % (teacher.dn, classdn, exc))
+                MODULE.error(
+                    "Could not add teacher %s to class %s: %s"
+                    % (teacher.dn, classdn, get_exception_msg(exc))
+                )
                 failed.append(classdn)
         self.finished(request.id, not any(failed))
