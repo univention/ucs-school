@@ -1,3 +1,9 @@
+ucs-school-umc-import (3.0.2) unstable; urgency=medium
+
+  * Bug #52636: migrate ucs-school-umc-import to Python 3
+
+ -- Florian Best <best@univention.de>  Wed, 30 Jun 2021 16:44:15 +0200
+
 ucs-school-umc-import (3.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump

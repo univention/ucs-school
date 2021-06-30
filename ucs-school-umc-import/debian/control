@@ -16,6 +16,9 @@ Package: ucs-school-umc-import
 Architecture: all
 Depends:
  python-ucs-school (>= 12.1.9),
+ python3-ucsschool-importer-http-api-client,
+ python3-ucsschool-importer-http-api-common,
+ python3-ucsschool-lib,
  ucs-school-import-http-api-client (>= 17.0.6-15),
  ucs-school-import-http-api-common (>= 17.0.6-15),
  univention-management-console-server (>= 11.0.4-37),

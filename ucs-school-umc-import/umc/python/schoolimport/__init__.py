@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # Univention Management Console
 #  Automatic UCS@school user import
@@ -201,7 +201,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
         # caution! if an exception happens in this function the module process will die!
         MODULE.error("Thread result: %s" % (result,))
         if isinstance(result, BaseException):
-            progress.exception(thread.exc_info)
+            progress.exception(thread.exc_info)  # FIXME: broken since Bug #47114
             return
         progress.finish_with_result(result)
 
@@ -294,12 +294,16 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @sanitize(job=StringSanitizer(required=True))
     @require_password
     def get_password(self, request):
-        response = self.client.userimportjob.get(request.options["job"]).password_file
-        self.finished(request.id, response, mimetype="text/csv")
+        password_file = self.client.userimportjob.get(request.options["job"]).password_file
+        if password_file is not None:
+            password_file = password_file.encode("UTF-8")
+        self.finished(request.id, password_file, mimetype="text/csv")
 
     @allow_get_request
     @sanitize(job=StringSanitizer(required=True))
     @require_password
     def get_summary(self, request):
-        response = self.client.userimportjob.get(request.options["job"]).summary_file
-        self.finished(request.id, response, mimetype="text/csv")
+        summary_file = self.client.userimportjob.get(request.options["job"]).summary_file
+        if summary_file is not None:
+            summary_file = summary_file.encode("UTF-8")
+        self.finished(request.id, summary_file, mimetype="text/csv")
