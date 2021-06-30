@@ -13,7 +13,10 @@ Standards-Version: 3.7.2
 Package: ucs-school-umc-lists
 Architecture: all
 Depends:
+ python-ldap,
  python-ucs-school (>= 12.1.9),
+ python3-ldap,
+ python3-ucsschool-lib,
  shell-ucs-school,
  ucs-school-umc-common,
  univention-management-console,
