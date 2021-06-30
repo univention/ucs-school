@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from ldap.dn import explode_rdn
 from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
@@ -146,10 +147,10 @@ class Instance(SchoolBaseModule):
         if request.flavor == "workgroup-admin":
             result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
             result["allowed_email_senders_groups"] = [
-                {"id": dn, "label": dn.split(",")[0][3:]}
+                {"id": dn, "label": explode_rdn(dn, True)[0]}
                 for dn in result["allowed_email_senders_groups"]
             ]
-            umc_users = list()
+            umc_users = []
             for user_dn in result["allowed_email_senders_users"]:
                 user = User.from_dn(user_dn, None, ldap_user_read)
                 umc_users.append(
