@@ -17,8 +17,12 @@ Replaces:
 Breaks:
  ucs-school-umc-schooladmin (<< 8.0.0),
 Depends:
+ python-ldap,
  python-ucs-school (>= 12.1.9),
  python-univention-directory-manager,
+ python3-ldap,
+ python3-ucsschool-lib,
+ python3-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,
  univention-config-registry,
