@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -103,7 +103,7 @@ class Instance(SchoolBaseModule):
         the case of the directory name.
         """
         username = username.replace("/", "")
-        all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
+        all_user_dirs = next(os.walk(CUPSPDF_DIR))[1]
         return [x for x in all_user_dirs if x.lower() == username.lower()]
 
     @sanitize(school=SchoolSanitizer(required=True))
@@ -201,7 +201,7 @@ class Instance(SchoolBaseModule):
         if not os.path.exists(path):
             raise UMC_Error(_("Invalid file"))
 
-        with open(path) as fd:
+        with open(path, 'rb') as fd:
             self.finished(request.id, fd.read(), mimetype="application/pdf")
 
     @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
@@ -276,8 +276,8 @@ class Instance(SchoolBaseModule):
             raise UMC_Error(
                 _("Failed to connect to print server %(printserver)s.") % {"printserver": spoolhost}
             )
-        except cups.IPPError as xxx_todo_changeme:
-            (errno, description) = xxx_todo_changeme.args
+        except cups.IPPError as exc:
+            (errno, description) = exc.args
             IPP_AUTHENTICATION_CANCELED = 4096
             description = {
                 cups.IPP_NOT_AUTHORIZED: _("No permission to print"),
@@ -346,12 +346,11 @@ class Printjob(object):
             return
         pdfinfo = subprocess.Popen(  # nosec
             ["/usr/bin/pdfinfo", self.fullfilename],
-            shell=False,
             env={"LANG": "C"},
             stdout=subprocess.PIPE,
         )
         stdout, stderr = pdfinfo.communicate()
-        for line in stdout.split("\n"):
+        for line in stdout.decode("UTF-8", "replace").splitlines():
             if not line:
                 continue
             try:

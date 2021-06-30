@@ -18,6 +18,8 @@ Depends:
  poppler-utils,
  python-cups,
  python-ucs-school (>= 12.1.9),
+ python3-cups,
+ python3-ucsschool-lib,
  shell-ucs-school,
  shell-univention-lib,
  univention-management-console-server (>= 11.0.4-37),
