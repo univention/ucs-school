@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (8.0.2) unstable; urgency=medium
+
+  * Bug #52645: migrate ucs-school-umc-lessontimes to Python 3
+
+ -- Florian Best <best@univention.de>  Wed, 30 Jun 2021 13:05:22 +0200
+
 ucs-school-umc-lessontimes (8.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
