@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -32,9 +32,9 @@
 # <http://www.gnu.org/licenses/>.
 
 import csv
+from io import StringIO
 
-import StringIO
-from ldap.dn import explode_dn
+from ldap.dn import explode_rdn
 
 from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
@@ -49,7 +49,7 @@ _ = Translation("ucs-school-umc-lists").translate
 
 
 def write_classlist_csv(fieldnames, students, filename, separator):
-    csvfile = StringIO.StringIO()
+    csvfile = StringIO()
     writer = csv.writer(csvfile, delimiter=str(separator))
     writer.writerow(fieldnames)
     for row in students:
@@ -91,12 +91,12 @@ class Instance(SchoolBaseModule):
                                 "ucsschool/umc/lists/class/attributes."
                             ).format(attr)
                         )
-                    if type(value) is list:
+                    if isinstance(value, list):
                         value = " ".join(value)
                     row.append(value)
             rows.append(row)
 
-        filename = explode_dn(group)[0].split("=")[1] + ".csv"
+        filename = explode_rdn(group, True)[0] + ".csv"
         result = write_classlist_csv(fieldnames, rows, filename, separator)
         self.finished(request.id, result)
 
