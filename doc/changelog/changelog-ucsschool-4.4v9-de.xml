@@ -506,7 +506,306 @@ feedback@univention.de
 					<!-- END ucs-school-webproxy 15.0.1A~4.4.0.202105120932 -->
 <!-- CHANGELOG:2021-05-26:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-07-01" lang="en">
+					<title>Released on 2021-07-01:</title>
+					<!-- START ucs-school-import 17.0.70A~4.4.0.202106291122 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.70A~4.4.0.202106291122</emphasis>:
+						<itemizedlist>
+							<listitem><para>UDM extensions for <package>ucs-school-import</package> are now Python 3 compatible (<u:bug>52658</u:bug>).</para></listitem>
+
+							<listitem><para>The UCR templates for <package>ucs-school-import</package> are now Python 3 compatible (<u:bug>52604</u:bug>).</para></listitem>
+
+							<listitem><para>The package <package>ucs-school-import</package> has been migrated to dh_python (<u:bug>52580</u:bug>).</para></listitem>
+
+							<listitem><para>The package <package>ucs-school-lib</package> has been migrated to dh_python (<u:bug>52582</u:bug>).</para></listitem>
+
+							<listitem><para>The <envar>quiet</envar> parameter for the <command>ucs-school-purge-expired-users</command> script did not function properly, causing a mail being sent to root each time the respective cron job has run. This fix resolves that issue (<u:bug>50331</u:bug>).</para></listitem>
+
+							<listitem><para>The postinst of the package <package>ucs-school-import</package> overwrote certain UCRV to defaults, which is not desired behavior. This fix resolves that issue (<u:bug>53326</u:bug>).</para></listitem>
+
+							<listitem><para>The Importer removes non-UCS@school roles or the admin role if the imported user already exists. This fix resolves that issue (<u:bug>53203</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.70A~4.4.0.202106291122 -->
+					<!-- START ucs-school-info 9.0.0-1A~4.4.0.202106030005 -->
+					<para>
+						Source package <emphasis>ucs-school-info</emphasis> in version <emphasis>9.0.0-1A~4.4.0.202106030005</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-support debhelper has been removed from the package <package>ucs-school-info</package> (<u:bug>52646</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-info 9.0.0-1A~4.4.0.202106030005 -->
+					<!-- START ucs-school-italc 13.0.0-1A~4.4.0.202106041001 -->
+					<para>
+						Source package <emphasis>ucs-school-italc</emphasis> in version <emphasis>13.0.0-1A~4.4.0.202106041001</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-italc</package> has been migrated to dh_python (<u:bug>52581</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-italc 13.0.0-1A~4.4.0.202106041001 -->
+					<!-- START ucs-school-ldap-acls-master 17.0.4-10A~4.4.0.202106020037 -->
+					<para>
+						Source package <emphasis>ucs-school-ldap-acls-master</emphasis> in version <emphasis>17.0.4-10A~4.4.0.202106020037</emphasis>:
+						<itemizedlist>
+							<listitem><para>The LDAP-ACL UCR templates are now Python 3 compatible (<u:bug>52604</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ldap-acls-master 17.0.4-10A~4.4.0.202106020037 -->
+					<!-- START ucs-school-lib 12.2.32A~4.4.0.202106161246 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.32A~4.4.0.202106161246</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-lib</package> has been migrated to dh_python (<u:bug>52582</u:bug>).</para></listitem>
+
+							<listitem><para>UCS@school consistency-checks now handles exceptions caused by inaccessible users (<u:bug>53211</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.32A~4.4.0.202106161246 -->
+					<!-- START ucs-school-metapackage 12.0.4-17A~4.4.0.202106030111 -->
+					<para>
+						Source package <emphasis>ucs-school-metapackage</emphasis> in version <emphasis>12.0.4-17A~4.4.0.202106030111</emphasis>:
+						<itemizedlist>
+							<listitem><para>The join hook has been migrated to Python 3 (<u:bug>52604</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-metapackage 12.0.4-17A~4.4.0.202106030111 -->
+					<!-- START ucs-school-netlogon 9.0.0-1A~4.4.0.202106030010 -->
+					<para>
+						Source package <emphasis>ucs-school-netlogon</emphasis> in version <emphasis>9.0.0-1A~4.4.0.202106030010</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-support debhelper has been removed from the package <package>ucs-school-netlogon</package> (<u:bug>52648</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-netlogon 9.0.0-1A~4.4.0.202106030010 -->
+					<!-- START ucs-school-netlogon-user-logonscripts 15.0.0-3A~4.4.0.202106041845 -->
+					<para>
+						Source package <emphasis>ucs-school-netlogon-user-logonscripts</emphasis> in version <emphasis>15.0.0-3A~4.4.0.202106041845</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCR templates are now Python 3 compatible (<u:bug>52604</u:bug>).</para></listitem>
+
+							<listitem><para>The package <package>ucs-school-netlogon-user-logonscripts</package> has been migrated to dh_python (<u:bug>52647</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-netlogon-user-logonscripts 15.0.0-3A~4.4.0.202106041845 -->
+					<!-- START ucs-school-old-sharedirs 14.0.0-1A~4.4.0.202106030013 -->
+					<para>
+						Source package <emphasis>ucs-school-old-sharedirs</emphasis> in version <emphasis>14.0.0-1A~4.4.0.202106030013</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-old-sharedirs</package> has been migrated to dh_python (<u:bug>52649</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-old-sharedirs 14.0.0-1A~4.4.0.202106030013 -->
+					<!-- START ucs-school-ox-support 3.0.2A~4.4.0.202106030014 -->
+					<para>
+						Source package <emphasis>ucs-school-ox-support</emphasis> in version <emphasis>3.0.2A~4.4.0.202106030014</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-support debhelper has been removed from the package <package>ucs-school-ox-support</package> (<u:bug>52650</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-ox-support 3.0.2A~4.4.0.202106030014 -->
+					<!-- START ucs-school-radius-802.1x 7.0.1-8A~4.4.0.202106030015 -->
+					<para>
+						Source package <emphasis>ucs-school-radius-802.1x</emphasis> in version <emphasis>7.0.1-8A~4.4.0.202106030015</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-radius-802.1x</package> has been migrated to dh_python (<u:bug>52651</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-radius-802.1x 7.0.1-8A~4.4.0.202106030015 -->
+					<!-- START ucs-school-roleshares 7.0.0-5A~4.4.0.202106030017 -->
+					<para>
+						Source package <emphasis>ucs-school-roleshares</emphasis> in version <emphasis>7.0.0-5A~4.4.0.202106030017</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-roleshares</package> has been migrated to dh_python (<u:bug>52583</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-roleshares 7.0.0-5A~4.4.0.202106030017 -->
+					<!-- START ucs-school-s4-branch-site 7.0.0-3A~4.4.0.202106032239 -->
+					<para>
+						Source package <emphasis>ucs-school-s4-branch-site</emphasis> in version <emphasis>7.0.0-3A~4.4.0.202106032239</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-support debhelper has been removed from the package <package>ucs-school-s4-branch-site</package> (<u:bug>52584</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-s4-branch-site 7.0.0-3A~4.4.0.202106032239 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-32A~4.4.0.202106032157 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-32A~4.4.0.202106032157</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-computerroom</package> has been migrated to dh_python (<u:bug>52585</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-32A~4.4.0.202106032157 -->
+					<!-- START ucs-school-umc-diagnostic 1.0.0-23A~4.4.0.202106221241 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-23A~4.4.0.202106221241</emphasis>:
+						<itemizedlist>
+							<listitem><para>The python-support debhelper has been removed from the package <package>ucs-school-umc-diagnostic</package> (<u:bug>53386</u:bug>).</para></listitem>
+
+							<listitem><para>The UCS@school object consistency script parametrization did not behave intuitively in certain cases. This fix resolves those issues (<u:bug>53211</u:bug>).</para></listitem>
+
+							<listitem><para>The diagnostic check <envar>UCS@school Check admin accounts</envar> gave misleading output when an admin was missing in a school's admin group. This fix improves the output messages and additionally adds a check, which ensures that an admin is not in a wrong admin group (<u:bug>53139</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-diagnostic 1.0.0-23A~4.4.0.202106221241 -->
+					<!-- START ucs-school-umc-distribution 17.0.1-9A~4.4.0.202106030021 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-9A~4.4.0.202106030021</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-distribution</package> has been migrated to dh_python (<u:bug>52586</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-9A~4.4.0.202106030021 -->
+					<!-- START ucs-school-umc-exam 9.0.1-55A~4.4.0.202106041427 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-55A~4.4.0.202106041427</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCR templates are now Python 3 compatible (<u:bug>52604</u:bug>).</para></listitem>
+
+							<listitem><para>The package <package>ucs-school-umc-exam</package> has been migrated to dh_python (<u:bug>52587</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-55A~4.4.0.202106041427 -->
+					<!-- START ucs-school-umc-groups 9.0.0-13A~4.4.0.202106030025 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-13A~4.4.0.202106030025</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-groups</package> has been migrated to dh_python (<u:bug>52588</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-groups 9.0.0-13A~4.4.0.202106030025 -->
+					<!-- START ucs-school-umc-helpdesk 15.0.0-5A~4.4.0.202106041855 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-helpdesk</emphasis> in version <emphasis>15.0.0-5A~4.4.0.202106041855</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UDM module "settings/console_helpdesk" has been migrated to be Python 3 compatible (<u:bug>52658</u:bug>).</para></listitem>
+
+							<listitem><para>The package <package>ucs-school-umc-helpdesk</package> has been migrated to dh_python (<u:bug>52589</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-helpdesk 15.0.0-5A~4.4.0.202106041855 -->
+					<!-- START ucs-school-umc-import 2.0.0-6A~4.4.0.202106030028 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-import</emphasis> in version <emphasis>2.0.0-6A~4.4.0.202106030028</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-import</package> has been migrated to dh_python (<u:bug>52590</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-import 2.0.0-6A~4.4.0.202106030028 -->
+					<!-- START ucs-school-umc-installer 7.0.2A~4.4.0.202106030029 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-installer</emphasis> in version <emphasis>7.0.2A~4.4.0.202106030029</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-installer</package> has been migrated to dh_python (<u:bug>52591</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-installer 7.0.2A~4.4.0.202106030029 -->
+					<!-- START ucs-school-umc-internetrules 15.0.2A~4.4.0.202106030032 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-internetrules</emphasis> in version <emphasis>15.0.2A~4.4.0.202106030032</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-internetrules</package> has been migrated to dh_python (<u:bug>52592</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-internetrules 15.0.2A~4.4.0.202106030032 -->
+					<!-- START ucs-school-umc-lessontimes 7.0.0-3A~4.4.0.202106030033 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lessontimes</emphasis> in version <emphasis>7.0.0-3A~4.4.0.202106030033</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-lessontimes</package> has been migrated to dh_python (<u:bug>52593</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lessontimes 7.0.0-3A~4.4.0.202106030033 -->
+					<!-- START ucs-school-umc-lists 2.0.0-7A~4.4.0.202106030035 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-lists</emphasis> in version <emphasis>2.0.0-7A~4.4.0.202106030035</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-lists</package> has been migrated to dh_python (<u:bug>52594</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-lists 2.0.0-7A~4.4.0.202106030035 -->
+					<!-- START ucs-school-umc-printermoderation 16.0.2A~4.4.0.202106030036 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-printermoderation</emphasis> in version <emphasis>16.0.2A~4.4.0.202106030036</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-printermoderation</package> has been migrated to dh_python (<u:bug>52595</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-printermoderation 16.0.2A~4.4.0.202106030036 -->
+					<!-- START ucs-school-umc-rooms 16.1.2A~4.4.0.202106030038 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.2A~4.4.0.202106030038</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-rooms</package> has been migrated to dh_python (<u:bug>52596</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-rooms 16.1.2A~4.4.0.202106030038 -->
+					<!-- START ucs-school-umc-users 15.0.2A~4.4.0.202106030040 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.2A~4.4.0.202106030040</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-users</package> has been migrated to dh_python (<u:bug>52597</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.2A~4.4.0.202106030040 -->
+					<!-- START ucs-school-umc-wizards 11.0.2A~4.4.0.202106030041 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.2A~4.4.0.202106030041</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-umc-wizards</package> has been migrated to dh_python (<u:bug>52598</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.2A~4.4.0.202106030041 -->
+					<!-- START ucs-school-veyon-client 1.0.1-8A~4.4.0.202106041321 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-client</emphasis> in version <emphasis>1.0.1-8A~4.4.0.202106041321</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>ucs-school-veyon-client</package> has been migrated to dh_python (<u:bug>52599</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-client 1.0.1-8A~4.4.0.202106041321 -->
+					<!-- START ucs-school-webproxy 15.0.3A~4.4.0.202106030113 -->
+					<para>
+						Source package <emphasis>ucs-school-webproxy</emphasis> in version <emphasis>15.0.3A~4.4.0.202106030113</emphasis>:
+						<itemizedlist>
+							<listitem><para>The UCR templates are now Python 3 compatible (<u:bug>52604</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-webproxy 15.0.3A~4.4.0.202106030113 -->
+<!-- CHANGELOG:2021-07-01:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
