@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the hardening of the UMC school wizard admin workaround
 ## roles: [domaincontroller_master]

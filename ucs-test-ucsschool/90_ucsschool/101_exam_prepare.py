@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Check exam adding, putting and getting
 ## roles: [domaincontroller_master, domaincontroller_slave]

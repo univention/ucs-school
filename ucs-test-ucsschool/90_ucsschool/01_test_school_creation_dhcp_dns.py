@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test if dhcp search base and dhcp dns policy are correct
 ## tags: [apptest, ucsschool]

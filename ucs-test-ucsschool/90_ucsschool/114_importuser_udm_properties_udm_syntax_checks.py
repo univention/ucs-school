@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test if UDM syntax checks are applied to ImportUser.udm_properties
 ## tags: [apptest,ucsschool,ucsschool_base1]

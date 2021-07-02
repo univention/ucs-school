@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: upload files to exam module with problematic filenames
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -27,6 +27,7 @@ def main():
         ]:
             fd = tempfile.NamedTemporaryFile()
             token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
+            token = token.encode("utf-8")
             fd.write(token)
             fd.flush()
 

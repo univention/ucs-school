@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: squidguard - check dbtemp option and position of BDB backing files
 ## roles: [domaincontroller_master,domaincontroller_backup,domaincontroller_slave]
 ## bugs: [40541]

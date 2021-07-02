@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: ucs-school-printermoderator-module-check
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -84,7 +84,7 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
     localIp = socket.gethostbyname(socket.gethostname())
     uri = "%s://%s" % ("lpd", localIp)
     print_server = "%s.%s" % (spool_host, domainname)
-    f = tempfile.NamedTemporaryFile(suffix=".csv")
+    f = tempfile.NamedTemporaryFile("w+", suffix=".csv")
     line = "%s\t%s\t%s\t%s\t%s\n" % (operation, school, print_server, printer_name, uri)
     f.write(line)
     f.flush()

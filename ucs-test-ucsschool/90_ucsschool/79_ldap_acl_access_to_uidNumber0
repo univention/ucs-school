@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python2.7
+#!/usr/share/ucs-test/runner python3
 ## desc: Test hijacking uidNumber=0
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles:
@@ -145,7 +145,7 @@ def main():
 						bindpw=PASSWORD,
 					)
 				except (univention.admin.uexceptions.base, ldap.LDAPError) as exc:
-					print >> sys.stderr, 'SKIP: Authentication as %r failed: %s' % (dn, exc)
+					print('SKIP: Authentication as %r failed: %s' % (dn, exc), file=sys.stderr)
 
 		def do_hacks(connections):
 			hacks = []

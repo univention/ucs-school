@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.validator obj_to_dict function
 ## roles: [domaincontroller_master]

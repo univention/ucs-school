@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.group.WorkGroup CRUD operations
 ## roles: [domaincontroller_master]

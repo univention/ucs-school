@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test S4 SRV record maintainance
 ## roles: [domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
