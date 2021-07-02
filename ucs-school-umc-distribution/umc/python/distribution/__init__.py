@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
@@ -97,39 +97,15 @@ class Instance(SchoolBaseModule):
             MODULE.info("Created temporary directory: %s" % self._tmpDir)
 
         for file in request.options:
-            filename = self.__workaround_filename_bug(file)
+            filename = file["filename"]
+            if "\\" in filename:  # Bug 46709/46710: filename seems to be a UNC / windows path
+                MODULE.info("Filename seems to contain Windows path name or UNC - fixing filename")
+                filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
             destPath = os.path.join(self._tmpDir, filename)
             MODULE.info("Received file %r, saving it to %r" % (file["tmpfile"], destPath))
             shutil.move(file["tmpfile"], destPath)
 
         self.finished(request.id, None)
-
-    def __workaround_filename_bug(self, file):
-        # the following code block is a heuristic to support both: fixed and unfixed Bug #37716
-        filename = file["filename"]
-        try:
-            # The UMC-Webserver decodes filename in latin-1, need to revert
-            filename = filename.encode("ISO8859-1")
-        except UnicodeEncodeError:
-            # we got non-latin characters, Bug #37716 is fixed and string contains e.g. '→'
-            filename = file["filename"].encode("UTF-8")
-        else:
-            # the string contains at least no non-latin1 characters
-            try:
-                # try if the bytes could be UTF-8
-                # can't fail if Bug #37716 is fixed
-                filename.decode("UTF-8")
-            except UnicodeDecodeError:
-                filename = file["filename"].encode("UTF-8")  # Bug #37716 was fixed
-        # the code block can be removed and replaced by filename = file['filename'].encode('UTF-8')
-        # after Bug #37716
-        # Bug 46709/46710: start
-        if "\\" in filename:  # filename seems to be a UNC / windows path
-            MODULE.info("Filename seems to contain Windows path name or UNC - fixing filename")
-            filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
-        # Bug 46709/46710: end
-        MODULE.info("Detected filename %r as %r" % (file["filename"], filename))
-        return filename
 
     @sanitize(
         filenames=ListSanitizer(min_elements=1),
@@ -155,7 +131,6 @@ class Instance(SchoolBaseModule):
 
         result = []
         for ifile in filenames:
-            ifile = ifile.encode("UTF-8")
             # check whether file has already been upload in this session
             iresult = dict(sessionDuplicate=False, projectDuplicate=False, distributed=False)
             iresult["filename"] = ifile
@@ -226,9 +201,6 @@ class Instance(SchoolBaseModule):
             # remove keys that may not be set from outside
             for k in ("atJobNumCollect", "atJobNumDistribute"):
                 iprops.pop(k, None)
-
-            # transform filenames into bytestrings
-            iprops["files"] = [f.encode("UTF-8") for f in iprops.get("files", [])]
 
             # load the project or create a new one
             project = None

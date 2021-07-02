@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (18.0.2) unstable; urgency=medium
+
+  * Bug #52614: migrate ucs-school-umc-distribution to Python 3
+
+ -- Florian Best <best@univention.de>  Fri, 02 Jul 2021 14:42:32 +0200
+
 ucs-school-umc-distribution (18.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
