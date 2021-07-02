@@ -18,6 +18,8 @@ Breaks:
 Depends:
  python-ucs-school (>= 12.1.9),
  python-univention-lib,
+ python3-ucsschool-lib,
+ python3-univention-lib,
  shell-ucs-school,
  ucs-school-umc-common,
  univention-config-registry,
