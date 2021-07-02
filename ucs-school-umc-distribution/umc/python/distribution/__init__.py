@@ -271,7 +271,10 @@ class Instance(SchoolBaseModule):
                 project.sender = sender
 
             # initiate project and validate its values
-            project.validate()
+            try:
+                project.validate()
+            except ValueError as exc:
+                raise UMC_Error(str(exc))
 
             # make sure that there is no other project with the same directory name
             # if we add new projects
