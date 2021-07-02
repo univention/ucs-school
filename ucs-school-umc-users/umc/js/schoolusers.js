@@ -33,12 +33,11 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/on",
-	"dojo/date/locale",
 	"dojo/Deferred",
-	"dijit/Dialog",
 	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
+	"umc/widgets/Dialog",
 	"umc/widgets/Module",
 	"umc/widgets/Grid",
 	"umc/widgets/Page",
@@ -49,38 +48,29 @@ define([
 	"umc/widgets/CheckBox",
 	"umc/widgets/Text",
 	"umc/widgets/ContainerWidget",
-	"umc/widgets/ProgressInfo",
+	"umc/widgets/ProgressBar",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoolusers"
-], function(declare, lang, array, on, locale, Deferred, Dialog, entities, dialog, tools, Module,
-            Grid, Page, Form, SearchBox, PasswordBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
+], function(declare, lang, array, on, Deferred, entities, dialog, tools, Dialog, Module, Grid, Page, Form, SearchBox,
+		PasswordBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressBar, SearchForm, _) {
 
 	return declare("umc.modules.schoolusers", [ Module ], {
 		idProperty: 'id',
 		_grid: null,
 		_searchPage: null,
-		_progressInfo: null,
+		_progressBar: null,
 		_initialChangeDone: false,
 
-		uninitialize: function() {
-			this.inherited(arguments);
-
-			this._progressInfo.destroyRecursive();
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
 		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyOpacity = 1;
-			this.standby(true);
-
 			this._searchPage = new Page({
-				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				fullWidth: true
 			});
-
-			this.addChild(this._searchPage);
 
 			var actions = [{
 				name: 'reset',
@@ -117,15 +107,15 @@ define([
 
 			this._grid = new Grid({
 				actions: actions,
+				hideContextActionsWhenNoSelection: false,
 				columns: columns,
 				moduleStore: this.moduleStore,
 				defaultAction: 'reset'
 			});
 
-			this._searchPage.addChild(this._grid);
-
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				description: _('Select the school.'),
 				label: _('School'),
@@ -136,7 +126,9 @@ define([
 				dynamicValues: 'schoolusers/schools'
 			}, {
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'class',
+				size: 'TwoThirds',
 				description: _('Select a class or workgroup.'),
 				label: _('Class or workgroup'),
 				staticValues: [
@@ -147,6 +139,7 @@ define([
 				depends: 'school'
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				size: 'TwoThirds',
 				value: '',
@@ -204,17 +197,15 @@ define([
 				}));
 			}));
 
-			this.standbyDuring(this._searchForm.ready()).then(lang.hitch(this, function() {
-				this.standbyOpacity = 0.75;
-			}));
-
-			this._searchPage.addChild(this._searchForm);
-
-			this._progressInfo = new ProgressInfo({
+			this._progressBar = new ProgressBar({
 				style: 'min-width: 400px'
 			});
+			this.own(this._progressBar);
 
-			this._searchPage.startup();
+			this.standbyDuring(this._searchForm.ready());
+			this._searchPage.addChild(this._searchForm);
+			this._searchPage.addChild(this._grid);
+			this.addChild(this._searchPage);
 
 			tools.ucr(['ucsschool/passwordreset/password-change-on-next-login', 'ucsschool/passwordreset/force-password-change-on-next-login']).then(lang.hitch(this, function(ucr) {
 				this.changeOnNextLogin = tools.isTrue(ucr['ucsschool/passwordreset/password-change-on-next-login'] || true);
@@ -226,21 +217,18 @@ define([
 			var _dialog = null, form = null;
 
 			var _cleanup = function() {
-				_dialog.hide();
-				_dialog.destroyRecursive();
-				form.destroyRecursive();
+				_dialog.close();
 			};
 
 			var errors = [];
 			var finished_func = lang.hitch( this, function() {
 				this.moduleStore.onChange();
-				this._progressInfo.update(ids.length, _('Finished'));
+				this._progressBar.setInfo(null, _('Finished'), 100);
 				this.standby(false);
 				if (errors.length) {
 					var message = _('Failed to reset the password for the following users:') + '<br><ul>';
 					var _content = new ContainerWidget( {
-						scrollable: true,
-						style: 'max-height: 500px'
+						style: 'max-height: 500px;'
 					});
 					array.forEach(errors, function(item) {
 						message += '<li>' + entities.encode(item.name) + '<br>' + entities.encode(item.message) + '</li>';
@@ -254,14 +242,13 @@ define([
 			var _set_passwords = lang.hitch(this, function(password, nextLogin) {
 				var deferred = new Deferred();
 
-				this._progressInfo.set('maximum', ids.length);
-				this._progressInfo.updateTitle(_('Setting passwords'));
+				this._progressBar.setInfo(_('Setting passwords'));
 				deferred.resolve();
-				this.standby(true, this._progressInfo);
+				this.standby(true, this._progressBar);
 
 				array.forEach(items, function(item, i) {
 					deferred = deferred.then(lang.hitch(this, function() {
-						this._progressInfo.update(i, _('User: ') + item.name);
+						this._progressBar.setInfo(null, _('User: ') + item.name, (i / ids.length) * 100);
 						return this.umcpCommand('schoolusers/password/reset', {
 							userDN: item.id,
 							newPassword: password,
@@ -308,6 +295,11 @@ define([
 					label: _('New password')
 				}],
 				buttons: [{
+					name: 'cancel',
+					label: _('Cancel'),
+					callback: _cleanup,
+					align: 'left'
+				}, {
 					name: 'submit',
 					label: _('Reset'),
 					style: 'float: right;',
@@ -325,18 +317,14 @@ define([
 						_cleanup();
 						_set_passwords(password, nextLogin);
 					} )
-				}, {
-					name: 'cancel',
-					label: _('Cancel'),
-					callback: _cleanup
 				}],
 				layout: ['info', 'changeOnNextLogin', 'newPassword']
 			});
 
 			_dialog = new Dialog( {
-				title: _( 'Reset passwords' ),
+				title: _( 'Reset passwords'),
 				content: form,
-				'class': 'umcPopup'
+				destroyOnCancel: true
 			} );
 			_dialog.show();
 		}
