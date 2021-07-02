@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console Distribution Module
@@ -33,7 +33,7 @@
 import inspect
 import os
 import sys
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 import univention.config_registry
 import univention.debug as ud
@@ -63,71 +63,67 @@ def main():
     if configRegistry.get("ucsschool/datadistribution/debug/level", None):
         debug_level = int(configRegistry.get("ucsschool/datadistribution/debug/level"))
 
-    parser = OptionParser()
-    parser.add_option(
+    parser = ArgumentParser()
+    parser.add_argument(
         "-d",
         "--debug",
         action="store",
-        type="int",
-        dest="debug",
+        type=int,
         default=debug_level,
         help="if set, debugging is activated and set to the specified level",
     )
 
-    # 	parser.add_option( '-i', '--init', action = 'store_true',
-    # 					   dest = 'init', default = False,
-    # 					   help = 'init specified project' )
+    # parser.add_argument( '-i', '--init', action='store_true', help='init specified project')
 
-    parser.add_option(
+    parser.add_argument(
         "-c",
         "--collect",
         action="store_true",
-        dest="collect",
         default=False,
         help="collect specified project",
     )
 
-    parser.add_option(
+    parser.add_argument(
         "-s",
         "--distribute",
         action="store_true",
-        dest="distribute",
         default=False,
         help="distribute specified project",
     )
 
-    # 	parser.add_option( '-f', '--force', action = 'store_true',
-    # 					   dest = 'force', default = False,
-    # 					   help = 'force action' )
+    # parser.add_argument('-f', '--force', action='store_true', help='force action')
 
-    parser.add_option(
-        "-r", "--remove", action="store_true", dest="remove", default=False, help="remove project data"
-    )
+    parser.add_argument("-r", "--remove", action="store_true", help="remove project data")
+    parser.add_argument("project", nargs="?")
 
-    (options, args) = parser.parse_args()
+    options = parser.parse_args()
 
     # open logging
-    ud.init("/var/log/univention/ucs-school-umc-distribution.log", 1, 1)
+    ud.init("/var/log/univention/ucs-school-umc-distribution.log", ud.FLUSH, ud.FUNCTION)
     ud.set_level(ud.ADMIN, options.debug)
-    debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution started: args=%s" % sys.argv)
+    debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution started: args=%s" % (sys.argv,))
 
     if int(options.collect) + int(options.distribute) + int(options.remove) != 1:
         debugmsg(ud.ADMIN, ud.ERROR, "please specify one action: --distribute, --collect, or --remove")
         sys.exit(250)
 
-    if len(args):
-        if not os.path.exists(args[0]):
-            debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution: file does not exist: %s" % args[0])
+    if options.project:
+        if not os.path.exists(options.project):
+            debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution: file does not exist: %s" % options.project)
             exitcode = 10
-        elif not os.path.isfile(args[0]):
-            debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution: is not a file: %s" % args[0])
+        elif not os.path.isfile(options.project):
+            debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution: is not a file: %s" % options.project)
             exitcode = 20
         else:
             # try to load project data
-            project = util.Project.load(args[0])
+            project = util.Project.load(options.project)
             if not project:
                 # loading failed
-                debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution finished: loading failed: %s" % (args[0]))
+                debugmsg(
+                    ud.ADMIN,
+                    ud.ERROR,
+                    "umc-distribution finished: loading failed: %s" % (options.project),
+                )
                 exitcode = 30
             else:
                 # project has been loaded
@@ -146,7 +142,7 @@ def main():
                 elif options.collect:
                     # collect project files
                     dirsFailed = []
-                    res = project.collect(dirsFailed)
+                    project.collect(dirsFailed)
                     for idir in dirsFailed:
                         debugmsg(ud.ADMIN, ud.ERROR, "  collecting from user failed: %s" % idir)
                     if dirsFailed:
