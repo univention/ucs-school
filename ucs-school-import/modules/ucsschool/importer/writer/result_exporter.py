@@ -67,7 +67,7 @@ class ResultExporter(object):
         """
         mkdir_p(os.path.dirname(filename), "root", "root", stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         writer = self.get_writer()
-        with writer.open(filename):
+        with writer.open(filename, "w+"):
             writer.write_header(self.get_header())
             for obj in self.get_iter(import_handler):
                 row = self.serialize(obj)

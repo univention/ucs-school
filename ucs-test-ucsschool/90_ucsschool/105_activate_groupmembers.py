@@ -31,6 +31,7 @@ def activate_groupmembers(group_name, newStatus, change_passwd):
         change_passwd,
     ]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    out = out.decode("utf-8")
     print(out, err)
     outfile = re.search(r"outfile\sis\s:\s([^\n]+)", out)
     if outfile:
@@ -75,6 +76,7 @@ def check_auth(username, passwd, should_pass=True):
 def is_active(username):
     cmd = ["udm", "users/user", "list", "--filter", "uid=%s" % username]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    out = out.decode("utf-8")
     found = re.search(r"disabled:\s(\d+)", out)
     if found:
         found = found.group(1)

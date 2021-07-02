@@ -188,6 +188,7 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
     print("*** Renaming class {!r} to {!r}".format(old_name, new_name))
     cmd = ["/usr/share/ucs-school-import/scripts/rename_class", fp.name]
     returncode, out, err = exec_cmd(cmd, log=True, raise_exc=False)
+    out = out.decode("utf-8")
     print("*** returncode of 'rename_class' command: {!r}".format(returncode))
     if returncode == 0:
         utils.wait_for_replication_and_postrun()

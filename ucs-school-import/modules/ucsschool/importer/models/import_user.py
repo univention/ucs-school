@@ -649,7 +649,7 @@ class ImportUser(User):
         * See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme"
             for details on the configuration.
         """
-        ignore_keys = self.to_dict().keys()
+        ignore_keys = list(self.to_dict().keys())
         ignore_keys.extend(
             ["mailPrimaryAddress", "record_uid", "source_uid", "username"]
         )  # these are used in make_*
@@ -1325,7 +1325,7 @@ class ImportUser(User):
                         "objectClass=posixAccount",
                         attr=["uid", "ucsschoolRecordUID", "ucsschoolSourceUID"],
                     )
-                    if not attr["uid"][0].endswith("$")
+                    if not attr["uid"][0].endswith(b"$")
                 )
             self._check_username_uniqueness()
 

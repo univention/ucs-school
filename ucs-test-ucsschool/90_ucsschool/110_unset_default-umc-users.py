@@ -31,6 +31,7 @@ def main():
                     expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (
                         ucr.get("ldap/base"),
                     )
+                    expected_attr = expected_attr.encode("utf-8")
                     found_attr = schoolenv.lo.search(
                         base=base, scope="base", attr=["univentionPolicyReference"]
                     )[0][1]["univentionPolicyReference"]
