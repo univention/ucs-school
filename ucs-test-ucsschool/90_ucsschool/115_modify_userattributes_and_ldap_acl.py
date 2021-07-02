@@ -34,8 +34,8 @@ if __name__ == "__main__":
         utils.verify_ldap_object(user)
 
         lo = univention.admin.uldap.access(binddn=user, bindpw="univention")
-        lo.modify(user, [("l", "", "Bremen")])
+        lo.modify(user, [("l", "", b"Bremen")])
         utils.verify_ldap_object(user, {"l": ["Bremen"]})
 
         with pytest.raises(univention.admin.uexceptions.permissionDenied):
-            lo.modify(user, [("sn", "", "mustfail")])
+            lo.modify(user, [("sn", "", b"mustfail")])

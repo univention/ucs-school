@@ -50,7 +50,7 @@ def main():
         time.sleep(20)
         with open(LOGFILE, "rb") as log:
             log.seek(logfile_pos)
-            reloads = re.findall(RELOAD_PATTERN, log.read())
+            reloads = re.findall(RELOAD_PATTERN, log.read().decode("utf-8"))
         print("*** reloads:\n{}\n***".format("\n".join(reloads)))
         reload_count = len(reloads)
         if reload_count not in (2, 3):
