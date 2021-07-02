@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.3) unstable; urgency=medium
+
+  * Bug #53378: adapt modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Fri, 02 Jul 2021 16:05:30 +0200
+
 ucs-school-umc-users (16.0.2) unstable; urgency=medium
 
   * Bug #52634: migrate ucs-school-umc-users to Python 3
