@@ -142,6 +142,7 @@ class SqliteQueue(object):
         # iterating over its rows.
         with Cursor(self.filename) as cursor:
             cursor.execute(u"DELETE FROM user_queue")
+        with Cursor(self.filename) as cursor:
             cursor.execute(u"VACUUM")
 
     def add(self, users):  # type: (List[Tuple[str, str]]) -> None
