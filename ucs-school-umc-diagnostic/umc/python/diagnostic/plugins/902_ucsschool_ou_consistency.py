@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -49,7 +49,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, List
+    from typing import Dict, List  # noqa: F401
 except ImportError:
     pass
 _ = Translation("ucs-school-umc-diagnostic").translate
@@ -76,28 +76,31 @@ def run(_umc_instance):
 
     ou_list = lo.search(filter="ou=*", base=ucr.get("ldap/base"), scope="one")
     for (ou_dn, ou_attrs) in ou_list:
-        if "ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass", []):
+        if b"ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass", []):
             continue
 
         ucsschoolRoles = ou_attrs.get("ucsschoolRole", [])
         if not ucsschoolRoles:
             problematic_objects.setdefault(ou_dn, []).append(_("ucsschoolRole is not set"))
         if ucsschoolRoles and not any(
-            x == "school:school:{}".format(ou_attrs.get("ou")[0]) for x in ucsschoolRoles
+            x.decode("UTF-8") == "school:school:{}".format(ou_attrs.get("ou")[0].decode("UTF-8"))
+            for x in ucsschoolRoles
         ):
             problematic_objects.setdefault(ou_dn, []).append(
-                _('ucsschoolRole "school:school:{0}" not found').format(ou_attrs.get("ou")[0])
+                _('ucsschoolRole "school:school:{0}" not found').format(
+                    ou_attrs.get("ou")[0].decode("UTF-8")
+                )
             )
 
-        if not ou_attrs.get("displayName", [None])[0]:
+        if not ou_attrs.get("displayName", [b""])[0]:
             problematic_objects.setdefault(ou_dn, []).append(_("displayName is not set"))
 
         for attr_name in ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer"):
-            value = ou_attrs.get(attr_name, [None])[0]
+            value = ou_attrs.get(attr_name, [b""])[0].decode("UTF-8")
             if not value:
                 problematic_objects.setdefault(ou_dn, []).append(_("{0} is not set").format(attr_name))
             try:
-                lo.search(base=value, scope="base")
+                lo.searchDn(base=value, scope="base")
             except NO_SUCH_OBJECT:
                 problematic_objects.setdefault(ou_dn, []).append(
                     _("{0} contains invalid value: {1!r}").format(attr_name, value)
