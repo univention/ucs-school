@@ -97,7 +97,7 @@ class ImportFile:
 
     def write_import(self, data):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, data)
+        os.write(self.import_fd, data.encode("utf-8"))
         os.close(self.import_fd)
 
     def run_import(self, data):

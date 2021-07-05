@@ -10,6 +10,8 @@
 ##  - ucs-test-ldap
 ## exposure: dangerous
 
+from __future__ import print_function
+
 import imp
 import sys
 
@@ -145,7 +147,7 @@ def main():
 						bindpw=PASSWORD,
 					)
 				except (univention.admin.uexceptions.base, ldap.LDAPError) as exc:
-					print >> sys.stderr, 'SKIP: Authentication as %r failed: %s' % (dn, exc)
+					print('SKIP: Authentication as %r failed: %s' % (dn, exc), file=sys.stderr)
 
 		def do_hacks(connections):
 			hacks = []
