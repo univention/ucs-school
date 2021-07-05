@@ -70,6 +70,13 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
+			<itemizedlist>
+				<listitem><para>
+					All components have been migrated to Python 3 (<u:bug>52608</u:bug>, <u:bug>52609</u:bug>, <u:bug>52611</u:bug>, <u:bug>52612</u:bug>, <u:bug>52613</u:bug>, <u:bug>52614</u:bug>, <u:bug>52615</u:bug>, <u:bug>52616</u:bug>, <u:bug>52617</u:bug>, <u:bug>52618</u:bug>, <u:bug>52619</u:bug>, <u:bug>52620</u:bug>, <u:bug>52621</u:bug>, <u:bug>52622</u:bug>, <u:bug>52623</u:bug>, <u:bug>52624</u:bug>, <u:bug>52625</u:bug>, <u:bug>52626</u:bug>, <u:bug>52627</u:bug>, <u:bug>52628</u:bug>, <u:bug>52629</u:bug>, <u:bug>52630</u:bug>, <u:bug>52631</u:bug>, <u:bug>52632</u:bug>, <u:bug>52633</u:bug>, <u:bug>52634</u:bug>, <u:bug>52635</u:bug>, <u:bug>52636</u:bug>, <u:bug>52637</u:bug>, <u:bug>52638</u:bug>, <u:bug>52639</u:bug>, <u:bug>52640</u:bug>, <u:bug>52641</u:bug>, <u:bug>52642</u:bug>, <u:bug>52643</u:bug>, <u:bug>52644</u:bug>, <u:bug>52645</u:bug>).
+				</para></listitem>
+			</itemizedlist>
+			</section>
+
 <!-- CHANGELOG-NEW-SECTION -->
 
 		</section>
