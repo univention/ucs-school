@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: ucs-school-printermoderation-find-printer-in-ou-check
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous

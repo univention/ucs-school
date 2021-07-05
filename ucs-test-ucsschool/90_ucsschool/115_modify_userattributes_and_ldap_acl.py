@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Self service user attributes ACL generation and enforcement
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles:
@@ -34,8 +34,8 @@ if __name__ == "__main__":
         utils.verify_ldap_object(user)
 
         lo = univention.admin.uldap.access(binddn=user, bindpw="univention")
-        lo.modify(user, [("l", "", "Bremen")])
+        lo.modify(user, [("l", b"", b"Bremen")])
         utils.verify_ldap_object(user, {"l": ["Bremen"]})
 
         with pytest.raises(univention.admin.uexceptions.permissionDenied):
-            lo.modify(user, [("sn", "", "mustfail")])
+            lo.modify(user, [("sn", b"", b"mustfail")])
