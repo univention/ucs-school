@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school Diagnosis Module
@@ -55,10 +55,10 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import MODULE, Critical, ProblemFixed
 
 try:
-    from typing import TYPE_CHECKING, Set
+    from typing import TYPE_CHECKING, Set  # noqa: F401
 
     if TYPE_CHECKING:
-        from univention.admin.uldap import access
+        from univention.admin.uldap import access  # noqa: F401
 except ImportError:
     pass
 
@@ -88,7 +88,7 @@ def find_all_problematic_objects(lo):  # type: (access) -> Set[str]
         obj_list = lo.search(filter=filter_format("univentionObjectType=%s", (obj_type,)))
         for (obj_dn, obj_attrs) in obj_list:
             MODULE.process("Found {}...".format(obj_dn))
-            if "ucsschoolComputer" not in obj_attrs.get("objectClass", []):
+            if b"ucsschoolComputer" not in obj_attrs.get("objectClass", []):
                 problematic_objects.add(obj_dn)
 
             if "ucsschoolRole" not in obj_attrs:
@@ -125,8 +125,8 @@ def fix_computers(_umc_instance):
         ml = []
         old_val = attrs.get("objectClass", [])
         MODULE.process("old_val = {!r}".format(old_val))
-        if "ucsschoolComputer" not in old_val:
-            ml.append(["objectClass", old_val, old_val + ["ucsschoolComputer"]])
+        if b"ucsschoolComputer" not in old_val:
+            ml.append(["objectClass", old_val, old_val + [b"ucsschoolComputer"]])
         MODULE.info("old_val = {!r}".format(attrs.get("ucsschoolRole")))
         if "ucsschoolRole" not in attrs:
             school = AnyComputer.get_school_from_dn(dn)
@@ -136,10 +136,10 @@ def fix_computers(_umc_instance):
                 "computers/ipmanagedclient": create_ucsschool_role_string(role_ip_computer, school),
                 "computers/linux": create_ucsschool_role_string(role_linux_computer, school),
                 "computers/ubuntu": create_ucsschool_role_string(role_ubuntu_computer, school),
-            }.get(attrs.get("univentionObjectType", [None])[0])
+            }.get(attrs.get("univentionObjectType", [b""])[0].decode("UTF-8"))
             MODULE.info("role = {!r}".format(role))
             if role is not None:
-                ml.append(["ucsschoolRole", [], [role]])
+                ml.append(["ucsschoolRole", [], [role.encode("UTF-8")]])
         MODULE.info("ml={!r}".format(ml))
         if ml:
             try:

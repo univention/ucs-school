@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -42,7 +42,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, Set
+    from typing import Dict, Set  # noqa: F401
 except ImportError:
     pass
 
@@ -80,8 +80,8 @@ def run(_umc_instance):
     search_filter = "(&(ucsschoolSourceUID=*)(ucsschoolRecordUID=*))"
     for dn, attrs in lo.search(filter=search_filter, attr=[UCSSCHOOLSOURCEUID, UCSSCHOOLRECORDUID]):
         try:
-            source_uid = attrs[UCSSCHOOLSOURCEUID][0]
-            record_uid = attrs[UCSSCHOOLRECORDUID][0]
+            source_uid = attrs[UCSSCHOOLSOURCEUID][0].decode("UTF-8")
+            record_uid = attrs[UCSSCHOOLRECORDUID][0].decode("UTF-8")
             other_dn = all_ids[source_uid][record_uid]
             # if this line is reached, a suid-ruid duplicate was found
             problematic_objects.setdefault(dn, []).append(
