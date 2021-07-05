@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school Diagnosis Module
@@ -52,7 +52,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, List
+    from typing import Dict, List  # noqa: F401
 except ImportError:
     pass
 
@@ -81,7 +81,8 @@ def run(_umc_instance):
         filter="(|"
         "(univentionObjectType=computers/domaincontroller_slave)"
         "(univentionObjectType=computers/memberserver)"
-        ")"
+        ")",
+        attr=["univentionObjectType"],
     )
     for (obj_dn, obj_attrs) in obj_list:
         result = {
@@ -148,7 +149,7 @@ def run(_umc_instance):
                     problematic_objects.setdefault(obj_dn, []).append(
                         _("Host object is member in edu groups AND in admin groups which is not allowed")
                     )
-        if obj_attrs.get("univentionObjectType", [""])[0] == "computers/domaincontroller_slave":
+        if obj_attrs.get("univentionObjectType", [b""])[0] == b"computers/domaincontroller_slave":
             if any(
                 list(result["memberserver"]["edu"].values())
                 + list(result["memberserver"]["admin"].values())

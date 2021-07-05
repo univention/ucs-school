@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2020-2021 Univention GmbH
@@ -73,7 +73,7 @@ def run(_umc_instance):
         edu_dc_dns = lo.getAttr(
             "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"]), "uniqueMember"
         )
-        if host_dn not in edu_dc_dns:
+        if host_dn.encode("UTF-8") not in edu_dc_dns:
             # not a school server
             return
 
@@ -112,11 +112,11 @@ def install_veyon_proxy_app(_umc_instance):
             VEYON_APP_NAME, VEYON_APP_ID, APPCENTER_LOGFILE
         )
     )
-    with tempfile.NamedTemporaryFile() as pw_file:
+    with tempfile.NamedTemporaryFile("w+") as pw_file:
         pw_file.write(_umc_instance.password)
         pw_file.flush()
         get_action("install").call(
-            app=app,
+            app=[app],
             noninteractive=True,
             username=_umc_instance.username,
             pwdfile=pw_file.name,

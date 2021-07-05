@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -45,7 +45,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, List
+    from typing import Dict, List  # noqa: F401
 except ImportError:
     pass
 
@@ -72,7 +72,11 @@ def run(_umc_instance):
     for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool", "ucsschoolRole"]):
         admins_dn.append(dn)
         try:
-            admin = {"dn": dn, "schools": attr["ucsschoolSchool"], "roles": attr["ucsschoolRole"]}
+            admin = {
+                "dn": dn,
+                "schools": [x.decode("UTF-8") for x in attr["ucsschoolSchool"]],
+                "roles": [x.decode("UTF-8") for x in attr["ucsschoolRole"]],
+            }
             admins.append(admin)
         except KeyError:
             continue
@@ -83,6 +87,7 @@ def run(_umc_instance):
     # check if each group member is a ucsschoolAdministrator
     for dn, attr in groups:
         for member in attr.get("uniqueMember", []):
+            member = member.decode("UTF-8")
             if member not in admins_dn:
                 problematic_objects.setdefault(member, []).append(
                     _(
@@ -99,11 +104,11 @@ def run(_umc_instance):
             if role_school_admin in role:
                 school = get_role_info(role)[2]  # eg. "DEMOSCHOOL" from school_admin:school:DEMOSCHOOL
                 for dn, attr in groups:
-                    if attr["ucsschoolSchool"][0] == school:
-                        if not admin["dn"] in attr.get("uniqueMember", []):
+                    if attr["ucsschoolSchool"][0].decode("UTF-8") == school:
+                        if not admin["dn"].encode("UTF-8") in attr.get("uniqueMember", []):
                             missing_group_dns.append(dn)
                     else:
-                        if admin["dn"] in attr.get("uniqueMember", []):
+                        if admin["dn"].encode("UTF-8") in attr.get("uniqueMember", []):
                             forbidden_groups.append(dn)
 
         if missing_group_dns:
