@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 # -*- coding: utf-8 -*-
 ## desc: check number of squid reloads
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -50,7 +50,7 @@ def main():
         time.sleep(20)
         with open(LOGFILE, "rb") as log:
             log.seek(logfile_pos)
-            reloads = re.findall(RELOAD_PATTERN, log.read())
+            reloads = re.findall(RELOAD_PATTERN, log.read().decode("utf-8"))
         print("*** reloads:\n{}\n***".format("\n".join(reloads)))
         reload_count = len(reloads)
         if reload_count not in (2, 3):

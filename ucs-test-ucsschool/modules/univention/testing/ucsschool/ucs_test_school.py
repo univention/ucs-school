@@ -81,9 +81,9 @@ from ucsschool.lib.roles import (
 from univention.admin.uexceptions import ldapError, noObject
 
 try:
-    from typing import Any, Dict, List, Optional, Set, Tuple
+    from typing import Any, Dict, List, Optional, Set, Tuple  # noqa: F401
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 except ImportError:
     pass
 
@@ -368,7 +368,7 @@ class UCSTestSchool(object):
         try:
             obj_list = self.lo.searchDn(base=oudn, scope="sub")  # type: List[str]
         except noObject:
-            logger.warn("*** OU has already been removed.")
+            logger.warning("*** OU has already been removed.")
             ok = False
         else:
             # sorted by length, longest first (==> leafs first)
@@ -458,7 +458,7 @@ class UCSTestSchool(object):
         for dn, attrs in self.lo.search(filter_s):
             logger.info("*** Updating 'ucsschoolRole' of %r...", dn)
             old_value = attrs["ucsschoolRole"]
-            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name))]
+            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name).encode("utf-8"))]
             self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
 
     def cleanup_default_containers(self, ou_name):  # type: (str) -> None
@@ -477,7 +477,7 @@ class UCSTestSchool(object):
         ):
             old_value = attrs.get(attr, [])
             new_value = [
-                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base))
+                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base).encode("utf-8"))
             ]
             if old_value != new_value:
                 ml.append((attr, old_value, new_value))

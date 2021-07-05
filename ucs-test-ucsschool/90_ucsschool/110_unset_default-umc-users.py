@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: unset default umc users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
@@ -28,9 +28,9 @@ def main():
                 )
                 print("*** Checking school {!r} (cli={}".format(school, cli))
                 try:
-                    expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (
+                    expected_attr = ("cn=default-umc-users,cn=UMC,cn=policies,%s" % (
                         ucr.get("ldap/base"),
-                    )
+                    )).encode("utf-8")
                     found_attr = schoolenv.lo.search(
                         base=base, scope="base", attr=["univentionPolicyReference"]
                     )[0][1]["univentionPolicyReference"]
