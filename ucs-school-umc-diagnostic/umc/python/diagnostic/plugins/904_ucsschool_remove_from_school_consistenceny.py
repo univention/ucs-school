@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -45,7 +45,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, Set
+    from typing import Dict, Set  # noqa: F401
 except ImportError:
     pass
 
@@ -77,8 +77,8 @@ def run(_umc_instance):
     )
     for (obj_dn, obj_attrs) in obj_list:
         ucsschool_roles = obj_attrs.get(UCSSCHOOLROLE, [])
-        roles = {role.split(":")[-1] for role in ucsschool_roles if ":school:" in role}
-        school = set(obj_attrs.get(UCSSCHOOLSCHOOL, []))
+        roles = {role.decode("UTF-8").split(":")[-1] for role in ucsschool_roles if b":school:" in role}
+        school = set(x.decode("UTF-8") for x in obj_attrs.get(UCSSCHOOLSCHOOL, []))
         if school != roles:
             problematic_objects.setdefault(obj_dn, []).append(
                 _("{0} is not part of the school but in {1}").format(obj_dn, roles)
@@ -95,8 +95,13 @@ def run(_umc_instance):
     )
     for (obj_dn, obj_attrs) in obj_list:
         ums = obj_attrs.get("uniqueMember", [])
-        grp_schools = {role.split(":")[-1] for role in obj_attrs[UCSSCHOOLROLE] if ":school:" in role}
+        grp_schools = {
+            role.decode("UTF-8").split(":")[-1]
+            for role in obj_attrs[UCSSCHOOLROLE]
+            if b":school:" in role
+        }
         for um in ums:
+            um = um.decode("UTF-8")
             if um not in users:
                 problematic_objects.setdefault(obj_dn, []).append(
                     _("{0} has no ucsschoolRole, but is in group").format(um)

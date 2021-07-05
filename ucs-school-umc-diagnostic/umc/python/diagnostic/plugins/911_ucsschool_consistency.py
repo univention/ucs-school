@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -36,7 +36,7 @@
 from __future__ import absolute_import
 
 try:
-    from typing import Dict, List
+    from typing import Dict, List  # noqa: F401
 except ImportError:
     pass
 
