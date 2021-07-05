@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -41,7 +41,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, Set
+    from typing import Dict, Set  # noqa: F401
 except ImportError:
     pass
 
@@ -75,7 +75,7 @@ def run(_umc_instance):
     problematic_objects = {}  # type: Dict[str, Set[str]]
     lo = getAdminConnection()
     search_filter = "(&(ucsschoolSourceUID=*)(!(ucsschoolRecordUID=*)))"
-    for dn, attrs in lo.search(filter=search_filter, attr=[UCSSCHOOLSOURCEUID]):
+    for dn in lo.searchDn(filter=search_filter):
         problematic_objects.setdefault(dn, []).append(
             _("has ucsschoolSourceUID but no ucsschoolRecordUID set.")
         )

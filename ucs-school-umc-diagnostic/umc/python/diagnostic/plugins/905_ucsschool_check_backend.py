@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -70,13 +70,14 @@ def run(_umc_instance):
         admin_dc_dns = lo.getAttr(
             "cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(ucr["ldap/base"]), "uniqueMember"
         )
-        if not any(host_dn in dns for dns in [edu_dc_dns, admin_dc_dns]):
+        if not any(host_dn.encode("UTF-8") in dns for dns in [edu_dc_dns, admin_dc_dns]):
             # not a school server
             return
 
     cmd = ["/usr/bin/dpkg-query", "-W", "-f", "${Status},${Version}", "samba"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)  # nosec
     stdout, stderr = p.communicate()
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
     installed, version = stdout.split(",")
     is_installed = "ok installed" in installed
     is_correct_version = ":4." in version

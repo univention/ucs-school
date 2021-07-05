@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -75,7 +75,7 @@ def run(_umc_instance):
 
     # check if ucs-school-ox-support package is installed
     out, err = exec_cmd("/usr/bin/dpkg-query", "-W", "-f", "${Status}", "ucs-school-ox-support")
-    if "ok installed" not in out:
+    if "ok installed" not in out.decode("UTF-8", "replace"):
         raise Warning(
             "The OX App Suite is installed but the required package 'ucs-school-ox-support' is missing.",
             buttons=[{"action": "install_missing", "label": _("Install missing components")}],
@@ -94,6 +94,7 @@ def install_missing_components(_umc_instance):
     stdout, stderr = exec_cmd("apt-get", "install", "ucs-school-ox-support")
     if stderr:  # on fail, try again with univention-install
         stdout, stderr = exec_cmd("univention-install", "ucs-school-ox-support")
+        stdout, stderr = stdout.decode("UTF-8", "replace"), stderr.decode("UTF-8", "replace")
         error_text = "E: Unable to locate package"
         if error_text in stdout or stderr:
             raise Warning("Could not install package 'ucs-school-ox-support'.\n{}".format(stderr))

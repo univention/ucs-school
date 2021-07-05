@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school Diagnosis Module
@@ -43,7 +43,7 @@ from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
 try:
-    from typing import Dict, List
+    from typing import Dict, List  # noqa: F401
 except ImportError:
     pass
 
@@ -73,7 +73,7 @@ def run(_umc_instance):
         attr=["uid", "mailPrimaryAddress"],
     )
     for (obj_dn, obj_attrs) in obj_list:
-        uid = obj_attrs.get("uid")[0]
+        uid = obj_attrs.get("uid")[0].decode("UTF-8")
         prefix = uid.rstrip("0123456789")
         suffix = uid[len(prefix) :]
         if suffix == "":
@@ -86,8 +86,8 @@ def run(_umc_instance):
         else:
             user_prefix2counter[prefix] = suffix
 
-        mPA = obj_attrs.get("mailPrimaryAddress", [None])[0]
-        if mPA is None:
+        mPA = obj_attrs.get("mailPrimaryAddress", [b""])[0].decode("UTF-8")
+        if not mPA:
             continue
         localpart = mPA.rsplit("@", 1)[0]
         prefix = localpart.rstrip("0123456789")
@@ -108,7 +108,7 @@ def run(_umc_instance):
             scope="one",
         )
         for (obj_dn, obj_attrs) in obj_list:
-            value = obj_attrs.get("ucsschoolUsernameNextNumber", [""])[0]
+            value = obj_attrs.get("ucsschoolUsernameNextNumber", [b""])[0].decode("UTF-8")
             try:
                 prefix_counter = int(value)
             except ValueError:
@@ -124,7 +124,7 @@ def run(_umc_instance):
                 )
 
             # Check: counter should be higher than existing users
-            prefix = obj_attrs.get("cn", [None])[0]
+            prefix = obj_attrs.get("cn", [b""])[0].decode("UTF-8")
             if counter_type == "usernames":
                 user_prefix_counter = user_prefix2counter.get(prefix)
             else:
