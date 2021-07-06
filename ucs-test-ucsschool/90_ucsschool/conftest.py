@@ -1,1 +1,1 @@
-pytest_plugins = ["univention.testing.ucsschool.conftest"]
+pytest_plugins = ["univention.testing.conftest", "univention.testing.ucsschool.conftest"]
