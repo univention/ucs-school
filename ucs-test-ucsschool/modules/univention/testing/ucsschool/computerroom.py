@@ -887,7 +887,7 @@ class Computers(object):
         for computer in computer_import.ipmanagedclients:
             created_computers.append(computer)
 
-        return sorted(created_computers)
+        return sorted(created_computers,key=lambda x: x.name)
 
     def get_dns(self, computers):
         return [x.dn for x in computers]

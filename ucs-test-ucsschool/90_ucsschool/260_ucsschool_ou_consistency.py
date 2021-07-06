@@ -27,9 +27,9 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
             filter="ou={}".format(self.schoolC.name), base=self.ucr.get("ldap/base"), scope="one"
         )
         ou_c_dn, ou_c_attrs = ou_list[0]
-        assert "ucsschoolOrganizationalUnit" in ou_a_attrs.get("objectClass", [])
-        assert "ucsschoolOrganizationalUnit" in ou_b_attrs.get("objectClass", [])
-        assert "ucsschoolOrganizationalUnit" in ou_c_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_a_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_b_attrs.get("objectClass", [])
+        assert b"ucsschoolOrganizationalUnit" in ou_c_attrs.get("objectClass", [])
 
         logger.info("Change ldap-values of A-C, such that the diagnostic tool should raise a warning.")
         expected_warnings = []

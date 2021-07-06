@@ -458,7 +458,8 @@ class UCSTestSchool(object):
         for dn, attrs in self.lo.search(filter_s):
             logger.info("*** Updating 'ucsschoolRole' of %r...", dn)
             old_value = attrs["ucsschoolRole"]
-            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name).encode("utf-8")]
+            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name))]
+            #new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name.encode("utf-8")))]
             self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
 
     def cleanup_default_containers(self, ou_name):  # type: (str) -> None
@@ -476,8 +477,10 @@ class UCSTestSchool(object):
             "univentionUsersObject",
         ):
             old_value = attrs.get(attr, [])
+            # ou_name = ou_name.encode("utf-8")
+            self_ldap_base = self_ldap_base.encode("utf-8")
             new_value = [
-                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base).encode("utf-8"))
+                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base))
             ]
             if old_value != new_value:
                 ml.append((attr, old_value, new_value))

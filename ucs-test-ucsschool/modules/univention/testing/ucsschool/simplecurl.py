@@ -7,6 +7,7 @@
 from __future__ import print_function
 
 import os
+import tempfile
 import time
 
 import pycurl
@@ -66,7 +67,11 @@ class SimpleCurl(object):
         username = username if username else account.username
         password = password if password else account.bindpw
         self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
-        self.cookieFilename = os.tempnam()
+        try:
+            temp = tempfile.NamedTemporaryFile()
+            self.cookieFilename = temp.name
+        finally:
+            temp.close()
         self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
         self.curl.setopt(pycurl.COOKIEFILE, self.cookieFilename)
 
@@ -89,7 +94,7 @@ class SimpleCurl(object):
         self.curl.setopt(pycurl.VERBOSE, bVerbose)
         if postData:
             self.curl.setopt(pycurl.HTTPPOST, postData)
-        buf = StringIO.StringIO()
+        buf = StringIO()
         self.curl.setopt(pycurl.WRITEFUNCTION, buf.write)
         print("getting page:", url)
         for i in range(60):

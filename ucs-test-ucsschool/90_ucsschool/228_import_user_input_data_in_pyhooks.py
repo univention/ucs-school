@@ -63,7 +63,7 @@ def main():
 
         with tempfile.NamedTemporaryFile() as csv_file:
             for user in users:
-                csv_file.write("{}\n".format(line.format(**user)))
+                csv_file.write("{}\n".format(line.format(**user)).encode("utf-8"))
             csv_file.flush()
 
             cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
@@ -80,7 +80,7 @@ def main():
         with tempfile.NamedTemporaryFile() as csv_file:
             for user in users:
                 user["mode"] = "D"
-                csv_file.write(line.format(**user))
+                csv_file.write(line.format(**user).encode("utf-8"))
             csv_file.flush()
 
             cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
