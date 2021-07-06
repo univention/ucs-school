@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.239) unstable; urgency=low
+
+  * Bug #53536: add ucs-test section for ID Broker tests
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 06 Jul 2021 15:46:49 +0200
+
 ucs-test-ucsschool (6.0.238) unstable; urgency=medium
 
   * Bug #53203: added test 251_import_keeps_old_roles

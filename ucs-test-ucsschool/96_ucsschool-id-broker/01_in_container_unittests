@@ -1,0 +1,11 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container unit tests for the ID Broker app
+## exposure: safe
+## tags: [ucsschool-id-broker]
+
+APP="ucsschool-apis"
+CMD="cd /app/tests/unittests; python3 -m pytest -l -v"
+
+echo "Running in container: sh -c \"$CMD\""
+
+univention-app shell "$APP" sh -c "$CMD"
