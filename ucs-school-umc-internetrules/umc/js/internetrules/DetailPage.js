@@ -56,9 +56,6 @@ define([
 		postMixInProperties: function() {
 			this.inherited(arguments);
 
-			// set the opacity for the standby animation
-			this.standbyOpacity = 1;
-
 			// get the module store
 			this.moduleStore = store('id', 'internetrules');
 
@@ -67,13 +64,13 @@ define([
 			var headerButtons = [{
 				name: 'submit',
 				label: _('Save'),
-				iconClass: 'umcSaveIconWhite',
+				iconClass: 'save',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
 				name: 'close',
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				label: _('Back to overview'),
 				callback: lang.hitch(this, 'onClose')
 			}];

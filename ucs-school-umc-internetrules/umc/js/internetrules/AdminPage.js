@@ -35,12 +35,11 @@ define([
 	"umc/dialog",
 	"umc/store",
 	"umc/widgets/Page",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/SearchBox",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, dialog, store, Page, ExpandingTitlePane, Grid, SearchBox, SearchForm, _) {
+], function(declare, lang, array, dialog, store, Page, Grid, SearchBox, SearchForm, _) {
 
 	return declare("umc.modules.internetrules.AdminPage", [ Page ], {
 		// summary:
@@ -63,12 +62,6 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane({
-				title: _('Search results')
-			});
-			this.addChild(titlePane);
-
 			//
 			// data grid
 			//
@@ -78,7 +71,7 @@ define([
 				name: 'add',
 				label: _('Add rule'),
 				description: _('Create a new rule'),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, '_add')
@@ -86,7 +79,7 @@ define([
 				name: 'edit',
 				label: _('Edit'),
 				description: _('Edit the selected rule'),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isStandardAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, '_edit')
@@ -96,7 +89,7 @@ define([
 				description: _('Delete the selected rules.'),
 				isStandardAction: true,
 				isMultiAction: true,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, '_remove')
 			}];
 
@@ -139,7 +132,7 @@ define([
 			});
 
 			// add the grid to the title pane
-			titlePane.addChild(this._grid);
+			this.addChild(this._grid);
 
 			//
 			// search form
@@ -147,6 +140,7 @@ define([
 
 			var widgets = [{
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the rules\' names and their domain lists'),
 				label: _('Search pattern'),
@@ -169,7 +163,7 @@ define([
 			this._searchForm.on('valuesInitialized', lang.hitch(this, function() { this._searchForm.submit(); }));
 
 			// add search form to the title pane
-			titlePane.addChild(this._searchForm);
+			this.addChild(this._searchForm);
 		},
 
 		_edit: function(ids, items) {
