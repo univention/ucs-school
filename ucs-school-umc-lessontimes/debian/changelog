@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (8.0.3) unstable; urgency=medium
+
+  * Bug #53374: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 07 Jul 2021 11:15:47 +0200
+
 ucs-school-umc-lessontimes (8.0.2) unstable; urgency=medium
 
   * Bug #52645: migrate ucs-school-umc-lessontimes to Python 3

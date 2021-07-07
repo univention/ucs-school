@@ -31,10 +31,8 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/topic",
 	"dojox/html/entities",
 	"umc/dialog",
-	"umc/widgets/ContainerWidget",
 	"umc/widgets/Form",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
@@ -42,16 +40,15 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/TimeBox",
 	"umc/i18n!umc/modules/lessontimes"
-], function(declare, lang, topic, entities, dialog, ContainerWidget, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
+], function(declare, lang, entities, dialog, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
 
 	return declare("umc.modules.lessontimes", [ Module ], {
-
-		standbyOpacity: 1,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyDuring(this.umcpCommand('lessontimes/get')).then(lang.hitch(this, function(response) {
+			this.standby(true);
+			this.umcpCommand('lessontimes/get').then(lang.hitch(this, function(response) {
 				this.renderPage(response.result);
 			}));
 		},
@@ -86,7 +83,6 @@ define([
 			}];
 
 			this._form = new Form({
-				region: 'top',
 				widgets: widgets,
 				layout: layout
 			});
@@ -113,12 +109,7 @@ define([
 			});
 			this.addChild(this._page);
 
-			var container = new ContainerWidget({
-				scrollable: true
-			});
-			this._page.addChild(container);
-
-			container.addChild(this._form);
+			this._page.addChild(this._form);
 		},
 
 		onSubmit: function(values) {
