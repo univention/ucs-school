@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (16.0.3) unstable; urgency=medium
+
+  * Bug #53370: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 07 Jul 2021 11:19:08 +0200
+
 ucs-school-umc-helpdesk (16.0.2) unstable; urgency=medium
 
   * Bug #52641: Migrate ucs-school-umc-helpdesk to Python3
