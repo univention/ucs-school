@@ -50,16 +50,20 @@ define([
 		_detailPage: null,
 		_adminPage: null,
 
+		selectablePagesToLayoutMapping: {
+			_assignPage: 'searchpage-grid',
+			_adminPage: 'searchpage-grid'
+		},
+
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			// render the correct pages corresponding to the given flavor
-			if (this.moduleFlavor == 'assign') {
+			if (this.moduleFlavor === 'assign') {
 				// flavor for assigning rules to groups
 				this._assignPage = new AssignPage({ fullWidth: true });
 				this.addChild(this._assignPage);
-			}
-			else {
+			} else {
 				// flavor for managing internet rules
 				this._adminPage = new AdminPage({ fullWidth: true });
 				this.addChild(this._adminPage);
@@ -85,5 +89,4 @@ define([
 			}
 		}
 	});
-
 });
