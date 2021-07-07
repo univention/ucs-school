@@ -50,12 +50,15 @@ define([
 		_grid: null,
 		_searchPage: null,
 		_detailPage: null,
-		standbyOpacity: 1,
 		helpText: '',
 		mailAddressPattern: '',
 		autosearchVariable: '',
 		autoSearch: true,
 		DetailPage: null,
+
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
+		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
@@ -80,12 +83,14 @@ define([
 			this._grid = new Grid({
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
-				moduleStore: this.moduleStore
+				moduleStore: this.moduleStore,
+				hideContextActionsWhenNoSelection: false
 			});
 			this._searchPage.addChild(this._grid);
 
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				dynamicValues: 'schoolgroups/schools',
 				label: _('School'),
@@ -94,6 +99,7 @@ define([
 				autoHide: true
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				size: 'TwoThirds',
 				description: _('Specifies the substring pattern which is searched for in the displayed name'),
@@ -117,7 +123,6 @@ define([
 					}
 				}),
 				onValuesInitialized: lang.hitch(this, function() {
-					this.standbyOpacity = 0.75;
 					var values = this._searchForm.get('value');
 					if (values.school && this.autoSearch) {
 						this._grid.filter(values);
@@ -157,7 +162,7 @@ define([
 				name: 'edit',
 				label: _('Edit'),
 				description: _('Edit the selected object'),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isStandardAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, '_editObject')
@@ -252,7 +257,7 @@ define([
 				name: 'add',
 				label: _('Add workgroup'),
 				description: _('Create a new workgroup'),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, '_addObject')
@@ -263,7 +268,7 @@ define([
 				description: _('Deleting the selected objects.'),
 				isStandardAction: true,
 				isMultiAction: true,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, '_deleteObjects')
 			});
 			return actions;
