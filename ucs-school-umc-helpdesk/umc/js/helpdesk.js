@@ -30,50 +30,22 @@
 
 define([
 	"dojo/_base/declare",
-	"dojo/_base/array",
 	"dojo/_base/lang",
-	"dojo/on",
-	"dojo/topic",
 	"umc/dialog",
-	"umc/tools",
 	"umc/widgets/ComboBox",
 	"umc/widgets/Form",
-	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
-	"umc/widgets/SearchForm",
 	"umc/widgets/TextArea",
-	"umc/widgets/TextBox",
 	"umc/i18n!umc/modules/helpdesk"
-], function(declare, array, lang, on, topic, dialog, tools, ComboBox,
-            Form, Grid, Module, Page, SearchForm, TextArea, TextBox, _) {
+], function(declare, lang, dialog, ComboBox, Form, Module, Page, TextArea, _) {
 	return declare("umc.modules.helpdesk", [ Module ], {
-
-		standbyOpacity: 1,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			var buttons = [{
-				name: 'submit',
-				label: _('Send'),
-				'default': true,
-				callback: lang.hitch(this, function() {
-					var values = this._form.get('value');
-					if (values.message) {
-						this.onSubmit(this._form.get('value'));
-					} else {
-						dialog.alert(_('The required message is missing. Therefore, no report has been sent to the helpdesk team.'));
-					}
-				})
-			}];
-
 			this._page = new Page({
-				headerText: this.description,
-//				headerTextRegion: 'main',
-				helpText: '',
-//				helpTextRegsion: 'main',
-				headerButtons: buttons
+				mainContentClass: 'umcCard2'
 			});
 
 			var widgets = [{
@@ -101,9 +73,23 @@ define([
 				'message'
 			];
 
+			var buttons = [{
+				name: 'submit',
+				label: _('Send'),
+				callback: lang.hitch(this, function() {
+					var values = this._form.get('value');
+					if (values.message) {
+						this.onSubmit(this._form.get('value'));
+					} else {
+						dialog.alert(_('The required message is missing. Therefore, no report has been sent to the helpdesk team.'));
+					}
+				})
+			}];
+
 			this._form = new Form({
 				widgets: widgets,
-				layout: layout
+				layout: layout,
+				buttons: buttons
 			});
 			this.standbyDuring(this._form.ready());
 
