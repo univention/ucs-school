@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
@@ -43,9 +44,11 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, array, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
+], function(declare, lang, array, entities, tools, Page, Form, TextBox, Text, ComboBox, MultiObjectSelect, MultiSelect, Grid, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
+		navContentClass: 'umcCard2',
+
 		moduleStore: null,
 
 		_form: null,
@@ -62,14 +65,14 @@ define([
 			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save'),
-				iconClass: 'umcSaveIconWhite',
+				iconClass: 'save',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
 				name: 'close',
 				label: _('Cancel'),
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				callback: lang.hitch(this, 'onClose')
 			}];
 		},
@@ -177,8 +180,8 @@ define([
 				this._grid.update(true);
 			}));
 			this.addChild(Text({
-				name: 'grid_title',
-				content: '<h2>' + _('Teacher computer') + '</h2>'
+				content: '<h2>' + entities.encode(_('Teacher computer')) + '</h2>',
+				style: 'margin-bottom: var(--layout-spacing-unit);'
 			}));
 			this.addChild(this._grid);
 			this._form.on('Loaded', lang.hitch(this, function() {

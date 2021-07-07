@@ -33,7 +33,6 @@ define([
 	"dojo/_base/lang",
 	"dojo/aspect",
 	"umc/dialog",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
@@ -42,7 +41,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolrooms/DetailPage",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, aspect, dialog, ExpandingTitlePane, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
+], function(declare, lang, aspect, dialog, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolrooms", [ Module ], {
 
@@ -52,14 +51,16 @@ define([
 		_detailPage: null,
 		_startWithCreation: null, // If set the room creation dialog will be triggered automatically
 
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
+		},
+
 		buildRendering: function() {
 			this.inherited(arguments);
 			this.standby(true);
 
 			this._searchPage = new Page({
-				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				fullWidth: true
 			});
 
 			this.addChild(this._searchPage);
@@ -68,7 +69,7 @@ define([
 				name: 'add',
 				label: _('Add room'),
 				description: _('Create a new room'),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, '_addObject')
@@ -76,7 +77,7 @@ define([
 				name: 'edit',
 				label: _('Edit'),
 				description: _('Edit the selected object'),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isStandardAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, '_editObject')
@@ -86,7 +87,7 @@ define([
 				description: _('Deleting the selected objects.'),
 				isStandardAction: true,
 				isMultiAction: false,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, '_deleteObjects')
 			}];
 
@@ -111,6 +112,7 @@ define([
 
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				description: _('Choose the school'),
 				label: _('School'),
@@ -121,6 +123,7 @@ define([
 				autoHide: true
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the displayed name'),
 				label: _('Search pattern'),
@@ -160,7 +163,6 @@ define([
 			}));
 
 			this._searchPage.addChild(this._searchForm);
-			this._searchPage.startup();
 
 			this._detailPage = new DetailPage({
 				moduleStore: this.moduleStore,
@@ -244,5 +246,4 @@ define([
 			}));
 		}
 	});
-
 });
