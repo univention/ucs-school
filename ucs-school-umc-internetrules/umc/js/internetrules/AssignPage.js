@@ -32,9 +32,9 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
-	"dijit/Dialog",
 	"umc/tools",
 	"umc/store",
+	"umc/widgets/Dialog",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/Grid",
@@ -44,11 +44,8 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, Dialog, tools, store, Page, Form,
+], function(declare, lang, array, tools, store, Dialog, Page, Form,
             Grid, SearchBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
-
-// create helper class: combination of Form and StandbyMixin
-var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, StandbyMixin ], {});
 
 	return declare("umc.modules.internetrules.AssignPage", [ Page ], {
 		// summary:
@@ -107,7 +104,8 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				actions: actions,
 				columns: columns,
 				moduleStore: this.moduleStore,
-				defaultAction: 'assign'
+				defaultAction: 'assign',
+				hideContextActionsWhenNoSelection: false
 			});
 
 			// add the grid to the title pane
@@ -119,12 +117,14 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				dynamicValues: 'internetrules/schools',
 				label: _('School'),
 				autoHide: true
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				description: _('Specifies the substring pattern which is searched for in the group properties'),
 				label: _('Search pattern'),
@@ -159,9 +159,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			// define a cleanup function
 			var _dialog = null, form = null;
 			var _cleanup = function() {
-				_dialog.hide();
-				_dialog.destroyRecursive();
-				form.destroyRecursive();
+				_dialog.close();
 			};
 
 			// prepare displayed list of groups
@@ -207,14 +205,14 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			var buttons = [{
 				name: 'cancel',
 				label: _('Cancel'),
-				callback: _cleanup
+				callback: _cleanup,
+				align: 'left'
 			}, {
 				name: 'submit',
 				label: _('Assign rule'),
-				style: 'float:right',
 				callback: lang.hitch(this, function(vals) {
 					// prepare parameters
-					form.standby(true);
+					_dialog.standby(true);
 					var rule = form.getWidget('rule').get('value');
 					var assignedRules = array.map(ids, function(iid) {
 						return {
@@ -236,7 +234,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			}];
 
 			// generate the search form
-			form = new StandbyForm({
+			form = new Form({
 				// property that defines the widget's position in a dijit.layout.BorderContainer
 				widgets: widgets,
 				layout: [ 'rule', 'message' ],
@@ -247,9 +245,10 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			_dialog = new Dialog({
 				title: _('Assign internet rule'),
 				content: form,
-				'class' : 'umcPopup',
+				destroyOnCancel: true,
 				style: 'max-width: 400px;'
 			});
+			_dialog.standbyDuring(form.ready());
 			this.own(_dialog);
 			_dialog.show();
 		}

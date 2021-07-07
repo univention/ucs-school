@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (16.0.2) unstable; urgency=medium
+
+  * Bug #53373: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 07 Jul 2021 11:14:49 +0200
+
 ucs-school-umc-internetrules (16.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
