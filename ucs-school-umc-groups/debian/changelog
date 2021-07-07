@@ -1,3 +1,15 @@
+ucs-school-umc-groups (10.0.4) unstable; urgency=medium
+
+  * Bug #53369: add missing icons to grid buttons
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 08 Jul 2021 13:54:31 +0200
+
+ucs-school-umc-groups (10.0.3) unstable; urgency=medium
+
+  * Bug #53369: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 07 Jul 2021 11:12:18 +0200
+
 ucs-school-umc-groups (10.0.2) unstable; urgency=medium
 
   * Bug #52631: migrate ucs-school-umc-groups to Python 3

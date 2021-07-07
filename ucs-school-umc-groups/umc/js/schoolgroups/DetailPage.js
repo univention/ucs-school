@@ -42,11 +42,12 @@ define([
 ], function(declare, lang, array, Page, Form, StandbyMixin, TextBox, ComboBox, MultiObjectSelect, _) {
 
 	return declare("umc.modules.schoolgroups.DetailPage", [ Page, StandbyMixin ], {
+		mainContentClass: 'umcCard2', // umc/widgets/Page.js
+
 		moduleStore: null,
 		moduleFlavor: null,
 		umcpCommand: null,
 		_form: null,
-		standbyOpacity: 1,
 
 		multiWidgetName: 'members',
 
@@ -58,12 +59,12 @@ define([
 			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save changes'),
-				iconClass: 'umcSaveIconWhite',
+				iconClass: 'save',
 				callback: lang.hitch(this, '_save')
 			}, {
 				name: 'close',
 				label: _('Back to overview'),
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				callback: lang.hitch(this, 'onClose')
 			}];
 		},
