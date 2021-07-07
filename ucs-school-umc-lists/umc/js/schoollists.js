@@ -31,32 +31,15 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array",
-	"dojo/on",
-	"dojo/date/locale",
-	"dojo/Deferred",
-	"dijit/Dialog",
-	"dojox/html/entities",
 	"umc/dialog",
-	"umc/tools",
 	"umc/widgets/Module",
-	"umc/widgets/Grid",
 	"umc/widgets/Page",
-	"umc/widgets/Form",
-	"umc/widgets/SearchBox",
-	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
-	"umc/widgets/CheckBox",
 	"umc/widgets/Button",
-	"umc/widgets/Text",
 	"umc/widgets/ContainerWidget",
-	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
-	"umc/i18n/tools",
 	"umc/i18n!umc/modules/schoollists"
-], function(declare, lang, array, on, locale, Deferred, Dialog, entities, dialog, tools, Module,
-			Grid, Page, Form, SearchBox, TextBox, ComboBox, CheckBox, Button, Text, ContainerWidget, ProgressInfo,
-			SearchForm, i18nTools, _) {
+], function(declare, lang, dialog, Module, Page, ComboBox, Button, ContainerWidget, SearchForm, _) {
 
 	return declare("umc.modules.schoollists", [ Module ], {
 		idProperty: 'id',
@@ -104,9 +87,8 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standby(true);
-
 			this._searchPage = new Page({
+				mainContentClass: 'umcCard2',
 				helpText: _(
 					'This module lets you export class and workgroup lists. The lists are in the CSV format. ' +
 					'If you have problems opening the exported file, ensure the encoding is set to UTF-16 ' +
@@ -146,7 +128,9 @@ define([
 				name: 'csvUtf16',
 				description: _('Download a list of group members'),
 				label: _('Export (Recommended)'),
-				style: "margin: 0; width: 30em;",
+				size: 'One',
+				'class': 'ucsFillButton',
+				defaultButton: true,
 				onClick: lang.hitch(this, function() {
 					if (this._searchForm.validate()) {
 						this._csvFormat = 'excel';
@@ -160,7 +144,8 @@ define([
 				name: 'csvUtf8',
 				description: _('Download a list of group members (in an alternative format)'),
 				label: _('Export (Alternative format)'),
-				style: "margin: 0; width: 30em;",
+				size: 'One',
+				'class': 'ucsFillButton',
 				onClick: lang.hitch(this, function() {
 					if (this._searchForm.validate()) {
 						this._csvFormat = 'alternative';
@@ -178,7 +163,6 @@ define([
 			];
 
 			this._searchForm = new SearchForm({
-				region: 'top',
 				hideSubmitButton: true,
 				widgets: widgets,
 				layout: layout,
@@ -190,11 +174,8 @@ define([
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});
-			var container = new ContainerWidget();
-			container.addChild(this._searchForm);
-			this._searchPage.addChild(container);
-			this._searchForm.ready().then(lang.hitch(this, 'standby', false));
-
+			this._searchPage.addChild(this._searchForm);
+			this.standbyDuring(this._searchForm.ready());
 		}
 	});
 
