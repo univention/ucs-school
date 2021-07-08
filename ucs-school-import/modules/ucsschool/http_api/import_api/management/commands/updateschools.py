@@ -31,6 +31,8 @@
 
 """
 Django manage.py command to update one/some/all School object(s).
+
+python -m ucsschool.http_api.manage updateschools --all
 """
 
 from __future__ import unicode_literals
