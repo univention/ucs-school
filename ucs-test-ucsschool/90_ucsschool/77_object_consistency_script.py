@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.group.WorkGroup CRUD operations
 ## roles: [domaincontroller_master]
@@ -13,7 +13,7 @@
 #
 
 try:
-    from typing import Tuple
+    from typing import Tuple  # noqa: F401
 except ImportError:
     pass
 
@@ -307,7 +307,3 @@ def test_not_existing_martkplatz_share(create_ou, udm_instance, ucr_hostname):
 
     stdout, stderr = exec_script(ou_name)
     assert_error_msg_in_script_output(stdout, marktplatz_share, "does not exist")
-
-
-if __name__ == "__main__":
-    assert pytest.main(["-l", "-v", __file__]) == 0

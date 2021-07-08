@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test deleting multiple workgroups
 ## roles: [domaincontroller_slave]
@@ -10,8 +10,6 @@
 #
 # Hint: When debugging interactively, disable output capturing:
 # $ pytest -s -l -v ./......py::test_create
-#
-import pytest
 
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -48,7 +46,3 @@ def test_delete_multiple_workgroups():
             "schoolgroups/query", {"school": school, "pattern": ""}, "workgroup-admin"
         ).result
         assert len(res_query) == remaining_groups
-
-
-if __name__ == "__main__":
-    assert pytest.main(["-l", "-v", __file__]) == 0

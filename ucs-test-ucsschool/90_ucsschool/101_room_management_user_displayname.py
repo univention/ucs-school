@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: Unittests for italc display names
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -107,7 +107,3 @@ def test_username_missing_veyon(user_str, missing_username):
     user_str = user_str[-1] if missing_username else user_str[0]
     with pytest.raises(AttributeError):
         user_map_veyon.validate_userstr(user_str)
-
-
-if __name__ == "__main__":
-    assert pytest.main(["-l", "-v", __file__]) == 0

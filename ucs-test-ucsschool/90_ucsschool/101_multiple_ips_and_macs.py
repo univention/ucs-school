@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: Unittests for italc multiple ips and macs
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -416,7 +416,3 @@ def test_no_ips_veyon(monkeypatch):
         _ = computer.ipAddress
         assert computer.connected() is False
         assert exc == "Unknown IP address"
-
-
-if __name__ == "__main__":
-    assert pytest.main(["-l", "-v", __file__]) == 0
