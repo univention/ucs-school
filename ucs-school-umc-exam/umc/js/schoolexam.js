@@ -76,7 +76,6 @@ define([
 
 		umcpCommand: null,
 		autoValidate: true,
-		standbyOpacity: 1.0,
 		examName: null,
 		_showRestart: false,
 		_progressBar: null,
@@ -233,7 +232,7 @@ define([
 					name: 'files',
 					command: 'schoolexam/upload',
 					multiFile: true,
-					label: ' ',
+					label: _('Files'),
 					buttonLabel: _('Upload files'),
 					description: _('Files that are distributed along with this exam')
 					//canUpload: lang.hitch(this, '_checkFilenameUpload'),
@@ -390,7 +389,8 @@ define([
 			// create the grid for rebooting computers manually
 			var rebootPage = this.getPage('reboot');
 			this._grid = new RebootGrid({
-				umcpCommand: lang.hitch(this, 'umcpCommand')
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				'class': 'umcGridOnContainer'
 			});
 			rebootPage.addChild(this._grid);
 			domClass.remove(this._grid._grid.domNode, 'umcDynamicHeight');
@@ -404,7 +404,8 @@ define([
 			// create recipient detail grid manually
 			var advancedPage = this.getPage('advanced');
 			this._recipientsGrid = new RecipientsGrid({
-				umcpCommand: lang.hitch(this, 'umcpCommand')
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				'class': 'umcGridOnContainer'
 			});
 			advancedPage.addChild(this._recipientsGrid);
 
@@ -856,13 +857,15 @@ define([
 		_searchPage: null,
 		_grid: null,
 
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
+		},
+
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			this._searchPage = new Page({
-				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				fullWidth: true
 			});
 			this.addChild(this._searchPage);
 			// define grid actions
@@ -870,7 +873,7 @@ define([
 				name: 'add',
 				label: _('Prepare new exam'),
 				description: _('Prepare new exam'),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, '_openWizard', false)
@@ -878,7 +881,7 @@ define([
 				name: 'edit',
 				label: _('Edit exam'),
 				description: _('Edit exam'),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isContextAction: true,
 				isMultiAction: false,
 				isStandardAction: true,
@@ -890,7 +893,7 @@ define([
 				name: 'delete',
 				label: _('Delete exam(s)'),
 				description: _('Delete exam(s)'),
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				isContextAction: true,
 				isMultiAction: true,
 				isStandardAction: true,
@@ -947,6 +950,7 @@ define([
 			// add remaining elements of the search form
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'filter',
 				label: 'Filter',
 				staticValues: [
@@ -955,6 +959,7 @@ define([
 				]
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				inlineLabel: _('Search...'),
 				description: _('Specifies the substring pattern which is searched for in the exams.'),
@@ -979,16 +984,13 @@ define([
 			});
 
 			this._searchPage.addChild(this._searchForm);
-
-			// we need to call page's startup method manually as all widgets have
-			// been added to the page container object
-			this._searchPage.startup();
 		},
 		_openWizard: function(editMode) {
 			this._examWizard = new ExamWizard({
-				'class': 'umcCard',
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
-				examName: editMode ? this._grid.getSelectedIDs()[0] : null
+				examName: editMode ? this._grid.getSelectedIDs()[0] : null,
+				standby: lang.hitch(this, 'standby'),
+				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
 			this.addChild(this._examWizard);
 
@@ -1007,15 +1009,15 @@ define([
 		_deleteExams: function() {
 			var exams = this._grid.getSelectedIDs();
 			dialog.confirm(_('Do you really want to delete %s?', exams.join(', ')), [{
+				label: _('Cancel'),
+				default: true
+			}, {
 				label: _('Delete'),
 				callback: lang.hitch(this, function() {
 					this.umcpCommand('schoolexam/exam/delete', {exams: exams}).then(lang.hitch(this, function() {
 						this._grid.filter(this._grid.query);
 					}))
 				})
-			}, {
-				label: _('Cancel'),
-				default: true
 			}], _('Delete exam(s)'));
 		}
 	});
