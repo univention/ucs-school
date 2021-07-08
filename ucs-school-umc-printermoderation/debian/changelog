@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (17.0.3) unstable; urgency=medium
+
+  * Bug #53376: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 08 Jul 2021 07:37:44 +0200
+
 ucs-school-umc-printermoderation (17.0.2) unstable; urgency=medium
 
   * Bug #52613: migrate ucs-school-umc-printermoderation to Python 3
