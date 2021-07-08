@@ -2,7 +2,7 @@
 @%@UCRWARNING=# @%@
 
 #
-# http://docs.gunicorn.org/en/19.6.0/settings.html
+# http://docs.gunicorn.org/en/19.9.0/settings.html
 #
 
 from multiprocessing import cpu_count
