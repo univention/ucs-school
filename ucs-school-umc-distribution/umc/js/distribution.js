@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/Deferred",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Grid",
@@ -42,7 +43,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/distribution/DetailPage",
 	"umc/i18n!umc/modules/distribution"
-], function(declare, lang, Deferred, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
+], function(declare, lang, Deferred, entities, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	var cmpUsername = function(a, b) {
 		return a && b && a.toLowerCase() === b.toLowerCase();
@@ -212,15 +213,15 @@ define([
 		_distribute: function(ids, items) {
 
 			if (!items[0].recipients) {
-				dialog.alert(_('Error: No recipients have been assigned to the project!'));
+				dialog.alert(entities.encode(_('Error: No recipients have been assigned to the project!')));
 				return;
 			}
 
-			var msg = _('Please confirm to collect the project <i>%s</i>.', items[0].description);
+			var msg = _('Please confirm to collect the project <i>%s</i>.', entities.encode(items[0].description));
 			if (!items[0].isDistributed && items[0].files) {
-				msg = _('Please confirm to distribute the project <i>%s</i>.', items[0].description);
+				msg = _('Please confirm to distribute the project <i>%s</i>.', entities.encode(items[0].description));
 			} else if (!items[0].isDistributed && !items[0].files) {
-				msg = _('Warning: No files have been assigned to the project!<br>Please confirm to distribute the empty project <i>%s</i>.', items[0].description);
+				msg = _('Warning: No files have been assigned to the project!<br>Please confirm to distribute the empty project <i>%s</i>.', entities.encode(items[0].description));
 			}
 			var stepConfirmation = new Deferred();
 			dialog.confirm(msg, [{
@@ -262,7 +263,7 @@ define([
 		_editObject: function(ids, items) {
 			if (this.moduleFlavor === 'teacher' && !cmpUsername(items[0].sender, tools.status('username'))) {
 				// a teacher may only edit his own project
-				dialog.alert(_('Only the owner of a project is able to edit its details. If necessary, you are able to transfer the ownership of a project to your account by executing the action "adopt".'));
+				dialog.alert(entities.encode(_('Only the owner of a project is able to edit its details. If necessary, you are able to transfer the ownership of a project to your account by executing the action "adopt".')));
 				return;
 			}
 
@@ -272,7 +273,7 @@ define([
 		},
 
 		_adopt: function(ids, items) {
-			dialog.confirm(_('Please confirm to transfer the ownership of the project <i>%s</i> to your account.', items[0].description), [{
+			dialog.confirm(_('Please confirm to transfer the ownership of the project <i>%s</i> to your account.', entities.encode(items[0].description)), [{
 				label: _('Cancel'),
 				name: 'cancel',
 				'default': true
@@ -288,7 +289,7 @@ define([
 						if (response.result instanceof Array && response.result.length > 0) {
 							var res = response.result[0];
 							if (!res.success) {
-								dialog.alert(_('The following error occurred: %s', res.details));
+								dialog.alert(entities.encode(_('The following error occurred: %s', res.details)));
 							}
 						}
 					}), lang.hitch(this, function() {
@@ -301,11 +302,11 @@ define([
 		_delete: function(ids, items) {
 			if (this.moduleFlavor === 'teacher' && !cmpUsername(items[0].sender, tools.status('username'))) {
 				// a teacher may only remove his own project
-				dialog.alert(_('Only the owner of a project is able to remove it.'));
+				dialog.alert(entities.encode(_('Only the owner of a project is able to remove it.')));
 				return;
 			}
 
-			dialog.confirm(_('Please confirm to remove the project <i>%s</i>.', items[0].description), [{
+			dialog.confirm(_('Please confirm to remove the project <i>%s</i>.', entities.encode(items[0].description)), [{
 				label: _('Cancel'),
 				name: 'cancel',
 				'default': true

@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Page",
@@ -44,7 +45,7 @@ define([
 	"umc/widgets/TimeBox",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/distribution"
-], function(declare, lang, array, dialog, tools, Page, Form, TextBox, ComboBox, MultiUploader, MultiObjectSelect, DateBox, TimeBox, StandbyMixin, _) {
+], function(declare, lang, array, entities, dialog, tools, Page, Form, TextBox, ComboBox, MultiUploader, MultiObjectSelect, DateBox, TimeBox, StandbyMixin, _) {
 
 	return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {
 		// summary:
@@ -290,7 +291,7 @@ define([
 				var distributedFiles = [];
 				array.forEach(results, function(i) {
 					if (i.distributed) {
-						distributedFiles.unshift(i.filename);
+						distributedFiles.unshift(entities.encode(i.filename));
 					}
 				});
 				if (distributedFiles.length > 0) {
@@ -328,13 +329,13 @@ define([
 
 				array.forEach(result, function(ifile) {
 					if (ifile.distributed) {
-						distributed.push(ifile.filename);
+						distributed.push(entities.encode(ifile.filename));
 					}
 					if (ifile.projectDuplicate) {
-						projectDuplicate.push(ifile.filename);
+						projectDuplicate.push(entities.encode(ifile.filename));
 					}
 					if (ifile.sessionDuplicate) {
-						sessionDuplicate.push(ifile.filename);
+						sessionDuplicate.push(entities.encode(ifile.filename));
 					}
 				});
 
