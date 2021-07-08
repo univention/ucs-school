@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (18.0.3) unstable; urgency=medium
+
+  * Bug #53367: adjust modules to UCS 5 design
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 08 Jul 2021 10:18:05 +0200
+
 ucs-school-umc-distribution (18.0.2) unstable; urgency=medium
 
   * Bug #52614: migrate ucs-school-umc-distribution to Python 3
