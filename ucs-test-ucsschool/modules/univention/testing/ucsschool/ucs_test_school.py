@@ -368,7 +368,7 @@ class UCSTestSchool(object):
         try:
             obj_list = self.lo.searchDn(base=oudn, scope="sub")  # type: List[str]
         except noObject:
-            logger.warn("*** OU has already been removed.")
+            logger.warning("*** OU has already been removed.")
             ok = False
         else:
             # sorted by length, longest first (==> leafs first)
@@ -429,7 +429,7 @@ class UCSTestSchool(object):
                 if dn.decode("UTF-8").endswith(",ou={},{}".format(ou_name, self.ldap_base))
             ]
             ou_member_uids = [
-                "{}$".format(explode_rdn(dn.decode("UTF-8"), True)[0]) for dn in ou_member_dns
+                "{}$".format(explode_rdn(dn, True)[0]) for dn in ou_member_dns
             ]
             ml = []
             if ou_member_dns:

@@ -8,7 +8,7 @@ import string
 import subprocess
 import tempfile
 
-import ipaddr
+import ipaddress as ipaddr
 
 import univention.config_registry
 import univention.testing.strings as uts
@@ -49,10 +49,11 @@ def get_reverse_net(network, netmask):
     )
     (stdout, stderr) = p.communicate()
 
-    output = stdout.strip().split(".")
+    output = stdout.strip().split(b".")
     output.reverse()
+    outp = [elem.decode("utf-8") for elem in output]
 
-    return ".".join(output)
+    return ".".join(outp)
 
 
 class Network:
@@ -60,16 +61,16 @@ class Network:
         assert prefixlen > 7
         assert prefixlen < 25
 
-        self._net = ipaddr.IPv4Network("%s/%s" % (random_ip(), prefixlen))
-        self.network = "%s/%s" % (self._net.network, prefixlen)
-        self.iprange = "%s-%s" % (self._net.network + 1, self._net.network + 10)
-        self.defaultrouter = self._net.network + 1
-        self.nameserver = self._net.network + 2
-        self.netbiosserver = self._net.network + 8
+        self._net = ipaddr.IPv4Network("%s/%s" % (random_ip(), prefixlen), strict=False)
+        self.network = "%s/%s" % (self._net, prefixlen)
+        self.iprange = "%s-%s" % (self._net.network_address + 1, self._net.network_address + 10)
+        self.defaultrouter = self._net.network_address + 1
+        self.nameserver = self._net.network_address + 2
+        self.netbiosserver = self._net.network_address + 8
 
         self.router_mode = False
         self.school = school
-        self.name = "%s-%s" % (self.school, self._net.network)
+        self.name = "%s-%s" % (self.school, self._net)
 
         self.school_base = get_school_base(self.school)
 
@@ -190,7 +191,7 @@ class ImportFile:
 
     def write_import(self, data):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, data)
+        os.write(self.import_fd, data.encode("utf-8"))
         os.close(self.import_fd)
 
     def run_import(self, data):
