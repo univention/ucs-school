@@ -54,18 +54,15 @@ define([
 		_searchPage: null,
 		_detailPage: null,
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.standbyOpacity = 1;
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
 		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			this._searchPage = new Page({
-				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				fullWidth: true
 			});
 			this.addChild(this._searchPage);
 
@@ -74,7 +71,7 @@ define([
 				name: 'add',
 				label: _('Add project'),
 				description: _('Create a new distribution project'),
-				iconClass: 'umcIconAdd',
+				iconClass: 'plus',
 				isContextAction: false,
 				isStandardAction: true,
 				callback: lang.hitch(this, '_newObject')
@@ -82,7 +79,7 @@ define([
 				name: 'edit',
 				label: _('Edit'),
 				description: _('Edit the selected distribution project.'),
-				iconClass: 'umcIconEdit',
+				iconClass: 'edit-2',
 				isStandardAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, '_editObject')
@@ -122,7 +119,7 @@ define([
 				description: _('Removes the project from the internal database.'),
 				isStandardAction: true,
 				isMultiAction: false,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, '_delete')
 			}];
 
@@ -160,6 +157,7 @@ define([
 			// add remaining elements of the search form
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxDark',
 				name: 'filter',
 				label: 'Filter',
 				staticValues: [
@@ -168,6 +166,7 @@ define([
 				]
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxDark',
 				name: 'pattern',
 				inlineLabel: _('Search...'),
 				description: _('Specifies the substring pattern which is searched for in the projects.'),
@@ -192,10 +191,6 @@ define([
 			});
 
 			this._searchPage.addChild(this._searchForm);
-
-			// we need to call page's startup method manually as all widgets have
-			// been added to the page container object
-			this._searchPage.startup();
 
 			// create a DetailPage instance
 			this._detailPage = new DetailPage({
@@ -248,10 +243,10 @@ define([
 						}
 						else {
 							if (items[0].isDistributed) {
-								dialog.notify(_('The project files have been collected successfully.'));
+								dialog.contextNotify(_('The project files have been collected successfully.'));
 							}
 							else {
-								dialog.notify(_('The project files have been distributed successfully.'));
+								dialog.contextNotify(_('The project files have been distributed successfully.'));
 							}
 						}
 					}
