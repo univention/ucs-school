@@ -343,7 +343,7 @@ class UCSSchoolHelperAbstractClass(object):
         likely change the outcome of self.dn as well
         """
         if self.name and self.position:
-            name = self._meta.ldap_map_function(self.name).decode('utf-8')
+            name = self._meta.ldap_map_function(self.name)
             return "%s=%s,%s" % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
         return self.old_dn
 
