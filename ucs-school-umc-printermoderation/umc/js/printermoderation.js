@@ -33,10 +33,11 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/Deferred",
-	"dijit/Dialog",
 	"dojo/date/locale",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/tools",
+	"umc/widgets/Dialog",
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
@@ -45,10 +46,10 @@ define([
 	"umc/widgets/SearchBox",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
-	"umc/widgets/ProgressInfo",
+	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/printermoderation"
-], function(declare, lang, array, Deferred, Dialog, locale, dialog, tools, Grid,
-            Module, Page, Form, SearchForm, SearchBox, Text, ComboBox, ProgressInfo, _) {
+], function(declare, lang, array, Deferred, locale, entities, dialog, tools, Dialog, Grid,
+            Module, Page, Form, SearchForm, SearchBox, Text, ComboBox, ProgressBar, _) {
 
 	return declare("umc.modules.printermoderation", [ Module ], {
 		// summary:
@@ -60,22 +61,23 @@ define([
 
 		_grid: null,
 		_searchPage: null,
-		_progressInfo: null,
-		standbyOpacity: 1,
+		_progressBar: null,
+
+		selectablePagesToLayoutMapping: {
+			_searchPage: 'searchpage-grid'
+		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			// setup a progress bar with some info text
-			this._progressInfo = new ProgressInfo({
+			this._progressBar = new ProgressBar({
 				style: 'min-width: 400px;'
 			});
-			this.own(this._progressInfo);
+			this.own(this._progressBar);
 
 			this._searchPage = new Page({
-				fullWidth: true,
-				headerText: this.description,
-				helpText: ''
+				fullWidth: true
 			});
 
 			// define grid actions
@@ -105,7 +107,7 @@ define([
 				description: _( 'Delete the print job.' ),
 				isStandardAction: true,
 				isMultiAction: true,
-				iconClass: 'umcIconDelete',
+				iconClass: 'trash',
 				callback: lang.hitch(this, '_deletePrintJobs')
 			}];
 
@@ -139,6 +141,7 @@ define([
 			this._grid = new Grid({
 				actions: actions,
 				defaultAction: 'view',
+				hideContextActionsWhenNoSelection: false,
 				columns: columns,
 				moduleStore: this.moduleStore,
 				sortIndex: -4
@@ -148,6 +151,7 @@ define([
 
 			var widgets = [{
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'school',
 				description: _('Select the school.'),
 				label: _( 'School' ),
@@ -156,6 +160,7 @@ define([
 				dynamicValues: 'printermoderation/schools'
 			}, {
 				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'class',
 				description: _('Select a class or workgroup.'),
 				label: _('Class or workroup'),
@@ -167,6 +172,7 @@ define([
 				depends: 'school'
 			}, {
 				type: SearchBox,
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				size: 'TwoThirds',
 				inlineLabel: _('Search...'),
@@ -197,7 +203,6 @@ define([
 
 			this._searchPage.addChild(this._searchForm);
 			this.addChild(this._searchPage);
-			this._searchPage.startup();
 		},
 
 		_deletePrintJobs: function(ids, items) {
@@ -205,20 +210,19 @@ define([
 				label: _( 'Delete' ),
 				callback: lang.hitch( this, function() {
 					var finished_func = lang.hitch( this, function() {
-						this._progressInfo.update( items.length, _( 'Finished' ) );
+						this._progressBar.setInfo( null, _( 'Finished' ), 100 );
 						this.moduleStore.onChange();
 						this.standby( false );
 					} );
 					var deferred = new Deferred();
 
-					this._progressInfo.set( 'maximum', items.length );
-					this._progressInfo.update( 0, '', _( 'Deleting print jobs ...' ) );
-					this.standby( true, this._progressInfo );
+					this._progressBar.setInfo( _( 'Deleting print jobs ...' ), '', 0 );
+					this.standby( true, this._progressBar );
 					deferred.resolve();
 
 					array.forEach( items, lang.hitch( this, function( item, i ) {
 						deferred = deferred.then( lang.hitch( this, function() {
-							this._progressInfo.update( i, lang.replace( _( 'Print job {0} from {1}' ), [ item.printjob, item.user ] ) );
+							this._progressBar.setInfo( null, lang.replace( _( 'Print job {0} from {1}' ), [ item.printjob, item.user ] ), (i / ids.length) * 100 );
 							return this.umcpCommand( 'printermoderation/delete', {
 								username: item.username,
 								printjob: item.filename
@@ -237,26 +241,23 @@ define([
 			var _dialog = null, form = null;
 
 			var _cleanup = function() {
-				_dialog.hide();
-				_dialog.destroyRecursive();
-				form.destroyRecursive();
+				_dialog.close();
 			};
 
 			var _print = lang.hitch( this, function( printer ) {
 				var deferred = new Deferred();
 				var finished_func = lang.hitch(this, function() {
 					this.moduleStore.onChange();
-					this._progressInfo.update( ids.length, _( 'Finished' ) );
+					this._progressBar.setInfo( null, _( 'Finished' ), 100 );
 					this.standby( false );
 				} );
-				this._progressInfo.set( 'maximum', ids.length );
-				this._progressInfo.updateTitle( _( 'Printing ...' ) );
-				this.standby( true, this._progressInfo );
+				this._progressBar.setInfo( _( 'Printing ...' ) );
+				this.standby( true, this._progressBar );
 				deferred.resolve();
 
 				array.forEach( items, function( item, i ) {
 					deferred = deferred.then( lang.hitch( this, function() {
-						this._progressInfo.update( i, lang.replace( _( 'Print job <i>{printjob}</i> of <i>{user}</i>' ), item ) );
+						this._progressBar.setInfo( null, lang.replace( _( 'Print job <i>{printjob}</i> of <i>{user}</i>' ), item ), (i / ids.length) * 100 );
 						return tools.umcpCommand( 'printermoderation/print', {
 							username: item.username,
 							printjob: item.filename,
@@ -275,7 +276,7 @@ define([
 			} else {
 				message = lang.replace( _( 'A printer must be selected on which the {0} documents should be printed.' ), [ items.length ] );
 			}
-			message = '<p>' + message + '</p>';
+			message = '<p>' + entities.encode(message) + '</p>';
 			form = new Form( {
 				style: 'max-width: 500px;',
 				widgets: [ {
@@ -297,18 +298,18 @@ define([
 					label: _('Printer')
 				} ],
 				buttons: [ {
+					name: 'cancel',
+					label: _( 'Cancel' ),
+					align: 'left',
+					callback: _cleanup
+				}, {
 					name: 'submit',
 					label: _( 'Print' ),
-					style: 'float: right;',
 					callback: function() {
 						var printer = form.getWidget( 'printer' );
 						_cleanup();
 						_print( printer.get( 'value' ) );
 					}
-				}, {
-					name: 'cancel',
-					label: _( 'Cancel' ),
-					callback: _cleanup
 				}],
 				layout: [ 'info', 'school', 'printer' ]
 			});
@@ -316,7 +317,7 @@ define([
 			_dialog = new Dialog( {
 				title: _( 'Print' ),
 				content: form,
-				'class': 'umcPopup'
+				destroyOnCancel: true
 			} );
 			_dialog.show();
 		}
