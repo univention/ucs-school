@@ -127,7 +127,7 @@ Description: UCS@school: LDAP import schema and custom attributes
 Package: ucs-school-import-http-api
 Architecture: all
 Depends:
- gunicorn (>=19.0-1),
+ gunicorn3 (>=19.0-1),
  python-ucsschool-importer-http-api (>= 17.0.65),
  python3-ucsschool-importer-http-api,
  ucs-school-import (= ${source:Version}),
