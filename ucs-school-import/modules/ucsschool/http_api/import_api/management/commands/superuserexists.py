@@ -31,6 +31,8 @@
 
 """
 Django manage.py command to check if a specified superuser account already exists.
+
+python -m ucsschool.http_api.manage superuserexists
 """
 
 from __future__ import unicode_literals
