@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: Schoolrooms management module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -92,7 +92,3 @@ def test_veyon_add_setting(create_win_computer, school, is_veyon):
     room.add()
     room.put({"veyon": not is_veyon})
     room.assert_backend_role(not is_veyon)
-
-
-if __name__ == "__main__":
-    assert pytest.main(["-l", "-v", __file__]) == 0
