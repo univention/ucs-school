@@ -69,11 +69,6 @@ define([
 			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
 
-			// Set the opacity for the standby animation to 100% in order to mask
-			// GUI changes when the module is opened. Call this.standby(true|false)
-			// to enabled/disable the animation.
-			this.standbyOpacity = 1;
-
 			// set the page header
 			this.headerText = _('Project properties');
 			this.helpText = _('This page allows to modify properties of an existing or new distribution project.');
@@ -83,14 +78,14 @@ define([
 			this.headerButtons = [{
 				name: 'submit',
 				label: _('Save changes'),
-				iconClass: 'umcSaveIconWhite',
+				iconClass: 'save',
 				callback: lang.hitch(this, function() {
 					this._save(this._form.get('value'));
 				})
 			}, {
 				name: 'close',
 				label: _('Back to overview'),
-				iconClass: 'umcArrowLeftIconWhite',
+				iconClass: 'arrow-left',
 				callback: lang.hitch(this, function() {
 					this.onClose();
 					this._resetForm();
@@ -262,8 +257,7 @@ define([
 			this._form = new Form({
 				widgets: widgets,
 				layout: layout,
-				moduleStore: this.moduleStore,
-				scrollable: true
+				moduleStore: this.moduleStore
 			});
 
 			// add form to page... the page extends a BorderContainer, by default
