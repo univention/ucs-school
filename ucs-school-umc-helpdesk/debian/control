@@ -21,7 +21,7 @@ Depends:
  python-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,
- ucs-school-umc-helpdesk-schema,
+ ucs-school-umc-helpdesk-schema (>= 16.0.4),
  univention-config-registry,
  univention-directory-manager-tools,
  univention-management-console,
@@ -49,6 +49,10 @@ Depends:
  univention-ldap-server ( >= 8.0.77-7 ),
  ${python3:Depends},
  ${python:Depends},
+Breaks:
+ ucs-school-umc-helpdesk (<< 16.0.4)
+Replaces:
+ ucs-school-umc-helpdesk (<< 16.0.4)
 Description: LDAP Schema for univention-management-console-helpdesk
  This package contains an LDAP Schema extension for the
  Univention Management Console Helpdesk module.
