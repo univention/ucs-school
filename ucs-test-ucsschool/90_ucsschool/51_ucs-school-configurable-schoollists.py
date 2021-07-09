@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner /usr/bin/pytest -s -l -v
 ## desc: Test umc calls to generate school class lists with altered attributes.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
@@ -40,7 +40,8 @@ def random_properties(udm_user, klass_name, n=5):
     return expected_values, udm_properties, column_names
 
 
-def main():
+def test_ucs_school_configurable_schoollists():
+    """Test umc calls to generate school class lists with altered attributes"""
     with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr:
         host = ucr.get("hostname")
         ucrv_name = "ucsschool/umc/lists/class/attributes"
@@ -82,7 +83,3 @@ def main():
             # Multi-values are returned in "", replacing them was the easiest way.
             class_list["csv"] = class_list["csv"].replace('"', "")
             assert class_list == expected_class_list
-
-
-if __name__ == "__main__":
-    main()
