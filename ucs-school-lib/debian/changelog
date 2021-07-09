@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.4) unstable; urgency=medium
+
+  * Bug #42405: escape DNs in ucsschool.lib.schoolldap
+
+ -- Florian Best <best@univention.de>  Fri, 09 Jul 2021 14:35:54 +0200
+
 ucs-school-lib (13.0.3) unstable; urgency=medium
 
   * Bug #53364: remove iTALC support

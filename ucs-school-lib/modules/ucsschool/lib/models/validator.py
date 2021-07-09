@@ -37,6 +37,7 @@ import traceback
 import uuid
 
 import ldap
+from ldap.dn import escape_dn_chars, str2dn
 
 try:
     from typing import Any, Dict, List, Optional, Type, Union  # noqa: F401
@@ -248,7 +249,7 @@ class UserValidator(SchoolValidator):
         Users should be inside the `Domain Users OU` of their schools.
         """
         return [
-            "cn=Domain Users {0},cn=groups,ou={0},{1}".format(school, ucr["ldap/base"])
+            "cn=Domain Users {0},cn=groups,ou={0},{1}".format(escape_dn_chars(school), ucr["ldap/base"])
             for school in schools
         ]
 
@@ -339,7 +340,8 @@ class ExamStudentValidator(StudentValidator):
         """
         return [
             "cn={},cn=ucsschool,cn=groups,{}".format(
-                SchoolSearchBase._examGroupNameTemplate % {"ou": school.lower()}, ucr["ldap/base"]
+                escape_dn_chars(SchoolSearchBase._examGroupNameTemplate % {"ou": school.lower()}),
+                ucr["ldap/base"],
             )
             for school in schools
         ]
@@ -396,9 +398,10 @@ class GroupAndShareValidator(SchoolValidator):
         Groups and shares do not have the property school,
         so it is extracted of the dn.
         """
-        res = re.search(r"ou=([^,]+)", dn)
-        if res:
-            return res.group(1)
+        try:
+            return next(val for x in str2dn(dn) for attr, val, z in x if attr.lower() == "ou")
+        except StopIteration:
+            pass
 
     @classmethod
     def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
