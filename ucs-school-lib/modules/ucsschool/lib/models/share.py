@@ -33,6 +33,7 @@
 import grp
 import os.path
 
+from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 from six import iteritems
 
@@ -87,7 +88,7 @@ class SetNTACLsMixin(object):
 
     def get_ou_admin_full_control(self, lo):  # type: (LoType) -> List[str]
         admin_dn = "cn=admins-{},cn=ouadmins,cn=groups,{}".format(
-            self.school.lower(), ucr.get("ldap/base")
+            escape_dn_chars(self.school.lower()), ucr.get("ldap/base")
         )
         samba_sid = self.get_groups_samba_sid(lo, admin_dn)
         return ["(A;OICI;0x001f01ff;;;{})".format(samba_sid)]
@@ -104,7 +105,9 @@ class SetNTACLsMixin(object):
         """
         search_base = self.get_search_base(self.school)
         student_group_dn = "cn={}{},cn=groups,{}".format(
-            search_base.group_prefix_students, self.school, search_base.schoolDN
+            escape_dn_chars(search_base.group_prefix_students),
+            escape_dn_chars(self.school),
+            search_base.schoolDN,
         )
         samba_sid = self.get_groups_samba_sid(lo, student_group_dn)
         return ["(D;OICI;WOWD;;;{})".format(samba_sid)]
@@ -133,7 +136,10 @@ class SetNTACLsMixin(object):
         """
         res = self.get_aces_deny_students_change_permissions(lo)
         search_base = self.get_search_base(self.school)
-        domain_users_dn = "cn=Domain Users %s,%s" % (self.school.lower(), search_base.groups)
+        domain_users_dn = "cn=Domain Users %s,%s" % (
+            escape_dn_chars(self.school.lower()),
+            search_base.groups,
+        )
         samba_sid = self.get_groups_samba_sid(lo, domain_users_dn)
         res.append("(A;OICI;0x001f01ff;;;{})".format(samba_sid))
         res.extend(self.get_ou_admin_full_control(lo))

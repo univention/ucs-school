@@ -42,7 +42,7 @@ except ImportError:
 
 import ldap
 from ldap.dn import escape_dn_chars
-from ldap.filter import escape_filter_chars, filter_format
+from ldap.filter import filter_format
 
 import univention.admin.modules
 import univention.admin.objects
@@ -328,7 +328,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             host = SchoolDC(name=hostname, school=self.name)
             return host.dn
 
-        host = AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(hostname))
+        host = AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", (hostname,)))
         if host:
             return host.dn
         else:
@@ -373,7 +373,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if ou_specific:
             name = "OU%s-%s" % (self.name.lower(), name)
         if as_dn:
-            return "cn=%s,cn=ucsschool,cn=groups,%s" % (name, ucr.get("ldap/base"))
+            return "cn=%s,cn=ucsschool,cn=groups,%s" % (escape_dn_chars(name), ucr.get("ldap/base"))
         else:
             return name
 
@@ -425,13 +425,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             mod = univention.admin.modules.get("computers/domaincontroller_slave")
             if not mod.initialized:
                 univention.admin.modules.init(lo, po, mod)
-            slave_dcs = lo.search(
-                "(&(objectClass=univentionDomainController)(cn={})(univentionServerRole=slave))".format(
-                    dc_name_l
+            slave_dcs = lo.searchDn(
+                filter_format(
+                    "(&(objectClass=univentionDomainController)(cn=%s)(univentionServerRole=slave))",
+                    [dc_name_l],
                 )
             )
             if slave_dcs:
-                dn, attr = slave_dcs[0]
+                dn = slave_dcs[0]
                 dc_udm_obj = univention.admin.objects.get(mod, None, lo, po, dn)
                 dc_udm_obj.open()
             if not dc_udm_obj:
@@ -441,7 +442,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 dc_udm_obj = dc.get_udm_object(lo)
             else:
                 dc = SchoolDCSlave.from_udm_obj(
-                    SchoolDCSlave.get_first_udm_obj(lo, "cn={}".format(self.dc_name)), self.name, lo
+                    SchoolDCSlave.get_first_udm_obj(lo, filter_format("cn=%s", [self.dc_name])),
+                    self.name,
+                    lo,
                 )
                 if dc:
                     dc.ucsschool_roles = [create_ucsschool_role_string(role_dc_slave_edu, self.name)]
@@ -483,7 +486,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # call dc.move() if really necessary to move
             return dc.modify(lo, move_if_necessary=False)
         else:
-            existing_host = AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(name))
+            existing_host = AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", (name,)))
             if existing_host:
                 self.logger.error(
                     'Given host name "%s" is already in use and no domaincontroller slave system. '
@@ -499,7 +502,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         for dc in school_dcs:
             administrative = dc == "verwaltung"
             dc_name = self.get_dc_name(administrative=administrative)
-            server = AnyComputer.get_first_udm_obj(lo, "cn=%s" % escape_filter_chars(dc_name))
+            server = AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", (dc_name,)))
             self.logger.info(
                 "School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  "
                 "server=%r",
@@ -651,7 +654,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             "cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
             "cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s",
         ):
-            grpdn = grpdn % {"ou": self.name, "basedn": ucr.get("ldap/base")}
+            grpdn = grpdn % {"ou": escape_dn_chars(self.name), "basedn": ucr.get("ldap/base")}
             self._remove_udm_object("groups/group", grpdn, lo)
 
         for user in User.get_all(lo, self.name):
@@ -916,7 +919,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             else:
                 self.logger.warning("DHCPDNSPolicy for {} exists already.".format(self.name))
 
-            dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(ou_lower, ou_dn)
+            dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(escape_dn_chars(ou_lower), ou_dn)
             # In a single server environment, the master is the DNS server.
             if ucr.is_true("ucsschool/singlemaster", False):
                 policy = dhcp_dns_mod.get(dhcp_dns_policy_dn)
@@ -945,7 +948,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         udm = UDM(lo).version(1)
         ou = self.name
         ou_dn = self.dn
-        ou_import_group = "cn={}-import-all,cn=groups,{}".format(ou, ou_dn)
+        ou_import_group = "cn={}-import-all,cn=groups,{}".format(escape_dn_chars(ou), ou_dn)
         group = Group.cache("{}-import-all".format(ou), ou)
         group.position = "cn=groups,{}".format(ou_dn)
         group.name = "{}-import-all".format(ou)
