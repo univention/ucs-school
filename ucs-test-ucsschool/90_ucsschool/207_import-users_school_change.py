@@ -225,7 +225,9 @@ class Test(CLI_Import_v2_Tester):
         return userlist[0]
 
     def log_person_infos(self, person):
-        self.log.warn("User object %r:\n%s", person.dn, pprint.pformat(self.lo.get(person.dn), indent=2))
+        self.log.warning(
+            "User object %r:\n%s", person.dn, pprint.pformat(self.lo.get(person.dn), indent=2)
+        )
         self.log.info("Membership: %s", pprint.pformat(self.get_group_membership(person.dn), indent=2))
 
     def verify_removed_schoolgroup_membership(self, person, school_removed_from):

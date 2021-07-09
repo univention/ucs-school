@@ -362,9 +362,9 @@ html5
         print("supposed = ", supposed)
         print("current = ", current)
 
-        fail_state = supposed != current
-        if fail_state:
-            utils.fail("Project %s was not modified successfully,supposed!=current" % (self.name,))
+        assert supposed == current, "Project %s was not modified successfully,supposed!=current" % (
+            self.name,
+        )
 
         # check distribute
         check = "distribution"
@@ -374,14 +374,15 @@ html5
         after_time = found["starttime"]
         before_atJob = previousGetResult["atJobNumDistribute"]
         after_atJob = found["atJobNumDistribute"]
-        fail_state = fail_state or self.put_fail(
+        fail_state = self.put_fail(
             before_type, after_type, before_time, after_time, before_atJob, after_atJob
         )
-        if fail_state:
-            utils.fail(
-                "Project %s was not modified successfully, %s: %s -> %s"
-                % (self.name, check, before_type, after_type)
-            )
+        assert not fail_state, "Project %s was not modified successfully, %s: %s -> %s" % (
+            self.name,
+            check,
+            before_type,
+            after_type,
+        )
 
         # check collect
         check = "collection"
@@ -391,14 +392,15 @@ html5
         after_time = found["deadline"]
         before_atJob = previousGetResult["atJobNumCollect"]
         after_atJob = found["atJobNumCollect"]
-        fail_state = fail_state or self.put_fail(
+        fail_state = self.put_fail(
             before_type, after_type, before_time, after_time, before_atJob, after_atJob
         )
-        if fail_state:
-            utils.fail(
-                "Project %s was not modified successfully, %s: %s -> %s"
-                % (self.name, check, before_type, after_type)
-            )
+        assert not fail_state, "Project %s was not modified successfully, %s: %s -> %s" % (
+            self.name,
+            check,
+            before_type,
+            after_type,
+        )
 
     def put_fail(self, before_type, after_type, before_time, after_time, before_atJob, after_atJob):
         """Checks if the atjobs are in the expected formats
@@ -444,8 +446,7 @@ html5
         print("Distributing Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/distribute", [self.name], flavor).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to distribute project (%r)" % (self.name,))
+        assert reqResult[0]["success"], "Unable to distribute project (%r)" % (self.name,)
 
     def check_distribute(self, users):
         """Checks if the distribution was successful
@@ -471,8 +472,7 @@ html5
         print("Collecting Project %s" % (self.name))
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/collect", [self.name], flavor).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to collect project (%r)" % (self.name,))
+        assert reqResult[0]["success"], "Unable to collect project (%r)" % (self.name,)
 
     def check_collect(self, users):
         """Checks if the collection was successful
@@ -499,8 +499,7 @@ html5
         flavor = self.flavor
         param = [{"object": self.name, "options": None}]
         reqResult = self.client.umc_command("distribution/remove", param, flavor).result
-        if reqResult:
-            utils.fail("Unable to remove project (%r)" % (param,))
+        assert not reqResult, "Unable to remove project (%r)" % (param,)
 
     def check_remove(self):
         """Calls 'distribution/query'
@@ -508,8 +507,7 @@ html5
         """
         print("Checking %s removal" % (self.name,))
         current = self.query(pattern=self.name)
-        if self.name in current:
-            utils.fail("Project %s was not removed successfully" % (self.name,))
+        assert self.name not in current, "Project %s was not removed successfully" % (self.name,)
 
     def checkFiles(self, files):
         """Calls 'distribution/checkfiles'"""
@@ -517,22 +515,19 @@ html5
         flavor = self.flavor
         param = {"project": self.name, "filenames": files}
         reqResult = self.client.umc_command("distribution/checkfiles", param, flavor).result
-        if reqResult:
-            utils.fail("Unable to chack files for project (%r)" % (param,))
+        assert not reqResult, "Unable to chack files for project (%r)" % (param,)
 
     def adopt(self, project_name):
         """Calls 'distribute/adopt'"""
         print("Adopting project", self.name)
         flavor = self.flavor
         reqResult = self.client.umc_command("distribution/adopt", [project_name], flavor).result
-        if reqResult:
-            utils.fail("Failed to adopt project (%r)" % (project_name,))
+        assert not reqResult, "Failed to adopt project (%r)" % (project_name,)
 
     def check_adopt(self, project_name):
         print("Checking adopting")
         q = self.query(pattern=project_name)
-        if not (project_name in q):
-            utils.fail("Project %s was not adopted successfully" % (project_name,))
+        assert project_name in q, "Project %s was not adopted successfully" % (project_name,)
 
     def getUserFilesPath(self, user, purpose="distribute", version=1):
         """Gets the correct files path for a specific user depending on

@@ -91,8 +91,7 @@ class InternetRule(object):
         print("defining rule %s with UMCP:%s" % (self.name, "internetrules/add"))
         print("param = %r" % (param,))
         reqResult = self.client.umc_command("internetrules/add", param).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to define rule (%r)" % (param,))
+        assert reqResult[0]["success"], "Unable to define rule (%r)" % (param,)
 
     def get(self, should_exist):
         """gets internet rule via UMCP\n
@@ -100,8 +99,9 @@ class InternetRule(object):
         :type should_exist: bool"""
         print("Calling %s for %s" % ("internetrules/get", self.name))
         reqResult = self.client.umc_command("internetrules/get", [self.name]).result
-        if bool(reqResult) != should_exist:
-            utils.fail("Unexpected fetching result for internet rule (%r)" % (self.name))
+        assert bool(reqResult) == should_exist, "Unexpected fetching result for internet rule (%r)" % (
+            self.name,
+        )
 
     def put(self, new_name=None, new_type=None, new_domains=None, new_wlan=None, new_priority=None):
         """Modify internet rule via UMCP\n
@@ -138,22 +138,19 @@ class InternetRule(object):
         print("Modifying rule %s with UMCP:%s" % (self.name, "internetrules/put"))
         print("param = %r" % (param,))
         reqResult = self.client.umc_command("internetrules/put", param).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to modify rule (%r)" % (param,))
-        else:
-            self.name = new_name
-            self.typ = new_type
-            self.domains = new_domains
-            self.wlan = new_wlan
-            self.priority = new_priority
+        assert reqResult[0]["success"], "Unable to modify rule (%r)" % (param,)
+        self.name = new_name
+        self.typ = new_type
+        self.domains = new_domains
+        self.wlan = new_wlan
+        self.priority = new_priority
 
     def remove(self):
         """removes internet rule via UMCP"""
         print("Calling %s for %s" % ("internetrules/remove", self.name))
         options = [{"object": self.name}]
         reqResult = self.client.umc_command("internetrules/remove", options).result
-        if not reqResult[0]["success"]:
-            utils.fail("Unable to remove rule (%r)" % (self.name,))
+        assert reqResult[0]["success"], "Unable to remove rule (%r)" % (self.name,)
 
     # Fetch the values from ucr and check if it matches
     # the correct values for the rule
@@ -170,9 +167,11 @@ class InternetRule(object):
         exItems = dict(
             [(key.split("/")[-1], value) for (key, value) in self.ucr.items() if self.name in key]
         )
-        if bool(exItems) != should_match:
-            utils.fail("Unexpected registery items (should_match=%r items=%r)" % (should_match, exItems))
-        elif should_match:
+        assert bool(exItems) == should_match, "Unexpected registery items (should_match=%r items=%r)" % (
+            should_match,
+            exItems,
+        )
+        if should_match:
             wlan = str(self.wlan).lower()
             typ = self.typ
             if self.typ == "whitelist":
@@ -187,8 +186,12 @@ class InternetRule(object):
             )
             curDomains = sorted(exDomains.values())
             currentState = (curtype, curPriority, curWlan, curDomains)
-            if currentState != (typ, self.priority, wlan, self.domains):
-                utils.fail("Values in UCR are not updated for rule (%r)" % (self.name))
+            assert currentState == (
+                typ,
+                self.priority,
+                wlan,
+                self.domains,
+            ), "Values in UCR are not updated for rule (%r)" % (self.name,)
 
     # Assign internet rules to workgroups/classes
     # return a tuple (groupName, ruleName)
@@ -222,10 +225,8 @@ class InternetRule(object):
         print("Assigning rule %s to %s: %s" % (self.name, groupType, groupName))
         print("param = %r" % (param,))
         result = self.client.umc_command("internetrules/groups/assign", param).result
-        if not result:
-            utils.fail("Unable to assign internet rule to workgroup (%r)" % (param,))
-        else:
-            return (groupName, self.name)
+        assert result, "Unable to assign internet rule to workgroup (%r)" % (param,)
+        return (groupName, self.name)
 
     # returns a list of all the existing internet rules via UMCP
     def allRules(self):
@@ -277,8 +278,10 @@ class Check(object):
             if ruleName is None:
                 ruleName = "$default$"
             result = self.client.umc_command("internetrules/groups/query", param).result[0]["rule"]
-            if result != ruleName:
-                utils.fail("Assigned rule (%r) to workgroup (%r) doesn't match" % (ruleName, groupName))
+            assert result == ruleName, "Assigned rule (%r) to workgroup (%r) doesn't match" % (
+                ruleName,
+                groupName,
+            )
 
     def checkUcr(self):
         """Check ucr variables for groups/ classes internet rules"""
@@ -286,5 +289,6 @@ class Check(object):
         for groupName, ruleName in self.groupRuleCouples:
             print("Checking %s UCR variables" % (groupName))
             groupid = "proxy/filter/groupdefault/%s-%s" % (self.school, groupName)
-            if self.ucr.get(groupid) != ruleName:
-                utils.fail("Ucr variable (%r) is not correctly set" % (groupid))
+            assert self.ucr.get(groupid) == ruleName, "Ucr variable (%r) is not correctly set" % (
+                groupid,
+            )

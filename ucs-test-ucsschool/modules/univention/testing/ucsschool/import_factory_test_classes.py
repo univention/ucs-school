@@ -126,7 +126,7 @@ class JsonWriter(BaseWriter):
         logger.info("*** JsonWrite.__init()")
         self._filename = None
         self._mode = None
-        self._objects = list()
+        self._objects = []
         super(JsonWriter, self).__init__()
 
     def open(self, filename, mode="wb"):

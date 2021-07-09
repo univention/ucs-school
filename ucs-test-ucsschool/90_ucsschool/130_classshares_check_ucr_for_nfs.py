@@ -27,7 +27,7 @@ def verify_nfs_access(class_name, expected_nfs_option):
     except (ldap.NO_SUCH_OBJECT, IndexError):
         utils.fail("Share object for class %r not found!" % (class_name,))
 
-    nfs_enabled = "univentionShareNFS" in attr.get("objectClass", [])
+    nfs_enabled = b"univentionShareNFS" in attr.get("objectClass", [])
     print(
         "*** Share %r: NFS option enabled=%r   expected=%r"
         % (

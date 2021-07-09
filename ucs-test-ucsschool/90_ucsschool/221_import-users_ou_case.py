@@ -21,7 +21,7 @@ class Test(CLI_Import_v2_Tester):
         for ori_ou in (self.ou_A, self.ou_B, self.ou_C):
             while not any(c in string.letters for c in ori_ou.name):
                 # test won't work: only digits -> upper case == lower case
-                self.log.warn("OU does not contain any letters, creating new one.")
+                self.log.warning("OU does not contain any letters, creating new one.")
                 ori_ou.name, ori_ou.dn = self.schoolenv.create_ou(
                     name_edudc=self.ucr.get("hostname"), use_cache=False
                 )

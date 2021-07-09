@@ -36,7 +36,7 @@ def cleanup():
             os.remove("{}{}".format(TESTHOOKTARGET, ext))
             logger.info("*** Deleted %s%s...", TESTHOOKTARGET, ext)
         except OSError:
-            logger.warn("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
+            logger.warning("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
 def main():
@@ -61,7 +61,7 @@ def main():
         )
         print("*** Creating users {!r}...".format(usernames))
 
-        with tempfile.NamedTemporaryFile() as csv_file:
+        with tempfile.NamedTemporaryFile("w+") as csv_file:
             for user in users:
                 csv_file.write("{}\n".format(line.format(**user)))
             csv_file.flush()
@@ -77,7 +77,7 @@ def main():
 
         print("*** Deleting users {!r}...".format(usernames))
 
-        with tempfile.NamedTemporaryFile() as csv_file:
+        with tempfile.NamedTemporaryFile("w+") as csv_file:
             for user in users:
                 user["mode"] = "D"
                 csv_file.write(line.format(**user))

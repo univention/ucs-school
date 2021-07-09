@@ -8,7 +8,9 @@ import sys
 import tempfile
 
 try:
-    from typing import Any, Dict, List, Optional, Tuple, Type
+    from typing import Any, Dict, List, Optional, Tuple, Type  # noqa: F401
+
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass  # noqa: F401
 except ImportError:
     pass
 
@@ -19,7 +21,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff
@@ -301,7 +302,7 @@ def udm_session():
 @pytest.fixture
 def create_import_user(lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
-    from ucsschool.importer.models.import_user import (
+    from ucsschool.importer.models.import_user import (  # noqa: F401
         ImportStaff,
         ImportStudent,
         ImportTeacher,
@@ -381,8 +382,8 @@ def user_ldap_attributes(
         for ou in ous:
             groups.extend(user_groups(user_type, ou))
         return {
-            "givenName": [name[: len(name) / 2]],
-            "sn": [name[len(name) / 2 :]],
+            "givenName": [name[: len(name) // 2]],
+            "sn": [name[len(name) // 2 :]],
             "uid": [name],
             "univentionBirthday": [
                 "19{}-0{}-{}{}".format(
@@ -411,13 +412,13 @@ def user_school_attributes(user_ldap_attributes):
         assert isinstance(ous, list)
         attrs = ldap_attrs or user_ldap_attributes(ous, user_type)
         return {
-            "name": attrs["uid"][0],
-            "firstname": attrs["givenName"][0],
-            "lastname": attrs["sn"][0],
-            "birthday": attrs["univentionBirthday"][0],
+            "name": attrs["uid"][0].decode("UTF-8"),
+            "firstname": attrs["givenName"][0].decode("UTF-8"),
+            "lastname": attrs["sn"][0].decode("UTF-8"),
+            "birthday": attrs["univentionBirthday"][0].decode("UTF-8"),
             "school": ous[0],
             "schools": ous,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
         }
 
     return _func
@@ -459,14 +460,18 @@ def workgroup_school_attributes(workgroup_ldap_attributes):
     def _func(ou, ldap_attrs=None):  # type: (str, Optional[Dict[str, Any]]) -> Dict[str, Any]
         attrs = ldap_attrs or workgroup_ldap_attributes(ou)
         return {
-            "name": attrs["cn"][0],
-            "description": attrs["description"][0],
-            "email": attrs["mailPrimaryAddress"][0],
-            "allowed_email_senders_users": attrs["univentionAllowedEmailUsers"],
-            "allowed_email_senders_groups": attrs["univentionAllowedEmailGroups"],
+            "name": attrs["cn"][0].decode("UTF-8"),
+            "description": attrs["description"][0].decode("UTF-8"),
+            "email": attrs["mailPrimaryAddress"][0].decode("UTF-8"),
+            "allowed_email_senders_users": [
+                x.decode("UTF-8") for x in attrs["univentionAllowedEmailUsers"]
+            ],
+            "allowed_email_senders_groups": [
+                x.decode("UTF-8") for x in attrs["univentionAllowedEmailGroups"]
+            ],
             "school": ou,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
-            "users": attrs["uniqueMember"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
+            "users": [x.decode("UTF-8") for x in attrs["uniqueMember"]],
         }
 
     return _func
@@ -513,9 +518,9 @@ def workgroup_share_school_attributes(workgroup_share_ldap_attributes):
     def _func(ou, ldap_attrs=None):  # type: (str, Optional[Dict[str, Any]]) -> Dict[str, Any]
         attrs = ldap_attrs or workgroup_share_ldap_attributes(ou)
         return {
-            "name": attrs["cn"][0],
+            "name": attrs["cn"][0].decode("UTF-8"),
             "school": ou,
-            "model_ucsschool_roles": attrs["ucsschoolRole"],
+            "model_ucsschool_roles": [x.decode("UTF-8") for x in attrs["ucsschoolRole"]],
         }
 
     return _func

@@ -12,10 +12,7 @@
 # $ pytest -s -l -v ./404_ucsschool_lib_models_main.py
 #
 
-try:
-    from typing import Dict, List
-except ImportError:
-    pass
+import sys
 
 import pytest
 
@@ -24,6 +21,11 @@ import univention.testing.utils as utils
 from ucsschool.lib.models.share import MarketplaceShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_marketplace_share
+
+try:
+    from typing import Dict, List  # noqa: F401
+except ImportError:
+    pass
 
 
 @pytest.fixture(scope="session")
@@ -59,7 +61,7 @@ def test_create(exp_ldap_attr, ucr_hostname, ucr_ldap_base):
         ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
         dn = "cn=Marktplatz,cn=shares,ou={},{}".format(ou_name, ucr_ldap_base)
         cmd = [
-            "python",
+            sys.executable,
             "-m",
             "ucsschool.lib.models",
             "--debug",

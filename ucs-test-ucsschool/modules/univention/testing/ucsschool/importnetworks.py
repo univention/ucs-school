@@ -2,13 +2,11 @@
 
 from __future__ import print_function
 
+import ipaddress
 import os
 import random
-import string
 import subprocess
 import tempfile
-
-import ipaddr
 
 import univention.config_registry
 import univention.testing.strings as uts
@@ -18,10 +16,6 @@ from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportNetwork(Exception):
-    pass
 
 
 class NetworkHookResult(Exception):
@@ -49,7 +43,7 @@ def get_reverse_net(network, netmask):
     )
     (stdout, stderr) = p.communicate()
 
-    output = stdout.strip().split(".")
+    output = stdout.decode("UTF-8").strip().split(".")
     output.reverse()
 
     return ".".join(output)
@@ -60,16 +54,19 @@ class Network:
         assert prefixlen > 7
         assert prefixlen < 25
 
-        self._net = ipaddr.IPv4Network("%s/%s" % (random_ip(), prefixlen))
-        self.network = "%s/%s" % (self._net.network, prefixlen)
-        self.iprange = "%s-%s" % (self._net.network + 1, self._net.network + 10)
-        self.defaultrouter = self._net.network + 1
-        self.nameserver = self._net.network + 2
-        self.netbiosserver = self._net.network + 8
+        self._net = ipaddress.IPv4Interface(u"%s/%s" % (random_ip(), prefixlen))
+        self.network = str(self._net)
+        self.iprange = "%s-%s" % (
+            self._net.network.network_address + 1,
+            self._net.network.network_address + 10,
+        )
+        self.defaultrouter = self._net.network.network_address + 1
+        self.nameserver = self._net.network.network_address + 2
+        self.netbiosserver = self._net.network.network_address + 8
 
         self.router_mode = False
         self.school = school
-        self.name = "%s-%s" % (self.school, self._net.network)
+        self.name = "%s-%s" % (self.school, self._net.network.network_address)
 
         self.school_base = get_school_base(self.school)
 
@@ -80,7 +77,9 @@ class Network:
             configRegistry.get("domainname"),
             configRegistry.get("ldap/base"),
         )
-        reverse_subnet = get_reverse_net(str(self._net.network), str(self._net.netmask))
+        reverse_subnet = get_reverse_net(
+            str(self._net.network.network_address), str(self._net.network.netmask)
+        )
         self.dns_reverse_zone = "zoneName=%s.in-addr.arpa,cn=dns,%s" % (
             reverse_subnet,
             configRegistry.get("ldap/base"),
@@ -105,8 +104,8 @@ class Network:
     def expected_attributes(self):
         attr = {}
         attr["cn"] = [self.name]
-        attr["univentionNetmask"] = [str(self._net.prefixlen)]
-        attr["univentionNetwork"] = [str(self._net.network)]
+        attr["univentionNetmask"] = [str(self._net.network.prefixlen)]
+        attr["univentionNetwork"] = [str(self._net.network.network_address)]
         if self.iprange:
             attr["univentionIpRange"] = [self.iprange.replace("-", " ")]
         attr["univentionDnsForwardZone"] = [self.dns_forward_zone]
@@ -122,10 +121,15 @@ class Network:
         utils.verify_ldap_object(self.dhcp_zone, should_exist=True)
 
         lo = univention.uldap.getMachineConnection()
-        search_filter = "(&(cn=%s)(objectClass=univentionDhcpSubnet))" % self._net.network
-        subnet_dn = lo.search(
-            base=self.dhcp_zone, filter=search_filter, unique=1, required=1, attr=["dn"]
-        )[0][0]
+        search_filter = (
+            "(&(cn=%s)(objectClass=univentionDhcpSubnet))" % self._net.network.network_address
+        )
+        subnet_dn = lo.searchDn(
+            base=self.dhcp_zone,
+            filter=search_filter,
+            unique=True,
+            required=True,
+        )[0]
 
         if self.defaultrouter:
             defaultrouter_policy_dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (
@@ -207,7 +211,7 @@ class ImportFile:
             print("POST HOOK result: %s" % post_result)
             print("SCHOOL DATA     : %s" % data)
             if pre_result != post_result != data:
-                raise NetworkHookResult()
+                raise NetworkHookResult(pre_result, post_result, data)
         finally:
             hooks.cleanup()
             os.remove(self.import_file)
@@ -219,14 +223,10 @@ class ImportFile:
             cmd_block = ["/usr/share/ucs-school-import/scripts/import_networks", self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportNetwork(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def set_mode_to_router(self):
         self.router_mode = True
