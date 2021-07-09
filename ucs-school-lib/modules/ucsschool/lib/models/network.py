@@ -32,6 +32,8 @@
 
 from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
 
+from ldap.dn import escape_dn_chars
+
 from univention.admin.uexceptions import noObject
 
 from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
@@ -100,14 +102,17 @@ class Network(UCSSchoolHelperAbstractClass):
         # if iprange:
         # 	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
         # TODO: this is a DHCPServer created when school is created (not implemented yet)
-        udm_obj["dhcpEntryZone"] = "cn=%s,cn=dhcp,%s" % (self.school, School.cache(self.school).dn)
+        udm_obj["dhcpEntryZone"] = "cn=%s,cn=dhcp,%s" % (
+            escape_dn_chars(self.school),
+            School.cache(self.school).dn,
+        )
         udm_obj["dnsEntryZoneForward"] = "zoneName=%s,cn=dns,%s" % (
-            ucr.get("domainname"),
+            escape_dn_chars(ucr.get("domainname")),
             ucr.get("ldap/base"),
         )
         reversed_subnet = ".".join(reversed(self.get_subnet().split(".")))
         udm_obj["dnsEntryZoneReverse"] = "zoneName=%s.in-addr.arpa,cn=dns,%s" % (
-            reversed_subnet,
+            escape_dn_chars(reversed_subnet),
             ucr.get("ldap/base"),
         )
         return super(Network, self).do_create(udm_obj, lo)

@@ -34,9 +34,8 @@ import re
 from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
 
 import six
-from ldap.filter import escape_filter_chars
+from ldap.filter import filter_format
 
-from univention.admin.filter import conjunction, expression, parse
 from univention.admin.uexceptions import nextFreeIp
 
 from ..roles import (
@@ -122,7 +121,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
         try:
             if udm_obj is None:
                 try:
-                    udm_obj = self.get_only_udm_obj(lo, "cn=%s" % escape_filter_chars(self.name))
+                    udm_obj = self.get_only_udm_obj(lo, filter_format("cn=%s", (self.name,)))
                 except MultipleObjectsError:
                     self.logger.error('Found more than one DC Slave with hostname "%s"', self.name)
                     return False
@@ -184,8 +183,8 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
         Update roles using membership in groups 'OU*-DC-Edukativnetz' and 'OU*-DC-Verwaltungsnetz'
         instead of a 'schools' attribute.
         """
-        filter_s = "(&(objectClass=univentionGroup)(memberUid={}$)(cn=OU*-DC-*netz))".format(
-            escape_filter_chars(self.name)
+        filter_s = filter_format(
+            "(&(objectClass=univentionGroup)(memberUid=%s$)(cn=OU*-DC-*netz))", (self.name,)
         )
         groups = BasicGroup.get_all(lo, None, filter_s)
         # handle only dc_admin and dc_edu roles, ignore others
@@ -226,9 +225,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         This override limits the returned objects to actual ucsschoolComputers. Does not contain
         SchoolDC slaves and others anymore.
         """
-        object_class_filter = expression("objectClass", "ucsschoolComputer", "=")
+        object_class_filter = "(objectClass=ucsschoolComputer)"
         if filter_s:
-            school_computer_filter = conjunction("&", [object_class_filter, parse(filter_s)])
+            school_computer_filter = "(&%s%s)" % (object_class_filter, filter_s)
         else:
             school_computer_filter = object_class_filter
         return super(SchoolComputer, cls).lookup(lo, school, school_computer_filter, superordinate)
@@ -336,8 +335,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
     def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
         super(SchoolComputer, self).validate(lo, validate_unlikely_changes)
         for ip_address in self.ip_address:
-            name, ip_address = escape_filter_chars(self.name), escape_filter_chars(ip_address)
-            if AnyComputer.get_first_udm_obj(lo, "&(!(cn=%s))(ip=%s)" % (name, ip_address)):
+            if AnyComputer.get_first_udm_obj(
+                lo, filter_format("&(!(cn=%s))(ip=%s)", (self.name, ip_address))
+            ):
                 self.add_error(
                     "ip_address",
                     _(
@@ -346,8 +346,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                     ),
                 )
         for mac_address in self.mac_address:
-            name, mac_address = escape_filter_chars(self.name), escape_filter_chars(mac_address)
-            if AnyComputer.get_first_udm_obj(lo, "&(!(cn=%s))(mac=%s)" % (name, mac_address)):
+            if AnyComputer.get_first_udm_obj(
+                lo, filter_format("&(!(cn=%s))(mac=%s)", (self.name, mac_address))
+            ):
                 self.add_error(
                     "mac_address",
                     _(
