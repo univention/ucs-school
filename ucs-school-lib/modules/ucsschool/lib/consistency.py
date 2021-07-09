@@ -42,7 +42,8 @@ except ImportError:
     pass
 
 from ldap import INVALID_DN_SYNTAX
-from ldap.filter import filter_format
+from ldap.dn import escape_dn_chars
+from ldap.filter import escape_filter_chars, filter_format
 
 from univention.admin.uexceptions import noObject, permissionDenied
 from univention.admin.uldap import getMachineConnection
@@ -331,13 +332,19 @@ def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[
         search_base = SchoolSearchBase([ou])
         issues = []
         mandatory_groups = [
-            "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base),
-            "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base),
-            "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base),
-            "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base),
-            "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base),
-            "cn=OU{0}-Klassenarbeit,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base),
-            "cn=admins-{0},cn=ouadmins,cn=groups,{1}".format(ou, ldap_base),
+            "cn=Domain Users {0},cn=groups,ou={0},{1}".format(escape_dn_chars(ou), ldap_base),
+            "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
+            "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+                escape_dn_chars(ou), ldap_base
+            ),
+            "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+                escape_dn_chars(ou), ldap_base
+            ),
+            "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+                escape_dn_chars(ou), ldap_base
+            ),
+            "cn=OU{0}-Klassenarbeit,cn=ucsschool,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
+            "cn=admins-{0},cn=ouadmins,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
         ]
         for mandatory_group in mandatory_groups:
             try:
@@ -400,9 +407,11 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     if school:
         all_schools = [school]
         school_filter = school
+        allow_wildcards = False
     else:
         all_schools = [ou.name for ou in School.get_all(lo)]
         school_filter = "*"
+        allow_wildcards = True
 
     if ucr.is_true("ucsschool/import/generate/marktplatz", True):
         for ou in all_schools:
@@ -415,14 +424,23 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
                     "The 'Marktplatz' share of school %r does not exist." % (ou,)
                 )
 
+    def maybe_allow_wildcards(filter_string):
+        if allow_wildcards:
+            filter_string = filter_string.replace(escape_filter_chars("*"), "*")
+        return filter_string
+
     # check if there is a school class for each class share
     classes = []
     role_classes_string = create_ucsschool_role_string(role_school_class, school_filter)
-    for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_classes_string)):
+    for dn, attrs in lo.search(
+        filter=maybe_allow_wildcards(filter_format("(ucsschoolRole=%s)", [role_classes_string]))
+    ):
         classes.append(attrs["cn"][0].decode("UTF-8"))
 
     role_class_share_string = create_ucsschool_role_string(role_school_class_share, school_filter)
-    cls_shares = lo.search(filter="(ucsschoolRole={})".format(role_class_share_string))
+    cls_shares = lo.search(
+        filter=maybe_allow_wildcards(filter_format("(ucsschoolRole=%s)", [role_class_share_string]))
+    )
     for dn, attrs in cls_shares:
         if attrs["cn"][0].decode("UTF-8") not in classes:
             problematic_objects.setdefault(dn, []).append(
@@ -432,11 +450,15 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     # check if there is a work group for each work group share
     work_groups = []
     role_workgroup_string = create_ucsschool_role_string(role_workgroup, school_filter)
-    for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_workgroup_string)):
+    for dn, attrs in lo.search(
+        filter=maybe_allow_wildcards(filter_format("(ucsschoolRole=%s)", [role_workgroup_string]))
+    ):
         work_groups.append(attrs["cn"][0].decode("UTF-8"))
 
     role_workgroup_share_string = create_ucsschool_role_string(role_workgroup_share, school_filter)
-    wg_share = lo.search(filter="(ucsschoolRole={})".format(role_workgroup_share_string))
+    wg_share = lo.search(
+        filter=maybe_allow_wildcards(filter_format("(ucsschoolRole=%s)", [role_workgroup_share_string]))
+    )
     for dn, attrs in wg_share:
         if attrs["cn"][0].decode("UTF-8") not in work_groups:
             problematic_objects.setdefault(dn, []).append(
@@ -449,7 +471,7 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
 def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     def server_in_group_errors(lo, role, members, group_dn):
         problematic_objects = {}
-        for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role)):
+        for dn, attrs in lo.search(filter=filter_format("(ucsschoolRole=%s)", [role])):
             if dn not in members:
                 problematic_objects.setdefault(dn, []).append(
                     "is not a member of group {}".format(group_dn)
@@ -488,11 +510,17 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
             continue
 
     for ou in all_schools:
-        dn_dc_edu = "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
-        dn_dc_admin = "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
-        dn_member_edu = "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(ou, ldap_base)
+        dn_dc_edu = "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+            escape_dn_chars(ou), ldap_base
+        )
+        dn_dc_admin = "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+            escape_dn_chars(ou), ldap_base
+        )
+        dn_member_edu = "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+            escape_dn_chars(ou), ldap_base
+        )
         dn_member_admin = "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
-            ou, ldap_base
+            escape_dn_chars(ou), ldap_base
         )
         role_dc_edu_str = create_ucsschool_role_string(role_dc_slave_edu, ou)
         role_dc_admin_str = create_ucsschool_role_string(role_dc_slave_admin, ou)

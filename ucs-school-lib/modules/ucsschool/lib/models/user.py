@@ -33,8 +33,8 @@
 import os.path
 from collections import Mapping
 
-from ldap.dn import escape_dn_chars, explode_dn
-from ldap.filter import escape_filter_chars, filter_format
+from ldap.dn import escape_dn_chars, explode_rdn
+from ldap.filter import filter_format
 from six import iteritems
 
 import univention.admin.modules as udm_modules
@@ -441,8 +441,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     },
                 )
         if self.email:
-            name, email = escape_filter_chars(self.name), escape_filter_chars(self.email)
-            if self.get_first_udm_obj(lo, "&(!(uid=%s))(mailPrimaryAddress=%s)" % (name, email)):
+            if self.get_first_udm_obj(
+                lo, filter_format("&(!(uid=%s))(mailPrimaryAddress=%s)", (self.name, self.email))
+            ):
                 self.add_error(
                     "email",
                     _(
@@ -552,7 +553,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         prefix = self.get_search_base("DEMOSCHOOL").group_prefix_admins
         ldap_base = ucr.get("ldap/base")
         return [
-            "cn=%s%s,cn=ouadmins,cn=groups,%s" % (prefix, school.lower(), ldap_base)
+            "cn=%s%s,cn=ouadmins,cn=groups,%s"
+            % (escape_dn_chars(prefix), escape_dn_chars(school.lower()), ldap_base)
             for school in self.schools
         ]
 
@@ -812,7 +814,7 @@ class ExamStudent(Student):
         examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         dn = "uid=%s%s,%s" % (
             escape_dn_chars(examUserPrefix),
-            explode_dn(dn, True)[0],
+            escape_dn_chars(explode_rdn(dn, True)[0]),
             cls.get_container(school),
         )
         return cls.from_dn(dn, school, lo)

@@ -37,8 +37,7 @@ from copy import deepcopy
 
 import lazy_object_proxy
 import ldap
-from ldap import explode_dn
-from ldap.dn import escape_dn_chars
+from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import escape_filter_chars
 from six import add_metaclass, iteritems
 
@@ -853,7 +852,7 @@ class UCSSchoolHelperAbstractClass(object):
     def get_name_from_dn(cls, dn):  # type: (str) -> str
         if dn:
             try:
-                name = explode_dn(dn, 1)[0]
+                name = explode_rdn(dn, True)[0]
             except ldap.DECODING_ERROR:
                 name = ""
             name = name.encode("utf-8")
