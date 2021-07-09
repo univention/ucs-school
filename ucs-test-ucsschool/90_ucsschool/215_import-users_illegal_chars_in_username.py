@@ -35,11 +35,11 @@ class Test(UniqueObjectTester):
         allowed_chars = string.ascii_letters + string.digits + "."
         bad_chars = "".join(set(name).difference(set(allowed_chars)))
         if bad_chars:
-            self.log.warn(
+            self.log.warning(
                 "Removing disallowed characters %r from username %r.", "".join(sorted(bad_chars)), name
             )
         if name.startswith(".") or name.endswith("."):
-            self.log.warn("Removing disallowed dot from start and end of username %r.", name)
+            self.log.warning("Removing disallowed dot from start and end of username %r.", name)
             name = name.strip(".")
         return name.translate(None, bad_chars)
 

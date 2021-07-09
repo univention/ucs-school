@@ -3,13 +3,12 @@
 from __future__ import print_function
 
 import os
-import string
 import subprocess
 import tempfile
 
 import ldap
-from ldap.filter import filter_format
 import passlib.hash
+from ldap.filter import filter_format
 
 import ucsschool.lib.models.utils
 import univention.config_registry
@@ -31,7 +30,7 @@ from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
 
 try:
-    from typing import List, Optional
+    from typing import List, Optional  # noqa: F401
 except ImportError:
     pass
 
@@ -39,10 +38,6 @@ utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportUser(Exception):
-    pass
 
 
 class UserHookResult(Exception):
@@ -324,8 +319,10 @@ class Person(object):
             base=school_base, scope=ldap.SCOPE_BASE, attr=["ucsschoolHomeShareFileServer"]
         )
         if query_result:
-            share_file_server_dn = query_result[0][1].get("ucsschoolHomeShareFileServer")[0]
-            res = ldap.explode_rdn(share_file_server_dn, notypes=1)[0]
+            share_file_server_dn = (
+                query_result[0][1].get("ucsschoolHomeShareFileServer")[0].decode("UTF-8")
+            )
+            res = ldap.explode_rdn(share_file_server_dn, True)[0]
         else:
             res = None
         self._samba_info[school_base]["ucsschoolHomeShareFileServer"] = res
@@ -334,7 +331,7 @@ class Person(object):
             base=self.school_base, filter="univentionService=Windows Profile Server", attr=["cn"]
         )
         if query_result:
-            server = "\\\\%s" % query_result[0][1].get("cn")[0]
+            server = "\\\\%s" % query_result[0][1].get("cn")[0].decode("UTF-8")
         else:
             server = "%LOGONSERVER%"
         self._samba_info[school_base][
@@ -530,7 +527,7 @@ class ImportFile:
             print("POST HOOK result:\n%s" % post_result)
             print("SCHOOL DATA     :\n%s" % str(self.user_import))
             if pre_result != post_result != str(self.user_import):
-                raise UserHookResult()
+                raise UserHookResult(pre_result, post_result, self.user_import)
         finally:
             hooks.cleanup()
             try:
@@ -542,11 +539,7 @@ class ImportFile:
         cmd_block = [self.cli_path, self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportUser(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
         # reload UCR

@@ -279,7 +279,7 @@ class FactoryConfTest(object):
         try:
             os.remove(csvfile_name)
         except OSError as exc:
-            self.logger.warn("Could not delete %r: %s", csvfile_name, exc)
+            self.logger.warning("Could not delete %r: %s", csvfile_name, exc)
         self.logger.info("*** OK: only %d users were deleted.\n", len(random_birthday_users))
 
     def test_username_handler(self):

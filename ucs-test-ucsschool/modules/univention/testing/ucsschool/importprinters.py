@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 import os
-import string
 import subprocess
 import tempfile
 
@@ -14,10 +13,6 @@ import univention.testing.utils as utils
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportPrinter(Exception):
-    pass
 
 
 class PrinterHookResult(Exception):
@@ -114,7 +109,7 @@ class ImportFile:
             print("POST HOOK result: %s" % post_result)
             print("SCHOOL DATA     : %s" % data)
             if pre_result != post_result != data:
-                raise PrinterHookResult()
+                raise PrinterHookResult(pre_result, post_result, data)
         finally:
             hooks.cleanup()
             os.remove(self.import_file)
@@ -123,14 +118,10 @@ class ImportFile:
         cmd_block = ["/usr/share/ucs-school-import/scripts/import_printer", self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportPrinter(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class PrinterHooks:

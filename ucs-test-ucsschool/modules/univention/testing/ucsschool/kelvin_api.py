@@ -47,11 +47,12 @@ import subprocess
 import sys
 import time
 import uuid
-from typing import Any, Callable, Dict, List, Optional, Text, Tuple
+from typing import Any, Callable, Dict, List, Optional, Text, Tuple  # noqa: F401
 from unittest import TestCase
 
 import requests
 from six import iteritems, reraise as raise_
+from six.moves.urllib_parse import urljoin
 from urllib3.exceptions import InsecureRequestWarning
 
 import univention.testing.strings as uts
@@ -73,12 +74,6 @@ from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.utils import get_stream_handler, ucr
 from univention.config_registry import handler_set
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
-
-try:
-    from urlparse import urljoin  # py2
-except ImportError:
-    from urllib.parse import urljoin  # py3
-
 
 IMPORT_CONFIG = {
     "active": "/var/lib/ucs-school-import/configs/user_import.json",

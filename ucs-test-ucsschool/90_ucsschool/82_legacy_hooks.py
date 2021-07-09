@@ -352,7 +352,7 @@ class TestLegacyHooks(TestCase):
             logger.info("Model School does not support modify hooks.")
             patterns_and_words = ((r"^$", ()),)
         elif issubclass(self.model, Group):
-            logger.warn(
+            logger.warning(
                 "Model %r does not support modify hooks, if obj.name does not change.",
                 self.model.__name__,
             )

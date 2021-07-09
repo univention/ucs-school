@@ -21,6 +21,7 @@ class TestSamba4(object):
         Test class constructor
         """
         self.UCR = ConfigRegistry()
+        self.UCR.load()
         self.client = None
 
         self.admin_username = ""
@@ -207,20 +208,9 @@ class TestSamba4(object):
         """
         Loads the UCR to get credentials for the test.
         """
-        print("\nObtaining Administrator username and password for the test from the UCR")
-        try:
-            self.UCR.load()
-
-            self.admin_username = self.UCR["tests/domainadmin/account"]
-            # extracting the 'uid' value of the administrator username string:
-            self.admin_username = self.admin_username.split(",")[0][len("uid=") :]
-            self.admin_password = self.UCR["tests/domainadmin/pwd"]
-        except KeyError as exc:
-            print(
-                "\nAn exception while trying to read data from the UCR for the test: '%s'. Skipping "
-                "the test." % exc
-            )
-            self.return_code_result_skip()
+        account = utils.UCSTestDomainAdminCredentials()
+        self.admin_username = account.username
+        self.admin_password = account.bindpw
 
     def create_umc_connection_authenticate(self):
         """

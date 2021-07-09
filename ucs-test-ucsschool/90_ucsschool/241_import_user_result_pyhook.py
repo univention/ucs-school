@@ -38,7 +38,7 @@ class Test(CLI_Import_v2_Tester):
                 os.remove(path)
                 self.log.info("*** Deleted %s.", path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", path)
+                self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -46,7 +46,7 @@ class Test(CLI_Import_v2_Tester):
             os.remove(RESULTFILE)
             self.log.info("*** Deleted %s.", RESULTFILE)
         except OSError:
-            self.log.warn("*** Could not delete %s.", RESULTFILE)
+            self.log.warning("*** Could not delete %s.", RESULTFILE)
         super(Test, self).cleanup()
 
     def test(self):

@@ -178,11 +178,12 @@ class Room(object):
         current_computers = self.get_room_computers(client)
         print("Current computers in room %s are %r" % (self.name, current_computers))
         for i, computer in enumerate(sorted(current_computers)):
-            if computer not in sorted(expected_computer_list)[i]:
-                utils.fail(
-                    "Computers found %r do not match the expected: %r"
-                    % (current_computers, expected_computer_list)
-                )
+            assert (
+                computer in sorted(expected_computer_list)[i]
+            ), "Computers found %r do not match the expected: %r" % (
+                current_computers,
+                expected_computer_list,
+            )
 
     def set_room_settings(self, client, new_settings):
         print("Executing command: computerroom/settings/set")
@@ -202,17 +203,10 @@ class Room(object):
             d = dict(expected_settings)  # copy dictionary
             d["period"] = current_settings["period"]
             d["customRule"] = current_settings["customRule"]  # TODO Bug 35258 remove
-            if current_settings != d:
-                print(
-                    "FAIL: Current settings (%r) do not match expected ones (%r)"
-                    % (
-                        current_settings,
-                        d,
-                    )
-                )
-                utils.fail(
-                    "Current settings (%r) do not match expected ones (%r)" % (current_settings, d)
-                )
+            assert current_settings == d, "Current settings (%r) do not match expected ones (%r)" % (
+                current_settings,
+                d,
+            )
         except ConnectionError as exc:
             if "[Errno 4] " in str(exc):
                 print("failed to check room (%s) settings, exception [Errno4]" % self.name)
@@ -233,45 +227,38 @@ class Room(object):
         rule = InternetRule()
         current_rules = rule.allRules()
         internetRules = self.get_internetRules(client)
-        if sorted(current_rules) != sorted(internetRules):
-            utils.fail(
-                "Fetched internetrules %r, do not match the existing ones %r"
-                % (internetRules, current_rules)
-            )
+        assert sorted(current_rules) == sorted(
+            internetRules
+        ), "Fetched internetrules %r, do not match the existing ones %r" % (internetRules, current_rules)
 
     def check_atjobs(self, period, expected_existence):
         exist = False
-        for item in ula.list():
+        jobs = ula.list()
+        for item in jobs:
             if period == datetime.time.strftime(item.execTime.time(), "%H:%M"):
                 exist = True
                 break
-        if exist == expected_existence:
-            print("Atjob result at(%r) existance is expected (%r)" % (period, exist))
-        else:
-            print(
-                "FAIL: Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)"
-                % (
-                    period,
-                    expected_existence,
-                    exist,
-                )
+        print("Atjob result at(%r) existance: %r" % (period, exist))
+        print(
+            "\n".join(
+                "Job %s: %s  owner=%s\n%s" % (i, item, item.owner, item.command)
+                for i, item in enumerate(jobs)
             )
-            print("Found the following atjobs:")
-            for i, item in enumerate(ula.list()):
-                print("Job %s: %s  owner=%s\n%s" % (i, item, item.owner, item.command))
-            utils.fail(
-                "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)"
-                % (period, expected_existence, exist)
-            )
+        )
+        assert (
+            exist == expected_existence
+        ), "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)" % (
+            period,
+            expected_existence,
+            exist,
+        )
 
     def check_displayTime(self, client, period):
         displayed_period = self.get_room_settings(client)["period"][0:-3]
-        if period == displayed_period:
-            print("Time displayed (%r) is same as time at Atjobs (%r)" % (displayed_period, period))
-        else:
-            utils.fail(
-                "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
-            )
+        print("Time displayed (%r) - Atjobs (%r)" % (displayed_period, period))
+        assert (
+            period == displayed_period
+        ), "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
 
     def test_time_settings(self, client):
         self.aquire_room(client)
@@ -310,11 +297,12 @@ class Room(object):
 
         # Time field is not considered in the comparision
         current_settings["period"] = settings["period"]
-        if current_settings != settings:
-            utils.fail(
-                "Current settings (%r) are not reset back after the time out, expected (%r)"
-                % (current_settings, settings)
-            )
+        assert (
+            current_settings == settings
+        ), "Current settings (%r) are not reset back after the time out, expected (%r)" % (
+            current_settings,
+            settings,
+        )
 
         # Checking Atjobs list
         self.check_atjobs(period, False)
@@ -326,11 +314,10 @@ class Room(object):
         read = run_commands(
             [cmd_read_home], {"ip": ip_address, "username": user, "user": "{0}%{1}".format(user, passwd)}
         )
-        if read[0] != expected_result:
-            print("FAIL .. Read home directory result (%r), expected (%r)" % (read[0], expected_result))
-            raise CmdCheckFail(
-                "Read home directory result (%r), expected (%r)" % (read[0], expected_result)
-            )
+        assert read[0] == expected_result, "Read home directory result (%r), expected (%r)" % (
+            read[0],
+            expected_result,
+        )
 
     @retry_cmd
     def check_home_write(self, user, ip_address, passwd="univention", expected_result=0):
@@ -481,7 +468,7 @@ class Room(object):
         ucr.load()
         cups_status = subprocess.check_output(
             ["lpstat", "-h", ucr.get("cups/server", ""), "-r"], env={"LC_ALL": "C"}
-        )
+        ).decode("UTF-8")
         if cups_status != "scheduler is running\n":
             raise CupsNotRunningError('CUPS status reported: "{}"'.format(cups_status))
         f = tempfile.NamedTemporaryFile(dir="/tmp")
@@ -583,11 +570,9 @@ class Room(object):
 
         localCurl.close()
         print("RULE IN CONTROL = ", rule_in_control)
-        if rule_in_control != expected_rule:
-            utils.fail(
-                "rule in control (%s) does not match the expected one (%s)"
-                % (rule_in_control, expected_rule)
-            )
+        assert (
+            rule_in_control == expected_rule
+        ), "rule in control (%s) does not match the expected one (%s)" % (rule_in_control, expected_rule)
 
     def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, client):
         # Create new workgroup and assign new internet rule to it

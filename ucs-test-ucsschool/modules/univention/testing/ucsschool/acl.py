@@ -45,7 +45,7 @@ def run_commands(cmdlist, argdict):
             cmd[i] = val % argdict
         print("*** %r" % cmd)
         out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        result_list.append((out, err))
+        result_list.append((out.decode("UTF-8"), err.decode("UTF-8")))
     return result_list
 
 

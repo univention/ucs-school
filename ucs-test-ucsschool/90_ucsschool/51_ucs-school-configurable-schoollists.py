@@ -31,7 +31,7 @@ def random_properties(udm_user, klass_name, n=5):
         value = udm_user.get(key)
         if value:
             udm_properties.append(key)
-            if type(value) is list:
+            if isinstance(value, list):
                 value = " ".join(udm_user.get(key))
             expected_values.append(value)
     udm_properties.append("Class")

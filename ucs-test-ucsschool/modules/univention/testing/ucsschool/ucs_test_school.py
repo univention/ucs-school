@@ -428,9 +428,7 @@ class UCSTestSchool(object):
                 for dn in unique_member_attr
                 if dn.decode("UTF-8").endswith(",ou={},{}".format(ou_name, self.ldap_base))
             ]
-            ou_member_uids = [
-                "{}$".format(explode_rdn(dn.decode("UTF-8"), True)[0]) for dn in ou_member_dns
-            ]
+            ou_member_uids = ["{}$".format(explode_rdn(dn, True)[0]) for dn in ou_member_dns]
             ml = []
             if ou_member_dns:
                 ml.append(
@@ -458,7 +456,9 @@ class UCSTestSchool(object):
         for dn, attrs in self.lo.search(filter_s):
             logger.info("*** Updating 'ucsschoolRole' of %r...", dn)
             old_value = attrs["ucsschoolRole"]
-            new_value = [v for v in old_value if not v.endswith(":school:{}".format(ou_name).encode("utf-8"))]
+            new_value = [
+                v for v in old_value if not v.endswith(":school:{}".format(ou_name).encode("UTF-8"))
+            ]
             self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
 
     def cleanup_default_containers(self, ou_name):  # type: (str) -> None
@@ -477,7 +477,9 @@ class UCSTestSchool(object):
         ):
             old_value = attrs.get(attr, [])
             new_value = [
-                dn for dn in old_value if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base).encode("utf-8"))
+                dn
+                for dn in old_value
+                if not dn.endswith(",ou={},{}".format(ou_name, self.ldap_base).encode("UTF-8"))
             ]
             if old_value != new_value:
                 ml.append((attr, old_value, new_value))
@@ -728,7 +730,7 @@ class UCSTestSchool(object):
             "(&(objectClass=ucsschoolOrganizationalUnit)(ou={}*))".format(TEMPLATE_OU_NAME_PREFIX),
             attr=["ou"],
         ):
-            ou_name = ou_attrs["ou"][0]
+            ou_name = ou_attrs["ou"][0].decode("UTF-8")
             if ou_name != current_template_name:
                 logger.info("*** Removing old template OU %r...", ou_name)
                 self.cleanup_ou(ou_name)
@@ -1505,7 +1507,7 @@ class OUCloner(object):
         # make sure `new_ou` doesn't already exist
         new_ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(new_ou), lib_ucr["ldap/base"]))
         if new_ou_attrs:
-            raise ValueError("Target OU ({!r}) exists.".format(new_ou_attrs["ou"][0]))
+            raise ValueError("Target OU ({!r}) exists.".format(new_ou_attrs["ou"][0].decode("UTF-8")))
         # every cloning uses a fresh mapping
         self.id_mapping[new_ou] = {
             "dn": {},
@@ -1518,13 +1520,13 @@ class OUCloner(object):
         }
         # make sure to have the right name (case sensitive)
         ori_ou_attrs = self.lo.get("ou={},{}".format(escape_dn_chars(ori_ou), lib_ucr["ldap/base"]))
-        return ori_ou_attrs["ou"][0]
+        return ori_ou_attrs["ou"][0].decode("UTF-8")
 
     def post_clone(self, ori_ou, new_ou):  # type: (str, str) -> None
         if lib_ucr.is_true("ucsschool/singlemaster", False):
             for dn, attrs in self.lo.search("univentionServerRole=master"):
                 old_value = attrs["ucsschoolRole"]
-                new_value = old_value + ["single_master:school:{}".format(new_ou)]
+                new_value = old_value + ["single_master:school:{}".format(new_ou).encode("UTF-8")]
                 print("Updating 'ucsschoolRole' of singlemaster {!r}...".format(dn))
                 self.lo.modify(dn, [("ucsschoolRole", old_value, new_value)])
         del self.id_mapping[new_ou]
@@ -1543,10 +1545,12 @@ class OUCloner(object):
 
     def get_max_rid(self):  # type: () -> Tuple[str, int]
         """Find the highest Samba RID in the domain."""
-        sid_base = self.lo.search("sambaDomainName=*", attr=["sambaSID"])[0][1]["sambaSID"][0]
+        sid_base = self.lo.search("sambaDomainName=*", attr=["sambaSID"])[0][1]["sambaSID"][0].decode(
+            "ASCII"
+        )
         max_rid = 0
         for _, v in self.lo.search(filter_format("sambaSID=%s-*", (sid_base,)), attr=["sambaSID"]):
-            rid = int(v["sambaSID"][0].rsplit("-", 1)[1])
+            rid = int(v["sambaSID"][0].decode("ASCII").rsplit("-", 1)[1])
             max_rid = max(rid, max_rid)
         return sid_base, max_rid
 
@@ -1558,12 +1562,12 @@ class OUCloner(object):
             attr=["gidNumber", "uidNumber"],
         ):
             try:
-                gid = int(v["gidNumber"][0])
+                gid = int(v["gidNumber"][0].decode("ASCII"))
                 max_gid = max(gid, max_gid)
             except KeyError:
                 pass
             try:
-                uid = int(v["uidNumber"][0])
+                uid = int(v["uidNumber"][0].decode("ASCII"))
                 max_uid = max(uid, max_uid)
             except KeyError:
                 pass
@@ -1598,16 +1602,17 @@ class OUCloner(object):
         dn_new = self.replace_case_sesitive_and_lower(dn_ori, ori_ou, new_ou)
         attrs_new = {
             self.replace_case_sesitive_and_lower(key, ori_ou, new_ou): [
-                self.replace_case_sesitive_and_lower(v, ori_ou, new_ou) for v in values
+                self.replace_case_sesitive_and_lower(v, ori_ou.encode("UTF-8"), new_ou.encode("UTF-8"))
+                for v in values
             ]
             for key, values in six.iteritems(attrs_ori)
         }
         for k, v in attrs_new.items():
             if k == "displayName":
-                attrs_new[k] = "{} ({})".format(v[0], new_ou)
+                attrs_new[k] = "{} ({})".format(v[0].decode("UTF-8"), new_ou).encode("UTF-8")
             elif k == "gidNumber" and attrs_new["univentionObjectType"][0] in (
-                "groups/group",
-                "users/user",
+                b"groups/group",
+                b"users/user",
             ):
                 old_gid = int(v[0])
                 try:
@@ -1616,7 +1621,7 @@ class OUCloner(object):
                     new_gid = self.next_gid
                     self.id_mapping[new_ou]["gidNum"][old_gid] = self.next_gid
                     self.next_gid += 1
-                attrs_new[k] = str(new_gid)
+                attrs_new[k] = str(new_gid).encode()
             elif k == "memberUid" and v:
                 # Users will be added last, thus we don't know the new usernames to map to yet.
                 # So we just memorize the DNs and the old values that need fixing and empty the group.
@@ -1626,17 +1631,17 @@ class OUCloner(object):
                 # Same as 'memberUid'.
                 self.id_mapping[new_ou]["groups_uniqueMember"][dn_new] = attrs_ori[k]
                 attrs_new[k] = []
-            elif (k == "uid" and attrs_new["univentionObjectType"][0] == "users/user") or (
-                k == "cn" and attrs_new["univentionObjectType"][0].startswith("computers/")
+            elif (k == "uid" and attrs_new["univentionObjectType"][0] == b"users/user") or (
+                k == "cn" and attrs_new["univentionObjectType"][0].startswith(b"computers/")
             ):
-                old_id = v[0]
-                if attrs_new["univentionObjectType"][0].startswith("computers/"):
+                old_id = v[0].decode("UTF-8")
+                if attrs_new["univentionObjectType"][0].startswith(b"computers/"):
                     new_id = self.new_computer_name(old_id, ori_ou, new_ou)
                 else:
                     new_id = self.new_username(old_id, ori_ou, new_ou)
-                attrs_new[k] = new_id
+                attrs_new[k] = new_id.encode("UTF-8")
                 if k == "cn" and "uid" in attrs_ori:
-                    attrs_new["uid"] = "{}$".format(new_id)
+                    attrs_new["uid"] = "{}$".format(new_id).encode("UTF-8")
                 if dn_new.startswith(k):
                     dn_new = dn_new.replace("{}={},".format(k, old_id), "{}={},".format(k, new_id))
                 # changed UIDs and DNs in groups are updated later in update_group_members()
@@ -1648,18 +1653,18 @@ class OUCloner(object):
                     new_id = self.next_uid
                     self.id_mapping[new_ou]["uidNum"][old_id] = self.next_uid
                     self.next_uid += 1
-                attrs_new[k] = str(new_id)
+                attrs_new[k] = str(new_id).encode()
 
         if "krb5PrincipalName" in attrs_ori:
             old_value = attrs_ori["krb5PrincipalName"][0]
-            id_k = "cn" if attrs_new["univentionObjectType"][0].startswith("computers/") else "uid"
+            id_k = "cn" if attrs_new["univentionObjectType"][0].startswith(b"computers/") else "uid"
             attrs_new["krb5PrincipalName"] = old_value.replace(attrs_ori[id_k][0], attrs_new[id_k])
-        if attrs_new["univentionObjectType"][0] == "users/user":
+        if attrs_new["univentionObjectType"][0] == b"users/user":
             for k in ("homeDirectory", "sambaHomePath"):
                 if k not in attrs_ori:
                     continue
                 attrs_new[k] = attrs_ori[k][0].replace(attrs_ori["uid"][0], attrs_new["uid"])
-        if attrs_new["univentionObjectType"][0] in ("groups/group", "users/user"):
+        if attrs_new["univentionObjectType"][0] in (b"groups/group", b"users/user"):
             # don't change the SIDs of computer objects
             for k in ("sambaPrimaryGroupSID", "sambaSID"):
                 # funny how RIDs are still calculated this way...
@@ -1669,7 +1674,7 @@ class OUCloner(object):
                     else:
                         # if it's a user: uidNumber, else it'll be a group: gidNumber
                         rid = int(attrs_new.get("uidNumber", attrs_new["gidNumber"])) * 2
-                    attrs_new[k] = "{}-{}".format(self.sid_base, rid)
+                    attrs_new[k] = "{}-{}".format(self.sid_base, rid).encode("ASCII")
                     self.id_mapping[new_ou]["sid"][attrs_ori[k][0]] = attrs_new[k]
 
         self.id_mapping[new_ou]["dn"][dn_ori] = dn_new
@@ -1690,7 +1695,10 @@ class OUCloner(object):
         for dn_new, member_uids in six.iteritems(self.id_mapping[new_ou]["groups_memberUid"]):
             print("Updating members of {!r}...".format(dn_new))
             new_attrs = {}
-            member_uids = [self.new_username(uid, ori_ou, new_ou) for uid in member_uids]
+            member_uids = [
+                self.new_username(uid.decode("UTF-8"), ori_ou, new_ou).encode("UTF-8")
+                for uid in member_uids
+            ]
             if member_uids:
                 new_attrs["memberUid"] = member_uids
             unique_member_dns = self.id_mapping[new_ou]["groups_uniqueMember"].get(dn_new, [])
