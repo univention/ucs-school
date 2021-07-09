@@ -33,11 +33,11 @@
 import re
 
 try:
-    from typing import Dict, Optional, Pattern, Sequence
+    from typing import Dict, Optional, Pattern, Sequence  # noqa: F401
 except ImportError:
     pass
 
-from ldap.dn import explode_dn
+from ldap.dn import dn2str, escape_dn_chars, explode_dn, str2dn
 
 from univention.config_registry import ConfigRegistry
 
@@ -112,9 +112,10 @@ class SchoolSearchBase(object):
         >>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
         'dc1'
         """
-        school_dn = cls.getOUDN(dn)
-        if school_dn:
-            return explode_dn(school_dn, True)[0]
+        try:
+            return next(val for x in str2dn(dn) for attr, val, z in x if attr.lower() == "ou")
+        except StopIteration:
+            pass
 
     @classmethod
     def getOUDN(cls, dn):  # type: (str) -> str
@@ -124,12 +125,18 @@ class SchoolSearchBase(object):
         'Ou=dc1,oU=dc,dc=foo,dc=bar'
         >>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
         'ou=dc1,ou=dc,dc=foo,dc=bar'
+        >>> SchoolSearchBase.getOUDN('dc=foo,dc=bar')
+        'dc=foo,dc=bar'
         """
-        match = cls._RE_OUDN.search(dn)
-        if match:
-            return match.group(1)
-
-    _RE_OUDN = re.compile(r"(?:^|,)(ou=.*)$", re.I)
+        sdn = str2dn(dn)
+        index = 0
+        for part in sdn:
+            if any(x[0].lower() == "ou" for x in part):
+                break
+            index += 1
+        else:
+            return dn
+        return dn2str(sdn[index:])
 
     @property
     def dhcp(self):  # type: () -> str
@@ -161,63 +168,75 @@ class SchoolSearchBase(object):
 
     @property
     def students_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_students, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (
+            escape_dn_chars(self.group_prefix_students),
+            escape_dn_chars(self.school.lower()),
+            self.schoolDN,
+        )
 
     @property
     def teachers_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_teachers, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (
+            escape_dn_chars(self.group_prefix_teachers),
+            escape_dn_chars(self.school.lower()),
+            self.schoolDN,
+        )
 
     @property
     def staff_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (self.group_prefix_staff, self.school.lower(), self.schoolDN)
+        return "cn=%s%s,cn=groups,%s" % (
+            escape_dn_chars(self.group_prefix_staff),
+            escape_dn_chars(self.school.lower()),
+            self.schoolDN,
+        )
 
     @property
     def admins_group(self):  # type: () -> str
         return "cn=%s%s,cn=ouadmins,cn=groups,%s" % (
-            self.group_prefix_admins,
-            self.school.lower(),
+            escape_dn_chars(self.group_prefix_admins),
+            escape_dn_chars(self.school.lower()),
             self._ldapBase,
         )
 
     @property
     def workgroups(self):  # type: () -> str
-        return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
+        return "cn=%s,cn=groups,%s" % (escape_dn_chars(self._containerStudents), self.schoolDN)
 
     @property
     def classes(self):  # type: () -> str
         return "cn=%s,cn=%s,cn=groups,%s" % (
-            self._containerClass,
-            self._containerStudents,
+            escape_dn_chars(self._containerClass),
+            escape_dn_chars(self._containerStudents),
             self.schoolDN,
         )
 
     @property
     def rooms(self):  # type: () -> str
-        return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
+        return "cn=%s,cn=groups,%s" % (escape_dn_chars(self._containerRooms), self.schoolDN)
 
     @property
     def students(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (self._containerStudents, self.schoolDN)
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerStudents), self.schoolDN)
 
     @property
     def teachers(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (self._containerTeachers, self.schoolDN)
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerTeachers), self.schoolDN)
 
     @property
     def teachersAndStaff(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (self._containerTeachersAndStaff, self.schoolDN)
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerTeachersAndStaff), self.schoolDN)
 
     @property
     def staff(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (self._containerStaff, self.schoolDN)
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerStaff), self.schoolDN)
 
     @property
     def admins(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (self._containerAdmins, self.schoolDN)
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerAdmins), self.schoolDN)
 
     @property
     def classShares(self):  # type: () -> str
-        return "cn=%s,cn=shares,%s" % (self._containerClass, self.schoolDN)
+        return "cn=%s,cn=shares,%s" % (escape_dn_chars(self._containerClass), self.schoolDN)
 
     @property
     def shares(self):  # type: () -> str
@@ -233,7 +252,7 @@ class SchoolSearchBase(object):
 
     @property
     def examUsers(self):  # type: () -> str
-        return "cn=%s,%s" % (self._examUserContainerName, self.schoolDN)
+        return "cn=%s,%s" % (escape_dn_chars(self._examUserContainerName), self.schoolDN)
 
     @property
     def globalGroupContainer(self):  # type: () -> str
@@ -241,19 +260,31 @@ class SchoolSearchBase(object):
 
     @property
     def educationalDCGroup(self):  # type: () -> str
-        return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
+        return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (
+            escape_dn_chars(self.school),
+            self._ldapBase,
+        )
 
     @property
     def educationalMemberGroup(self):  # type: () -> str
-        return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
+        return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (
+            escape_dn_chars(self.school),
+            self._ldapBase,
+        )
 
     @property
     def administrativeDCGroup(self):  # type: () -> str
-        return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
+        return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (
+            escape_dn_chars(self.school),
+            self._ldapBase,
+        )
 
     @property
     def administrativeMemberGroup(self):  # type: () -> str
-        return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
+        return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (
+            escape_dn_chars(self.school),
+            self._ldapBase,
+        )
 
     @property
     def examGroupName(self):  # type: () -> str
@@ -263,7 +294,7 @@ class SchoolSearchBase(object):
 
     @property
     def examGroup(self):  # type: () -> str
-        return "cn=%s,cn=ucsschool,cn=groups,%s" % (self.examGroupName, self._ldapBase)
+        return "cn=%s,cn=ucsschool,cn=groups,%s" % (escape_dn_chars(self.examGroupName), self._ldapBase)
 
     def isWorkgroup(self, groupDN):  # type: (str) -> bool
         # a workgroup cannot lie in a sub directory

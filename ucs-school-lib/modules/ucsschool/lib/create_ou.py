@@ -44,6 +44,7 @@ try:
 except ImportError:
     pass
 
+from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 
 from ucsschool.lib.models.school import School
@@ -131,8 +132,9 @@ def create_ou(
     )
     if not objects:
         if share_name == "dc{}".format(ou_name) or (edu_name and share_name == edu_name):
-            share_dn = filter_format(
-                "cn=%s,cn=dc,cn=server,cn=computers,%s", (share_name, new_school.dn)
+            share_dn = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (
+                escape_dn_chars(share_name),
+                new_school.dn,
             )
         else:
             logger.warning(
