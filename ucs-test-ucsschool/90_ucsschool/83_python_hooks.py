@@ -444,7 +444,7 @@ class TestPythonHooks(TestCase):
                 (r"^post_modify", (obj.__class__.__name__, obj.name, "None")),
             )
         elif issubclass(self.model, Group):
-            logger.warn(
+            logger.warning(
                 "Model %r does not support modify hooks, if obj.name does not change.",
                 self.model.__name__,
             )

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.users validation
 ## roles: []
@@ -14,7 +14,7 @@
 import re
 
 try:
-    from typing import Any, Dict, List, Tuple
+    from typing import Any, Dict, List, Tuple  # noqa: F401
 except ImportError:
     pass
 

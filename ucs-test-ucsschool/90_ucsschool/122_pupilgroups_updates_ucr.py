@@ -69,7 +69,7 @@ class Test(CLI_Import_v2_Tester):
         if user_a_name not in self.ucr.get(ucr_A, "").split(","):
             utils.fail("Username %r not in UCRV %r." % (user_a_name, ucr_A))
         if self.ucr.get(ucr_B, ""):
-            self.log.warn("*** UCRV %r exists: %r", ucr_B, self.ucr.get(ucr_B, ""))
+            self.log.warning("*** UCRV %r exists: %r", ucr_B, self.ucr.get(ucr_B, ""))
         if user_b_name in self.ucr.get(ucr_B, "").split(","):
             utils.fail("Username %r in UCRV %r." % (user_b_name, ucr_B))
 

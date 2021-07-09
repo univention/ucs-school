@@ -18,6 +18,7 @@ Breaks:
 Depends:
  eapol,
  python-attr,
+ python-ipaddress,
  python-mock,
  python-passlib,
  python-pycurl,

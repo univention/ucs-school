@@ -94,6 +94,8 @@ class Workgroup(object):
             exception_strings = [
                 "The groupname is already in use as groupname or as username",
                 "Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet",
+                "Die Arbeitsgruppe '%s' existiert bereits!" % group_fullname,
+                "The workgroup '%s' already exists!" % group_fullname,
                 "Die Arbeitsgruppe u'%s' existiert bereits!" % group_fullname,
                 "The workgroup u'%s' already exists!" % group_fullname,
             ]
@@ -124,8 +126,7 @@ class Workgroup(object):
             }
         ]
         requestResult = self.client.umc_command("schoolgroups/add", param, flavor).result
-        if not requestResult:
-            utils.fail("Unable to add workgroup (%r)" % (param,))
+        assert requestResult, "Unable to add workgroup (%r)" % (param,)
         return requestResult
 
     def remove(self, options=None):
@@ -135,8 +136,7 @@ class Workgroup(object):
         flavor = "workgroup-admin"
         removingParam = [{"object": [groupdn], "options": options}]
         requestResult = self.client.umc_command("schoolgroups/remove", removingParam, flavor).result
-        if not requestResult:
-            utils.fail("Group %s failed to be removed" % self.name)
+        assert requestResult, "Group %s failed to be removed" % self.name
         utils.wait_for_replication()
 
     def addMembers(self, memberListdn, options=None):
@@ -195,12 +195,10 @@ class Workgroup(object):
             }
         ]
         requestResult = self.client.umc_command("schoolgroups/put", creationParam, flavor).result
-        if not requestResult:
-            utils.fail("Email address failed to be deactivated")
-        else:
-            self.email = ""
-            self.allowed_email_senders_groups = []
-            self.allowed_email_senders_users = []
+        assert requestResult, "Email address failed to be deactivated"
+        self.email = ""
+        self.allowed_email_senders_groups = []
+        self.allowed_email_senders_users = []
         utils.wait_for_replication()
 
     def set_members(self, new_members, options=None):
@@ -208,7 +206,7 @@ class Workgroup(object):
         :param new_members: list of the new members
         :type new_members: list
         """
-        print("Setting members	%r from group %s" % (new_members, self.name))
+        print("Setting members %r from group %s" % (new_members, self.name))
         flavor = "workgroup-admin"
         groupdn = self.dn()
         creationParam = [

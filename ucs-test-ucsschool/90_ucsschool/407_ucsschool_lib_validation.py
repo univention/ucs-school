@@ -72,7 +72,7 @@ def test_python_process_uid_zero(python_module_that_reads_a_student_from_ldap, s
     school, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
     user_name, user_dn = schoolenv.create_student(ou_name=school)
     path = python_module_that_reads_a_student_from_ldap(user_dn)
-    assert subprocess.call(["python", path], stderr=sys.stderr, stdout=sys.stdout) == 0
+    assert subprocess.call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout) == 0
 
 
 def test_python_process_uid_non_zero(python_module_that_reads_a_student_from_ldap, schoolenv):
@@ -85,6 +85,6 @@ def test_python_process_uid_non_zero(python_module_that_reads_a_student_from_lda
     try:
         os.seteuid(uid)
         assert os.geteuid() == uid
-        assert subprocess.call(["python", path], stderr=sys.stderr, stdout=sys.stdout) == 0
+        assert subprocess.call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout) == 0
     finally:
         os.seteuid(0)

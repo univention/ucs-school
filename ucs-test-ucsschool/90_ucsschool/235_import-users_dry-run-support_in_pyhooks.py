@@ -38,7 +38,7 @@ class Test(CLI_Import_v2_Tester):
                     os.remove(path)
                     self.log.info("*** Deleted %s.", path)
                 except OSError:
-                    self.log.warn("*** Could not delete %s.", path)
+                    self.log.warning("*** Could not delete %s.", path)
 
     def cleanup(self):
         self.pyhook_cleanup()
@@ -94,13 +94,13 @@ class Test(CLI_Import_v2_Tester):
                 os.rmdir(log_dir)
                 self.log.info("*** Deleted %s.", log_dir)
             except OSError:
-                self.log.warn("*** Could not delete %s.", log_dir)
+                self.log.warning("*** Could not delete %s.", log_dir)
             parent_path = os.path.dirname(log_dir)
             try:
                 os.rmdir(parent_path)
                 self.log.info("*** Deleted %s.", parent_path)
             except OSError:
-                self.log.warn("*** Could not delete %s.", parent_path)
+                self.log.warning("*** Could not delete %s.", parent_path)
 
     def check_hook_log_exists(self, with_support, no_support, dry_run, hooks_expected_to_run):
         for hook_expected_to_run in hooks_expected_to_run:
@@ -137,7 +137,7 @@ class Test(CLI_Import_v2_Tester):
                     os.remove(file_path)
                     self.log.info("*** Deleted %s.", file_path)
             except OSError:
-                self.log.warn("*** Could not delete file(s) in %s.", log_dir)
+                self.log.warning("*** Could not delete file(s) in %s.", log_dir)
 
     def test(self):
         source_uid = "source_uid-{}".format(uts.random_string())

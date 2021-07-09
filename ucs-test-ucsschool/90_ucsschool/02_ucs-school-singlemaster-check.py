@@ -17,7 +17,7 @@ import univention.testing.ucr as ucr_test
 def main():
     dpkgQuery = subprocess.Popen(
         ["dpkg-query", "-W", "-f", "${Status}\n", "ucs-school-singlemaster"], stdout=subprocess.PIPE
-    ).communicate()[0]
+    ).communicate()[0].decode("UTF-8")
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
     if ucr.is_true("ucsschool/singlemaster"):

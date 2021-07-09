@@ -295,23 +295,21 @@ class School(object):
 
         homesharefileserver_dn = dc_dn
         if homesharefileserver:
-            result = lo.search(
+            result = lo.searchDn(
                 filter="(&(objectClass=univentionDomainController)(cn=%s))" % homesharefileserver,
                 base=base_dn,
-                attr=["cn"],
             )
             if result:
-                homesharefileserver_dn = result[0][0]
+                homesharefileserver_dn = result[0]
 
         classsharefileserver_dn = dc_dn
         if classsharefileserver:
-            result = lo.search(
+            result = lo.searchDn(
                 filter="(&(objectClass=univentionDomainController)(cn=%s))" % classsharefileserver,
                 base=base_dn,
-                attr=["cn"],
             )
             if result:
-                classsharefileserver_dn = result[0][0]
+                classsharefileserver_dn = result[0]
 
         utils.verify_ldap_object(
             ou_base,

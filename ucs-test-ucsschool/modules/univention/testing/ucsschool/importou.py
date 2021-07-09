@@ -2,10 +2,10 @@
 
 from __future__ import print_function
 
+import base64
 import os
 import random
 import stat
-import string
 import subprocess
 
 from six import string_types
@@ -35,14 +35,6 @@ HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
 
 TYPE_DC_ADMINISTRATIVE = "administrative"
 TYPE_DC_EDUCATIONAL = "educational"
-
-
-class CreateOU(Exception):
-    pass
-
-
-class MoveDCToOU(Exception):
-    pass
 
 
 class DCNotFound(Exception):
@@ -141,9 +133,7 @@ def create_ou_cli(
         cmd_block.append("--alter-dhcpd-base=%s" % "false")
 
     print("cmd_block: %r" % cmd_block)
-    retcode = subprocess.call(cmd_block, shell=False)
-    if retcode:
-        raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
+    subprocess.check_call(cmd_block)
 
 
 def create_ou_python_api(
@@ -184,9 +174,7 @@ def move_domaincontroller_to_ou_cli(dc_name, ou):
     ]
     print("cmd_block: %r" % cmd_block)
 
-    retcode = subprocess.call(cmd_block, shell=False)
-    if retcode:
-        raise MoveDCToOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
+    subprocess.check_call(cmd_block)
 
 
 def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
@@ -420,13 +408,12 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 
     sharefileserver_dn = dc_dn
     if sharefileserver:
-        result = lo.search(
+        result = lo.searchDn(
             filter="(&(objectClass=univentionDomainController)(cn=%s))" % sharefileserver,
             base=base_dn,
-            attr=["cn"],
         )
         if result:
-            sharefileserver_dn = result[0][0]
+            sharefileserver_dn = result[0]
 
     utils.verify_ldap_object(
         ou_base,
@@ -797,7 +784,7 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 def parametrization_id_base64_decode(val):
     if isinstance(val, string_types) and val.strip().endswith("="):
         try:
-            return val.decode("base64").strip().decode("ascii", errors="replace")
+            return base64.b64decode(val.encode("ASCII")).decode("ascii", errors="replace")
         except ValueError:
             pass
 
@@ -833,8 +820,8 @@ def generate_import_ou_basics_test_data(use_cli_api=True, use_python_api=False):
                                     )
                                     yield (
                                         ou_name,
-                                        ou_displayname.encode(
-                                            "base64"
+                                        base64.b64encode(ou_displayname.encode("UTF-8")).decode(
+                                            "ASCII"
                                         ),  # pytest doesn't like non-ascii chars in parametrization args
                                         uts.random_name() if dc else None,
                                         uts.random_name() if dc_administrative else None,
@@ -871,8 +858,8 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 
             default_ip = Interfaces().get_default_ip_address()
             dhcp_subnet_properties = {
-                "subnet": default_ip.network,
-                "subnetmask": default_ip.prefixlen,
+                "subnet": str(default_ip.network.network_address),
+                "subnetmask": str(default_ip.network.prefixlen),
             }
             dhcp_subnet2 = udm.create_object(
                 "dhcp/subnet", superordinate=dhcp_service, **dhcp_subnet_properties
@@ -908,7 +895,10 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
                     "ou": ou_name,
                     "ou_base": ou_base,
                 }
-                new_dhcp_subnet2_dn = "cn=%s,%s" % (default_ip.network, new_dhcp_service_dn)
+                new_dhcp_subnet2_dn = "cn=%s,%s" % (
+                    default_ip.network.network_address,
+                    new_dhcp_service_dn,
+                )
                 utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)
 
                 # dhcp subnet1 should not be copied

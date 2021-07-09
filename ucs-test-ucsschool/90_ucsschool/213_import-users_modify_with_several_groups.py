@@ -90,7 +90,9 @@ class Test(CLI_Import_v2_Tester):
             if role in ("student", "teacher", "teacher_and_staff"):
                 person.school_classes.setdefault(self.ou_A.name, []).append(class_A_name)
                 person.school_classes.setdefault(self.ou_B.name, []).append(class_B_name)
-                self.log.warn("person.username with class_A_name=%r : %r", class_A_name, person.username)
+                self.log.warning(
+                    "person.username with class_A_name=%r : %r", class_A_name, person.username
+                )
             person_list.append(person)
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
@@ -103,7 +105,7 @@ class Test(CLI_Import_v2_Tester):
         for person in person_list:
             person.update_from_ldap(self.lo, ["dn", "username"])
             person.verify()
-        self.log.warn(
+        self.log.warning(
             "[person.dn for person in person_list if person.role in (student, teacher, "
             "teacher_and_staff)]=%r",
             [

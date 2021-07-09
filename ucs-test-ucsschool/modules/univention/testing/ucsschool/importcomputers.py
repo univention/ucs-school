@@ -4,7 +4,6 @@ from __future__ import print_function
 
 import os
 import random
-import string
 import subprocess
 import tempfile
 
@@ -22,10 +21,6 @@ from ucsschool.lib.models.school import School as SchoolLib
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class ImportComputer(Exception):
-    pass
 
 
 class ComputerHookResult(Exception):
@@ -50,7 +45,7 @@ def random_mac():
         random.randint(0x00, 0xFF),
     ]
 
-    return ":".join(map(lambda x: "%02x" % x, mac))
+    return ":".join("%02x" % x for x in mac)
 
 
 # Hot fix for bug #38191
@@ -66,7 +61,7 @@ class IP_Iter(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.index < self.max_range:
             ip_list = [
                 self.index,
@@ -80,9 +75,11 @@ class IP_Iter(object):
         else:
             raise StopIteration()
 
+    next = __next__
+
 
 def random_ip(ip_iter=IP_Iter()):
-    return ip_iter.next()
+    return next(ip_iter)
 
 
 class Computer(object):
@@ -185,7 +182,7 @@ class Computer(object):
                         should_exist=True,
                         retry_count=0,
                     )
-                    raise WrongMembership()
+                    raise WrongMembership(self.dn, group_dn)
                 except utils.LDAPObjectValueMissing:
                     pass
         if self.zone == "edukativ":
@@ -211,7 +208,7 @@ class Computer(object):
                         should_exist=True,
                         retry_count=0,
                     )
-                    raise WrongMembership()
+                    raise WrongMembership(self.dn, group_dn)
                 except utils.LDAPObjectValueMissing:
                     pass
 
@@ -264,7 +261,7 @@ class ImportFile:
             print("POST HOOK result:\n%s" % post_result)
             print("SCHOOL DATA     :\n%s" % str(self.computer_import))
             if pre_result != post_result != str(self.computer_import):
-                raise ComputerHookResult()
+                raise ComputerHookResult(pre_result, post_result, self.computer_import)
         finally:
             hooks.cleanup()
             try:
@@ -276,11 +273,7 @@ class ImportFile:
         cmd_block = ["/usr/share/ucs-school-import/scripts/import_computer", self.import_file]
 
         print("cmd_block: %r" % cmd_block)
-        retcode = subprocess.call(cmd_block, shell=False)
-        if retcode:
-            raise ImportComputer(
-                'Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode)
-            )
+        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
         # reload UCR

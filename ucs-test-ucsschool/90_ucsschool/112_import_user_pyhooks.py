@@ -39,7 +39,7 @@ def cleanup():
             os.remove("{}{}".format(TESTHOOKTARGET, ext))
             logger.info("*** Deleted %s%s...", TESTHOOKTARGET, ext)
         except OSError:
-            logger.warn("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
+            logger.warning("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
 def main():

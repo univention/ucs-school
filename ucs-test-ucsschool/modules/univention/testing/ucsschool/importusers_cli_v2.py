@@ -25,18 +25,9 @@ import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
-from ucsschool.lib.models.utils import (
-    UniStreamHandler,
-    add_stream_logger_to_schoollib,
-    get_stream_handler,
-)
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.testing.ucsschool.importusers import Person
-from univention.testing.ucsschool.ucs_test_school import (
-    force_ucsschool_logger_colorized_if_has_tty,
-    get_ucsschool_logger,
-)
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 try:
     from univention.testing.ucs_samba import DRSReplicationFailed
@@ -44,7 +35,7 @@ except ImportError:
     DRSReplicationFailed = Exception
 
 try:
-    from typing import Set
+    from typing import Set  # noqa: F401
 except ImportError:
     pass
 
@@ -255,7 +246,7 @@ class ImportTestbase(object):
         # copied from 61_udm-users/26_password_expire_date
         # Note: this is a timezone dependend value
         dateformat = cls.syntax_date2_dateformat(userexpirydate)
-        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1))
+        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) // 3600 // 24 + 1))
 
     def check_new_and_removed_users(self, exp_new, exp_removed):
         ldap_diff = self.diff_ldap_status()
@@ -366,7 +357,7 @@ class ImportTestbase(object):
             self.log.error("DRSReplicationFailed: %s", exc)
             res = None
         if not res:
-            self.log.warn("No result from wait_for_drs_replication().")
+            self.log.warning("No result from wait_for_drs_replication().")
             if try_resync:
                 cmd = ["/usr/share/univention-s4-connector/resync_object_from_ucs.py", group_dn]
                 self.log.info("Running subprocess.call(%r)...", cmd)
@@ -480,7 +471,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 
         properties2headers = {v: k for k, v in iteritems(header2properties)}
 
-        header_row = header2properties.keys()
+        header_row = list(header2properties)
         random.shuffle(header_row)
         self.log.info("Header row = %r", header_row)
 
@@ -515,9 +506,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
                     if raise_exc:
                         raise ImportException(msg)
                     else:
-                        self.log.warn("*" * 40)
-                        self.log.warn(msg)
-                        self.log.warn("*" * 40)
+                        self.log.warning("*" * 40)
+                        self.log.warning(msg)
+                        self.log.warning("*" * 40)
 
     def check_for_non_empty_pyhooks(self, raise_exc=True):
         path = "/usr/share/ucs-school-import/pyhooks"
@@ -530,9 +521,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
             if raise_exc:
                 raise ImportException(msg)
             else:
-                self.log.warn("*" * 40)
-                self.log.warn(msg)
-                self.log.warn("*" * 40)
+                self.log.warning("*" * 40)
+                self.log.warning(msg)
+                self.log.warning("*" * 40)
 
     def run_import(
         self, args, fail_on_error=True, fail_on_preexisting_config=True, fail_on_preexisting_pyhook=True
