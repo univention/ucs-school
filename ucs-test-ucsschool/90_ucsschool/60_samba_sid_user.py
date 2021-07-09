@@ -32,5 +32,5 @@ if __name__ == "__main__":
 
         lo = uldap.getMachineConnection()
         user_sid = lo.get(user_dn)["sambaSID"][0]
-        if not user_sid.startswith("S-1-5-21-"):
+        if not user_sid.startswith(b"S-1-5-21-"):
             raise WrongSID()
