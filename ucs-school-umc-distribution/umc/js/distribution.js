@@ -158,7 +158,7 @@ define([
 			// add remaining elements of the search form
 			var widgets = [{
 				type: ComboBox,
-				'class': 'umcTextBoxDark',
+				'class': 'umcTextBoxOnBody',
 				name: 'filter',
 				label: 'Filter',
 				staticValues: [
@@ -167,7 +167,7 @@ define([
 				]
 			}, {
 				type: SearchBox,
-				'class': 'umcTextBoxDark',
+				'class': 'umcTextBoxOnBody',
 				name: 'pattern',
 				inlineLabel: _('Search...'),
 				description: _('Specifies the substring pattern which is searched for in the projects.'),
