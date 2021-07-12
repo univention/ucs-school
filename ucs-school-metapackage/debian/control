@@ -55,7 +55,6 @@ Depends:
  ${misc:Depends},
 Recommends:
  ucs-school-import-http-api,
- ucs-school-portal-entry,
  ucs-school-umc-diagnostic,
  ucs-school-umc-exam-master,
  ucs-school-umc-groups,
@@ -117,7 +116,6 @@ Depends:
  ${misc:Depends},
 Recommends:
  ucs-school-branding,
- ucs-school-portal-entry,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
@@ -191,7 +189,6 @@ Depends:
 Recommends:
  ucs-school-branding,
  ucs-school-import-http-api,
- ucs-school-portal-entry,
  ucs-school-umc-computerroom,
  ucs-school-umc-diagnostic,
  ucs-school-umc-distribution,
@@ -264,21 +261,7 @@ Depends:
  shell-ucs-school (>= 5.0.38),
  univention-config,
  ${misc:Depends},
-Recommends:
- ucs-school-portal-entry,
 Description: UCS@school meta package for central Slave servers
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
-Package: ucs-school-portal-entry
-Architecture: all
-Depends:
- univention-config,
- ${misc:Depends},
-Description: UCS@school package for portal entries
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
