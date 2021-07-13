@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -33,16 +34,12 @@ import datetime
 import re
 import shutil
 
-import six
+from six import string_types
+from six.moves.configparser import ConfigParser
 
 from univention.lib import locking
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-
-try:
-    import ConfigParser  # py2
-except ImportError:
-    from configparser import ConfigParser  # py3
 
 LESSONS_FILE = "/var/lib/ucs-school-lib/lessons.ini"
 LESSONS_BACKUP = "/var/lib/ucs-school-lib/lessons.bak"
@@ -62,7 +59,7 @@ class Lesson(object):
             raise AttributeError(_("Overlapping lessons are not allowed"))
 
     def _check_name(self, string):
-        if not isinstance(string, six.string_types):
+        if not isinstance(string, string_types):
             raise TypeError("string expected")
         for char in (
             "\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14"
@@ -72,7 +69,7 @@ class Lesson(object):
         return string
 
     def _parse_time(self, string):
-        if not isinstance(string, six.string_types):
+        if not isinstance(string, string_types):
             raise TypeError("string expected")
         m = Lesson.TIME_REGEX.match(string)
         if not m:
@@ -98,16 +95,34 @@ class Lesson(object):
             return -1
         return 0
 
+    def __gt__(self, other):
+        return self.begin > other.end
+
+    def __ge__(self, other):
+        return self.begin >= other.end
+
+    def __lt__(self, other):
+        return self.end < other.begin
+
+    def __le__(self, other):
+        return self.end <= other.begin
+
+    def __eq__(self, other):
+        return self.begin == other.begin and self.end == other.end
+
+    def __ne__(self, other):
+        return not self == other
+
     def intersect(self, lesson):
-        return self.__cmp__(lesson) == 0
+        return not (self.begin > lesson.end or self.end < lesson.begin)
 
     def __str__(self):
         return "%s: %s - %s" % (self._name, self._begin, self._end)
 
 
-class SchoolLessons(ConfigParser.ConfigParser):
+class SchoolLessons(ConfigParser):
     def __init__(self, filename=LESSONS_FILE):
-        ConfigParser.ConfigParser.__init__(self)
+        ConfigParser.__init__(self)
         self._lessons = []
         self.read(filename)
         self.init()
@@ -115,8 +130,8 @@ class SchoolLessons(ConfigParser.ConfigParser):
     def init(self):
         for sec in self.sections():
             try:
-                lession = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
-                self.add(lession)
+                lesson = Lesson(sec, self.get(sec, "begin"), self.get(sec, "end"))
+                self.add(lesson)
             except (AttributeError, TypeError) as exc:
                 MODULE.warn("Lesson %s could not be added: %s" % (sec, str(exc)))
 
@@ -127,7 +142,7 @@ class SchoolLessons(ConfigParser.ConfigParser):
         self._lessons[:] = [les for les in self._lessons if les.name != lesson]
 
     def add(self, lesson, begin=None, end=None):
-        if isinstance(lesson, six.string_types):
+        if isinstance(lesson, string_types):
             lesson = Lesson(lesson, begin, end)
 
         # ensure there is no intersection between the lessons

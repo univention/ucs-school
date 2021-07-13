@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -61,9 +62,9 @@ from .school import School
 from .utils import _, create_passwd, ucr
 
 try:
-    from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
+    from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
 
-    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter
+    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter  # noqa: F401
 except ImportError:
     pass
 
@@ -214,12 +215,12 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if not obj:
             raise noObject("Could not read %r" % (self.dn,))
         if "ucsschoolSchool" in obj.oldattr:
-            return object_class in obj.oldattr.get("objectClass", [])
+            return object_class.encode("UTF-8") in obj.oldattr.get("objectClass", [])
         return fallback(self.school, self.dn)
 
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type["User"]
-        ocs = set(udm_obj.oldattr.get("objectClass", []))
+        ocs = set(x.decode("UTF-8") for x in udm_obj.oldattr.get("objectClass", []))
         if ocs >= {"ucsschoolTeacher", "ucsschoolStaff"}:
             return TeachersAndStaff
         if ocs >= {"ucsschoolExam", "ucsschoolStudent"}:
@@ -322,7 +323,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         # make sure user is in all mandatory groups and school classes
         current_groups = set(grp_dn.lower() for grp_dn in udm_obj["groups"])
-        groups_to_add = filter(lambda dn: dn.lower() not in current_groups, mandatory_groups)
+        groups_to_add = [dn for dn in mandatory_groups if dn.lower() not in current_groups]
         # [dn for dn in mandatory_groups if dn.lower() not in current_groups]
         if groups_to_add:
             self.logger.debug("Adding %r to groups %r.", self, groups_to_add)
@@ -655,7 +656,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             cls._meta.udm_module,
             None,
             lo,
-            filter=unicode(filter_object_type),
+            filter=u"{}".format(filter_object_type),
             scope="sub",
             superordinate=superordinate,
         )

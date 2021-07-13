@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -30,9 +31,9 @@
 # <http://www.gnu.org/licenses/>.
 
 try:
-    from typing import Optional
+    from typing import Optional  # noqa: F401
 
-    from .base import LoType
+    from .base import LoType  # noqa: F401
 except ImportError:
     pass
 

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -30,9 +31,9 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
 
 import six
-from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
 from univention.admin.filter import conjunction, expression, parse
@@ -55,11 +56,11 @@ from .network import Network
 from .utils import _, ucr
 
 try:
-    from typing import Any, Dict, List, Optional, Type
+    from typing import Any, Dict, List, Optional, Type  # noqa: F401
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
-    from .base import SuperOrdinateType, UdmObject
+    from .base import SuperOrdinateType, UdmObject  # noqa: F401
 except ImportError:
     pass
 
@@ -298,30 +299,30 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         self.create_network(lo)
         return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
-    def get_ipv4_network(self):  # type: () -> IPv4Network
+    def get_ipv4_network(self):  # type: () -> IPv4Interface
         if self.subnet_mask is not None and len(self.ip_address) > 0:
-            network_str = "%s/%s" % (self.ip_address[0], self.subnet_mask)
+            network_str = u"%s/%s" % (self.ip_address[0], self.subnet_mask)
         elif len(self.ip_address) > 0:
-            network_str = str(self.ip_address[0])
+            network_str = u"%s" % (self.ip_address[0],)
         else:
-            network_str = ""
+            network_str = u""
         try:
-            return IPv4Network(network_str)
+            return IPv4Interface(network_str)
         except (AddressValueError, NetmaskValueError, ValueError):
             self.logger.warning("Unparsable network: %r", network_str)
 
-    def _ip_is_set_to_subnet(self, ipv4_network=None):  # type: (IPv4Network) -> bool
+    def _ip_is_set_to_subnet(self, ipv4_network=None):  # type: (IPv4Interface) -> bool
         ipv4_network = ipv4_network or self.get_ipv4_network()
         if ipv4_network:
-            return ipv4_network.ip == ipv4_network.network
+            return ipv4_network.ip == ipv4_network.network.network_address
 
     def get_network(self):  # type: () -> Network
         ipv4_network = self.get_ipv4_network()
         if ipv4_network:
-            network_name = "%s-%s" % (self.school.lower(), ipv4_network.network)
-            network = str(ipv4_network.network)
+            network_name = "%s-%s" % (self.school.lower(), ipv4_network.network.network_address)
+            network = str(ipv4_network.network.network_address)
             netmask = str(ipv4_network.netmask)
-            broadcast = str(ipv4_network.broadcast)
+            broadcast = str(ipv4_network.network.broadcast_address)
             return Network.cache(
                 network_name, self.school, network=network, netmask=netmask, broadcast=broadcast
             )
@@ -366,9 +367,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             )
             networks = [
                 (
-                    network[1]["cn"][0],
-                    IPv4Network(
-                        network[1]["univentionNetwork"][0] + "/" + network[1]["univentionNetmask"][0]
+                    network[1]["cn"][0].decode("UTF-8"),
+                    IPv4Interface(
+                        u"%s/%s"
+                        % (
+                            network[1]["univentionNetwork"][0].decode("utf-8"),
+                            network[1]["univentionNetmask"][0].decode("utf-8"),
+                        )
                     ),
                 )
                 for network in lo.search("(univentionObjectType=networks/network)")
@@ -378,7 +383,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 if is_singlemaster and network[0] == "default" and own_network_ip4 == network[1]:
                     # Bug #48099: jump conflict with default network in singleserver environment
                     continue
-                if own_network_ip4.overlaps(network[1]):
+                if own_network_ip4.network.overlaps(network[1].network):
                     self.add_error(
                         "subnet_mask",
                         _("The newly created network would overlap with the existing network {}").format(
@@ -390,11 +395,11 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
     def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type[SchoolComputer]
         oc = udm_obj.lo.get(udm_obj.dn, ["objectClass"])
         object_classes = oc.get("objectClass", [])
-        if "univentionWindows" in object_classes:
+        if b"univentionWindows" in object_classes:
             return WindowsComputer
-        if "univentionMacOSClient" in object_classes:
+        if b"univentionMacOSClient" in object_classes:
             return MacComputer
-        if "univentionClient" in object_classes:
+        if b"univentionClient" in object_classes:
             return IPComputer
 
     @classmethod

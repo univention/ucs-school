@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -39,6 +40,7 @@ import string
 import subprocess
 import sys
 from contextlib import contextmanager
+from io import IOBase
 from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from random import choice, shuffle
 
@@ -54,7 +56,7 @@ from univention.lib.i18n import Translation
 from univention.lib.policy_result import policy_result
 
 try:
-    from typing import IO, Any, Dict, List, Optional, Sequence, Tuple, Union
+    from typing import IO, Any, Dict, List, Optional, Sequence, Tuple, Union  # noqa: F401
 except ImportError:
     pass
 
@@ -265,7 +267,7 @@ class ModuleHandler(logging.Handler):
         """log to univention debug, remove password from dicts in args"""
         _remove_password_from_log_record(record)
         msg = self.format(record)
-        if isinstance(msg, unicode):
+        if not isinstance(msg, str) and not isinstance(msg, bytes):  # Python 2
             msg = msg.encode("utf-8")
         udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
         ud.debug(self._udebug_facility, udebug_level, msg)
@@ -327,8 +329,10 @@ def add_module_logger_to_schoollib():
         logger.info("add_module_logger_to_schoollib() should only be called once! Skipping...")
 
 
-def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
-    # type: (Optional[int], Optional[str], Optional[str]) -> str
+def create_passwd(
+    length=8, dn=None, specials="$%&*-+=:.?"
+):  # type: (Optional[int], Optional[str], Optional[str]) -> str
+    """pseudorandom!"""
     assert length > 0
 
     if dn:
@@ -351,14 +355,14 @@ def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):
                 pass
         length = _pw_length_cache.get(ou, length)
 
-    pw = list()
-    specials_allowed = length / 5  # 20% specials in a password is enough
+    pw = []
+    specials_allowed = length // 5  # 20% specials in a password is enough
     specials = list(specials) if specials else []
-    lowercase = list(string.lowercase)
+    lowercase = list(string.ascii_lowercase)
     for char in ("i", "l", "o"):
         # remove chars that are easy to mistake for one another
         lowercase.remove(char)
-    uppercase = list(string.uppercase)
+    uppercase = list(string.ascii_uppercase)
     for char in ("I", "L", "O"):
         uppercase.remove(char)
     digits = list(string.digits)
@@ -423,7 +427,9 @@ def nearest_known_loglevel(level):
     if isinstance(level, int):
         int_level = level
     else:
-        int_level = logging._levelNames.get(level, 10)
+        int_level = logging.getLevelName(level)
+        if not isinstance(int_level, int):
+            int_level = 10
     if int_level <= logging.DEBUG:
         return logging.DEBUG
     elif int_level >= logging.CRITICAL:
@@ -451,7 +457,11 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
         fmt or CMDLINE_LOG_FORMATS[loglevel_int2str(nearest_known_loglevel(level))]
     )
     datefmt = datefmt or str(LOG_DATETIME_FORMAT)
-    formatter_kwargs = {"fmt": fmt, "datefmt": datefmt}
+    formatter_kwargs = {
+        "fmt": fmt,
+        "datefmt": datefmt,
+        "stream": sys.stdout if stream is None else stream,
+    }
     fmt_cls = fmt_cls or UCSTTYColoredFormatter
     if issubclass(fmt_cls, colorlog.ColoredFormatter):
         formatter_kwargs["log_colors"] = LOG_COLORS
@@ -539,7 +549,7 @@ def get_logger(
     """
     if not name:
         name = "noname"
-    if isinstance(target, file) or hasattr(target, "write"):
+    if isinstance(target, IOBase) or hasattr(target, "write"):
         # file like object
         filename = target.name
     else:
@@ -556,11 +566,11 @@ def get_logger(
         _logger.setLevel(level)
 
     if not isinstance(handler_kwargs, dict):
-        handler_kwargs = dict()
+        handler_kwargs = {}
     if not isinstance(formatter_kwargs, dict):
-        formatter_kwargs = dict()
+        formatter_kwargs = {}
 
-    if isinstance(target, file) or hasattr(target, "write"):
+    if isinstance(target, IOBase) or hasattr(target, "write"):
         handler_defaults = dict(cls=UniStreamHandler, stream=target)
         fmt = "%(log_color)s{}".format(CMDLINE_LOG_FORMATS[level])
         fmt_cls = colorlog.TTYColoredFormatter
@@ -620,6 +630,10 @@ def exec_cmd(cmd, log=False, raise_exc=False, **kwargs):
     kwargs["stderr"] = kwargs.get("stderr", subprocess.PIPE)
     process = subprocess.Popen(cmd, **kwargs)  # nosec
     stdout, stderr = process.communicate()
+    if isinstance(stdout, bytes):
+        stdout = stdout.decode("UTF-8")
+    if isinstance(stderr, bytes):
+        stderr = stderr.decode("UTF-8")
     if log:
         logger = logging.getLogger(__name__)
         if stdout:
