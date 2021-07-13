@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -28,13 +29,14 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+
 import socket
 import subprocess
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 
-    from .base import LoType
+    from .base import LoType  # noqa: F401
 except ImportError:
     pass
 
@@ -132,7 +134,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     ")",
                     [self.dc_name.lower()],
                 )
-            dcs = lo.search(ldap_filter_str)
+            dcs = lo.searchDn(ldap_filter_str)
             if dcs and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
                     "dc_name", "The educational DC for the school must not be a backup server"
@@ -206,7 +208,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
         last_dn = self.dn
         path = None
-        for path, containers in containers_with_path.iteritems():
+        for path, containers in containers_with_path.items():
             for cn in containers:
                 last_dn = _add_container(cn, last_dn, self.dn, path, lo)
 
@@ -586,7 +588,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.modify_without_hooks(lo)
 
             if self.alter_dhcpd_base and ucr.is_true("ucsschool/singlemaster", False):
-                handler_set(["dhcpd/ldap/base=cn=dhcp,%s" % (self.dn)])
+                handler_set(["dhcpd/ldap/base=cn=dhcp,%s" % (self.dn,)])
                 ucr.load()
 
             self.create_default_containers(lo)
@@ -688,9 +690,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     def from_binddn(cls, lo):
         cls.logger.debug("All local schools: Showing all OUs which DN %s can read.", lo.binddn)
         # get all schools of the user which are present on this server
-        user_schools = lo.search(base=lo.binddn, scope="base", attr=["ucsschoolSchool"])[0][1].get(
-            "ucsschoolSchool", []
-        )
+        user_schools = [x.decode("UTF-8") for x in lo.getAttr(lo.binddn, "ucsschoolSchool")]
         if user_schools:
             schools = []
             for ou in user_schools:

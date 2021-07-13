@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -38,9 +39,9 @@ import uuid
 import ldap
 
 try:
-    from typing import Any, Dict, List, Optional, Type, Union
+    from typing import Any, Dict, List, Optional, Type, Union  # noqa: F401
 
-    from .base import UdmObject
+    from .base import UdmObject  # noqa: F401
 except ImportError:
     pass
 
@@ -62,7 +63,7 @@ from ucsschool.lib.roles import (
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
 private_data_logger = None
-if os.geteuid() == 0:
+if os.geteuid() == 0:  # FIXME: this is a library, move somewhere else...
     LOG_FILE = "/var/log/univention/ucs-school-validation.log"
     VALIDATION_LOGGER = "UCSSchool-Validation"
     private_data_logger = logging.getLogger(VALIDATION_LOGGER)
@@ -83,7 +84,7 @@ def get_position_from(dn):  # type: (str) -> Optional[str]
 
 
 def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
-    dict_obj = dict()
+    dict_obj = {}
     dict_obj["props"] = dict(obj.items())
     dict_obj["dn"] = obj.dn
     dict_obj["position"] = get_position_from(dict_obj["dn"])
@@ -93,7 +94,7 @@ def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
 
 def obj_to_dict_conversion(obj):
     # type: (Union[UdmObject, Dict[str, Any]]) -> Dict[str, Any]
-    if type(obj) is dict:
+    if isinstance(obj, dict):
         dict_obj = obj
     else:
         dict_obj = obj_to_dict(obj)
@@ -213,7 +214,7 @@ class UserValidator(SchoolValidator):
         missing_groups = [
             exp_group
             for exp_group in expected_groups
-            if not any([g.endswith(exp_group.lower()) for g in groups])
+            if not any(g.endswith(exp_group.lower()) for g in groups)
         ]
         if missing_groups:
             return "is missing groups at positions {!r}".format(missing_groups)
@@ -225,7 +226,7 @@ class UserValidator(SchoolValidator):
         Users should not have roles with schools which they don't have.
         """
         schools = [s.lower() for s in schools]
-        missing_schools = set([s for r, c, s in roles if c == "school" and s.lower() not in schools])
+        missing_schools = set(s for r, c, s in roles if c == "school" and s.lower() not in schools)
         if missing_schools:
             return "is not part of schools: {!r}.".format(list(missing_schools))
 
@@ -496,7 +497,7 @@ def validate(obj, logger=None):  # type: (Dict[str, Any], logging.Logger) -> Non
     if validation_class:
         options = dict_obj["options"]
         errors = validation_class.validate(dict_obj)
-        errors = list(filter(None, errors))
+        errors = [err for err in errors if err is not None]
         if errors:
             validation_uuid = str(uuid.uuid4())
             errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}".format(

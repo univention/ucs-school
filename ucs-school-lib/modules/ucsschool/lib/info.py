@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school lib
@@ -34,7 +35,7 @@ from collections import namedtuple
 
 from ldap.filter import filter_format
 
-import univention.uldap  # import for mypy
+import univention.uldap  # noqa: F401
 from univention.config_registry import ConfigRegistry
 
 ucr = ConfigRegistry()
@@ -99,9 +100,9 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
     attrs = lo.get(dn, ["univentionObjectType"])
     object_type = attrs.get("univentionObjectType")[0]
-    if object_type in ("computers/domaincontroller_master", "computers/domaincontroller_backup"):
+    if object_type in (b"computers/domaincontroller_master", b"computers/domaincontroller_backup"):
         return True
-    if object_type in ("computers/domaincontroller_slave", "computers/memberserver"):
+    if object_type in (b"computers/domaincontroller_slave", b"computers/memberserver"):
         membership = get_school_membership_type(lo, dn)
         return not (membership.is_edu_school_member or membership.is_admin_school_member)
     return True
@@ -119,7 +120,7 @@ def is_school_slave(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
     attrs = lo.get(dn, ["univentionObjectType"])
     object_type = attrs.get("univentionObjectType")[0]
-    if object_type != "computers/domaincontroller_slave":
+    if object_type != b"computers/domaincontroller_slave":
         raise ValueError(
             "Given computer DN does not refer to a computers/domaincontroller_slave object!"
         )

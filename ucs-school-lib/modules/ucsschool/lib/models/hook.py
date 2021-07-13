@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2021 Univention GmbH
@@ -38,10 +39,10 @@ from ..pyhooks.pyhook import PyHook
 from .utils import ucr
 
 try:
-    from typing import Any, Dict, Type, TypeVar, Union
+    from typing import Any, Dict, Type, TypeVar, Union  # noqa: F401
 
-    from univention.admin.uldap import access as LoType
-    from univention.config_registry import ConfigRegistry
+    from univention.admin.uldap import access as LoType  # noqa: F401
+    from univention.config_registry import ConfigRegistry  # noqa: F401
 
     UCSSchoolHelperAbstractClassTV = TypeVar(
         "UCSSchoolHelperAbstractClassTV", bound="ucsschool.lib.models.base.UCSSchoolHelperAbstractClass"

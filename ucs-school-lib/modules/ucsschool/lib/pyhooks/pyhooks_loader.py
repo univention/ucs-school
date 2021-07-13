@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -38,15 +39,14 @@ import importlib
 import inspect
 import logging
 import os.path
-import sys
 from collections import defaultdict
 from os import listdir
 
-from six import iteritems, reraise, string_types
+from six import iteritems, string_types
 
 try:
-    import logging.Logger
-    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
+    import logging.Logger  # noqa: F401
+    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union  # noqa: F401
 
     from .pyhooks import PyHook
 
@@ -117,7 +117,7 @@ class PyHooksLoader(object):
             self.logger.info(
                 "Searching for hooks of type %r in: %s...", self.base_class_name, self.base_dir
             )
-            self._hook_classes[self.base_class_name] = list()
+            self._hook_classes[self.base_class_name] = []
             if self._filter_func:
                 filter_func = self._filter_func
             else:
@@ -138,7 +138,7 @@ class PyHooksLoader(object):
                             self.logger.info(
                                 "Hook class %r filtered out by %s().",
                                 a_class.__name__,
-                                filter_func.func_name,
+                                filter_func.__name__,
                             )
             self.logger.info(
                 "Found hook classes: %s",
@@ -170,7 +170,7 @@ class PyHooksLoader(object):
                         kwargs,
                         exc,
                     )
-                    reraise(*sys.exc_info())
+                    raise
 
             # fill cache: find all enabled hook methods
             methods = defaultdict(list)  # type: Dict[str, List[Tuple[Callable[..., Any], int]]]
@@ -192,7 +192,7 @@ class PyHooksLoader(object):
                     else:
                         self.logger.warning("Ignoring invalid priority item (%r : %r).", meth_name, prio)
             # sort by priority
-            self._pyhook_obj_cache = dict()
+            self._pyhook_obj_cache = {}
             for meth_name, meth_list in iteritems(methods):
                 self._pyhook_obj_cache[meth_name] = [
                     x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)
@@ -204,7 +204,10 @@ class PyHooksLoader(object):
                     [
                         (
                             meth_name,
-                            ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths],
+                            [
+                                "{}.{}".format(m.__self__.__class__.__name__, m.__func__.__name__)
+                                for m in meths
+                            ],
                         )
                         for meth_name, meths in iteritems(self._pyhook_obj_cache)
                     ]

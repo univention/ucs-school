@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -47,7 +48,6 @@ from univention.admin.syntax import (
     netmask,
     primaryEmailAddressValidDomain,
     reverseLookupSubnet,
-    simple,
     string,
     string_numbers_letters_dots_spaces,
     uid_umlauts,
@@ -59,7 +59,9 @@ from ..roles import all_context_types, all_roles
 from .utils import _, ucr
 
 try:
-    from typing import Any, List, Optional, Type
+    from typing import Any, List, Optional, Type  # noqa: F401
+
+    from univention.admin.syntax import simple  # noqa: F401
 except ImportError:
     pass
 

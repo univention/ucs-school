@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -55,7 +56,19 @@ from .utils import _, exec_cmd, ucr
 from .validator import validate
 
 try:
-    from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
+    from typing import (  # noqa: F401
+        Any,
+        Dict,
+        Iterable,
+        List,
+        Optional,
+        Sequence,
+        Set,
+        Tuple,
+        Type,
+        TypeVar,
+        Union,
+    )
 
     import univention.admin.handlers.simpleLdap
     from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
@@ -222,8 +235,8 @@ class UCSSchoolHelperAbstractClass(object):
 
         ``/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/``
         are called with the name of a temporary file containing the hook_line via run-parts.
-        ``%(module)s`` is ``'windows'`` for ``cls._meta.udm_module == 'computers/windows'`` by default and
-        can be explicitely set with::
+        ``%(module)s`` is ``'windows'`` for ``cls._meta.udm_module == 'computers/windows'`` by default
+        and can be explicitely set with::
 
             class Meta:
                 hook_path = 'computer'
@@ -484,7 +497,7 @@ class UCSSchoolHelperAbstractClass(object):
 
         # create temporary file with data
         with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line)
+            tmpfile.write(line.encode("utf-8"))
             tmpfile.flush()
 
             # invoke hook scripts
@@ -512,22 +525,23 @@ class UCSSchoolHelperAbstractClass(object):
         :return: None
         :rtype: None
         """
+        state = self._in_hook
         self._in_hook = True
         all_hooks = _pyhook_loader.get_hook_objects(lo)
         meth_name = "{}_{}".format(hook_time, func_name)
         try:
             for func in all_hooks.get(meth_name, []):
-                if issubclass(self.__class__, func.im_class.model):
+                if issubclass(self.__class__, func.__self__.__class__.model):
                     self.logger.debug(
                         "Running %s hook %s.%s for %s...",
                         meth_name,
-                        func.im_class.__name__,
-                        func.im_func.func_name,
+                        func.__self__.__class__.__name__,
+                        func.__func__.__name__,
                         self,
                     )
                     func(self)
         finally:
-            self._in_hook = False
+            self._in_hook = state
 
     def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> bool
         """
@@ -841,6 +855,7 @@ class UCSSchoolHelperAbstractClass(object):
                 name = explode_dn(dn, 1)[0]
             except ldap.DECODING_ERROR:
                 name = ""
+            name = name.encode("utf-8")
             return cls._meta.ldap_unmap_function([name])
 
     @classmethod
@@ -1110,17 +1125,20 @@ class UCSSchoolHelperAbstractClass(object):
         return cls
 
     def __repr__(self):  # type: () -> str
+        def srepr(x):
+            return repr(x).lstrip("u")
+
         dn = self.dn
-        dn = "%r, old_dn=%r" % (dn, self.old_dn) if dn != self.old_dn else repr(dn)
+        dn = "%s, old_dn=%s" % (srepr(dn), srepr(self.old_dn)) if dn != self.old_dn else srepr(dn)
         if self.supports_school():
-            return "%s(name=%r, school=%r, dn=%s)" % (
+            return "%s(name=%s, school=%s, dn=%s)" % (
                 self.__class__.__name__,
-                self.name,
-                self.school,
+                srepr(self.name),
+                srepr(self.school),
                 dn,
             )
         else:
-            return "%s(name=%r, dn=%s)" % (self.__class__.__name__, self.name, dn)
+            return "%s(name=%s, dn=%s)" % (self.__class__.__name__, srepr(self.name), srepr(dn))
 
     def __lt__(self, other):  # type: (UCSSchoolModel) -> bool
         return self.name < other.name
@@ -1318,7 +1336,16 @@ class RoleSupportMixin(object):
         if old_roles != self.ucsschool_roles:
             self.logger.info("Updating roles: %r -> %r...", old_roles, self.ucsschool_roles)
             # cannot use do_modify() here, as it would delete the old object
-            lo.modify(self.dn, [("ucsschoolRole", old_roles, self.ucsschool_roles)])
+            lo.modify(
+                self.dn,
+                [
+                    (
+                        "ucsschoolRole",
+                        [x.encode("UTF-8") for x in old_roles],
+                        [role.encode("utf-8") for role in self.ucsschool_roles],
+                    )
+                ],
+            )
 
     def validate_roles(self, lo):  # type: (LoType) -> None
         # for now different roles in different schools are not supported
