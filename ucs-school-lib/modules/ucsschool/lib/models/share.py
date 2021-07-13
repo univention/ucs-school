@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -44,9 +45,9 @@ from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectTyp
 from .utils import _, ucr
 
 try:
-    from typing import Any, List, Optional
+    from typing import Any, List, Optional  # noqa: F401
 
-    from .base import LoType, UdmObject
+    from .base import LoType, UdmObject  # noqa: F401
 except ImportError:
     pass
 
@@ -80,7 +81,7 @@ class SetNTACLsMixin(object):
     @staticmethod
     def get_groups_samba_sid(lo, dn):  # type: (LoType, str) -> str
         try:
-            return lo.get(dn)["sambaSID"][0]
+            return lo.get(dn)["sambaSID"][0].decode("ASCII")
         except (IndexError, KeyError):
             raise NoSID("Group {!r} has no/empty 'sambaSID' attribute.".format(dn))
 
@@ -237,20 +238,23 @@ class Share(UCSSchoolHelperAbstractClass):
         # fetch serverfqdn from OU
         result = lo.get(school_dn, ["ucsschoolClassShareFileServer"])
         if result:
-            server_domain_name = lo.get(result["ucsschoolClassShareFileServer"][0], ["associatedDomain"])
+            share_file_server = result["ucsschoolClassShareFileServer"][0].decode("utf-8")
+            server_domain_name = lo.get(share_file_server, ["associatedDomain"])
             if server_domain_name:
-                server_domain_name = server_domain_name["associatedDomain"][0]
+                server_domain_name = server_domain_name["associatedDomain"][0].decode("UTF-8")
             else:
                 server_domain_name = domainname
-            result = lo.get(result["ucsschoolClassShareFileServer"][0], ["cn"])
+            result = lo.get(share_file_server, ["cn"])
             if result:
-                return "%s.%s" % (result["cn"][0], server_domain_name)
+                return "%s.%s" % (result["cn"][0].decode("UTF-8"), server_domain_name)
 
         # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
         ou_attr_ldap_access_write = lo.get(school_dn, ["univentionLDAPAccessWrite"])
         alternative_server_dn = None
         if len(ou_attr_ldap_access_write) > 0:
-            alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
+            alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0].decode(
+                "UTF-8"
+            )
             if len(ou_attr_ldap_access_write) > 1:
                 self.logger.warning(
                     "more than one corresponding univentionLDAPAccessWrite found at ou=%s", self.school
@@ -260,7 +264,7 @@ class Share(UCSSchoolHelperAbstractClass):
         if alternative_server_dn:
             alternative_server_attr = lo.get(alternative_server_dn, ["uid"])
             if len(alternative_server_attr) > 0:
-                alternative_server_uid = alternative_server_attr["uid"][0]
+                alternative_server_uid = alternative_server_attr["uid"][0].decode("utf-8")
                 alternative_server_uid = alternative_server_uid.replace("$", "")
                 if len(alternative_server_uid) > 0:
                     return "%s.%s" % (alternative_server_uid, domainname)

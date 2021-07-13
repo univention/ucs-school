@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -37,9 +38,9 @@ Used by create_ou script and customer single user HTTP API.
 import logging
 
 try:
-    from typing import Optional
+    from typing import Optional  # noqa: F401
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 except ImportError:
     pass
 

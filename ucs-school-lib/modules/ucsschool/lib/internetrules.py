@@ -1,4 +1,5 @@
-# -*- coding: iso-8859-15 -*-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # Univention Management Console
 #  module: Internet Rules Module
@@ -32,7 +33,7 @@
 
 import re
 
-import six
+from six import string_types
 
 import univention.config_registry
 from univention.management.console.config import ucr
@@ -49,12 +50,12 @@ _filterTypes = {
     "blacklist-pass": BLACKLIST,
     "whitelist-block": WHITELIST,
 }
-_filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
+_filterTypesInv = {_i[1]: _i[0] for _i in _filterTypes.items()}
 _listTypes = {
     "blacklisted": BLACKLIST,
     "whitelisted": WHITELIST,
 }
-_listTypesInv = dict([(_i[1], _i[0]) for _i in _listTypes.iteritems()])
+_listTypesInv = {_i[1]: _i[0] for _i in _listTypes.items()}
 
 
 class Rule(object):
@@ -93,7 +94,7 @@ class Rule(object):
         """domains can be a list of strings or a list of index-string-type tuples."""
         self._domains = []
         for i in domains:
-            if isinstance(i, six.string_types):
+            if isinstance(i, string_types):
                 self._domains.append((-1, i, self.type))
             else:
                 self._domains.append(i)
@@ -222,7 +223,7 @@ def list(filterName=None, userRule=False):
 
     # iterate over all UCR variables
     rules = {}
-    for k, v in findUCRVariables(filterName, userRule).iteritems():
+    for k, v in findUCRVariables(filterName, userRule).items():
         imatch = _regFilterNames.match(k)
         if not imatch:
             # should not happen
@@ -274,13 +275,13 @@ def list(filterName=None, userRule=False):
 
     if filterName:
         # handle case for filtered search
-        if not len(rules):
+        if not rules:
             # no match
             return None
         # return single element
-        return rules.items()[0][1]
+        return next(r for r in rules.values())
 
-    return rules.values()
+    return [r for r in rules.values()]
 
 
 def getGroupRuleName(groupNames):
@@ -319,7 +320,5 @@ def setGroupRuleName(*args):
     if len(args) > 1:
         vars = ["proxy/filter/groupdefault/%s=%s" % (args[0], args[1])]
     else:
-        vars = [
-            "proxy/filter/groupdefault/%s=%s" % (iname, irule) for iname, irule in args[0].iteritems()
-        ]
+        vars = ["proxy/filter/groupdefault/%s=%s" % (iname, irule) for iname, irule in args[0].items()]
     univention.config_registry.handler_set(vars)

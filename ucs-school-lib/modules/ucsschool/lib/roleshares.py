@@ -1,4 +1,5 @@
-# -*- coding: iso-8859-15 -*-
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # Copyright 2014-2021 Univention GmbH
 #
@@ -43,12 +44,11 @@ from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.school import School
 from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
-from univention.admincli.admin import _2utf8
 from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
 
 try:
-    from typing import List, Optional
+    from typing import List, Optional  # noqa: F401
 except ImportError:
     pass
 
@@ -132,7 +132,7 @@ def create_roleshare_on_server(
     except univention.admin.uexceptions.objectExists as exc:
         print("Object exists: %s" % (exc.args[0],))
     else:
-        print("Object created: %s" % _2utf8(udm_obj.dn))
+        print("Object created: %s" % udm_obj.dn)
 
 
 @LDAP_Connection(MACHINE_READ)
@@ -143,7 +143,9 @@ def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
             base=server_dn, scope="base", attr=["cn", "associatedDomain"]
         )[0]
         if "associatedDomain" in ldap_obj:
-            fqdn = ".".join((ldap_obj["cn"][0], ldap_obj["associatedDomain"][0]))
+            fqdn = ".".join(
+                (ldap_obj["cn"][0].decode("UTF-8"), ldap_obj["associatedDomain"][0].decode("UTF-8"))
+            )
     except IndexError:
         print("Could not determine FQDN for %s" % (server_dn,))
     return fqdn

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -29,7 +30,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import inspect
+try:
+    from inspect import getfullargspec as get_arguments
+except ImportError:
+    from inspect import getargspec as get_arguments
+
 from functools import wraps
 
 from univention.management.console.ldap import (
@@ -92,10 +97,14 @@ def LDAP_Connection(*connection_types):
         connection_types = (USER_READ,)
 
     def inner_wrapper(func):
-        argspec = inspect.getargspec(func)
+        argspec = get_arguments(func)
         argnames = set(argspec.args) | set(connection_types)
-        add_search_base = "search_base" in argspec.args or argspec.keywords is not None
-        add_position = "ldap_position" in argspec.args or argspec.keywords is not None
+        try:
+            keywords = argspec.keywords
+        except AttributeError:
+            keywords = None if not argspec.kwonlyargs else argspec.kwonlyargs
+        add_search_base = "search_base" in argspec.args or keywords is not None
+        add_position = "ldap_position" in argspec.args or keywords is not None
 
         def wrapper_func(*args, **kwargs):
             # set LDAP keyword arguments

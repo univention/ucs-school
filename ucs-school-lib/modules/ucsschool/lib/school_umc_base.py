@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib
@@ -46,12 +47,12 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 
 try:
-    from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+    from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple  # noqa: F401
 
     if TYPE_CHECKING:
 
-        from univention.admin.handlers import simpleLdap as UdmObject
-        from univention.admin.uldap import access as LoType
+        from univention.admin.handlers import simpleLdap as UdmObject  # noqa: F401
+        from univention.admin.uldap import access as LoType  # noqa: F401
 except ImportError:
     pass
 
@@ -104,11 +105,11 @@ class SchoolBaseModule(Base):
         if not self.user_dn:  # ... backwards compatibility
             # the DN is None if we have a local user (e.g., root)
             # FIXME: the statement above is not completely true, user_dn is None also if the UMC server +
-            # could not detect it (for whatever reason) therefore this workaround is a security whole
+            # could not detect it (for whatever reason) therefore this workaround is a security hole
             # which allows to execute ldap operations as machine account
             try:  # to get machine account password
                 MODULE.warn("Using machine account for local user: %s" % self.username)
-                with open("/etc/machine.secret", "rb") as fd:
+                with open("/etc/machine.secret", "r") as fd:
                     password = fd.read().strip()
                 user_dn = ucr.get("ldap/hostdn")
             except IOError as exc:
@@ -148,7 +149,7 @@ class SchoolBaseModule(Base):
         groupresult = udm_modules.lookup(
             "groups/group", None, ldap_connection, scope=scope, base=ldap_base, filter=ldapFilter
         )
-        name_pattern = re.compile("^%s-" % (re.escape(school)), flags=re.I)
+        name_pattern = re.compile(r"^%s-" % (re.escape(school)), flags=re.I)
         return [{"id": grp.dn, "label": name_pattern.sub("", grp["name"])} for grp in groupresult]
 
     @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
@@ -246,7 +247,7 @@ class SchoolBaseModule(Base):
                 if pattern:
                     search_filter_list.append(LDAP_Filter.forUsers(pattern))
                 # concatenate LDAP filters
-                search_filter = unicode(
+                search_filter = u"{}".format(
                     conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                 )
                 for cls in classes:
@@ -303,7 +304,9 @@ class SchoolBaseModule(Base):
             # contains far less users than all available users. The else-block opens
             # all available users ==> high LDAP load! (Bug #42167)
 
-            user_dns = ldap_connection.get(group).get("uniqueMember", [])
+            user_dns = [
+                group.decode("utf-8") for group in ldap_connection.get(group).get("uniqueMember", [])
+            ]
             for userdn in set(user_dns):
                 search_filter_list = [LDAP_Filter.forSchool(school)]
                 if pattern:
@@ -311,7 +314,7 @@ class SchoolBaseModule(Base):
                 for cls in classes:
                     search_filter_list.append(cls.type_filter)
                     # concatenate LDAP filters
-                    search_filter = unicode(
+                    search_filter = u"{}".format(
                         user_module.lookup_filter(
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
@@ -334,7 +337,7 @@ class SchoolBaseModule(Base):
                     # in both cases: ignore user
         else:
             for cls in classes:
-                filter_s = unicode(
+                filter_s = u"{}".format(
                     user_module.lookup_filter(
                         conjunction(
                             "&",
@@ -408,8 +411,8 @@ class Display:
 
     @staticmethod
     def user_ldap(ldap_object):  # type: (Dict[str, Any]) -> str
-        fullname = ldap_object.get("sn", [""])[0]
-        if ldap_object.get("givenName", [""])[0]:
-            fullname += ", %s" % ldap_object["givenName"][0]
+        fullname = ldap_object.get("sn", [b""])[0].decode("utf-8")
+        if ldap_object.get("givenName", [b""])[0]:
+            fullname += ", %s" % ldap_object["givenName"][0].decode("utf-8")
 
-        return fullname + " (%s)" % ldap_object["uid"][0]
+        return fullname + " (%s)" % ldap_object["uid"][0].decode("utf-8")

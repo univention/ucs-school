@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2012-2021 Univention GmbH
@@ -34,7 +34,6 @@ Parser for smbstatus
 
 import re
 import subprocess
-import sys
 
 import univention.debug as ud
 
@@ -131,9 +130,9 @@ class SMB_Status(list):
             self.pop()
         if testdata is None:
             smbstatus = subprocess.Popen(  # nosec
-                ["/usr/bin/smbstatus"], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ["/usr/bin/smbstatus"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
-            data = ["%s\n" % x for x in smbstatus.communicate()[0].splitlines()]
+            data = ["%s\n" % x for x in smbstatus.communicate()[0].decode("UTF-8").splitlines()]
         else:
             data = testdata
         regexps = [REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES]
@@ -168,28 +167,20 @@ class SMB_Status(list):
             self.append(service)
 
 
-def usage():
-    print("Usage: {} [file]".format(sys.argv[0]))
-    print("If no file is given, runs smbstatus and parses its output.")
-    print("(Test data: /usr/share/ucs-school-lib/smbstatus_testdata.txt)")
-
-
 if __name__ == "__main__":
-    ud.init("/var/log/univention/smbstatus.log", 0, 0)
-    ud.set_level(ud.PARSER, 4)
-    if len(sys.argv) == 1:
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="If no file is given, runs smbstatus and parses its output (Test data: /usr/share/ucs-school-lib/smbstatus_testdata.txt)."
+    )
+    parser.add_argument("file", nargs="?", type=argparse.FileType("r"))
+    args = parser.parse_args()
+    ud.init("/var/log/univention/smbstatus.log", ud.NO_FLUSH, ud.NO_FUNCTION)
+    ud.set_level(ud.PARSER, ud.ALL)
+    if not args.file:
         status = SMB_Status()
-    elif len(sys.argv) == 2:
-        try:
-            testdata = open(sys.argv[1], "rb").read()
-        except IOError:
-            print("Error: Cannot read {!r}\n".format(sys.argv[1]))
-            usage()
-            sys.exit(1)
-        status = SMB_Status(testdata=testdata.split("\n"))
     else:
-        usage()
-        sys.exit(1)
-    for process in map(str, status):
-        print(process)
+        status = SMB_Status(testdata=args.file.read().split("\n"))
+    for process in status:
+        print(str(process))
         print("")

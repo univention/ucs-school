@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -48,9 +49,9 @@ from .share import ClassShare, WorkGroupShare
 from .utils import _, ucr
 
 try:
-    from typing import Any, Dict, Generator, List, Optional, Type
+    from typing import Any, Dict, Generator, List, Optional, Type  # noqa: F401
 
-    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject
+    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject  # noqa: F401
 except ImportError:
     pass
 
@@ -382,5 +383,5 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
                 continue
 
     def get_schools_from_udm_obj(self, udm_obj):  # type: (UdmObject) -> str
-        # fixme: no idea how to find out old school
+        # FIXME: no idea how to find out old school
         return self.school
