@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school python lib: models
@@ -29,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ipaddr import AddressValueError, IPv4Network, NetmaskValueError
+from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
 
 from univention.admin.uexceptions import noObject
 
@@ -124,9 +125,9 @@ class Network(UCSSchoolHelperAbstractClass):
             except noObject:
                 return
             netmask = network.netmask  # e.g. '24'
-            network_str = "0.0.0.0/%s" % netmask
+            network_str = u"0.0.0.0/%s" % netmask
             try:
-                ipv4_network = IPv4Network(network_str)
+                ipv4_network = IPv4Interface(network_str)
             except (AddressValueError, NetmaskValueError, ValueError):
                 cls.logger.warning("Unparsable network: %r", network_str)
             else:

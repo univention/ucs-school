@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2020-2021 Univention GmbH
@@ -35,7 +35,7 @@ from operator import attrgetter
 
 import click
 from ldap.filter import escape_filter_chars
-from six import iteritems, itervalues
+from six import PY2, iteritems, itervalues
 
 import univention.admin.modules as udm_modules
 from ucsschool.lib.models.base import (
@@ -49,14 +49,25 @@ from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import get_stream_handler, ucr
 from univention.admin.filter import conjunction, expression, parse, walk
 from univention.admin.uexceptions import ldapError, noObject
-from univention.admin.uldap import access as LoType, getAdminConnection, position as PoType
+from univention.admin.uldap import getAdminConnection
 
 try:
-    from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
+    from typing import (  # noqa: F401
+        TYPE_CHECKING,
+        Dict,
+        Iterable,
+        List,
+        NamedTuple,
+        Optional,
+        Set,
+        Tuple,
+        Type,
+    )
 
     if TYPE_CHECKING:
-        import univention.admin.handlers.simpleLdap
-        from ucsschool.lib.models.base import UCSSchoolModel
+        import univention.admin.handlers.simpleLdap  # noqa: F401
+        from ucsschool.lib.models.base import UCSSchoolModel  # noqa: F401
+        from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 except ImportError:
     pass
 
@@ -129,7 +140,7 @@ def load_model(model_name):  # type: (str) -> Type[UCSSchoolModel]
     try:
         m_c = model_classes[model_name.lower()]
     except KeyError:
-        logger.critical("Unkown model %r.", model_name)
+        logger.critical("Unknown model %r.", model_name)
         sys.exit(1)
     try:
         mod = importlib.import_module(m_c.module_name)
@@ -186,6 +197,16 @@ def get_obj(lo, model_cls, dn, name, school):
 
 
 def print_object(obj, print_attrs=None):  # type: (UCSSchoolModel, Optional[str]) -> None
+    def srepr(x):
+        def encode(s):
+            if PY2:  # pragma: no cover
+                return s.encode("UTF-8") if isinstance(s, type(u"")) else s
+            return s.decode("UTF-8") if isinstance(s, type(b"")) else s
+
+        if isinstance(x, list):
+            return repr([encode(y) for y in x])
+        return repr(encode(x)).lstrip("u")
+
     attrs = sorted(set(obj.to_dict().keys()) - set(no_display_attrs))
     if print_attrs:
         p_a = print_attrs.split(",")
@@ -193,8 +214,8 @@ def print_object(obj, print_attrs=None):  # type: (UCSSchoolModel, Optional[str]
     obj_repr = obj.to_dict()
     msg = "{}{}{}".format(
         obj,
-        "\n  dn: {!r}".format(obj.dn) if not attrs or "dn" in attrs else "",
-        "\n  {}".format("\n  ".join("{}: {!r}".format(k, obj_repr[k]) for k in attrs)),
+        "\n  dn: {}".format(srepr(obj.dn)) if not attrs or "dn" in attrs else "",
+        "\n  {}".format("\n  ".join("{}: {}".format(k, srepr(obj_repr[k])) for k in attrs)),
     )
     logger.info(msg)
 
@@ -409,7 +430,7 @@ def list_objs(ctx, model, dn, name, school, attr_filters, filter_str, print_attr
             logger.critical("Unknown school %r.", school)
             sys.exit(1)
         ou_obj = lo.get("ou={},{}".format(school, ucr["ldap/base"]))
-        return ou_obj["ou"][0]
+        return ou_obj["ou"][0].decode("UTF-8")
 
     def udm_filter_from_school_filter(filter_str):  # type: (str) -> str
         def replace_school_attr_with_udm_prop(expr, arg):  # type: (expression, Dict[str, str]) -> None
