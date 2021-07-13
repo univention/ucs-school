@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 #
@@ -37,7 +37,7 @@ import re
 import sys
 
 try:
-    from typing import Any, Dict, List, Optional
+    from typing import Any, Dict, List, Optional, Tuple  # noqa: F401
 except ImportError:
     pass
 
@@ -145,7 +145,9 @@ class UserCheck(object):
 
         return errors
 
-    def get_users_from_ldap(self, school, users):  # type: (str, List[str]) -> List[str]
+    def get_users_from_ldap(
+        self, school, users
+    ):  # type: (str, List[str]) -> Tuple[str, Dict[str, List[bytes]]]
         ldap_user_list = []
         if users:
             for user_dn in users:
@@ -156,7 +158,7 @@ class UserCheck(object):
                     sys.exit()
                 except INVALID_DN_SYNTAX:
                     print("DN {} has invalid syntax.".format(user_dn))
-                    sys.exit()
+                    sys.exit(1)
 
         if school:
             users_from_school_list = self.lo.search(
@@ -176,7 +178,7 @@ class UserCheck(object):
 
         return ldap_user_list
 
-    def check_user(self, dn, attrs):  # type: (str, Dict[str, Any]) -> List[str]
+    def check_user(self, dn, attrs):  # type: (str, Dict[str, List[bytes]]) -> List[str]
         issues = []
 
         try:
@@ -189,7 +191,7 @@ class UserCheck(object):
             return issues
 
         # check if objectClass is correctly set
-        user_obj_classes = attrs.get("objectClass", [])
+        user_obj_classes = [x.decode("UTF-8") for x in attrs.get("objectClass", [])]
         if not any(cls in user_obj_classes for cls in self.ucsschool_obj_classes):
             issues.append("User has no UCS@School Object Class set.")
 
@@ -283,7 +285,7 @@ class UserCheck(object):
 
         # Users should also be member of the corresponding school
         for ou in user_obj.school_classes:
-            if ou not in attrs["ucsschoolSchool"]:
+            if ou.encode("UTF-8") not in attrs["ucsschoolSchool"]:
                 issues.append(
                     "Is member of class {} but school property is not correspondingly set.".format(
                         user_obj.school_classes[ou][0]
@@ -417,28 +419,28 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     classes = []
     role_classes_string = create_ucsschool_role_string(role_school_class, school_filter)
     for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_classes_string)):
-        classes.append(attrs["cn"])
+        classes.append(attrs["cn"][0].decode("UTF-8"))
 
     role_class_share_string = create_ucsschool_role_string(role_school_class_share, school_filter)
     cls_shares = lo.search(filter="(ucsschoolRole={})".format(role_class_share_string))
     for dn, attrs in cls_shares:
-        if attrs["cn"] not in classes:
+        if attrs["cn"][0].decode("UTF-8") not in classes:
             problematic_objects.setdefault(dn, []).append(
-                "Corresponding class {} is missing.".format(attrs["cn"][0])
+                "Corresponding class {} is missing.".format(attrs["cn"][0].decode("UTF-8"))
             )
 
     # check if there is a work group for each work group share
     work_groups = []
     role_workgroup_string = create_ucsschool_role_string(role_workgroup, school_filter)
     for dn, attrs in lo.search(filter="(ucsschoolRole={})".format(role_workgroup_string)):
-        work_groups.append(attrs["cn"])
+        work_groups.append(attrs["cn"][0].decode("UTF-8"))
 
     role_workgroup_share_string = create_ucsschool_role_string(role_workgroup_share, school_filter)
     wg_share = lo.search(filter="(ucsschoolRole={})".format(role_workgroup_share_string))
     for dn, attrs in wg_share:
-        if attrs["cn"] not in work_groups:
+        if attrs["cn"][0].decode("UTF-8") not in work_groups:
             problematic_objects.setdefault(dn, []).append(
-                "Corresponding work group {} is missing.".format(attrs["cn"][0])
+                "Corresponding work group {} is missing.".format(attrs["cn"][0].decode("UTF-8"))
             )
 
     return problematic_objects
@@ -475,9 +477,9 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
     members = {}
     for dn in global_groups:
         try:
-            members[dn] = lo.search(base=dn)[0][1]["uniqueMember"]
+            members[dn] = [x.decode("UTF-8") for x in lo.search(base=dn)[0][1]["uniqueMember"]]
         except KeyError:
-            members[dn] = ""
+            members[dn] = []
             continue
         except noObject:
             problematic_objects.setdefault(dn, []).append(
@@ -505,9 +507,11 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
 
         for role, group_dn, global_group in checks:
             try:
-                members[group_dn] = lo.search(base=group_dn)[0][1]["uniqueMember"]
+                members[group_dn] = [
+                    x.decode("UTF-8") for x in lo.search(base=group_dn)[0][1]["uniqueMember"]
+                ]
             except KeyError:
-                members[group_dn] = ""
+                members[group_dn] = []
             except noObject:
                 problematic_objects.setdefault(dn, []).append(
                     "Memberships of group {} could not be checked. It does not exist".format(dn)
