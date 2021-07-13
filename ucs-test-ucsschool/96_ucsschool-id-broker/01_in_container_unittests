@@ -9,3 +9,9 @@ CMD="cd /app/tests/unittests; python3 -m pytest -l -v"
 echo "Running in container: sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
+
+CMD="cd /var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-broker-plugin/tests/unittests; python3 -m pytest -l -v"
+
+echo "Running in container: sh -c \"$CMD\""
+
+univention-app shell "$APP" sh -c "$CMD"

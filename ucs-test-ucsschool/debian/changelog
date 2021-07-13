@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.240) unstable; urgency=medium
+
+  * Bug #53535: add call for ID Broker tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 13 Jul 2021 12:47:26 +0200
+
 ucs-test-ucsschool (6.0.239) unstable; urgency=low
 
   * Bug #53536: add ucs-test section for ID Broker tests
