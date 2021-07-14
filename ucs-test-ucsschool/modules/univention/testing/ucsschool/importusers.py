@@ -855,11 +855,12 @@ def create_home_server(udm, name):
 
 
 def import_users_basics(use_cli_api=True, use_python_api=False):
-    ucr = univention.testing.ucr.UCSTestConfigRegistry()
-    ucr.load()
+    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, udm_test.UCSTestUDM() as udm:
+        ucr.load()
+        return _import_users_basics(udm, use_cli_api=use_cli_api, use_python_api=use_python_api)
 
-    udm = udm_test.UCSTestUDM()
 
+def _import_users_basics(udm, use_cli_api=True, use_python_api=False):
     for singlemaster in [False, True]:
         for samba_home_server in [None, "generate"]:
             for profile_path_server in [None, "generate"]:
