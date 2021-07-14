@@ -1,7 +1,7 @@
 modules/ucsschool/http_api/app/*.py ucsschool.http_api.app
-modules/ucsschool/http_api/import_api/management/*.py ucsschool.http_api.management
-modules/ucsschool/http_api/import_api/management/commands/*.py ucsschool.http_api.management.commands
-modules/ucsschool/http_api/import_api/migrations/*.py ucsschool.http_api.migrations
+modules/ucsschool/http_api/import_api/management/*.py ucsschool.http_api.import_api.management
+modules/ucsschool/http_api/import_api/management/commands/*.py ucsschool.http_api.import_api.management.commands
+modules/ucsschool/http_api/import_api/migrations/*.py ucsschool.http_api.import_api.migrations
 modules/ucsschool/http_api/manage.py ucsschool.http_api
 modules/ucsschool/http_api/import_api/admin.py ucsschool.http_api.import_api
 modules/ucsschool/http_api/import_api/apps.py ucsschool.http_api.import_api

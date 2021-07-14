@@ -1,3 +1,10 @@
+ucs-school-import (17.0.71) unstable; urgency=medium
+
+  * Bug #53576: fix regression: revert moving django packages into the
+    wrong location
+
+ -- Florian Best <best@univention.de>  Wed, 14 Jul 2021 12:14:39 +0200
+
 ucs-school-import (17.0.70) unstable; urgency=medium
 
   * Bug #53203: keep admin- and non-school roles on import
