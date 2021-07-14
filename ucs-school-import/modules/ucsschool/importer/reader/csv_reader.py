@@ -196,7 +196,7 @@ class CsvReader(BaseReader):
                 self.entry_count = reader.line_num
                 self.input_data = reader.row
                 yield {
-                    unicode(key, "utf-8").strip(): unicode(value or "", "utf-8").strip()
+                    key.strip(): (value or "").strip()
                     for key, value in row.items()
                 }
 
