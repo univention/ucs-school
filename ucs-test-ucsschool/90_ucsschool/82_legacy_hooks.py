@@ -437,7 +437,7 @@ class TestLegacyHooks(TestCase):
     def _test_remove(self):
         self.__class__.progress_counter += 1
         logger.info(
-            "** Test %d/%d remove() of model %d/%d: %r...",
+            "** Test %d/%d remove() of model %s.",
             self.progress_counter,
             len(self.func2model),
             self.model.__name__,
