@@ -195,10 +195,14 @@ class CsvReader(BaseReader):
             for row in reader:
                 self.entry_count = reader.line_num
                 self.input_data = reader.row
-                yield {
-                    key.strip(): (value or "").strip()
-                    for key, value in row.items()
-                }
+                try:
+                    yield {
+                        key.strip(): (value or "").strip()
+                        for key, value in row.items()
+                        if key is not None
+                    }
+                except Exception as exc:
+                    raise Exception(row.items(), exc)
 
     def handle_input(
         self,
