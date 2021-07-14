@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -48,9 +48,9 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.utils import UniStreamHandler, ucr
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 
-    from ucsschool.importer.models.import_user import ImportUser
+    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 
@@ -100,7 +100,7 @@ def roles_from_ocs(ocs, a_user, school):  # type: (List[str], ImportUser, str) -
         """"Fake UDM user object class for use with User.get_class_for_udm_obj()"""
 
         def __init__(self, ocs):
-            self.oldattr = {"objectClass": ocs}
+            self.oldattr = {"objectClass": [x.encode("UTF-8") for x in ocs]}
 
     kls = a_user.get_class_for_udm_obj(FakeUdmCls(ocs), school)
     return kls.roles
@@ -166,8 +166,10 @@ def main():
         logger.debug(
             "dn=%r ucsschoolPurgeTimestamp=%r shadowExpire=%r",
             dn,
-            purge_timestamp2date(attr["ucsschoolPurgeTimestamp"][0]).strftime("%Y-%m-%d"),
-            shadow_expire2date(attr["shadowExpire"][0]).strftime("%Y-%m-%d")
+            purge_timestamp2date(attr["ucsschoolPurgeTimestamp"][0].decode("UTF-8")).strftime(
+                "%Y-%m-%d"
+            ),
+            shadow_expire2date(attr["shadowExpire"][0].decode("ASCII")).strftime("%Y-%m-%d")
             if attr.get("shadowExpire")
             else None,
         )
@@ -183,7 +185,7 @@ def main():
             school = m.groups()[0]
         else:
             school = ""
-        roles = roles_from_ocs(attr["objectClass"], a_user, school)
+        roles = roles_from_ocs([x.decode("UTF-8") for x in attr["objectClass"]], a_user, school)
         # use specific ImportUser class to execute correct hooks
         user_obj = factory.make_import_user(roles)
         user = user_obj.from_dn(dn, None, lo)

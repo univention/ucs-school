@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -63,10 +64,10 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Any, Dict, List, Optional, Tuple, Type, Union
+    from typing import Any, Dict, List, Optional, Tuple, Type, Union  # noqa: F401
 
-    from ..configuration import ReadOnlyDict
-    from ..models.import_user import ImportUser
+    from ..configuration import ReadOnlyDict  # noqa: F401
+    from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 
@@ -88,8 +89,8 @@ class UserImport(object):
         :param bool dry_run: set to False to actually commit changes to LDAP
         """
         self.dry_run = dry_run
-        self.errors = list()  # type: List[UcsSchoolImportError]
-        self.imported_users = list()  # type: List[ImportUser]
+        self.errors = []  # type: List[UcsSchoolImportError]
+        self.imported_users = []  # type: List[ImportUser]
         self.added_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
         self.modified_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
         self.deleted_users = defaultdict(list)  # type: Dict[str, List[Dict[str, Any]]]
@@ -114,7 +115,7 @@ class UserImport(object):
         self.logger.info("------ Starting to read users from input data... ------")
         while True:
             try:
-                import_user = self.reader.next()
+                import_user = next(self.reader)
                 self.logger.info("Done reading %d. user: %s", num, import_user)
                 self.imported_users.append(import_user)
             except StopIteration:
@@ -148,7 +149,7 @@ class UserImport(object):
         while imported_users:
             imported_user = imported_users.pop(0)
             usernum += 1
-            percentage = 10 + 90 * usernum / self.imported_users_len  # 10% - 100%
+            percentage = 10 + 90 * usernum // self.imported_users_len  # 10% - 100%
             self.progress_report(
                 description="Creating and modifying users: {}%.".format(percentage),
                 percentage=int(percentage),
@@ -454,7 +455,7 @@ class UserImport(object):
         self.logger.info("------ Deleting %d users... ------", len(users))
         a_user = self.factory.make_import_user([])
         for num, (source_uid, record_uid, input_data) in enumerate(users, start=1):
-            percentage = 10 * num / len(users)  # 0% - 10%
+            percentage = 10 * num // len(users)  # 0% - 10%
             self.progress_report(
                 description="Deleting users: {}.".format(percentage),
                 percentage=int(percentage),
@@ -707,9 +708,9 @@ class UserImport(object):
         """
         self.logger.info("------ User import statistics ------")
         lines = ["Read users from input data: {}".format(self.imported_users_len)]
-        cls_names = self.added_users.keys()
-        cls_names.extend(self.modified_users.keys())
-        cls_names.extend(self.deleted_users.keys())
+        cls_names = list(self.added_users)
+        cls_names.extend(self.modified_users)
+        cls_names.extend(self.deleted_users)
         cls_names = set(cls_names)
         columns = 4
         lines_allowed = 2

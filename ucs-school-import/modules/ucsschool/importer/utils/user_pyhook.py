@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -36,10 +37,10 @@ Base class for all Python based User hooks.
 from .import_pyhook import ImportPyHook
 
 try:
-    from typing import TYPE_CHECKING, Dict, Union
+    from typing import TYPE_CHECKING, Dict, Union  # noqa: F401
 
     if TYPE_CHECKING:
-        from ucsschool.importer.models.import_user import ImportUser
+        from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 

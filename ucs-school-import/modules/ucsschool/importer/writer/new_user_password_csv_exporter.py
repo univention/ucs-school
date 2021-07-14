@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -53,7 +54,7 @@ class NewUserPasswordCsvExporter(ResultExporter):
         """
         Return only the new users.
         """
-        li = list()
+        li = []
         map(li.extend, user_import.added_users.values())
         li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
         return li

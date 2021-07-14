@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -42,9 +43,9 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Any, Dict, Iterable, Iterator, Optional
+    from typing import Any, Dict, Iterable, Iterator, Optional  # noqa: F401
 
-    from ..models.import_user import ImportUser
+    from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 
@@ -78,7 +79,7 @@ class BaseReader(object):
     def __iter__(self):  # type: () -> BaseReader
         return self
 
-    def next(self):  # type: () -> ImportUser
+    def __next__(self):  # type: () -> ImportUser
         """
         Generates ImportUsers from input data.
 
@@ -86,7 +87,7 @@ class BaseReader(object):
         :rtype: ImportUser
         """
         while True:
-            input_dict = self.import_users.next()
+            input_dict = next(self.import_users)
             self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
             try:
                 run_import_pyhooks(
@@ -104,6 +105,8 @@ class BaseReader(object):
         cur_import_user.input_data = self.input_data
         cur_import_user.prepare_uids()
         return cur_import_user
+
+    next = __next__  # py 2
 
     def get_roles(self, input_data):  # type: (Dict[str, Any]) -> Iterable[str]
         """

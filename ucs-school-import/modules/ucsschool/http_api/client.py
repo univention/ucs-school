@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -39,25 +40,19 @@ import copy
 import inspect
 import logging
 import os.path
+from io import IOBase
 
 import dateutil.parser
 import magic
 import requests
-from six import string_types
+from six import string_types, with_metaclass
+from six.moves.urllib_parse import parse_qs, quote as url_quote, urljoin, urlparse
 
 from ucsschool.lib.models.utils import get_stream_handler
 from univention.config_registry import ConfigRegistry
 
 try:
-    from urllib import quote as url_quote
-
-    from urlparse import parse_qs, urljoin, urlparse
-except ImportError:
-    # Python 3
-    from urllib.parse import parse_qs, quote as url_quote, urljoin, urlparse
-
-try:
-    from typing import Any, Callable, Dict, List
+    from typing import Any, Callable, Dict, List  # noqa: F401
 except ImportError:
     pass
 
@@ -66,9 +61,9 @@ ucr = ConfigRegistry()
 ucr.load()
 MIME_TYPE = magic.open(magic.MAGIC_MIME_TYPE)
 MIME_TYPE.load()
-__resource_client_class_registry = list()  # type: List[Client._ResourceClient]
+__resource_client_class_registry = []  # type: List[Client._ResourceClient]
 __resource_representation_class_registry = (
-    dict()
+    {}
 )  # type: Dict[str, ResourceRepresentation._ResourceReprBase]
 
 
@@ -161,7 +156,7 @@ class _ResourceRepresentationMetaClass(type):
         return kls
 
 
-class ResourceRepresentationIterator:
+class ResourceRepresentationIterator(object):
     """Iterator for paginated query results."""
 
     def __init__(self, resource_client, paginated_resource_list):
@@ -172,12 +167,12 @@ class ResourceRepresentationIterator:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
             resource = self._paginated_resource_list["results"][self.index]
         except IndexError:
             if self._paginated_resource_list["next"] is None:
-                raise StopIteration
+                raise StopIteration()
             parse_result = urlparse(self._paginated_resource_list["next"])
             url = parse_result._replace(query=None).geturl()
             params = parse_qs(parse_result.query)
@@ -187,7 +182,7 @@ class ResourceRepresentationIterator:
         self.index += 1
         return ResourceRepresentation.get_repr(self._resource_client, resource)
 
-    __next__ = next  # py3
+    next = __next__  # py2
 
 
 class ResourceRepresentation(object):
@@ -239,8 +234,7 @@ class ResourceRepresentation(object):
             self._resource = self._resource_client._resource_from_url(self._resource["url"])
             self._set_attrs(self._resource)
 
-    class SchoolResource(_ResourceReprBase):
-        __metaclass__ = _ResourceRepresentationMetaClass
+    class SchoolResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         resource_name = "schools"
 
         @property
@@ -264,18 +258,17 @@ class ResourceRepresentation(object):
             """
             return self._resource_client.client.userimportjob.list(school=self.name)
 
-    class RoleResource(_ResourceReprBase):
-        __metaclass__ = _ResourceRepresentationMetaClass
+    class RoleResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         resource_name = "roles"
 
-    class ResultResource(_ResourceReprBase):
+    class ResultResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         resource_name = "result"
         _attribute_repr = {"date_done": lambda x: dateutil.parser.parse(x)}
 
         def __repr__(self):
             return "{}(status={!r})".format(self.__class__.__name__, self.status)
 
-    class UserImportJobResource(_ResourceReprBase):
+    class UserImportJobResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         """
         Representation of an import job resource.
 
@@ -289,7 +282,6 @@ class ResourceRepresentation(object):
         * job.summary_file
         """
 
-        __metaclass__ = _ResourceRepresentationMetaClass
         resource_name = "imports/users"
         _attribute_repr = {"date_created": lambda x: dateutil.parser.parse(x)}
 
@@ -483,7 +475,9 @@ class Client(object):
         # request_kwargs['headers']['Accept-Language'] ='de_DE'
         if not self.ssl_verify:
             request_kwargs["verify"] = False
-        log_request_kwargs = copy.deepcopy(request_kwargs)
+        log_request_kwargs = copy.deepcopy(
+            dict(request_kwargs, files={k: v[0] for k, v in (request_kwargs["files"] or {}).items()})
+        )
         log_request_kwargs["auth"] = (
             log_request_kwargs["auth"][0],
             "*" * len(log_request_kwargs["auth"][1]),
@@ -592,18 +586,15 @@ class Client(object):
             """
             return self._to_python(self._list_resource(**params))
 
-    class _School(_ResourceClient):
-        __metaclass__ = _ResourceClientMetaClass
+    class _School(with_metaclass(_ResourceClientMetaClass, _ResourceClient)):
         resource_name = "schools"
         pk_name = "name"
 
-    class _Roles(_ResourceClient):
-        __metaclass__ = _ResourceClientMetaClass
+    class _Roles(with_metaclass(_ResourceClientMetaClass, _ResourceClient)):
         resource_name = "roles"
         pk_name = "name"
 
-    class _UserImportJob(_ResourceClient):
-        __metaclass__ = _ResourceClientMetaClass
+    class _UserImportJob(with_metaclass(_ResourceClientMetaClass, _ResourceClient)):
         resource_name = "imports/users"
         pk_name = "id"
 
@@ -629,7 +620,7 @@ class Client(object):
             assert isinstance(school, string_types) or school is None
             assert isinstance(user_role, string_types) or user_role is None
             assert isinstance(dryrun, bool)
-            assert isinstance(file_obj, file) or file_obj is None
+            assert isinstance(file_obj, IOBase) or file_obj is None
 
             data = {
                 "dryrun": dryrun,

@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -39,4 +40,4 @@ JOB_STARTED = "Started"
 JOB_ABORTED = "Aborted"
 JOB_FINISHED = "Finished"
 JOB_STATES = (JOB_NEW, JOB_SCHEDULED, JOB_STARTED, JOB_ABORTED, JOB_FINISHED)
-JOB_CHOICES = zip(JOB_STATES, JOB_STATES)
+JOB_CHOICES = list(zip(JOB_STATES, JOB_STATES))

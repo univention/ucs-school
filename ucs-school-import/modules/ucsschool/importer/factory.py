@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -38,9 +39,9 @@ import importlib
 from .exceptions import InitialisationError
 
 try:
-    from typing import Optional, Type
+    from typing import Optional, Type  # noqa: F401
 
-    from .default_user_import_factory import DefaultUserImportFactory
+    from .default_user_import_factory import DefaultUserImportFactory  # noqa: F401
 except ImportError:
     pass
 
