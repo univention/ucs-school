@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -80,8 +80,8 @@ def correct_case_ou(mixed_case_ou):
 for dn, attr in lo.search("ucsschoolRole=win_compuer:school:*", attr=["ucsschoolRole"]):
     old_roles = attr["ucsschoolRole"]
     new_roles = [
-        "{}:school:{}".format(role_win_computer, role.split(":", 2)[2])
-        if role.startswith("win_compuer:school:")
+        "{}:school:{}".format(role_win_computer, role.decode("UTF-8").split(":", 2)[2]).encode("UTF-8")
+        if role.startswith(b"win_compuer:school:")
         else role
         for role in old_roles
     ]
@@ -91,9 +91,9 @@ for dn, attr in lo.search("ucsschoolRole=win_compuer:school:*", attr=["ucsschool
 for role in (role_dc_slave_edu, role_dc_slave_admin, role_memberserver_edu, role_memberserver_admin):
     for dn, attr in lo.search("(ucsschoolRole={}:school:*)".format(role), attr=["ucsschoolRole"]):
         old_roles = attr["ucsschoolRole"]
-        mixed_case_ous = [old_role.split(":", 2)[2] for old_role in old_roles]
+        mixed_case_ous = [old_role.decode("UTF-8").split(":", 2)[2] for old_role in old_roles]
         correct_case_ous = [correct_case_ou(ou) for ou in mixed_case_ous]
-        new_roles = ["{}:school:{}".format(role, ou) for ou in correct_case_ous]
+        new_roles = ["{}:school:{}".format(role, ou).encode("UTF-8") for ou in correct_case_ous]
         if old_roles != new_roles:
             logger.info('Changing "ucsschoolRole" of %r from %r to %r.', dn, old_roles, new_roles)
             lo.modify(dn, [("ucsschoolRole", old_roles, new_roles)])

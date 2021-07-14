@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -50,7 +51,7 @@ class Command(BaseCommand):
             help="Update all school OU objects and delete not existing ones [default off].",
             action="store_true",
         )
-        parser.add_argument("--ou", nargs="+", type=str, help="OU to update.")
+        parser.add_argument("--ou", nargs="+", help="OU to update.")
 
     def handle(self, *args, **options):
         if not options["all"] and not options["ou"]:

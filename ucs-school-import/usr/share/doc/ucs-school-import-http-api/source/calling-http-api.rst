@@ -9,7 +9,7 @@ An HTTP-API is used to create new resources, fetch a single or a collection of a
 The resources in the UCS\@school import HTTP-API can be found on the APIs root URL::
 
     $ curl -s -k -H "Content-Type: application/json" -u myteacher:univention \
-        https://$(hostname -f)/api/v1/ | python -m json.tool
+        https://$(hostname -f)/api/v1/ | python3 -m json.tool
 
 .. code-block:: json
 
@@ -45,7 +45,7 @@ List operation
 Assuming the user ``myteacher`` has permissions to do imports for at least one role in schools ``$OU`` and ``$OU2``, listing the collection of schools will look like this::
 
     $ curl -s -k -H "Content-Type: application/json" -u myteacher:univention \
-        https://$(hostname -f)/api/v1/schools/ | python -m json.tool
+        https://$(hostname -f)/api/v1/schools/ | python3 -m json.tool
 
 .. code-block:: json
 
@@ -76,7 +76,7 @@ Get operation
 To fetch the complete resource follow the URL of the object in the previously retrieved collection::
 
     $ curl -s -k -H "Content-Type: application/json" -u myteacher:password \
-        https://$(hostname -f)/api/v1/schools/$OU/ | python -m json.tool
+        https://$(hostname -f)/api/v1/schools/$OU/ | python3 -m json.tool
 
 .. code-block:: json
 
@@ -135,7 +135,7 @@ The second import was a successful dry-run and the third a successful real run.
 The UMC module does not list dry-runs::
 
     $ curl -s -k -H "Content-Type: application/json" -u myteacher:univention \
-        https://$(hostname -f)/api/v1/imports/users/ | python -m json.tool
+        https://$(hostname -f)/api/v1/imports/users/ | python3 -m json.tool
 
 .. code-block:: json
 

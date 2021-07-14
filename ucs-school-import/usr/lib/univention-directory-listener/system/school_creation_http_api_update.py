@@ -1,4 +1,7 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+#
+# Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
@@ -14,9 +17,10 @@
 # well as other copyrighted, protected or trademarked materials like
 # Logos, graphics, fonts, specific documentations and configurations,
 # cryptographic keys etc. are subject to a license agreement between
-# you and Univention.
+# you and Univention and not subject to the GNU AGPL V3.
 #
-# This program is provided in the hope that it will be useful,
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
@@ -24,8 +28,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
-# <https://www.gnu.org/licenses/>.
-#
+# <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
 
@@ -49,7 +52,7 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
                 raise_exc=False,
             )
             if returncode:
-                self.logger.info("http_api says: %r", (returncode, stdout, stderr))
+                self.logger.warning("http_api says: %r", (returncode, stdout, stderr))
 
     def initialize(self):
         self._update_http_api()
@@ -63,7 +66,7 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
         :return:
         """
         self.logger.debug("dn: %r", dn)
-        name = new["ou"][0]
+        name = new["ou"][0].decode("UTF-8")
         with self.as_root():
             self.logger.info("Update school {} in http api".format(name))
             returncode, stdout, stderr = exec_cmd(
@@ -71,7 +74,7 @@ class SchoolCreationHttpApiUpdateListener(ListenerModuleHandler):
                 raise_exc=False,
             )
             if returncode:
-                self.logger.info("http_api says: %r", (returncode, stdout, stderr))
+                self.logger.warning("http_api says: %r", (returncode, stdout, stderr))
 
     def remove(self, dn, old):
         self.logger.debug("dn: %r", dn)

@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -40,6 +41,7 @@ import os
 import pprint
 import shutil
 import stat
+from argparse import Namespace
 
 from celery.states import STARTED as CELERY_STATES_STARTED
 from django.conf import settings
@@ -49,12 +51,6 @@ from ucsschool.importer.factory import load_class
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 
 from .utils import get_wsgi_uid_gid
-
-
-class ArgParseFake(object):
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
 
 
 class HttpApiImportFrontend(UserImportCommandLine):
@@ -130,7 +126,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
         super(HttpApiImportFrontend, self).__init__()
 
     def parse_cmdline(self):
-        self.args = ArgParseFake(
+        self.args = Namespace(
             conffile=None,  # see self.configuration_files
             dry_run=self.import_job.dryrun,
             infile=self.data_path,
@@ -186,7 +182,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
         conf_files.append(
             os.path.join("/var/lib/ucs-school-import/configs", self.http_api_specific_config)
         )
-        conf_files_job = list()
+        conf_files_job = []
         # prefix all file names, so they never clash
         num = 0
         for num, cf in enumerate(conf_files):

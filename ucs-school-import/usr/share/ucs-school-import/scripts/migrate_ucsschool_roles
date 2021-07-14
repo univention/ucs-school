@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -274,7 +274,7 @@ class UcsSchoolRolesMigration(object):
                 )
                 objs = cls.get_all(lo, school)
                 for obj in objs:
-                    if cls == User and oc not in lo.get(obj.dn)["objectClass"]:
+                    if cls == User and oc.encode("UTF-8") not in lo.get(obj.dn)["objectClass"]:
                         self.logger.warning(
                             "    WARN: Ignoring %r, because not a correct school user object.", obj.dn
                         )
@@ -290,7 +290,7 @@ class UcsSchoolRolesMigration(object):
                         for dn, attr in lo.search(
                             filter_format("(&(cn=admins-*)(uniqueMember=%s))", (obj.dn,))
                         ):
-                            schools.extend(attr["ucsschoolSchool"])
+                            schools.extend(x.decode("UTF-8") for x in attr["ucsschoolSchool"])
                         roles.extend(
                             [create_ucsschool_role_string(role_school_admin, skool) for skool in schools]
                         )
@@ -319,11 +319,11 @@ class UcsSchoolRolesMigration(object):
             self.logger.info("Checking central servers...")
 
             self.logger.info("- Looking for DC master...")
-            master_dcs = lo.search(
+            master_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
                 "(!(univentionService=UCS@school Education)))"
             )
-            for dn, attr in master_dcs:
+            for dn in master_dcs:
                 self.set_ldap_attr(
                     "DC master",
                     [create_ucsschool_role_string(role_dc_master, "-")],
@@ -332,11 +332,11 @@ class UcsSchoolRolesMigration(object):
                 )
 
             self.logger.info("- Looking for DC master (single server)...")
-            single_dcs = lo.search(
+            single_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
                 "(univentionService=UCS@school Education))"
             )
-            for dn, attr in single_dcs:
+            for dn in single_dcs:
                 self.set_ldap_attr(
                     "DC master (single)",
                     [create_ucsschool_role_string(role_single_master, "-")],
@@ -345,10 +345,10 @@ class UcsSchoolRolesMigration(object):
                 )
 
             self.logger.info("- Looking for DC backups...")
-            backup_dcs = lo.search(
+            backup_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=backup))"
             )
-            for dn, attr in backup_dcs:
+            for dn in backup_dcs:
                 self.set_ldap_attr(
                     "DC backup",
                     [create_ucsschool_role_string(role_dc_backup, "-")],
@@ -391,6 +391,7 @@ class UcsSchoolRolesMigration(object):
                 host_dn_to_ous = {}
                 for grp_dn, grp_attr in lo.search(filter_s, attr=attr):
                     for host_dn in grp_attr["uniqueMember"]:
+                        host_dn = host_dn.decode("UTF-8")
                         school = grp_dn_to_school(grp_dn)
                         if school:
                             host_dn_to_ous.setdefault(host_dn, []).append(school)
@@ -473,13 +474,12 @@ class UcsSchoolRolesMigration(object):
 
         self.stats["objects"] += 1
         attr = lo.get(dn, attr=["objectClass", "ucsschoolRole"])
-        if attr.get("ucsschoolRole") and not self.args.force:
-            self.logger.info(
-                "    Skipping %r, because already has role(s): %r", dn, attr["ucsschoolRole"]
-            )
+        current_roles = [x.decode("UTF-8") for x in attr.get("ucsschoolRole", [])]
+        if current_roles and not self.args.force:
+            self.logger.info("    Skipping %r, because already has role(s): %r", dn, current_roles)
             return
-        if attr.get("ucsschoolRole"):
-            roles = list(set(roles) - set(attr["ucsschoolRole"]))
+        if current_roles:
+            roles = list(set(roles) - set(current_roles))
         if roles:
             self.logger.info(
                 "    %s roles for %s at %r: %r%s...",
@@ -487,16 +487,19 @@ class UcsSchoolRolesMigration(object):
                 obj_name,
                 dn,
                 roles,
-                " (already has {!r})".format(attr["ucsschoolRole"]) if attr.get("ucsschoolRole") else "",
+                " (already has {!r})".format(current_roles) if current_roles else "",
             )
         else:
-            self.logger.info("Nothing to do for %r. Already has role(s): %r", dn, attr["ucsschoolRole"])
+            self.logger.info("Nothing to do for %r. Already has role(s): %r", dn, current_roles)
             return
         if self.args.modify:
-            if oc in attr["objectClass"]:
-                ml = [("ucsschoolRole", [], roles)]
+            if oc.encode("UTF-8") in attr["objectClass"]:
+                ml = [("ucsschoolRole", [], [x.encode("UTF-8") for x in roles])]
             else:
-                ml = [("objectClass", [], [oc]), ("ucsschoolRole", [], roles)]
+                ml = [
+                    ("objectClass", [], [oc.encode("UTF-8")]),
+                    ("ucsschoolRole", [], [x.encode("UTF-8") for x in roles]),
+                ]
             self.logger.debug(
                 "    set_ldap_attr(obj_name=%r, roles=%r, dn=%r, oc=%r): ml=%r",
                 obj_name,

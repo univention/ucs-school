@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -93,7 +94,7 @@ _config_args = {
 try:
     with open(os.path.expanduser("~/.import_shell_args"), "rb") as fp:
         _config_args.update(json.load(fp))
-except IOError as exc:
+except IOError:
     pass
 
 logger = logging.getLogger("ucsschool")

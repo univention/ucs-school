@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #
@@ -332,7 +333,7 @@ class DictReader(object):
     def fieldnames(self):
         if self._fieldnames is None:
             try:
-                self._fieldnames = self.reader.next()
+                self._fieldnames = next(self.reader)
             except StopIteration:
                 pass
         self.line_num = self.reader.line_num
@@ -342,18 +343,18 @@ class DictReader(object):
     def fieldnames(self, value):
         self._fieldnames = value
 
-    def next(self):
+    def __next__(self):
         if self.line_num == 0:
             # Used only for its side effect.
             self.fieldnames
-        self.row = self.reader.next()
+        self.row = next(self.reader)
         self.line_num = self.reader.line_num
 
         # unlike the basic reader, we prefer not to return blanks,
         # because we will typically wind up with a dict full of None
         # values
         while self.row == []:
-            self.row = self.reader.next()
+            self.row = next(self.reader)
         d = dict(zip(self.fieldnames, self.row))
         lf = len(self.fieldnames)
         lr = len(self.row)
@@ -363,3 +364,5 @@ class DictReader(object):
             for key in self.fieldnames[lr:]:
                 d[key] = self.restval
         return d
+
+    next = __next__

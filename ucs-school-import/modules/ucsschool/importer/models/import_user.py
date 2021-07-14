@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -92,16 +93,26 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 try:
-    from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union
+    from typing import (  # noqa: F401
+        TYPE_CHECKING,
+        Any,
+        Dict,
+        Iterable,
+        List,
+        Optional,
+        Tuple,
+        Type,
+        Union,
+    )
 
     if TYPE_CHECKING:
-        from univention.config_registry import ConfigRegistry
+        from univention.config_registry import ConfigRegistry  # noqa: F401
 
-        from ..configuration import ReadOnlyDict
-        from ..default_user_import_factory import DefaultUserImportFactory
-        from ..reader.base_reader import BaseReader
-        from ..utils.ldap_connection import LoType, UdmObjectType
-        from ..utils.username_handler import UsernameHandler
+        from ..configuration import ReadOnlyDict  # noqa: F401
+        from ..default_user_import_factory import DefaultUserImportFactory  # noqa: F401
+        from ..reader.base_reader import BaseReader  # noqa: F401
+        from ..utils.ldap_connection import LoType, UdmObjectType  # noqa: F401
+        from ..utils.username_handler import UsernameHandler  # noqa: F401
 except ImportError:
     pass
 
@@ -265,8 +276,8 @@ class ImportUser(User):
                 self.logger.debug(
                     "Running %s hook %s.%s for %s...",
                     meth_name,
-                    func.im_class.__name__,
-                    func.im_func.func_name,
+                    func.__self__.__class__.__name__,
+                    func.__func__.__name__,
                     self,
                 )
                 func(self)
@@ -294,7 +305,7 @@ class ImportUser(User):
         hooks = get_import_pyhooks(FormatPyHook)  # result is cached on the lib side
         res = fields
         for func in hooks.get("patch_fields_{}".format(self.role_sting), []):
-            if prop_name not in func.im_class.properties:
+            if prop_name not in func.__self__.__class__.properties:
                 # ignore properties not in Hook.properties
                 continue
             self.logger.debug(
@@ -652,12 +663,12 @@ class ImportUser(User):
         * See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz section "scheme"
             for details on the configuration.
         """
-        ignore_keys = self.to_dict().keys()
+        ignore_keys = list(self.to_dict())
         ignore_keys.extend(
             ["mailPrimaryAddress", "record_uid", "source_uid", "username"]
         )  # these are used in make_*
         ignore_keys.extend(self.no_overwrite_attributes)
-        for prop in [k for k in self.config["scheme"].keys() if k not in ignore_keys]:
+        for prop in [k for k in self.config["scheme"] if k not in ignore_keys]:
             self.make_udm_property(prop)
 
     def prepare_uids(self):  # type: () -> None
@@ -708,7 +719,7 @@ class ImportUser(User):
                     return "20%02d-%02d-%02d" % (year, month, day)
                 return "19%02d-%02d-%02d" % (year, month, day)
 
-        raise ValueError
+        raise ValueError()
 
     def make_classes(self):  # type: () -> Dict[str, Dict[str, List[str]]]
         """
@@ -720,7 +731,7 @@ class ImportUser(User):
         """
         char_replacement = self.config["school_classes_invalid_character_replacement"]
         if isinstance(self, Staff):
-            self.school_classes = dict()  # type: Dict[str, Dict[str, List[str]]]
+            self.school_classes = {}  # type: Dict[str, Dict[str, List[str]]]
         elif isinstance(self.school_classes, dict) and self.school_classes:
             for school, classes in iteritems(self.school_classes):
                 self.school_classes[school] = [
@@ -1186,7 +1197,7 @@ class ImportUser(User):
         :return: None
         :raises MissingMandatoryAttribute: ...
         :raises UniqueIdError: ...
-        :raises NoUsername: ...
+        :raises MissingUid: ...
         :raises UsernameToLong: ...
         :raises BadPassword: ...
         :raises InvalidEmail: ...
@@ -1334,10 +1345,10 @@ class ImportUser(User):
                 # (and we have to loop over the query result anyway)
                 self.__class__._all_usernames = dict(
                     (
-                        attr["uid"][0],
+                        attr["uid"][0].decode("UTF-8"),
                         UsernameUniquenessTuple(
-                            attr.get("ucsschoolRecordUID", [None])[0],
-                            attr.get("ucsschoolSourceUID", [None])[0],
+                            attr.get("ucsschoolRecordUID", [b""])[0].decode("UTF-8") or None,
+                            attr.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8") or None,
                             dn,
                         ),
                     )
@@ -1345,7 +1356,7 @@ class ImportUser(User):
                         "objectClass=posixAccount",
                         attr=["uid", "ucsschoolRecordUID", "ucsschoolSourceUID"],
                     )
-                    if not attr["uid"][0].endswith("$")
+                    if not attr["uid"][0].endswith(b"$")
                 )
             self._check_username_uniqueness()
 
@@ -1427,6 +1438,10 @@ class ImportUser(User):
         :return: scheme for the role from configuration
         :rtype: str
         """
+        try:
+            unicode = unicode
+        except NameError:
+            unicode = str
         try:
             scheme = unicode(self.config["scheme"]["username"][self.role_sting])
         except KeyError:
@@ -1526,7 +1541,7 @@ class ImportUser(User):
         if self.input_data:
             all_fields = self.reader.get_data_mapping(self.input_data)
         else:
-            all_fields = dict()
+            all_fields = {}
         all_fields.update(self.to_dict())
         all_fields.update(self.udm_properties)
         if "username" not in all_fields:
@@ -1633,7 +1648,7 @@ class ImportUser(User):
 
     @classmethod
     def school_classes_invalid_character_replacement(cls, school_class, char_replacement):
-        # type: (str, Union[str, unicode]) -> str
+        # type: (str, str) -> str
         """
         Replace disallowed characters in ``school_class`` with ``char_replacement``. Allowed chars:
         ``[string.digits, string.ascii_letters, " -._"]``. If ``char_replacement`` is empty no
@@ -1647,7 +1662,8 @@ class ImportUser(User):
         if not char_replacement or not school_class:
             return school_class
         klass_name_old = school_class  # for debug output at the end
-        school_class = school_class.decode("utf-8")
+        if isinstance(school_class, bytes) and bytes is str:  # Py 2
+            school_class = school_class.decode("utf-8")
         for character in school_class:
             if character not in ALLOWED_CHARS_IN_SCHOOL_CLASS_NAME:
                 school_class = school_class.replace(character, char_replacement)

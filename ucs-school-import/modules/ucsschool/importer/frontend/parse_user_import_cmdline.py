@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -38,7 +39,7 @@ from argparse import ArgumentParser
 from six import string_types
 
 try:
-    from typing import Any, Dict
+    from typing import Any, Dict  # noqa: F401
 except ImportError:
     pass
 
@@ -152,7 +153,7 @@ class ParseUserImportCmdline(object):
         if hasattr(self.args, "user_role") and self.args.user_role == "none":
             self.args.user_role = None
 
-        settings = dict()
+        settings = {}
         if hasattr(self.args, "infile") and self.args.infile:
             if not os.access(self.args.infile, os.R_OK):
                 self.parser.error("Cannot read input data file '{}'.".format(self.args.infile))

@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -43,9 +44,9 @@ from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 
 try:
-    from typing import Optional
+    from typing import Optional  # noqa: F401
 
-    from ..models.import_user import ImportUser
+    from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 

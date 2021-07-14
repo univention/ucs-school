@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -37,16 +37,9 @@ from argparse import ArgumentParser
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
+from six.moves import input
 
 from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_unprivileged_connection
-
-# python-future is in unmaintained, but this works too:
-try:
-    input = raw_input
-    # py2
-except NameError:
-    # py3
-    pass
 
 
 def parse_cmdline():
@@ -126,7 +119,6 @@ def main():
     if args.write:
         print("Would delete:")
         print("  {}".format("\n  ".join(dns)))
-        # TODO: replace with raw_input
         answer = input("Really reset the above {} counters? [y/N]:".format(total))  # nosec
         if answer.lower() not in ("y", "yes"):
             print("Stopping as requested.")
