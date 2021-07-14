@@ -55,7 +55,7 @@ You can do this in the UMC Users-school-wizard.
 Here is a code snippet how to do it on the command line (calling Python code).
 In this example the OU is called ``SchuleEins`` and the username is ``myteacher``::
 
-	$ python -c 'ou = "SchuleEins"; username = "myteacher" \
+	$ python3 -c 'ou = "SchuleEins"; username = "myteacher" \
 	    import univention.admin.uldap; \
 	    from ucsschool.lib.models.user import Teacher;  \
 	    lo, po = univention.admin.uldap.getAdminConnection(); \

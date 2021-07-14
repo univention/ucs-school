@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -36,7 +36,7 @@ UCS@school new import tool cmdline frontend.
 from .cmdline import CommandLine
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 

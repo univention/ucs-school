@@ -1,3 +1,34 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school
+#
+# Copyright 2017-2021 Univention GmbH
+#
+# https://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
 #
 # This is an example of how advanced modifications can be made to the import
 # code.
@@ -10,24 +41,24 @@
 #    and for a subclass.
 #
 #    The DefaultUserImportFactory code can be found in
-#    /usr/lib/python2.7/dist-packages/ucsschool/importer/default_user_import_factory.py
+#    /usr/lib/python3/dist-packages/ucsschool/importer/default_user_import_factory.py
 #
 
 #
 # Store your class (in the example it is _this_ file) somewhere it is found
 # by the system Python installation:
-# mkdir -p /usr/local/lib/python2.7/dist-packages
-# cp /usr/share/doc/ucs-school-import/subclassing_example.py /usr/local/lib/python2.7/dist-packages
+# mkdir -p /usr/local/lib/python3/dist-packages
+# cp /usr/share/doc/ucs-school-import/subclassing_example.py /usr/local/lib/python3/dist-packages
 #
 # Test with:
-# python -c 'from subclassing_example import MyUserImport'
+# python3 -c 'from subclassing_example import MyUserImport'
 # (Output should be none - at least no ImportError.)
 #
 # Then change the configuration like this:
 # (Replace "/var/lib/ucs-school-import/configs/myconfig.json" with your actual
 # configuration file and "subclassing_example.MyUserImport" with your module.class.)
 #
-# python -c 'MYCFG="/var/lib/ucs-school-import/configs/myconfig.json"; import json; cnf=json.load(open(MYCFG, "rb")); cnf["classes"]=cnf.get("classes", {}); cnf["classes"]["user_importer"]="subclassing_example.MyUserImport"; json.dump(cnf, open(MYCFG+".new", "wb"), indent=4)'  # noqa: E501
+# python3 -c 'MYCFG="/var/lib/ucs-school-import/configs/myconfig.json"; import json; cnf=json.load(open(MYCFG, "rb")); cnf["classes"]=cnf.get("classes", {}); cnf["classes"]["user_importer"]="subclassing_example.MyUserImport"; json.dump(cnf, open(MYCFG+".new", "wb"), indent=4)'  # noqa: E501
 #
 # Verfiy that /var/lib/ucs-school-import/configs/myconfig.json.new is correct and replace
 # /var/lib/ucs-school-import/configs/myconfig.json with it.

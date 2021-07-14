@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -42,7 +43,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from djcelery.models import TaskMeta  # celery >= 4.0: django_celery_results.models.TaskResult
-from ldap.filter import escape_filter_chars
+from ldap.filter import filter_format
 
 import univention.admin.localization
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
@@ -54,7 +55,7 @@ USER_STUDENT = "student"
 USER_TEACHER = "teacher"
 USER_TEACHER_AND_STAFF = "teacher_and_staff"
 USER_ROLES = (USER_STAFF, USER_STUDENT, USER_TEACHER, USER_TEACHER_AND_STAFF)
-USER_ROLES_CHOICES = zip([u.lower().replace(" ", "_") for u in USER_ROLES], USER_ROLES)
+USER_ROLES_CHOICES = list(zip([u.lower().replace(" ", "_") for u in USER_ROLES], USER_ROLES))
 
 translation = univention.admin.localization.translation("ucs-school-import-http-api")
 _ = translation.translate
@@ -71,8 +72,10 @@ class Role(models.Model):
     name = models.CharField(max_length=255, primary_key=True)
     displayName = models.CharField(max_length=255, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    __unicode__ = __str__
 
     @classmethod
     def update_from_ldap(cls):
@@ -82,7 +85,7 @@ class Role(models.Model):
 
         :return: None
         """
-        names = list()
+        names = []
         for role in USER_ROLES:
             name = role
             display_name = _(USER_ROLE_TRANS[role])
@@ -106,8 +109,8 @@ class Role(models.Model):
 #
 # To use this, install the code, and create and activate the required
 # migrations with:
-# python -m ucsschool.http_api.manage makemigrations
-# python -m ucsschool.http_api.manage migrate
+# python3 -m ucsschool.http_api.manage makemigrations
+# python3 -m ucsschool.http_api.manage migrate
 #
 
 # from django.contrib.auth import get_user_model
@@ -168,7 +171,7 @@ class Role(models.Model):
 # 		names = []
 # 		lo, po = get_unprivileged_connection()
 # 		for dn, import_group in lo.search('(objectClass=ucsschoolImportGroup)'):
-# 			name = import_group['cn'][0]
+# 			name = import_group['cn'][0].decode("UTF-8")
 # 			try:
 # 				obj, _created = cls.objects.get_or_create(import_group_name=name)
 # 			except cls.DoesNotExist:
@@ -221,17 +224,17 @@ class School(models.Model):
     name = models.CharField(max_length=255, primary_key=True)
     displayName = models.CharField(max_length=255, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    __unicode__ = __str__
 
     @staticmethod
     def _get_ous_from_ldap(ou=None):
         lo, po = get_unprivileged_connection()
         if ou:
             return lo.search(
-                filter="(&(objectClass=ucsschoolOrganizationalUnit)(ou={}))".format(
-                    escape_filter_chars(ou)
-                )
+                filter=filter_format("(&(objectClass=ucsschoolOrganizationalUnit)(ou=%s))", [ou])
             )
         else:
             return lo.search(filter="objectClass=ucsschoolOrganizationalUnit")
@@ -244,13 +247,13 @@ class School(models.Model):
         :param str ou_str: name of School object to update, all will be updated if None
         :return: None
         """
-        names = list()
+        names = []
         res = cls._get_ous_from_ldap(ou_str)
         if ou_str and not res:
             raise RuntimeError("Unknown school {!r}.".format(ou_str))
         for dn, ou in res:
-            name = ou["ou"][0]
-            display_name = ou.get("displayName", [name])[0]
+            name = ou["ou"][0].decode("UTF-8")
+            display_name = ou.get("displayName", [ou["ou"][0]])[0].decode("UTF-8")
             obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})
             if not created and obj.displayName != display_name:
                 obj.displayName = display_name
@@ -271,12 +274,14 @@ class TextArtifact(models.Model):
     class Meta:
         ordering = ("-pk",)
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             pk = "#{}".format(self.get_userimportjob().pk)
         except (AttributeError, ObjectDoesNotExist):
             pk = "n/a"
         return "{} #{} of importjob {}".format(self.__class__.__name__, self.pk, pk)
+
+    __unicode__ = __str__
 
     def get_text(self):
         if not self.text:
@@ -352,5 +357,7 @@ class UserImportJob(models.Model):
     class Meta:
         ordering = ("pk",)
 
-    def __unicode__(self):
+    def __str__(self):
         return "UserImportJob {} | {} ({})".format(self.pk, self.school, self.status)
+
+    __unicode__ = __str__

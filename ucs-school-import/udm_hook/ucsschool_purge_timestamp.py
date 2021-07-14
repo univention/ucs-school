@@ -4,7 +4,7 @@
 #
 # Copyright (C) 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -73,7 +73,7 @@ class UcsschoolPurgeTimestamp(simpleHook):
             new_val = cls.udm2ldap(add_val.decode("UTF-8"))
             if cls.udm_date_format_pattern.match(remove_val.decode("UTF-8")):
                 # LDAP value was converted on open(), convert back to original value
-                remove_val = cls.udm2ldap(remove_val)
+                remove_val = cls.udm2ldap(remove_val.decode("UTF-8"))
             add_mod_list.remove(item)
             add_mod_list.append(("ucsschoolPurgeTimestamp", remove_val, new_val))
         return add_mod_list

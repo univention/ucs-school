@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -69,7 +70,7 @@ class LegacyCsvReader(CsvReader):
         except (NoRole, UnknownRole):
             pass
 
-        roles = list()
+        roles = []
         for k, v in self.config["csv"]["mapping"].items():
             if v == "__is_teacher" and input_data[k] == "1":
                 roles.append(role_teacher)

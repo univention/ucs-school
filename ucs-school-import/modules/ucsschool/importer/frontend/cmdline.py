@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -55,7 +55,7 @@ from ..factory import setup_factory
 from .parse_user_import_cmdline import ParseUserImportCmdline
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 
@@ -73,7 +73,7 @@ class CommandLine(object):
         self.args = None
         self.config = None
         self.factory = None
-        self.errors = list()
+        self.errors = []
         self.user_import_summary_str = ""
         self._error_log_handler = None
 

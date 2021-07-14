@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -46,7 +47,7 @@ from ..utils.result_pyhook import ResultPyHook
 from ..utils.utils import nullcontext
 
 try:
-    from typing import TYPE_CHECKING, Optional, TypeVar
+    from typing import TYPE_CHECKING, Optional, TypeVar  # noqa: F401
 
     if TYPE_CHECKING:
         from ..utils.import_pyhook import ImportPyHook
@@ -76,7 +77,7 @@ class MassImport(object):
         self.factory = Factory()
         self.result_exporter = self.factory.make_result_exporter()
         self.password_exporter = self.factory.make_password_exporter()
-        self.errors = list()
+        self.errors = []
         self.user_import_stats_str = ""
 
     def mass_import(self):  # type: () -> None
@@ -114,7 +115,7 @@ class MassImport(object):
     def import_users(self):  # type: () -> None
         self.logger.info("------ Importing users... ------")
         user_import = self.factory.make_user_importer(self.dry_run)
-        exc = None
+        exception = None
         try:
             user_import.progress_report(description="Running pre-read hooks: 0%.", percentage=0)
             run_import_pyhooks(PreReadPyHook, "pre_read")
@@ -124,9 +125,11 @@ class MassImport(object):
             user_import.delete_users(users_to_delete)  # 0% - 10%
             user_import.create_and_modify_users(imported_users)  # 90% - 100%
         except UcsSchoolImportError as exc:
+            exception = exc
             user_import.errors.append(exc)
             self.logger.exception(exc)
         except Exception as exc:
+            exception = exc
             user_import.errors.append(
                 UcsSchoolImportFatalError("An unknown error terminated the import job: {}".format(exc))
             )
@@ -144,5 +147,5 @@ class MassImport(object):
         result_data = user_import.get_result_data()
         run_import_pyhooks(ResultPyHook, "user_result", result_data)
         self.logger.info("------ Importing users done. ------")
-        if exc:
-            raise exc
+        if exception:
+            raise exception

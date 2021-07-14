@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -55,11 +56,22 @@ Example::
 import codecs
 import csv
 import datetime
+import io
 import shutil
+
+from six import PY3
 
 from ucsschool.importer.exceptions import ConfigurationError
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.utils.pre_read_pyhook import PreReadPyHook
+
+
+def py3_decode(data, encoding):
+    return data.decode(encoding) if PY3 and isinstance(data, bytes) else data
+
+
+def py2_encode(data, encoder):
+    return data if PY3 else encoder.encode(data)
 
 
 class ModifyCsvHeader(PreReadPyHook):
@@ -94,12 +106,12 @@ class ModifyCsvHeader(PreReadPyHook):
 
         # get encoding and CSV dialect
         encoding = CsvReader.get_encoding(backup_file_name)
-        with open(backup_file_name, "r") as fp:
-            dialect = csv.Sniffer().sniff(fp.read())
+        with open(backup_file_name, "rb") as fp:
+            dialect = csv.Sniffer().sniff(py3_decode(fp.read(), encoding))
 
         # rewrite CSV with different headers
         self.logger.info("Rewriting %r...", ori_file_name)
-        with open(backup_file_name, "r") as fpr, open(ori_file_name, "w") as fpw:
+        with open(backup_file_name, "rb") as fpr, io.open(ori_file_name, "w", encoding=encoding) as fpw:
             fpre = codecs.getreader(encoding)(fpr)
             encoder = codecs.getincrementalencoder(encoding)()
             writer = csv.writer(fpw, dialect=dialect)
@@ -110,5 +122,5 @@ class ModifyCsvHeader(PreReadPyHook):
                     self.logger.info("Original header: %r", row)
                     row = [header_swap.get(value, value) for value in row]
                     self.logger.info("New header:      %r", row)
-                writer.writerow([encoder.encode(r) for r in row])
+                writer.writerow([py2_encode(r, encoder) for r in row])
         self.logger.info("Done rewriting CSV file.")
