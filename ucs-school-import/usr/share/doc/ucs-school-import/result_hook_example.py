@@ -1,6 +1,37 @@
-import smtplib
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school
+#
+# Copyright 2017-2021 Univention GmbH
+#
+# https://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
 
-import cStringIO
+import io
+import smtplib
 
 from ucsschool.importer.utils.result_pyhook import ResultPyHook
 from univention.config_registry import ConfigRegistry
@@ -27,7 +58,7 @@ class MailResultHook(ResultPyHook):
             self.logger.info("Not sending result email in dry-run.")
             return
 
-        msg = cStringIO.StringIO()
+        msg = io.StringIO()
         msg.write("From: {}\n".format(from_address))
         msg.write("To: {}\r\n\r\n".format(", ".join(to_addresses)))
 
@@ -70,6 +101,6 @@ class MailResultHook(ResultPyHook):
 
         server = smtplib.SMTP(smtp_server)
         server.set_debuglevel(1)
-        server.sendmail(from_address, to_addresses, msg.getvalue())
+        server.sendmail(from_address, to_addresses, msg.getvalue().encode("UTF-8"))
         msg.close()
         server.quit()

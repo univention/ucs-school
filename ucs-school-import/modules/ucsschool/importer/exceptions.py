@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -161,9 +162,6 @@ class NotSupportedError(UcsSchoolImportError):
     pass
 
 
-NoUsername = MissingUid
-
-
 class NoUsernameAtAll(UcsSchoolImportFatalError):
     pass
 
@@ -185,9 +183,6 @@ class TooManyErrors(UcsSchoolImportFatalError):
         self.errors = errors
 
 
-ToManyErrors = TooManyErrors
-
-
 class UDMError(UcsSchoolImportError):
     pass
 
@@ -200,14 +195,8 @@ class UnknownAction(UcsSchoolImportError):
     pass
 
 
-UnkownAction = UnknownAction
-
-
 class UnknownDisabledSetting(UcsSchoolImportError):
     pass
-
-
-UnkownDisabledSetting = UnknownDisabledSetting
 
 
 class UnknownProperty(UcsSchoolImportError):
@@ -218,25 +207,11 @@ class UnknownRole(UcsSchoolImportError):
     pass
 
 
-UnkownRole = UnknownRole
-
-
 class UnknownSchoolName(UcsSchoolImportError):
     pass
 
 
-UnkownSchoolName = UnknownSchoolName
-
-
 class UniqueIdError(UcsSchoolImportError):
-    pass
-
-
-class UsernameKeyExists(NameKeyExists):
-    """
-    Deprecated. Please use NameKeyExists.
-    """
-
     pass
 
 

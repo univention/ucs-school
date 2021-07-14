@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -38,7 +39,7 @@ try:
     from typing import TYPE_CHECKING
 
     if TYPE_CHECKING:
-        from ..mass_import.user_import import UserImportData
+        from ..mass_import.user_import import UserImportData  # noqa: F401
 except ImportError:
     pass
 

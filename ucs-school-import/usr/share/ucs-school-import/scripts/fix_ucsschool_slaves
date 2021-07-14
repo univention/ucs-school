@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -31,11 +31,11 @@
 from __future__ import absolute_import
 
 import logging
-import urllib
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 import ldap
 from ldap.filter import filter_format
+from six.moves.urllib_parse import quote
 
 import univention.uldap
 from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
@@ -65,7 +65,7 @@ def get_s4_lo():
         ldap_bindpw_s4 = open(ucr["connector/s4/ldap/bindpw"]).read().strip("\n")
     ldap_certificate_s4 = ucr.get("connector/s4/ldap/certificate")
     if protocol == "ldapi":
-        socket = urllib.quote(ucr.get("connector/s4/ldap/socket", ""), "")
+        socket = quote(ucr.get("connector/s4/ldap/socket", ""), "")
         ldap_uri_s4 = "%s://%s" % (protocol, socket)
     else:
         ldap_uri_s4 = "%s://%s:%d" % (protocol, ldap_host_s4, ldap_port_s4)
@@ -89,15 +89,15 @@ def fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=True):
     logger.debug("Attributes: %r", slave_attrs)
     roles = slave_attrs.get("ucsschoolRole", [])
     object_classes = slave_attrs.get("objectClass", [])
-    slave_cn = slave_attrs.get("cn", [""])[0]
+    slave_cn = slave_attrs.get("cn", [b""])[0].decode("UTF-8")
 
     mod_role = {
         "old": roles,
-        "new": [role for role in roles if not role.startswith("win_computer:school:")],
+        "new": [role for role in roles if not role.startswith(b"win_computer:school:")],
     }
     mod_oc = {
         "old": object_classes,
-        "new": [oc for oc in object_classes if oc not in ("univentionWindows", "ucsschoolComputer")],
+        "new": [oc for oc in object_classes if oc not in (b"univentionWindows", b"ucsschoolComputer")],
     }
 
     if mod_role["old"] != mod_role["new"] or mod_oc["old"] != mod_oc["new"]:
@@ -119,7 +119,7 @@ def fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=True):
         ):
             if slave_s4_dn is None:
                 continue  # referals
-            slave_account_control = int(slave_s4_attr["userAccountControl"][0])
+            slave_account_control = int(slave_s4_attr["userAccountControl"][0].decode("ASCII"))
             new_slave_account_control = int(slave_account_control) & ~4096 | 8192 | 524288
             if slave_account_control == new_slave_account_control:
                 continue
@@ -128,7 +128,7 @@ def fix_slave(lo, lo_s4, slave_dn, slave_attrs, dry_run=True):
                 (
                     "userAccountControl",
                     slave_s4_attr["userAccountControl"],
-                    [str(new_slave_account_control)],
+                    [str(new_slave_account_control).encode("ASCII")],
                 )
             ]
             logger.info("userAccountControl: %r", mod_account_control)
@@ -145,10 +145,10 @@ def main():
     description = """This script searches and checks for UCS@school school server objects in LDAP.
 If one of the wrong object classes (univentionWindows, ucsschoolComputer) is found,
 the wrong object class will be removed and the ucsschoolRole attribute corrected accordingly."""
-    parser = OptionParser(description=description)
-    parser.add_option("--dry-run", action="store_true", dest="dry_run", help="do not make any changes")
-    parser.add_option("--verbose", action="store_true", dest="verbose", help="show detailed log output")
-    (options, args) = parser.parse_args()
+    parser = ArgumentParser(description=description)
+    parser.add_argument("--dry-run", action="store_true", help="do not make any changes")
+    parser.add_argument("--verbose", action="store_true", help="show detailed log output")
+    options = parser.parse_args()
 
     logger.setLevel("DEBUG")
     logger.addHandler(get_stream_handler("DEBUG" if options.verbose else "INFO"))

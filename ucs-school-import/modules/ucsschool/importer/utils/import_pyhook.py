@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -42,10 +43,20 @@ from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 
 try:
-    from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+    from typing import (  # noqa: F401
+        TYPE_CHECKING,
+        Any,
+        Callable,
+        Dict,
+        List,
+        Optional,
+        Type,
+        TypeVar,
+        Union,
+    )
 
     if TYPE_CHECKING:
-        import univention.admin.uldap.access
+        import univention.admin.uldap  # noqa: F401
     ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
 except ImportError:
     pass

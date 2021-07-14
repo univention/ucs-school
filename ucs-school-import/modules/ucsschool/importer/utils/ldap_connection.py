@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -38,11 +39,11 @@ from univention.admin import uldap
 from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
 try:
-    from typing import TYPE_CHECKING, Tuple
+    from typing import TYPE_CHECKING, Tuple  # noqa: F401
 
     if TYPE_CHECKING:
-        import univention.admin.handlers
-        from univention.admin.uldap import access as LoType, position as PoType
+        import univention.admin.handlers  # noqa: F401
+        from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 
         UdmObjectType = univention.admin.handlers.simpleLdap
 except ImportError:

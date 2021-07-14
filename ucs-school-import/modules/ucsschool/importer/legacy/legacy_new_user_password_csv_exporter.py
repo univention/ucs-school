@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -77,6 +78,6 @@ class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
     def serialize(self, user):
         res = dict(username=user.name, password=user.password)
         input_data = list(user.input_data)
-        line = zip(self.field_names[2:], input_data)
+        line = list(zip(self.field_names[2:], input_data))
         res.update(line)
         return res

@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -42,7 +43,7 @@ from ..frontend.parse_user_import_cmdline import ParseUserImportCmdline
 
 class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
     def __init__(self):
-        self.defaults = dict()
+        self.defaults = {}
         self.parser = ArgumentParser(
             description="Create/modify/delete user accounts according to import file for UCS@school."
         )

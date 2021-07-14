@@ -1,6 +1,8 @@
+#!/usr/bin/python3
+#
 # Copyright 2020-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -26,11 +28,14 @@
 # <http://www.gnu.org/licenses/>.
 
 try:
-    from typing import Any, List, Tuple
+    from typing import Any, List, Tuple  # noqa: F401
 
-    from ucsschool.importer.models.import_user import ImportUser
+    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
+from ldap.dn import str2dn
+from ldap.filter import filter_format
+
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 #
@@ -82,7 +87,7 @@ class LogUserObject(UserPyHook):
         try:
             self._log = getattr(self.logger, LOG_LEVEL.lower())
         except AttributeError:
-            raise ValueError("Unkown log level {!r}.".format(LOG_LEVEL))
+            raise ValueError("Unknown log level {!r}.".format(LOG_LEVEL))
 
     def log_user_attrs(self, user, prefix):  # type: (ImportUser, str) -> None
         props_and_values = self.get_props_and_values(user)
@@ -105,8 +110,11 @@ class LogUserObject(UserPyHook):
                 res.append((prop, getattr(user, prop)))
                 if prop == "schools" and user.old_dn != user.dn:
                     try:
-                        ldap_schools = self.lo.get(user.old_dn, attr=["ucsschoolSchool"])[
-                            "ucsschoolSchool"
+                        ldap_schools = [
+                            x.decode("UTF-8")
+                            for x in self.lo.get(user.old_dn, attr=["ucsschoolSchool"])[
+                                "ucsschoolSchool"
+                            ]
                         ]
                         res.append(("schools (LDAP)", ldap_schools))
                     except KeyError:
@@ -114,7 +122,7 @@ class LogUserObject(UserPyHook):
                             "User with DN %r does not exist or has empty 'ucsschoolSchool' attribute!",
                             user.old_dn,
                         )
-                        filter_s = self.lo.explodeDn(user.old_dn)[0]
+                        filter_s = filter_format("%s=%s", str2dn(user.old_dn)[0][0][:2])
                         dns = self.lo.searchDn(filter_s)
                         self.logger.error("Searching LDAP with filter %r got: %r", filter_s, dns)
             else:
