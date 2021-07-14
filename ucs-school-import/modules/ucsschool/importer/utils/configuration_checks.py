@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -72,9 +73,9 @@ from ..exceptions import UcsSchoolImportFatalError
 from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 
 try:
-    from typing import List, Type
+    from typing import List, Type  # noqa: F401
 
-    from ..configuration import ReadOnlyDict
+    from ..configuration import ReadOnlyDict  # noqa: F401
 except ImportError:
     pass
 
@@ -117,7 +118,7 @@ def run_configuration_checks(config):  # type: (ReadOnlyDict) -> None
     for kls in config_check_classes:
         cc = kls(config)
         test_methods = inspect.getmembers(
-            cc, lambda x: inspect.ismethod(x) and x.func_name.startswith("test_")
+            cc, lambda x: inspect.ismethod(x) and x.__name__.startswith("test_")
         )
         test_methods.sort(key=itemgetter(0))
         for name, method in test_methods:

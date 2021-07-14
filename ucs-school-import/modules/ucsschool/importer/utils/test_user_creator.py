@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -154,13 +154,13 @@ class TestUserCreator(object):
             (self.num_teachers, "teacher"),
             (self.num_staffteachers, "staffteacher"),
         )
-        total_users_num = sum([job[0] for job in jobs])
+        total_users_num = sum(job[0] for job in jobs)
         total_users_count = 0
 
         for num, kind in jobs:
             if num == 0:
                 continue
-            for user_num in xrange(num):
+            for user_num in range(num):
                 given_name = next(self._get_new_given_name())
                 family_name = next(self._get_new_family_name())
                 user = dict(

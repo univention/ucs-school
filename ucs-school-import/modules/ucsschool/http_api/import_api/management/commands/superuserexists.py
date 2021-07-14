@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2018-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -43,7 +44,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument("username", type=str, help="Username to check if is superuser.")
+        parser.add_argument("username", help="Username to check if is superuser.")
 
     def handle(self, *args, **options):
         UserModel = get_user_model()

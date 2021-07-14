@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -50,6 +51,7 @@ from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from six.moves.urllib_parse import urljoin
 
 from ucsschool.importer.utils.ldap_connection import get_unprivileged_connection
 
@@ -63,12 +65,6 @@ from .serializers import (
     UserImportJobCreationValidator,
     UserImportJobSerializer,
 )
-
-try:
-    from urllib2 import urlparse
-except ImportError:
-    from urllib import parse as urlparse  # Python3
-
 
 logger = lazy_object_proxy.Proxy(lambda: logging.Logger(__name__))  # type: logging.Logger
 
@@ -120,7 +116,7 @@ class RoleFilterBackend(BaseFilterBackend):
         ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
         role_names = []
         for _dn, result_dict in ldap_result:
-            role_names.extend(result_dict["ucsschoolImportRole"])
+            role_names.extend(x.decode("UTF-8") for x in result_dict["ucsschoolImportRole"])
         return Q(name__in=role_names)
 
     def filter_queryset(self, request, queryset, view):
@@ -157,7 +153,7 @@ class SchoolFilterBackend(BaseFilterBackend):
         ldap_result = lo.search(filter_s, attr=cls.filter_attrs)
         school_names = []
         for _dn, result_dict in ldap_result:
-            school_names.extend(result_dict["ucsschoolImportSchool"])
+            school_names.extend(x.decode("UTF-8") for x in result_dict["ucsschoolImportSchool"])
         return Q(name__in=school_names)
 
     def filter_queryset(self, request, queryset, view):
@@ -194,8 +190,8 @@ class UserImportJobFilterBackend(BaseFilterBackend):
         query = None
         for _dn, result_dict in ldap_result:
             q = Q(
-                school__name__in=result_dict["ucsschoolImportSchool"],
-                user_role__in=result_dict["ucsschoolImportRole"],
+                school__name__in=[x.decode("UTF-8") for x in result_dict["ucsschoolImportSchool"]],
+                user_role__in=[x.decode("UTF-8") for x in result_dict["ucsschoolImportRole"]],
             )  # AND
             try:
                 query |= q  # OR
@@ -338,9 +334,9 @@ Manage Import jobs.
     @staticmethod
     def _get_subresource_urls(instance_url):
         return {
-            "log_file": urlparse.urljoin(instance_url, "logfile/"),
-            "password_file": urlparse.urljoin(instance_url, "passwords/"),
-            "summary_file": urlparse.urljoin(instance_url, "summary/"),
+            "log_file": urljoin(instance_url, "logfile/"),
+            "password_file": urljoin(instance_url, "passwords/"),
+            "summary_file": urljoin(instance_url, "summary/"),
         }
 
     def retrieve(self, request, *args, **kwargs):
@@ -539,8 +535,8 @@ Read-only list of Schools (OUs).
         instance.update_from_ldap(instance.pk)
         # inject /schools/{ou}/roles & /schools/{ou}/imports/users URLs
         instance_url = request.build_absolute_uri()
-        instance.roles = urlparse.urljoin(instance_url, "roles")
-        instance.user_imports = urlparse.urljoin(instance_url, "imports/users")
+        instance.roles = urljoin(instance_url, "roles")
+        instance.user_imports = urljoin(instance_url, "imports/users")
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -559,8 +555,8 @@ Read-only list of Schools (OUs).
         serializer = self.get_serializer(queryset, many=True)
         data = serializer.data
         for d in data:
-            d["roles"] = urlparse.urljoin(d["url"], "roles")
-            d["user_imports"] = urlparse.urljoin(d["url"], "imports/users")
+            d["roles"] = urljoin(d["url"], "roles")
+            d["user_imports"] = urljoin(d["url"], "imports/users")
         return Response(data)
 
     @detail_route(methods=["get", "post"], url_path="imports/users")

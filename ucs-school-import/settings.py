@@ -4,7 +4,7 @@
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -149,7 +149,7 @@ AUTHENTICATION_BACKENDS = ["django_pam.auth.backends.PAMBackend"] + list(
 
 TIME_ZONE = ucr.get("ucsschool/import/http_api/TIME_ZONE")
 if not TIME_ZONE:
-    with open("/etc/timezone", "rb") as fp:
+    with open("/etc/timezone", "r") as fp:
         TIME_ZONE = fp.read().strip()
     if not re.match(r"\w+/\w+", TIME_ZONE):
         TIME_ZONE = "Europe/Berlin"

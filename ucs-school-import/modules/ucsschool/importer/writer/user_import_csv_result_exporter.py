@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -91,7 +92,7 @@ class UserImportCsvResultExporter(ResultExporter):
 
         li = sorted(user_import.errors, key=exc_count)
         for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
-            tmp = list()
+            tmp = []
             map(tmp.extend, [u for u in users.values() if u])
             li.extend(tmp)
         li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))

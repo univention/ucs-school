@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -52,9 +52,9 @@ from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from univention.config_registry import ConfigRegistry
 
 try:
-    from typing import Optional
+    from typing import Optional  # noqa: F401
 
-    from univention.admin.uldap import access as LoType, position as PoType
+    from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 except ImportError:
     pass
 
@@ -191,14 +191,14 @@ class UcsSchoolUserMigration(object):
     def guess_usernames(self):
         # get encoding and CSV dialect
         encoding = CsvReader.get_encoding(self.args.input_file)
-        with open(self.args.input_file, "r") as fp:
-            dialect = csv.Sniffer().sniff(fp.read())
+        with open(self.args.input_file, "rb") as fp:
+            dialect = csv.Sniffer().sniff(fp.read().decode(encoding))
 
         results = []
         ambiguous_entries = []
 
         # read CSV file
-        with open(self.args.input_file) as fd_in:
+        with open(self.args.input_file, "rb") as fd_in:
             fd_in_e = codecs.getreader(encoding)(fd_in)
             for i, row in enumerate(csv.reader(fd_in_e, dialect=dialect), start=1):
                 if i == 1:
@@ -220,7 +220,7 @@ class UcsSchoolUserMigration(object):
                 )
                 result = self.lo.search(filter=filter_s, required=False)
                 if len(result) == 1:
-                    username = result[0][1].get("uid", [None])[0]
+                    username = result[0][1].get("uid", [b""])[0].decode("UTF-8") or None
                     results.append(Entry(username, record_uid, None, None))
                 elif not result:
                     # user(name) not found
@@ -228,7 +228,9 @@ class UcsSchoolUserMigration(object):
                         Entry(None, record_uid, "no user found in LDAP", " $ ".join(row))
                     )
                 else:
-                    username_list = [entry[1].get("uid", ["---"])[0] for entry in result]
+                    username_list = [
+                        entry[1].get("uid", [b"---"])[0].decode("UTF-8") for entry in result
+                    ]
                     ambiguous_entries.append(
                         Entry(
                             None,
@@ -294,8 +296,8 @@ class UcsSchoolUserMigration(object):
     def modify_record_uid(self):
         # get encoding and CSV dialect
         encoding = CsvReader.get_encoding(self.args.input_file)
-        with open(self.args.input_file, "r") as fp:
-            dialect = csv.Sniffer().sniff(fp.read())
+        with open(self.args.input_file, "rb") as fp:
+            dialect = csv.Sniffer().sniff(fp.read().decode(encoding))
 
         with open(self.args.input_file) as fd_in:
             fd_in_e = codecs.getreader(encoding)(fd_in)
@@ -322,26 +324,30 @@ class UcsSchoolUserMigration(object):
 
                 user_dn, attrs = result[0]
                 ml = [
-                    ("ucsschoolRecordUID", attrs.get("ucsschoolRecordUID", []), [record_uid]),
+                    (
+                        "ucsschoolRecordUID",
+                        attrs.get("ucsschoolRecordUID", []),
+                        [record_uid.encode("UTF-8")],
+                    ),
                 ]
                 if self.args.source_uid:
                     ml.append(
                         (
                             "ucsschoolSourceUID",
                             attrs.get("ucsschoolSourceUID", []),
-                            [self.args.source_uid],
+                            [self.args.source_uid.encode("UTF-8")],
                         )
                     )
                 self.logger.info(
                     "%sUser: %r   record_uid: %r ==> %r   source_uid: %r ==> %r",
                     "DRYRUN: " if self.args.dry_run else "",
                     username,
-                    attrs.get("ucsschoolRecordUID", [None])[0],
+                    attrs.get("ucsschoolRecordUID", [b""])[0].decode("UTF-8"),
                     record_uid,
-                    attrs.get("ucsschoolSourceUID", [None])[0],
+                    attrs.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8"),
                     self.args.source_uid
                     if self.args.source_uid
-                    else attrs.get("ucsschoolSourceUID", [None])[0],
+                    else attrs.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8"),
                 )
                 if not self.args.dry_run:
                     try:

@@ -1,10 +1,11 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
 # Copyright 2017-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -56,7 +57,7 @@ from .models import Logfile, PasswordsFile, Role, School, SummaryFile, TextArtif
 from .tasks import dry_run, import_users
 
 try:
-    from typing import Tuple
+    from typing import Tuple  # noqa: F401
 except ImportError:
     pass
 

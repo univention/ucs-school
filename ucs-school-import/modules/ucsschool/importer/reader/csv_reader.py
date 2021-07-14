@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -35,6 +36,7 @@ CSV reader for CSV files using the new import format.
 import codecs
 import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
+from io import IOBase
 
 import magic
 from six import reraise, string_types
@@ -49,10 +51,10 @@ from ..exceptions import ConfigurationError, InitialisationError, NoRole, Unknow
 from .base_reader import BaseReader
 
 try:
-    from csv import Dialect
-    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, Optional, Union
+    from csv import Dialect  # noqa: F401
+    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, Optional, Union  # noqa: F401
 
-    from ..models.import_user import ImportUser
+    from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 
@@ -62,7 +64,7 @@ class CsvReader(BaseReader):
     Reads CSV files and turns lines to ImportUser objects.
     """
 
-    _attrib_names = dict()  # type: Dict[str, Iterable[str]]  # cache for Attribute names
+    _attrib_names = {}  # type: Dict[str, Iterable[str]]  # cache for Attribute names
     _role_method = None  # type: Callable  # method to get users role
     _csv_roles_mapping = {
         "student": [role_pupil],
@@ -99,10 +101,15 @@ class CsvReader(BaseReader):
         :return: encoding of filename_or_file
         :rtype: str
         """
+        try:
+            FileType = file
+        except NameError:
+            FileType = IOBase
+
         if isinstance(filename_or_file, string_types):
             with open(filename_or_file, "rb") as fp:
                 txt = fp.read()
-        elif isinstance(filename_or_file, file):
+        elif isinstance(filename_or_file, FileType):
             old_pos = filename_or_file.tell()
             txt = filename_or_file.read()
             filename_or_file.seek(old_pos)
@@ -110,6 +117,7 @@ class CsvReader(BaseReader):
             raise ValueError(
                 'Argument "filename_or_file" has unknown type {!r}.'.format(type(filename_or_file))
             )
+
         if hasattr(magic, "from_file"):
             encoding = magic.Magic(mime_encoding=True).from_buffer(txt)
         elif hasattr(magic, "detect_from_filename"):
@@ -121,7 +129,7 @@ class CsvReader(BaseReader):
             encoding = "utf-8-sig"
         return encoding
 
-    def get_dialect(self, fp):  # type: (BinaryIO) -> Dialect
+    def get_dialect(self, fp, encoding):  # type: (BinaryIO) -> Dialect
         """
         Overwrite me to force a certain CSV dialect.
 
@@ -130,7 +138,7 @@ class CsvReader(BaseReader):
         :rtype: csv.Dialect
         """
         delimiter = self.config.get("csv", {}).get("delimiter")
-        return Sniffer().sniff(fp.readline(), delimiters=delimiter)
+        return Sniffer().sniff(fp.readline().decode(encoding), delimiters=delimiter)
 
     def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
         """
@@ -143,8 +151,11 @@ class CsvReader(BaseReader):
         :rtype: Iterator
         """
         with open(self.filename, "rb") as fp:
+            encoding = self.get_encoding(fp)
+            self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
+            fp.seek(0)
             try:
-                dialect = self.get_dialect(fp)
+                dialect = self.get_dialect(fp, encoding)
             except CsvError as exc:
                 reraise(
                     InitialisationError,
@@ -154,9 +165,6 @@ class CsvReader(BaseReader):
                     ),
                     sys.exc_info()[2],
                 )
-            fp.seek(0)
-            encoding = self.get_encoding(fp)
-            self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
             if self.header_lines == 1:
                 # let DictReader figure it out itself
                 header = None
@@ -171,7 +179,7 @@ class CsvReader(BaseReader):
                 _reader = csv_reader(fpu, dialect=dialect)
                 line = _reader.next()
                 fp.seek(start)
-                header = map(str, range(len(line)))
+                header = [str(x) for x in range(len(line))]
             csv_reader_args = dict(fieldnames=header, dialect=dialect)
             csv_reader_args.update(kwargs.get("csv_reader_args", {}))
             fpu = UTF8Recoder(fp, encoding)
@@ -189,7 +197,7 @@ class CsvReader(BaseReader):
                 self.input_data = reader.row
                 yield {
                     unicode(key, "utf-8").strip(): unicode(value or "", "utf-8").strip()
-                    for key, value in row.iteritems()
+                    for key, value in row.items()
                 }
 
     def handle_input(
@@ -352,7 +360,7 @@ class CsvReader(BaseReader):
         if not self.fieldnames:
             self.read().next()
         dict_reader_mapping = dict(zip(self.fieldnames, input_data))
-        res = dict()
+        res = {}
         for k, v in self.config["csv"]["mapping"].items():
             try:
                 res[v] = dict_reader_mapping[k]
@@ -371,7 +379,7 @@ class CsvReader(BaseReader):
         """
         cls_name = import_user.__class__.__name__
         if cls_name not in cls._attrib_names:
-            cls._attrib_names[cls_name] = import_user.to_dict().keys()
+            cls._attrib_names[cls_name] = list(import_user.to_dict())
         return cls._attrib_names[cls_name]
 
     def _get_missing_columns(self):
@@ -404,5 +412,8 @@ class UTF8Recoder(object):
     def __iter__(self):  # type: () -> UTF8Recoder
         return self
 
-    def next(self):  # type: () -> str
-        return self.reader.next().encode("utf-8")
+    def next(self):  # type: () -> bytes
+        return next(self.reader).encode("utf-8")
+
+    def __next__(self):  # type: () -> str
+        return next(self.reader)

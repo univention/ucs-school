@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2019-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -94,12 +95,12 @@ class ModifyCsvHeader(PreReadPyHook):
 
         # get encoding and CSV dialect
         encoding = CsvReader.get_encoding(backup_file_name)
-        with open(backup_file_name, "r") as fp:
-            dialect = csv.Sniffer().sniff(fp.read())
+        with open(backup_file_name, "rb") as fp:
+            dialect = csv.Sniffer().sniff(fp.read().decode(encoding))
 
         # rewrite CSV with different headers
         self.logger.info("Rewriting %r...", ori_file_name)
-        with open(backup_file_name, "r") as fpr, open(ori_file_name, "w") as fpw:
+        with open(backup_file_name, "rb") as fpr, open(ori_file_name, "wb") as fpw:
             fpre = codecs.getreader(encoding)(fpr)
             encoder = codecs.getincrementalencoder(encoding)()
             writer = csv.writer(fpw, dialect=dialect)

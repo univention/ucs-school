@@ -1,9 +1,10 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -49,11 +50,10 @@ from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStor
 from .ldap_connection import get_admin_connection, get_unprivileged_connection
 
 try:
-    from typing import TYPE_CHECKING, Callable, Dict, Optional
+    from typing import TYPE_CHECKING, Callable, Dict, Optional  # noqa: F401
 
     if TYPE_CHECKING:
-        import univention.admin.uldap.access
-        import univention.admin.uldap.position
+        import univention.admin.uldap  # noqa: F401
 except ImportError:
     pass
 
@@ -131,7 +131,10 @@ class LdapStorageBackend(NameCounterStorageBackend):
         try:
             self.lo.add(
                 "cn={},{}".format(escape_dn_chars(name), self.ldap_base),
-                [("objectClass", "ucsschoolUsername"), ("ucsschoolUsernameNextNumber", str(value))],
+                [
+                    ("objectClass", b"ucsschoolUsername"),
+                    ("ucsschoolUsernameNextNumber", str(value).encode("UTF-8")),
+                ],
             )
         except objectExists:
             raise NameKeyExists("Cannot create key {!r} - already exists.".format(name))
@@ -140,7 +143,13 @@ class LdapStorageBackend(NameCounterStorageBackend):
         try:
             self.lo.modify(
                 "cn={},{}".format(escape_dn_chars(name), self.ldap_base),
-                [("ucsschoolUsernameNextNumber", str(old_value), str(new_value))],
+                [
+                    (
+                        "ucsschoolUsernameNextNumber",
+                        str(old_value).encode("UTF-8"),
+                        str(new_value).encode("UTF-8"),
+                    )
+                ],
             )
         except noObject:
             raise NoValueStored("Name {!r} not found.".format(name))
@@ -150,7 +159,7 @@ class LdapStorageBackend(NameCounterStorageBackend):
             res = self.lo.get(
                 "cn={},{}".format(escape_dn_chars(name), self.ldap_base),
                 attr=["ucsschoolUsernameNextNumber"],
-            )["ucsschoolUsernameNextNumber"][0]
+            )["ucsschoolUsernameNextNumber"][0].decode("UTF-8")
         except (KeyError, noObject):
             raise NoValueStored("Name {!r} not found.".format(name))
         try:
@@ -170,15 +179,16 @@ class LdapStorageBackend(NameCounterStorageBackend):
 
         :return: None
         """
-        for dn, attribs in self.lo.search(
-            filter="objectClass=ucsschoolUsername", base=self.ldap_base, attr=[""]
+        for dn in self.lo.searchDn(
+            filter="objectClass=ucsschoolUsername",
+            base=self.ldap_base,
         ):
             self.lo.delete(dn)
 
 
 class MemoryStorageBackend(NameCounterStorageBackend):
     def __init__(self, attribute_storage_name):  # type: (str) -> None
-        self._mem_store = dict()  # type: Dict[str, int]
+        self._mem_store = {}  # type: Dict[str, int]
         lo, po = get_unprivileged_connection()
         self.ldap_backend = LdapStorageBackend(attribute_storage_name, lo, po)
 
@@ -216,7 +226,7 @@ class MemoryStorageBackend(NameCounterStorageBackend):
 
         :return: None
         """
-        self._mem_store = dict()
+        self._mem_store = {}
 
 
 class UsernameHandler(object):

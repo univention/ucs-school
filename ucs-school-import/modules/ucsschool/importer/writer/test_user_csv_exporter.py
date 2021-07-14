@@ -1,10 +1,10 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 # Copyright 2016-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -66,7 +66,7 @@ class TestUserCsvExporter(ResultExporter):
             user["Klassen"] = ""
         user["Schulen"] = ",".join(user["Schulen"])
         for k, v in user.items():
-            user[k] = v.encode("utf-8")
+            user[k] = v.encode("utf-8")  # TODO: test
         return user
 
 
@@ -87,5 +87,5 @@ class HttpApiTestUserCsvExporter(TestUserCsvExporter):
         del user["Schulen"]
         del user["Benutzertyp"]
         for k, v in user.items():
-            user[k] = v.encode("utf-8")
+            user[k] = v.encode("utf-8")  # TODO: test
         return user

@@ -1,9 +1,9 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2007-2021 Univention GmbH
 #
-# http://www.univention.de/
+# https://www.univention.de/
 #
 # All rights reserved.
 #
@@ -36,8 +36,10 @@ servers to the OU object.
 
 from __future__ import print_function
 
-import optparse
+import argparse
 import sys
+
+from ldap.filter import filter_format
 
 import univention.admin.config
 import univention.admin.modules
@@ -49,14 +51,14 @@ ucr = univention.config_registry.ConfigRegistry()
 ucr.load()
 
 
-def findComputerNameWithService(computer_module, co, lo, service, ouDn):
+def findComputerNameWithService(computer_module, lo, service, ouDn):
     computers = univention.admin.modules.lookup(
         computer_module,
-        co,
+        None,
         lo,
         scope="sub",
         base=ouDn,
-        filter=univention.admin.filter.expression("univentionService", service),
+        filter=filter_format("univentionService=%s", [service]),
     )
     for computer in computers:
         return computer.dn
@@ -64,43 +66,33 @@ def findComputerNameWithService(computer_module, co, lo, service, ouDn):
 
 
 def main():
-    usage = """%prog [--dry-run] [--ou <ou_name>] --auto-detect
-
-%prog updates the (specified) OU objects and sets the file servers for
+    description = """%(prog)s updates the (specified) OU objects and sets the file servers for
 class shares and home shares. These servers are read from the import scripts
 during creation of new classes or users.
 """
 
-    parser = optparse.OptionParser(usage=usage)
-    parser.add_option(
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument(
         "--dry-run",
         action="store_true",
-        dest="dryrun",
-        default=False,
         help="do not change any object but print changes instead to stdout",
     )
-    parser.add_option(
+    parser.add_argument(
         "--auto-detect",
         action="store_true",
-        dest="autodetect",
-        default=False,
         help="this option tries to detect the file servers automatically",
     )
-    parser.add_option(
-        "--ou", action="store", dest="ou", default=None, help="name of ou that shall be updated/modified"
-    )
-    options, args = parser.parse_args()
+    parser.add_argument("--ou", help="name of ou that shall be updated/modified")
+    options = parser.parse_args()
 
-    if not options.autodetect:
-        print("This tool only supports --auto-detect at the moment.", file=sys.stderr)
-        sys.exit(1)
+    if not options.auto_detect:
+        parser.error("This tool only supports --auto-detect at the moment.")
 
-    if options.dryrun:
+    if options.dry_run:
         print("DRY-RUN: no change will be written to LDAP")
 
     baseDN = ucr["ldap/base"]
 
-    co = univention.admin.config.config()
     lo, position = univention.admin.uldap.getAdminConnection()
 
     univention.admin.modules.update()
@@ -113,26 +105,25 @@ during creation of new classes or users.
 
     is_singlemaster = ucr.is_true("ucsschool/singlemaster", False)
     master_dn = None
-    host_list = univention.admin.modules.lookup(dcmaster_module, co, lo, scope="sub", base=baseDN)
+    host_list = univention.admin.modules.lookup(dcmaster_module, None, lo, scope="sub", base=baseDN)
     for hostobj in host_list:
         master_dn = hostobj.dn
     if not master_dn:
-        print("Cannot determine DN of domaincontroller_master - stopping here", file=sys.stderr)
-        sys.exit(1)
+        parser.error("Cannot determine DN of domaincontroller_master - stopping here")
 
     # get list of OU UDM objects
     ou_list = []
     ou_filter = None
     if options.ou:
         # user has specified a specific OU on command line - add appropriate LDAP filter
-        ou_filter = univention.admin.filter.expression("ou", options.ou)
+        ou_filter = filter_format("ou=%s", [options.ou])
     ou_obj_list = univention.admin.modules.lookup(
-        ou_module, co, lo, scope="sub", base=baseDN, filter=ou_filter
+        ou_module, None, lo, scope="sub", base=baseDN, filter=ou_filter
     )
     for ou_obj in ou_obj_list:
         # FIXME: lame check: if OU contains a computer container then it is a UCS@school OU
         if univention.admin.modules.lookup(
-            cn_module, co, lo, scope="one", base=ou_obj.dn, filter="cn=computers"
+            cn_module, None, lo, scope="one", base=ou_obj.dn, filter="cn=computers"
         ):
             # only remember OU DNs if it contains a cn=computers subcontainer
             ou_list.append(ou_obj.dn)
@@ -144,8 +135,8 @@ during creation of new classes or users.
         classshareserver = None
 
         ou_attrs = lo.get(ou_dn)
-        if "ucsschoolOrganizationalUnit" not in ou_attrs["objectClass"]:
-            modlist.append(("objectClass", "", "ucsschoolOrganizationalUnit"))
+        if b"ucsschoolOrganizationalUnit" not in ou_attrs["objectClass"]:
+            modlist.append(("objectClass", b"", b"ucsschoolOrganizationalUnit"))
 
         if is_singlemaster:
             # in single server environments the DC master is always the correct fileserver for shares
@@ -159,9 +150,9 @@ during creation of new classes or users.
                 "Samba 4",
                 "Samba 3",
             ):
-                serverDn = findComputerNameWithService(computer_module, co, lo, servicename, ou_dn)
+                serverDn = findComputerNameWithService(computer_module, lo, servicename, ou_dn)
                 if serverDn is not None:
-                    if options.dryrun:
+                    if options.dry_run:
                         print("Found server providing service %s: %s" % (servicename, serverDn))
                     homeshareserver = serverDn
                     classshareserver = serverDn
@@ -174,24 +165,24 @@ during creation of new classes or users.
             continue
 
         print("OU: %s" % ou_dn)
-        if not ou_attrs.get("ucsschoolClassShareFileServer", [""])[0]:
+        if not ou_attrs.get("ucsschoolClassShareFileServer", [b""])[0]:
             modlist.append(
                 (
                     "ucsschoolClassShareFileServer",
-                    ou_attrs.get("ucsschoolClassShareFileServer", [""])[0],
-                    classshareserver,
+                    ou_attrs.get("ucsschoolClassShareFileServer", [b""])[0],
+                    classshareserver.encode("UTF-8"),
                 )
             )
             print("    ==> ucsschoolClassShareFileServer = %s" % classshareserver)
         else:
             print("    ==> ucsschoolClassShareFileServer has already been set")
 
-        if not ou_attrs.get("ucsschoolHomeShareFileServer", [""])[0]:
+        if not ou_attrs.get("ucsschoolHomeShareFileServer", [b""])[0]:
             modlist.append(
                 (
                     "ucsschoolHomeShareFileServer",
-                    ou_attrs.get("ucsschoolHomeShareFileServer", [""])[0],
-                    homeshareserver,
+                    ou_attrs.get("ucsschoolHomeShareFileServer", [b""])[0],
+                    homeshareserver.encode("UTF-8"),
                 )
             )
             print("    ==> ucsschoolHomeShareFileServer = %s" % homeshareserver)
@@ -199,7 +190,7 @@ during creation of new classes or users.
             print("    ==> ucsschoolHomeShareFileServer has already been set")
 
         if modlist:
-            if options.dryrun:
+            if options.dry_run:
                 print("DRY-RUN: skipping LDAP modification")
             else:
                 try:

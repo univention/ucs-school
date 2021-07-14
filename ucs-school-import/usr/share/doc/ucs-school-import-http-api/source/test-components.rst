@@ -31,8 +31,8 @@ If the join script succeeded, the database already contains a list of OUs. Let's
 
 Those OUs should already exist as objects in Djangos database::
 
-	$ python -m ucsschool.http_api.manage shell -c \
-	    "from ucsschool.http_api.import_api.models import School; print School.objects.all()"
+	$ python3 -m ucsschool.http_api.manage shell -c \
+	    "from ucsschool.http_api.import_api.models import School; print(School.objects.all())"
 
 	<QuerySet [<School: SchoolOne>, <School: SchoolTwo>]>
 
@@ -74,7 +74,7 @@ The web site ``https://$HOST/api/v1/schools/`` should list the schools for which
 Instead of using a browser, the HTTP-API can of cause be queried directly through HTTP::
 
 	$ curl -s -k -H "Content-Type: application/json" -u myteacher:univention \
-	    https://$(hostname -f)/api/v1/schools/ | python -m json.tool
+	    https://$(hostname -f)/api/v1/schools/ | python3 -m json.tool
 
 .. code-block:: json
 
