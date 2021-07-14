@@ -208,7 +208,7 @@ else
     python3 -m ucsschool.http_api.manage createsuperuser --username "$ADMINISTRATOR_UID" --email "root@$hostname.$domainname" --no-color --noinput
 fi
 echo "Seeding DB with School entries..."
-python3 -m ucsschool.http_api.manage updateschools --all
+python3 -m ucsschool.http_api.manage updateschools --all || die
 
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf
