@@ -12,9 +12,9 @@
 
 
 def test_samba_sid_group(udm, ucr, lo):
-        # create a group which is ignored by the connector
-        position = "cn=univention,%s" % ucr.get("ldap/base")
-        group_dn, groupname = udm.create_group(position=position, check_for_drs_replication=False)
+    # create a group which is ignored by the connector
+    position = "cn=univention,%s" % ucr.get("ldap/base")
+    group_dn, groupname = udm.create_group(position=position, check_for_drs_replication=False)
 
-        group_sid = lo.get(group_dn)["sambaSID"][0]
-        assert group_sid.startswith(b"S-1-5-21-")
+    group_sid = lo.get(group_dn)["sambaSID"][0]
+    assert group_sid.startswith(b"S-1-5-21-")

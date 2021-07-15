@@ -11,15 +11,19 @@ from ucsschool.lib.models.share import Share
 
 
 def test_check_for_nfs_shares(schoolenv):
-        nfs_shares = []
-        for school in School.get_all(schoolenv.lo):
-            for share in Share.get_all(schoolenv.lo, school.name):
-                share_udm = share.get_udm_object(schoolenv.lo)
-                if "nfs" in share_udm.options:
-                    if share.name in ["Marktplatz", "iTALC-Installation"]:
-                        print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))
-                    else:
-                        nfs_shares.append((school.name, share.name))
+    nfs_shares = []
+    for school in School.get_all(schoolenv.lo):
+        for share in Share.get_all(schoolenv.lo, school.name):
+            share_udm = share.get_udm_object(schoolenv.lo)
+            if "nfs" in share_udm.options:
+                if share.name in ["Marktplatz", "iTALC-Installation"]:
+                    print("*** Ignoring //{}/{} (Bug #42514)".format(school.name, share.name))
+                else:
+                    nfs_shares.append((school.name, share.name))
 
-        assert not nfs_shares
-        print("*** No shares found in schools {}.".format(", ".join(s.name for s in School.get_all(schoolenv.lo))))
+    assert not nfs_shares
+    print(
+        "*** No shares found in schools {}.".format(
+            ", ".join(s.name for s in School.get_all(schoolenv.lo))
+        )
+    )

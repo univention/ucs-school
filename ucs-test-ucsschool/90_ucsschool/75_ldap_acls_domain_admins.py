@@ -21,16 +21,14 @@ class MyAcl(Acl):
 
 
 def ldap_acls_domain_admins(schoolenv, ucr):
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
-            tea, tea_dn = schoolenv.create_teacher(school)
-            non_school_admin_dn, nonschool_admin = schoolenv.udm.create_user(
-                password=uts.random_string(),
-                groups=["cn=Domain Admins,cn=groups,%s" % (schoolenv.ucr.get("ldap/base"))],
-            )
-            schoolenv.lo.modify(non_school_admin_dn, [("objectClass", "", "ucsschoolAdministrator")])
-            acl2 = MyAcl(school, non_school_admin_dn, "ALLOWED")
-            non_school_user_dn, nonschool_username = schoolenv.udm.create_user(
-                password=uts.random_string()
-            )
-            acl2.assert_user(non_school_user_dn, "write")
-            acl2.assert_user(tea_dn, "write")
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    tea, tea_dn = schoolenv.create_teacher(school)
+    non_school_admin_dn, nonschool_admin = schoolenv.udm.create_user(
+        password=uts.random_string(),
+        groups=["cn=Domain Admins,cn=groups,%s" % (schoolenv.ucr.get("ldap/base"))],
+    )
+    schoolenv.lo.modify(non_school_admin_dn, [("objectClass", "", "ucsschoolAdministrator")])
+    acl2 = MyAcl(school, non_school_admin_dn, "ALLOWED")
+    non_school_user_dn, nonschool_username = schoolenv.udm.create_user(password=uts.random_string())
+    acl2.assert_user(non_school_user_dn, "write")
+    acl2.assert_user(tea_dn, "write")

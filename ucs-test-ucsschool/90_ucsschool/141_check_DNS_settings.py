@@ -15,9 +15,9 @@ import univention.testing.utils as utils
 
 
 def test_check_dns_settings(ucr):
-        lo = utils.get_ldap_connection()
-        zone_name = "%s.%s." % (ucr.get("hostname"), ucr.get("domainname"))
-        print("Searching for DNS zones with nsRecord=%r" % (zone_name,))
-        zones = lo.search(filter_format("nSRecord=%s", (zone_name,)))
+    lo = utils.get_ldap_connection()
+    zone_name = "%s.%s." % (ucr.get("hostname"), ucr.get("domainname"))
+    print("Searching for DNS zones with nsRecord=%r" % (zone_name,))
+    zones = lo.search(filter_format("nSRecord=%s", (zone_name,)))
 
-        assert not zones, "A school server is listed as DNS server, which it must not be: %r" % (zones,)
+    assert not zones, "A school server is listed as DNS server, which it must not be: %r" % (zones,)

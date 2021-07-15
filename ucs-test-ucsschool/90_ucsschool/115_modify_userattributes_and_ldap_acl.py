@@ -17,22 +17,20 @@ from univention.config_registry import handler_set
 
 
 def test_modify_userattributes_and_ldap_acl(schoolenv, udm, ucr):
-        host = ucr.get("hostname")
-        school, oudn = schoolenv.create_ou(name_edudc=host)
+    host = ucr.get("hostname")
+    school, oudn = schoolenv.create_ou(name_edudc=host)
 
-        handler_set(["umc/self-service/profiledata/enabled=true"])
+    handler_set(["umc/self-service/profiledata/enabled=true"])
 
-        if "l" not in ucr.get("self-service/ldap_attributes", "").split(","):
-            handler_set(
-                ["self-service/ldap_attributes=%s,l" % ucr.get("self-service/ldap_attributes", "")]
-            )
+    if "l" not in ucr.get("self-service/ldap_attributes", "").split(","):
+        handler_set(["self-service/ldap_attributes=%s,l" % ucr.get("self-service/ldap_attributes", "")])
 
-        _, user = schoolenv.create_teacher(school)
-        utils.verify_ldap_object(user)
+    _, user = schoolenv.create_teacher(school)
+    utils.verify_ldap_object(user)
 
-        lo = univention.admin.uldap.access(binddn=user, bindpw="univention")
-        lo.modify(user, [("l", b"", b"Bremen")])
-        utils.verify_ldap_object(user, {"l": ["Bremen"]})
+    lo = univention.admin.uldap.access(binddn=user, bindpw="univention")
+    lo.modify(user, [("l", b"", b"Bremen")])
+    utils.verify_ldap_object(user, {"l": ["Bremen"]})
 
-        with pytest.raises(univention.admin.uexceptions.permissionDenied):
-            lo.modify(user, [("sn", b"", b"mustfail")])
+    with pytest.raises(univention.admin.uexceptions.permissionDenied):
+        lo.modify(user, [("sn", b"", b"mustfail")])

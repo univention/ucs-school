@@ -11,10 +11,10 @@ import subprocess
 
 
 def test_ucs_school_info(ucr, lo):
-        for dn, ou_attrs in lo.search(
-            base=ucr["ldap/base"],
-            filter="(objectClass=ucsschoolOrganizationalUnit)",
-            scope="one",
-            attr=["ou"],
-        ):
-            subprocess.check_call(["ucs-school-info", "-a", ou_attrs["ou"][0].decode("UTF-8")])
+    for dn, ou_attrs in lo.search(
+        base=ucr["ldap/base"],
+        filter="(objectClass=ucsschoolOrganizationalUnit)",
+        scope="one",
+        attr=["ou"],
+    ):
+        subprocess.check_call(["ucs-school-info", "-a", ou_attrs["ou"][0].decode("UTF-8")])

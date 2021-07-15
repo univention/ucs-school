@@ -12,11 +12,11 @@
 
 
 def test_samba_sid_user(udm, ucr, lo):
-        # create an user who is ignored by the connector
-        position = "cn=univention,%s" % ucr.get("ldap/base")
-        user_dn, username = udm.create_user(
-            position=position, check_for_drs_replication=False, wait_for=False
-        )
+    # create an user who is ignored by the connector
+    position = "cn=univention,%s" % ucr.get("ldap/base")
+    user_dn, username = udm.create_user(
+        position=position, check_for_drs_replication=False, wait_for=False
+    )
 
-        user_sid = lo.get(user_dn)["sambaSID"][0]
-        assert user_sid.startswith(b"S-1-5-21-")
+    user_sid = lo.get(user_dn)["sambaSID"][0]
+    assert user_sid.startswith(b"S-1-5-21-")

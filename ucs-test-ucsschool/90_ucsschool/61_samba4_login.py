@@ -22,20 +22,20 @@ from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4co
 
 
 def test_samba4_login(udm, ucr):
-        password = uts.random_string()
+    password = uts.random_string()
 
-        username = udm.create_user(password=password)[0]
+    username = udm.create_user(password=password)[0]
 
-        print("Waiting for DRS replication...")
-        wait_for_drs_replication(
-            "(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid"
-        )
-        wait_for_s4connector()
+    print("Waiting for DRS replication...")
+    wait_for_drs_replication("(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid")
+    wait_for_s4connector()
 
-        subprocess.check_call((
+    subprocess.check_call(
+        (
             "/usr/bin/smbclient",
             "-U%s%%%s" % (username, password),
             "//%s/sysvol" % ucr.get("hostname"),
             "-c",
             "ls",
-        ))
+        )
+    )

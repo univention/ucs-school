@@ -17,12 +17,12 @@ delimiter = ","
 
 
 def test_school_creation(schoolenv):
-        name = uts.random_name()
-        value = "Domain Users %s" % name
+    name = uts.random_name()
+    value = "Domain Users %s" % name
 
-        assert value not in lib_ucr.get(ucrv, "")
+    assert value not in lib_ucr.get(ucrv, "")
 
-        schoolenv.create_ou(ou_name=name, use_cache=False)
-        lib_ucr.load()
-        ucr_value = lib_ucr.get(ucrv, "")
-        assert value in ucr_value
+    schoolenv.create_ou(ou_name=name, use_cache=False)
+    lib_ucr.load()
+    ucr_value = lib_ucr.get(ucrv, "")
+    assert value in ucr_value
