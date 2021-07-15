@@ -26,12 +26,12 @@ blacklisted_option_combinations = {
 }
 
 
-def test_invalid_option_combinations(ucr, udm, schoolenv):
+def test_invalid_option_combinations(ucr, udm_session, schoolenv):
     print("*** Testing creation...\n*")
     for kls, bad_options in blacklisted_option_combinations.items():
         for bad_option in bad_options:
             with pytest.raises(UCSTestUDM_CreateUDMObjectFailed):
-                udm.create_user(options=[kls, bad_option])
+                udm_session.create_user(options=[kls, bad_option])
 
     print("*\n*** Testing modification...\n*")
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))

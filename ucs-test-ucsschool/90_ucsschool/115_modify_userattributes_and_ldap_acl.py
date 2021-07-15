@@ -16,7 +16,7 @@ import univention.testing.utils as utils
 from univention.config_registry import handler_set
 
 
-def test_modify_userattributes_and_ldap_acl(schoolenv, udm, ucr):
+def test_modify_userattributes_and_ldap_acl(schoolenv, udm_session, ucr):
     host = ucr.get("hostname")
     school, oudn = schoolenv.create_ou(name_edudc=host)
 

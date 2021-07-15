@@ -16,7 +16,7 @@ from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
 
 
-def test_exam_mode_restrict_login(udm, schoolenv):
+def test_exam_mode_restrict_login(udm_session, schoolenv):
     ucr = schoolenv.ucr
     lo = schoolenv.open_ldap_connection()
     ucr.load()
@@ -27,7 +27,7 @@ def test_exam_mode_restrict_login(udm, schoolenv):
         edudc = ucr.get("hostname")
     school, oudn = schoolenv.create_ou(name_edudc=edudc)
     search_base = SchoolSearchBase([school])
-    klasse_dn = udm.create_object(
+    klasse_dn = udm_session.create_object(
         "groups/group",
         name="%s-AA1" % school,
         position=search_base.classes,
@@ -45,9 +45,9 @@ def test_exam_mode_restrict_login(udm, schoolenv):
     orig_udm = student2.get_udm_object(lo)
     orig_udm["sambaUserWorkstations"] = ["OTHERPC"]
     orig_udm.modify()
-    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
-    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
-    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
+    udm_session.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
+    udm_session.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
+    udm_session.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
     print("# import random computers")
     computers = Computers(lo, school, 2, 0, 0)

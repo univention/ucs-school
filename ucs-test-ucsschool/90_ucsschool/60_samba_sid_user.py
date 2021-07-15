@@ -11,10 +11,10 @@
 ## bugs: [33677]
 
 
-def test_samba_sid_user(udm, ucr, lo):
+def test_samba_sid_user(udm_session, ucr, lo):
     # create an user who is ignored by the connector
     position = "cn=univention,%s" % ucr.get("ldap/base")
-    user_dn, username = udm.create_user(
+    user_dn, username = udm_session.create_user(
         position=position, check_for_drs_replication=False, wait_for=False
     )
 
