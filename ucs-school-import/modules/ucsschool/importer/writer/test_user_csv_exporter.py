@@ -66,7 +66,9 @@ class TestUserCsvExporter(ResultExporter):
             user["Klassen"] = ""
         user["Schulen"] = ",".join(user["Schulen"])
         for k, v in user.items():
-            user[k] = v.encode("utf-8")  # TODO: test
+            if not isinstance(v, str):  # py2
+                v = v.encode("UTF-8")
+            user[k] = v
         return user
 
 
@@ -87,5 +89,7 @@ class HttpApiTestUserCsvExporter(TestUserCsvExporter):
         del user["Schulen"]
         del user["Benutzertyp"]
         for k, v in user.items():
-            user[k] = v.encode("utf-8")  # TODO: test
+            if not isinstance(v, str):  # py2
+                v = v.encode("UTF-8")
+            user[k] = v
         return user
