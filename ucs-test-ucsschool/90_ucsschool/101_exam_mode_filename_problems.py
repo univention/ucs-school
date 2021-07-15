@@ -22,7 +22,7 @@ def test_exam_mode_filename_problems(ucr):
         "C:\\Windows\\Temp\\foobar.txt",
         "foobar.txt",
     ]:
-        with tempfile.NamedTemporaryFile() as fd:
+        with tempfile.NamedTemporaryFile("w+") as fd:
             token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
             fd.write(token)
             fd.flush()

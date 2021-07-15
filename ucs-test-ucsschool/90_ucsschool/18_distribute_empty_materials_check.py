@@ -58,7 +58,7 @@ def test_distribute_empty_materials(schoolenv, ucr):
     student_project_path = project.getUserFilesPath(stu, purpose="distribute")
     filename = uts.random_string()
     subprocess.check_call(["touch", os.path.join(student_project_path, filename)])
-    project.files.append((filename, "utf-8"))
+    project.filename_encodings.append((filename, "utf-8"))
     project.collect()
     project.check_collect([stu])
 

@@ -19,7 +19,7 @@ import univention.testing.strings as uts
 def test_samba_login(ucr, udm_session):
     password = uts.random_string()
 
-    username = udm_session.create_user(password=password)[0]
+    username = udm_session.create_user(password=password)[1]
 
     subprocess.check_call(
         (
