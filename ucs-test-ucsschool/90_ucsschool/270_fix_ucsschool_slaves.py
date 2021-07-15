@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Fix broken domaincontroller slave objects via fix_ucsschool_slaves
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]

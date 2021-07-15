@@ -466,7 +466,7 @@ class Person(object):
                     key = ldap2person[attr]
                 except KeyError:
                     raise NotImplementedError("Mapping for {!r} not yet implemented.".format(attr))
-                value = attrs_from_ldap.get(key, [None])[0].decode("UTF-8")
+                value = attrs_from_ldap.get(key, [b""])[0].decode("UTF-8")
             kwargs[attr] = value
         self.update(**kwargs)
 

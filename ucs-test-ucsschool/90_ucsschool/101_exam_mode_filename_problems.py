@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: upload files to exam module with problematic filenames
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous

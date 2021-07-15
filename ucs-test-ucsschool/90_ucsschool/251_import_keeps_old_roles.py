@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: The importer should not remove existing admin roles or non ucsschool roles
 ## tags: [apptest,ucsschool,ucsschool_import1]

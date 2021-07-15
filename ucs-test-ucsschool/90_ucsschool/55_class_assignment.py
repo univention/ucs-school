@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the class assignment umc module
 ## exposure: dangerous
@@ -29,7 +29,7 @@ def schoolenv():
             2, name_edudc=uts.random_name(), name_share_file_server=hostname, use_cache=False
         )
         name_edudcs = [hostname, name_edudc_2, name_edudc_2]
-        schoolenv.school_classes = dict()
+        schoolenv.school_classes = {}
         client = Client.get_test_connection(hostname=schoolenv.ucr["ldap/master"])
         for (school, school_dn), name_edudc in zip(schoolenv.schools, name_edudcs):
             class_name = uts.random_string()

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test ResultPyHooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -65,8 +65,8 @@ class Test(CLI_Import_v2_Tester):
         roles1 = dict((k, user_num[k]) for k in _roles[:2])
         roles2 = dict((k, user_num[k]) for k in _roles[1:])  # overlap 1
 
-        person_list1 = list()
-        person_list2 = list()
+        person_list1 = []
+        person_list2 = []
         for role, num in roles1.items():
             for _ in range(num):
                 person = Person(self.ou_A.name, role)

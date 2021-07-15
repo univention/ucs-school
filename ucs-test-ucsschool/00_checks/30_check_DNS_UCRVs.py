@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## bugs: [40470]
 ## desc: Check values of school-servers (except master and backup) DNS related ucr variables
 ## exposure: safe

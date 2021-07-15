@@ -151,7 +151,7 @@ class Bunch(object):
 
 class UCSTestSchool(object):
     ucr = lazy_object_proxy.Proxy(lambda: univention.testing.ucr.UCSTestConfigRegistry().__enter__())
-    _test_ous = dict()  # type: Dict[Tuple[str, str, str, str, str, str], List[Tuple[str]]]
+    _test_ous = {}  # type: Dict[Tuple[str, str, str, str, str, str], List[Tuple[str]]]
 
     LDAP_BASE = lazy_object_proxy.Proxy(lambda: UCSTestSchool.ucr["ldap/base"])
 
@@ -181,7 +181,7 @@ class UCSTestSchool(object):
         add_stream_logger_to_schoollib()
         random.seed()
         self._cleanup_ou_names = set()
-        self._ldap_objects_in_test_ous = dict()  # type: Dict[str, Set[str]]
+        self._ldap_objects_in_test_ous = {}  # type: Dict[str, Set[str]]
         self.ldap_base = self.ucr["ldap/base"]
         self.lo = self.open_ldap_connection()
         self.udm = udm_test.UCSTestUDM()
@@ -1209,7 +1209,7 @@ class UCSTestSchool(object):
 
     @classmethod
     def load_test_ous(cls):
-        cls._test_ous = dict()
+        cls._test_ous = {}
         try:
             with open(TEST_OU_CACHE_FILE, "r") as fp:
                 loaded = json.load(fp)
@@ -1227,7 +1227,7 @@ class UCSTestSchool(object):
     def store_test_ous(cls):
         with open(TEST_OU_CACHE_FILE, "w") as fp:
             # json needs strings as keys, must split data
-            res = {"keys": dict(), "values": dict()}
+            res = {"keys": {}, "values": {}}
             for num, (k, v) in enumerate(cls._test_ous.items()):
                 res["keys"][num] = k
                 res["values"][num] = v

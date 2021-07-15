@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: check password generation code
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 ## bugs: [45640]
 
 import string

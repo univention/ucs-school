@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test umc calls to generate school class lists
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]

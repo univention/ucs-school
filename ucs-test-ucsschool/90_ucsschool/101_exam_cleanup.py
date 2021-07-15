@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: tests for exam-cleanup script
 ## roles: [domaincontroller_master]

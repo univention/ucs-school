@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test if exam and import groups are created correctly
 ## roles: []
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 
 import pytest
 

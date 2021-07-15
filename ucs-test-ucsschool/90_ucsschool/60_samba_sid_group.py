@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check if a new group gets a domain sid
 ## tags: [apptest,ucsschool,ucsschool_base1]

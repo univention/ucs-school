@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test if in dry-run pyhooks with dry-run support run and those without don't
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -142,7 +142,7 @@ class Test(CLI_Import_v2_Tester):
 
         self.log.info("*** 1/8 Importing a user from each role (create), with dry-run...")
         config.update_entry("dry_run", True)
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test deleting multiple workgroups
 ## roles: [domaincontroller_slave]

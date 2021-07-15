@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: set default umc users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]

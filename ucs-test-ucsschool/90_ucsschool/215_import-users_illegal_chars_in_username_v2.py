@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: remove illegal characters from username
 ## tags: [apptest,ucsschool,ucsschool_import1]

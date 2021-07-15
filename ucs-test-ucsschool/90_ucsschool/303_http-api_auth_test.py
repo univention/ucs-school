@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if auth via HTTP-API works with non-ASCII passwords (gunicorns log is checked)
 ## roles: [domaincontroller_master]

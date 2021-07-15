@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test modifications on user objects by python import hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -56,7 +56,7 @@ def test_import_user_pyhooks(cleanup_ext, ucr, schoolenv):
             name=username,
             firstname=uts.random_name(),
             lastname=uts.random_name(),
-            school_classes=dict(),
+            school_classes={},
             record_uid=uts.random_name(),
         )
         logger.info("*** Creating %r in %r...", kls.__name__, ou_name)

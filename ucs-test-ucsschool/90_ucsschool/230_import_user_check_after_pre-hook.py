@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test if input_data is filled in legacy during pre_/post_delete hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -116,7 +116,7 @@ class Test(CLI_Import_v2_Tester):
             )
 
         self.log.info("*** 4/6 Importing a user from each role, pre_create with error...")
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)

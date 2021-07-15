@@ -31,7 +31,7 @@
 """
 CLI for OU cloning:
 
-$ python -m univention.testing.ucsschool DEMOSCHOOL testou1234
+$ python3 -m univention.testing.ucsschool DEMOSCHOOL testou1234
 """
 
 import sys

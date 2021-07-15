@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## bugs: [40471]
 ## desc: Check that the group "Domain Users $SCHOOL" is connected to the policy "default-umc-users"
 ## exposure: dangerous

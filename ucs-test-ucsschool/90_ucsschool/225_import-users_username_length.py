@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test diffent username lengths
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -136,7 +136,7 @@ class Test(CLI_Import_v2_Tester):
             source_uid = "source_uid-{}".format(uts.random_string())
             config.update_entry("source_uid", source_uid)
 
-            person_list = list()
+            person_list = []
             for role in ("student", "teacher", "staff", "teacher_and_staff"):
                 person = Person(self.ou_A.name, role)
                 record_uid = "record_uid-%s" % (uts.random_string(),)

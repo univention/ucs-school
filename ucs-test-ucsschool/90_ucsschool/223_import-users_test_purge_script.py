@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test purge script
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -54,7 +54,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("deletion_grace_period:deactivation", 0)
         config.update_entry("deletion_grace_period:deletion", random.randint(1, 20))
 
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             for ou in (self.ou_A, self.ou_B, self.ou_C):
                 person = Person(ou.name, role)

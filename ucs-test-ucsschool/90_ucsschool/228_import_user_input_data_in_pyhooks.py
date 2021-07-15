@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test if input_data is filled in legacy during pre_/post_delete hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
