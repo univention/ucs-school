@@ -25,7 +25,7 @@ from ucsschool.lib.models.user import User
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 
@@ -175,16 +175,31 @@ def main():
                         result = lo.search(base=user.dn)
                         assert result, "Could not find {} in LDAP".format(user.dn)
                         if dry_run:
-                            assert result[0][1].get("ucsschoolSourceUID", [b""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [b""])[0] != user.record_uid
-                            assert result[0][1].get("uid", [b""])[0] == user.username
+                            assert (
+                                result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                != source_uid
+                            )
+                            assert (
+                                result[0][1].get("ucsschoolRecordUID", [b""])[0].decode("UTF-8")
+                                != user.record_uid
+                            )
+                            assert result[0][1].get("uid", [b""])[0].decode("UTF-8") == user.username
                         else:
                             if source_uid is not None:
-                                assert result[0][1].get("ucsschoolSourceUID", [b""])[0] == source_uid
+                                assert (
+                                    result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                    == source_uid
+                                )
                             else:
-                                assert result[0][1].get("ucsschoolSourceUID", [b""])[0] != source_uid
-                            assert result[0][1].get("ucsschoolRecordUID", [b""])[0] == user.record_uid
-                            assert result[0][1].get("uid", [b""])[0] == user.username
+                                assert (
+                                    result[0][1].get("ucsschoolSourceUID", [b""])[0].decode("UTF-8")
+                                    != source_uid
+                                )
+                            assert (
+                                result[0][1].get("ucsschoolRecordUID", [b""])[0].decode("UTF-8")
+                                == user.record_uid
+                            )
+                            assert result[0][1].get("uid", [b""])[0].decode("UTF-8") == user.username
 
             print("*\n*** Test was successful.\n*")
 
