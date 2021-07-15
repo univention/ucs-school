@@ -101,7 +101,7 @@ class Test(CLI_Import_v2_Tester):
                     )
                 else:
                     self.log.info(
-                        "*** OK: Username %r of %r has expected length {!r}.",
+                        "*** OK: Username %r of %r has expected length %r.",
                         username,
                         person.role,
                         exp_len,
@@ -195,7 +195,7 @@ class Test(CLI_Import_v2_Tester):
                     )
                 else:
                     self.log.info(
-                        "*** OK: Username %r of %r has expected length {!r}.",
+                        "*** OK: Username %r of %r has expected length %r.",
                         username,
                         person.role,
                         exp_len,
@@ -311,7 +311,7 @@ class Test(CLI_Import_v2_Tester):
                     )
                 else:
                     self.log.info(
-                        "*** OK: Username %r of %r has expected length {!r}.",
+                        "*** OK: Username %r of %r has expected length %r.",
                         username,
                         person.role,
                         exp_len,
