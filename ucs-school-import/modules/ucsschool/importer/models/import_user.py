@@ -277,7 +277,7 @@ class ImportUser(User):
                     "Running %s hook %s.%s for %s...",
                     meth_name,
                     func.__self__.__class__.__name__,
-                    func.__func__.func_name,
+                    func.__func__.__name__,
                     self,
                 )
                 func(self)
