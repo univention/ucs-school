@@ -61,7 +61,7 @@ class CsvWriter(BaseWriter):
 
         self.writer = None
 
-    def open(self, filename, mode="wb"):
+    def open(self, filename, mode="w"):
         """
         Open the output file.
 
