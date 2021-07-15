@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: create DC via CLI
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -21,11 +21,7 @@ from univention.testing.ucsschool.importou import (
 )
 
 
-class CreateDC(Exception):
-    pass
-
-
-if __name__ == "__main__":
+def test_import_create_dc_via_cli():
     dc_name = uts.random_name()
     ou_name = uts.random_name()
     try:
@@ -42,8 +38,6 @@ if __name__ == "__main__":
                 "--type=%s" % dc_type,
             ]
             print("cmd_block: %r" % cmd_block)
-            retcode = subprocess.call(cmd_block)
-            if retcode:
-                raise CreateDC("Failed to execute %r. Return code: %d." % (cmd_block, retcode))
+            subprocess.check_call(cmd_block)
     finally:
         remove_ou(ou_name)
