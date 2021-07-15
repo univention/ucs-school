@@ -1,12 +1,12 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
-## desc: Check if UCS 4.4 is installed
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
+## desc: Check if UCS 5.0 is installed
 ## tags: [apptest,ucsschool]
 ## exposure: safe
 ## bug: [40475]
 
 import univention.config_registry
 
-EXPECTED_VERSION = "4.4"
+EXPECTED_VERSION = "5.0"
 
 
 def test_ucs_version():

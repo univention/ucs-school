@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check that models of users cannot be changed.
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [python-ucsschool-lib]
+## packages: [python3-ucsschool-lib]
 
 import univention.testing.strings as uts
 from ucsschool.lib.models.base import WrongModel

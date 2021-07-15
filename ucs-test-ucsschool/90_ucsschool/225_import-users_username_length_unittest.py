@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test diffent username lengths
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -24,7 +24,7 @@ class Test(CLI_Import_v2_Tester):
 
     def __init__(self):
         super(Test, self).__init__()
-        self.usernames = list()
+        self.usernames = []
 
     def test(self):
         """

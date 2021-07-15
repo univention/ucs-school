@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check if all required and recommended packages for UCS@school are installed
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest,ucsschool]

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check login restrictions of exam users and original users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]

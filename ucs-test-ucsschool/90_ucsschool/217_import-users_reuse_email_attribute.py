@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test if it is possible to reuse an email address (Bug 41544)
 ## tags: [apptest,ucsschool,ucsschool_import1]

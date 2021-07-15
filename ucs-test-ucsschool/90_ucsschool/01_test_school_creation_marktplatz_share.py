@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v -s
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test if the Marktplatz share is created with every school
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 
 import pytest
 

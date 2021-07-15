@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test python module ucsschool.lib.info
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 ## bugs: [47966]
 
 import pytest

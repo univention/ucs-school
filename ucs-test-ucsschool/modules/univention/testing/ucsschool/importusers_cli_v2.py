@@ -552,7 +552,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 class UniqueObjectTester(CLI_Import_v2_Tester):
     def __init__(self):
         super(UniqueObjectTester, self).__init__()
-        self.unique_basenames_to_remove = list()
+        self.unique_basenames_to_remove = []
 
     def cleanup(self):
         self.log.info("Removing new unique-usernames,cn=ucsschool entries...")

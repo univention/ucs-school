@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check if all required LDAP indices for UCS@school are set up
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest,ucsschool]

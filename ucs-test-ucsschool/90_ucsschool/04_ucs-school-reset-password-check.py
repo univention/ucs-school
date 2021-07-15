@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-reset-password-check
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -134,31 +134,31 @@ def school_environment():
         ("admins", "student", "teachers", 1, True, True, 401, 401, False),
         # DISABLED DUE TO BUG 35447:
         # #13 test if schooladmin is able to reset admin password (chgPwdNextLogin=False),
-        # pytest.param(
-        #     "admins",
-        #     "student",
-        #     "admins",
-        #     1,
-        #     False,
-        #     Forbidden,
-        #     200,
-        #     401,
-        #     False,
-        #     marks=pytest.mark.xfail(reason="Bug #35447"),
-        # ),
-        # # #14 test if schooladmin is able to reset admin password (chgPwdNextLogin=True)
-        # pytest.param(
-        #     "admins",
-        #     "student",
-        #     "admins",
-        #     2,
-        #     True,
-        #     Forbidden,
-        #     200,
-        #     401,
-        #     False,
-        #     marks=pytest.mark.xfail(reason="Bug #35447"),
-        # ),
+        pytest.param(
+            "admins",
+            "student",
+            "admins",
+            1,
+            False,
+            Forbidden,
+            200,
+            401,
+            False,
+            marks=pytest.mark.xfail(reason="Bug #35447"),
+        ),
+        # #14 test if schooladmin is able to reset admin password (chgPwdNextLogin=True)
+        pytest.param(
+            "admins",
+            "student",
+            "admins",
+            2,
+            True,
+            Forbidden,
+            200,
+            401,
+            False,
+            marks=pytest.mark.xfail(reason="Bug #35447"),
+        ),
     ],
 )
 def test_password_reset(

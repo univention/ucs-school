@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test if GPOs filtered for a native Windows Server work in exam mode
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-windows-tools]

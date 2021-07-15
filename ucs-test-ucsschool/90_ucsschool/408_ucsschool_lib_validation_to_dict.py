@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.validator obj_to_dict function
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 
 import pytest
 

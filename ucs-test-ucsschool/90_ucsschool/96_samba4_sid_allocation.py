@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test the Samba SID allocation.
 ## bugs: [34221]
 ## roles:

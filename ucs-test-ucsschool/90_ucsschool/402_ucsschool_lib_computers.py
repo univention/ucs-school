@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check computer model in ucsschool lib
 ## tags: [apptest,ucsschool]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
-##   - python-ucsschool-lib
+##   - python3-ucsschool-lib
 
 from ucsschool.lib.models.computer import SchoolComputer
 from univention.admin.uldap import getAdminConnection

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-helpdesk - send mail via helpdesk module
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]

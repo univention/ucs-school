@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test the Samba4 GPO link replication between DC-Slaves.
 ## bugs: [45992]
 ## roles: [domaincontroller_slave]
