@@ -1,9 +1,5 @@
 @%@UCRWARNING=# @%@
 
-# Change this to true when done to enable the init.d script.
-# Default: false
-ENABLED="true"
-
 # Name of nodes to start
 CELERYD_NODES="dryrun import"
 
@@ -23,6 +19,8 @@ CELERY_CONFIG_MODULE=
 
 # %n will be replaced with the nodename.
 CELERYD_LOG_FILE="/var/log/univention/ucs-school-import/workers-%n.log"
+#CELERYD_LOG_DIR="$(dirname $CELERYD_LOG_FILE)"
+CELERYD_LOG_DIR="/var/log/univention/ucs-school-import/"
 
 # Workers should run as an unprivileged user.
 # But we need root access, to run the listener code.
@@ -31,4 +29,6 @@ CELERYD_GROUP="root"
 
 CELERY_APP="ucsschool.http_api.app.celery:app"
 CELERYD_PID_FILE="/run/ucs-school-import-worker/%n.pid"
+#CELERYD_PID_DIR="$(dirname $CELERYD_PID_FILE)"
+CELERYD_PID_DIR="/run/ucs-school-import-worker/"
 CELERY_CREATE_DIRS=1
