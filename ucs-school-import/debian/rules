@@ -41,23 +41,20 @@ PYMODULESRC_FILES := $(shell find modules/ -name '*.py')
 	dh $@ --with python2,python3,univention-l10n,ucr,univention-join
 
 plantuml:
-	make -C $(PLANTUML_DIR)
+	$(MAKE) -C $(PLANTUML_DIR)
 	cp -v $(PLANTUML_DIR)/*.png $(PLANTUML_DIR)/*.svg $(APIDOCSRC_DIR)
 
 pymoduledoc: $(PYMODULESRC_FILES)
 	sphinx-apidoc --force --private --no-toc -o $(APIDOCSRC_DIR)/python/ modules/
 
 apidoc:	$(APIDOCSRC_FILES) plantuml pymoduledoc
-	make -C$(APIDOC_BASE_DIR) html
+	$(MAKE) -C$(APIDOC_BASE_DIR) html
 
 override_dh_auto_build: apidoc
-	dh_auto_build
 
 override_dh_installsystemd:
 	dh_installsystemd
-	# FIXME: dh_installsystemd: Package 'ucs-school-import' does not install unit 'ucs-school-celery.service'.
-	# dh_installsystemd --name celery-worker-ucsschool-import ucs-school-celery.service
-	mv debian/ucs-school-celery/lib/systemd/system/ucs-school-celery.service debian/ucs-school-celery/lib/systemd/system/celery-worker-ucsschool-import.service
+	dh_installsystemd --name ucs-school-celery
 
 override_dh_fixperms:
 	dh_fixperms
@@ -68,16 +65,8 @@ override_dh_fixperms:
 
 override_dh_auto_clean:
 	dh_auto_clean
-	rm -f debian/ucs-school-import.conffiles
-	rm -f debian/ucs-school-import-schema.conffiles
-	make -C $(APIDOC_BASE_DIR) clean
-	make -C $(PLANTUML_DIR) clean
-	rm -f $(APIDOCSRC_DIR)/python/*
-
-override_dh_installdeb:
-	dh_installdeb
-	sed -i 's/ucs-school-celery\.service/celery-worker-ucsschool-import.service/g' debian/ucs-school-celery.postinst.debhelper  debian/ucs-school-celery.postrm.debhelper  debian/ucs-school-celery.preinst.debhelper  debian/ucs-school-celery.prerm.debhelper debian/ucs-school-celery/DEBIAN/postinst  debian/ucs-school-celery/DEBIAN/postrm  debian/ucs-school-celery/DEBIAN/preinst  debian/ucs-school-celery/DEBIAN/prerm
-
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
+	$(RM) debian/ucs-school-import.conffiles
+	$(RM) debian/ucs-school-import-schema.conffiles
+	$(MAKE) -C $(APIDOC_BASE_DIR) clean
+	$(MAKE) -C $(PLANTUML_DIR) clean
+	$(RM) $(APIDOCSRC_DIR)/python/*
