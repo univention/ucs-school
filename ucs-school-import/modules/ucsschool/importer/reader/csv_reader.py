@@ -39,7 +39,7 @@ from csv import Error as CsvError, Sniffer, reader as csv_reader
 from io import IOBase
 
 import magic
-from six import reraise, string_types
+from six import reraise, string_types, PY3
 
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
@@ -165,6 +165,7 @@ class CsvReader(BaseReader):
                     ),
                     sys.exc_info()[2],
                 )
+            fp.seek(0)
             if self.header_lines == 1:
                 # let DictReader figure it out itself
                 header = None
@@ -195,14 +196,18 @@ class CsvReader(BaseReader):
             for row in reader:
                 self.entry_count = reader.line_num
                 self.input_data = reader.row
-                try:
+                if PY3:
                     yield {
                         key.strip(): (value or "").strip()
                         for key, value in row.items()
                         if key is not None
                     }
-                except Exception as exc:
-                    raise Exception(row.items(), exc)
+                else:
+                    yield {
+                        key.decode('UTF-8').strip(): (value or b"").decode("UTF-8").strip()
+                        for key, value in row.items()
+                        if key is not None
+                    }
 
     def handle_input(
         self,
