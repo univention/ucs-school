@@ -65,16 +65,6 @@ define([
 			Tooltip, styles, entities, UMCApp, dialog, tools, Dialog, Grid, Button, Module, Page,
 			Form, ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
-	// prepare CSS rules for module
-	styles.insertCssRule(
-		'.icon-umcIconCollectFiles',
-		lang.replace('background: url({0});', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-collect-files.png')])
-	);
-	styles.insertCssRule(
-		'.icon-umcIconFinishExam',
-		lang.replace('background: url({0});', [require.toUrl('dijit/themes/umc/icons/16x16/computerroom-icon-finish-exam.png')])
-	);
-
 	var isConnected = function(item) { return item.connection === 'connected'; };
 
 	return declare("umc.modules.computerroom", [ Module ], {
@@ -147,13 +137,14 @@ define([
 					label: _('Cancel')
 				},
 				{
+					name: 'continue',
+					label: _('Continue without finishing'),
+					style: 'margin-left: auto'
+				},
+				{
 					name: 'finish',
 					label: _('Finish exam'),
 					default: true
-				},
-				{
-					name: 'continue',
-					label: _('Continue without finishing')
 				}
 			], _('Close exam mode')).then(lang.hitch(this, function(result) {
 				 if(result === 'finish') {
@@ -200,13 +191,16 @@ define([
 				visible: false
 			}, {
 				name: 'collect',
-				iconClass: 'umcIconCollectFiles',
+				iconClass: {
+					iconName: 'collect-files',
+					spritePath: require.toUrl('dijit/themes/umc/icons/scalable/computerroom-icon-collect-files.svg')
+				},
 				visible: false,
 				label: _('Collect results'),
 				callback: lang.hitch(this, '_collectExam')
 			}, {
 				name: 'finishExam',
-				iconClass: 'umcIconFinishExam',
+				iconClass: 'power',
 				visible: false,
 				label: _('Finish exam'),
 				callback: lang.hitch(this, '_finishExam')
@@ -594,10 +588,10 @@ define([
 				this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
 			}
 			if (this._headButtons.examEndTime.domNode) {
-				this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam);
-			}
-			if (!roomInfo || !roomInfo.exam) {
-				this._headButtons.examEndTime.set('content', '');
+				if (!roomInfo || !roomInfo.exam) {
+					this._headButtons.examEndTime.set('content', '');
+				}
+				this._headButtons.examEndTime.set('visible', !!this._headButtons.examEndTime.get('content'));
 			}
 
 			// hide time period input field in settings dialog
@@ -747,9 +741,6 @@ define([
 			this._searchPage.addChild(this._grid);
 
 			this.addHeaderContainer();
-			this._grid.watch('actions', lang.hitch(this, function() {
-				this.addHeaderContainer();
-			}));
 		},
 
 		addHeaderContainer: function() {
@@ -868,7 +859,8 @@ define([
 				callback: lang.hitch(this, function() {
 					window.clearTimeout(this._examEndTimer);
 					this._examEndTimer = null;
-				})
+				}),
+				style: 'margin-right: auto'
 			}, {
 				name: 'finish_exam',
 				label: _('Finish exam'),
@@ -1127,6 +1119,7 @@ define([
 				style: 'width: 400px;'
 			});
 			_dialog.show();
+			_dialog.standbyDuring(form.ready());
 			okButton.set('disabled', true);
 		},
 
@@ -1290,6 +1283,7 @@ define([
 						content = (delta <= 60000) ? _('1 minute left') : _('%s minutes left', String(1+(delta / 1000 / 60)).split('.')[0]);
 					}
 					this._headButtons.examEndTime.set('content', content);
+					this._headButtons.examEndTime.set('visible', !!this._headButtons.examEndTime.get('content'));
 				}
 
 				// update the grid actions
@@ -1317,6 +1311,7 @@ define([
 					// show or hide the "stop presentation" button if already initialized
 					if (this._headButtons !== null && this._headButtons.stop_presentation && this._headButtons.stop_presentation.domNode) {
 						this._headButtons.stop_presentation.set('visible', demo);
+						this._grid.updateActionsVisibility();
 					}
 				}
 
@@ -1349,5 +1344,4 @@ define([
 			}));
 		}
 	});
-
 });
