@@ -39,7 +39,7 @@ from csv import Error as CsvError, Sniffer, reader as csv_reader
 from io import IOBase
 
 import magic
-from six import reraise, string_types, PY3
+from six import PY3, reraise, string_types
 
 import univention.admin.handlers.users.user as udm_user_module
 import univention.admin.modules
@@ -138,7 +138,10 @@ class CsvReader(BaseReader):
         :rtype: csv.Dialect
         """
         delimiter = self.config.get("csv", {}).get("delimiter")
-        return Sniffer().sniff(fp.readline(), delimiters=delimiter)
+        line = fp.readline()
+        if PY3 and isinstance(line, bytes):
+            line = line.decode(encoding)
+        return Sniffer().sniff(line, delimiters=delimiter)
 
     def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
         """
@@ -178,7 +181,7 @@ class CsvReader(BaseReader):
 
                 fpu = UTF8Recoder(fp, encoding)
                 _reader = csv_reader(fpu, dialect=dialect)
-                line = _reader.next()
+                line = next(_reader)
                 fp.seek(start)
                 header = [str(x) for x in range(len(line))]
             csv_reader_args = dict(fieldnames=header, dialect=dialect)
@@ -204,7 +207,7 @@ class CsvReader(BaseReader):
                     }
                 else:
                     yield {
-                        key.decode('UTF-8').strip(): (value or b"").decode("UTF-8").strip()
+                        key.decode("UTF-8").strip(): (value or b"").decode("UTF-8").strip()
                         for key, value in row.items()
                         if key is not None
                     }
@@ -367,7 +370,7 @@ class CsvReader(BaseReader):
         if not input_data:
             return {}
         if not self.fieldnames:
-            self.read().next()
+            next(self.read())
         dict_reader_mapping = dict(zip(self.fieldnames, input_data))
         res = {}
         for k, v in self.config["csv"]["mapping"].items():

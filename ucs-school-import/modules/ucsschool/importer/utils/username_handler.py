@@ -41,7 +41,7 @@ import string
 
 import lazy_object_proxy
 from ldap.dn import escape_dn_chars
-from six import string_types
+from six import PY3, string_types
 
 from univention.admin.uexceptions import noObject, objectExists
 
@@ -360,6 +360,8 @@ class UsernameHandler(object):
                     name,
                 )
                 name = name.strip(char)
+        if PY3:
+            return str(name).translate(str.maketrans("", "", bad_chars))
         return str(name).translate(None, bad_chars)
 
     def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
@@ -518,6 +520,8 @@ class EmailHandler(UsernameHandler):
                 self.attribute_name,
                 name,
             )
+        if PY3:
+            return str(name).translate(str.maketrans("", "", bad_chars))
         return str(name).translate(None, bad_chars)
 
     def format_name(self, name, max_length=None):  # type: (str, Optional[int]) -> str
