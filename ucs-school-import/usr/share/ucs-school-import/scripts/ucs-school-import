@@ -1650,7 +1650,7 @@ def import_networks(router_only=False):
                 )
             else:
                 try:
-                    network = ipaddress.IPv4Network(u"%s" % (network,))
+                    network = ipaddress.IPv4Network(u"%s" % (network,), strict=False)
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
