@@ -83,14 +83,12 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 
-# import univention.management.console.modules.schoolexam.util as exam_util
-
-
 _ = Translation("ucs-school-umc-computerroom").translate
 
 ROOMDIR = "/var/cache/ucs-school-umc-computerroom"
-FN_SCREENSHOT_DENIED = _("/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg")
-FN_SCREENSHOT_NOTREADY = _("/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg")
+_SCREENSHOT_DIR = "/usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable"
+FN_SCREENSHOT_DENIED = os.path.join(_SCREENSHOT_DIR, _("screenshot_denied.svg"))
+FN_SCREENSHOT_NOTREADY = os.path.join(_SCREENSHOT_DIR, _("screenshot_notready.svg"))
 
 
 def compare_dn(a, b):
@@ -605,15 +603,20 @@ class Instance(SchoolBaseModule):
     @check_room_access
     @sanitize(computer=ComputerSanitizer(required=True))
     def screenshot(self, request):
-        """Returns a JPEG image containing a screenshot of the given computer."""
+        """Returns a JPEG image containing a screenshot of the given computer
+        or a premade SVG image for special situations like when a screenshots is not ready yet
+        """
 
         computer = request.options["computer"]
         tmpfile = computer.screenshot
         if computer.hide_screenshot:
+            mimetype = "image/svg+xml"
             filename = FN_SCREENSHOT_DENIED
         elif tmpfile is None:
+            mimetype = "image/svg+xml"
             filename = FN_SCREENSHOT_NOTREADY
         else:
+            mimetype = "image/jpeg"
             filename = tmpfile.name
 
         MODULE.info("screenshot(%s): hide screenshot = %r" % (computer.name, computer.hide_screenshot))
@@ -628,7 +631,7 @@ class Instance(SchoolBaseModule):
         except EnvironmentError as exc:
             MODULE.error("Unable to remove temporary screenshot file %r: %s" % (tmpfile.name, exc))
 
-        self.finished(request.id, response, mimetype="image/jpeg")
+        self.finished(request.id, response, mimetype=mimetype)
 
     def _read_rules_end_at(self):
         room_file = _getRoomFile(self._computerroom.roomDN)
