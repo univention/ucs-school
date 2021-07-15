@@ -34,7 +34,6 @@ define([
 	"dojo/_base/array",
 	"dojo/aspect",
 	"dojo/dom",
-	"dojo/dom-style",
 	"dojo/dom-class",
 	"dojox/html/entities",
 	"dijit/layout/ContentPane",
@@ -45,8 +44,11 @@ define([
 	"umc/widgets/Button",
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
+	"umc/widgets/Text",
+	"put-selector/put",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, domStyle, domClass, entities, ContentPane, _Contained, Tooltip, ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
+], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip,
+		ComboBox, ContainerWidget, Button, Page, StandbyMixin, Text, put, _) {
 
 	// README: This is an alternative view
 	// var Item = declare( "umc.modules.computerroom.Item", [ dijit.TitlePane, _Contained ], {
@@ -117,7 +119,7 @@ define([
 	// 	}
 	// } );
 
-	var Item = declare( "umc.modules.computerroom.Item", [ ContentPane, _Contained ], {
+	var Item = declare("umc.modules.computerroom.Item", [ ContentPane, _Contained ], {
 
 		// the computer to show
 		computer: '',
@@ -139,84 +141,76 @@ define([
 
 		_currentURI: null,
 
-		// default size (width) of the image
-		defaultWidth: 250,
-
 		uninitialize: function() {
-			this.inherited( arguments );
-			if ( this._timer !== null ) {
-				window.clearTimeout( this._timer );
+			this.inherited(arguments);
+			if (this._timer !== null) {
+				window.clearTimeout(this._timer);
 			}
 		},
 
 		_createURI: function() {
 			this.random = Math.random();
-			return lang.replace(this._pattern, {computer: encodeURIComponent(this.computer), random: encodeURIComponent(this.random)});
+			return lang.replace(this._pattern, {
+				computer: encodeURIComponent(this.computer),
+				random: encodeURIComponent(this.random)
+			});
 		},
 
-		_updateImage: function( size ) {
-			var img = dom.byId( lang.replace( 'img-{computer}', this ) );
-			var em = dom.byId( lang.replace( 'em-{computer}', this ) );
+		_updateImage: function() {
+			var img = dom.byId(lang.replace('img-{computer}', this));
+			var userTag = dom.byId(lang.replace('userTag-{computer}', this));
 
-			if ( size === undefined ) {
-				size = this.defaultSize;
-			} else {
-				this.defaultSize = size;
+			if (userTag) {
+				userTag.innerHTML = entities.encode(this.username) || '<i>' + entities.encode(_('No user logged in')) + '</i>';
 			}
-
-			if ( this.domNode ) {
-				if ( size !== undefined ) {
-					domStyle.set(this.domNode, {
-						'width': size + 'px',
-						'max-height': size + 'px'
-					});
-				}
-			}
-			if ( em ) {
-				em.innerHTML = this.username;
-			}
-			if ( img ) {
+			if (img) {
 				var new_uri = this._createURI();
 				img.src = new_uri;
 				this._currentURI = new_uri;
 			}
-			if ( this._timer ) {
-				window.clearTimeout( this._timer );
+			if (this._timer) {
+				window.clearTimeout(this._timer);
 			}
-			this._timer = window.setTimeout( lang.hitch( this, function() { this._updateImage(); } ), 5000 );
+			this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), 5000);
 		},
 
 		buildRendering: function() {
-			this.inherited( arguments );
+			this.inherited(arguments);
 			domClass.add(this.domNode, 'screenShotView__imgThumbnail');
-			lang.mixin( this, {
-				content: lang.replace('<em class="screenShotView__userTag" id="em-{computer}"></em><img class="screenShotView__img" id="img-{computer}" alt="{alternative}"></img>', {
+			lang.mixin(this, {
+				content: lang.replace('<span class="screenShotView__userTag" id="userTag-{computer}"></span><div class="screenShotView__imgWrapper"><img class="screenShotView__img" id="img-{computer}" alt="{alternative}"></img></div>', {
 					computer: entities.encode(this.computer),
 					alternative: entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 				})
-			} );
+			});
 			this.startup();
 
 			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
 			var tooltip = new Tooltip({
-				'class': 'umcTooltip',
 				label: lang.replace('<div class="screenShotView__imgTooltip"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="" /></div>', [
 					entities.encode(this.computer),
 					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 				]),
-				connectId: [ this.domNode ],
-				onShow: lang.hitch( this, function() {
-					var image = dom.byId( 'screenshotTooltip-' + this.computer );
-					if ( image ) {
-						image.src = this._currentURI ? this._currentURI: this._createURI();
+				connectId: [this.domNode],
+				onShow: lang.hitch(this, function() {
+					console.log('show tooltip');
+					var image = dom.byId('img-' + this.computer);
+					var imageTooltip = dom.byId('screenshotTooltip-' + this.computer);
+					if (!image || !imageTooltip) {
+						return;
 					}
-				} )
+					if (image.clientWidth > 320) {
+						tooltip.close();
+						return;
+					}
+					imageTooltip.src = this._currentURI ? this._currentURI: this._createURI();
+				})
 			});
 
 			// destroy the tooltip when this widget is destroyed
 			aspect.after(this, 'destroy', function() { tooltip.destroy(); });
 
-			this._timer = window.setTimeout( lang.hitch( this, function() { this._updateImage(); } ), 500 );
+			this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), 500);
 		}
 	} );
 
@@ -229,7 +223,11 @@ define([
 
 		fullWidth: true,
 
+		navContentClass: 'umcCard2',
+		mainContentClass: 'umcCard2',
+
 		_container: null,
+		_noComputersText: null,
 
 		_cbxSize: null,
 
@@ -237,9 +235,8 @@ define([
 			this.inherited(arguments);
 
 			// set the page header
-			this.headerText = _( 'Screenshots of computers' );
-			this.helpText = _( 'This page shows screenshots of selected computers that will be updated continuously.' );
-
+			this.headerText = _('Screenshots of computers');
+			this.helpText = _('This page shows screenshots of selected computers that will be updated continuously.');
 		},
 
 		buildRendering: function() {
@@ -262,22 +259,16 @@ define([
 
 			this._cbxSize = new ComboBox( {
 				region: 'nav',
-				name: _( 'Size' ),
-				'class': 'umcTextBoxOnBody',
+				name: _('Size'),
 				staticValues: [
-					{ id: 200, label: _( 'Tiny' ) },
-					{ id: 250, label: _( 'Small' ) },
-					{ id: 350, label: _( 'Normal' ) },
-					{ id: 500, label: _( 'Large' ) }
+					{ id: 4, label: _('Tiny') },
+					{ id: 3, label: _('Small') },
+					{ id: 2, label: _('Normal') },
+					{ id: 1, label: _('Large') }
 				],
-				value: 250,
-				onChange: lang.hitch( this, function( newValue ) {
-					// console.log( 'ComboBox.onChange: ' + newValue );
-					if ( this._container.hasChildren() ) {
-						array.forEach( this._container.getChildren(), lang.hitch( this, function( child ) {
-							child._updateImage( newValue );
-						} ) );
-					}
+				value: 3,
+				onChange: lang.hitch(this, function(newValue) {
+					put(this._container.domNode, `[style="--local-columns-count: ${newValue}"]`);
 				} )
 			} );
 			this.addChild(this._cbxSize);
@@ -285,28 +276,29 @@ define([
 			this._container = new ContainerWidget({
 				'class': 'screenShotView__screenshotContainer'
 			});
-			this.addChild( this._container );
+			this.addChild(this._container);
+
+			this._noComputersText = new Text({
+				'class': 'screenShotView__noComputersText',
+				content: entities.encode(_('All computers in this room are offline.')),
+				visible: false
+			});
+			this.addChild(this._noComputersText);
 		},
 
 		_cleanup: function() {
-			if ( this._container.hasChildren() ) {
-				array.forEach( this._container.getChildren(), lang.hitch( this, function( child ) {
-					this._container.removeChild( child );
-					child.destroyRecursive();
-				} ) );
-			}
+			this._container.destroyDescendants();
 		},
 
-		load: function( ids ) {
+		load: function(ids) {
 			// during loading show the standby animation
 			this.standby(true);
 			this._cleanup();
-			array.forEach( ids, lang.hitch( this, function( item ) {
-				var computer = new Item( lang.mixin( item, {
-					defaultSize: this._cbxSize.get( 'value' )
-				} ) );
-				this._container.addChild( computer );
-			} ) );
+			array.forEach(ids, lang.hitch(this, function(item) {
+				var computer = new Item(item);
+				this._container.addChild(computer);
+			}));
+			this._noComputersText.set('visible', !this._container.hasChildren());
 			this.startup();
 			this.standby(false);
 		},
@@ -315,5 +307,4 @@ define([
 			// event stub
 		}
 	});
-
 });
