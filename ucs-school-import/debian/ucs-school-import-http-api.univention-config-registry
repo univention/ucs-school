@@ -10,6 +10,3 @@ File: etc/default/celery-worker-ucsschool-import
 
 Type: file
 File: etc/gunicorn.d/ucs-school-import
-
-Type: file
-File: etc/init.d/celery-worker-ucsschool-import
