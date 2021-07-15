@@ -51,7 +51,11 @@ def check_ldap(school, computers, should_exist):
                 filter="(pTRRecord=%s.%s.)" % (computer_name, ucr.get("domainname")), base=dns
             )
             if should_exist:
-                assert found, "Object not found:(%r), pTRRecord=%s.%s." % (dns, computer_name, ucr.get("domainname"))
+                assert found, "Object not found:(%r), pTRRecord=%s.%s." % (
+                    dns,
+                    computer_name,
+                    ucr.get("domainname"),
+                )
             else:
                 assert not found, "Object unexpectedly found:(%r)" % found
 
@@ -69,16 +73,16 @@ def check_ldap(school, computers, should_exist):
 
 
 def test_delete_computers_delete_related_objects(schoolenv):
-        school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-        computers = []
-        for computer_type in ["windows", "macos", "ipmanagedclient"]:
-            computer = UmcComputer(school, computer_type)
-            computer.create()
-            computers.append(computer)
+    computers = []
+    for computer_type in ["windows", "macos", "ipmanagedclient"]:
+        computer = UmcComputer(school, computer_type)
+        computer.create()
+        computers.append(computer)
 
-        check_ldap(school, computers, should_exist=True)
+    check_ldap(school, computers, should_exist=True)
 
-        for computer in computers:
-            computer.remove()
-        check_ldap(school, computers, should_exist=False)
+    for computer in computers:
+        computer.remove()
+    check_ldap(school, computers, should_exist=False)

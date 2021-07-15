@@ -26,7 +26,9 @@ def test_define_internet_rules():
         definedRules2 = rule.allRules()
 
         # check if the existing internet rules are correct
-        assert definedRules2 == sorted(definedRules), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
+        assert definedRules2 == sorted(
+            definedRules
+        ), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
 
         # New rule values (hard coded)
         name = rule.name
@@ -56,4 +58,6 @@ def test_define_internet_rules():
         definedRules2 = rule.allRules()
 
         # check if the existing internet rules are correct
-        assert definedRules2 == sorted(definedRules), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
+        assert definedRules2 == sorted(
+            definedRules
+        ), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)

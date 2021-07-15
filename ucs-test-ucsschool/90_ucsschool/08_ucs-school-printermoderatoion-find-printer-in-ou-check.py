@@ -19,9 +19,9 @@ def doPrinter(operation, printer_name, schoolName, spool_host, domainname):
     uri = "%s://%s" % ("lpd", localIp)
     print_server = "%s.%s" % (spool_host, domainname)
     with tempfile.NamedTemporaryFile(suffix=".csv") as fd:
-        line = ("%s\t%s\t%s\t%s\t%s\n" % (operation, schoolName, print_server, printer_name, uri)).encode(
-            "utf-8"
-        )
+        line = (
+            "%s\t%s\t%s\t%s\t%s\n" % (operation, schoolName, print_server, printer_name, uri)
+        ).encode("utf-8")
         fd.write(line)
         fd.flush()
         subprocess.check_call(["/usr/share/ucs-school-import/scripts/import_printer", fd.name])
@@ -35,29 +35,33 @@ def printerExist(connection, printerName, schoolName):
 
 
 def test_ucs_school_printermoderatoion_find_printer_in_ou(schoolenv, ucr):
-            newPrinterName = uts.random_string()
-            host = ucr.get("hostname")
-            domainname = ucr.get("domainname")
-            connection = Client(host)
-            account = utils.UCSTestDomainAdminCredentials()
-            admin = account.username
-            passwd = account.bindpw
-            connection.authenticate(admin, passwd)
+    newPrinterName = uts.random_string()
+    host = ucr.get("hostname")
+    domainname = ucr.get("domainname")
+    connection = Client(host)
+    account = utils.UCSTestDomainAdminCredentials()
+    admin = account.username
+    passwd = account.bindpw
+    connection.authenticate(admin, passwd)
 
-            # create more than one OU
-            (schoolName1, _), (schoolName2, _), (schoolName3, _) = schoolenv.create_multiple_ous(
-                3, name_edudc=host
-            )
+    # create more than one OU
+    (schoolName1, _), (schoolName2, _), (schoolName3, _) = schoolenv.create_multiple_ous(
+        3, name_edudc=host
+    )
 
-            # add new printer
-            doPrinter("A", newPrinterName, schoolName1, host, domainname)
+    # add new printer
+    doPrinter("A", newPrinterName, schoolName1, host, domainname)
 
-            # check if the printer exists in the correct OU
-            for i in range(5):
-                assert printerExist(connection, newPrinterName, schoolName1), "Printer not found in the specified OU"
+    # check if the printer exists in the correct OU
+    for i in range(5):
+        assert printerExist(
+            connection, newPrinterName, schoolName1
+        ), "Printer not found in the specified OU"
 
-                for school in [schoolName2, schoolName3]:
-                    assert not printerExist(connection, newPrinterName, school), "Printer underneath of wrong OU was found."
+        for school in [schoolName2, schoolName3]:
+            assert not printerExist(
+                connection, newPrinterName, school
+            ), "Printer underneath of wrong OU was found."
 
-            # delete the created printer
-            doPrinter("D", newPrinterName, schoolName1, host, domainname)
+    # delete the created printer
+    doPrinter("D", newPrinterName, schoolName1, host, domainname)

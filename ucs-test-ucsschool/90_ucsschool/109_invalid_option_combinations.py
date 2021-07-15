@@ -27,50 +27,45 @@ blacklisted_option_combinations = {
 
 
 def test_invalid_option_combinations(ucr, udm, schoolenv):
-            print("*** Testing creation...\n*")
-            for kls, bad_options in blacklisted_option_combinations.items():
-                for bad_option in bad_options:
-                    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed):
-                        udm.create_user(options=[kls, bad_option])
+    print("*** Testing creation...\n*")
+    for kls, bad_options in blacklisted_option_combinations.items():
+        for bad_option in bad_options:
+            with pytest.raises(UCSTestUDM_CreateUDMObjectFailed):
+                udm.create_user(options=[kls, bad_option])
 
-            print("*\n*** Testing modification...\n*")
-            ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
-            lo = schoolenv.open_ldap_connection(admin=True)
-            for kls, ldap_cls in [
-                (ExamStudent, "ucsschoolExam"),
-                (Staff, "ucsschoolStaff"),
-                (Student, "ucsschoolStudent"),
-                (Teacher, "ucsschoolTeacher"),
-                (TeachersAndStaff, "ucsschoolAdministrator"),
-            ]:
-                for bad_option in blacklisted_option_combinations[ldap_cls]:
-                    print(
-                        "*** Creating {} and trying to add option {}...".format(
-                            kls.type_name, bad_option
-                        )
-                    )
-                    user = kls(
-                        name=uts.random_username(),
-                        school=ou_name,
-                        firstname=uts.random_name(),
-                        lastname=uts.random_name(),
-                    )
-                    user.create(lo)
-                    utils.verify_ldap_object(
-                        user.dn,
-                        expected_attr={
-                            "uid": [user.name],
-                            "ucsschoolRole": [
-                                create_ucsschool_role_string(role, ou_name)
-                                for role in user.default_roles
-                            ],
-                        },
-                        strict=False,
-                        should_exist=True,
-                    )
+    print("*\n*** Testing modification...\n*")
+    ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    lo = schoolenv.open_ldap_connection(admin=True)
+    for kls, ldap_cls in [
+        (ExamStudent, "ucsschoolExam"),
+        (Staff, "ucsschoolStaff"),
+        (Student, "ucsschoolStudent"),
+        (Teacher, "ucsschoolTeacher"),
+        (TeachersAndStaff, "ucsschoolAdministrator"),
+    ]:
+        for bad_option in blacklisted_option_combinations[ldap_cls]:
+            print("*** Creating {} and trying to add option {}...".format(kls.type_name, bad_option))
+            user = kls(
+                name=uts.random_username(),
+                school=ou_name,
+                firstname=uts.random_name(),
+                lastname=uts.random_name(),
+            )
+            user.create(lo)
+            utils.verify_ldap_object(
+                user.dn,
+                expected_attr={
+                    "uid": [user.name],
+                    "ucsschoolRole": [
+                        create_ucsschool_role_string(role, ou_name) for role in user.default_roles
+                    ],
+                },
+                strict=False,
+                should_exist=True,
+            )
 
-                    udm_user = user.get_udm_object(lo)
-                    udm_user.options.append(bad_option)
-                    with pytest.raises(invalidOptions):
-                        udm_user.modify(lo)
-                    user.remove(lo)
+            udm_user = user.get_udm_object(lo)
+            udm_user.options.append(bad_option)
+            with pytest.raises(invalidOptions):
+                udm_user.modify(lo)
+            user.remove(lo)
