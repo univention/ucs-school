@@ -138,7 +138,7 @@ class CsvReader(BaseReader):
         :rtype: csv.Dialect
         """
         delimiter = self.config.get("csv", {}).get("delimiter")
-        return Sniffer().sniff(fp.readline().decode(encoding), delimiters=delimiter)
+        return Sniffer().sniff(fp.readline(), delimiters=delimiter)
 
     def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
         """
