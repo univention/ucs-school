@@ -12,12 +12,12 @@ from univention.admin.uldap import getAdminConnection
 from univention.testing.ucsschool.importcomputers import ComputerImport, ImportFile
 
 
-def test_lookup(school_env):
+def test_lookup(schoolenv):
     """
     This tests checks that no non-client computers are returned for the lookup function of the
     SchoolComputer
     """
-    ou_name, ou_dn = school_env.create_ou(name_edudc=school_env.ucr.get("hostname"))
+    ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
     print("********** Generate school data")
     computer_import = ComputerImport(
         ou_name, nr_windows=3, nr_memberserver=3, nr_macos=3, nr_ipmanagedclient=3
