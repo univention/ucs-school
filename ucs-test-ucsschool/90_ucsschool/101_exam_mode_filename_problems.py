@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: upload files to exam module with problematic filenames
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -10,13 +10,10 @@ import os
 import random
 import tempfile
 
-import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
 from univention.testing.ucsschool.exam import Exam
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_exam_mode_filename_problems(ucr):
         hostname = ucr.get("hostname")
         project = Exam("unused_school", "unused_room", "unused_endtime", "unused_recipients")
 
@@ -25,14 +22,14 @@ def main():
             "C:\\Windows\\Temp\\foobar.txt",
             "foobar.txt",
         ]:
-            fd = tempfile.NamedTemporaryFile()
-            token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
-            fd.write(token)
-            fd.flush()
+            with tempfile.NamedTemporaryFile() as fd:
+                token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
+                fd.write(token)
+                fd.flush()
 
-            project.uploadFile(
-                fd.name, "application/octet-stream", override_file_name=override_file_name
-            )
+                project.uploadFile(
+                    fd.name, "application/octet-stream", override_file_name=override_file_name
+                )
 
             found = False
             dirlist = [
@@ -58,11 +55,4 @@ def main():
                         break
                 if found:
                     break
-            if not found:
-                utils.fail(
-                    'Failed to upload test file with "forged" filename %r' % (override_file_name,)
-                )
-
-
-if __name__ == "__main__":
-    main()
+            assert found, 'Failed to upload test file with "forged" filename %r' % (override_file_name,)

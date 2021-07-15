@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: set OU display name
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -36,9 +36,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
         ou_name,
     ]
     print("Calling following command: %r" % cmd)
-    retval = subprocess.call(cmd)
-    if retval:
-        utils.fail("create_ou failed with exitcode %s" % retval)
+    subprocess.check_call(cmd)
 
     ou_dn = "ou=%s,%s" % (ou_name, ucr.get("ldap/base"))
     utils.verify_ldap_object(
@@ -49,7 +47,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
     )
 
 
-def main():
+def test_import_set_ou_display_name():
     # create short OU name
     ou_name = uts.random_name()
     try:
@@ -60,7 +58,3 @@ def main():
     finally:
         school_tester = ut_school.UCSTestSchool()
         school_tester.cleanup_ou(ou_name)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: automatic_distribute_materials_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -10,8 +10,8 @@ from __future__ import print_function
 import time
 from subprocess import call
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
+import pytest
+
 import univention.testing.utils as utils
 from univention.config_registry import handler_set
 from univention.testing.ucsschool.distribution import Distribution
@@ -19,17 +19,21 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-def main():
-    MIN_DIST_TIME = 8 * 60
-    MIN_COLL_TIME = 18 * 60
-    try:
-        with utu.UCSTestSchool() as schoolenv:
-            with ucr_test.UCSTestConfigRegistry() as ucr:
+@pytest.fixture
+def cleanup_restart_umc():
+    yield
+    call(["systemctl", "restart", "univention-management-console-web-server", "univention-management-console-server"])
+    # wait some time for UMC web server and UMC server to be ready before the next test is called
+    time.sleep(5)
+
+
+def test_automatic_distribute_materials(schoolenv, cleanup_restart_umc, ucr):
+                MIN_DIST_TIME = 8 * 60
+                MIN_COLL_TIME = 18 * 60
                 host = ucr.get("hostname")
                 handler_set(["umc/http/session/timeout=1200"])
                 handler_set(["umc/module/timeout=1200"])
-                call(["invoke-rc.d", "univention-management-console-web-server", "restart"])
-                call(["invoke-rc.d", "univention-management-console-server", "restart"])
+                call(["systemctl", "restart", "univention-management-console-web-server", "univention-management-console-server"])
                 connection = Client(host)
 
                 # Create ou, teacher, student, group
@@ -80,13 +84,3 @@ def main():
 
                 project.remove()
                 project.check_remove()
-    finally:
-        call(["invoke-rc.d", "univention-management-console-web-server", "restart"])
-        call(["invoke-rc.d", "univention-management-console-server", "restart"])
-        time.sleep(
-            5
-        )  # wait some time for UMC web server and UMC server to be ready before the next test is called
-
-
-if __name__ == "__main__":
-    main()

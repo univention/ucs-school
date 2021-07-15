@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: UDM hook prevents creating and modifying user objects with forbidden option combinations
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -8,10 +8,9 @@
 ##   - ucs-school-import
 ## bugs: [41351]
 
+import pytest
+
 import univention.testing.strings as uts
-import univention.testing.ucr
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.roles import create_ucsschool_role_string
@@ -27,20 +26,14 @@ blacklisted_option_combinations = {
 }
 
 
-def main():
-    print("*** Testing creation...\n*")
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-        with udm_test.UCSTestUDM() as udm:
+def test_invalid_option_combinations(ucr, udm, schoolenv):
+            print("*** Testing creation...\n*")
             for kls, bad_options in blacklisted_option_combinations.items():
                 for bad_option in bad_options:
-                    try:
+                    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed):
                         udm.create_user(options=[kls, bad_option])
-                        utils.fail("Created {} with {}.".format(kls, bad_option))
-                    except UCSTestUDM_CreateUDMObjectFailed as exc:
-                        print("OK: caught expected exception: %s" % exc)
 
-        print("*\n*** Testing modification...\n*")
-        with utu.UCSTestSchool() as schoolenv:
+            print("*\n*** Testing modification...\n*")
             ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             lo = schoolenv.open_ldap_connection(admin=True)
             for kls, ldap_cls in [
@@ -78,15 +71,6 @@ def main():
 
                     udm_user = user.get_udm_object(lo)
                     udm_user.options.append(bad_option)
-                    try:
+                    with pytest.raises(invalidOptions):
                         udm_user.modify(lo)
-                        utils.fail("Added {} to {}.".format(bad_option, kls.type_name))
-                    except invalidOptions as exc:
-                        print("OK: caught expected exception: %s" % exc)
                     user.remove(lo)
-
-    print("*\n*** Test was successful.\n*")
-
-
-if __name__ == "__main__":
-    main()

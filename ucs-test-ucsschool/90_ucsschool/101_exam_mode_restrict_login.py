@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check login restrictions of exam users and original users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -10,18 +10,15 @@
 from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
-from univention.testing.udm import UCSTestUDM
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
+def test_exam_mode_restrict_login(udm, schoolenv):
         ucr = schoolenv.ucr
-        open_ldap_co = schoolenv.open_ldap_connection()
+        lo = schoolenv.open_ldap_connection()
         ucr.load()
         print("# create test users and classes")
         if ucr.is_true("ucsschool/singlemaster"):
@@ -44,8 +41,8 @@ def main():
             lastname=uts.random_name(),
         )
         student2.position = search_base.students
-        student2.create(open_ldap_co)
-        orig_udm = student2.get_udm_object(open_ldap_co)
+        student2.create(lo)
+        orig_udm = student2.get_udm_object(lo)
         orig_udm["sambaUserWorkstations"] = ["OTHERPC"]
         orig_udm.modify()
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
@@ -53,7 +50,7 @@ def main():
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
         print("# import random computers")
-        computers = Computers(open_ldap_co, school, 2, 0, 0)
+        computers = Computers(lo, school, 2, 0, 0)
         pc1, pc2 = computers.create()
 
         print("# set 2 computer rooms to contain the created computers")
@@ -84,15 +81,11 @@ def main():
         ]
 
         for dn in exam_member_dns:
-            result = open_ldap_co.get(dn, ["sambaUserWorkstations"], True)
-            assert result.get("sambaUserWorkstations") == [pc2.name]
-        result = open_ldap_co.get(student2.dn, ["sambaUserWorkstations"], True)
-        assert result.get("sambaUserWorkstations") == ["$OTHERPC"]
+            result = lo.get(dn, ["sambaUserWorkstations"], True)
+            assert result.get("sambaUserWorkstations") == [pc2.name.encode("UTF-8")]
+        result = lo.get(student2.dn, ["sambaUserWorkstations"], True)
+        assert result.get("sambaUserWorkstations") == [b"$OTHERPC"]
         print("# stopping exam")
         exam.finish()
-        result = open_ldap_co.get(student2.dn, ["sambaUserWorkstations"], True)
-        assert result.get("sambaUserWorkstations") == ["OTHERPC"]
-
-
-if __name__ == "__main__":
-    main()
+        result = lo.get(student2.dn, ["sambaUserWorkstations"], True)
+        assert result.get("sambaUserWorkstations") == [b"OTHERPC"]

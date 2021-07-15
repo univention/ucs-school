@@ -1,18 +1,15 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-define-internet-rules-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: careful
 ## packages: [ucs-school-umc-internetrules]
 
-import univention.testing.utils as utils
 from univention.testing.ucsschool.internetrule import InternetRule
 
 
-def main():
-
+def test_define_internet_rules():
     with InternetRule() as rule:
-
         # Fetch the currently defined internet rules
         definedRules = rule.allRules()
 
@@ -29,10 +26,7 @@ def main():
         definedRules2 = rule.allRules()
 
         # check if the existing internet rules are correct
-        if definedRules2 != sorted(definedRules):
-            utils.fail(
-                "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
-            )
+        assert definedRules2 == sorted(definedRules), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
 
         # New rule values (hard coded)
         name = rule.name
@@ -62,11 +56,4 @@ def main():
         definedRules2 = rule.allRules()
 
         # check if the existing internet rules are correct
-        if definedRules2 != sorted(definedRules):
-            utils.fail(
-                "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)
-            )
-
-
-if __name__ == "__main__":
-    main()
+        assert definedRules2 == sorted(definedRules), "Existing rules (%r) do not match the actual ones (%r)" % (definedRules2, definedRules)

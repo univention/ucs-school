@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: set OU display name
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -12,19 +12,13 @@ from __future__ import print_function
 import random
 
 import univention.testing.strings as uts
-import univention.testing.ucr
-import univention.testing.udm
 import univention.testing.utils as utils
-
-ucr = univention.testing.ucr.UCSTestConfigRegistry()
-ucr.load()
 
 # multiple whitespaces to increase chance to get several words
 charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
 
 
-def main():
-    with univention.testing.udm.UCSTestUDM() as udm:
+def test_change_ou_display_name(udm, ucr):
         print("*** Stopping existing UDM CLI server")
         udm.stop_cli_server()
 
@@ -67,7 +61,3 @@ def main():
             strict=True,
             should_exist=True,
         )
-
-
-if __name__ == "__main__":
-    main()

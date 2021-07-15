@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test modifications on user objects by python import hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -12,10 +12,9 @@ import os.path
 import shutil
 import sys
 
+import pytest
+
 import univention.testing.strings as uts
-import univention.testing.ucr
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from ucsschool.importer.utils.shell import (
     ImportStaff,
     ImportStudent,
@@ -33,7 +32,9 @@ sys.path.append("/usr/share/ucs-school-import/pyhooks/")
 from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS  # noqa: E402
 
 
-def cleanup():
+@pytest.fixture
+def cleanup_ext():
+    yield
     for ext in ["", "c", "o"]:
         try:
             os.remove("{}{}".format(TESTHOOKTARGET, ext))
@@ -42,9 +43,7 @@ def cleanup():
             logger.warning("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
-def main():
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
-        with utu.UCSTestSchool() as schoolenv:
+def test_import_user_pyhooks(cleanup_ext, ucr, schoolenv):
             (ou_name, ou_dn), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(
                 2, name_edudc=ucr.get("hostname")
             )
@@ -66,31 +65,20 @@ def main():
                 user.prepare_all(True)
                 user.create(lo)
                 user = kls.get_all(lo, ou_name, "uid={}".format(username))[0]
-                if user.birthday != BIRTHDAYS["post_create"]:
-                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_create"])
+                assert user.birthday == BIRTHDAYS["post_create"]
 
                 logger.info("*** Modifying %r...", kls.__name__)
                 user.birthday = PRE_ACTION_BIRTHDAYS["pre_modify"]
                 user.modify(lo)
                 user = kls.from_dn(user.dn, ou_name, lo)
-                if user.birthday != BIRTHDAYS["post_modify"]:
-                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_modify"])
+                assert user.birthday == BIRTHDAYS["post_modify"]
 
                 logger.info("*** Moving %r to %r...", kls.__name__, ou_name2)
                 user.birthday = PRE_ACTION_BIRTHDAYS["pre_move"]
                 user.change_school(ou_name2, lo)
                 user = kls.from_dn(user.dn, ou_name2, lo)
-                if user.birthday != BIRTHDAYS["post_move"]:
-                    utils.fail("Birthday should have been %r." % BIRTHDAYS["post_move"])
+                assert user.birthday == BIRTHDAYS["post_move"]
 
                 logger.info("*** Deleting %r...", kls.__name__)
                 user.birthday = PRE_ACTION_BIRTHDAYS["pre_remove"]
                 user.remove(lo)
-            logger.info("Test was successful.\n\n\n")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    finally:
-        cleanup()
