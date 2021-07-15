@@ -20,6 +20,8 @@ ucsschool.importer.utils.username_handler.noObject = KeyError
 assert config
 
 
+__module__ = __import__(__name__)
+
 static_memory_storage_backend = MemoryStorageBackend("usernames")
 
 
@@ -32,5 +34,5 @@ class UsernameHandler(UsernameHandler):
 
 
 def test_import_users_illegal_chars_in_username_v2():
-    result = doctest.testmod()
+    result = doctest.testmod(__module__, verbose=True, raise_on_error=True)
     assert not result.failed and result.attempted, result
