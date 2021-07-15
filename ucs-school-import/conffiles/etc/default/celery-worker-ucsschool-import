@@ -1,9 +1,5 @@
 @%@UCRWARNING=# @%@
 
-# Change this to true when done to enable the init.d script.
-# Default: false
-ENABLED="true"
-
 # Name of nodes to start
 CELERYD_NODES="dryrun import"
 

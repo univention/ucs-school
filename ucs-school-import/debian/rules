@@ -53,6 +53,12 @@ apidoc:	$(APIDOCSRC_FILES) plantuml pymoduledoc
 override_dh_auto_build: apidoc
 	dh_auto_build
 
+override_dh_installsystemd:
+	dh_installsystemd
+	# FIXME: dh_installsystemd: Package 'ucs-school-import' does not install unit 'ucs-school-celery.service'.
+	# dh_installsystemd --name celery-worker-ucsschool-import ucs-school-celery.service
+	mv debian/ucs-school-celery/lib/systemd/system/ucs-school-celery.service debian/ucs-school-celery/lib/systemd/system/celery-worker-ucsschool-import.service
+
 override_dh_fixperms:
 	dh_fixperms
 	chmod 750 debian/ucs-school-import/var/lib/ucs-school-import/passwords
@@ -67,6 +73,10 @@ override_dh_auto_clean:
 	make -C $(APIDOC_BASE_DIR) clean
 	make -C $(PLANTUML_DIR) clean
 	rm -f $(APIDOCSRC_DIR)/python/*
+
+override_dh_installdeb:
+	dh_installdeb
+	sed -i 's/ucs-school-celery\.service/celery-worker-ucsschool-import.service/g' debian/ucs-school-celery.postinst.debhelper  debian/ucs-school-celery.postrm.debhelper  debian/ucs-school-celery.preinst.debhelper  debian/ucs-school-celery.prerm.debhelper debian/ucs-school-celery/DEBIAN/postinst  debian/ucs-school-celery/DEBIAN/postrm  debian/ucs-school-celery/DEBIAN/preinst  debian/ucs-school-celery/DEBIAN/prerm
 
 override_dh_auto_test:
 	dh_auto_test
