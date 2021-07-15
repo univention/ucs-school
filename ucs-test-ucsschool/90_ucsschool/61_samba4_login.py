@@ -24,7 +24,7 @@ from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4co
 def test_samba4_login(udm_session, ucr):
     password = uts.random_string()
 
-    username = udm_session.create_user(password=password)[0]
+    username = udm_session.create_user(password=password)[1]
 
     print("Waiting for DRS replication...")
     wait_for_drs_replication("(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid")

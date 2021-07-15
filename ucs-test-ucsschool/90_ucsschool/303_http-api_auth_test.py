@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if auth via HTTP-API works with non-ASCII passwords (gunicorns log is checked)
 ## roles: [domaincontroller_master]
@@ -8,9 +8,6 @@
 
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from ucsschool.http_api.client import Client, ObjectNotFound, PermissionError, ServerError
 from univention.testing.ucs_samba import wait_for_drs_replication
 
@@ -21,9 +18,7 @@ def count_unicode_exceptions_in_gunicorn_log():
     return content.count("UnicodeEncodeError: 'ascii' codec can't encode characters in position")
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_http_api_auth_test(schoolenv, ucr):
             password = '!"§$%&/()=*'
 
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
@@ -34,7 +29,7 @@ def main():
 
             try:
                 Client(
-                    name=school_admin.decode("utf-8"),
+                    name=school_admin.decode("utf-8") if isinstance(school_admin, bytes) else school_admin,
                     password=password.decode("utf-8") if isinstance(password, bytes) else password,
                     server="{}.{}".format(ucr["hostname"], ucr["domainname"]),
                     log_level=Client.LOG_RESPONSE,
@@ -47,16 +42,17 @@ def main():
                 )
             except ServerError as exc:
                 raise Exception("The UCS@school Import API HTTP server is not reachable: %s" % (exc,))
-            except PermissionError as exc:
+            except PermissionError:
                 print("*** Authentication failed... checking if gunicorn failed with traceback...")
                 new_exception_count = count_unicode_exceptions_in_gunicorn_log()
                 print("*** old_exception_count: {}".format(old_exception_count))
                 print("*** new_exception_count: {}".format(new_exception_count))
                 if new_exception_count > old_exception_count:
-                    utils.fail(
+                    print(
                         "Authentication against HTTP-API failed with unicode exception in gunicorn. See "
                         "bug #48137."
                     )
+                    raise
                 else:
                     print(
                         "*** Authentication failed for unknown reason! Test does not fail because "
@@ -64,7 +60,3 @@ def main():
                     )
                     print("*** Nevertheless bug #48137 does not seem to happen.")
                     raise
-
-
-if __name__ == "__main__":
-    main()

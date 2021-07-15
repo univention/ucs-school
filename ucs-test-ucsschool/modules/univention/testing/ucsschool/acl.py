@@ -18,14 +18,6 @@ import univention.testing.udm as udm_test
 from univention.uldap import getMachineConnection
 
 
-class FailAcl(Exception):
-    pass
-
-
-class FailCmd(Exception):
-    pass
-
-
 def run_commands(cmdlist, argdict):
     """
     Start all commands in cmdlist and replace formatstrings with arguments in argdict.
@@ -147,19 +139,19 @@ class Acl(object):
                 "attr": attr,
             }
             out, err = run_commands([cmd], argdict)[0]
-            if err:
-                try:
-                    result = [x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x)][0]
-                except IndexError:
-                    result = None
-                    print("Failed to parse slapacl output:", attr, err)
-                if result and access_allowance not in result:
-                    raise FailAcl(
-                        "Access (%s) by (%s) to (%s) not expected %r"
-                        % (access, self.auth_dn, target_dn, result)
-                    )
-            else:
-                raise FailCmd("command %r was not executed successfully" % cmd)
+            assert err, "command %r was not executed successfully" % cmd
+            try:
+                result = [x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x)][0]
+            except IndexError:
+                result = None
+                print("Failed to parse slapacl output:", attr, err)
+            if result:
+                assert access_allowance in result, "Access (%s) by (%s) to (%s) not expected %r" % (
+                    access,
+                    self.auth_dn,
+                    target_dn,
+                    result,
+                )
 
     def assert_base_dn(self, access):
         """General acces rule = all read"""

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Computers(schools) module
 ## roles: [domaincontroller_master]
@@ -10,15 +10,11 @@ from __future__ import print_function
 
 import time
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.computerroom import UmcComputer
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_computers_module(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
             pcs = []
@@ -54,7 +50,3 @@ def main():
                             raise
                     else:
                         break
-
-
-if __name__ == "__main__":
-    main()

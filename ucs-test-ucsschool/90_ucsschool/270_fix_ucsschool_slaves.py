@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Fix broken domaincontroller slave objects via fix_ucsschool_slaves
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -10,27 +10,21 @@ from __future__ import absolute_import, print_function
 import subprocess
 import sys
 
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 
-
-def main():
-    with utu.UCSTestSchool() as schoolenv:
+def test_fix_ucsschool_slaves(schoolenv):
         school, oudn = schoolenv.create_ou()
 
         lo = schoolenv.open_ldap_connection()
         result = lo.search(base=oudn, attr=["ucsschoolHomeShareFileServer"])
         try:
-            dcdn = result[0][1].get("ucsschoolHomeShareFileServer", [None])[0]
+            dcdn = result[0][1].get("ucsschoolHomeShareFileServer", [None])[0].decode("UTF-8")
         except IndexError:
             dcdn = None
         assert dcdn is not None, "Cannot determine DN of school server"
 
         result = lo.search(base=dcdn)
         attrs = result[0][1]
-        if "univentionWindows" in attrs.get("objectClass", []) or "ucsschoolComputer" in attrs.get(
-            "objectClass", []
-        ):
+        if {b"univentionWindows", b"ucsschoolComputer"} & set(attrs.get("objectClass", [])):
             print("WARNING: domaincontroller_slave's objectclass already broken!")
         for value in attrs.get("ucsschoolRole", []):
             if value.startswith("win_computer:school:"):
@@ -44,13 +38,13 @@ def main():
                 [
                     "objectClass",
                     attrs.get("objectClass", []),
-                    list(set(attrs.get("objectClass", [])) | {"univentionWindows", "ucsschoolComputer"}),
+                    list(set(attrs.get("objectClass", [])) | {b"univentionWindows", b"ucsschoolComputer"}),
                 ],
                 [
                     "ucsschoolRole",
                     attrs.get("ucsschoolRole", []),
                     list(
-                        set(attrs.get("ucsschoolRole", [])) | {"win_computer:school:{}".format(school)}
+                        set(attrs.get("ucsschoolRole", [])) | {"win_computer:school:{}".format(school).encode()}
                     ),
                 ],
             ],
@@ -59,22 +53,9 @@ def main():
         print("Starting fix_ucschool_slaves...")
         sys.stdout.flush()
         sys.stderr.flush()
-        subprocess.call(["/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves", "--verbose"])
+        subprocess.check_call(["/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves", "--verbose"])
 
-        broken = False
         result = lo.search(base=dcdn)
-        if "univentionWindows" in result[0][1].get("objectClass", []) or "ucsschoolComputer" in result[
-            0
-        ][1].get("objectClass", []):
-            print("ERROR: domaincontroller_slave's objectclass is not fixed!")
-            broken = True
+        assert not {b"univentionWindows", b"ucsschoolComputer"} & set(result[0][1].get("objectClass", []))
         for value in result[0][1].get("ucsschoolRole", []):
-            if value.startswith("win_computer:school:"):
-                print("ERROR: domaincontroller_slave's ucschoolRole is not fixed! {!r}".format(value))
-                broken = True
-        if broken:
-            utils.fail("At least one attribute is not fixed!")
-
-
-if __name__ == "__main__":
-    main()
+            assert not value.startswith(b"win_computer:school:")

@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Test execution of Python based hooks
 ## exposure: dangerous
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
-## packages: [python-ucs-school, ucs-school-import]
+## packages: [python3-ucsschool-lib, ucs-school-import]
 ## bugs: [49557]
 
 import importlib
@@ -16,7 +16,7 @@ import random
 import re
 from unittest import TestCase, main
 
-from six import add_metaclass
+from six import add_metaclass, PY3
 
 import ucsschool.lib.models.user
 import univention.testing.strings as uts
@@ -30,10 +30,12 @@ from ucsschool.lib.models.school import School
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 
+py = '3' if PY3 else '2.7'
+
 MODULE_PATHS = (
-    ("/usr/lib/python2.7/dist-packages/ucsschool/lib/models", "ucsschool.lib.models"),
-    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/models", "ucsschool.importer.models"),
-    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hookpy")

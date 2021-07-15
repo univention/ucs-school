@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Imported users found using record_uid
 ## tags: [apptest,ucsschool,ucsschool_import1,logging]

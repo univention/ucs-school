@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test FormatPyHook
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -66,7 +66,7 @@ class Test(CLI_Import_v2_Tester):
         del config["csv"]["mapping"]["E-Mail"]
 
         self.log.info("Importing a user from each role...")
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)
@@ -103,7 +103,7 @@ class Test(CLI_Import_v2_Tester):
             # The format hook for generaing the email attribute should have
             # removed all vowels from the lastname of these three roles.
             if person.role in ("student", "teacher", "teacher_and_staff"):
-                lastname = person.lastname.translate(None, "aeiou")
+                lastname = person.lastname.translate(str.maketrans("", "", "aeiou"))
             else:
                 # staffs lastname was not modified
                 lastname = person.lastname

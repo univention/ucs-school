@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test no-overwrite-attributes
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -76,7 +76,7 @@ class Test(CLI_Import_v2_Tester):
             try:
                 dn = res[0][0]
                 attrs = res[0][1]
-                email = attrs["mailPrimaryAddress"][0]
+                email = attrs["mailPrimaryAddress"][0].decode("UTF-8")
             except KeyError as exc:
                 self.log.exception("Error searching for user: %s res=%r", exc, res)
                 raise
@@ -86,7 +86,7 @@ class Test(CLI_Import_v2_Tester):
                     'Email address should end in "1" ([ALWAYSCOUNTER] in scheme:email), '
                     "but is {!r}.".format(email)
                 )
-            username = res[0][1]["uid"][0]
+            username = res[0][1]["uid"][0].decode("UTF-8")
             self.log.debug("role=%r username=%r email=%r dn=%r", person.role, username, email, dn)
             person.update(dn=dn, username=username, mail=email)
             person.verify()

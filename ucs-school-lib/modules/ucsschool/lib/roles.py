@@ -144,7 +144,7 @@ def create_ucsschool_role_string(
         raise UnknownRole("Unknown role {!r}.".format(role))
     if school:
         context = school
-    return "{}:{}:{}".format(role, context_type, context)
+    return "{}:{}:{}".format(role, context_type, context).lower()
 
 
 def get_role_info(ucsschool_role_string):

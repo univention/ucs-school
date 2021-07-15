@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Computers(schools) module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -6,18 +6,14 @@
 ## exposure: dangerous
 ## packages: [ucs-school-radius-802.1x]
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing import ucs_samba, utils
 from univention.testing.ucsschool.internetrule import InternetRule
-from univention.testing.ucsschool.radius import test_peap_auth
+from univention.testing.ucsschool.radius import test_peap_auth as _test_peap_auth
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_radius_internetrules_priority(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             umc_connection = Client.get_test_connection()
 
@@ -67,7 +63,7 @@ def main():
             utils.wait_for_replication_and_postrun()
             ucs_samba.wait_for_s4connector()
 
-            radius_secret = "testing123"  # parameter set in  /etc/freeradius/clients.conf
+            radius_secret = "testing123"  # parameter set in /etc/freeradius/clients.conf
             password = "univention"
             allow_radius_access = [True, False, False]
             test_couples = zip(users, allow_radius_access)
@@ -75,8 +71,4 @@ def main():
             # Testing loop
             for (user_list, should_succeed) in test_couples:
                 for username in user_list:
-                    test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
-
-
-if __name__ == "__main__":
-    main()
+                    _test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)

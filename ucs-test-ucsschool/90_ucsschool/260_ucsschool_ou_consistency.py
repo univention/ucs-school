@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check ucschool ou consistency diagnostic tool
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]
@@ -158,11 +158,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
         logger.info("Ran diagnostic tool {} successfully.".format(module_name))
 
 
-def main():
+def test_ou_consistency():
     with UCSSchoolOuConsistencyCheck() as test_suite:
         test_suite.create_multi_env_school_objects()
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

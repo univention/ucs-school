@@ -5,10 +5,6 @@ import tempfile
 from univention.testing.ucsschool.computerroom import run_commands
 
 
-class TestFail(Exception):
-    pass
-
-
 def write_peap_config_file(conf_file, username, password):
     content = """network={
     key_mgmt=WPA-EAP
@@ -24,7 +20,7 @@ def write_peap_config_file(conf_file, username, password):
 
 
 def peap_auth(username, password, radius_secret):
-    peap_conf_file = tempfile.NamedTemporaryFile(suffix=".conf", dir="/tmp")
+    peap_conf_file = tempfile.NamedTemporaryFile("w+", suffix=".conf", dir="/tmp")
     print(" ** Creating temp config file %s" % peap_conf_file.name)
     write_peap_config_file(peap_conf_file, username, password)
     peap_conf_file.flush()
@@ -47,8 +43,10 @@ def test_peap_auth(username, password, radius_secret, should_succeed=True):
         "-" * 40,
     )
     auth_result = peap_auth(username, password, radius_secret)
-    if auth_result != should_succeed:
-        raise TestFail(
-            "PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s"
-            % (auth_result, should_succeed, username)
-        )
+    assert (
+        auth_result == should_succeed
+    ), "PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s" % (
+        auth_result,
+        should_succeed,
+        username,
+    )

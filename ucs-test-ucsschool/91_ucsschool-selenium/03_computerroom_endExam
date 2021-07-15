@@ -31,7 +31,7 @@ class UMCTester(object):
 		self.selenium.enter_input_combobox('school', school)
 		try:
 			self.selenium.wait_for_text(room_name, timeout=10)
-		except:
+		except Exception:
 			pass
 		self.selenium.enter_input_combobox('room', room_name)
 		self.selenium.click_button(_('Select room'))
@@ -70,7 +70,6 @@ class UMCTester(object):
 
 					schoolenv.create_computerroom(school, name=room.name, description=room.description, host_members=room.host_members)
 
-
 					self.selenium.do_login()
 					self._open_computer_room(school, room.name)
 					self.selenium.click_button(_('Close'))  # No exam running, should just close the module
@@ -95,7 +94,7 @@ class UMCTester(object):
 					self.selenium.click_button(_('Cancel'))
 					try:
 						self.selenium.wait_until_all_dialogues_closed()
-					except:
+					except Exception:
 						pass
 					self.selenium.click_button(_('Close'))
 					self.selenium.click_button(_('Continue without finishing'))

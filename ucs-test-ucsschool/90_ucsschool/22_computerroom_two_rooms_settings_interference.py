@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -14,8 +14,6 @@ import datetime
 import itertools
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.lib.umc import ConnectionError
 from univention.testing.network import NetworkRedirector
 from univention.testing.ucsschool.computerroom import (
@@ -53,9 +51,7 @@ def print_header(
     )
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_computerroom_two_room_settings_interference(schoolenv, ucr):
             with NetworkRedirector() as nethelper:
                 school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
                 tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
@@ -204,7 +200,3 @@ def main():
                                     raise
                 finally:
                     remove_printer(printer_name, school, ucr.get("ldap/base"))
-
-
-if __name__ == "__main__":
-    main()

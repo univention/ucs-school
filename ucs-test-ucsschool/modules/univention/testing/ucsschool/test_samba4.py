@@ -54,13 +54,15 @@ class TestSamba4(object):
         print("\n create_and_run_process(%r, shell=%r)" % (cmd, shell))
         proc = Popen(cmd, stdin=stdin, stdout=stdout, stderr=PIPE, shell=shell, close_fds=True)
 
-        stdout, stderr = proc.communicate(input=std_input)
+        stdout, stderr = proc.communicate(std_input if std_input is None else std_input.encode("UTF-8"))
 
-        if stderr:
+        if stderr is not None:
             stderr = stderr.decode("UTF-8")
+        if stderr:
             stderr = self.remove_samba_warnings(stderr)
-        if stdout:
+        if stdout is not None:
             stdout = stdout.decode("UTF-8")
+        if stdout:
             stdout = self.remove_samba_warnings(stdout)
 
         return stdout, stderr

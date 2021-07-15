@@ -6,6 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-master | ucs-school-singlemaster
+
 import time
 
 import univention.testing.strings as uts

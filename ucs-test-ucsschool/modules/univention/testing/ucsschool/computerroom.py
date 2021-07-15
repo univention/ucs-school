@@ -5,6 +5,7 @@ import copy
 import datetime
 import itertools
 import os
+import pipes
 import re
 import subprocess
 import tempfile
@@ -43,35 +44,7 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-class GetFail(Exception):
-    pass
-
-
-class GetCheckFail(Exception):
-    pass
-
-
-class CreateFail(Exception):
-    pass
-
-
-class QueryCheckFail(Exception):
-    pass
-
-
-class RemoveFail(Exception):
-    pass
-
-
-class EditFail(Exception):
-    pass
-
-
 class CmdCheckFail(Exception):
-    pass
-
-
-class CupsNotRunningError(Exception):
     pass
 
 
@@ -469,8 +442,7 @@ class Room(object):
         cups_status = subprocess.check_output(
             ["lpstat", "-h", ucr.get("cups/server", ""), "-r"], env={"LC_ALL": "C"}
         ).decode("UTF-8")
-        if cups_status != "scheduler is running\n":
-            raise CupsNotRunningError('CUPS status reported: "{}"'.format(cups_status))
+        assert cups_status == "scheduler is running\n", 'CUPS status reported: "{}"'.format(cups_status)
         f = tempfile.NamedTemporaryFile(dir="/tmp")
         cmd_print = ["smbclient", "//%(ip)s/%(printer)s", "-U", "%(user)s", "-c", "print %(filename)s"]
         result = run_commands(
@@ -949,18 +921,16 @@ class UmcComputer(object):
                 )
             )
         else:
-            raise CreateFail("Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult))
+            assert False, "Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult)
 
     def remove(self):
         """Remove computer"""
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/computers/remove", param, flavor).result
-        if not reqResult[0] is True:
-            raise RemoveFail("Unable to remove computer (%s): %r" % (self.name, reqResult))
-        else:
-            utils.wait_for_replication()
-            utils.wait_for_s4connector_replication()
+        assert reqResult[0] is True, "Unable to remove computer (%s): %r" % (self.name, reqResult)
+        utils.wait_for_replication()
+        utils.wait_for_s4connector_replication()
 
     def dn(self):
         return "cn=%s,cn=computers,%s" % (self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -970,10 +940,8 @@ class UmcComputer(object):
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}}]
         reqResult = self.client.umc_command("schoolwizards/computers/get", param, flavor).result
-        if not reqResult[0]:
-            raise GetFail("Unable to get computer (%s): %r" % (self.name, reqResult))
-        else:
-            return reqResult[0]
+        assert reqResult[0], "Unable to get computer (%s): %r" % (self.name, reqResult)
+        return reqResult[0]
 
     def check_get(self):
         typ2roles = {
@@ -998,10 +966,10 @@ class UmcComputer(object):
         get_result = self.get()
         if get_result != info:
             diff = set(x for x in get_result if get_result[x] != info[x])
-            raise GetCheckFail(
-                "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
-                "Difference = %r" % (self.name, get_result, info, diff)
-            )
+        assert get_result == info, (
+            "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
+            "Difference = %r" % (self.name, get_result, info, diff)
+        )
 
     def type_name(self):
         if self.typ == "windows":
@@ -1034,17 +1002,16 @@ class UmcComputer(object):
         print("Editing computer %s" % (self.name,))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/computers/put", param, flavor).result
-        if reqResult[0] is not True:
-            raise EditFail(
-                "Unable to edit computer (%s) with the parameters (%r): %r"
-                % (self.name, param, reqResult)
-            )
-        else:
-            self.ip_address = ip_address
-            self.mac_address = mac_address.lower() if mac_address else None
-            self.subnet_mask = subnet_mask
-            self.inventory_number = inventory_number
-            utils.wait_for_replication()
+        assert reqResult[0] is True, "Unable to edit computer (%s) with the parameters (%r): %r" % (
+            self.name,
+            param,
+            reqResult,
+        )
+        self.ip_address = ip_address
+        self.mac_address = mac_address.lower() if mac_address else None
+        self.subnet_mask = subnet_mask
+        self.inventory_number = inventory_number
+        utils.wait_for_replication()
 
     def query(self):
         """get the list of existing computer in the school"""
@@ -1056,11 +1023,12 @@ class UmcComputer(object):
     def check_query(self, computer_names):
         reqResult = self.query()
         names_in_result = {x["name"] for x in reqResult}
-        if not set(computer_names).issubset(names_in_result):
-            raise QueryCheckFail(
-                "computers from query do not contain the existing computers, found (%r), expected (%r)"
-                % (names_in_result, computer_names)
-            )
+        assert set(computer_names).issubset(
+            names_in_result
+        ), "computers from query do not contain the existing computers, found (%r), expected (%r)" % (
+            names_in_result,
+            computer_names,
+        )
 
     def verify_ldap(self, should_exist):
         print("verifying computer %s" % self.name)
@@ -1070,11 +1038,13 @@ class UmcComputer(object):
 def create_homedirs(member_dn_list, open_ldap_co):
     for dn in member_dn_list:
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            if not home_dir:
-                utils.fail("No homeDirectory attribute found for %r" % (dn,))
+            home_dir = home_dir.decode("UTF-8")
             if not os.path.exists(home_dir):
                 print("# Creating %r for %r" % (home_dir, dn))
                 os.makedirs(home_dir)
+            break
+        else:
+            assert False, "No homeDirectory attribute found for %r" % (dn,)
 
 
 @SetTimeout
@@ -1084,12 +1054,15 @@ def check_create_share_folder(
     """
     test if a user can create folders inside a given share, i.e. they have edit rights.
     """
-    cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(username, share, dir_name)
+    cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(
+        pipes.quote(username), pipes.quote(share), dir_name
+    )
     if samba_workstation:
-        cmd += " --netbiosname='{}'".format(samba_workstation)
+        cmd += " --netbiosname={}".format(pipes.quote(samba_workstation))
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)
-    if "NT_STATUS_ACCESS_DENIED" in stdout:
-        utils.fail("Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout))
+    assert (
+        "NT_STATUS_ACCESS_DENIED" not in stdout
+    ), "Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout)
 
 
 def check_change_permissions(

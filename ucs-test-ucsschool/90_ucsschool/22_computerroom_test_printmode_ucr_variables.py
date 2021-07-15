@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -12,15 +12,11 @@ from __future__ import print_function
 import datetime
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from univention.testing.ucsschool.computerroom import Computers, Room, add_printer
 from univention.testing.umc import Client
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
+def test_computerroom_test_printmode_ucr_variables(schoolenv, ucr):
         school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
         open_ldap_co = schoolenv.open_ldap_connection()
@@ -50,8 +46,6 @@ def main():
         add_printer(
             printer_name, school, ucr.get("hostname"), ucr.get("domainname"), ucr.get("ldap/base")
         )
-
-        did_fail = False
 
         class settings(object):
             pass
@@ -122,8 +116,7 @@ def main():
                 print("---------------------------------------------")
                 set_room_printmode(settings2)
                 print("Printmodes: %r" % ([x.printmode for x in settingslist],))
-                if not ucr_check_both_values(settingslist):
-                    did_fail = True
+                assert ucr_check_both_values(settingslist)
 
         # test with 3 rooms
         settingslist = [settings1, settings2, settings3]
@@ -135,12 +128,4 @@ def main():
                     print("---------------------------------------------")
                     set_room_printmode(settings3)
                     print("Printmodes: %r" % ([x.printmode for x in settingslist],))
-                    if not ucr_check_both_values(settingslist):
-                        did_fail = True
-
-        if did_fail:
-            utils.fail("At least one combination failed!")
-
-
-if __name__ == "__main__":
-    main()
+                    assert ucr_check_both_values(settingslist)

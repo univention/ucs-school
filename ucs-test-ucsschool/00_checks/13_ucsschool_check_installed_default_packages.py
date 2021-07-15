@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check if all required and recommended packages for UCS@school are installed
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest,ucsschool]
@@ -10,12 +10,10 @@ from __future__ import print_function
 
 import apt
 
-import univention.testing.utils as utils
-
 METAPACKAGES = ["ucs-school-master", "ucs-school-singlemaster", "ucs-school-slave"]
 
 
-def main():
+def test_installed_ucsschool_default_packages():
     apt_cache = apt.Cache()
     apt_cache.open()
 
@@ -34,11 +32,5 @@ def main():
                     if deppkg.name in apt_cache and apt_cache[deppkg.name].is_installed:
                         found += 1
                 print("Checking packages %r (pkg found=%d)" % (pkglist, found))
-                if found == 0:
-                    utils.fail("Package %r is not installed but it should" % (deppkg,))
-    if not meta_found:
-        utils.fail("There is no meta package installed")
-
-
-if __name__ == "__main__":
-    main()
+                assert found, "Package %r is not installed but it should" % (deppkg,)
+    assert meta_found, "There is no meta package installed"

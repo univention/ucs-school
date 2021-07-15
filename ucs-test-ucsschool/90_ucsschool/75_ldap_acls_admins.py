@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if school admins have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
@@ -8,7 +8,6 @@
 
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
 from univention.testing.strings import random_string
@@ -17,9 +16,7 @@ from univention.testing.ucsschool.computerroom import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_ldap_acls_admins(schoolenv, ucr):
             name_edudc = random_string(length=5)
             school, oudn = schoolenv.create_ou(name_edudc=name_edudc)
             school_admin, school_admin_dn = schoolenv.create_school_admin(
@@ -118,7 +115,3 @@ def main():
             # share_dn = 'cn=Marktplatz,cn=shares,%s' % (oudn,)
             # acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
             # acl.assert_share_object_access(share_dn, 'write', 'DENIED')
-
-
-if __name__ == "__main__":
-    main()

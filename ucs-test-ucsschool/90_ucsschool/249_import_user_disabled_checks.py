@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test 'disabled_checks' feature
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -9,6 +9,7 @@
 ## bugs: [50406]
 
 import copy
+import pytest
 
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
@@ -34,7 +35,7 @@ class Test(CLI_Import_v2_Tester):
 
         self.log.info('*** 1/2 Starting import without "disabled_checks" set...')
 
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)
@@ -42,11 +43,9 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config])
-            self.fail("Import ran with bad settings.")
-        except ImportException:
-            self.log.info("*** OK - import stopped.")
+        self.log.info("*** OK - import stopped.")
 
         self.log.info('*** 2/2 Starting import with "disabled_checks" set...')
 

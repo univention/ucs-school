@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Test execution of legacy hooks
 ## exposure: dangerous
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
-## packages: [python-ucs-school, ucs-school-import]
+## packages: [python3-ucsschool-lib, ucs-school-import]
 ## bugs: [49556]
 
 import importlib
@@ -14,6 +14,8 @@ import os.path
 import pprint
 import re
 from unittest import TestCase, main
+
+from six import with_metaclass, PY3
 
 import univention.testing.strings as uts
 from ucsschool.importer.configuration import setup_configuration
@@ -31,10 +33,12 @@ try:
 except ImportError:
     pass
 
+py = '3' if PY3 else '2.7'
+
 MODULE_PATHS = (
-    ("/usr/lib/python2.7/dist-packages/ucsschool/lib/models", "ucsschool.lib.models"),
-    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/models", "ucsschool.importer.models"),
-    ("/usr/lib/python2.7/dist-packages/ucsschool/importer/legacy", "ucsschool.importer.legacy"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test82_legacy_hook.sh")
@@ -167,7 +171,7 @@ class TestLegacyHooksMeta(type):
         return cls
 
 
-class TestLegacyHooks(TestCase):
+class TestLegacyHooks(with_metaclass(TestLegacyHooksMeta, TestCase)):
     ucs_test_school = None
     lo = None
     models = None  # populated in metaclass
@@ -178,8 +182,6 @@ class TestLegacyHooks(TestCase):
     ou2_name = ou2_dn = None
     import_config = None
     progress_counter = 0
-
-    __metaclass__ = TestLegacyHooksMeta
 
     @classmethod
     def setUpClass(cls):

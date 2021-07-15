@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test if GPOs filtered for a native Windows Server work in exam mode
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-windows-tools]
@@ -18,7 +18,6 @@ from os import path
 from subprocess import PIPE, STDOUT, Popen
 from sys import exit
 
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 import univention.testing.utils as utils
 import univention.winexe
@@ -33,6 +32,11 @@ from univention.testing.ucsschool.exam import Exam
 
 ucr = ConfigRegistry()
 
+Win = None
+samba_credentials = None
+domainname = None
+ldap_base = None
+
 
 def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
     """
@@ -40,7 +44,9 @@ def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
     and 'communicates' with it.
     """
     proc = Popen(cmd, stdout=stdout, stderr=PIPE, stdin=stdin)
-    return proc.communicate(std_in)
+    stdout, stderr = proc.communicate(std_in)
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
+    return stdout, stderr
 
 
 def remove_samba_warnings(input_str):
@@ -60,6 +66,7 @@ def run_samba_tool(cmd, stdout=PIPE):
     """
     cmd += samba_credentials
     stdout, stderr = run_cmd(cmd)
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
 
     if stderr:
         stderr = remove_samba_warnings(stderr)
@@ -583,7 +590,8 @@ class GPO_Test(object):
         )
 
 
-def test_exam_gpo(ucr, udm, schoolenv, windows_client):
+def _test_exam_gpo(ucr, udm_session, schoolenv, windows_client):
+    udm = udm_session
 
     school = SchoolSearchBase.getOU(ucr["ldap/hostdn"])
     school_search_base = School.get_search_base(school)
@@ -629,7 +637,7 @@ def test_exam_gpo(ucr, udm, schoolenv, windows_client):
             exam.finish()
 
 
-if __name__ == "__main__":
+def test_samba4_evaluate_windows_gpo(schoolenv, udm_session):
     """
     IMPORTANT: Windows Host should be joined to the domain prior test run!
 
@@ -648,6 +656,7 @@ if __name__ == "__main__":
     GPOs are applied using 'Security Filtering',
     'Authenticated Users' are set to have only GpoRead permissions.
     """
+    global Win, samba_credentials, domainname, ldap_base
     ucr.load()
 
     domain_admin_dn = ucr.get("tests/domainadmin/account")
@@ -680,6 +689,4 @@ if __name__ == "__main__":
     )
     windows_check_domain()
 
-    with univention.testing.udm.UCSTestUDM() as udm:
-        with utu.UCSTestSchool() as schoolenv:
-            test_exam_gpo(ucr, udm, schoolenv, windows_client)
+    _test_exam_gpo(ucr, udm_session, schoolenv, windows_client)

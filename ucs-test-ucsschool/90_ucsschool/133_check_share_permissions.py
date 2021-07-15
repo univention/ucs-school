@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## desc: Test if share-access don't leave permission change open for class members.
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -10,7 +10,7 @@ import os
 import re
 import tempfile
 import time
-from typing import List
+from typing import List  # noqa: F401
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -60,7 +60,7 @@ def check_klass_share_same_permissions_after_renaming(
     new_class_name = "{}-{}".format(school, uts.random_string())
     klasse_share = "//{}/{}".format(ucr_hostname, new_class_name)
     new_klasse_share_folder = "{} {}".format(klasse_share, klasse_folder)
-    with tempfile.NamedTemporaryFile(suffix=".import", dir="/tmp/") as fp:
+    with tempfile.NamedTemporaryFile("w+", suffix=".import", dir="/tmp/") as fp:
         fp.write("{}\t{}".format(klasse.name, new_class_name))
         fp.flush()
         fp.seek(0)
@@ -87,11 +87,11 @@ def test_class_permissions(ucr_hostname, ucr_ldap_base):
         )
         search_base = SchoolSearchBase([school])
         schueler_group_dn = search_base.students_group
-        schueler_group_sid = schoolenv.lo.get(schueler_group_dn)["sambaSID"][0]
+        schueler_group_sid = schoolenv.lo.get(schueler_group_dn)["sambaSID"][0].decode("ASCII")
         lehrer_group_dn = search_base.teachers_group
-        lehrer_group_sid = schoolenv.lo.get(lehrer_group_dn)["sambaSID"][0]
+        lehrer_group_sid = schoolenv.lo.get(lehrer_group_dn)["sambaSID"][0].decode("ASCII")
         admin_group_dn = search_base.admins_group
-        admin_group_sid = schoolenv.lo.get(admin_group_dn)["sambaSID"][0]
+        admin_group_sid = schoolenv.lo.get(admin_group_dn)["sambaSID"][0].decode("ASCII")
 
         klasse_name = "{}-{}".format(school, uts.random_string())
         teacher_name, teacher_dn = schoolenv.create_user(

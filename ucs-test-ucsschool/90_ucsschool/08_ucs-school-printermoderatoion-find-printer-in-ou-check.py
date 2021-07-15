@@ -18,10 +18,10 @@ def doPrinter(operation, printer_name, schoolName, spool_host, domainname):
     localIp = socket.gethostbyname(socket.gethostname())
     uri = "%s://%s" % ("lpd", localIp)
     print_server = "%s.%s" % (spool_host, domainname)
-    with tempfile.NamedTemporaryFile(suffix=".csv") as fd:
+    with tempfile.NamedTemporaryFile("w+", suffix=".csv") as fd:
         line = (
             "%s\t%s\t%s\t%s\t%s\n" % (operation, schoolName, print_server, printer_name, uri)
-        ).encode("utf-8")
+        )
         fd.write(line)
         fd.flush()
         subprocess.check_call(["/usr/share/ucs-school-import/scripts/import_printer", fd.name])

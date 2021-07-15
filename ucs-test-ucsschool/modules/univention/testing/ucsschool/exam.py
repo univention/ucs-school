@@ -19,18 +19,6 @@ from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.umc import Client, ClientSaml
 
 
-class StartFail(Exception):
-    pass
-
-
-class FinishFail(Exception):
-    pass
-
-
-class SaveFail(Exception):
-    pass
-
-
 def get_dir_files(dir_path, recursive=True):
     result = []
     for f in glob.glob("%s/*" % dir_path):
@@ -150,8 +138,7 @@ class Exam(object):
         print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/start", param).result
         print("Start exam response = ", reqResult)
-        if not reqResult["success"]:
-            raise StartFail("Unable to start exam (%r)" % (param,))
+        assert reqResult["success"], "Unable to start exam (%r)" % (param,)
 
     def save(self, update=False, fields=None):
         """Saves an exam. If fields is a list only the given values are set in the request"""
@@ -187,8 +174,7 @@ class Exam(object):
         command = "put" if update else "add"
         reqResult = self.client.umc_command("schoolexam/exam/{}".format(command), param).result
         print("Save exam response = {}".format(reqResult))
-        if not reqResult:
-            raise SaveFail("Unable to {} exam {!r}".format(command, param))
+        assert reqResult, "Unable to {} exam {!r}".format(command, param)
 
     def get(self):
         """Gets an exam and returns result"""
@@ -207,8 +193,7 @@ class Exam(object):
         print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/finish", param).result
         print("Finish exam response = ", reqResult)
-        if not reqResult["success"]:
-            raise FinishFail("Unable to finish exam (%r)" % param)
+        assert reqResult["success"], "Unable to finish exam (%r)" % param
 
     def genData(self, file_name, content_type, boundary, override_file_name=None):
         """Generates data in the form to be sent via http POST request.\n

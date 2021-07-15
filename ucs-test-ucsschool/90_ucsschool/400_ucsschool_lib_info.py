@@ -1,25 +1,20 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test python module ucsschool.lib.info
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 ## bugs: [47966]
 
 import pytest
 
 import ucsschool.lib.info as uli
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm
 
 
-def main():
-    with univention.testing.udm.UCSTestUDM() as udm:
-        with utu.UCSTestSchool() as schoolenv:
-            with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
+                udm = udm_session
                 name_edudc = uts.random_string()
                 name_admindc = uts.random_string()
                 name_centraldc = uts.random_string()
@@ -111,7 +106,3 @@ def main():
                     False,
                     False,
                 ), "get_school_membership_type() returned unexpected result for central dc"
-
-
-if __name__ == "__main__":
-    main()

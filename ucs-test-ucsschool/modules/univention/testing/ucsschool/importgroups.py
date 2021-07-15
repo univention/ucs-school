@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 import os
-import string
 import subprocess
 import tempfile
 
@@ -94,7 +93,7 @@ class ImportFile:
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
-        os.write(self.import_fd, str(self.group_import))
+        os.write(self.import_fd, str(self.group_import).encode("UTF-8"))
         os.close(self.import_fd)
 
     def run_import(self, group_import):

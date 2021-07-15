@@ -6,16 +6,12 @@
 """
 from __future__ import print_function
 
+from io import BytesIO
 import os
 import tempfile
 import time
 
 import pycurl
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 import univention.testing.utils as utils
 
@@ -75,7 +71,7 @@ class SimpleCurl(object):
     def cookies(self):
         return self.curl.getinfo(pycurl.INFO_COOKIELIST)
 
-    def getPage(self, url, bVerbose=False, postData=None):
+    def getPage(self, url, bVerbose=False, postData=None, encoding='UTF-8'):
         """Gets a http page
         this method keep trying to fetch the page for 60secs then stops
         raising and exception if not succeeded.\n
@@ -91,7 +87,7 @@ class SimpleCurl(object):
         self.curl.setopt(pycurl.VERBOSE, bVerbose)
         if postData:
             self.curl.setopt(pycurl.HTTPPOST, postData)
-        buf = StringIO()
+        buf = BytesIO()
         self.curl.setopt(pycurl.WRITEFUNCTION, buf.write)
         print("getting page:", url)
         for i in range(60):
@@ -108,7 +104,7 @@ class SimpleCurl(object):
         page = buf.getvalue()
         # print page[1:150]
         buf.close()
-        return page
+        return page.decode(encoding)
 
     def httpCode(self):
         """HTTP status code\n

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if teachers have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
@@ -8,16 +8,13 @@
 
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import Acl
 from univention.testing.ucsschool.computerroom import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_ldap_acls_teachers(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
             stu, stu_dn = schoolenv.create_user(school)
@@ -67,7 +64,3 @@ def main():
             # share_dn = 'cn=Marktplatz,cn=shares,%s' % (oudn,)
             # acl.assert_share_object_access(share_dn, 'read', 'ALLOWED')
             # acl.assert_share_object_access(share_dn, 'write', 'DENIED')
-
-
-if __name__ == "__main__":
-    main()

@@ -29,4 +29,4 @@ def test_lookup(schoolenv):
     import_file.run_import(computer_import)
     lo, po = getAdminConnection()
     computers = SchoolComputer.lookup(lo, ou_name)
-    assert len(computers) == 9
+    assert len(computers) == 9, computers

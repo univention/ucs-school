@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test PostReadPyHook functionality
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -58,7 +58,7 @@ class Test(CLI_Import_v2_Tester):
             "*** a) switch firstname and lastname b) add a birthday c) raise & test a class level "
             "variable..."
         )
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             person.update(record_uid="record_uid-{}".format(uts.random_string()), source_uid=source_uid)

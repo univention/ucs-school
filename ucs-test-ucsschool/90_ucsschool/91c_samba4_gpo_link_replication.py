@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test the Samba4 GPO link replication between DC-Slaves.
 ## bugs: [45992]
 ## roles: [domaincontroller_slave]
@@ -8,12 +8,10 @@
 
 from __future__ import print_function
 
-import sys
 from re import search
 from subprocess import check_call, check_output
 
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 
 
@@ -52,7 +50,7 @@ class GPO(object):
                 "--password={}".format(self.account.bindpw),
             ]
         )
-        stdout = stdout.rstrip()
+        stdout = stdout.decode("UTF-8").rstrip()
         print("\nSamba-tool produced the following output:", stdout)
 
         try:
@@ -96,29 +94,25 @@ class GPO(object):
 
 def check_local_LDAP_for_GPO_link(gpo_reference, oudn):
     stdout = check_output(["univention-ldapsearch", oudn.split(",", 1)[0]])
+    stdout = stdout.decode("UTF-8")
     print(stdout)
     return gpo_reference.lower() in stdout.lower()
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        # create new OU the current DC slave is NOT resposible for
-        schoolName, oudn = schoolenv.create_ou(use_cache=False)
-        utils.wait_for_replication_and_postrun()
-        # create a new GPO
-        with GPO(oudn) as gpo:
-            # connect the GPO to the new OU (oudn) via samba-tool in local S4
-            # due to LDAP ACLs, the local S4 connector should not be able to
-            # replicate the gPOlink to the UCS master.
-            gpo.set_gpo_link_on_slave_via_sambatool()
-            if check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn):
-                # the local LDAP contains the GPO link at oudn but should not
-                utils.fail("A school DC can set GPO links for another OU")
-            gpo.set_gpo_link_on_slave_via_s4connector()
-            if not check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn):
-                # the local LDAP should contains the GPO link at oudn
-                utils.fail("A school DC cannot read GPO links from other OUs")
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+def test_samba4_gpo_link_replication(schoolenv):
+    # create new OU the current DC slave is NOT resposible for
+    schoolName, oudn = schoolenv.create_ou(use_cache=False)
+    utils.wait_for_replication_and_postrun()
+    # create a new GPO
+    with GPO(oudn) as gpo:
+        # connect the GPO to the new OU (oudn) via samba-tool in local S4
+        # due to LDAP ACLs, the local S4 connector should not be able to
+        # replicate the gPOlink to the UCS master.
+        gpo.set_gpo_link_on_slave_via_sambatool()
+        assert not check_local_LDAP_for_GPO_link(
+            gpo.gpo_reference, oudn
+        ), "A school DC can set GPO links for another OU"  # the local LDAP contains the GPO link at oudn but should not
+        gpo.set_gpo_link_on_slave_via_s4connector()
+        assert check_local_LDAP_for_GPO_link(
+            gpo.gpo_reference, oudn
+        ), "A school DC cannot read GPO links from other OUs"  # the local LDAP should contains the GPO link at oudn

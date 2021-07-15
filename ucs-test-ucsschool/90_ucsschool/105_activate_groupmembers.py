@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Activate groupmembers
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -13,8 +13,6 @@ import re
 import subprocess
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.lib.umc import Unauthorized
 from univention.testing.ucsschool.workgroup import Workgroup
@@ -88,9 +86,7 @@ def checK_status(username, should_pass):
     return should_pass == is_active(username)
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_activate_groupmembers(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
             tea_lastname = uts.random_name()
@@ -137,7 +133,3 @@ def main():
                     check_auth(username, passwd, should_pass)
 
                 check_usernames_in_csv(outfile, users)
-
-
-if __name__ == "__main__":
-    main()

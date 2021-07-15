@@ -2,7 +2,7 @@ import csv
 import pytest
 
 try:
-    from typing import Dict, Generator
+    from typing import Dict, Generator  # noqa: F401
 except ImportError:
     pass
 

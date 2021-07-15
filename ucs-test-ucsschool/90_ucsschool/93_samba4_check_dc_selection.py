@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test the DC Locator (DNS) with Samba4.
 ## bugs: [34223, 37698]
 ## roles:

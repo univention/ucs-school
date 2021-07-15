@@ -132,7 +132,7 @@ class JsonWriter(BaseWriter):
     def open(self, filename, mode="wb"):
         self._filename = filename
         self._mode = mode
-        return tempfile.SpooledTemporaryFile()
+        return tempfile.SpooledTemporaryFile(mode=mode)
 
     def write_obj(self, obj):
         self._objects.append(obj)

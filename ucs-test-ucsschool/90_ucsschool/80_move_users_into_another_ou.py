@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: move user into another school
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -15,9 +15,7 @@ import univention.testing.strings as uts
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.user import User
 from univention.testing import utils
-from univention.testing.ucr import UCSTestConfigRegistry
-from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
-from univention.testing.udm import UCSTestUDM
+from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 logger = get_ucsschool_logger()
 
@@ -26,9 +24,7 @@ def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_nam
     user = User.from_dn(user.dn, None, lo)
     print("*** Groups {} is in: {}".format(user, user.get_udm_object(lo)["groups"]))
     workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
-    if user.dn in workgroup.users:
-        print("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
-        utils.fail("User %r was not removed from workgroup." % user)
+    assert user.dn not in workgroup.users
     try:
         utils.verify_ldap_object(
             user.dn, expected_attr=attrs, strict=True, should_exist=True, retry_count=0
@@ -54,15 +50,15 @@ def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_nam
     ], 'Old school class "{}" was created in target school.'.format(grp2_name)
 
 
-def main():
-    if not hasattr(User, "change_school"):
-        utils.fail("ERROR: moving users to another school OU is not supported by ucs-school-lib")
+def test_move_users_into_another_ou(schoolenv, ucr, udm_session):
+        udm = udm_session
+        if not hasattr(User, "change_school"):
+            utils.fail("ERROR: moving users to another school OU is not supported by ucs-school-lib")
 
-    with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr, UCSTestUDM() as udm:
         # make sure that nonedu containers are created
         univention.config_registry.handler_set(["ucsschool/ldap/noneducational/create/objects=yes"])
 
-        (a, a_dn), (b, b_dn) = env.create_multiple_ous(2, name_edudc=ucr.get("hostname"))
+        (a, a_dn), (b, b_dn) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get("hostname"))
 
         # TODO: add exam user
         # TODO: change school and uid at once!
@@ -84,27 +80,27 @@ def main():
 
         users = [
             (
-                env.create_user(a, classes=two_klasses),
+                schoolenv.create_user(a, classes=two_klasses),
                 "schueler",
                 [students_group, domain_users_school, global_group_dn],
             ),
             (
-                env.create_user(a, is_teacher=True, classes=two_klasses),
+                schoolenv.create_user(a, is_teacher=True, classes=two_klasses),
                 "lehrer",
                 [domain_users_school, teacher_group, global_group_dn],
             ),
             (
-                env.create_user(a, is_staff=True),
+                schoolenv.create_user(a, is_staff=True),
                 "mitarbeiter",
                 [domain_users_school, staff_group, global_group_dn],
             ),
             (
-                env.create_user(a, is_teacher=True, is_staff=True, classes=two_klasses),
+                schoolenv.create_user(a, is_teacher=True, is_staff=True, classes=two_klasses),
                 "lehrer",
                 [domain_users_school, teacher_group, staff_group, global_group_dn],
             ),
         ]
-        lo = env.open_ldap_connection()
+        lo = schoolenv.open_ldap_connection()
         workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
         users_dns = [dn for (user, dn), roleshare_path, groups in users]
         udm.modify_object("groups/group", dn=global_group_dn, append={"users": users_dns})
@@ -153,7 +149,3 @@ def main():
                 retry_count=50,
                 delay=4,
             )
-
-
-if __name__ == "__main__":
-    main()

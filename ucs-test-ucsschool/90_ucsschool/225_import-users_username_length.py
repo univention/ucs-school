@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test diffent username lengths
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -44,7 +44,7 @@ class Test(CLI_Import_v2_Tester):
             if self.ucr.get("ucsschool/username/max_length") is not None:
                 univention.config_registry.handler_unset(["ucsschool/username/max_length"])
 
-            person_list = list()
+            person_list = []
             for role in ("student", "teacher", "staff", "teacher_and_staff"):
                 person = Person(self.ou_A.name, role)
                 record_uid = "record_uid-%s" % (uts.random_string(),)
@@ -79,7 +79,7 @@ class Test(CLI_Import_v2_Tester):
                         )
                     )
                 dn = res[0][0]
-                username = res[0][1]["uid"][0]
+                username = res[0][1]["uid"][0].decode("UTF-8")
                 self.log.debug(
                     "*** role=%r username=%r len(username)=%r dn=%r",
                     person.role,
@@ -125,7 +125,7 @@ class Test(CLI_Import_v2_Tester):
             }
             # use default values for two roles
             for _ in range(2):
-                role_uses_default = random.choice(username_lengths.keys())
+                role_uses_default = random.choice(list(username_lengths.keys()))
                 del username_lengths[role_uses_default]
             # min length is 4, if student is unset and default is used, it must be at least
             # 4 + len('exam-') = 9
@@ -171,7 +171,7 @@ class Test(CLI_Import_v2_Tester):
                         )
                     )
                 dn = res[0][0]
-                username = res[0][1]["uid"][0]
+                username = res[0][1]["uid"][0].decode("UTF-8")
                 self.log.debug(
                     "*** role=%r username=%r len(username)=%r dn=%r",
                     person.role,
@@ -219,7 +219,7 @@ class Test(CLI_Import_v2_Tester):
             }
             # use default values for two roles
             for _ in range(2):
-                role_uses_default = random.choice(username_lengths.keys())
+                role_uses_default = random.choice(list(username_lengths.keys()))
                 del username_lengths[role_uses_default]
                 try:
                     del config["username"]["max_length"][role_uses_default]
@@ -232,7 +232,7 @@ class Test(CLI_Import_v2_Tester):
             source_uid = "source_uid-{}".format(uts.random_string())
             config.update_entry("source_uid", source_uid)
 
-            person_list = list()
+            person_list = []
             for role in ("student", "teacher", "staff", "teacher_and_staff"):
                 person = Person(self.ou_A.name, role)
                 record_uid = "record_uid-%s" % (uts.random_string(),)
@@ -288,7 +288,7 @@ class Test(CLI_Import_v2_Tester):
                         )
                     )
                 dn = res[0][0]
-                username = res[0][1]["uid"][0]
+                username = res[0][1]["uid"][0].decode("UTF-8")
                 self.log.debug(
                     "*** role=%r username=%r len(username)=%r dn=%r",
                     person.role,

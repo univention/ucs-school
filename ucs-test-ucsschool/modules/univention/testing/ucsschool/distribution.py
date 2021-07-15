@@ -11,6 +11,8 @@ from __future__ import print_function
 import os
 import time
 
+import six
+
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
@@ -89,7 +91,7 @@ class Distribution(object):
         self.collectDate = collectDate if collectDate else time.strftime("%Y-%m-%d")
         self.distributeType = distributeType
         self.collectType = collectType
-        self.files = files
+        self.filename_encodings = files
         self.recipients = recipients
         self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
         self.sender = sender if sender else admin
@@ -99,6 +101,24 @@ class Distribution(object):
         else:
             self.client = Client(None, admin, passwd)
         self.distributed_version = 1
+
+    @property
+    def files(self):
+        return [
+            file_name for file_name, encoding in self.filename_encodings
+        ]
+
+    @property
+    def files_encoded(self):
+        if six.PY2:
+            return [
+                file_name.decode(encoding).encode("UTF-8")
+                for file_name, encoding in self.filename_encodings
+            ]
+        return [
+            file_name.decode(encoding) if isinstance(file_name, bytes) else file_name
+            for file_name, encoding in self.filename_encodings
+        ]
 
     def query(self, filt="private", pattern=""):
         """Calles 'distribution/query'
@@ -187,7 +207,7 @@ html5
         """
         # creatng and uploading the files
         content_type = "text/plain"
-        for filename, encoding in self.files:
+        for filename in self.files:
             with open(filename, "w") as g:
                 g.write("test_content")
             self.uploadFile(filename, content_type)
@@ -197,7 +217,6 @@ html5
         for item in self.recipients:
             recipients.append(item.dn())
         print("recipients=", recipients)
-        files = [file_name.decode(encoding).encode("UTF-8") for file_name, encoding in self.files]
         param = [
             {
                 "object": {
@@ -208,7 +227,7 @@ html5
                     "distributeDate": self.distributeDate,
                     "distributeTime": self.distributeTime,
                     "distributeType": self.distributeType,
-                    "files": files,
+                    "files": self.files_encoded,
                     "name": self.name,
                     "recipients": recipients,
                 },
@@ -279,7 +298,7 @@ html5
         collectType = collectType if collectType else self.collectType
         collectTime = collectTime if collectTime else self.collectTime
         collectDate = collectDate if collectDate else self.collectDate
-        files = files if files else [x for x, y in self.files]
+        files = files if files else self.files
         recipients = recipients if recipients else self.recipients
         new_recipients = []
         for item in recipients:
@@ -314,7 +333,7 @@ html5
             self.collectType = collectType
             self.collectTime = collectTime
             self.collectDate = collectDate
-            self.files = [(x, "utf8") for x in files]
+            self.filename_encodings = [(x, "utf8") for x in files]
             self.recipients = recipients
 
     def check_put(self, previousGetResult):
@@ -348,7 +367,7 @@ html5
         else:
             dTime = "%s %s" % (self.collectDate, self.collectTime)
         current = {
-            "files": [x for x, y in self.files],
+            "files": self.files,
             "sender": self.sender,
             "description": self.description,
             "recipients": recips,
@@ -460,7 +479,7 @@ html5
             print("file_path=", path)
             existingFiles = self.idir(path)
             print("existingFiles=", existingFiles)
-            files = [x for x, y in self.files]
+            files = self.files
             assert files == existingFiles, "Project files were not distributed for user %s:\n%r!=%r" % (
                 user,
                 files,
@@ -477,7 +496,7 @@ html5
     def check_collect(self, users):
         """Checks if the collection was successful
         by checking the file system.\n
-        :param users: names of users to have the material collected form
+        :param users: names of users to have the material collected from
         :type users: list of str
         """
         print("Checking %s collection" % (self.name,))
@@ -486,7 +505,7 @@ html5
             print("file_path=", path)
             existingFiles = self.idir(path)
             print("existingFiles=", existingFiles)
-            files = [x for x, y in self.files]
+            files = self.files
             assert files == existingFiles, "Project files were not collected for user %s:\n%r!=%r" % (
                 user,
                 files,

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Check SingleSourcePartialUserImport scenario
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -30,18 +30,12 @@ class Test(CLI_Import_v2_Tester):
         schools = self.lo.get(person.dn, attr=["ucsschoolSchool"])["ucsschoolSchool"]
         self.log.info("User is in ou=%r and has schools=%r.", person.school, schools)
         if person.school == self.limbo_ou_name:
-            if schools != [self.limbo_ou_name]:
-                self.fail(
-                    'Primary school is limbo_ou ({!r}) but "schools" attribute is {!r}.'.format(
-                        self.limbo_ou_name, schools
-                    )
-                )
+            assert schools == [self.limbo_ou_name.encode("UTF-8")]
             group_dns = self.lo.searchDn(
                 "(&(objectClass=univentionGroup)(uniqueMember={}))".format(person.dn)
             )
             self.log.debug("Groups of user: %r", group_dns)
-            if not all(dn.endswith(self.limbo_ou_dn) for dn in group_dns):
-                self.fail("User is in limbo_ou, but has group from other OUs.")
+            assert all(dn.endswith(self.limbo_ou_dn) for dn in group_dns), (group_dns, self.limbo_ou_dn)
 
     def test(self):
         source_uid = "source_uid-%s" % (uts.random_string(),)

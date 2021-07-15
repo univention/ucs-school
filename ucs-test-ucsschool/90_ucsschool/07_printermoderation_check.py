@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-printermoderator-module-check
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -15,8 +15,6 @@ from mimetypes import MimeTypes
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 
@@ -155,10 +153,8 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost, doma
         utils.fail("Could not pass print jobs to hard printer")
 
 
-def main():
-    with univention.testing.udm.UCSTestUDM() as udm:
-        with utu.UCSTestSchool() as schoolenv:
-            with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_printermoderation(udm_session, schoolenv, ucr):
+                udm = udm_session
                 newPrinterName = uts.random_string()
                 default_printer = "PDFDrucker"
                 test_file = "testpage.ps"
@@ -248,7 +244,3 @@ def main():
 
                 # delete the created printer
                 doPrinter("D", newPrinterName, school, host, domainname)
-
-
-if __name__ == "__main__":
-    main()

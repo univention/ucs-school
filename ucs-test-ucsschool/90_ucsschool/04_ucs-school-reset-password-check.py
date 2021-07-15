@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-reset-password-check
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -6,8 +6,6 @@
 ## packages: [ucs-school-umc-users]
 
 from __future__ import print_function
-
-import sys
 
 import pytest
 
@@ -27,7 +25,7 @@ def auth(host, username, password):
         return exc.response
 
 
-def test_pwd_reset(
+def _test_pwd_reset(
     host,
     acting_user,
     flavor,
@@ -78,7 +76,8 @@ def test_pwd_reset(
         assert auth_response.result.get("password_expired"), "The password is not expired - as expected."
 
 
-def main():
+@pytest.fixture()
+def school_environment():
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
     host = ucr.get("hostname")
@@ -103,65 +102,92 @@ def main():
             adminsDn.append(admin_dn)
 
         utils.wait_for_replication_and_postrun()
-
-        print("#1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True)")
-        test_pwd_reset(
-            host, teachers[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
-        )
-
-        print("#2 test if student is unable to reset teacher password (chgPwdNextLogin=True)")
-        test_pwd_reset(
-            host, students[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
-        )
-
-        print("#3 test if student is unable to reset student password (chgPwdNextLogin=True)")
-        test_pwd_reset(
-            host, students[0], "student", students[1], studentsDn[1], True, Forbidden, 200, 401
-        )
-
-        print("#4 test if teacher is unable to reset teacher password (chgPwdNextLogin=False)")
-        test_pwd_reset(
-            host, teachers[0], "teacher", teachers[1], teachersDn[1], False, Forbidden, 200, 401
-        )
-
-        print("#5 test if student is unable to reset teacher password (chgPwdNextLogin=False)")
-        test_pwd_reset(
-            host, students[0], "teacher", teachers[1], teachersDn[1], False, Forbidden, 200, 401
-        )
-
-        print("#6 test if student is unable to reset student password (chgPwdNextLogin=False)")
-        test_pwd_reset(
-            host, students[0], "student", students[1], studentsDn[1], False, Forbidden, 200, 401
-        )
-
-        print("#7 test if teacher is able to reset student password (chgPwdNextLogin=True)")
-        test_pwd_reset(
-            host, teachers[0], "student", students[1], studentsDn[1], True, True, 401, 401, True
-        )
-
-        print("#8 test if teacher is able to reset student password (chgPwdNextLogin=False)")
-        test_pwd_reset(host, teachers[0], "student", students[0], studentsDn[0], False, True, 401, 200)
-
-        print("#9 test if schooladmin is able to reset student password (chgPwdNextLogin=False)")
-        test_pwd_reset(host, admins[0], "student", students[0], studentsDn[0], False, True, 401, 200)
-
-        print("#10 test if schooladmin is able to reset student password (chgPwdNextLogin=True)")
-        test_pwd_reset(host, admins[0], "student", students[2], studentsDn[2], True, True, 401, 401)
-
-        print("#11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False)")
-        test_pwd_reset(host, admins[0], "student", teachers[0], teachersDn[0], False, True, 401, 200)
-
-        print("#12 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True)")
-        test_pwd_reset(host, admins[0], "student", teachers[1], teachersDn[1], True, True, 401, 401)
+        yield teachers, teachersDn, students, studentsDn, admins, adminsDn
 
 
-# DISABLED DUE TO BUG 35447
-# 		print '#13 test if schooladmin is able to reset admin password (chgPwdNextLogin=False)'
-# 		test_pwd_reset(host, admins[0], 'student', admins[1], adminsDn[1], False, Forbidden, 200, 401)
-
-# 		print '#14 test if schooladmin is able to reset admin password (chgPwdNextLogin=True)'
-# 		test_pwd_reset(host, admins[0], 'student', admins[2], adminsDn[2], True, Forbidden, 200, 401)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+@pytest.mark.parametrize(
+    "acting_user,flavor,target,target_num,chg_pwd_on_next_login,expected_reset_result,expected_auth_for_new_password,expected_auth_for_old_password,expect_password_expired",
+    [
+        # #1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True),
+        ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
+        # #2 test if student is unable to reset teacher password (chgPwdNextLogin=True),
+        ("students", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
+        # #3 test if student is unable to reset student password (chgPwdNextLogin=True),
+        ("students", "student", "students", 1, True, Forbidden, 200, 401, False),
+        # #4 test if teacher is unable to reset teacher password (chgPwdNextLogin=False),
+        ("teachers", "teacher", "teachers", 1, False, Forbidden, 200, 401, False),
+        # #5 test if student is unable to reset teacher password (chgPwdNextLogin=False),
+        ("students", "teacher", "teachers", 1, False, Forbidden, 200, 401, False),
+        # #6 test if student is unable to reset student password (chgPwdNextLogin=False),
+        ("students", "student", "students", 1, False, Forbidden, 200, 401, False),
+        # #7 test if teacher is able to reset student password (chgPwdNextLogin=True),
+        ("teachers", "student", "students", 1, True, True, 401, 401, True),
+        # #8 test if teacher is able to reset student password (chgPwdNextLogin=False),
+        ("teachers", "student", "students", 0, False, True, 401, 200, False),
+        # #9 test if schooladmin is able to reset student password (chgPwdNextLogin=False),
+        ("admins", "student", "students", 0, False, True, 401, 200, False),
+        # #10 test if schooladmin is able to reset student password (chgPwdNextLogin=True),
+        ("admins", "student", "students", 2, True, True, 401, 401, False),
+        # #11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False),
+        ("admins", "student", "teachers", 0, False, True, 401, 200, False),
+        # #12 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True),
+        ("admins", "student", "teachers", 1, True, True, 401, 401, False),
+        # DISABLED DUE TO BUG 35447:
+        # #13 test if schooladmin is able to reset admin password (chgPwdNextLogin=False),
+        pytest.param(
+            "admins",
+            "student",
+            "admins",
+            1,
+            False,
+            Forbidden,
+            200,
+            401,
+            False,
+            marks=pytest.mark.xfail(reason="Bug #35447"),
+        ),
+        # #14 test if schooladmin is able to reset admin password (chgPwdNextLogin=True)
+        pytest.param(
+            "admins",
+            "student",
+            "admins",
+            2,
+            True,
+            Forbidden,
+            200,
+            401,
+            False,
+            marks=pytest.mark.xfail(reason="Bug #35447"),
+        ),
+    ],
+)
+def test_password_reset(
+    ucr,
+    school_environment,
+    acting_user,
+    flavor,
+    target,
+    target_num,
+    chg_pwd_on_next_login,
+    expected_reset_result,
+    expected_auth_for_new_password,
+    expected_auth_for_old_password,
+    expect_password_expired,
+):
+    host = ucr.get("hostname")
+    teachers, teachersDn, students, studentsDn, admins, adminsDn = school_environment
+    users = {"teachers": teachers, "students": students, "admins": admins}
+    dns = {"teachers": teachersDn, "students": studentsDn, "admins": adminsDn}
+    ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401)
+    _test_pwd_reset(
+        host,
+        users[acting_user][0],
+        flavor,
+        users[target][target_num],
+        dns[target][target_num],
+        chg_pwd_on_next_login,
+        expected_reset_result,
+        expected_auth_for_old_password,
+        expected_auth_for_new_password,
+        expect_password_expired=False,
+    )

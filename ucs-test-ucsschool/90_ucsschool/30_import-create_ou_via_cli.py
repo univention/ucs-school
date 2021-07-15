@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Import OU via CLI
 ## tags: [apptest,ucsschool,ucsschool_import4]
@@ -8,6 +8,7 @@
 ## packages:
 ##   - ucs-school-import
 
+import base64
 import datetime
 import os
 import shutil
@@ -73,7 +74,7 @@ def test_ou_basics(
                 eio.create_and_verify_ou(
                     ucr,
                     ou=ou_name,
-                    ou_displayname=ou_displayname.decode("base64"),
+                    ou_displayname=base64.b64decode(ou_displayname.encode("ASCII")).decode("UTF-8"),
                     dc=dc,
                     dc_administrative=dc_administrative,
                     sharefileserver=sharefileserver,

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: ucs-school-ldap-acls
 ## roles: [domaincontroller_master]
@@ -10,20 +10,10 @@
 
 from __future__ import print_function
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import run_commands
 from univention.testing.ucsschool.computerroom import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 from univention.uldap import getMachineConnection
-
-
-class FailAcl(Exception):
-    pass
-
-
-class FailCmd(Exception):
-    pass
 
 
 class Attributes(object):
@@ -271,8 +261,8 @@ class LDAPACLTestMatrix(object):
         :type access: str=Access.Read Access.Write or Access.none
         """
         access_allowance = access_allowance if access_allowance else Access.Allowed
-        # print '\n * Authdn = %s\n * Targetdn = %s\n * Attribute = %s\n * Access = %s' % (
-        # 		self.auth_dn, target_dn, attr, access)
+        # print('\n * Authdn = %s\n * Targetdn = %s\n * Attribute = %s\n * Access = %s' % (
+        #       self.auth_dn, target_dn, attr, access))
         cmd = [
             "slapacl",
             "-f",
@@ -295,7 +285,7 @@ class LDAPACLTestMatrix(object):
                 else:
                     return True
         else:
-            raise FailCmd("command %r was not executed successfully" % cmd)
+            assert False, "command %r was not executed successfully" % cmd
 
     def walkThroughContainer(self, base):
         lo = getMachineConnection()
@@ -370,9 +360,7 @@ class LDAPACLTestMatrix(object):
                 self.addSubtree(dn, attrs, access)
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_ldap_acls(schoolenv, ucr):
             base_dn = ucr.get("ldap/base")
             school, school_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
@@ -443,7 +431,3 @@ def main():
                     mac_temp_dn,
                 ]
             )
-
-
-if __name__ == "__main__":
-    main()

@@ -164,28 +164,28 @@ class Person(object):
             self.move_school_classes(old_school, self.school)
 
     def update(self, **kwargs):
-        for key in kwargs:
+        for key, value in kwargs.items():
             if key == "dn":
-                self.username = ldap.explode_rdn(kwargs[key], notypes=1)[0]
-                self.dn = kwargs[key]
+                self.username = ldap.explode_rdn(value, notypes=True)[0]
+                self.dn = value
             if key == "username":
-                self.username = kwargs[key]
+                self.username = value
                 self.dn = self.make_dn()
             elif key == "school":
-                self._set_school(kwargs[key])
+                self._set_school(value)
             elif key == "schools":
                 if not self.school and "school" not in kwargs:
-                    self._set_school(sorted(kwargs[key])[0])
-                self.schools = kwargs[key]
+                    self._set_school(sorted(value)[0])
+                self.schools = value
             elif hasattr(self, key):
-                setattr(self, key, kwargs[key])
+                setattr(self, key, value)
             else:
-                print("ERROR: cannot update Person(): unknown option %r=%r" % (key, kwargs[key]))
+                print("ERROR: cannot update Person(): unknown option %r=%r" % (key, value))
 
     def move_school_classes(self, old_school, new_school):
         assert new_school in self.schools
 
-        for school, classes in self.school_classes.items():
+        for school, classes in list(self.school_classes.items()):
             if school == old_school:
                 new_classes = [
                     cls.replace("{}-".format(old_school), "{}-".format(new_school)) for cls in classes
@@ -466,7 +466,7 @@ class Person(object):
                     key = ldap2person[attr]
                 except KeyError:
                     raise NotImplementedError("Mapping for {!r} not yet implemented.".format(attr))
-                value = attrs_from_ldap.get(key, [None])[0]
+                value = attrs_from_ldap.get(key, [None])[0].decode("UTF-8")
             kwargs[attr] = value
         self.update(**kwargs)
 
