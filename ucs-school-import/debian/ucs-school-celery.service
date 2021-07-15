@@ -1,0 +1,17 @@
+[Unit]
+Description=celery task worker daemon for ucsschool-import
+After=network.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+EnvironmentFile=/etc/default/celery-worker-ucsschool-import
+WorkingDirectory=/var/spool/ucs-school-import
+ExecStart=/bin/sh -c '${CELERY_BIN:-"celery"} -A $CELERY_APP multi start $CELERYD_NODES --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS'
+ExecStop=/bin/sh -c '${CELERY_BIN:-"celery"} multi stopwait $CELERYD_NODES --pidfile=${CELERYD_PID_FILE}'
+ExecReload=/bin/sh -c '${CELERY_BIN:-"celery"} -A $CELERY_APP multi restart $CELERYD_NODES --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
