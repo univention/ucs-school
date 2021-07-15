@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.share.MarketplaceShare
 ## roles: [domaincontroller_master]
@@ -8,7 +8,7 @@
 ##   - ucs-school-import
 
 try:
-    from typing import Iterable, Tuple
+    from typing import Iterable, Tuple  # noqa: F401
 except ImportError:
     pass
 

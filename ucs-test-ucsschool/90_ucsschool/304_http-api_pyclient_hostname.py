@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: Import HTTP API (Newton) accepts hostname matching its fqdn, but with differing case
 ## tags: [apptest,ucsschool,ucsschool_import1]
