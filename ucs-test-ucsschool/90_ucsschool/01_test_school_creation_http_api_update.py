@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Modify ucrv on school creation/deletion
 ## roles: [domaincontroller_master, domaincontroller_backup]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 ##   - ucs-school-import-http-api
 import os
 
@@ -23,7 +23,3 @@ def test_school_creation():
     name = uts.random_name()
     schoolenv.create_ou(ou_name=name, use_cache=False)
     assert name in list(School.objects.all().values_list("name", flat=True))
-
-
-if __name__ == "__main__":
-    test_school_creation()

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Klassen module
 ## roles: [domaincontroller_master]
@@ -6,14 +6,10 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.klasse import Klasse
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_klassen_module(schoolenv, ucr):
             ou, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             klassen = []
 
@@ -39,7 +35,3 @@ def main():
 
                 klasse.remove()
                 klasse.check_existence(False)
-
-
-if __name__ == "__main__":
-    main()

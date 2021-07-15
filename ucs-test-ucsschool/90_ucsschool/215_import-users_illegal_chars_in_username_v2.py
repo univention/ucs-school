@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: remove illegal characters from username
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -31,7 +31,6 @@ class UsernameHandler(UsernameHandler):
         self.storage_backend = static_memory_storage_backend
 
 
-if __name__ == "__main__":
+def test_import_users_illegal_chars_in_username_v2():
     result = doctest.testmod()
-    if result.failed or not result.attempted:
-        raise ValueError(result)
+    assert not result.failed and result.attempted, result

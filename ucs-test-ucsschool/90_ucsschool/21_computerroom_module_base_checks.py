@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: computerroom module base checks
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -7,15 +7,11 @@
 
 from __future__ import print_function
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.umc import Client
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_computerroom_module_base_checks(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             tea1, tea1_dn = schoolenv.create_user(school, is_teacher=True)
             tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
@@ -53,7 +49,3 @@ def main():
             room3.checK_room_aquire(client2, "OK")
             room3.check_room_user(client1, tea2)
             room3.check_room_computers(client2, created_computers_dn[4:9])
-
-
-if __name__ == "__main__":
-    main()

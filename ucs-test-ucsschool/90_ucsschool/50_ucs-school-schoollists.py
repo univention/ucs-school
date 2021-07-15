@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test umc calls to generate school class lists
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
@@ -6,17 +6,12 @@
 ## packages: [ucs-school-umc-groups]
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 
 
-def main():
-    ucr = ucr_test.UCSTestConfigRegistry()
-    ucr.load()
-    host = ucr.get("hostname")
-    with utu.UCSTestSchool() as schoolenv:
+def test_ucs_school_schoollists(ucr, schoolenv):
+        host = ucr.get("hostname")
         school_name, oudn = schoolenv.create_ou(name_edudc=host)
         class_name, class_dn = schoolenv.create_school_class(school_name)
         stu_firstname = uts.random_string()
@@ -48,7 +43,3 @@ def main():
             print("Expected: {}".format(expected_class_list))
             print("Received: {}".format(class_list))
             assert class_list == expected_class_list
-
-
-if __name__ == "__main__":
-    main()

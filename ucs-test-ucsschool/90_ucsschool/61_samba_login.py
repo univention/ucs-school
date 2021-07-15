@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Create an user and check the samba4 login
 ## roles:
 ##  - domaincontroller_master
@@ -13,32 +13,18 @@
 
 import subprocess
 
-import univention.config_registry as config_registry
 import univention.testing.strings as uts
-import univention.testing.udm as udm_test
 
 
-class SambaLoginFailed(Exception):
-    pass
-
-
-if __name__ == "__main__":
-    ucr = config_registry.ConfigRegistry()
-    ucr.load()
-
-    with udm_test.UCSTestUDM() as udm:
-        username = uts.random_username()
+def test_samba_login(ucr, udm):
         password = uts.random_string()
 
-        user = udm.create_user(username=username, password=password)
+        username = udm.create_user(password=password)[0]
 
-        cmd = (
+        subprocess.check_call((
             "/usr/bin/smbclient",
             "-U%s%%%s" % (username, password),
             "//%s/netlogon" % ucr.get("hostname"),
             "-c",
             "ls",
-        )
-        retcode = subprocess.call(cmd, shell=False)
-        if retcode:
-            raise SambaLoginFailed()
+        ))

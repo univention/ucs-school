@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-singlemaster-check
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -9,37 +9,21 @@
 from __future__ import print_function
 
 import subprocess
-import sys
 
 import univention.testing.ucr as ucr_test
 
 
-def main():
-    dpkgQuery = subprocess.Popen(
+def test_ucs_school_singlemaster_check():
+    dpkg_query = subprocess.Popen(
         ["dpkg-query", "-W", "-f", "${Status}\n", "ucs-school-singlemaster"], stdout=subprocess.PIPE
     ).communicate()[0].decode("UTF-8")
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
     if ucr.is_true("ucsschool/singlemaster"):
-        if dpkgQuery == "install ok installed\n":
-            print("ucs-school-singlemaster is installed")
-            print("ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Correct Value)")
-            returnValue = 0
-        else:
-            print("ucs-school-singlemaster is not installed ")
-            print("ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Wrong Value)")
-            returnValue = 1
+        assert dpkg_query == "install ok installed\n", ("ucs-school-singlemaster is not installed ", ucr.get("ucsschool/singlemaster"))
+        print("ucs-school-singlemaster is installed")
+        print("ucsschool/singlemaster =", ucr.get("ucsschool/singlemaster"), " (Correct Value)")
     else:
-        if dpkgQuery == "install ok installed\n":
-            print("ucs-school-singlemaster is installed ")
-            print("ucsschool/singlemaster = false", " (Wrong Value)")
-            returnValue = 1
-        else:
-            print("ucs-school-singlemaster is not installed ")
-            print("ucsschool/singlemaster = false", " (Correct Value)")
-            returnValue = 0
-    return returnValue
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+        assert dpkg_query != "install ok installed\n", ("ucs-school-singlemaster is installed ", ucr.get("ucsschool/singlemaster"))
+        print("ucs-school-singlemaster is not installed ")
+        print("ucsschool/singlemaster = false", " (Correct Value)")

@@ -1,23 +1,20 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test if the Marktplatz share is created with every school
-## roles: []
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 
 import pytest
 
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.share import MarketplaceShare
 from ucsschool.lib.models.utils import ucr
 from univention.config_registry import handler_set, handler_unset
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
-def test_market_place_created(ucr_value):
-    with utu.UCSTestSchool() as schoolenv:
+def test_market_place_created(schoolenv, ucr_value):
         if ucr_value == "unset":
             handler_unset(["ucsschool/import/generate/share/marktplatz"])
         else:

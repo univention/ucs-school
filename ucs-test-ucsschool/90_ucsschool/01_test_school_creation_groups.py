@@ -1,15 +1,14 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v -s
 ## -*- coding: utf-8 -*-
 ## desc: test if exam and import groups are created correctly
 ## roles: []
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 
 import pytest
 
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.misc import Container
 from ucsschool.lib.models.utils import ucr
@@ -20,8 +19,7 @@ from univention.testing.utils import verify_ldap_object
 
 
 @pytest.mark.parametrize("ucr_value", ["yes", "no", "unset"])
-def test_import_import_group(ucr_value):
-    with utu.UCSTestSchool() as schoolenv:
+def test_import_import_group(schoolenv, ucr_value):
         if ucr_value == "unset":
             handler_unset(["ucsschool/import/generate/import/group"])
         else:
@@ -42,8 +40,7 @@ def test_import_import_group(ucr_value):
             verify_ldap_object(ou_import_group_dn, expected_attr=expected_attr, strict=False)
 
 
-def test_create_exam_group():
-    with utu.UCSTestSchool() as schoolenv:
+def test_create_exam_group(schoolenv):
         ucr = schoolenv.ucr
         ldap_base = ucr["ldap/base"]
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr["hostname"], use_cache=False)

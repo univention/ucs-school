@@ -1,5 +1,5 @@
-#!/usr/share/ucs-test/runner python
-# coding=utf-8
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
+# -*- coding: utf-8 -*-
 ## desc: users in domain admin group & OC ucsschoolAdministrator can create school & non-school users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
@@ -8,8 +8,6 @@
 
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import Acl
 
 
@@ -22,9 +20,7 @@ class MyAcl(Acl):
         self.assert_acl(user_dn, access, attrs)
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def ldap_acls_domain_admins(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             tea, tea_dn = schoolenv.create_teacher(school)
             non_school_admin_dn, nonschool_admin = schoolenv.udm.create_user(
@@ -38,7 +34,3 @@ def main():
             )
             acl2.assert_user(non_school_user_dn, "write")
             acl2.assert_user(tea_dn, "write")
-
-
-if __name__ == "__main__":
-    main()

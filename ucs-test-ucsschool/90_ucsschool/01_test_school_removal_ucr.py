@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner python-3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Modify ucrv on school creation/deletion
 ## roles: [domaincontroller_master, domaincontroller_backup]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 ##   - ucs-school-selfservice-support
 
 
@@ -34,7 +34,3 @@ def test_school_creation():
     lib_ucr.load()
     ucr_value = lib_ucr.get(ucrv, "")
     assert value not in ucr_value
-
-
-if __name__ == "__main__":
-    test_school_creation()

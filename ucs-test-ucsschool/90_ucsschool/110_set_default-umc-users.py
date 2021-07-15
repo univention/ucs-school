@@ -1,17 +1,15 @@
-#!/usr/share/ucs-test/runner python3
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: set default umc users
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: []
 
-import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from univention.config_registry import handler_set
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_set_default_umc_users(ucr):
         handler_set(["ucsschool/import/attach/policy/default-umc-users=no"])
         # UCR variables are loaded for ucsschool at the import stage
         # That's why the import should be after setting the ucr variable
@@ -29,23 +27,10 @@ def main():
                     schoolenv.get_ou_base_dn(school),
                 )
                 print("*** Checking school {!r} (cli={})".format(school, cli))
-                try:
-                    expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (
-                        ucr.get("ldap/base"),
-                    )
-                    found_attr = schoolenv.lo.search(
-                        base=base, scope="base", attr=["univentionPolicyReference"]
-                    )[0][1].get("univentionPolicyReference", [])
-                    if expected_attr in found_attr:
-                        utils.fail(
-                            "Attributes found: %r\nNot expected: %r" % (found_attr, expected_attr)
-                        )
-                except IndexError:
-                    utils.fail(
-                        "Attribute %s was not found in ldap object %r"
-                        % ("univentionPolicyReference", base)
-                    )
-
-
-if __name__ == "__main__":
-    main()
+                expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (
+                    ucr.get("ldap/base"),
+                )
+                found_attr = schoolenv.lo.search(
+                    base=base, scope="base", attr=["univentionPolicyReference"]
+                )[0][1].get("univentionPolicyReference", [])
+                assert expected_attr.encode("UTF-8") not in found_attr
