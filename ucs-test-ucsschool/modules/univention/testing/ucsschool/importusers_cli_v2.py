@@ -512,7 +512,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
 
     def check_for_non_empty_pyhooks(self, raise_exc=True):
         path = "/usr/share/ucs-school-import/pyhooks"
-        dir_content = os.listdir(path)
+        dir_content = [x for x in os.listdir(path) if x != "__pycache__"]
         if dir_content:
             msg = (
                 "The directory {!r} seems to be non-empty: {!r} That often causes problems for tests. "
