@@ -56,7 +56,7 @@ from univention.management.console.modules.decorators import (
     sanitize,
     simple_response,
 )
-from univention.management.console.modules.sanitizers import StringSanitizer
+from univention.management.console.modules.sanitizers import LDAPSearchSanitizer, StringSanitizer
 
 DISTRIBUTION_DATA_PATH = "/var/lib/ucs-school-umc-distribution"
 DISTRIBUTION_CMD = "/usr/lib/ucs-school-umc-distribution/umc-distribution"
@@ -141,13 +141,14 @@ class Instance(SchoolBaseModule):
         **{
             "school": SchoolSanitizer(required=True),
             "class": StringSanitizer(required=True),
-            "pattern": StringSanitizer(required=True),
+            "pattern": LDAPSearchSanitizer(
+                required=True, default="", use_asterisks=True, add_asterisks=False
+            ),
         }
     )
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None, ldap_position=None):
         """Searches for print jobs"""
-
         klass = request.options.get("class")
         if klass in (None, "None"):
             klass = None

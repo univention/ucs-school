@@ -43,7 +43,11 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import BooleanSanitizer, StringSanitizer
+from univention.management.console.modules.sanitizers import (
+    BooleanSanitizer,
+    LDAPSearchSanitizer,
+    StringSanitizer,
+)
 
 _ = Translation("ucs-school-umc-schoolusers").translate
 
@@ -63,7 +67,9 @@ class Instance(SchoolBaseModule):
         **{
             "school": SchoolSanitizer(required=True),
             "class": StringSanitizer(required=True),  # allow_none=True
-            "pattern": StringSanitizer(required=True),
+            "pattern": LDAPSearchSanitizer(
+                required=True, default="", use_asterisks=True, add_asterisks=False
+            ),
         }
     )
     @LDAP_Connection()

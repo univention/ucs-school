@@ -46,8 +46,8 @@ from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import (
     DictSanitizer,
     DNSanitizer,
+    LDAPSearchSanitizer,
     ListSanitizer,
-    StringSanitizer,
 )
 
 try:
@@ -66,11 +66,13 @@ class Instance(SchoolBaseModule):
         super(Instance, self).init()
         add_module_logger_to_schoollib()
 
-    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+    )
     @LDAP_Connection()
     def computers(self, request, ldap_user_read=None):
         pattern = LDAP_Filter.forComputers(request.options.get("pattern", ""))
-
         result = [
             {"label": x.name, "id": x.dn, "teacher_computer": x.teacher_computer}
             for x in SchoolComputer.get_all(ldap_user_read, request.options["school"], pattern)
@@ -81,12 +83,14 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, result)
 
-    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+    )
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None):
         school = request.options["school"]
         pattern = LDAP_Filter.forGroups(request.options.get("pattern", ""), school)
-
         result = [
             {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)
