@@ -14,10 +14,10 @@ msgstr ""
 
 #: umc/js/printermoderation.js:274
 msgid ""
-"A printer must be selected on which the document <i>{printjob}</i> should be "
+"A printer must be selected on which the document {0} should be "
 "printed."
 msgstr ""
-"Ein Drucker muss ausgewählt werden auf dem das Dokument <i>{printjob}</i> "
+"Ein Drucker muss ausgewählt werden auf dem das Dokument {0} "
 "gedruckt werden soll"
 
 #: umc/js/printermoderation.js:276
