@@ -62,6 +62,7 @@ from univention.management.console.modules.sanitizers import (
     ChoicesSanitizer,
     DictSanitizer,
     DNSanitizer,
+    LDAPSearchSanitizer,
     StringSanitizer,
 )
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
@@ -444,6 +445,10 @@ class Instance(SchoolBaseModule, SchoolImport):
             schools = [School.cache(school)]
         else:
             schools = School.from_binddn(lo)
+        sanitizer = LDAPSearchSanitizer(
+            required=False, default="", use_asterisks=True, add_asterisks=False
+        )
+        filter_str = sanitizer.sanitize("filter_str", {"filter_str": filter_str})
         objs = []
         for school in schools:
             try:
@@ -581,6 +586,9 @@ class Instance(SchoolBaseModule, SchoolImport):
     create_class = _create_obj
     delete_class = _delete_obj
 
+    @sanitize(
+        filter=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+    )
     @response
     @LDAP_Connection()
     def get_schools(self, request, ldap_user_read=None):
