@@ -50,7 +50,6 @@ class UMCTester(object):
 			self.selenium.do_login()
 			self.selenium.open_module(_('Define internet rules'), wait_for_standby=False)
 			self.selenium.wait_until_standby_animation_appears_and_disappears(appear_timeout=15, disappear_timeout=60)
-			self.selenium.wait_for_text(_('Unbeschränkt'))
 			self.create_internet_rule(rulename_blacklist, 'Blacklist', 9, ['example.com', 'example2.com'])
 			ucr.load()
 			priority = ucr.get('proxy/filter/setting/{}/priority'.format(rulename_blacklist))
