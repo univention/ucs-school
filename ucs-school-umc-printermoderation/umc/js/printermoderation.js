@@ -206,35 +206,35 @@ define([
 		},
 
 		_deletePrintJobs: function(ids, items) {
-			dialog.confirm( _( 'Should the selected print jobs be deleted?' ), [ {
-				label: _( 'Delete' ),
-				callback: lang.hitch( this, function() {
-					var finished_func = lang.hitch( this, function() {
-						this._progressBar.setInfo( null, _( 'Finished' ), 100 );
+			dialog.confirm(_( 'Should the selected print jobs be deleted?' ), [{
+				label: _('Cancel'),
+				'default': true
+			}, {
+				label: _('Delete'),
+				callback: lang.hitch(this, function() {
+					var finished_func = lang.hitch(this, function() {
+						this._progressBar.setInfo(null, _('Finished'), 100);
 						this.moduleStore.onChange();
-						this.standby( false );
+						this.standby(false);
 					} );
 					var deferred = new Deferred();
 
-					this._progressBar.setInfo( _( 'Deleting print jobs ...' ), '', 0 );
-					this.standby( true, this._progressBar );
+					this._progressBar.setInfo(_( 'Deleting print jobs ...' ), '', 0);
+					this.standby(true, this._progressBar);
 					deferred.resolve();
 
-					array.forEach( items, lang.hitch( this, function( item, i ) {
-						deferred = deferred.then( lang.hitch( this, function() {
-							this._progressBar.setInfo( null, lang.replace( _( 'Print job {0} from {1}' ), [ item.printjob, item.user ] ), (i / ids.length) * 100 );
-							return this.umcpCommand( 'printermoderation/delete', {
+					array.forEach(items, lang.hitch(this, function(item, i) {
+						deferred = deferred.then(lang.hitch(this, function() {
+							this._progressBar.setInfo(null, lang.replace(_('Print job {0} from {1}'), [item.printjob, item.user]), (i / ids.length) * 100);
+							return this.umcpCommand('printermoderation/delete', {
 								username: item.username,
 								printjob: item.filename
-							} );
-						} ), finished_func );
-					} ) );
-					deferred.then( finished_func, finished_func );
-				} )
-			}, {
-				label: _( 'Cancel' ),
-				'default': true
-			} ] );
+							});
+						}), finished_func);
+					}));
+					deferred.then(finished_func, finished_func);
+				})
+			}]);
 		},
 
 		_printJobs: function(ids, items) {
@@ -272,11 +272,13 @@ define([
 
 			var message = '';
 			if (ids.length === 1) {
-				message = lang.replace( _( 'A printer must be selected on which the document <i>{printjob}</i> should be printed.' ), items[ 0 ] );
+				var printjob = '<i>' + entities.encode(items[0].printjob) + '</i>';
+				message = entities.encode(_('A printer must be selected on which the document {0} should be printed.'));
+				message = lang.replace(message, [printjob]);
 			} else {
-				message = lang.replace( _( 'A printer must be selected on which the {0} documents should be printed.' ), [ items.length ] );
+				message = entities.encode(lang.replace(_('A printer must be selected on which the {0} documents should be printed.'), [items.length]));
 			}
-			message = '<p>' + entities.encode(message) + '</p>';
+			message = '<p>' + message + '</p>';
 			form = new Form( {
 				style: 'max-width: 500px;',
 				widgets: [ {
