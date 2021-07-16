@@ -52,6 +52,7 @@ from univention.management.console.modules.sanitizers import (
     ChoicesSanitizer,
     DictSanitizer,
     IntegerSanitizer,
+    LDAPSearchSanitizer,
     ListSanitizer,
     StringSanitizer,
 )
@@ -63,6 +64,9 @@ _filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
 
 
 class Instance(SchoolBaseModule):
+    @sanitize(
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False)
+    )
     def query(self, request):
         """Searches for internet filter rules
         requests.options = {}
@@ -386,7 +390,10 @@ class Instance(SchoolBaseModule):
         # return the results
         self.finished(request.id, result)
 
-    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+    )
     @LDAP_Connection()
     def groups_query(self, request, ldap_user_read=None, ldap_position=None):
         """List all groups (classes, workgroups) and their assigned internet rule"""

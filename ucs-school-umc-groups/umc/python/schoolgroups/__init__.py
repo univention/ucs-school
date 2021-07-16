@@ -51,6 +51,7 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import (
     DictSanitizer,
+    LDAPSearchSanitizer,
     ListSanitizer,
     StringSanitizer,
 )
@@ -76,7 +77,12 @@ def get_group_class(request):
 
 
 class Instance(SchoolBaseModule):
-    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        pattern=LDAPSearchSanitizer(
+            required=False, default="*", use_asterisks=True, add_asterisks=False
+        ),
+    )
     @LDAP_Connection()
     def groups(self, request, ldap_user_read=None):
         school = request.options["school"]
@@ -88,7 +94,10 @@ class Instance(SchoolBaseModule):
         )
         self.finished(request.id, result)
 
-    @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))
+    @sanitize(
+        school=SchoolSanitizer(required=True),
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+    )
     @LDAP_Connection()
     def users(self, request, ldap_user_read=None, ldap_position=None):
         # parse group parameter
@@ -112,7 +121,10 @@ class Instance(SchoolBaseModule):
         ]
         self.finished(request.id, result)
 
-    @sanitize(pattern=StringSanitizer(default=""), school=SchoolSanitizer(required=True))
+    @sanitize(
+        pattern=LDAPSearchSanitizer(required=True, default="", use_asterisks=True, add_asterisks=False),
+        school=SchoolSanitizer(required=True),
+    )
     @LDAP_Connection(USER_WRITE)
     def query(self, request, ldap_user_write=None, ldap_position=None):
         klasses = [get_group_class(request)]
