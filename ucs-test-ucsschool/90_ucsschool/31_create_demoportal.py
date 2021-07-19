@@ -5,7 +5,7 @@
 ## roles: [domaincontroller_master]
 ## exposure: safe
 ## packages:
-##   - ucs-school-master
+##   - ucs-school-singlemaster
 
 import imp
 import os
@@ -73,11 +73,11 @@ def entries():
 
 
 @pytest.fixture()
-def categories():
+def categories(entries):
     return [
-        [uts.random_name() for _ in range(3)],
-        [uts.random_name() for _ in range(3)],
-        [uts.random_name() for _ in range(3)],
+        [uts.random_name() for _ in range(3)] + [[entries[0][0]]],
+        [uts.random_name() for _ in range(3)] + [[entries[1][0]]],
+        [uts.random_name() for _ in range(3)] + [[entries[2][0]]],
     ]
 
 
@@ -213,7 +213,6 @@ def test_create_school_creates_missing_school(
     assert subprocess_check_call_mock.call_args_list == [
         call(
             [
-                "python",
                 "/usr/share/ucs-school-import/scripts/create_ou",
                 "--displayName={}".format(random_school.display_name),
                 "--alter-dhcpd-base=false",
@@ -248,16 +247,16 @@ def test_create_portal(create_demoportal_module, entries, categories):
         assert isinstance(args[0], simpleLdap)
         udm_objects.append(args[0])
     expected = [
-        {"module": "settings/portal_entry", "props": {"name": entry[0], "link": entry[5]}}
+        {"module": "portals/entry", "props": {"name": entry[0], "link": ["en_US", entry[5]]}}
         for entry in entries
     ]
     expected.extend(
         [
-            {"module": "settings/portal_category", "props": {"name": category[0]}}
+            {"module": "portals/category", "props": {"name": category[0]}}
             for category in categories
         ]
     )
-    expected.append({"module": "settings/portal", "props": {"name": "ucsschool_demo_portal"}})
+    expected.append({"module": "portals/portal", "props": {"name": "ucsschool_demo_portal"}})
     assert len(udm_objects) == len(expected)
     for udm_object, expect in zip(udm_objects, expected):
         assert udm_object.module == expect["module"]
