@@ -1,3 +1,9 @@
+ucs-school-umc-users (15.0.3) unstable; urgency=medium
+
+  * Bug #53026: fix double star search raises traceback
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 20 Jul 2021 09:57:27 +0200
+
 ucs-school-umc-users (15.0.2) unstable; urgency=medium
 
   * Bug #52597: migrate to dh_python
