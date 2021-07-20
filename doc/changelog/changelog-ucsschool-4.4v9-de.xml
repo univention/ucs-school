@@ -804,7 +804,21 @@ feedback@univention.de
 					<!-- END ucs-school-webproxy 15.0.3A~4.4.0.202106030113 -->
 <!-- CHANGELOG:2021-07-01:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-07-20" lang="en">
+					<title>Released on 2021-07-20:</title>
+					<!-- START ucs-school-import 17.0.71A~4.4.0.202107141220 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.71A~4.4.0.202107141220</emphasis>:
+						<itemizedlist>
+							<listitem><para>During the dh-python migration some python packages were installed in the wrong location. This has been repaired (<u:bug>53576</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.71A~4.4.0.202107141220 -->
+<!-- CHANGELOG:2021-07-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
