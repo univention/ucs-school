@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check diagnostic tool ucschool slave groupmemberships
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]
@@ -15,13 +15,13 @@ from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 
 
 class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
-    def unique_members(self, grp_dn):  # type: () -> List
+    def unique_members(self, grp_dn):  # type: () -> List[bytes]
         res = self.lo.get(grp_dn, ["uniqueMember"], required=True)
         if "uniqueMember" in res:
             return res["uniqueMember"]
@@ -54,7 +54,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
             self.schoolA.name, self.ucr.get("ldap/base")
         )
         unique_members = self.unique_members(grp_dn)
-        unique_members.append(slave_dn)
+        unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
             "Host object is member in global admin group but not in OU specific slave group (or the "
@@ -64,7 +64,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         # Add Slave to Member-Edukativnetz
         grp_dn = "cn=Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         unique_members = self.unique_members(grp_dn)
-        unique_members.append(slave_dn)
+        unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append("Slave object is member in memberserver groups")
         expected_warnings_slave.append(
@@ -77,7 +77,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
             self.schoolA.name, self.ucr.get("ldap/base")
         )
         unique_members = self.unique_members(grp_dn)
-        unique_members.append(slave_dn)
+        unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
             "Host object is member in edu groups AND in admin groups which is not allowed"
@@ -86,7 +86,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         # Add the Memberserver to DC-Edukativnetz
         grp_dn = "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         unique_members = self.unique_members(grp_dn)
-        unique_members.append(member_dn)
+        unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [["uniqueMember", self.unique_members(grp_dn), unique_members]])
         expected_warnings_member.append("Memberserver object is member in slave groups")
 
@@ -123,12 +123,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         logger.info("Ran diagnostic tool {} successfully.".format(module_name))
 
 
-def main():
+def test_diagnostic_module_090():
     with UCSSchoolSlaveGroupMemberships() as test_suite:
         test_suite.create_multi_env_global_objects()
         test_suite.create_multi_env_school_objects()
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

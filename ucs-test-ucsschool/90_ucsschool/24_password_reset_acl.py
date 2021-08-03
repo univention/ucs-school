@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: test password reset ACLs
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -14,8 +14,6 @@ import time
 import pytest
 
 import univention.admin.uldap as udm_uldap
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 
 
@@ -45,7 +43,7 @@ RESULT_FAIL = "FAIL"
 RESULT_OK = "OK"
 
 
-class TestCases(object):
+class _TestCases(object):
     def __init__(self, ucr, schoolenv):
         self.ucr = ucr
         self.schoolenv = schoolenv
@@ -141,33 +139,27 @@ class TestCases(object):
             "pwhistory",
         ):  # "krb5key" has no eq matching rule, so lo.modify fails
             if expected_result == RESULT_OK:
-                lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time())]]])
+                lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
             else:
                 with pytest.raises(Exception):
-                    lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time())]]])
+                    lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
         print("OK: result as expected")
 
-    def run(self):
-        self.test_pw_reset(self.student0, self.student1, RESULT_FAIL)
-        self.test_pw_reset(self.student0, self.student2, RESULT_FAIL)
-        self.test_pw_reset(self.teacher0, self.student1, RESULT_OK)
-        self.test_pw_reset(self.teacher0, self.student2, RESULT_OK)
-        self.test_pw_reset(self.teacher0, self.teacher1, RESULT_FAIL)
-        self.test_pw_reset(self.teacher0, self.teacher2, RESULT_FAIL)
-        self.test_pw_reset(self.admin0, self.student1, RESULT_OK)
-        self.test_pw_reset(self.admin0, self.student2, RESULT_OK)
-        self.test_pw_reset(self.admin0, self.teacher1, RESULT_OK)
-        self.test_pw_reset(self.admin0, self.teacher2, RESULT_OK)
-        # the following test is disabled because it will currently fail
-        # self.test_pw_reset(self.admin0, self.admin1, RESULT_FAIL)
 
-
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
-        with utu.UCSTestSchool() as schoolenv:
-            testcases = TestCases(ucr, schoolenv)
-            testcases.run()
-
-
-if __name__ == "__main__":
-    main()
+@pytest.mark.parametrize('actor,target,expected_result', [
+    ('student0', 'student1', RESULT_FAIL),
+    ('student0', 'student2', RESULT_FAIL),
+    ('teacher0', 'student1', RESULT_OK),
+    ('teacher0', 'student2', RESULT_OK),
+    ('teacher0', 'teacher1', RESULT_FAIL),
+    ('teacher0', 'teacher2', RESULT_FAIL),
+    ('admin0', 'student1', RESULT_OK),
+    ('admin0', 'student2', RESULT_OK),
+    ('admin0', 'teacher1', RESULT_OK),
+    ('admin0', 'teacher2', RESULT_OK),
+    # the following test is disabled because it will currently fail
+    pytest.param('admin0', 'admin1', RESULT_FAIL, marks=pytest.mark.xfail(reason='TODO: blame why')),
+])
+def test_password_reset_acl(ucr, schoolenv, actor, target, expected_result):
+    tc = _TestCases(ucr, schoolenv)
+    tc.test_pw_reset(getattr(tc, actor), getattr(tc, target), expected_result)

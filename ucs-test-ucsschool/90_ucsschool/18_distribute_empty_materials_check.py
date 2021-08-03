@@ -7,7 +7,6 @@
 ## packages: [ucs-school-umc-distribution]
 
 import os
-import subprocess
 import time
 
 import univention.testing.strings as uts
@@ -57,7 +56,10 @@ def test_distribute_empty_materials(schoolenv, ucr):
     project.check_distribute([stu])
     student_project_path = project.getUserFilesPath(stu, purpose="distribute")
     filename = uts.random_string()
-    subprocess.check_call(["touch", os.path.join(student_project_path, filename)])
+    with open(os.path.join(student_project_path, filename), "w") as fd:
+        print("Creating %s in %s" % (filename, student_project_path))
+        fd.write("test")
+
     project.filename_encodings.append((filename, "utf-8"))
     project.collect()
     project.check_collect([stu])

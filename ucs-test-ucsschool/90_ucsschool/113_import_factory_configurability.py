@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test configurability feature of import factory
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -96,7 +96,7 @@ class FactoryConfTest(object):
         return exitcode
 
     def create_csv(self):
-        csvfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        csvfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.logger.info("*** Writing user information to CSV file '%s'...", csvfile.name)
         users = list(self.test_user_creator.make_users())
         self.test_user_exporter.dump(users, csvfile.name)
@@ -127,7 +127,7 @@ class FactoryConfTest(object):
             "\n\n*** Starting import with password_exporter=UniventionPasswordExporter...\n"
         )
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -160,7 +160,7 @@ class FactoryConfTest(object):
     def test_result_exporter(self):
         self.logger.info("\n\n*** Starting import with result_exporter=AnonymizeResultExporter...\n\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -212,11 +212,11 @@ class FactoryConfTest(object):
 
     def test_user_importer(self):
         self.logger.info("\n\n*** Starting import with user_importer=BirthdayUserImport...\n\n")
-        csvfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        csvfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.logger.info("*** Writing user information to CSV file '%s'...", csvfile.name)
         users = list(self.test_user_creator.make_users())
-        today_birthday_users = list()
-        random_birthday_users = list()
+        today_birthday_users = []
+        random_birthday_users = []
         today = time.strftime("%Y-%m-%d")
         for user in users:
             if random.choice([True, False]):
@@ -254,7 +254,7 @@ class FactoryConfTest(object):
             "\n\n*** OK: imported 8 users. Will delete them now (except whose with birthday=today)\n\n"
         )
         # create empty CSV file
-        with tempfile.NamedTemporaryFile(dir=self.tmpdir, delete=False) as csvfile:
+        with tempfile.NamedTemporaryFile("w+", dir=self.tmpdir, delete=False) as csvfile:
             dialect = excel()
             dialect.doublequote = True
             dialect.quoting = QUOTE_ALL
@@ -285,7 +285,7 @@ class FactoryConfTest(object):
     def test_username_handler(self):
         self.logger.info("\n\n*** Starting import with username_handler=FooUsernameHandler...\n\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -313,7 +313,7 @@ class FactoryConfTest(object):
     def test_json_writer(self):
         self.logger.info("\n\n*** Starting import with user_writer=JsonWriter...\n")
         users, csvfile = self.create_csv()
-        outfile = tempfile.NamedTemporaryFile(dir=self.tmpdir)
+        outfile = tempfile.NamedTemporaryFile("w+", dir=self.tmpdir)
         self.save_ldap_status()
         self.run_import(
             [
@@ -335,7 +335,7 @@ class FactoryConfTest(object):
         if len(jsout) != 8:
             utils.fail("Expected %d objects in export, found %d." % (8, len(jsout)))
         vn_in = {x["Vorname"] for x in users}
-        vn_out = {x["firstname"].encode("utf-8") for x in jsout}
+        vn_out = {x["firstname"].encode("utf-8") if str is bytes else x["firstname"] for x in jsout}
         if vn_in.difference(vn_out):
             utils.fail(
                 "Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r"

@@ -185,7 +185,7 @@ class Person(object):
     def move_school_classes(self, old_school, new_school):
         assert new_school in self.schools
 
-        for school, classes in self.school_classes.items():
+        for school, classes in list(self.school_classes.items()):
             if school == old_school:
                 new_classes = [
                     cls.replace("{}-".format(old_school), "{}-".format(new_school)) for cls in classes
@@ -466,7 +466,7 @@ class Person(object):
                     key = ldap2person[attr]
                 except KeyError:
                     raise NotImplementedError("Mapping for {!r} not yet implemented.".format(attr))
-                value = attrs_from_ldap.get(key, [None])[0]
+                value = attrs_from_ldap.get(key, [None])[0].decode("UTF-8")
             kwargs[attr] = value
         self.update(**kwargs)
 

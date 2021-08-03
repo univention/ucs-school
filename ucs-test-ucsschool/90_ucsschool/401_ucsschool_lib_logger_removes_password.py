@@ -1,10 +1,10 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test get_file_handler function
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: safe
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 
 import logging
 import os

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test if GPOs filtered for a native Windows Server work in exam mode
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-windows-tools]
@@ -40,7 +40,9 @@ def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
     and 'communicates' with it.
     """
     proc = Popen(cmd, stdout=stdout, stderr=PIPE, stdin=stdin)
-    return proc.communicate(std_in)
+    stdout, stderr = proc.communicate(std_in)
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
+    return stdout, stderr
 
 
 def remove_samba_warnings(input_str):
@@ -60,6 +62,7 @@ def run_samba_tool(cmd, stdout=PIPE):
     """
     cmd += samba_credentials
     stdout, stderr = run_cmd(cmd)
+    stdout, stderr = stdout.decode("UTF-8"), stderr.decode("UTF-8")
 
     if stderr:
         stderr = remove_samba_warnings(stderr)
@@ -583,7 +586,8 @@ class GPO_Test(object):
         )
 
 
-def test_exam_gpo(ucr, udm, schoolenv, windows_client):
+def test_exam_gpo(ucr, udm_session, schoolenv, windows_client):
+    udm = udm_session
 
     school = SchoolSearchBase.getOU(ucr["ldap/hostdn"])
     school_search_base = School.get_search_base(school)

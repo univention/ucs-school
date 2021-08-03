@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test roleshares creation
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -52,9 +52,7 @@ def run_smbclient(share, authname, password, smbcmd):
     runs "smbclient ${share} -U${authname}%${password} -c ${smbcmd}
     and returns the exitcode.
     """
-    cmd = ["smbclient", share, "-U%s%%%s" % (authname, password), "-c", smbcmd]
-
-    return run_cmd(cmd)
+    return run_cmd(["smbclient", share, "-U%s%%%s" % (authname, password), "-c", smbcmd])
 
 
 def run_cmd(cmd, shell=False, print_output=True):
@@ -67,6 +65,7 @@ def run_cmd(cmd, shell=False, print_output=True):
     except OSError:
         print("Failed to run: %r" % cmd)
         raise
+    out = out.decode("UTF-8")
     if print_output:
         print("---[stdout+stderr]---")
         print(out)
@@ -304,5 +303,3 @@ def main(ldap_machine_read=None):
 
 if __name__ == "__main__":
     sys.exit(main())
-
-# vim: set filetype=py

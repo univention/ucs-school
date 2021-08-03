@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: http-proxy-multi-auth-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -13,7 +13,6 @@ import subprocess
 
 import pycurl
 
-import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from univention.config_registry import handler_set, handler_unset
 from univention.testing.ucsschool.simplecurl import SimpleCurl
@@ -37,16 +36,14 @@ def checkBasic(host, passwd, url, http_code):
     print("Performing Basic proxy auth check")
     curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_BASIC)
     result = curl.response(url)
-    if http_code != result:
-        utils.fail("Basic proxy auth check failed, http_code = %r, expected = %r" % (result, http_code))
+    assert http_code == result, "Basic proxy auth check failed, http_code = %r, expected = %r" % (result, http_code)
 
 
 def checkNTLM(host, passwd, url, http_code):
     print("Performing NTLM proxy auth check")
     curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_NTLM)
     result = curl.response(url)
-    if http_code != result:
-        utils.fail("NTLM proxy auth check failed, http_code = %r, expected = %r" % (result, http_code))
+    assert http_code == result, "NTLM proxy auth check failed, http_code = %r, expected = %r" % (result, http_code)
 
 
 def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
@@ -55,16 +52,14 @@ def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
     account = utils.UCSTestDomainAdminCredentials()
     admin = account.username
     pop = subprocess.Popen(["kinit", "--password-file=STDIN", admin], stdin=subprocess.PIPE)
-    pop.communicate(passwd)
+    pop.communicate(passwd.encode("UTF-8"))
     subprocess.call(["klist"])
     result = curl.response(url)
-    if http_code != result:
-        utils.fail(
-            "Gssnegotiate proxy auth check failed, http_code = %r, expected = %r" % (result, http_code)
-        )
+    assert http_code == result, "Gssnegotiate proxy auth check failed, http_code = %r, expected = %r" % (result, http_code)
+    if not expect_wrong_password:
+        assert pop.returncode == 0, "kinit: correct Password used but did not work"
     else:
-        if not expect_wrong_password and pop.returncode != 0:
-            utils.fail("kinit: correct Password used but did not work")
+        assert pop.returncode != 0
 
 
 def setAuthVariables(basic, ntlm, gneg):
@@ -81,7 +76,7 @@ def setAuthVariables(basic, ntlm, gneg):
         handler_set(["squid/krb5auth=yes", "squid/krb5auth/keepalive=yes"])
     else:
         handler_unset(["squid/krb5auth", "squid/krb5auth/keepalive"])
-    subprocess.call(["systemctl", "restart", "squid"])
+    subprocess.check_call(["systemctl", "restart", "squid"])
 
 
 def printHeader(state, passwd, expect_wrong_password):
@@ -90,8 +85,7 @@ def printHeader(state, passwd, expect_wrong_password):
     print("Password used: %s, expect_wrong_password: %s" % (passwd, expect_wrong_password))
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_http_proxy_multi_auth_check(ucr):
         # url = ucr.get('proxy/filter/redirecttarget')
         url = "http://download.univention.de/"
         host = "%s.%s" % (ucr.get("hostname"), ucr.get("domainname"))
@@ -113,7 +107,3 @@ def main():
 
                 # Perform the checks
                 checkAuths(host, passwd, url, basic, ntlm, gneg, expect_wrong_password)
-
-
-if __name__ == "__main__":
-    main()

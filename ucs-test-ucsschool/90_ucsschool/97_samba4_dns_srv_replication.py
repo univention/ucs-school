@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test the DNS SRV record replication.
 ## bugs: [34222, 38064, 39964]
 ## roles:

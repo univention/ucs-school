@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: check if staff users can optionally be replicated to edu slaves
 ## roles: [domaincontroller_slave]
@@ -18,7 +18,7 @@ import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import NameDnObj, UCSTestSchool, logger
 
 try:
-    from typing import Tuple
+    from typing import Tuple  # noqa: F401
 except ImportError:
     pass
 
@@ -53,7 +53,7 @@ class LDAPACLCheck(UCSTestSchool):
             cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         stdout, stderr = proc.communicate(self.admin_password)
-        return stdout, stderr
+        return stdout.decode("UTF-8"), stderr.decode("UTF-8")
 
     def run_test(self):  # type: () -> None
         # ssh to master ==> get UCR + set to OFF
@@ -122,11 +122,7 @@ class LDAPACLCheck(UCSTestSchool):
             logger.debug("STDERR:\n%s", stderr)
 
 
-def main():
+def test_ldap_acls_staff_on_edu_servers():
     with LDAPACLCheck() as test_suite:
         test_suite.setup()
         test_suite.run_test()
-
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## bugs: [40470]
 ## desc: Check values of school-servers (except master and backup) DNS related ucr variables
 ## exposure: safe
@@ -6,11 +6,8 @@
 ##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
 
-from univention.testing.ucr import UCSTestConfigRegistry
 
-
-def main():
-    with UCSTestConfigRegistry() as ucr:
+def test_check_dns_ucr_variables(ucr):
         ucrv_forward = ucr.get("dns/nameserver/registration/forward_zone")
         assert ucr.is_false(value=ucrv_forward), (
             "The ucr variable 'dns/nameserver/registration/forward_zone' is set to '%s', but must be set"
@@ -21,7 +18,3 @@ def main():
             "The ucr variable 'dns/nameserver/registration/reverse_zone' is set to '%s', but must be set"
             " to 'no'." % (ucrv_reverse,)
         )
-
-
-if __name__ == "__main__":
-    main()

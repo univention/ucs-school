@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test ResultPyHooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -60,7 +60,7 @@ class Test(CLI_Import_v2_Tester):
 
         roles = ("staff", "student", "teacher", "teacher_and_staff")
         user_num = dict((role, random.randint(1, 4)) for role in roles)
-        _roles = user_num.keys()
+        _roles = list(user_num.keys())
         random.shuffle(_roles)  # moar random
         roles1 = dict((k, user_num[k]) for k in _roles[:2])
         roles2 = dict((k, user_num[k]) for k in _roles[1:])  # overlap 1
@@ -123,11 +123,9 @@ class Test(CLI_Import_v2_Tester):
             expected_result.append(r"^deleted_{}={}$".format(role, deleted(role)))
         self.log.debug("expected_result:\n%s", "\n".join(expected_result))
 
-        for num, line in enumerate(open(RESULTFILE, "rb")):
-            if re.match(expected_result[num], line):
-                self.log.debug("OK: {!r}".format(line.strip("\n")))
-            else:
-                self.fail("Expected {!r} found {!r}.".format(expected_result[num], line))
+        for num, line in enumerate(open(RESULTFILE, "r")):
+            assert re.match(expected_result[num], line)
+            self.log.debug("OK: {!r}".format(line.strip("\n")))
 
 
 if __name__ == "__main__":

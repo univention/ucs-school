@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Verify that checks of birthday format are executed in dry-run
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -10,6 +10,8 @@
 
 import copy
 import time
+
+import pytest
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
@@ -82,11 +84,9 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         for person in person_list:
             utils.verify_ldap_object(person.dn, strict=False, should_exist=False)
@@ -95,11 +95,9 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** 2.2 should also fail for dry-run..")
         config.update_entry("dry_run", True)
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Dry-run did not fail.")
-        except ImportException:
-            self.log.info("OK: dry-run failed.")
+        self.log.info("OK: dry-run failed.")
 
         for person in person_list:
             utils.verify_ldap_object(person.dn, strict=False, should_exist=False)
@@ -116,11 +114,9 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         for person in person_list_success:
             person.update(birthday=person.old_birthday)
@@ -162,11 +158,9 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         # Import aborted after 1st person, others didn't change school.
         for person in person_list_success[1:]:
@@ -196,11 +190,9 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list_success, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         for person in person_list_success:
             person.update(school=person.old_school, birthday=person.old_birthday)

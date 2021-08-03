@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check home dirs of exam users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -13,45 +13,36 @@ import os
 from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
-from univention.testing.udm import UCSTestUDM
 
 
-def create_homedirs(member_dn_list, open_ldap_co):
+def create_homedirs(member_dn_list, lo):
     # create home directories
     for dn in member_dn_list:
-        for homedir in open_ldap_co.getAttr(dn, "homeDirectory"):
-            if not homedir:
-                utils.fail("No homeDirectory attribute found for %r" % (dn,))
+        for homedir in lo.getAttr(dn, "homeDirectory"):
+            homedir = homedir.decode("UTF-8")
+            assert homedir, "No homeDirectory attribute found for %r" % (dn,)
             if not os.path.exists(homedir):
                 print("# Creating %r for %r" % (homedir, dn))
                 os.makedirs(homedir)
 
 
-def check_homedirs(member_dn_list, open_ldap_co, should_exist=True):
+def check_homedirs(member_dn_list, lo, should_exist=True):
     # create home directories
     for dn in member_dn_list:
-        for homedir in open_ldap_co.getAttr(dn, "homeDirectory"):
+        for homedir in lo.getAttr(dn, "homeDirectory"):
+            homedir = homedir.decode("UTF-8")
             print("# Checking %r for %r" % (homedir, dn))
-            if not homedir:
-                utils.fail("No homeDirectory attribute found for %r" % (dn,))
-            if os.path.exists(homedir) != should_exist:
-                utils.fail(
-                    "homeDirectory %r for %r is not in expected state: found=%r  expected=%r"
-                    % (homedir, dn, os.path.exists(homedir), should_exist)
-                )
+            assert homedir, "No homeDirectory attribute found for %r" % (dn,)
+            assert os.path.exists(homedir) == should_exist
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
-        open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
+def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
+        udm = udm_session
+        lo = schoolenv.open_ldap_connection()
 
         print("# create test users and classes")
         if ucr.is_true("ucsschool/singlemaster"):
@@ -74,13 +65,13 @@ def main():
             lastname=uts.random_name(),
         )
         student2.position = search_base.students
-        student2.create(open_ldap_co)
+        student2.create(lo)
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
         udm.modify_object("groups/group", dn=klasse_dn, append={"users": [student2.dn]})
 
         print("# import random computers")
-        computers = Computers(open_ldap_co, school, 2, 0, 0)
+        computers = Computers(lo, school, 2, 0, 0)
         pc1, pc2 = computers.create()
 
         print("# set 2 computer rooms to contain the created computers")
@@ -95,8 +86,8 @@ def main():
             )
 
         print("# create home directories and check existance")
-        create_homedirs([teadn, studn, student2.dn], open_ldap_co)
-        check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
+        create_homedirs([teadn, studn, student2.dn], lo)
+        check_homedirs([teadn, studn, student2.dn], lo, should_exist=True)
 
         print("# Set an exam and start it")
         current_time = datetime.now()
@@ -116,19 +107,15 @@ def main():
         ]
 
         print("# recheck existance of home directories of original users")
-        check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
+        check_homedirs([teadn, studn, student2.dn], lo, should_exist=True)
         print("# create home directories and check existance of exam users")
-        create_homedirs(exam_member_dns, open_ldap_co)
-        check_homedirs(exam_member_dns, open_ldap_co, should_exist=True)
+        create_homedirs(exam_member_dns, lo)
+        check_homedirs(exam_member_dns, lo, should_exist=True)
 
         print("# stopping exam")
         exam.finish()
 
         print("# recheck existance of home directories of original users")
-        check_homedirs([teadn, studn, student2.dn], open_ldap_co, should_exist=True)
+        check_homedirs([teadn, studn, student2.dn], lo, should_exist=True)
         print("# check removal of home directories of exam users")
-        check_homedirs(exam_member_dns, open_ldap_co, should_exist=False)
-
-
-if __name__ == "__main__":
-    main()
+        check_homedirs(exam_member_dns, lo, should_exist=False)

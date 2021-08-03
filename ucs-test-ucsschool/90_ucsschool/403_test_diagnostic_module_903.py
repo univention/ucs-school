@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check diagnostic tool 903_ucsschool_schoolcomputers
 ## tags: [ucsschool, diganostic_test]
@@ -14,7 +14,7 @@ from univention.management.console.modules.diagnostic import Critical, Instance,
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, NameDnObj, logger
 
 try:
-    from typing import List
+    from typing import List  # noqa: F401
 except ImportError:
     pass
 
@@ -59,9 +59,9 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
             )
             if i > num_computers // 2:
                 objectClass = self.lo.get(computer.dn, ["objectClass"], required=True)
-                if "ucsschoolComputer" in objectClass["objectClass"]:
-                    objectClass["objectClass"].remove("ucsschoolComputer")
-                    assert "ucsschoolComputer" not in self.lo.get(computer.dn, ["objectClass"])
+                if b"ucsschoolComputer" in objectClass["objectClass"]:
+                    objectClass["objectClass"].remove(b"ucsschoolComputer")
+                    assert b"ucsschoolComputer" not in self.lo.get(computer.dn, ["objectClass"])
                 self.lo.modify(
                     computer.dn,
                     [
@@ -110,11 +110,7 @@ class UCSSchoolSchoolComputers(AutoMultiSchoolEnv):
             raise Exception("diagnostic tool (fix) {} failed: {}".format(module_name, exc))
 
 
-def main():
+def test_diagnostic_module_903():
     with UCSSchoolSchoolComputers() as test_suite:
         test_suite.create_multi_env_school_objects()
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

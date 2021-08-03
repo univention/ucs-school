@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: http-proxy-basic-auth-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -9,8 +9,6 @@ from __future__ import print_function
 
 import time
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.klasse import Klasse
@@ -28,10 +26,10 @@ def ruleInControl(user, ruleList, host, banPage):
     ruleList = [rule for rule in ruleList if rule is not None]
     for rule in ruleList:
         if rule.typ == "blacklist":
-            if all(localCurl.getPage(dom) == banPage for dom in rule.domains):
+            if all(localCurl.getPage(dom, encoding="ISO8859-1") == banPage for dom in rule.domains):
                 inCtrl.append(rule)
         elif rule.typ == "whitelist":
-            if all(localCurl.getPage(dom) != banPage for dom in rule.domains):
+            if all(localCurl.getPage(dom, encoding="ISO8859-1") != banPage for dom in rule.domains):
                 inCtrl.append(rule)
     localCurl.close()
     # return the bigger rule
@@ -61,9 +59,7 @@ def doCheck(host, banPage, user, rulesType, ruleWithHigherPrio, ruleWithLowerPri
         print("TEST PASSED: rule in Ctrl for user (%s) is (%s)" % (user, ruleInCtrl))
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_http_proxy_basic_auth_check(schoolenv, ucr):
             host = ucr.get("hostname")
 
             # create ou
@@ -81,7 +77,7 @@ def main():
             # Getting the redirection page when blocked
             adminCurl = SimpleCurl(proxy=host)
             redirUri = ucr.get("proxy/filter/redirecttarget")
-            banPage = adminCurl.getPage(redirUri)
+            banPage = adminCurl.getPage(redirUri, encoding="ISO8859-1")
             adminCurl.close()
 
             client = Client.get_test_connection(host)
@@ -140,7 +136,3 @@ def main():
 
             printHeader("Check for blacklist and teacher for two rules with different priorities")
             doCheck(host, banPage, tea, "blacklist", rule2, rule1)
-
-
-if __name__ == "__main__":
-    main()

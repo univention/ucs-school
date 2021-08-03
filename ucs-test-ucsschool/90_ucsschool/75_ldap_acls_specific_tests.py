@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: check specific LDAP access permissions
 ## roles: [domaincontroller_master]
@@ -35,7 +35,7 @@ import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
 try:
-    from typing import List, Union
+    from typing import List, Union  # noqa: F401
 except ImportError:
     pass
 
@@ -113,9 +113,9 @@ class ACLTester(object):
 
         attr_type = ATTR2TYPE.get(attribute, "str")
         if attr_type == "str":
-            value = [uts.random_string()]  # type: Union[str, List[str]]
+            value = [uts.random_string().encode("UTF-8")]  # type: Union[bytes, List[bytes]]
         elif attr_type == "str_int":
-            value = str(random.randint(100000, 999999))
+            value = str(random.randint(100000, 999999)).encode("UTF-8")
         else:
             raise Exception("Unknown attribute type: {}".format(attr_type))
 
@@ -206,9 +206,9 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
             self.lo.add(
                 dn,
                 [
-                    ("objectClass", "ucsschoolUsername"),
-                    ("ucsschoolUsernameNextNumber", "2"),
-                    ("cn", cn),
+                    ("objectClass", b"ucsschoolUsername"),
+                    ("ucsschoolUsernameNextNumber", b"2"),
+                    ("cn", cn.encode("UTF-8")),
                 ],
             )
         )
@@ -385,7 +385,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
         acl_tester.raise_on_error()
 
 
-def main():
+def test_ldap_acls_specific_tests():
     with LDAPACLCheck() as test_suite:
         test_suite.create_multi_env_global_objects()
         test_suite.create_multi_env_school_objects()
@@ -403,7 +403,3 @@ def main():
                 time.sleep(1)
 
         test_suite.run_all_tests()
-
-
-if __name__ == "__main__":
-    main()

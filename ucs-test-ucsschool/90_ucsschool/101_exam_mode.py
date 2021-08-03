@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -10,7 +10,6 @@
 from __future__ import print_function
 
 from datetime import datetime, timedelta
-from unittest import TestCase, main
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -26,11 +25,11 @@ from univention.testing.ucsschool.exam import (
 from univention.testing.udm import UCSTestUDM
 
 
-class TestExamMode(TestCase):
+class Test_ExamMode(object):
     def __test_exam_mode(self, Exam=Exam):
         with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
             ucr = schoolenv.ucr
-            open_ldap_co = schoolenv.open_ldap_connection()
+            lo = schoolenv.open_ldap_connection()
             ucr.load()
 
             print(" ** Initial Status")
@@ -55,7 +54,7 @@ class TestExamMode(TestCase):
                 lastname=uts.random_name(),
             )
             student2.position = "cn=users,%s" % ucr["ldap/base"]
-            student2.create(open_ldap_co)
+            student2.create(lo)
 
             udm.modify_object("groups/group", dn=klasse_dn, append={"users": [teadn]})
             udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn]})
@@ -65,7 +64,7 @@ class TestExamMode(TestCase):
             wait_replications_check_rejected_uniqueMember(existing_rejects)
 
             # importing random computers
-            computers = Computers(open_ldap_co, school, 2, 0, 0)
+            computers = Computers(lo, school, 2, 0, 0)
             created_computers = computers.create()
             created_computers_dn = computers.get_dns(created_computers)
 
@@ -102,14 +101,10 @@ class TestExamMode(TestCase):
             exam.finish()
             print(" ** After finishing the exam")
             wait_replications_check_rejected_uniqueMember(existing_rejects)
-            student2.remove(open_ldap_co)
+            student2.remove(lo)
 
     def test_saml_login(self):
         self.__test_exam_mode(Exam=ExamSaml)
 
     def test_classic_login(self):
         self.__test_exam_mode()
-
-
-if __name__ == "__main__":
-    main(verbosity=2)

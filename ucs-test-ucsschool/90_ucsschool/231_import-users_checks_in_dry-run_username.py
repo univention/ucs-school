@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Verify that checks on existing usernames are executed in dry-run
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -10,6 +10,8 @@
 
 import copy
 import random
+
+import pytest
 
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
@@ -49,11 +51,9 @@ class Test(CLI_Import_v2_Tester):
         person.update(record_uid=person.username, source_uid=source_uid, username=username)
         fn_csv = self.create_csv_file(person_list=[person], mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
         self.log.info("*** Importing (create) a new user of role %r and different username...", role)
         config.update_entry("dry_run", False)
@@ -75,11 +75,9 @@ class Test(CLI_Import_v2_Tester):
         person.update(username=username)
         fn_csv = self.create_csv_file(person_list=[person], mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config, "-i", fn_csv])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("OK: import failed.")
+        self.log.info("OK: import failed.")
 
 
 if __name__ == "__main__":

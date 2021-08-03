@@ -1,13 +1,10 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: check availability of umc modules
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-master|ucs-school-slave|ucs-school-singlemaster]
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 from univention.testing.umc import Client
 
@@ -153,10 +150,8 @@ def checkModules(modules, userType, serverRole, singleMaster):
         )
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with udm_test.UCSTestUDM() as udm:
-            with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_available_umc_modules(schoolenv, udm_session, ucr):
+                udm = udm_session
                 host = ucr.get("hostname")
                 serverRole = ucr.get("server/role")
                 print("Role = {!r}".format(serverRole))
@@ -195,7 +190,3 @@ def main():
                     modules = [(x["id"], x.get("flavor")) for x in modules]
                     print("modules = {!r}".format(modules))
                     checkModules(modules, userType, serverRole, singleMaster)
-
-
-if __name__ == "__main__":
-    main()

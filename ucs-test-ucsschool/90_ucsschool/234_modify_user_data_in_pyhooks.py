@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test if old_user is a copy of user in pyhooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -16,10 +16,9 @@ import subprocess
 import sys
 import tempfile
 
+import pytest
+
 import univention.testing.strings as uts
-import univention.testing.ucr
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), "test234_modify_user_data_in_pyhooks.pyhookpy")
@@ -30,7 +29,9 @@ logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 
 
+@pytest.fixture
 def cleanup():
+    yield
     for ext in ["", "c", "o"]:
         try:
             os.remove("{}{}".format(TESTHOOKTARGET, ext))
@@ -39,8 +40,7 @@ def cleanup():
             logger.warning("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
-def main():
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, utu.UCSTestSchool() as schoolenv:
+def test_modify_user_data_in_pyhooks(ucr, schoolenv, cleanup):
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         usernames = [uts.random_username(), uts.random_username()]
         users = [
@@ -69,11 +69,7 @@ def main():
             cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
             sys.stdout.flush()
             sys.stderr.flush()
-            exitcode = subprocess.call(cmd)
-            if exitcode:
-                utils.fail("Import failed with exit code {!r}".format(exitcode))
-            else:
-                print("Import process exited with exit code {!r}".format(exitcode))
+            subprocess.check_call(cmd)
 
         print("*** Deleting users {!r}...".format(usernames))
 
@@ -86,11 +82,7 @@ def main():
             cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
             sys.stdout.flush()
             sys.stderr.flush()
-            exitcode = subprocess.call(cmd)
-            if exitcode:
-                utils.fail("Import failed with exit code %r" % (exitcode,))
-            else:
-                print("Import process exited with exit code {!r}".format(exitcode))
+            subprocess.check_call(cmd)
 
         print("*** Trying non-legacy import - 1st to create users, 2nd to modify them.")
 
@@ -143,17 +135,6 @@ def main():
             ]
             sys.stdout.flush()
             sys.stderr.flush()
-            exitcode = subprocess.call(cmd)
-            if exitcode:
-                utils.fail("Import failed with exit code %r" % (exitcode,))
-            else:
-                print("Import process exited with exit code {!r}".format(exitcode))
+            subprocess.check_call(cmd)
 
         logger.info("*** OK: Test was successful.\n\n\n")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    finally:
-        cleanup()

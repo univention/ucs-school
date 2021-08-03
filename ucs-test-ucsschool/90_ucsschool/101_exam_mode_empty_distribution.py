@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check file collection from exams without prior distribution of files
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -16,7 +16,6 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import (
@@ -24,14 +23,11 @@ from univention.testing.ucsschool.exam import (
     get_s4_rejected,
     wait_replications_check_rejected_uniqueMember,
 )
-from univention.testing.udm import UCSTestUDM
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
-        open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
+def test_exam_mode_empty_distribution(udm_session, schoolenv, ucr):
+        udm = udm_session
+        lo = schoolenv.open_ldap_connection()
 
         print(" ** Initial Status")
         existing_rejects = get_s4_rejected()
@@ -58,7 +54,7 @@ def main():
         wait_replications_check_rejected_uniqueMember(existing_rejects)
 
         # importing random computer
-        computers = Computers(open_ldap_co, school, 1, 0, 0)
+        computers = Computers(lo, school, 1, 0, 0)
         created_computers = computers.create()
         created_computers_dn = computers.get_dns(created_computers)
 
@@ -85,9 +81,9 @@ def main():
         print(" ** After starting the exam")
         wait_replications_check_rejected_uniqueMember(existing_rejects)
         filename = uts.random_string()
-        exam_stu_homedir = open_ldap_co.search(
+        exam_stu_homedir = lo.search(
             filter_format("uid=%s", ("exam-" + stu,)), attr=("homeDirectory",)
-        )[0][1]["homeDirectory"][0]
+        )[0][1]["homeDirectory"][0].decode("UTF-8")
         subprocess.check_call(
             [
                 "touch",
@@ -99,7 +95,3 @@ def main():
         exam.check_collect()
         print(" ** After finishing the exam")
         wait_replications_check_rejected_uniqueMember(existing_rejects)
-
-
-if __name__ == "__main__":
-    main()

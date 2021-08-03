@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: upload files to distribute module with problematic filenames
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -10,13 +10,10 @@ import os
 import random
 import tempfile
 
-import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
 from univention.testing.ucsschool.distribution import Distribution
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_distribute_filename_problems(ucr):
         hostname = ucr.get("hostname")
         project = Distribution("unusedschoolname", ucr=ucr)
 
@@ -25,7 +22,7 @@ def main():
             "C:\\Windows\\Temp\\foobar.txt",
             "foobar.txt",
         ]:
-            fd = tempfile.NamedTemporaryFile(mode="w")
+            fd = tempfile.NamedTemporaryFile("w")
             token = "".join(random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(256))
             fd.write(token)
             fd.flush()
@@ -56,11 +53,4 @@ def main():
                         break
                 if found:
                     break
-            if not found:
-                utils.fail(
-                    'Failed to upload test file with "forged" filename %r' % (override_file_name,)
-                )
-
-
-if __name__ == "__main__":
-    main()
+            assert found, 'Failed to upload test file with "forged" filename %r' % (override_file_name,)

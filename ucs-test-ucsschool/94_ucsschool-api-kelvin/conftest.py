@@ -7,9 +7,9 @@ import shutil
 import time
 
 try:
-    from typing import Any, Dict, List, Optional
+    from typing import Any, Dict, List, Optional  # noqa: F401
 
-    from ucsschool.importer.models.import_user import ImportUser
+    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 except ImportError:
     pass
 try:

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test recursion detection in dependency solver for formatting ImportUser properties
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -10,6 +10,8 @@
 
 import copy
 import random
+
+import pytest
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
@@ -84,11 +86,9 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(values=config)
-        try:
+        with pytest.raises(ImportException):
             self.run_import(["-c", fn_config])
-            self.fail("Import did not fail.")
-        except ImportException:
-            self.log.info("*** OK: import failed.")
+        self.log.info("*** OK: import failed.")
 
         # import must fail before creating or deleting any users
         for person in person_list:

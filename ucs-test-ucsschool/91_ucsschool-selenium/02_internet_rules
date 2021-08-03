@@ -12,7 +12,6 @@ from univention.testing import selenium
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.admin import localization
 
-import sys
 import random
 import string
 
@@ -23,7 +22,7 @@ _ = translator.translate
 class UMCTester(object):
 
 	def __init__(self, *args, **kwargs):
-		self.selenium = None # type: selenium.UMCSeleniumTest
+		self.selenium = None  # type: selenium.UMCSeleniumTest
 		super(UMCTester, self).__init__(*args, **kwargs)
 
 	def create_internet_rule(self, name, type, priority, urls, submit=True):

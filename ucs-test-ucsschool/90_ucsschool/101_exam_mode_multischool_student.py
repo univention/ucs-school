@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -13,7 +13,6 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.user import ExamStudent, Student
 from ucsschool.lib.roles import (
     context_type_exam,
@@ -30,15 +29,12 @@ from univention.testing.ucsschool.exam import (
     get_s4_rejected,
     wait_replications_check_rejected_uniqueMember,
 )
-from univention.testing.udm import UCSTestUDM
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
+def test_exam_mode_multischool_student(udm_session, schoolenv, ucr):
+        udm = udm_session
         open_ldap_co = schoolenv.open_ldap_connection()
         handler_set(["ucsschool/exam/user/homedir/autoremove=yes"])
-        ucr.load()
 
         print(" ** Initial Status")
         existing_rejects = get_s4_rejected()
@@ -162,7 +158,3 @@ def main():
         assert not os.path.isdir(exam_student2_home)
         utils.verify_ldap_object(exam_student2.dn, should_exist=False)
         student2.remove(open_ldap_co)
-
-
-if __name__ == "__main__":
-    main()

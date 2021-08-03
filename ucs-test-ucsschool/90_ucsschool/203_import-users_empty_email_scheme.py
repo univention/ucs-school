@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test creation of email addresses from an empty scheme (Bug #45972)
 ## tags: [apptest,ucsschool,ucsschool_import1]
@@ -37,7 +37,7 @@ class Test(UniqueObjectTester):
             "*** 1/4 Importing a user of each role without email in input and without email in scheme..."
         )
 
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)
@@ -61,7 +61,7 @@ class Test(UniqueObjectTester):
         source_uid = "source_uid-{}".format(uts.random_string())
         config.update_entry("source_uid", source_uid)
         config["csv"]["mapping"]["E-Mail"] = self.default_config["csv"]["mapping"]["E-Mail"]
-        person_list = list()
+        person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
             person = Person(self.ou_A.name, role)
             record_uid = "record_uid-%s" % (uts.random_string(),)

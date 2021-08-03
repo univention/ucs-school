@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: dump LDAP access to all available objects
 ## roles: [domaincontroller_master]
@@ -139,7 +139,7 @@ def run_one_test(args):
             _, stderr = process.communicate()
             for line in re.findall(
                 "^(?:[a-zA-Z0-9]+=.*?: .*?=[a-z0]+[)]?|entry: .*?|children: .*?)$",
-                stderr,
+                stderr.decode("UTF-8"),
                 re.DOTALL | re.MULTILINE,
             ):
                 attr, value = line.rsplit(": ", 1)
@@ -229,7 +229,7 @@ class LDAPDiffCheck(AutoMultiSchoolEnv):
             logger.info(result)
 
 
-def main():
+def test_ldap_acl_dump():
     with LDAPDiffCheck() as test_suite:
         test_suite.collect_dns()
 
@@ -248,7 +248,3 @@ def main():
             logger.info("Waiting for cleanup until %r exists...", fn)
             while not os.path.exists(fn):
                 time.sleep(1)
-
-
-if __name__ == "__main__":
-    main()

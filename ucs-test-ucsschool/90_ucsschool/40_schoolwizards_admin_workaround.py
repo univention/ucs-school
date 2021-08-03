@@ -1,15 +1,16 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check the hardening of the UMC school wizard admin workaround
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## tags: [apptest, ucsschool, base1]
 ## bugs: [52757]
-from typing import List
+
+from typing import List  # noqa: F401
 
 import pytest
 
-from ucsschool.lib.models.user import User
+from ucsschool.lib.models.user import User  # noqa: F401
 from univention.config_registry import handler_get, handler_set, handler_unset
 from univention.lib.umc import BadRequest, Client
 from univention.testing.ucsschool.conftest import UserType
@@ -22,7 +23,7 @@ def school_admin_school_wizard_policy(ucr_ldap_base):
         operation_set.format(ucr_ldap_base)
         for operation_set in ["cn=schoolwizards-users,cn=operations,cn=UMC,cn=univention,{}"]
     ]
-    operation_sets_to_clean = list()
+    operation_sets_to_clean = []
     uas_umc_admin_policy = (
         UDM.admin()
         .version(1)
@@ -125,7 +126,6 @@ def test_delete_user_correct(
     umc_wizards_admin_workaround,
     create_ou,
     create_ou_user,
-    user_school_attributes,
     create_umc_client,
 ):
     ou1_name, ou1_dn = create_ou()
@@ -147,7 +147,6 @@ def test_delete_user_other_school(
     umc_wizards_admin_workaround,
     create_ou,
     create_ou_user,
-    user_school_attributes,
     create_umc_client,
 ):
     ou1_name, ou1_dn = create_ou(ou_name="A")
@@ -175,7 +174,6 @@ def test_edit_user_correct(
     umc_wizards_admin_workaround,
     create_ou,
     create_ou_user,
-    user_school_attributes,
     create_umc_client,
 ):
     ou1_name, ou1_dn = create_ou()
@@ -197,7 +195,6 @@ def test_edit_user_other_school(
     umc_wizards_admin_workaround,
     create_ou,
     create_ou_user,
-    user_school_attributes,
     create_umc_client,
 ):
     ou1_name, ou1_dn = create_ou(ou_name="A")

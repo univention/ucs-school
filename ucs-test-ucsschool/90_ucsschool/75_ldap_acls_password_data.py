@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 ## desc: Check if the permissions to user password attributes are correct
 ## roles: [domaincontroller_master]
@@ -6,17 +6,12 @@
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.udm as udm_test
 from univention.testing.ucsschool.acl import Acl
 
 
-def main():
-    attrs = ["sambaNTPassword", "userPassword", "krb5Key", "sambaPasswordHistory", "pwhistory"]
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
-            with udm_test.UCSTestUDM() as udm:
+def test_ldap_acls_password_data(schoolenv, ucr, udm_session):
+                udm = udm_session
+                attrs = ["sambaNTPassword", "userPassword", "krb5Key", "sambaPasswordHistory", "pwhistory"]
                 school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
                 school_admin, school_admin_dn = schoolenv.create_school_admin(school)
                 school_admin2, school_admin_dn2 = schoolenv.create_school_admin(school)
@@ -56,7 +51,3 @@ def main():
                     acl.assert_acl(target_dn, "read", attrs)
                 for target_dn in (school_admin_dn2, global_user_dn):
                     acl.assert_acl(target_dn, "read", attrs, "DENIED")
-
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test if input_data is filled in legacy during pre_/post_delete hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -7,6 +7,7 @@
 ## packages:
 ##   - ucs-school-import
 ## bugs: [46384, 46439]
+
 import os
 import os.path
 import random
@@ -16,10 +17,9 @@ import subprocess
 import sys
 import tempfile
 
+import pytest
+
 import univention.testing.strings as uts
-import univention.testing.ucr
-import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), "test228_input_data_pyhookpy")
@@ -30,7 +30,9 @@ logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 
 
+@pytest.fixture
 def cleanup():
+    yield
     for ext in ["", "c", "o"]:
         try:
             os.remove("{}{}".format(TESTHOOKTARGET, ext))
@@ -39,8 +41,7 @@ def cleanup():
             logger.warning("*** Could not delete %s%s.", TESTHOOKTARGET, ext)
 
 
-def main():
-    with univention.testing.ucr.UCSTestConfigRegistry() as ucr, utu.UCSTestSchool() as schoolenv:
+def test_import_user_input_data_in_pyhooks(ucr, schoolenv, cleanup):
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
         usernames = [uts.random_username(), uts.random_username()]
         users = [
@@ -70,10 +71,8 @@ def main():
             sys.stdout.flush()
             sys.stderr.flush()
             exitcode = subprocess.call(cmd)
-            if exitcode:
-                utils.fail("Import failed with exit code {!r}".format(exitcode))
-            else:
-                print("Import process exited with exit code {!r}".format(exitcode))
+            assert not exitcode, "Import failed with exit code {!r}".format(exitcode)
+            print("Import process exited with exit code {!r}".format(exitcode))
 
         print("*** Deleting users {!r}...".format(usernames))
 
@@ -87,10 +86,8 @@ def main():
             sys.stdout.flush()
             sys.stderr.flush()
             exitcode = subprocess.call(cmd)
-            if exitcode:
-                utils.fail("Import failed with exit code %r" % (exitcode,))
-            else:
-                print("Import process exited with exit code {!r}".format(exitcode))
+            assert not exitcode, "Import failed with exit code %r" % (exitcode,)
+            print("Import process exited with exit code {!r}".format(exitcode))
 
         print("*** Trying non-legacy import - 1st to create users, 2nd to remove them.")
 
@@ -124,16 +121,7 @@ def main():
         sys.stdout.flush()
         sys.stderr.flush()
         exitcode = subprocess.call(cmd)
-        if exitcode == 0:
-            utils.fail("Import did not fail, although it should.")
-        else:
-            print("*** OK: non-legacy import process fail (exit code {!r})".format(exitcode))
+        assert exitcode != 0, "Import did not fail, although it should."
+        print("*** OK: non-legacy import process fail (exit code {!r})".format(exitcode))
 
         logger.info("*** OK: Test was successful.\n\n\n")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    finally:
-        cleanup()

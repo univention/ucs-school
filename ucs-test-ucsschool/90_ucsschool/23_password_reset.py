@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-reset-password-check
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -15,7 +15,6 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.lib.umc import Forbidden, HTTPError
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -130,7 +129,7 @@ class Error(Exception):
     pass
 
 
-class TestPasswordResetStaff:
+class _TestPasswordResetStaff:
     def __init__(self, schoolenv, school, host):
         self.schoolenv = schoolenv
         self.school = school
@@ -146,7 +145,7 @@ class TestPasswordResetStaff:
         admin_pw_reset.assert_password_change(staff_user, "jksdhgf983048ghsd", False)
 
 
-class TestPasswordReset(object):
+class _TestPasswordReset(object):
     def __init__(self, schoolenv, school, host):
         self.schoolenv = schoolenv
         self.school = school
@@ -275,7 +274,7 @@ class TestPasswordReset(object):
     ):
         try:
             password_reset = PasswordReset(self.host, flavor, actor[0])
-        except HTTPError as exc:
+        except HTTPError:
             if expected_result == EXPECT_LOGIN_FAIL:
                 return False
             raise Error("Authenticating failed")
@@ -324,15 +323,10 @@ class TestPasswordReset(object):
             )
 
 
-def main():
-    host = ucr.get("hostname")
-    with utu.UCSTestSchool() as schoolenv:
+def test_password_reset(ucr, schoolenv):
+        host = ucr.get("hostname")
         school, oudn = schoolenv.create_ou(name_edudc=host)
         if not is_domaincontroller_slave:  # Staff is not replicated to replication nodes
-            TestPasswordReset(schoolenv, school, host)
-            pw_reset_staff = TestPasswordResetStaff(schoolenv, school, host)
+            _TestPasswordReset(schoolenv, school, host)
+            pw_reset_staff = _TestPasswordResetStaff(schoolenv, school, host)
             pw_reset_staff.run_test()
-
-
-if __name__ == "__main__":
-    main()

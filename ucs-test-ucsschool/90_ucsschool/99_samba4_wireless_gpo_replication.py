@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Test wireless gpo replication
 ## roles: [domaincontroller_slave]
 ## tags: [apptest,ucsschool_base1]
@@ -7,20 +7,15 @@
 
 from subprocess import PIPE, Popen
 
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_s4connector
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
+def test_samba4_wireless_gpp_replication(schoolenv):
         values_set = [
             schoolenv.ucr.is_true("connector/s4/mapping/msgpwl", False),
         ]
-        if not all(values_set):
-            utils.fail(
-                "One of the UCR-V connector/s4/mapping/msgpwl|msgpisec|msgpsi is not set or set to 'No'."
-            )
+        assert all(values_set)
         gpo_name = "{00000001-6CF5-4327-8EB1-0635DD98A83E}"
         schoolenv.udm.create_object(
             "container/msgpo",
@@ -53,9 +48,4 @@ def main():
         )
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = proc.communicate(proc)
-        if gpo_name not in stdout:
-            utils.fail("The GPO '%s' was not found in the list of all GPOs." % gpo_name)
-
-
-if __name__ == "__main__":
-    main()
+        assert gpo_name in stdout.decode("UTF-8")

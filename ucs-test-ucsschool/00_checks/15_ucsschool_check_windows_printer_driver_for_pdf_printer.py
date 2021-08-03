@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check windows printer driver default for PDF printer in UCS@school
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool]
@@ -9,27 +9,22 @@ from __future__ import print_function
 
 import subprocess
 
-import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
-
 
 def check_value(path, key, value):
     cmd = ["net", "registry", "getvalue", path, key]
     out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     found = False
     print(path + " " + key)
-    for i in out.split(b"\n"):
+    for i in out.decode("UTF-8").split("\n"):
         print(i)
-        if i.startswith(b"Value "):
-            v = i.split(b"=")[1].strip().strip(b'"')
+        if i.startswith("Value "):
+            v = i.split("=")[1].strip().strip('"')
             if v == value:
                 found = True
-    if not found:
-        utils.fail("value in '%s' is '%s' not!" % (path + "\\" + key, value))
+    assert found, "value in '%s' is '%s' not!" % (path + "\\" + key, value)
 
 
-def main():
-    with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_ucsschool_check_windows_printer_driver_for_pdf_printer(ucr):
         driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
         printer_name = "PDFDrucker"
         registry_path = (
@@ -37,7 +32,3 @@ def main():
         )
         check_value(registry_path, "Printer Driver", driver_name)
         check_value(registry_path + r"\DsSpooler", "driverName", driver_name)
-
-
-if __name__ == "__main__":
-    main()

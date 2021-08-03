@@ -534,11 +534,18 @@ class CLI_Import_v2_Tester(ImportTestbase):
         self.log.info("Starting import: %r", cmd)
         sys.stdout.flush()
         sys.stderr.flush()
-        exitcode = subprocess.call(cmd)
+        if fail_on_error:
+            try:
+                exitcode = subprocess.check_call(cmd)
+            except subprocess.CalledProcessError as exc:
+                self.log.error("As requested raising an exception due to non-zero exit code")
+                raise ImportException(
+                    "Command '%r' returned non-zero exit status %r (output=%r)"
+                    % (exc.cmd, exc.returncode, exc.output)
+                )
+        else:
+            exitcode = subprocess.call(cmd)
         self.log.info("Import process exited with exit code %r", exitcode)
-        if fail_on_error and exitcode:
-            self.log.error("As requested raising an exception due to non-zero exit code")
-            raise ImportException("Non-zero exit code %r" % (exitcode,))
         return exitcode
 
 

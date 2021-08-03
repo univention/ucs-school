@@ -1,11 +1,11 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.user.SchoolAdmin CRUD operations
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
+##   - python3-ucsschool-lib
 
 #
 # Hint: When debugging interactively, disable output capturing:
@@ -20,7 +20,7 @@ from univention.testing.ucsschool.conftest import UserType
 def test_create(create_ou, lo, user_ldap_attributes, user_school_attributes):
     ou_name, ou_dn = create_ou()
     ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
-    groups = ldap_attrs.pop("groups")
+    groups = [x.decode("UTF-8") for x in ldap_attrs.pop("groups")]
     school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
     obj = SchoolAdmin(**school_attrs)
     res = obj.create(lo)
@@ -54,7 +54,7 @@ def test_get_all(create_ou, lo, user_school_attributes):
 def test_modify(create_ou, lo, user_ldap_attributes, user_school_attributes):
     ou_name, ou_dn = create_ou()
     ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
-    groups = ldap_attrs.pop("groups")
+    groups = [x.decode("UTF-8") for x in ldap_attrs.pop("groups")]
     school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
     obj = SchoolAdmin(**school_attrs)
     res = obj.create(lo)
@@ -63,7 +63,7 @@ def test_modify(create_ou, lo, user_ldap_attributes, user_school_attributes):
     for dn in groups:
         utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
     ldap_attrs_new = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
-    groups = ldap_attrs_new.pop("groups")
+    groups = [x.decode("UTF-8") for x in ldap_attrs_new.pop("groups")]
     school_attrs_new = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs_new)
     assert obj.name != school_attrs_new["name"]
     for k, v in school_attrs_new.items():
@@ -79,7 +79,7 @@ def test_modify(create_ou, lo, user_ldap_attributes, user_school_attributes):
 def test_delete(create_ou, lo, model_ldap_object_classes, user_ldap_attributes, user_school_attributes):
     ou_name, ou_dn = create_ou()
     ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
-    groups = ldap_attrs.pop("groups")
+    groups = [x.decode("UTF-8") for x in ldap_attrs.pop("groups")]
     school_attrs = user_school_attributes([ou_name], UserType.SchoolAdmin, ldap_attrs=ldap_attrs)
     obj = SchoolAdmin(**school_attrs)
     res = obj.create(lo)

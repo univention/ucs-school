@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Computers(schools) module
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -12,13 +12,11 @@ import random
 
 from ldap.filter import filter_format
 
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.computerroom import Computers, set_windows_pc_password
 from univention.testing.ucsschool.internetrule import InternetRule
-from univention.testing.ucsschool.radius import test_peap_auth
+from univention.testing.ucsschool.radius import test_peap_auth as _test_peap_auth
 from univention.testing.ucsschool.workgroup import Workgroup
 
 
@@ -40,9 +38,7 @@ def random_case(txt):  # type: (str) -> str
     return "".join(result)
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_radius_machine_authentication(schoolenv, ucr):
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             open_ldap_co = schoolenv.open_ldap_connection()
 
@@ -94,8 +90,4 @@ def main():
 
             # Testing loop
             for username, should_succeed in test_couples:
-                test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
-
-
-if __name__ == "__main__":
-    main()
+                _test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)

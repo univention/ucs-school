@@ -148,7 +148,9 @@ class Workgroup(object):
         """
         print("Adding members  %r to group %s" % (memberListdn, self.name))
         groupdn = self.dn()
-        currentMembers = sorted(self.ulConnection.getAttr(groupdn, "uniqueMember"))
+        currentMembers = sorted(
+            x.decode("UTF-8") for x in self.ulConnection.getAttr(groupdn, "uniqueMember")
+        )
         for member in memberListdn:
             if member not in currentMembers:
                 currentMembers.append(member)
@@ -165,7 +167,9 @@ class Workgroup(object):
         """
         print("Removing members  %r from group %s" % (memberListdn, self.name))
         groupdn = self.dn()
-        currentMembers = sorted(self.ulConnection.getAttr(groupdn, "uniqueMember"))
+        currentMembers = sorted(
+            x.decode("UTF-8") for x in self.ulConnection.getAttr(groupdn, "uniqueMember")
+        )
         for member in memberListdn:
             if member in currentMembers:
                 currentMembers.remove(member)
@@ -226,10 +230,8 @@ class Workgroup(object):
             }
         ]
         requestResult = self.client.umc_command("schoolgroups/put", creationParam, flavor).result
-        if not requestResult:
-            utils.fail("Members %s failed to be set" % new_members)
-        else:
-            self.members = new_members
+        assert requestResult, "Members %s failed to be set" % new_members
+        self.members = new_members
         utils.wait_for_replication()
 
     def verify_ldap_attributes(self):

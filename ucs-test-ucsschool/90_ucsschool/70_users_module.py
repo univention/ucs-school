@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Users(schools) module
 ## roles: [domaincontroller_master]
@@ -13,8 +13,6 @@ from copy import deepcopy
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -26,7 +24,7 @@ from univention.testing.umc import Client
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
 
 
-def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):
+def _test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):
     print("\n>>>> Creating 4 users...\n")
     users = []
 
@@ -103,9 +101,7 @@ def test(student_classes, teacher_classes, schools, ucr, remove_from_school=None
     return users
 
 
-def main():
-    with utu.UCSTestSchool() as schoolenv:
-        with ucr_test.UCSTestConfigRegistry() as ucr:
+def test_users_module(schoolenv, ucr):
             umc_connection = Client.get_test_connection(ucr.get("ldap/master"))
             (ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get("hostname"))
             class_01 = Klasse(school=ou, connection=umc_connection)
@@ -118,7 +114,7 @@ def main():
             teacher_classes = {ou: ["%s-%s" % (ou, class_01.name), "%s-%s" % (ou, class_02.name)]}
 
             print("\n>>>> Testing module with users in 1 OU ({}).\n".format(ou))
-            test(student_classes, teacher_classes, [ou], ucr, ou, connection=umc_connection)
+            _test(student_classes, teacher_classes, [ou], ucr, ou, connection=umc_connection)
 
             class_03 = Klasse(school=ou2, connection=umc_connection)
             class_03.create()
@@ -136,7 +132,7 @@ def main():
                 "\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2)
             )
             print(">>>> Removing user from primary OU first.\n")
-            users = test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
+            users = _test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
 
             for user in users:
                 print((user.username, user.role, user.school, user.schools))
@@ -152,7 +148,7 @@ def main():
                 "\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2)
             )
             print(">>>> Removing user from secondary OU first.\n")
-            users = test(
+            users = _test(
                 student_classes, teacher_classes, [ou, ou2], ucr, ou2, connection=umc_connection
             )
 
@@ -164,7 +160,3 @@ def main():
                 utils.wait_for_replication()
                 wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
                 user.verify()
-
-
-if __name__ == "__main__":
-    main()

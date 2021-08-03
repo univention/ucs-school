@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test if in dry-run pyhooks with dry-run support run and those without don't
 ## tags: [apptest,ucsschool,ucsschool_base1]
@@ -107,27 +107,15 @@ class Test(CLI_Import_v2_Tester):
             # check HookSupportsDryRun
             path = self.get_path(True, dry_run, hook_expected_to_run)
             if with_support:
-                if os.path.exists(path):
-                    self.log.info("##### OK: %r exists", path)
-                else:
-                    self.fail("Expected path does not exist: {!r}".format(path))
+                assert os.path.exists(path)
             else:
-                if os.path.exists(path):
-                    self.fail("Path expected to not exist: {!r}".format(path))
-                else:
-                    self.log.info("##### OK: %r does not exist", path)
+                assert not os.path.exists(path)
             # check HookNoDryRun
             path = self.get_path(False, dry_run, hook_expected_to_run)
             if no_support:
-                if os.path.exists(path):
-                    self.log.info("##### OK: %r exists", path)
-                else:
-                    self.fail("Expected does not exist: {!r}".format(path))
+                assert os.path.exists(path)
             else:
-                if os.path.exists(path):
-                    self.fail("Path expected to not exist: {!r}".format(path))
-                else:
-                    self.log.info("##### OK: %r does not exist", path)
+                assert not os.path.exists(path)
 
     def purge_hook_logs(self):
         for log_dir in self.get_log_dirs():

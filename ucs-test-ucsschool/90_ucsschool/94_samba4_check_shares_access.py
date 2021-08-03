@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## desc: Test the DC Locator Master shares access from DC-Slave.
 ## bugs: [34224, 37977]
 ## roles:
@@ -124,9 +124,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             self.connect_to_master_sysvol_share(student_name, student_password)
             # Kerberos case disabled, as will work only for local DC share
             # Probably, due to Bug #31919:
-            # self.connect_to_master_sysvol_share(student_name,
-            # 									 student_password,
-            # 									 True)
+            # self.connect_to_master_sysvol_share(student_name, student_password, True)
         finally:
             if student_dn:
                 print("\nRemoving the test student user '%s':" % student_name)

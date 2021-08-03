@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check the consistency of exam users in unix, ldap and the ownership of their home directories
 ## roles: [domaincontroller_master, domaincontroller_slave]
@@ -17,7 +17,6 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
@@ -25,7 +24,6 @@ from univention.admin.uexceptions import noObject
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.ucsschool.exam import Exam
-from univention.testing.udm import UCSTestUDM
 
 SLEEP_INTERVAL = 10
 SLEEP_TIMEOUT = 300
@@ -56,25 +54,18 @@ def check_uids(member_dn_list, open_ldap_co):
                 time.sleep(SLEEP_INTERVAL)
                 timeout -= SLEEP_INTERVAL
 
-        user_name = attrs["uid"][0]
-        ldap_uid = str(attrs["uidNumber"][0])
+        user_name = attrs["uid"][0].decode("UTF-8")
+        ldap_uid = attrs["uidNumber"][0].decode("UTF-8")
         unix_uid = str(pwd.getpwnam(user_name).pw_uid)
         for homedir in attrs["homeDirectory"]:
-            if not os.path.exists(homedir):
-                utils.fail("homeDirectory {} for {} does not exist".format(homedir, dn))
+            assert os.path.exists(homedir), "homeDirectory {} for {} does not exist".format(homedir, dn)
             dir_owner = str(os.stat(homedir).st_uid)
-            if not (ldap_uid == unix_uid == dir_owner):
-                utils.fail(
-                    "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not "
-                    "consistent!".format(ldap_uid, unix_uid, dir_owner)
-                )
+            assert ldap_uid == unix_uid == dir_owner, "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not consistent!".format(ldap_uid, unix_uid, dir_owner)
 
 
-def main():
-    with UCSTestUDM() as udm, utu.UCSTestSchool() as schoolenv:
-        ucr = schoolenv.ucr
+def test_exam_mode_uids(udm_session, schoolenv, ucr):
+        udm = udm_session
         open_ldap_co = schoolenv.open_ldap_connection()
-        ucr.load()
 
         print("# create test users and classes")
         if ucr.is_true("ucsschool/singlemaster"):
@@ -157,7 +148,3 @@ def main():
         wait_for_s4connector()
         check_uids(exam_member_dns, open_ldap_co)
         exam2.finish()
-
-
-if __name__ == "__main__":
-    main()

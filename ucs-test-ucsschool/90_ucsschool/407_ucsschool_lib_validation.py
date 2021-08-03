@@ -1,16 +1,11 @@
-#!/usr/share/ucs-test/runner /usr/bin/pytest -l -v
+#!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: test general validation funcitonality
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
 ## packages:
-##   - python-ucs-school
-
-#
-# Hint: When debugging interactively, disable output capturing:
-# $ pytest -s -l -v ./......py::test_*
-#
+##   - python3-ucsschool-lib
 
 import os
 import pwd
@@ -50,7 +45,7 @@ def python_module_that_reads_a_student_from_ldap(machine_account_dn, machine_pas
                 ldap_base=ucr["ldap/base"],
                 binddn=machine_account_dn,
                 bindpw=machine_password,
-            ),
+            ).encode("UTF-8"),
         )
         os.close(fd)
         print("Wrote test Python module to {!r}.".format(path))
@@ -72,7 +67,7 @@ def test_python_process_uid_zero(python_module_that_reads_a_student_from_ldap, s
     school, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
     user_name, user_dn = schoolenv.create_student(ou_name=school)
     path = python_module_that_reads_a_student_from_ldap(user_dn)
-    assert subprocess.call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout) == 0
+    subprocess.check_call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout)
 
 
 def test_python_process_uid_non_zero(python_module_that_reads_a_student_from_ldap, schoolenv):
@@ -85,6 +80,6 @@ def test_python_process_uid_non_zero(python_module_that_reads_a_student_from_lda
     try:
         os.seteuid(uid)
         assert os.geteuid() == uid
-        assert subprocess.call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout) == 0
+        subprocess.check_call([sys.executable, path], stderr=sys.stderr, stdout=sys.stdout)
     finally:
         os.seteuid(0)
