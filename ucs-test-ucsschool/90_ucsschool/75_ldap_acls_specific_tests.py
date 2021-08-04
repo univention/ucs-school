@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: check specific LDAP access permissions
 ## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool,ucsschool_base1]

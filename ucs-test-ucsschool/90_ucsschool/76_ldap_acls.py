@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: ucs-school-ldap-acls
 ## roles: [domaincontroller_master]
 ## versions:

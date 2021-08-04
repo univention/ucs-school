@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: dump LDAP access to all available objects
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,ucsschool_base1]

@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: ucs-school-lessontimes-module
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
