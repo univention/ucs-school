@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: Check if teachers have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]

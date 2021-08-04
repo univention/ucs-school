@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 ## desc: Check if the permissions to user password attributes are correct
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
