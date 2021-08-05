@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="schoollists" version="1.0" priority="30" python="3">
+	<module id="schoollists" icon="schoollists" version="1.0" priority="30" python="3">
 	<name>Class Lists</name>
 	<description>Generate lists for classes and workgroups</description>
 	<categories>
