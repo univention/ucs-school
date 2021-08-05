@@ -4,19 +4,19 @@
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
-	<flavor id="class" priority="21">
+	<flavor id="class" icon="schoolgroups-class" priority="21">
 	  <name>Assigning teachers</name>
 	  <description>Associate teachers with a class</description>
 	</flavor>
-	<flavor id="teacher" priority="21">
+	<flavor id="teacher" icon="schoolgroups-teacher" priority="21">
 	  <name>Assigning classes</name>
 	  <description>Associate classes with a teacher</description>
 	</flavor>
-	<flavor id="workgroup" priority="20">
+	<flavor id="workgroup" icon="schoolgroupss-workgroup" priority="20">
 	  <name>Edit workgroups</name>
 	  <description>Edit members of workgroups</description>
 	</flavor>
-	<flavor id="workgroup-admin" overwrites="workgroup"  priority="20">
+	<flavor id="workgroup-admin" icon="schoolgroups-admin" overwrites="workgroup"  priority="20">
 	  <name>Administrate workgroups</name>
 	  <description>Add and modify workgroups</description>
 	</flavor>
