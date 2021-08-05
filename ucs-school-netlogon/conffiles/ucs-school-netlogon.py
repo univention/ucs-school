@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # UCS@school
@@ -147,7 +148,7 @@ def handler(configRegistry, changes):
                 if len(tmp) > 4 and tmp[4] == "priority":
                     continue
                 script = configRegistry[key]
-                priority = configRegistry.get(key + "/priority", sys.maxint)
+                priority = configRegistry.get(key + "/priority", sys.maxsize)
                 if not scripts.get(priority):
                     scripts[priority] = []
                 scripts[priority].append(script)
