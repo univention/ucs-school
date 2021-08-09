@@ -56,9 +56,11 @@ def check_init_windows_profiles(member_dn_list, lo):  # type: (List[str], LoType
             print(os.listdir(home_dir))
             wait_for_files_to_exist(
                 [
-                    os.path.join(home_dir, "windows-profiles"),
-                    os.path.join(home_dir, ".profile"),
-                    os.path.join(home_dir, ".univention-skel.lock"),
+                    os.path.join(home_dir, "windows-profiles/default.V2"),
+                    os.path.join(home_dir, "windows-profiles/default.V3"),
+                    os.path.join(home_dir, "windows-profiles/default.V4"),
+                    os.path.join(home_dir, "windows-profiles/default.V5"),
+                    os.path.join(home_dir, "windows-profiles/default.V6"),
                 ]
             )
 
