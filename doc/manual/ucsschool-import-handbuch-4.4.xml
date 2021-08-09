@@ -1558,7 +1558,7 @@ udm dns/host_record create \
 			</para>
 			<note>
 				<simpara>
-					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/pymodules/python2.7/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
+					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/python2.7/dist-packages/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
 				</simpara>
 			</note>
 			<para>
