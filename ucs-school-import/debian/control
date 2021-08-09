@@ -21,6 +21,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-import
 Architecture: all
 Depends:
+ python-attr,
  python-jsonschema,
  python-lazy-object-proxy,
  python-ldap,
@@ -30,6 +31,7 @@ Depends:
  python-univention,
  python-univention-config-registry,
  python-univention-lib,
+ python3-attr,
  python3-jsonschema,
  python3-lazy-object-proxy,
  python3-ldap,
