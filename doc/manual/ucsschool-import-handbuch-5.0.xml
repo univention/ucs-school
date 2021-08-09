@@ -422,7 +422,7 @@ optional arguments:
 				Das JSON-Format erlaubt Daten in verschachtelten Strukturen zu speichern, und ist sowohl von Computern als auch Menschen zuverlässig zu lesen und zu schreiben.
 				Nach dem Editieren einer JSON-Datei kann ihre syntaktische Korrektheit mit Hilfe einer Webseite zur JSON Validierung oder eines Kommandozeilenprogramms überprüft werden:
 				<programlisting>
-python -m json.tool &lt; my_config.json
+python3 -m json.tool &lt; my_config.json
 				</programlisting>
 			</para>
 			<para>
@@ -739,7 +739,7 @@ python -m json.tool &lt; my_config.json
 <!-- output:new_user_passwords -->
 							<row>
 								<entry morerows="1" id="configuration:json_format:userimport:output:new_user_passwords"><varname>output:new_ \ user_passwords</varname></entry>
-								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior"><citetitle><foreignphrase>Python-Format-String</foreignphrase></citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
+								<entry>Diese Variable definiert den Pfad zur CSV-Datei, in die Passwörter neuer Benutzer geschrieben werden. Auf den Dateinamen wird die Python-Funktion <methodname>datetime.datetime.strftime()</methodname> angewandt. Wenn ein <ulink url="https://docs.python.org/3.7/library/datetime.html#strftime-and-strptime-behavior"><citetitle><foreignphrase>Python-Format-String</foreignphrase></citetitle></ulink> in ihm vorkommt, wird dieser umgewandelt (siehe Beispiel <link linkend="configuration:json_format:userimport:output:user_import_summary"><literal>output:user_import_summary</literal></link>).</entry>
 							</row>
 							<row>
 								<entry align="right">Standard (<classname>string</classname>): nicht gesetzt</entry>
@@ -1558,7 +1558,7 @@ udm dns/host_record create \
 			</para>
 			<note>
 				<simpara>
-					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/python2.7/dist-packages/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
+					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/python3.7/dist-packages/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
 				</simpara>
 			</note>
 			<para>
@@ -1644,7 +1644,7 @@ class MyHook(UserPyHook):
 			</para>
 			<para>
 				In der Funktion wird außerdem mit <methodname>self.logger.info()</methodname> ein Text zu Protokoll gegeben.
-				Es handelt sich bei <property>self.logger</property> um eine Instanz eines <ulink url="https://docs.python.org/2/library/logging.html"><citetitle>Python <classname>logging</classname></citetitle></ulink> Objekts.
+				Es handelt sich bei <property>self.logger</property> um eine Instanz eines <ulink url="https://docs.python.org/3.7/library/logging.html"><citetitle>Python <classname>logging</classname></citetitle></ulink> Objekts.
 			</para>
 			<para>
 				In <methodname>pre_remove()</methodname> wird das Heimatverzeichnis des Benutzers benötigt.
@@ -1725,29 +1725,25 @@ class MyUsernameHandler(UsernameHandler):
 				<methodname>always_counter_with_zeros()</methodname> verwendet <methodname>always_counter()</methodname> zur Erzeugung der nächsten freien Zahl, schreibt diese aber dann so um, dass sie immer vier Stellen lang ist (der Anfang wird mit Nullen aufgefüllt).
 			</para>
 			<para>
-				Wird die Klasse unter <filename class="directory">/usr/local/lib/python2.7/dist-packages/usernames_with_zeros.py</filename> abgespeichert, so kann sie unter Python als <classname>usernames_with_zeros.MyUsernameHandler</classname> verwendet werden.
-				Zuvor muss das Verzeichnis angelegt werden:
-				<programlisting>
-mkdir -p /usr/local/lib/python2.7/dist-packages
-				</programlisting>
+				Wird die Klasse unter <filename class="directory">/usr/lib/python3.7/dist-packages/usernames_with_zeros.py</filename> abgespeichert, so kann sie unter Python als <classname>usernames_with_zeros.MyUsernameHandler</classname> verwendet werden.
 			</para>
 			<para>
 				Ob Python die Klasse findet, lässt sich testen mit:
 				<programlisting>
-python -c 'from usernames_with_zeros import MyUsernameHandler'
+python3 -c 'from usernames_with_zeros import MyUsernameHandler'
 				</programlisting>
 				(Es sollte keine Ausgabe geben.)
 			</para>
 			<para>
 				Die neue Funktionalität lässt sich testen mit:
 				<programlisting>
-# python
+# python3
 >>> from usernames_with_zeros import MyUsernameHandler
->>> print MyUsernameHandler(15).format_username("Anton[ALWAYSCOUNTER]")
+>>> print(MyUsernameHandler(15).format_username("Anton[ALWAYSCOUNTER]"))
 Anton1
->>> print MyUsernameHandler(15).format_username("Anton[ALWAYSWITHZEROS]")
+>>> print(MyUsernameHandler(15).format_username("Anton[ALWAYSWITHZEROS]"))
 Anton0002
->>> print MyUsernameHandler(15).format_username("Anton[ALWAYSWITHZEROS]")
+>>> print(MyUsernameHandler(15).format_username("Anton[ALWAYSWITHZEROS]"))
 Anton0003
 >>> exit()
 				</programlisting>
@@ -1824,7 +1820,7 @@ class MyUserImportFactory(DefaultUserImportFactory):
 					</programlisting>
 				</para>
 				<para>
-					Wird diese Datei nun als <filename>/usr/local/lib/python2.7/dist-packages/my_userimport_factory.py</filename> abgespeichert, so kann sie in der Konfiguration zur Verwendung als <property>factory</property> für die Importsoftware folgendermaßen aktiviert werden:
+					Wird diese Datei nun als <filename>/usr/lib/python3/dist-packages/my_userimport_factory.py</filename> abgespeichert, so kann sie in der Konfiguration zur Verwendung als <property>factory</property> für die Importsoftware folgendermaßen aktiviert werden:
 					<programlisting>
 {
     "factory": "my_userimport_factory.MyUserImportFactory"

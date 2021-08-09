@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # This script will check if all of the screenshots for the manuals and website
 # exist. It will take into account different languages.
