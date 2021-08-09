@@ -116,7 +116,7 @@ def main():
                 allowed_email_senders_users=[teadn],
                 allowed_email_senders_groups=[klassdn],
             )
-            email_group.email = "{}-{}@example.com".format(email_group.name, schoolName)
+            email_group.email = "{}-{}@example.net".format(email_group.name, schoolName)
             email_group.create()
             email_group.verify_exists(group_should_exist=True, share_should_exist=True)
             email_group.verify_ldap_attributes()
