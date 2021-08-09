@@ -56,9 +56,11 @@ def check_init_windows_profiles(member_dn_list, lo):  # type: (List[str], LoType
             print(os.listdir(home_dir))
             wait_for_files_to_exist(
                 [
-                    os.path.join(home_dir, "windows-profiles"),
-                    os.path.join(home_dir, ".profile"),
-                    os.path.join(home_dir, ".univention-skel.lock"),
+                    os.path.join(home_dir, "windows-profiles/default.V2"),
+                    os.path.join(home_dir, "windows-profiles/default.V3"),
+                    os.path.join(home_dir, "windows-profiles/default.V4"),
+                    os.path.join(home_dir, "windows-profiles/default.V5"),
+                    os.path.join(home_dir, "windows-profiles/default.V6"),
                 ]
             )
 
@@ -67,7 +69,7 @@ def check_exam_user_home_dir_permissions(
     member_dn_list, lo, distribution_data_folder
 ):  # type: (List[str], LoType, str) -> None
     for dn in member_dn_list:
-        samba_workstation = lo.getAttr(dn, "sambaUserWorkstations")
+        samba_workstation = lo.getAttr(dn, "sambaUserWorkstations")[0]
         for home_dir in lo.getAttr(dn, "homeDirectory"):
             home_dir = home_dir.decode("UTF-8")
             print("# check nt acls for {} and it's subfolders.".format(home_dir))
@@ -78,7 +80,6 @@ def check_exam_user_home_dir_permissions(
 
         for samba_home in lo.getAttr(dn, "sambaHomePath"):
             samba_home = samba_home.decode("UTF-8").replace("\\", "/")
-            samba_workstation = samba_workstation[0]
             uid = lo.getAttr(dn, "uid")[0].decode("UTF-8")
             new_folder = uts.random_string()
             samba_new_share_folder = "{} {}".format(samba_home, new_folder)
