@@ -45,6 +45,8 @@ import traceback
 
 import ldap
 import ldap.filter
+from ldap.dn import escape_dn_chars, dn2str, str2dn
+from ldap.filter import filter_format
 
 import univention.admin.modules
 import univention.admin.objects
@@ -1098,14 +1100,14 @@ def verify_containers(position_dn, module, co, lo, superordinate, base, path="")
 
     @param module Param is ignored! cn_module is the only supported module!!
     """
-    split_dn = ldap.dn.str2dn(position_dn)
+    split_dn = str2dn(position_dn)
     # with this variable it's ensured that within a row of containers there is
     # no other object/container which can not be created with method
     started_cn_row = False
     for i, part in enumerate(reversed(split_dn)):
         if part[0][0] == "cn":
             verify_container(
-                ldap.dn.dn2str(split_dn[-i - 1 :]), cn_module, None, lo, superordinate, base, path=path
+                dn2str(split_dn[-i - 1 :]), cn_module, None, lo, superordinate, base, path=path
             )
             started_cn_row = True
         elif started_cn_row:
@@ -1118,8 +1120,8 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
     look if goal-container exists, else create it
     """
     container_exists = 0
-    attr = ldap.dn.str2dn(position_dn)[0][0][0]
-    name = ldap.dn.str2dn(position_dn)[0][0][1]
+    attr = str2dn(position_dn)[0][0][0]
+    name = str2dn(position_dn)[0][0][1]
     position = lo.parentDn(position_dn)
     try:
         objects = univention.admin.modules.lookup(
@@ -1174,10 +1176,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
     more_instances = 1
     container_position = base
     while more_instances:
-        container_position = ldap.dn.dn2str(
-            ldap.dn.str2dn(position_dn)[-len(ldap.dn.str2dn(container_position)) - 1 :]
-        )
-        container_attr = ldap.dn.str2dn(container_position)[0][0][0]
+        container_position = dn2str(str2dn(position_dn)[-len(str2dn(container_position)) - 1 :])
+        container_attr = str2dn(container_position)[0][0][0]
         if container_position == position_dn:
             more_instances = 0
         elif container_attr == "cn":
@@ -1191,8 +1191,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
     # look if share exists, else create it
     share_exists = 0
-    attr = ldap.dn.str2dn(position_dn)[0][0][0]
-    name = ldap.dn.str2dn(position_dn)[0][0][1]
+    attr = str2dn(position_dn)[0][0][0]
+    name = str2dn(position_dn)[0][0][1]
     position = lo.parentDn(position_dn)
     objects = univention.admin.modules.lookup(
         module,
@@ -1311,17 +1311,15 @@ def verify_group(
         return True
 
     group_exists = 0
-    attr = ldap.dn.str2dn(position_dn)[0][0][0]
-    name = ldap.dn.str2dn(position_dn)[0][0][1]
+    attr = str2dn(position_dn)[0][0][0]
+    name = str2dn(position_dn)[0][0][1]
     position = lo.parentDn(position_dn)
 
     more_instances = 1
     container_position = base
     while more_instances:
-        container_position = ldap.dn.dn2str(
-            ldap.dn.str2dn(position_dn)[-len(ldap.dn.str2dn(container_position)) - 1 :]
-        )
-        container_attr = ldap.dn.str2dn(container_position)[0][0][0]
+        container_position = dn2str(str2dn(position_dn)[-len(str2dn(container_position)) - 1 :])
+        container_attr = str2dn(container_position)[0][0][0]
         if container_position == position_dn:
             more_instances = 0
         elif container_attr == "cn":
@@ -2426,7 +2424,7 @@ def activate_groupmembers():
                     memberobj.modify()
 
                     # write csv line
-                    snr = next(x[0][1] for x in ldap.dn.str2dn(memberdn) if x[0][0] == "ou")
+                    snr = next(x[0][1] for x in str2dn(memberdn) if x[0][0] == "ou")
                     outf.write(
                         out_line
                         % (
@@ -2584,7 +2582,7 @@ def rename_class():
         base=baseDN,
         filter="(objectClass=univentionGroup)",
     ):
-        cn = ldap.dn.str2dn(group.dn)[0][0][1]
+        cn = str2dn(group.dn)[0][0][1]
         myGroups[cn] = group
     for share in univention.admin.modules.lookup(
         share_module,
@@ -2595,7 +2593,7 @@ def rename_class():
         base=baseDN,
         filter="(objectClass=univentionShare)",
     ):
-        cn = ldap.dn.str2dn(share.dn)[0][0][1]
+        cn = str2dn(share.dn)[0][0][1]
         myShares[cn] = share
 
     print("infile is  : " + infile)
