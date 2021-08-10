@@ -121,7 +121,7 @@ feedback@univention.de
 		<para>
 		  <figure id="ssl-warning">
 			<title>Sicherheitszertifikatswarnung in Firefox</title>
-			<graphic scalefit="1" width="80%" align="center" fileref="illustrations44/firefox_ssl_certificate.png"/>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations50/firefox_ssl_certificate.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -141,7 +141,7 @@ feedback@univention.de
 		<para>
 		  <figure id="login">
 			<title>Anmeldung an der &ucsUMC;</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations44/login.png"/>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations50/login.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -159,7 +159,7 @@ feedback@univention.de
 		<para>
 		  <figure id="moduluebersicht">
 			<title>Übersichtsseite der Funktionen eines Schuladministrators</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/module_overview_Administrator_admin.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/module_overview_Administrator_admin.png"/>
 		  </figure>
 		</para>
 	  </section>
@@ -190,7 +190,7 @@ feedback@univention.de
 			  <para>
 				<figure id="passwordreset1">
 				  <title>Zurücksetzen von Schülerpasswörtern</title>
-				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations44/passwords_students_1.png"/>
+				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations50/passwords_students_1.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -203,7 +203,7 @@ feedback@univention.de
 			  <para>
 				<figure id="searchingpupils">
 				  <title>Suche nach Schülerkonten</title>
-				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations44/passwords_students_2.png"/>
+				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations50/passwords_students_2.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -216,7 +216,7 @@ feedback@univention.de
 			  <para>
 				<figure id="passwordreset2">
 				  <title>Zurücksetzen eines Schülerpassworts</title>
-				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations44/passwords_students_3.png"/>
+				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations50/passwords_students_3.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -261,7 +261,7 @@ feedback@univention.de
 		<para>
 		  <figure id="choose-computerroom">
 			<title>Auswahl eines Computerraums</title>
-			<graphic scalefit="1" width="45%" align="center" fileref="illustrations44/computerroom_1_select.png"/>
+			<graphic scalefit="1" width="45%" align="center" fileref="illustrations50/computerroom_1_select.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -312,7 +312,7 @@ feedback@univention.de
 		<para>
 		  <figure id="computerraum">
 			<title>Beaufsichtigung eines Computerraums</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/computerroom_2_overview.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/computerroom_2_overview.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -331,7 +331,7 @@ feedback@univention.de
 		<para>
 		  <figure id="screenlock">
 			<title>Ein gesperrter Bildschirm</title>
-			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/school-veyon-lock.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations50/school-veyon-lock.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -388,7 +388,7 @@ feedback@univention.de
 		<para>
 		  <figure id="praesentation">
 			<title>Start einer Bildschirmpräsentation</title>
-			<graphic scalefit="1" width="80%" align="center" fileref="illustrations44/computerroom_3_start_presentation.png"/>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations50/computerroom_3_start_presentation.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -456,7 +456,7 @@ feedback@univention.de
 		<title>Übersicht der Klassenarbeiten</title>
 		<figure id="fig:klassenarbeit:overview">
 			<title>Übersicht über die Klassenarbeiten anzeigen</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_3_overview.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/exam_3_overview.png"/>
 		</figure>
 		<para>
 			Beim Öffnen des Moduls <guimenu>Klassenarbeiten</guimenu> in der &ucsUMC; zeigt sich zuerst eine Übersichtsseite, die alle Informationen über gerade laufende Klassenarbeiten anzeigt.
@@ -529,7 +529,7 @@ feedback@univention.de
 		  <title>Neustart der Schülerrechner</title>
 		  <figure id="fig:klassenarbeit:neustart">
 			<title>Neustart der Schülerrechner</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_1_reboot.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/exam_1_reboot.png"/>
 		  </figure>
 		  <para>
 			Je nach Konfiguration der Schülerrechner kann es notwendig sein, dass alle Schülerrechner des Computerraums neu gestartet werden.
@@ -563,7 +563,7 @@ feedback@univention.de
 		  <title>Verwaltung und Abschluss der Klassenarbeit</title>
 		  <figure id="fig:klassenarbeit:computerraum">
 			<title>Verwaltung der Klassenarbeit über das Computerraum-Modul im Klassenarbeitsmodus</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/exam_2_computerroom.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/exam_2_computerroom.png"/>
 		  </figure>
 		  <para>
 			Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC;-Modul <guimenu>Computerraum</guimenu> (siehe <xref linkend="fig:klassenarbeit:computerraum"/>).
@@ -592,7 +592,7 @@ feedback@univention.de
 		<para>
 		  <figure id="helpdesk">
 			<title>Anfrage an den Helpdesk</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/helpdesk.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/helpdesk.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -641,7 +641,7 @@ feedback@univention.de
 		<para>
 		  <figure id="select-workgroup">
 			<title>Auswahl einer Arbeitsgruppe</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/workgroup_1_selected.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/workgroup_1_selected.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -656,7 +656,7 @@ feedback@univention.de
 		<para>
 		  <figure id="assign-pupils">
 			<title>Zuweisen von Schülern zu einer Arbeitsgruppe</title>
-			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/workgroup_2_add_students.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations50/workgroup_2_add_students.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -683,7 +683,7 @@ feedback@univention.de
 		<para>
 		  <figure id="manage-ag-emails">
 			<title>Konfiguration der Email-Adresse für eine Arbeitsgruppe</title>
-			<graphic scalefit="1" width="40%" align="center" fileref="illustrations44/workgroup_3_manage_email.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations50/workgroup_3_manage_email.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -716,7 +716,7 @@ feedback@univention.de
 		<para>
 		  <figure id="lists_export_0">
 			<title>Schülerliste exportieren</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/lists_export_0.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/lists_export_0.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -737,7 +737,7 @@ feedback@univention.de
 		<para>
 		  <figure id="printer-moderation">
 			<title>Moderation von Druckaufträgen</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/printer_moderation_1.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/printer_moderation_1.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -765,7 +765,7 @@ feedback@univention.de
 
 				<figure id="printer-selection">
 				  <title>Auswahl des Druckers nach Freigabe des Druckauftrags</title>
-				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations44/printer_moderation_2.png"/>
+				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations50/printer_moderation_2.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -820,7 +820,7 @@ feedback@univention.de
 		<para>
 		  <figure id="verteilungsprojekte">
 			<title>Liste von Materialverteilungsprojekten</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/distribution_projects_1.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/distribution_projects_1.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -844,7 +844,7 @@ feedback@univention.de
 		<para>
 		  <figure id="verteilungsprojekt">
 			<title>Erstellen eines Materialverteilungsprojekts</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/distribution_projects_2.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/distribution_projects_2.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -908,7 +908,7 @@ feedback@univention.de
 		<para>
 		  <figure id="verteilungsprojekt-einsammeln">
 			<title>Einsammeln eines Materialverteilungsprojekts</title>
-			<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/distribution_projects_4.png"/>
+			<graphic scalefit="1" width="60%" align="center" fileref="illustrations50/distribution_projects_4.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -961,7 +961,7 @@ feedback@univention.de
 		<para>
 		  <figure id="computerroom-list">
 			<title>Verwaltung von Computerräumen</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/computerrooms_1_overview.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/computerrooms_1_overview.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -977,7 +977,7 @@ feedback@univention.de
 		<para>
 		  <figure id="add-to-computerroom">
 			<title>Zuweisen von Computern zu einem Computerraum</title>
-			<graphic scalefit="1" width="35%" align="center" fileref="illustrations44/computerrooms_2_add_computers.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations50/computerrooms_2_add_computers.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -1005,7 +1005,7 @@ feedback@univention.de
 		<para>
 		  <figure id="lesson-times">
 			<title>Festlegung der Unterrichtszeiten</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/lesson_times.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/lesson_times.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -1025,7 +1025,7 @@ feedback@univention.de
 		<para>
 		  <figure id="liste-klassen">
 			<title>Liste der Klassen einer Schule</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/classes.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/classes.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -1046,7 +1046,7 @@ feedback@univention.de
 		<para>
 		  <figure id="assign-teacher">
 			<title>Zuweisen von Lehrern zu einer Klasse</title>
-			<graphic scalefit="1" width="35%" align="center" fileref="illustrations44/assign_teachers_to_class.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations50/assign_teachers_to_class.png"/>
 		  </figure>
 		</para>
 	  </section>
@@ -1081,7 +1081,7 @@ feedback@univention.de
 		<para>
 		  <figure id="internet-rules">
 			<title>Verwaltung von Internetregeln</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/internet_rules_1.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/internet_rules_1.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -1106,7 +1106,7 @@ feedback@univention.de
 		<para>
 		  <figure id="wikipedia-whitelist">
 			<title>Anlegen einer Whitelist für Wikipedia</title>
-			<graphic scalefit="1" width="100%" align="center" fileref="illustrations44/internet_rules_2.png"/>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations50/internet_rules_2.png"/>
 		  </figure>
 		</para>
 		<para>
