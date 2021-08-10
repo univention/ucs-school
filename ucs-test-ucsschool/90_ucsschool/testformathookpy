@@ -27,7 +27,7 @@ class FormatTestPyHook(FormatPyHook):
 	@classmethod
 	def my_translate(cls, s, del_chars):
 		if str is not bytes:  # py3
-			return s.translate(None, str.maketrans("", "", del_chars))
+			return s.translate(str.maketrans("", "", del_chars))
 		if isinstance(s, unicode):
 			translate_table = dict((ord(x), None) for x in del_chars)
 			return s.translate(translate_table)
