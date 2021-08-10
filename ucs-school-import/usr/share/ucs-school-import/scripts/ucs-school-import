@@ -177,7 +177,7 @@ class Hooks(object):
     PATH = "/usr/share/ucs-school-import/hooks/"
 
     def _create_temp_file(self, line):
-        tmpfile = tempfile.NamedTemporaryFile()
+        tmpfile = tempfile.NamedTemporaryFile("w+")
         tmpfile.write(line)
         tmpfile.flush()
         return tmpfile
@@ -1267,7 +1267,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
                 serverDomainName = serverDomainName["associatedDomain"][0].decode("UTF-8")
             else:
                 serverDomainName = domainname
-            result = lo.get(result["ucsschoolClassShareFileServer"][0], ["cn"])
+            result = lo.get(result["ucsschoolClassShareFileServer"][0].decode("UTF-8"), ["cn"])
             if result:
                 serverfqdn = "%s.%s" % (result["cn"][0].decode("UTF-8"), serverDomainName)
 
@@ -2275,7 +2275,7 @@ def import_printer():
                 object.open()
                 object["name"] = printerName
                 object["spoolHost"] = [spoolHost]
-                object["uri"] = printer_module.unmapPrinterURI((printerUri,))
+                object["uri"] = printer_module.unmapPrinterURI([printerUri.encode("UTF-8")])
                 if printerModel:
                     object["model"] = printerModel
                 else:
