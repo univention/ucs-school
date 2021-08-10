@@ -530,7 +530,7 @@ def create_school_ou(
 
         # looking for DN of fileserver
         objects = lo.searchDn(
-            filter=fiöter_format("(&(objectClass=univentionHost)(cn=%s))", [ShareFileServer]), base=baseDN
+            filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", [ShareFileServer]), base=baseDN
         )
         if len(objects) != 1:
             # no object found
