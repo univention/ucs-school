@@ -14,10 +14,9 @@ import os.path
 import pprint
 import random
 import re
-from sys import executable
 from unittest import TestCase, main
 
-from six import add_metaclass
+from six import add_metaclass, PY3
 
 import ucsschool.lib.models.user
 import univention.testing.strings as uts
@@ -31,10 +30,12 @@ from ucsschool.lib.models.school import School
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 
+py = '3' if PY3 else '2.7'
+
 MODULE_PATHS = (
-    ("/usr/lib/%s/dist-packages/ucsschool/lib/models" % (executable,), "ucsschool.lib.models"),
-    ("/usr/lib/%s/dist-packages/ucsschool/importer/models" % (executable,), "ucsschool.importer.models"),
-    ("/usr/lib/%s/dist-packages/ucsschool/importer/legacy" % (executable,), "ucsschool.importer.legacy"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hookpy")

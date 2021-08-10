@@ -13,10 +13,9 @@ import os
 import os.path
 import pprint
 import re
-from sys import executable
 from unittest import TestCase, main
 
-from six import with_metaclass
+from six import with_metaclass, PY3
 
 import univention.testing.strings as uts
 from ucsschool.importer.configuration import setup_configuration
@@ -34,10 +33,12 @@ try:
 except ImportError:
     pass
 
+py = '3' if PY3 else '2.7'
+
 MODULE_PATHS = (
-    ("/usr/lib/%s/dist-packages/ucsschool/lib/models" % (executable,), "ucsschool.lib.models"),
-    ("/usr/lib/%s/dist-packages/ucsschool/importer/models" % (executable,), "ucsschool.importer.models"),
-    ("/usr/lib/%s/dist-packages/ucsschool/importer/legacy" % (executable,), "ucsschool.importer.legacy"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
+    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test82_legacy_hook.sh")
