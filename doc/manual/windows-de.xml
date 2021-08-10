@@ -189,7 +189,7 @@ service univention-directory-listener restart
 	</para>
 	  <figure id="school:windows:veyon:fig1">
 		<title>Veyon-Installation: Auswahl der Komponenten</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-installation.png"/>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations50/veyon-installation.png"/>
 	  </figure>
 	<para>
 	  Veyon bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt.
@@ -198,7 +198,7 @@ service univention-directory-listener restart
 	</para>
 	  <figure id="school:windows:veyon:fig2">
 		<title>Veyon-Konfiguration: Auswahl der Authentifizierungs-Methode</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-auth-method.png"/>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations50/veyon-auth-method.png"/>
 	  </figure>
 	<para>
 	  Nach der Installation von Veyon auf dem Windows-Client muss das Programm mit dem installierten Veyon Configurator
@@ -207,7 +207,7 @@ service univention-directory-listener restart
 	</para>
 	  <figure id="school:windows:veyon:fig3">
 		<title>Veyon-Konfiguration: Zugriffskontrolle</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-access-control.png"/>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations50/veyon-access-control.png"/>
 	  </figure>
 	  <para>
 		Anschließend muss unter <guimenu>Zugriffskontrolle</guimenu> die Checkbox <emphasis>Verwendung von Domaingruppen aktivieren</emphasis> aktiviert werden.
@@ -215,7 +215,7 @@ service univention-directory-listener restart
 	  </para>
 	  <figure id="school:windows:veyon:fig4">
 		<title>Veyon-Konfiguration: Schlüsselimport</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations44/veyon-key-import.png"/>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations50/veyon-key-import.png"/>
 	  </figure>
 	  <para>
 	  Schließlich muss der öffentliche Schlüssel importiert werden, damit der Schulserver Zugriff auf das installierte Veyon-Backend erhält.
