@@ -402,17 +402,17 @@ def create_school_ou(
         "0printerPath": ["cn=printers"],
         "1userPath": [
             "cn=users",
-            "cn=%s,cn=users" % cn_pupils,
-            "cn=%s,cn=users" % cn_teachers,
-            "cn=%s,cn=users" % cn_admins,
+            "cn=%s,cn=users" % escape_dn_chars(cn_pupils),
+            "cn=%s,cn=users" % escape_dn_chars(cn_teachers),
+            "cn=%s,cn=users" % escape_dn_chars(cn_admins),
         ],
         "2computerPath": ["cn=computers", "cn=server,cn=computers", "cn=dc,cn=server,cn=computers"],
         "3networkPath": ["cn=networks"],
         "4groupPath": [
             "cn=groups",
-            "cn=%s,cn=groups" % cn_pupils,
-            "cn=%s,cn=groups" % cn_teachers,
-            "cn=klassen,cn=%s,cn=groups" % cn_pupils,
+            "cn=%s,cn=groups" % escape_dn_chars(cn_pupils),
+            "cn=%s,cn=groups" % escape_dn_chars(cn_teachers),
+            "cn=klassen,cn=%s,cn=groups" % escape_dn_chars(cn_pupils),
             "cn=raeume,cn=groups",
         ],
         "5dhcpPath": ["cn=dhcp"],
@@ -3107,7 +3107,7 @@ Arguments:
                 print('ERROR: invalid share server name given: "%s"' % options.ShareFileServer)
                 sys.exit(1)
             objects = lo.searchDn(
-                filter="(&(objectClass=univentionHost)(cn=%s))" % options.ShareFileServer, base=baseDN
+                filter=filter_format("(&(objectClass=univentionHost)(cn=%s))", [options.ShareFileServer]), base=baseDN
             )
             if not objects:
                 print(
