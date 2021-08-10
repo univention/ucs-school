@@ -141,7 +141,7 @@ cd /usr/share/ucs-school-import/scripts/
 						<para>
 							<figure id="fig:umc-multi-ou-create">
 								<title>Anlegen einer neuen Schule</title>
-								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-create.png"/>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations50/umc-multi-ou-create.png"/>
 							</figure>
 						</para>
 					</listitem>
@@ -157,7 +157,7 @@ cd /usr/share/ucs-school-import/scripts/
 						<para>
 							<figure id="fig:umc-multi-ou-modify">
 								<title>Das Setzen von Dateiservern für eine Schule</title>
-								<graphic scalefit="1" width="85%" align="center" fileref="illustrations44/umc-multi-ou-modify.png"/>
+								<graphic scalefit="1" width="85%" align="center" fileref="illustrations50/umc-multi-ou-modify.png"/>
 							</figure>
 						</para>
 					</listitem>

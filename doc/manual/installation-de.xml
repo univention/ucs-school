@@ -86,7 +86,7 @@
 		  dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> zu finden.
 		  <figure id="install-via-appcenter">
 		    <title>Installation von &ucsUAS; über das Univention App Center</title>
-		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/appcenter_ucsschool.png"/>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/appcenter_ucsschool.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -94,7 +94,7 @@
 		  &ucsUAS; Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
 		  <figure id="install-umc-wizard">
 		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
-		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/install-umc-wizard.png"/>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/install-umc-wizard.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -102,7 +102,7 @@
 		  <guimenu>Single-Server-Umgebung</guimenu> auszuwählen.
 		  <figure id="install-umc-wizard-single-server">
 		    <title>Single-Server-Umgebung</title>
-		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/installation-single-server.png"/>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/installation-single-server.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -116,7 +116,7 @@
 		  Konfiguration von &ucsUAS; nicht mehr modifiziert werden.
 		  <figure id="install-umc-wizard-single-schoolname">
 		    <title>Eingabe der Schuldaten</title>
-		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/installation-singleserver-schoolname.png"/>
+		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/installation-singleserver-schoolname.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -171,7 +171,7 @@
 	 		  dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> zu finden.
 	 		  <figure id="install-via-appcenter-master">
 	 		    <title>Installation von &ucsUAS; über das Univention App Center</title>
-	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/appcenter_ucsschool.png"/>
+	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/appcenter_ucsschool.png"/>
 	 		  </figure>
 	 		</para>
 	 		<para>
@@ -179,7 +179,7 @@
 	 		  &ucsUAS;-Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
 	 		  <figure id="install-umc-wizard-master">
 	 		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
-	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/install-umc-wizard.png"/>
+	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/install-umc-wizard.png"/>
 	 		  </figure>
 	 		</para>
 	 		<para>
@@ -187,7 +187,7 @@
 	 		  <guimenu>Multi-Server-Umgebung</guimenu> auszuwählen.
 	 		  <figure id="install-umc-wizard-multi-server">
 	 		    <title>Multi-Server-Umgebung</title>
-	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations44/installation-multi-server.png"/>
+	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/installation-multi-server.png"/>
 	 		  </figure>
 	 		</para>
 	 		<para>
