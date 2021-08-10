@@ -317,7 +317,6 @@ def create_policy(cn, container, values, policy_module):
     returns DN if policy has been created, otherwise None
     """
     created = False
-    exists = False
     verify_containers(container, cn_module, None, lo, superordinate, baseDN, path="policyPath")
 
     objlist = univention.admin.modules.lookup(
@@ -329,7 +328,7 @@ def create_policy(cn, container, values, policy_module):
         base=container,
         filter=filter_format("cn=%s", [cn]),
     )
-    exists = bool(objlist)
+    dn = None
     if not objlist:
         cnpos = univention.admin.uldap.position(baseDN)
         cnpos.setDn(container)
@@ -338,13 +337,12 @@ def create_policy(cn, container, values, policy_module):
         for k, v in values.items():
             policy_object[k] = v
         try:
-            # TODO: the UDM function create() of simplePolicy did not have a return value
-            create_object(policy_object)
+            dn = create_object(policy_object)
             created = True
         except Exception:  # noqa: F401
             print("WARNING: Error creating policy cn=%s,%s failed" % (cn, container))
             traceback.print_exc(100, sys.stdout)
-    return (exists, created)
+    return (dn, created)
 
 
 def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
@@ -829,13 +827,12 @@ def create_school_ou(
     if ucr.is_true("ucsschool/import/generate/policy/dhcp/dns/clearou", False):
         name = "dhcp-dns-clear"
         container = "cn=policies,%s" % getDN(schoolNr)
-        dn = "cn=%s,%s" % (escape_dn_chars(name), container)
         values = {
             "name": name,
             "emptyAttributes": ["univentionDhcpDomainNameServers"],
         }
-        exists, created = create_policy(name, container, values, policy_dhcp_dns_module)
-        if not created and not exists:
+        dn, created = create_policy(name, container, values, policy_dhcp_dns_module)
+        if not created and dn:
             print("Policy object %s cannot be created" % dn)
             problem_hints = problem_hints + "there were problems creating policy object %s\n" % dn
         else:
@@ -2091,7 +2088,7 @@ def import_computer():
                 else:
                     print("generate computer %s (school %s)" % (name, schoolNr))
 
-                    success = create_network(schoolNr, ip_iface.network)
+                    success, dn = create_network(schoolNr, ip_iface.network)
 
                     position.setDn("cn=computers,%s" % (getDN(schoolNr),))
                     object = module.object(None, lo, position=position, superordinate=superordinate)
