@@ -18,6 +18,7 @@ from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set, handler_unset
 from univention.testing import selenium
 from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.udm import UCSTestUDM
 
 translator = localization.translation("ucs-test-selenium")
 _ = translator.translate
@@ -63,7 +64,7 @@ class UMCTester(object):
         assert wg_share.exists(lo) == share_exists, "{} != {}".format(wg_share.exists(lo), share_exists)
 
     def test_umc(self):
-        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry():
+        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry(), UCSTestUDM() as udm:
             lo, po = getAdminConnection()
             handler_set(["ucsschool/workgroups/autosearch=no"])
             school_name, schooldn = schoolenv.create_ou()
@@ -92,6 +93,7 @@ class UMCTester(object):
             self.check_wg(lo, school_name, wg_name, False, None, [], [])
 
             #  Test for creating a workgroup with share and email address
+            udm.create_object("mail/domain", name="test.de")
             self.open_wg_module()
             wg_name2 = uts.random_string(6)
             self.enter_wg_details(school_name, wg_name2, True, True)
