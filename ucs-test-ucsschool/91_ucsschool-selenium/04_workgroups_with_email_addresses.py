@@ -11,6 +11,7 @@ import time
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
+from univention.testing.udm import UCSTestUDM
 from ucsschool.lib.models.group import WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare
 from univention.admin import localization
@@ -63,7 +64,7 @@ class UMCTester(object):
         assert wg_share.exists(lo) == share_exists, "{} != {}".format(wg_share.exists(lo), share_exists)
 
     def test_umc(self):
-        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry():
+        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry(), UCSTestUDM() as udm:
             lo, po = getAdminConnection()
             handler_set(["ucsschool/workgroups/autosearch=no"])
             school_name, schooldn = schoolenv.create_ou()
@@ -92,6 +93,7 @@ class UMCTester(object):
             self.check_wg(lo, school_name, wg_name, False, None, [], [])
 
             #  Test for creating a workgroup with share and email address
+            udm.create_object('mail/domain', name='test.de')
             self.open_wg_module()
             wg_name2 = uts.random_string(6)
             self.enter_wg_details(school_name, wg_name2, True, True)
