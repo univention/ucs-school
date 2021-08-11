@@ -14,7 +14,7 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-def test_workingroup_module(ucr, schoolenv):
+def test_workingroup_module(ucr, udm_session, schoolenv):
     host = ucr.get("hostname")
     schoolName, oudn = schoolenv.create_ou(name_edudc=host)
     tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
@@ -105,6 +105,7 @@ def test_workingroup_module(ucr, schoolenv):
         no_share_group.verify_ldap_attributes()
 
         # 15 group with email
+        udm_session.create_object("mail/domain", name="example.net")
         email_group = Workgroup(
             schoolName,
             create_email=True,
