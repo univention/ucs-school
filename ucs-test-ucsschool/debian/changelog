@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.0.3) unstable; urgency=medium
+
+  * Bug #53471: set a proper sambaNTPassword in 24_password_reset_acl.py
+
+ -- Felix Botner <botner@univention.de>  Thu, 19 Aug 2021 18:06:18 +0200
+
 ucs-test-ucsschool (7.0.2) unstable; urgency=medium
 
   * Bug #52607: migrate ucs-test-ucsschool to Python 3

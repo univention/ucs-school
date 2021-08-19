@@ -12,8 +12,10 @@ import sys
 import time
 
 import pytest
+import passlib.hash
 
 import univention.admin.uldap as udm_uldap
+import univention.testing.strings as uts
 import univention.testing.utils as utils
 
 
@@ -133,16 +135,16 @@ class _TestCases(object):
         )
         old_values = lo.get(target.dn)
         print("target.ucsschoolSchool: {}".format(old_values.get("ucsschoolSchool")))
-        for attr_name in (
-            "sambaNTPassword",
-            "userPassword",
-            "pwhistory",
+        for attr_name, val in (
+            ("sambaNTPassword", passlib.hash.nthash.hash(uts.random_string(20)).upper().encode()),
+            ("userPassword", str(time.time()).encode()),
+            ("pwhistory", str(time.time()).encode()),
         ):  # "krb5key" has no eq matching rule, so lo.modify fails
             if expected_result == RESULT_OK:
-                lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
+                lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [val]]])
             else:
                 with pytest.raises(Exception):
-                    lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
+                    lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [val]]])
         print("OK: result as expected")
 
 
