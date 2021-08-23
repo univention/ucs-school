@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console Module printermoderation
@@ -33,7 +33,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=3
+VERSION=4
 
 . /usr/share/univention-lib/all.sh
 . /usr/share/univention-join/joinscripthelper.lib
@@ -54,13 +54,33 @@ position="cn=printers,$ldap_base"
 if [ "$server_role" = "domaincontroller_slave" ] ; then
 	position="cn=printers,ou=${ldap_hostdn#*,ou=}"
 fi
+
+# update to UCS 5, can be removed after
+if [ "$JS_LAST_EXECUTED_VERSION" = 3 ]; then
+	dn="cn=PDFDrucker,$position"
+	model=$(univention-ldapsearch -b "$dn" | sed -ne 's|univentionPrinterModel: ||p')
+	if [ -n "$model" ] && [ "$model" = "None" ]; then
+		udm shares/printer modify "$@" \
+			--dn "$dn" \
+			--set model="cups-pdf/CUPS-PDF_noopt.ppd" || die
+		# can't set uri (cups-pdf:/. -> cups-pdf:/) via UDM , Bug?
+		echo -e "dn: $dn
+changetype: modify
+replace: univentionPrinterURI
+univentionPrinterURI: cups-pdf:/" | ldapmodify -x -D "$ldap_hostdn" -H "ldap://$ldap_master:${ldap_master_port:-7389}" -y /etc/machine.secret
+	fi
+fi
+
+# end
+
 udm shares/printer create "$@" --ignore_exists \
 	--position "$position" \
 	--set name="PDFDrucker" \
 	--set spoolHost="$hostname.$domainname" \
-	--set uri="cups-pdf:/ ." \
+	--set uri="cups-pdf:/" \
 	--set description="Moderierter PDF-Drucker" \
-	--set model="None" || die
+	--set model="cups-pdf/CUPS-PDF_noopt.ppd" || die
+
 
 # only for new installations
 if [ "$JS_LAST_EXECUTED_VERSION" = 0 ]; then
