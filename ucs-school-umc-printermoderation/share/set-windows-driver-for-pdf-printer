@@ -52,7 +52,7 @@ if [ $? -eq 0 -o $? -eq 2 ]; then
 		if [ -f "$ldb" ]; then
 			# samba4 -> add to samba4 Print Operators
 			if ! ldbsearch -H "$ldb" cn="Print Operators" | grep -iq  "member: cn=$hostname,"; then
-				s4_host_dn="$(univention-s4search cn="$hostname" dn |sed -n 's/^dn: //p')"
+				s4_host_dn="$(univention-s4search "(&(cn="$hostname")(objectClass=Computer))" dn |sed -n 's/^dn: //p')"
 				ldbmodify -H "$ldb" <<-%EOF
 dn: CN=Print Operators,CN=Builtin,$samba4_ldap_base
 changetype: modify
