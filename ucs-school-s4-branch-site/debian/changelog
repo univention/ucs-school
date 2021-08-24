@@ -1,3 +1,9 @@
+ucs-school-s4-branch-site (8.0.2) unstable; urgency=medium
+
+  * Bug #52629: remove package
+
+ -- Florian Best <best@univention.de>  Tue, 24 Aug 2021 22:10:38 +0200
+
 ucs-school-s4-branch-site (8.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
