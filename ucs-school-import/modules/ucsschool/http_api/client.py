@@ -156,7 +156,7 @@ class _ResourceRepresentationMetaClass(type):
         return kls
 
 
-class ResourceRepresentationIterator:
+class ResourceRepresentationIterator(object):
     """Iterator for paginated query results."""
 
     def __init__(self, resource_client, paginated_resource_list):
@@ -172,7 +172,7 @@ class ResourceRepresentationIterator:
             resource = self._paginated_resource_list["results"][self.index]
         except IndexError:
             if self._paginated_resource_list["next"] is None:
-                raise StopIteration
+                raise StopIteration()
             parse_result = urlparse(self._paginated_resource_list["next"])
             url = parse_result._replace(query=None).geturl()
             params = parse_qs(parse_result.query)
@@ -261,7 +261,7 @@ class ResourceRepresentation(object):
     class RoleResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         resource_name = "roles"
 
-    class ResultResource(_ResourceReprBase):
+    class ResultResource(with_metaclass(_ResourceRepresentationMetaClass, _ResourceReprBase)):
         resource_name = "result"
         _attribute_repr = {"date_done": lambda x: dateutil.parser.parse(x)}
 
