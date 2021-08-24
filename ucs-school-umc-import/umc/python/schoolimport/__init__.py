@@ -201,6 +201,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
         # caution! if an exception happens in this function the module process will die!
         MODULE.error("Thread result: %s" % (result,))
         if isinstance(result, BaseException):
+            MODULE.error(
+                "Thread result: Traceback (most recent call last):\n%s" % ("".join(thread.trace),)
+            )
             progress.exception(thread.exc_info)  # FIXME: broken since Bug #47114
             return
         progress.finish_with_result(result)
