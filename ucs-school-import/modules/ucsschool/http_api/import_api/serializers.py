@@ -38,6 +38,7 @@ from __future__ import unicode_literals
 
 import collections
 import datetime
+import json
 import logging
 import os
 
@@ -78,7 +79,7 @@ class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
         # Internal representation of TaskResult.result isn't getting converted
         # automatically.
         res = super(TaskResultSerializer, self).to_representation(instance)
-        res["result"] = instance.result
+        res["result"] = json.loads(instance.result)
         # TODO: check if .result->status and .status match
         return res
 
