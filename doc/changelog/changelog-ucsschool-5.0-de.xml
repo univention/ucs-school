@@ -77,6 +77,9 @@ feedback@univention.de
 				<listitem><para>
 					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>, <u:bug>53460</u:bug>)
 				</para></listitem>
+				<listitem><para>
+					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
