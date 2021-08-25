@@ -83,6 +83,9 @@ feedback@univention.de
 				<listitem><para>
 					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
