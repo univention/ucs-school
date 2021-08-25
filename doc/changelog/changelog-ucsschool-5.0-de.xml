@@ -110,27 +110,6 @@ feedback@univention.de
 			</itemizedlist>
 			</section>
 
-<!--
-TODO:
-Bug #20064: Metapaket heisst ucs-school-singlemaster:
-Bug #41513: Remove legacy import_user code  from script ucs-school-import: FIXED
-Bug #52602: Replace DC Master/Slave with Primary/Backup/Replica/Managed Node:
-Bug #52603: Replace init.d with systemd: FIXED
-Bug #52605: Migrate debhelper to with ucr,univention-l10n,umc,join,... sequences: FIXED
-Bug #52606: ucs-school-webproxy needs to be migrated from runit to systemd: FIXED
-Bug #53364: remove iTALC in UCS@school 5.0: FIXED
-Bug #53365: Remove UCC support in UCS@school 5.0: FIXED
-Bug #53381: Remove BB API references in UCS@school 5.0: FIXED
-Bug #53392: Remove UVMM LDAP ACL's from UCS@school: FIXED
-Bug #53399: Migrate settings/portal* to portals/*:
-Bug #53415: Remove ucs-school-roleshares UMC module: FIXED
-Bug #53417: Increase all join script versions by 10:
-Bug #53451: Replace univention-celery with a systemd configuration for UCS@school:
-Bug #53452: Remove print quota setting from ucs-school-import: FIXED
-Bug #53468: netlogon listener: sqlite3.OperationalError: cannot VACUUM from within a transaction:
-
--->
-
 <!-- CHANGELOG-NEW-SECTION -->
 
 		</section>
