@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (18.0.2) unstable; urgency=medium
+
+  * Bug #20255: allow school DC Slaves to read settings/printeruri
+
+ -- Florian Best <best@univention.de>  Wed, 25 Aug 2021 10:43:58 +0200
+
 ucs-school-ldap-acls-master (18.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
