@@ -71,7 +71,7 @@ class GPO(object):
                 "--binddn",
                 self.account.binddn,
                 "--bindpwd",
-                self.account.bindpw,
+                self.account.pwdfile,
             ]
         )
         utils.wait_for_replication_and_postrun()
