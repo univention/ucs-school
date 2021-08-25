@@ -80,6 +80,9 @@ feedback@univention.de
 				<listitem><para>
 					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
