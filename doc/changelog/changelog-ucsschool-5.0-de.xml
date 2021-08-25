@@ -95,6 +95,9 @@ feedback@univention.de
 				<listitem><para>
 					<package>iTALC</package> has been removed from UCS@school (<u:bug>53364</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					<package>UCC</package> has been removed from UCS@school (<u:bug>53365</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
