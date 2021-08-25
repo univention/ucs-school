@@ -86,6 +86,9 @@ feedback@univention.de
 				<listitem><para>
 					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
