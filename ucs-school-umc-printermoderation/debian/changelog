@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (17.0.5) unstable; urgency=medium
+
+  * Bug #53598: set proper PDFDrucker model/uri
+
+ -- Felix Botner <botner@univention.de>  Wed, 25 Aug 2021 13:31:07 +0200
+
 ucs-school-umc-printermoderation (17.0.4) unstable; urgency=medium
 
   * Bug #53598: set proper PDFDrucker model/uri

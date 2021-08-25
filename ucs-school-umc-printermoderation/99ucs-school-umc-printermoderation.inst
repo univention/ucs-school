@@ -55,22 +55,17 @@ if [ "$server_role" = "domaincontroller_slave" ] ; then
 	position="cn=printers,ou=${ldap_hostdn#*,ou=}"
 fi
 
-# update to UCS 5, can be removed after
+# update to UCS 5, can be removed after the update
 if [ "$JS_LAST_EXECUTED_VERSION" = 3 ]; then
 	dn="cn=PDFDrucker,$position"
-	model=$(univention-ldapsearch -b "$dn" | sed -ne 's|univentionPrinterModel: ||p')
-	if [ -n "$model" ] && [ "$model" = "None" ]; then
+	pdfprinter="$(univention-ldapsearch -LLL -b "$dn" '(|(univentionPrinterModel=None)(!(univentionPrinterModel=*)))' dn)"
+	if [ -n "$pdfprinter" ]; then
 		udm shares/printer modify "$@" \
 			--dn "$dn" \
+			--set uri="cups-pdf:/" \
 			--set model="cups-pdf/CUPS-PDF_noopt.ppd" || die
-		# can't set uri (cups-pdf:/. -> cups-pdf:/) via UDM , Bug?
-		echo -e "dn: $dn
-changetype: modify
-replace: univentionPrinterURI
-univentionPrinterURI: cups-pdf:/" | ldapmodify -x -D "$ldap_hostdn" -H "ldap://$ldap_master:${ldap_master_port:-7389}" -y /etc/machine.secret
 	fi
 fi
-
 # end
 
 udm shares/printer create "$@" --ignore_exists \
