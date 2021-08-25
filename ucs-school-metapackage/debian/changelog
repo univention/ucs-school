@@ -1,3 +1,9 @@
+ucs-school-metapackage (13.0.4) unstable; urgency=medium
+
+  * Bug #52629: remove package ucs-school-s4-branch-site
+
+ -- Florian Best <best@univention.de>  Wed, 25 Aug 2021 15:50:42 +0200
+
 ucs-school-metapackage (13.0.3) unstable; urgency=medium
 
   * Bug #53364: remove iTALC support
