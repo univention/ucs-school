@@ -89,6 +89,9 @@ feedback@univention.de
 				<listitem><para>
 					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
