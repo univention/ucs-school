@@ -92,6 +92,9 @@ feedback@univention.de
 				<listitem><para>
 					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					<package>iTALC</package> has been removed from UCS@school (<u:bug>53364</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
