@@ -98,6 +98,12 @@ feedback@univention.de
 				<listitem><para>
 					<package>UCC</package> has been removed from UCS@school (<u:bug>53365</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					The LDAP ACL's for UVMM are only applied if the UVMM schema is installed (<u:bug>53392</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
