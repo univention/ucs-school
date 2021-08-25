@@ -104,6 +104,9 @@ feedback@univention.de
 				<listitem><para>
 					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
