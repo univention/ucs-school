@@ -62,7 +62,7 @@ if [ "$JS_LAST_EXECUTED_VERSION" = 3 ]; then
 	if [ -n "$pdfprinter" ]; then
 		udm shares/printer modify "$@" \
 			--dn "$dn" \
-			--set uri="cups-pdf:/" \
+			--set uri='"cups-pdf:/" ""' \
 			--set model="cups-pdf/CUPS-PDF_noopt.ppd" || die
 	fi
 fi
