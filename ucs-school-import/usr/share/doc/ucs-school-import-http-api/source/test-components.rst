@@ -12,7 +12,7 @@ All five services must be running:
 	service ucs-school-import-http-api status  # this is Gunicorn
 	service postgresql status
 	service rabbitmq-server status
-	service celery-worker-ucsschool-import status
+	service ucs-school-import-celery-worker status
 
 Check if components are working
 -------------------------------

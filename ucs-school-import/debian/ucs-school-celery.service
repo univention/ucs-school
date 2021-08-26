@@ -3,6 +3,7 @@ Description=celery task worker daemon for ucsschool-import
 After=network.target
 
 [Service]
+Alias=celery-worker-ucsschool-import.service
 Type=forking
 User=root
 Group=root
