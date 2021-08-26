@@ -107,6 +107,9 @@ feedback@univention.de
 				<listitem><para>
 					print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					The printer URI of the default pdf printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
