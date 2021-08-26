@@ -49,6 +49,13 @@ umc_operation_create "printermoderation-all" "Printer moderation" "" "printermod
 ucs_school_policies_create
 ucs_school_policies_append "printermoderation-all"
 
+if [ "$JS_LAST_EXECUTED_VERSION" = 3 ]; then
+	# resync cn=cups,cn=univention (but not cn=cups,cn=apps,cn=univention
+	/usr/share/univention-directory-listener/resync-objects.py -f '(&(objectClass=organizationalRole)(cn=cups)(cn:dn:=univention)(!(cn:dn:=apps)))' || die
+	# resync cn=printeruris,cn=cups,cn=univention
+	/usr/share/univention-directory-listener/resync-objects.py -f '(&(objectClass=univentionPrinterURIs)(cn=printeruris))' || die
+fi
+
 # create default PDF printer
 position="cn=printers,$ldap_base"
 if [ "$server_role" = "domaincontroller_slave" ] ; then
