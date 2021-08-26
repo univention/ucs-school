@@ -67,7 +67,7 @@ do
 	echo "Reloading $SERVICE..."
     deb-systemd-invoke reload "$SERVICE.service"
 done
-for SERVICE in rabbitmq-server celery-worker-ucsschool-import ucs-school-import-http-api;
+for SERVICE in rabbitmq-server ucs-school-import-celery-worker ucs-school-import-http-api;
 do
 	echo "Restarting $SERVICE..."
     deb-systemd-invoke restart "$SERVICE.service"

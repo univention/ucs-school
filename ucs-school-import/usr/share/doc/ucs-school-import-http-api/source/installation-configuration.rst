@@ -16,7 +16,7 @@ This will have installed and configured five system services:
 * ucs-school-import-http-api (Gunicorn instance: a Python application server)
 * postgresql (SQL server)
 * rabbitmq-server (message queueing system)
-* celery-worker-ucsschool-import (worker process pool)
+* ucs-school-import-celery-worker (worker process pool)
 
 UMC frontend installation
 -------------------------
