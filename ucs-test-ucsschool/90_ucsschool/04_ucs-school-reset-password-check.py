@@ -76,7 +76,7 @@ def _test_pwd_reset(
         assert auth_response.result.get("password_expired"), "The password is not expired - as expected."
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def school_environment():
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
