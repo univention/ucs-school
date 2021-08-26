@@ -187,8 +187,7 @@
 					Sollte auf dem &ucsMaster; ein SSL-Zertifikat mit abweichenden FQDNs verwendet werden, wird beim Öffnen des UMC-Moduls <guimenu>Benutzerimport</guimenu> eine Fehlermeldung auftauchen, da
 					der lokale Rechnername nicht mit den Rechnernamen im SSL-Zertifikat übereinstimmt. In diesem Fall muss die UCR-Variable <envar>ucsschool/import/http_api/client/server</envar> entsprechend
 					auf den/einen Rechnernamen (FQDN) des SSL-Zertifikats gesetzt werden. Zusätzlich sollte die UCR-Variable <envar>ucsschool/import/http_api/ALLOWED_HOSTS</envar> den lokalen FQDN sowie den
-					im SSL-Zertifikat verwendeten FQDN enthalten. Nach dem Setzen der beiden UCR-Variablen müssen einige Dienste neu gestartet werden: <command>service ucs-school-import-http-api restart</command>
-					und <command>service ucs-school-import-celery-worker restart</command>.
+					im SSL-Zertifikat verwendeten FQDN enthalten. Nach dem Setzen der beiden UCR-Variablen müssen einige Dienste neu gestartet werden: <command>systemctl restart ucs-school-import-http-api ucs-school-import-celery-worker</command>.
 				</para>
 			</note>
 		</section>
