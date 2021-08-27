@@ -14,6 +14,7 @@ from time import sleep
 
 import ldap
 
+import workaround
 import ucsschool.lib.models
 import univention.testing.utils as utils
 from univention.admin.uldap import getMachineConnection
@@ -53,7 +54,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         )
         stdout, stderr = self.create_and_run_process(cmd)
 
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print("\nExecuting cmd:", cmd)
             utils.fail("The 'samba-tool' produced the following output to STDERR: '%s'" % stderr)
         if not stdout:
@@ -118,7 +119,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         )
 
         stdout, stderr = self.create_and_run_process(cmd)
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print("\nExecuting cmd:", cmd)
             print(
                 "\nAn error message while creating a GPO using 'samba-tool' on the remote host '%s'. "
@@ -169,7 +170,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         )
 
         stdout, stderr = self.create_and_run_process(cmd)
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print("\nExecuting cmd:", cmd)
             print(
                 "\nAn error message while creating a GPO link using 'samba-tool' on the remote host "
@@ -211,7 +212,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         )
         stdout, stderr = self.create_and_run_process(cmd)
 
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print("\nExecuting cmd:", cmd)
             utils.fail(
                 "An error occured while getting the GPO link using 'samba-tool', STDERR: '%s'" % stderr

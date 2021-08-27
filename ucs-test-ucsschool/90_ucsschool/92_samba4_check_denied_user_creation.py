@@ -16,6 +16,7 @@ from __future__ import print_function
 from re import compile as regex_compile, search
 from sys import exit
 
+import workaround
 import univention.testing.utils as utils
 from univention.testing.strings import random_string
 from univention.testing.ucsschool.test_samba4 import TestSamba4
@@ -74,12 +75,13 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
                     "The creation of user '%s' succeded, while should be disabled on DC-Slave with "
                     "Samba4" % username
                 )
-
+        stderr = workaround.filter_deprecated(stderr)
         if not stderr.strip():
             utils.fail(
                 "Expecting the user creation to fail, however, the 'samba-tool' did not produce any "
                 "output to STDERR."
             )
+
 
         if not bool(self.fail_pattern.match(stderr)):
             utils.fail(

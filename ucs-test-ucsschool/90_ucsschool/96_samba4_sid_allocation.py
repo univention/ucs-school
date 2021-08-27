@@ -17,6 +17,7 @@ from time import sleep
 
 import ldap
 
+import workaround
 import univention.testing.utils as utils
 from univention.testing.strings import random_username
 from univention.testing.ucs_samba import wait_for_drs_replication
@@ -79,8 +80,9 @@ class TestS4SIDAllocation(TestSamba4):
 
         print("Executing command:", cmd)
         stdout, stderr = self.create_and_run_process(cmd)
-        if stderr:
-            utils.fail("An error occured while running univention-s4search: %r" % stderr)
+        if workaround.filter_deprecated(stderr):
+            utils.fail("The 'univention-s4search' produced errors %s." % stderr)
+
         matches = re.findall(r"^%s: (.*)$" % attribute, stdout, re.MULTILINE)
         if not matches:
             utils.fail("The 'univention-s4search' did not produce any %s." % attribute)

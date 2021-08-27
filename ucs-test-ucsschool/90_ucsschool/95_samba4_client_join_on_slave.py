@@ -16,7 +16,7 @@ from __future__ import print_function
 
 from multiprocessing import Process
 from os import getenv
-from re import IGNORECASE, match
+from re import IGNORECASE, search
 from shutil import rmtree
 from subprocess import PIPE
 from tempfile import mkdtemp
@@ -27,6 +27,7 @@ from samba.credentials import DONT_USE_KERBEROS, Credentials
 from samba.net import LIBNET_JOIN_AUTOMATIC, Net
 from samba.param import LoadParm
 
+import workaround
 import univention.testing.utils as utils
 from univention.testing.strings import random_username
 from univention.testing.ucsschool.test_samba4 import TestSamba4
@@ -217,10 +218,13 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         )
 
         stdout, stderr = self.create_and_run_process(cmd, PIPE, computer_ldif)
-        if stderr:
+        errors = []
+        # Workaround for Bug #53711
+        if workaround.filter_deprecated(stderr):
             utils.fail(
                 "An error occured while creating computer in SamDB using 'ldbadd' tool: '%s'" % stderr
             )
+        print(stdout)
         if not stdout.strip():
             utils.fail(
                 "The 'ldbadd' tool did not produce any output to STDOUT, while a confirmation of "
@@ -228,8 +232,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
             )
         else:
             print("The 'ldbadd' produced the following output:", stdout)
-
-        if not bool(match(".*Added 1 record.* successfully", stdout, IGNORECASE)):
+        if not bool(search(".*Added 1 record.* successfully", stdout, IGNORECASE)):
             utils.fail(
                 "Could not find the confirmation of a successful record addition to the database from "
                 "'ldbadd'."
