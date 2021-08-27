@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import difflib
 import ipaddress
 import os
 import random
@@ -16,10 +17,6 @@ from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importou import get_school_base
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
-
-class NetworkHookResult(Exception):
-    pass
 
 
 configRegistry = univention.config_registry.ConfigRegistry()
@@ -210,8 +207,10 @@ class ImportFile:
             print("PRE  HOOK result: %s" % pre_result)
             print("POST HOOK result: %s" % post_result)
             print("SCHOOL DATA     : %s" % data)
-            if pre_result != post_result != data:
-                raise NetworkHookResult(pre_result, post_result, data)
+            diff_pre = ''.join(difflib.unified_diff(data.splitlines(), pre_result.splitlines()))
+            diff_post = ''.join(difflib.unified_diff(data.splitlines(), post_result.splitlines()))
+            assert data == pre_result.strip(), (data, pre_result, diff_pre)
+            assert data == post_result.strip(), (data, post_result, diff_post)
         finally:
             hooks.cleanup()
             os.remove(self.import_file)
@@ -285,13 +284,21 @@ exit 0
             with open(post_hook, "w+") as fd:
                 fd.write(
                     """#!/bin/sh
+debug_exit() {
+    echo "Hook failed: filter=(&(objectClass=%(search_object_class)s)(cn=$school-$network))" >>%(post_hook_result)s
+    echo "Expected DN: $dn" >>%(post_hook_result)s
+    echo "Found DN: $ldap_dn" >>%(post_hook_result)s
+    echo "Found similar objects" >>%(post_hook_result)s
+    univention-ldapsearch -LLL "objectClass=%(search_object_class)s" dn >>%(post_hook_result)s
+    exit "$@"
+}
 set -x
 dn="$2"
 network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
 school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | \
+ldap_dn="$(univention-ldapsearch -LLL "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" dn | \
 ldapsearch-wrapper | sed -ne 's|dn: ||p')"
-test "$dn" = "$ldap_dn" || exit 1
+test "$dn" = "$ldap_dn" || debug_exit 1
 cat $1 >>%(post_hook_result)s
 exit 0
 """
