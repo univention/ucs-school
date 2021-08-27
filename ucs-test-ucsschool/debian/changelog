@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.1.0) unstable; urgency=medium
+
+  * Bug #53711: Ignore "locking blocks" deprecated warning
+
+ -- Julia Bremer <bremer@univention.de>  Fri, 27 Aug 2021 14:03:37 +0200
+
 ucs-test-ucsschool (7.0.4) unstable; urgency=medium
 
   * Bug #53705: Use Domain Admin credentials for msgpo.py script
