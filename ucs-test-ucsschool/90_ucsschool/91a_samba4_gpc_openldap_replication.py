@@ -13,6 +13,7 @@ from sys import exit
 from time import sleep
 
 import ldap
+import workaround
 
 import ucsschool.lib.models
 import univention.admin.uexceptions
@@ -57,7 +58,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         )
 
         stdout, stderr = self.samba_tool("gpo", "create", display_name)
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print(
                 ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s")
                 % (stderr,)
@@ -125,7 +126,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         print("\nLinking '%s' container and '%s' GPO using 'samba-tool'" % (container_dn, gpo_reference))
 
         stdout, stderr = self.samba_tool("gpo", "setlink", container_dn, gpo_reference)
-        if stderr:
+        if workaround.filter_deprecated(stderr):
             print(
                 ("\nAn error message while creating a GPO link using " "'samba-tool'. STDERR:\n%s")
                 % stderr
