@@ -831,6 +831,7 @@ class UCSTestSchool(object):
         is_teacher=False,  # type: Optional[bool]
         is_staff=False,  # type: Optional[bool]
         is_active=True,  # type: Optional[bool]
+        activationDate=None,  # type: Optional[List[str]]
         password="univention",  # type: Optional[str]
         use_cli=False,  # type: Optional[bool]
         wait_for_replication=True,  # type: Optional[bool]
@@ -867,6 +868,8 @@ class UCSTestSchool(object):
                 if not all(["-" in c for c in classes.split(",")]):
                     utils.fail("*** Class names must be <school-ou>-<class-name>.")
             # create import file
+            if activationDate:
+                utils.fail("Setting activationDate with classic import is not implemented yet")
             line = "A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n" % (
                 username,
                 lastname,
@@ -913,6 +916,7 @@ class UCSTestSchool(object):
                 "email": mailaddress,
                 "password": password,
                 "disabled": not is_active,
+                "accountActivationDate": activationDate,
                 "school_classes": dict(school_classes),
             }
             cls = Student
