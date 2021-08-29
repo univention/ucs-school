@@ -1,4 +1,4 @@
-ucs-test-ucsschool (7.0.6) unstable; urgency=medium
+ucs-test-ucsschool (7.0.7) unstable; urgency=medium
 
   * Bug #53711: Ignore "locking blocks" deprecated warning
 
