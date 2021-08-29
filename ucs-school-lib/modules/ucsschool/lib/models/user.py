@@ -43,6 +43,7 @@ from univention.admin.uexceptions import noObject, valueError
 
 from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
 from .attributes import (
+    AccountActivationDate,
     Birthday,
     Disabled,
     Email,
@@ -83,6 +84,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     email = Email(_("Email"), aka=["Email", "E-Mail"], unlikely_to_change=True)  # type: str
     password = Password(_("Password"), aka=["Password", "Passwort"])  # type: Optional[str]
     disabled = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])  # type: bool
+    accountActivationDate = AccountActivationDate(_("ActivationDate"), aka=["ActivationDate", "Aktivierungsdatum"])
     school_classes = SchoolClassesAttribute(
         _("Class"), aka=["Class", "Klasse"]
     )  # type: Dict[str, List[str]]

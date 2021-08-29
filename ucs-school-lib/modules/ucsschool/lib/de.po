@@ -347,6 +347,10 @@ msgstr "Passwort"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
+#: models/user.py:69
+msgid "ActivationDate"
+msgstr "Aktivierungsdatum"
+
 #: models/user.py:70
 msgid "Class"
 msgstr "Klasse"
