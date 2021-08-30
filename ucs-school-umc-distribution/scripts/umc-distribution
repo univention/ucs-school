@@ -101,7 +101,7 @@ def main():
     # open logging
     ud.init("/var/log/univention/ucs-school-umc-distribution.log", ud.FLUSH, ud.FUNCTION)
     ud.set_level(ud.ADMIN, options.debug)
-    debugmsg(ud.ADMIN, ud.ERROR, "umc-distribution started: args=%s" % (sys.argv,))
+    debugmsg(ud.ADMIN, ud.INFO, "umc-distribution started: args=%s" % (sys.argv,))
 
     if int(options.collect) + int(options.distribute) + int(options.remove) != 1:
         debugmsg(ud.ADMIN, ud.ERROR, "please specify one action: --distribute, --collect, or --remove")
@@ -136,7 +136,7 @@ def main():
                     if usersFailed:
                         exitcode = 40
                     debugmsg(
-                        ud.ADMIN, ud.ERROR, "umc-distribution finished: distributing: args=%s" % sys.argv
+                        ud.ADMIN, ud.INFO, "umc-distribution finished: distributing: args=%s" % sys.argv
                     )
 
                 elif options.collect:
@@ -148,17 +148,17 @@ def main():
                     if dirsFailed:
                         exitcode = 50
                     debugmsg(
-                        ud.ADMIN, ud.ERROR, "umc-distribution finished: collecting: args=%s" % sys.argv
+                        ud.ADMIN, ud.INFO, "umc-distribution finished: collecting: args=%s" % sys.argv
                     )
 
                 elif options.remove:
                     # remove project data
                     project.purge()
                     debugmsg(
-                        ud.ADMIN, ud.ERROR, "umc-distribution finished: removing: args=%s" % sys.argv
+                        ud.ADMIN, ud.INFO, "umc-distribution finished: removing: args=%s" % sys.argv
                     )
 
-    debugmsg(ud.ADMIN, ud.ERROR, "finished umc-distribution: args=%s" % sys.argv)
+    debugmsg(ud.ADMIN, ud.INFO, "finished umc-distribution: args=%s" % sys.argv)
     sys.exit(exitcode)
 
 
