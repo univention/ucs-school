@@ -131,9 +131,9 @@ class SchoolSearchBase(object):
         sdn = str2dn(dn)
         index = 0
         for part in sdn:
-            index += 1
             if any(x[0].lower() == "ou" for x in part):
                 break
+            index += 1
         else:
             return dn
         return dn2str(sdn[index:])
