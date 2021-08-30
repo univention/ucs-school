@@ -15,8 +15,14 @@ msgstr ""
 msgid "Add and modify workgroups"
 msgstr "Anlegen und Bearbeiten von Arbeitsgruppen"
 
+msgid "Add and modify organizational groups"
+msgstr "Anlegen und Bearbeiten von organisatorischen Gruppen"
+
 msgid "Administrate workgroups"
 msgstr "Arbeitsgruppen verwalten"
+
+msgid "Administrate organizational groups"
+msgstr "Organisatorische Gruppen verwalten"
 
 msgid "Edit members of workgroups"
 msgstr "Bearbeiten der Mitglieder einer Arbeitsgruppe"

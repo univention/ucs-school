@@ -35,7 +35,7 @@ from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.lib.models.group import SchoolClass, SchoolGroup, WorkGroup
+from ucsschool.lib.models.group import SchoolClass, SchoolGroup, WorkGroup, OrganizationalGroup
 from ucsschool.lib.models.share import GroupShare
 from ucsschool.lib.models.user import Teacher, TeachersAndStaff, User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
@@ -61,7 +61,7 @@ _ = Translation("ucs-school-umc-groups").translate
 
 def only_workgroup_admin(func):
     def _decorated(self, request, *args, **kwargs):
-        if request.flavor != "workgroup-admin":
+        if request.flavor not in ("workgroup-admin", "orgagroup-admin"):
             raise UMC_Error("not supported")
         return func(self, request, *args, **kwargs)
 
@@ -73,6 +73,8 @@ def get_group_class(request):
         return WorkGroup
     elif request.flavor == "teacher":
         return Teacher
+    elif request.flavor == "orgagroup-admin":
+        return OrganizationalGroup
     return SchoolClass
 
 
@@ -255,7 +257,7 @@ class Instance(SchoolBaseModule):
         MODULE.info("New members: %s" % group_from_umc["members"])
         MODULE.info("Removed members: %s" % (removed_members,))
 
-        if request.flavor == "workgroup-admin":
+        if request.flavor in ("workgroup-admin", "orgagroup-admin"):
             # do not allow groups to be renamed in order to avoid conflicts with shares
             # grp.name = '%(school)s-%(name)s' % group
             group_from_ldap.description = group_from_umc["description"]
@@ -342,6 +344,7 @@ class Instance(SchoolBaseModule):
     @only_workgroup_admin
     @LDAP_Connection(USER_READ, USER_WRITE)
     def add(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+        klass = get_group_class(request)
         for group in request.options:
             group = group["object"]
             break
@@ -357,7 +360,7 @@ class Instance(SchoolBaseModule):
                 grp["email"] = group.get("email", "")
                 grp["allowed_email_senders_groups"] = group.get("allowed_email_senders_groups", [])
                 grp["allowed_email_senders_users"] = group.get("allowed_email_senders_users", [])
-            grp = WorkGroup(**grp)
+            grp = klass(**grp)
             try:
                 success = grp.create(ldap_user_write)
             except ValidationError as exc:
@@ -383,10 +386,11 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection(USER_READ, USER_WRITE)
     def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
         """Deletes a workgroup"""
+        klass = get_group_class(request)
         errors = []
         for group_dn in request.options[0]["object"]:
 
-            group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
+            group = klass.from_dn(group_dn, None, ldap_user_write)
             if not group.school:
                 errors.append("Group must within the scope of a school OU: %s" % group_dn)
             try:

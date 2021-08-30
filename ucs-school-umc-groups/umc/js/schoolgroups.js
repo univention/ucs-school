@@ -309,7 +309,8 @@ define([
 				'class': Class,
 				'teacher': Teacher,
 				'workgroup': WorkGroup,
-				'workgroup-admin': WorkgroupAdmin
+				'workgroup-admin': WorkgroupAdmin,
+				'orgagroup-admin': WorkgroupAdmin
 			}[flavor]);
 		}
 	};

@@ -59,7 +59,7 @@ define([
 				type: TextBox,
 				name: 'name',
 				label: _('Workgroup'),
-				disabled: this.moduleFlavor != 'workgroup-admin',
+				disabled: !['workgroup-admin', "orgagroup-admin"].includes(this.moduleFlavor),
 				regExp: '^[a-zA-Z0-9]([a-zA-Z0-9 _.-]*[a-zA-Z0-9])?$',
 				invalidMessage: _('May only consist of letters, digits, spaces, dots, hyphens, underscore. Has to start and to end with a letter or a digit.'),
 				onChange: lang.hitch(this, function() {
@@ -73,14 +73,14 @@ define([
 				name: 'description',
 				label: _('Description'),
 				description: _('Verbose description of the group'),
-				disabled: this.moduleFlavor != 'workgroup-admin'
+				disabled: !['workgroup-admin', "orgagroup-admin"].includes(this.moduleFlavor),
 			}, this.getMultiSelectWidget(),
 				{
 				type: CheckBox,
 				name: 'create_share',
 				label: _('Create share'),
 				description: _('If checked, a share is created for the new group'),
-				disabled: this.moduleFlavor != 'workgroup-admin',
+				disabled: !['workgroup-admin', "orgagroup-admin"].includes(this.moduleFlavor),
 				value: true
 				},
 				{ // This widget only exists to hold the information if an email was delivered by the backend in editMode
@@ -199,7 +199,7 @@ define([
 		},
 		getMultiSelectGroup: function() {
 			var groups = [];
-			if (this.moduleFlavor == 'workgroup-admin') {
+			if (['workgroup-admin', "orgagroup-admin"].includes(this.moduleFlavor)) {
 				groups.push({id: 'None', label: _('All users')});
 				groups.push({id: 'teacher', label: _('All teachers')});
 			}

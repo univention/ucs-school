@@ -20,6 +20,10 @@
 	  <name>Administrate workgroups</name>
 	  <description>Add and modify workgroups</description>
 	</flavor>
+	<flavor id="orgagroup-admin" overwrites="workgroup"  priority="19">
+	  <name>Administrate organizational groups</name>
+	  <description>Add and modify organizational groups</description>
+	</flavor>
 	<command name="schoolgroups/query" function="query"></command>
 	<command name="schoolgroups/get" function="get"></command>
 	<command name="schoolgroups/put" function="put"></command>

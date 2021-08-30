@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2021-03-25 13:12+0100\n"
+"POT-Creation-Date: 2021-08-30 22:42+0200\n"
 "PO-Revision-Date: 2012-05-08 15:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,8 +24,8 @@ msgstr "Arbeitsgruppe hinzufügen"
 msgid "All students"
 msgstr "Alle Schüler"
 
-#: umc/js/schoolgroups/ClassDetailPage.js:73
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:204
+#: umc/js/schoolgroups/ClassDetailPage.js:73
 msgid "All teachers"
 msgstr "Alle Lehrer"
 
@@ -70,8 +70,8 @@ msgid "Deleting the selected objects."
 msgstr "Löschen der ausgewählten Objekte"
 
 #: umc/js/schoolgroups.js:193 umc/js/schoolgroups.js:241
-#: umc/js/schoolgroups/ClassDetailPage.js:56
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:74
+#: umc/js/schoolgroups/ClassDetailPage.js:56
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -151,12 +151,12 @@ msgstr ""
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: umc/js/schoolgroups.js:91 umc/js/schoolgroups/ClassDetailPage.js:46
-#: umc/js/schoolgroups/WorkgroupDetailPage.js:50
+#: umc/js/schoolgroups.js:91 umc/js/schoolgroups/WorkgroupDetailPage.js:50
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:124
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:149
-#: umc/js/schoolgroups/DetailPage.js:98
+#: umc/js/schoolgroups/ClassDetailPage.js:46
 #: umc/js/schoolgroups/TeacherDetailPage.js:48
+#: umc/js/schoolgroups/DetailPage.js:98
 msgid "School"
 msgstr "Schule"
 
