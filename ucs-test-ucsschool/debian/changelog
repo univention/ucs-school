@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.242) unstable; urgency=low
+
+  * Bug #53719: connect to primary when checking created objects
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Aug 2021 11:38:18 +0200
+
 ucs-test-ucsschool (6.0.241) unstable; urgency=medium
 
   * Bug #53718: Extend test case for accountActivationDate

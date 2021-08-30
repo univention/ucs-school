@@ -23,7 +23,7 @@ Depends:
  python-pytest,
  python-pytest-catchlog,
  python-requests,
- ucs-test-framework (>= 9.0.2-90),
+ ucs-test-framework (>= 9.0.7-57),
  ucs-test-libs,
  univention-unittests,
  ${misc:Depends},

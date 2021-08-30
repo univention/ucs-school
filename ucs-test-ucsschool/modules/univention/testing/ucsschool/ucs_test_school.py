@@ -935,9 +935,6 @@ class UCSTestSchool(object):
             result = cls(**kwargs).create(self.lo)
             logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
 
-        if wait_for_replication:
-            utils.wait_for_replication()
-
         utils.verify_ldap_object(
             user_dn,
             expected_attr={
@@ -945,6 +942,8 @@ class UCSTestSchool(object):
             },
             strict=False,
             should_exist=True,
+            primary=True,
+            wait_for="replication" if wait_for_replication else "",
         )
         return username, user_dn
 
@@ -999,8 +998,6 @@ class UCSTestSchool(object):
         )
         user_udm.modify()
         logger.info("*** SchoolAdmin created from %s ***", user.__class__.__name__)
-        if wait_for_replication:
-            utils.wait_for_replication()
         expected_ocs = {"ucsschoolAdministrator"}
         roles = []
         if is_staff:
@@ -1019,6 +1016,8 @@ class UCSTestSchool(object):
             },
             strict=False,
             should_exist=True,
+            primary=True,
+            wait_for="replication" if wait_for_replication else "",
         )
         return school_admin, dn
 
@@ -1081,13 +1080,13 @@ class UCSTestSchool(object):
         result = SchoolClass(**kwargs).create(self.lo)
         logger.info("*** Result of SchoolClass(...).create(): %r", result)
 
-        if wait_for_replication:
-            utils.wait_for_replication()
         utils.verify_ldap_object(
             grp_dn,
             expected_attr={"ucsschoolRole": [create_ucsschool_role_string(role_school_class, ou_name)]},
             strict=False,
             should_exist=True,
+            primary=True,
+            wait_for="replication" if wait_for_replication else "",
         )
         return class_name, grp_dn
 
@@ -1116,13 +1115,13 @@ class UCSTestSchool(object):
         result = WorkGroup(**kwargs).create(self.lo)
         logger.info("*** Result of WorkGroup(...).create(): %r", result)
 
-        if wait_for_replication:
-            utils.wait_for_replication()
         utils.verify_ldap_object(
             grp_dn,
             expected_attr={"ucsschoolRole": [create_ucsschool_role_string(role_workgroup, ou_name)]},
             strict=False,
             should_exist=True,
+            primary=True,
+            wait_for="replication" if wait_for_replication else "",
         )
         return workgroup_name, grp_dn
 
@@ -1171,13 +1170,13 @@ class UCSTestSchool(object):
             pc.teacher_computer = True
             pc.modify(self.lo)
         logger.info("*** Teacher computer set up")
-        if wait_for_replication:
-            utils.wait_for_replication()
         utils.verify_ldap_object(
             obj.dn,
             expected_attr={"ucsschoolRole": [create_ucsschool_role_string(role_computer_room, ou_name)]},
             strict=False,
             should_exist=True,
+            primary=True,
+            wait_for="replication" if wait_for_replication else "",
         )
         return name, result
 
