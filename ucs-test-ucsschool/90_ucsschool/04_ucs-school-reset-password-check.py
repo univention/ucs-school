@@ -127,93 +127,57 @@ def main():
             host, teachers[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
         )
 
-        print("#3 test if teacher is unable to reset teacher password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, teachers[0], "teacher", teachers[3], teachersDn[3], False, Forbidden, 401, 401
-        )
-
-        print("#4 test if teacher is unable to reset teacher password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, teachers[0], "teacher", teachers[3], teachersDn[3], True, Forbidden, 401, 401
-        )
-
-        print("#5 test if student is unable to reset teacher password (chgPwdNextLogin=False)")
+        print("#3 test if student is unable to reset teacher password (chgPwdNextLogin=False)")
         test_pwd_reset(
             host, students[0], "teacher", teachers[1], teachersDn[1], False, Forbidden, 200, 401
         )
 
-        print("#6 test if student is unable to reset teacher password (chgPwdNextLogin=True)")
+        print("#4 test if student is unable to reset teacher password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, students[0], "teacher", teachers[1], teachersDn[1], True, Forbidden, 200, 401
         )
 
-        print("#7 test if student is unable to reset teacher password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, students[0], "teacher", teachers[3], teachersDn[3], False, Forbidden, 401, 401
-        )
-
-        print("#8 test if student is unable to reset teacher password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, students[0], "teacher", teachers[3], teachersDn[3], True, Forbidden, 401, 401
-        )
-
-        print("#9 test if student is unable to reset student password (chgPwdNextLogin=False)")
+        print("#5 test if student is unable to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(
             host, students[0], "student", students[1], studentsDn[1], False, Forbidden, 200, 401
         )
 
-        print("#10 test if student is unable to reset student password (chgPwdNextLogin=True)")
+        print("#6 test if student is unable to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, students[0], "student", students[1], studentsDn[1], True, Forbidden, 200, 401
         )
 
-        print("#11 test if student is unable to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, students[0], "student", students[3], studentsDn[3], False, Forbidden, 401, 401,
-        )
-
-        print("#12 test if student is unable to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
-        test_pwd_reset(
-            host, students[0], "student", students[3], studentsDn[3], True, Forbidden, 401, 401
-        )
-
-        print("#13 test if teacher is able to reset student password (chgPwdNextLogin=False)")
+        print("#7 test if teacher is able to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(host, teachers[0], "student", students[0], studentsDn[0], False, True, 401, 200)
 
-        print("#14 test if teacher is able to reset student password (chgPwdNextLogin=True)")
+        print("#8 test if teacher is able to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(
             host, teachers[0], "student", students[1], studentsDn[1], True, True, 401, 401, True
         )
 
-        print("#15 test if teacher is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
+        print("#9 test if teacher is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
         test_pwd_reset(host, teachers[0], "student", students[3], studentsDn[3], False, True, 401, 401)
 
-        print("#16 test if teacher is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
+        print("#10 test if teacher is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
         test_pwd_reset(host, teachers[0], "student", students[4], studentsDn[4], True, True, 401, 401)
 
-        print("#17 test if schooladmin is able to reset student password (chgPwdNextLogin=False)")
+        print("#11 test if schooladmin is able to reset student password (chgPwdNextLogin=False)")
         test_pwd_reset(host, admins[0], "student", students[0], studentsDn[0], False, True, 401, 200)
 
-        print("#18 test if schooladmin is able to reset student password (chgPwdNextLogin=True)")
+        print("#12 test if schooladmin is able to reset student password (chgPwdNextLogin=True)")
         test_pwd_reset(host, admins[0], "student", students[2], studentsDn[2], True, True, 401, 401)
 
-        print("#19 test if schooladmin is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
+        print("#13 test if schooladmin is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
         test_pwd_reset(host, admins[0], "student", students[3], studentsDn[3], False, True, 401, 401)
 
-        print("#20 test if schooladmin is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
+        print("#14 test if schooladmin is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
         test_pwd_reset(host, admins[0], "student", students[4], studentsDn[4], True, True, 401, 401)
 
-        print("#21 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False)")
+        print("#15 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False)")
         test_pwd_reset(host, admins[0], "student", teachers[0], teachersDn[0], False, True, 401, 200)
 
-        print("#22 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True)")
+        print("#16 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True)")
         test_pwd_reset(host, admins[0], "student", teachers[1], teachersDn[1], True, True, 401, 401)
-
-        print("#23 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False, still disabled with accountActivationDate)")
-        test_pwd_reset(host, admins[0], "student", teachers[3], teachersDn[3], False, True, 401, 401)
-
-        print("#24 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True, still disabled with accountActivationDate)")
-        test_pwd_reset(host, admins[0], "student", teachers[4], teachersDn[4], True, True, 401, 401)
 
 
 # DISABLED DUE TO BUG 35447
