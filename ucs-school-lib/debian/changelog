@@ -6,7 +6,7 @@ ucs-school-lib (12.2.35) unstable; urgency=medium
 
 ucs-school-lib (12.2.34) unstable; urgency=medium
 
-  * Bug #53675: Extend user model for accountActivationDate
+  * Bug #53718: Extend user model for accountActivationDate
 
  -- Arvid <requate@univention.de>  Sun, 29 Aug 2021 19:43:45 +0200
 

@@ -3,7 +3,8 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
-fix: 12.2.33A~4.4.0.202107201102
+fix: 12.2.34A~4.4.0.202108291957
 desc: |
  * A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed. (Bug #53026).
-bug: [53026]
+ * The ucsschool-lib user model has been extended to cover the udm property accountActivationDate (Bug #53718)
+bug: [53026,53718]

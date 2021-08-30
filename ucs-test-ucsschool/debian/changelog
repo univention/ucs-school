@@ -18,7 +18,7 @@ ucs-test-ucsschool (6.0.242) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.241) unstable; urgency=medium
 
-  * Bug #53675: Extend test case for accountActivationDate
+  * Bug #53718: Extend test case for accountActivationDate
 
  -- Arvid <requate@univention.de>  Sun, 29 Aug 2021 19:42:27 +0200
 
