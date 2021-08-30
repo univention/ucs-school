@@ -172,8 +172,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         cn_admins = self.cn_name("admins", "admins")
         cn_classes = self.cn_name("class", "klassen")
         cn_rooms = self.cn_name("rooms", "raeume")
+        cn_organizational_groups = self.cn_name("organizational_groups", "organisatorisch")
         user_containers = [cn_pupils, cn_teachers, cn_admins]
-        group_containers = [cn_pupils, [cn_classes], cn_teachers, cn_rooms]
+        group_containers = [cn_pupils, [cn_classes], cn_teachers, cn_rooms, cn_organizational_groups]
         if self.shall_create_administrative_objects():
             cn_staff = self.cn_name("staff", "mitarbeiter")
             cn_teachers_staff = self.cn_name("teachers-and-staff", "lehrer und mitarbeiter")

@@ -82,6 +82,7 @@ role_school_class_share = "school_class_share"
 role_single_master = "single_master"
 role_student = "student"  # attention: there is also "role_pupil"
 role_workgroup = "workgroup"
+role_organizational_group = "organizational_group"
 role_workgroup_share = "workgroup_share"
 role_computer_room_backend_veyon = "veyon-backend"
 
@@ -108,6 +109,7 @@ all_roles = (
     role_single_master,
     role_student,
     role_workgroup,
+    role_organizational_group,
     role_workgroup_share,
     role_school_domain_group,
     role_school_teacher_group,

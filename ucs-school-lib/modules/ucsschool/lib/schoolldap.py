@@ -80,6 +80,7 @@ class SchoolSearchBase(object):
     def _load_containers_and_prefixes(cls):  # type: () -> None
         if not cls.ucr:
             cls._load_ucr()
+        cls._container_organizational_groups = cls.ucr.get("ucsschool/ldap/default/container/organizational_groups", "organisatorisch")
         cls._containerAdmins = cls.ucr.get("ucsschool/ldap/default/container/admins", "admins")
         cls._containerStudents = cls.ucr.get("ucsschool/ldap/default/container/pupils", "schueler")
         cls._containerStaff = cls.ucr.get("ucsschool/ldap/default/container/staff", "mitarbeiter")
@@ -183,6 +184,10 @@ class SchoolSearchBase(object):
         return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 
     @property
+    def organizational_groups(self):  # type: () -> str
+        return "cn=%s,cn=groups,%s" % (self._container_organizational_groups, self.schoolDN)
+
+    @property
     def classes(self):  # type: () -> str
         return "cn=%s,cn=%s,cn=groups,%s" % (
             self._containerClass,
@@ -269,6 +274,12 @@ class SchoolSearchBase(object):
         if not groupDN.endswith(self.workgroups):
             return False
         return len(explode_dn(groupDN)) - len(explode_dn(self.workgroups)) == 1
+
+    def is_organizational_group(self, group_dn):  # type: (str) -> bool
+        # organizational groups cannot lie in a subdirectory
+        if not group_dn.endswith(self.organizational_groups):
+            return False
+        return len(explode_dn(group_dn)) - len(explode_dn(self.organizational_groups)) == 1
 
     def isGroup(self, groupDN):  # type: (str) -> bool
         return groupDN.endswith(self.groups)

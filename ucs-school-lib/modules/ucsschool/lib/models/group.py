@@ -39,6 +39,7 @@ from ..roles import (
     role_computer_room_backend_veyon,
     role_school_class,
     role_workgroup,
+    role_organizational_group,
 )
 from .attributes import Attribute, Description, Email, GroupName, Groups, Hosts, SchoolClassName, Users
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass
@@ -114,6 +115,10 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     @classmethod
     def is_school_workgroup(cls, school, group_dn):  # type: (str, str) -> bool
         return cls.get_search_base(school).isWorkgroup(group_dn)
+
+    @classmethod
+    def is_organizational_group(cls, school, group_dn):  # type: (str, str) -> bool
+        return cls.get_search_base(school).is_organizational_group(group_dn)
 
     @classmethod
     def is_school_class(cls, school, group_dn):  # type: (str, str) -> bool
@@ -338,6 +343,21 @@ class WorkGroup(EmailAttributesMixin, SchoolClass, _MayHaveSchoolPrefix):
     def get_class_for_udm_obj(cls, udm_obj, school):
         # type: (UdmObject, str) -> Optional[Type[WorkGroup]]
         if not cls.is_school_workgroup(school, udm_obj.dn):
+            return
+        return cls
+
+
+class OrganizationalGroup(WorkGroup):
+    default_roles = [role_organizational_group]
+    ShareClass = WorkGroupShare
+
+    @classmethod
+    def get_container(cls, school):  # type: (str) -> str
+        return cls.get_search_base(school).organizational_groups
+
+    @classmethod
+    def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Optional[Type[WorkGroup]]
+        if not cls.is_organizational_group(school, udm_obj.dn):
             return
         return cls
 
