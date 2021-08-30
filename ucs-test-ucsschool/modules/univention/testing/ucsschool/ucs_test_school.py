@@ -943,7 +943,7 @@ class UCSTestSchool(object):
             strict=False,
             should_exist=True,
             primary=True,
-            wait_for="replication" if wait_for_replication else "",
+            pre_check=utils.wait_for_replication if wait_for_replication else None,
         )
         return username, user_dn
 
@@ -1017,7 +1017,7 @@ class UCSTestSchool(object):
             strict=False,
             should_exist=True,
             primary=True,
-            wait_for="replication" if wait_for_replication else "",
+            pre_check=utils.wait_for_replication if wait_for_replication else None,
         )
         return school_admin, dn
 
@@ -1086,7 +1086,7 @@ class UCSTestSchool(object):
             strict=False,
             should_exist=True,
             primary=True,
-            wait_for="replication" if wait_for_replication else "",
+            pre_check=utils.wait_for_replication if wait_for_replication else None,
         )
         return class_name, grp_dn
 
@@ -1121,7 +1121,7 @@ class UCSTestSchool(object):
             strict=False,
             should_exist=True,
             primary=True,
-            wait_for="replication" if wait_for_replication else "",
+            pre_check=utils.wait_for_replication if wait_for_replication else None,
         )
         return workgroup_name, grp_dn
 
@@ -1176,7 +1176,7 @@ class UCSTestSchool(object):
             strict=False,
             should_exist=True,
             primary=True,
-            wait_for="replication" if wait_for_replication else "",
+            pre_check=utils.wait_for_replication if wait_for_replication else None,
         )
         return name, result
 
