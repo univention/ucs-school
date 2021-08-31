@@ -551,7 +551,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     roles = []
 
                 udm_obj.props.ucsschoolRole.extend(roles)
-                udm_obj.props.ucsschoolRole = list(set(x.lower() for x in udm_obj.props.ucsschoolRole))
                 udm_obj.save()
 
             dhcp_service = self.get_dhcp_service(dc_name)
@@ -785,7 +784,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             role = create_ucsschool_role_string(role_single_master, self.name)
             if role not in obj.props.ucsschoolRole:
                 obj.props.ucsschoolRole.append(role)
-                obj.props.ucsschoolRole = list(set(x.lower() for x in obj.props.ucsschoolRole))
                 obj.save()
                 self.logger.debug("Append ucsschoolRole {!r} to {!r}.".format(role, obj.dn))
             else:
