@@ -12,7 +12,6 @@ import tempfile
 import time
 from functools import wraps
 
-from ldap.dn import explode_rdn
 
 import univention.lib.atjobs as ula
 import univention.testing.strings as uts
@@ -1039,23 +1038,8 @@ class UmcComputer(object):
 
 def create_homedirs(member_dn_list, open_ldap_co):
     for dn in member_dn_list:
-        samba_workstation = open_ldap_co.getAttr(dn, "sambaUserWorkstations")
         for home_dir in open_ldap_co.getAttr(dn, "homeDirectory"):
             home_dir = home_dir.decode("UTF-8")
-            from univention.config_registry import ucr
-
-            username = explode_rdn(dn)[0]
-            cmd = [
-                "smbclient",
-                "-U",
-                username + "%univention",
-                "//%s.%s/netlogon" % (ucr["hostname"], ucr["domainname"]),
-                "-c",
-                "logon %s univention" % (username,),
-            ]
-            if samba_workstation:
-                cmd += ["--netbiosname", samba_workstation[0]]
-            subprocess.call(cmd)
             if not os.path.exists(home_dir):
                 print("# Creating %r for %r" % (home_dir, dn))
                 os.makedirs(home_dir)

@@ -69,7 +69,7 @@ def check_exam_user_home_dir_permissions(
     member_dn_list, lo, distribution_data_folder
 ):  # type: (List[str], LoType, str) -> None
     for dn in member_dn_list:
-        samba_workstation = lo.getAttr(dn, "sambaUserWorkstations")[0]
+        samba_workstation = lo.getAttr(dn, "sambaUserWorkstations")[0].decode("UTF-8")
         for home_dir in lo.getAttr(dn, "homeDirectory"):
             home_dir = home_dir.decode("UTF-8")
             print("# check nt acls for {} and it's subfolders.".format(home_dir))
