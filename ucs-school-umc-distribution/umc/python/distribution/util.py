@@ -41,6 +41,7 @@ import traceback
 from datetime import datetime
 from pipes import quote
 
+import PAM
 from six import iteritems, string_types
 
 import ucsschool.lib.models
@@ -63,6 +64,7 @@ POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = ucr.get(
 POSTFIX_DATADIR_RECIPIENT = ucr.get(
     "ucsschool/datadistribution/datadir/recipient", "Unterrichtsmaterial"
 )
+PAM_HOMEDIR_SESSION = ucr.is_true("homedir/create", True)
 
 TYPE_USER = "USER"
 TYPE_GROUP = "GROUP"
@@ -464,8 +466,24 @@ class Project(_Dict):
             # create home directory with correct permissions if not yet exsists (e.g. user never logged
             # in via samba)
             if homedir and not os.path.exists(homedir):
-                MODULE.warn("recreate homedir %r uidNumber=%r gidNumber=%r" % (homedir, owner, group))
-                os.makedirs(homedir, 0o711)
+                if PAM_HOMEDIR_SESSION:
+                    MODULE.warn(
+                        "recreate homedir %r uidNumber=%r gidNumber=%r (PAM)" % (homedir, owner, group)
+                    )
+                    try:
+                        p = PAM.pam()
+                        p.start("session")
+                        p.set_item(PAM.PAM_USER, user.username)
+                        p.open_session()
+                        p.close_session()
+                    except PAM.error as e:
+                        MODULE.error("recreating homedir with PAM failed: %s" % str(e))
+                if not os.path.exists(homedir):
+                    MODULE.warn(
+                        "recreate homedir %r uidNumber=%r gidNumber=%r (makedirs)"
+                        % (homedir, owner, group)
+                    )
+                    os.makedirs(homedir, 0o711)
                 os.chmod(homedir, 0o700)
                 os.chown(homedir, owner, group)
 
