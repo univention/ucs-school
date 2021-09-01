@@ -8,18 +8,18 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="quickstart-ucsschool-de-4.4">
+<book lang="de" id="quickstart-ucsschool-de-5.0">
 <bookinfo>
   <title>&ucsUAS;</title>
   <subtitle>Quickstart Guide für &ucsUAS;</subtitle>
     <legalnotice>
       <literallayout>
-Version 4.4 v1
-Stand: 12. März 2019
+Version 5.0
+Stand: 1. September 2021
       </literallayout>
       <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2019
+(c) 2002-2021
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -88,7 +88,7 @@ feedback@univention.de
     <variablelist>
       <varlistentry>
         <term>Systemrolle</term>
-        <listitem><simpara>&ucsMaster;</simpara></listitem>
+        <listitem><simpara>&ucsPrimaryDN;</simpara></listitem>
       </varlistentry>
       <varlistentry>
         <term>Software-Auswahl</term>
@@ -143,7 +143,7 @@ feedback@univention.de
   </para>
 
   <para>
-    Standardmäßig wird bei der Erstinstallation von &ucsUAS; auf dem &ucsMaster; eine Demonstrationsschule inklusive Testnutzern und
+    Standardmäßig wird bei der Erstinstallation von &ucsUAS; auf dem &ucsPrimaryDN; eine Demonstrationsschule inklusive Testnutzern und
     einem Portal konfiguriert. Die Schule trägt den Namen <emphasis>DEMOSCHOOL</emphasis> und kann für eigene Tests verwendet werden.
 	Das Passwort für die automatisch angelegten Nutzer <systemitem class="username">demo_student</systemitem>,
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
@@ -256,7 +256,7 @@ feedback@univention.de
   </para>
 
   <figure id="ucsschool-module">
-	<title>Modulübersicht &ucsUAS; 4.4</title>
+	<title>Modulübersicht &ucsUAS; 5.0</title>
 	<graphic scalefit="1" width="80%" align="center" fileref="illustrations44/module_overview_Administrator_admin.png"/>
   </figure>
 
@@ -383,7 +383,7 @@ feedback@univention.de
     der bei der Installation gewählt wurde. Nach einem Klick auf die Schaltfläche <guimenu>OK</guimenu> muss in
     das Eingabefeld <guimenu>Ändern des Computernamens, bzw. der Domäne</guimenu> unter <guimenu>Name</guimenu>
     der <systemitem class="username">Administrator</systemitem> und in das Eingabefeld
-    <guimenu>Kennwort</guimenu> das bei der Einrichtung des DC Masters verwendete Administrator-Kennwort
+    <guimenu>Kennwort</guimenu> das bei der Einrichtung des Primary Directory Node verwendete Administrator-Kennwort
     eingetragen werden. Nun kann der Domänenbeitritt mit einem Klick auf <guimenu>OK</guimenu> gestartet werden.
   </para>
 
@@ -485,7 +485,7 @@ feedback@univention.de
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; in einer Multi-Server-Umgebung installieren</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:master2"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:installation:primary_directory_node2"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-vm-images">
     <publishername>Univention GmbH</publishername>
@@ -503,37 +503,37 @@ feedback@univention.de
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; - Handbuch für Lehrkräfte und Schuladministratoren</title>
-    <releaseinfo><ulink url="https://docs.univention.de/ucsschool-lehrer-handbuch-4.4.html"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.univention.de/ucsschool-lehrer-handbuch-5.0.html"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-admin">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>&ucsUAS; - Handbuch für Administratoren</title>
-    <releaseinfo><ulink url="http://docs.software-univention.de/ucsschool-handbuch-4.4.html"/></releaseinfo>
+    <releaseinfo><ulink url="http://docs.software-univention.de/ucsschool-handbuch-5.0.html"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-computer-management">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Rechnerverwaltung</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.4.html#computers:general"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-5.0.html#computers:general"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-computer-import">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Import von Rechnerkonten für Windows-PCs</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:schoolcreate:computers"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:schoolcreate:computers"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucs-computer-windows">
     <publishername>Univention GmbH</publishername>
     <pubdate>2017</pubdate>
     <title>Konfiguration und Management von Windows-Desktops</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.4.html#windows:samba4:desktopmanagement"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-5.0.html#windows:samba4:desktopmanagement"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-veyon">
     <publishername>Univention GmbH</publishername>
     <pubdate>2021</pubdate>
     <title>Veyon-Installation auf Windows-Clients</title>
-    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:windows:veyon"/></releaseinfo>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:windows:veyon"/></releaseinfo>
   </biblioentry>
 
   <bibliomixed id="ec2-quickstart"/>

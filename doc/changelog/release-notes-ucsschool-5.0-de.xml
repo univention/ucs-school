@@ -65,7 +65,7 @@ feedback@univention.de
 			dauern.
 		</para>
 		<para>
-			Das Update von &ucsUAS; muss zunächst auf dem Domaincontroller Master durchgeführt
+			Das Update von &ucsUAS; muss zunächst auf dem &ucsPrimaryDN; durchgeführt
 			werden, bevor das Update auf den übrigen &ucsUAS;-Systemen der Domäne gestartet werden
 			kann. Ansonsten wird es zu Problemen auf den übrigen &ucsUAS;-Schulservern kommen.
 		</para>
@@ -145,14 +145,14 @@ Checking ldap_schema ...                          OK
 			<title>Join-Hooks</title>
 			<para>
 				Der in &ucsUAS; 5.0 eingeführte Installationsprozess nutzt das neue Feature <emphasis>Join-Hooks</emphasis>,
-				das ab &ucsUCS; 5.0 zur Verfügung steht. Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsMaster; im
+				das ab &ucsUCS; 5.0 zur Verfügung steht. Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im
 				LDAP-Verzeichnis hinterlegt und automatisch während des Join-Vorgangs bzw. während der Ausführung von Joinskripten
 				ausgeführt. Der &ucsUAS;-Join-Hook installiert auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus
 				dem Univention App Center und installiert die auf dem jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese
 				noch fehlen.
 			</para>
 			<para>
-				Nach dem Update des &ucsMaster; auf UCS 5.0/&ucsUAS; 5.0 muss auf allen anderen Systemen der Domäne der Befehl
+				Nach dem Update des &ucsPrimaryDN; auf UCS 5.0/&ucsUAS; 5.0 muss auf allen anderen Systemen der Domäne der Befehl
 				<command>univention-run-join-scripts</command> auf der Kommandozeile ausgeführt werden, was den Join-Hook auf
 				jedem System erstmalig ausführt. Für die Erstinstallation der benötigten Pakete wird der Join-Hook je nach Rolle
 				des Systems und dessen Systemperformance mehrere Minuten benötigen. Dieser Vorgang darf dabei nicht abgebrochen

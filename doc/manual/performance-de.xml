@@ -54,26 +54,26 @@
 			Bei &ucsUAS; muss das Backend für BIND zwingend auf Samba 4 gesetzt sein (UCR-Variable <envar>dns/backend=samba4</envar>).
 		</para>
 	</note>
-    <section id="school:performance:additionalMemberserver">
-  	<title>Installation zusätzlicher Memberserver</title>
+    <section id="school:performance:additionalManaged-Node-Server">
+  	<title>Installation zusätzlicher Managed-Node-Server</title>
   	<para>
   	  In &ucsUAS; Umgebungen in denen Samba 4 Active Directory kompatible Dienste bereitstellt,
-	  kann ein zusätzlicher UCS Memberserver an einem Schulstandort installiert werden.
+	  kann ein zusätzlicher UCS Managed-Node-Server an einem Schulstandort installiert werden.
   	</para>
   	<para>
-  	  Um einen solchen zusätzlichen Memberserver an einem Schulstandort zu installieren und zu joinen, müssen
+  	  Um einen solchen zusätzlichen Managed-Node-Server an einem Schulstandort zu installieren und zu joinen, müssen
 	  vorbereitende Schritte durchgeführt werden:
   	  <itemizedlist>
   		<listitem>
   		  <simpara>
-			Für den neuen Memberserver muss im Container <uri>cn=computers</uri> der gewünschten Schul-OU ein
+			Für den neuen Managed-Node-Server muss im Container <uri>cn=computers</uri> der gewünschten Schul-OU ein
 			Rechnerobjekt angelegt werden. Der Name des Rechnerobjekts muss mit dem Hostnamen übereinstimmen, mit dem
-			der neue Memberserver installiert wurde.
+			der neue Managed-Node-Server installiert wurde.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Der Memberserver muss in die Gruppen <systemitem class="groupname">Member-Edukativnetz</systemitem> und
+			Der Managed-Node-Server muss in die Gruppen <systemitem class="groupname">Member-Edukativnetz</systemitem> und
 			<systemitem class="groupname">OU&lt;OUNAME&gt;-Member-Edukativnetz</systemitem> aufgenommen werden.
   		  </simpara>
   		</listitem>
@@ -81,19 +81,19 @@
   		  <simpara>
 			Im &ucsUDM; sollte eine &ucsUCR; Richtlinie angelegt werden, die die UCR-Variable <envar>ldap/server/name</envar>
 			auf den Namen des gewünschten Schulservers setzt. Diese &ucsUCR; Richtlinie sollte dann mit der gewünschten Schul-OU
-			oder mit dem Container verknüpft werden, in dem das Rechnerobjekt des Memberservers positioniert ist.
+			oder mit dem Container verknüpft werden, in dem das Rechnerobjekt des Managed-Node-Servers positioniert ist.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Auf dem Memberserver selbst muss vor dem Domänenbeitritt die UCR-Variable <envar>nameserver1</envar>
+			Auf dem Managed-Node-Server selbst muss vor dem Domänenbeitritt die UCR-Variable <envar>nameserver1</envar>
 			auf die IP-Adresse des Schulservers gesetzt werden. Die UCR-Variablen <envar>nameserver2</envar>
 			und <envar>nameserver3</envar> dürfen nicht gesetzt sein.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Nach diesen Schritten kann der Memberserver wie gewohnt der Domäne beitreten.
+			Nach diesen Schritten kann der Managed-Node-Server wie gewohnt der Domäne beitreten.
   		  </simpara>
   		</listitem>
   	  </itemizedlist>

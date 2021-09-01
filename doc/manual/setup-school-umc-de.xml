@@ -97,7 +97,7 @@
 				  Bei Schulservern bzw. Verwaltungsservern muss die Schule <emphasis>vor</emphasis> dem Domänenbeitritt
 				  des Systems angelegt und der Rechnername des Schulservers bzw. Verwaltungsservers an der Schule
 				  hinterlegt werden. Stimmen hinterlegter Rechnername und der Name des beitretenden Systems nicht überein,
-				  wird ein &ucsSlave; ohne &ucsUAS;-Funktionalität installiert und eingerichtet.
+				  wird ein &ucsReplicaDN; ohne &ucsUAS;-Funktionalität installiert und eingerichtet.
 			  </para>
 		  </caution>
 		  <note>
@@ -228,7 +228,7 @@ cd /usr/share/ucs-school-import/scripts/
 	<section id="school:setup:umc:user">
 	  <title>Verwaltung einzelner Benutzerkonten</title>
 	  <para>
-		Für die manuelle Pflege von einzelnen Benutzerkonten wird auf dem Domänencontroller Master
+		Für die manuelle Pflege von einzelnen Benutzerkonten wird auf dem Primary Directory Node
 		das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> bereitgestellt, welches sich in der
 		UMC-Modulgruppe <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
 		Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schülern, Lehrern und
@@ -304,7 +304,7 @@ cd /usr/share/ucs-school-import/scripts/
 	<section id="school:setup:umc:classes">
 	  <title>Verwaltung von Schulklassen</title>
 	  <para>
-		Auf dem Domaincontroller Master kann das Anlegen und Entfernen von Schulklassen über das
+		Auf dem Primary Directory Node kann das Anlegen und Entfernen von Schulklassen über das
 		UMC-Modul <guimenu>Klassen (Schulen)</guimenu> erfolgen. Das Anlegen einer Schulklasse ist
 		erforderlich, bevor das erste Schüler-Benutzerkonto erstellt werden kann. Die eigentliche Zuordnung
 		von Schülern zu einer Klasse erfolgt über das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> am

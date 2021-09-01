@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.4-import-legacy">
+<book lang="de" id="ucsschool-5.0-import-legacy">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,12 +18,12 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.4 v3
-				Stand: 02. September 2019
+				Version 5.0
+				Stand: 1. September 2021
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
-				(c) 2016-2019
+				(c) 2016-2021
 				Univention GmbH
 				Mary-Somerville-Straße 1
 				28359 Bremen
@@ -58,7 +58,7 @@
 		<para>
 		  Für punktuelle Anpassungen - etwa ein Schulwechsel mitten im Schuljahr -
 		  besteht die Möglichkeit einzelne Schüler manuell zu bearbeiten. Dies
-		  wird im &ucsUAS; Handbuch für Administratoren, Kapitel <ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:setup:umc:user">Verwaltung einzelner Benutzerkonten</ulink> beschrieben.
+		  wird im &ucsUAS; Handbuch für Administratoren, Kapitel <ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:setup:umc:user">Verwaltung einzelner Benutzerkonten</ulink> beschrieben.
 		</para>
 		<para>
 		  Der Import der Schuldaten ist bei Single- und Multi-Server-Umgebungen identisch.
@@ -66,7 +66,7 @@
 		<para>
 		  Der Import von Benutzern erfolgt über das
 		  Skript <command>/usr/share/ucs-school-import/scripts/import_user</command>,
-		  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> gestartet werden muss.
+		  das auf dem &ucsPrimaryDN; als Benutzer <systemitem class="username">root</systemitem> gestartet werden muss.
 		  Es erwartet den Namen einer CSV-Datei als ersten Parameter. Das Format
 		  der Eingabedatei ist wie folgt aufgebaut:
 		</para>

@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.4-umc-import">
+<book lang="de" id="ucsschool-5.0-umc-import">
 	<bookinfo>
 		<title>
 			&ucsUAS;
@@ -18,12 +18,12 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-				Version 4.4 v3
-				Stand: 02. September 2019
+				Version 5.0
+				Stand: 1. September 2021
 			</literallayout>
 			<literallayout lang="">
 				Alle Rechte vorbehalten./ All rights reserved.
-				(c) 2017-2019
+				(c) 2017-2021
 				Univention GmbH
 				Mary-Somerville-Straße 1
 				28359 Bremen
@@ -54,7 +54,7 @@
 			&ucsUAS; bringt seit der Version 4.2 v6 ein UMC-Modul mit, das es ermöglicht, sicher und komfortabel Benutzerdaten aus CSV-Dateien zu importieren. Über ein flexibles Sicherheitskonzept kann einzelnen Benutzern oder ganzen Gruppen die Berechtigung gegeben werden, Importe für bestimmte Schulen durchführen und deren Ergebnisse einsehen zu können.
 		</para>
 		<para>
-			Technisch basiert das UMC-Modul <guimenu>Benutzerimport</guimenu> auf Komponenten der Software, die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html"><citetitle>UCS@school-Handbuch zur CLI-Import-Schnittstelle</citetitle></ulink> beschrieben sind. Die Konfiguration dieser Komponenten ist nicht Teil dieses Dokuments.
+			Technisch basiert das UMC-Modul <guimenu>Benutzerimport</guimenu> auf Komponenten der Software, die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html"><citetitle>UCS@school-Handbuch zur CLI-Import-Schnittstelle</citetitle></ulink> beschrieben sind. Die Konfiguration dieser Komponenten ist nicht Teil dieses Dokuments.
 		</para>
 	</chapter>
 
@@ -145,7 +145,7 @@
 		<section id="installation">
 			<title>Installation</title>
 			<para>
-				Die Installation muss auf dem &ucsMaster; stattfinden:
+				Die Installation muss auf dem &ucsPrimaryDN; stattfinden:
 				<programlisting>
 # univention-install ucs-school-umc-import
 				</programlisting>
@@ -161,7 +161,7 @@
 				</programlisting>
 			</para>
 			<para>
-				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
+				Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die in <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html"><citetitle>Handbuch Import-Schnittstelle</citetitle></ulink> beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei <filename>/usr/share/ucs-school-import/configs/user_import_http-api.json</filename> sollte als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden.
 				Die Konfiguration wird aktiviert, indem sie an die richtige Position kopiert wird:
 				<programlisting>
 	# cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
@@ -184,7 +184,7 @@
 			</para>
 			<note>
 				<para>
-					Sollte auf dem &ucsMaster; ein SSL-Zertifikat mit abweichenden FQDNs verwendet werden, wird beim Öffnen des UMC-Moduls <guimenu>Benutzerimport</guimenu> eine Fehlermeldung auftauchen, da
+					Sollte auf dem &ucsPrimaryDN; ein SSL-Zertifikat mit abweichenden FQDNs verwendet werden, wird beim Öffnen des UMC-Moduls <guimenu>Benutzerimport</guimenu> eine Fehlermeldung auftauchen, da
 					der lokale Rechnername nicht mit den Rechnernamen im SSL-Zertifikat übereinstimmt. In diesem Fall muss die UCR-Variable <envar>ucsschool/import/http_api/client/server</envar> entsprechend
 					auf den/einen Rechnernamen (FQDN) des SSL-Zertifikats gesetzt werden. Zusätzlich sollte die UCR-Variable <envar>ucsschool/import/http_api/ALLOWED_HOSTS</envar> den lokalen FQDN sowie den
 					im SSL-Zertifikat verwendeten FQDN enthalten. Nach dem Setzen der beiden UCR-Variablen müssen einige Dienste neu gestartet werden: <command>systemctl restart ucs-school-import-http-api ucs-school-import-celery-worker</command>.

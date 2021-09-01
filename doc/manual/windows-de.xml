@@ -71,7 +71,7 @@
 		  Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dafür wird
 		  beim Joinen eines Schulservers automatisch am unter dem Schul-OU-Objekt liegenden DHCP-Container
 		  eine DHCP-DNS-Richtlinie verknüpft. Das automatische Verknüpfen dieser Richtlinie kann über das
-		  Setzen einer UCR-Variable auf dem Domänencontroller Master <emphasis>und</emphasis> dem Schulserver
+		  Setzen einer UCR-Variable auf dem &ucsPrimaryDN; <emphasis>und</emphasis> dem Schulserver
 		  deaktiviert werden. Die folgende Variable muss vor der Installation von
 		  &ucsUAS; oder dem Update des Systems gesetzt werden:
 		  <programlisting language="sh">
@@ -116,7 +116,7 @@ ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 	<para>
 	  Es ist zu beachten, dass die an der Schul-OU hinterlegten Dateiserver nur in einer
 	  Multi-Server-Umgebung ausgewertet werden. In einer Single-Server-Umgebung wird für beide
-	  Freigabetypen beim Anlegen neuer Objekte immer der &ucsMaster; als Dateiserver konfiguriert.
+	  Freigabetypen beim Anlegen neuer Objekte immer der &ucsPrimaryDN; als Dateiserver konfiguriert.
 	</para>
   </section>
 
