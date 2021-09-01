@@ -28,7 +28,7 @@
 
 """
 UDM hook to set UCS@schools `ucsschool_roles` attribute on client computer
-and central memberserver objects.
+and central Managed Node objects.
 """
 
 import inspect
@@ -92,7 +92,7 @@ except ImportError:
 class UcsschoolRoleComputers(simpleHook):
     """
     UDM hook to set UCS@schools `ucsschool_roles` attribute on client computer
-    and central memberserver objects.
+    and central Managed Node objects.
     """
 
     type = "UcsschoolRoleComputers"
@@ -147,7 +147,7 @@ class UcsschoolRoleComputers(simpleHook):
 
         obj_schools = self._get_schools(obj, all_schools)
         if role_str == "member":
-            # only central memberservers are handled here
+            # only central Managed Nodes are handled here
             if obj_schools == ["-"]:
                 role_str = role_memberserver
             else:

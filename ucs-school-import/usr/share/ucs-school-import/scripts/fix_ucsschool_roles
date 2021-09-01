@@ -57,7 +57,7 @@ ucr = ConfigRegistry()
 ucr.load()
 
 if ucr["server/role"] != "domaincontroller_master":
-    print("This script can only be executed on the Domaincontroller Master.")
+    print("This script can only be executed on the Primary Directory Node.")
     sys.exit(2)
 
 logger = logging.getLogger("UcsSchoolRolesMigration")

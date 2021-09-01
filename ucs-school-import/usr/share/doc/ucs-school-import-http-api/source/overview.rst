@@ -23,7 +23,7 @@ To be more precise, let's take a look at the topology picture and go from client
    :alt: Interaction of components.
 
 #. Clients are HTTP clients. UCS\@school provides a Python-API that makes interaction with the HTTP-API comfortable. This makes the Python code the HTTP client.
-#. The HTTP-API can only be accessed through HTTPS on the DC master. The web server `Apache <https://httpd.apache.org/>`_ runs a reverse proxy for the URL path ``/api/`` (UCRV [#UCRV_URL_path_api]_). All access to that path is forwarded to Gunicorn. Apache configuration file: [#apache_conf_file]_.
+#. The HTTP-API can only be accessed through HTTPS on the Primary Directory Node. The web server `Apache <https://httpd.apache.org/>`_ runs a reverse proxy for the URL path ``/api/`` (UCRV [#UCRV_URL_path_api]_). All access to that path is forwarded to Gunicorn. Apache configuration file: [#apache_conf_file]_.
 #. The `Gunicorn <http://gunicorn.org/>`_ Python web application (`WSGI <https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface>`_) server is listening on ``localhost`` on port ``8000`` (UCRV [#UCRV_gunicorn_port]_) for HTTP connections. Gunicorns configuration file: [#gunicorn_conf_file]_.
 
    #. Gunicorn starts the WSGI application returned by :py:func:`ucsschool.http_api.app.wsgi:application()`.

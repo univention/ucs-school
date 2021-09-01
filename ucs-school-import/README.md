@@ -2,7 +2,7 @@
 
 # Installation
 
-## Backend (on DC master)
+## Backend (on Primary Directory Node)
 
 	univention-install ucs-school-import-http-api
 
