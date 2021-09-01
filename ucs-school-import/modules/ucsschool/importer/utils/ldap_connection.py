@@ -70,7 +70,7 @@ def get_admin_connection():  # type: () -> (Tuple[LoType, PoType])
         try:
             _admin_connection, _admin_position = uldap.getAdminConnection()
         except IOError:
-            raise UcsSchoolImportFatalError("This script must be executed on a DC Master.")
+            raise UcsSchoolImportFatalError("This script must be executed on a Primary Directory Node.")
     return _admin_connection, _admin_position
 
 

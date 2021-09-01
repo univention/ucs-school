@@ -83,7 +83,7 @@ ucr = ConfigRegistry()
 ucr.load()
 
 if ucr["server/role"] != "domaincontroller_master":
-    print("This script can only be executed on the Domaincontroller Master.")
+    print("This script can only be executed on the Primary Directory Node.")
     sys.exit(2)
 
 lo, po = univention.admin.uldap.getAdminConnection()
@@ -140,12 +140,12 @@ class UcsSchoolRolesMigration(object):
         argp.add_argument(
             "--servers-central",
             action="store_true",
-            help="Modify central server objects (DC master, DC backup, DC slave, memberserver).",
+            help="Modify central server objects (Primary Directory Node, Backup Directory Node, Replica Directory Node, Managed Node).",
         )
         argp.add_argument(
             "--servers-school",
             action="store_true",
-            help="Modify UCS@school school server objects (DC slave admin & edu, memberserver).",
+            help="Modify UCS@school school server objects (Replica Directory Node admin & edu, Managed Node).",
         )
 
         argp.add_argument(
@@ -318,52 +318,52 @@ class UcsSchoolRolesMigration(object):
             self.logger.info("---------------------------------------------------------------")
             self.logger.info("Checking central servers...")
 
-            self.logger.info("- Looking for DC master...")
+            self.logger.info("- Looking for Primary Directory Node...")
             master_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
                 "(!(univentionService=UCS@school Education)))"
             )
             for dn in master_dcs:
                 self.set_ldap_attr(
-                    "DC master",
+                    "Primary Directory Node",
                     [create_ucsschool_role_string(role_dc_master, "-")],
                     dn,
                     "ucsschoolServer",
                 )
 
-            self.logger.info("- Looking for DC master (single server)...")
+            self.logger.info("- Looking for Primary Directory Node (single server)...")
             single_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=master)"
                 "(univentionService=UCS@school Education))"
             )
             for dn in single_dcs:
                 self.set_ldap_attr(
-                    "DC master (single)",
+                    "Primary Directory Node (single)",
                     [create_ucsschool_role_string(role_single_master, "-")],
                     dn,
                     "ucsschoolServer",
                 )
 
-            self.logger.info("- Looking for DC backups...")
+            self.logger.info("- Looking for Backup Directory Nodes...")
             backup_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=backup))"
             )
             for dn in backup_dcs:
                 self.set_ldap_attr(
-                    "DC backup",
+                    "Backup Directory Node",
                     [create_ucsschool_role_string(role_dc_backup, "-")],
                     dn,
                     "ucsschoolServer",
                 )
 
-            self.logger.info("- Looking for DC slaves...")
+            self.logger.info("- Looking for Replica Directory Nodes...")
             slave_dcs = lo.searchDn(
                 "(&(objectClass=univentionDomainController)(univentionServerRole=slave))"
             )
             for dn in slave_dcs:
                 if not SchoolDCSlave.from_dn(dn, None, lo).school:
                     self.set_ldap_attr(
-                        "DC slave",
+                        "Replica Directory Node",
                         [create_ucsschool_role_string(role_dc_slave, "-")],
                         dn,
                         "ucsschoolServer",
@@ -403,9 +403,9 @@ class UcsSchoolRolesMigration(object):
                                 type_msg,
                                 host_dn,
                             )
-                            self.logger.warning("    WARN: Marking %r as central slave.", host_dn)
+                            self.logger.warning("    WARN: Marking %r as central Replica Directory Node.", host_dn)
                             self.set_ldap_attr(
-                                "DC slave",
+                                "Replica Directory Node",
                                 [create_ucsschool_role_string(role_dc_slave, "-")],
                                 host_dn,
                                 "ucsschoolServer",
@@ -429,8 +429,8 @@ class UcsSchoolRolesMigration(object):
                         "ucsschoolServer",
                     )
 
-            # DC-Edukativnetz separate, because have to distinguish between first and secondary slaves
-            self.logger.info("- Looking for DC slave edu...")
+            # DC-Edukativnetz separate, because have to distinguish between first and secondary Replica Directory Nodes
+            self.logger.info("- Looking for Replica Directory Node edu...")
             filter_s = "(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-DC-Edukativnetz))"
             attr = ["uniqueMember"]
             host_dn_to_ous = host_and_ous(filter_s, attr, "DC-Edukativnetz", "school slave")
@@ -439,16 +439,16 @@ class UcsSchoolRolesMigration(object):
                 slave_udm = slave.get_udm_object(lo)
                 if "S4 Connector" in slave_udm["service"]:
                     self.set_ldap_attr(
-                        "DC slave edu",
+                        "Replica Directory Node edu",
                         [create_ucsschool_role_string(role_dc_slave_edu, ou) for ou in ous],
                         host_dn,
                         "ucsschoolServer",
                     )
-                # else: slave not yet joined -> no services -> no role yet
+                # else: Replica Directory Node not yet joined -> no services -> no role yet
 
-            mark_server("DC-Verwaltungsnetz", "DC slave admin", role_dc_slave_admin)
-            mark_server("Member-Edukativnetz", "member server edu", role_memberserver_edu)
-            mark_server("Member-Verwaltungsnetz", "member server admin", role_memberserver_admin)
+            mark_server("DC-Verwaltungsnetz", "Replica Directory Node admin", role_dc_slave_admin)
+            mark_server("Member-Edukativnetz", "Managed Node edu", role_memberserver_edu)
+            mark_server("Member-Verwaltungsnetz", "Managed Node admin", role_memberserver_admin)
 
         self.logger.info("---------------------------------------------------------------")
         self.logger.info("Finished.")

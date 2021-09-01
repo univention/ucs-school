@@ -472,7 +472,7 @@ def create_school_ou(
     for group in groups:
         verify_group(group, None, lo, superordinate, baseDN, schoolNr)
 
-    # add already existing dc (slave) to global dc groups
+    # add already existing dc (Replica Directory Node) to global dc groups
     # for proper ldap replication
     if dccn:
         dcobject = object_exists(
@@ -711,8 +711,8 @@ def create_school_ou(
 
         # * check if computer exists
         # * if computer is exists, test the following things
-        #   * is computer a dc master or dc backup ==> do not add computer to any groups
-        #   * is computer a dc slave ==> add computer to groups specified by dcgroups
+        #   * is computer a Primary Directory Node or Backup Directory Node ==> do not add computer to any groups
+        #   * is computer a Replica Directory Node ==> add computer to groups specified by dcgroups
         #   * is computer no dc ==> return error and exit
         #
 
@@ -743,7 +743,7 @@ def create_school_ou(
                 continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item
 
         if server_exists:
-            # check if existing system is a DC master or DC backup
+            # check if existing system is a Primary Directory Node or Backup Directory Node
             masterobjs = univention.admin.modules.lookup(
                 dcmaster_module,
                 None,
@@ -763,7 +763,7 @@ def create_school_ou(
                 filter=filter_format("cn=%s", [dccn]),
             )
             is_master_or_backup = masterobjs or backupobjs
-            # check if existing system is a DC slave
+            # check if existing system is a Replica Directory Node
             slaveobjs = univention.admin.modules.lookup(
                 server_module,
                 None,
@@ -787,7 +787,7 @@ def create_school_ou(
 
                 if is_master_or_backup and is_slave:
                     print(
-                        "ERROR: implementation error: %s seems to be dc slave and dc master at the same time"
+                        "ERROR: implementation error: %s seems to be a Replica Directory Node and Primary Directory Node at the same time"
                         % dcName
                     )
                     sys.exit(1)
@@ -1233,7 +1233,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
         # set default server
         serverfqdn = "dc%s.%s" % (schoolNr.lower(), domainname)
 
-        # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+        # get alternative server (defined at ou object if a Replica Directory Node is responsible for more than one ou)
         ou_dn = getDN(schoolNr, basedn=base)
         ou_attr_LDAPAccessWrite = lo.get(ou_dn, ["univentionLDAPAccessWrite"])
         alternativeServer_dn = None
@@ -2768,10 +2768,10 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
         filter=filter_format("cn=%s", [options.dcname]),
     )
     if not slaves:
-        print('ERROR: cannot find domaincontroller slave with hostname "%s"' % options.dcname)
+        print('ERROR: cannot find Replica Directory Node with hostname "%s"' % options.dcname)
         sys.exit(1)
     if len(slaves) > 1:
-        print('ERROR: found more than one domaincontroller slave with hostname "%s"' % options.dcname)
+        print('ERROR: found more than one Replica Directory Node with hostname "%s"' % options.dcname)
         sys.exit(1)
 
     oulist = univention.admin.modules.lookup(
@@ -2801,7 +2801,7 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
     )
     if not groups:
         print(
-            'ERROR: cannot move domaincontroller slave with hostname "%s" to OU "%s"'
+            'ERROR: cannot move Replica Directory Node with hostname "%s" to OU "%s"'
             % (
                 options.dcname,
                 options.ou,
@@ -2812,7 +2812,7 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 
     if slave.dn.endswith(",%s" % ouDn):
         print(
-            'domaincontroller slave "%s" is already located below ou "%s" - stopping here'
+            'Replica Directory Node "%s" is already located below ou "%s" - stopping here'
             % (
                 options.dcname,
                 options.ou,
@@ -2822,8 +2822,8 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 
     REis_in_ou = re.compile(r"^.+,ou=[^,]+,%s$" % baseDN)
     if REis_in_ou.match(slave.dn) and not options.force:
-        print('ERROR: domaincontroller slave "%s" is located in another OU' % (options.dcname))
-        print("ERROR: DN of domaincontroller slave: %s" % slave.dn)
+        print('ERROR: Replica Directory Node "%s" is located in another OU' % (options.dcname))
+        print("ERROR: DN of Replica Directory Node: %s" % slave.dn)
         print("ERROR: use --force to override")
         sys.exit(1)
 
@@ -2831,7 +2831,7 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
     containers = univention.admin.modules.lookup(cn_module, None, lo, scope="base", base=cnDn)
     if not containers:
         print(
-            "ERROR: cannot move domaincontroller slave object - target container does not exist: %s"
+            "ERROR: cannot move Replica Directory Node object - target container does not exist: %s"
             % cnDn
         )
         sys.exit(1)
@@ -2897,7 +2897,7 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
         create_object(dhcpserver)
 
     print("Move complete")
-    print("HINT: the domaincontroller slave has to be rejoined into the domain!")
+    print("HINT: the Replica Directory Node has to be rejoined into the domain!")
 
 
 def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
@@ -2967,7 +2967,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
     )
     if host_objects and not slave_objects:
         print(
-            'ERROR: given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.'
+            'ERROR: given host name "%s" is already in use and no Replica Directory Node system. Please choose another name.'
             % dc_name
         )
         sys.exit(1)
@@ -2976,7 +2976,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
         # slave object does exist
         if len(slave_objects) > 1:
             print(
-                "ERROR: more than one domaincontroller slave with cn=%s found in LDAP: %r"
+                "ERROR: more than one Replica Directory Node with cn=%s found in LDAP: %r"
                 % (
                     dc_name,
                     slave_objects,
@@ -2995,7 +2995,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
             slave_object.modify()
             print("modifed object:", slave_object.dn)
     else:
-        # slave object does NOT exist - create missing DC object
+        # Replica Directory Node object does NOT exist - create missing DC object
         position = univention.admin.uldap.position(baseDN)
         position.setDn("cn=dc,cn=server,cn=computers,%s" % getDN(ou_name))
         slave_object = server_module.object(None, lo, position=position, superordinate=superordinate)
@@ -3177,7 +3177,7 @@ Arguments:
                 )
                 sys.exit(1)
 
-        # In a single server environment the default school DC is the master
+        # In a single server environment the default school DC is the Primary Directory Node
         if not dcNameEducational and ucr.is_true("ucsschool/singlemaster", False):
             dcNameEducational = ucr.get("hostname")
 
@@ -3203,7 +3203,7 @@ Arguments:
 elif sys.argv[0].endswith("create_dc"):
     usage = """%prog --ou <ou> --name <dcname> --type <dctype>
 
-%prog creates domaincontroller slave objects within the given OU."""
+%prog creates Replica Directory Node objects within the given OU."""
 
     parser = optparse.OptionParser(usage=usage)
     parser.add_option(
@@ -3211,21 +3211,21 @@ elif sys.argv[0].endswith("create_dc"):
         action="store",
         dest="dc_name",
         default=None,
-        help="hostname of the domaincontroller slave object that shall be created",
+        help="hostname of the Replica Directory Node object that shall be created",
     )
     parser.add_option(
         "--ou",
         action="store",
         dest="ou_name",
         default=None,
-        help="target OU where the domaincontroller slave object will be created in",
+        help="target OU where the Replica Directory Node object will be created in",
     )
     parser.add_option(
         "--type",
         action="store",
         dest="dc_type",
         default=None,
-        help="UCS@school type of the domaincontroller slave object (valid values: %r, %r)"
+        help="UCS@school type of the Replica Directory Node object (valid values: %r, %r)"
         % (TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE),
     )
     options, args = parser.parse_args()
@@ -3262,7 +3262,7 @@ elif sys.argv[0].endswith("create_dc"):
 elif sys.argv[0].endswith("move_domaincontroller_to_ou"):
     usage = """%prog --dcname <dcname> --ou <ou>
 
-%prog moves domaincontroller slave objects that are not located
+%prog moves Replica Directory Node objects that are not located
 within an OU LDAP subtree to the given OU."""
 
     parser = optparse.OptionParser(usage=usage)
@@ -3271,21 +3271,21 @@ within an OU LDAP subtree to the given OU."""
         action="store",
         dest="dcname",
         default=None,
-        help="hostname of the domaincontroller slave object that shall be moved",
+        help="hostname of the Replica Directory Node object that shall be moved",
     )
     parser.add_option(
         "--ou",
         action="store",
         dest="ou",
         default=None,
-        help="target OU where the domaincontroller slave object is moved to",
+        help="target OU where the Replica Directory Node object is moved to",
     )
     parser.add_option(
         "--force",
         action="store_true",
         dest="force",
         default=False,
-        help="force move of domaincontroller slave object if located in other OU",
+        help="force move of Replica Directory Node object if located in other OU",
     )
     options, args = parser.parse_args()
 

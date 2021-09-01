@@ -248,7 +248,7 @@ def main():
     try:
         lo, _ = uldap.getAdminConnection()
     except IOError:
-        raise SystemExit("This script must be executed on a DC Master.")
+        raise SystemExit("This script must be executed on a Primary Directory Node.")
     try:
         if options.migrate_ous:
             for message in migrate_ous(lo, options):

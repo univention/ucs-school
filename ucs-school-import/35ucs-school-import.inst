@@ -47,7 +47,7 @@ LDAP_SECRET_FILE="$CONF_DIR/ldap_unprivileged.secret"
 if [ $server_role = domaincontroller_master ]; then
 	LDAP_USER_NAME="importhttpapi"
 else
-	# DC backup
+	# Backup Directory Node
 	LDAP_USER_NAME="importhttpapi-$hostname"
 fi
 LDAP_USER_POSITION="cn=users,$ldap_base"

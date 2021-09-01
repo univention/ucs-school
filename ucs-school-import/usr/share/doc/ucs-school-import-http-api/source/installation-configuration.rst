@@ -4,7 +4,7 @@ Installation and configuration
 Backend installation
 --------------------
 
-The backend *must* be installed on the DC master::
+The backend *must* be installed on the Primary Directory Node::
 
 	$ univention-install ucs-school-import-http-api
 
@@ -22,7 +22,7 @@ UMC frontend installation
 -------------------------
 
 Conceptually the UMC module can be installed on all UCS roles.
-But in its current implementation it *must* be installed on the DC master::
+But in its current implementation it *must* be installed on the Primary Directory Node::
 
 	$ univention-install ucs-school-umc-import
 
