@@ -72,7 +72,7 @@
             <title>Anlegen eines PDF-Druckers für die Druckermoderation</title>
             <para>
                 Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
-                das UMC-Modul <guimenu>Drucker</guimenu> auf dem &ucsMaster;
+                das UMC-Modul <guimenu>Drucker</guimenu> auf dem &ucsPrimaryDN;
                 angelegt. Weiterführende Dokumentation findet sich im
                 Druckdienste-Kapitel des UCS-Handbuchs<biblioref linkend="ucs-handbuch"/>.
             </para>
@@ -232,7 +232,7 @@
         </para>
         <para>
             Weitere Freigaben werden, wie in einer Standard-UCS-Installation, über
-            das UMC-Modul <guimenu>Freigaben</guimenu> auf dem &ucsMaster;
+            das UMC-Modul <guimenu>Freigaben</guimenu> auf dem &ucsPrimaryDN;
             angelegt. Weiterführende Dokumentation findet sich im
             Freigaben-Kapitel des UCS-Handbuchs<biblioref linkend="ucs-handbuch"/>.
         </para>
@@ -286,7 +286,7 @@
         </para>
         <para>
             Die Freigabe-Einstellungen dieser Freigabe können wie üblich über die &ucsUMC; auf
-            dem &ucsMaster; angepasst werden, z.B. um Lehrern auch Schreibzugriff zu gewähren.
+            dem &ucsPrimaryDN; angepasst werden, z.B. um Lehrern auch Schreibzugriff zu gewähren.
         </para>
         <para>
             Voraussetzung für diese Funktion ist, dass die
@@ -317,7 +317,7 @@
                     <simpara>
                         Die zusätzliche Gruppenmitgliedschaft muss manuell über das &ucsUMC;-Modul
                         <guimenu>Benutzer</guimenu>
-                        auf dem &ucsMaster; hinzugefügt werden. Auf dem Reiter
+                        auf dem &ucsPrimaryDN; hinzugefügt werden. Auf dem Reiter
                         <guimenu>Gruppen</guimenu>
                         muss das Benutzerkonto in die Gruppe
                         <systemitem class="groupname"><replaceable>admins-OU</replaceable></systemitem>
