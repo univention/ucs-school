@@ -92,7 +92,7 @@
 			Diese werden im folgenden aufgelistet und kurz erläutert.
 		</para>
 		<para>
-			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsMaster; als auch auf den Schulservern identische Werte aufweisen müssen.
+			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsPrimaryDN; als auch auf den Schulservern identische Werte aufweisen müssen.
 			<itemizedlist>
 				<listitem>
 					<simpara>

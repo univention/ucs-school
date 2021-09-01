@@ -82,7 +82,7 @@ If this error occurs again, please clone this bug.
 Do the following checks and document the result in Taiga/Bugzilla/Gitlab:
 
 * OK: all packages have been uploaded to the public appcenter (http://appcenter.software-univention.de/univention-repository/4.4/maintained/component/ucsschool_20201208103021/)
-* OK: successfully updated in a multi-server env dc master and dc slave
+* OK: successfully updated in a multi-server env Primary Directory Node and Replica Directory Node
 * OK: all bugs have been closed (52945, 49102, 49557)
 * OK: all yaml files have been renamed (`doc/errata/published/2021-05-26-*`)
 * OK: manual updated (https://docs.software-univention.de/ucsschool-handbuch-4.4.html)

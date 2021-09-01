@@ -20,7 +20,7 @@ Das hängt damit zusammen, dass die primäre Gruppe der Benutzer in der Standard
 
 - Der Benutzer `uid=anton` liegt unterhalb von `ou=schule1` und hat als primäre Gruppe `cn=Domain Users schule1,cn=groups,ou=schule1,dc=example,dc=com`. Zusätzlich ist der Benutzer ein schulübergreifender Benutzer an den Schulen 1 und 2.
 - Für den Schulserver1 der Schule1 ist das kein Problem.
-- Der Schulserver2 der Schule2 kann alle Benutzer aus dem LDAP des Masters replizieren, die auch Mitglied von Schule2 sind (in diesem Fall auch `uid=anton`).
+- Der Schulserver2 der Schule2 kann alle Benutzer aus dem LDAP des Primary Directory Node replizieren, die auch Mitglied von Schule2 sind (in diesem Fall auch `uid=anton`).
 - Der S4-Connector, der auf Schulserver2 aktiv ist, versucht jetzt, `uid=anton` ins lokale AD zu synchronisieren, benötigt dafür aber die primäre Gruppe aus der anderen Schule.
 
 Container unterhalb von `cn=groups,ou=SCHULE,dc=example,dc=com` sowie darin enthaltene Gruppen sollten laut ACL nicht auf "fremde" Schulserver syncronisiert werden. D.h. Klassen und Arbeitsgruppen sind nur auf "ihrem" Schulserver vorhanden.
@@ -83,9 +83,9 @@ Für UCS@school ist vorgesehen, dass jeder Schüler nur einer Klasse zugeordnet 
 Freigaben, die allen Usern zugeordnet werden sollen, wie z.B. dem Marktplatz, können ebenfalls über UCR-Variablen konfiguriert werden. Der Marktplatz wird über folgende UCR-Settings verknüpft:
 
     ucsschool/userlogon/commonshares/letter/Unterrichtsmaterial: U
-    ucsschool/userlogon/commonshares/server/Unterrichtsmaterial: slave213
+    ucsschool/userlogon/commonshares/server/Unterrichtsmaterial: replica213
     ucsschool/userlogon/commonshares/letter/Marktplatz: M
-    ucsschool/userlogon/commonshares/server/Marktplatz: slave213
+    ucsschool/userlogon/commonshares/server/Marktplatz: replica213
     ucsschool/userlogon/commonshares: Marktplatz,Unterrichtsmaterial
 
 "Marktplatz" und "Unterrichtsmaterial" sind hier jeweils die Namen der Freigabeen. `ucsschool/userlogon/commonshares` ist eine kommaseparierte Liste aller Freigaben, die für alle User verknüpft werden sollen.
@@ -100,8 +100,8 @@ Das LDB-Modul wird auf folgenden Systemen vom Metapaket installiert und aktivier
 - Multiserver-Umgebung:
   - Schulserver (edukativ UND Verwaltung)
 - Singleserver-Umgebung:
-  - DC Master
-  - DC Backup
+  - Primary Directory Node
+  - Backup Directory Node
 
 Auf allen anderen Rollen ist das Modul nicht aktiv und joinende Windowsclients legen dann Rechnerobjekte direkt in den zentralen Containern und nicht unterhalb der Schul-OUs an.
 
@@ -113,7 +113,7 @@ In ucs-test-ucsschool gibt es das Skript `75_ldap_acls_specific_tests`, welches 
 
 ### Auswirkungen von ACL-Änderungen überprüfen
 
-In ucs-test-ucsschool gibt es außerdem das Skript `78_ldap_acls_dump`. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen. Anschließend wird für alle 29 Objekttypen (cn=admin, DC Master, DC Backup, ..., Lehrer, Schüler, Mitarbeiter, Schuladmins, Windows-Clients, SchulDC) eine via `slapacl` eine Abfrage für alle Objekte im LDAP und in den drei TestOUs gemacht und die Zugriffsberechtigungen für die Attribute in jeweils eine Datei geschrieben (`/var/log/univention/78_ldap_acls_dump.TIMESTAMP/dn??.ldif`). In dem Verzeichnis liegt auch eine Datei `dn.txt` wo das Mapping der zwischen DN und Datei wieder aufgelöst wird.
+In ucs-test-ucsschool gibt es außerdem das Skript `78_ldap_acls_dump`. Es erstellt automatisch 3 Schulen mit allen (schulübergreifenden) Benutzertypen, allen Rechnertypen, Klassen, Arbeitsgruppen und Räumen. Anschließend wird für alle 29 Objekttypen (cn=admin, Primary Directory Node, Backup Directory Node, ..., Lehrer, Schüler, Mitarbeiter, Schuladmins, Windows-Clients, SchulDC) eine via `slapacl` eine Abfrage für alle Objekte im LDAP und in den drei TestOUs gemacht und die Zugriffsberechtigungen für die Attribute in jeweils eine Datei geschrieben (`/var/log/univention/78_ldap_acls_dump.TIMESTAMP/dn??.ldif`). In dem Verzeichnis liegt auch eine Datei `dn.txt` wo das Mapping der zwischen DN und Datei wieder aufgelöst wird.
 
 #### Welchen Mehrwert hat man dadurch?
 Man kann den Dump der Zugriffsberechtigungen jetzt **VOR** und **NACH** einer LDAP-ACL-Änderung erstellen und sich die Änderungen zwischen den beiden Dumps über das Skript `78_ldap_acls_dump.diff` (auch in ucs-test-ucsschool) anzeigen lassen. Dabei wird für jede Datei, die verglichen wird, ein `less` gestartet.
@@ -199,8 +199,8 @@ Um fehlende Zählerobjekte für Benutzernamen-Präfixe zu erzeugen, kann folgend
 #### Kann man, nachdem man eine Klasenarbeit erfolgreich beendet hat, sofort eine neue starten? Mit der gleichen Klasse?
 Ja, das sollte gehen. (Wir gehen mal davon aus, dass sich die Klassenarbeit ordentlich wieder beendet hat. Falls da noch Überbleibsel in der Config übrig geblieben sind￼, kann es natürlich zu Folgefehlern kommen).
 
-#### Kann das Starten einer Klassenarbeit scheitern, wenn die Replikation zwischen Master und Slave zu träge ist?
-Ganz klares `Jein`. Das Exam-Modul auf dem Slave wendet sich an den Master, um dort die Exam-User anzulegen bzw. später wieder zu löschen. Nach dem Anlegen der Exam-User auf dem Master wartet das Exam-Modul auf dem Slave bis zu 30 Minuten, dass die Exam-User auch auf den Slave repliziert wurden. Wenn die Replikation so langsam ist, dass der 30min-Timeout gerissen wird, dann lautet die Antwort eindeutig `Ja`, aber dann kann man den Exam-Modus auch nicht mehr kurzfristig sinnvoll einsetzen.
+#### Kann das Starten einer Klassenarbeit scheitern, wenn die Replikation zwischen Primary Directory Node und Replica Directory Node zu träge ist?
+Ganz klares `Jein`. Das Exam-Modul auf dem Replica Directory Node wendet sich an den Primary Directory Node, um dort die Exam-User anzulegen bzw. später wieder zu löschen. Nach dem Anlegen der Exam-User auf dem Primary Directory Node wartet das Exam-Modul auf dem Replica Directory Node bis zu 30 Minuten, dass die Exam-User auch auf den Replica Directory Node repliziert wurden. Wenn die Replikation so langsam ist, dass der 30min-Timeout gerissen wird, dann lautet die Antwort eindeutig `Ja`, aber dann kann man den Exam-Modus auch nicht mehr kurzfristig sinnvoll einsetzen.
 
 #### Was macht einen ExamUser aus?
 * Das Objekt liegt im LDAP unter der primären OU des originalen Nutzers

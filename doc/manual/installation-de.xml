@@ -20,7 +20,7 @@
   <para>
 	Im Folgenden werden zwei Installationsvarianten beschrieben:
 	die Installation als Single-Server-Umgebung und die Installation als
-	Multi-Server-Umgebung mit einem Domänencontroller Master und mindestens einem
+	Multi-Server-Umgebung mit einem &ucsPrimaryDN; und mindestens einem
 	Schulserver. In beiden Fällen wird empfohlen während des Installationsprozesses von &ucsUAS; keine weiteren Aktionen
 	in der UMC oder auf der Kommandozeile auszuführen. Sollten Sie das Fenster im Browser während des Installationsprozesses von
 	&ucsUAS; schließen, läuft die Installation selbst dennoch auf dem System weiter. Um den Status der Installation dann
@@ -31,7 +31,7 @@
   </para>
 
   <para>
-    In beiden Varianten wird standardmäßig bei der Erstinstallation von &ucsUAS; auf dem &ucsMaster; eine Demonstrationsschule inklusive Testnutzern und
+    In beiden Varianten wird standardmäßig bei der Erstinstallation von &ucsUAS; auf dem &ucsPrimaryDN; eine Demonstrationsschule inklusive Testnutzern und
     einem Portal konfiguriert. Die Schule trägt den Namen <wordasword>DEMOSCHOOL</wordasword> und kann für eigene Tests verwendet werden.
 	Das Passwort für die automatisch angelegten Nutzer <systemitem class="username">demo_student</systemitem>,
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
@@ -51,7 +51,7 @@
 	  </para>
 	  <para>
 		  Der neue Installationsprozess nutzt das neue Feature <emphasis>Join-Hooks</emphasis>, das ab &ucsUCS; 4.4 zur Verfügung steht.
-		  Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsMaster; im LDAP-Verzeichnis hinterlegt und automatisch
+		  Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im LDAP-Verzeichnis hinterlegt und automatisch
 		  während des Join-Vorgangs bzw. während der Ausführung von Joinskripten ausgeführt. Der &ucsUAS;-Join-Hook installiert
 		  auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus dem Univention App Center und installiert die auf dem
 		  jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese fehlen. Für die Erstinstallation der Pakete wird der Join-Hook
@@ -65,10 +65,10 @@
 
   <section id="installation:single">
 	  <title>Installation einer Single-Server-Umgebung</title>
-	  <section id="installation:single:master">
-		<title>Installation des DC Master</title>
+	  <section id="installation:single:primary_directory_node">
+		<title>Installation des &ucsPrimaryDN;</title>
 		<para>
-		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsMaster;</emphasis> installiert werden. Die
+		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsPrimaryDN;</emphasis> (kurz: Primary) installiert werden. Die
 		  Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Es ist empfohlen während
 		  der Installation keine zusätzliche Software auszuwählen.
 		</para>
@@ -130,7 +130,7 @@
 		</para>
 		<caution>
 			<para>
-				Nach Abschluss der Installation auf dem &ucsMaster; sollte auf allen anderen gejointen Systemen der Domäne der Befehl
+				Nach Abschluss der Installation auf dem &ucsPrimaryDN; sollte auf allen anderen gejointen Systemen der Domäne der Befehl
 				<command>univention-run-join-scripts</command> ausgeführt werden, damit der installierte &ucsUAS;-Join-Hook
 				benötigte Konfigurationspakete auf den Systemen nachinstallieren kann. Dieser Vorgang kann je nach Rolle des Systems und
 				dessen Systemperformance mehrere Minuten dauern und darf nicht unterbrochen werden.
@@ -139,7 +139,7 @@
 	  </section>
 	</section>
 
-	<section id="school:installation:master2">
+	<section id="school:installation:primary_directory_node2">
 		<title>Installation einer Multi-Server-Umgebung</title>
 		<para>
 			Das Konzept der Multi-Server-Umgebung von &ucsUAS; sieht zentrale Server für Cloud-Dienste wie Portal, Mail, Kalender,
@@ -149,11 +149,11 @@
 			Abschnitten genauer beschrieben.
 		</para>
 
-		<section id="installation:multi:master">
-	 		<title>Installation des DC Master</title>
+		<section id="installation:multi:primary_directory_node">
+	 		<title>Installation des &ucsPrimaryDN;</title>
 	 		<para>
-	 		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsMaster;</emphasis> (kurz: DC Master) installiert werden. Die
-	 		  Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Sofern der &ucsMaster;
+	 		  Zunächst muss ein UCS System mit der Systemrolle <emphasis>&ucsPrimaryDN;</emphasis> installiert werden. Die
+	 		  Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Sofern der &ucsPrimaryDN;
 	 		  als Active Directory-kompatibler Domänencontroller genutzt werden soll, so kann die Software bereits
 	 		  während der UCS-Installation ausgewählt werden.
 	 		</para>
@@ -169,7 +169,7 @@
 	 		  Nun kann die Kachel <guimenu>App Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis>
 	 		  installiert werden. Für die Installation ist den Anweisungen zu folgen, bspw. kann eine Lizenzaktivierung notwendig sein. Details
 	 		  dazu sind im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> zu finden.
-	 		  <figure id="install-via-appcenter-master">
+	 		  <figure id="install-via-appcenter-primary_directory_node">
 	 		    <title>Installation von &ucsUAS; über das Univention App Center</title>
 	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/appcenter_ucsschool.png"/>
 	 		  </figure>
@@ -177,7 +177,7 @@
 	 		<para>
 	 		  Nach dem Abschluss der Installation über das App Center erfolgt die Konfiguration von &ucsUAS;. Diese wird mit dem
 	 		  &ucsUAS;-Konfigurationsassistenten durchgeführt. Dieser ist in UMC über den Bereich <guimenu>Schul-Administration</guimenu> erreichbar.
-	 		  <figure id="install-umc-wizard-master">
+	 		  <figure id="install-umc-wizard-primary_directory_node">
 	 		    <title>Starten des &ucsUAS;-Konfigurationsassistenten</title>
 	 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/install-umc-wizard.png"/>
 	 		  </figure>
@@ -200,7 +200,7 @@
 	 		</para>
 			<caution>
 				<para>
-					Nach Abschluss der Installation auf dem &ucsMaster; sollte auf allen anderen gejointen Systemen der Domäne der Befehl
+					Nach Abschluss der Installation auf dem &ucsPrimaryDN; sollte auf allen anderen gejointen Systemen der Domäne der Befehl
 					<command>univention-run-join-scripts</command> ausgeführt werden, damit der installierte &ucsUAS;-Join-Hook
 					benötigte Konfigurationspakete auf den Systemen nachinstallieren kann. Dieser Vorgang kann je nach Rolle und
 					Systemperformance mehrere Minuten dauern und darf nicht unterbrochen werden.
@@ -209,23 +209,23 @@
 	 	  </section>
 
 	 	  <section id="installation:multi:backup">
-	 		<title>Installation eines DC Backup (optional)</title>
+	 		<title>Installation eines Backup Directory Node (optional)</title>
 	 		<para>
-	 		  Auf Servern mit der Rolle <emphasis>&ucsBackup;</emphasis> (kurz: DC Backup) werden alle Domänendaten und
+	 		  Auf Servern mit der Rolle <emphasis>&ucsBackupDN;</emphasis> (kurz: Backup) werden alle Domänendaten und
 	 		  SSL-Sicherheitszertifikate als Nur-Lese-Kopie gespeichert.
 	 		</para>
 	 		<para>
-	 		  Ein DC Backup dient als Fallback-System des DC Master. Sollte dieser ausfallen, kann ein DC Backup
-	 		  die Rolle des DC Master dauerhaft übernehmen. Der Einsatz eines DC Backup ist optional und die Einrichtung
+	 		  Ein Backup Directory Node dient als Fallback-System des &ucsPrimaryDN;. Sollte dieser ausfallen, kann ein Backup Directory Node
+	 		  die Rolle des &ucsPrimaryDN; dauerhaft übernehmen. Der Einsatz eines Backup Directory Node ist optional und die Einrichtung
 			  denkbar einfach.
 			</para>
 			<para>
-				Es muss ein neues DC Backup-System installiert werden. Während des Domänenbeitritts (oder der Ausführung
+				Es muss ein neues Backup-Directory-Node-System installiert werden. Während des Domänenbeitritts (oder der Ausführung
 				von <command>univention-run-join-scripts</command>) werden auf diesem System durch den in den vorigen
-				Abschnitten bereits erwähnten &ucsUAS;-Join-Hook automatisch die gleichen Pakete wie auf dem DC Master
+				Abschnitten bereits erwähnten &ucsUAS;-Join-Hook automatisch die gleichen Pakete wie auf dem &ucsPrimaryDN;
 				installiert. Es werden dabei jedoch nur die Softwarepakete installiert. Falls nach der Installation Änderungen
-				an der Konfiguration auf dem DC Master vorgenommen werden, müssen diese manuell auf den/die DC-Backup-Systeme
-				übertragen werden, damit diese in einem Backup2Master-Szenario die Rolle des DC Masters ohne Probleme
+				an der Konfiguration auf dem &ucsPrimaryDN; vorgenommen werden, müssen diese manuell auf den/die Backup-Systeme
+				übertragen werden, damit diese in einem Backup2Master-Szenario die Rolle des &ucsPrimaryDN; ohne Probleme
 				übernehmen können.
 			</para>
 	 		<para>
@@ -237,7 +237,7 @@
 	 		</para>
 	 	  </section>
 
-	 	  <section id="school:installation:slave">
+	 	  <section id="school:installation:replica_directory_node">
 	 		<title>Installation eines Schulservers</title>
 	 		<para>
 	 		  Der edukative Schulserver, im folgenden Schulserver genannt, liefert die Anmeldedienste für Schüler
@@ -252,7 +252,7 @@
 				erfolgen, da dieser sonst als normales UCS-System ohne spezielle &ucsUAS;-Funktionalitäten eingerichtet wird.
 			</para>
 			<para>
-				Nach dem Anlegen der Schule muss ein UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis> installiert werden.
+				Nach dem Anlegen der Schule muss ein UCS-System mit der Systemrolle <emphasis>&ucsReplicaDN;</emphasis> installiert werden.
 				Die Installation ist im UCS-Handbuch<biblioref linkend="ucs-handbuch"/> beschrieben. Während der Installation ist
 				darauf zu achten, dass der Rechnername bei der Installation mit dem Namen des Schulservers übereinstimmt, der beim
 				Anlegen der Schule angegeben wurde. Nach der Angabe des Schulservernamens wird vom UCS-Installer ab UCS 4.4-1 die Rolle abgefragt,
@@ -268,14 +268,14 @@
 	 			erreichbar, dazu kann einfach der Name oder die IP-Adresse des Servers in die Adresszeile des Webbrowsers
 	 			eingegeben werden. Es erscheint eine Kachel mit der Bezeichnung <guimenu>Systemeinstellungen</guimenu>. Nach einem Klick
 	 			auf die Kachel wird eine Anmeldemaske angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer Administrator (sofern noch nicht geändert, entspricht das Passwort dem
-				während der DC-Master-Installation vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>).
+				während der Primary-Directory-Node-Installation vergebenen Passwort für den Benutzer <systemitem class="username">root</systemitem>).
 	 		</para>
 	 		<caution>
 	 			<para>
-	 				Die <emphasis>nachträgliche</emphasis> Installation von &ucsUAS; auf einem bestehenden &ucsSlave; und die Verwendung
+	 				Die <emphasis>nachträgliche</emphasis> Installation von &ucsUAS; auf einem bestehenden &ucsReplicaDN; und die Verwendung
 					als Schulserver ist nicht möglich. Der Verwendungszweck des Systems wird während des Domänenbeitritts festgelegt.
 					Falls das Anlegen der Schule und das Hinterlegen des Rechnernamens an der Schule versäumt wurde, wird das System
-					während des Domänenbeitritts als normaler &ucsSlave; ohne spezielle &ucsUAS;-Funktionalität eingerichtet.
+					während des Domänenbeitritts als normaler &ucsReplicaDN; ohne spezielle &ucsUAS;-Funktionalität eingerichtet.
 				</para>
 				<para>
 					Soll das System trotzdem als Schulserver im Edukativ- oder Verwaltungsnetz eingesetzt werden, muss zunächst das
@@ -285,7 +285,7 @@
 	 			</para>
 	 		</caution>
 	 	  </section>
-	 	  <section id="school:installation:slave-administrative">
+	 	  <section id="school:installation:replica_directory_node-administrative">
 	 		<title>Installation eines Verwaltungsservers (optional)</title>
 	 		<para>
 	 		  Der Verwaltungsserver bietet Anmeldedienste für Mitarbeiter in der Verwaltung an. Es ist nicht zwingend erforderlich,
@@ -297,7 +297,7 @@
 	 		  Edukativnetzes zu vermeiden (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
 	 		</para>
 	 		<para>
-	 		  Die Installation eines Verwaltungsserver erfolgt analog zur in <xref linkend="school:installation:slave"/>
+	 		  Die Installation eines Verwaltungsserver erfolgt analog zur in <xref linkend="school:installation:replica_directory_node"/>
 	 		  beschriebenen Installation des Schulservers. Auch hier muss <emphasis>vor</emphasis> dem Domänenbeitritt der
 			  Rechnername des Verwaltungsservers an der Schule eingetragen werden. Der <xref linkend="school:setup:umc:schools:modify"/>
 			  beschreibt dies für bestehende Schulen. Abweichend zur Installation eines edukativen Schulservers muss bei der
@@ -334,10 +334,10 @@
 	 		</listitem>
 	 		<listitem>
 	 		  <simpara>
-	 			Der &ucsMaster; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
-	 			sein sollte, kann der Rechnername des DC Master auch durch den Parameter <option>-dcname
+	 			Der &ucsPrimaryDN; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
+	 			sein sollte, kann der Rechnername des &ucsPrimaryDN; auch durch den Parameter <option>-dcname
 	 			<replaceable>HOSTNAME</replaceable></option> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
-	 			angegeben werden, also beispielsweise <systemitem class="fqdomainname">master.example.com</systemitem>.
+	 			angegeben werden, also beispielsweise <systemitem class="fqdomainname">primary.example.com</systemitem>.
 	 		  </simpara>
 	 		</listitem>
 	 		<listitem>
@@ -362,7 +362,7 @@
 	 	<section id="installation:multi:othersystems">
 	 		<title>Installation sonstiger Systeme (optional)</title>
 	 		<para>
-				Während des Domänenbeitritts sonstiger Systeme (&ucsSlave; ohne &ucsUAS; oder &ucsMember;) wird (sofern notwendig)
+				Während des Domänenbeitritts sonstiger Systeme (&ucsReplicaDN; ohne &ucsUAS; oder &ucsManagedNode;) wird (sofern notwendig)
 				über den &ucsUAS;-Join-Hook automatisch die Installation der &ucsUAS;-App und notwendiger &ucsUAS;-Pakete
 				veranlasst. Weitere manuelle Schritte sind zunächst nicht zu beachten.
 	 		</para>
@@ -378,7 +378,7 @@
 		die Aufnahme von Schulservern in die Domäne.
 	  </para>
 	  <para>
-		Für die Umwandlung sind einige Befehle auf der Kommandozeile des DC Masters auszuführen, die
+		Für die Umwandlung sind einige Befehle auf der Kommandozeile des &ucsPrimaryDN;s auszuführen, die
 		einen Austausch des &ucsUAS;-Metapakets sowie eine Konfigurationsänderung durchführen (Bitte das Minuszeichen hinter dem zweiten Paketnamen am Ende der ersten Zeile beachten!):
 		<programlisting language="sh">
 univention-install ucs-school-multiserver ucs-school-singleserver-
@@ -389,7 +389,7 @@ ucr unset ucsschool/singlemaster
 		  Durch die beiden Befehle wird das Meta-Paket <package>ucs-school-singleserver</package> deinstalliert
 		  und im gleichen Zug das Paket <package>ucs-school-multiserver</package> installiert.
 		  Mit der Deinstallation des Pakets <package>ucs-school-singleserver</package> werden die
-		  nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem DC Master
+		  nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem &ucsPrimaryDN;
 		  der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
 		  Löschung der betroffenen Pakete findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get
 		  autoremove</command> statt. Dabei ist zu beachten, dass neben den genannten Paketen ggf. auch
@@ -419,7 +419,7 @@ apt-get unmarkauto <replaceable>PAKETNAME</replaceable>
 		Richtlinien, die (ggf. automatisch von &ucsUAS;) an Container der Schul-OUs verknüpft wurden, sollten auf ihre Einstellungen hin überprüft werden. Dies betrifft unter anderem die DHCP-DNS-Einstellungen.
 	  </para>
 	  <para>
-		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem DC Master neu gestartet werden:
+		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem &ucsPrimaryDN; neu gestartet werden:
 		<programlisting language="sh">
 service univention-management-console-server restart
 		</programlisting>
@@ -427,7 +427,7 @@ service univention-management-console-server restart
 	  <caution>
 		<para>
 		  Es ist zu beachten, dass auch nach der abgeschlossenen Umwandlung in eine
-		  Multi-Server-Umgebung der auf dem DC Master installierte Samba4-Dienst bestehen bleibt
+		  Multi-Server-Umgebung der auf dem &ucsPrimaryDN; installierte Samba4-Dienst bestehen bleibt
 		  und nicht automatisch deinstalliert wird.
 		</para>
 	  </caution>
@@ -436,7 +436,7 @@ service univention-management-console-server restart
 	<section id="school:installation:selfservice">
 	  <title>Integration mit Self-Service App</title>
 	  <para>
-		  Um die <foreignphrase>Self-Service App</foreignphrase> in einer &ucsUAS;-Umgebung einzusetzen, wird empfohlen das Paket <package>ucs-school-selfservice-support</package> auf dem &ucsMaster; und den &ucsBackup; zu installieren. Dies sorgt automatisch dafür, dass den Benutzern aller Schulen, die in den Gruppen <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> Mitglied sind, die Benutzung des <foreignphrase>Self-Service</foreignphrase> Moduls erlaubt wird. Es wird automatisch die UCR-Variable <envar>umc/self-service/passwordreset/whitelist/groups</envar> beim Erstellen von neuen Schul-OUs aktuell gehalten.
+		  Um die <foreignphrase>Self-Service App</foreignphrase> in einer &ucsUAS;-Umgebung einzusetzen, wird empfohlen das Paket <package>ucs-school-selfservice-support</package> auf dem &ucsPrimaryDN; und den &ucsBackupDN; zu installieren. Dies sorgt automatisch dafür, dass den Benutzern aller Schulen, die in den Gruppen <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> Mitglied sind, die Benutzung des <foreignphrase>Self-Service</foreignphrase> Moduls erlaubt wird. Es wird automatisch die UCR-Variable <envar>umc/self-service/passwordreset/whitelist/groups</envar> beim Erstellen von neuen Schul-OUs aktuell gehalten.
 	  </para>
 	  <para>
 		Die Installation wird folgendermaßen durchgeführt:

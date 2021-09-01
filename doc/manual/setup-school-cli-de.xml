@@ -31,11 +31,11 @@
 		Für &ucsUAS; gibt es momentan mehrere Möglichkeiten Nutzer in das System zu importieren.
 	</para>
 	<para>
-		Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
+		Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
 	</para>
 	<para>
 		Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
-		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-4.4.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
+		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-5.0.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
 		ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
 	</para>
   </section>
@@ -58,7 +58,7 @@ gym123-Igel</programlisting>
 
 	<para>
 	  Der Import von Benutzern erfolgt über das Skript
-	  <command>/usr/share/ucs-school-import/scripts/import_group</command>, das auf dem &ucsMaster; als
+	  <command>/usr/share/ucs-school-import/scripts/import_group</command>, das auf dem &ucsPrimaryDN; als
 	  Benutzer <systemitem class="username">root</systemitem> gestartet werden muss.  Es erwartet den Namen einer CSV-Datei als
 	  ersten Parameter. Das Dateiformat für die Gruppen-Importdatei ist wie folgt aufgebaut:
 	</para>
@@ -147,7 +147,7 @@ D	  g123m		g123m-R12		 Klasse R12
 		  Die ältesten Klassen (die der Abgänger zum Schulende) müssen zuvor
 		  gelöscht werden. Die Umbenennung erfolgt über das
 		  Skript <command>/usr/share/ucs-school-import/scripts/rename_class</command>,
-		  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden
+		  das auf dem &ucsPrimaryDN; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden
 		  muss. Es erwartet den Namen einer tab-separierten CSV-Datei als ersten
 		  Parameter. Die CSV-Datei enthält dabei pro Zeile zuerst den alten und dann den
 		  neuen Klassennamen, z.B.
@@ -197,7 +197,7 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	<para>
 	  Netzwerke können derzeit nur auf der Kommandozeile über das Skript
 	  <command>/usr/share/ucs-school-import/scripts/import_networks</command> importiert werden. Das
-	  Skript muss auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden.
+	  Skript muss auf dem &ucsPrimaryDN; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden.
 	  In der Import-Datei sind die einzelnen Felder durch ein Tabulatorzeichen zu trennen. Das Format
 	  der Import-Datei ist wie folgt aufgebaut:
 	</para>
@@ -287,7 +287,7 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 	  <para>
 		Der Import mehrerer PCs erfolgt über das
 		Skript <command>/usr/share/ucs-school-import/scripts/import_computer</command>,
-		das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
+		das auf dem &ucsPrimaryDN; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
 		Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
 		folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
 		Tabulatorzeichen zu trennen.
@@ -393,7 +393,7 @@ ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
 	<para>
 	  Der Import der Drucker kann skriptbasiert über das
 	  Skript <command>/usr/share/ucs-school-import/scripts/import_printer</command> erfolgen,
-	  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
+	  das auf dem &ucsPrimaryDN; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
 	  Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
 	  folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
 	  Tabulatorzeichen zu trennen.

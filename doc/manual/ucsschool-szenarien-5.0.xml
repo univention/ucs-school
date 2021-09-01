@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.4-szenarien">
+<book lang="de" id="ucsschool-5.0-szenarien">
 	<bookinfo>
 		<title>
 			Szenarien zum Einsatz von &ucsUAS;
@@ -18,13 +18,13 @@
 		</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.4
-Stand: 28. August 2020
+Version 5.0
+Stand: 1. September 2021
 			</literallayout>
 
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2020
+(c) 2002-2021
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -337,7 +337,7 @@ feedback@univention.de
 				<itemizedlist mark="whitesquare">
 					<listitem><para>Wo werden die zentralen Server betrieben?  Siehe <xref linkend="infrastructure-and_hardware-requirements_servers" />.</para></listitem>
 					<listitem><para>Nach welchen Konzepten wird die Gesamtinfrastruktur betrieben, insbesondere Netzkonzept, sowie Namenskonzepte für Benutzer und Rechner?  Siehe <xref linkend="concepts" />.</para></listitem>
-					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_member" /> und <xref linkend="concepts_backup" />.</para></listitem>
+					<listitem><para>Wie wird die Aufrechterhaltung des Betriebs sichergestellt, zum Beispiel Monitoring, Datensicherung und Notfallpläne?  Siehe <xref linkend="installation_managed_node" /> und <xref linkend="concepts_backup" />.</para></listitem>
 					<listitem><para>Wer führt die initiale Installation und Einrichtung durch?</para>
 							<itemizedlist mark="whitesquare">
 								<listitem><para>Installation der UCS-Server mit &ucsUAS; App: <xref linkend="installation" /></para></listitem>
@@ -886,10 +886,10 @@ feedback@univention.de
 						<listitem><para>Beispiel: System UCS, Standort Rechenzentrum, erstes System: <systemitem class="systemname">ucsrz01</systemitem></para></listitem>
 						<listitem><para>Weitere Beispiele:
 								<itemizedlist>
-									<listitem><para>&ucsMaster;: <systemitem class="systemname">ucsrz01</systemitem></para></listitem>
-									<listitem><para>&ucsBackup;: <systemitem class="systemname">ucsrz02</systemitem>, <systemitem class="systemname">ucsrz03</systemitem></para></listitem>
-									<listitem><para>&ucsSlave;: <systemitem class="systemname">ucsrz04</systemitem></para></listitem>
-									<listitem><para>&ucsMember;: <systemitem class="systemname">ucsrz05</systemitem></para></listitem>
+									<listitem><para>&ucsPrimaryDN;: <systemitem class="systemname">ucsrz01</systemitem></para></listitem>
+									<listitem><para>&ucsBackupDN;: <systemitem class="systemname">ucsrz02</systemitem>, <systemitem class="systemname">ucsrz03</systemitem></para></listitem>
+									<listitem><para>&ucsReplicaDN;: <systemitem class="systemname">ucsrz04</systemitem></para></listitem>
+									<listitem><para>&ucsManagedNode;: <systemitem class="systemname">ucsrz05</systemitem></para></listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
@@ -993,7 +993,7 @@ feedback@univention.de
 				<para>
 					Für Benutzerkonten kann das gewünschte Schema im
 					Importmechanismus hinterlegt werden, siehe <ulink
-						url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html">&ucsUAS;-Handbuch
+						url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html">&ucsUAS;-Handbuch
 						zur CLI-Import-Schnittstelle</ulink>.
 				</para>
 				<para>
@@ -1037,7 +1037,7 @@ feedback@univention.de
 				Das Monitoring erfolgt für &ucsUAS; immer aus der Zentrale
 				heraus.  Entsprechend ist ein Server-System für den Betrieb des
 				Monitoring-Dienstes vorzusehen, siehe <xref
-					linkend="installation_member" />.
+					linkend="installation_managed_node" />.
 			</para>
 			<para>
 				<systemitem class="service">Nagios</systemitem> selbst ist nicht
@@ -1050,7 +1050,7 @@ feedback@univention.de
 				erfassen, kann zum Beispiel das <systemitem
 					class="service">UCS Dashboard</systemitem> verwendet werden, dessen
 				<ulink
-					url="https://docs.software-univention.de/handbuch-4.4.html#dashboard::general">Einrichtung</ulink>
+					url="https://docs.software-univention.de/handbuch-5.0.html#dashboard::general">Einrichtung</ulink>
 				im &ucsUCS; Handbuch dokumentiert ist.
 			</para>
 		</section>
@@ -1089,7 +1089,7 @@ feedback@univention.de
 							&ucsUCR;-, OpenLDAP- und Samba-Datenbank sowie der
 							Inhalte der SYSVOL-Freigabe</para></listitem>
 					<listitem><para><filename>/etc/univention/ssl</filename> auf
-							dem &ucsMaster; und den &ucsBackup;-Servern:
+							dem &ucsPrimaryDN; und den &ucsBackupDN;-Servern:
 							Beinhaltet das Root-Zertifikat der internen
 							Zertifizierungsstelle und alle
 							Rechner-Zertifikate</para></listitem>
@@ -1105,7 +1105,7 @@ feedback@univention.de
 							der OpenLDAP- und Samba-Datenbanken braucht
 							normalerweise nicht gesichert zu werden, da diese
 							beim erneuten Domänenbeitritt des Schulservers vom
-							&ucsMaster; oder &ucsBackup; repliziert
+							&ucsPrimaryDN; oder &ucsBackupDN; repliziert
 							werden</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
@@ -1208,12 +1208,12 @@ feedback@univention.de
 		</para>
 		<section id="infrastructure-and_hardware-requirements_servers">
 			<title>Zentrale Server</title>
-			<section id="infrastructure-and_hardware-requirements_servers_master">
+			<section id="infrastructure-and_hardware-requirements_servers_primary_directory_node">
 				<title>Identity Management</title>
 				<para>
 					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 				</para>
-				<para>Systeme vom Typ &ucsMaster; und &ucsBackup; stellen das
+				<para>Systeme vom Typ &ucsPrimaryDN; und &ucsBackupDN; stellen das
 					Identitätsmanagement mit der zugrunde liegenden
 					LDAP-Datenbank zur Verfügung.</para>
 				<para>
@@ -1225,7 +1225,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Die primären Lastszenarien des &ucsMaster; sind:
+					Die primären Lastszenarien des &ucsPrimaryDN; sind:
 					<itemizedlist>
 						<listitem><para>Viele lesende Zugriffe auf die
 								LDAP-Datenbank, da neben der Administration alle
@@ -1245,17 +1245,17 @@ feedback@univention.de
 					Schuljahreswechsel notwendig ist.
 				</para>
 				<para>
-					&ucsBackup; dienen der Lastverteilung und Ausfallsicherheit.
-					Es sollte immer mindestens ein &ucsBackup; in der Domäne vorhanden sein.
-					Darüber hinaus können bei Bedarf weitere &ucsBackup;-Systeme hinzugefügt
+					&ucsBackupDN; dienen der Lastverteilung und Ausfallsicherheit.
+					Es sollte immer mindestens ein &ucsBackupDN; in der Domäne vorhanden sein.
+					Darüber hinaus können bei Bedarf weitere &ucsBackupDN;-Systeme hinzugefügt
 					werden.
 				</para>
 				<para>
-					Sollte der &ucsMaster; durch einen irreparablen Schaden ausfallen, kann ein
-					&ucsBackup;-System zum &ucsMaster; hochgestuft werden. Dieser Vorgang ist nicht
-					umkehrbar, daher sollte die Position der &ucsBackup;-Systeme innerhalb der
+					Sollte der &ucsPrimaryDN; durch einen irreparablen Schaden ausfallen, kann ein
+					&ucsBackupDN;-System zum &ucsPrimaryDN; hochgestuft werden. Dieser Vorgang ist nicht
+					umkehrbar, daher sollte die Position der &ucsBackupDN;-Systeme innerhalb der
 					Netzinfrastruktur entsprechend gewählt werden, damit jedes einzelne System im
-					Extremfall alle Aufgaben des &ucsMaster; übernehmen kann.
+					Extremfall alle Aufgaben des &ucsPrimaryDN; übernehmen kann.
 				</para>
 			</section>
 			<section id="infrastructure-and_hardware-requirements_servers_radius">
@@ -1286,7 +1286,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 			</section>
-			<section id="infrastructure-and_hardware-requirements_servers_slave">
+			<section id="infrastructure-and_hardware-requirements_servers_replica_directory_node">
 				<title>IT-Angebote, wie Groupware und Lernplattformen</title>
 				<para>
 					<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
@@ -1496,9 +1496,9 @@ feedback@univention.de
 		<title>Installation</title>
 		<para>
 			Die Installation von &ucsUAS; ist grundlegend im <ulink
-				url="https://docs.software-univention.de/handbuch-4.4.html#installation:chapter">Handbuch
+				url="https://docs.software-univention.de/handbuch-5.0.html#installation:chapter">Handbuch
 				zu &ucsUCS;</ulink> und im <ulink
-				url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#installation">&ucsUAS;
+				url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#installation">&ucsUAS;
 				Handbuch für Administratoren</ulink> beschrieben.  In diesem
 			Abschnitt geben wir zusätzliche Hinweise zur Installation,
 			insbesondere im Hinblick auf die Umsetzung der definierten Konzepte.
@@ -1530,8 +1530,8 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 		</para>
-		<section id="installation_master">
-			<title>Installation des &ucsMaster;</title>
+		<section id="installation_primary_directory_node">
+			<title>Installation des &ucsPrimaryDN;</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
@@ -1544,7 +1544,7 @@ feedback@univention.de
 							Internetproviders einzutragen.
 					</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsMaster; zu installieren: <option>Erstellen einer
+							&ucsPrimaryDN; zu installieren: <option>Erstellen einer
 								neuen &ucsUCS;-Domäne</option></para></listitem>
 					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
 					eine LDAP-Basis vorgeschlagen. Diese sollte nur in Ausnahmefällen
@@ -1585,30 +1585,30 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 		</section>
-		<section id="installation_backup">
-			<title>Installation eines &ucsBackup;</title>
+		<section id="installation_backup_directory_node">
+			<title>Installation eines &ucsBackupDN;</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Zur Lastverteilung bei der LDAP-Replikation können neben dem
-				ersten, unbedingt notwendigen &ucsBackup; Server zusätzlich noch
-				weitere &ucsBackup; Systeme aufgesetzt werden.
+				ersten, unbedingt notwendigen &ucsBackupDN; Server zusätzlich noch
+				weitere &ucsBackupDN; Systeme aufgesetzt werden.
 				<itemizedlist>
-					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsPrimaryDN;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server ist die IP-Adresse des
-							&ucsMaster; einzutragen.  Der DNS-Forwarder wird
-							beim Domänenbeitritt automatisch vom &ucsMaster;
+							&ucsPrimaryDN; einzutragen.  Der DNS-Forwarder wird
+							beim Domänenbeitritt automatisch vom &ucsPrimaryDN;
 							übernommen und braucht somit nicht eingetragen zu
 							werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsBackup; als Mitglied der Domäne zu installieren:
+							&ucsBackupDN; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							<option>&ucsBackup;</option> auszuwählen.</para></listitem>
+							<option>&ucsBackupDN;</option> auszuwählen.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
@@ -1634,13 +1634,13 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="installation_schulserver">
-			<title>Installation eines &ucsSlave; als Schulserver </title>
+			<title>Installation eines &ucsReplicaDN; als Schulserver </title>
 			<para>
 				<emphasis>für Szenario 3</emphasis>
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsPrimaryDN;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
@@ -1648,15 +1648,15 @@ feedback@univention.de
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server sind die IP-Adressen des
-							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							&ucsPrimaryDN; und des &ucsBackupDN; einzutragen.  Der
 							DNS-Forwarder wird beim Domänenbeitritt automatisch
-							vom &ucsMaster; übernommen und braucht somit nicht
+							vom &ucsPrimaryDN; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsSlave; als Mitglied der Domäne zu installieren:
+							&ucsReplicaDN; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							&ucsSlave; auszuwählen.</para></listitem>
+							&ucsReplicaDN; auszuwählen.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
@@ -1680,34 +1680,34 @@ feedback@univention.de
 							werden.</para></listitem>
 				</itemizedlist>
 				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
-				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:slave">&ucsUAS;
+				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:installation:replica_directory_node">&ucsUAS;
 				Handbuch für Administratoren</ulink>.
 			</para>
 		</section>
-		<section id="installation_slave">
-			<title>Installation eines &ucsSlave; für RADIUS, Groupware,
+		<section id="installation_replica_directory_node">
+			<title>Installation eines &ucsReplicaDN; für RADIUS, Groupware,
 				Collaboration, Lernplattformen usw.</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				Nach Möglichkeit sollte für jeden Dienst ein separater Server mit der Rolle
-				<option>&ucsSlave;</option> verwendet werden.
+				<option>&ucsReplicaDN;</option> verwendet werden.
 				<itemizedlist>
-					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsPrimaryDN;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server sind die IP-Adressen des
-							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							&ucsPrimaryDN; und des &ucsBackupDN; einzutragen.  Der
 							DNS-Forwarder wird beim Domänenbeitritt automatisch
-							vom &ucsMaster; übernommen und braucht somit nicht
+							vom &ucsPrimaryDN; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsSlave; als Mitglied der Domäne zu installieren:
+							&ucsReplicaDN; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							&ucsSlave; auszuwählen.</para></listitem>
+							&ucsReplicaDN; auszuwählen.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
@@ -1728,28 +1728,28 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 		</section>
-		<section id="installation_member">
-			<title>Installation eines &ucsMember; für Monitoring</title>
+		<section id="installation_managed_node">
+			<title>Installation eines &ucsManagedNode; für Monitoring</title>
 			<para>
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsPrimaryDN;
 							alle verfügbaren Updates installiert wurden.</para></listitem>
 					<listitem><para>Die IP-Adresskonfiguration erfolgt
 							entsprechend des Netzkonzepts.</para></listitem>
 					<listitem><para>Als DNS-Server sind die IP-Adressen des
-							&ucsMaster; und des &ucsBackup; einzutragen.  Der
+							&ucsPrimaryDN; und des &ucsBackupDN; einzutragen.  Der
 							DNS-Forwarder wird beim Domänenbeitritt automatisch
-							vom &ucsMaster; übernommen und braucht somit nicht
+							vom &ucsPrimaryDN; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
-							&ucsSlave; als Mitglied der Domäne zu installieren:
+							&ucsReplicaDN; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
-							&ucsMember; auszuwählen.</para></listitem>
-					<listitem><para>Es ist sicherzustellen, dass der &ucsMaster;
+							&ucsManagedNode; auszuwählen.</para></listitem>
+					<listitem><para>Es ist sicherzustellen, dass der &ucsPrimaryDN;
 							alle verfügbaren Updates installiert
 							hat.</para></listitem>
 					<listitem><para>Das installierte System ist abschließend bis
@@ -1824,7 +1824,7 @@ feedback@univention.de
 							System stellen/umleiten:  Wenn zum Beispiel alle
 							E-Mails an den Benutzer <systemitem
 								class="username">root</systemitem> an den
-							&ucsMaster; umgeleitet werden sollen, ist die
+							&ucsPrimaryDN; umgeleitet werden sollen, ist die
 							&ucsUCR;-Variable <envar>mail/alias/root</envar> auf
 							den Wert
 							<literal>root@ucsrz01.example.org</literal>
@@ -1836,7 +1836,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Anschließend ist auf dem Zielsystem, in diesem
-							Beispiel auf dem &ucsMaster;, die Zieladresse für
+							Beispiel auf dem &ucsPrimaryDN;, die Zieladresse für
 							alle E-Mails an <systemitem
 								class="username">root</systemitem> zu
 							hinterlegen.  Die E-Mailadresse wird ebenfalls über
@@ -1853,7 +1853,7 @@ feedback@univention.de
 							Außerdem ist der Zugang zu einem entfernten
 							Mailserver zu konfigurieren, über den die E-Mails
 							zugestellt werden können.  Die <ulink
-								url="https://docs.software-univention.de/handbuch-4.4.html#mail::serverconfig::relay">Konfiguration
+								url="https://docs.software-univention.de/handbuch-5.0.html#mail::serverconfig::relay">Konfiguration
 								dieses sogenannten Relayhosts</ulink> ist im
 							&ucsUCS;-Handbuch beschrieben.
 						</para>
@@ -1930,7 +1930,7 @@ feedback@univention.de
 							<row>
 								<entry><envar>samba4/sysvol/sync/from_downstream</envar></entry>
 								<entry><literal>false</literal></entry>
-								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsMaster; zu den &ucsUAS; Schulservern. Dies beugt Problemen mit der Replikation vor.</entry>
+								<entry>Konfiguriert die SYSVOL-Replikation unidirektional vom &ucsPrimaryDN; zu den &ucsUAS; Schulservern. Dies beugt Problemen mit der Replikation vor.</entry>
 							</row>
 							<row>
 								<entry><envar>nagios/client/allowedhosts</envar></entry>
@@ -2009,8 +2009,8 @@ feedback@univention.de
 			</para>
 			<note>
 				<para>
-					Die &ucsUAS; Schulserver setzen automatisch den &ucsMaster;
-					und die &ucsBackup;-Server als Zeitserver. Damit wird
+					Die &ucsUAS; Schulserver setzen automatisch den &ucsPrimaryDN;
+					und die &ucsBackupDN;-Server als Zeitserver. Damit wird
 					automatisch eine Kaskadierung erreicht.
 				</para>
 			</note>
@@ -2117,7 +2117,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Die CSV-Datei <filename>schulen.csv</filename> ist
-							auf dem &ucsMaster; in folgendem Verzeichnis
+							auf dem &ucsPrimaryDN; in folgendem Verzeichnis
 							abzulegen:
 							<filename>/usr/local/ucsschool/import_data/</filename>
 						</para>
@@ -2127,7 +2127,7 @@ feedback@univention.de
 							Um die CSV-Datei weiterverarbeiten zu können, muss
 							sie im Unix-Format vorliegen.  Sollte sie auf unter
 							Windows oder macOS gespeichert worden sein, so muss
-							sie konvertiert werden.  Dazu ist auf dem &ucsMaster;
+							sie konvertiert werden.  Dazu ist auf dem &ucsPrimaryDN;
 							der folgende Befehl auf die Datei anzuwenden:
 							<programlisting>
 								<![CDATA[
@@ -2140,7 +2140,7 @@ dos2unix schulen.csv
 							installiert werden, indem das
 							<application>unmaintained</application>-Repository
 							aktiviert wird, siehe <ulink
-								url="https://docs.software-univention.de/handbuch-4.4.html#software::configrepo">Konfiguration
+								url="https://docs.software-univention.de/handbuch-5.0.html#software::configrepo">Konfiguration
 								des Repository-Servers</ulink>.  Nach der
 							Aktivierung des Repositories ist der folgende Befehl
 							zu Installation des Pakets auszuführen:
@@ -2226,7 +2226,7 @@ done < "$1"
 				Die Netze sind entsprechend der <link
 					linkend="concepts_network">Definition im Netzkonzept</link>
 				in eine CSV-Datei einzutragen.  Im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:schoolcreate:network:import">&ucsUAS;-Handbuch</ulink>
 				ist das Datenformat für den Import beschrieben.  In der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
 				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
@@ -2237,7 +2237,7 @@ done < "$1"
 					<listitem>
 						<para>
 							Die CSV-Datei <filename>networks.csv</filename> ist
-							auf dem &ucsMaster; in folgendem Verzeichnis
+							auf dem &ucsPrimaryDN; in folgendem Verzeichnis
 							abzulegen:
 							<filename>/usr/local/ucsschool/import_data/</filename>
 						</para>
@@ -2287,7 +2287,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 			</para>
 			<para>
 				Das Datenformat der CSV-Datei ist im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:schoolcreate:computers">&ucsUAS;-Handbuch</ulink>
 				beschrieben.  Es sollte eine CSV-Datei je Schule erstellt
 				werden, die alle Rechner der jeweiligen Schule entsprechend des
 				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
@@ -2300,7 +2300,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 					<listitem>
 						<para>
 							Die CSV-Datei <filename>computers_SCHULE.csv</filename> ist
-							auf dem &ucsMaster; in folgendem Verzeichnis
+							auf dem &ucsPrimaryDN; in folgendem Verzeichnis
 							abzulegen:
 							<filename>/usr/local/ucsschool/import_data/</filename>
 						</para>
@@ -2345,7 +2345,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 			</para>
 			<para>
 				Das Datenformat der CSV-Datei ist im <ulink
-					url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
+					url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:setup:cli:printers">&ucsUAS;-Handbuch</ulink>
 				beschrieben.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
@@ -2356,7 +2356,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 					<listitem>
 						<para>>
 							Die CSV-Datei <filename>printers.csv</filename> ist
-							auf dem &ucsMaster; in folgendem Verzeichnis
+							auf dem &ucsPrimaryDN; in folgendem Verzeichnis
 							abzulegen:
 							<filename>/usr/local/ucsschool/import_data/</filename>
 						</para>
@@ -2398,11 +2398,11 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 				Für &ucsUAS; gibt es momentan mehrere Möglichkeiten Nutzer und Klassen in das System zu importieren.
 			</para>
 			<para>
-				Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-4.4.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
+				Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
 			</para>
 			<para>
 				Die Einrichtung und Verwendung des zugehörigen &ucsUMC; Moduls ist im
-				<ulink url="https://docs.software-univention.de/ucsschool-umc-import-handbuch-4.4.html">Handbuch grafischer Benutzer-Import</ulink>
+				<ulink url="https://docs.software-univention.de/ucsschool-umc-import-handbuch-5.0.html">Handbuch grafischer Benutzer-Import</ulink>
 				nachzulesen.
 			</para>
 			<para>
