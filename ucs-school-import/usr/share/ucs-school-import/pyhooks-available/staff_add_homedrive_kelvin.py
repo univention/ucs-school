@@ -39,7 +39,7 @@
 #   ucsschool/import/set/serverprofile/path
 #
 # This will be done automatically upon installation of the Kelvin API app.
-# When the variables are changed in the DC master, the variables have to be
+# When the variables are changed in the Primary Directory Node, the variables have to be
 # updated in the Kelvin API Docker container aswel. To do so rerun the Kelvin
 # apps join script:
 #    univention-run-join-scripts --run-scripts --force 50ucsschool-kelvin-rest-api.inst

@@ -154,7 +154,7 @@ the wrong object class will be removed and the ucsschoolRole attribute corrected
     logger.addHandler(get_stream_handler("DEBUG" if options.verbose else "INFO"))
     logger.addHandler(get_file_handler("DEBUG", LOG_FILE))
 
-    logger.info("Looking for affected domaincontroller_slave objects...")
+    logger.info("Looking for affected Replica Directory Node objects...")
     lo, po = getAdminConnection()
     lo_s4 = get_s4_lo()
     slaves = lo.search(

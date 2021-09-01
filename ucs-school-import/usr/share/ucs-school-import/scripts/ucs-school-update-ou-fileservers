@@ -109,7 +109,7 @@ during creation of new classes or users.
     for hostobj in host_list:
         master_dn = hostobj.dn
     if not master_dn:
-        parser.error("Cannot determine DN of domaincontroller_master - stopping here")
+        parser.error("Cannot determine DN of Primary Directory Node - stopping here")
 
     # get list of OU UDM objects
     ou_list = []
@@ -139,7 +139,7 @@ during creation of new classes or users.
             modlist.append(("objectClass", b"", b"ucsschoolOrganizationalUnit"))
 
         if is_singlemaster:
-            # in single server environments the DC master is always the correct fileserver for shares
+            # in single server environments the Primary Directory Node is always the correct fileserver for shares
             homeshareserver = master_dn
             classshareserver = master_dn
         else:
