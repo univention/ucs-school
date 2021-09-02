@@ -7,7 +7,7 @@ import os
 from univention.lib.misc import custom_groupname
 
 aclset = """
-# Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
+# Primary und Back Directory Nodes duerfen die Einträge aller OUs lesen und schreiben
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=DC Backup Hosts,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
@@ -84,31 +84,31 @@ access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPasswo
 	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff])" none
 	by * +0 break
 
-# DC Slaves need write access to the members of the group Domain Computers
+# Replica Directory Nodes need write access to the members of the group Domain Computers
 access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="uniqueMember,memberUid"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects (part 1)
+# Replica Directory Nodes can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects (part 1)
 access to dn.base="cn=policies,cn=system,@%@ldap/base@%@" attrs=children
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects (part 2)
+# Replica Directory Nodes can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects (part 2)
 access to dn.children="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))" attrs=entry,children,@$@MSGPO_MSPRINT_CONTAINER@$@
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave DCs can read and write policy containers for MS WMI filter objects (part 1)
+# Replica Directory Nodes can read and write policy containers for MS WMI filter objects (part 1)
 access to dn.base="cn=WMIPolicy,cn=system,@%@ldap/base@%@" attrs=children
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave DCs can read and write policy containers for MS WMI filter objects (part 2)
+# Replica Directory Nodes can read and write policy containers for MS WMI filter objects (part 2)
 access to dn.children="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))" attrs=entry,@$@MSWMI_FILTER@$@
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -150,7 +150,7 @@ access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,
 	by set.expand="[$3] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
 	by * +0 break
 
-# Slave DCs muessen das temporäre Objekt mailPrimaryAddress erstellen duerfen. Siehe Bug #52215
+# Replica Directory Nodes muessen das temporäre Objekt mailPrimaryAddress erstellen duerfen. Siehe Bug #52215
 access to dn.regex="^cn=([^,]+),cn=mailPrimaryAddress,cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="objectClass=lock" attrs="entry,@univentionObject,@lock"
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
@@ -194,7 +194,7 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by set="user/objectClass & [ucsschoolAdministrator]" write
 	by * +0 break
 
-# domaincontroller slaves and memberservers of management group are not allowed to replicate pupils and teachers
+# Replica Directory Nodes and Managed Nodes of management group are not allowed to replicate pupils and teachers
 access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
@@ -205,7 +205,7 @@ access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeache
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
 
-# domaincontroller slaves and memberservers of educational group are not allowed to replicate staff users
+# Replica Directory Nodes and Managed Nodes of educational group are not allowed to replicate staff users
 # the following 2 ACLs may be deactivated via the UCR variable "ucsschool/ldap/replicate_staff_to_edu"
 @$@STAFF2EDU@$@access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 @$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
@@ -219,13 +219,13 @@ access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeache
 
 # FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU; explain why or fix it
 # TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
-# Memberserver duerfen Passwoerter aller Objekte unterhalb einer Schule lesen
+# Managed Nodes duerfen Passwoerter aller Objekte unterhalb einer Schule lesen
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by * +0 break
 
-# Alle DC-Slaves muessen alle Benutzercontainer, Gruppen und GPO links jeder Schule lesen koennen
+# Alle Replica Directory Nodes muessen alle Benutzercontainer, Gruppen und GPO links jeder Schule lesen koennen
 access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit" attrs=entry,children,@$@SCHOOLOUATTRS@$@,@msGPO
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -250,7 +250,7 @@ access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STA
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +rscxd break
 
-# DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen
+# Replica Directory Nodes muessen die Benutzer ihrer Schule lesen und schreiben duerfen
 access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
@@ -270,8 +270,8 @@ access to dn.regex="^(.+,)?ou=[^,]+,@%@ldap/base@%@$$"
 	by * +0 break
 
 
-# Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
-# Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
+# Schul-Replica-Directory-Nodes duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
+# Lehrer und Managed Nodes duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
 	by set.expand="[ldap:///ou=$2,@%@ldap/base@%@?ou?base?%28%21%28objectClass%3DucsschoolOrganizationalUnit%29%29]/ou" +0 break
@@ -286,7 +286,7 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by dn.regex="^.*,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +0 stop
 	by * +0 break
 
-# Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
+# Replica Directory Nodes duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
 access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -309,7 +309,7 @@ access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
 	print(replace_ucr_variables(aclset))
 else:
-	print('# no ACL required on domaincontroller_slave')
+	print('# no ACL required on Replica Directory Node')
 @!@
 
 # end 65ucsschool

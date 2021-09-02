@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# UCS@School
+# UCS@school
 #
 # Copyright 2016-2021 Univention GmbH
 #
