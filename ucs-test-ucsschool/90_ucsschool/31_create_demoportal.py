@@ -9,14 +9,12 @@
 
 import imp
 import os
-from io import StringIO
 
 import pytest
 from mock import call, patch
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-from univention.admin.handlers import simpleLdap
 from univention.admin.uldap import getAdminConnection
 
 try:
@@ -61,31 +59,6 @@ def hostname_demoschool():
 @pytest.fixture()
 def random_school():
     return SchoolMock()
-
-
-@pytest.fixture()
-def entries():
-    return [
-        [uts.random_name() for _ in range(7)] + ["domainadmin"],
-        [uts.random_name() for _ in range(7)] + ["domainadmin"],
-        [uts.random_name() for _ in range(7)] + ["domainadmin"],
-    ]
-
-
-@pytest.fixture()
-def categories(entries):
-    return [
-        [uts.random_name() for _ in range(3)] + [[entries[0][0]]],
-        [uts.random_name() for _ in range(3)] + [[entries[1][0]]],
-        [uts.random_name() for _ in range(3)] + [[entries[2][0]]],
-    ]
-
-
-def first_item_if_list(obj):
-    if isinstance(obj, list):
-        return obj[0]
-    else:
-        return obj
 
 
 def check_create_demoportal_call_lists(
@@ -221,44 +194,3 @@ def test_create_school_creates_missing_school(
             ]
         )
     ]
-
-
-def test_create_portal(create_demoportal_module, entries, categories):
-    with patch.object(
-        create_demoportal_module.module_groups, "lookup", return_value=[SchoolMock()]
-    ), patch.object(
-        create_demoportal_module, "already_exists", return_value=True
-    ) as already_exists, patch.object(
-        create_demoportal_module, "ENTRIES", entries
-    ), patch.object(
-        create_demoportal_module, "CATEGORIES", categories
-    ), patch.object(
-        create_demoportal_module, "open"
-    ) as open_mock:
-        # context manager and iterator protocols for open()
-        open_mock.return_value.__enter__ = lambda x: StringIO(unic(uts.random_string()))
-        open_mock.return_value.__exit__ = open_mock.close()
-
-        create_demoportal_module.create_portal()
-
-    udm_objects = []
-    for acall in already_exists.call_args_list:
-        args, kwargs = acall
-        assert isinstance(args[0], simpleLdap)
-        udm_objects.append(args[0])
-    expected = [
-        {"module": "portals/entry", "props": {"name": entry[0], "link": ["en_US", entry[5]]}}
-        for entry in entries
-    ]
-    expected.extend(
-        [
-            {"module": "portals/category", "props": {"name": category[0]}}
-            for category in categories
-        ]
-    )
-    expected.append({"module": "portals/portal", "props": {"name": "ucsschool_demo_portal"}})
-    assert len(udm_objects) == len(expected)
-    for udm_object, expect in zip(udm_objects, expected):
-        assert udm_object.module == expect["module"]
-        for prop, val in expect["props"].items():
-            assert first_item_if_list(udm_object[prop]) == val

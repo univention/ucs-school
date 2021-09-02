@@ -28,28 +28,21 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import base64
 import os
 import random
 import string
 import subprocess
 import sys
 
-from ldap.filter import filter_format
-
 import univention.admin.modules as modules
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher
 from ucsschool.lib.models.utils import ucr
-from univention.admin.uldap import position
 from univention.management.console.ldap import get_admin_connection
 
 lo, pos = get_admin_connection()
 modules.update()
-module_portal = modules.get("portals/portal")
-module_portal_c = modules.get("portals/category")
-module_portal_e = modules.get("portals/entry")
 module_groups = modules.get("groups/group")
 module_users = modules.get("users/user")
 
@@ -72,167 +65,6 @@ else:
 
 # (name, displayName)
 SCHOOL = ("DEMOSCHOOL", "Demo School")
-
-# (name, en, de, entry_names)
-CATEGORIES = [
-    (
-        "ucsschool_demo_collaboration_communication",
-        "Collaboration & Communication",
-        "Kollaboration & Kommunikation",
-        [
-            "ucsschool_demo_mail",
-            "ucsschool_demo_chat",
-            "ucsschool_demo_calendar",
-            "ucsschool_demo_bookResources",
-            "ucsschool_demo_subPlan",
-            "ucsschool_demo_eduFunctions",
-        ],
-    ),
-    (
-        "ucsschool_demo_creativity",
-        "Creativity",
-        "Kreativität",
-        [
-            "ucsschool_demo_home",
-            "ucsschool_demo_share",
-            "ucsschool_demo_workOnline",
-        ],
-    ),
-    (
-        "ucsschool_demo_admin",
-        "Administration",
-        "Verwaltung",
-        [
-            "ucsschool_demo_pwReset",
-            "ucsschool_demo_users",
-            "ucsschool_demo_admin",
-        ],
-    ),
-]
-
-# (name, name_en, name_de, descr_en, descr_de, link, icon, group)
-ENTRIES = [
-    (
-        "ucsschool_demo_mail",
-        "Mail",
-        "Mail",
-        "Mail",
-        "Mail",
-        "/univention/ucsschool/demo_tiles.html",
-        "mail",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_chat",
-        "Chat",
-        "Chat",
-        "Chat",
-        "Chat",
-        "/univention/ucsschool/demo_tiles.html",
-        "chat",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_calendar",
-        "Calendar",
-        "Kalender",
-        "Calendar",
-        "Kalender",
-        "/univention/ucsschool/demo_tiles.html",
-        "calendar",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_bookResources",
-        "Book Resources",
-        "Ressourcen buchen",
-        "Book Resources",
-        "Ressourcen buchen",
-        "/univention/ucsschool/demo_tiles.html",
-        "bookResources",
-        "teacher",
-    ),
-    (
-        "ucsschool_demo_subPlan",
-        "Subsitution Plan",
-        "Vertretungsplan",
-        "Subsitution Plan",
-        "Vertretungsplan",
-        "/univention/ucsschool/demo_tiles.html",
-        "subPlan",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_eduFunctions",
-        "Educational Functions",
-        "Pädagogische Funktionen",
-        "Educational Functions",
-        "Pädagogische Funktionen",
-        "/univention/management/#category=ucs-school-class",
-        "eduFunctions",
-        "teacher",
-    ),
-    (
-        "ucsschool_demo_home",
-        "My files",
-        "Eigene Dateien",
-        "My files",
-        "Eigene Dateien",
-        "/univention/ucsschool/demo_tiles.html",
-        "home",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_share",
-        "File Share",
-        "Tauschverzeichnis",
-        "File Share",
-        "Tauschverzeichnis",
-        "/univention/ucsschool/demo_tiles.html",
-        "share",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_workOnline",
-        "Work Online",
-        "Online Arbeiten",
-        "Work Online",
-        "Online Arbeiten",
-        "/univention/ucsschool/demo_tiles.html",
-        "workOnline",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_pwReset",
-        "Reset own Password",
-        "Eigenes Passwort zurücksetzen",
-        "Reset own Password",
-        "Eigenes Passwort zurücksetzen",
-        "/univention/ucsschool/demo_tiles.html",
-        "pwReset_1",
-        "everyone",
-    ),
-    (
-        "ucsschool_demo_users",
-        "User Management",
-        "Benutzerverwaltung",
-        "User Management",
-        "Benutzerverwaltung",
-        "/univention/management/#module=schoolwizards:schoolwizards/users:0:",
-        "contacts",
-        "schooladmin",
-    ),
-    (
-        "ucsschool_demo_admin",
-        "Administration",
-        "Administration",
-        "Administration",
-        "Administration",
-        "/univention/management/",
-        "admin",
-        "everyone",
-    ),
-]
 
 
 def create_school():
@@ -295,121 +127,13 @@ def create_school():
     admin_udm.modify()
 
 
-def create_portal():
-    to_create = list()
-    pos_portal = position(pos.getBase())
-    pos_entry = position(pos.getBase())
-    pos_category = position(pos.getBase())
-    pos_folder = position(pos.getBase())
-
-    entry_groups = dict(domainadmin="", schooladmin="", teacher="", everyone="")
-    try:
-        entry_groups["domainadmin"] = module_groups.lookup(
-            None, lo, "name=Domain Admins", pos.getBase()
-        )[0].dn
-        entry_groups["schooladmin"] = module_groups.lookup(
-            None, lo, "name=admins-{}".format(SCHOOL[0]), pos.getBase()
-        )[0].dn
-        entry_groups["teacher"] = module_groups.lookup(
-            None, lo, "name=lehrer-{}".format(SCHOOL[0]), pos.getBase()
-        )[0].dn
-    except IndexError:
-        print(
-            "Could not find all necessary user groups to create demo portal. Something must have gone "
-            "wrong with the school creation!"
-        )
-        sys.exit(1)
-
-    pos_portal.setDn("cn=portal,cn=portals,cn=univention")
-    pos_entry.setDn("cn=entry,cn=portals,cn=univention")
-    for name, en, de, descr_en, descr_de, link, icon, group in ENTRIES:
-        iconpath = (
-            "/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/"
-            "ucsschool_demo_{}.png".format(icon)
-        )
-        entry_obj = module_portal_e.object(None, lo, pos_entry)
-        entry_obj.open()
-        entry_obj["name"] = name
-        entry_obj["displayName"] = [("en_US", en), ("de_DE", de)]
-        entry_obj["description"] = [("en_US", descr_en), ("de_DE", descr_de)]
-        entry_obj["link"] = [("en_US", link)]
-        with open(iconpath, "rb") as fd:
-            content = fd.read()
-            entry_obj["icon"] = base64.b64encode(content).decode("ASCII")
-        entry_obj["allowedGroups"] = [entry_groups[group]]
-        to_create.append(entry_obj)
-
-    pos_category.setDn("cn=category,cn=portals,cn=univention")
-    for dn, en, de, entries in CATEGORIES:
-        category_obj = module_portal_c.object(None, lo, pos_category)
-        category_obj.open()
-        category_obj["name"] = dn
-        category_obj["displayName"] = [("en_US", en), ("de_DE", de)]
-        category_obj["entries"] = ["cn={},{}".format(entry, pos_entry.getDn()) for entry in entries]
-        to_create.append(category_obj)
-
-    pos_folder.setDn("cn=folder,cn=portals,cn=univention")
-    portal_obj = module_portal.object(None, lo, pos_portal)
-    portal_obj.open()
-    portal_obj["name"] = "ucsschool_demo_portal"
-    portal_obj["displayName"] = [
-        ("en_US", "UCS@school Demo Portal"),
-        ("de_DE", "UCS@school Demo Portal"),
-    ]
-    portal_obj["categories"] = [
-        "cn=ucsschool_demo_collaboration_communication,{}".format(pos_category.getDn()),
-        "cn=ucsschool_demo_creativity,{}".format(pos_category.getDn()),
-        "cn=ucsschool_demo_admin,{}".format(pos_category.getDn()),
-    ]
-    portal_obj["menuLinks"] = [
-        "cn=certificates,{}".format(pos_folder.getDn()),
-        "cn=help,{}".format(pos_folder.getDn()),
-    ]
-    with open("/usr/share/ucs-school-metapackage/ucsschool_demo_pictures/background.jpg", "rb") as fd:
-        content = fd.read()
-        portal_obj["background"] = base64.b64encode(content).decode("ASCII")
-    to_create.append(portal_obj)
-
-    for o in to_create:
-        if not already_exists(o):
-            o.create()
-
-
 def run():
     """
-    This function creates a demo school and demo portal for testing and demonstration purposes
+    This function creates a demo school for testing and demonstration purposes.
+    It used to create a demo portal, too. Hence, the name. But this is not done anymore.
     """
     create_school()
-    create_portal()
     sys.exit(0)
-
-
-def already_exists(check_obj):
-    """
-    Checks if a given object already exists in the LDAP
-    (works only with portal, portal categories and portal entries)
-    """
-    module = None
-    if isinstance(check_obj, module_portal.object):
-        module = module_portal
-    elif isinstance(check_obj, module_portal_c.object):
-        module = module_portal_c
-    elif isinstance(check_obj, module_portal_e.object):
-        module = module_portal_e
-    else:
-        raise TypeError("The checked object is no portal[_entry|_category] object!")
-
-    return (
-        len(
-            module.lookup(
-                None,
-                lo,
-                filter_format("name=%s", (check_obj.get("name"),)),
-                base=check_obj.position.getBase(),
-            )
-        )
-        > 0
-    )
 
 
 if __name__ == "__main__":
