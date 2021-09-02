@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.244) unstable; urgency=medium
+
+  * Bug #53718: revert
+
+ -- Florian Best <best@univention.de>  Thu, 02 Sep 2021 11:44:32 +0200
+
 ucs-test-ucsschool (6.0.243) unstable; urgency=low
 
   * Bug #53719: pass function instead of function name
@@ -12,7 +18,7 @@ ucs-test-ucsschool (6.0.242) unstable; urgency=low
 
 ucs-test-ucsschool (6.0.241) unstable; urgency=medium
 
-  * Bug #53718: Extend test case for accountActivationDate
+  * Bug #53675: Extend test case for accountActivationDate
 
  -- Arvid <requate@univention.de>  Sun, 29 Aug 2021 19:42:27 +0200
 

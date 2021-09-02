@@ -34,7 +34,6 @@ import re
 from ldap.dn import escape_dn_chars
 
 from univention.admin.syntax import (
-    ActivationDateTimeTimezone,
     GroupDN,
     MAC_Address,
     UDM_Objects,
@@ -229,11 +228,6 @@ class Password(Attribute):
 class Disabled(Attribute):
     udm_name = "disabled"
     syntax = disabled
-
-
-class AccountActivationDate(Attribute):
-    udm_name = "accountActivationDate"
-    syntax = ActivationDateTimeTimezone
 
 
 class SchoolAttribute(CommonName):
