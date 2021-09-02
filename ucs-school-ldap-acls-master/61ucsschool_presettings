@@ -5,7 +5,7 @@
 import os.path
 
 aclset = '''
-# grant at least read access to school slave controllers to operational attributes, if not limited later on
+# grant at least read access to school Replica Directory Nodes to operational attributes, if not limited later on
 access to attrs="structuralObjectClass,entryUUID,creatorsName,createTimestamp,entryCSN,modifiersName,modifyTimestamp"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd break
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd break
@@ -13,7 +13,7 @@ access to attrs="structuralObjectClass,entryUUID,creatorsName,createTimestamp,en
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd break
 	by * +0 break
 
-# Slave-Controller und Member-Server duerfen Samba-Domaenenobjekt(e) modifizieren
+# Replica Directory Nodes und Managed Nodes duerfen Samba-Domaenenobjekt(e) modifizieren
 access to filter="(objectClass=sambaDomain)" attrs=@sambaDomain
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -21,7 +21,7 @@ access to filter="(objectClass=sambaDomain)" attrs=@sambaDomain
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# grant write access to domaincontroller slave/member server for certain univention app center settings
+# grant write access to Replica Directory Nodes and Managed Nodes for certain univention app center settings
 access to dn.regex="^univentionAppID=([^,]+),cn=([^,]+),cn=apps,cn=univention,@%@ldap/base@%@$" filter="(objectClass=univentionApp)" attrs=entry,@univentionApp,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -46,7 +46,7 @@ access to dn="cn=apps,cn=univention,@%@ldap/base@%@" attrs=children
 '''
 if os.path.exists('/var/lib/univention-ldap/local-schema/univention-virtual-machine-manager.schema'):
 	aclset += '''
-# Slave controllers and memberservers require write access to virtual machine manager objects
+# Replica Directory Nodes and Managed Nodes require write access to virtual machine manager objects
 access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)" attrs=entry,@univentionVirtualMachine,@univentionObject
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -73,7 +73,7 @@ access to dn="cn=(Information|CloudConnection),cn=Virtual Machine Manager,@%@lda
 
 aclset += '''
 
-# Slave-Controller und Member-Server benoetigen idmap-Container
+# Replica Directory Nodes und Managed Nodes benoetigen idmap-Container
 access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=children,@organizationalRole,@sambaIdmapEntry,@sambaSidEntry
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -81,7 +81,7 @@ access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=children,@organ
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave-Controller und Member-Server benoetigen ID-Mapping
+# Replica Directory Nodes und Managed Nodes benoetigen ID-Mapping
 access to dn.subtree="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=entry,@univentionObject,@sambaUnixIdPool,@sambaIdmapEntry,@sambaSidEntry,@organizationalRole
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -89,7 +89,7 @@ access to dn.subtree="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=entry,@unive
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Slave-Controller und Member-Server benoetigen nicht alle Container
+# Replica Directory Nodes und Managed Nodes benoetigen nicht alle Container
 access to dn.subtree="cn=backup,@%@ldap/base@%@"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
@@ -125,7 +125,7 @@ access to dn.regex="^(.*,)?cn=(cups|ppolicy|packages|services|templates|admin-se
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
 
-# prevent replication of username and email counter objects to slaves and memberservers
+# prevent replication of username and email counter objects to Replica Directory Nodes and Managed Nodes
 access to dn.children="cn=unique-usernames,cn=ucsschool,cn=univention,@%@ldap/base@%@"
 	by set="user/univentionObjectType & [computers/domaincontroller_slave]" none
 	by set="user/univentionObjectType & [computers/memberserver]" none
@@ -141,7 +141,7 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
 	print(aclset)
 else:
-	print('# no ACL required on domaincontroller_slave')
+	print('# no ACL required on Replica Directory Node')
 @!@
 
 # end 61ucsschool_presettings
