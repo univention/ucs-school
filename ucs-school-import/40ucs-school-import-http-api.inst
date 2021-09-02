@@ -33,7 +33,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=4
+VERSION=13
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -190,7 +190,7 @@ if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; t
 	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial djcelery
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 4 ]; then
+if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 13 ]; then
 	echo "Upgrading schema from UCS@school 4.4 to UCS@school 5.0"
 	su - postgres -c "psql -d '$POSTGRES_DB' -c \"delete from django_migrations where app='import_api';\"" || die 'Failed removing django migrations'
 	python3 -m ucsschool.http_api.manage migrate --no-color --noinput django_celery_results || die 'Failed initializing django_celery_results'
