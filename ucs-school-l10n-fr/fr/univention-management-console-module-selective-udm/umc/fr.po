@@ -15,9 +15,9 @@ msgstr ""
 "X-Generator: Lokalize 2.0\n"
 
 msgid ""
-"Domain management operations for slaves with a selective replicated directory"
+"Domain management operations for Replica Directory Nodes with a selective replicated directory"
 msgstr ""
-"Opérations de gestion du domaine pour les esclaves avec un dossier "
+"Opérations de gestion du domaine pour les Replica Directory Nodes avec un dossier "
 "répliqué sélectif"
 
 msgid "Selective UDM"
