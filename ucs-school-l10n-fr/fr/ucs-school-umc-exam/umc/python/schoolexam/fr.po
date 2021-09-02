@@ -49,8 +49,8 @@ msgstr "Impossible de se connecter au serveur UMC local."
 
 #: umc/python/schoolexam/__init__.py:224 umc/python/schoolexam/__init__.py:464
 #, python-format
-msgid "Could not connect to master server %s."
-msgstr "Impossible de se connecter au serveur maître %s."
+msgid "Could not connect to Primary Directory Node %s."
+msgstr "Impossible de se connecter au Primary Directory Node %s."
 
 #: umc/python/schoolexam/__init__.py:336
 msgid "Distributing exam files"
