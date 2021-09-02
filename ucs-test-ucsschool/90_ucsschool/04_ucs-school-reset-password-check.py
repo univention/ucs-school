@@ -7,15 +7,22 @@
 
 from __future__ import print_function
 
+from datetime import datetime, timedelta
 import pytest
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
+import univention.testing.udm as udm_test
 import univention.testing.utils as utils
 from univention.lib.umc import Forbidden, HTTPError
 from univention.testing.umc import Client
 
+try:
+    from univention.admin.syntax import ActivationDateTimeTimezone
+    check_accountActivationDate = True
+except ImportError:
+    check_accountActivationDate = False
 
 def auth(host, username, password):
     try:
@@ -81,7 +88,13 @@ def school_environment():
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
     host = ucr.get("hostname")
-    with utu.UCSTestSchool() as schoolenv:
+
+    now = datetime.now()
+    with open("/etc/timezone", "r") as tzfile:
+        timezone = tzfile.read().strip()
+    ts_later = (now + timedelta(hours=5)).strftime("%Y-%m-%d %H:%M " + timezone)
+
+    with utu.UCSTestSchool() as schoolenv, udm_test.UCSTestUDM() as udm:
         schoolName, oudn = schoolenv.create_ou(name_edudc=host)
         teachers = []
         teachersDn = []
@@ -89,7 +102,7 @@ def school_environment():
         studentsDn = []
         admins = []
         adminsDn = []
-        for i in [0, 1, 2]:
+        for i in range(5 if check_accountActivationDate else 3):
             tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
             teachers.append(tea)
             teachersDn.append(teadn)
@@ -100,6 +113,19 @@ def school_environment():
             admin, admin_dn = schoolenv.create_school_admin(schoolName, is_teacher=is_teacher)
             admins.append(admin)
             adminsDn.append(admin_dn)
+
+        if check_accountActivationDate:
+            # workaround 1:
+            # Can't monkeypatch ucsschool.lib.models.user.User.do_create to pass accountActivationDate directly,
+            # so modify via udm
+            utils.wait_for_replication_and_postrun()
+            for i in range(3, 5):
+                dn = studentsDn[i]
+                # Workaround 2:
+                # UCSTestUDM raises UCSTestUDM_CannotModifyExistingObject as it didn't create the object
+                udm._cleanup.setdefault("users/user", []).append(dn)
+                udm.modify_object("users/user", dn=dn, accountActivationDate=ts_later)
+                udm._cleanup["users/user"].remove(dn)
 
         utils.wait_for_replication_and_postrun()
         yield teachers, teachersDn, students, studentsDn, admins, adminsDn
@@ -132,11 +158,23 @@ def school_environment():
         # #8 test if teacher is able to reset student password (chgPwdNextLogin=True),
         ("teachers", "student", "students", 1, True, True, 401, 401, True),
 
+        # #15 test if teacher is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate),
+        ("teachers", "student", "students", 3, False, True, 401, 401 if check_accountActivationDate else 200, False),
+
+        # #16 test if teacher is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate),
+        ("teachers", "student", "students", 4, True, True, 401, 401, True),
+
         # #9 test if schooladmin is able to reset student password (chgPwdNextLogin=False),
         ("admins", "student", "students", 0, False, True, 401, 200, False),
 
         # #10 test if schooladmin is able to reset student password (chgPwdNextLogin=True),
         ("admins", "student", "students", 2, True, True, 401, 401, False),
+
+        # #19 test if schooladmin is able to reset student password (chgPwdNextLogin=False, still disabled with accountActivationDate),
+        ("admins", "student", "students", 3, False, True, 401, 401 if check_accountActivationDate else 200, False),
+
+        # #20 test if schooladmin is able to reset student password (chgPwdNextLogin=True, still disabled with accountActivationDate),
+        ("admins", "student", "students", 4, True, True, 401, 401, False),
 
         # #11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False),
         ("admins", "student", "teachers", 0, False, True, 401, 200, False),
