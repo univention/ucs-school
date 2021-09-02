@@ -108,30 +108,42 @@ def school_environment():
 @pytest.mark.parametrize(
     "acting_user,flavor,target,target_num,chg_pwd_on_next_login,expected_reset_result,expected_auth_for_old_password,expected_auth_for_new_password,expect_password_expired",
     [
-        # #1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True),
-        ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
-        # #2 test if student is unable to reset teacher password (chgPwdNextLogin=True),
-        ("students", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
-        # #3 test if student is unable to reset student password (chgPwdNextLogin=True),
-        ("students", "student", "students", 1, True, Forbidden, 200, 401, False),
-        # #4 test if teacher is unable to reset teacher password (chgPwdNextLogin=False),
+        # #1 test if teacher is unable to reset teacher password (chgPwdNextLogin=False),
         ("teachers", "teacher", "teachers", 1, False, Forbidden, 200, 401, False),
-        # #5 test if student is unable to reset teacher password (chgPwdNextLogin=False),
+
+        # #2 test if teacher is unable to reset teacher password (chgPwdNextLogin=True),
+        ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
+
+        # #3 test if student is unable to reset teacher password (chgPwdNextLogin=False),
         ("students", "teacher", "teachers", 1, False, Forbidden, 200, 401, False),
-        # #6 test if student is unable to reset student password (chgPwdNextLogin=False),
+
+        # #4 test if student is unable to reset teacher password (chgPwdNextLogin=True),
+        ("students", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),
+
+        # #5 test if student is unable to reset student password (chgPwdNextLogin=False),
         ("students", "student", "students", 1, False, Forbidden, 200, 401, False),
-        # #7 test if teacher is able to reset student password (chgPwdNextLogin=True),
-        ("teachers", "student", "students", 1, True, True, 401, 401, True),
-        # #8 test if teacher is able to reset student password (chgPwdNextLogin=False),
+
+        # #6 test if student is unable to reset student password (chgPwdNextLogin=True),
+        ("students", "student", "students", 1, True, Forbidden, 200, 401, False),
+
+        # #7 test if teacher is able to reset student password (chgPwdNextLogin=False),
         ("teachers", "student", "students", 0, False, True, 401, 200, False),
+
+        # #8 test if teacher is able to reset student password (chgPwdNextLogin=True),
+        ("teachers", "student", "students", 1, True, True, 401, 401, True),
+
         # #9 test if schooladmin is able to reset student password (chgPwdNextLogin=False),
         ("admins", "student", "students", 0, False, True, 401, 200, False),
+
         # #10 test if schooladmin is able to reset student password (chgPwdNextLogin=True),
         ("admins", "student", "students", 2, True, True, 401, 401, False),
+
         # #11 test if schooladmin is able to reset teacher password (chgPwdNextLogin=False),
         ("admins", "student", "teachers", 0, False, True, 401, 200, False),
+
         # #12 test if schooladmin is able to reset teacher password (chgPwdNextLogin=True),
         ("admins", "student", "teachers", 1, True, True, 401, 401, False),
+
         # DISABLED DUE TO BUG 35447:
         # #13 test if schooladmin is able to reset admin password (chgPwdNextLogin=False),
         # pytest.param(
