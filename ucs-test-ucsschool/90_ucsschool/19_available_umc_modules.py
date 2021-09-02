@@ -151,42 +151,42 @@ def checkModules(modules, userType, serverRole, singleMaster):
 
 
 def test_available_umc_modules(schoolenv, udm_session, ucr):
-                udm = udm_session
-                host = ucr.get("hostname")
-                serverRole = ucr.get("server/role")
-                print("Role = {!r}".format(serverRole))
-                singleMaster = ucr.is_true("ucsschool/singlemaster", False)
-                basedn = ucr.get("ldap/base")
+    udm = udm_session
+    host = ucr.get("hostname")
+    serverRole = ucr.get("server/role")
+    print("Role = {!r}".format(serverRole))
+    singleMaster = ucr.is_true("ucsschool/singlemaster", False)
+    basedn = ucr.get("ldap/base")
 
-                # Create ou, teacher, student, staff member, schooladmin, domainadmin
-                school, oudn = schoolenv.create_ou(name_edudc=host)
-                users = []
+    # Create ou, teacher, student, staff member, schooladmin, domainadmin
+    school, oudn = schoolenv.create_ou(name_edudc=host)
+    users = []
 
-                tea, teadn = schoolenv.create_user(school, is_teacher=True)
-                users.append((tea, "teacher"))
+    tea, teadn = schoolenv.create_user(school, is_teacher=True)
+    users.append((tea, "teacher"))
 
-                # staff is not replicated to login to dc-slave
-                if serverRole != "domaincontroller_slave":
-                    staf, stafdn = schoolenv.create_user(school, is_staff=True)
-                    users.append((staf, "staff"))
+    # staff is not replicated to login to dc-slave
+    if serverRole != "domaincontroller_slave":
+        staf, stafdn = schoolenv.create_user(school, is_staff=True)
+        users.append((staf, "staff"))
 
-                stu, studn = schoolenv.create_user(school)
-                users.append((stu, "student"))
+    stu, studn = schoolenv.create_user(school)
+    users.append((stu, "student"))
 
-                position = "cn=admins,cn=users,ou=%s,%s" % (school, basedn)
-                groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
-                dn, schooladmin = udm.create_user(position=position, groups=groups)
-                users.append((schooladmin, "schooladmin"))
+    position = "cn=admins,cn=users,ou=%s,%s" % (school, basedn)
+    groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
+    dn, schooladmin = udm.create_user(position=position, groups=groups)
+    users.append((schooladmin, "schooladmin"))
 
-                groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
-                dn, domainadmin = udm.create_user(position=position, groups=groups)
-                users.append((domainadmin, "domainadmin"))
+    groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
+    dn, domainadmin = udm.create_user(position=position, groups=groups)
+    users.append((domainadmin, "domainadmin"))
 
-                utils.wait_for_replication_and_postrun()
-                for user, userType in users:
-                    client = Client(host, user, "univention")
-                    print("usertype={!r}".format(userType))
-                    modules = client.umc_get("modules/list").data["modules"]
-                    modules = [(x["id"], x.get("flavor")) for x in modules]
-                    print("modules = {!r}".format(modules))
-                    checkModules(modules, userType, serverRole, singleMaster)
+    utils.wait_for_replication_and_postrun()
+    for user, userType in users:
+        client = Client(host, user, "univention")
+        print("usertype={!r}".format(userType))
+        modules = client.umc_get("modules/list").data["modules"]
+        modules = [(x["id"], x.get("flavor")) for x in modules]
+        print("modules = {!r}".format(modules))
+        checkModules(modules, userType, serverRole, singleMaster)

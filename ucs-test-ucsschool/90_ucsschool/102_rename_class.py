@@ -205,7 +205,10 @@ def _test_rename_class(schoolenv, school, old_name, new_name, should_fail=False)
         # the renamed group object should use the same gidNumber
         # the renamed group should still include the same users as before
         new_ldap_info = ldap_info(new_name)
-        assert old_ldap_info == new_ldap_info, "%s has changed after renaming the class" % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0]
+        assert old_ldap_info == new_ldap_info, (
+            "%s has changed after renaming the class"
+            % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0]
+        )
 
         # the renamed share object should be still accessible
         new_dir = share_path(new_name, school)
@@ -223,17 +226,17 @@ def create_two_users(schoolenv, school, class_name):  # type: (utu.UCSTestSchool
 
 
 def test_rename_class(ucr, schoolenv):  # type: () -> None
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            old_name = "%s-%s" % (school, uts.random_name())
-            new_name = "%s-%s" % (school, uts.random_name())
-            _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
+    old_name = "%s-%s" % (school, uts.random_name())
+    new_name = "%s-%s" % (school, uts.random_name())
+    _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
 
-            old_name = "%s-%s" % (school, uts.random_name())
-            new_name = "%s-%s" % (school, uts.random_name())
-            create_two_users(schoolenv, school, old_name)
-            _test_rename_class(schoolenv, school, old_name, new_name)
+    old_name = "%s-%s" % (school, uts.random_name())
+    new_name = "%s-%s" % (school, uts.random_name())
+    create_two_users(schoolenv, school, old_name)
+    _test_rename_class(schoolenv, school, old_name, new_name)
 
-            old_name = "%s-%s" % (school, uts.random_name())
-            create_two_users(schoolenv, school, old_name)
-            _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
+    old_name = "%s-%s" % (school, uts.random_name())
+    create_two_users(schoolenv, school, old_name)
+    _test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)

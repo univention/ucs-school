@@ -324,9 +324,9 @@ class _TestPasswordReset(object):
 
 
 def test_password_reset(ucr, schoolenv):
-        host = ucr.get("hostname")
-        school, oudn = schoolenv.create_ou(name_edudc=host)
-        if not is_domaincontroller_slave:  # Staff is not replicated to replication nodes
-            _TestPasswordReset(schoolenv, school, host)
-            pw_reset_staff = _TestPasswordResetStaff(schoolenv, school, host)
-            pw_reset_staff.run_test()
+    host = ucr.get("hostname")
+    school, oudn = schoolenv.create_ou(name_edudc=host)
+    if not is_domaincontroller_slave:  # Staff is not replicated to replication nodes
+        _TestPasswordReset(schoolenv, school, host)
+        pw_reset_staff = _TestPasswordResetStaff(schoolenv, school, host)
+        pw_reset_staff.run_test()

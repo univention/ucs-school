@@ -154,93 +154,91 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost, doma
 
 
 def test_printermoderation(udm_session, schoolenv, ucr):
-                udm = udm_session
-                newPrinterName = uts.random_string()
-                default_printer = "PDFDrucker"
-                test_file = "testpage.ps"
-                domainname = ucr.get("domainname")
-                basedn = ucr.get("ldap/base")
-                host = ucr.get("hostname")
-                if ucr.is_true("ucsschool/singlemaster"):
-                    edudc = None
-                else:
-                    edudc = host
-                school, oudn = schoolenv.create_ou(name_edudc=edudc)
-                klasse1_dn = udm.create_object(
-                    "groups/group",
-                    name="%s-1A" % school,
-                    position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
-                )
-                klasse2_dn = udm.create_object(
-                    "groups/group",
-                    name="%s-2B" % school,
-                    position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
-                )
-                tea, teadn = schoolenv.create_user(school, is_teacher=True)
-                stu1, stu1_dn = schoolenv.create_user(school)
-                stu2, stu2_dn = schoolenv.create_user(school)
+    udm = udm_session
+    newPrinterName = uts.random_string()
+    default_printer = "PDFDrucker"
+    test_file = "testpage.ps"
+    domainname = ucr.get("domainname")
+    basedn = ucr.get("ldap/base")
+    host = ucr.get("hostname")
+    if ucr.is_true("ucsschool/singlemaster"):
+        edudc = None
+    else:
+        edudc = host
+    school, oudn = schoolenv.create_ou(name_edudc=edudc)
+    klasse1_dn = udm.create_object(
+        "groups/group",
+        name="%s-1A" % school,
+        position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
+    )
+    klasse2_dn = udm.create_object(
+        "groups/group",
+        name="%s-2B" % school,
+        position="cn=klassen,cn=schueler,cn=groups,%s" % oudn,
+    )
+    tea, teadn = schoolenv.create_user(school, is_teacher=True)
+    stu1, stu1_dn = schoolenv.create_user(school)
+    stu2, stu2_dn = schoolenv.create_user(school)
 
-                name = "%s%s" % (uts.random_name(2).upper(), uts.random_name(8))
-                stu3, stu3_dn = schoolenv.create_user(school, username=name)
-                stu4, stu4_dn = schoolenv.create_user(school, username="%s2" % name)
+    name = "%s%s" % (uts.random_name(2).upper(), uts.random_name(8))
+    stu3, stu3_dn = schoolenv.create_user(school, username=name)
+    stu4, stu4_dn = schoolenv.create_user(school, username="%s2" % name)
 
-                udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [teadn]})
-                udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [stu1_dn]})
-                udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [stu3_dn]})
+    udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [teadn]})
+    udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [stu1_dn]})
+    udm.modify_object("groups/group", dn=klasse1_dn, append={"users": [stu3_dn]})
 
-                udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu2_dn]})
-                udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu4_dn]})
+    udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu2_dn]})
+    udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu4_dn]})
 
-                utils.wait_for_replication_and_postrun()
+    utils.wait_for_replication_and_postrun()
 
-                connection = Client(host)
-                connection.authenticate(tea, "univention")
+    connection = Client(host)
+    connection.authenticate(tea, "univention")
 
-                # add new printer
-                doPrinter("A", newPrinterName, school, host, domainname)
+    # add new printer
+    doPrinter("A", newPrinterName, school, host, domainname)
 
-                # check if the printer exists
-                if not printerExist(connection, newPrinterName, school):
-                    utils.fail("Printer not found")
+    # check if the printer exists
+    if not printerExist(connection, newPrinterName, school):
+        utils.fail("Printer not found")
 
-                # order print jobs
-                for stu in (stu1, stu2, stu3, stu4):
-                    orderPrint(default_printer, stu, test_file)
+    # order print jobs
+    for stu in (stu1, stu2, stu3, stu4):
+        orderPrint(default_printer, stu, test_file)
 
-                # query all orderd print jobs
-                alljobs = queryPrintJobs(connection, newPrinterName, "None", school, "", basedn)
-                # query all orderd print jobs from classes 1A
-                alljobs1A = queryPrintJobs(
-                    connection, newPrinterName, "%s-1A" % school, school, "", basedn
-                )
-                alljobs2B = queryPrintJobs(  # noqa: F841  # TODO: check value?
-                    connection, newPrinterName, "%s-2B" % school, school, "", basedn
-                )
+    # query all orderd print jobs
+    alljobs = queryPrintJobs(connection, newPrinterName, "None", school, "", basedn)
+    # query all orderd print jobs from classes 1A
+    alljobs1A = queryPrintJobs(connection, newPrinterName, "%s-1A" % school, school, "", basedn)
+    alljobs2B = queryPrintJobs(  # noqa: F841  # TODO: check value?
+        connection, newPrinterName, "%s-2B" % school, school, "", basedn
+    )
 
-                if alljobs1A == alljobs:
-                    utils.fail("Unexpected job query result")
+    if alljobs1A == alljobs:
+        utils.fail("Unexpected job query result")
 
-                # get print jobs
-                printJobs = {}
-                for stu in (stu1, stu2, stu3, stu4):
-                    printJobs.update({stu: getPrintJobs(alljobs, stu)})
+    # get print jobs
+    printJobs = {}
+    for stu in (stu1, stu2, stu3, stu4):
+        printJobs.update({stu: getPrintJobs(alljobs, stu)})
 
-                # check file type for the printjobs files
-                for stu in printJobs:
-                    checkPrintJobs(printJobs.get(stu))
+    # check file type for the printjobs files
+    for stu in printJobs:
+        checkPrintJobs(printJobs.get(stu))
 
-                for stu in (stu1, stu3):
-                    # download print jobs for stu and check the filetype
-                    downloadPrintJobs(connection, stu, printJobs.get(stu)[0])
+    for stu in (stu1, stu3):
+        # download print jobs for stu and check the filetype
+        downloadPrintJobs(connection, stu, printJobs.get(stu)[0])
 
-                    # accepting a print job from stu
-                    acceptprint(connection, stu, printJobs.get(stu)[0], newPrinterName, host, domainname)
+        # accepting a print job from stu
+        acceptprint(connection, stu, printJobs.get(stu)[0], newPrinterName, host, domainname)
 
-                    # delete a print job for stu 1
-                    delPrintJob(connection, stu, printJobs.get(stu)[0])
+        # delete a print job for stu 1
+        delPrintJob(connection, stu, printJobs.get(stu)[0])
 
-                # delete a print job for stu 2
-                delPrintJob(connection, stu2, printJobs.get(stu2)[0])
+    # delete a print job for stu 2
+    delPrintJob(connection, stu2, printJobs.get(stu2)[0])
 
-                # delete the created printer
-                doPrinter("D", newPrinterName, school, host, domainname)
+    # delete the created printer
+    doPrinter("D", newPrinterName, school, host, domainname)

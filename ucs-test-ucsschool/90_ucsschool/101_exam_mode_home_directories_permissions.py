@@ -130,65 +130,65 @@ def check_exam_user_home_dir_permissions(
 
 
 def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
-        udm = udm_session
-        lo = schoolenv.open_ldap_connection()
+    udm = udm_session
+    lo = schoolenv.open_ldap_connection()
 
-        print("# create test users and classes")
-        if ucr.is_true("ucsschool/singlemaster"):
-            edudc = None
-        else:
-            edudc = ucr.get("hostname")
-        school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
-        search_base = SchoolSearchBase([school])
-        klasse_dn = udm.create_object(
-            "groups/group",
-            name="%s-AA1" % school,
-            position=search_base.classes,
+    print("# create test users and classes")
+    if ucr.is_true("ucsschool/singlemaster"):
+        edudc = None
+    else:
+        edudc = ucr.get("hostname")
+    school, oudn = schoolenv.create_ou(name_edudc=edudc, use_cache=False)
+    search_base = SchoolSearchBase([school])
+    klasse_dn = udm.create_object(
+        "groups/group",
+        name="%s-AA1" % school,
+        position=search_base.classes,
+    )
+
+    stu1, studn1 = schoolenv.create_user(school)
+    stu2, studn2 = schoolenv.create_user(school)
+    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn1, studn2]})
+
+    print("# import random computers")
+    computers = Computers(lo, school, 2, 0, 0)
+    pc1, pc2 = computers.create()
+
+    print("# set 2 computer rooms to contain the created computers")
+    room = Room(school, host_members=pc1.dn)
+    schoolenv.create_computerroom(
+        school,
+        name=room.name,
+        description=room.description,
+        host_members=room.host_members,
+    )
+
+    create_homedirs([studn1, studn2], lo)
+    print("# Set an exam and start it")
+    current_time = datetime.now()
+    chosen_time = current_time + timedelta(hours=2)
+    exam = Exam(
+        school=school,
+        room=room.dn,  # room dn
+        examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+        recipients=[klasse_dn],  # list of classes dns
+    )
+    exam.start()
+
+    exam_member_dns = [
+        "uid=exam-%s,%s" % (stu1, search_base.examUsers),
+        "uid=exam-%s,%s" % (stu2, search_base.examUsers),
+    ]
+    for uid in [stu1, stu2]:
+        username = "exam-{}".format(uid)
+        wait_for_drs_replication(
+            "(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid"
         )
-
-        stu1, studn1 = schoolenv.create_user(school)
-        stu2, studn2 = schoolenv.create_user(school)
-        udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn1, studn2]})
-
-        print("# import random computers")
-        computers = Computers(lo, school, 2, 0, 0)
-        pc1, pc2 = computers.create()
-
-        print("# set 2 computer rooms to contain the created computers")
-        room = Room(school, host_members=pc1.dn)
-        schoolenv.create_computerroom(
-            school,
-            name=room.name,
-            description=room.description,
-            host_members=room.host_members,
-        )
-
-        create_homedirs([studn1, studn2], lo)
-        print("# Set an exam and start it")
-        current_time = datetime.now()
-        chosen_time = current_time + timedelta(hours=2)
-        exam = Exam(
-            school=school,
-            room=room.dn,  # room dn
-            examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-            recipients=[klasse_dn],  # list of classes dns
-        )
-        exam.start()
-
-        exam_member_dns = [
-            "uid=exam-%s,%s" % (stu1, search_base.examUsers),
-            "uid=exam-%s,%s" % (stu2, search_base.examUsers),
-        ]
-        for uid in [stu1, stu2]:
-            username = "exam-{}".format(uid)
-            wait_for_drs_replication(
-                "(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid"
-            )
-        wait_for_s4connector()
-        print("# create home directories and check permissions")
-        create_homedirs(exam_member_dns, lo)
-        distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")
-        check_init_windows_profiles(exam_member_dns, lo)
-        check_exam_user_home_dir_permissions(exam_member_dns, lo, distribution_data_folder)
-        print("# stopping exam")
-        exam.finish()
+    wait_for_s4connector()
+    print("# create home directories and check permissions")
+    create_homedirs(exam_member_dns, lo)
+    distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")
+    check_init_windows_profiles(exam_member_dns, lo)
+    check_exam_user_home_dir_permissions(exam_member_dns, lo, distribution_data_folder)
+    print("# stopping exam")
+    exam.finish()

@@ -361,73 +361,73 @@ class LDAPACLTestMatrix(object):
 
 
 def test_ldap_acls(schoolenv, ucr):
-            base_dn = ucr.get("ldap/base")
-            school, school_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    base_dn = ucr.get("ldap/base")
+    school, school_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-            schoolenv.create_user(school, is_teacher=True, is_staff=True)
-            schoolenv.create_user(school, is_staff=True)
-            stu, stu_dn = schoolenv.create_user(school)
-            schoolenv.create_school_admin(school)
+    tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+    schoolenv.create_user(school, is_teacher=True, is_staff=True)
+    schoolenv.create_user(school, is_staff=True)
+    stu, stu_dn = schoolenv.create_user(school)
+    schoolenv.create_school_admin(school)
 
-            open_ldap_co = schoolenv.open_ldap_connection()
-            # importing 2 random computers
-            computers = Computers(open_ldap_co, school, 1, 0, 0)
-            created_computers = computers.create()
-            computers_dns = computers.get_dns(created_computers)
-            room = ComputerRoom(school, host_members=computers_dns)
-            room.add()
+    open_ldap_co = schoolenv.open_ldap_connection()
+    # importing 2 random computers
+    computers = Computers(open_ldap_co, school, 1, 0, 0)
+    created_computers = computers.create()
+    computers_dns = computers.get_dns(created_computers)
+    room = ComputerRoom(school, host_members=computers_dns)
+    room.add()
 
-            room_container_dn = "cn=raeume,cn=groups,%s" % school_dn
-            gid_temp_dn = "cn=gid,cn=temporary,cn=univention,%s" % base_dn
-            gidNumber_temp_dn = "cn=gidNumber,cn=temporary,cn=univention,%s" % base_dn
-            sid_temp_dn = "cn=sid,cn=temporary,cn=univention,%s" % base_dn
-            groupName_temp_dn = "cn=groupName,cn=temporary,cn=univention,%s" % base_dn
-            mac_temp_dn = "cn=mac,cn=temporary,cn=univention,%s" % base_dn
+    room_container_dn = "cn=raeume,cn=groups,%s" % school_dn
+    gid_temp_dn = "cn=gid,cn=temporary,cn=univention,%s" % base_dn
+    gidNumber_temp_dn = "cn=gidNumber,cn=temporary,cn=univention,%s" % base_dn
+    sid_temp_dn = "cn=sid,cn=temporary,cn=univention,%s" % base_dn
+    groupName_temp_dn = "cn=groupName,cn=temporary,cn=univention,%s" % base_dn
+    mac_temp_dn = "cn=mac,cn=temporary,cn=univention,%s" % base_dn
 
-            global_univention_dn = "cn=univention,%s" % base_dn
-            global_policies_dn = "cn=policies,%s" % base_dn
-            global_dns_dn = "cn=dns,%s" % base_dn
-            global_groups_dn = "cn=groups,%s" % base_dn
+    global_univention_dn = "cn=univention,%s" % base_dn
+    global_policies_dn = "cn=policies,%s" % base_dn
+    global_dns_dn = "cn=dns,%s" % base_dn
+    global_groups_dn = "cn=groups,%s" % base_dn
 
-            staff_dn_access_list = [
-                # 0 for base, 1 for subtree
-                (0, stu_dn, Attributes.user, Access.Write),
-                (0, room_container_dn, Attributes.container, Access.Write),
-                (0, room.dn(), Attributes.room, Access.Write),
-                (1, gid_temp_dn, Attributes.temp_tree, Access.Write),
-                (1, gidNumber_temp_dn, Attributes.temp_tree, Access.Write),
-                (1, sid_temp_dn, Attributes.temp_tree, Access.Write),
-                (1, groupName_temp_dn, Attributes.temp_tree, Access.Write),
-                (1, mac_temp_dn, Attributes.temp_tree, Access.Write),
-                (0, gid_temp_dn, Attributes.temp, Access.Read),
-                (0, gidNumber_temp_dn, Attributes.temp, Access.Read),
-                (0, sid_temp_dn, Attributes.temp, Access.Read),
-                (0, groupName_temp_dn, Attributes.temp, Access.Read),
-                (0, mac_temp_dn, Attributes.temp, Access.Read),
-                (0, gidNumber_temp_dn, Attributes.gid_temp, Access.Write),
-                (1, global_univention_dn, Attributes.global_containers, Access.Write),
-                (1, global_policies_dn, Attributes.global_containers, Access.Write),
-                (1, global_dns_dn, Attributes.global_containers, Access.Write),
-                (1, global_groups_dn, Attributes.global_containers, Access.Write),
-                (1, global_univention_dn, Attributes.global_containers, Access.Read),
-                (1, global_policies_dn, Attributes.global_containers, Access.Read),
-                (1, global_dns_dn, Attributes.global_containers, Access.Read),
-                (1, global_groups_dn, Attributes.global_containers, Access.Read),
-            ]
-            mat = LDAPACLTestMatrix(tea_dn, Access.Read)
-            mat.add_staff_target_dns(staff_dn_access_list)
-            mat.run(
-                [
-                    school_dn,
-                    global_univention_dn,
-                    global_policies_dn,
-                    global_dns_dn,
-                    global_groups_dn,
-                    gid_temp_dn,
-                    gidNumber_temp_dn,
-                    sid_temp_dn,
-                    groupName_temp_dn,
-                    mac_temp_dn,
-                ]
-            )
+    staff_dn_access_list = [
+        # 0 for base, 1 for subtree
+        (0, stu_dn, Attributes.user, Access.Write),
+        (0, room_container_dn, Attributes.container, Access.Write),
+        (0, room.dn(), Attributes.room, Access.Write),
+        (1, gid_temp_dn, Attributes.temp_tree, Access.Write),
+        (1, gidNumber_temp_dn, Attributes.temp_tree, Access.Write),
+        (1, sid_temp_dn, Attributes.temp_tree, Access.Write),
+        (1, groupName_temp_dn, Attributes.temp_tree, Access.Write),
+        (1, mac_temp_dn, Attributes.temp_tree, Access.Write),
+        (0, gid_temp_dn, Attributes.temp, Access.Read),
+        (0, gidNumber_temp_dn, Attributes.temp, Access.Read),
+        (0, sid_temp_dn, Attributes.temp, Access.Read),
+        (0, groupName_temp_dn, Attributes.temp, Access.Read),
+        (0, mac_temp_dn, Attributes.temp, Access.Read),
+        (0, gidNumber_temp_dn, Attributes.gid_temp, Access.Write),
+        (1, global_univention_dn, Attributes.global_containers, Access.Write),
+        (1, global_policies_dn, Attributes.global_containers, Access.Write),
+        (1, global_dns_dn, Attributes.global_containers, Access.Write),
+        (1, global_groups_dn, Attributes.global_containers, Access.Write),
+        (1, global_univention_dn, Attributes.global_containers, Access.Read),
+        (1, global_policies_dn, Attributes.global_containers, Access.Read),
+        (1, global_dns_dn, Attributes.global_containers, Access.Read),
+        (1, global_groups_dn, Attributes.global_containers, Access.Read),
+    ]
+    mat = LDAPACLTestMatrix(tea_dn, Access.Read)
+    mat.add_staff_target_dns(staff_dn_access_list)
+    mat.run(
+        [
+            school_dn,
+            global_univention_dn,
+            global_policies_dn,
+            global_dns_dn,
+            global_groups_dn,
+            gid_temp_dn,
+            gidNumber_temp_dn,
+            sid_temp_dn,
+            groupName_temp_dn,
+            mac_temp_dn,
+        ]
+    )

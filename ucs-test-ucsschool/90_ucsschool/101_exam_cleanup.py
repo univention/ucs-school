@@ -39,72 +39,72 @@ def get_user_work_stations(mod_user, stu):  # type: (UsersUserModule, str) -> Li
 
 
 def test_user_restore_after_exam(udm_session, schoolenv):
-        udm = udm_session
-        # UCSTestUDM does not search, so I have to use the normal UDM
-        mod_user = SysUDM(schoolenv.lo, 1).get("users/user")
-        lo = schoolenv.open_ldap_connection()
-        schoolenv.ucr.load()
-        existing_rejects = get_s4_rejected()
-        if schoolenv.ucr.is_true("ucsschool/singlemaster"):
-            edudc = None
-        else:
-            edudc = schoolenv.ucr.get("hostname")
-        school, oudn = schoolenv.create_ou(name_edudc=edudc)
-        search_base = SchoolSearchBase([school])
-        klasse_dn = udm.create_object(
-            "groups/group",
-            name="%s-AA1" % school,
-            position=search_base.classes,
-        )
+    udm = udm_session
+    # UCSTestUDM does not search, so I have to use the normal UDM
+    mod_user = SysUDM(schoolenv.lo, 1).get("users/user")
+    lo = schoolenv.open_ldap_connection()
+    schoolenv.ucr.load()
+    existing_rejects = get_s4_rejected()
+    if schoolenv.ucr.is_true("ucsschool/singlemaster"):
+        edudc = None
+    else:
+        edudc = schoolenv.ucr.get("hostname")
+    school, oudn = schoolenv.create_ou(name_edudc=edudc)
+    search_base = SchoolSearchBase([school])
+    klasse_dn = udm.create_object(
+        "groups/group",
+        name="%s-AA1" % school,
+        position=search_base.classes,
+    )
 
-        stu, studn = schoolenv.create_user(school)
-        stu2, studn2 = schoolenv.create_user(school)
-        udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn, studn2]})
-        user = User.from_dn(studn2, school, schoolenv.lo)
-        user_udm = user.get_udm_object(schoolenv.lo)
-        orig_value_user2 = [uts.random_string() for _ in range(3)]
-        user_udm["sambaUserWorkstations"] = orig_value_user2
-        user_udm.modify()
+    stu, studn = schoolenv.create_user(school)
+    stu2, studn2 = schoolenv.create_user(school)
+    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn, studn2]})
+    user = User.from_dn(studn2, school, schoolenv.lo)
+    user_udm = user.get_udm_object(schoolenv.lo)
+    orig_value_user2 = [uts.random_string() for _ in range(3)]
+    user_udm["sambaUserWorkstations"] = orig_value_user2
+    user_udm.modify()
 
-        wait_replications_check_rejected_uniqueMember(existing_rejects)
+    wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-        computers = Computers(lo, school, 1, 0, 0)
-        created_computers = computers.create()
-        created_computers_dn = computers.get_dns(created_computers)
+    computers = Computers(lo, school, 1, 0, 0)
+    created_computers = computers.create()
+    created_computers_dn = computers.get_dns(created_computers)
 
-        room = Room(school, host_members=created_computers_dn[0])
+    room = Room(school, host_members=created_computers_dn[0])
 
-        schoolenv.create_computerroom(
-            school, name=room.name, description=room.description, host_members=room.host_members
-        )
+    schoolenv.create_computerroom(
+        school, name=room.name, description=room.description, host_members=room.host_members
+    )
 
-        wait_replications_check_rejected_uniqueMember(existing_rejects)
-        chosen_time = datetime.now() + timedelta(hours=2)
-        exam = Exam(
-            school=school,
-            room=room.dn,
-            examEndTime=chosen_time.strftime("%H:%M"),
-            recipients=[klasse_dn],
-        )
+    wait_replications_check_rejected_uniqueMember(existing_rejects)
+    chosen_time = datetime.now() + timedelta(hours=2)
+    exam = Exam(
+        school=school,
+        room=room.dn,
+        examEndTime=chosen_time.strftime("%H:%M"),
+        recipients=[klasse_dn],
+    )
 
-        exam.start()
-        wait_replications_check_rejected_uniqueMember(existing_rejects)
+    exam.start()
+    wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-        samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)[0]
-        samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
-        assert samba_user_workstations_user1.startswith("$")
-        assert all([s.startswith("$") for s in samba_user_workstations_user2])
+    samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)[0]
+    samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
+    assert samba_user_workstations_user1.startswith("$")
+    assert all([s.startswith("$") for s in samba_user_workstations_user2])
 
-        exec_cmd(
-            ["/usr/share/ucs-school-exam/exam-and-room-cleanup", "--skip-exam-shutdown"],
-            log=True,
-            raise_exc=True,
-        )
-        samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)
-        samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
-        assert not samba_user_workstations_user1
-        assert not any([s.startswith("$") for s in samba_user_workstations_user2])
-        assert samba_user_workstations_user2 == orig_value_user2
-        exam.finish()
+    exec_cmd(
+        ["/usr/share/ucs-school-exam/exam-and-room-cleanup", "--skip-exam-shutdown"],
+        log=True,
+        raise_exc=True,
+    )
+    samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)
+    samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
+    assert not samba_user_workstations_user1
+    assert not any([s.startswith("$") for s in samba_user_workstations_user2])
+    assert samba_user_workstations_user2 == orig_value_user2
+    exam.finish()
 
-        wait_replications_check_rejected_uniqueMember(existing_rejects)
+    wait_replications_check_rejected_uniqueMember(existing_rejects)

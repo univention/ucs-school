@@ -38,53 +38,53 @@ def random_case(txt):  # type: (str) -> str
 
 
 def test_radius_authentication(schoolenv, ucr):
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-            tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
-            stu, stu_dn = schoolenv.create_user(school)
-            stu2, stu2_dn = schoolenv.create_user(school)
+    tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+    tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
+    stu, stu_dn = schoolenv.create_user(school)
+    stu2, stu2_dn = schoolenv.create_user(school)
 
-            group = Workgroup(school, members=[tea_dn, stu_dn])
-            group.create()
-            rule = InternetRule(wlan=True)
-            rule.define()
+    group = Workgroup(school, members=[tea_dn, stu_dn])
+    group.create()
+    rule = InternetRule(wlan=True)
+    rule.define()
 
-            group2 = Workgroup(school, members=[tea2_dn, stu2_dn])
-            group2.create()
-            rule2 = InternetRule(wlan=False)
-            rule2.define()
+    group2 = Workgroup(school, members=[tea2_dn, stu2_dn])
+    group2.create()
+    rule2 = InternetRule(wlan=False)
+    rule2.define()
 
-            utils.wait_for_replication_and_postrun()
+    utils.wait_for_replication_and_postrun()
 
-            rule.assign(school, group.name, "workgroup")
-            rule2.assign(school, group2.name, "workgroup")
+    rule.assign(school, group.name, "workgroup")
+    rule2.assign(school, group2.name, "workgroup")
 
-            utils.wait_for_replication_and_postrun()
-            print("Wait until users are replicated into S4...")
-            for name in [tea, tea2, stu, stu2]:
-                wait_for_drs_replication(filter_format("cn=%s", (name,)))
+    utils.wait_for_replication_and_postrun()
+    print("Wait until users are replicated into S4...")
+    for name in [tea, tea2, stu, stu2]:
+        wait_for_drs_replication(filter_format("cn=%s", (name,)))
 
-            radius_secret = "testing123"  # parameter set in  /etc/freeradius/clients.conf
-            password = "univention"
+    radius_secret = "testing123"  # parameter set in  /etc/freeradius/clients.conf
+    password = "univention"
 
-            test_couples = []
+    test_couples = []
 
-            def add_test_couples(username, expected_success):
-                test_couples.extend(
-                    [
-                        (username, expected_success),  # original case
-                        (username.lower(), expected_success),  # all lowercase
-                        (username.upper(), expected_success),  # all uppercase
-                        (random_case(username), expected_success),  # all random case
-                    ]
-                )
+    def add_test_couples(username, expected_success):
+        test_couples.extend(
+            [
+                (username, expected_success),  # original case
+                (username.lower(), expected_success),  # all lowercase
+                (username.upper(), expected_success),  # all uppercase
+                (random_case(username), expected_success),  # all random case
+            ]
+        )
 
-            add_test_couples(tea, True)
-            add_test_couples(stu, True)
-            add_test_couples(tea2, False)
-            add_test_couples(stu2, False)
+    add_test_couples(tea, True)
+    add_test_couples(stu, True)
+    add_test_couples(tea2, False)
+    add_test_couples(stu2, False)
 
-            # Testing loop
-            for username, should_succeed in test_couples:
-                _test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
+    # Testing loop
+    for username, should_succeed in test_couples:
+        _test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)

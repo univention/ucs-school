@@ -101,19 +101,19 @@ def _test_ruleset(ucr, test_settings):
 
 
 def test_squidguard_assign_rule_to_two_rooms(ucr):
-        # setup filter rules for squidguard
-        prepare_UCR_setup(ucr)
+    # setup filter rules for squidguard
+    prepare_UCR_setup(ucr)
 
-        # test with different rules for each room
-        _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur-Univention"})
-        # test with the same rule for both rooms
-        _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia"})
-        # test with the same rule for both rooms
-        _test_ruleset(ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention"})
-        # test with the same rule for three rooms
-        _test_ruleset(
-            ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention", "Raum-Drei": "Nur-Univention"}
-        )
-        _test_ruleset(
-            ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia", "Raum-Drei": "Nur Wikipedia"}
-        )
+    # test with different rules for each room
+    _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur-Univention"})
+    # test with the same rule for both rooms
+    _test_ruleset(ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia"})
+    # test with the same rule for both rooms
+    _test_ruleset(ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention"})
+    # test with the same rule for three rooms
+    _test_ruleset(
+        ucr, {"Raum1": "Nur-Univention", "Raum2": "Nur-Univention", "Raum-Drei": "Nur-Univention"}
+    )
+    _test_ruleset(
+        ucr, {"Raum1": "Nur Wikipedia", "Raum2": "Nur Wikipedia", "Raum-Drei": "Nur Wikipedia"}
+    )

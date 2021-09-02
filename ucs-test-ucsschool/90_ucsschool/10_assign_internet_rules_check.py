@@ -26,116 +26,116 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
 
 
 def test_assign_internet_rules(schoolenv, ucr):
-            umc_connection = Client.get_test_connection()
-            if ucr.get("server/role") == "domaincontroller_master":
-                umc_connection_master = umc_connection
-            else:
-                umc_connection_master = Client.get_test_connection(ucr.get("ldap/master"))
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    umc_connection = Client.get_test_connection()
+    if ucr.get("server/role") == "domaincontroller_master":
+        umc_connection_master = umc_connection
+    else:
+        umc_connection_master = Client.get_test_connection(ucr.get("ldap/master"))
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            # define many random internet rules
-            newRules = []
-            for _ in range(8):
-                rule = InternetRule(ucr=ucr, connection=umc_connection)
-                rule.define()
-                rule.get(should_exist=True)
-                newRules.append(rule)
-            utils.wait_for_replication()
+    # define many random internet rules
+    newRules = []
+    for _ in range(8):
+        rule = InternetRule(ucr=ucr, connection=umc_connection)
+        rule.define()
+        rule.get(should_exist=True)
+        newRules.append(rule)
+    utils.wait_for_replication()
 
-            # Create random workgroups
-            newWorkgroups = []
-            for _ in range(2):
-                group = Workgroup(school, ucr=ucr, connection=umc_connection)
-                group.create()
-                newWorkgroups.append(group)
-            utils.wait_for_replication()
+    # Create random workgroups
+    newWorkgroups = []
+    for _ in range(2):
+        group = Workgroup(school, ucr=ucr, connection=umc_connection)
+        group.create()
+        newWorkgroups.append(group)
+    utils.wait_for_replication()
 
-            assignedGroups = [(g.name, None) for g in newWorkgroups]
+    assignedGroups = [(g.name, None) for g in newWorkgroups]
 
-            # Instantiate Check instance
-            check1 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
+    # Instantiate Check instance
+    check1 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check1.checkRules()
-            # check ucr variables
-            check1.checkUcr()
+    # check the assigned internet rules UMCP
+    check1.checkRules()
+    # check ucr variables
+    check1.checkUcr()
 
-            # assign internetrules to groups randomly
-            rules = newRules[:4]
-            assignedGroups = assignRulesToGroupsRandomly(newWorkgroups, rules, school, "workgroup")
+    # assign internetrules to groups randomly
+    rules = newRules[:4]
+    assignedGroups = assignRulesToGroupsRandomly(newWorkgroups, rules, school, "workgroup")
 
-            # Instantiate another Check instance
-            check2 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
+    # Instantiate another Check instance
+    check2 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check2.checkRules()
-            # check ucr variables
-            check2.checkUcr()
+    # check the assigned internet rules UMCP
+    check2.checkRules()
+    # check ucr variables
+    check2.checkUcr()
 
-            # switch internetrules for groups randomly
-            rules = newRules[4:]
-            assignedGroups = assignRulesToGroupsRandomly(newWorkgroups, rules, school, "workgroup")
+    # switch internetrules for groups randomly
+    rules = newRules[4:]
+    assignedGroups = assignRulesToGroupsRandomly(newWorkgroups, rules, school, "workgroup")
 
-            # Instantiate another Check instance
-            check3 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
+    # Instantiate another Check instance
+    check3 = Check(school, assignedGroups, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check3.checkRules()
-            # check ucr variables
-            check3.checkUcr()
+    # check the assigned internet rules UMCP
+    check3.checkRules()
+    # check ucr variables
+    check3.checkUcr()
 
-            # assign default internetrule to groups
-            for group in newWorkgroups:
-                rule.assign(school, group.name, "workgroup", default=True)
+    # assign default internetrule to groups
+    for group in newWorkgroups:
+        rule.assign(school, group.name, "workgroup", default=True)
 
-            # check the assigned internet rules UMCP
-            check1.checkRules()
-            # check ucr variables
-            check1.checkUcr()
+    # check the assigned internet rules UMCP
+    check1.checkRules()
+    # check ucr variables
+    check1.checkUcr()
 
-            # Create random classs
-            newclasses = []
-            for _ in range(2):
-                klasse = Klasse(school, ucr=ucr, connection=umc_connection_master)
-                klasse.create()
-                newclasses.append(klasse)
-            utils.wait_for_replication()
+    # Create random classs
+    newclasses = []
+    for _ in range(2):
+        klasse = Klasse(school, ucr=ucr, connection=umc_connection_master)
+        klasse.create()
+        newclasses.append(klasse)
+    utils.wait_for_replication()
 
-            assignedClasses = [(c.name, None) for c in newclasses]
+    assignedClasses = [(c.name, None) for c in newclasses]
 
-            check1 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
+    check1 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check1.checkRules()
-            # check ucr variables
-            check1.checkUcr()
+    # check the assigned internet rules UMCP
+    check1.checkRules()
+    # check ucr variables
+    check1.checkUcr()
 
-            # assign internetrules to classes randomly
-            rules = newRules[:4]
-            assignedClasses = assignRulesToGroupsRandomly(newclasses, rules, school, "class")
+    # assign internetrules to classes randomly
+    rules = newRules[:4]
+    assignedClasses = assignRulesToGroupsRandomly(newclasses, rules, school, "class")
 
-            check2 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
+    check2 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check2.checkRules()
-            # check ucr variables
-            check2.checkUcr()
+    # check the assigned internet rules UMCP
+    check2.checkRules()
+    # check ucr variables
+    check2.checkUcr()
 
-            # switch internetrules for classes randomly
-            rules = newRules[4:]
-            assignedClasses = assignRulesToGroupsRandomly(newclasses, rules, school, "class")
-            check3 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
+    # switch internetrules for classes randomly
+    rules = newRules[4:]
+    assignedClasses = assignRulesToGroupsRandomly(newclasses, rules, school, "class")
+    check3 = Check(school, assignedClasses, ucr=ucr, connection=umc_connection)
 
-            # check the assigned internet rules UMCP
-            check3.checkRules()
-            # check ucr variables
-            check3.checkUcr()
+    # check the assigned internet rules UMCP
+    check3.checkRules()
+    # check ucr variables
+    check3.checkUcr()
 
-            # assign default internetrule to classes
-            for c in newclasses:
-                rule.assign(school, c.name, "class", default=True)
+    # assign default internetrule to classes
+    for c in newclasses:
+        rule.assign(school, c.name, "class", default=True)
 
-            # check the assigned internet rules UMCP
-            check1.checkRules()
-            # check ucr variables
-            check1.checkUcr()
+    # check the assigned internet rules UMCP
+    check1.checkRules()
+    # check ucr variables
+    check1.checkUcr()

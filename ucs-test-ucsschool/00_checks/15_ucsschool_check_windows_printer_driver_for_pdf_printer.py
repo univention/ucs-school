@@ -25,10 +25,8 @@ def check_value(path, key, value):
 
 
 def test_ucsschool_check_windows_printer_driver_for_pdf_printer(ucr):
-        driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
-        printer_name = "PDFDrucker"
-        registry_path = (
-            r"HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\%s" % printer_name
-        )
-        check_value(registry_path, "Printer Driver", driver_name)
-        check_value(registry_path + r"\DsSpooler", "driverName", driver_name)
+    driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
+    printer_name = "PDFDrucker"
+    registry_path = r"HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\%s" % printer_name
+    check_value(registry_path, "Printer Driver", driver_name)
+    check_value(registry_path + r"\DsSpooler", "driverName", driver_name)

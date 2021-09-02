@@ -139,27 +139,34 @@ class _TestCases(object):
             "pwhistory",
         ):  # "krb5key" has no eq matching rule, so lo.modify fails
             if expected_result == RESULT_OK:
-                lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
+                lo.modify(
+                    target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]]
+                )
             else:
                 with pytest.raises(Exception):
-                    lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]])
+                    lo.modify(
+                        target.dn, [[attr_name, old_values.get(attr_name), [str(time.time()).encode()]]]
+                    )
         print("OK: result as expected")
 
 
-@pytest.mark.parametrize('actor,target,expected_result', [
-    ('student0', 'student1', RESULT_FAIL),
-    ('student0', 'student2', RESULT_FAIL),
-    ('teacher0', 'student1', RESULT_OK),
-    ('teacher0', 'student2', RESULT_OK),
-    ('teacher0', 'teacher1', RESULT_FAIL),
-    ('teacher0', 'teacher2', RESULT_FAIL),
-    ('admin0', 'student1', RESULT_OK),
-    ('admin0', 'student2', RESULT_OK),
-    ('admin0', 'teacher1', RESULT_OK),
-    ('admin0', 'teacher2', RESULT_OK),
-    # the following test is disabled because it will currently fail
-    pytest.param('admin0', 'admin1', RESULT_FAIL, marks=pytest.mark.xfail(reason='TODO: blame why')),
-])
+@pytest.mark.parametrize(
+    "actor,target,expected_result",
+    [
+        ("student0", "student1", RESULT_FAIL),
+        ("student0", "student2", RESULT_FAIL),
+        ("teacher0", "student1", RESULT_OK),
+        ("teacher0", "student2", RESULT_OK),
+        ("teacher0", "teacher1", RESULT_FAIL),
+        ("teacher0", "teacher2", RESULT_FAIL),
+        ("admin0", "student1", RESULT_OK),
+        ("admin0", "student2", RESULT_OK),
+        ("admin0", "teacher1", RESULT_OK),
+        ("admin0", "teacher2", RESULT_OK),
+        # the following test is disabled because it will currently fail
+        pytest.param("admin0", "admin1", RESULT_FAIL, marks=pytest.mark.xfail(reason="TODO: blame why")),
+    ],
+)
 def test_password_reset_acl(ucr, schoolenv, actor, target, expected_result):
     tc = _TestCases(ucr, schoolenv)
     tc.test_pw_reset(getattr(tc, actor), getattr(tc, target), expected_result)

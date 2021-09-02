@@ -87,49 +87,47 @@ def checK_status(username, should_pass):
 
 
 def test_activate_groupmembers(schoolenv, ucr):
-            school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-            tea_lastname = uts.random_name()
-            tea_staff_lastname = uts.random_name()
-            stu_lastname = uts.random_name()
-            staff_lastname = uts.random_name()
-            school_admin_lastname = uts.random_name()
+    tea_lastname = uts.random_name()
+    tea_staff_lastname = uts.random_name()
+    stu_lastname = uts.random_name()
+    staff_lastname = uts.random_name()
+    school_admin_lastname = uts.random_name()
 
-            tea, tea_dn = schoolenv.create_user(school, is_teacher=True, lastname=tea_lastname)
-            tea_staff, tea_staff_dn = schoolenv.create_user(
-                school, is_teacher=True, is_staff=True, lastname=tea_staff_lastname
-            )
-            staff, staff_dn = schoolenv.create_user(school, is_staff=True, lastname=staff_lastname)
-            stu, stu_dn = schoolenv.create_user(school, lastname=stu_lastname)
-            school_admin, school_admin_dn = schoolenv.create_school_admin(
-                school, lastname=school_admin_lastname
-            )
+    tea, tea_dn = schoolenv.create_user(school, is_teacher=True, lastname=tea_lastname)
+    tea_staff, tea_staff_dn = schoolenv.create_user(
+        school, is_teacher=True, is_staff=True, lastname=tea_staff_lastname
+    )
+    staff, staff_dn = schoolenv.create_user(school, is_staff=True, lastname=staff_lastname)
+    stu, stu_dn = schoolenv.create_user(school, lastname=stu_lastname)
+    school_admin, school_admin_dn = schoolenv.create_school_admin(school, lastname=school_admin_lastname)
 
-            users_dn = [tea_dn, tea_staff_dn, staff_dn, stu_dn, school_admin_dn]
-            users = [tea, tea_staff, staff, stu, school_admin]
-            lastnames = [
-                tea_lastname,
-                tea_staff_lastname,
-                staff_lastname,
-                stu_lastname,
-                school_admin_lastname,
-            ]
+    users_dn = [tea_dn, tea_staff_dn, staff_dn, stu_dn, school_admin_dn]
+    users = [tea, tea_staff, staff, stu, school_admin]
+    lastnames = [
+        tea_lastname,
+        tea_staff_lastname,
+        staff_lastname,
+        stu_lastname,
+        school_admin_lastname,
+    ]
 
-            group = Workgroup(school=school, members=users_dn)
-            account = utils.UCSTestDomainAdminCredentials()
-            passwd = account.bindpw
-            group.create()
-            for change_passwd, newStatus in itertools.product(["0", "1"], ["0", "1"]):
-                should_pass = newStatus == "1"
+    group = Workgroup(school=school, members=users_dn)
+    account = utils.UCSTestDomainAdminCredentials()
+    passwd = account.bindpw
+    group.create()
+    for change_passwd, newStatus in itertools.product(["0", "1"], ["0", "1"]):
+        should_pass = newStatus == "1"
 
-                print("Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd))
-                outfile = activate_groupmembers("%s-%s" % (school, group.name), newStatus, change_passwd)
-                utils.wait_for_replication_and_postrun()
+        print("Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd))
+        outfile = activate_groupmembers("%s-%s" % (school, group.name), newStatus, change_passwd)
+        utils.wait_for_replication_and_postrun()
 
-                for username, lastname in zip(users, lastnames):
-                    checK_status(username, should_pass)
-                    if change_passwd == "1":
-                        passwd = get_new_password(outfile, lastname)
-                    check_auth(username, passwd, should_pass)
+        for username, lastname in zip(users, lastnames):
+            checK_status(username, should_pass)
+            if change_passwd == "1":
+                passwd = get_new_password(outfile, lastname)
+            check_auth(username, passwd, should_pass)
 
-                check_usernames_in_csv(outfile, users)
+        check_usernames_in_csv(outfile, users)

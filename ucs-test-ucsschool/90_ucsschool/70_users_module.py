@@ -102,61 +102,55 @@ def _test(student_classes, teacher_classes, schools, ucr, remove_from_school=Non
 
 
 def test_users_module(schoolenv, ucr):
-            umc_connection = Client.get_test_connection(ucr.get("ldap/master"))
-            (ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get("hostname"))
-            class_01 = Klasse(school=ou, connection=umc_connection)
-            class_01.create()
-            class_01.verify()
-            class_02 = Klasse(school=ou, connection=umc_connection)
-            class_02.create()
-            class_02.verify()
-            student_classes = {ou: ["%s-%s" % (ou, class_01.name)]}
-            teacher_classes = {ou: ["%s-%s" % (ou, class_01.name), "%s-%s" % (ou, class_02.name)]}
+    umc_connection = Client.get_test_connection(ucr.get("ldap/master"))
+    (ou, oudn), (ou2, oudn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr.get("hostname"))
+    class_01 = Klasse(school=ou, connection=umc_connection)
+    class_01.create()
+    class_01.verify()
+    class_02 = Klasse(school=ou, connection=umc_connection)
+    class_02.create()
+    class_02.verify()
+    student_classes = {ou: ["%s-%s" % (ou, class_01.name)]}
+    teacher_classes = {ou: ["%s-%s" % (ou, class_01.name), "%s-%s" % (ou, class_02.name)]}
 
-            print("\n>>>> Testing module with users in 1 OU ({}).\n".format(ou))
-            _test(student_classes, teacher_classes, [ou], ucr, ou, connection=umc_connection)
+    print("\n>>>> Testing module with users in 1 OU ({}).\n".format(ou))
+    _test(student_classes, teacher_classes, [ou], ucr, ou, connection=umc_connection)
 
-            class_03 = Klasse(school=ou2, connection=umc_connection)
-            class_03.create()
-            class_03.verify()
-            student_classes = {
-                ou: ["%s-%s" % (ou, class_01.name)],
-                ou2: ["%s-%s" % (ou2, class_03.name)],
-            }
-            teacher_classes = {
-                ou: ["%s-%s" % (ou, class_01.name), "%s-%s" % (ou, class_02.name)],
-                ou2: ["%s-%s" % (ou2, class_03.name)],
-            }
+    class_03 = Klasse(school=ou2, connection=umc_connection)
+    class_03.create()
+    class_03.verify()
+    student_classes = {
+        ou: ["%s-%s" % (ou, class_01.name)],
+        ou2: ["%s-%s" % (ou2, class_03.name)],
+    }
+    teacher_classes = {
+        ou: ["%s-%s" % (ou, class_01.name), "%s-%s" % (ou, class_02.name)],
+        ou2: ["%s-%s" % (ou2, class_03.name)],
+    }
 
-            print(
-                "\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2)
-            )
-            print(">>>> Removing user from primary OU first.\n")
-            users = _test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
+    print("\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2))
+    print(">>>> Removing user from primary OU first.\n")
+    users = _test(student_classes, teacher_classes, [ou, ou2], ucr, ou, connection=umc_connection)
 
-            for user in users:
-                print((user.username, user.role, user.school, user.schools))
-                wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
-                user.get()
-                user.verify()
-                user.remove()
-                wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
-                utils.wait_for_replication()
-                user.verify()
+    for user in users:
+        print((user.username, user.role, user.school, user.schools))
+        wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
+        user.get()
+        user.verify()
+        user.remove()
+        wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
+        utils.wait_for_replication()
+        user.verify()
 
-            print(
-                "\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2)
-            )
-            print(">>>> Removing user from secondary OU first.\n")
-            users = _test(
-                student_classes, teacher_classes, [ou, ou2], ucr, ou2, connection=umc_connection
-            )
+    print("\n>>>> Testing module with users in 2 OUs (primary: {} secondary: {}).".format(ou, ou2))
+    print(">>>> Removing user from secondary OU first.\n")
+    users = _test(student_classes, teacher_classes, [ou, ou2], ucr, ou2, connection=umc_connection)
 
-            for user in users:
-                wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
-                user.get()
-                user.verify()
-                user.remove()
-                utils.wait_for_replication()
-                wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
-                user.verify()
+    for user in users:
+        wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
+        user.get()
+        user.verify()
+        user.remove()
+        utils.wait_for_replication()
+        wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
+        user.verify()
