@@ -41,6 +41,7 @@ define([
 	"umc/dialog",
 	"umc/store",
 	"umc/tools",
+	"umc/widgets/Icon",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/Module",
@@ -53,7 +54,7 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/HiddenInput",
 	"umc/i18n!umc/modules/schoolimport"
-], function(declare, lang, array, locale, on, topic, all, Deferred, entities, dialog, store, tools, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
+], function(declare, lang, array, locale, on, topic, all, Deferred, entities, dialog, store, tools, Icon, Page, Form, Module, Wizard, StandbyMixin, ComboBox, Uploader, ProgressBar, Text, Grid, HiddenInput, _) {
 
 	var ImportWizard = declare("umc.modules.schoolimport.ImportWizard", [Wizard], {
 
@@ -294,6 +295,7 @@ define([
 			}
 
 			var grid = new Grid({
+				'class': 'umcGridOnContainer',
 				gridOptions: { selectionMode: 'none' },
 				moduleStore: store('id', 'schoolimport/jobs', this.moduleFlavor),
 				actions: [{
@@ -347,7 +349,14 @@ define([
 							return '';
 						}
 						return new Text({
-							content: lang.replace('<a href="/univention/command/schoolimport/job/passwords.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-passwords.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Passwords')})
+							content: lang.replace(
+								'<a href="/univention/command/schoolimport/job/passwords.csv?job={job}" target="_blank">{icon}<span style="margin-left: var(--layout-spacing-unit-small);">{name}</span></a>',
+								{
+									job: entities.encode(encodeURIComponent(item.id)),
+									name: _('Passwords'),
+									icon: Icon.asHTMLString('key'),
+								}
+							)
 						});
 					}
 				}, {
@@ -358,7 +367,14 @@ define([
 							return '';
 						}
 						return new Text({
-							content: lang.replace('<a href="/univention/command/schoolimport/job/summary.csv?job={job}" target="_blank"><img style="height: 24px;" src="/univention/js/dijit/themes/umc/icons/scalable/schoolimport-download.svg"> {name}</>', {job: encodeURIComponent(item.id), name: _('Summary')})
+							content: lang.replace(
+								'<a href="/univention/command/schoolimport/job/summary.csv?job={job}" target="_blank">{icon}<span style="margin-left: var(--layout-spacing-unit-small);">{name}</span></a>',
+								{
+									job: entities.encode(encodeURIComponent(item.id)),
+									name: _('Summary'),
+									icon: Icon.asHTMLString('download'),
+								}
+							)
 						});
 					}
 				}]
