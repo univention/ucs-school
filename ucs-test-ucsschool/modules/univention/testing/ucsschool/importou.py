@@ -858,8 +858,8 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 
             default_ip = Interfaces().get_default_ip_address()
             dhcp_subnet_properties = {
-                "subnet": str(default_ip.network.network_address),
-                "subnetmask": str(default_ip.network.prefixlen),
+                "subnet": str(default_ip.network),
+                "subnetmask": str(default_ip.prefixlen),
             }
             dhcp_subnet2 = udm.create_object(
                 "dhcp/subnet", superordinate=dhcp_service, **dhcp_subnet_properties
@@ -896,7 +896,7 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
                     "ou_base": ou_base,
                 }
                 new_dhcp_subnet2_dn = "cn=%s,%s" % (
-                    default_ip.network.network_address,
+                    default_ip.network,
                     new_dhcp_service_dn,
                 )
                 utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)

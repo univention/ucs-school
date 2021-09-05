@@ -164,7 +164,7 @@ class _TestCases(object):
         ("admin0", "teacher1", RESULT_OK),
         ("admin0", "teacher2", RESULT_OK),
         # the following test is disabled because it will currently fail
-        pytest.param("admin0", "admin1", RESULT_FAIL, marks=pytest.mark.xfail(reason="TODO: blame why")),
+        # pytest.param("admin0", "admin1", RESULT_FAIL, marks=pytest.mark.xfail(reason="TODO: blame")),
     ],
 )
 def test_password_reset_acl(ucr, schoolenv, actor, target, expected_result):
