@@ -130,7 +130,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if ucr_variable is not None:
             samba_home_path = r"\\%s" % ucr_variable.strip("\\")
         elif ucr.is_true("ucsschool/singlemaster", False):
-            # in single server environments the master is always the fileserver
+            # in single server environments the Primary Directory Node is always the fileserver
             samba_home_path = r"\\%s" % ucr.get("hostname")
         # if there's a cached result then use it
         elif school.dn not in self._samba_home_path_cache:

@@ -137,11 +137,11 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             dcs = lo.searchDn(ldap_filter_str)
             if dcs and ucr.is_true("ucsschool/singlemaster"):
                 self.add_error(
-                    "dc_name", "The educational DC for the school must not be a backup server"
+                    "dc_name", "The educational DC for the school must not be a Backup Directory Node"
                 )
             elif dcs:
                 self.add_error(
-                    "dc_name", "The educational DC for the school must not be a backup or master server"
+                    "dc_name", "The educational DC for the school must not be a Backup Directory Node or Primary Directory Node"
                 )
 
     def build_hook_line(self, hook_time, func_name):
@@ -416,8 +416,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
             )
             if mb_dcs:
-                return  # We do not modify the groups of master or backup servers.
-                # Should be validated, but stays here as well in case validation was deactivated
+                return  # We do not modify the groups of Primary Directory Node or Backup Directory Node servers.
+                # Should be validated, but stays here as well in case validation was deactivated.
             # Sadly we need this here to access non school specific computers.
             # TODO: Use Daniels simple API if merged into product
             po = univention.admin.uldap.position(lo.base)
@@ -489,7 +489,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             existing_host = AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", (name,)))
             if existing_host:
                 self.logger.error(
-                    'Given host name "%s" is already in use and no domaincontroller slave system. '
+                    'Given host name "%s" is already in use and no Replica Directory Node. '
                     "Please choose another name.",
                     name,
                 )
@@ -529,7 +529,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
                 if hostlist:
                     # if at least one DC has control over this OU then jump to next 'school_dcs'
-                    # item ==> do not create default slave objects
+                    # item ==> do not create default Replica Directory Node objects
                     continue
 
                 self.create_dc_slave(lo, dc_name, administrative=administrative)
@@ -777,7 +777,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         ou_lower = self.name.lower()
         if ucr.is_true("ucsschool/singlemaster", False):
             mod = udm.get("computers/domaincontroller_master")
-            # UDM computer object of master can be found with "cn={hostname}", using the hostname
+            # UDM computer object of Primary Directory Node can be found with "cn={hostname}", using the hostname
             # from its fqdn, which is in ucr["ldap/master"].
             filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
             obj = [o for o in mod.search(filter_s)][0]
@@ -807,7 +807,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         udm.get("computers/domaincontroller_slave").get(server_dn)
                     except UdmNoObject:
                         self.logger.info(
-                            "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                            "A Replica Directory Node was expected at {}. Not setting ucsscchoolRole property.".format(
                                 server_dn
                             )
                         )
@@ -920,7 +920,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.logger.warning("DHCPDNSPolicy for {} exists already.".format(self.name))
 
             dhcp_dns_policy_dn = "cn=dhcp-dns-{},cn=policies,{}".format(escape_dn_chars(ou_lower), ou_dn)
-            # In a single server environment, the master is the DNS server.
+            # In a single server environment, the Primary Directory Node is the DNS server.
             if ucr.is_true("ucsschool/singlemaster", False):
                 policy = dhcp_dns_mod.get(dhcp_dns_policy_dn)
                 policy.props.domain_name_servers = [socket.gethostbyname(ucr["ldap/master"])]
