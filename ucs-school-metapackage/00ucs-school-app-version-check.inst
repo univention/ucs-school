@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # UCS@school
-#  join script to check version of app on master
+#  join script to check version of app on Primary Directory Node
 #
 # Copyright 2016-2021 Univention GmbH
 #
@@ -39,8 +39,8 @@ joinscript_init
 if [ "$(ucr get server/role)" = "domaincontroller_backup" -o "$(ucr get server/role)" = "domaincontroller_slave" ]; then
 	if ! /usr/share/ucs-school-metapackage/scripts/app_version.py -v ucsschool; then
 		echo "****************************************************************************"
-		echo "The version of the UCS@school app on the DC master is lower than the version"
-		echo "on this host. Please consult the Univention Support Database on how to"
+		echo "The version of the UCS@school app on the Primary Directory Node is lower than the"
+		echo "version on this host. Please consult the Univention Support Database on how to"
 		echo "proceed: http://sdb.univention.de/1374"
 		echo "****************************************************************************"
 		exit 1
