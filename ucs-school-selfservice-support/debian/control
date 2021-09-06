@@ -17,8 +17,8 @@ Depends:
  ${misc:Depends},
 Description: Package for running the self-service app in a UCS@school domain
  This package provides scripts for running the self-service app in a
- UCS@school domain. It should be installed on the DC master and DC backups
- only.
+ UCS@school domain. It should be installed on the Primary Directory Node and
+ Backup Directory Nodes only.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
