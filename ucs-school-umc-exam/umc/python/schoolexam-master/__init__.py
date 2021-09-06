@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# UCS@School UMC module schoolexam-master
+# UCS@school UMC module schoolexam-master
 #  UMC module delivering backend services for ucs-school-umc-exam
 #
 # Copyright 2013-2021 Univention GmbH
