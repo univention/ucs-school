@@ -41,8 +41,8 @@ msgstr "Der Benutzer \"%s\" konnte nicht authentifiziert werden!"
 
 #: umc/python/schoolexam/__init__.py:451 umc/python/schoolexam/__init__.py:701
 #, python-format
-msgid "Could not connect to master server %s."
-msgstr "Die Verbindung zum Master-Server %s konnte nicht aufgebaut werden."
+msgid "Could not connect to Primary Directory Node %s."
+msgstr "Die Verbindung zum Primary Directory Node %s konnte nicht aufgebaut werden."
 
 #: umc/python/schoolexam/__init__.py:567
 msgid "Distributing exam files"

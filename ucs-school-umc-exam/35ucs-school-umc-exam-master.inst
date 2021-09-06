@@ -49,7 +49,7 @@ univention-config-registry set \
 eval "$(ucr shell)"
 
 umc_operation_create "schoolexam-master" "Manage exam accounts" "" "schoolexam-master/*"
-# allow school slaves to query computer rooms and stop exams (Bug #40213)
+# allow UCS@School Replica Directory Nodes to query computer rooms and stop exams (Bug #40213)
 umc_operation_create "schoolexam-stop-cron" "Stop exam via host accounts" "" "schoolexam/exam/finish" "computerroom/rooms"
 
 # create default policies if not exists and append operationset to it

@@ -30,7 +30,7 @@
 """
 Base class for all Python based exam user hooks.
 
-ATTENTION: These hooks will only be executed by the exam UMC module on the DC master!
+ATTENTION: These hooks will only be executed by the exam UMC module on the Primary Directory Node!
 """
 
 from ucsschool.importer.utils.import_pyhook import ImportPyHook
