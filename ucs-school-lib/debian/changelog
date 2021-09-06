@@ -1,3 +1,9 @@
+ucs-school-lib (12.2.36) unstable; urgency=medium
+
+  * Revert "Bug #53026: replace consecutive asterisks"
+
+ -- Florian Best <best@univention.de>  Mon, 06 Sep 2021 16:15:46 +0200
+
 ucs-school-lib (12.2.35) unstable; urgency=medium
 
   * Bug #53718: revert
