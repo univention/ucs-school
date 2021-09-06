@@ -133,44 +133,54 @@ def get_school_membership(options):  # type: (Any) -> SchoolMembership
 
 
 def determine_role_packages(options, package_manager):  # type: (Any, PackageManager) -> List[str]
+    IS_UCS4 = ucr["version/version"].startswith("4.")
     if options.server_role in ("domaincontroller_master",):
         return []
 
     elif options.server_role in ("domaincontroller_backup",):
         # if metapackage is already installed, then stick with it and don't change it
         for pkg_name in (
-            "ucs-school-master",
-            "ucs-school-singlemaster",
+            "ucs-school-multiserver",
+            "ucs-school-singleserver",
+            "ucs-school-master",  # UCS@school 4.4
+            "ucs-school-singleserver",  # UCS@school 4.4
         ):
             if package_manager.is_installed(pkg_name):
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
-        # if no metapackage has been found, determine package type via master's UCR variable
+        # if no metapackage has been found, determine package type via Primary's UCR variable
         result = call_cmd_on_master(
             options.master_fqdn, "/usr/sbin/ucr", "get", "ucsschool/singlemaster"
         )
         if ucr.is_true(value=result.stdout.strip()):
-            log.info("Master is a UCS@school single server system")
-            return ["ucs-school-singlemaster"]
+            log.info("Primary is a UCS@school single server system")
+            return ["ucs-school-singleserver" if not IS_UCS4 else "ucs-school-singlemaster"]
         else:
-            log.info("Master is part of a multi server environment")
-            return ["ucs-school-master"]
+            log.info("Primary is part of a multi server environment")
+            return ["ucs-school-multiserver" if not IS_UCS4 else "ucs-school-master"]
 
     elif options.server_role in ("domaincontroller_slave",):
         # if metapackage is already installed, then stick with it and don't change it
-        for pkg_name in ("ucs-school-slave", "ucs-school-nonedu-slave", "ucs-school-central-slave"):
+        for pkg_name in (
+            "ucs-school-replica",
+            "ucs-school-nonedu-replica",
+            "ucs-school-central-replica",
+            "ucs-school-slave",  # UCS@school 4.4
+            "ucs-school-nonedu-slave",  # UCS@school 4.4
+            "ucs-school-central-slave",  # UCS@school 4.4
+        ):
             if package_manager.is_installed(pkg_name):
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
 
-        # if no metapackage has been found, then determine slave type via group memberships
+        # if no metapackage has been found, then determine Replica type via group memberships
         membership = get_school_membership(options)
         if membership.is_edu_school_member:
-            return ["ucs-school-slave"]
+            return ["ucs-school-replica" if not IS_UCS4 else "ucs-school-slave"]
         elif membership.is_admin_school_member:
-            return ["ucs-school-nonedu-slave"]
+            return ["ucs-school-nonedu-replica" if not IS_UCS4 else "ucs-school-nonedu-slave"]
         else:
-            return ["ucs-school-central-slave"]
+            return ["ucs-school-central-replica" if not IS_UCS4 else "ucs-school-central-slave"]
 
     elif options.server_role in ("memberserver",):
         return []
@@ -360,7 +370,7 @@ def veyon_app_should_be_installed(options, roles_pkg_list):  # type: (Any, List[
     """
     if options.server_role == "domaincontroller_master":
         return ucr.is_true("ucsschool/singlemaster")
-    return "ucs-school-slave" in roles_pkg_list
+    return "ucs-school-replica" in roles_pkg_list or "ucs-school-slave" in roles_pkg_list
 
 
 def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None

@@ -7,12 +7,12 @@
 import univention.testing.utils as utils
 
 role_packages = {
-    "dc_multi_master": "ucs-school-master",
-    "dc_single_master": "ucs-school-singlemaster",
-    "dc_slave_edu": "ucs-school-slave",
-    "dc_slave": "ucs-school-central-slave",
-    "dc_backup": "ucs-school-master",
-    "single_master": "ucs-school-singlemaster",
+    "dc_multi_master": "ucs-school-multiserver",
+    "dc_single_master": "ucs-school-singleserver",
+    "dc_slave_edu": "ucs-school-replica",
+    "dc_slave": "ucs-school-central-replica",
+    "dc_backup": "ucs-school-multiserver",
+    "single_master": "ucs-school-singleserver",
 }
 
 

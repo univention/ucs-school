@@ -3,7 +3,7 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [ucs-school-master|ucs-school-slave|ucs-school-singlemaster]
+## packages: [ucs-school-multiserver|ucs-school-replica|ucs-school-singleserver]
 
 import univention.testing.utils as utils
 from univention.testing.umc import Client

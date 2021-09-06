@@ -212,11 +212,11 @@ def test_determine_app_version_higher_than_req_for_44v9(join_hook_module):
     "roles",
     (
         [],
-        ["ucs-school-master"],
-        ["ucs-school-singlemaster"],
-        ["ucs-school-slave"],
-        ["ucs-school-nonedu-slave"],
-        ["ucs-school-central-slave"],
+        ["ucs-school-multiserver"],
+        ["ucs-school-singleserver"],
+        ["ucs-school-replica"],
+        ["ucs-school-nonedu-replica"],
+        ["ucs-school-central-replica"],
     ),
     ids=role_id,
 )
@@ -225,7 +225,7 @@ def test_install_veyon_app(roles, join_hook_module):
     with mock.patch.object(join_hook_module, "log") as log_mock, mock.patch.object(
         join_hook_module, "call_cmd_locally", return_value=join_hook_module.StdoutStderr("{}", "")
     ) as call_cmd_locally_mock, mock.patch.object(join_hook_module, "ucr", ucr_mock):
-        if roles in ([], ["ucs-school-singlemaster"]):
+        if roles in ([], ["ucs-school-singleserver"]):
             options_mock.server_role = "domaincontroller_master"
             ucr_mock.is_true.return_value = True
         else:
@@ -233,7 +233,7 @@ def test_install_veyon_app(roles, join_hook_module):
             ucr_mock.is_true.return_value = False
         join_hook_module.install_veyon_app(options_mock, roles)
         assert log_mock.info.called
-        if roles in ([], ["ucs-school-singlemaster"], ["ucs-school-slave"]):
+        if roles in ([], ["ucs-school-singleserver"], ["ucs-school-replica"]):
             log_mock.info.assert_called_with("Log output of the installation goes to 'appcenter.log'.")
             assert "/usr/bin/univention-app" in call_cmd_locally_mock.call_args[0]
             assert "install" in call_cmd_locally_mock.call_args[0]

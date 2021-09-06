@@ -5,7 +5,7 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-master | ucs-school-singlemaster
+##   - ucs-school-multiserver | ucs-school-singleserver
 
 import pytest
 

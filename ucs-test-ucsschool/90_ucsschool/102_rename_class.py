@@ -3,7 +3,7 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [ucs-school-import, ucs-school-singlemaster]
+## packages: [ucs-school-import, ucs-school-singleserver]
 
 import glob
 import grp

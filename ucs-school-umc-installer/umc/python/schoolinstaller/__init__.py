@@ -92,14 +92,14 @@ CERTIFICATE_PATH = "/etc/univention/ssl/ucsCA/CAcert.pem"
 # 		server_role = ucr.get('server/role')
 # 		if value == 'singlemaster':
 # 			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
-# 				return 'ucs-school-singlemaster'
+# 				return 'ucs-school-singleserver'
 # 			self.raise_validation_error(
 # 			    _('Single server environment not allowed on server role "%s"') % server_role)
 # 		if value == 'multiserver':
 # 			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
-# 				return 'ucs-school-master'
+# 				return 'ucs-school-multiserver'
 # 			elif server_role == 'domaincontroller_slave':
-# 				return 'ucs-school-slave'
+# 				return 'ucs-school-replica'
 # 			self.raise_validation_error(
 # 	    		_('Multi server environment not allowed on server role "%s"') % server_role)
 # 		self.raise_validation_error(_('Value "%s" not allowed') % value)
@@ -417,15 +417,15 @@ class Instance(Base):
 
     def get_school_environment(self):
         """Returns 'singlemaster', 'multiserver', or None"""
-        if self.package_manager.is_installed("ucs-school-singlemaster"):
+        if self.package_manager.is_installed("ucs-school-singleserver"):
             return "singlemaster"
         elif any(
             self.package_manager.is_installed(package)
             for package in [
-                "ucs-school-slave",
-                "ucs-school-nonedu-slave",
-                "ucs-school-central-slave",
-                "ucs-school-master",
+                "ucs-school-replica",
+                "ucs-school-nonedu-replica",
+                "ucs-school-central-replica",
+                "ucs-school-multiserver",
             ]
         ):
             return "multiserver"
@@ -714,18 +714,18 @@ class Instance(Base):
             # slave
             packages_to_install.extend(["univention-samba4", "univention-s4-connector"])
             if server_type == "educational":
-                packages_to_install.append("ucs-school-slave")
+                packages_to_install.append("ucs-school-replica")
             else:
-                packages_to_install.append("ucs-school-nonedu-slave")
+                packages_to_install.append("ucs-school-nonedu-replica")
         else:  # master or backup
             if setup == "singlemaster":
                 if installed_samba_version:
                     pass  # do not install samba a second time
                 else:  # otherwise install samba4
                     packages_to_install.extend(["univention-samba4", "univention-s4-connector"])
-                packages_to_install.append("ucs-school-singlemaster")
+                packages_to_install.append("ucs-school-singleserver")
             elif setup == "multiserver":
-                packages_to_install.append("ucs-school-master")
+                packages_to_install.append("ucs-school-multiserver")
             else:
                 raise SchoolInstallerError(_("Invalid UCS@school configuration."))
         MODULE.info("Packages to be installed: %s" % ", ".join(packages_to_install))

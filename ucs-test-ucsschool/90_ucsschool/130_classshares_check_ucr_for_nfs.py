@@ -3,7 +3,7 @@
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
-## packages: [ucs-school-import, ucs-school-singlemaster]
+## packages: [ucs-school-import, ucs-school-singleserver]
 ## bugs: [38641]
 
 from __future__ import print_function

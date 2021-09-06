@@ -4,13 +4,13 @@
 ## tags: [apptest,ucsschool]
 ## exposure: safe
 ## packages:
-##    - ucs-school-master | ucs-school-singlemaster | ucs-school-slave
+##    - ucs-school-multiserver | ucs-school-singleserver | ucs-school-replica
 
 from __future__ import print_function
 
 import apt
 
-METAPACKAGES = ["ucs-school-master", "ucs-school-singlemaster", "ucs-school-slave"]
+METAPACKAGES = ["ucs-school-multiserver", "ucs-school-singleserver", "ucs-school-replica"]
 
 
 def test_installed_ucsschool_default_packages():

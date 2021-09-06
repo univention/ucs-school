@@ -1,3 +1,9 @@
+ucs-school-metapackage (13.0.6) unstable; urgency=medium
+
+  * Bug #20064: rename meta packages
+
+ -- Florian Best <best@univention.de>  Mon, 06 Sep 2021 18:54:31 +0200
+
 ucs-school-metapackage (13.0.5) unstable; urgency=medium
 
   * Bug #53460: Remove Demo Portal

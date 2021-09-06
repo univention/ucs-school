@@ -46,9 +46,9 @@ def test_settings_univention_samba4():
     for setting, value in settings_samba.items():
         if setting == "samba4/ldb/sam/module/prepend" and not any(
             (
-                utils.package_installed("ucs-school-singlemaster"),
-                utils.package_installed("ucs-school-slave"),
-                utils.package_installed("ucs-school-nonedu-slave"),
+                utils.package_installed("ucs-school-singleserver"),
+                utils.package_installed("ucs-school-replica"),
+                utils.package_installed("ucs-school-nonedu-replica"),
             )
         ):
             # Bug #49726: test only on slave / singlemaster
@@ -64,7 +64,7 @@ def test_settings_s4connector():
 
 
 def test_settings_ucs_school_slave():
-    if not utils.package_installed("ucs-school-slave"):
-        pytest.skip("Missing ucs-school-slave")
+    if not utils.package_installed("ucs-school-replica"):
+        pytest.skip("Missing ucs-school-replica")
     for setting, value in settings_school_slave.items():
         check_setting(setting, value)

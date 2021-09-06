@@ -381,14 +381,14 @@
 		Für die Umwandlung sind einige Befehle auf der Kommandozeile des DC Masters auszuführen, die
 		einen Austausch des &ucsUAS;-Metapakets sowie eine Konfigurationsänderung durchführen (Bitte das Minuszeichen hinter dem zweiten Paketnamen am Ende der ersten Zeile beachten!):
 		<programlisting language="sh">
-univention-install ucs-school-master ucs-school-singlemaster-
+univention-install ucs-school-multiserver ucs-school-singleserver-
 ucr unset ucsschool/singlemaster
 		</programlisting>
 	  </para>
 	  <para>
-		  Durch die beiden Befehle wird das Meta-Paket <package>ucs-school-singlemaster</package> deinstalliert
-		  und im gleichen Zug das Paket <package>ucs-school-master</package> installiert.
-		  Mit der Deinstallation des Pakets <package>ucs-school-singlemaster</package> werden die
+		  Durch die beiden Befehle wird das Meta-Paket <package>ucs-school-singleserver</package> deinstalliert
+		  und im gleichen Zug das Paket <package>ucs-school-multiserver</package> installiert.
+		  Mit der Deinstallation des Pakets <package>ucs-school-singleserver</package> werden die
 		  nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem DC Master
 		  der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
 		  Löschung der betroffenen Pakete findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get

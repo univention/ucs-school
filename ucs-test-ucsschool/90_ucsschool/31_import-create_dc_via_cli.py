@@ -6,7 +6,7 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-##   - ucs-school-master
+##   - ucs-school-multiserver
 
 from __future__ import print_function
 

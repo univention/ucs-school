@@ -2,7 +2,7 @@
 ## desc: Test the Samba4 GPC objects and links replication from DC-Master to DC-Slave or vice versa.
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## packages: [univention-samba4, ucs-school-slave|ucs-school-master]
+## packages: [univention-samba4, ucs-school-replica|ucs-school-multiserver]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 

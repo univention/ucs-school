@@ -4,7 +4,7 @@
 ## tags: [apptest,ucsschool]
 ## exposure: safe
 ## packages:
-##    - ucs-school-master | ucs-school-singlemaster | ucs-school-slave
+##    - ucs-school-multiserver | ucs-school-singleserver | ucs-school-replica
 
 from __future__ import print_function
 
