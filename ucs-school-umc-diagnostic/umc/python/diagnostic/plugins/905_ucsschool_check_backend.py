@@ -31,7 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 #
-# This module checks if the hosts role is either a master, slave or backup
+# This module checks if the hosts role is either a Primary Directory Node,
+# Replica Directory Node or Backup Directory Node
 # domain controller and samba4 is installed (Bug #50503)
 
 from __future__ import absolute_import
@@ -47,7 +48,7 @@ title = _("UCS@school Check if Samba4 is installed")
 description = "\n".join(
     [
         _(
-            "UCS@school: Test that checks if Samba4 is installed on a single master or on a school "
+            "UCS@school: Test that checks if Samba4 is installed on a singleserver system or on a school "
             "server in a multi-server-environment."
         ),
     ]
@@ -59,7 +60,7 @@ def run(_umc_instance):
     if server_role == "domaincontroller_backup":
         return
     if server_role == "domaincontroller_master" and ucr.is_false("ucsschool/singlemaster", default=True):
-        # not a single master
+        # not a singleserver system
         return
     if server_role == "domaincontroller_slave":
         host_dn = ucr["ldap/hostdn"]

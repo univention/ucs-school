@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.3) unstable; urgency=medium
+
+  * Bug #52602: change server role terminology
+
+ -- Christian Castens <castens@univention.de>  Wed, 08 Sep 2021 12:19:37 +0200
+
 ucs-school-umc-diagnostic (2.0.2) unstable; urgency=medium
 
   * Bug #52633: migrate ucs-school-umc-diagnostic to Python 3

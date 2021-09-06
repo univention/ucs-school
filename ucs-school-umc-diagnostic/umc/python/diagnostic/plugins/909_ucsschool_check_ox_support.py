@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 """
-This module checks if a UCS@school DC-Master with OX installed also has
+This module checks if a UCS@school Primary Directory Node with OX installed also has
 the package ucs-school-ox-support installed. If not a button pops up,
 which tries to fix this issue by installing it.
 """

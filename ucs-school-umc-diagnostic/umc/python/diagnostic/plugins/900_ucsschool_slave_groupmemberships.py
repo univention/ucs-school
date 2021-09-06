@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 #
-# Checks if the domaincontroller slave and memberserver objects are members
+# Checks if the Replica Directory Node and Managed Node objects are members
 # of both groups:
 #   DC-Edukativnetz + OU-$OU-DC-Edukativnetz
 # or
@@ -58,11 +58,11 @@ except ImportError:
 
 _ = Translation("univention-management-console-module-diagnostic").translate
 
-title = _("UCS@school Group Memberships of DC Slaves")
+title = _("UCS@school Group Memberships of Replica Directory Nodes")
 description = "\n".join(
     [
         _(
-            "UCS@school Domaincontroller Slave objects rely on the membership within certain UCS@school "
+            "UCS@school Replica Directory Node objects rely on the membership within certain UCS@school "
             "LDAP groups."
         ),
         _("Inconsistencies in these group memberships can trigger erratic behaviour of UCS@school."),
@@ -155,12 +155,12 @@ def run(_umc_instance):
                 + list(result["memberserver"]["admin"].values())
             ):
                 problematic_objects.setdefault(obj_dn, []).append(
-                    _("Slave object is member in memberserver groups")
+                    _("Replica Directory Node object is member in Managed Node groups")
                 )
         else:
             if any(list(result["slave"]["edu"].values()) + list(result["slave"]["admin"].values())):
                 problematic_objects.setdefault(obj_dn, []).append(
-                    _("Memberserver object is member in slave groups")
+                    _("Managed Node object is member in Replica Directory Node groups")
                 )
 
     if problematic_objects:
