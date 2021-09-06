@@ -28,7 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 """
-This module checks if on a UCS@school single master or a school server from
+This module checks if on a UCS@school single Primary Directory Node or a school server from
 UCS@school version 4.4 v9 on, the UCS@school Veyon Proxy app is installed.
 """
 from __future__ import absolute_import
@@ -52,7 +52,7 @@ _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school Veyon Proxy app")
 description = _(
-    "Verify that the {!r} app is installed on single master and school server system roles.".format(
+    "Verify that the {!r} app is installed on single Primary Directory Node and school server system roles.".format(
         VEYON_APP_NAME
     )
 )
@@ -61,10 +61,10 @@ description = _(
 def run(_umc_instance):
     server_role = ucr["server/role"]
     if server_role not in ("domaincontroller_master", "domaincontroller_slave"):
-        # not a single master or a school server
+        # not a single Primary Directory Node or a school server
         return
     if server_role == "domaincontroller_master" and not ucr.is_true("ucsschool/singlemaster"):
-        # not a single master
+        # not a single Primary Directory Node
         return
     if server_role == "domaincontroller_slave":
         host_dn = ucr["ldap/hostdn"]
