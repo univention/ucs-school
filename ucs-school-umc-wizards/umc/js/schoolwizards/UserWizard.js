@@ -128,7 +128,6 @@ define([
 					type: CheckBox,
 					name: 'disabled',
 					label: _('Disabled'),
-					required: true
 				}, {
 					type: DateBox,
 					name: 'birthday',
