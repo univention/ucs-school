@@ -573,14 +573,16 @@ class Instance(SchoolBaseModule):
                 my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)
             logger.info("after saving exam: my.project=%r", my.project)
 
-            # open a new connection to the master UMC
+            # open a new connection to the Primary Directory Node UMC
             try:
                 master = ucr["ldap/master"]
                 client = Client(master)
                 client.authenticate_with_machine_account()
             except (ConnectionError, HTTPError) as exc:
                 logger.error("start_exam() Could not connect to UMC on %s: %s", master, exc)
-                raise UMC_Error(_("Could not connect to master server %s.") % ucr.get("ldap/master"))
+                raise UMC_Error(
+                    _("Could not connect to Primary Directory Node %s.") % ucr.get("ldap/master")
+                )
 
             # mark the computer room for exam mode
             progress.component(_("Preparing the computer room for exam mode..."))
@@ -649,7 +651,9 @@ class Instance(SchoolBaseModule):
                 # indicate the the user has been processed
                 progress.add_steps(percentPerUser)
 
-            logger.info("start_exam() Sending DNs to add to group to master: %r", student_dns)
+            logger.info(
+                "start_exam() Sending DNs to add to group to Primary Directory Node: %r", student_dns
+            )
             client.umc_command(
                 "schoolexam-master/add-exam-users-to-groups",
                 {"users": list(student_dns), "school": request.options["school"]},
@@ -884,14 +888,14 @@ class Instance(SchoolBaseModule):
                 # remove immutable bit from folders
             progress.add_steps(10)
 
-            # open a new connection to the master UMC
+            # open a new connection to the Primary Directory Node UMC
             master = ucr["ldap/master"]
             try:
                 client = Client(master)
                 client.authenticate_with_machine_account()
             except (ConnectionError, HTTPError) as exc:
                 logger.error("Could not connect to UMC on %s: %s", master, exc)
-                raise UMC_Error(_("Could not connect to master server %s.") % (master,))
+                raise UMC_Error(_("Could not connect to Primary Directory Node %s.") % (master,))
 
             school = SchoolSearchBase.getOU(request.options["room"])
 
@@ -912,7 +916,7 @@ class Instance(SchoolBaseModule):
                 recipients = ldap_user_read.search(
                     filter_format("ucsschoolRole=%s", (exam_role_str,)), attr=["ucsschoolRole", "uid"]
                 )
-                # This is needed for backwards compatibility with any master
+                # This is needed for backwards compatibility with any Primary Directory Node
                 # that is not updated to use roles for exam membership yet.
                 exam_roles_exist = any(
                     True
@@ -975,10 +979,10 @@ class Instance(SchoolBaseModule):
                             umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"]}
                         ).result
                     except Forbidden as exc:
-                        # DC Master has old package. No problem, as users will still be
+                        # Primary Directory Node has old package. No problem, as users will still be
                         # deleted in the next step, just slower.
                         logger.warning(
-                            "Forbidden (HTTP %r): DC Master doesn't know UMC command %r. "
+                            "Forbidden (HTTP %r): Primary Directory Node doesn't know UMC command %r. "
                             "Skipping non-primary-groups-removal optimization step.",
                             exc.code,
                             umc_cmd,

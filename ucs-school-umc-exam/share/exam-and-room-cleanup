@@ -372,13 +372,13 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
         "--skip-exam-user-removal",
         default=False,
         action="store_true",
-        help="do not remove all existing exam users (only on DC master / DC backup)",
+        help="do not remove all existing exam users (only on Primary Directory Node / Backup Directory Node)",
     )
     parser.add_argument(
         "--skip-exam-computer-removal",
         default=False,
         action="store_true",
-        help="do not remove all existing exam computers (only on DC master / DC backup)",
+        help="do not remove all existing exam computers (only on Primary Directory Node / Backup Directory Node)",
     )
     parser.add_argument(
         "--skip-ucr-cleanup",
