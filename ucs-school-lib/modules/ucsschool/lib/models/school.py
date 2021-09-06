@@ -489,7 +489,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             existing_host = AnyComputer.get_first_udm_obj(lo, filter_format("cn=%s", (name,)))
             if existing_host:
                 self.logger.error(
-                    'Given host name "%s" is already in use and no domaincontroller slave system. '
+                    'Given host name "%s" is already in use and no Replica Directory Node. '
                     "Please choose another name.",
                     name,
                 )
@@ -529,7 +529,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
                 if hostlist:
                     # if at least one DC has control over this OU then jump to next 'school_dcs'
-                    # item ==> do not create default slave objects
+                    # item ==> do not create default Replica Directory Node objects
                     continue
 
                 self.create_dc_slave(lo, dc_name, administrative=administrative)
@@ -708,7 +708,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # we got an OU in the user DN -> school teacher or assistent
             # restrict the visibility to current school
             # (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-            school_dn = lo.binddn[lo.binddn.find("ou=") :]
+            school_dn = lo.binddn[lo.binddn.find("ou="):]
             cls.logger.debug(
                 "Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show "
                 "%s",
@@ -807,7 +807,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         udm.get("computers/domaincontroller_slave").get(server_dn)
                     except UdmNoObject:
                         self.logger.info(
-                            "A DC slave was expected at {}. Not setting ucsscchoolRole property.".format(
+                            "A Replica Directory Node was expected at {}. Not setting ucsscchoolRole property.".format(
                                 server_dn
                             )
                         )

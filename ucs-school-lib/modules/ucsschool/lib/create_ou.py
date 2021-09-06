@@ -75,8 +75,8 @@ def create_ou(
     :param str share_name: host name
     :param univention.uldap.access lo: LDAP connection object
     :param str baseDN: base DN
-    :param str hostname: hostname of master in case of singlemaster
-    :param bool is_single_master: whther it is a singlemaster
+    :param str hostname: hostname of Primary Directory Node in case of singlemaster
+    :param bool is_single_master: whether it is a singlemaster
     :param bool alter_dhcpd_base: if the DHCP base should be modified
     :return bool: whether the OU was sucessfully created (or already existed)
     :raises ValueError: on validation errors

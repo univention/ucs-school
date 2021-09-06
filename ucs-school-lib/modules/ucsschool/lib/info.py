@@ -47,7 +47,7 @@ MembershipFlags = namedtuple("MembershipFlags", ["is_edu_school_member", "is_adm
 def get_school_membership_type(lo, dn):  # type: (univention.uldap.access, str) -> MembershipFlags
     """
     Returns a named tuple, that states if the given computer object specified by `dn` is an educational
-    school slave/memberserver or administrative slave/memberserver.
+    school Replica Directory Node/Managed Node or administrative Replica Directory Node/Managed Node.
 
     :param univention.uldap.access lo: the LDAP connection
     :param str dn: DN of the computer object
@@ -110,11 +110,11 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
 
 def is_school_slave(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
-    Checks if the given domaincontroller_slave object (specified by `dn`) is a school slave.
+    Checks if the given domaincontroller_slave object (specified by `dn`) is a school Replica Directory Node.
 
     :param univention.uldap.access lo: the LDAP connection
     :param str dn: DN of the computer object
-    :return: is the computer a school slave?
+    :return: is the computer a school Replica Directory Node?
     :rtype: bool
     :raises ValueError: computer DN does not refer to a computers/domaincontroller_slave object
     """

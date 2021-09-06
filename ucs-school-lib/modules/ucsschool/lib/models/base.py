@@ -333,7 +333,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def get_machine_connection(cls):  # type: () -> LoType
-        """get a cached ldap connection to the DC Master using this host's credentials"""
+        """get a cached ldap connection to the Primary Directory Node using this host's credentials"""
         if not cls._machine_connection:
             cls._machine_connection = udm_uldap.getMachineConnection()[0]
         return cls._machine_connection

@@ -123,10 +123,10 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
                 try:
                     udm_obj = self.get_only_udm_obj(lo, filter_format("cn=%s", (self.name,)))
                 except MultipleObjectsError:
-                    self.logger.error('Found more than one DC Slave with hostname "%s"', self.name)
+                    self.logger.error('Found more than one Replica Directory Node with hostname "%s"', self.name)
                     return False
                 if udm_obj is None:
-                    self.logger.error('Cannot find DC Slave with hostname "%s"', self.name)
+                    self.logger.error('Cannot find Replica Directory Node with hostname "%s"', self.name)
                     return False
             old_dn = udm_obj.dn
             school = self.get_school_obj(lo)
@@ -136,18 +136,18 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
                 return False
             if old_dn == self.dn:
                 self.logger.info(
-                    'DC Slave "%s" is already located in "%s" - stopping here', self.name, self.school
+                    'Replica Directory Node "%s" is already located in "%s" - stopping here', self.name, self.school
                 )
             self.set_dn(old_dn)
             if self.exists_outside_school(lo):
                 if not force:
                     self.logger.error(
-                        'DC Slave "%s" is located in another OU - %s', self.name, udm_obj.dn
+                        'Replica Directory Node "%s" is located in another OU - %s', self.name, udm_obj.dn
                     )
                     self.logger.error("Use force=True to override")
                     return False
             if school is None:
-                self.logger.error("Cannot move DC Slave object - School does not exist: %r", school)
+                self.logger.error("Cannot move Replica Directory Node object - School does not exist: %r", school)
                 return False
             self.modify_without_hooks(lo)
             if school.class_share_file_server == old_dn:
@@ -173,7 +173,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
                 dhcp_server.create(lo)
 
             self.logger.info("Move complete")
-            self.logger.warning("The DC Slave has to be rejoined into the domain!")
+            self.logger.warning("The Replica Directory Node has to be rejoined into the domain!")
         finally:
             self.invalidate_cache()
         return True
@@ -223,7 +223,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
         # type: (LoType, str, Optional[str], Optional[SuperOrdinateType]) -> List[UdmObject]
         """
         This override limits the returned objects to actual ucsschoolComputers. Does not contain
-        SchoolDC slaves and others anymore.
+        School Replica Directory Nodes and others anymore.
         """
         object_class_filter = "(objectClass=ucsschoolComputer)"
         if filter_s:

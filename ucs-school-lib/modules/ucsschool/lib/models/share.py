@@ -254,7 +254,7 @@ class Share(UCSSchoolHelperAbstractClass):
             if result:
                 return "%s.%s" % (result["cn"][0].decode("UTF-8"), server_domain_name)
 
-        # get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+        # get alternative server (defined at ou object if a Replica Directory Node is responsible for more than one ou)
         ou_attr_ldap_access_write = lo.get(school_dn, ["univentionLDAPAccessWrite"])
         alternative_server_dn = None
         if len(ou_attr_ldap_access_write) > 0:
