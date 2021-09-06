@@ -59,19 +59,25 @@ try:
     if master_version is None:
         raise KeyError()
 except KeyError:
-    print('App "{}" is not installed on DC master.'.format(app_name))
+    print('App "{}" is not installed on Primary Directory Node.'.format(app_name))
     sys.exit(2)
 
 ret = LooseVersion(app.version) > LooseVersion(master_version)
 
 if "-v" in sys.argv:
     print('Version of app "{}" on this host: "{}"'.format(app_name, app.version))
-    print('Version of app "{}" on DC master: "{}"'.format(app_name, master_version))
+    print('Version of app "{}" on Primary Directory Node: "{}"'.format(app_name, master_version))
     if ret:
-        print('Error: local version of app "{}" higher than DC masters versions!'.format(app_name))
+        print(
+            'Error: local version of app "{}" higher than version on Primary Directoy Node!'.format(
+                app_name
+            )
+        )
     else:
         print(
-            'OK: local version of app "{}" is lower or equal to that of the DC master.'.format(app_name)
+            'OK: local version of app "{}" lower than or equal to version on Primary Directory Node.'.format(
+                app_name
+            )
         )
 
 ucrv = "ucsschool/join/ignore-version-mismatch/{}/{}".format(master_version, app.version)
