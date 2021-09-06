@@ -52,7 +52,7 @@ def print_problematic_objects(objects, entry_string):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="UCS@School Object Consistency Check", formatter_class=argparse.RawTextHelpFormatter
+        description="UCS@school Object Consistency Check", formatter_class=argparse.RawTextHelpFormatter
     )
     exclusive_group = parser.add_mutually_exclusive_group()
     exclusive_group.add_argument(
