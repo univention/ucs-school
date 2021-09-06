@@ -84,7 +84,7 @@ define([
 								return values;
 							}
 
-							// single server environment is only allowed on DC master + DC backup
+							// single server environment is only allowed on Primary Directory Node + Backup Directory Node
 							if (this._serverRole !== 'domaincontroller_slave') {
 								values.push({ id: 'singlemaster', label: _('Single server environment') });
 							}
@@ -97,16 +97,16 @@ define([
 					}),
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							multiserver: _('<p>In a multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessible on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
-							singlemaster: _('<p>In a single server environment, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments. With the selection of this mode the UCS@school Veyon Proxy App will be installed on this system automatically. The successfull installation of the Veyon Proxy App can be verified with a diagnosis module.</p>')
+							multiserver: _('<p>In a multi server environment, the Primary Directory Node is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own Replica Directory Node that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessible on the Replica Directory Node. The Primary Directory Node does not provide UMC modules for teachers. After configuring a Primary Directory Node, one or more Replica Directory Nodes must be configured and joined into the UCS@school domain.</p>'),
+							singlemaster: _('<p>In a single server environment, the Primary Directory Node is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the Primary Directory Node itself. Teaching related UMC modules are provided directly on the Primary Directory Node itself. Note that this setup can lead to performance problems in larger environments. With the selection of this mode the UCS@school Veyon Proxy App will be installed on this system automatically. The successfull installation of the Veyon Proxy App can be verified with a diagnosis module.</p>')
 						};
 
 						// update the help text according to the value chosen...
 						var text = texts[newVal] || '';
 
 						if (this._serverRole === 'domaincontroller_slave') {
-							// adaptations for text of a multi server environment on slave domain controllers
-							//text = _('<p>The local server role is slave domain controller, for which only a multi server environment can be configured.</p>') + text;
+							// adaptations for text of a multi server environment on Replica Directory Nodes
+							//text = _('<p>The local server role is Replica Directory Node, for which only a multi server environment can be configured.</p>') + text;
 							text = '';
 						}
 
@@ -124,12 +124,12 @@ define([
 				widgets: [{
 					type: Text,
 					name: 'backup_text',
-					content: _('The UCS@school configuration wizard detected all necessary information to install UCS@school on this DC Backup. Click <i>next</i> to start the installation.')
+					content: _('The UCS@school configuration wizard detected all necessary information to install UCS@school on this Backup Directory Node. Click <i>next</i> to start the installation.')
 				}]
 			}, {
 				name: 'credentials',
 				headerText: _('UCS@school - domain credentials'),
-				helpText: _('In order to setup this system as UCS@school slave domain controller, please enter the domain credentials of a domain account with join privileges.'),
+				helpText: _('In order to setup this system as UCS@school Replica Directory Node, please enter the domain credentials of a domain account with join privileges.'),
 				widgets: [{
 					type: TextBox,
 					required: true,
@@ -146,7 +146,7 @@ define([
 					required: true,
 					regExp: '^[a-z]([a-z0-9-]*[a-z0-9])*(\\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$', // see __init__.py RE_HOSTNAME
 					name: 'master',
-					label: _('Fully qualified domain name of master domain controller (e.g. schoolmaster.example.com)')
+					label: _('Fully qualified domain name of the Primary Directory Node (e.g. schoolprimary.example.com)')
 				}, {
 					type: Text,
 					name: 'dnsLookupError',
@@ -173,24 +173,24 @@ define([
 					dynamicValue: function(values) { return values.OUdisplayname.replace(/[^a-zA-Z0-9]/g, ''); },
 					required: true
 				}, {
-					// this information will only be shown to slave systems
+					// this information will only be shown to Replica Directory Nodes
 					type: Text,
 					name: 'infoTextSlave',
-					content: '<p>' + _('Note that each slave domain controller system is directly associated with a school OU. A slave domain controller has only access to the data below its own school OU, not to data from other schools.') + '</p>'
+					content: '<p>' + _('Note that each Replica Directory Node is directly associated with a school OU. A Replica Directory Node has only access to the data below its own school OU, not to data from other schools.') + '</p>'
 				}, {
-					// this information will only be shown to master systems in the single server environment
+					// this information will only be shown to Primary Directory Nodes in the single server environment
 					type: Text,
 					name: 'infoTextMaster',
-					content: '<p>' + _('For the single server environment, all school OUs are accessed from the master system itself.') + '</p>'
+					content: '<p>' + _('For the single server environment, all school OUs are accessed from the Primary Directory Node itself.') + '</p>'
 				}]
 			}, {
 				name: 'server_type',
 				headerText: _('UCS@school - educational server vs. administrative server'),
-				helpText: _('<p>The UCS@school multi server environment distinguishes between educational servers and administrative servers. The educational servers provide all educational functions of UCS@school. The administrative servers only provide a very limited set of functions, e.g. logon services for staff users.</p><p>Usually the domain controller slave is configured as educational server.</p>'),
+				helpText: _('<p>The UCS@school multi server environment distinguishes between educational servers and administrative servers. The educational servers provide all educational functions of UCS@school. The administrative servers only provide a very limited set of functions, e.g. logon services for staff users.</p><p>Usually the Replica Directory Node is configured as educational server.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'server_type',
-					label: _('Please choose the server type for this domain controller slave:'),
+					label: _('Please choose the server type for this Replica Directory Node:'),
 					staticValues: [
 						{ id: 'educational', label: _('Educational server') },
 						{ id: 'administrative', label: _('Administrative server') }
@@ -199,12 +199,12 @@ define([
 			}, {
 				name: 'administrativesetup',
 				headerText: _('UCS@school - extended school OU setup'),
-				helpText: _('During installation this server will be configured as administrative server. To create the specified school, the name of a second/future domain controller slave is required, which will be configured as educational server.'),
+				helpText: _('During installation this server will be configured as administrative server. To create the specified school, the name of a second/future Replica Directory Node is required, which will be configured as educational server.'),
 				widgets: [{
 					type: TextBox,
 					name: 'nameEduServer',
 					label: _("Name of educational school server"),
-					description: _('Name of the educational domain controller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the educational server may not be equal to the administrative server!'),
+					description: _('Name of the educational Replica Directory Node for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the educational server may not be equal to the administrative server!'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$',
 					required: true
 				}]
@@ -292,7 +292,7 @@ define([
 
 				// update some widgets with the intial results
 				if (this._serverRole === 'domaincontroller_slave') {
-					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school slave domain controller. Before continuing please make sure that an UCS@school master domain controller has already been set up for a multi server environment.'));
+					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of a UCS@school Replica Directory Node. Before continuing please make sure that a UCS@school Primary Directory Node has already been set up for a multi server environment.'));
 				}
 				this.getWidget('credentials', 'master').set('value', guessedMaster);
 				if (!guessedMaster) {
@@ -300,7 +300,7 @@ define([
 					var widget = this.getWidget('credentials', 'dnsLookupError');
 					var _warningMessage = lang.replace('<b>{0}</b> {1} {2} {3}', [
 						_('Warning:'),
-						_('Could not find the DNS entry for the domain controller master.'),
+						_('Could not find the DNS entry for the Primary Directory Node.'),
 						_('Make sure the DNS server is up and running or check the DNS settings.'),
 						networkLink ? _('The DNS settings can be adjusted in the %s.', networkLink) : ''
 					]);
@@ -365,13 +365,13 @@ define([
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
 				if (!this._validServerRole()) {
-					dialog.alert(_('UCS@school can only be installed on the system roles master domain controller, backup domain controller, or slave domain controller.'));
+					dialog.alert(_('UCS@school can only be installed on the system roles Primary Directory Node, Backup Directory Node, or Replica Directory Node.'));
 					return 'setup';
 				}
 
-				// a DC backup needs to be joined
+				// a Backup Directory Node needs to be joined
 				if (this._serverRole === 'domaincontroller_backup' && !this._joined) {
-					dialog.alert(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'));
+					dialog.alert(_('In order to install UCS@school on a Backup Directory Node, the system needs to be joined first.'));
 					return 'setup';
 				}
 
@@ -390,12 +390,12 @@ define([
 					next = 'setup';
 				}
 
-				// domaincontroller backup can start directly
+				// Backup Directory Node can start directly
 				if (next === 'setup' && this._serverRole === 'domaincontroller_backup') {
 					return this.standbyDuring(tools.umcpCommand('schoolinstaller/get/metainfo').then(lang.hitch(this, function(data) {
 						var metainfo = data.result;
 						if (!metainfo) {
-							return 'credentials';  // the DC Backup is not joined yet/anymore. Continue with the next page. Cannot happen as UCS@school is now installed via the AppCenter so the system must be joined.
+							return 'credentials';  // the Backup Directory Node is not joined yet/anymore. Continue with the next page. Cannot happen as UCS@school is now installed via the AppCenter so the system must be joined.
 						}
 						this.getWidget('setup', 'setup').set('value', metainfo.school_environment);
 						return 'backupsetup';
@@ -406,28 +406,28 @@ define([
 					next = 'credentials';
 				}
 
-				// show credentials page only on domaincontroller slave
+				// show credentials page only on Replica Directory Node
 				if (next === 'credentials' && this._serverRole !== 'domaincontroller_slave') {
 					next = 'school';
 				}
 
-				// no schoolOU/server_type/administrativesetup page on a DC master w/multi server environment and a DC backup in general
+				// no schoolOU/server_type/administrativesetup page on a Primary Directory Node w/multi server environment and a Backup Directory Node in general
 				if (next === 'school' && ((this.getWidget('setup', 'setup').get('value') === 'multiserver' && this._serverRole === 'domaincontroller_master') || this._serverRole === 'domaincontroller_backup')) {
 					next = 'install';
 				}
 
-				// show server type page only on domaincontroller slave
+				// show server type page only on Replica Directory Node
 				if (next === 'server_type' && this._serverRole !== 'domaincontroller_slave') {
 					next = 'install';
 				}
 
-				// show managementsetup page only if no slave has been specified or OU does not exist yet
+				// show managementsetup page only if no Replica Directory Node has been specified or OU does not exist yet
 				if (next === 'administrativesetup') {
 					next = this.standbyDuring(this.getSchoolInfo()).then(lang.hitch(this, function(data) {
 						var schoolinfo = data.result;
 
 						if (this.getWidget('server_type', 'server_type').get('value') === 'educational') {
-							// check if there are other UCS@school slaves defined
+							// check if there are other UCS@school Replica Directory Nodes defined
 							if ((schoolinfo.educational_slaves.length > 0) && (array.indexOf(schoolinfo.educational_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
 								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + schoolinfo.educational_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
@@ -442,7 +442,7 @@ define([
 								return this._start_installation(pageName);
 							}
 						} else {
-							// check if there are other UCS@school slaves defined
+							// check if there are other UCS@school Replica Directory Nodes defined
 							if ((schoolinfo.administrative_slaves.length > 0) && (array.indexOf(schoolinfo.administrative_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
 								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + schoolinfo.administrative_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
@@ -453,7 +453,7 @@ define([
 									return 'server_type';
 								}));
 							} else  {
-								// otherwise ask for a name of the educational slave if none is already define; if defined, start the installation
+								// otherwise ask for a name of the educational Replica Directory Node if none is already define; if defined, start the installation
 								if (schoolinfo.educational_slaves.length > 0) {
 									this.getWidget('administrativesetup', 'nameEduServer').set('value', schoolinfo.educational_slaves[0]);
 									return this._start_installation(pageName); // Warning: the deferred object returns a deferred object!
@@ -586,12 +586,12 @@ define([
 		previous: function(pageName) {
 			var previous = this.inherited(arguments);
 
-			// DC Master/Slave doesn't have the backup page
+			// Primary Directory Node/Replica Directory Node doesn't have the backup page
 			if (previous === 'backupsetup') {
 				previous = 'setup';
 			}
 
-			// show credentials page only on DC Slave
+			// show credentials page only on Replica Directory Node
 			if (previous === 'credentials' && this._serverRole !== 'domaincontroller_slave') {
 				previous = 'setup';
 			} else if (previous === 'error') {
@@ -601,7 +601,7 @@ define([
 			return previous;
 		},
 
-		// only DC master, DC backup, and DC slave are valid system roles for this module
+		// only Primary Directory Node, Backup Directory Node, and Replica Directory Node are valid system roles for this module
 		_validServerRole: function() {
 			return this._serverRole === 'domaincontroller_master' || this._serverRole === 'domaincontroller_backup' || this._serverRole === 'domaincontroller_slave';
 		},

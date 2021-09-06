@@ -122,7 +122,7 @@ class SchoolInstallerError(UMC_Error):
 
 
 def get_master_dns_lookup():
-    # DNS lookup for the DC master entry
+    # DNS lookup for the Primary Directory Node entry
     try:
         query = "_domaincontroller_master._tcp.%s." % ucr.get("domainname")
         resolver = dns.resolver.Resolver()
@@ -150,7 +150,7 @@ def umc(username, password, master, path, options=None, flavor=None):
 
 
 def create_ou_local(ou, display_name):
-    """Calls create_ou locally as user root (only on master)."""
+    """Calls create_ou locally as user root (only on Primary Directory Node)."""
     if not display_name:
         MODULE.warn("create_ou_local(): display name is undefined - using OU name as display name")
         display_name = ou
@@ -219,7 +219,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
             # call to univention-join
             process = None
             if server_role == "domaincontroller_slave":
-                # DC slave -> complete re-join
+                # Replica Directory Node -> complete re-join
                 MODULE.process("Performing system join...")
                 process = subprocess.Popen(  # nosec
                     ["/usr/sbin/univention-join", "-dcaccount", username, "-dcpwd", password_file.name],
@@ -228,7 +228,7 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                     close_fds=True,
                 )
             else:
-                # DC backup/master -> only run join scripts
+                # Backup Directory Node/Primary Directory Node -> only run join scripts
                 MODULE.process("Executing join scripts ...")
                 process = subprocess.Popen(  # nosec
                     [
@@ -462,7 +462,7 @@ class Instance(Base):
 
     @simple_response
     def get_metainfo(self):
-        """Queries the specified DC Master for metainformation about the UCS@school environment"""
+        """Queries the specified Primary Directory Node for metainformation about the UCS@school environment"""
         master = ucr.get("ldap/master") or get_master_dns_lookup()
         if not master:
             return
@@ -480,7 +480,7 @@ class Instance(Base):
     )
     @simple_response
     def get_schoolinfo(self, username, password, master, school):
-        """Queries the specified DC Master for information about the specified school"""
+        """Queries the specified Primary Directory Node for information about the specified school"""
         return self._umc_master(
             username, password, master, "schoolinstaller/get/schoolinfo/master", {"school": school}
         )
@@ -491,7 +491,7 @@ class Instance(Base):
     @simple_response
     def get_schoolinfo_master(self, school):
         """
-        Fetches LDAP information from master about specified OU.
+        Fetches LDAP information from Primary Directory Node about specified OU.
         This function assumes that the given arguments have already been validated!
         """
 
@@ -509,7 +509,7 @@ class Instance(Base):
             raise  # handled via UMC
         except ldap.LDAPError as exc:
             MODULE.warn("LDAP error during receiving school info: %s" % (exc,))
-            raise UMC_Error(_("The LDAP connection to the master system failed."))
+            raise UMC_Error(_("The LDAP connection to the Primary Directory Node failed."))
         else:
             exists = True
             class_share_server = school.class_share_file_server
@@ -532,7 +532,7 @@ class Instance(Base):
 
     @simple_response
     def get_metainfo_master(self):
-        """Returns information about the UCS@school Installation on the DC Master."""
+        """Returns information about the UCS@school Installation on the Primary Directory Node."""
         return {
             "samba": self.get_samba_version(),
             "school_environment": self.get_school_environment(),
@@ -545,13 +545,13 @@ class Instance(Base):
         except Forbidden:
             raise SchoolInstallerError(
                 _(
-                    "Make sure ucs-school-umc-installer is installed on the DC Master and all join "
+                    "Make sure ucs-school-umc-installer is installed on the Primary Directory Node and all join "
                     "scripts are executed."
                 )
             )
         except (ConnectionError, HTTPError) as exc:
             raise SchoolInstallerError(
-                _("Could not connect to the DC Master %s: %s") % (master, exc)
+                _("Could not connect to the Primary Directory Node %s: %s") % (master, exc)
             )  # TODO: set status, message, result
 
     @sanitize(
@@ -584,7 +584,7 @@ class Instance(Base):
             raise ValueError("The installation was started twice. This should not have happened.")
 
         if server_role != "domaincontroller_slave":
-            # use the credentials of the currently authenticated user on a master/backup system
+            # use the credentials of the currently authenticated user on a Primary Directory Node/Backup Directory Node
             self.require_password()
             username = self.username
             password = self.password
@@ -609,13 +609,13 @@ class Instance(Base):
         ):
             raise SchoolInstallerError(
                 _(
-                    "Invalid server role! UCS@school can only be installed on the system roles master "
-                    "domain controller, backup domain controller, or slave domain controller."
+                    "Invalid server role! UCS@school can only be installed on the system roles Primary Directory Node, "
+                    "Backup Directory Node, or Replica Directory Node."
                 )
             )
 
         if server_role == "domaincontroller_slave" and not server_type:
-            raise SchoolInstallerError(_("Server type has to be set for domain controller slave"))
+            raise SchoolInstallerError(_("Server type has to be set for Replica Directory Node"))
 
         if (
             server_role == "domaincontroller_slave"
@@ -637,17 +637,17 @@ class Instance(Base):
             raise SchoolInstallerError(
                 _(
                     "The name of the educational server may not be equal to the name of the "
-                    "administrative slave."
+                    "administrative Replica Directory Node."
                 )
             )
 
         if server_role == "domaincontroller_slave":
-            # on slave systems, download the certificate from the master in order
+            # on Replica Directory Nodes, download the certificate from the Primary Directory Node in order
             # to be able to build up secure connections
             self.original_certificate_file = self.retrieve_root_certificate(master)
 
         if server_role != "domaincontroller_master":
-            # check for a compatible environment on the DC master
+            # check for a compatible environment on the Primary Directory Node
 
             masterinfo = self._umc_master(username, password, master, "schoolinstaller/get/metainfo")
             school_environment = masterinfo["school_environment"]
@@ -655,7 +655,7 @@ class Instance(Base):
             if not school_environment:
                 raise SchoolInstallerError(
                     _(
-                        "Please install UCS@school on the master domain controller system. Cannot "
+                        "Please install UCS@school on the Primary Directory Node. Cannot "
                         "proceed installation on this system."
                     )
                 )
@@ -669,21 +669,21 @@ class Instance(Base):
             if server_role == "domaincontroller_slave" and school_environment != "multiserver":
                 raise SchoolInstallerError(
                     _(
-                        "The master domain controller is not configured for a UCS@school multi server "
+                        "The Primary Directory Node is not configured for a UCS@school multi server "
                         "environment. Cannot proceed installation on this system."
                     )
                 )
             if server_role == "domaincontroller_backup" and school_environment != setup:
                 raise SchoolInstallerError(
                     _(
-                        "The UCS@school master domain controller needs to be configured similarly to "
-                        "this backup system. Please choose the correct environment type for this system."
+                        "The UCS@school Primary Directory Node needs to be configured similarly to "
+                        "this Backup Directory Node. Please choose the correct environment type for this system."
                     )
                 )
             if server_role == "domaincontroller_backup" and not joined:
                 raise SchoolInstallerError(
                     _(
-                        "In order to install UCS@school on a backup domain controller, the system needs"
+                        "In order to install UCS@school on a Backup Directory Node, the system needs"
                         " to be joined first."
                     )
                 )
@@ -711,13 +711,13 @@ class Instance(Base):
                 )
             )
         if server_role == "domaincontroller_slave":
-            # slave
+            # Replica Directory Node
             packages_to_install.extend(["univention-samba4", "univention-s4-connector"])
             if server_type == "educational":
                 packages_to_install.append("ucs-school-replica")
             else:
                 packages_to_install.append("ucs-school-nonedu-replica")
-        else:  # master or backup
+        else:  # Primary Directory Node or Backup Directory Node
             if setup == "singlemaster":
                 if installed_samba_version:
                     pass  # do not install samba a second time
@@ -808,7 +808,7 @@ class Instance(Base):
             if server_role != "domaincontroller_backup" and not (
                 server_role == "domaincontroller_master" and setup == "multiserver"
             ):
-                # create the school OU (not on backup and not on master w/multi server environment)
+                # create the school OU (not on Backup Directory Node and not on Primary Directory Node w/multi server environment)
                 MODULE.info("Starting creation of LDAP school OU structure...")
                 progress_state.component = _("Creation of LDAP school structure")
                 progress_state.info = ""
@@ -838,16 +838,16 @@ class Instance(Base):
                             "The UCS@school software packages have been installed, however, a school "
                             "OU could not be created and consequently a re-join of the system has not "
                             "been performed. Please create a new school OU structure using the UMC "
-                            'module "Add school" on the master and perform a domain join on this '
-                            'machine via the UMC module "Domain join".'
+                            'module "Add school" on the Primary Directory Node and perform a domain join '
+                            'on this machine via the UMC module "Domain join".'
                         )
                     )
 
                 progress_state.add_steps(10)
 
             if server_role == "domaincontroller_slave":
-                # make sure that the slave is correctly moved below its OU
-                MODULE.info("Trying to move the slave entry in the right OU structure...")
+                # make sure that the Replica Directory Node is correctly moved below its OU
+                MODULE.info("Trying to move the Replica Directory Node entry in the right OU structure...")
                 result = umc(
                     username,
                     password,
@@ -858,23 +858,23 @@ class Instance(Base):
                 ).result
                 if not result.get("success"):
                     MODULE.warn(
-                        "Could not successfully move the slave DC into its correct OU structure:\n%s"
+                        "Could not successfully move the Replica Directory Node into its correct OU structure:\n%s"
                         % result.get("message")
                     )
                     raise SchoolInstallerError(
                         _(
                             "Validating the LDAP school OU structure failed. It seems that the current "
-                            "slave system has already been assigned to a different school or that the "
+                            "Replica Directory Node has already been assigned to a different school or that the "
                             "specified school OU name is already in use."
                         )
                     )
 
-            # system join on a slave system
+            # system join on a Replica Directory Node
             progress_state.component = _("Domain join")
             if server_role == "domaincontroller_slave":
                 progress_state.info = _("Preparing domain join...")
                 MODULE.process("Starting system join...")
-            else:  # run join scripts on DC backup/master
+            else:  # run join scripts on Backup Directory Node/Primary Directory Node
                 progress_state.info = _("Executing join scripts...")
                 MODULE.process("Running join scripts...")
             system_join(
@@ -911,12 +911,12 @@ class Instance(Base):
         self.finished(request.id, None)
 
     def retrieve_root_certificate(self, master):
-        """On a slave system, download the root certificate from the specified master
-        and install it on the system. In this way it can be ensured that secure
+        """On a Replica Directory Node, download the root certificate from the specified Primary
+        Directory Node and install it on the system. In this way it can be ensured that secure
         connections can be performed even though the system has not been joined yet.
         Returns the renamed original file if it has been renamed. Otherwise None is returned."""
         if ucr.get("server/role") != "domaincontroller_slave":
-            # only do this on a slave system
+            # only do this on a Replica Directory Node
             return
 
         # make sure the directory exists
@@ -924,7 +924,7 @@ class Instance(Base):
             os.makedirs(os.path.dirname(CERTIFICATE_PATH))
 
         original_certificate_file = None
-        # download the certificate from the DC master
+        # download the certificate from the Primary Directory Node
         certificate_uri = "http://%s/ucs-root-ca.crt" % (master,)
         MODULE.info("Downloading root certificate from: %s" % (master,))
         try:
