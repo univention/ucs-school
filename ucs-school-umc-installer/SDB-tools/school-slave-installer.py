@@ -255,18 +255,18 @@ def main():  # type: () -> None
     parser.add_argument(
         "-d", "--debug", default=False, action="store_true", help="show some debug output"
     )
-    # DISABLED FOR NOW - THE FIRST VERSION ONLY SUPPORTS "EDU-SLAVES"
+    # DISABLED FOR NOW - THE FIRST VERSION ONLY SUPPORTS "EDU REPLICA DIRECTORY NODES"
     # 	parser.add_argument(
     # 		'-E', '--educational-server-name', dest='name_edu_server',
     # 		help='name of the educational server', metavar='NAME_EDU_SLAVE')
     # 	parser.add_argument(
     # 		'-e', '--educational-server', dest='server_type',
     # 		action='store_const', const='educational',
-    # 		help='install a dc slave in educational network (DEFAULT)')
+    # 		help='install a Replica Directory Node in educational network (DEFAULT)')
     # 	parser.add_argument(
     # 		'-a', '--administrative-server', dest='server_type',
     # 		action='store_const', const='administrative',
-    # 		help='install a dc slave in administrative network')
+    # 		help='install a Replica Directory Node in administrative network')
 
     options = parser.parse_args()
 
@@ -277,7 +277,7 @@ def main():  # type: () -> None
 
     if ucr["server/role"] != "domaincontroller_slave":
         parser.error(
-            'This script may only be called on UCS system with the role "domaincontroller_slave"!'
+            'This script may only be called on a Replica Directory Node (domaincontroller_slave)!'
         )
 
     if options.password_fn:

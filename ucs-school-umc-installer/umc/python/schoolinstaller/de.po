@@ -27,8 +27,8 @@ msgstr ""
 
 #: umc/python/schoolinstaller/__init__.py:463
 #, python-format
-msgid "Could not connect to the DC Master %s: %s"
-msgstr "Konnte nicht mit dem DC Master %s verbinden: %s"
+msgid "Could not connect to the Primary Directory Node %s: %s"
+msgstr "Konnte nicht mit dem Primary Directory Node %s verbinden: %s"
 
 #: umc/python/schoolinstaller/__init__.py:601
 msgid "Creation of LDAP school structure"
@@ -53,10 +53,10 @@ msgstr "Konnte keine Pakete installieren."
 
 #: umc/python/schoolinstaller/__init__.py:538
 msgid ""
-"In order to install UCS@school on a backup domain controller, the system "
+"In order to install UCS@school on a Backup Directory Node, the system "
 "needs to be joined first."
 msgstr ""
-"Bevor UCS@school auf einem Domänencontroller Backup installiert werden kann, "
+"Bevor UCS@school auf einem Backup Directory Node installiert werden kann, "
 "muss dieses System zuerst der Domäne beigetreten sein."
 
 #: umc/python/schoolinstaller/__init__.py:293
@@ -74,27 +74,26 @@ msgstr "Ungültige UCS@school-Konfiguration"
 #: umc/python/schoolinstaller/__init__.py:507
 msgid ""
 "Invalid server role! UCS@school can only be installed on the system roles "
-"master domain controller, backup domain controller, or slave domain "
-"controller."
+"Primary Directory Node, Backup Directory Node, or Replica Directory Node."
 msgstr ""
 "Ungültige Systemrolle! UCS@school kann nur auf den Systemrollen "
-"Domänencontroller Master, Domänencontroller Backup sowie Domänencontroller "
-"Slave installiert werden."
+"Primary Directory Node, Backup Directory Node sowie Replica Directory Node "
+"installiert werden."
 
 #: umc/python/schoolinstaller/__init__.py:461
 msgid ""
-"Make sure ucs-school-umc-installer is installed on the DC Master and all "
+"Make sure ucs-school-umc-installer is installed on the Primary Directory Node and all "
 "join scripts are executed."
 msgstr ""
-"Bitte stellen Sie sicher, dass ucs-school-umc-installer auf dem DC Master "
+"Bitte stellen Sie sicher, dass ucs-school-umc-installer auf dem Primary Directory Node "
 "installiert ist und alle Joinskripte ausgeführt wurden."
 
 #: umc/python/schoolinstaller/__init__.py:530
 msgid ""
-"Please install UCS@school on the master domain controller system. Cannot "
-"proceed installation on this system."
+"Please install UCS@school on the Primary Directory Node."
+"Cannot proceed installation on this system."
 msgstr ""
-"Bitte installieren Sie UCS@school auf dem Domänencontroller-Master-System. "
+"Bitte installieren Sie UCS@school auf dem Primary Directory Node. "
 "Die Installation kann nicht fortgesetzt werden."
 
 #: umc/python/schoolinstaller/__init__.py:630
@@ -102,9 +101,9 @@ msgid "Preparing domain join..."
 msgstr "Vorbereiten des Domänenbeitritts..."
 
 #: umc/python/schoolinstaller/__init__.py:510
-msgid "Server type has to be set for domain controller slave"
+msgid "Server type has to be set for Replica Directory Node"
 msgstr ""
-"Es muss ein Servertyp (Edukativ/Verwaltung) für den Domänencontroller Slave "
+"Es muss ein Servertyp (Edukativ/Verwaltung) für den Replica Directory Node "
 "angegeben werden."
 
 #: umc/python/schoolinstaller/__init__.py:277
@@ -148,33 +147,33 @@ msgstr ""
 "\"Domänenbeitritt\" abgeschlossen werden."
 
 #: umc/python/schoolinstaller/__init__.py:431
-msgid "The LDAP connection to the master system failed."
+msgid "The LDAP connection to the Primary Directory Node failed."
 msgstr ""
-"Eine LDAP-Verbindung zu dem Master-System konnte nicht aufgebaut werden."
+"Eine LDAP-Verbindung zu dem Primary Directory Node konnte nicht aufgebaut werden."
 
 #: umc/python/schoolinstaller/__init__.py:536
 msgid ""
-"The UCS@school master domain controller needs to be configured similarly to "
-"this backup system. Please choose the correct environment type for this "
+"The UCS@school Primary Directory Node needs to be configured similarly to "
+"this Backup Directory Node. Please choose the correct environment type for this "
 "system."
 msgstr ""
-"Das UCS@school-Domänencontroller-Master-System muss gleich wie das "
-"Domänencontroller-Backup-System konfiguriert werden. Bitte wählen Sie die "
-"dem Master-System entsprechende Konfiguration für dieses System aus."
+"Das UCS@school Primary Directory Node muss gleich wie der Backup Directory "
+"Node konfiguriert werden. Bitte wählen Sie die dem Primary Directory "
+"Node entsprechende Konfiguration für dieses System aus."
 
 #: umc/python/schoolinstaller/__init__.py:613
 msgid ""
 "The UCS@school software packages have been installed, however, a school OU "
 "could not be created and consequently a re-join of the system has not been "
 "performed. Please create a new school OU structure using the UMC module "
-"\"Add school\" on the master and perform a domain join on this machine via "
-"the UMC module \"Domain join\"."
+"\"Add school\" on the Primary Directory Node and perform a domain join on this "
+"Replica Directory Node via the UMC module \"Domain join\"."
 msgstr ""
 "Die UCS@school-Softwarepakete wurden erfolgreich installiert, jedoch konnte "
 "eine Schul-OU nicht erzeugt werden, so dass ein Domänenbeitritt des Systems "
 "nicht durchgeführt wurde. Bitte erstellen Sie eine neue Schul-OU-Struktur "
-"über das UMC-Modul \"Schule hinzufügen\" auf dem DC-Master-System und führen "
-"Sie einen Domänenbeitritt auf diesem Slave-System über das UMC-Modul "
+"über das UMC-Modul \"Schule hinzufügen\" auf dem Primary Directory Node und führen "
+"Sie einen Domänenbeitritt auf diesem Replica Directory Node über das UMC-Modul "
 "\"Domänenbeitritt\" durch."
 
 #: umc/python/schoolinstaller/__init__.py:110
@@ -183,10 +182,10 @@ msgstr "Der eingegebene Domänenname ist ungültig"
 
 #: umc/python/schoolinstaller/__init__.py:534
 msgid ""
-"The master domain controller is not configured for a UCS@school multi server "
+"The Primary Directory Node is not configured for a UCS@school multi server "
 "environment. Cannot proceed installation on this system."
 msgstr ""
-"Das UCS@school-Domänencontroller-Master-System ist nicht für den Multi-"
+"Das UCS@school Primary Directory Node ist nicht für den Multi-"
 "Server-Einsatz konfiguriert. Die Installation kann nicht fortgesetzt werden."
 
 #: umc/python/schoolinstaller/__init__.py:513
@@ -200,7 +199,7 @@ msgstr ""
 #: umc/python/schoolinstaller/__init__.py:516
 msgid ""
 "The name of the educational server may not be equal to the name of the "
-"administrative slave."
+"administrative Replica Directory Node."
 msgstr ""
 "Der Name eines edukativen Schulservers darf nicht mit dem Namen des "
 "Verwaltungsservers übereinstimmen!"
@@ -222,11 +221,11 @@ msgstr ""
 #: umc/python/schoolinstaller/__init__.py:625
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
-"slave system has already been assigned to a different school or that the "
+"Replica Directory Node has already been assigned to a different school or that the "
 "specified school OU name is already in use."
 msgstr ""
 "Die Überprüfung der LDAP-Schul-OU-Struktur ist fehlgeschlagen. Es scheint, "
-"dass das aktuelle Slave-System bereits einer anderen Schule zugeordnet ist, "
+"dass der aktuelle Replica Directory Node bereits einer anderen Schule zugeordnet ist, "
 "oder dass der angegebene Schul-OU-Name bereits in Verwendung ist."
 
 #: umc/python/schoolinstaller/__init__.py:645
@@ -234,27 +233,27 @@ msgid "finished..."
 msgstr "beendet..."
 
 #~ msgid ""
-#~ "Cannot connect to the master domain controller system %s. It seems that "
+#~ "Cannot connect to the Primary Directory Node %s. It seems that "
 #~ "the specified domain credentials are not valid."
 #~ msgstr ""
-#~ "Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. "
+#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. "
 #~ "Scheinbar sind die angegebenen Anmeldedaten nicht gültig."
 
 #~ msgid ""
-#~ "Cannot connect to the master domain controller system %s. Please make "
+#~ "Cannot connect to the Primary Directory Node %s. Please make "
 #~ "sure that the system is reachable. If not this could be due to wrong DNS "
 #~ "name server settings."
 #~ msgstr ""
-#~ "Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. Bitte "
+#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. Bitte "
 #~ "stellen Sie sicher, dass das System erreichbar ist. Ist dies nicht der "
 #~ "Fall, kann das mit falschen DNS-Einstellungen für den Nameserver "
 #~ "zusammenhängen."
 
 #~ msgid ""
 #~ "The OU \"%s\" is already in use and has been assigned to a different "
-#~ "slave domain controller system. Please choose a different name for the "
+#~ "Replica Directory Node. Please choose a different name for the "
 #~ "associated school OU."
 #~ msgstr ""
 #~ "Die OU \"%s\" ist bereits in Verwendung und wurde einem anderen "
-#~ "Domänencontroller-Slave-System zugeordnet. Bitte wählen Sie einen anderen "
+#~ "Replica Directory Node zugeordnet. Bitte wählen Sie einen anderen "
 #~ "Namen für die verknüpfte Schul-OU."
