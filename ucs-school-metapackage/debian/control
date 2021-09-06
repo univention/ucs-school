@@ -63,11 +63,11 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-users,
  ucs-school-umc-wizards,
-Description: UCS@school meta package for UCS DC Master System (multi server environment)
+Description: UCS@school meta package for UCS Primary Directory Node (multi server environment)
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller master. The domaincontroller master will be
+ a UCS Primary Directory Node. The Primary Directory Node will be
  configured for a multi server environment. The package ucs-school-slave
- has to be installed on all domaincontroller slave systems.
+ has to be installed on all Replica Directory Nodes.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
@@ -128,10 +128,10 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-users,
  ucs-school-webproxy,
-Description: UCS@school meta package for UCS DC Slave System
+Description: UCS@school meta package for UCS Replica Directory Nodes
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller slave. The package ucs-school-master
- has to be installed on domaincontroller master/backup systems.
+ a UCS Replica Directory Node. The package ucs-school-master
+ has to be installed on Primary Directory Nodes/Backup Directory Nodes.
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
@@ -205,9 +205,9 @@ Recommends:
  ucs-school-umc-users,
  ucs-school-umc-wizards,
  ucs-school-webproxy,
-Description: UCS@school meta package for UCS DC Master System (single server environment)
+Description: UCS@school meta package for UCS Primary Directory Node (single server environment)
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller master. The domaincontroller master will be
+ a UCS Primary Directory Node. The Primary Directory Node will be
  configured for a single server environment.
  .
  This package is part of Univention Corporate Server (UCS),
@@ -236,7 +236,7 @@ Depends:
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
  univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
  ${misc:Depends},
-Description: UCS@school meta package for non-educational Slave servers
+Description: UCS@school meta package for non-educational Replica Directory Nodes
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing
@@ -261,7 +261,7 @@ Depends:
  shell-ucs-school (>= 5.0.38),
  univention-config,
  ${misc:Depends},
-Description: UCS@school meta package for central Slave servers
+Description: UCS@school meta package for central Replica Directory Nodes
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

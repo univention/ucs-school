@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Univention Samba4 Slave PDC helper
+# Univention Samba4 Replica Directory Node PDC helper
 #  join script
 #
 # Copyright 2013-2021 Univention GmbH
@@ -62,9 +62,9 @@ is_school_slave ()
 	univention-ldapsearch -LLL -b "$ldap_hostdn" "(&(univentionService=UCS@school)(univentionServerRole=slave))" dn | grep -qi "^dn:"
 }
 if ! is_school_slave; then
-	# This join script should only run on a school slave
+	# This join script should only run on a UCS@School Replica Directory Node
 	# See bug 47234.
-	echo "INFO: This system is not a school slave."
+	echo "INFO: This system is not a UCS@School Replica Directory Node."
 	joinscript_save_current_version
 	exit 0
 fi

@@ -43,15 +43,15 @@ eval "$(ucr shell)"
 OU="$(school_ou "$ldap_hostdn")"
 
 rejoin_msg() {
-	echo "This problem may be resolved by the following action on the DC master:"
-	echo "1) Remove the slaves computer account: "
+	echo "This problem may be resolved by the following action on the Primary Directory Node:"
+	echo "1) Remove the Replica Directory Node computer account: "
 	echo "   # udm computers/domaincontroller_slave remove \"--dn=$ldap_hostdn\""
-	echo "2) Create the slaves computer account with the correct settings:"
+	echo "2) Create the Replica Directory Node computer account with the correct settings:"
 	echo "   # cd /usr/share/ucs-school-import/scripts/"
 	echo "   # ./create_ou <OU (abbreviation of school)> $hostname"
-	echo "Then rejoin the slave, after rebooting it, by running this on the DC slave:"
-	echo "   # ucr set nameserver1=<IP of DC master> nameserver2= nameserver3="
-	echo "   # univention-join -dcname <FQDN of DC master>"
+	echo "Then rejoin the Replica Directory Node, after rebooting it, by running this on the Replica Directory Node:"
+	echo "   # ucr set nameserver1=<IP of Primary Directory Node> nameserver2= nameserver3="
+	echo "   # univention-join -dcname <FQDN of Primary Directory Node>"
 }
 
 if [ -z "$OU" ]; then

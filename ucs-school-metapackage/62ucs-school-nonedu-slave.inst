@@ -77,7 +77,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		fi
 	fi
 
-	# In UCS@school a DC slave should not register himself to the DNS SRV records.
+	# In UCS@school a Replica Directory Node should not register himself to the DNS SRV records.
 	univention-config-registry set	dns/register/srv_records/kerberos?false \
 									dns/register/srv_records/ldap?false \
 									dns/register/srv_records/gc?false \
@@ -148,7 +148,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 4 ] ; then
 	fi
 fi
 
-# trust slave KRB tickets on dc master (Bug #51418)
+# trust Replica Directory Node KRB tickets on Primary Directory Node (Bug #51418)
 if [ $JS_LAST_EXECUTED_VERSION -lt 5 ]; then
 	if samba-tool spn list "ucs-sso" | grep -q 'no servicePrincipalName'; then
 		samba-tool spn add "HTTP/ucs-sso.$(hostname -d)" "ucs-sso" || die
@@ -172,14 +172,14 @@ ignore_user ()
 ignore_user "krbtgt"
 ignore_user "Guest"
 
-# remove schoolslave as dns server from forward lookup zone (Bug #40139)
+# remove UCS@School Replica Directory Node as dns server from forward lookup zone (Bug #40139)
 if is_ucr_false dns/nameserver/registration/forward_zone; then
     zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
     if [ -n "$zone" ]; then
         udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
     fi
 fi
-# remove schoolslave as dns server from reverse lookup zone (Bug #40139)
+# remove UCS@School Replica Directory Node as dns server from reverse lookup zone (Bug #40139)
 if is_ucr_false dns/nameserver/registration/reverse_zone; then
     IP="$(get_default_ip_address)"
     NETMASK="$(get_default_netmask)"

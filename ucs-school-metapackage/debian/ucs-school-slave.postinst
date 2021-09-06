@@ -73,7 +73,7 @@ univention-config-registry set \
 
 if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
-		### Defaults for new installations of Slave PDCs
+		### Defaults for new installations of Replica Directory Node PDCs
 		univention-config-registry set samba4/ignore/mixsetup?yes samba3/ignore/mixsetup?yes	## necessary for migration of Samba3 to Samba4
 	fi
 fi

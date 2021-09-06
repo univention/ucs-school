@@ -54,7 +54,7 @@ univention-config-registry set \
 
 if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
-		### Defaults for new installations of non-edu Slave PDCs
+		### Defaults for new installations of non-edu Replica Directory Node PDCs
 		:
 		# prevent sysvol-sync of netlogon scripts
 		if [ -z "$(ucr get samba/share/netlogon/path)" -a -z "$(ucr get ucsschool/userlogon/netlogon/path)" ]; then
@@ -63,7 +63,7 @@ if [ "$1" = "configure" ] ; then
 				ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 		fi
 	else
-		### Settings for updates of non-edu Slave PDCs
+		### Settings for updates of non-edu Replica Directory Node PDCs
 		:
 	fi
 

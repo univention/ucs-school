@@ -143,15 +143,15 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
             if package_manager.is_installed(pkg_name):
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
-        # if no metapackage has been found, determine package type via master's UCR variable
+        # if no metapackage has been found, determine package type via Primary Directory Node's UCR variable
         result = call_cmd_on_master(
             options.master_fqdn, "/usr/sbin/ucr", "get", "ucsschool/singlemaster"
         )
         if ucr.is_true(value=result.stdout.strip()):
-            log.info("Master is a UCS@school single server system")
+            log.info("Primary Directory Node is a UCS@school single server system")
             return ["ucs-school-singlemaster"]
         else:
-            log.info("Master is part of a multi server environment")
+            log.info("Primary Directory Node is part of a multi server environment")
             return ["ucs-school-master"]
 
     elif options.server_role in ("domaincontroller_slave",):
@@ -161,7 +161,7 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
 
-        # if no metapackage has been found, then determine slave type via group memberships
+        # if no metapackage has been found, then determine Replica Directory Node type via group memberships
         membership = get_school_membership(options)
         if membership.is_edu_school_member:
             return ["ucs-school-slave"]
@@ -248,7 +248,7 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
         result = call_cmd_locally("ucr", "get", "version/version")
         local_version = result.stdout.strip()
         app_string = "ucsschool"
-        log.info("Master version: %r", master_version)
+        log.info("Primary Directory Node version: %r", master_version)
         log.info("Local version: %r", local_version)
         if master_version == local_version:
             result = call_cmd_on_master(
@@ -261,12 +261,12 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
             for app_entry in master_app_info.get("installed", []):
                 app_name, app_version = app_entry.split("=", 1)
                 if app_name == "ucsschool":
-                    log.info("Found UCS@school version %r on DC master.", app_version)
+                    log.info("Found UCS@school version %r on Primary Directory Node.", app_version)
                     break
             else:
                 log.error(
                     "UCS@school does not seem to be installed on %s! Cannot get app version of "
-                    "UCS@school on DC master!",
+                    "UCS@school on Primary Directory Node!",
                     options.master_fqdn,
                 )
                 sys.exit(1)
@@ -354,7 +354,7 @@ def veyon_app_should_be_installed(options, roles_pkg_list):  # type: (Any, List[
     """
     Check whether the Veyon Proxy App should be installed on this system.
 
-    :return: True if this is a singlemaster or an edu slave, else False
+    :return: True if this is a singlemaster or an edu Replica Directory Node, else False
     """
     if options.server_role == "domaincontroller_master":
         return ucr.is_true("ucsschool/singlemaster")
@@ -362,7 +362,7 @@ def veyon_app_should_be_installed(options, roles_pkg_list):  # type: (Any, List[
 
 
 def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None
-    """Install 'UCS@school Veyon Proxy' app on local system if it is an edu-slave."""
+    """Install 'UCS@school Veyon Proxy' app on local system if it is an edu Replica Directory Node."""
     if not veyon_app_should_be_installed(options, roles_pkg_list):
         log.info("Not installing 'UCS@school Veyon Proxy' app on this system role.")
         return
@@ -426,7 +426,7 @@ def main():  # type: () -> None
     parser.add_argument(
         "--master",
         dest="master_fqdn",
-        help="FQDN of the UCS master domaincontroller",
+        help="FQDN of the UCS Primary Directory Node",
     )
     parser.add_argument("--binddn", help="LDAP binddn")
     parser.add_argument("--bindpwdfile", help="path to password file")
@@ -441,7 +441,7 @@ def main():  # type: () -> None
     if not options.server_role:
         parser.error("Please specify a server role")
     if not options.master_fqdn:
-        parser.error("Please specify a FQDN for the master domaincontroller")
+        parser.error("Please specify a FQDN for the Primary Directory Node")
     if not options.binddn:
         parser.error("Please specify a LDAP binddn")
     if not options.bindpwdfile:
