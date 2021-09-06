@@ -10,7 +10,7 @@ Build-Depends:
  univention-unittests,
 Standards-Version: 3.8.2
 
-Package: ucs-school-master
+Package: ucs-school-multiserver
 Architecture: all
 Conflicts:
  italc-client,
@@ -21,12 +21,14 @@ Conflicts:
  libitalc,
  libitalc-dev,
  python-italc,
- ucs-school-singlemaster,
+ ucs-school-singleserver,
  ucs-school-ucc-integration,
  ucs-school-umc-csv-import,
 Breaks:
+ ucs-school-master (<< 13.0.6),
  ucs-school-umc-csv-import,
 Replaces:
+ ucs-school-master (<< 13.0.6),
  ucs-school-umc-csv-import,
 Pre-Depends:
  univention-config,
@@ -66,7 +68,7 @@ Recommends:
 Description: UCS@school meta package for UCS DC Master System (multi server environment)
  This meta package installs all required packages for UCS@school on
  a UCS domaincontroller master. The domaincontroller master will be
- configured for a multi server environment. The package ucs-school-slave
+ configured for a multi server environment. The package ucs-school-replica
  has to be installed on all domaincontroller slave systems.
  .
  This package is part of Univention Corporate Server (UCS),
@@ -74,8 +76,12 @@ Description: UCS@school meta package for UCS DC Master System (multi server envi
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
-Package: ucs-school-slave
+Package: ucs-school-replica
 Architecture: all
+Breaks:
+ ucs-school-slave (<< 13.0.6),
+Replaces:
+ ucs-school-slave (<< 13.0.6),
 Conflicts:
  italc-client,
  italc-dbg,
@@ -130,7 +136,7 @@ Recommends:
  ucs-school-webproxy,
 Description: UCS@school meta package for UCS DC Slave System
  This meta package installs all required packages for UCS@school on
- a UCS domaincontroller slave. The package ucs-school-master
+ a UCS domaincontroller slave. The package ucs-school-multiserver
  has to be installed on domaincontroller master/backup systems.
  .
  This package is part of Univention Corporate Server (UCS),
@@ -138,7 +144,7 @@ Description: UCS@school meta package for UCS DC Slave System
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
-Package: ucs-school-singlemaster
+Package: ucs-school-singleserver
 Architecture: all
 Conflicts:
  italc-client,
@@ -149,12 +155,14 @@ Conflicts:
  libitalc,
  libitalc-dev,
  python-italc,
- ucs-school-master,
+ ucs-school-multiserver,
  ucs-school-ucc-integration,
  ucs-school-umc-csv-import,
 Replaces:
+ ucs-school-singlemaster (<< 13.0.6),
  ucs-school-umc-csv-import,
 Breaks:
+ ucs-school-singlemaster (<< 13.0.6),
  ucs-school-umc-csv-import,
 Pre-Depends:
  univention-config,
@@ -215,8 +223,12 @@ Description: UCS@school meta package for UCS DC Master System (single server env
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
-Package: ucs-school-nonedu-slave
+Package: ucs-school-nonedu-replica
 Architecture: all
+Breaks:
+ ucs-school-nonedu-slave (<< 13.0.6),
+Replaces:
+ ucs-school-nonedu-slave (<< 13.0.6),
 Conflicts:
  italc-client,
  italc-dbg,
@@ -243,8 +255,12 @@ Description: UCS@school meta package for non-educational Slave servers
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
 
-Package: ucs-school-central-slave
+Package: ucs-school-central-replica
 Architecture: all
+Breaks:
+ ucs-school-central-slave (<< 13.0.6),
+Replaces:
+ ucs-school-central-slave (<< 13.0.6),
 Conflicts:
  italc-client,
  italc-dbg,
@@ -262,6 +278,66 @@ Depends:
  univention-config,
  ${misc:Depends},
 Description: UCS@school meta package for central Slave servers
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-master
+Architecture: all
+Depends:
+ ucs-school-multiserver,
+ ${misc:Depends},
+Description: UCS@school transitional dummy package
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-singlemaster
+Architecture: all
+Depends:
+ ucs-school-singleserver,
+ ${misc:Depends},
+Description: UCS@school transitional dummy package
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-slave
+Architecture: all
+Depends:
+ ucs-school-replica,
+ ${misc:Depends},
+Description: UCS@school transitional dummy package
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-nonedu-slave
+Architecture: all
+Depends:
+ ucs-school-nonedu-replica,
+ ${misc:Depends},
+Description: UCS@school transitional dummy package
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-central-slave
+Architecture: all
+Depends:
+ ucs-school-central-replica,
+ ${misc:Depends},
+Description: UCS@school transitional dummy package
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

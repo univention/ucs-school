@@ -5,7 +5,7 @@
 ## roles: [domaincontroller_master]
 ## exposure: safe
 ## packages:
-##   - ucs-school-singlemaster
+##   - ucs-school-singleserver
 
 import imp
 import os

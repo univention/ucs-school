@@ -2,7 +2,7 @@
 ## desc: Test the Samba4 GPC objects and links replication from DC-Slave to DC-Master OpenLDAP.
 ## bugs: [34214]
 ## roles: [domaincontroller_slave]
-## packages: [univention-samba4, ucs-school-slave]
+## packages: [univention-samba4, ucs-school-replica]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 

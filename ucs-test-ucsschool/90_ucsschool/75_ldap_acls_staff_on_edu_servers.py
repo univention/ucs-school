@@ -5,7 +5,7 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## timeout: 3600
 ## exposure: dangerous
-## packages: [ucs-school-slave]
+## packages: [ucs-school-replica]
 ## bugs: [50274]
 
 

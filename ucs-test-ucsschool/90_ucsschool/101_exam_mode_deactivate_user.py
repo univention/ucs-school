@@ -5,7 +5,7 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## bugs: [36251, 41568]
-## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-school-singlemaster]
+## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam, ucs-school-singleserver]
 
 from datetime import datetime, timedelta
 from time import sleep
