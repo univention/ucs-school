@@ -37,17 +37,17 @@ school_ou() {
 	# Tries to determine the LDAP name of the host's OU.
 	# The OU name is derived from the given host DN. If no DN has been passed to
 	# the function, the hostdn of the system is used as fallback.
-	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	# PLEASE NOTE: This function works only on Replica Directory Nodes!
 	#              Other systems will return an empty value!
 	#
 	# example:
 	# $ ucr get ldap/hostdn
-	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# cn=myreplica,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
 	# $ school_ou
 	# gymmitte
-	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# $ school_ou cn=myreplica,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
 	# foobar
-	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# $ school_ou cn=myreplica,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
 	# foo
 
 	local ldap_hostdn
@@ -67,17 +67,17 @@ school_dn() {
 	# Tries to determine the LDAP DN of the host's OU.
 	# The OU DN is derived from the given host DN. If no DN has been passed to
 	# the function, the hostdn of the system is used as fallback.
-	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	# PLEASE NOTE: This function works only on Replica Directory Nodes!
 	#              Other systems will return an empty value!
 	#
 	# example:
 	# $ ucr get ldap/hostdn
-	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# cn=myreplica,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
 	# $ school_dn
 	# ou=gymmitte,dc=example,dc=com
-	# $ school_dn cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# $ school_dn cn=myreplica,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
 	# ou=foobar,dc=example,dc=com
-	# $ school_dn cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# $ school_dn cn=myreplica,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
 	# ou=foo,ou=bar,dc=example,dc=com
 
 	local ldap_hostdn
@@ -97,14 +97,14 @@ servers_school_ous() {
 	# Tries to determine all LDAP DNs of the OUs this host is responsible for.
 	# The OU DN is retrieved from the local LDAP. If no DN has been passed to
 	# the function, the hostdn of the system is used as fallback.
-	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	# PLEASE NOTE: This function works only on Replica Directory Nodes!
 	#              Other systems will return an empty value!
 	#
 	# example:
 	# $ servers_school_ous
 	# ou=bar,dc=example,dc=com
 	#
-	# $ servers_school_ous -d cn=myslave,cn=dc,cn=server,cn=computers,ou=bar,dc=example,dc=com
+	# $ servers_school_ous -d cn=myreplica,cn=dc,cn=server,cn=computers,ou=bar,dc=example,dc=com
 	# ou=bar,dc=example,dc=com
 	# ou=foo,dc=example,dc=com
 	#

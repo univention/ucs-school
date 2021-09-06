@@ -129,7 +129,7 @@ class UserCheck(object):
     def check_allowed_membership(self, group_dn, students=False, teachers=False, staff=False):
         # type: (str, Optional[bool], Optional[bool], Optional[bool]) -> List[str]
         """
-        This function is used to check if a group of a user matches the users UCS@School role(s).
+        This function is used to check if a group of a user matches the users UCS@school role(s).
         The caller specifies the group dn and the user roles which are allowed by setting them to 'True'.
         Example:
         'group_dn' is expected to be a teachers group, i.e. 'teachers' is set to True by the caller.
@@ -194,7 +194,7 @@ class UserCheck(object):
         # check if objectClass is correctly set
         user_obj_classes = [x.decode("UTF-8") for x in attrs.get("objectClass", [])]
         if not any(cls in user_obj_classes for cls in self.ucsschool_obj_classes):
-            issues.append("User has no UCS@School Object Class set.")
+            issues.append("User has no UCS@school Object Class set.")
 
         # check if UCS@school role is correctly set for each school dependent of the objectClass
         user_roles = []
@@ -219,7 +219,7 @@ class UserCheck(object):
             for school in user_obj.schools:
                 ucsschool_role_string = create_ucsschool_role_string(role, school)
                 if ucsschool_role_string.lower() not in ucsschool_roles:
-                    issues.append("User does not have UCS@School Role {}".format(ucsschool_role_string))
+                    issues.append("User does not have UCS@school Role {}".format(ucsschool_role_string))
 
         # check appropriate group memberships (case-insensitive)
         users_group_dns = [_dn.lower() for _dn in self.lo.searchDn(filter="uniqueMember={}".format(dn))]

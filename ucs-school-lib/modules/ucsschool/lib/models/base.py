@@ -332,7 +332,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def get_machine_connection(cls):  # type: () -> LoType
-        """get a cached ldap connection to the DC Master using this host's credentials"""
+        """get a cached ldap connection to the Primary Directory Node using this host's credentials"""
         if not cls._machine_connection:
             cls._machine_connection = udm_uldap.getMachineConnection()[0]
         return cls._machine_connection
@@ -361,7 +361,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     def set_attributes(self, **kwargs):  # type: (**Any) -> None
         """
-        A function to set the attributes of an UCS@school object in one function call.
+        A function to set the attributes of a UCS@school object in one function call.
         Only attributes that exist in self._attributes are set. The rest of the kwargs are
         simply ignored.
 
