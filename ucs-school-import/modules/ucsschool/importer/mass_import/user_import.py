@@ -611,7 +611,7 @@ class UserImport(object):
             success = True
             user.call_hooks("post", "remove", self.connection)
         elif modified:
-            success = user.modify(lo=self.connection)
+            success = user.modify(lo=self.connection, validate=False)
         else:
             # not a dry_run, but user was not modified, because
             # disabled / expiration date / purge timestamp were already set
