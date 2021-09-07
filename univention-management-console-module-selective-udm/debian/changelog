@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (9.0.3) unstable; urgency=medium
+
+  * Bug #52602: change server role terminology
+
+ -- Christian Castens <castens@univention.de>  Wed, 08 Sep 2021 12:12:31 +0200
+
 univention-management-console-module-selective-udm (9.0.2) unstable; urgency=medium
 
   * Bug #52628: migrate univention-management-console-module-selective-

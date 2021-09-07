@@ -23,9 +23,9 @@ Provides:
  ${python:Provides},
 Recommends:
  univention-management-console-server (>= 11.0.4-37),
-Description: UMC module for slaves with a selective replicated LDAP
+Description: UMC module for Replica Directory Nodes with a selective replicated LDAP
  This package contains the UMC module which offers domain management
- functions to a selective replicated DC Slave.
+ functions to a selective replicated Replica Directory Node.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
