@@ -148,7 +148,7 @@ def iter_objects_in_request(
     UCS@school lib objects already altered with the changes from the request.
 
     Attention: If the admin workaround is activated (see Bug #52757) certain constraints are checked.
-     If they are not fulfilled this function aborts with an UMC Error.
+     If they are not fulfilled this function aborts with a UMC Error.
 
     :param request: The request from the UMCP call containing all the objects
         to be iterated over.
