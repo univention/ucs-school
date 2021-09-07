@@ -52,18 +52,15 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         display_name = "ucs_test_school_gpo_" + random_username(8)
 
         print(
-            ("\nCreating a Group Policy Object (GPO) with a display " "name '%s' using 'samba-tool'")
+            ("\nCreating a Group Policy Object (GPO) with a display name '%s' using 'samba-tool'")
             % display_name
         )
 
         stdout, stderr = self.samba_tool("gpo", "create", display_name)
         if stderr:
             print(
-                (
-                    "\nAn error message while creating a GPO using "
-                    "'samba-tool' on the remote host '%s'. STDERR:\n%s"
-                )
-                % (self.remote_host, stderr)
+                ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s")
+                % (stderr,)
             )
         if not stdout:
             utils.fail(
