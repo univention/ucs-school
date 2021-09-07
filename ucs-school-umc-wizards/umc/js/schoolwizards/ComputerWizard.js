@@ -141,10 +141,10 @@ define([
 						deferred.resolve(false);
 					} else if (response.result.warning) {
 						dialog.confirm(entities.encode(response.result.warning), [
-							{label: _('Create')},
-							{label: _('Cancel')}
+							{label: _('Cancel'), default: true},
+							{label: _('Create'), name: 'create'},
 						]).then(lang.hitch(this, function(choice) {
-							if (choice === 0) {
+							if (choice === 'create') {
 								this._createObject(true, deferred)
 							} else {
 								deferred.resolve(false);
