@@ -53,6 +53,10 @@
 	}
 }
 
+.computerroomSettingsButton--warning {
+	--bgc: var(--bgc-error);
+}
+
 /* note in Grid */
 .examEndTimeNote {
 	padding: 0 calc(2 * var(--layout-spacing-unit)) 0 var(--layout-spacing-unit);

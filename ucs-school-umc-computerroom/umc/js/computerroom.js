@@ -1250,14 +1250,14 @@ define([
 					this._grid.update(true);
 				}
 
-				var redColor = false;
+				var areSettingsExpiring = false;
 				if (response.result.settingEndsIn) {
 					var labelValidUntil = lang.replace('{label} (' + _('{time} minutes') + ')', {
 						time: response.result.settingEndsIn,
 						label: this._changeSettingsLabel
 					});
 					this._headButtons.settings.set('label', labelValidUntil);
-					redColor = (response.result.settingEndsIn <= 5);
+					areSettingsExpiring = (response.result.settingEndsIn <= 5);
 				} else {
 					if (this._headButtons.settings.get('label') !== this._changeSettingsLabel) {
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
@@ -1265,7 +1265,7 @@ define([
 					}
 				}
 				if (this._headButtons.settings.domNode) {
-					domClass.toggle(this._headButtons.settings.domNode, 'umcRedColor', redColor);
+					domClass.toggle(this._headButtons.settings.domNode, 'computerroomSettingsButton--warning', areSettingsExpiring);
 				}
 
 				var endTime = (this.get('roomInfo') || {}).examEndTime;
