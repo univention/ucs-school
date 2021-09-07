@@ -565,6 +565,7 @@ define([
 				this._searchPage.set('headerText', _('No room selected'));
 				return;
 			}
+			this._searchPage.set('headerText', '');
 
 			var room = tools.explodeDn(roomInfo.room, true)[0];
 			room = room.replace(/^[^\-]+-/, '');
@@ -612,13 +613,10 @@ define([
 		renderSearchPage: function() {
 			this._searchPage = new Page({
 				fullWidth: true,
-				headerText: this.description,
 				helpText: _("Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares.")
 			});
 
 			this.addChild(this._searchPage);
-
-			this._updateHeader();
 
 			var columns = [{
 				name: 'name',
@@ -741,6 +739,7 @@ define([
 			this._searchPage.addChild(this._grid);
 
 			this.addHeaderContainer();
+			this._updateHeader();
 		},
 
 		addHeaderContainer: function() {
