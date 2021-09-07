@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test the DC Locator Master shares access from DC-Slave.
+## desc: Test the Locator Primary Directory Node shares access from Replica Directory Node.
 ## bugs: [34224, 37977]
 ## roles:
 ## - domaincontroller_slave
@@ -32,7 +32,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
     def connect_to_master_sysvol_share(self, username, password, use_kerberos=False):
         """
         Using 'smbclient' and given credentials executes the 'cmd' to list
-        the sysvol contents on the DC-Master. Tries to use Kerberos if
+        the sysvol contents on the Primary Directory Node. Tries to use Kerberos if
         respective kwarg 'use_kerberos'==True.
         """
         domain_name = self.UCR.get("domainname")
@@ -60,7 +60,9 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
                 "--command=ls",
             )
 
-        print("\nTrying to connect to Sysvol on DC-Master and list the contents using Samba client:")
+        print(
+            "\nTrying to connect to Sysvol on Primary Directory Node and list the contents using Samba client:"
+        )
         print(cmd)
 
         stdout, stderr = self.create_and_run_process(cmd)
@@ -69,17 +71,17 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
         if not stdout.strip():
             utils.fail(
-                "The Samba client did not produce any output to STDOUT, while DC-Master Sysvol contents"
+                "The Samba client did not produce any output to STDOUT, while Primary Directory Node Sysvol contents"
                 " were expected"
             )
         print("The Samba client produced the following output to STDOUT:\n%s" % stdout)
 
         connection_errors = ("NT_STATUS_CONNECTION_REFUSED", "failed", "Error")
         if any(err_string in stdout for err_string in connection_errors):
-            utils.fail("\nThe connection with DC-Master failed. See the stdout.")
+            utils.fail("\nThe connection with Primary Directory Node failed. See the stdout.")
         if domain_name not in stdout:
             utils.fail(
-                "The Samba client output of DC-Master Sysvol contents does not include folder with the "
+                "The Samba client output of Primary Directory Node Sysvol contents does not include folder with the "
                 "domain name."
             )
 
@@ -107,14 +109,14 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
     def main(self):
         """
-        Creates a user and tries to list the DC-Master Sysvol using smbclient.
+        Creates a user and tries to list the Primary Directory Node Sysvol using smbclient.
         (First with NTLM and after with Kerberos).
         """
         self.get_ucr_test_credentials()
 
-        # skip the test if DC-Master has no S4:
+        # skip the test if Primary Directory Node has no S4:
         if not self.dc_master_has_samba4():
-            print("\nThe DC-Master has no S4, skipping test...")
+            print("\nThe Primary Directory Node has no S4, skipping test...")
             self.return_code_result_skip()
 
         try:

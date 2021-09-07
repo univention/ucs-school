@@ -38,9 +38,12 @@ class TestS4SIDAllocation(TestSamba4):
 
     def start_stop_s4_connector_on_master(self, action):
         """
-        Makes a UMC request to DC-Master to stop or start the S4-Connector.
+        Makes a UMC request to Primary Directory Node to stop or start the S4-Connector.
         """
-        print("\nMaking a UMC request to %s the S4-Connector service on the DC-Master\n" % action)
+        print(
+            "\nMaking a UMC request to %s the S4-Connector service on the Primary Directory Node\n"
+            % action
+        )
         assert self.client.umc_command("services/" + action, ["univention-s4-connector"]).result.get(
             "success"
         ), "Restarting S4-Connector service failed"
@@ -48,18 +51,18 @@ class TestS4SIDAllocation(TestSamba4):
     def start_stop_s4_connector(self, connector_should_run):
         """
         Starts or stops the S4 connector depending on given arg (True or False)
-        also for the DC-Master via UMC if the 'self.test_remotely' is 'True'.
+        also for the Primary Directory Node via UMC if the 'self.test_remotely' is 'True'.
         """
         if connector_should_run is True:
             if self.test_remotely:
-                # start the service on DC-Master
+                # start the service on Primary Directory Node
                 self.start_stop_s4_connector_on_master("start")
             # start service locally
             utils.start_s4connector()
 
         elif connector_should_run is False:
             if self.test_remotely:
-                # stop the service on DC-Master
+                # stop the service on Primary Directory Node
                 self.start_stop_s4_connector_on_master("stop")
             # stop service locally
             utils.stop_s4connector()
@@ -143,8 +146,8 @@ class TestS4SIDAllocation(TestSamba4):
 
     def dc_master_has_s4(self):
         """
-        Returns 'True' if the DC-Master has S4 running or False otherwise.
-        Looking in the LDAP for 'Samba 4' in DC-Master 'univentionService'-s.
+        Returns 'True' if the Primary Directory Node has S4 running or False otherwise.
+        Looking in the LDAP for 'Samba 4' in Primary Directory Node 'univentionService'-s.
         """
         try:
             dc_master = self.ldap_master.replace(self.UCR["domainname"], "", 1)[:-1]
@@ -153,28 +156,29 @@ class TestS4SIDAllocation(TestSamba4):
 
             if "Samba 4" in master_services:
                 print(
-                    "\nThe DC-Master has Samba4 running, the test will also check the SID for the test "
-                    "user on the DC-Master"
+                    "\nThe Primary Directory Node has Samba4 running, the test will also check the SID for the test "
+                    "user on the Primary Directory Node"
                 )
                 return True
 
         except KeyError as exc:
             utils.fail(
-                "An error occured while trying to get the DC-Master 'univentionServices': '%s'" % exc
+                "An error occured while trying to get the Primary Directory Node 'univentionServices': '%s'"
+                % exc
             )
 
     def determine_test_scenario(self):
         """
         Determines if the test should perform checks only locally, or
         if it should also check the 'SambaSID' on the remote DC.
-        Creates the UMC connection to DC-Master when checks should
-        also be performed there.
+        Creates the UMC connection to Primary Directory Node when checks
+        should also be performed there.
         """
         if self.UCR.get("server/role") == "domaincontroller_master":
-            print("\nCurrent role is DC-Master, performing only local checks")
+            print("\nCurrent role is Primary Directory Node, performing only local checks")
             self.test_remotely = False
         elif not self.dc_master_has_s4():
-            print("\nThe DC-Master has no Samba4, performing only local checks")
+            print("\nThe Primary Directory Node has no Samba4, performing only local checks")
             self.test_remotely = False
         else:
             self.test_remotely = True
@@ -183,9 +187,9 @@ class TestS4SIDAllocation(TestSamba4):
     def main(self):
         """
         Tests that SambaSID allocation is correct.
-        When run on DC-Master performs only local check;
-        When run on DC-Backup or DC-Slave also performs the remote
-        check on the DC-Master;
+        When run on Primary Directory Node performs only local check;
+        When run on Backup Directory Node or Replica Directory Node also performs the remote
+        check on the Primary Directory Node;
         Also checks the 'NextRID' allocation.
         """
         self.get_ucr_test_credentials()
@@ -271,21 +275,23 @@ class TestS4SIDAllocation(TestSamba4):
 
             # perform remote check when needed
             if self.test_remotely:
-                print("\nComparing the SID on DC-Master with the local one:")
+                print("\nComparing the SID on Primary Directory Node with the local one:")
 
                 uri = "ldap://" + self.ldap_master
                 for _ in range(5):  # poor man's replication check
                     samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, uri)
                     if samba_sid_master:
                         break
-                    print("\nNot yet replicated to master. Sleep for 10 seconds and retry.")
+                    print(
+                        "\nNot yet replicated to Primary Directory Node. Sleep for 10 seconds and retry."
+                    )
                     sleep(10)
 
                 # compare objectSid@locally vs. objectSid@Master
                 if ldap_sid_pre_sync != samba_sid_master:
                     utils.fail(
                         (
-                            "The SID in the LDAP and Samba4 on the DC-Master for"
+                            "The SID in the LDAP and Samba4 on the Primary Directory Node for"
                             " the test user '%s' are different: '%s' vs. '%s' in"
                             " Samba4 LDB." % (test_username, ldap_sid_pre_sync, samba_sid_master)
                         )

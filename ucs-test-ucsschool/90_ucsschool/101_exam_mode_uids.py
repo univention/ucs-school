@@ -53,7 +53,9 @@ def check_uids(member_dn_list, open_ldap_co):
                 print("Sleeping {}s...".format(SLEEP_INTERVAL))
                 time.sleep(SLEEP_INTERVAL)
                 timeout -= SLEEP_INTERVAL
-                assert timeout > 0, "replication timed out... check logs of schoolexam-master!"
+                assert (
+                    timeout > 0
+                ), "replication timed out... check logs of schoolexam Primary Directory Node!"
 
         user_name = attrs["uid"][0].decode("UTF-8")
         ldap_uid = attrs["uidNumber"][0].decode("UTF-8")

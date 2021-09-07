@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## bugs: [40470]
-## desc: school-servers (except master and backup) not added to DNS forward and reverse lookup zones
+## desc: school-servers (except Primary Directory Node and Backup Directory Node) not added to DNS forward and reverse lookup zones
 ## exposure: safe
 ## join: true
 ## roles:

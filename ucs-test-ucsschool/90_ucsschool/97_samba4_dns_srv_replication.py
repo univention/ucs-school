@@ -303,8 +303,8 @@ class TestS4DNSSRVReplication(TestSamba4):
     def check_srv_records_equal(self, dns_srv_records):
         """
         Checks that every record in the given list of DNS SRV records has
-        the same location attribute values in the LDAP and Samba.
-        Only applicable to DC-Master(s), as on DC-Slave the values
+        the same location attribute values in the LDAP and Samba. Only applicable
+        to Primary Directory Node(s), as on Replica Directory Nodes the values
         are hardcoded.
         """
         if self.server_role == "domaincontroller_master":
@@ -401,9 +401,9 @@ class TestS4DNSSRVReplication(TestSamba4):
         """
         Determines the test scenario, i.e. whether the DNS SRV replication
         should work for a specific set of records:
-        - if current role is DC-Master (Singlemaster): both ways should work;
-        - if current role is DC-Master (multi-school): no way should work;
-        - if current role is DC-Slave: (multi-school): no way should work.
+        - if current role is Primary Directory Node (single): both ways should work;
+        - if current role is Primary Directory Node (multi-school): no way should work;
+        - if current role is Replica Directory Node: (multi-school): no way should work.
         """
         self.server_role = self.UCR.get("server/role")
         print("\nDetermining the test scenario, current DC role is '%s'" % self.server_role)
@@ -411,23 +411,23 @@ class TestS4DNSSRVReplication(TestSamba4):
             dc_slaves = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^  name: ").split()
 
             if dc_slaves:
-                # multi-school domain with DC-Slave(s), no replication
+                # multi-school domain with Replica Directory Node(s), no replication
                 print(
-                    "\nCurrent role is a DC-Master and there is(are) DC-Slave(s) %s in the domain, "
+                    "\nCurrent role is a Primary Directory Node and there is(are) Replica Directory Node(s) %s in the domain, "
                     "replication should not work for specific DNS SRV records." % dc_slaves
                 )
             else:
-                # a Single-Master system setup, openLDAP -> SAMBA replication
+                # a singleserver system setup, openLDAP -> SAMBA replication
                 print(
-                    "\nCurrent role is a DC-Master and it is the only DC in the domain, two-way "
+                    "\nCurrent role is a Primary Directory Node and it is the only DC in the domain, two-way "
                     "replication should work for tested DNS SRV records"
                 )
                 self.repl_should_work = True
 
         elif self.server_role == "domaincontroller_slave":
-            # running on a DC-Slave, no replication
+            # running on a Replica Directory Node, no replication
             print(
-                "\nCurrent role is a DC-Slave, no replication should happen for a list of specific DNS "
+                "\nCurrent role is a Replica Directory Node, no replication should happen for a list of specific DNS "
                 "SRV records."
             )
 
@@ -486,7 +486,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 
         try:
             # check that SRV record attribute values are the same in
-            # openLDAP and Samba initially (DC-Master only):
+            # openLDAP and Samba initially (Primary Directory Node only):
             self.check_srv_records_equal(dns_srv_records)
 
             # case 1: modify values in openLDAP and check the state in Samba:

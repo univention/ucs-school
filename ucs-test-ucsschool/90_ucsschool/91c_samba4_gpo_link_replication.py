@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
-## desc: Test the Samba4 GPO link replication between DC-Slaves.
+## desc: Test the Samba4 GPO link replication between Replica Directory Nodes.
 ## bugs: [45992]
 ## roles: [domaincontroller_slave]
 ## packages: [univention-samba4]
@@ -100,14 +100,14 @@ def check_local_LDAP_for_GPO_link(gpo_reference, oudn):
 
 
 def test_samba4_gpo_link_replication(schoolenv):
-    # create new OU the current DC slave is NOT resposible for
+    # create new OU the current Replica Directory Node is NOT resposible for
     schoolName, oudn = schoolenv.create_ou(use_cache=False)
     utils.wait_for_replication_and_postrun()
     # create a new GPO
     with GPO(oudn) as gpo:
         # connect the GPO to the new OU (oudn) via samba-tool in local S4
         # due to LDAP ACLs, the local S4 connector should not be able to
-        # replicate the gPOlink to the UCS master.
+        # replicate the gPOlink to the UCS Primary Directory Node.
         gpo.set_gpo_link_on_slave_via_sambatool()
         assert not check_local_LDAP_for_GPO_link(
             gpo.gpo_reference, oudn

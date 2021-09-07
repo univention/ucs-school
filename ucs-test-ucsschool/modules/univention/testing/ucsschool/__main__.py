@@ -54,6 +54,6 @@ def cli(source_ou, target_ou):
 
 if __name__ == "__main__":
     if not ucr["server/role"] in ("domaincontroller_master", "domaincontroller_backup"):
-        click.echo("This script must be executed on a DC master or backup.")
+        click.echo("This script must be executed on a Primary Directory Node or Backup Directory Node.")
         sys.exit(1)
     cli()
