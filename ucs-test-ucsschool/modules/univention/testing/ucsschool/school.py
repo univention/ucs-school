@@ -45,7 +45,7 @@ def create_dc_slave(udm, school=None):
                 ucr.get("ldap/base"),
             )
 
-        print("Creating DC Slave (%s)" % name)
+        print("Creating Replica Directory Node (%s)" % name)
         position = "cn=dc,cn=computers,%s" % ldap_base
         if not ucr.is_true("ucsschool/singlemaster", False):
             position = "cn=dc,cn=server,cn=computers,ou=%s,%s" % (school, ldap_base)
@@ -61,7 +61,7 @@ def create_dc_slave(udm, school=None):
         if dn:
             return name, dn
         else:
-            utils.fail("Could not create a DC Slave via udm")
+            utils.fail("Could not create a Replica Directory Node via udm")
 
 
 class School(object):
@@ -498,8 +498,8 @@ class School(object):
         )
 
         # check group membership
-        #  slave should be member
-        #  master and backup should not be member
+        # Replica Directory Node should be member
+        # Primary Directory Node and Backup Directory Node should not be member
         dcgroups = [
             "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn),
             "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn),

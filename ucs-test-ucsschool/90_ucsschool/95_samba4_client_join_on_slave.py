@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test Window client join into UCS@School S4-Slave.
+## desc: Test Window client join into UCS@School S4 Replica Directory Node.
 ## bugs: [34219]
 ## roles:
 ## - domaincontroller_slave
@@ -257,9 +257,9 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
     def main(self, precreate_computer=False):
         """
         Creates a Windows Client in the SamDB and checks:
-         - Client join DC-Slave with a pre-created computer account when
+         - Client join Replica Directory Node with a pre-created computer account when
            'precreate_computer' is True;
-         - Client join DC-Slave without a beforehand pre-created
+         - Client join Replica Directory Node without a beforehand pre-created
            computer account.
         """
         self.get_ucr_test_credentials()

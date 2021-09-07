@@ -31,7 +31,7 @@ class Test(CLI_Import_v2_Tester):
         self.ou_A = utu.Bunch(name=None, dn=None)
         self.ou_B = utu.Bunch(name=None, dn=None)
         self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=self.ucr.get("hostname"))
-        # not using the cache, as it could return the same OU on singlemaster systems
+        # not using the cache, as it could return the same OU on single Primary Directory Nodes
         self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(use_cache=False)
         self.log.info(
             "*** This host is responsible for OU %r, but not for OU %r.", self.ou_A.name, self.ou_B.name

@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
-## desc: Fix broken domaincontroller slave objects via fix_ucsschool_slaves
+## desc: Fix broken Replica Directory Node objects via fix_ucsschool_slaves
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
@@ -25,11 +25,11 @@ def test_fix_ucsschool_slaves(schoolenv):
         result = lo.search(base=dcdn)
         attrs = result[0][1]
         if {b"univentionWindows", b"ucsschoolComputer"} & set(attrs.get("objectClass", [])):
-            print("WARNING: domaincontroller_slave's objectclass already broken!")
+            print("WARNING: Replica Directory Node's objectclass already broken!")
         for value in attrs.get("ucsschoolRole", []):
             if value.startswith("win_computer:school:"):
                 print(
-                    "WARNING: domaincontroller_slave's ucschoolRole already broken! {!r}".format(value)
+                    "WARNING: Replica Directory Node's ucschoolRole already broken! {!r}".format(value)
                 )
 
         lo.modify(
@@ -50,7 +50,7 @@ def test_fix_ucsschool_slaves(schoolenv):
             ],
         )
 
-        print("Starting fix_ucschool_slaves...")
+        print("Starting to fix UCS@School Replica Directory Node...")
         sys.stdout.flush()
         sys.stderr.flush()
         subprocess.check_call(["/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves", "--verbose"])

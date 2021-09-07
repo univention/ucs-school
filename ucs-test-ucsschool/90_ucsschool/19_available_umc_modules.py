@@ -33,7 +33,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
     defaultList = []
     ignoreList = [("lib", None), (u"passwordreset", None)]
 
-    # Lehrer auf dem DC Master
+    # Lehrer auf dem Primary Directory Node
     dc_teacher = defaultList + [
         ("schoolgroups", "workgroup-admin"),
         ("schoolusers", "student"),
@@ -50,7 +50,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
         ("schoolusers", "student"),
         ("schoollists", None),
     ]
-    # Schuladmin sollte auf dem DC Master
+    # Schuladmin sollte auf dem Primary Directory Node
     dc_schooladmin = defaultList + [
         ("schoolusers", "student"),
         ("schoolusers", "teacher"),
@@ -80,7 +80,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
         ("lessontimes", None),
         ("schoollists", None),
     ]
-    # Domanenadministrator auf dem DC Master
+    # Domanenadministrator auf dem Primary Directory Node
     dc_domainadmin = defaultList + [
         ("udm", "users/user"),
         ("udm", "groups/group"),
@@ -165,7 +165,7 @@ def test_available_umc_modules(schoolenv, udm_session, ucr):
                 tea, teadn = schoolenv.create_user(school, is_teacher=True)
                 users.append((tea, "teacher"))
 
-                # staff is not replicated to login to dc-slave
+                # staff is not replicated to login to Replica Directory Node
                 if serverRole != "domaincontroller_slave":
                     staf, stafdn = schoolenv.create_user(school, is_staff=True)
                     users.append((staf, "staff"))

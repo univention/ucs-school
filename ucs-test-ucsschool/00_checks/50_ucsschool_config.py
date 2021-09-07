@@ -51,7 +51,7 @@ def test_settings_univention_samba4():
                 utils.package_installed("ucs-school-nonedu-slave"),
             )
         ):
-            # Bug #49726: test only on slave / singlemaster
+            # Bug #49726: test only on Replica Directory Node / single Primary Directory Node
             continue
         check_setting(setting, value)
 

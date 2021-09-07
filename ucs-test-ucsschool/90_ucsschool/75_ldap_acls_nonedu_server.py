@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
-## desc: Check if non-edu slaves have at least the required LDAP permissions for UCS@school
+## desc: Check if non-edu Replica Directory Nodes have at least the required LDAP permissions for UCS@school
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous

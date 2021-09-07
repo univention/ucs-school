@@ -21,7 +21,7 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
                 name_backup = uts.random_string()
                 name_centralmemberserver = uts.random_string()
 
-                # create central dc slave, edu school slave and admin school slave
+                # create central Replica Directory Node, edu school Replica Directory Node and admin school Replica Directory Node
                 dn_centraldc = udm.create_object(
                     "computers/domaincontroller_slave",
                     position="cn=dc,cn=computers,{}".format(ucr.get("ldap/base")),
@@ -30,7 +30,7 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
                 school, oudn = schoolenv.create_ou(
                     name_edudc=name_edudc, name_admindc=name_admindc, use_cache=False
                 )
-                # create dc backup and memberserver
+                # create Backup Directory Node and Managed Node
                 dn_memberserver = udm.create_object(
                     "computers/memberserver",
                     position="cn=computers,{}".format(ucr.get("ldap/base")),
@@ -42,7 +42,7 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
                     name=name_backup,
                 )
 
-                # get DNs of school slaves
+                # get DNs of school Replica Directory Nodes
                 lo = schoolenv.open_ldap_connection()
                 dn_edudc = lo.searchDn(
                     filter="(&(univentionObjectType=computers/domaincontroller_slave)(cn={}))".format(
@@ -61,13 +61,13 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
                 )[0]
 
                 # check is_school_slave()
-                assert uli.is_school_slave(lo, dn_edudc), "{} should be a school slave".format(dn_edudc)
-                assert uli.is_school_slave(lo, dn_admindc), "{} should be a school slave".format(
+                assert uli.is_school_slave(lo, dn_edudc), "{} should be a school Replica Directory Node".format(dn_edudc)
+                assert uli.is_school_slave(lo, dn_admindc), "{} should be a school Replica Directory Node".format(
                     dn_admindc
                 )
                 assert not (
                     uli.is_school_slave(lo, dn_centraldc)
-                ), "{} should NOT be a school slave".format(dn_centraldc)
+                ), "{} should NOT be a school Replica Directory Node".format(dn_centraldc)
                 with pytest.raises(
                     ValueError,
                     match="Given computer DN does not refer to a computers/domaincontroller_slave "
@@ -77,20 +77,20 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
 
                 assert not (
                     uli.is_central_computer(lo, dn_edudc)
-                ), "{} should NOT be a central slave".format(dn_edudc)
+                ), "{} should NOT be a central Replica Directory Node".format(dn_edudc)
                 assert not (
                     uli.is_central_computer(lo, dn_admindc)
-                ), "{} should NOT be a central slave".format(dn_admindc)
-                assert uli.is_central_computer(lo, dn_centraldc), "{} should be a central slave".format(
+                ), "{} should NOT be a central Replica Directory Node".format(dn_admindc)
+                assert uli.is_central_computer(lo, dn_centraldc), "{} should be a central Replica Directory Node".format(
                     dn_centraldc
                 )
                 assert uli.is_central_computer(
                     lo, dn_memberserver
-                ), "{} should be a central memberserver".format(dn_memberserver)
-                assert uli.is_central_computer(lo, dn_backup), "{} should be a central backup".format(
+                ), "{} should be a central Managed Node".format(dn_memberserver)
+                assert uli.is_central_computer(lo, dn_backup), "{} should be a central Backup Directory Node".format(
                     dn_backup
                 )
-                assert uli.is_central_computer(lo, dn_master), "{} should be a central master".format(
+                assert uli.is_central_computer(lo, dn_master), "{} should be a central Primary Directory Node".format(
                     dn_master
                 )
 

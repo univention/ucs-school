@@ -374,8 +374,8 @@ class Acl(object):
 
     def assert_ou(self, access):
         """
-        Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
-        Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde
+        Replica Directory Nodes duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
+        Lehrer und Managed Nodes duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde
         Server/user duerfen nichts
         """
         attrs = [
@@ -475,7 +475,7 @@ class Acl(object):
 
     def assert_member_server(self, access):
         """
-        Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver joinen (benoetigt
+        Mitglieder der lokalen Administratoren duerfen den Replica Directory Node und Managed Node joinen (benoetigt
         Passwortaenderung)
         """
         base_dn = self.ucr.get("ldap/base")
