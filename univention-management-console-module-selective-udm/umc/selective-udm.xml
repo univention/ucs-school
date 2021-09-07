@@ -2,7 +2,7 @@
 <umc version="2.0">
   <module id="selective-udm" version="1.0" python="3">
 	<name>Selective UDM</name>
-	<description>Domain management operations for slaves with a selective replicated directory</description>
+	<description>Domain management operations for Replica Directory Nodes with a selective replicated directory</description>
 	<keywords></keywords>
 	<command name="selectiveudm/create_windows_computer" function="create_windows_computer" />
   </module>

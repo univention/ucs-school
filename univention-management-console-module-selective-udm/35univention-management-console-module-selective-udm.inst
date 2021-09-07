@@ -45,7 +45,7 @@ umc_init
 eval "$(ucr shell)"
 
 # create selective-udm operation
-umc_operation_create "selective-udm" "Domain management operations for slaves with a selective replicated directory" "" "selectiveudm/create_windows_computer"
+umc_operation_create "selective-udm" "Domain management operations for Replica Directory Nodes with a selective replicated directory" "" "selectiveudm/create_windows_computer"
 
 # create default server policy if not exists
 udm policies/umc create "$@" --ignore_exists --set name=default-slave-umc --position "cn=UMC,cn=policies,$ldap_base"
