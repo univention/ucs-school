@@ -89,7 +89,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolHomeShareFileServer is set to master in a UCS@school multi server "
+                "ucsschoolHomeShareFileServer is set to Primary Directory Node in a UCS@school multi server "
                 "environment\n"
             )
             self.lo.modify(
@@ -103,7 +103,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolClassShareFileServer is set to master in a UCS@school multi server "
+                "ucsschoolClassShareFileServer is set to Primary Directory Node in a UCS@school multi server "
                 "environment\n"
             )
         else:
@@ -118,7 +118,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolHomeShareFileServer is not set to master in a UCS@school single server "
+                "ucsschoolHomeShareFileServer is not set to Primary Directory Node in a UCS@school single server "
                 "environment\n"
             )
             self.lo.modify(
@@ -132,7 +132,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 ],
             )
             expected_warnings.append(
-                "ucsschoolClassShareFileServer is not set to master in a UCS@school single server "
+                "ucsschoolClassShareFileServer is not set to Primary Directory Node in a UCS@school single server "
                 "environment\n"
             )
 

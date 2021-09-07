@@ -101,7 +101,7 @@ def test_wrong_school_role(schoolenv, ucr_hostname, udm_instance, role_and_bad_v
     obj.save()
 
     stdout, stderr = exec_script(ou_name)
-    expected_error = "User does not have UCS@School Role {}:school".format(expected)
+    expected_error = "User does not have UCS@school Role {}:school".format(expected)
     assert_error_msg_in_script_output(stdout, dn, expected_error)
 
 
@@ -136,7 +136,7 @@ def test_wrong_school_role_for_each_school(schoolenv, ucr_hostname, udm_instance
     obj.save()
 
     stdout, stderr = exec_script(None)
-    expected_error = "User does not have UCS@School Role {}:school".format("student")
+    expected_error = "User does not have UCS@school Role {}:school".format("student")
     assert_error_msg_in_script_output(stdout, student_dn, expected_error)
 
 
@@ -221,7 +221,7 @@ def test_case_insensitive_school_roles(schoolenv, ucr_hostname, udm_instance, ro
     obj.save()
 
     stdout, stderr = exec_script(ou_name)
-    expected_error = "User does not have UCS@School Role {}:school".format(expected)
+    expected_error = "User does not have UCS@school Role {}:school".format(expected)
     assert_error_msg_not_in_script_output(stdout, dn, expected_error)
 
 

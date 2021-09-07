@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## bugs: [40470]
-## desc: Check values of school-servers (except master and backup) DNS related ucr variables
+## desc: Check values of school-servers (except Primary Directory Nodes and Backup Directory Nodes) DNS related ucr variables
 ## exposure: safe
 ## roles:
 ##  - domaincontroller_slave

@@ -47,7 +47,7 @@ def test_schoolwizard_school_create():
         schoolwizards_schools_create(ou_name)
         dc_dn = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (dc_name, testschool.get_ou_base_dn(ou_name))
         if testschool.ucr.is_true("ucsschool/singlemaster", False):
-            # on singlemaster systems a seperate DC should not be created
+            # on singleserver systems a seperate DC should not be created
             utils.verify_ldap_object(
                 dc_dn, expected_attr={"cn": [dc_name]}, strict=True, should_exist=False
             )

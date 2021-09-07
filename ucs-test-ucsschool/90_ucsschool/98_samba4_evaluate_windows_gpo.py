@@ -424,7 +424,7 @@ def udm_get_windows_computer():
     if not sed_stdout:
         print(
             "SKIP: failed to find any Windows Host DN via UDM. Perhaps host not joined as a "
-            "memberserver or does not exist in this setup."
+            "Managed Node or does not exist in this setup."
         )
         exit(TestCodes.REASON_INSTALL)
 

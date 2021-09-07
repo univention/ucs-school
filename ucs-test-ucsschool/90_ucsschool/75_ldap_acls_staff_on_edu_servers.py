@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
-## desc: check if staff users can optionally be replicated to edu slaves
+## desc: check if staff users can optionally be replicated to edu Replica Directory Nodes
 ## roles: [domaincontroller_slave]
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## timeout: 3600
@@ -56,7 +56,7 @@ class LDAPACLCheck(UCSTestSchool):
         return stdout.decode("UTF-8"), stderr.decode("UTF-8")
 
     def run_test(self):  # type: () -> None
-        # ssh to master ==> get UCR + set to OFF
+        # ssh to Primary Directory Node ==> get UCR + set to OFF
         stdout, stderr = self.run_on_master("/usr/sbin/ucr get ucsschool/ldap/replicate_staff_to_edu")
         logger.debug("STDOUT:\n%s", stdout)
         logger.debug("STDERR:\n%s", stderr)
@@ -69,7 +69,7 @@ class LDAPACLCheck(UCSTestSchool):
             # the default case and it is difficult to test e.g. via verify_ldap_object() since it does
             # not use the machine account
 
-            # ssh to master ==> set UCRV to ON and create Staff2 in test OU
+            # ssh to Primary Directory Node ==> set UCRV to ON and create Staff2 in test OU
             stdout, stderr = self.run_on_master(
                 "/usr/sbin/ucr set ucsschool/ldap/replicate_staff_to_edu=yes ; "
                 "/usr/sbin/ucr commit /etc/ldap/slapd.conf ; "

@@ -122,15 +122,15 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
     def get_other_hostnames_from_search(self, search_results):
         """
         Returns the list of other hostnames in search_results
-        except for the local hostname and the DC-Master.
+        except for the local hostname and the Primary Directory Node.
         """
         sysvol_sync_host = self.UCR.get("samba4/sysvol/sync/host")
         try:
             other_hostnames = search_results.split()
 
-            # DC-Master might not be in a list if it has no Samba4.
+            # Primary Directory Node might not be in a list if it has no Samba4.
             if sysvol_sync_host in other_hostnames:
-                # remove the DC Master as it is added to the first place:
+                # remove the Primary Directory Node as it is added to the first place:
                 other_hostnames.remove(sysvol_sync_host)
 
             # remove local DC hostname:
@@ -148,7 +148,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         Invokes the 'univention-ldapsearch' with 'ldap_master' as LDAP
         server to get the hostnames of other DC instances in the domain that
         have S4 running; Excludes the local hostname and returns the list with
-        a DC-Master hostname plus all other DC hostnames in the domain.
+        a Primary Directory Node hostname plus all other DC hostnames in the domain.
         """
         print("\nGenerating the list of other DCs in the domain to check the SYSVOL replication:")
 
@@ -184,16 +184,16 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         if stderr:
             utils.fail(
                 "An error occured while trying to sed through the LDAP search results from the "
-                "DC-Master: '%s'. sed input was: '%s'" % (stderr, search_stdout)
+                "Primary Directory Node: '%s'. sed input was: '%s'" % (stderr, search_stdout)
             )
         if not stdout.strip():
             utils.fail(
                 "No output from sed process, possibly an error occured during the LDAP search on "
-                "DC-Master or while trying to connect to DC-Master. sed input "
+                "Primary Directory Node or while trying to connect to Primary Directory Node. sed input "
                 "was: '%s'" % (search_stdout,)
             )
 
-        # DC-Master should be the first node to check the replication to:
+        # Primary Directory Node should be the first node to check the replication to:
         hosts = [ldap_master] + self.get_other_hostnames_from_search(stdout)
         print("The following hosts will be checked:", hosts)
         return hosts
@@ -247,8 +247,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
     def main(self):
         """
         Tests the replication of the Samba SYSVOL with multi-school
-        domain setup (DC-Master + [optionally DC-Backup] +
-        any number of DC-Slaves).
+        domain setup (Primary Directory Node + [optionally Backup Directory Node] +
+        any number of Replica Directory Nodes).
         """
         try:
             self.get_ucr_test_credentials()

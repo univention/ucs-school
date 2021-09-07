@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test user creation denial on DC-Slave with Samba4.
+## desc: Test user creation denial on Replica Directory Node with Samba4.
 ## bugs: [34217, 37700]
 ## roles: [domaincontroller_slave]
 ## packages: [univention-samba4]
@@ -73,7 +73,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
             if bool(search(".*User .* created successfully.*", stdout)):
                 self.remove_user = username
                 utils.fail(
-                    "The creation of user '%s' succeded, while should be disabled on DC-Slave with "
+                    "The creation of user '%s' succeded, while should be disabled on Replica Directory Node with "
                     "Samba4" % username
                 )
         stderr = workaround.filter_deprecated(stderr)
@@ -91,7 +91,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 
     def main(self):
         """
-        Test that user objects creation is blocked on S4 Slave.
+        Test that user objects creation is blocked on S4 Replica Directory Node.
         """
         try:
             self.get_ucr_test_credentials()

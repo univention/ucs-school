@@ -6,18 +6,18 @@
 ## timeout: 14400
 
 """
-Up to UCS@school 4.3v6, school servers (DC slaves) could only read student,
+Up to UCS@school 4.3v6, school servers (Replica Directory Nodes) could only read student,
 teacher and admin objects from the OU structures with their machine account.
 With the introduction of the UCR variable ucsschool/ldap/replicate_staff_to_edu,
-it is also possible to replicate staff objects to the educational slaves.
+it is also possible to replicate staff objects to the educational Replica Directory Nodes.
 This is checked by this test. Depending on the status of the UCR variable, read
 access to the staff objects is possible or not. The config of the slapd is
 adjusted automatically and the slapd is restarted.
 
 In addition, cross-school user accounts are checked. While student1 is directly
-below the OU of Slave1, student2 is below another OU, where student2 is a member
+below the OU of slave1, student2 is below another OU, where student2 is a member
 of both schools (1+2). It is therefore actively checked whether these user
-objects can also be read by the slave. This also applies to the other user roles.
+objects can also be read by the Replica Directory Node. This also applies to the other user roles.
 """
 
 import subprocess
@@ -122,7 +122,7 @@ class TestCases(object):
         # currently we are lacking a concept for this
         print("----------------------- setting host account password... -----------------------")
 
-        # locate DN of DC slave for OU school1
+        # locate DN of Replica Directory Node for OU school1
         lo = udm_uldap.getAdminConnection()[0]
         filter_s = filter_format(
             "(&(cn=%s)(univentionObjectType=computers/domaincontroller_slave))", (self.slave1.name,)

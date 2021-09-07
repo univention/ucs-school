@@ -97,7 +97,7 @@ class TestSamba4(object):
 
     def dc_master_has_samba4(self):
         """
-        Returns 'True' when DC-Master has Samba4 according to "service=Samba 4"
+        Returns 'True' when Primary Directory Node has Samba4 according to "service=Samba 4"
         """
         if not self.ldap_master:
             self.ldap_master = self.UCR.get("ldap/master")
@@ -173,7 +173,7 @@ class TestSamba4(object):
 
     def select_school_ou(self, schoolname_only=False):
         """
-        Returns the first found School OU from the list of DC-Slaves in domain.
+        Returns the first found School OU from the list of Replica Directory Nodes in domain.
         """
         print("\nSelecting the School OU for the test")
 
@@ -216,7 +216,7 @@ class TestSamba4(object):
 
     def create_umc_connection_authenticate(self):
         """
-        Creates UMC connection and authenticates to DC-Master with the test
+        Creates UMC connection and authenticates to Primary Directory Node with the test
         user credentials.
         """
         if not self.ldap_master:

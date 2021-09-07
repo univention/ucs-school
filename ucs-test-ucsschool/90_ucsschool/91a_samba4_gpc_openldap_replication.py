@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test the Samba4 GPC objects and links replication from DC-Slave to DC-Master OpenLDAP.
+## desc: Test the Samba4 GPC objects and links replication from Replica Directory Node to Primary Directory Node OpenLDAP.
 ## bugs: [34214]
 ## roles: [domaincontroller_slave]
 ## packages: [univention-samba4, ucs-school-replica]
@@ -27,17 +27,17 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
     def main(self):
         """
         Tests the Samba4 GPC objects (and GPO links) replication from
-        DC-Slave to DC-Master OpenLDAP.
+        Replica Directory Node to Primary Directory Node OpenLDAP.
         """
         try:
             self.get_ucr_test_credentials()
             (self.ldap, _pos) = getMachineConnection(ldap_master=True)
 
-            # Create GPO and check replication against master:
+            # Create GPO and check replication against Primary Directory Node:
             gpo_reference = self.create_gpo()
             self.check_gpo_replicated(gpo_reference)
 
-            # Create GPO link to School OU and check replication against master:
+            # Create GPO link to School OU and check replication against Primary Directory Node:
             school_ou_dn = self.find_school_ou()
             self.create_gpo_link(school_ou_dn, gpo_reference)
             self.check_gpo_link_replicated(school_ou_dn, gpo_reference)
@@ -97,7 +97,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
 
     def check_gpo_replicated(self, gpo_reference):
         """
-        Check the Master DC OpenLDAP for a created GPO object.
+        Check the Primary Directory Node OpenLDAP for a created GPO object.
         """
         gpo_search = ldap.filter.filter_format("(cn=%s)", (gpo_reference,))
         for _ in range(5):
@@ -109,7 +109,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             else:
                 break
         else:
-            utils.fail("GPO %s not replicated to DC Master LDAP" % gpo_reference)
+            utils.fail("GPO %s not replicated to Primary Directory Node LDAP" % gpo_reference)
         print("Found the created GPO: %s" % result)
 
     def find_school_ou(self):
@@ -150,7 +150,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
 
     def check_gpo_link_replicated(self, container_dn, gpo_reference):
         """
-        Check the Master DC OpenLDAP for a created `msGPOLink` in the given
+        Check the Primary Directory Node OpenLDAP for a created `msGPOLink` in the given
         `container_dn`.
         """
         for _ in range(5):
@@ -168,7 +168,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
                     break
         else:
             utils.fail(
-                "GPO link %s -> %s not replicated to DC Master LDAP." % (container_dn, gpo_reference)
+                "GPO link %s -> %s not replicated to Primary Directory Node LDAP." % (container_dn, gpo_reference)
             )
         print("Found msGPOLink attribute: %s" % gp_link)
 

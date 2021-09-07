@@ -210,7 +210,7 @@ class UCSTestSchool(object):
         (if None is given) to the server defined by the UCR variable
         ldap/server/name is used.
         If admin is set to True, a connection is setup by getAdminConnection().
-        If machine is set to True, a connection to the master is setup by getMachoneConnection().
+        If machine is set to True, a connection to the Primary Directory Node is setup by getMachoneConnection().
         """
         assert not (admin and machine)
         assert not (
@@ -492,7 +492,7 @@ class UCSTestSchool(object):
         if isinstance(name_edudc, str):
             if name_edudc.lower() == cls.ucr.get("ldap/master", "").split(".", 1)[0].lower():
                 logger.info(
-                    "*** It is not allowed to set the master as name_edudc ==> resetting name_edudc to "
+                    "*** It is not allowed to set the Primary Directory Node as name_edudc ==> resetting name_edudc to "
                     "None"
                 )
                 name_edudc = None
@@ -503,7 +503,7 @@ class UCSTestSchool(object):
                 ]
             ):
                 logger.info(
-                    "*** It is not allowed to set any backup as name_edudc ==> resetting name_edudc to "
+                    "*** It is not allowed to set any Backup Directory Node as name_edudc ==> resetting name_edudc to "
                     "None"
                 )
                 name_edudc = None
@@ -525,17 +525,17 @@ class UCSTestSchool(object):
         Creates a new OU with random or specified name. The function may also set a specified
         displayName. If "displayName" is None, a random displayName will be set. If "displayName"
         equals to the empty string (''), the displayName won't be set. "name_edudc" may contain
-        the optional name for an educational dc slave. "name_admindc" may contain
-        the optional name for an administrative dc slave. If name_share_file_server is set, the
+        the optional name for an educational Replica Directory Node. "name_admindc" may contain
+        the optional name for an administrative Replica Directory Node. If name_share_file_server is set, the
         class share file server and the home share file server will be set.
         If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
         library is used.
         If use_cache is True (default) and an OU was created in a previous test with the same arguments,
         it will be reused. -> If ou_name and displayName are None, instead of creating new random names,
         the existing test-OU will be returned.
-        PLEASE NOTE: if name_edudc is set to the hostname of the master or backup, name_edudc will be
-        unset automatically, because it's not allowed to specify the hostname of the master or any
-        backup in any situation!
+        PLEASE NOTE: if name_edudc is set to the hostname of the Primary Directory Node or Backup Directory Node, name_edudc will be
+        unset automatically, because it's not allowed to specify the hostname of the Primary Directory Node or any
+        Backup Directory Node in any situation!
 
         Return value: (ou_name, ou_dn)
             ou_name: name of the created OU
@@ -557,7 +557,7 @@ class UCSTestSchool(object):
         # ):
         #     return self.cloned_ou()
 
-        # it is not allowed to set the master as name_edudc ==> resetting name_edudc
+        # it is not allowed to set the Primary Directory Node as name_edudc ==> resetting name_edudc
         name_edudc = self.check_name_edudc(name_edudc)
         if use_cache and not self._test_ous:
             self.load_test_ous()

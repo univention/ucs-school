@@ -633,8 +633,8 @@ def check_group_membership(ou, dc_name, base_dn, lo, must_exist):
     )
 
     # check group membership
-    #  slave should be member
-    #  master and backup should not be member
+    #  Replica Directory Node should be member
+    #  Primary Directory Node and Backup Directory NOde should not be member
     dcgroups = [
         "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn),
         "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn),

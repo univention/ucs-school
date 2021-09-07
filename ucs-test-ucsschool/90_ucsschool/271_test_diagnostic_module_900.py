@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
-## desc: Check diagnostic tool ucschool slave groupmemberships
+## desc: Check diagnostic tool UCS@school Replica Directory Node groupmemberships
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,diagnostic_test]
 ## exposure: dangerous
@@ -37,7 +37,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         slave_dn = slave_list[0]
         member_dn = member_list[0]
 
-        # Remove a slave-dc from DC-Edukativnetz
+        # Remove a Replica Directory Node from DC-Edukativnetz
         grp_dn = "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         try:
             self.lo.modify(grp_dn, [("uniqueMember", slave_dn, None)])
@@ -45,11 +45,11 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
             # makes running subsequent running of the script easier.
             logger.debug("{} already removed from group {}.".format(slave_dn, grp_dn))
         expected_warnings_slave.append(
-            "Host object is member in global edu group but not in OU specific slave group (or the other "
+            "Host object is member of global edu group but not in OU specific Replica Directory Node group (or the other "
             "way around)"
         )
 
-        # Add slave to OUschoola-DC-Verwaltungsnetz
+        # Add Replica Directory Node to OUschoola-DC-Verwaltungsnetz
         grp_dn = "cn=OU{}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
             self.schoolA.name, self.ucr.get("ldap/base")
         )
@@ -57,18 +57,18 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
-            "Host object is member in global admin group but not in OU specific slave group (or the "
+            "Host object is member of global admin group but not in OU specific Replica Directory Node group (or the "
             "other way around)"
         )
 
-        # Add Slave to Member-Edukativnetz
+        # Add Replica Directory Node to Member-Edukativnetz
         grp_dn = "cn=Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         unique_members = self.unique_members(grp_dn)
         unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
-        expected_warnings_slave.append("Slave object is member in memberserver groups")
+        expected_warnings_slave.append("Replica Directory Node object is member of Managed Node groups")
         expected_warnings_slave.append(
-            "Host object is member in global edu group but not in OU specific memberserver group (or "
+            "Host object is member of global edu group but not of OU specific Managed Node group (or "
             "the other way around)"
         )
 
@@ -80,15 +80,15 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
-            "Host object is member in edu groups AND in admin groups which is not allowed"
+            "Host object is member of edu groups AND in admin groups which is not allowed"
         )
 
-        # Add the Memberserver to DC-Edukativnetz
+        # Add the Managed Node to DC-Edukativnetz
         grp_dn = "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         unique_members = self.unique_members(grp_dn)
         unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [["uniqueMember", self.unique_members(grp_dn), unique_members]])
-        expected_warnings_member.append("Memberserver object is member in slave groups")
+        expected_warnings_member.append("Managed Node object is member of Replica Directory Node groups")
 
         logger.info(
             "Run diagnostic tool, capture and test if warnings were raised. The dns of the client "

@@ -91,14 +91,14 @@ class TestS4DCLocatorDNS(TestSamba4):
         located in the branch or central department respectively via UDM list.
         """
         if self.is_a_school_branch_site(self.UCR.get("ldap/hostdn")):
-            # in a branch site (looks for DC-Slaves)
+            # in a branch site (looks for Replica Directory Nodes)
             branch_dcs = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^  fqdn: ")
 
             self.site_dcs.extend(branch_dcs.split())
             print("\nThe following DCs are located in the current School branch site:\n%s" % branch_dcs)
 
         else:
-            # in a central department site (looks for DC-Master and DC-Backup)
+            # in a central department site (looks for Primary Directory Node and Backup Directory Node)
             central_dcs = self.sed_for_key(self.get_udm_list_dcs("domaincontroller_master"), "^  fqdn: ")
             central_dcs += " "
             central_dcs += self.sed_for_key(
@@ -115,9 +115,9 @@ class TestS4DCLocatorDNS(TestSamba4):
         Tests the Domain Controller location process as done by the
         'net ads lookup'.
         Correct DC location behavior:
-         for DC-Slave -> itself or other DC-Slave within the same branch;
-         for DC-Backup -> itself or DC-Master in a central department;
-         for DC-Master -> itself or DC-Backup in a central department;
+         for Replica Directory Node -> itself or other Replica Directory Node within the same branch;
+         for Backup Directory Node -> itself or Primary Directory Node in a central department;
+         for Primary Directory Node -> itself or Backup Directory Node in a central department;
         """
         try:
             self.UCR.load()
