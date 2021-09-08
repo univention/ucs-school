@@ -1,3 +1,9 @@
+ucs-school-umc-common (10.0.2) unstable; urgency=medium
+
+  * Bug #52602: change server role terminology
+
+ -- Christian Castens <castens@univention.de>  Wed, 08 Sep 2021 12:09:05 +0200
+
 ucs-school-umc-common (10.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
