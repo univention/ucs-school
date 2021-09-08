@@ -85,6 +85,8 @@ def test_ini_settings(ini_url):
     }
     if version >= 20210518142444:
         exp.add("/var/lib/ucs-school-lib/kelvin-hooks:/var/lib/ucs-school-lib/kelvin-hooks")
+    if version >= 20210902124852:
+        exp.add("/etc/ucsschool/kelvin:/etc/ucsschool/kelvin")
     assert {v.strip() for v in config.get("Application", "DockerVolumes").split(",")} == exp
     if version <= 20200804122304:
         assert config.get("Application", "RequiredApps") == "ucsschool"
