@@ -60,7 +60,7 @@ define([
 		// currently active flavor of the module
 		moduleFlavor: '',
 
-		// internal reference to the formular containing all form widgets of an UDM object
+		// internal reference to the formular containing all form widgets of a UDM object
 		_form: null,
 
 		postMixInProperties: function() {
