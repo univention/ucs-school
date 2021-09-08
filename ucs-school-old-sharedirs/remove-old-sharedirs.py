@@ -1,5 +1,5 @@
 #
-# Univention UCS@School
+# Univention UCS@school
 #  listener module
 #
 # Copyright 2007-2021 Univention GmbH

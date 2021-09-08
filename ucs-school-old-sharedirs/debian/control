@@ -13,7 +13,7 @@ Architecture: all
 Depends:
  univention-config,
  univention-directory-listener,
-Description: UCS@School listener module to move away obsolete share directories
+Description: UCS@school listener module to move away obsolete share directories
  This package contains a univention directory listener module that
  moves away obsolete share directories on deletion of share objects.
  .
