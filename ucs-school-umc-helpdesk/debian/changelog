@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (16.0.5) unstable; urgency=medium
+
+  * Bug #52602: change server role terminology
+
+ -- Christian Castens <castens@univention.de>  Wed, 08 Sep 2021 12:10:48 +0200
+
 ucs-school-umc-helpdesk (16.0.4) unstable; urgency=medium
 
   * Bug #27354: move UDM module settings/console_helpdesk into schema
