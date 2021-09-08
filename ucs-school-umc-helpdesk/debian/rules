@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 #
-# UCS@School Helpdesk Module
+# UCS@school Helpdesk Module
 #  rules file for generating the deb package
 #
 # Copyright 2004-2021 Univention GmbH

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# UCS@School Helpdesk
+# UCS@school Helpdesk
 #  univention admin helpdesk module
 #
 # Copyright 2006-2021 Univention GmbH

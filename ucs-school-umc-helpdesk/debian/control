@@ -32,7 +32,7 @@ Provides:
  ${python3:Provides},
  ${python:Provides},
 Description: Univention Directory Manager module to administrate helpdesk categories of UMC
- This package contains an Univention Directory Manager module that provides a
+ This package contains a Univention Directory Manager module that provides a
  web frontend or commandline tool to administrate helpdesk categories used
  in Univention Management Console.
  .
