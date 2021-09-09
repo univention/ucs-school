@@ -5,6 +5,10 @@
 Changelog
 ---------
 
+v1.5.0 (2021-09-10)
+...................
+* Unixhomes are now set correctly for users. (Bug #52926)
+
 v1.4.4 (2021-06-29)
 ...................
 * The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)

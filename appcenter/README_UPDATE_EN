@@ -1,4 +1,10 @@
 <h1>Changelog</h1>
+<h2>v1.5.0 (2021-09-10)</h2>
+<ul>
+    <li>
+         Unixhomes are now set correctly for users. (Bug #52926)
+    </li>
+</ul>
 <h2>v1.4.4 (2021-06-29)</h2>
 <ul>
     <li>
