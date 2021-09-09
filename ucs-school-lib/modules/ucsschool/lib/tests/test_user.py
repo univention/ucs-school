@@ -460,3 +460,39 @@ async def test_remove(create_ou_using_python, udm_kwargs, new_udm_user, role: Ro
         success = await user.remove(udm)
         assert success is True
         assert not await user.exists(udm)
+
+unixhomes= {
+    'student': "schueler",
+    'teacher': "lehrer",
+    'staff': "mitarbeiter",
+    'teacher_and_staff': "lehrer",
+}
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+async def test_unixhome(
+    create_ou_using_python, new_school_class_using_udm, udm_users_user_props, udm_kwargs, role: Role
+):
+    school = await create_ou_using_python()
+    async with UDM(**udm_kwargs) as udm:
+        user_props = await udm_users_user_props(school)
+        user_props["name"] = user_props["username"]
+        user_props["email"] = user_props["mailPrimaryAddress"]
+        user_props["school"] = school
+        user_props["birthday"] = str(user_props["birthday"])
+        del user_props["e-mail"]
+        if role.klass != Staff:
+            cls_dn1, cls_attr1 = await new_school_class_using_udm(school=school)
+            cls_dn2, cls_attr2 = await new_school_class_using_udm(school=school)
+            user_props["school_classes"] = {
+                school: [
+                    f"{school}-{cls_attr1['name']}",
+                    f"{school}-{cls_attr2['name']}",
+                ]
+            }
+        user = role.klass(**user_props)
+        success = await user.create(udm)
+        assert success is True
+        user = await role.klass.from_dn(user.dn, school, udm)
+        udm_user = await user.get_udm_object(udm)
+        assert f"/home/{school}/{unixhomes[role.name]}/{user.name}" == udm_user.props.unixhome

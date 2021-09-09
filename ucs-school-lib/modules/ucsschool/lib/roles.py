@@ -47,7 +47,7 @@ class InvalidUcsschoolRoleString(UcsschoolRoleStringError):
     pass
 
 
-role_pupil = "pupil"  # attention: there is also "role_student"
+role_pupil = "pupil"  # attention: there is also "role_student" below
 role_teacher = "teacher"
 role_staff = "staff"
 
