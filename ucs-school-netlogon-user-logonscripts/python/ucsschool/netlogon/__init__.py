@@ -186,7 +186,7 @@ class SqliteQueue(object):
     def remove(self, userdn):  # type: (str) -> None
         """
         Removes a specific user DN from queue.
-        userdn has to be an UTF-8 encoded string or unicode string.
+        userdn has to be a UTF-8 encoded string or unicode string.
         """
         if isinstance(userdn, bytes):  # Python 2
             userdn = userdn.decode("utf-8")
