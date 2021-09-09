@@ -50,7 +50,7 @@ define([
 		// reference to the module's store object
 		moduleStore: null,
 
-		// internal reference to the formular containing all form widgets of an UDM object
+		// internal reference to the formular containing all form widgets of a UDM object
 		_form: null,
 
 		postMixInProperties: function() {
