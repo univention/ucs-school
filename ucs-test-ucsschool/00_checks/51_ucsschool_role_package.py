@@ -11,7 +11,7 @@ role_packages = {
     "dc_single_master": "ucs-school-singlemaster",
     "dc_slave_edu": "ucs-school-slave",
     "dc_slave": "ucs-school-central-slave",
-    "dc_backup": "ucs-school-backup",
+    "dc_backup": "ucs-school-master",
     "single_master": "ucs-school-singlemaster",
 }
 

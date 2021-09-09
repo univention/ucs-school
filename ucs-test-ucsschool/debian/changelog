@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.247) unstable; urgency=low
+
+  * Bug #52673: fix package test for backups
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 09 Sep 2021 08:36:32 +0200
+
 ucs-test-ucsschool (6.0.246) unstable; urgency=medium
 
   * Bug #53744: Fix test for new Kelvin app configuration
