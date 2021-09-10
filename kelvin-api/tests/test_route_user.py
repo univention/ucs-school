@@ -628,6 +628,34 @@ async def test_create(
 
 
 @pytest.mark.asyncio
+async def test_create_unmapped_udm_prop(
+    create_ou_using_python,
+    random_user_create_model,
+    url_fragment,
+    udm_kwargs,
+    schedule_delete_user_name_using_udm,
+    retry_http_502,
+    auth_header,
+):
+    school = await create_ou_using_python()
+    r_user = await random_user_create_model(school, roles=[f"{url_fragment}/roles/teacher"])
+    r_user.udm_properties["unmapped_prop"] = "some value"
+    data = r_user.json()
+    print(f"POST data={data!r}")
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school, f"username={r_user.name}")
+    assert len(lib_users) == 0
+    schedule_delete_user_name_using_udm(r_user.name)
+    response = retry_http_502(
+        requests.post,
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        data=data,
+    )
+    assert response.status_code == 422, f"{response.__dict__!r}"
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
 async def test_create_without_username(
     auth_header,

@@ -41,6 +41,7 @@ from ucsschool.lib.models.base import NoObject
 from ucsschool.lib.models.utils import env_or_ucr, get_file_handler
 from ucsschool.lib.models.validator import VALIDATION_LOGGER
 
+from .config import load_configurations
 from .constants import (
     APP_VERSION,
     DEFAULT_LOG_LEVELS,
@@ -105,6 +106,11 @@ def setup_logging() -> None:
     logger = logging.getLogger()
     logger.setLevel(abs_min_level)
     logger.addHandler(file_handler)
+
+
+@app.on_event("startup")
+def load_configs():
+    load_configurations()
 
 
 @app.on_event("startup")

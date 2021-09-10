@@ -55,7 +55,7 @@ from six import add_metaclass, iteritems
 
 from udm_rest_client import UDM, NoObject as UdmNoObject, UdmModule, UdmObject
 from univention.admin.filter import conjunction, expression
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import noObject, noProperty, valueError, valueInvalidSyntax
 from univention.admin.uldap import LoType, PoType, getAdminConnection, getMachineConnection
 
 from ..pyhooks.pyhooks_loader import PyHooksLoader
@@ -117,6 +117,12 @@ class MultipleObjectsError(Exception):
     def __init__(self, objs: Sequence[UdmObject], *args, **kwargs) -> None:
         super(MultipleObjectsError, self).__init__(*args, **kwargs)
         self.objs = objs
+
+
+class UDMPropertiesError(Exception):
+    def __init__(self, message: str, *args, **kwargs):
+        super(Exception, self).__init__(message, *args, **kwargs)
+        self.message = message
 
 
 @add_metaclass(UCSSchoolHelperMetaClass)
@@ -223,6 +229,7 @@ class UCSSchoolHelperAbstractClass(object):
     _cache: Dict[Tuple[str, Tuple[str, str]], UCSSchoolModel] = {}
     _search_base_cache: Dict[str, SchoolSearchBase] = {}
     _initialized_udm_modules: List[str] = []
+    _attribute_udm_names: Dict[str, str] = None
 
     name: str = CommonName(_("Name"), aka=["Name"])
     school: str = SchoolAttribute(_("School"), aka=["School"])
@@ -301,6 +308,7 @@ class UCSSchoolHelperAbstractClass(object):
         self.old_dn = self.dn
         self.errors: Dict[str, List[str]] = {}
         self.warnings: Dict[str, List[str]] = {}
+        self.udm_properties: Dict[str, Any] = {}
         self._in_hook = False  # if a hook is currently running
 
     @classmethod
@@ -516,13 +524,70 @@ class UCSSchoolHelperAbstractClass(object):
         """
         pass
 
+    @classmethod
+    def attribute_udm_names(cls) -> Dict[str, str]:
+        if not cls._attribute_udm_names:
+            cls._attribute_udm_names = dict(
+                (attr.udm_name, name) for name, attr in cls._attributes.items() if attr.udm_name
+            )
+        return cls._attribute_udm_names
+
+    def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None
+        """
+        Make sure users do not store values for ucsschool.lib mapped Attributes
+        in udm_properties.
+        """
+        if not self.udm_properties:
+            return
+
+        bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names())
+        if bad_props:
+            raise UDMPropertiesError(
+                "UDM properties '{}' must be set as attributes of the {} object (not in "
+                "udm_properties).".format("', '".join(bad_props), self.__class__.__name__)
+            )
+
+    def _handle_udm_properties(self, udm_obj: UdmObject):
+        """
+        This method sets the values in self.udm_properties directly in the udm object.
+        """
+        for property_, value in (self.udm_properties or {}).items():
+            try:
+                udm_obj.props[property_] = value
+            except (KeyError, noProperty) as exc:
+                raise UDMPropertiesError(
+                    "UDM property '{}' could not be set. {}: {}".format(
+                        property_, exc.__class__.__name__, exc
+                    )
+                )
+            except (valueError, valueInvalidSyntax) as exc:
+                raise UDMPropertiesError(
+                    "UDM property '{}' could not be set. {}: {}".format(
+                        property_, exc.__class__.__name__, exc
+                    )
+                )
+            except Exception as exc:
+                self.logger.exception(
+                    "Unexpected exception caught: UDM property %r could not be set for object %r",
+                    property_,
+                    self,
+                    exc,
+                )
+                raise UDMPropertiesError(
+                    "UDM property {!r} could not be set. {}: {}".format(
+                        property_, exc.__class__.__name__, exc
+                    )
+                )
+
     async def _alter_udm_obj(self, udm_obj: UdmObject) -> None:
+        self._prevent_mapped_attributes_in_udm_properties()
         for name, attr in iteritems(self._attributes):
             if attr.udm_name:
                 value = getattr(self, name)
                 if attr.map_to_udm:
                     setattr(udm_obj.props, attr.udm_name, value)
         # TODO: move g[s]et_default_options() from User here to update udm_obj.options
+        self._handle_udm_properties(udm_obj)
 
     async def create(self, lo: UDM, validate: bool = True) -> bool:
         """

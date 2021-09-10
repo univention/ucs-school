@@ -40,6 +40,7 @@ from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
 
+from ...lib.models.base import UDMPropertiesError
 from ..opa import OPAClient
 from ..token_auth import get_token
 from .base import APIAttributesMixin, LibModelHelperMixin, udm_ctx
@@ -65,6 +66,7 @@ class SchoolCreateModel(LibModelHelperMixin):
 
     class Config(LibModelHelperMixin.Config):
         lib_class = School
+        config_id = "school"
 
     @validator("name", check_fields=False)
     def check_name(cls, value: str) -> str:
@@ -117,7 +119,8 @@ async def fix_school_attributes(
 
     Side effect: changes attributes of `school_obj` and saves it to LDAP.
     """
-    changed = False
+    # We have to assume the school object also changed if there are udm properties set
+    changed = False or bool(school_obj.udm_properties)
     if len(school_obj.administrative_servers) != len(school.administrative_servers):
         dns = []
         for host in school.administrative_servers:
@@ -287,6 +290,9 @@ async def create(
         will be alphabetically first of '$educational_servers' if unset)
     - **alter_dhcpd_base**: whether the UCR variable dhcpd/ldap/base should be modified during school
         creation on singleserver environments. (optional, currently non-functional!)
+    - **udm_properties**: object with UDM properties (optional, e.g.
+        **{"udm_prop1": "value1"}**, must be configured in
+        **mapped_udm_properties**, see documentation)
     """
     if not await OPAClient.instance().check_policy_true(
         policy="schools",
@@ -328,7 +334,13 @@ async def create(
         error_msg = f"Failed to create school {school_obj.name!r}: {exc}"
         logger.exception(error_msg)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
-    school_obj = await School.from_dn(school_obj.dn, school_obj.name, udm)
+    school_obj_to_fix = await School.from_dn(school_obj.dn, school_obj.name, udm)
+    school_obj_to_fix.udm_properties = school_obj.udm_properties
     logger.debug("Finished create_ou(), fixing schools DC attributes...")
-    await fix_school_attributes(school_obj, school, logger, udm)
-    return await SchoolModel.from_lib_model(school_obj, request, udm)
+    try:
+        await fix_school_attributes(school_obj_to_fix, school, logger, udm)
+    except UDMPropertiesError as exc:
+        error_msg = f"Failed to set udm properties on newly created school {school_obj.name!r}: {exc}"
+        logger.exception(error_msg)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error_msg)
+    return await SchoolModel.from_lib_model(school_obj_to_fix, request, udm)

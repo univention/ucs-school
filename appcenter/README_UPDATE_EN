@@ -4,6 +4,13 @@
     <li>
          Unixhomes are now set correctly for users. (Bug #52926)
     </li>
+    <li>
+         The Kelvin API now supports udm properties on all Kelvin resources except roles. (Bug #53744)
+         Be advised that a new restriction was added that also applies to the udm_properties in the users resource and
+         slightly alters the possible udm properties that can be configured. Please consult the manual section
+         <a href="https://docs.software-univention.de/ucsschool-kelvin-rest-api/installation-configuration.html#udm-properties">UDM Properties</a>
+         for details.
+    </li>
 </ul>
 <h2>v1.4.4 (2021-06-29)</h2>
 <ul>

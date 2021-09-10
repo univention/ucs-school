@@ -77,6 +77,14 @@ IMPORT_CONFIG = {
         )
     ),
 }
+MAPPED_UDM_PROPERTIES_CONFIG = {
+    "active": Path("/etc/ucsschool/kelvin/mapped_udm_properties.json"),
+    "bak": Path(
+        "/etc/ucsschool/kelvin/mapped_udm_properties.json.bak.{}".format(
+            datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+        )
+    ),
+}
 MAPPED_UDM_PROPERTIES = [
     "title",
     "description",
@@ -504,6 +512,33 @@ def restart_kelvin_api_server_module():
 @pytest.fixture(scope="session")
 def restart_kelvin_api_server_session():
     return restart_kelvin_api_server
+
+
+@pytest.fixture(scope="session")
+def mapped_udm_properties_test_config(restart_kelvin_api_server_session):
+    def _func():
+        if not ucsschool.kelvin.constants.CN_ADMIN_PASSWORD_FILE.exists():
+            # not in Docker container
+            return
+        if MAPPED_UDM_PROPERTIES_CONFIG["active"].exists():
+            shutil.move(MAPPED_UDM_PROPERTIES_CONFIG["active"], MAPPED_UDM_PROPERTIES_CONFIG["bak"])
+
+        config = {"school": ["description"], "school_class": ["mailAddress"]}
+
+        with open(MAPPED_UDM_PROPERTIES_CONFIG["active"], "w") as fd:
+            json.dump(config, fd, indent=4)
+
+        restart_kelvin_api_server_session()
+
+    yield _func
+
+    if MAPPED_UDM_PROPERTIES_CONFIG["bak"].exists():
+        shutil.move(MAPPED_UDM_PROPERTIES_CONFIG["bak"], MAPPED_UDM_PROPERTIES_CONFIG["active"])
+
+
+@pytest.fixture(scope="session")
+def setup_mapped_udm_properties_config(mapped_udm_properties_test_config):
+    mapped_udm_properties_test_config()
 
 
 @pytest.fixture(scope="session")

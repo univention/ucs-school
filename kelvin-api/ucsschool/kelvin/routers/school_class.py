@@ -26,15 +26,17 @@
 # <http://www.gnu.org/licenses/>.
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from pydantic import BaseModel, Field, HttpUrl, root_validator, validator
 
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
+from ucsschool.lib.models.base import UDMPropertiesError
 from ucsschool.lib.models.group import SchoolClass
 from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError
 
+from ..config import UDM_MAPPING_CONFIG
 from ..opa import OPAClient
 from ..token_auth import get_token
 from ..urls import name_from_dn, url_to_dn, url_to_name
@@ -58,6 +60,7 @@ class SchoolClassCreateModel(UcsSchoolBaseModel):
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = SchoolClass
+        config_id = "school_class"
 
     _validate_name = validator("name", allow_reuse=True)(check_name)
 
@@ -105,6 +108,7 @@ class SchoolClassPatchDocument(BaseModel):
     description: str = None
     ucsschool_roles: List[str] = Field(None, title="Roles of this object. Don't change if unsure.")
     users: List[HttpUrl] = None
+    udm_properties: Dict[str, Any] = None
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = SchoolClass
@@ -120,6 +124,19 @@ class SchoolClassPatchDocument(BaseModel):
         cls.Config.lib_class.name.validate(class_name)
         return value
 
+    @validator("udm_properties")
+    def only_known_udm_properties(cls, udm_properties: Optional[Dict[str, Any]]):
+        property_list = getattr(UDM_MAPPING_CONFIG, "school_class", [])
+        if not udm_properties:
+            return udm_properties
+        for key in udm_properties:
+            if key not in property_list:
+                raise ValueError(
+                    f"The udm property {key!r} was not configured for this resource "
+                    f"and thus is not allowed."
+                )
+        return udm_properties
+
     async def to_modify_kwargs(self, school, request: Request) -> Dict[str, Any]:
         res = {}
         if self.name:
@@ -128,6 +145,8 @@ class SchoolClassPatchDocument(BaseModel):
             res["description"] = self.description
         if self.ucsschool_roles:
             res["ucsschool_roles"] = self.ucsschool_roles
+        if self.udm_properties:
+            res["udm_properties"] = self.udm_properties
         if self.users:
             res["users"] = [
                 await url_to_dn(request, "user", UcsSchoolBaseModel.unscheme_and_unquote(user))
@@ -223,6 +242,9 @@ async def create(
     - **users**: list of URLs to User resources (optional)
     - **ucsschool_roles**: list of tags of the form
         $ROLE:$CONTEXT_TYPE:$CONTEXT (optional)
+    - **udm_properties**: object with UDM properties (optional, e.g.
+        **{"udm_prop1": "value1"}**, must be configured in
+        **mapped_udm_properties**, see documentation)
     """
     if not await OPAClient.instance().check_policy_true(
         policy="classes",
@@ -240,7 +262,7 @@ async def create(
     else:
         try:
             await sc.create(udm)
-        except (LibValidationError, CreateError) as exc:
+        except (LibValidationError, CreateError, UDMPropertiesError) as exc:
             error_msg = f"Failed to create school class {sc!r}: {exc}"
             logger.exception(error_msg)
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
@@ -281,7 +303,7 @@ async def partial_update(
     if changed:
         try:
             await sc_current.modify(udm)
-        except (LibValidationError, ModifyError) as exc:
+        except (LibValidationError, ModifyError, UDMPropertiesError) as exc:
             logger.warning(
                 "Error modifying school class %r with %r: %s",
                 sc_current,
@@ -329,6 +351,7 @@ async def complete_update(
     sc_current = await get_lib_obj(udm, SchoolClass, f"{school}-{class_name}", school)
     changed = False
     sc_request: SchoolClass = await school_class.as_lib_model(request)
+    sc_current.udm_properties = sc_request.udm_properties
     for attr in SchoolClass._attributes.keys():
         current_value = getattr(sc_current, attr)
         new_value = getattr(sc_request, attr)
@@ -337,10 +360,10 @@ async def complete_update(
         if new_value != current_value:
             setattr(sc_current, attr, new_value)
             changed = True
-    if changed:
+    if changed or sc_current.udm_properties:
         try:
             await sc_current.modify(udm)
-        except (LibValidationError, ModifyError) as exc:
+        except (LibValidationError, ModifyError, UDMPropertiesError) as exc:
             logger.warning(
                 "Error modifying school class %r with %r: %s",
                 sc_current,

@@ -35,7 +35,7 @@ import os
 from typing import List
 
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.roles import role_pupil, role_staff, role_teacher, role_student
+from ucsschool.lib.roles import role_pupil, role_staff, role_student, role_teacher
 
 try:
     from univention.config_registry import ConfigRegistry

@@ -8,6 +8,7 @@ Changelog
 v1.5.0 (2021-09-10)
 ...................
 * Unixhomes are now set correctly for users. (Bug #52926)
+* The Kelvin API now supports udm properties on all Kelvin resources except roles. (Bug #53744)
 
 v1.4.4 (2021-06-29)
 ...................

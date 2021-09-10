@@ -56,21 +56,40 @@ The directory ``/var/lib/ucs-school-import/configs`` is mounted as a *volume* in
 The directory contains the file ``kelvin.json``, which is the top level configuration file for the UCS\@school import code, executed when ``user`` objects are managed.
 Documentation for the UCS\@school import configuration is available only in german in the `Handbuch zur CLI-Import-Schnittstelle`_.
 
-Additionally to the usual import configuration options, there is now a configuration key ``mapped_udm_properties``.
-It points to a list of UDM properties that should show up - and be modifiable - in the user resources ``udm_properties`` attribute.
+UDM Properties
+^^^^^^^^^^^^^^
+
+There was already an ``udm_properties`` functionality available for user resources within Kelvin.
+With the release of Kelvin 1.5.0 the ``udm_properties`` functionality was added to all other resources (except roles)
+as well. The list of ``mapped_udm_properties`` can be configured in
+``/etc/ucsschool/kelvin/mapped_udm_properties.json``.
+
+The format of the ``mapped_udm_properties.json`` is::
+
+    {
+        name_of_resource: ["name_of_property_to_map",...],
+        ...
+    }
+
 For example::
 
     {
-        "mapped_udm_properties": [
-            "description",
-            "gidNumber",
-            "employeeType",
-            "organisation",
-            "phone",
-            "title",
-            "uidNumber"
-        ]
+        "user": ["unixhome", "title"],
+        "school_class": ["mailAddress"],
+        "school": ["description"]
     }
+
+The following restrictions have to be observed:
+
+#. The Kelvin configuration may contain also a ``mapped_udm_properties``. This refers to the user resource.
+   If there is also a configuration for the key ``user`` in ``mapped_udm_properties.json``, it will override the
+   ``mapped_udm_propertes`` kelvin configuration (for users only).
+#. Any udm property that is directly linked to an already existing model field results in an invalid configuration.
+   It is not allowed, for example, to configure the ``description`` of a school class as an udm property, since it is
+   already present in the model itself. This is now also true for the user resource, where this was possible before.
+
+**Important** Please be advised that this direct access to udm properties is in no way checked or validated by any UCS@school logic
+and thus can lead to corrupt objects and errors on your system, if not used correctly.
 
 Python hooks for user object management (import hooks)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

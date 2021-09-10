@@ -36,7 +36,8 @@ The following JSON is an example Schools resource in the *UCS\@school Kelvin RES
         "educational_servers": ["dctest-01"],
         "administrative_servers": [],
         "class_share_file_server": "dctest-01",
-        "home_share_file_server": "dctest-01"
+        "home_share_file_server": "dctest-01",
+        "udm_properties": {}
     }
 
 
@@ -54,8 +55,19 @@ The following JSON is an example Schools resource in the *UCS\@school Kelvin RES
     "administrative_servers", "list", "List of server host names for the administrative school network.", "(*)"
     "class_share_file_server", "string", "Host name of server with the class shares.", "if unset: the schools educational server, (*)"
     "home_share_file_server", "string", "Host name of server with the home shares.", "if unset: the schools educational server, (*)"
+    "udm_properties", "nested object", "Object with UDM properties. For example: ``{'"'description'"': '"'Gymnasium'"'}``", "Must be configured, see below."
 
 (*) **API CHANGE**: before version ``1.4.0`` this was a DN or list of DNs
+
+
+udm_properties
+--------------
+The attribute ``udm_properties`` is an object that can contain arbitrary UDM properties.
+It must be configured in the file ``/etc/ucsschool/kelvin/mapped_udm_properties.json``, see :ref:`UDM Properties`.
+
+**Attention**: Due to the technical way schools are created, udm_properties are set after the initial creation
+of the school. This can lead to a school being created with an error following the subsequent alteration.
+In this case the Kelvin API returns a 500 status code, but the school was created anyways.
 
 List / Search
 -------------
@@ -86,7 +98,8 @@ The response body will be::
             "educational_servers": ["dc-demoschool"],
             "administrative_servers": [],
             "class_share_file_server": "dc-demoschool",
-            "home_share_file_server": "dc-demoschool"
+            "home_share_file_server": "dc-demoschool",
+            "udm_properties": {}
         },
         ...
     ]

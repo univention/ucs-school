@@ -127,6 +127,8 @@ async def test_get(
     ou_name = await create_ou_using_python()
     async with UDM(**udm_kwargs) as udm:
         lib_obj = await School.from_dn(f"ou={ou_name},{ldap_base}", ou_name, udm)
+        lib_obj.udm_properties["description"] = f"{ou_name}-description"
+        await lib_obj.modify(udm)
     response = retry_http_502(
         requests.get,
         f"{url_fragment}/schools/{ou_name}",
@@ -135,6 +137,7 @@ async def test_get(
     json_resp = response.json()
     assert response.status_code == 200
     api_obj = SchoolModel(**json_resp)
+    assert api_obj.udm_properties["description"] == f"{ou_name}-description"
     await compare_lib_api_obj(lib_obj, api_obj)
     assert api_obj.unscheme_and_unquote(api_obj.url) == f"{url_fragment}/schools/{lib_obj.name}"
 
@@ -152,6 +155,7 @@ async def test_create(
 ):
     school_create_model: SchoolCreateModel = random_school_create_model()
     attrs = school_create_model.dict()
+    attrs["udm_properties"] = {"description": "DESCRIPTION"}
     schedule_delete_ou_using_ssh(school_create_model.name, docker_host_name)
     response = retry_http_502(
         requests.post,
@@ -166,6 +170,31 @@ async def test_create(
         lib_obj = await School.from_dn(
             f"ou={school_create_model.name},{ldap_base}", school_create_model.name, udm
         )
+        udm_obj = await udm.obj_by_dn(lib_obj.dn)
+    assert api_obj.udm_properties["description"] == "DESCRIPTION"
+    assert udm_obj.props["description"] == "DESCRIPTION"
     assert lib_obj.dn == api_obj.dn
     await compare_lib_api_obj(lib_obj, api_obj)
     assert api_obj.unscheme_and_unquote(api_obj.url) == f"{url_fragment}/schools/{lib_obj.name}"
+
+
+@pytest.mark.asyncio
+async def test_create_unmapped_udm_prop(
+    random_school_create_model,
+    schedule_delete_ou_using_ssh,
+    docker_host_name,
+    retry_http_502,
+    url_fragment,
+    auth_header,
+):
+    school_create_model: SchoolCreateModel = random_school_create_model()
+    attrs = school_create_model.dict()
+    attrs["udm_properties"] = {"unmapped_prop": "some value"}
+    schedule_delete_ou_using_ssh(school_create_model.name, docker_host_name)
+    response = retry_http_502(
+        requests.post,
+        f"{url_fragment}/schools/",
+        headers={"Content-Type": "application/json", **auth_header},
+        json=attrs,
+    )
+    assert response.status_code == 422

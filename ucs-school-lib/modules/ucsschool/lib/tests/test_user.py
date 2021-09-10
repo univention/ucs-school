@@ -461,12 +461,14 @@ async def test_remove(create_ou_using_python, udm_kwargs, new_udm_user, role: Ro
         assert success is True
         assert not await user.exists(udm)
 
-unixhomes= {
-    'student': "schueler",
-    'teacher': "lehrer",
-    'staff': "mitarbeiter",
-    'teacher_and_staff': "lehrer",
+
+unixhomes = {
+    "student": "schueler",
+    "teacher": "lehrer",
+    "staff": "mitarbeiter",
+    "teacher_and_staff": "lehrer",
 }
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)

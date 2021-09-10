@@ -32,16 +32,12 @@ import logging
 from collections.abc import Sequence
 from functools import lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
-
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic.main import Model
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Set, Tuple, Type
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, Response, status
 from ldap.filter import escape_filter_chars
 from pydantic import BaseModel, Field, HttpUrl, SecretStr, ValidationError, root_validator, validator
 
-from ucsschool.importer.configuration import ReadOnlyDict
 from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
 from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.factory import Factory
@@ -58,10 +54,10 @@ from ucsschool.importer.models.import_user import (
     convert_to_teacher_and_staff,
 )
 from ucsschool.lib.models.attributes import ValidationError as LibValidationError
-from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError, MoveError, UdmObject
+from udm_rest_client import UDM, APICommunicationError, CreateError, ModifyError, MoveError
 from univention.admin.filter import conjunction, expression
 
-from ..exceptions import UnknownUDMProperty
+from ..config import UDM_MAPPING_CONFIG
 from ..import_config import get_import_config, init_ucs_school_import_framework
 from ..ldap_access import LDAPAccess
 from ..opa import OPAClient, import_user_to_opa
@@ -104,21 +100,10 @@ def ldap_access_obj() -> LDAPAccess:
     return LDAPAccess()
 
 
-def get_udm_properties(udm_obj: UdmObject) -> Dict[str, Any]:
-    config: ReadOnlyDict = get_import_config()
-    udm_properties = {}
-    for prop in config.get("mapped_udm_properties", []):
-        try:
-            udm_properties[prop] = udm_obj.props[prop]
-        except KeyError:
-            raise UnknownUDMProperty(f"Unknown UDM property {prop!r}.")
-    return udm_properties
-
-
 async def get_import_user(udm: UDM, dn: str) -> ImportUser:
     user = await get_lib_obj(udm, ImportUser, dn=dn)
     udm_user_current = await user.get_udm_object(udm)
-    current_udm_properties = get_udm_properties(udm_user_current)
+    current_udm_properties = UserModel.get_mapped_udm_properties(udm_user_current)
     user.udm_properties.update(current_udm_properties)
     return user
 
@@ -193,24 +178,10 @@ class UserBaseModel(UcsSchoolBaseModel):
     school_classes: Dict[str, List[str]] = {}
     source_uid: str = None
     ucsschool_roles: List[str] = []
-    udm_properties: Dict[str, Any] = None
-
-    def __init__(self, **data: Any) -> None:
-        super(UserBaseModel, self).__init__(**data)
-        # Bug #51766: setting udm_properties = {} in model
-        # leads to invalid java code.
-        if self.udm_properties is None:
-            self.udm_properties = {}
-
-    @classmethod
-    def parse_obj(cls: Type["Model"], obj: Any) -> "Model":
-        res: UserBaseModel = super(UserBaseModel, cls).parse_obj(obj)
-        if res.udm_properties is None:
-            res.udm_properties = {}
-        return res
 
     class Config(UcsSchoolBaseModel.Config):
         lib_class = ImportUser
+        config_id = "user"
 
 
 def not_both_password_and_hashes(cls, values):
@@ -295,7 +266,6 @@ class UserModel(UserBaseModel, APIAttributesMixin):
             )
             for school in sorted(kwargs["school_classes"].keys())
         )
-        kwargs["udm_properties"] = get_udm_properties(udm_obj)
         return kwargs
 
 
@@ -317,6 +287,19 @@ class UserPatchModel(BasePatchModel):
     kelvin_password_hashes: PasswordsHashes = None
 
     _not_both_password_and_hashes = root_validator(allow_reuse=True)(not_both_password_and_hashes)
+
+    @validator("udm_properties")
+    def only_known_udm_properties(cls, udm_properties: Optional[Dict[str, Any]]):
+        property_list = getattr(UDM_MAPPING_CONFIG, "user", [])
+        if not udm_properties:
+            return udm_properties
+        for key in udm_properties:
+            if key not in property_list:
+                raise ValueError(
+                    f"The udm property {key!r} was not configured for this resource "
+                    f"and thus is not allowed."
+                )
+        return udm_properties
 
     async def to_modify_kwargs(self, request: Request) -> Dict[str, Any]:  # noqa: C901
         kwargs = await super().to_modify_kwargs(request)
@@ -640,7 +623,7 @@ async def create(
     - **ucsschool_roles**: list of roles the user has in to each school
         (optional, auto-managed by system, setting and changing discouraged)
     - **udm_properties**: object with UDM properties (optional, e.g.
-        **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
+        **{"udm_prop1": "value1"}**, must be configured in
         **mapped_udm_properties**, see documentation)
     - **kelvin_password_hashes**: Password hashes to be stored unchanged in
         OpenLDAP (optional)
@@ -817,8 +800,9 @@ async def partial_update(  # noqa: C901
     - **disabled**: whether the user should be created deactivated (default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school (auto-managed by system,
         setting and changing discouraged)
-    - **udm_properties**: object with UDM properties (e.g. **{"street": "Luise Av."}**, must be
-        configured in **kelvin.json** in **mapped_udm_properties**, see documentation)
+    - **udm_properties**: object with UDM properties (optional, e.g.
+        **{"udm_prop1": "value1"}**, must be configured in
+        **mapped_udm_properties**, see documentation)
     - **kelvin_password_hashes**: Password hashes to be stored unchanged in OpenLDAP
     """
     async for udm_obj in udm.get("users/user").search(f"uid={escape_filter_chars(username)}"):
@@ -937,7 +921,7 @@ async def complete_update(  # noqa: C901
     - **ucsschool_roles**: list of roles the user has in to each school
         (optional, auto-managed by system, setting and changing discouraged)
     - **udm_properties**: object with UDM properties (optional, e.g.
-        **{"street": "Luise Av."}**, must be configured in **kelvin.json** in
+        **{"udm_prop1": "value1"}**, must be configured in
         **mapped_udm_properties**, see documentation)
     - **kelvin_password_hashes**: Password hashes to be stored unchanged in
         OpenLDAP (optional)

@@ -50,6 +50,7 @@ APP_VERSION = lazy_object_proxy.Proxy(_app_version)
 API_USERS_GROUP_NAME = f"{APP_ID}-admins"
 APP_BASE_PATH = Path("/var/lib/univention-appcenter/apps", APP_ID)
 APP_CONFIG_BASE_PATH = APP_BASE_PATH / "conf"
+KELVIN_CONFIG_BASE_PATH = Path("/etc/ucsschool/kelvin")
 CN_ADMIN_PASSWORD_FILE = APP_CONFIG_BASE_PATH / "cn_admin.secret"
 DEFAULT_LOG_LEVELS = {
     None: logging.INFO,
@@ -72,6 +73,7 @@ STATIC_FILE_CHANGELOG = STATIC_FILES_PATH / "changelog.html"
 STATIC_FILE_README = STATIC_FILES_PATH / "readme.html"
 TOKEN_SIGN_SECRET_FILE = APP_CONFIG_BASE_PATH / "tokens.secret"
 TOKEN_HASH_ALGORITHM = "HS256"
+UDM_MAPPED_PROPERTIES_CONFIG_FILE = KELVIN_CONFIG_BASE_PATH / "mapped_udm_properties.json"
 UCRV_TOKEN_TTL = "ucsschool/kelvin/access_tokel_ttl"
 URL_KELVIN_BASE = "/ucsschool/kelvin"
 URL_API_PREFIX = f"{URL_KELVIN_BASE}/v1"

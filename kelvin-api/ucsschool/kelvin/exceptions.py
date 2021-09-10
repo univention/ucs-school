@@ -36,3 +36,7 @@ class ObjectAlreadyExists(PydanticValueError):
 
 class UnknownUDMProperty(ValueError):
     ...
+
+
+class InvalidConfiguration(ValueError):
+    ...

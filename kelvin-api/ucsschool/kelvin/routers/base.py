@@ -28,7 +28,7 @@
 import logging
 import re
 from functools import lru_cache
-from typing import Any, Dict, List, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 from urllib.parse import ParseResult, quote, unquote, urlparse
 
 import psutil
@@ -37,10 +37,15 @@ from fastapi import HTTPException, Request, status
 from pydantic import BaseModel, HttpUrl, validator
 
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
-from udm_rest_client import UDM
+from udm_rest_client import UDM, UdmObject
 
+from ..config import UDM_MAPPING_CONFIG
+from ..exceptions import UnknownUDMProperty
 from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pydantic.main import Model
 
 school_name_regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$")
 
@@ -91,8 +96,12 @@ async def get_lib_obj(
 
 
 class LibModelHelperMixin(BaseModel):
+
+    udm_properties: Dict[str, Any] = None
+
     class Config:
         lib_class: Type[UCSSchoolModel]
+        config_id: str = "LibModelHelperMixin"
         json_loads = ujson.loads
 
     @staticmethod
@@ -111,6 +120,42 @@ class LibModelHelperMixin(BaseModel):
         up: ParseResult = urlparse(url)
         replaced = up._replace(scheme="http", path=unquote(up.path))
         return replaced.geturl()
+
+    @validator("udm_properties")
+    def only_known_udm_properties(cls, udm_properties: Optional[Dict[str, Any]]):
+        property_list = getattr(UDM_MAPPING_CONFIG, cls.Config.config_id, [])
+        if not udm_properties:
+            return udm_properties
+        for key in udm_properties:
+            if key not in property_list:
+                raise ValueError(
+                    f"The udm property {key!r} was not configured for this resource "
+                    f"and thus is not allowed."
+                )
+        return udm_properties
+
+    @classmethod
+    def parse_obj(cls: Type["Model"], obj: Any) -> "Model":
+        res: LibModelHelperMixin = super(LibModelHelperMixin, cls).parse_obj(obj)
+        if res.udm_properties is None:
+            res.udm_properties = {}
+        return res
+
+    @classmethod
+    def get_mapped_udm_properties(cls, udm_obj: UdmObject) -> Dict[str, Any]:
+        udm_properties = {}
+        property_list = getattr(UDM_MAPPING_CONFIG, cls.Config.config_id, [])
+        for prop in property_list:
+            try:
+                udm_properties[prop] = udm_obj.props[prop]
+            except KeyError:
+                raise UnknownUDMProperty(f"Unknown UDM property {prop!r}.")
+        return udm_properties
+
+    @classmethod
+    def filter_udm_properties(cls, udm_properties: Dict[str, Any]) -> Dict[str, Any]:
+        property_list = getattr(UDM_MAPPING_CONFIG, cls.Config.config_id, [])
+        return {key: value for key, value in udm_properties.items() if key in property_list}
 
     @classmethod
     async def from_lib_model(
@@ -139,12 +184,25 @@ class LibModelHelperMixin(BaseModel):
         kwargs["dn"] = kwargs.pop("$dn$")
         if obj.supports_school():
             kwargs["school"] = cls.scheme_and_quote(request.url_for("get", school_name=obj.school))
+        udm_obj = await obj.get_udm_object(udm)
+        kwargs["udm_properties"] = cls.get_mapped_udm_properties(udm_obj)
         return kwargs
+
+    def __init__(self, **kwargs):
+        super(LibModelHelperMixin, self).__init__(**kwargs)
+        # Bug #51766: setting udm_properties = {} in model
+        # leads to invalid java code.
+        if self.udm_properties is None:
+            self.udm_properties = {}
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
         """Get the corresponding ucsschool.lib object to this Kelvin object."""
         kwargs = await self._as_lib_model_kwargs(request)
-        return self.Config.lib_class(**kwargs)
+        udm_properties = kwargs.pop("udm_properties") if "udm_properties" in kwargs else {}
+        filtered_udm_properties = self.filter_udm_properties(udm_properties)
+        lib_obj: UCSSchoolModel = self.Config.lib_class(**kwargs)
+        lib_obj.udm_properties = filtered_udm_properties
+        return lib_obj
 
     async def _as_lib_model_kwargs(self, request: Request) -> Dict[str, Any]:
         """
@@ -177,13 +235,17 @@ class UcsSchoolBaseModel(LibModelHelperMixin):
 
     async def as_lib_model(self, request: Request) -> UCSSchoolModel:
         kwargs = await self._as_lib_model_kwargs(request)
+        udm_properties = kwargs.pop("udm_properties") if "udm_properties" in kwargs else {}
+        filtered_udm_properties = self.filter_udm_properties(udm_properties)
         if self.Config.lib_class.supports_school():
             kwargs["school"] = (
                 url_to_name(request, "school", self.unscheme_and_unquote(self.school))
                 if self.school
                 else self.school
             )
-            return self.Config.lib_class(**kwargs)
+            lib_obj: UCSSchoolModel = self.Config.lib_class(**kwargs)
+            lib_obj.udm_properties = filtered_udm_properties
+            return lib_obj
 
     @validator("name", check_fields=False)
     def check_name(cls, value: str) -> str:

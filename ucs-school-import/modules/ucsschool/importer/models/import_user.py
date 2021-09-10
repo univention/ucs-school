@@ -43,7 +43,7 @@ from ldap.filter import filter_format
 from six import iteritems, string_types
 
 from ucsschool.lib.models.attributes import RecordUID, SourceUID, ValidationError
-from ucsschool.lib.models.base import NoObject, WrongObjectType
+from ucsschool.lib.models.base import NoObject, UDMPropertiesError, WrongObjectType
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import (
     ConcreteUserClass,
@@ -159,7 +159,6 @@ class ImportUser(User):
     prop = uadmin_property("_replace")
     _all_school_names: List[str] = None
     _all_usernames: Dict[str, UsernameUniquenessTuple] = {}
-    _attribute_udm_names: Dict[str, str] = None
     _prop_regex = re.compile(r"<(.*?)(:.*?)*>")
     _prop_providers = {
         "birthday": "make_birthday",
@@ -474,49 +473,18 @@ class ImportUser(User):
         roles = user_dict.pop("roles", [])
         return cls.factory.make_import_user(roles, **user_dict)
 
+    def _handle_udm_properties(self, udm_obj: UdmObject):
+        try:
+            super(ImportUser, self)._handle_udm_properties(udm_obj)
+        except UDMPropertiesError as exc:
+            raise UDMError(exc.message, entry_count=self.entry_count, import_user=self) from exc
+
     async def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
-        self._prevent_mapped_attributes_in_udm_properties()
         await super(ImportUser, self)._alter_udm_obj(udm_obj)
         if self._userexpiry is not None:
             udm_obj.props["userexpiry"] = self._userexpiry
         if self._purge_ts is not None:
             udm_obj.props["ucsschoolPurgeTimestamp"] = self._purge_ts
-
-        for property_, value in (self.udm_properties or {}).items():
-            try:
-                udm_obj.props[property_] = value
-            except (KeyError, noProperty) as exc:
-                raise UnknownProperty(
-                    "UDM property '{}' could not be set. {}: {}".format(
-                        property_, exc.__class__.__name__, exc
-                    ),
-                    entry_count=self.entry_count,
-                    import_user=self,
-                )
-            except (valueError, valueInvalidSyntax) as exc:
-                raise UDMValueError(
-                    "UDM property '{}' could not be set. {}: {}".format(
-                        property_, exc.__class__.__name__, exc
-                    ),
-                    entry_count=self.entry_count,
-                    import_user=self,
-                )
-            except Exception as exc:
-                self.logger.exception(
-                    "Unexpected exception caught: UDM property %r could not be set for user %r in "
-                    "import line %r: %s.",
-                    property_,
-                    self.name,
-                    self.entry_count,
-                    exc,
-                )
-                raise UDMError(
-                    "UDM property {!r} could not be set. {}: {}".format(
-                        property_, exc.__class__.__name__, exc
-                    ),
-                    entry_count=self.entry_count,
-                    import_user=self,
-                )
 
     @classmethod
     async def get_all_school_names(cls, lo: UDM) -> Iterable[str]:
@@ -1549,28 +1517,12 @@ class ImportUser(User):
             self.make_classes()
         return super(ImportUser, self).get_school_class_objs()
 
-    @classmethod
-    def attribute_udm_names(cls) -> Dict[str, str]:
-        if not cls._attribute_udm_names:
-            cls._attribute_udm_names = dict(
-                (attr.udm_name, name) for name, attr in cls._attributes.items() if attr.udm_name
-            )
-        return cls._attribute_udm_names
-
     def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None
         """
         Make sure users do not store values for ucsschool.lib mapped Attributes
         in udm_properties.
         """
-        if not self.udm_properties:
-            return
-
-        bad_props = set(self.udm_properties.keys()).intersection(self.attribute_udm_names())
-        if bad_props:
-            raise NotSupportedError(
-                "UDM properties '{}' must be set as attributes of the {} object (not in "
-                "udm_properties).".format("', '".join(bad_props), self.__class__.__name__)
-            )
+        super(ImportUser, self)._prevent_mapped_attributes_in_udm_properties()
         if "e-mail" in self.udm_properties.keys() and not self.email:
             # this might be an mistake, so let's warn the user
             self.logger.warning(
