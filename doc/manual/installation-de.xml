@@ -44,13 +44,7 @@
 
   <caution>
 	  <para>
-		  Beginnend mit &ucsUAS; 4.4 hat sich der Installationsprozess von zusätzlichen Systemen in
-		  einer &ucsUAS;-Domäne geändert. Sollen UCS-Systeme mit Version 4.3 oder kleiner in die
-		  &ucsUAS;-Domäne aufgenommen werden, ist das entsprechende Handbuch für die jeweilige UCS-Version zu
-		  prüfen, da der hier beschriebene Prozess auf diesen Systemen nicht funktioniert.
-	  </para>
-	  <para>
-		  Der neue Installationsprozess nutzt das neue Feature <emphasis>Join-Hooks</emphasis>, das ab &ucsUCS; 4.4 zur Verfügung steht.
+		  Der Installationsprozess nutzt seit &ucsUAS; 4.4 das Feature <emphasis>Join-Hooks</emphasis>.
 		  Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im LDAP-Verzeichnis hinterlegt und automatisch
 		  während des Join-Vorgangs bzw. während der Ausführung von Joinskripten ausgeführt. Der &ucsUAS;-Join-Hook installiert
 		  auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus dem Univention App Center und installiert die auf dem
