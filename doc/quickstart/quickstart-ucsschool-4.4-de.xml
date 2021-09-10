@@ -143,8 +143,8 @@ feedback@univention.de
   </para>
 
   <para>
-    Standardmäßig wird bei der Erstinstallation von &ucsUAS; auf dem &ucsPrimaryDN; eine Demonstrationsschule inklusive Testnutzern und
-    einem Portal konfiguriert. Die Schule trägt den Namen <emphasis>DEMOSCHOOL</emphasis> und kann für eigene Tests verwendet werden.
+    Standardmäßig wird bei der Erstinstallation von &ucsUAS; auf dem &ucsPrimaryDN; eine Demonstrationsschule inklusive Testnutzern
+    konfiguriert. Die Schule trägt den Namen <emphasis>DEMOSCHOOL</emphasis> und kann für eigene Tests verwendet werden.
 	Das Passwort für die automatisch angelegten Nutzer <systemitem class="username">demo_student</systemitem>,
     <systemitem class="username">demo_teacher</systemitem> und <systemitem class="username">demo_admin</systemitem> befindet sich in der Datei
     <filename>/etc/ucsschool/demoschool.secret</filename>. Um das Anlegen der Demonstrationsschule zu verhindern,
