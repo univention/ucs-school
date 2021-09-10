@@ -1,3 +1,9 @@
+ucs-school-umc-installer (8.0.4) unstable; urgency=medium
+
+  * Bug #53460: Do not mention Demo Portal - it is not created anymore
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 10 Sep 2021 17:55:28 +0200
+
 ucs-school-umc-installer (8.0.3) unstable; urgency=medium
 
   * Bug #52602: change server role terminology

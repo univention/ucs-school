@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2018-11-07 10:31+0100\n"
+"POT-Creation-Date: 2021-09-10 17:53+0200\n"
 "PO-Revision-Date: 2017-03-08 13:06+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolinstaller/__init__.py:655
+#: umc/python/schoolinstaller/__init__.py:902
 #, python-format
 msgid "An unexpected error occurred during installation: %s"
 msgstr "Ein unerwarteter Fehler trat während der Installation auf: %s"
 
-#: umc/python/schoolinstaller/__init__.py:544
+#: umc/python/schoolinstaller/__init__.py:697
 msgid ""
 "Cannot get lock for installation process. Another package manager seems to "
 "block the operation."
@@ -25,88 +25,88 @@ msgstr ""
 "Die Sperre für den Installationsprozess konnte nicht angelegt werden. Eine "
 "andere Paket-Manager-Instanz scheint die Ausführung zu blockieren."
 
-#: umc/python/schoolinstaller/__init__.py:463
+#: umc/python/schoolinstaller/__init__.py:554
 #, python-format
 msgid "Could not connect to the Primary Directory Node %s: %s"
 msgstr "Konnte nicht mit dem Primary Directory Node %s verbinden: %s"
 
-#: umc/python/schoolinstaller/__init__.py:601
+#: umc/python/schoolinstaller/__init__.py:813
 msgid "Creation of LDAP school structure"
 msgstr "Erstellen der LDAP-Schul-Struktur"
 
-#: umc/python/schoolinstaller/__init__.py:628
+#: umc/python/schoolinstaller/__init__.py:873
 msgid "Domain join"
 msgstr "Domänenbeitritt"
 
-#: umc/python/schoolinstaller/__init__.py:223
+#: umc/python/schoolinstaller/__init__.py:272
 #, python-format
 msgid "Executing join script %s"
 msgstr "Ausführung des Join-Skriptes %s"
 
-#: umc/python/schoolinstaller/__init__.py:633
+#: umc/python/schoolinstaller/__init__.py:878
 msgid "Executing join scripts..."
 msgstr "Ausführung der Join-Skripte..."
 
-#: umc/python/schoolinstaller/__init__.py:596
+#: umc/python/schoolinstaller/__init__.py:806
 msgid "Failed to install packages."
 msgstr "Konnte keine Pakete installieren."
 
-#: umc/python/schoolinstaller/__init__.py:538
+#: umc/python/schoolinstaller/__init__.py:686
 msgid ""
-"In order to install UCS@school on a Backup Directory Node, the system "
-"needs to be joined first."
+"In order to install UCS@school on a Backup Directory Node, the system needs "
+"to be joined first."
 msgstr ""
 "Bevor UCS@school auf einem Backup Directory Node installiert werden kann, "
 "muss dieses System zuerst der Domäne beigetreten sein."
 
-#: umc/python/schoolinstaller/__init__.py:293
+#: umc/python/schoolinstaller/__init__.py:358
 msgid "Initializing"
 msgstr "Einrichten"
 
-#: umc/python/schoolinstaller/__init__.py:583
+#: umc/python/schoolinstaller/__init__.py:746
 msgid "Installation of UCS@school packages"
 msgstr "Installation der UCS@school-Pakete"
 
-#: umc/python/schoolinstaller/__init__.py:569
+#: umc/python/schoolinstaller/__init__.py:730
 msgid "Invalid UCS@school configuration."
 msgstr "Ungültige UCS@school-Konfiguration"
 
-#: umc/python/schoolinstaller/__init__.py:507
+#: umc/python/schoolinstaller/__init__.py:612
 msgid ""
 "Invalid server role! UCS@school can only be installed on the system roles "
 "Primary Directory Node, Backup Directory Node, or Replica Directory Node."
 msgstr ""
-"Ungültige Systemrolle! UCS@school kann nur auf den Systemrollen "
-"Primary Directory Node, Backup Directory Node sowie Replica Directory Node "
+"Ungültige Systemrolle! UCS@school kann nur auf den Systemrollen Primary "
+"Directory Node, Backup Directory Node sowie Replica Directory Node "
 "installiert werden."
 
-#: umc/python/schoolinstaller/__init__.py:461
+#: umc/python/schoolinstaller/__init__.py:548
 msgid ""
-"Make sure ucs-school-umc-installer is installed on the Primary Directory Node and all "
-"join scripts are executed."
+"Make sure ucs-school-umc-installer is installed on the Primary Directory "
+"Node and all join scripts are executed."
 msgstr ""
-"Bitte stellen Sie sicher, dass ucs-school-umc-installer auf dem Primary Directory Node "
-"installiert ist und alle Joinskripte ausgeführt wurden."
+"Bitte stellen Sie sicher, dass ucs-school-umc-installer auf dem Primary "
+"Directory Node installiert ist und alle Joinskripte ausgeführt wurden."
 
-#: umc/python/schoolinstaller/__init__.py:530
+#: umc/python/schoolinstaller/__init__.py:658
 msgid ""
-"Please install UCS@school on the Primary Directory Node. Cannot "
-"proceed installation on this system."
+"Please install UCS@school on the Primary Directory Node. Cannot proceed "
+"installation on this system."
 msgstr ""
-"Bitte installieren Sie UCS@school auf dem Primary Directory Node. "
-"Die Installation kann nicht fortgesetzt werden."
+"Bitte installieren Sie UCS@school auf dem Primary Directory Node. Die "
+"Installation kann nicht fortgesetzt werden."
 
-#: umc/python/schoolinstaller/__init__.py:630
+#: umc/python/schoolinstaller/__init__.py:875
 msgid "Preparing domain join..."
 msgstr "Vorbereiten des Domänenbeitritts..."
 
-#: umc/python/schoolinstaller/__init__.py:510
+#: umc/python/schoolinstaller/__init__.py:618
 msgid "Server type has to be set for Replica Directory Node"
 msgstr ""
 "Es muss ein Servertyp (Edukativ/Verwaltung) für den Replica Directory Node "
 "angegeben werden."
 
-#: umc/python/schoolinstaller/__init__.py:277
+#: umc/python/schoolinstaller/__init__.py:338
 msgid ""
 "Software packages have been installed successfully, however, some join "
 "scripts could not be executed. More details can be found in the log file /"
@@ -119,7 +119,7 @@ msgstr ""
 "Konflikte können die entsprecheden Join-Skripte über das UMC-Modul "
 "\"Domänenbeitritt\" noch einmal ausgeführt werden."
 
-#: umc/python/schoolinstaller/__init__.py:274
+#: umc/python/schoolinstaller/__init__.py:328
 msgid ""
 "Software packages have been installed successfully, however, the join "
 "process could not be executed. More details can be found in the log file /"
@@ -132,7 +132,7 @@ msgstr ""
 "entsprechenden Konflikte kann der Domänenbeitritt über das UMC-Modul "
 "\"Domänenbeitritt\" noch einmal ausgeführt werden."
 
-#: umc/python/schoolinstaller/__init__.py:216
+#: umc/python/schoolinstaller/__init__.py:259
 #, python-format
 msgid ""
 "Software packages have been installed, however, the system join could not be "
@@ -146,49 +146,50 @@ msgstr ""
 "entsprechenden Konflikte kann der Domänenbeitritt über das UMC-Modul "
 "\"Domänenbeitritt\" abgeschlossen werden."
 
-#: umc/python/schoolinstaller/__init__.py:431
+#: umc/python/schoolinstaller/__init__.py:512
 msgid "The LDAP connection to the Primary Directory Node failed."
 msgstr ""
-"Eine LDAP-Verbindung zu dem Primary Directory Node konnte nicht aufgebaut werden."
+"Eine LDAP-Verbindung zu dem Primary Directory Node konnte nicht aufgebaut "
+"werden."
 
-#: umc/python/schoolinstaller/__init__.py:536
-msgid ""
-"The UCS@school Primary Directory Node needs to be configured similarly to "
-"this Backup Directory Node. Please choose the correct environment type for this "
-"system."
-msgstr ""
-"Das UCS@school Primary Directory Node muss gleich wie der Backup Directory "
-"Node konfiguriert werden. Bitte wählen Sie die dem Primary Directory "
-"Node entsprechende Konfiguration für dieses System aus."
-
-#: umc/python/schoolinstaller/__init__.py:613
-msgid ""
-"The UCS@school software packages have been installed, however, a school "
-"OU could not be created and consequently a re-join of the system has not "
-"been performed. Please create a new school OU structure using the UMC "
-"module \"Add school\" on the Primary Directory Node and perform a domain join "
-"on this machine via the UMC module \"Domain join\"."
-msgstr ""
-"Die UCS@school-Softwarepakete wurden erfolgreich installiert, jedoch konnte "
-"eine Schul-OU nicht erzeugt werden, so dass ein Domänenbeitritt des Systems "
-"nicht durchgeführt wurde. Bitte erstellen Sie eine neue Schul-OU-Struktur "
-"über das UMC-Modul \"Schule hinzufügen\" auf dem Primary Directory Node und führen "
-"Sie einen Domänenbeitritt auf diesem Replica Directory Node über das UMC-Modul "
-"\"Domänenbeitritt\" durch."
-
-#: umc/python/schoolinstaller/__init__.py:110
-msgid "The entered FQDN is not a valid value"
-msgstr "Der eingegebene Domänenname ist ungültig"
-
-#: umc/python/schoolinstaller/__init__.py:534
+#: umc/python/schoolinstaller/__init__.py:672
 msgid ""
 "The Primary Directory Node is not configured for a UCS@school multi server "
 "environment. Cannot proceed installation on this system."
 msgstr ""
-"Das UCS@school Primary Directory Node ist nicht für den Multi-"
-"Server-Einsatz konfiguriert. Die Installation kann nicht fortgesetzt werden."
+"Das UCS@school Primary Directory Node ist nicht für den Multi-Server-Einsatz "
+"konfiguriert. Die Installation kann nicht fortgesetzt werden."
 
-#: umc/python/schoolinstaller/__init__.py:513
+#: umc/python/schoolinstaller/__init__.py:679
+msgid ""
+"The UCS@school Primary Directory Node needs to be configured similarly to "
+"this Backup Directory Node. Please choose the correct environment type for "
+"this system."
+msgstr ""
+"Das UCS@school Primary Directory Node muss gleich wie der Backup Directory "
+"Node konfiguriert werden. Bitte wählen Sie die dem Primary Directory Node "
+"entsprechende Konfiguration für dieses System aus."
+
+#: umc/python/schoolinstaller/__init__.py:838
+msgid ""
+"The UCS@school software packages have been installed, however, a school OU "
+"could not be created and consequently a re-join of the system has not been "
+"performed. Please create a new school OU structure using the UMC module "
+"\"Add school\" on the Primary Directory Node and perform a domain join on "
+"this machine via the UMC module \"Domain join\"."
+msgstr ""
+"Die UCS@school-Softwarepakete wurden erfolgreich installiert, jedoch konnte "
+"eine Schul-OU nicht erzeugt werden, so dass ein Domänenbeitritt des Systems "
+"nicht durchgeführt wurde. Bitte erstellen Sie eine neue Schul-OU-Struktur "
+"über das UMC-Modul \"Schule hinzufügen\" auf dem Primary Directory Node und "
+"führen Sie einen Domänenbeitritt auf diesem Replica Directory Node über das "
+"UMC-Modul \"Domänenbeitritt\" durch."
+
+#: umc/python/schoolinstaller/__init__.py:117
+msgid "The entered FQDN is not a valid value"
+msgstr "Der eingegebene Domänenname ist ungültig"
+
+#: umc/python/schoolinstaller/__init__.py:627
 msgid ""
 "The name of an educational server has to be specified if the system shall be "
 "configured as administrative server."
@@ -196,7 +197,7 @@ msgstr ""
 "Der Name eines edukativen Schulservers muss angegeben werden, wenn das "
 "aktuelle System als Verwaltungsserver konfiguriert werden soll."
 
-#: umc/python/schoolinstaller/__init__.py:516
+#: umc/python/schoolinstaller/__init__.py:639
 msgid ""
 "The name of the educational server may not be equal to the name of the "
 "administrative Replica Directory Node."
@@ -204,12 +205,12 @@ msgstr ""
 "Der Name eines edukativen Schulservers darf nicht mit dem Namen des "
 "Verwaltungsservers übereinstimmen!"
 
-#: umc/python/schoolinstaller/__init__.py:503
+#: umc/python/schoolinstaller/__init__.py:602
 msgid "The specified school OU is not valid."
 msgstr "Die angegebene Schul-OU ist ungültig."
 
-#: umc/python/schoolinstaller/__init__.py:532
-#: umc/python/schoolinstaller/__init__.py:551
+#: umc/python/schoolinstaller/__init__.py:665
+#: umc/python/schoolinstaller/__init__.py:709
 msgid ""
 "This UCS domain uses Samba 3 which is no longer supported by UCS@school. "
 "Please update all domain systems to samba 4 to be able to continue."
@@ -218,42 +219,42 @@ msgstr ""
 "unterstützt wird. Um fortzusetzen, muss die UCS-Domäne auf Samba 4 "
 "aktualisiert werden."
 
-#: umc/python/schoolinstaller/__init__.py:625
+#: umc/python/schoolinstaller/__init__.py:866
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
-"Replica Directory Node has already been assigned to a different school or that the "
-"specified school OU name is already in use."
+"Replica Directory Node has already been assigned to a different school or "
+"that the specified school OU name is already in use."
 msgstr ""
 "Die Überprüfung der LDAP-Schul-OU-Struktur ist fehlgeschlagen. Es scheint, "
-"dass der aktuelle Replica Directory Node bereits einer anderen Schule zugeordnet ist, "
-"oder dass der angegebene Schul-OU-Name bereits in Verwendung ist."
+"dass der aktuelle Replica Directory Node bereits einer anderen Schule "
+"zugeordnet ist, oder dass der angegebene Schul-OU-Name bereits in Verwendung "
+"ist."
 
-#: umc/python/schoolinstaller/__init__.py:645
+#: umc/python/schoolinstaller/__init__.py:891
 msgid "finished..."
 msgstr "beendet..."
 
 #~ msgid ""
-#~ "Cannot connect to the Primary Directory Node %s. It seems that "
-#~ "the specified domain credentials are not valid."
+#~ "Cannot connect to the Primary Directory Node %s. It seems that the "
+#~ "specified domain credentials are not valid."
 #~ msgstr ""
-#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. "
-#~ "Scheinbar sind die angegebenen Anmeldedaten nicht gültig."
+#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. Scheinbar sind "
+#~ "die angegebenen Anmeldedaten nicht gültig."
 
 #~ msgid ""
-#~ "Cannot connect to the Primary Directory Node %s. Please make "
-#~ "sure that the system is reachable. If not this could be due to wrong DNS "
-#~ "name server settings."
+#~ "Cannot connect to the Primary Directory Node %s. Please make sure that "
+#~ "the system is reachable. If not this could be due to wrong DNS name "
+#~ "server settings."
 #~ msgstr ""
-#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. Bitte "
-#~ "stellen Sie sicher, dass das System erreichbar ist. Ist dies nicht der "
-#~ "Fall, kann das mit falschen DNS-Einstellungen für den Nameserver "
-#~ "zusammenhängen."
+#~ "Die Verbindung zum Primary Directory Node %s schlug fehl. Bitte stellen "
+#~ "Sie sicher, dass das System erreichbar ist. Ist dies nicht der Fall, kann "
+#~ "das mit falschen DNS-Einstellungen für den Nameserver zusammenhängen."
 
 #~ msgid ""
 #~ "The OU \"%s\" is already in use and has been assigned to a different "
-#~ "Replica Directory Node. Please choose a different name for the "
-#~ "associated school OU."
+#~ "Replica Directory Node. Please choose a different name for the associated "
+#~ "school OU."
 #~ msgstr ""
-#~ "Die OU \"%s\" ist bereits in Verwendung und wurde einem anderen "
-#~ "Replica Directory Node zugeordnet. Bitte wählen Sie einen anderen "
-#~ "Namen für die verknüpfte Schul-OU."
+#~ "Die OU \"%s\" ist bereits in Verwendung und wurde einem anderen Replica "
+#~ "Directory Node zugeordnet. Bitte wählen Sie einen anderen Namen für die "
+#~ "verknüpfte Schul-OU."
