@@ -2,7 +2,7 @@
 ## desc: Check if UCS 4.4 is installed
 ## tags: [apptest,ucsschool]
 ## exposure: safe
-## bug: [40475]
+## bugs: [40475]
 
 import univention.config_registry
 
