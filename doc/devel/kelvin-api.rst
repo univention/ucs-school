@@ -67,16 +67,15 @@ Publish Kelvin
 --------------
 
 Do not forget to publish the documentation. At least the version has to be increased.
-For documentation about this see [docu readme](../kelvin/readme.rst).
+For documentation about this see docu readme https://git.knut.univention.de/univention/ucsschool/-/blob/feature/kelvin/doc/kelvin/readme.rst
 
 This code should be run **on omar**:
 
-```shell
-cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
-./copy_from_appcenter.test.sh 4.4 ucsschool-kelvin-rest-api_20210617131818/  # copies the given version to public app center on local mirror!
-sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
-```
+    $ cd /mnt/omar/vmwares/mirror/appcenter
+    $ ./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
+    $ ./copy_from_appcenter.test.sh 4.4 ucsschool-kelvin-rest-api_20210617131818/  # copies the given version to public app center on local mirror!
+    $ sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
+
 
 
 Tests
