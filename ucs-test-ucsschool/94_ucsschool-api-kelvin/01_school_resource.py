@@ -46,6 +46,7 @@ EXPECTED_SCHOOL_RESSOURCE_ATTRS = {
     "name",
     "ucsschool_roles",
     "url",
+    "udm_properties",
 }
 
 
@@ -126,6 +127,8 @@ def test_list(auth_header):
             assert k in obj
             if k in ("administrative_servers", "educational_servers", "ucsschool_roles"):
                 assert isinstance(obj[k], list)
+            elif k == "udm_properties":
+                assert isinstance(obj[k], dict)
             else:
                 assert isinstance(obj[k], (string_types, type(None)))
 
@@ -148,6 +151,8 @@ def test_get(auth_header, lo):
         for k, v in json_response.items():
             if k == "url":
                 assert v == school_url
+            elif k == "udm_properties":
+                continue  # We are not interested in that here.
             elif (
                 k
                 in (
