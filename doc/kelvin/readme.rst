@@ -17,10 +17,14 @@ You don't have to do this anymore. This is here just for documentations sake.
 Build HTML output from RST files
 --------------------------------
 
+Don't use the ``sphinx-univention`` for this. It's outdated. Use a local ``sphinx`` version
+instead and checkout the git submodule with ``git submodule update --init --recursive --remote``.
+
 To build the HTML documentation run::
 
     $ cd doc/kelvin
-    $ docker run -u "$(id -u):$(id -g)" -it --rm -v "$(pwd)/docs":/home/python/docs keimlink/sphinx-doc:1.7.1 make -C docs html
+    $ make -C docs html
+
 
 Autobuild HTML docs during development
 --------------------------------------
@@ -52,13 +56,6 @@ Add the files to the docs git repository and start a Jenkins job::
     $ git commit -m "Bug #52220: update Kelvin API documentation"
     $ git push
 
-The start the Jenkins job at https://jenkins.knut.univention.de:8181/view/Publish/job/Publish_docs.univention.de/ and open its terminal output page.
-After a while there will be a question if the prepared result should really be published. Verify the build and tell it to *proceed*::
 
-    [ftp] Is http://univention-repository.knut.univention.de/download/docs/ okay?
-    [ftp] Proceed or Abort
-
-The result will be uploaded to docs.software-univention.de and then there will be a second verify request::
-
-    Is https://docs.software-univention.de/ okay?
-    Proceed or Abort
+The documentation will be build automatically in our [pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines).
+You have to press a deploy button to publish the documentation.
