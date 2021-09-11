@@ -2476,7 +2476,7 @@ def export_computer():
     # get group
     print("looking for objects... please wait...")
     objects = univention.admin.modules.lookup(
-        computer_module, None, lo, scope="sub", superordinate=superordinate, base=ouBaseDN, filter=None
+        computer_module, None, lo, scope="sub", superordinate=superordinate, base=ouBaseDN,
     )
     print("writing data of %d objects..." % len(objects))
     out_line = ("%%s%(sep)s" * 5 + "\n") % {"sep": sepchar}
@@ -2485,7 +2485,6 @@ def export_computer():
         inventoryNumber = ""
         ip = ""
         mac = ""
-        # FIXME: looks completely broken
         if host.get("inventoryNumber"):
             inventoryNumber = host["inventoryNumber"][0]
         if host.get("ip"):
