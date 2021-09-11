@@ -9,9 +9,9 @@ User=root
 Group=root
 EnvironmentFile=/etc/default/celery-worker-ucsschool-import
 WorkingDirectory=/var/spool/ucs-school-import
-ExecStartPre=/bin/sh -c '/bin/mkdir -p "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
-ExecStartPre=/bin/sh -c '/usr/bin/chmod 02755 "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
-ExecStartPre=/bin/sh -c '/usr/bin/chown "${CELERYD_USER}:${CELERYD_GROUP}" "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
+ExecStartPre=/bin/sh -c 'mkdir -p "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
+ExecStartPre=/bin/sh -c 'chmod 02755 "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
+ExecStartPre=/bin/sh -c 'chown "${CELERYD_USER}:${CELERYD_GROUP}" "${CELERYD_PID_DIR}" "${CELERYD_LOG_DIR}"'
 ExecStart=/bin/sh -c '${CELERY_BIN:-"celery"} -A $CELERY_APP multi start $CELERYD_NODES --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS'
 ExecStop=/bin/sh -c '${CELERY_BIN:-"celery"} multi stopwait $CELERYD_NODES --pidfile=${CELERYD_PID_FILE}'
 ExecReload=/bin/sh -c '${CELERY_BIN:-"celery"} -A $CELERY_APP multi restart $CELERYD_NODES --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} $CELERYD_OPTS'
