@@ -83,14 +83,12 @@ from univention.management.console.modules.sanitizers import (
     StringSanitizer,
 )
 
-# import univention.management.console.modules.schoolexam.util as exam_util
-
-
 _ = Translation("ucs-school-umc-computerroom").translate
 
 ROOMDIR = "/var/cache/ucs-school-umc-computerroom"
-FN_SCREENSHOT_DENIED = _("/usr/share/ucs-school-umc-computerroom/screenshot_denied.svg")
-FN_SCREENSHOT_NOTREADY = _("/usr/share/ucs-school-umc-computerroom/screenshot_notready.svg")
+_SCREENSHOT_DIR = '/usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable'
+FN_SCREENSHOT_DENIED = os.path.join(_SCREENSHOT_DIR, _("screenshot_denied.svg"))
+FN_SCREENSHOT_NOTREADY = os.path.join(_SCREENSHOT_DIR, _("screenshot_notready.svg"))
 
 
 def compare_dn(a, b):

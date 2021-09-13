@@ -39,7 +39,6 @@ define([
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
 	"dijit/Tooltip",
-	"umc/i18n/tools",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Button",
@@ -48,7 +47,7 @@ define([
 	"umc/widgets/Text",
 	"put-selector/put",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip, i18nTools,
+], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip,
 		ComboBox, ContainerWidget, Button, Page, StandbyMixin, Text, put, _) {
 
 	// README: This is an alternative view
@@ -182,9 +181,9 @@ define([
 				content: lang.replace('<span class="screenShotView__userTag" id="userTag-{computer}"></span><div class="screenShotView__imgWrapper"><img class="screenShotView__img" id="img-{computer}" alt="{alternative}" src="{initialSrc}"></img></div>', {
 					computer: entities.encode(this.computer),
 					alternative: entities.encode(_('Currently there is no screenshot available. Wait a few seconds.')),
-					initialSrc: lang.replace('/univention/management/modules/computerroom/screenshot_notready{locale}.svg', {
-						locale: i18nTools.defaultLang() === 'de-DE' ? '_de' : '',
-					})
+					initialSrc: require.toUrl(lang.replace('dijit/themes/umc/icons/scalable/{image}', {
+						image: _('screenshot_notready.svg')
+					}))
 				})
 			});
 			this.startup();

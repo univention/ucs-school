@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2020-04-24 12:19+0200\n"
+"POT-Creation-Date: 2021-09-13 12:18+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,19 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:84
-msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.svg"
-msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_denied_de.svg"
-
-#: umc/python/computerroom/__init__.py:85
-msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.svg"
-msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready_de.svg"
-
-#: umc/python/computerroom/__init__.py:491
+#: umc/python/computerroom/__init__.py:521
 msgid "A different user is already running a computer room session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:710
+#: umc/python/computerroom/__init__.py:721
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."
@@ -32,10 +24,18 @@ msgstr ""
 "In diesem Raum wird derzeit schon eine Klassenarbeit geschrieben. Bitte "
 "wählen Sie einen anderen Raum."
 
-#: umc/python/computerroom/__init__.py:281
-#: umc/python/computerroom/__init__.py:285
-#: umc/python/computerroom/__init__.py:288
-#: umc/python/computerroom/__init__.py:294
+#: umc/python/computerroom/__init__.py:283
+#: umc/python/computerroom/__init__.py:287
+#: umc/python/computerroom/__init__.py:290
+#: umc/python/computerroom/__init__.py:296
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Ungültige Raum-DN: %s"
+
+#: umc/python/computerroom/__init__.py:90
+msgid "screenshot_denied.svg"
+msgstr "screenshot_denied_de.svg"
+
+#: umc/python/computerroom/__init__.py:91
+msgid "screenshot_notready.svg"
+msgstr "screenshot_notready_de.svg"
