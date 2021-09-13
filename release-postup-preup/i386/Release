@@ -1,0 +1,26 @@
+Codename: ucsschool_20201208103021/i386
+Date: Mon, 13 Sep 2021 19:09:20 +0000
+Label: ucs@school
+Origin: Univention
+Suite: apt
+Version: ucsschool_20201208103021
+MD5Sum:
+ d41d8cd98f00b204e9800998ecf8427e                0 Packages
+ 4059d198768f9f8dc9372dc1c54bc3c3               14 Packages.bz2
+ a3f8f9e2a9ec6178e350fd88f60976dc               29 Packages.gz
+ fa826e57334e4ab78fb366196d6a83c3              160 Release
+SHA1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709                0 Packages
+ 64a543afbb5f4bf728636bdcbbe7a2ed0804adc2               14 Packages.bz2
+ b5787b052867f5950dce261774fa995a5d52bb64               29 Packages.gz
+ 6f2948ba2de3445e1271c2e855fabf58ea81a2e4              160 Release
+SHA256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 Packages
+ d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058               14 Packages.bz2
+ 147ab1cb37609f8b3a5674fb3a6d4221bc6bc42a69b820162abcc9f3f549ad1e               29 Packages.gz
+ a3a6c9b1b50c74ce69a4e35a3b3d000b2d5a7efe8fecb19d90b191e036e55fc3              160 Release
+SHA512:
+ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 Packages
+ 6de201dfed1d45412509c65deb34690dc2d09c6aafccfe491fd2f440f92842b9c755b61dc7bcdd4cc0c9f18cf46c2b3a1241e99c4c2a33fff5555e7b2f0b6348               14 Packages.bz2
+ 0a70267abb0d88d10c140caa678f7b90d868e477f8f71c37ebe12c8c2abd503d8e0f3da85dee6c258b0239703d5519f34c1498c8be37913c610efdecf788c517               29 Packages.gz
+ 382c3de58587b36a08434e226717bb3c2d2c45bfc60ceed77b3b207724a618b3c1a2454e4072b987296f3cf0de33b69d20c8374892a2f627e85f37ff1d8a7951              160 Release
