@@ -52,7 +52,7 @@
           <y:Geometry height="56.231998443603516" width="35.095298767089844" x="840.9100913391113" y="73.64100205230712"/>
           <y:Fill color="#CCCCFF" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="83.048828125" x="-23.976764678955078" y="-49.90625">UCS Master
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="83.048828125" x="-23.976764678955078" y="-49.90625">UCS Primary
 Identity
 Management<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
