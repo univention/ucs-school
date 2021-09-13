@@ -75,10 +75,13 @@ feedback@univention.de
 					All components have been migrated to Python 3 (<u:bug>52608</u:bug>, <u:bug>52609</u:bug>, <u:bug>52611</u:bug>, <u:bug>52612</u:bug>, <u:bug>52613</u:bug>, <u:bug>52614</u:bug>, <u:bug>52615</u:bug>, <u:bug>52616</u:bug>, <u:bug>52617</u:bug>, <u:bug>52618</u:bug>, <u:bug>52619</u:bug>, <u:bug>52620</u:bug>, <u:bug>52621</u:bug>, <u:bug>52622</u:bug>, <u:bug>52623</u:bug>, <u:bug>52624</u:bug>, <u:bug>52625</u:bug>, <u:bug>52626</u:bug>, <u:bug>52627</u:bug>, <u:bug>52628</u:bug>, <u:bug>52630</u:bug>, <u:bug>52631</u:bug>, <u:bug>52632</u:bug>, <u:bug>52633</u:bug>, <u:bug>52634</u:bug>, <u:bug>52635</u:bug>, <u:bug>52636</u:bug>, <u:bug>52637</u:bug>, <u:bug>52638</u:bug>, <u:bug>52639</u:bug>, <u:bug>52640</u:bug>, <u:bug>52641</u:bug>, <u:bug>52642</u:bug>, <u:bug>52643</u:bug>, <u:bug>52644</u:bug>, <u:bug>52645</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>, <u:bug>53460</u:bug>)
+					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>)
 				</para></listitem>
 				<listitem><para>
 					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The Demo Portal has been removed (<u:bug>53460</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
