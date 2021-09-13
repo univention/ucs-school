@@ -652,7 +652,7 @@ define([
 						'computers/windows': _('Windows'),
 					}[item.objectType] || _('Unknown');
 
-					var label = '<table>';
+					var label = '<table class="computerroomComputerInfoTable">';
 					label += '<tr><td><b>{lblComputerType}</b></td><td>{computertype}</td></tr>';
 					label += '<tr><td><b>{lblStatus}</b></td><td>{status}</td></tr>';
 					label += '<tr><td><b>{lblIP}</b></td><td>{ip}</td></tr>';
