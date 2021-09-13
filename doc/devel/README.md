@@ -192,7 +192,7 @@ The password of the demoschool users is stored in this file.
 
 Um fehlende Zählerobjekte für Benutzernamen-Präfixe zu erzeugen, kann folgender Schnippsel verwendet werden:
 
-    python -c "from ucsschool.importer.utils.username_handler import LdapStorageBackend; b = LdapStorageBackend('usernames'); b.create('${USERNAMEPREFIX}', ${NEXTNUMBER})"
+    python3 -c "from ucsschool.importer.utils.username_handler import LdapStorageBackend; b = LdapStorageBackend('usernames'); b.create('${USERNAMEPREFIX}', ${NEXTNUMBER})"
 
 # Klassenarbeitsmodus / Exam-Mode
 
