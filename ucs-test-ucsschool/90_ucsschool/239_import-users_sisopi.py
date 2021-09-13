@@ -9,6 +9,7 @@
 ## bugs: [47447]
 
 import copy
+import random
 
 from ldap.filter import escape_filter_chars
 
@@ -54,7 +55,9 @@ class Test(CLI_Import_v2_Tester):
         del config["csv"]["mapping"]["OUs"]
 
         self.limbo_ou_name, self.limbo_ou_dn = self.schoolenv.create_ou(
-            name_edudc=self.ucr.get("hostname"), use_cache=False
+            "limbotestou{}".format(random.randint(1000, 9999)),
+            name_edudc=self.ucr.get("hostname"),
+            use_cache=False,
         )
         config.update_entry("limbo_ou", self.limbo_ou_name)
         self.log.info("*** Created limbo OU %r.", self.limbo_ou_name)
