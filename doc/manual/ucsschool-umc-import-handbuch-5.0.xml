@@ -364,7 +364,7 @@
 				Tipp: Mit folgendem Befehl kann die syntaktische Korrektheit der JSON-Datei geprüft werden.
 				Wenn die Datei syntaktisch korrekt ist, wird ihr Inhalt ausgegeben, bei einem Fehler wird stattdessen dieser angezeigt.
 				<programlisting>
-# cat /var/lib/ucs-school-import/configs/user_import.json | python -m json.tool
+# cat /var/lib/ucs-school-import/configs/user_import.json | python3 -m json.tool
 {
     "classes": {
         "user_importer": "ucsschool.importer.mass_import.sisopi_user_import.SingleSourcePartialUserImport"
