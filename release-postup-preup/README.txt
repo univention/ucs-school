@@ -1,27 +1,27 @@
 Warum?
 
-Wir brauchen einige UCS Pakete im school repo für eine sauberes Update.
+Wir brauchen einige UCS Pakete im UCS@school repo für ein sauberes Update von UCS 4.4 auf UCS 5.0.
 
 Idee:
 
-Wir stecken diese Pakete (https://git.knut.univention.de/univention/ucs/-/issues/730) in das school repo.
+Wir stecken diese Pakete (https://forge.univention.org/bugzilla/show_bug.cgi?id=53782#c2) in das UCS@school repo.
 
 Problem:
 
 Das UCS Update Pinned (apt pinning) das UCS Repo, so dass Pakete nur von dort installiert werden, auch wenn
-es in anderen Repo's neuer Versionen gibt.
+es in anderen Repo's neuere Versionen gibt.
 
 Lösung:
 
-School Repo wird auch gepinned. Dafür brauchen wir Release Dateien und post/preup für die Konfiguration des pinnings.
+Das UCS@school repo wird auch gepinned. Dafür brauchen wir Release Dateien und post/preup für die Konfiguration des pinnings.
 
-Release (Dateien) / preup und postup 
+Release (Dateien) / preup und postup
 ------------------------------------
 
-1. auf omar das school Repo aktualisiern
+1. auf omar das UCS@school repo aktualisieren
 @omar /var/univention/buildsystem2/mirror/appcenter.test/tools/sync.sh 5.0
 
-2. Release Dateien erstellen und signieren (und pre/postup) 
+2. Release Dateien erstellen und signieren (und pre/postup)
 @here bash -x update-release-pup.sh
 
 3a. Release Dateien auf das Test-AppCenter kopieren
@@ -37,5 +37,3 @@ Release (Dateien) / preup und postup
 
 4. Sync nach Test-AppCenter anstoßen
 @selfservice univention-app selfservice-sync "5.0/ucsschool=5.0 b3"
-
-
