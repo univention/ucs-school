@@ -141,7 +141,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
             elif dcs:
                 self.add_error(
-                    "dc_name", "The educational DC for the school must not be a Backup Directory Node or Primary Directory Node"
+                    "dc_name",
+                    "The educational DC for the school must not be a Backup Directory Node or Primary Directory Node",
                 )
 
     def build_hook_line(self, hook_time, func_name):
