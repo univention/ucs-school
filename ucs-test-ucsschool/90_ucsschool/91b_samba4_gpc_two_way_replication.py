@@ -240,7 +240,9 @@ class TestGPCReplicationTwoWays(TestSamba4):
         Using 'udm list' looks for any Replica Directory Nodes in the domain to test the
         replication from.
         """
-        print("\nCurrent server role is Primary Directory Node, trying to find a Replica Directory Node in the domain for the test")
+        print(
+            "\nCurrent server role is Primary Directory Node, trying to find a Replica Directory Node in the domain for the test"
+        )
         udm_stdout = self.get_udm_list_dc_slaves_with_samba4(with_ucsschool=True)
 
         if "serverRole: slave" not in udm_stdout.strip():
@@ -308,7 +310,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
     def main(self):
         """
         Tests the Samba4 GPC objects (and GPO links) replication from Primary Directory Node
-        to Replica Directory Node and vise versa: from Replica Directory Node to Primary 
+        to Replica Directory Node and vise versa: from Replica Directory Node to Primary
         Directory Node. Which direction to test is determined by the current server role
         (and thus the self.remote_host is being selected).
         """

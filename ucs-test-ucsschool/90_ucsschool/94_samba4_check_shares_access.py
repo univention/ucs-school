@@ -60,7 +60,9 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
                 "--command=ls",
             )
 
-        print("\nTrying to connect to Sysvol on Primary Directory Node and list the contents using Samba client:")
+        print(
+            "\nTrying to connect to Sysvol on Primary Directory Node and list the contents using Samba client:"
+        )
         print(cmd)
 
         stdout, stderr = self.create_and_run_process(cmd)

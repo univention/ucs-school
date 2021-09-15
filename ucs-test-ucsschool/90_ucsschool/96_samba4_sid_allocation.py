@@ -40,7 +40,10 @@ class TestS4SIDAllocation(TestSamba4):
         """
         Makes a UMC request to Primary Directory Node to stop or start the S4-Connector.
         """
-        print("\nMaking a UMC request to %s the S4-Connector service on the Primary Directory Node\n" % action)
+        print(
+            "\nMaking a UMC request to %s the S4-Connector service on the Primary Directory Node\n"
+            % action
+        )
         assert self.client.umc_command("services/" + action, ["univention-s4-connector"]).result.get(
             "success"
         ), "Restarting S4-Connector service failed"
@@ -160,7 +163,8 @@ class TestS4SIDAllocation(TestSamba4):
 
         except KeyError as exc:
             utils.fail(
-                "An error occured while trying to get the Primary Directory Node 'univentionServices': '%s'" % exc
+                "An error occured while trying to get the Primary Directory Node 'univentionServices': '%s'"
+                % exc
             )
 
     def determine_test_scenario(self):
@@ -278,7 +282,9 @@ class TestS4SIDAllocation(TestSamba4):
                     samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn, uri)
                     if samba_sid_master:
                         break
-                    print("\nNot yet replicated to Primary Directory Node. Sleep for 10 seconds and retry.")
+                    print(
+                        "\nNot yet replicated to Primary Directory Node. Sleep for 10 seconds and retry."
+                    )
                     sleep(10)
 
                 # compare objectSid@locally vs. objectSid@Master

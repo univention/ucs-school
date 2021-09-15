@@ -60,8 +60,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         stdout, stderr = self.samba_tool("gpo", "create", display_name)
         if workaround.filter_deprecated(stderr):
             print(
-                ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s")
-                % (stderr,)
+                ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s") % (stderr,)
             )
         if not stdout:
             utils.fail(
@@ -168,7 +167,8 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
                     break
         else:
             utils.fail(
-                "GPO link %s -> %s not replicated to Primary Directory Node LDAP." % (container_dn, gpo_reference)
+                "GPO link %s -> %s not replicated to Primary Directory Node LDAP."
+                % (container_dn, gpo_reference)
             )
         print("Found msGPOLink attribute: %s" % gp_link)
 
