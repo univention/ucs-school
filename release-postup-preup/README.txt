@@ -15,32 +15,26 @@ Lösung:
 
 Das UCS@school repo wird auch gepinned. Dafür brauchen wir Release Dateien und post/preup für die Konfiguration des pinnings.
 
-Release (Dateien) / preup und postup
-------------------------------------
+Release (Dateien) aktualisieren:
+--------------------------------
 
-1. auf omar das UCS@school repo aktualisieren
-@omar
-	/var/univention/buildsystem2/mirror/appcenter.test/tools/sync.sh 5.0
+Release Dateien müssen immer aktualisiert werden, wenn Pakete in der App geändert werden (mod, add, rm).
+Benötigt wird der (ssh) tech key ($HOME/ec2/keys/tech.pem):
 
-2. Release Dateien erstellen und signieren (und pre/postup)
-@here
-	bash -x update-release-pup.sh
+-> cd ~/git/ucsschool/release-postup-preup
+-> ./update-release-preup-postup.sh release
 
-3a. Release Dateien auf das Test-AppCenter kopieren
-@here
-	scp -r amd64/ i386/ all/ selfservice:/tmp
-@selfservice
-	mv amd64/Release* /var/lib/univention-appcenter-selfservice/appcenter/univention-repository/5.0/maintained/component/ucsschool_20201208103021/amd64/
-	mv all/Release* /var/lib/univention-appcenter-selfservice/appcenter/univention-repository/5.0/maintained/component/ucsschool_20201208103021/all/
-	mv i386/Release* /var/lib/univention-appcenter-selfservice/appcenter/univention-repository/5.0/maintained/component/ucsschool_20201208103021/i386/
+Danach ggf git commit.
 
-3b. post/preup auf Test-AppCenter kopieren
-@here
-	scp postup.sh* selfservice:/tmp/
-	scp preup.sh* selfservice:/tmp/
-@selfservice
-	mv postup.sh* preup.sh* /var/lib/univention-appcenter-selfservice/appcenter/univention-repository/5.0/maintained/component/ucsschool_20201208103021/all/
+preup/postup aktualisieren:
+---------------------------
 
-4. Sync nach Test-AppCenter anstoßen
-@selfservice
-	univention-app selfservice-sync "5.0/ucsschool=5.0 b3"
+Nur bei Änderungen an den Dateien (momentan wird im preup das pinning für
+UCS@school aktiviert und im postup wieder deaktiviert).
+
+-> cd ~/git/ucsschool/release-postup-preup
+-> ./update-release-preup-postup.sh postup
+oder
+-> ./update-release-preup-postup.sh preup
+
+Danach ggf git commit.

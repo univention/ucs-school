@@ -1,5 +1,5 @@
 Codename: ucsschool_20201208103021/i386
-Date: Wed, 15 Sep 2021 07:26:58 +0000
+Date: Wed, 15 Sep 2021 11:54:05 +0000
 Label: ucs@school
 Origin: Univention
 Suite: apt
@@ -8,19 +8,19 @@ MD5Sum:
  d41d8cd98f00b204e9800998ecf8427e                0 Packages
  4059d198768f9f8dc9372dc1c54bc3c3               14 Packages.bz2
  076604e0a1f21413d436356d82030737               29 Packages.gz
- 7a2fbf629d79fc1089fd871799425090              160 Release
+ b58fc54267d89bcc177af136a45d3eca              160 Release
 SHA1:
  da39a3ee5e6b4b0d3255bfef95601890afd80709                0 Packages
  64a543afbb5f4bf728636bdcbbe7a2ed0804adc2               14 Packages.bz2
  ad1f314c0e4148f3f25c331aefd35cac07b50702               29 Packages.gz
- eb2d43c845559b540fdfe3341b185f82e09a74ae              160 Release
+ 361675b057decc15907bc4d43487f08e6c766528              160 Release
 SHA256:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 Packages
  d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058               14 Packages.bz2
  a5b1f277805a16b04b6e49bab4fdca77e8bc932ba6d90d7c0040c7078efdde78               29 Packages.gz
- 9a027821e32e2bb5ad33110b89b4a1f942095552af115666aa7f0913a2934020              160 Release
+ acfae45af18cc254388b481734a4abf015df6c0252210871707907193a2ffccb              160 Release
 SHA512:
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 Packages
  6de201dfed1d45412509c65deb34690dc2d09c6aafccfe491fd2f440f92842b9c755b61dc7bcdd4cc0c9f18cf46c2b3a1241e99c4c2a33fff5555e7b2f0b6348               14 Packages.bz2
  d3baee3f60d492302784e5d1fbd34ca4b5602d385a53c25cf6e6cb567897de38423005e4cc1725aeca4219ed9c7c433d3edea944ab902a2cda35882522c505e3               29 Packages.gz
- 4d345975fd7bedde417b469301f8181d20e86859c37b1f999078ec74aa9c21b1946a8eb70d9b770491ea70c32cb93e48bf179b335b4470da6936800b5b797ab5              160 Release
+ e7712cb99ec7a0d17741a40b1f42fdabd2e9bcb5631d8735063cf3ef47dff5f2715fd315cb7e45e43fa7a5d1d5d5943329afd08f2d14d36b2e73907032974286              160 Release
