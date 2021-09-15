@@ -196,6 +196,7 @@ if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 13 ]; 
 	python3 -m ucsschool.http_api.manage migrate --no-color --noinput django_celery_results || die 'Failed initializing django_celery_results'
 	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" DROP CONSTRAINT "import_api_userimportj_result_id_7383b884_fk_celery_taskmeta_id";'" || die 'Failed to drop djcelery constraint'
 	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" ADD CONSTRAINT "impor_result_id_7383b884_fk_django_celery_results_taskresult_id" FOREIGN KEY ("result_id") REFERENCES "django_celery_results_taskresult" ("id") DEFERRABLE INITIALLY DEFERRED;'" || die 'Failed to create django_celery_results constraint'
+	printf "SELECT CONCAT('ALTER SEQUENCE django_celery_results_taskresult_id_seq RESTART WITH ', (SELECT nextval('celery_taskmeta_id_seq')), ';'); \\gexec" | su - postgres -c "psql -d '$POSTGRES_DB'" || die "Could not set AUTOINCREMENT value"
 	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial import_api
 fi
 echo "Migrating DB schema..."
