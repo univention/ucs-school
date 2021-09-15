@@ -68,10 +68,16 @@ if "-v" in sys.argv:
     print('Version of app "{}" on this host: "{}"'.format(app_name, app.version))
     print('Version of app "{}" on Primary Directory Node: "{}"'.format(app_name, master_version))
     if ret:
-        print('Error: local version of app "{}" higher than version on Primary Directoy Node!'.format(app_name))
+        print(
+            'Error: local version of app "{}" higher than version on Primary Directoy Node!'.format(
+                app_name
+            )
+        )
     else:
         print(
-            'OK: local version of app "{}" lower than or equal to version on Primary Directory Node.'.format(app_name)
+            'OK: local version of app "{}" lower than or equal to version on Primary Directory Node.'.format(
+                app_name
+            )
         )
 
 ucrv = "ucsschool/join/ignore-version-mismatch/{}/{}".format(master_version, app.version)
