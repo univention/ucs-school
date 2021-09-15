@@ -1,5 +1,5 @@
 Codename: ucsschool_20201208103021/i386
-Date: Wed, 15 Sep 2021 11:54:05 +0000
+Date: Wed, 15 Sep 2021 17:25:04 +0000
 Label: ucs@school
 Origin: Univention
 Suite: apt
@@ -7,20 +7,20 @@ Version: ucsschool_20201208103021
 MD5Sum:
  d41d8cd98f00b204e9800998ecf8427e                0 Packages
  4059d198768f9f8dc9372dc1c54bc3c3               14 Packages.bz2
- 076604e0a1f21413d436356d82030737               29 Packages.gz
- b58fc54267d89bcc177af136a45d3eca              160 Release
+ c212938ed239dea7e3dc83543044c2da               29 Packages.gz
+ 2fb2ce82941e6557b8bf14e4b1d2052b              160 Release
 SHA1:
  da39a3ee5e6b4b0d3255bfef95601890afd80709                0 Packages
  64a543afbb5f4bf728636bdcbbe7a2ed0804adc2               14 Packages.bz2
- ad1f314c0e4148f3f25c331aefd35cac07b50702               29 Packages.gz
- 361675b057decc15907bc4d43487f08e6c766528              160 Release
+ 2a1620f97badf0731ecb715cf944857b0073517d               29 Packages.gz
+ c66e3a4a67ff2c671d4d386476ebd6f1035d2fdd              160 Release
 SHA256:
  e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 Packages
  d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058               14 Packages.bz2
- a5b1f277805a16b04b6e49bab4fdca77e8bc932ba6d90d7c0040c7078efdde78               29 Packages.gz
- acfae45af18cc254388b481734a4abf015df6c0252210871707907193a2ffccb              160 Release
+ 49d7748b0fc22caf96193d1a8bf7fbab4088320af1a33fe5950c3efc3ab2b460               29 Packages.gz
+ 436d159e1efa0bdfc3e4933108f2c83cfd5692cd371b20a42abf8de03087150a              160 Release
 SHA512:
  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 Packages
  6de201dfed1d45412509c65deb34690dc2d09c6aafccfe491fd2f440f92842b9c755b61dc7bcdd4cc0c9f18cf46c2b3a1241e99c4c2a33fff5555e7b2f0b6348               14 Packages.bz2
- d3baee3f60d492302784e5d1fbd34ca4b5602d385a53c25cf6e6cb567897de38423005e4cc1725aeca4219ed9c7c433d3edea944ab902a2cda35882522c505e3               29 Packages.gz
- e7712cb99ec7a0d17741a40b1f42fdabd2e9bcb5631d8735063cf3ef47dff5f2715fd315cb7e45e43fa7a5d1d5d5943329afd08f2d14d36b2e73907032974286              160 Release
+ a56d52b124f3eb121afed1e65ffe89f63ea4d4b972f4873ef35bc35c1a0bdf28bd2420ad71fc48aa11e165bed9ff2a524aadebe05717ef1de2d2e248ce8c4176               29 Packages.gz
+ 6ac6811b2a8c58e55f7ca65264d2de9acab54732c192f706892aedfb9442d0131168c7dc18c8fdffd47308652bf9e3bed654dff924bf55bc7bfe3ff882b5b8a6              160 Release
