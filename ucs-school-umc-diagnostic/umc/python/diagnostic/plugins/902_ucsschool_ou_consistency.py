@@ -109,15 +109,17 @@ def run(_umc_instance):
                 "ldap/hostdn"
             ):  # WARNING: this line expects that the check is performed on the Primary Directory Node!
                 problematic_objects.setdefault(ou_dn, []).append(
-                    _("{0} is not set to Primary Directory Node in a UCS@school single server environment").format(
-                        attr_name
-                    )
+                    _(
+                        "{0} is not set to Primary Directory Node in a UCS@school single server environment"
+                    ).format(attr_name)
                 )
             if not ucr.is_true("ucsschool/singlemaster", False) and value == ucr.get(
                 "ldap/hostdn"
             ):  # WARNING: this line expects that the check is performed on the Primary Directory Node!
                 problematic_objects.setdefault(ou_dn, []).append(
-                    _("{0} is set to Primary Directory Node in a UCS@school multi server environment").format(attr_name)
+                    _(
+                        "{0} is set to Primary Directory Node in a UCS@school multi server environment"
+                    ).format(attr_name)
                 )
 
     if problematic_objects:
