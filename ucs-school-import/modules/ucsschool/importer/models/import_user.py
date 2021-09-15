@@ -255,12 +255,10 @@ class ImportUser(User):
             and not (self.config["dry_run"] and self.action == "A")
         ):
             # update self from LDAP if object exists (after A and M), except after a dry-run create
-            user = self.get_by_import_id(lo, self.source_uid, self.record_uid)
-            user_udm = user.get_udm_object(lo)
             # copy only those UDM properties from LDAP that were originally
-            # set in self.udm_properties
-            for k in self.udm_properties.keys():
-                user.udm_properties[k] = user_udm[k]
+            user = self.get_by_import_id(
+                lo, self.source_uid, self.record_uid, udm_properties=self.udm_properties.keys()
+            )
             self.update(user)
 
         self.in_hook = True
@@ -430,8 +428,10 @@ class ImportUser(User):
         return a_user.type_filter
 
     @classmethod
-    def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
-        # type: (LoType, str, str, Optional[str]) -> ImportUser
+    def get_by_import_id(
+        cls, connection, source_uid, record_uid, superordinate=None, udm_properties=None
+    ):
+        # type: (LoType, str, str, Optional[str], Optional[Iterable]) -> ImportUser
         """
         Retrieve an ImportUser.
 
@@ -439,6 +439,7 @@ class ImportUser(User):
         :param str source_uid: source DB identifier
         :param str record_uid: source record identifier
         :param str superordinate: superordinate
+        :param iterable udm_properties: list of udm attributes to load into self.udm_properties
         :return: object of :py:class:`ImportUser` subclass loaded from LDAP or raises NoObject
         :rtype: ImportUser
         :raises ucsschool.lib.models.base.NoObject: if no user was found
@@ -457,7 +458,11 @@ class ImportUser(User):
         )
         obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
         if obj:
-            return cls.from_udm_obj(obj, None, connection)
+            import_obj = cls.from_udm_obj(obj, None, connection)
+            if udm_properties:
+                for udm_property in udm_properties:
+                    import_obj.udm_properties[udm_property] = obj[udm_property]
+            return import_obj
         else:
             dns = connection.searchDn(
                 filter_format(
