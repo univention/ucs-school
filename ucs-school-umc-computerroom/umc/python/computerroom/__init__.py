@@ -610,13 +610,13 @@ class Instance(SchoolBaseModule):
         computer = request.options["computer"]
         tmpfile = computer.screenshot
         if computer.hide_screenshot:
-            mimetype = 'image/svg+xml'
+            mimetype = "image/svg+xml"
             filename = FN_SCREENSHOT_DENIED
         elif tmpfile is None:
-            mimetype = 'image/svg+xml'
+            mimetype = "image/svg+xml"
             filename = FN_SCREENSHOT_NOTREADY
         else:
-            mimetype = 'image/jpeg'
+            mimetype = "image/jpeg"
             filename = tmpfile.name
 
         MODULE.info("screenshot(%s): hide screenshot = %r" % (computer.name, computer.hide_screenshot))
