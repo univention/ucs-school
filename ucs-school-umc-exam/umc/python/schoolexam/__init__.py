@@ -580,7 +580,9 @@ class Instance(SchoolBaseModule):
                 client.authenticate_with_machine_account()
             except (ConnectionError, HTTPError) as exc:
                 logger.error("start_exam() Could not connect to UMC on %s: %s", master, exc)
-                raise UMC_Error(_("Could not connect to Primary Directory Node %s.") % ucr.get("ldap/master"))
+                raise UMC_Error(
+                    _("Could not connect to Primary Directory Node %s.") % ucr.get("ldap/master")
+                )
 
             # mark the computer room for exam mode
             progress.component(_("Preparing the computer room for exam mode..."))
@@ -649,7 +651,9 @@ class Instance(SchoolBaseModule):
                 # indicate the the user has been processed
                 progress.add_steps(percentPerUser)
 
-            logger.info("start_exam() Sending DNs to add to group to Primary Directory Node: %r", student_dns)
+            logger.info(
+                "start_exam() Sending DNs to add to group to Primary Directory Node: %r", student_dns
+            )
             client.umc_command(
                 "schoolexam-master/add-exam-users-to-groups",
                 {"users": list(student_dns), "school": request.options["school"]},
