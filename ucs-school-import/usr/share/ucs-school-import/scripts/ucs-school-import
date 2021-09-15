@@ -2476,7 +2476,7 @@ def export_computer():
     # get group
     print("looking for objects... please wait...")
     objects = univention.admin.modules.lookup(
-        computer_module, None, lo, scope="sub", superordinate=superordinate, base=ouBaseDN,
+        computer_module, None, lo, scope="sub", superordinate=superordinate, base=ouBaseDN
     )
     print("writing data of %d objects..." % len(objects))
     out_line = ("%%s%(sep)s" * 5 + "\n") % {"sep": sepchar}
