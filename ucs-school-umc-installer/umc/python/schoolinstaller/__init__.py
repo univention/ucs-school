@@ -847,7 +847,9 @@ class Instance(Base):
 
             if server_role == "domaincontroller_slave":
                 # make sure that the Replica Directory Node is correctly moved below its OU
-                MODULE.info("Trying to move the Replica Directory Node entry in the right OU structure...")
+                MODULE.info(
+                    "Trying to move the Replica Directory Node entry in the right OU structure..."
+                )
                 result = umc(
                     username,
                     password,

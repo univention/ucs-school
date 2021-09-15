@@ -277,7 +277,7 @@ def main():  # type: () -> None
 
     if ucr["server/role"] != "domaincontroller_slave":
         parser.error(
-            'This script may only be called on a Replica Directory Node (domaincontroller_slave)!'
+            "This script may only be called on a Replica Directory Node (domaincontroller_slave)!"
         )
 
     if options.password_fn:
