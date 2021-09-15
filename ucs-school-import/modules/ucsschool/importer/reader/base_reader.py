@@ -43,7 +43,7 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 try:
-    from typing import Any, Dict, Iterable, Iterator, Optional  # noqa: F401
+    from typing import Any, Dict, Iterable, Iterator, List, Optional, Text  # noqa: F401
 
     from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
@@ -133,7 +133,7 @@ class BaseReader(object):
         """
         raise NotImplementedError()
 
-    def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
+    def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[Text, Text]]
         """
         IMPLEMENT ME
         Generator that returns dicts of read users
@@ -159,3 +159,17 @@ class BaseReader(object):
         :rtype: dict
         """
         return {}
+
+    def get_imported_udm_property_names(self, import_user):  # type: (ImportUser) -> List[str]
+        """
+        IMPLEMENT ME
+        Return all udm attributes which are directly set by the reader class. This is
+        configuration and input format specific. See csv_reader for an example.
+        This function is used to set which attributes should be loaded from ldap into udm_properties
+        for users which will be deleted.
+
+        :param ImportUser import_user: an ImportUser object
+        :return: list of udm attibute names
+        :rtype: list(str)
+        """
+        return []

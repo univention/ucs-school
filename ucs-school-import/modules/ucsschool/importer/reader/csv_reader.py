@@ -52,7 +52,18 @@ from .base_reader import BaseReader
 
 try:
     from csv import Dialect  # noqa: F401
-    from typing import Any, BinaryIO, Callable, Dict, Iterable, Iterator, Optional, Union  # noqa: F401
+    from typing import (  # noqa: F401
+        Any,
+        BinaryIO,
+        Callable,
+        Dict,
+        Iterable,
+        Iterator,
+        List,
+        Optional,
+        Text,
+        Union,
+    )
 
     from ..models.import_user import ImportUser  # noqa: F401
 except ImportError:
@@ -145,7 +156,7 @@ class CsvReader(BaseReader):
         line = fp.readline()
         return Sniffer().sniff(py3_decode(line, encoding), delimiters=delimiter)
 
-    def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[unicode, unicode]]
+    def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[Text, Text]]
         """
         Generate dicts from a CSV file.
 
@@ -410,6 +421,29 @@ class CsvReader(BaseReader):
                 key not in self.fieldnames
                 and value != "__ignore"
                 and key not in self.config["csv"].get("allowed_missing_columns", [])
+            )
+        ]
+
+    def get_imported_udm_property_names(self, import_user):  # type: (ImportUser) -> List[str]
+        """
+        Return a list of udm attribute names for udm attribute values
+        which are set through config["csv"]["mapping"]
+
+        :param ImportUser import_user: an ImportUser object
+        :return: list of udm attibute names
+        :rtype: list(str)
+        """
+        attrib_names = self._get_attrib_name(import_user)
+        return [
+            value
+            for key, value in self.config["csv"]["mapping"].items()
+            if (
+                key in self.fieldnames
+                and value not in attrib_names
+                and value != "__ignore"
+                and value != "__action"
+                and value != self._csv_roles_key
+                and value in udm_user_module.property_descriptions
             )
         ]
 
