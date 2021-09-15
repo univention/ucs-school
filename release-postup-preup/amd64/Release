@@ -1,5 +1,5 @@
 Codename: ucsschool_20201208103021/amd64
-Date: Tue, 14 Sep 2021 07:32:46 +0000
+Date: Wed, 15 Sep 2021 07:26:49 +0000
 Label: ucs@school
 Origin: Univention
 Suite: apt
@@ -7,20 +7,20 @@ Version: ucsschool_20201208103021
 MD5Sum:
  522ed2c65dd7cddd017370299eb96b86             9217 Packages
  5b45d8c0b35ad15633f0a798eb59f9ae             3175 Packages.bz2
- 490d45d358da123edce032930a4223d7             3123 Packages.gz
- f66db44894ebfadb74f584419120d437              161 Release
+ 2295d4504561d4b8a28d7e43d2720128             3123 Packages.gz
+ d5f42869c3c0d2af2aa15bf24d009c18              161 Release
 SHA1:
  ae1d1c1f10e5e70347ae9cd6a3e2fed2e03768e9             9217 Packages
  410a29bb1f044fa1b59ea547bcea1ddca041c229             3175 Packages.bz2
- bc4c5779ece56b56e075bf1259d16f972fa3edc3             3123 Packages.gz
- 17464aea5b883a1993990de92597fee58d0b4be5              161 Release
+ 4ed712037859593dfd0d6306d615f3d889078b3d             3123 Packages.gz
+ a01a7571c352dfff8e7b327c0a965a78591f22c3              161 Release
 SHA256:
  40d22e3cc8fe4bf05654e9fe80ec6dabe85699e86b17babd56d2467ef5edd068             9217 Packages
  9e10a7280fc418bd1bffbcbfbab1c8b286e6993a0267290909fed29f300db427             3175 Packages.bz2
- 6bed97ab2ce94d6c1b8415283259b8f7c51e0bb06d46c7221a7c29aec3899c01             3123 Packages.gz
- d04224b87f5c5e56132c977fe93ffed668f028c8c92ae06f2a41d8d470be1961              161 Release
+ 19adbdae5c67a93ac38f7448bf74c430b58fad5b7f2737f38e2dfb8b7a95c5e8             3123 Packages.gz
+ 4605b774b6ee2ba2ff6798b89e0adbbdc04b02af1148dbda269da390daab11c9              161 Release
 SHA512:
  a354193eea67e5af2cf201625b49ce7ac2a0e4c4e1fe3e28e5b754bb19e5e7af10e144dd75a4d6007c90374e03e331ec3e3e54a98e4f2466b89a986e6ad25750             9217 Packages
  726e5f9604636bb363a9b9ff7bb8e61c219d52a460a91ff2f4a70c077a2c418d6a99184449788afd1890030fc6b0448da41511a31ccc5653945ac10688f4ef00             3175 Packages.bz2
- 221f1ece11e2ee99de4bca76024214e806c949214b1dfcc18e42cf10c83f6ee8bb38b4ca665cdb7755afdf62f90e0449569c66e899b8e1784e3bc2efbae401ea             3123 Packages.gz
- b503fc8741c8bec9e8b5f9b05fc97e79b9e9f8215d97aa7c57265b5b8e8c8f5fcbed2bd73bfb6503a6c0ea3bb4812a1e0155818520d8ed5c8c79a4b33499945e              161 Release
+ 844de5040197abee29e75ee2b29aae4316e9b8a572ffbe250b919a806b8495b4f4d601c22733d290b22d2cf12aabf0ac1b11345a7deb68354c24579d9e52413e             3123 Packages.gz
+ 5de40e2e016db3a66a7a3b85cfde5e8230bec671ad1daf1c8b5eba02ab4e9066d314904b14819b72273995f644ad310b218b3c2893abbb6511627b553a3dc213              161 Release
