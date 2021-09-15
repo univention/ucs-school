@@ -403,7 +403,9 @@ class UcsSchoolRolesMigration(object):
                                 type_msg,
                                 host_dn,
                             )
-                            self.logger.warning("    WARN: Marking %r as central Replica Directory Node.", host_dn)
+                            self.logger.warning(
+                                "    WARN: Marking %r as central Replica Directory Node.", host_dn
+                            )
                             self.set_ldap_attr(
                                 "Replica Directory Node",
                                 [create_ucsschool_role_string(role_dc_slave, "-")],
