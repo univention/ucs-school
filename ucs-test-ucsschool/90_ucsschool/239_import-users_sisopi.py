@@ -15,7 +15,7 @@ from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
 from ucsschool.lib.models.group import SchoolClass
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
@@ -27,6 +27,10 @@ class Test(CLI_Import_v2_Tester):
         fn_config = self.create_config_json(config=config)
         self.run_import(["-c", fn_config, "-i", fn_csv])
         wait_for_drs_replication("cn={}".format(escape_filter_chars(person.username)))
+        # wait for the connector to do its job, wait_for_drs_replication just checks if dn exists
+        # school import stops the u-d-n so all modifications are delayed and we have to wait
+        # at this point, to not disturb the next test
+        wait_for_s4connector()
         person.verify()
         schools = self.lo.get(person.dn, attr=["ucsschoolSchool"])["ucsschoolSchool"]
         self.log.info("User is in ou=%r and has schools=%r.", person.school, schools)
