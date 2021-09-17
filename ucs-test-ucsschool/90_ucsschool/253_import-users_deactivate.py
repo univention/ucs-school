@@ -24,6 +24,7 @@ from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.udm import UDM
 
 # this test fails every now and then for teachers when checking shadowExpire in (2/3)
 # lets see if more waiting helps
@@ -93,9 +94,20 @@ class Test(CLI_Import_v2_Tester):
         self.create_csv_file(person_list=[], fn_csv=fn_csv, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(values=config)
         self.save_ldap_status()
+
+        # we need to make sure that validation for users that are to be disabled/deleted is not
+        # accidentally turned back on by some other dev. Hence we modify the ldap object and set
+        # it to an invalid state before removing it. If the code is still ok, the following
+        # shall pass...
+
+        udm = UDM.admin().version(1)
+        person_ldap = udm.obj_by_dn(person.dn)
+        person_ldap.props.description = ""
+        person_ldap.save()
+
         self.run_import(["-c", fn_config])
         self.log.info("Sleeping 60s for s4 sync...")
-        time.sleep(60)
+        time.sleep(10)
         for person in person_list:
             wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
         self.check_new_and_removed_users(0, 0)
