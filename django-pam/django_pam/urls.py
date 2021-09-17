@@ -14,7 +14,7 @@ except:
     from django.conf.urls import include, url as re_path
 
 
-app_name = 'django-pam'
+app_name = "django-pam"
 urlpatterns = [
-    re_path(r'^', include('django_pam.accounts.urls')),
-    ]
+    re_path(r"^", include("django_pam.accounts.urls")),
+]

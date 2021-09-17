@@ -9,25 +9,25 @@ __docformat__ = "restructuredtext en"
 
 import logging
 import types
-import six
-import pam as pam_base
 
+import pam as pam_base
+import six
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.backends import ModelBackend
 
-log = logging.getLogger('django_pam.auth.backends')
+log = logging.getLogger("django_pam.auth.backends")
 
 
 class PAMBackend(ModelBackend):
     """
     An implementation of a PAM backend authentication module.
     """
+
     _pam = pam_base.pam()
 
-    def authenticate(self, request, username=None, password=None,
-                     **extra_fields):
+    def authenticate(self, request, username=None, password=None, **extra_fields):
         """
         Authenticate using PAM then get the account if it exists else create
         a new account.
@@ -49,23 +49,28 @@ class PAMBackend(ModelBackend):
         """
         UserModel = get_user_model()
         user = None
-        service = extra_fields.pop('service', 'login')
-        encoding = extra_fields.pop('encoding', 'utf-8')
-        resetcreds = extra_fields.pop('resetcreds', True)
-        log.debug("request: %s, username: %s, service: %s, encoding: %s, "
-                  "resetcreds: %s, extra_fields: %s", request, username,
-                  service, encoding, resetcreds, extra_fields)
+        service = extra_fields.pop("service", "login")
+        encoding = extra_fields.pop("encoding", "utf-8")
+        resetcreds = extra_fields.pop("resetcreds", True)
+        log.debug(
+            "request: %s, username: %s, service: %s, encoding: %s, " "resetcreds: %s, extra_fields: %s",
+            request,
+            username,
+            service,
+            encoding,
+            resetcreds,
+            extra_fields,
+        )
 
-        if self._pam.authenticate(username, password, service=service,
-                                  encoding=encoding, resetcreds=resetcreds):
+        if self._pam.authenticate(
+            username, password, service=service, encoding=encoding, resetcreds=resetcreds
+        ):
             try:
-                user = UserModel._default_manager.get_by_natural_key(
-                    username=username)
+                user = UserModel._default_manager.get_by_natural_key(username=username)
             except UserModel.DoesNotExist:
                 # delete "request" if exists in extra_fields
                 extra_fields.pop("request", None)
-                user = UserModel._default_manager.create_user(
-                    username, **extra_fields)
+                user = UserModel._default_manager.create_user(username, **extra_fields)
 
         return user
 
@@ -80,16 +85,16 @@ class PAMBackend(ModelBackend):
         UserModel = get_user_model()
         obj = None
 
-        if user_data is not None and (
-            isinstance(user_data, six.integer_types)
-            or user_data.isdigit()):
+        if user_data is not None and (isinstance(user_data, six.integer_types) or user_data.isdigit()):
             query = models.Q(pk=user_data)
         elif isinstance(user_data, six.string_types):
             query = models.Q(username=user_data) | models.Q(email=user_data)
         else:
-            msg = _("The user argument type should be either an integer "
-                    "(valid pk) or a string (username or email), found "
-                    "type {}.").format(type(user_data))
+            msg = _(
+                "The user argument type should be either an integer "
+                "(valid pk) or a string (username or email), found "
+                "type {}."
+            ).format(type(user_data))
             log.error(msg)
             raise TypeError(msg)
 

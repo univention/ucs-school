@@ -12,7 +12,7 @@ import logging
 
 from django.http import JsonResponse
 
-log = logging.getLogger('django_pam.accounts.views')
+log = logging.getLogger("django_pam.accounts.views")
 
 
 class JSONResponseMixin(object):
@@ -44,6 +44,7 @@ class JSONResponseMixin(object):
         # objects -- such as Django model instances or querysets
         # -- can be serialized as JSON.
         return context
+
 
 class AjaxableResponseMixin(object):
     """
@@ -95,5 +96,5 @@ class AjaxableResponseMixin(object):
         :type context: dict
         :rtype: dict -- Updated context
         """
-        context.update({'pk': self.object.pk})
+        context.update({"pk": self.object.pk})
         return context

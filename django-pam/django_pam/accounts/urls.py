@@ -14,13 +14,11 @@ try:
 except:
     from django.conf.urls import include, url as re_path
 
-
 from django.views.generic import TemplateView
 
 from .views import LoginView, LogoutView
 
-
 urlpatterns = [
-    re_path(r'^login/$', LoginView.as_view(), name='login'),
-    re_path(r'^logout/$', LogoutView.as_view(), name='logout'),
-    ]
+    re_path(r"^login/$", LoginView.as_view(), name="login"),
+    re_path(r"^logout/$", LogoutView.as_view(), name="logout"),
+]
