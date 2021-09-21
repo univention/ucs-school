@@ -467,12 +467,7 @@ class UserImport(object):
                 # additional_udm_properties are loaded from ldap, so that remove hooks can
                 # work with them the same way as other hooks. For "A" and "M" operations,
                 # udm_properties are set by the reader class.
-                try:
-                    additional_udm_properties = self.reader.get_imported_udm_property_names(a_user)
-                except AttributeError:
-                    # For the unlikely case a reader does not inherit from the `BaseReader`
-                    # and has this function not yet implemented
-                    additional_udm_properties = []
+                additional_udm_properties = self.reader.get_imported_udm_property_names(a_user)
                 user = a_user.get_by_import_id(
                     self.connection, source_uid, record_uid, udm_properties=additional_udm_properties
                 )
