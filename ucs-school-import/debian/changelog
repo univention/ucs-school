@@ -1,3 +1,10 @@
+ucs-school-import (17.0.72) unstable; urgency=medium
+
+  * Bug #53816: Do not verify users on remove and fill udm_properties with
+    data from the ldap object on a user remove.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 21 Sep 2021 17:38:05 +0200
+
 ucs-school-import (17.0.71) unstable; urgency=medium
 
   * Bug #53576: fix regression: revert moving django packages into the
