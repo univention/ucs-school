@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-24) unstable; urgency=medium
+
+  * Bug #53646: add diagnostic module to find problematic group names
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 21 Sep 2021 16:34:57 +0200
+
 ucs-school-umc-diagnostic (1.0.0-23) unstable; urgency=medium
 
   * Bug #53139: improved checking of missing admin-ou group memberships
