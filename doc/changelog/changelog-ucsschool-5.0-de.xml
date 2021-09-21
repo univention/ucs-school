@@ -113,11 +113,13 @@ feedback@univention.de
 				<listitem><para>
 					The printer URI of the default pdf printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
 				</para></listitem>
+				<listitem><para>
+					All importer `Reader` classes now need to implement the `get_imported_udm_property_names` method (<u:bug>53816</u:bug>).
+				</para></listitem>
 			</itemizedlist>
 			</section>
 
 <!-- CHANGELOG-NEW-SECTION -->
 
-		</section>
 	</chapter>
 </book>
