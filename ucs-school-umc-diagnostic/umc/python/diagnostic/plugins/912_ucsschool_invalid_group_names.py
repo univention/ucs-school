@@ -73,6 +73,8 @@ def run(_umc_instance):
     if problematic_objects:
         details = "\n\n" + _("The following group shares have problematic names.")
         details += "\n" + _("Rename the corresponding groups, to solve this issue.")
+        details += "\n" + _("If you are using a version higher than UCS@school 5.0,")
+        details += "\n" + _("please visit https://help.univention.com/t/18597")
         for share_dn, group_dn in problematic_objects:
             details += "\n"
             details += "\n  share: {}".format(share_dn)
