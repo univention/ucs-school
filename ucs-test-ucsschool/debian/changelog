@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.2) unstable; urgency=medium
+
+  * Bug #53816: added tests for udm_properties during user removal
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 22 Sep 2021 09:31:13 +0200
+
 ucs-test-ucsschool (7.3.1) unstable; urgency=medium
 
   * Bug #53783: wait for s4 connector in 239_import-users_sisopi.py
