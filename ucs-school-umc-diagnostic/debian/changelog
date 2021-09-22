@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (1.0.0-25) unstable; urgency=medium
+
+  * Bug #53646: change text in diagnose module
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 22 Sep 2021 15:24:29 +0200
+
 ucs-school-umc-diagnostic (1.0.0-24) unstable; urgency=medium
 
   * Bug #53646: add diagnostic module to find problematic group names
