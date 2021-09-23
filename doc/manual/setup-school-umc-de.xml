@@ -323,8 +323,7 @@ cd /usr/share/ucs-school-import/scripts/
 		<para>
 		  Anschließend wird für die neue Klasse ein Name sowie eine Beschreibung erfragt. Sprechende
 		  Namen, wie zum Beispiel <emphasis>Igel</emphasis> oder <wordasword>BiologieLK</wordasword> sind als
-		  Namen ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<wordasword>10R</wordasword>). Aufeinander
-		  folgende Leerzeichen werden nicht unterstützt. Über die
+		  Namen ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<wordasword>10R</wordasword>). Über die
 		  Schaltfläche <guimenu>Speichern</guimenu> wird die neue Klasse im Verzeichnisdienst angelegt.
 		</para>
 		<para>
