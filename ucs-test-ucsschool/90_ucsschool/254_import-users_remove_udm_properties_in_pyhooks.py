@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test that users which will be deleted get udm_properties loaded
 ## tags: [apptest,ucsschool,ucsschool_import1]
