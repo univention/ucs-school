@@ -107,7 +107,7 @@ class Test(CLI_Import_v2_Tester):
 
         self.run_import(["-c", fn_config])
         self.log.info("Sleeping 60s for s4 sync...")
-        time.sleep(10)
+        time.sleep(60)
         for person in person_list:
             wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
         self.check_new_and_removed_users(0, 0)
