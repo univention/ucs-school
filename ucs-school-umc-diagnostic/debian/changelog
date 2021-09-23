@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.4) unstable; urgency=medium
+
+  * Bug #53464: version bump 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 23 Sep 2021 17:18:21 +0200
+
 ucs-school-umc-diagnostic (2.0.3) unstable; urgency=medium
 
   * Bug #52602: change server role terminology
