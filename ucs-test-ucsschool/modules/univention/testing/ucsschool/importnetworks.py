@@ -26,7 +26,7 @@ configRegistry.load()
 def get_reverse_net(network, netmask):
     p = subprocess.Popen(
         [
-            "/usr/bin/univention-ipcalc",
+            "/usr/bin/univention-ipcalc6",
             "--ip",
             network,
             "--netmask",
