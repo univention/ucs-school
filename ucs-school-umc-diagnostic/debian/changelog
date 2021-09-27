@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.7) unstable; urgency=medium
+
+  * Bug #53646: undo revert because of share access bug
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 27 Sep 2021 09:39:00 +0200
+
 ucs-school-umc-diagnostic (2.0.6) unstable; urgency=medium
 
   *  Bug #53646: undo revert because of share access bug
