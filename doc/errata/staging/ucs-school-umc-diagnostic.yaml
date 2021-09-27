@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-diagnostic
+fix: 1.0.0-25A~4.4.0.202109221532
+desc: |
+ * When school groups are created with consecutive whitespaces, this can lead to errors. A new diagnostic module was added to find such groups. When using an UCS@school version higher than 5.0 please visit https://help.univention.com/t/18597 (Bug #53646).
+bug: [53646]

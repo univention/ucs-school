@@ -1,8 +1,26 @@
+ucs-school-umc-diagnostic (1.0.0-27) unstable; urgency=medium
+
+  * Bug #53646: undo revert because of share access bug
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 27 Sep 2021 09:17:09 +0200
+
 ucs-school-umc-diagnostic (1.0.0-26) unstable; urgency=medium
 
   * Bug #53646: version bump after revert
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 23 Sep 2021 17:08:26 +0200
+
+ucs-school-umc-diagnostic (1.0.0-25) unstable; urgency=medium
+
+  * Bug #53646: change text in diagnose module
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 22 Sep 2021 15:24:29 +0200
+
+ucs-school-umc-diagnostic (1.0.0-24) unstable; urgency=medium
+
+  * Bug #53646: add diagnostic module to find problematic group names
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 21 Sep 2021 16:34:57 +0200
 
 ucs-school-umc-diagnostic (1.0.0-23) unstable; urgency=medium
 
