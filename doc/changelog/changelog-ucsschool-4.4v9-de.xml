@@ -817,7 +817,21 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.71A~4.4.0.202107141220 -->
 <!-- CHANGELOG:2021-07-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-09-30" lang="en">
+					<title>Released on 2021-09-30:</title>
+					<!-- START ucs-school-import 17.0.72A~4.4.0.202109211758 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.72A~4.4.0.202109211758</emphasis>:
+						<itemizedlist>
+							<listitem><para>The <property>udm_properties</property> property is now loaded from ldap for users which should be removed, instead of being left empty. Additional, the validation for users which should be removed has been deactivated (<u:bug>53649</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.72A~4.4.0.202109211758 -->
+<!-- CHANGELOG:2021-09-30:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
