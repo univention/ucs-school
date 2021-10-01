@@ -66,19 +66,23 @@ homedrive = configRegistry.get("ucsschool/import/set/homedrive")
 class Person(object):
     _samba_info = {}
 
-    def __init__(self, school, role):
-        self.firstname = uts.random_name()
-        self.lastname = uts.random_name()
-        self.username = uts.random_name()
-        self.legacy_v2 = False
+    def __init__(self, school, role, **kwargs):
         self.school = school
-        self.schools = [school]
         self.role = role
-        self.record_uid = None
-        self.source_uid = None
-        self.description = None
-        self.mail = "%s@%s" % (self.username, configRegistry.get("domainname"))
-        self.school_classes = {}
+        self.firstname = kwargs.get("firstname", uts.random_name())
+        self.lastname = kwargs.get("lastname", uts.random_name())
+        self.username = kwargs.get("username", uts.random_name())
+        self.legacy_v2 = kwargs.get("legacy_v2", False)
+        self.schools = kwargs.get("schools", [school])
+        self.record_uid = kwargs.get("record_uid", None)
+        self.source_uid = kwargs.get("source_uid", None)
+        self.description = kwargs.get("description", None)
+        self.mail = kwargs.get("mail", "%s@%s" % (self.username, configRegistry.get("domainname")))
+        self.school_classes = kwargs.get("school_classes", {})
+        self.mode = kwargs.get("mode", "A")
+        self.active = kwargs.get("active", True)
+        self.password = kwargs.get("password", None)
+        self.birthday = kwargs.get("birthday", None)
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
@@ -91,10 +95,6 @@ class Person(object):
         elif self.is_staff():
             self.cn = cn_staff
             self.grp_prefix = grp_prefix_staff
-        self.mode = "A"
-        self.active = True
-        self.password = None
-        self.birthday = None
         self.school_base = self.make_school_base()
         self.dn = self.make_dn()
         self.append_random_groups()
