@@ -238,11 +238,7 @@ class ImportUser(User):
         """
         if lo != self.lo:
             self.logger.warning('Received "lo" (%r) is not the same as self.lo (%r).', lo, self.lo)
-        if (
-            hook_time == "post"
-            and self.action in ["A", "M"]
-            and not (self.config["dry_run"] and self.action == "A")
-        ):
+        if hook_time == "post" and self.action in ["A", "M"] and not self.config["dry_run"]:
             # update self from LDAP if object exists (after A and M), except after a dry-run create
             # copy only those UDM properties from LDAP that were originally
             user = self.get_by_import_id(
