@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.250) unstable; urgency=low
+
+  * Bug #53841: add test for correct values in summary file after a dry-run
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Oct 2021 10:30:47 +0200
+
 ucs-test-ucsschool (6.0.249) unstable; urgency=medium
 
   * Bug #53649: added tests for udm_properties during user removal

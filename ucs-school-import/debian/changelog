@@ -1,3 +1,9 @@
+ucs-school-import (17.0.73) unstable; urgency=low
+
+  * Bug #53841: no not reset user data to state in LDAP during dry-run
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Oct 2021 10:31:11 +0200
+
 ucs-school-import (17.0.72) unstable; urgency=medium
 
   * Bug #53816: Do not verify users on remove and fill udm_properties with
