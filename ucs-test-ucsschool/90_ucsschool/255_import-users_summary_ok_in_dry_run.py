@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner python
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Test that the csv summary contains the changed user dta also in dry-run
 ## tags: [apptest,ucsschool,ucsschool_import1]
