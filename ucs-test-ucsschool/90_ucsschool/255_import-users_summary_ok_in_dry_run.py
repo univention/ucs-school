@@ -24,7 +24,7 @@ class Test(CLI_Import_v2_Tester):
 
     def __init__(self):
         super(Test, self).__init__()
-        self.summary_fd = tempfile.NamedTemporaryFile(delete=False)
+        self.summary_fd = tempfile.NamedTemporaryFile(delete=False, mode="w+")
 
     def cleanup(self):
         super(Test, self).cleanup()
