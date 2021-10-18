@@ -4,7 +4,7 @@
 
 For service implementations: Technical and/or organizational contact from Professional Services.
 
-## Source 
+## Source
 
 Link to story-reference in JIRA/plan.io/Bugzilla
 
@@ -17,7 +17,7 @@ As a \<role\> I can \<capability\>, so that \<receive benefit\>.
 A little context to the issue. Where does the task come from, what is needed for implementation. Everything which is important but doesn't fit the user story syntax can be written down here.
 
 A user story should be self-contained and provide value when shipped. It should also contain a "single source of truth".
-	
+
 Additional points:
 
 - If possible, list implementation constraints here (e.g. after a refinement)
@@ -30,4 +30,3 @@ Additional points:
 
 1. Write down criteria for measuring when the story is completed
 2. That can be a manual or automated test, release artifacts, etc.
-
