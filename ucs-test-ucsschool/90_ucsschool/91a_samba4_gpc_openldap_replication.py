@@ -59,8 +59,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         stdout, stderr = self.samba_tool("gpo", "create", display_name)
         if stderr:
             print(
-                ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s")
-                % (stderr,)
+                ("\nAn error message while creating a GPO using 'samba-tool'. STDERR:\n%s") % (stderr,)
             )
         if not stdout:
             utils.fail(
