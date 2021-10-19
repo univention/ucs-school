@@ -5,10 +5,11 @@ command_args=" run --server -w -l debug /kelvin/kelvin-api/opa_policies/"
 name=opa
 description="Open Policy Agent server"
 pidfile="/var/run/opa.pid"
+logfile="/var/log/univention/ucsschool-kelvin-rest-api/opa.log"
 
 start() {
     ebegin "Starting $description"
-    start-stop-daemon --start -m -p $pidfile --background --name "$name" --exec $command -- $command_args
+    start-stop-daemon --start --stdout $logfile --stderr $logfile -m -p $pidfile --background --name "$name" --exec $command -- $command_args
     eend $?
 }
 
