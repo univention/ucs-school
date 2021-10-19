@@ -234,6 +234,8 @@ def creation_kwargs(
             )
         elif model in ("School", "OU"):
             del result["school"]
+        elif model == "MailDomain":
+            result["name"] = fake.domain_name()
         return result
 
     return _func
