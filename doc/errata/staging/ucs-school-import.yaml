@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-import
 fix: 17.0.73A~4.4.0.202110081040
 desc: |
- * The generation of the import summary CSV file was fixed to also reflect changes to existing users in case of a dry-run (Bug #53841).
+ * The generation of the import summary CSV file was fixed to also reflect the potential changes to existing users in dry-runs (Bug #53841).
 bug: [53841]

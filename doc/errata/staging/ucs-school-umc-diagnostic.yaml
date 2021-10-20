@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-diagnostic
 fix: 1.0.0-27A~4.4.0.202109270937
 desc: |
- * Samba shares for school groups with consecutive whitespaces can not be accessed by default. A new diagnostic module has been added to find such groups. When using an UCS@school version higher than 5.0 please visit https://help.univention.com/t/18597 (Bug #53464).
+ * Samba shares for school groups with consecutive whitespaces can not be accessed by default. A new diagnostic module has been added to find such groups. Please visit https://help.univention.com/t/18597 for more information (Bug #53464).
 bug: [53464]
