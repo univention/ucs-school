@@ -830,7 +830,30 @@ feedback@univention.de
 					<!-- END ucs-school-import 17.0.72A~4.4.0.202109211758 -->
 <!-- CHANGELOG:2021-09-30:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-10-20" lang="en">
+					<title>Released on 2021-10-20:</title>
+					<!-- START ucs-school-import 17.0.73A~4.4.0.202110081040 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.73A~4.4.0.202110081040</emphasis>:
+						<itemizedlist>
+							<listitem><para>The generation of the import summary CSV file was fixed to also reflect the potential changes to existing users in dry-runs (<u:bug>53841</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.73A~4.4.0.202110081040 -->
+					<!-- START ucs-school-umc-diagnostic 1.0.0-27A~4.4.0.202109270937 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-diagnostic</emphasis> in version <emphasis>1.0.0-27A~4.4.0.202109270937</emphasis>:
+						<itemizedlist>
+							<listitem><para>Samba shares for school groups with consecutive whitespaces can not be accessed by default. A new diagnostic module has been added to find such groups. Please visit https://help.univention.com/t/18597 for more information (<u:bug>53464</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-diagnostic 1.0.0-27A~4.4.0.202109270937 -->
+<!-- CHANGELOG:2021-10-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
