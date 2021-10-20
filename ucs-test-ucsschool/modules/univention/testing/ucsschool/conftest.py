@@ -48,12 +48,16 @@ MACHINE_ACCOUNT_PW_FILE = "/etc/machine.secret"
 MAPPED_UDM_PROPERTIES = (
     "title",
     "description",
+    "displayName",
+    "e-mail",
     "employeeType",
     "organisation",
     "phone",
     "uidNumber",
     "gidNumber",
-)  # keep in sync with kelvin-api/tests/conftest.py::MAPPED_UDM_PROPERTIES
+)  # keep in sync with MAPPED_UDM_PROPERTIES in [ucsschool-repo/feature-kelvin]kelvin-api/tests/...
+# ... conftest.py and [ucs-repo(4.4|5.0)]/test/utils/ucsschool_id_connector.py
+# if changed: check kelvin-api/tests/test_route_user.test_search_filter_udm_properties()
 IMPORT_CONFIG_KWARGS = {
     "configuration_checks": ["defaults", "mapped_udm_properties"],
     "dry_run": False,
