@@ -1,4 +1,18 @@
 <h1>Changelog</h1>
+
+<h2>v1.5.1 (2021-10-20)</h2>
+<ul>
+    <li>
+         Add Open Policy Agent component to components documentation (Bug 53960)
+    </li>
+    <li>
+         The log output of the Open Policy Agent is now written to <code>/var/log/univention/ucsschool-kelvin-rest-api/opa.log</code> (Bug 53961).
+    </li>
+    <li>
+        The test suite for the ``ucsschool.lib`` component was improved (Bug 53962).
+    </li>
+</ul>
+
 <h2>v1.5.0 (2021-09-10)</h2>
 <ul>
     <li>
