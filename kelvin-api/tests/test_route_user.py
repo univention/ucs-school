@@ -52,6 +52,7 @@ from ucsschool.kelvin.routers.user import (
 )
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
 
 pytestmark = pytest.mark.skipif(
@@ -138,9 +139,8 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
         elif attr == "ucsschool_roles" and "ucsschoolRole" in ldap_obj:
             assert set(value) == set(r.decode("utf-8") for r in ldap_obj["ucsschoolRole"])
         elif attr == "email" and "mailPrimaryAddress" in ldap_obj:
-            assert value == ldap_obj["mail"][0].decode("utf-8") and value == ldap_obj[
-                "mailPrimaryAddress"
-            ][0].decode("utf-8")
+            assert value in [o.decode("utf-8") for o in ldap_obj["mail"]]
+            assert value in [o.decode("utf-8") for o in ldap_obj["mailPrimaryAddress"]]
         elif attr == "source_uid" and "ucsschoolSourceUID" in ldap_obj:
             assert value == ldap_obj["ucsschoolSourceUID"][0].decode("utf-8")
         elif attr == "birthday" and "univentionBirthday" in ldap_obj:
@@ -341,9 +341,18 @@ async def test_search_filter_udm_properties(
     random_name,
     filter_param: str,
 ):
-    if filter_param in ("title", "description", "employeeType", "organisation"):
+    if filter_param in ("description", "displayName", "employeeType", "organisation", "title"):
         filter_value = random_name()
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
+    elif filter_param == "e-mail":
+        domainname = env_or_ucr("domainname")
+        email1 = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
+        filter_value = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
+        email3 = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
+        create_kwargs = {
+            "email": filter_value,
+            "udm_properties": {filter_param: [email1, filter_value, email3]},
+        }
     elif filter_param == "phone":
         filter_value = random_name()
         create_kwargs = {"udm_properties": {filter_param: [random_name(), filter_value, random_name()]}}
@@ -357,7 +366,7 @@ async def test_search_filter_udm_properties(
         udm_user = await user.get_udm_object(udm)
     if filter_param in ("uidNumber", "gidNumber"):
         filter_value = udm_user.props[filter_param]
-    elif filter_param == "phone":
+    elif filter_param in ("e-mail", "phone"):
         assert set(udm_user.props[filter_param]) == set(create_kwargs["udm_properties"][filter_param])
     else:
         assert udm_user.props[filter_param] == create_kwargs["udm_properties"][filter_param]
@@ -375,7 +384,7 @@ async def test_search_filter_udm_properties(
     assert user.name in api_users
     api_user = api_users[user.name]
     created_value = api_user.udm_properties[filter_param]
-    if filter_param == "phone":
+    if filter_param in ("e-mail", "phone"):
         assert set(created_value) == set(create_kwargs["udm_properties"][filter_param])
     else:
         assert created_value == filter_value

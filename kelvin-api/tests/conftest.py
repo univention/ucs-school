@@ -88,13 +88,17 @@ MAPPED_UDM_PROPERTIES_CONFIG = {
 MAPPED_UDM_PROPERTIES = [
     "title",
     "description",
+    "displayName",
+    "e-mail",
     "employeeType",
     "organisation",
     "phone",
     "uidNumber",
     "gidNumber",
-]  # keep in sync with ucsschool[4.4]/ucs-test-ucsschool/ \
-# 94_ucsschool-api-kelvin/conftest.py::MAPPED_UDM_PROPERTIES
+]  # keep in sync with MAPPED_UDM_PROPERTIES in [ucsschool-repo(4.4|5.0)]/ucs-test-ucsschool/modules/...
+# .../univention/testing/ucsschool/conftest.py and [ucs-repo(4.4|5.0)]/test/utils/...
+# .../ucsschool_id_connector.py
+# if changed: check tests/test_route_user.test_search_filter_udm_properties()
 
 # import fixtures from ucsschool.lib tests
 # this also imports a fixture "event_loop()" that stabilizes async teardowns
