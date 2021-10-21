@@ -31,8 +31,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
     cmd = [
         "/usr/share/ucs-school-import/scripts/create_ou",
         "--verbose",
-        "--displayName",
-        ou_displayName,
+        "--displayName={}".format(ou_displayName),
         ou_name,
     ]
     print("Calling following command: %r" % cmd)
