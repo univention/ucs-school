@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.5.2.0-2) unstable; urgency=low
+
+  * Bug #53963: add hostname to veyon certificate file name
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 21 Oct 2021 16:46:05 +0200
+
 ucs-school-veyon-windows (4.5.2.0-1) unstable; urgency=low
 
   * Bug #52522: set language during build to make ucslint happy
