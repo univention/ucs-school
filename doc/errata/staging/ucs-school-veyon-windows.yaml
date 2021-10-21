@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-veyon-windows
-fix:
+fix: 4.5.2.0-2A~4.4.0.202110211713
 desc: |
  * The Veyon certificate file name now contains the school servers host name. This will prevent overwriting of certificates on the SYSVOL share (Bug #53963).
 bug: [53963]
