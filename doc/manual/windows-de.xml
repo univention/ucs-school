@@ -212,7 +212,7 @@ service univention-directory-listener restart
 	  Schließlich muss der öffentliche Schlüssel importiert werden, damit der Schulserver Zugriff auf das installierte Veyon-Backend erhält.
 	  Der Import kann mit <guimenu>Authentifizierungsschlüssl &ar; Schlüssel importieren</guimenu> durchgeführt werden. Dort ist der Veyon-Schlüssel des Schulservers anzugeben. Der Schlüssel
 	  wird automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
-	  <filename>scripts/veyon-cert.pem</filename> abgelegt. Im Dialog <emphasis>Authentifizierungsschlüsselname</emphasis>
+	  <filename>scripts/veyon-cert_SERVERNAME.pem</filename> abgelegt. (U.U. liegt dort zusätzlich eine Datei <filename>veyon-cert.pem</filename> <emphasis>ohne</emphasis> den Namen des Servers. Diese sollte nicht verwendet werden.) Im Dialog <emphasis>Authentifizierungsschlüsselname</emphasis>
 	  muss der Name <emphasis>teacher</emphasis> angegeben werden. Außer den beschriebenen Konfigurationen müssen keine weiteren Anpassungen vorgenommen werden.
 	</para>
 	<para>
