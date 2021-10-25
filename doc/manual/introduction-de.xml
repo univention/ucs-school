@@ -26,7 +26,7 @@
 	den IT-Betrieb und den IT-gestützten Unterricht in der Schule.
   </para>
   <para>
-	Die &ucsUMC; ermöglicht die zentrale, web-basierte Verwaltung aller
+	Die &ucsUMC; (TODO Portal?) ermöglicht die zentrale, web-basierte Verwaltung aller
 	Domänendaten (z.B. Benutzer, Gruppen, Rechner, DNS/DHCP). Die
 	Speicherung der Daten erfolgt in einem Verzeichnisdienst auf Basis von
 	OpenLDAP. Da viele Schuldaten primär in schulträgerspezifischen Systemen
