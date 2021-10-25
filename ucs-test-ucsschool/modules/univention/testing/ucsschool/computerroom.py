@@ -280,103 +280,21 @@ class Room(object):
         # Checking Atjobs list
         self.check_atjobs(period, False)
 
-    @retry_cmd
     def check_home_read(self, user, ip_address, passwd="univention", expected_result=0):
-        print(".... Check home read ....")
-        cmd_read_home = ["smbclient", "//%(ip)s/%(username)s", "-U", "%(user)s", "-c", "dir"]
-        read = run_commands(
-            [cmd_read_home], {"ip": ip_address, "username": user, "user": "{0}%{1}".format(user, passwd)}
-        )
-        assert read[0] == expected_result, "Read home directory result (%r), expected (%r)" % (
-            read[0],
-            expected_result,
-        )
+        check_share_read(user, ip_address, share=user, passwd=passwd, expected_result=expected_result)
 
-    @retry_cmd
     def check_home_write(self, user, ip_address, passwd="univention", expected_result=0):
-        print(".... Check home write ....")
-        f = tempfile.NamedTemporaryFile(dir="/tmp")
-        cmd_write_home = [
-            "smbclient",
-            "//%(ip)s/%(username)s",
-            "-U",
-            "%(user)s",
-            "-c",
-            "put %(filename)s",
-        ]
-        write = run_commands(
-            [cmd_write_home],
-            {
-                "ip": ip_address,
-                "username": user,
-                "user": "{0}%{1}".format(user, passwd),
-                "filename": "%s %s" % (f.name, f.name.split("/")[-1]),
-            },
-        )
-        f.close()
-        if write[0] != expected_result:
-            print(
-                "FAIL .. Write to home directory result (%r), expected (%r)"
-                % (
-                    write[0],
-                    expected_result,
-                )
-            )
-            raise CmdCheckFail(
-                "Write to home directory result (%r), expected (%r)" % (write[0], expected_result)
-            )
+        check_share_write(user, ip_address, share=user, passwd=passwd, expected_result=expected_result)
 
-    @retry_cmd
     def check_marktplatz_read(self, user, ip_address, passwd="univention", expected_result=0):
-        print(".... Check Marktplatz read ....")
-        cmd_read_marktplatz = ["smbclient", "//%(ip)s/Marktplatz", "-U", "%(user)s", "-c", "dir"]
-        read = run_commands(
-            [cmd_read_marktplatz], {"ip": ip_address, "user": "{0}%{1}".format(user, passwd)}
+        check_share_read(
+            user, ip_address, share="Marktplatz", passwd=passwd, expected_result=expected_result
         )
-        if read[0] != expected_result:
-            print(
-                "FAIL .. Read Marktplatz directory result (%r), expected (%r)"
-                % (
-                    read[0],
-                    expected_result,
-                )
-            )
-            raise CmdCheckFail(
-                "Read Marktplatz directory result (%r), expected (%r)" % (read[0], expected_result)
-            )
 
-    @retry_cmd
     def check_marktplatz_write(self, user, ip_address, passwd="univention", expected_result=0):
-        print(".... Check Marktplatz write ....")
-        f = tempfile.NamedTemporaryFile(dir="/tmp")
-        cmd_write_marktplatz = [
-            "smbclient",
-            "//%(ip)s/Marktplatz",
-            "-U",
-            "%(user)s",
-            "-c",
-            "put %(filename)s",
-        ]
-        write = run_commands(
-            [cmd_write_marktplatz],
-            {
-                "ip": ip_address,
-                "user": "{0}%{1}".format(user, passwd),
-                "filename": "%s %s" % (f.name, f.name.split("/")[-1]),
-            },
+        check_share_write(
+            user, ip_address, share="Marktplatz", passwd=passwd, expected_result=expected_result
         )
-        f.close()
-        if write[0] != expected_result:
-            print(
-                "FAIL .. Write to Marktplatz directory result (%r), expected (%r)"
-                % (
-                    write[0],
-                    expected_result,
-                )
-            )
-            raise CmdCheckFail(
-                "Write to Marktplatz directory result (%r), expected (%r)" % (write[0], expected_result)
-            )
 
     def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
         self.check_home_read(user, ip_address, expected_result=expected_home_result)
@@ -1086,3 +1004,52 @@ def check_change_permissions(
                 stdout
             )
         )
+
+
+@retry_cmd
+def check_share_read(user, ip_address, share, passwd="univention", filename="/*", expected_result=0):
+    print(".... Check {} read ....".format(share))
+    cmd_read_share = ["smbclient", "//%(ip)s/%(share)s", "-U", "%(user)s", "-c", "dir %(filename)s"]
+    read = run_commands(
+        [cmd_read_share],
+        {"ip": ip_address, "share": share, "user": "{0}%{1}".format(user, passwd), "filename": filename},
+    )
+    assert read[0] == expected_result, "Read share (%r) result (%r), expected (%r)" % (
+        share,
+        read[0],
+        expected_result,
+    )
+
+
+@retry_cmd
+def check_share_write(
+    user, ip_address, share, passwd="univention", remote_filename=None, expected_result=0
+):
+    print(".... Check {} write ....".format(share))
+    f = tempfile.NamedTemporaryFile(dir="/tmp")
+    if not remote_filename:
+        remote_filename = os.path.basename(f.name)
+    cmd_write_share = [
+        "smbclient",
+        "//%(ip)s/%(share)s",
+        "-U",
+        "%(user)s",
+        "-c",
+        "put %(filename)s %(remote_filename)s",
+    ]
+    write = run_commands(
+        [cmd_write_share],
+        {
+            "ip": ip_address,
+            "share": share,
+            "user": "{0}%{1}".format(user, passwd),
+            "filename": f.name,
+            "remote_filename": remote_filename,
+        },
+    )
+    f.close()
+    assert write[0] == expected_result, "Write share (%r) result (%r), expected (%r)" % (
+        share,
+        write[0],
+        expected_result,
+    )
