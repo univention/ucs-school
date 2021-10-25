@@ -119,15 +119,14 @@ feedback@univention.de
   </para>
 
   <para>
-    Bei der ersten Anmeldung erscheint ein Dialog, mit dem die UCS-Lizenz für das Univention App Center
-    freigeschaltet werden kann. Es muss dazu eine E-Mail-Adresse angegeben werden, an die der freigeschaltete
+    Bei der ersten Anmeldung muss im UMC-Modul Willkommen! eine UCS-Lizenz für das Univention App Center
+    freigeschaltet werden. Im Dialog, der über <guimenu>Neue Lizenz anfordern</guimenu> geöffnet wird, muss dazu eine E-Mail-Adresse angegeben werden, an die der freigeschaltete
     Lizenzschlüssel dann geschickt wird.
   </para>
 
   <para>
-    Der freigeschaltete Lizenzschlüssel kann über die UMC importiert werden, indem in der oberen rechte
-    Bildschirmzeile auf das Pfeil-Symbol neben dem Benutzernamen geklickt wird. Es muss der Menüpunkt
-    <guimenu>Lizenz -> Neue Lizenz einspielen</guimenu> ausgewählt werden. Nach dem Import des Lizenzschlüssels
+    Der freigeschaltete Lizenzschlüssel kann über die UMC-Modul Willkommen! importiert werden. Es muss der Menüpunkt
+    <guimenu>Neue Lizenz importieren</guimenu> ausgewählt werden. Nach dem Import des Lizenzschlüssels
     kann das Univention App Center verwendet werden.
   </para>
 
