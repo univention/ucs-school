@@ -9,6 +9,7 @@
 
 import os
 import re
+import tempfile
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, List
 
@@ -24,10 +25,13 @@ from univention.testing.ucsschool.computerroom import (
     Room,
     check_change_permissions,
     check_create_share_folder,
+    check_share_read,
+    check_share_write,
     create_homedirs,
     retry_cmd,
 )
 from univention.testing.ucsschool.exam import Exam
+from univention.testing.umc import Client
 
 if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType
@@ -152,7 +156,8 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
 
     stu1, studn1 = schoolenv.create_user(school)
     stu2, studn2 = schoolenv.create_user(school)
-    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn1, studn2]})
+    tea, teadn = schoolenv.create_user(school, is_teacher=True, password="univention")
+    udm.modify_object("groups/group", dn=klasse_dn, append={"users": [studn1, studn2, teadn]})
 
     print("# import random computers")
     computers = Computers(lo, school, 2, 0, 0)
@@ -171,12 +176,18 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
     print("# Set an exam and start it")
     current_time = datetime.now()
     chosen_time = current_time + timedelta(hours=2)
-    exam = Exam(
-        school=school,
-        room=room.dn,  # room dn
-        examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
-        recipients=[klasse_dn],  # list of classes dns
-    )
+    with tempfile.NamedTemporaryFile("w+", suffix=".exam") as f:
+        f.write("Temp exam file to upload")
+        f.flush()
+        exam = Exam(
+            school=school,
+            room=room.dn,  # room dn
+            examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
+            recipients=[klasse_dn],  # list of classes dns
+            files=[os.path.basename(f.name)],
+            connection=Client(username=tea, password="univention"),
+        )
+        exam.uploadFile(f.name)
     exam.start()
 
     exam_member_dns = [
@@ -194,5 +205,48 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
     distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")
     check_init_windows_profiles(exam_member_dns, lo)
     check_exam_user_home_dir_permissions(exam_member_dns, lo, distribution_data_folder)
+    exam_filename = os.path.join(distribution_data_folder, exam.name, "*.exam")
+    exam_answer_filename = os.path.join(distribution_data_folder, exam.name, "my.answer")
+    print("# check exam permissions for students")
+    for uid in [stu1, stu2]:
+        username = "exam-{}".format(uid)
+        check_share_read(
+            username,
+            ucr.get("hostname"),
+            username,
+            passwd="univention",
+            filename=exam_filename,
+            expected_result=0,
+        )
+        check_share_write(
+            username,
+            ucr.get("hostname"),
+            username,
+            passwd="univention",
+            remote_filename=exam_answer_filename,
+            expected_result=0,
+        )
+    exam.collect()
+    exam.check_collect()
+    print("# check collected exam permissions for teacher")
+    for uid in [stu1, stu2]:
+        username = "exam-{}".format(uid)
+        exam_filename = os.path.join(
+            distribution_data_folder, exam.name + "-Ergebnisse", username + "-001", "*.exam"
+        )
+        exam_answer_filename = os.path.join(
+            distribution_data_folder, exam.name + "-Ergebnisse", username + "-001", "my.answer"
+        )
+        check_share_read(
+            tea, ucr.get("hostname"), tea, passwd="univention", filename=exam_filename, expected_result=0
+        )
+        check_share_read(
+            tea,
+            ucr.get("hostname"),
+            tea,
+            passwd="univention",
+            filename=exam_answer_filename,
+            expected_result=0,
+        )
     print("# stopping exam")
     exam.finish()
