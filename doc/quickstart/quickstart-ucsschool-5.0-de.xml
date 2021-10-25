@@ -112,7 +112,7 @@ feedback@univention.de
 
   <para>
     Der folgende Abschnitt beschreibt die Installation der Erweiterung &ucsUAS; auf einem UCS-System
-    über Univention App Center <biblioref linkend="ucs-app-center"/>. Dazu muss eine Anmeldung mit dem
+    über Univention App Center. Dazu muss eine Anmeldung mit dem
     Administrator-Konto (Benutzername: <systemitem class="username">Administrator</systemitem>) an der
     Univention Management Console (<uri>https://<replaceable>server_ip</replaceable>/umc</uri> oder
     <uri>http://<replaceable>server_ip</replaceable>/umc</uri>) erfolgen.
@@ -491,12 +491,6 @@ feedback@univention.de
     <pubdate>2017</pubdate>
     <title>Inbetriebnahme und Konfiguration des Demosystems in VMware oder VirtualBox</title>
     <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=Inbetriebnahme_und_Konfiguration_des_Demosystems_in_VMware_oder_VirtualBox"/></releaseinfo>
-  </biblioentry>
-  <biblioentry id="ucs-app-center">
-    <publishername>Univention GmbH</publishername>
-    <pubdate>2017</pubdate>
-    <title>App Center</title>
-    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=UCS@school_4.4_Quickstart#Installation_von_UCS.40school_in_einer_Multi-Server-Umgebung"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-teacher">
     <publishername>Univention GmbH</publishername>
