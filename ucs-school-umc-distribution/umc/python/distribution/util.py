@@ -690,6 +690,18 @@ class Project(_Dict):
     # 			    all_versions.pop()))
     # 			_delete_result(target)
 
+    def _fix_permissions(self, path):
+        os.chown(path, int(self.sender.uidNumber), int(self.sender.gidNumber))
+        try:
+            # Remove ntacl set for exams, to allow read access
+            os.removexattr(path, "security.NTACL", follow_symlinks=False)
+        except OSError as exc:
+            no_xattr_set_error = errno.ENODATA
+            if exc.errno == no_xattr_set_error:
+                pass
+            else:
+                MODULE.warn("Could not remove ntacl:\n{}".format(exc))
+
     def collect(self, dirsFailed=None, readOnly=False, compress=False):
         if not isinstance(dirsFailed, list):
             dirsFailed = []
@@ -734,16 +746,12 @@ class Project(_Dict):
                     # Necessary for correct filename in the permission fixing
                     targetdir = targetdir + compressed_suffix
                     # fix permission
-                    os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
+                    self._fix_permissions(targetdir)
                     if compress:
                         os.chmod(targetdir, 0o600)
                     for root, dirs, files in os.walk(targetdir):
                         for momo in dirs + files:
-                            os.chown(
-                                os.path.join(root, momo),
-                                int(self.sender.uidNumber),
-                                int(self.sender.gidNumber),
-                            )
+                            self._fix_permissions(os.path.join(root, momo))
                         if readOnly:
                             for file in files:
                                 os.chmod(os.path.join(root, file), 0o400)
