@@ -852,7 +852,21 @@ feedback@univention.de
 					<!-- END ucs-school-umc-diagnostic 1.0.0-27A~4.4.0.202109270937 -->
 <!-- CHANGELOG:2021-10-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-10-25" lang="en">
+					<title>Released on 2021-10-25:</title>
+					<!-- START ucs-school-veyon-windows 4.5.2.0-2A~4.4.0.202110211713 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-windows</emphasis> in version <emphasis>4.5.2.0-2A~4.4.0.202110211713</emphasis>:
+						<itemizedlist>
+							<listitem><para>The Veyon certificate file name now contains the school servers host name. This will prevent overwriting of certificates on the SYSVOL share (<u:bug>53963</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-windows 4.5.2.0-2A~4.4.0.202110211713 -->
+<!-- CHANGELOG:2021-10-25:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
