@@ -296,9 +296,10 @@ html5
         return reqResult
 
     def check_collect(self):
-        account = utils.UCSTestDomainAdminCredentials()
-        admin = account.username
-        path = "/home/%s/Klassenarbeiten/%s-Ergebnisse" % (admin, self.name)
+        username = self.client.username or utils.UCSTestDomainAdminCredentials().username
+        path = os.path.join(
+            os.path.expanduser("~{}".format(username)), "Klassenarbeiten/%s-Ergebnisse" % (self.name,)
+        )
         path_files = get_dir_files(path)
         assert set(self.files).issubset(set(path_files)), "%r were not collected to %r" % (
             self.files,
