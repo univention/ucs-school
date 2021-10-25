@@ -11,7 +11,7 @@ from univention.testing.ucsschool.computerroom import Computers, Room
 from univention.testing.umc import Client
 
 
-def computerroom_module_settings(schoolenv, ucr):
+def test_computerroom_module_settings(schoolenv, ucr):
     with NetworkRedirector() as nethelper:
         school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"), use_cache=False)
         teacher, teacher_dn = schoolenv.create_user(school, is_teacher=True)

@@ -551,7 +551,7 @@ class Room(object):
         group = Workgroup(school, members=[user_dn])
         group.create()
         try:
-            global_domains = ["univention.de", "google.de"]
+            global_domains = ["univention.de", "example.com"]
             rule = InternetRule(typ="whitelist", domains=global_domains)
             rule.define()
             rule.assign(school, group.name, "workgroup")
@@ -611,7 +611,7 @@ class Room(object):
         group = Workgroup(school, client, members=[user_dn])
         group.create()
         try:
-            global_domains = ["univention.de", "google.de"]
+            global_domains = ["univention.de", "example.com"]
             rule = InternetRule(typ="whitelist", domains=global_domains)
             rule.define()
             rule.assign(school, group.name, "workgroup")
@@ -779,7 +779,7 @@ def add_printer(name, school, hostname, domainname, ldap_base):
         "--set",
         "spoolHost=%(hostname)s.%(domainname)s",
         "--set",
-        'uri="file:// /tmp/%(name)s.printer"',
+        "uri=file:// /tmp/%(name)s.printer",
         "--set",
         "model=None",
         "--binddn",
