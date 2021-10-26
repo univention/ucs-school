@@ -33,6 +33,8 @@
 Write the passwords of newly created users to a CSV file.
 """
 
+import itertools
+
 from ..factory import Factory
 from ..models.import_user import ImportUser
 from ..writer.result_exporter import ResultExporter
@@ -54,8 +56,7 @@ class NewUserPasswordCsvExporter(ResultExporter):
         """
         Return only the new users.
         """
-        li = []
-        map(li.extend, user_import.added_users.values())
+        li = list(itertools.chain(*user_import.added_users.values()))
         li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
         return li
 
