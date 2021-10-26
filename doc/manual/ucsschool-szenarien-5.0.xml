@@ -1613,17 +1613,8 @@ feedback@univention.de
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
-					<listitem><para>Nach Abschluss der Installation
-							ist über das Univention App Center die
-							<package>&ucsUAS;</package> App zu
-							installieren.</para></listitem>
-					<listitem><para>Im Anschluss an die Installation der
-							<package>&ucsUAS;</package> App ist in der &ucsUMC;
-							in der Kategorie
-							<emphasis>Schuladministration</emphasis> der
-							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
-							zu starten und der Assistent bis zum
-							Ende auszuführen.</para></listitem>
+					<listitem><para>Alle benötigten Pakete werden während des Domänenbeitritts installiert.
+					</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1661,17 +1652,9 @@ feedback@univention.de
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
-					<listitem><para>Nach Abschluss der Installation ist über das
-							Univention App Center die App
-							<package>&ucsUAS;</package> zu
-							installieren.</para></listitem>
-					<listitem><para>Im Anschluss an die Installation der
-							<package>&ucsUAS;</package> App ist in der &ucsUMC;
-							in der Kategorie
-							<emphasis>Schuladministration</emphasis> der
-							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
-							zu starten und der Assistent bis zum
-							Ende auszuführen.</para></listitem>
+                    <listitem><para>Alle benötigten Pakete werden während des Domänenbeitritts installiert
+					  und für die zu replizierende Schule konfiguriert.
+					</para></listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
