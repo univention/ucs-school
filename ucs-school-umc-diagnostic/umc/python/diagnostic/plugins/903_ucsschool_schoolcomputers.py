@@ -36,6 +36,8 @@
 
 from __future__ import absolute_import
 
+from typing import TYPE_CHECKING, Set
+
 import ldap
 from ldap.filter import filter_format
 
@@ -54,13 +56,8 @@ from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import MODULE, Critical, ProblemFixed
 
-try:
-    from typing import TYPE_CHECKING, Set  # noqa: F401
-
-    if TYPE_CHECKING:
-        from univention.admin.uldap import access  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from univention.admin.uldap import access
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 

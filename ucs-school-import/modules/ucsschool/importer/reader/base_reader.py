@@ -34,6 +34,7 @@ Base class of all input readers.
 """
 
 import logging
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional, Text
 
 from ..configuration import Configuration
 from ..exceptions import UcsSchoolImportSkipImportRecord
@@ -42,12 +43,8 @@ from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.post_read_pyhook import PostReadPyHook
 
-try:
-    from typing import Any, Dict, Iterable, Iterator, List, Optional, Text  # noqa: F401
-
-    from ..models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..models.import_user import ImportUser
 
 
 class BaseReader(object):

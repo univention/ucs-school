@@ -31,6 +31,7 @@
 import imp
 import os.path
 import sys
+from typing import TYPE_CHECKING, Any, List, NamedTuple, Optional
 
 import pytest
 
@@ -46,14 +47,13 @@ else:
     orig_import = __import__
     mock_import_func = "__builtin__.__import__"
 
-try:
-    import logging  # noqa: F401
-    from typing import Any, List, NamedTuple, Optional  # noqa: F401
+if TYPE_CHECKING:
+    import logging
 
     from typing_extensions import Protocol
 
-    from univention.config_registry import ConfigRegistry  # noqa: F401
-    from univention.lib.package_manager import PackageManager  # noqa: F401
+    from univention.config_registry import ConfigRegistry
+    from univention.lib.package_manager import PackageManager
 
     StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
 
@@ -75,9 +75,6 @@ try:
         def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> None
             pass
 
-
-except ImportError:
-    pass
 
 JOIN_HOOK_FILE = "ucsschool-join-hook.py"
 

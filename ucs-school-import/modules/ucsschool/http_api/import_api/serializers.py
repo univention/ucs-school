@@ -41,6 +41,7 @@ import datetime
 import json
 import logging
 import os
+from typing import Tuple
 
 import lazy_object_proxy
 from django.conf import settings
@@ -56,11 +57,6 @@ from ucsschool.lib.models.utils import ucr
 from .constants import JOB_NEW, JOB_SCHEDULED
 from .models import Logfile, PasswordsFile, Role, School, SummaryFile, TextArtifact, UserImportJob
 from .tasks import dry_run, import_users
-
-try:
-    from typing import Tuple  # noqa: F401
-except ImportError:
-    pass
 
 
 class TaskResultSerializer(serializers.HyperlinkedModelSerializer):

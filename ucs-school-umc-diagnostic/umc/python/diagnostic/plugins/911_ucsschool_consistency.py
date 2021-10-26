@@ -35,10 +35,7 @@
 
 from __future__ import absolute_import
 
-try:
-    from typing import Dict, List  # noqa: F401
-except ImportError:
-    pass
+from typing import Dict, List
 
 from ucsschool.lib.consistency import check_all
 from univention.lib.i18n import Translation

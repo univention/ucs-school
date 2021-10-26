@@ -35,6 +35,7 @@ Single source database, partial import user import class.
 """
 
 import copy
+from typing import TYPE_CHECKING, Optional
 
 from ldap.filter import filter_format
 
@@ -43,12 +44,8 @@ from ucsschool.lib.models.attributes import ValidationError
 from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 
-try:
-    from typing import Optional  # noqa: F401
-
-    from ..models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..models.import_user import ImportUser
 
 
 class SingleSourcePartialUserImport(UserImport):

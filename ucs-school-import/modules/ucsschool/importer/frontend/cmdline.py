@@ -39,6 +39,7 @@ import pprint
 import pwd
 import sys
 from datetime import datetime
+from typing import List
 
 import six
 
@@ -53,11 +54,6 @@ from ..configuration import Configuration, setup_configuration
 from ..exceptions import InitialisationError
 from ..factory import setup_factory
 from .parse_user_import_cmdline import ParseUserImportCmdline
-
-try:
-    from typing import List  # noqa: F401
-except ImportError:
-    pass
 
 CENTRAL_LOG_DIR = "/var/log/univention/ucs-school-import"
 LAST_FAIL_LOG_SYMLINK = os.path.join(CENTRAL_LOG_DIR, "LAST-FAIL")

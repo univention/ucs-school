@@ -30,12 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    from typing import Optional  # noqa: F401
-
-    from .base import LoType  # noqa: F401
-except ImportError:
-    pass
+from typing import TYPE_CHECKING, Optional
 
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
@@ -44,6 +39,9 @@ from univention.admin.uexceptions import objectExists
 from .attributes import ContainerPath
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _, ucr
+
+if TYPE_CHECKING:
+    from .base import LoType
 
 
 class MailDomain(UCSSchoolHelperAbstractClass):

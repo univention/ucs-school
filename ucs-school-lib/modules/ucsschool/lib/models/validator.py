@@ -35,16 +35,13 @@ import os
 import re
 import traceback
 import uuid
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
 import ldap
 from ldap.dn import escape_dn_chars, str2dn
 
-try:
-    from typing import Any, Dict, List, Optional, Type, Union  # noqa: F401
-
-    from .base import UdmObject  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .base import UdmObject
 
 from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.roles import (

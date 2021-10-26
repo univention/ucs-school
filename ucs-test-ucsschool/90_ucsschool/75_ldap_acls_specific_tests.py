@@ -28,16 +28,12 @@ import os
 import random
 import time
 import uuid
+from typing import List, Union
 
 import univention.admin.uldap
 import univention.testing.strings as uts
 import univention.testing.udm
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
-
-try:
-    from typing import List, Union  # noqa: F401
-except ImportError:
-    pass
 
 ATTR2TYPE = {
     "krb5KeyVersionNumber": "str_int",

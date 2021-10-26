@@ -66,18 +66,15 @@ from __future__ import absolute_import
 import inspect
 import logging
 from operator import itemgetter
+from typing import TYPE_CHECKING, List, Type
 
 from ucsschool.lib.pyhooks.pyhooks_loader import PyHooksLoader
 
 from ..exceptions import UcsSchoolImportFatalError
 from .ldap_connection import get_readonly_connection, get_unprivileged_connection
 
-try:
-    from typing import List, Type  # noqa: F401
-
-    from ..configuration import ReadOnlyDict  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..configuration import ReadOnlyDict
 
 
 __all__ = ["ConfigurationChecks"]

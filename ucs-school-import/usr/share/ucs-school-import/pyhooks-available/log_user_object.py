@@ -27,16 +27,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    from typing import Any, List, Tuple  # noqa: F401
+from typing import TYPE_CHECKING, Any, List, Tuple
 
-    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
 from ldap.dn import str2dn
 from ldap.filter import filter_format
 
 from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+if TYPE_CHECKING:
+    from ucsschool.importer.models.import_user import ImportUser
+
 
 #
 # Define the user attributes and UDM properties that shuold be logged (and

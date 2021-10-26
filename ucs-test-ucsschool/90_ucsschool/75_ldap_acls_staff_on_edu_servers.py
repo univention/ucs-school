@@ -12,15 +12,11 @@
 from __future__ import absolute_import, print_function
 
 import subprocess
+from typing import Tuple
 
 import univention.admin.uldap as udm_uldap
 import univention.testing.utils as utils
 from univention.testing.ucsschool.ucs_test_school import NameDnObj, UCSTestSchool, logger
-
-try:
-    from typing import Tuple  # noqa: F401
-except ImportError:
-    pass
 
 
 class LDAPACLCheck(UCSTestSchool):

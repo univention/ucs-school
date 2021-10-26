@@ -9,15 +9,11 @@
 from __future__ import absolute_import, print_function
 
 import re
+from typing import List
 
 from univention.admin.uexceptions import ldapError
 from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
-
-try:
-    from typing import List  # noqa: F401
-except ImportError:
-    pass
 
 
 class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):

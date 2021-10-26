@@ -31,19 +31,15 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from threading import Lock
+from typing import TYPE_CHECKING, Dict, Optional
 
 import requests
 
 from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
 from .utils import check_veyon_error
 
-try:
-    from typing import TYPE_CHECKING, Dict, Optional  # noqa: F401
-
-    if TYPE_CHECKING:
-        from .models import Dimension, Feature  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .models import Dimension, Feature
 
 
 class VeyonClient:

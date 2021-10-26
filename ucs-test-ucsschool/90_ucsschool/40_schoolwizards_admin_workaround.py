@@ -6,15 +6,17 @@
 ## tags: [apptest, ucsschool, base1]
 ## bugs: [52757]
 
-from typing import List  # noqa: F401
+from typing import TYPE_CHECKING, List
 
 import pytest
 
-from ucsschool.lib.models.user import User  # noqa: F401
 from univention.config_registry import handler_get, handler_set, handler_unset
 from univention.lib.umc import BadRequest, Client
 from univention.testing.ucsschool.conftest import UserType
 from univention.udm import UDM
+
+if TYPE_CHECKING:
+    from ucsschool.lib.models.user import User
 
 
 @pytest.fixture(scope="session")

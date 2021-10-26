@@ -30,13 +30,9 @@
 import os
 import sqlite3
 import stat
+from typing import Any, List, Optional, Tuple
 
 import univention.config_registry
-
-try:
-    from typing import Any, List, Optional, Tuple  # noqa: F401
-except ImportError:
-    pass
 
 FN_NETLOGON_USER_QUEUE = "/var/spool/ucs-school-netlogon-user-logonscripts/user_queue.sqlite"
 

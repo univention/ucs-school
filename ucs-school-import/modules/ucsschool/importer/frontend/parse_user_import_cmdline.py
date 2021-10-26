@@ -35,13 +35,9 @@ Default command line frontend for import.
 
 import os
 from argparse import ArgumentParser
+from typing import Any, Dict
 
 from six import string_types
-
-try:
-    from typing import Any, Dict  # noqa: F401
-except ImportError:
-    pass
 
 
 class ParseUserImportCmdline(object):

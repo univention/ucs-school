@@ -34,31 +34,27 @@ Default implementation of the Abstract Factory.
 """
 
 import logging
+from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar
 
 from ucsschool.lib.models.utils import ucr
 
 from .exceptions import InitialisationError
 from .factory import load_class
 
-try:  # noqa: F401
-    from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar
+if TYPE_CHECKING:
+    import ucsschool.importer.mass_import.mass_import.MassImport
+    import ucsschool.importer.mass_import.user_import.UserImport
+    import ucsschool.importer.reader.csv_reader.CsvReader
+    import ucsschool.importer.utils.username_handler.EmailHandler
+    import ucsschool.importer.utils.username_handler.UsernameHandler
+    import ucsschool.importer.writer.csv_writer.CsvWriter
+    import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
+    import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
+    import univention.config_registry.ConfigRegistry
 
     from .models.import_user import ImportUser
 
-    if TYPE_CHECKING:
-        import ucsschool.importer.mass_import.mass_import.MassImport
-        import ucsschool.importer.mass_import.user_import.UserImport
-        import ucsschool.importer.reader.csv_reader.CsvReader
-        import ucsschool.importer.utils.username_handler.EmailHandler
-        import ucsschool.importer.utils.username_handler.UsernameHandler
-        import ucsschool.importer.writer.csv_writer.CsvWriter
-        import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
-        import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
-        import univention.config_registry.ConfigRegistry
-
-    ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
-except ImportError:
-    pass
+ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
 
 
 class DefaultUserImportFactory(object):

@@ -31,11 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
-
-try:
-    from typing import Dict, Optional, Pattern, Sequence  # noqa: F401
-except ImportError:
-    pass
+from typing import Dict, Optional, Pattern, Sequence
 
 from ldap.dn import dn2str, escape_dn_chars, explode_dn, str2dn
 

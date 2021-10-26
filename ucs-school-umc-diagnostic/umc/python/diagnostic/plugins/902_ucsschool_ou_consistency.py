@@ -41,6 +41,8 @@
 #   server environment?
 from __future__ import absolute_import
 
+from typing import Dict, List
+
 from ldap import NO_SUCH_OBJECT
 
 from univention.lib.i18n import Translation
@@ -48,10 +50,6 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
 
-try:
-    from typing import Dict, List  # noqa: F401
-except ImportError:
-    pass
 _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school OU Consistency")

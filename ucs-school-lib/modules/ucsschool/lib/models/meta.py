@@ -33,6 +33,7 @@
 import inspect
 import logging
 from functools import partial
+from typing import Any, Dict
 
 import lazy_object_proxy
 from six import iteritems
@@ -40,12 +41,6 @@ from six import iteritems
 import univention.admin.modules as udm_modules
 
 from .attributes import Attribute
-
-try:
-    from typing import Any, Dict  # noqa: F401
-except ImportError:
-    pass
-
 
 # load UDM modules see Bug #51717
 udm_modules.update()

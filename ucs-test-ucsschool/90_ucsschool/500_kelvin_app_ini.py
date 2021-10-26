@@ -7,13 +7,8 @@
 
 import itertools
 import re
-
-try:
-    from typing import Iterable  # noqa: F401
-except ImportError:
-    pass
-
 import tempfile
+from typing import Iterable
 
 import pytest
 import requests

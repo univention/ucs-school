@@ -12,15 +12,11 @@ import re
 import subprocess
 import time
 from multiprocessing import Pool
+from typing import Dict, List, Optional, Set
 
 import ldif
 
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
-
-try:
-    from typing import Dict, List, Optional, Set  # noqa: F401
-except ImportError:
-    pass
 
 # OUTPUT of:
 # "slapacl -d0 -D cn=admin,dc=nstx,dc=local -b uid=Administrator,cn=users,dc=nstx,dc=local 2>&1"

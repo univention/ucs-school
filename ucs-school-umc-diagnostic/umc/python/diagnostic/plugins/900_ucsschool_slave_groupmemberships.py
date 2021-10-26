@@ -44,17 +44,14 @@
 
 from __future__ import absolute_import
 
+from typing import Dict, List
+
 from ldap.filter import filter_format
 
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-
-try:
-    from typing import Dict, List  # noqa: F401
-except ImportError:
-    pass
 
 _ = Translation("univention-management-console-module-diagnostic").translate
 

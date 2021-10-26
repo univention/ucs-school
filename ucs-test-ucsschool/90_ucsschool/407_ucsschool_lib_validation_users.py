@@ -12,13 +12,8 @@
 # $ pytest -s -l -v ./......py::test_*
 #
 import re
-
-try:
-    from typing import Any, Dict, List, Tuple  # noqa: F401
-except ImportError:
-    pass
-
 import tempfile
+from typing import Any, Dict, List, Tuple
 
 import pytest
 

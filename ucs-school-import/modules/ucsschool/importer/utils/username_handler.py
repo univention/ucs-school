@@ -38,6 +38,7 @@ from __future__ import absolute_import
 import logging
 import re
 import string
+from typing import TYPE_CHECKING, Callable, Dict, Optional
 
 import lazy_object_proxy
 from ldap.dn import escape_dn_chars
@@ -49,13 +50,8 @@ from ..configuration import Configuration
 from ..exceptions import BadValueStored, FormatError, NameKeyExists, NoValueStored
 from .ldap_connection import get_admin_connection, get_unprivileged_connection
 
-try:
-    from typing import TYPE_CHECKING, Callable, Dict, Optional  # noqa: F401
-
-    if TYPE_CHECKING:
-        import univention.admin.uldap  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    import univention.admin.uldap
 
 
 class NameCounterStorageBackend(object):

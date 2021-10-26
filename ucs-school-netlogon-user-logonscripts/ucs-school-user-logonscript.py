@@ -33,6 +33,7 @@ import os
 import shutil
 import signal
 import subprocess
+from typing import Dict, List, Optional
 
 import ldap
 import listener
@@ -42,11 +43,6 @@ import univention.admin.modules
 import univention.debug as ud
 from ucsschool.netlogon import SqliteQueue, get_netlogon_path_list
 from univention.admin.uldap import getMachineConnection
-
-try:
-    from typing import Dict, List, Optional  # noqa: F401
-except ImportError:
-    pass
 
 univention.admin.modules.update()
 users_user_module = univention.admin.modules.get("users/user")

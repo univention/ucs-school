@@ -34,13 +34,9 @@ from __future__ import absolute_import, print_function
 
 import argparse
 import socket
+from typing import Iterable, Optional, Set
 
 import netifaces
-
-try:
-    from typing import Iterable, Optional, Set  # noqa: F401
-except ImportError:
-    pass
 
 DEFAULT_PORT = 9
 

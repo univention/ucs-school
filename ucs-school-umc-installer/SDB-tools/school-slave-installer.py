@@ -41,6 +41,7 @@ import tempfile
 import time
 import traceback
 from argparse import ArgumentParser
+from typing import Any
 
 from ldap.filter import filter_format
 from six.moves import input
@@ -48,11 +49,6 @@ from six.moves import input
 import univention.admin.uldap
 import univention.lib.umc
 from univention.config_registry import ConfigRegistry
-
-try:
-    from typing import Any  # noqa: F401
-except ImportError:
-    pass
 
 ucr = ConfigRegistry()
 ucr.load()

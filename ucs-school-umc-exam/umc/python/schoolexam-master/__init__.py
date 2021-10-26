@@ -41,7 +41,7 @@ import os.path
 import re
 import traceback
 from collections import defaultdict
-from typing import Dict, List, Tuple  # noqa: F401
+from typing import Dict, List, Tuple
 
 import ldap
 from ldap.dn import escape_dn_chars, str2dn

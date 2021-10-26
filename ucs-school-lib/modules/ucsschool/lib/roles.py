@@ -31,10 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    from typing import Optional, Tuple
-except ImportError:
-    pass
+from typing import Optional, Tuple
 
 
 class UcsschoolRoleStringError(Exception):

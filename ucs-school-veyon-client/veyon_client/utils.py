@@ -27,12 +27,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-try:
-    import typing  # noqa: F401
+from typing import TYPE_CHECKING
 
-    import requests  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    import requests
 
 from .models import VeyonError
 

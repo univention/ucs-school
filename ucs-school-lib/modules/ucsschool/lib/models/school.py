@@ -32,13 +32,7 @@
 
 import socket
 import subprocess
-
-try:
-    from typing import List  # noqa: F401
-
-    from .base import LoType  # noqa: F401
-except ImportError:
-    pass
+from typing import TYPE_CHECKING, List
 
 import ldap
 from ldap.dn import escape_dn_chars
@@ -74,6 +68,9 @@ from .misc import OU, Container
 from .policy import DHCPDNSPolicy
 from .share import MarketplaceShare
 from .utils import _, flatten, ucr
+
+if TYPE_CHECKING:
+    from .base import LoType
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):

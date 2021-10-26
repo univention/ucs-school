@@ -47,7 +47,7 @@ import subprocess
 import sys
 import time
 import uuid
-from typing import Any, Callable, Dict, List, Optional, Text, Tuple  # noqa: F401
+from typing import Any, Callable, Dict, List, Optional, Text, Tuple
 from unittest import TestCase
 
 import requests

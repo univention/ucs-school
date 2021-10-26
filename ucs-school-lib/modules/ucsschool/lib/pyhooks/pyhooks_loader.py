@@ -41,18 +41,16 @@ import logging
 import os.path
 from collections import defaultdict
 from os import listdir
+from typing import IO, TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
 
 from six import iteritems, string_types
 
-try:
-    import logging.Logger  # noqa: F401
-    from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union  # noqa: F401
+if TYPE_CHECKING:
+    import logging.Logger
 
     from .pyhooks import PyHook
 
     PyHookTV = TypeVar("PyHookTV", bound=PyHook)
-except ImportError:
-    pass
 
 
 class PyHooksLoader(object):

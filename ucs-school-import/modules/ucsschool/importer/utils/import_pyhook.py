@@ -36,30 +36,18 @@ Base class for all Python based import hooks.
 from __future__ import absolute_import
 
 import logging
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
 from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
 
 from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 
-try:
-    from typing import (  # noqa: F401
-        TYPE_CHECKING,
-        Any,
-        Callable,
-        Dict,
-        List,
-        Optional,
-        Type,
-        TypeVar,
-        Union,
-    )
+if TYPE_CHECKING:
+    import univention.admin.uldap
 
-    if TYPE_CHECKING:
-        import univention.admin.uldap  # noqa: F401
-    ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
-except ImportError:
-    pass
+ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
+
 
 __import_pyhook_loader_instance = None  # type: Optional["ImportPyHookLoader"]
 

@@ -35,11 +35,7 @@ This module check the constistency of USC@school users, shares and groups
 """
 import re
 import sys
-
-try:
-    from typing import Any, Dict, List, Optional, Tuple  # noqa: F401
-except ImportError:
-    pass
+from typing import Dict, List, Optional, Tuple
 
 from ldap import INVALID_DN_SYNTAX
 from ldap.dn import escape_dn_chars

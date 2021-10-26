@@ -37,6 +37,19 @@ import codecs
 import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 from io import IOBase
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    BinaryIO,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Text,
+    Union,
+)
 
 import magic
 from six import PY3, reraise, string_types
@@ -50,24 +63,10 @@ from ..contrib.csv import DictReader
 from ..exceptions import ConfigurationError, InitialisationError, NoRole, UnknownProperty, UnknownRole
 from .base_reader import BaseReader
 
-try:
-    from csv import Dialect  # noqa: F401
-    from typing import (  # noqa: F401
-        Any,
-        BinaryIO,
-        Callable,
-        Dict,
-        Iterable,
-        Iterator,
-        List,
-        Optional,
-        Text,
-        Union,
-    )
+if TYPE_CHECKING:
+    from csv import Dialect
 
-    from ..models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+    from ..models.import_user import ImportUser
 
 
 def py3_decode(data, encoding):

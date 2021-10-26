@@ -5,6 +5,7 @@ from __future__ import print_function
 import os
 import subprocess
 import tempfile
+from typing import List, Optional
 
 import ldap
 import passlib.hash
@@ -28,11 +29,6 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_s
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
-
-try:
-    from typing import List, Optional  # noqa: F401
-except ImportError:
-    pass
 
 utils.verify_ldap_object_orig = utils.verify_ldap_object
 utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)

@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import ipaddress
+from typing import TYPE_CHECKING, List, Optional
 
 from ldap.dn import dn2str, str2dn
 from ldap.filter import filter_format
@@ -47,14 +48,10 @@ from .attributes import (
 from .base import UCSSchoolHelperAbstractClass
 from .utils import _, ucr
 
-try:
-    from typing import List, Optional  # noqa: F401
+if TYPE_CHECKING:
+    from univention.admin.uldap import access as LoType
 
-    from univention.admin.uldap import access as LoType  # noqa: F401
-
-    from .base import UdmObject  # noqa: F401
-except ImportError:
-    pass
+    from .base import UdmObject
 
 
 class DHCPService(UCSSchoolHelperAbstractClass):

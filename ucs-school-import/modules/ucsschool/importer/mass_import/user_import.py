@@ -39,6 +39,7 @@ import datetime
 import logging
 import sys
 from collections import defaultdict
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
 
 import six
 from ldap.filter import filter_format
@@ -63,13 +64,9 @@ from ..utils.import_pyhook import run_import_pyhooks
 from ..utils.ldap_connection import get_admin_connection, get_readonly_connection
 from ..utils.post_read_pyhook import PostReadPyHook
 
-try:
-    from typing import Any, Dict, List, Optional, Tuple, Type, Union  # noqa: F401
-
-    from ..configuration import ReadOnlyDict  # noqa: F401
-    from ..models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..configuration import ReadOnlyDict
+    from ..models.import_user import ImportUser
 
 
 class UserImport(object):

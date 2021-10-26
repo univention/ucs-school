@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from ldap.filter import escape_filter_chars, filter_format
 
@@ -46,15 +47,9 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 
 from .school_umc_ldap_connection import LDAP_Connection, set_bind_function
 
-try:
-    from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple  # noqa: F401
-
-    if TYPE_CHECKING:
-
-        from univention.admin.handlers import simpleLdap as UdmObject  # noqa: F401
-        from univention.admin.uldap import access as LoType  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from univention.admin.handlers import simpleLdap as UdmObject
+    from univention.admin.uldap import access as LoType
 
 # load UDM modules
 udm_modules.update()

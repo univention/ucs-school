@@ -2,6 +2,7 @@ ucs-school-import (18.0.5) unstable; urgency=low
 
   * Bug #53964: fix empty new-user-password CSV file
   * Bug #53988: fix linter errors
+  * Bug #53983: python-typing is always installed in UCS 5.0
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 26 Oct 2021 14:40:41 +0200
 

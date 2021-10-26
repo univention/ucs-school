@@ -13,6 +13,7 @@ import os
 import os.path
 import pprint
 import re
+from typing import Type
 from unittest import TestCase, main
 
 from six import PY3, with_metaclass
@@ -27,11 +28,6 @@ from ucsschool.lib.models.school import School
 from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
-
-try:
-    from typing import Type  # noqa: F401
-except ImportError:
-    pass
 
 py = "3" if PY3 else "2.7"
 

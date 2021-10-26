@@ -32,6 +32,7 @@
 
 import os.path
 from collections import Mapping
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
 from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import filter_format
@@ -61,12 +62,8 @@ from .misc import MailDomain
 from .school import School
 from .utils import _, create_passwd, ucr
 
-try:
-    from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
-
-    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):

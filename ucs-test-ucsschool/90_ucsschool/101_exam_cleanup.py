@@ -8,6 +8,7 @@
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, List
 
 from ldap.filter import filter_format
 
@@ -23,12 +24,8 @@ from univention.testing.ucsschool.exam import (
 )
 from univention.udm import UDM as SysUDM
 
-try:
-    from typing import List  # noqa: F401
-
-    from univention.udm.modules.users_user import UsersUserModule  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from univention.udm.modules.users_user import UsersUserModule
 
 
 def get_user_work_stations(mod_user, stu):  # type: (UsersUserModule, str) -> List[str]

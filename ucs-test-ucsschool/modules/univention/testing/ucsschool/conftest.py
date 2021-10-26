@@ -6,13 +6,7 @@ import pprint
 import random
 import sys
 import tempfile
-
-try:
-    from typing import Any, Dict, List, Optional, Tuple, Type  # noqa: F401
-
-    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass  # noqa: F401
-except ImportError:
-    pass
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type
 
 import pytest
 import six
@@ -36,6 +30,10 @@ from ucsschool.lib.roles import (
     role_workgroup,
     role_workgroup_share,
 )
+
+if TYPE_CHECKING:
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+
 
 IMPORT_CONFIG = {
     "active": "/var/lib/ucs-school-import/configs/user_import.json",
@@ -306,7 +304,7 @@ def udm_session():
 @pytest.fixture
 def create_import_user(lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
-    from ucsschool.importer.models.import_user import (  # noqa: F401
+    from ucsschool.importer.models.import_user import (
         ImportStaff,
         ImportStudent,
         ImportTeacher,

@@ -10,14 +10,13 @@
 import os
 import re
 from datetime import datetime, timedelta
-from typing import List  # noqa: F401
+from typing import TYPE_CHECKING, List
 
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.admin.uldap import access as LoType  # noqa: F401
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computerroom import (
     CmdCheckFail,
@@ -29,6 +28,9 @@ from univention.testing.ucsschool.computerroom import (
     retry_cmd,
 )
 from univention.testing.ucsschool.exam import Exam
+
+if TYPE_CHECKING:
+    from univention.admin.uldap import access as LoType
 
 
 def check_nt_acls(filename):  # type: (str) -> None

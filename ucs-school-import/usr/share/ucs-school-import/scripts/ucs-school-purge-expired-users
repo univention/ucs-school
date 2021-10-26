@@ -39,6 +39,7 @@ import pprint
 import re
 import sys
 from argparse import ArgumentParser
+from typing import TYPE_CHECKING, List
 
 from ldap.filter import filter_format
 
@@ -47,12 +48,8 @@ from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLin
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.lib.models.utils import UniStreamHandler, ucr
 
-try:
-    from typing import List  # noqa: F401
-
-    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ucsschool.importer.models.import_user import ImportUser
 
 
 def parse_cmdline():

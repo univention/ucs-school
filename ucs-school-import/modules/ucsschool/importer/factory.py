@@ -35,15 +35,12 @@ Singleton to the factory currently in use.
 
 
 import importlib
+from typing import TYPE_CHECKING, Optional, Type
 
 from .exceptions import InitialisationError
 
-try:
-    from typing import Optional, Type  # noqa: F401
-
-    from .default_user_import_factory import DefaultUserImportFactory  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .default_user_import_factory import DefaultUserImportFactory
 
 
 def setup_factory(factory_cls_name):  # type: (str) -> DefaultUserImportFactory

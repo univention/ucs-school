@@ -36,6 +36,7 @@ Configuration classes.
 
 import json
 import logging
+from typing import Any, Dict, List, Optional, Type
 
 from jsonschema import ValidationError, validate
 from six import string_types
@@ -46,12 +47,6 @@ from .exceptions import InitialisationError, ReadOnlyConfiguration
 from .utils.config_pyhook import ConfigPyHook
 from .utils.configuration_checks import run_configuration_checks
 from .utils.import_pyhook import run_import_pyhooks
-
-try:
-    from typing import Any, Dict, List, Optional, Type  # noqa: F401
-except ImportError:
-    pass
-
 
 USER_IMPORT_SCHEMA_FILE = "/usr/share/ucs-school-import/schema/user_import_configuration_schema.json"
 

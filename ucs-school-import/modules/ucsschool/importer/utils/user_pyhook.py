@@ -34,15 +34,12 @@
 Base class for all Python based User hooks.
 """
 
+from typing import TYPE_CHECKING, Dict, Union
+
 from .import_pyhook import ImportPyHook
 
-try:
-    from typing import TYPE_CHECKING, Dict, Union  # noqa: F401
-
-    if TYPE_CHECKING:
-        from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ucsschool.importer.models.import_user import ImportUser
 
 
 class UserPyHook(ImportPyHook):

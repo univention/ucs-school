@@ -38,11 +38,7 @@ import threading
 import time
 import traceback
 import uuid
-
-try:
-    from typing import Any, List, Optional, TypeVar  # noqa: F401
-except ImportError:
-    pass
+from typing import TYPE_CHECKING, Any, List, Optional, TypeVar
 
 import ldap
 from ldap.dn import explode_rdn
@@ -55,11 +51,13 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
 from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
 from univention.admin.uexceptions import noObject
-from univention.admin.uldap import access as LoType  # noqa: F401
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules.computerroom import wakeonlan
+
+if TYPE_CHECKING:
+    from univention.admin.uldap import access as LoType
 
 LV = TypeVar("LV")
 

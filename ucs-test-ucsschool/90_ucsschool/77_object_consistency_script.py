@@ -7,10 +7,7 @@
 ## packages:
 ##   - python3-ucsschool-lib
 
-try:
-    from typing import Tuple  # noqa: F401
-except ImportError:
-    pass
+from typing import Tuple
 
 import pytest
 

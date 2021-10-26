@@ -1,11 +1,7 @@
 import csv
+from typing import Dict, Generator
 
 import pytest
-
-try:
-    from typing import Dict, Generator  # noqa: F401
-except ImportError:
-    pass
 
 
 @pytest.fixture(scope="session")

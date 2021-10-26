@@ -32,10 +32,14 @@ and central Managed Node objects.
 """
 
 import inspect
+from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union
 
 from six import iteritems
 
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
+
+if TYPE_CHECKING:
+    import univention.admin.handlers.simpleComputer
 
 try:
     from ucsschool.lib.models.school import School
@@ -77,16 +81,10 @@ else:
         "computers/ipmanagedclient": (b"ucsschoolComputer", role_ip_computer),
         "computers/ubuntu": (b"ucsschoolComputer", role_ubuntu_computer),
     }
-try:
-    from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union  # noqa: F401
 
-    if TYPE_CHECKING:
-        import univention.admin.handlers.simpleComputer  # noqa: F401
 
-    AddType = Tuple[str, List[bytes]]  # pylint: disable=invalid-name
-    ModType = Tuple[str, List[bytes], List[bytes]]  # pylint: disable=invalid-name
-except ImportError:
-    pass
+AddType = Tuple[str, List[bytes]]
+ModType = Tuple[str, List[bytes], List[bytes]]
 
 
 class UcsschoolRoleComputers(simpleHook):

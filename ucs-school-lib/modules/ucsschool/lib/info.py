@@ -32,11 +32,14 @@
 # <http://www.gnu.org/licenses/>.
 
 from collections import namedtuple
+from typing import TYPE_CHECKING
 
 from ldap.filter import filter_format
 
-import univention.uldap  # noqa: F401
 from univention.config_registry import ConfigRegistry
+
+if TYPE_CHECKING:
+    import univention.uldap
 
 ucr = ConfigRegistry()
 ucr.load()

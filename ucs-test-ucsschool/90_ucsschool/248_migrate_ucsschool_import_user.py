@@ -15,17 +15,13 @@ import os
 import random
 import subprocess
 import tempfile
+from typing import List
 
 import attr
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import User
-
-try:
-    from typing import List  # noqa: F401
-except ImportError:
-    pass
 
 
 @attr.s

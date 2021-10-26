@@ -12,13 +12,10 @@
 # $ pytest -s -l -v ./......py::test_*
 #
 import tempfile
+from typing import Any, Dict, List, Tuple
 
 import pytest
 
-try:
-    from typing import Any, Dict, List, Tuple  # noqa: F401
-except ImportError:
-    pass
 import ucsschool.lib.models.validator
 import univention.testing.strings as uts
 from ucsschool.lib.models.utils import ucr

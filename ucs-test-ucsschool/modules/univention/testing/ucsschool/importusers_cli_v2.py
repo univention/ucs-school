@@ -34,10 +34,7 @@ try:
 except ImportError:
     DRSReplicationFailed = Exception
 
-try:
-    from typing import Set  # noqa: F401
-except ImportError:
-    pass
+from typing import Set
 
 
 class ImportException(Exception):

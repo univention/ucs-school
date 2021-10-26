@@ -33,14 +33,12 @@
 Base class for configuration hooks.
 """
 
+from typing import TYPE_CHECKING, Any, Dict, List
+
 from .import_pyhook import ImportPyHook
 
-try:
-    from typing import Any, Dict, List  # noqa: F401
-
-    from ..configuration import ReadOnlyDict  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..configuration import ReadOnlyDict
 
 
 class ConfigPyHook(ImportPyHook):

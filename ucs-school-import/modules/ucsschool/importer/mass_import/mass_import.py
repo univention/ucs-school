@@ -35,6 +35,7 @@ Default mass import class.
 
 import datetime
 import logging
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from ucsschool.lib.models.utils import stopped_notifier
 
@@ -46,15 +47,10 @@ from ..utils.pre_read_pyhook import PreReadPyHook
 from ..utils.result_pyhook import ResultPyHook
 from ..utils.utils import nullcontext
 
-try:
-    from typing import TYPE_CHECKING, Optional, TypeVar  # noqa: F401
+if TYPE_CHECKING:
+    from ..utils.import_pyhook import ImportPyHook
 
-    if TYPE_CHECKING:
-        from ..utils.import_pyhook import ImportPyHook
-
-        ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
-except ImportError:
-    pass
+ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
 
 
 class MassImport(object):

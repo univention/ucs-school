@@ -35,6 +35,7 @@ from __future__ import print_function
 
 import os
 import sys
+from typing import List, Optional
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions
@@ -46,12 +47,6 @@ from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
 from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
-
-try:
-    from typing import List, Optional  # noqa: F401
-except ImportError:
-    pass
-
 
 udm_modules.update()
 

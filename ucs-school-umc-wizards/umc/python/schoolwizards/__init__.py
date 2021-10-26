@@ -34,6 +34,7 @@
 import functools
 import re
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union
 
 import six
 
@@ -62,14 +63,10 @@ from univention.management.console.modules.sanitizers import (
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 from univention.udm import UDM
 
-try:
-    from typing import Any, Iterator, Optional, Set, Union  # noqa: F401
-
+if TYPE_CHECKING:
     LibModel = Union[School, User, SchoolComputer, SchoolClass]
 
-    from univention.admin.uldap import access as LoType  # noqa: F401
-except ImportError:
-    pass
+    from univention.admin.uldap import access as LoType
 
 _ = Translation("ucs-school-umc-wizards").translate
 

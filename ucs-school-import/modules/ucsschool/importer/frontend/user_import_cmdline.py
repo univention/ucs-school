@@ -33,12 +33,9 @@
 UCS@school new import tool cmdline frontend.
 """
 
-from .cmdline import CommandLine
+from typing import List
 
-try:
-    from typing import List  # noqa: F401
-except ImportError:
-    pass
+from .cmdline import CommandLine
 
 
 class UserImportCommandLine(CommandLine):

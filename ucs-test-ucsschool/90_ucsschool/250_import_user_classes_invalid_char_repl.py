@@ -7,12 +7,8 @@
 ## packages:
 ##   - ucs-school-import
 
-try:
-    from typing import Iterable, Tuple  # noqa: F401
-except ImportError:
-    pass
-
 import random
+from typing import Iterable, Tuple
 
 import pytest
 

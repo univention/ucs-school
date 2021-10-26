@@ -35,15 +35,12 @@
 
 from __future__ import absolute_import
 
+from typing import Dict, Set
+
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-
-try:
-    from typing import Dict, Set  # noqa: F401
-except ImportError:
-    pass
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 

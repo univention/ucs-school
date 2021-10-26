@@ -41,6 +41,7 @@ import inspect
 import logging
 import os.path
 from io import IOBase
+from typing import Any, Callable, Dict, List
 
 import dateutil.parser
 import magic
@@ -50,12 +51,6 @@ from six.moves.urllib_parse import parse_qs, quote as url_quote, urljoin, urlpar
 
 from ucsschool.lib.models.utils import get_stream_handler
 from univention.config_registry import ConfigRegistry
-
-try:
-    from typing import Any, Callable, Dict, List  # noqa: F401
-except ImportError:
-    pass
-
 
 ucr = ConfigRegistry()
 ucr.load()

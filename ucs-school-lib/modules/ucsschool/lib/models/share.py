@@ -32,6 +32,7 @@
 
 import grp
 import os.path
+from typing import TYPE_CHECKING, Any, List, Optional
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
@@ -45,12 +46,8 @@ from .attributes import SchoolClassAttribute, ShareName, WorkgroupAttribute
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectType
 from .utils import _, ucr
 
-try:
-    from typing import Any, List, Optional  # noqa: F401
-
-    from .base import LoType, UdmObject  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .base import LoType, UdmObject
 
 
 class NoSID(Exception):

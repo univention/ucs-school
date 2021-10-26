@@ -33,17 +33,15 @@
 Base class for all Python based pre-read hooks.
 """
 
+from typing import TYPE_CHECKING, Any, Optional
+
 from ..configuration import Configuration
 from .import_pyhook import ImportPyHook
 
-try:
-    from typing import Any, Optional  # noqa: F401
+if TYPE_CHECKING:
+    import univention.admin.uldap.access
 
-    import univention.admin.uldap.access  # noqa: F401
-
-    from ..configuration import ReadOnlyDict  # noqa: F401
-except ImportError:
-    pass
+    from ..configuration import ReadOnlyDict
 
 
 class PreReadPyHook(ImportPyHook):

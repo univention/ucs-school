@@ -33,15 +33,12 @@
 Base class for all Python based Result-Pyhooks.
 """
 
+from typing import TYPE_CHECKING
+
 from .import_pyhook import ImportPyHook
 
-try:
-    from typing import TYPE_CHECKING
-
-    if TYPE_CHECKING:
-        from ..mass_import.user_import import UserImportData  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from ..mass_import.user_import import UserImportData
 
 
 class ResultPyHook(ImportPyHook):

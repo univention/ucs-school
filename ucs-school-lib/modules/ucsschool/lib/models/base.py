@@ -33,6 +33,20 @@
 import os.path
 import tempfile
 from copy import deepcopy
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import lazy_object_proxy
 import ldap
@@ -54,33 +68,19 @@ from .meta import UCSSchoolHelperMetaClass
 from .utils import _, exec_cmd, ucr
 from .validator import validate
 
-try:
-    from typing import (  # noqa: F401
-        Any,
-        Dict,
-        Iterable,
-        List,
-        Optional,
-        Sequence,
-        Set,
-        Tuple,
-        Type,
-        TypeVar,
-        Union,
-    )
-
+if TYPE_CHECKING:
     import univention.admin.handlers.simpleLdap
-    from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
+    from univention.admin.uldap import access as LoType
 
     UdmObject = univention.admin.handlers.simpleLdap
     SuperOrdinateType = Union[str, UdmObject]
-    UldapFilter = Union[str, conjunction, expression]
-    UCSSchoolModel = TypeVar("UCSSchoolModel", bound="UCSSchoolHelperAbstractClass")
-    UCSSchoolHelperAbstractClassTV = TypeVar(
-        "UCSSchoolHelperAbstractClassTV", bound="UCSSchoolHelperAbstractClass"
-    )
-except ImportError:
-    pass
+
+UldapFilter = Union[str, conjunction, expression]
+UCSSchoolModel = TypeVar("UCSSchoolModel", bound="UCSSchoolHelperAbstractClass")
+UCSSchoolHelperAbstractClassTV = TypeVar(
+    "UCSSchoolHelperAbstractClassTV", bound="UCSSchoolHelperAbstractClass"
+)
+
 
 PYHOOKS_PATH = "/var/lib/ucs-school-lib/hooks"
 PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"

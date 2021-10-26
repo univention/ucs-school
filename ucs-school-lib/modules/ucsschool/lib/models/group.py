@@ -30,6 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Type
+
 from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
@@ -48,12 +50,8 @@ from .policy import UMCPolicy
 from .share import ClassShare, WorkGroupShare
 from .utils import _, ucr
 
-try:
-    from typing import Any, Dict, Generator, List, Optional, Type  # noqa: F401
-
-    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject  # noqa: F401
-except ImportError:
-    pass
+if TYPE_CHECKING:
+    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject
 
 
 class _MayHaveSchoolPrefix(object):

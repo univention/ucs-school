@@ -39,15 +39,12 @@
 
 from __future__ import absolute_import
 
+from typing import Dict, List
+
 from ucsschool.lib.roles import get_role_info, role_school_admin
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Warning
 from univention.uldap import getAdminConnection
-
-try:
-    from typing import Dict, List  # noqa: F401
-except ImportError:
-    pass
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 

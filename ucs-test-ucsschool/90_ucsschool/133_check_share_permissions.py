@@ -10,7 +10,7 @@ import os
 import re
 import tempfile
 import time
-from typing import List  # noqa: F401
+from typing import List
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu

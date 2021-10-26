@@ -10,14 +10,9 @@ from __future__ import unicode_literals
 
 import logging
 import random
+from typing import Set
 
 import pytest
-
-try:
-    from typing import Set  # noqa: F401
-except ImportError:
-    pass
-
 import requests
 from ldap.filter import filter_format
 from six import string_types

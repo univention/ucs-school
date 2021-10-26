@@ -8,6 +8,7 @@
 ##   - python3-ucsschool-lib
 
 import sys
+from typing import Dict, List, Tuple
 
 import pytest
 
@@ -16,11 +17,6 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.importusers import Person
-
-try:
-    from typing import Dict, List, Tuple  # noqa: F401
-except ImportError:
-    pass
 
 
 @pytest.fixture(scope="session")

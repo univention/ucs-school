@@ -1,6 +1,7 @@
 ucs-school-umc-rooms (17.0.5) unstable; urgency=low
 
   * Bug #53988: fix linter errors
+  * Bug #53983: python-typing is always installed in UCS 5.0
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 26 Oct 2021 14:40:42 +0200
 
