@@ -43,17 +43,17 @@
 			<listitem>
 				<simpara>
 					<emphasis>Lehrer</emphasis> erhalten gegenüber Schülern zusätzliche
-					Rechte, um z.B. auf UMC-Module zuzugreifen, die das
+					Rechte, um z.B. auf UMC-Module (TODO umc: Naming; nicht eingeführter Begriff) zuzugreifen, die das
 					Zurücksetzen von Schülerpasswörtern oder das Auswählen von
 					Internetfiltern ermöglichen. Die einem Lehrer angezeigten Module können
 					individuell definiert werden, Lehrer erhalten in der Regel aber nur Zugriff
-					auf einen Teil der von der &ucsUMC; bereitgestellten Funktionen.
+					auf einen Teil der von der &ucsUMC; (TODO umc) bereitgestellten Funktionen.
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>
 					<emphasis>Schuladministratoren</emphasis> erhalten, auf den Servern ihrer jeweiligen
-					Schule, administrativen Zugriff auf die &ucsUAS;-UMC-Module.
+					Schule, administrativen Zugriff auf die &ucsUAS;-UMC-Module. (TODO umc)
 					Sie können z.B. Computer zu
 					Rechnergruppen zusammenfassen, neue Internetfilter definieren oder
 					auch Lehrerpasswörter zurücksetzen.
@@ -76,7 +76,7 @@
 					Die <emphasis>System-Administratoren</emphasis> sind Mitarbeiter mit vollem
 					administrativen Zugriff auf die &ucsUAS;-Systeme, also beispielweise
 					ein IT-Dienstleister, der die Schule beim Betrieb der Server
-					unterstützt.
+					unterstützt. (TODO: kann aber nicht über uas hinzugefügt werden)
 				</simpara>
 			</listitem>
 		</itemizedlist>
@@ -84,7 +84,7 @@
 			Überschneidungen der Benutzertypen Lehrer, Mitarbeiter und
 			Schuladministrator sind möglich. So können z.B. Benutzerkonten
 			erstellt werden, die eine Nutzung des Kontos als Lehrer und
-			Mitarbeiter ermöglichen.
+			Mitarbeiter ermöglichen. (TODO: Schuladministrator kann aber nicht über uas hinzugefügt werden)
 		</para>
 		<para>
 			Für die Pflege der Benutzerkonten stehen mehrere Möglichkeiten zur
@@ -121,6 +121,7 @@
 			Organisationseinheit (OU) der Schule angelegt werden (siehe auch <xref
 			linkend="structure:ou:replication"/>). Die Einrichtung zusätzlicher UCS-Systeme wird in <xref
 			linkend="school:performance:scaling"/> beschrieben.
+			(TODO: dieser Detailabsatz ergibt an dieser frühen Stelle im Dokument noch gar keinen Sinn)
 		  </para>
 		</caution>
 		<section id="structure:ou:replication">
@@ -129,7 +130,8 @@
 				Ein Schulserver bietet alle an einem Standort verwendeten Dienste an. Die
 				Anfragen an den LDAP-Verzeichnisdienst erfolgen dabei gegen einen
 				lokalen LDAP-Server, der automatisch gegen den &ucsPrimaryDN; fortlaufend repliziert
-				und aktualisiert wird. Dies gewährleistet einen reibungslosen Betrieb,
+				und aktualisiert wird (TODO: wording "gegen repliziert und aktualisiert").
+				Dies gewährleistet einen reibungslosen Betrieb,
 				auch wenn die Verbindung zwischen Schulserver und dem
 				zentralen &ucsPrimaryDN; einmal ausfallen sollte.
 			</para>
@@ -146,7 +148,9 @@
 				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
 				repliziert: sein Benutzerobjekt und die Standardgruppen.
 				Verlässt der Benutzer die Schule, wird sein Benutzerobjekt dort gelöscht bzw. nicht mehr dorthin repliziert.
+				(TODO: existiert das Benutzerobjekt nun einmal, oder mehrmals?)
 				Schulübergreifende Benutzerkonten können nur mit Importskripten verwaltet werden.
+				(TODO: was genau bedeutet dies?)
 			</para>
 			<para>
 				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
@@ -158,7 +162,8 @@
 			</para>
 			<para>
 			  &ucsUAS; unterscheidet in seinem Verzeichnisdienst zwischen dem Namen einer Schule und dem Schulkürzel
-			  (OU-Namen).  Der Name einer Schule kann frei gewählt werden und wird primär in den
+			  (OU-Name) (TODO:wording auf welchen Namen bezieht sich OU-Name).
+			  Der Name einer Schule kann frei gewählt werden und wird primär in den
 			  UMC-Modulen angezeigt (in anderem Kontexten wird dieser Wert häufig auch als Anzeigename
 			  bezeichnet).  Der eigentliche Name der Organisationseinheit (OU) wird nachfolgend auch als
 			  Schulkürzel bezeichnet.  Das Schulkürzel sollte ausschließlich aus Buchstaben, Ziffern oder dem
@@ -171,7 +176,7 @@
 			<title>Replikation mehrerer Schulen auf einen Schulserver</title>
 			<para>
 				Im Normalfall repliziert ein Schulserver die LDAP-Daten für genau eine Schule. Es gibt jedoch
-				Szenarien, in denen es wünschenswert ist, wenn die LDAP-Daten (Benutzerkonten,
+				Szenarien, in denen es wünschenswert ist, dass die LDAP-Daten (Benutzerkonten,
 				Gruppen, Rechnerkonten, Räume, ...) von mehreren Schulen auf einem Schulserver vorgehalten werden.
 				Beginnend mit UCS@school 4.4v5 bietet UCS@school die Möglichkeit an, dass sich mehrere Schulen
 				einen Schulserver teilen.
@@ -187,7 +192,8 @@
 					</listitem>
 					<listitem>
 						<para>
-							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer
+							Direkt nach dem Hinzufügen eines existierenden Schulservers zu einer (TODO: wird nicht
+							die Schule einem Schulserver hinzugefügt?)
 							neuen Schule muss der Schulserver erneut der Domäne beitreten (auf der Kommandozeile über den Befehl
 							<command>univention-join</command>). Anderenfalls kann es zu Inkonsistenzen im LDAP-Verzeichnis
 							aufgrund geänderter Zugriffsberechtigungen kommen.
@@ -202,9 +208,9 @@
 					</listitem>
 					<listitem>
 						<para>
-							Lehrkräfte können in der Univention Management Console nur die Benutzer,
+							Lehrkräfte können in der Univention Management Console (TODO umc) nur die Benutzer,
 							Klassen, Arbeitsgruppen, Druckaufträge, Computerräume und Rechner der Schulen sehen, in denen sie
-							auch Mitglied sind. Eine Ausnahme bilden die UMC-Module <guimenu>Klassenarbeiten</guimenu> und
+							auch Mitglied sind. Eine Ausnahme bilden die UMC-Module (TODO uas-module?) <guimenu>Klassenarbeiten</guimenu> und
 							<guimenu>Materialien verteilen</guimenu>, welche die Klassenarbeiten und Verteilungsprojekte aller
 							Schulen angezeigt, die auf diesen Schulserver verwaltet werden, unabhängig davon, ob die Lehrkräfte
 							Mitglied der jeweiligen anderen Schulen sind.
@@ -231,7 +237,7 @@
 						<para>
 							Da der Schulserver die Authentifizierung für die Windows-Rechner
 							durchführt, ist es allen Benutzern der Schulen eines Schulservers möglich, sich auf allen
-							Windows-Rechnern anzumelden, die gegen den Schulserver gejoined wurden.
+							Windows-Rechnern anzumelden, die gegen (TODO gegen) den Schulserver gejoined wurden.
 						</para>
 					</listitem>
 					<listitem>
@@ -240,6 +246,7 @@
 							die Schulserver des Edukativnetzes. Der Betrieb von mehreren Schulen auf einem Server des
 							Verwaltungsnetzes wird nicht unterstützt! Nähere Informationen zu Verwaltungs- und Edukativnetzen
 							finden sich in <xref linkend="structure:edunet-vs-adminnet"/>.
+							(TODO: dies könnte auch gut in der Einführung am Anfang der Liste stehen).
 						</para>
 					</listitem>
 				</itemizedlist>
@@ -282,7 +289,7 @@
 		</para>
 		<para>
 		  Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
-		  angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
+		  angeboten (TODO: uas module?). Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
 		  Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
 		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
 		  Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
@@ -299,7 +306,7 @@
 			vorgehalten.
 		  </para>
 		</note>
-		<caution>
+		<caution> (TODO: also note, not caution?)
 		  <para>
 			  UCS@school setzt für die Unterteilung in Edukativ- und Verwaltungsnetz eine physikalische Trennung
 			  der beiden Netzwerksegmente voraus. D.h. das edukative Netz und das Verwaltungsnetz können nicht
@@ -355,7 +362,7 @@
 			<para><uri>cn=raeume,cn=groups,ou=gymmitte,dc=example,dc=com</uri></para>
 			<para><uri>cn=schueler,cn=groups,ou=gymmitte,dc=example,dc=com</uri></para>
 			<para><uri>cn=klassen,cn=schueler,cn=groups,ou=gymmitte,dc=example,dc=com</uri></para>
-			<para>
+			<para>(TODO: idealerweise rechtsbünding)
 			  In den aufgeführten Containern werden Gruppenobjekte für &ucsUAS; vorgehalten. Im
 			  Container <uri>cn=groups</uri> werden automatisch einige Standard-Gruppen angelegt, die
 			  alle Schüler, Lehrer bzw. Mitarbeiter der Schul-OU als Gruppenmitglied enthalten. Diese Gruppen
