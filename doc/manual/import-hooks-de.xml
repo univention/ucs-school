@@ -24,8 +24,8 @@
       <caution>
           <para>
               Hooks werden nur auf dem System ausgeführt, auf dem sie installiert sind.
-              In der Regel ist das der &ucsPrimaryDN; (DC Master), sowie alle Backup Directory Nodes (DC Backups).
-              Sollen Hooks auch auf Replication Nodes (DC Slave) ausgeführt werden, so müssen sie auch dort installiert werden.
+              In der Regel ist das der &ucsPrimaryDN;, sowie alle &ucsBackupDN;-Server.
+              Sollen Hooks auch auf &ucsReplicaDN;-Servern ausgeführt werden, so müssen sie auch dort installiert werden.
               Eine automatische Verteilung der Hook Dateien findet nicht statt.
           </para>
       </caution>
@@ -36,7 +36,7 @@
           Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt werden, die von <classname>ucsschool.lib.models.hook.Hook</classname> ableitet.
           In der Klasse können Methoden <methodname>pre_create()</methodname>, <methodname>post_create()</methodname>, etc. definiert werden, welche zum jeweiligen Zeitpunkt ausgeführt werden.
           Der Name der Datei mit der abgeleiteten Klasse muss auf <filename>.py</filename> enden und im Verzeichnis <filename class="directory">/var/lib/ucs-school-lib/hooks</filename> abgespeichert werden.
-          Zwei Beispiele finden sich auf Servern der Rolle &ucsPrimaryDN; (DC Master) in <filename>hook_example1.py</filename> und <filename>hook_example2.py</filename> unter <filename class="directory">/usr/share/doc/ucs-school-lib-common/</filename> bzw. online auf <ulink url="https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example1.py">https://github.com/.../hook_example1.py</ulink> und <ulink url="https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example2.py">https://github.com/.../hook_example2.py</ulink>.
+          Zwei Beispiele finden sich auf Servern der Rolle &ucsPrimaryDN; in <filename>hook_example1.py</filename> und <filename>hook_example2.py</filename> unter <filename class="directory">/usr/share/doc/ucs-school-lib-common/</filename> bzw. online auf <ulink url="https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example1.py">https://github.com/.../hook_example1.py</ulink> und <ulink url="https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example2.py">https://github.com/.../hook_example2.py</ulink>.
           Im Folgenden wird anhand des Beispiels in <filename>hook_example2.py</filename> erklärt, wie mit Hilfe eines Hooks jeder Schulklasse eine Email-Adresse zugeordnet werden kann.
       </para>
       <caution>

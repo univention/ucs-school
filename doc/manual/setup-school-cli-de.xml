@@ -20,7 +20,7 @@
   <caution>
 	<simpara>
 	Seit der &ucsUAS;-Version 3.2 R2 halten die kommandozeilenbasierten Importskripte zu Beginn
-	des jeweiligen Imports den &ucsUDN; auf dem Domänencontroller Master an. Nach Abschluss des Imports
+	des jeweiligen Imports den &ucsUDN; auf dem &ucsPrimaryDN; an. Nach Abschluss des Imports
 	wird der &ucsUDN; wieder gestartet.
 	</simpara>
   </caution>
