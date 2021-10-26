@@ -56,9 +56,7 @@
 		Benutzern oder Gruppenrichtlinien (GPOs). Univention
 		hat die benötigten Komponenten für die Bereitstellung von Active Directory kompatiblen
 		Domänendiensten mit Samba 4 getestet und in enger Zusammenarbeit mit dem Samba-Team in UCS
-		integriert. Parallel dazu wurde für UCS Samba 3 mit Samba 4 integriert. Somit werden auch bei
-		Verwendung der Active Directory kompatiblen Domänendienste die erprobten Datei- und Druckdienste aus
-		Samba 3 verwendet.
+		integriert.
 	  </para>
 	  <caution>
 		<para>
