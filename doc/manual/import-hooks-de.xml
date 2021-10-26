@@ -8,186 +8,14 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<chapter id="import">
-  <title>Pre- und Post-Hook-Skripte für den Import</title>
+<chapter id="pyhooks">
+  <title>Python-Hooks</title>
   <para>
-	Während des Datenimports kann es notwendig sein, dass in Abhängigkeit von der
-	jeweiligen Umgebung zusätzlich einige weitere Einstellungen vorgenommen werden
-	müssen. Mit den Pre- und Post-Hook-Skripten besteht die Möglichkeit vor und
-	nach dem Import eines Objektes, Skripte auszuführen. Zu allen Objekten und den
-	davon jeweils unterstützten Operationen können mehrere Skripte definiert
-	werden, die dann vor und nach den Operationen Anpassungen vornehmen.
+	Ab &ucsUAS; 4.4 v9 kann vor und nach dem Anlegen, Ändern, Verschieben und Löschen von &ucsUAS; Objekten Python-Code ausgeführt werden. Dies kann z.B. im Rahmen des &ucsUAS; Imports von eingesetzt werden, um in Abhängigkeit von der
+	jeweiligen Umgebung zusätzlich einige weitere Einstellungen vorzunehmen.
   </para>
-  <caution>
-    <para>
-      Hook-Skripte werden zu &ucsUAS; Version 5.0 abgekündigt.
-      Mit &ucsUAS; Version 4.4 v9 wurden Python-basierte Hooks eingeführt, welche ihre Funktion übernehmen.
-      Ihre Funktionalität wird unten, in <xref linkend="import:pyhooks"/> erklärt.
-    </para>
-  </caution>
-  <para>
-	Damit die Import-Skripte die Hook-Skripte finden können, müssen diese unterhalb
-	des Verzeichnisses <filename>/usr/share/ucs-school-import/hooks/</filename> abgelegt
-	werden. Dort gibt es für jede unterstützte Operation ein eigenes
-	Unterverzeichnis. Beispielsweise gibt es das Verzeichnis
-	<filename>user_create_pre.d</filename>, das alle Skripte enthalten muss, die vor dem
-	Import eines Benutzers ausgeführt werden sollen. Alle weiteren Verzeichnisse
-	sind nach dem gleichen Schema benannt: <filename><replaceable>&lt;Objekt&gt;</replaceable>_<replaceable>&lt;Operation&gt;</replaceable>_pre.d</filename>
-	für die Skripte, die <emphasis>vor</emphasis> einer Operation ausgeführt werden sollen
-	und <filename><replaceable>&lt;Objekt&gt;</replaceable>_<replaceable>&lt;Operation&gt;</replaceable>_post.d</filename> für die Skripte, die nach einer
-	Operation ausgeführt werden sollen. Das Paket <package>ucs-school-import</package>
-	bringt diese Verzeichnisse bereits mit. Skripte, die bei der Ausführung
-	berücksichtigt werden sollen, müssen zwei Bedingungen erfüllen. Der Name darf
-	nur aus Ziffern, Buchstaben und Unter- und Bindestrichen bestehen und die
-	Ausführungsrechte müssen für die Datei gesetzt sein. Alle anderen Dateien in
-	diesen Verzeichnissen werden ignoriert.
-  </para>
-  <para>
-	Die Hook-Skripte werden derzeit für die Objekttypen <classname>ou</classname>, <classname>user</classname>,
-	<classname>group</classname>, <classname>printer</classname>, <classname>computer</classname>, <classname>network</classname> und <classname>router</classname>
-	für die Operationen <option>create</option>, <option>modify</option> und <option>remove</option> ausgeführt.
-	Dabei ist zu beachten, dass für Rechner (<foreignphrase>computer</foreignphrase>), Netzwerke, Router und Schul-OUs
-	nur die Operation zum Erzeugen (<option>create</option>) definiert ist und daher auch nur dafür
-	Hook-Skripte definiert werden können.
-  </para>
-  <para>
-	Die Pre-Hook-Skripte werden mit einem Parameter aufgerufen. Dieser enthält den
-	Namen einer Datei in der die Zeile des als nächstes zu bearbeitenden Objektes
-	aus der Import-Datei gespeichert ist. Darüber können die Skripte jede
-	Einstellung für das Objekt auslesen; allerdings ist zu berücksichtigen, dass
-	zu diesem Zeitpunkt die Daten noch nicht durch das Import-Skript geprüft
-	worden sind. Die Post-Hook-Skripte bekommen als zusätzlichen Parameter noch
-	den LDAP-DN des gerade bearbeiteten Objektes übergeben.
-  </para>
-  <para>
-	Das folgende Beispiel-Skript soll ausgeführt werden, nachdem eine neue
-	Schul-OU angelegt wurde. Dafür muss das Skript in das Verzeichnis
-	<filename class="directory">/usr/share/ucs-school-import/hooks/ou_create_post.d/</filename> kopiert
-	werden. Die Aufgabe des Skriptes soll es sein, die LDAP-Basis für den
-	DHCP-Server der Schule per &ucsUCR;-Richtlinie auf den Container
-	<uri>cn=dhcp</uri> unterhalb der LDAP-Basis der Schule zu setzen.
-  </para>
-  <programlisting language="sh">
-#!/bin/sh
-ldap_base="$(ucr get ldap/base)"
-# Auslesen der ersten Spalte (OU-name) der Importdatei
-ou="$(awk -F '\t' '{print $1}' "$1")"
-# Den Standard-Schul-DC-Namen erzeugen
-host="dc${ou}.$(ucr get domainname)"
-# Eine UCR-Richtlinie erstellen und mit dem Schul-DC verbinden
-udm policies/registry create \
-  --position "cn=policies,ou=$ou,$ldap_base" \
-  --set name=dhcpd_ldap_base \
-  --append "registry=dhcpd/ldap/base=cn=dhcp,ou=$ou,$ldap_base"
-udm computers/domaincontroller_slave \
-  --dn "cn=dc${ou},cn=dc,cn=computers,ou=$ou,$ldap_base" \
-  --policy-reference "cn=dhcpd_ldap_base,cn=policies,ou=$ou,$ldap_base"
-echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
-  <para>
-	Obwohl das Skript <command>create_ou</command> keine Eingabedatei übergeben bekommt,
-	wird für die Hook-Skripte eine generiert, die in der Zeile den Namen der OU
-	enthält. Wenn ein vom Standard abweichender Schul-DC-Name angegeben wurde,
-	wird dieser als zweiter Wert übergeben. Für alle anderen Operationen auf den
-	Objekten können Hook-Skripte auf äquivalente Weise erstellt werden.
-  </para>
-
-  <section id="import:extend">
-	<title>Erweiterung von Importdateien</title>
-	<para>
-	  Eine weitere Funktion von den Hook-Skripten ist die Möglichkeit mit
-	  Erweiterungen in den Import-Dateien umzugehen, d.h. wenn in den Importdateien
-	  mehr Felder eingetragen sind, als durch die Import-Skripte selbst
-	  verarbeitet werden, so können die erweiterten Attribute in den Hook-Skripten
-	  ausgelesen und verarbeitet werden. Als Beispiel könnten bei den Benutzern
-	  Adressinformationen oder eine Abteilung gespeichert werden. Die zusätzlichen
-	  Felder werden in den Importdateien jeweils hinten an die Zeilen getrennt durch
-	  einen Tabulator angehängt. Da die Hook-Skripte die komplette Zeile übergeben
-	  bekommen, kann ein Post-Hook-Skript genutzt werden, um die neuen Felder auszulesen
-	  und die Informationen z.B. an dem gerade erzeugten Benutzer zu ergänzen.
-	</para>
-  </section>
-
-  <section id="import:marketplace">
-	<title>Beispiel-Hook-Skript: automatische Erstellung der Marktplatzfreigabe</title>
-	<para>
-	  Um den Austausch von Dokumenten zwischen Benutzern zu erleichtern, wird
-	  empfohlen, die Freigabe <emphasis>Marktplatz</emphasis> auf den jeweiligen Schul-DCs
-	  anzulegen, auf die alle Benutzer Zugriff erhalten.
-	</para>
-	<para>
-	  Das Hook-Skript <command>ou_create_post.d/52marktplatz_create</command> wurde ab &ucsUAS;
-	  für UCS 2.4 mitgeliefert und legte beim Aufruf von <command>create_ou</command> die
-	  Freigabe ``Marktplatz'' automatisch an.
-      Seit &ucsUAS; 4.4 v8 existiert der Hook nicht mehr als separate Datei, da er in den Kern von &ucsUAS; übernommen wurde. Über
-	  die &ucsUCRV; <envar>ucsschool/import/generate/share/marktplatz</envar> kann das Anlegen der Freigabe
-	  de-/aktiviert werden, indem der Variable der Wert <literal>no</literal> bzw. <literal>yes</literal>
-	  zugeordnet wird.
-	</para>
-	<para>
-	  Über drei weitere &ucsUCR;-Variablen kann das Verhalten des Hooks gesteuert
-	  werden:
-	</para>
-	  <itemizedlist>
-		<listitem>
-		  <para>
-			<command>ucsschool/import/generate/share/marktplatz/sharepath</command>
-		  </para>
-		  <para>
-			Diese Variable definiert das Verzeichnis auf dem Server, welches als
-			Freigabe <systemitem class="resource">Marktplatz</systemitem> freigegeben wird. In der Standardeinstellung wird das Verzeichnis
-			<filename>/home/&lt;OU&gt;/groups/Marktplatz</filename> verwendet.
-		  </para>
-		</listitem>
-		<listitem>
-		  <para>
-			<command>ucsschool/import/generate/share/marktplatz/group</command>
-		  </para>
-		  <para>
-			Beim Anlegen der Freigabe wird die in dieser Variable definierte Gruppe
-			als Gruppenbesitzer der Freigabe festgelegt. In der Standardeinstellung
-			ist	dies die Gruppe <systemitem class="groupname">Domain Users</systemitem>. Es ist zu beachten, dass abweichend vom UCS-Standard
-			die über die Importskripte angelegten Benutzer nicht in der Gruppe <systemitem class="groupname">Domain Users</systemitem> enthalten sind.
-		  </para>
-		</listitem>
-		<listitem>
-		  <para>
-			<command>ucsschool/import/generate/share/marktplatz/permissions</command>
-		  </para>
-		  <para>
-			Die Zugriffsrechte der Freigabe sind in oktaler Schreibweise anzugeben
-			(z.B. 0777). In der Standardeinstellung erhalten der Benutzer <systemitem class="username">root</systemitem>,
-			die vordefinierte Gruppe (z.B. <systemitem class="groupname">Domain Users</systemitem>) sowie alle sonstigen Benutzer Lese- und
-			Schreibrechte (0777).
-		  </para>
-		</listitem>
-	  </itemizedlist>
-  </section>
-
-  <section id="import:dhcp">
-	<title>Beispiel-Hook-Skript: Setzen des LDAP-Containers für DHCP-Objekte</title>
-	<para>
-	  Auf den Schul-DCs wird ein abweichender Container für DHCP-Objekte
-	  verwendet, weshalb die &ucsUCRV; <envar>dhcpd/ldap/base</envar> entsprechend gesetzt werden
-	  muss. Um das manuelle Setzen der UCR-Variable für jede neue OU bzw. jeden
-	  neuen Schul-DC zu vermeiden, wird automatisch beim Erstellen einer OU die
-	  UCR-Richtlinie <uri>ou-default-ucr-policy</uri> im Container
-	  <uri>cn=policies,ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri> angelegt und anschließend mit dem OU-Objekt <uri>ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri>
-	  verknüpft. Bis &ucsUAS; 4.4 v8 tat dies der Hook <command>ou_create_post.d/40dhcpsearchbase_create</command>, mittlerweile ist diese Funktion im Kern.
-      Über die Richtlinie wird die &ucsUCRV; <envar>dhcpd/ldap/base</envar>
-	  entsprechend gesetzt. Dadurch wird sichergestellt, dass die in der Richtlinie
-	  gesetzten UCR-Variablen auf allen UCS-Systemen der OU
-	  automatisch übernommen werden.
-	</para>
-  </section>
-
-  <section id="import:pyhooks">
-      <title>Python-Hooks</title>
       <para>
-          Ab &ucsUAS; 4.4 v9 kann vor und nach dem Anlegen, Ändern, Verschieben und Löschen von &ucsUAS; Objekten Python-Code ausgeführt werden.
-          Die im vorherigen Kapitel beschriebenen Hook-Skripte werden ab &ucsUAS; 5.0 nicht mehr unterstützt.
-      </para>
-      <para>
-          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") werden wesentlich schneller ausgeführt als Hook-Skripte, erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
           Die Hooks werden für alle Klassen, von denen Objekte erzeugt werden können und die von <classname>ucsschool.lib.models.base.UCSSchoolHelperAbstractClass</classname> ableiten, ausgeführt.
@@ -386,5 +214,4 @@ True
           Anschließend wird <methodname>MailForSchoolClass.post_create()</methodname> ausgeführt.
           Beim <methodname>sc.modify(lo)</methodname> passiert das Gleiche.
       </para>
-  </section>
 </chapter>
