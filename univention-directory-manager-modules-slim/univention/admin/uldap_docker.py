@@ -41,6 +41,7 @@ import lazy_object_proxy
 import ldap
 import ldap.sasl
 import ldap.schema
+import six
 from ldapurl import LDAPUrl, isLDAPUrl
 
 from univention.config_registry import ConfigRegistry
@@ -771,8 +772,8 @@ class access(object):
         for key, oldvalue, newvalue in changes:
             if oldvalue and newvalue:
                 if oldvalue == newvalue or (
-                    not isinstance(oldvalue, basestring)
-                    and not isinstance(newvalue, basestring)
+                    not isinstance(oldvalue, (bytes, six.text_type))
+                    and not isinstance(newvalue, (bytes, six.text_type))
                     and set(oldvalue) == set(newvalue)
                 ):
                     continue  # equal values

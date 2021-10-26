@@ -138,8 +138,8 @@ class LdapStorageBackend(NameCounterStorageBackend):
                 [
                     (
                         "ucsschoolUsernameNextNumber",
-                        str(old_value).encode("utf-8"),
-                        str(new_value).encode("utf-8"),
+                        [str(old_value).encode("utf-8")],
+                        [str(new_value).encode("utf-8")],
                     )
                 ],
             )

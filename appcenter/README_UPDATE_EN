@@ -11,6 +11,9 @@
     <li>
         The test suite for the ``ucsschool.lib`` component was improved (Bug 53962).
     </li>
+    <li>
+        Username generation counter can now be raised above 100 (Bug 53987).
+    </li>
 </ul>
 
 <h2>v1.5.0 (2021-09-10)</h2>
