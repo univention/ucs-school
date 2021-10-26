@@ -48,8 +48,8 @@ title = _("UCS@school Check if Samba4 is installed")
 description = "\n".join(
     [
         _(
-            "UCS@school: Test that checks if Samba4 is installed on a singleserver system or on a school "
-            "server in a multi-server-environment."
+            "UCS@school: Test that checks if Samba4 is installed on a singleserver system or on a "
+            "school server in a multi-server-environment."
         ),
     ]
 )

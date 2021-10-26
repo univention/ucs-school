@@ -166,9 +166,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
         result = {"id": jobid}
 
         SLEEP_TIME = 0.2
-        TIMEOUT_AFTER = (
-            int(ucr.get("ucsschool/import/dry-run/timeout", 120)) / SLEEP_TIME
-        )  # default: two minutes (as seconds)
+        # default: two minutes (as seconds):
+        TIMEOUT_AFTER = int(ucr.get("ucsschool/import/dry-run/timeout", 120)) / SLEEP_TIME
         i = 0
         finished = False
         while not finished:

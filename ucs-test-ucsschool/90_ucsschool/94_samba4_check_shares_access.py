@@ -61,7 +61,8 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             )
 
         print(
-            "\nTrying to connect to Sysvol on Primary Directory Node and list the contents using Samba client:"
+            "\nTrying to connect to Sysvol on Primary Directory Node and list the contents using Samba "
+            "client:"
         )
         print(cmd)
 
@@ -71,8 +72,8 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
         if not stdout.strip():
             utils.fail(
-                "The Samba client did not produce any output to STDOUT, while Primary Directory Node Sysvol contents"
-                " were expected"
+                "The Samba client did not produce any output to STDOUT, while Primary Directory Node "
+                "Sysvol contents were expected"
             )
         print("The Samba client produced the following output to STDOUT:\n%s" % stdout)
 
@@ -81,8 +82,8 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             utils.fail("\nThe connection with Primary Directory Node failed. See the stdout.")
         if domain_name not in stdout:
             utils.fail(
-                "The Samba client output of Primary Directory Node Sysvol contents does not include folder with the "
-                "domain name."
+                "The Samba client output of Primary Directory Node Sysvol contents does not include "
+                "folder with the domain name."
             )
 
     def create_student(self):

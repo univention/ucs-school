@@ -475,8 +475,8 @@ class Acl(object):
 
     def assert_member_server(self, access):
         """
-        Mitglieder der lokalen Administratoren duerfen den Replica Directory Node und Managed Node joinen (benoetigt
-        Passwortaenderung)
+        Mitglieder der lokalen Administratoren duerfen den Replica Directory Node und Managed Node
+        joinen (benoetigt Passwortaenderung)
         """
         base_dn = self.ucr.get("ldap/base")
         attrs = [

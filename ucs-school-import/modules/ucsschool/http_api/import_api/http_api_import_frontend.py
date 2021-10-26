@@ -92,9 +92,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
                 stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXOTH,
             )  # 751: higher directories may be owned by root, but will be traversable
             os.chown(self.basedir, self.wsgi_uid, self.wsgi_gid)
-            os.chmod(
-                self.basedir, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
-            )  # secure mode for our directory
+            os.chmod(self.basedir, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)  # secure mode for our dir
         except os.error as exc:
             raise InitialisationError(
                 "Cannot create directory {!r} for import job {!r}: {}".format(

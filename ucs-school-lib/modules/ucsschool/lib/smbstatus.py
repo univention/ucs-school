@@ -171,7 +171,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="If no file is given, runs smbstatus and parses its output (Test data: /usr/share/ucs-school-lib/smbstatus_testdata.txt)."
+        description="If no file is given, runs smbstatus and parses its output (Test data: "
+        "/usr/share/ucs-school-lib/smbstatus_testdata.txt)."
     )
     parser.add_argument("file", nargs="?", type=argparse.FileType("r"))
     args = parser.parse_args()

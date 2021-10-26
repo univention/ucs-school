@@ -184,9 +184,8 @@ class Instance(SchoolBaseModule):
         # Make teacher computers
         for computer_dn in teacher_computers:
             try:
-                computer = SchoolComputer.from_dn(
-                    computer_dn, None, ldap_user_write
-                )  # Please remove with Bug #49611
+                # Please remove one call with Bug #49611:
+                computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_write)
                 computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_write)
                 computer.teacher_computer = True
                 computer.modify(ldap_user_write)
@@ -196,9 +195,8 @@ class Instance(SchoolBaseModule):
         non_teacher_computer = set(all_computers).difference(teacher_computers)
         for computer_dn in non_teacher_computer:
             try:
-                computer = SchoolComputer.from_dn(
-                    computer_dn, None, ldap_user_write
-                )  # Please remove with Bug #49611
+                # Please remove one call with Bug #49611:
+                computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_write)
                 computer = SchoolComputer.from_dn(computer_dn, None, ldap_user_write)
                 computer.teacher_computer = False
                 computer.modify(ldap_user_write)

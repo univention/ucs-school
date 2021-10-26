@@ -413,22 +413,23 @@ class TestS4DNSSRVReplication(TestSamba4):
             if dc_slaves:
                 # multi-school domain with Replica Directory Node(s), no replication
                 print(
-                    "\nCurrent role is a Primary Directory Node and there is(are) Replica Directory Node(s) %s in the domain, "
-                    "replication should not work for specific DNS SRV records." % dc_slaves
+                    "\nCurrent role is a Primary Directory Node and there is(are) Replica Directory "
+                    "Node(s) %s in the domain, replication should not work for specific DNS SRV records."
+                    % dc_slaves
                 )
             else:
                 # a singleserver system setup, openLDAP -> SAMBA replication
                 print(
-                    "\nCurrent role is a Primary Directory Node and it is the only DC in the domain, two-way "
-                    "replication should work for tested DNS SRV records"
+                    "\nCurrent role is a Primary Directory Node and it is the only DC in the domain, "
+                    "two-way replication should work for tested DNS SRV records"
                 )
                 self.repl_should_work = True
 
         elif self.server_role == "domaincontroller_slave":
             # running on a Replica Directory Node, no replication
             print(
-                "\nCurrent role is a Replica Directory Node, no replication should happen for a list of specific DNS "
-                "SRV records."
+                "\nCurrent role is a Replica Directory Node, no replication should happen for a list of "
+                "specific DNS SRV records."
             )
 
         else:

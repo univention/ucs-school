@@ -57,7 +57,7 @@ class Test(HttpApiImportTester):
         )
 
         self.log.info("------ Restarting service ucs-school-import-http-api... ------")
-        subprocess.call(["service", "ucs-school-import-http-api", "restart"])
+        subprocess.call(["/usr/bin/systemctl", "restart", "ucs-school-import-http-api"])
         time.sleep(4)
 
         self.log.info("------ Connecting to HTTP-API... ------")

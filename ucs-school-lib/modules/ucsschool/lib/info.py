@@ -110,7 +110,7 @@ def is_central_computer(lo, dn):  # type: (univention.uldap.access, str) -> bool
 
 def is_school_slave(lo, dn):  # type: (univention.uldap.access, str) -> bool
     """
-    Checks if the given domaincontroller_slave object (specified by `dn`) is a school Replica Directory Node.
+    Checks if the given domaincontroller_slave object (specified by `dn`) is a school Replica Node.
 
     :param univention.uldap.access lo: the LDAP connection
     :param str dn: DN of the computer object

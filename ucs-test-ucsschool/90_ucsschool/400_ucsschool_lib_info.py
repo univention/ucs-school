@@ -21,7 +21,8 @@ def test_ucsschool_lib_info(udm_session, schoolenv, ucr):
     name_backup = uts.random_string()
     name_centralmemberserver = uts.random_string()
 
-    # create central Replica Directory Node, edu UCS@school Replica Directory Node and admin UCS@school Replica Directory Node
+    # create central Replica Directory Node, edu UCS@school Replica Directory Node and admin UCS@school
+    # Replica Directory Node
     dn_centraldc = udm.create_object(
         "computers/domaincontroller_slave",
         position="cn=dc,cn=computers,{}".format(ucr.get("ldap/base")),

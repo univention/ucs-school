@@ -52,7 +52,7 @@ def deactivate_rules(roomDN):
         hosts += pc.ip_address
     reset_room_settings(room.get_relative_name(), hosts)
     # reload cups
-    subprocess.call(["systemctl", "reload", "cups.service"])
+    subprocess.call(["/usr/bin/systemctl", "reload", "cups.service"])  # nosec
 
 
 def deprecated_deactivate_rules(options):
@@ -80,8 +80,8 @@ def deprecated_deactivate_rules(options):
     handler_unset(options.remove)
 
     # reload cups
-    if not subprocess.call(["systemctl", "is-active", "--quiet", "cups.service"]):
-        subprocess.call(["systemctl", "reload", "cups.service"])
+    if not subprocess.call(["/usr/bin/systemctl", "is-active", "--quiet", "cups.service"]):  # nosec
+        subprocess.call(["/usr/bin/systemctl", "reload", "cups.service"])  # nosec
 
 
 if __name__ == "__main__":

@@ -71,7 +71,8 @@ def main():
     parser.add_argument(
         "educational_dc_name",
         nargs="?",
-        help='hostname of the educational DC for specified OU (if dc_name is not specified "dc<ou_name>" will beused as the default for the domaincontroller name)',
+        help='hostname of the educational DC for specified OU (if dc_name is not specified "dc<ou_name>"'
+        " will beused as the default for the domaincontroller name)",
     )
     parser.add_argument(
         "administrative_dc_name",

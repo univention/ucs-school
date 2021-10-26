@@ -140,12 +140,14 @@ class UcsSchoolRolesMigration(object):
         argp.add_argument(
             "--servers-central",
             action="store_true",
-            help="Modify central server objects (Primary Directory Node, Backup Directory Node, Replica Directory Node, Managed Node).",
+            help="Modify central server objects (Primary Directory Node, Backup Directory Node, Replica "
+            "Directory Node, Managed Node).",
         )
         argp.add_argument(
             "--servers-school",
             action="store_true",
-            help="Modify UCS@school school server objects (Replica Directory Node admin & edu, Managed Node).",
+            help="Modify UCS@school school server objects (Replica Directory Node admin & edu, Managed "
+            "Node).",
         )
 
         argp.add_argument(
@@ -431,7 +433,8 @@ class UcsSchoolRolesMigration(object):
                         "ucsschoolServer",
                     )
 
-            # DC-Edukativnetz separate, because have to distinguish between first and secondary Replica Directory Nodes
+            # DC-Edukativnetz separate, because have to distinguish between first and secondary Replica
+            # Directory Nodes
             self.logger.info("- Looking for Replica Directory Node edu...")
             filter_s = "(&(objectClass=univentionGroup)(uniqueMember=*)(cn=OU*-DC-Edukativnetz))"
             attr = ["uniqueMember"]

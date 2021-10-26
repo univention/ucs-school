@@ -26,6 +26,7 @@ from univention.uldap import getMachineConnection
 try:
     from typing import Dict, List, Optional, Tuple  # noqa: F401
 
+    import univention.testing.ucsschool.ucs_test_school as utu
     from univention.admin.uldap import access as LoType  # noqa: F401
 
     MegaSuperDuperPermissionTuple = Tuple[Tuple[Tuple[str, str], str], Dict[str, Tuple[str, str, str]]]

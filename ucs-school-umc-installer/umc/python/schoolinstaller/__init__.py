@@ -462,7 +462,9 @@ class Instance(Base):
 
     @simple_response
     def get_metainfo(self):
-        """Queries the specified Primary Directory Node for metainformation about the UCS@school environment"""
+        """
+        Queries the specified Primary Directory Node for metainformation about the UCS@school environment
+        """
         master = ucr.get("ldap/master") or get_master_dns_lookup()
         if not master:
             return
@@ -545,14 +547,15 @@ class Instance(Base):
         except Forbidden:
             raise SchoolInstallerError(
                 _(
-                    "Make sure ucs-school-umc-installer is installed on the Primary Directory Node and all join "
-                    "scripts are executed."
+                    "Make sure ucs-school-umc-installer is installed on the Primary Directory Node and "
+                    "all join scripts are executed."
                 )
             )
         except (ConnectionError, HTTPError) as exc:
+            # TODO: set status, message, result:
             raise SchoolInstallerError(
                 _("Could not connect to the Primary Directory Node %s: %s") % (master, exc)
-            )  # TODO: set status, message, result
+            )
 
     @sanitize(
         username=StringSanitizer(required=True),
@@ -572,9 +575,7 @@ class Instance(Base):
         master = request.options.get("master")
         school_ou = request.options.get("schoolOU")
         educational_slave = request.options.get("nameEduServer")
-        ou_display_name = request.options.get(
-            "OUdisplayname", school_ou
-        )  # use school OU name as fallback
+        ou_display_name = request.options.get("OUdisplayname", school_ou)  # use OU name as fallback
         server_type = request.options.get("server_type")
         setup = request.options.get("setup")
         server_role = ucr.get("server/role")
@@ -584,7 +585,8 @@ class Instance(Base):
             raise ValueError("The installation was started twice. This should not have happened.")
 
         if server_role != "domaincontroller_slave":
-            # use the credentials of the currently authenticated user on a Primary Directory Node/Backup Directory Node
+            # use the credentials of the currently authenticated user on a Primary Directory Node/Backup
+            # Directory Node
             self.require_password()
             username = self.username
             password = self.password
@@ -609,8 +611,8 @@ class Instance(Base):
         ):
             raise SchoolInstallerError(
                 _(
-                    "Invalid server role! UCS@school can only be installed on the system roles Primary Directory Node, "
-                    "Backup Directory Node, or Replica Directory Node."
+                    "Invalid server role! UCS@school can only be installed on the system roles Primary "
+                    "Directory Node, Backup Directory Node, or Replica Directory Node."
                 )
             )
 
@@ -642,8 +644,8 @@ class Instance(Base):
             )
 
         if server_role == "domaincontroller_slave":
-            # on Replica Directory Nodes, download the certificate from the Primary Directory Node in order
-            # to be able to build up secure connections
+            # on Replica Directory Nodes, download the certificate from the Primary Directory Node in
+            # order to be able to build up secure connections
             self.original_certificate_file = self.retrieve_root_certificate(master)
 
         if server_role != "domaincontroller_master":
@@ -676,8 +678,9 @@ class Instance(Base):
             if server_role == "domaincontroller_backup" and school_environment != setup:
                 raise SchoolInstallerError(
                     _(
-                        "The UCS@school Primary Directory Node needs to be configured similarly to "
-                        "this Backup Directory Node. Please choose the correct environment type for this system."
+                        "The UCS@school Primary Directory Node needs to be configured similarly to this "
+                        "Backup Directory Node. Please choose the correct environment type for this "
+                        "system."
                     )
                 )
             if server_role == "domaincontroller_backup" and not joined:
@@ -749,9 +752,9 @@ class Instance(Base):
         def _thread(_self, packages):
             MODULE.process("Start Veyon proxy app installation")
             app_info = json.loads(
-                subprocess.check_output(["/usr/bin/univention-app", "info", "--as-json"]).decode(
-                    "UTF-8"
-                )  # nosec
+                subprocess.check_output(  # nosec
+                    ["/usr/bin/univention-app", "info", "--as-json"]
+                ).decode("UTF-8")
             )
             veyon_installed = any(
                 (
@@ -808,7 +811,8 @@ class Instance(Base):
             if server_role != "domaincontroller_backup" and not (
                 server_role == "domaincontroller_master" and setup == "multiserver"
             ):
-                # create the school OU (not on Backup Directory Node and not on Primary Directory Node w/multi server environment)
+                # create the school OU (not on Backup Directory Node and not on Primary Directory Node
+                # w/multi server environment)
                 MODULE.info("Starting creation of LDAP school OU structure...")
                 progress_state.component = _("Creation of LDAP school structure")
                 progress_state.info = ""
@@ -838,8 +842,8 @@ class Instance(Base):
                             "The UCS@school software packages have been installed, however, a school "
                             "OU could not be created and consequently a re-join of the system has not "
                             "been performed. Please create a new school OU structure using the UMC "
-                            'module "Add school" on the Primary Directory Node and perform a domain join '
-                            'on this machine via the UMC module "Domain join".'
+                            'module "Add school" on the Primary Directory Node and perform a domain '
+                            'join on this machine via the UMC module "Domain join".'
                         )
                     )
 
@@ -860,14 +864,14 @@ class Instance(Base):
                 ).result
                 if not result.get("success"):
                     MODULE.warn(
-                        "Could not successfully move the Replica Directory Node into its correct OU structure:\n%s"
-                        % result.get("message")
+                        "Could not successfully move the Replica Directory Node into its correct OU "
+                        "structure:\n%s" % result.get("message")
                     )
                     raise SchoolInstallerError(
                         _(
                             "Validating the LDAP school OU structure failed. It seems that the current "
-                            "Replica Directory Node has already been assigned to a different school or that the "
-                            "specified school OU name is already in use."
+                            "Replica Directory Node has already been assigned to a different school or "
+                            "that the specified school OU name is already in use."
                         )
                     )
 

@@ -93,9 +93,8 @@ class UserImportCsvResultExporter(ResultExporter):
         li = sorted(user_import.errors, key=exc_count)
         for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
             for u in users.values():
-                if not u:
-                    continue
-                li.extend(u)
+                if u:
+                    li.extend(u)
         li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
         return li
 

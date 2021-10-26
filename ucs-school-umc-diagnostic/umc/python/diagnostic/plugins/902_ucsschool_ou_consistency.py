@@ -37,7 +37,7 @@
 # - is ucsschoolRole set to "school:school:$OU"?
 # - is a displayName set?
 # - is a HomeShareFileServer and a ClassShareFileServer set?
-# - is a HomeShareFileServer and a ClassShareFileServer (not) set to the Primary Directory Node in multi/single
+# - is a HomeShareFileServer and a ClassShareFileServer (not) set to the Primary Node in multi/single
 #   server environment?
 from __future__ import absolute_import
 
@@ -110,7 +110,8 @@ def run(_umc_instance):
             ):  # WARNING: this line expects that the check is performed on the Primary Directory Node!
                 problematic_objects.setdefault(ou_dn, []).append(
                     _(
-                        "{0} is not set to Primary Directory Node in a UCS@school single server environment"
+                        "{0} is not set to Primary Directory Node in a UCS@school single server "
+                        "environment"
                     ).format(attr_name)
                 )
             if not ucr.is_true("ucsschool/singlemaster", False) and value == ucr.get(

@@ -115,9 +115,8 @@ class Test(UniqueObjectTester):
             utils.verify_ldap_object(
                 person.dn, expected_attr={"uid": [person.username]}, strict=False, should_exist=True
             )
-            wait_for_drs_replication(
-                filter_format("cn=%s", (person.username,))
-            )  # wait for creation before deletion
+            # wait for creation before deletion:
+            wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
 
         # delete users
         self.log.info("*** Deleting all users...")

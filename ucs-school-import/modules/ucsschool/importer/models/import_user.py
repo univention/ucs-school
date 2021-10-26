@@ -613,9 +613,8 @@ class ImportUser(User):
     @lo.setter
     def lo(self, value):  # type: (LoType) -> None
         cn_admin_dn = "cn=admin,{}".format(self.ucr["ldap/base"])
-        assert not (
-            self.config["dry_run"] and value == cn_admin_dn
-        )  # TODO: 1. compare with lo.lo.binddn, 2. don't use assert, raise an exception
+        # TODO: 1. compare with lo.lo.binddn, 2. don't use assert, raise an exception:
+        assert not (self.config["dry_run"] and value == cn_admin_dn)
         self._lo = value
 
     def prepare_all(self, new_user=False):  # type: (Optional[bool]) -> None
@@ -665,9 +664,8 @@ class ImportUser(User):
             for details on the configuration.
         """
         ignore_keys = list(self.to_dict())
-        ignore_keys.extend(
-            ["mailPrimaryAddress", "record_uid", "source_uid", "username"]
-        )  # these are used in make_*
+        # these are used in make_*:
+        ignore_keys.extend(["mailPrimaryAddress", "record_uid", "source_uid", "username"])
         ignore_keys.extend(self.no_overwrite_attributes)
         for prop in [k for k in self.config["scheme"] if k not in ignore_keys]:
             self.make_udm_property(prop)

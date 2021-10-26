@@ -148,7 +148,7 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
             if package_manager.is_installed(pkg_name):
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
-        # if no metapackage has been found, determine package type via Primary Directory Node's UCR variable
+        # if no metapackage has been found, determine package type via Primary Node's UCR variable
         result = call_cmd_on_master(
             options.master_fqdn, "/usr/sbin/ucr", "get", "ucsschool/singlemaster"
         )
@@ -173,7 +173,7 @@ def determine_role_packages(options, package_manager):  # type: (Any, PackageMan
                 log.info("Found installed metapackage %r. Reusing it.", pkg_name)
                 return [pkg_name]
 
-        # if no metapackage has been found, then determine Replica Directory Node type via group memberships
+        # if no metapackage has been found, then determine Replica Node type via group memberships
         membership = get_school_membership(options)
         if membership.is_edu_school_member:
             return ["ucs-school-replica" if not IS_UCS4 else "ucs-school-slave"]

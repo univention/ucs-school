@@ -196,7 +196,7 @@ def network(base=baseDN):
                             policy = get_object(dn, "policies/dhcp_dns")
                             print("\tDomain Name:\t%s" % policy["domain_name"])
                             print("\tDNS Server:\t%s" % "; ".join(policy["domain_name_servers"]))
-                    except Exception:
+                    except Exception:  # nosec
                         pass
 
         for iprange in n["ipRange"]:

@@ -75,9 +75,8 @@ if "-v" in sys.argv:
         )
     else:
         print(
-            'OK: local version of app "{}" lower than or equal to version on Primary Directory Node.'.format(
-                app_name
-            )
+            'OK: local version of app "{}" lower than or equal to version on Primary Directory '
+            "Node.".format(app_name)
         )
 
 ucrv = "ucsschool/join/ignore-version-mismatch/{}/{}".format(master_version, app.version)

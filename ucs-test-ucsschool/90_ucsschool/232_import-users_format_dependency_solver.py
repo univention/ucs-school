@@ -90,9 +90,8 @@ class Test(CLI_Import_v2_Tester):
             "scheme:roomNumber", "<phone>-<email>[0:5]"
         ),  # UDM prop that depends on other UDM prop
         config.update_entry("scheme:city", "<birthday>"),  # UDM prop that depends on lib attr
-        config.update_entry(
-            "scheme:{}".format(ext_attr_name), "<firstname:lower>.<lastname:lower>"
-        )  # not-lib-mapped extended attr that depends on lib attrs
+        # not-lib-mapped extended attr that depends on lib attrs:
+        config.update_entry("scheme:{}".format(ext_attr_name), "<firstname:lower>.<lastname:lower>")
         config.update_entry("source_uid", source_uid)
         config.update_entry("user_role", None)
 

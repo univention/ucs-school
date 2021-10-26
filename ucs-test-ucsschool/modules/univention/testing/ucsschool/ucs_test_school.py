@@ -210,7 +210,8 @@ class UCSTestSchool(object):
         (if None is given) to the server defined by the UCR variable
         ldap/server/name is used.
         If admin is set to True, a connection is setup by getAdminConnection().
-        If machine is set to True, a connection to the Primary Directory Node is setup by getMachoneConnection().
+        If machine is set to True, a connection to the Primary Directory Node is setup by
+        getMachoneConnection().
         """
         assert not (admin and machine)
         assert not (
@@ -492,8 +493,8 @@ class UCSTestSchool(object):
         if isinstance(name_edudc, str):
             if name_edudc.lower() == cls.ucr.get("ldap/master", "").split(".", 1)[0].lower():
                 logger.info(
-                    "*** It is not allowed to set the Primary Directory Node as name_edudc ==> resetting name_edudc to "
-                    "None"
+                    "*** It is not allowed to set the Primary Directory Node as name_edudc ==> resetting"
+                    " name_edudc to None"
                 )
                 name_edudc = None
             elif any(
@@ -503,8 +504,8 @@ class UCSTestSchool(object):
                 ]
             ):
                 logger.info(
-                    "*** It is not allowed to set any Backup Directory Node as name_edudc ==> resetting name_edudc to "
-                    "None"
+                    "*** It is not allowed to set any Backup Directory Node as name_edudc ==> resetting "
+                    "name_edudc to None"
                 )
                 name_edudc = None
         return name_edudc
@@ -526,16 +527,16 @@ class UCSTestSchool(object):
         displayName. If "displayName" is None, a random displayName will be set. If "displayName"
         equals to the empty string (''), the displayName won't be set. "name_edudc" may contain
         the optional name for an educational Replica Directory Node. "name_admindc" may contain
-        the optional name for an administrative Replica Directory Node. If name_share_file_server is set, the
-        class share file server and the home share file server will be set.
+        the optional name for an administrative Replica Directory Node. If name_share_file_server is set,
+        the class share file server and the home share file server will be set.
         If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
         library is used.
         If use_cache is True (default) and an OU was created in a previous test with the same arguments,
         it will be reused. -> If ou_name and displayName are None, instead of creating new random names,
         the existing test-OU will be returned.
-        PLEASE NOTE: if name_edudc is set to the hostname of the Primary Directory Node or Backup Directory Node, name_edudc will be
-        unset automatically, because it's not allowed to specify the hostname of the Primary Directory Node or any
-        Backup Directory Node in any situation!
+        PLEASE NOTE: if name_edudc is set to the hostname of the Primary Directory Node or Backup
+        Directory Node, name_edudc will be unset automatically, because it's not allowed to specify the
+        hostname of the Primary Directory Node or any Backup Directory Node in any situation!
 
         Return value: (ou_name, ou_dn)
             ou_name: name of the created OU
@@ -601,9 +602,8 @@ class UCSTestSchool(object):
 
             logger.info("*** Creating new OU %r", ou_name)
             School.invalidate_all_caches()
-            School.init_udm_module(
-                self.lo
-            )  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+            # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
+            School.init_udm_module(self.lo)
             result = School(**kwargs).create(self.lo)
             logger.info("*** Result of School(...).create(): %r", result)
         else:
@@ -929,9 +929,8 @@ class UCSTestSchool(object):
                 cls = Staff
             logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
             User.invalidate_all_caches()
-            User.init_udm_module(
-                self.lo
-            )  # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+            # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
+            User.init_udm_module(self.lo)
             roles = cls.default_roles
             result = cls(**kwargs).create(self.lo)
             logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
@@ -1774,9 +1773,8 @@ class OUCloner(object):
 if __name__ == "__main__":
     with UCSTestSchool() as schoolenv:
         # create ou
-        ou_name, ou_dn = schoolenv.create_ou(
-            displayName=""
-        )  # FIXME: displayName has been disabled for backward compatibility
+        # FIXME: displayName has been disabled for backward compatibility:
+        ou_name, ou_dn = schoolenv.create_ou(displayName="")
         logger.info("NEW OU")
         logger.info("  %r", ou_name)
         logger.info("  %r", ou_dn)

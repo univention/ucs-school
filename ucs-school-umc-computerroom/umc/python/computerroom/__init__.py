@@ -908,13 +908,13 @@ class Instance(SchoolBaseModule):
         self.reload_cups()
 
     def reload_cups(self):
-        if not subprocess.call(
-            ["systemctl", "is-enabled", "--quiet", "cups.service"],
+        if not subprocess.call(  # nosec
+            ["/usr/bin/systemctl", "is-enabled", "--quiet", "cups.service"],
             stdout=open("/dev/null", "w"),
             stderr=subprocess.STDOUT,
         ):
             MODULE.info("Reloading cups")
-            if subprocess.call(["systemctl", "reload", "cups.service"]) != 0:  # nosec
+            if subprocess.call(["/usr/bin/systemctl", "reload", "cups.service"]) != 0:  # nosec
                 MODULE.error("Failed to reload cups! Printer settings not applied.")
 
     def reset_smb_connections(self):

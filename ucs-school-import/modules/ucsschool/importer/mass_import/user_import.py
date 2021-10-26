@@ -190,9 +190,8 @@ class UserImport(object):
                         user.record_uid,
                         ", ".join("{!r}: {!r}".format(k, _user[k]) for k in sorted(_user.keys())),
                     )
-                password = (
-                    user.password
-                )  # save password of new user for later export (NewUserPasswordCsvExporter)
+                # save password of new user for later export (NewUserPasswordCsvExporter):
+                password = user.password
                 try:
                     if user.action == "A":
                         err = CreationError  # type: Union[Type[CreationError], Type[ModificationError]]

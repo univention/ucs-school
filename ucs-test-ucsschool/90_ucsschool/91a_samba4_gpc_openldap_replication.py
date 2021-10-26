@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test the Samba4 GPC objects and links replication from Replica Directory Node to Primary Directory Node OpenLDAP.
+## desc: Test the Samba4 GPC objects and links replication from Replica Directory Node to Primary Directory Node OpenLDAP.  # noqa: E501
 ## bugs: [34214]
 ## roles: [domaincontroller_slave]
 ## packages: [univention-samba4, ucs-school-replica]

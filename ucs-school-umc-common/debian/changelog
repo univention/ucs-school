@@ -1,3 +1,9 @@
+ucs-school-umc-common (10.0.3) unstable; urgency=low
+
+  * Bug #53988: fix linter errors
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Oct 2021 14:40:42 +0200
+
 ucs-school-umc-common (10.0.2) unstable; urgency=medium
 
   * Bug #52602: change server role terminology

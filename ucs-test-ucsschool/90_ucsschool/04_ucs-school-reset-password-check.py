@@ -106,7 +106,8 @@ def school_environment():
 
 
 @pytest.mark.parametrize(
-    "acting_user,flavor,target,target_num,chg_pwd_on_next_login,expected_reset_result,expected_auth_for_old_password,expected_auth_for_new_password,expect_password_expired",
+    "acting_user,flavor,target,target_num,chg_pwd_on_next_login,expected_reset_result,"
+    "expected_auth_for_old_password,expected_auth_for_new_password,expect_password_expired",
     [
         # #1 test if teacher is unable to reset teacher password (chgPwdNextLogin=True),
         ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401, False),

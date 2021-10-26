@@ -139,7 +139,7 @@ during creation of new classes or users.
             modlist.append(("objectClass", b"", b"ucsschoolOrganizationalUnit"))
 
         if is_singlemaster:
-            # in single server environments the Primary Directory Node is always the correct fileserver for shares
+            # in single server environments the Primary is always the correct fileserver for shares
             homeshareserver = master_dn
             classshareserver = master_dn
         else:

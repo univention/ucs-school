@@ -100,10 +100,8 @@ class RoleFilterBackend(BaseFilterBackend):
         "(memberUid=%s)"
         ")"
     )
-    filter_attrs = (
-        str("ucsschoolImportRole"),
-        str("ucsschoolImportSchool"),
-    )  # unicode_literals + python-ldap = TypeError
+    # unicode_literals + python-ldap = TypeError:
+    filter_attrs = (str("ucsschoolImportRole"), str("ucsschoolImportSchool"))
 
     @classmethod
     def _build_query(cls, username, school):
@@ -177,10 +175,8 @@ class UserImportJobFilterBackend(BaseFilterBackend):
         "(memberUid=%s)"
         ")"
     )
-    filter_attrs = (
-        str("ucsschoolImportRole"),
-        str("ucsschoolImportSchool"),
-    )  # unicode_literals + python-ldap = TypeError
+    # unicode_literals + python-ldap = TypeError:
+    filter_attrs = (str("ucsschoolImportRole"), str("ucsschoolImportSchool"))
 
     @classmethod
     def _build_query(cls, username):

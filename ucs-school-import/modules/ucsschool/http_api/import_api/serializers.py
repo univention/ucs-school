@@ -68,12 +68,8 @@ class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
         model = TaskResult
         fields = ("status", "result", "date_done", "traceback")
         # exclude = (,)
-        read_only_fields = (
-            "status",
-            "result",
-            "date_done",
-            "traceback",
-        )  # not really necessary, as the view is a ReadOnlyModelViewSet
+        # not really necessary, as the view is a ReadOnlyModelViewSet:
+        read_only_fields = ("status", "result", "date_done", "traceback")
 
     def to_representation(self, instance):
         # Internal representation of TaskResult.result isn't getting converted

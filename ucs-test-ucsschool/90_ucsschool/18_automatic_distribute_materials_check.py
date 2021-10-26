@@ -24,7 +24,7 @@ def cleanup_restart_umc():
     yield
     call(
         [
-            "systemctl",
+            "/usr/bin/systemctl",
             "restart",
             "univention-management-console-web-server",
             "univention-management-console-server",
@@ -42,7 +42,7 @@ def test_automatic_distribute_materials(schoolenv, cleanup_restart_umc, ucr):
     handler_set(["umc/module/timeout=1200"])
     call(
         [
-            "systemctl",
+            "/usr/bin/systemctl",
             "restart",
             "univention-management-console-web-server",
             "univention-management-console-server",

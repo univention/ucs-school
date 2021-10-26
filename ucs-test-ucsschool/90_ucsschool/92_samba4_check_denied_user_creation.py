@@ -73,8 +73,8 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
             if bool(search(".*User .* created successfully.*", stdout)):
                 self.remove_user = username
                 utils.fail(
-                    "The creation of user '%s' succeded, while should be disabled on Replica Directory Node with "
-                    "Samba4" % username
+                    "The creation of user '%s' succeded, while should be disabled on Replica Directory "
+                    "Node with Samba4" % username
                 )
         stderr = workaround.filter_deprecated(stderr)
         if not stderr.strip():

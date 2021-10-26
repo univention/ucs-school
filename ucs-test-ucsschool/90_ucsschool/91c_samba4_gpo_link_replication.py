@@ -109,10 +109,12 @@ def test_samba4_gpo_link_replication(schoolenv):
         # due to LDAP ACLs, the local S4 connector should not be able to
         # replicate the gPOlink to the UCS Primary Directory Node.
         gpo.set_gpo_link_on_slave_via_sambatool()
-        assert not check_local_LDAP_for_GPO_link(
-            gpo.gpo_reference, oudn
-        ), "A school DC can set GPO links for another OU"  # the local LDAP contains the GPO link at oudn but should not
+        # the local LDAP contains the GPO link at oudn but should not:
+        assert not check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn), (
+            "A school DC can set GPO " "links for another OU"
+        )
         gpo.set_gpo_link_on_slave_via_s4connector()
-        assert check_local_LDAP_for_GPO_link(
-            gpo.gpo_reference, oudn
-        ), "A school DC cannot read GPO links from other OUs"  # the local LDAP should contains the GPO link at oudn
+        # the local LDAP should contains the GPO link at oudn:
+        assert check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn), (
+            "A school DC cannot read GPO " "links from other OUs"
+        )

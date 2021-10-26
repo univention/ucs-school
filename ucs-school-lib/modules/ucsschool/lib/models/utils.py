@@ -671,7 +671,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
         return returncode == 0
 
     logger.info("Stopping %s", service_name)
-    if _run(["systemctl", "stop", service_name]):
+    if _run(["/usr/bin/systemctl", "stop", service_name]):
         logger.info("%s stopped", service_name)
     else:
         logger.error("Failed to stop %s...", service_name)
@@ -686,7 +686,7 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
         yield
     finally:
         logger.info("Starting %s", service_name)
-        command = ["systemctl", "start", service_name]
+        command = ["/usr/bin/systemctl", "start", service_name]
         if _run(command):
             logger.info("%s started", service_name)
         else:

@@ -567,9 +567,8 @@ class VeyonComputer(threading.Thread):
         try:
             return self._veyon_client.get_feature_status(feature, host=self.ipAddress)
         except VeyonError as exc:
-            MODULE.error(
-                "Fetching feature status failed: {}".format(exc)
-            )  # might just be a non reachable IP. TODO: Catch errors other than 404
+            # might just be a non reachable IP. TODO: Catch errors other than 404:
+            MODULE.error("Fetching feature status failed: {}".format(exc))
         return None
 
     def connected(self):

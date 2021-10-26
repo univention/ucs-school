@@ -206,7 +206,7 @@ class Hooks(object):
 
         sys.stdout.flush()
         sys.stderr.flush()
-        ret_code = subprocess.call(command)
+        ret_code = subprocess.call(command)  # nosec
 
         # close temporary file (also deletes the file)
         if "line" in kwargs:
@@ -2412,7 +2412,7 @@ def activate_groupmembers():
                     else:
                         print("activated", end=" ")
 
-                    passwd = "*"
+                    passwd = "*"  # nosec
                     if chpasswd:
                         passwd = create_passwd(dn=memberdn, specials="-+.,;")
                         memberobj["password"] = passwd

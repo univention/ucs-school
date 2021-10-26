@@ -296,7 +296,7 @@ def clean():  # type: () -> None
     listener.setuid(0)
     try:
         Log.warning("Stopping logon script generator daemon...")
-        run_daemon(["systemctl", "stop", "ucs-school-netlogon-user-logonscripts.service"])
+        run_daemon(["/usr/bin/systemctl", "stop", "ucs-school-netlogon-user-logonscripts.service"])
         Log.warning("Deleting all *.vbs scripts in {!r}...".format(get_netlogon_path_list()))
         for path in get_netlogon_path_list():
             if os.path.isdir(path):
@@ -309,6 +309,6 @@ def clean():  # type: () -> None
         Log.warning("Purging SQLite DB...")
         SqliteQueue(logger=Log).truncate_database()
         Log.warning("Starting logon script generator daemon...")
-        run_daemon(["systemctl", "start", "ucs-school-netlogon-user-logonscripts.service"])
+        run_daemon(["/usr/bin/systemctl", "start", "ucs-school-netlogon-user-logonscripts.service"])
     finally:
         listener.unsetuid()

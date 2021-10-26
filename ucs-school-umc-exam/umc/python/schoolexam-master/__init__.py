@@ -741,18 +741,15 @@ class Instance(SchoolBaseModule):
         teacher_pc_role = create_ucsschool_role_string(role_teacher_computer, room.school)
         exam_hosts = []
         for host in room.hosts:
-            host_obj = SchoolComputer.from_dn(
-                host, None, ldap_user_read
-            )  # Please remove with Bug #49611
+            host_obj = SchoolComputer.from_dn(host, None, ldap_user_read)  # remove with Bug #49611
             host_obj = SchoolComputer.from_dn(host, None, ldap_user_read)
             if teacher_pc_role not in host_obj.ucsschool_roles:
                 exam_hosts.append(host)
         # Add all host members of room to examGroup
         host_uid_list = [str2dn(uniqueMember)[0][0][1] + "$" for uniqueMember in exam_hosts]
         examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
-        examGroup.fast_member_add(
-            exam_hosts, host_uid_list
-        )  # adds any uniqueMember and member listed if not already present
+        # adds any uniqueMember and member listed if not already present:
+        examGroup.fast_member_add(exam_hosts, host_uid_list)
 
         self.finished(request.id, {}, success=True)
 
@@ -775,9 +772,8 @@ class Instance(SchoolBaseModule):
         # Remove all host members of room from examGroup
         host_uid_list = [str2dn(uniqueMember)[0][0][1] + "$" for uniqueMember in room.hosts]
         examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
-        examGroup.fast_member_remove(
-            room.hosts, host_uid_list
-        )  # removes any uniqueMember and member listed if still present
+        # removes any uniqueMember and member listed if still present:
+        examGroup.fast_member_remove(room.hosts, host_uid_list)
 
         self.finished(request.id, {}, success=True)
 

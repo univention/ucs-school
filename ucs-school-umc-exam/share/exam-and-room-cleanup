@@ -229,7 +229,8 @@ class ExamCleanupHelper(object):
                     ud.debug(
                         ud.MAIN,
                         ud.PROCESS,
-                        f"Removing computers from exam group {exam_group['name']!r}: {exam_group['hosts']!r}",
+                        f"Removing computers from exam group {exam_group['name']!r}: "
+                        f"{exam_group['hosts']!r}",
                     )
                     exam_group["hosts"] = []
                     exam_group.modify()
@@ -372,13 +373,15 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
         "--skip-exam-user-removal",
         default=False,
         action="store_true",
-        help="do not remove all existing exam users (only on Primary Directory Node / Backup Directory Node)",
+        help="do not remove all existing exam users (only on Primary Directory Node / Backup "
+        "Directory Node)",
     )
     parser.add_argument(
         "--skip-exam-computer-removal",
         default=False,
         action="store_true",
-        help="do not remove all existing exam computers (only on Primary Directory Node / Backup Directory Node)",
+        help="do not remove all existing exam computers (only on Primary Directory Node / Backup "
+        "Directory Node)",
     )
     parser.add_argument(
         "--skip-ucr-cleanup",

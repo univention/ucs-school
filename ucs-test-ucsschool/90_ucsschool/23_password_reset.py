@@ -231,7 +231,7 @@ class _TestPasswordReset(object):
             yield "%s-b" % i, expect, actor, schoolenv.create_teacher(school, **kw)
             yield "%s-c" % i, expect, actor, schoolenv.create_teacher_and_staff(school, **kw)
             if not is_domaincontroller_slave:
-                # staff users are never replicated to educational school Replica Directory Nodes - skip test
+                # staff users are never replicated to educational school Replica Nodes - skip test
                 yield "%s-d" % i, expect, actor, schoolenv.create_staff(school, **kw)
             expect = EXPECT_OK if actor in (domain_admin,) else EXPECT_DISALLOW
             yield "%s-e" % i, expect, actor, schoolenv.create_school_admin(school, is_teacher=is_teacher)
@@ -246,14 +246,14 @@ class _TestPasswordReset(object):
         tasks = [(student, EXPECT_DISALLOW)]
         if (
             not is_domaincontroller_slave
-        ):  # staff users are never replicated to educational school Replica Directory Nodes - skip test
+        ):  # staff users are never replicated to educational school Replica Nodes - skip test
             staff = schoolenv.create_staff(school)
             tasks.append((staff, EXPECT_DISALLOW))
         for i, (actor, expect) in enumerate(tasks):
             yield "%s-h" % i, expect, actor, schoolenv.create_teacher(school, **kw)
             yield "%s-i" % i, expect, actor, schoolenv.create_teacher_and_staff(school, **kw)
             if not is_domaincontroller_slave:
-                # staff users are never replicated to educational school Replica Directory Nodes - skip test
+                # staff users are never replicated to educational school Replica Nodes - skip test
                 yield "%s-j" % i, expect, actor, schoolenv.create_staff(school, **kw)
             yield "%s-k" % i, expect, actor, schoolenv.create_school_admin(
                 school, is_teacher=is_teacher, **kw

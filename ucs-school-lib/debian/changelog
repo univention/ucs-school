@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.6) unstable; urgency=low
+
+  * Bug #53988: fix linter errors
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Oct 2021 14:38:36 +0200
+
 ucs-school-lib (13.0.5) unstable; urgency=medium
 
   * Bug #52602: change server role terminology

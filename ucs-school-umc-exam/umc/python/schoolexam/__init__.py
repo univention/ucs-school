@@ -236,13 +236,14 @@ class Instance(SchoolBaseModule):
                 cmd.append(f"--netbiosname={workstation}")
             else:
                 logger.debug(
-                    f"{exam_user.dn} is missing a workstation. The exam-user will be able to login to workstations "
-                    "outside the computerroom."
+                    f"{exam_user.dn} is missing a workstation. The exam-user will be able to login to "
+                    "workstations outside the computerroom."
                 )
             rv, stdout, stderr = exec_cmd(cmd)
             if rv != 0:
                 logger.error(
-                    f"Error while initiating windows-profiles for {exam_user.dn} rv: {rv} {stderr!r} {stdout!r}"
+                    f"Error while initiating windows-profiles for {exam_user.dn} rv: {rv} {stderr!r}"
+                    f" {stdout!r}"
                 )
 
     @staticmethod
@@ -713,7 +714,8 @@ class Instance(SchoolBaseModule):
                     # mark the user as replicated
                     usersReplicated.add(idn)
                     progress.info(
-                        f"({len(usersReplicated):02d}/{len(examUsers):02d}) {iuser.lastname}, {iuser.firstname} ({iuser.username})"
+                        f"({len(usersReplicated):02d}/{len(examUsers):02d}) {iuser.lastname}, "
+                        f"{iuser.firstname} ({iuser.username})"
                     )
                     progress.add_steps(percentPerUser)
 
@@ -993,7 +995,8 @@ class Instance(SchoolBaseModule):
                 logger.info("Deleting %d recipients...", len(project.recipients))
                 for num, iuser in enumerate(project.recipients, start=1):
                     progress.info(
-                        f"({num:02d}/{len(project.recipients):02d}) {iuser.lastname}, {iuser.firstname} ({iuser.username})"
+                        f"({num:02d}/{len(project.recipients):02d}) {iuser.lastname}, {iuser.firstname} "
+                        f"({iuser.username})"
                     )
                     try:
                         if exam_roles_exist or iuser.dn not in parallel_users_local:

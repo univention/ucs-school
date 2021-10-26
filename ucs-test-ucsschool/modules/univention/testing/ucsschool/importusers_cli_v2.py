@@ -184,9 +184,8 @@ class ImportTestbase(object):
         self.log = get_ucsschool_logger()
         self.lo = None  # will be initialized in run()
         self.ldap_status = None  # type: Set[str]
-        self.schoolenv = (
-            None
-        )  # type: univention.testing.ucsschool.UCSTestSchool  # will be initialized in run()
+        # will be initialized in run():
+        self.schoolenv = None  # type: univention.testing.ucsschool.UCSTestSchool
         self.udm = None  # type: univention.testing.udm.UCSTestUDM  # will be initialized in run()
         try:
             self.maildomain = self.ucr["mail/hosteddomains"].split()[0]  # type: str

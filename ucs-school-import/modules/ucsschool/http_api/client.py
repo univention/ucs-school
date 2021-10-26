@@ -207,7 +207,7 @@ class ResourceRepresentation(object):
         """Base class of resource representation classes."""
 
         resource_name = ""
-        _attribute_repr = {}  # type: Dict[unicode, Callable[[unicode], Any]]
+        _attribute_repr = {}  # type: Dict[str, Callable[[str], Any]]
 
         def __init__(self, resource_client, resource):
             self._resource_client = resource_client

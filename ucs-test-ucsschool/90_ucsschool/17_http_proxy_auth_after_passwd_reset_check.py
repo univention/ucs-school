@@ -75,7 +75,7 @@ def test_http_proxy_auth_after_password_reset_check(ucr):
             ]
         )
         handler_unset(["squid/ntlmauth/keepalive"])
-        subprocess.call(["systemctl", "restart", "squid"])
+        subprocess.call(["/usr/bin/systemctl", "restart", "squid"])
         with utu.UCSTestSchool() as schoolenv:
             school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             stu, studn = schoolenv.create_user(school)
@@ -134,4 +134,4 @@ def test_http_proxy_auth_after_password_reset_check(ucr):
             authProxy(host, url, tea, "univention", pycurl.HTTPAUTH_BASIC, 407)
             authProxy(host, url, tea, "univention", pycurl.HTTPAUTH_NTLM, 407)
     finally:
-        subprocess.call(["systemctl", "restart", "squid"])
+        subprocess.call(["/usr/bin/systemctl", "restart", "squid"])

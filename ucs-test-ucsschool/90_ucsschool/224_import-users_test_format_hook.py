@@ -57,9 +57,8 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("csv:mapping:role", "__role")
         # No csv:mapping:birthday, so the birthday attribute is empty. This
         # will in ImportUser.make_birthday() trigger format_from_scheme().
-        config.update_entry(
-            "scheme:birthday", "<firstname>"
-        )  # create birthday attribute from firstname value
+        # create birthday attribute from firstname value:
+        config.update_entry("scheme:birthday", "<firstname>")
         config.update_entry("scheme:email", "<:umlauts><firstname:lower>.<lastname:lower>@<maildomain>"),
         config.update_entry("source_uid", source_uid)
         config.update_entry("user_role", None)

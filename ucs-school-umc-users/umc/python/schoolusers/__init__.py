@@ -150,7 +150,5 @@ class Instance(SchoolBaseModule):
         time_difference = expires_timestamp - current_timestamp
         if time_difference <= 0:
             return 0
-        return int(
-            ceil(time_difference / 86400)
-        )  # Bug #42212: User.passwordexpiry max resolution is day.
+        return int(ceil(time_difference / 86400))  # Bug #42212: passwordexpiry max resolution is day
         # So we always round up towards the day the password will be expired

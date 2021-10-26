@@ -63,10 +63,9 @@ def check_uids(member_dn_list, open_ldap_co):
         for homedir in attrs["homeDirectory"]:
             assert os.path.exists(homedir), "homeDirectory {} for {} does not exist".format(homedir, dn)
             dir_owner = str(os.stat(homedir).st_uid)
-            assert (
-                ldap_uid == unix_uid == dir_owner
-            ), "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not consistent!".format(
-                ldap_uid, unix_uid, dir_owner
+            assert ldap_uid == unix_uid == dir_owner, (
+                "uids of ldap object ({}), unix ({}) and home directory ownership ({}) are not "
+                "consistent!".format(ldap_uid, unix_uid, dir_owner)
             )
 
 

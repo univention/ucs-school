@@ -45,8 +45,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
             # makes running subsequent running of the script easier.
             logger.debug("{} already removed from group {}.".format(slave_dn, grp_dn))
         expected_warnings_slave.append(
-            "Host object is member of global edu group but not in OU specific Replica Directory Node group (or the other "
-            "way around)"
+            "Host object is member of global edu group but not in OU specific Replica Directory Node "
+            "group (or the other way around)"
         )
 
         # Add Replica Directory Node to OUschoola-DC-Verwaltungsnetz
@@ -57,8 +57,8 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         unique_members.append(slave_dn.encode("UTF-8"))
         self.lo.modify(grp_dn, [("uniqueMember", self.unique_members(grp_dn), unique_members)])
         expected_warnings_slave.append(
-            "Host object is member of global admin group but not in OU specific Replica Directory Node group (or the "
-            "other way around)"
+            "Host object is member of global admin group but not in OU specific Replica Directory Node "
+            "group (or the other way around)"
         )
 
         # Add Replica Directory Node to Member-Edukativnetz

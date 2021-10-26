@@ -19,25 +19,25 @@ import pytest
 import univention.testing.strings as uts
 from ucsschool.importer.models.import_user import ImportUser
 
-bad_chars = u"äöüßàáâãåç"
-repl_char = u"-"
+bad_chars = "äöüßàáâãåç"
+repl_char = "-"
 
 
-def names():  # type: () -> Iterable[Tuple[unicode, unicode]]
+def names():  # type: () -> Iterable[Tuple[str, str]]
     res = []
     for bad_char in bad_chars:
         school = uts.random_username(8)
         class_name = uts.random_username(8)
-        good_class_name = u"{}-{}".format(school, class_name)
+        good_class_name = "{}-{}".format(school, class_name)
         pos = random.randint(0, len(class_name))
         bad_class_name = list(class_name)
         bad_class_name.insert(pos, bad_char)
-        res.append((good_class_name, u"{}-{}".format(school, "".join(bad_class_name))))
+        res.append((good_class_name, "{}-{}".format(school, "".join(bad_class_name))))
     return res
 
 
-def ids(name):  # type: (Tuple[unicode, unicode]) -> unicode
-    return u"{} | {}".format(*name)
+def ids(name):  # type: (Tuple[str, str]) -> str
+    return "{} | {}".format(*name)
 
 
 @pytest.mark.parametrize("name", names(), ids=ids)

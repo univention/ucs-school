@@ -343,7 +343,8 @@ class Schools(Attribute):
     udm_name = "school"
     value_type = list
     value_default = list
-    # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined Replica Directory Node):
+    # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined Replica
+    # Directory Node):
     syntax = string
     extended = True
 

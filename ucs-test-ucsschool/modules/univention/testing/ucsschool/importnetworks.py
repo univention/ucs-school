@@ -285,7 +285,8 @@ exit 0
                 fd.write(
                     """#!/bin/sh
 debug_exit() {
-    echo "Hook failed: filter=(&(objectClass=%(search_object_class)s)(cn=$school-$network))" >>%(post_hook_result)s
+    echo "Hook failed: filter=(&(objectClass=%(search_object_class)s)(cn=$school-$network))" \
+        >>%(post_hook_result)s
     echo "Expected DN: $dn" >>%(post_hook_result)s
     echo "Found DN: $ldap_dn" >>%(post_hook_result)s
     echo "Found similar objects" >>%(post_hook_result)s
@@ -296,8 +297,8 @@ set -x
 dn="$2"
 network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
 school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch -LLL "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" dn | \
-ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+ldap_dn="$(univention-ldapsearch -LLL "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" \
+    dn | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
 test "$dn" = "$ldap_dn" || debug_exit 1
 cat $1 >>%(post_hook_result)s
 exit 0

@@ -1059,7 +1059,7 @@ define([
 					} else if (room && room.locked) {
 						msg += _('<b>Note:</b> This computer room is currently in use by %s.', entities.encode(room.user));
 					}
-					
+
 					var messageWidgets = form.getWidget('message');
 					messageWidgets.set('content', msg);
 					messageWidgets.set('visible', !!msg);

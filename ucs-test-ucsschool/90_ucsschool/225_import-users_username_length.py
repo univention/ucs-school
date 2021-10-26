@@ -321,9 +321,8 @@ class Test(CLI_Import_v2_Tester):
 
         test_default_settings()
         test_custom_settings()
-        test_settings_higher_than_20(
-            False, "3/4"
-        )  # without setting the UCRV, settings > 20 should be ignored
+        # without setting the UCRV, settings > 20 should be ignored:
+        test_settings_higher_than_20(False, "3/4")
         test_settings_higher_than_20(True, "4/4")
 
 

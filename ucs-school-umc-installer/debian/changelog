@@ -1,3 +1,9 @@
+ucs-school-umc-installer (8.0.5) unstable; urgency=low
+
+  * Bug #53988: fix linter errors
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 26 Oct 2021 14:40:42 +0200
+
 ucs-school-umc-installer (8.0.4) unstable; urgency=medium
 
   * Bug #53460: Do not mention Demo Portal - it is not created anymore

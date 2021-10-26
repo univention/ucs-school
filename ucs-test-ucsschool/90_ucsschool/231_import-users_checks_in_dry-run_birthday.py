@@ -167,11 +167,9 @@ class Test(CLI_Import_v2_Tester):
             person.update(school=person.old_school)
 
         for person in person_list_success:
-            person.update(
-                birthday=person.old_birthday, school_classes={}
-            )  # As the import aborts, school classes may
-            # not have been created in the new school, but old ones may have been removed already.
-            # So lets ignore them.
+            person.update(birthday=person.old_birthday, school_classes={})  # As the import aborts,
+            # school classes may not have been created in the new school, but old ones may have been
+            # removed already. So lets ignore them.
             person.verify()
 
         self.log.info(

@@ -156,15 +156,14 @@ class TestS4SIDAllocation(TestSamba4):
 
             if "Samba 4" in master_services:
                 print(
-                    "\nThe Primary Directory Node has Samba4 running, the test will also check the SID for the test "
-                    "user on the Primary Directory Node"
+                    "\nThe Primary Directory Node has Samba4 running, the test will also check the SID "
+                    "for the test user on the Primary Directory Node"
                 )
                 return True
 
         except KeyError as exc:
             utils.fail(
-                "An error occured while trying to get the Primary Directory Node 'univentionServices': '%s'"
-                % exc
+                "An error occurred while trying to get the Primaries 'univentionServices': '%s'" % exc
             )
 
     def determine_test_scenario(self):

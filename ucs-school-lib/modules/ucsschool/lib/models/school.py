@@ -142,7 +142,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             elif dcs:
                 self.add_error(
                     "dc_name",
-                    "The educational DC for the school must not be a Backup Directory Node or Primary Directory Node",
+                    "The educational DC for the school must not be a Backup Directory Node or Primary "
+                    "Directory Node",
                 )
 
     def build_hook_line(self, hook_time, func_name):
@@ -417,7 +418,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
             )
             if mb_dcs:
-                return  # We do not modify the groups of Primary Directory Node or Backup Directory Node servers.
+                return  # We do not modify the groups of Primary or Backup servers.
                 # Should be validated, but stays here as well in case validation was deactivated.
             # Sadly we need this here to access non school specific computers.
             # TODO: Use Daniels simple API if merged into product
@@ -778,8 +779,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         ou_lower = self.name.lower()
         if ucr.is_true("ucsschool/singlemaster", False):
             mod = udm.get("computers/domaincontroller_master")
-            # UDM computer object of Primary Directory Node can be found with "cn={hostname}", using the hostname
-            # from its fqdn, which is in ucr["ldap/master"].
+            # UDM computer object of Primary Directory Node can be found with "cn={hostname}", using the
+            # hostname from its fqdn, which is in ucr["ldap/master"].
             filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
             obj = [o for o in mod.search(filter_s)][0]
             role = create_ucsschool_role_string(role_single_master, self.name)
@@ -808,9 +809,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         udm.get("computers/domaincontroller_slave").get(server_dn)
                     except UdmNoObject:
                         self.logger.info(
-                            "A Replica Directory Node was expected at {}. Not setting ucsscchoolRole property.".format(
-                                server_dn
-                            )
+                            "A Replica Directory Node was expected at {}. Not setting ucsscchoolRole "
+                            "property.".format(server_dn)
                         )
                         continue
 

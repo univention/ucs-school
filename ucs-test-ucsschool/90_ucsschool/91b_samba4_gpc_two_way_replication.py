@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test the Samba4 GPC objects and links replication from Primary Directory Node to Replica Directory Node or vice versa.
+## desc: Test the Samba4 GPC objects and links replication from Primary Directory Node to Replica Directory Node or vice versa.  # noqa: 501
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## packages: [univention-samba4, ucs-school-replica|ucs-school-multiserver]
@@ -241,28 +241,29 @@ class TestGPCReplicationTwoWays(TestSamba4):
         replication from.
         """
         print(
-            "\nCurrent server role is Primary Directory Node, trying to find a Replica Directory Node in the domain for the test"
+            "\nCurrent server role is Primary Directory Node, trying to find a Replica Directory Node "
+            "in the domain for the test"
         )
         udm_stdout = self.get_udm_list_dc_slaves_with_samba4(with_ucsschool=True)
 
         if "serverRole: slave" not in udm_stdout.strip():
             print(
-                "\nThe udm list to did not produce any ouptut with Replica Directory Nodes to STDOUT, assuming there "
-                "are no Replica Directory Nodes in the domain. Skipping test..."
+                "\nThe udm list to did not produce any ouptut with Replica Directory Nodes to STDOUT, "
+                "assuming there are no Replica Directory Nodes in the domain. Skipping test..."
             )
             self.return_code_result_skip()
         else:
             sed_stdout = self.sed_for_key(udm_stdout, "^  ip: ")
             if not sed_stdout:
                 utils.fail(
-                    "Could not find at least one IP address of the Replica Directory Node in the output of the udm "
-                    "list command"
+                    "Could not find at least one IP address of the Replica Directory Node in the output "
+                    "of the udm list command"
                 )
 
             slave_ips = sed_stdout.split()
             print(
-                "\nThe Replica Directory Node(s) with the following IP address(-es) were found in the domain: '%s'"
-                % slave_ips
+                "\nThe Replica Directory Node(s) with the following IP address(-es) were found in the "
+                "domain: '%s'" % slave_ips
             )
             self.remote_host = slave_ips[0]
             self.host_or_ip = "--ipaddress"  # use ip address with samba-tool
@@ -281,29 +282,29 @@ class TestGPCReplicationTwoWays(TestSamba4):
         if server_role == "domaincontroller_master":
             self.find_slave_in_domain()
             print(
-                "\nThe following Replica Directory Node '%s' will be selected as the remote host for the test"
-                % self.remote_host
+                "\nThe following Replica Directory Node '%s' will be selected as the remote host for "
+                "the test" % self.remote_host
             )
 
         elif server_role == "domaincontroller_slave":
             # check first if Primary Directory Node has Samba4:
             if not self.dc_master_has_samba4():
                 print(
-                    "The Primary Directory Node '%s' has no Samba4, thus remote check not possible, skipping the "
-                    "test." % self.ldap_master
+                    "The Primary Directory Node '%s' has no Samba4, thus remote check not possible, "
+                    "skipping the test." % self.ldap_master
                 )
                 self.return_code_result_skip()
 
             self.remote_host = "ldap://" + self.ldap_master
             self.host_or_ip = "-H"  # to use hostname as an arg for samba-tool
             print(
-                "\nCurrent server role is Replica Directory Node, the Primary Directory Node '%s' will be selected as the "
-                "remote host for the test" % self.remote_host
+                "\nCurrent server role is Replica Directory Node, the Primary Directory Node '%s' will "
+                "be selected as the remote host for the test" % self.remote_host
             )
         else:
             print(
-                "\nThe test is not inteded to run on servers other than Replica Directory Nodes or Primary Directory Nodes, current "
-                "role is '%s'. Skipping test..." % server_role
+                "\nThe test is not inteded to run on servers other than Replica Directory Nodes or "
+                "Primary Directory Nodes, current role is '%s'. Skipping test..." % server_role
             )
             self.return_code_result_skip()
 

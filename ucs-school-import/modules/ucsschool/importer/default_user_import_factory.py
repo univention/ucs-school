@@ -40,21 +40,21 @@ from ucsschool.lib.models.utils import ucr
 from .exceptions import InitialisationError
 from .factory import load_class
 
-try:
-    from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar  # noqa: F401
+try:  # noqa: F401
+    from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar
 
-    from .models.import_user import ImportUser  # noqa: F401
+    from .models.import_user import ImportUser
 
     if TYPE_CHECKING:
-        import ucsschool.importer.mass_import.mass_import.MassImport  # noqa: F401
-        import ucsschool.importer.mass_import.user_import.UserImport  # noqa: F401
-        import ucsschool.importer.reader.csv_reader.CsvReader  # noqa: F401
-        import ucsschool.importer.utils.username_handler.EmailHandler  # noqa: F401
-        import ucsschool.importer.utils.username_handler.UsernameHandler  # noqa: F401
-        import ucsschool.importer.writer.csv_writer.CsvWriter  # noqa: F401
-        import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter  # noqa: F401
-        import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter  # noqa: F401
-        import univention.config_registry.ConfigRegistry  # noqa: F401
+        import ucsschool.importer.mass_import.mass_import.MassImport
+        import ucsschool.importer.mass_import.user_import.UserImport
+        import ucsschool.importer.reader.csv_reader.CsvReader
+        import ucsschool.importer.utils.username_handler.EmailHandler
+        import ucsschool.importer.utils.username_handler.UsernameHandler
+        import ucsschool.importer.writer.csv_writer.CsvWriter
+        import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
+        import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
+        import univention.config_registry.ConfigRegistry
 
     ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
 except ImportError:

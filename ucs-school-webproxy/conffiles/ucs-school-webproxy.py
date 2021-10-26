@@ -148,7 +148,7 @@ def signalReloadProcess():
 
 
 def reloadSquidDirectly():
-    subprocess.call(("systemctl", "reload", "squid"), close_fds=True)  # nosec
+    subprocess.call(("/usr/bin/systemctl", "reload", "squid"), close_fds=True)  # nosec
 
 
 def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):

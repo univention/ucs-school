@@ -52,9 +52,8 @@ _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school Veyon Proxy app")
 description = _(
-    "Verify that the {!r} app is installed on singleserver system and school server system roles.".format(
-        VEYON_APP_NAME
-    )
+    "Verify that the {!r} app is installed on singleserver system and school server system "
+    "roles.".format(VEYON_APP_NAME)
 )
 
 
