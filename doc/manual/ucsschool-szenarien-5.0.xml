@@ -90,7 +90,7 @@ feedback@univention.de
 			die weiterführenden technischen Themen in diesem Dokument, die
 			erprobte Lösungen aus der Praxis aufzeigen.
 		</para>
-		<para>
+		<para>(TODO: ist dies eine Wiederholung des vorherigen Absatzes?)
 			Die Kapitel <link linkend="scenarios">2</link> und <link
 				linkend="setup-checklist">3</link> geben einen Überblick zu
 			üblichen Einsatzszenarien von &ucsUAS; (Bildungscloud, Zentrales
@@ -230,7 +230,7 @@ feedback@univention.de
 							weitere IT-Angebote für
 							Schulen</phrase></textobject>
 				</mediaobject>
-			</figure>
+			</figure>(TODO: mir ist der Unterschied zu Szenario 1 nicht klar geworden, ausser irgendwas mit VPN)
 		</section>
 		<section id="scenario-3">
 			<title>Szenario 3: Zentral verwaltete schulische IT-Infrastruktur</title>
@@ -293,7 +293,7 @@ feedback@univention.de
 			</para>
 			<figure id="fig-scenario-4">
 				<title>Zentral verwaltete schulische IT-Infrastruktur
-					ohne dezentrale Schulserver</title>
+					ohne dezentrale Schulserver</title>(TODO: wer weiß an dieser Stelle, was ein Schulserver ist?)
 				<mediaobject>
 					<imageobject>
 						<imagedata scalefit="1" width="97%" contentdepth="100%" align="center" fileref="illustrations50/4_zentrale_wlan_schulserver_rz.png"  />
@@ -457,7 +457,7 @@ feedback@univention.de
 					<listitem><para>Motivierte Schulleitung und IT-Verantwortliche an der Schule</para></listitem>
 				</itemizedlist>
 				Sind diese Schulen erfolgreich ausgestattet worden, so können
-				sie als Referenz für anderen Schulen dienen.  Schrittweise
+				sie als Referenz für die anderen Schulen dienen.  Schrittweise
 				können nun komplexere Umgebungen ausgerollt werden.
 			</para>
 		</section>
@@ -773,9 +773,10 @@ feedback@univention.de
 				</para>
 				<note>
 					<para>
-						Mit dem hier empfohlenen Vorgehen wird ein sog. Split-DNS-Szenario eingerichtet. Die von &ucsUCS; für interne
+						Mit dem hier empfohlenen Vorgehen wird ein sogenanntes Split-DNS-Szenario eingerichtet. Die von &ucsUCS; für interne
 						Funktionen bereitgestellten DNS-Dienste lösen Hostnamen auf internen IP-Adressen auf,
-						während öffentliche DNS-Server die selben Hostnamen auf die öffentlichen IP-Adressen auflösen müssen.
+						während öffentliche DNS-Server die selben Hostnamen auf die öffentlichen IP-Adressen auflösen müssen. (TODO warum nicht mit einem
+						einfachen DNS Szenario ohne Split beginnen? Bzw. begründen, warum dies ein sinnvoller Einstieg ist)
 					</para>
 				</note>
 				<itemizedlist>
@@ -858,7 +859,7 @@ feedback@univention.de
 					</itemizedlist>
 				</para>
 				<para>
-					Es besteht die Möglichkeit den Namen der Samba-/Active
+					Es besteht die Möglichkeit den Namen der Samba-/Active (TODO: warum brauche ich hier eine Samba Domäne?)
 					Directory-Domäne unabhängig von dem eigentlichen
 					Domänennamen zu definieren. Dies ermöglicht es, dass
 					Benutzer eine andere Domäne bei Anmeldung an Windows
@@ -1014,7 +1015,7 @@ feedback@univention.de
 					Folgende Konventionen haben sich in allen Szenarien bewährt:
 					<itemizedlist>
 						<listitem><para>Alle Objektnamen sollten durchgängig Kleinbuchstaben verwenden.</para></listitem>
-						<listitem><para>Sofern nicht anders angegeben, sollte die Länge von Objektnamen 15 Zeichen nicht überschreiten. Dies ist insbesondere wichtig für Benutzernamen.</para></listitem>
+						<listitem><para>Sofern nicht anders angegeben, sollte die Länge von Objektnamen 15 Zeichen nicht überschreiten (TODO weiter oben ist die Rede von 13 Zeichen). Dies ist insbesondere wichtig für Benutzernamen.</para></listitem>
 					</itemizedlist>
 				</para>
 			</section>
@@ -1025,7 +1026,7 @@ feedback@univention.de
 				<emphasis>für <link linkend="scenarios">alle</link> Szenarien</emphasis>
 			</para>
 			<para>
-				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen
+				Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen hierfür
 				ist ein elementarer Bestandteil des professionellen IT-Betriebs.
 				&ucsUCS; hat deshalb die Monitoring-Software <systemitem
 					class="service">Nagios</systemitem> fest integriert und für
@@ -1098,11 +1099,11 @@ feedback@univention.de
 				</itemizedlist>
 			</para>
 			<para>
-				Schulserver, sofern vorhanden:
+				Schulserver, sofern vorhanden (TODO: nirgendwo wird erklärt, was ein Schulserver ist):
 				<itemizedlist>
 					<listitem><para><filename>/var/univention-backup</filename>:
-							Nächtliche Sicherung der &ucsUCR;.  Die Sicherung
-							der OpenLDAP- und Samba-Datenbanken braucht
+							Nächtliche Sicherung der &ucsUCR;.  Die Daten
+							der OpenLDAP- und Samba-Datenbanken brauchen
 							normalerweise nicht gesichert zu werden, da diese
 							beim erneuten Domänenbeitritt des Schulservers vom
 							&ucsPrimaryDN; oder &ucsBackupDN; repliziert
@@ -1219,7 +1220,7 @@ feedback@univention.de
 				<para>
 					Minimale Systemvoraussetzungen:
 					<itemizedlist>
-						<listitem><para>4 CPU-Kerne</para></listitem>
+						<listitem><para>4 CPU-Kerne</para></listitem> (TODO: geht da auch mein Celeron oder Atom Rechner? Ein alter Laptop?)
 						<listitem><para>8 GB RAM</para></listitem>
 						<listitem><para>100 GB Speicherplatz</para></listitem>
 					</itemizedlist>
@@ -1247,13 +1248,13 @@ feedback@univention.de
 				<para>
 					&ucsBackupDN; dienen der Lastverteilung und Ausfallsicherheit.
 					Es sollte immer mindestens ein &ucsBackupDN; in der Domäne vorhanden sein.
-					Darüber hinaus können bei Bedarf weitere &ucsBackupDN;-Systeme hinzugefügt
+					Darüber hinaus können bei Bedarf weitere &ucsBackupDN; Systeme hinzugefügt
 					werden.
 				</para>
 				<para>
 					Sollte der &ucsPrimaryDN; durch einen irreparablen Schaden ausfallen, kann ein
 					&ucsBackupDN;-System zum &ucsPrimaryDN; hochgestuft werden. Dieser Vorgang ist nicht
-					umkehrbar, daher sollte die Position der &ucsBackupDN;-Systeme innerhalb der
+					umkehrbar, daher sollte die Position der &ucsBackupDN; Systeme innerhalb der
 					Netzinfrastruktur entsprechend gewählt werden, damit jedes einzelne System im
 					Extremfall alle Aufgaben des &ucsPrimaryDN; übernehmen kann.
 				</para>
@@ -1395,7 +1396,7 @@ feedback@univention.de
 				<para>
 					Die Schulen sollten über zuverlässige Internetzugänge
 					verfügen, die maximal 1x pro Nacht getrennt werden.  Die
-					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s
+					Geschwindigkeit des Zugangs sollte mindestens 6 MBit/s (TODO: gilt das noch so?)
 					betragen.  Ausschlaggebend für die notwendige
 					Geschwindigkeit ist die Anzahl der gleichzeitig aktiven
 					Endgeräte.  Als Richtwert kann von einem Bedarf von mindestens
@@ -1492,7 +1493,10 @@ feedback@univention.de
 			</section>
 		</section>
 	</chapter>
-	<chapter id="installation">
+	<chapter id="installation"> (TODO: in diesem Kapitel wäre eine Übersicht zu den verschiedenen Rollen
+		(primary etc.) schön. Ebenso stellt sich die Frage, warum das ganze nicht im uas Handbuch
+		geschrieben steht)
+
 		<title>Installation</title>
 		<para>
 			Die Installation von &ucsUAS; ist grundlegend im <ulink
@@ -1664,7 +1668,7 @@ feedback@univention.de
 					<listitem><para>Nach Abschluss der Installation ist über das
 							Univention App Center die App
 							<package>&ucsUAS;</package> zu
-							installieren.</para></listitem>
+							installieren.</para></listitem> (TODO: auf primary oder backup?)
 					<listitem><para>Im Anschluss an die Installation der
 							<package>&ucsUAS;</package> App ist in der &ucsUMC;
 							in der Kategorie
@@ -1843,6 +1847,7 @@ feedback@univention.de
 							&ucsUCR;-Variable <envar>mail/alias/root</envar>
 							festgelegt, zum Beispiel
 							<literal>admins@example.org</literal>.
+							(TODO: Beispiel mit ucr Aufruf)
 						</para>
 					</listitem>
 					<listitem>
@@ -2072,7 +2077,8 @@ feedback@univention.de
 						<para>
 							<ulink url="ucsschool-import-vorlagen.xlsx">Vorlage
 								für den Import</ulink> öffnen und Tabelle
-							<emphasis>Schulen</emphasis> ausfüllen.
+							<emphasis>Schulen</emphasis> ausfüllen. (TODO: gibt es die Datei noch? Bei den Artefaken im Jenkins ist sie nicht)
+							(TODO: evtl. erklären, dass es sich um calc, nicht um excel handelt)
 						</para>
 						<para>
 							<figure id="fig-import-schools">
@@ -2156,7 +2162,8 @@ univention-install dos2unix
 							Die CSV-Datei aus der Vorlage enthält noch zwei Kopfzeilen, die
 							mit dem Zeichen <literal>#</literal> beginnen, diese
 							müssen vor der weiteren Verarbeitung entfernt
-							werden:
+							werden: (TODO: Die Vorlage ist xlsx, die mit calc geöffnet wird. Spaltenüberschriften sind hier
+							möglich, d.h. bei geeigneter Formatierung müsste dieser Schritt eigentlich entfallen können)
 							<programlisting>
 								<![CDATA[
 sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
@@ -2169,7 +2176,8 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
 							Zum automatisierten Einlesen aller Schulen ist
 							einmalig ein Skript zu erstellen.  Dazu sind
 							folgende Befehle auszuführen, um das Skript
-							anzulegen:
+							anzulegen: (TODO: warum gibt es das Script nicht auch zum herunterladen? Bzw wird es nicht
+							auch mit ausgeliefert?)
 							<programlisting>
 								<![CDATA[
 mkdir -p /usr/local/bin/ucsschool/helper_scripts/
@@ -2408,7 +2416,7 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/printers.csv
 			<para>
 				Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
 				<ulink url="https://docs.software-univention.de/ucsschool-import-legacy.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
-				ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
+				ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird. (TODO: ist er jetzt abgelöst?)
 			</para>
 		</section>
 	</chapter>
