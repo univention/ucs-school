@@ -121,7 +121,7 @@
 								Traten während des Test-Imports Fehler auf, wird eine Fehlermeldung angezeigt. Unterhalb der Fehlermeldung ist im Text ein Link. Durch Klicken auf diesen, wird eine E-Mail mit der Fehlermeldung an einen Administrator verfasst.
 								<figure id="sim_had_error">
 									<title>Simulation hatte Fehler</title>
-									<graphic scalefit="1" width="95%" align="center" fileref="illustrations50/import_ui_simulation_error.png"/>
+									<graphic scalefit="1" width="95%" align="center" fileref="illustrations50/import_ui_simulation_error.png"/> (TODO: black screenshot)
 								</figure>
 							</para>
 						</listitem>
@@ -274,7 +274,7 @@
 	<chapter id="sisopi">
 		<title>Szenario "Eine Quelle, partielle Importe" (<wordasword>single source, partial import - SiSoPi</wordasword>)</title>
 			<para>
-				Seit &ucsUAS; 4.3 v5 wird ein Szenario unterstützt, in dem es eine Quelldatenbank mit den Mitgliedern aller Schulen gibt, bei dem aber nicht zentral, sondern an allen Schulen einzeln importiert wird.
+				Seit &ucsUAS; 4.3 v5 (TODO: so genau?) wird ein Szenario unterstützt, in dem es eine Quelldatenbank mit den Mitgliedern aller Schulen gibt, bei dem aber nicht zentral, sondern an allen Schulen einzeln importiert wird.
 				Der Import ist sowohl über die Kommandozeile als auch mit dem UMC-Modul (welches im Hintergrund die <wordasword>Import-HTTP-API</wordasword> verwendet) möglich.
 			</para>
 		<section id="Features">
