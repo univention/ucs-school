@@ -54,7 +54,7 @@ if TYPE_CHECKING:
 
     from .models.import_user import ImportUser
 
-ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
+    ImportUserTV = TypeVar("ImportUserTV", bound=ImportUser)
 
 
 class DefaultUserImportFactory(object):
