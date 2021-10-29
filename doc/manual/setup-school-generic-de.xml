@@ -443,4 +443,15 @@
             <literal>DEMOSCHOOL-AG1@schule-univention.de</literal> berechnet.
         </para>
     </section>
+
+    <section id="school:setup:generic:apple-school-manager">
+        <title>Provisionierung von Benutzern zu Apple School Manager</title>
+        <para>
+            Die Apple School Manager Connector App für UCS@school synchronisiert
+            automatisch Benutzer zu Apple School Manager (ASM). Das UCS@school
+            Identity Management übernimmt die Rolle des
+            Studierendeninformationssystems und verwendet die
+            SFTP-Schnittstelle, wie sie von Apple bereit gestellt wird.
+        </para>
+    </section>
 </chapter>
