@@ -50,7 +50,7 @@ from ..utils.utils import nullcontext
 if TYPE_CHECKING:
     from ..utils.import_pyhook import ImportPyHook
 
-ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
+    ImportPyHookTV = TypeVar("ImportPyHookTV", bound=ImportPyHook)
 
 
 class MassImport(object):

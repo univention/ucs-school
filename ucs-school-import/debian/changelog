@@ -1,3 +1,9 @@
+ucs-school-import (18.0.7) unstable; urgency=low
+
+  * Bug #53983: fix typo leading to NameError 2
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 01 Nov 2021 10:28:55 +0100
+
 ucs-school-import (18.0.6) unstable; urgency=low
 
   * Bug #53983: fix typo leading to NameError
