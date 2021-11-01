@@ -1047,7 +1047,7 @@ def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
         else:
             import_user.disabled = "0"
         return True
-    return super(LegacyCsvReader, self).handle_input(
+    return super(CustomCsvReader, self).handle_input(
         mapping_key, mapping_value, csv_value, import_user
     )
 					</programlisting>
