@@ -72,13 +72,13 @@ ucr search --verbose ^proxy/pac/exclude/
 	<uri>http://<replaceable>schulserver.domaene.de</replaceable>/proxy.pac</uri>
   </para>
   <para>
-	Im Internet Explorer 8 wird die PAC-Datei beispielsweise unter <guimenu>Internetoptionen
+	Im Internet Explorer wird die PAC-Datei beispielsweise unter <guimenu>Internetoptionen
 	&ar; Reiter Verbindungen &ar; LAN-Einstellungen &ar; Automatisches
 	Konfigurationsskript verwendet</guimenu> zugewiesen.
   </para>
   <para>
-	In Firefox 10 kann die PAC-Datei im Menü unter <guimenu>Bearbeiten &ar;
-	Einstellungen &ar; Erweitert &ar; Netzwerk &ar; Verbindungen &ar; Einstellungen &ar; Automatische
+	In Firefox kann die PAC-Datei im Menü unter <guimenu>Allgemein &ar;
+	Einstellungen &ar; Verbindungs-Einstellungen &ar; Automatische
 	Proxy-Konfigurations-URL</guimenu> zugewiesen werden.
   </para>
   <para>
