@@ -468,7 +468,7 @@ class UserImport(object):
                     self.connection, source_uid, record_uid, udm_properties=additional_udm_properties
                 )
                 user.action = "D"  # mark for logging/csv-output purposes
-                user.input_data = input_data  # most likely empty list (except in legacy import)
+                user.input_data = input_data  # most likely empty list
             except NoObject as exc:
                 self.logger.error(
                     "Cannot delete non existing user with source_uid=%r, record_uid=%r input_data=%r: "

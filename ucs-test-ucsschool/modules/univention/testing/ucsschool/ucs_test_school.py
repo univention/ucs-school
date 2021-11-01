@@ -154,7 +154,6 @@ class UCSTestSchool(object):
 
     PATH_CMD_BASE = "/usr/share/ucs-school-import/scripts"
     PATH_CMD_CREATE_OU = os.path.join(PATH_CMD_BASE, "create_ou")
-    PATH_CMD_IMPORT_USER = os.path.join(PATH_CMD_BASE, "import_user")
 
     CN_STUDENT = lazy_object_proxy.Proxy(
         lambda: UCSTestSchool.ucr.get("ucsschool/ldap/default/container/pupils", "schueler")
@@ -834,7 +833,6 @@ class UCSTestSchool(object):
         is_staff=False,  # type: Optional[bool]
         is_active=True,  # type: Optional[bool]
         password="univention",  # type: Optional[str]
-        use_cli=False,  # type: Optional[bool]
         wait_for_replication=True,  # type: Optional[bool]
     ):  # type: (...) -> Tuple[str, str]
         """
@@ -862,75 +860,35 @@ class UCSTestSchool(object):
             schools = [ou_name]
 
         user_dn = "uid=%s,%s" % (username, self.get_user_container(ou_name, is_teacher, is_staff))
-        if use_cli:
-            if classes is None:
-                classes = ""
-            if classes:
-                if not all(["-" in c for c in classes.split(",")]):
-                    utils.fail("*** Class names must be <school-ou>-<class-name>.")
-            # create import file
-            line = "A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n" % (
-                username,
-                lastname,
-                firstname,
-                ou_name,
-                classes,
-                mailaddress,
-                int(is_teacher),
-                int(is_active),
-                int(is_staff),
-            )
-            with tempfile.NamedTemporaryFile() as tmp_file:
-                tmp_file.write(line)
-                tmp_file.flush()
-
-                cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-                logger.info("*** Calling following command: %r", cmd)
-                retval = subprocess.call(cmd)
-                if retval:
-                    utils.fail("import_user failed with exitcode %s" % retval)
-
-            if is_staff and is_teacher:
-                roles = [role_staff, role_teacher]
-            elif is_staff and not is_teacher:
-                roles = [role_staff]
-            elif not is_staff and is_teacher:
-                roles = [role_teacher]
-            else:
-                roles = [role_student]
-
-            if password is not None:
-                self._set_password(user_dn, password)
-        else:
-            school_classes = defaultdict(list)
-            if classes:
-                for kls in classes.split(","):
-                    school_classes[kls.partition("-")[0]].append(kls)
-            kwargs = {
-                "school": ou_name,
-                "schools": schools,
-                "name": username,
-                "firstname": firstname,
-                "lastname": lastname,
-                "email": mailaddress,
-                "password": password,
-                "disabled": not is_active,
-                "school_classes": dict(school_classes),
-            }
-            cls = Student
-            if is_teacher and is_staff:
-                cls = TeachersAndStaff
-            elif is_teacher and not is_staff:
-                cls = Teacher
-            elif not is_teacher and is_staff:
-                cls = Staff
-            logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
-            User.invalidate_all_caches()
-            # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
-            User.init_udm_module(self.lo)
-            roles = cls.default_roles
-            result = cls(**kwargs).create(self.lo)
-            logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
+        school_classes = defaultdict(list)
+        if classes:
+            for kls in classes.split(","):
+                school_classes[kls.partition("-")[0]].append(kls)
+        kwargs = {
+            "school": ou_name,
+            "schools": schools,
+            "name": username,
+            "firstname": firstname,
+            "lastname": lastname,
+            "email": mailaddress,
+            "password": password,
+            "disabled": not is_active,
+            "school_classes": dict(school_classes),
+        }
+        cls = Student
+        if is_teacher and is_staff:
+            cls = TeachersAndStaff
+        elif is_teacher and not is_staff:
+            cls = Teacher
+        elif not is_teacher and is_staff:
+            cls = Staff
+        logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
+        User.invalidate_all_caches()
+        # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
+        User.init_udm_module(self.lo)
+        roles = cls.default_roles
+        result = cls(**kwargs).create(self.lo)
+        logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
 
         utils.verify_ldap_object(
             user_dn,

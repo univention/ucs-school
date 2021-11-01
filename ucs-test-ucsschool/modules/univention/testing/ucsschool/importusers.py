@@ -282,16 +282,8 @@ class Person(object):
             sn=[self.lastname],
             uid=[self.username],
             ucsschoolRole=self.roles,
-            ucsschoolSourceUID=[self.source_uid]
-            if self.source_uid
-            else ["LegacyDB"]
-            if self.legacy_v2
-            else [],
-            ucsschoolRecordUID=[self.record_uid]
-            if self.record_uid
-            else [self.username]
-            if self.legacy_v2
-            else [],
+            ucsschoolSourceUID=[self.source_uid] if self.source_uid else [],
+            ucsschoolRecordUID=[self.record_uid] if self.record_uid else [],
             description=[self.description] if self.description else [],
             ucsschoolSchool=self.schools,
             univentionBirthday=[self.birthday] if self.birthday else [],
@@ -495,13 +487,10 @@ class TeacherStaff(Person):
 
 
 class ImportFile:
-    def __init__(self, use_cli_api, use_python_api):
-        self.use_cli_api = use_cli_api
-        self.use_python_api = use_python_api
+    def __init__(self):
         self.import_fd, self.import_file = tempfile.mkstemp()
         os.close(self.import_fd)
         self.user_import = None
-        self.cli_path = "/usr/share/ucs-school-import/scripts/import_user"
 
     def write_import(self):
         self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
@@ -512,11 +501,7 @@ class ImportFile:
         hooks = UserHooks()
         self.user_import = user_import
         try:
-            if self.use_cli_api:
-                self.write_import()
-                self._run_import_via_cli()
-            elif self.use_python_api:
-                self._run_import_via_python_api()
+            self._run_import_via_python_api()
             pre_result = hooks.get_pre_result()
             post_result = hooks.get_post_result()
             print("PRE  HOOK result:\n%s" % pre_result)
@@ -530,12 +515,6 @@ class ImportFile:
                 os.remove(self.import_file)
             except OSError as e:
                 print("WARNING: %s not removed. %s" % (self.import_file, e))
-
-    def _run_import_via_cli(self):
-        cmd_block = [self.cli_path, self.import_file]
-
-        print("cmd_block: %r" % cmd_block)
-        subprocess.check_call(cmd_block)
 
     def _run_import_via_python_api(self):
         # reload UCR
@@ -784,16 +763,12 @@ class UserImport:
 
 
 def create_and_verify_users(
-    use_cli_api=True,
-    use_python_api=False,
     school_name=None,
     nr_students=3,
     nr_teachers=3,
     nr_staff=3,
     nr_teacher_staff=3,
 ):
-    assert use_cli_api != use_python_api
-
     print("********** Generate school data")
     user_import = UserImport(
         school_name=school_name,
@@ -802,15 +777,9 @@ def create_and_verify_users(
         nr_staff=nr_staff,
         nr_teacher_staff=nr_teacher_staff,
     )
-    import_file = ImportFile(use_cli_api, use_python_api)
+    import_file = ImportFile()
 
     print(user_import)
-
-    if use_cli_api:
-        for user in (
-            user_import.students + user_import.staff + user_import.teachers + user_import.teacher_staff
-        ):
-            user.legacy_v2 = True
 
     print("********** Create users")
     import_file.run_import(user_import)
@@ -850,13 +819,13 @@ def create_home_server(udm, name):
     udm.create_object("computers/memberserver", **properties)
 
 
-def import_users_basics(use_cli_api=True, use_python_api=False):
+def import_users_basics():
     with univention.testing.ucr.UCSTestConfigRegistry() as ucr, udm_test.UCSTestUDM() as udm:
         ucr.load()
-        return _import_users_basics(udm, use_cli_api=use_cli_api, use_python_api=use_python_api)
+        return _import_users_basics(udm)
 
 
-def _import_users_basics(udm, use_cli_api=True, use_python_api=False):
+def _import_users_basics(udm):
     for singlemaster in [False, True]:
         for samba_home_server in [None, "generate"]:
             for profile_path_server in [None, "generate"]:
@@ -911,7 +880,7 @@ def _import_users_basics(udm, use_cli_api=True, use_python_api=False):
                             print("****    home_server_at_ou: %s" % home_server_at_ou)
                             print("****    windows_profile_server: %s" % windows_profile_server)
                             print("")
-                            create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
+                            create_and_verify_users(school_name, 3, 3, 3, 3)
                         finally:
                             remove_ou(school_name)
 

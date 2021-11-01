@@ -1,3 +1,9 @@
+ucs-school-import (18.0.8) unstable; urgency=low
+
+  * Bug #54018: remove legacy user import
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 Nov 2021 11:27:37 +0100
+
 ucs-school-import (18.0.7) unstable; urgency=low
 
   * Bug #53983: fix typo leading to NameError 2

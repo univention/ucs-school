@@ -35,7 +35,6 @@ py = "3" if PY3 else "2.7"
 MODULE_PATHS = (
     ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
     ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
-    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hookpy")
@@ -63,11 +62,6 @@ EXPECTED_CLASSES = {
     "ImportTeacher": "ucsschool.importer.models.import_user",
     "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
     "ImportUser": "ucsschool.importer.models.import_user",
-    "LegacyImportStaff": "ucsschool.importer.legacy.legacy_import_user",
-    "LegacyImportStudent": "ucsschool.importer.legacy.legacy_import_user",
-    "LegacyImportTeacher": "ucsschool.importer.legacy.legacy_import_user",
-    "LegacyImportTeachersAndStaff": "ucsschool.importer.legacy.legacy_import_user",
-    "LegacyImportUser": "ucsschool.importer.legacy.legacy_import_user",
     "MacComputer": "ucsschool.lib.models.computer",
     "MailDomain": "ucsschool.lib.models.misc",
     "MarketplaceShare": "ucsschool.lib.models.share",
@@ -98,7 +92,6 @@ CLASSES_NOT_FOR_INSTANTIATION = (
     "AnyComputer",
     "BasicSchoolGroup",
     "ImportUser",
-    "LegacyImportUser",
     "SchoolComputer",
     "Share",
     "User",
@@ -198,10 +191,6 @@ class TestPythonHooks(TestCase):
         "ImportStudent": "ucsschool.importer.models.import_user",
         "ImportTeacher": "ucsschool.importer.models.import_user",
         "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
-        "LegacyImportStaff": "ucsschool.importer.legacy.legacy_import_user",
-        "LegacyImportStudent": "ucsschool.importer.legacy.legacy_import_user",
-        "LegacyImportTeacher": "ucsschool.importer.legacy.legacy_import_user",
-        "LegacyImportTeachersAndStaff": "ucsschool.importer.legacy.legacy_import_user",
     }
 
     @classmethod
@@ -714,10 +703,6 @@ class TestPythonHooks(TestCase):
     _create_ImportStudent = _create_ImportStaff
     _create_ImportTeacher = _create_ImportStaff
     _create_ImportTeachersAndStaff = _create_ImportStaff
-    _create_LegacyImportStaff = _create_ImportStaff
-    _create_LegacyImportStudent = _create_ImportStaff
-    _create_LegacyImportTeacher = _create_ImportStaff
-    _create_LegacyImportTeachersAndStaff = _create_ImportStaff
 
 
 if __name__ == "__main__":

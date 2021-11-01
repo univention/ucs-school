@@ -11,8 +11,7 @@
 import copy
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
-from univention.testing.ucsschool.importusers import ImportFile, Person, UserImport
+from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import UniqueObjectTester
 
 
@@ -34,7 +33,7 @@ class Test(UniqueObjectTester):
         del config["scheme"]["email"]
 
         self.log.info(
-            "*** 1/4 Importing a user of each role without email in input and without email in scheme..."
+            "*** 1/2 Importing a user of each role without email in input and without email in scheme..."
         )
 
         person_list = []
@@ -53,9 +52,9 @@ class Test(UniqueObjectTester):
         for person in person_list:
             person.verify()
 
-        self.log.info("*** OK 1/4 All %r users were created correctly.", len(person_list))
+        self.log.info("*** OK 1/2 All %r users were created correctly.", len(person_list))
         self.log.info(
-            "*** 2/4 Importing a user of each role with email in input and without email in scheme..."
+            "*** 2/2 Importing a user of each role with email in input and without email in scheme..."
         )
 
         source_uid = "source_uid-{}".format(uts.random_string())
@@ -77,49 +76,8 @@ class Test(UniqueObjectTester):
         for person in person_list:
             person.verify()
 
-        self.log.info("*** OK 2/4 All %r users were created correctly.", len(person_list))
-        self.log.info("*** 3/4 Doing (new) legacy import: 3 users each role, having email addresses...")
-
-        user_import = UserImport(
-            school_name=self.ou_A.name, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3
-        )
-        for user in (
-            user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
-        ):
-            user.update(record_uid=user.username, source_uid="LegacyDB")
-        import_file = ImportFile(True, False)
-        import_file.run_import(user_import)
-        user_import.verify()
-        # user_import.verify() should have checked this, but let's be explicit:
-        for user in (
-            user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
-        ):
-            if not user.mail:
-                utils.fail("User {!r} has no email address:\n{!s}".format(user.username, user))
-
-        self.log.info("*** OK 3/4 All users were created correctly.")
-        self.log.info(
-            "*** 4/4 Doing (new) legacy import: 3 users each role, having NO email addresses..."
-        )
-
-        user_import = UserImport(
-            school_name=self.ou_A.name, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3
-        )
-        for user in (
-            user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
-        ):
-            user.update(record_uid=user.username, source_uid="LegacyDB", mail="")
-        import_file = ImportFile(True, False)
-        import_file.run_import(user_import)
-        user_import.verify()
-        # user_import.verify() should have checked this, but let's be explicit:
-        for user in (
-            user_import.staff + user_import.students + user_import.teachers + user_import.teacher_staff
-        ):
-            if user.mail:
-                utils.fail("User {!r} has an email address:\n{!s}".format(user.username, user))
-
-        self.log.info("*** OK 4/4 All users were created correctly.")
+        self.log.info("*** OK 2/2 All %r users were created correctly.", len(person_list))
+        self.log.info("*** OK 2/2 All users were created correctly.")
 
 
 def main():

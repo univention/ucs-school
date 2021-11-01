@@ -46,7 +46,6 @@ class SchoolImport(object):
     """Wrapper for the ucs-school-import script"""
 
     _SCRIPT_PATH = "/usr/share/ucs-school-import/scripts"
-    USER_SCRIPT = "%s/import_user" % _SCRIPT_PATH
     SCHOOL_SCRIPT = "%s/create_ou" % _SCRIPT_PATH
     GROUP_SCRIPT = "%s/import_group" % _SCRIPT_PATH
     COMPUTER_SCRIPT = "%s/import_computer" % _SCRIPT_PATH
@@ -95,38 +94,6 @@ class SchoolImport(object):
             finally:
                 tmpfile.close()
         return None, None
-
-    def import_user(
-        self,
-        username,
-        lastname,
-        firstname,
-        school,
-        class_,
-        mail_primary_address,
-        teacher,
-        staff,
-        password,
-    ):
-        """Imports a new user"""
-        entry = [
-            "A",
-            username,
-            lastname,
-            firstname,
-            school,
-            class_,
-            "",
-            mail_primary_address,
-            teacher,
-            True,
-            staff,
-            password,
-        ]
-
-        return_code, stdout = self._run_script(SchoolImport.USER_SCRIPT, entry)
-        if return_code:
-            raise OSError(_("Could not create user"))
 
     def import_group(self, school, name, description):
         """Creates a new class"""

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.10) unstable; urgency=low
+
+  * Bug #54018: remove legacy user import
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 Nov 2021 11:27:43 +0100
+
 ucs-test-ucsschool (7.3.9) unstable; urgency=low
 
   * Bug #53988: handle old systemctl path in update tests

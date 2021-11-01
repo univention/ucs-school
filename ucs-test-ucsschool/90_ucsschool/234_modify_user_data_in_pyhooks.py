@@ -42,47 +42,6 @@ def cleanup():
 
 def test_modify_user_data_in_pyhooks(ucr, schoolenv, cleanup):
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
-    usernames = [uts.random_username(), uts.random_username()]
-    users = [
-        dict(
-            mode="A",
-            username=username,
-            lastname=uts.random_username(),
-            firstname=uts.random_username(),
-            ou=ou_name,
-            scool_class="{}{}".format(uts.random_int(1, 13), random.choice(string.ascii_lowercase)),
-            maildomain=ucr["domainname"],
-        )
-        for username in usernames
-    ]
-    line = (
-        "{mode}	{username}	{lastname}	{firstname}	{ou}	{ou}-{scool_class}		"
-        "{username}m@{maildomain}	0	1	0"
-    )
-    print("*** Creating users {!r}...".format(usernames))
-
-    with tempfile.NamedTemporaryFile("w+") as csv_file:
-        for user in users:
-            csv_file.write("{}\n".format(line.format(**user)))
-        csv_file.flush()
-
-        cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
-        sys.stdout.flush()
-        sys.stderr.flush()
-        subprocess.check_call(cmd)
-
-    print("*** Deleting users {!r}...".format(usernames))
-
-    with tempfile.NamedTemporaryFile("w+") as csv_file:
-        for user in users:
-            user["mode"] = "M"
-            csv_file.write(line.format(**user))
-        csv_file.flush()
-
-        cmd = ["/usr/share/ucs-school-import/scripts/import_user", csv_file.name]
-        sys.stdout.flush()
-        sys.stderr.flush()
-        subprocess.check_call(cmd)
 
     print("*** Trying non-legacy import - 1st to create users, 2nd to modify them.")
 
