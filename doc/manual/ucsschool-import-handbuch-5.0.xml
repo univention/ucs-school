@@ -1035,7 +1035,22 @@ udm users/user
 				<title>Eigene Erweiterungen hinzufügen</title>
 				<para>
 					Weitere, eigene Interpretationen von Eingabewerten können in einer von <classname>ucsschool.importer.reader.csv_reader.CsvReader</classname> abgeleiteten Klasse (siehe <xref linkend="extending:subclassing"/>) in der Methode <methodname>handle_input()</methodname> erzeugt werden.
-					Als Beispiel kann <methodname>handle_input()</methodname> in <classname>ucsschool.importer.legacy.legacy_csv_reader.LegacyCsvReader</classname> dienen, welches für den Import des alten CSV-Dateiformats den Sonderwert <literal>__activate</literal> (neue Benutzer de/aktivieren) hinzufügt.
+					Das folgende Listing zeigt beispielhaft eine Methode <methodname>handle_input()</methodname>, die sich in einer von <classname>CsvReader</classname> abgeleiteten Klasse befindet. 
+					In ihr wird für Schüler der Wert von <literal>__activate</literal> in <literal>disabled</literal> übersetzt.
+					<programlisting>
+def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
+    if mapping_value in ["__is_staff", "__is_teacher"]:
+        return True
+    if mapping_value == "__activate":
+        if csv_value == "0":
+            import_user.disabled = "1"
+        else:
+            import_user.disabled = "0"
+        return True
+    return super(CustomCsvReader, self).handle_input(
+        mapping_key, mapping_value, csv_value, import_user
+    )
+					</programlisting>
 				</para>
 				<para>
 					Um Unterstützung für den Import von anderen Dateiformaten als CSV (JSON, XML etc) hinzuzufügen, kann von <classname>ucsschool.importer.reader.base_reader.BaseReader</classname> abgeleitet werden (siehe <xref linkend="extending:subclassing"/>).

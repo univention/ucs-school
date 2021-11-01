@@ -33,11 +33,6 @@
 	<para>
 		Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
 	</para>
-	<para>
-		Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
-		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-5.0.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
-		ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
-	</para>
   </section>
 
   <section id="school:setup:cli:classes">
