@@ -19,16 +19,16 @@ def test_set_default_umc_users(ucr):
         from ucsschool.lib.models.utils import ucr
 
         ucr.load()
-        for cli in (True, False):
-            school, oudn = schoolenv.create_ou(use_cli=cli, use_cache=False)
-            utils.wait_for_replication_and_postrun()
-            base = "cn=Domain Users %s,cn=groups,%s" % (
-                school.lower(),
-                schoolenv.get_ou_base_dn(school),
-            )
-            print("*** Checking school {!r} (cli={})".format(school, cli))
-            expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),)
-            found_attr = schoolenv.lo.search(
-                base=base, scope="base", attr=["univentionPolicyReference"]
-            )[0][1].get("univentionPolicyReference", [])
-            assert expected_attr.encode("UTF-8") not in found_attr
+
+        school, oudn = schoolenv.create_ou(use_cache=False)
+        utils.wait_for_replication_and_postrun()
+        base = "cn=Domain Users %s,cn=groups,%s" % (
+            school.lower(),
+            schoolenv.get_ou_base_dn(school),
+        )
+        print("*** Checking school {!r}".format(school))
+        expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),)
+        found_attr = schoolenv.lo.search(
+            base=base, scope="base", attr=["univentionPolicyReference"]
+        )[0][1].get("univentionPolicyReference", [])
+        assert expected_attr.encode("UTF-8") not in found_attr

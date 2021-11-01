@@ -103,7 +103,7 @@ Stelle im LDAP angelegt.
 
 ## Benutzer importieren:
 Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des
-Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
+Skriptes "ucs-school-import" mit dem Dateinamen als Option.
 
 ## Netzwerk importieren:
 Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen

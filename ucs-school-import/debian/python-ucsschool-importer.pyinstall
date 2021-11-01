@@ -1,7 +1,6 @@
 modules/ucsschool/importer/*.py ucsschool.importer
 modules/ucsschool/importer/contrib/*.py ucsschool.importer.contrib
 modules/ucsschool/importer/frontend/*.py ucsschool.importer.frontend
-modules/ucsschool/importer/legacy/*.py ucsschool.importer.legacy
 modules/ucsschool/importer/mass_import/*.py ucsschool.importer.mass_import
 modules/ucsschool/importer/models/*.py ucsschool.importer.models
 modules/ucsschool/importer/reader/*.py ucsschool.importer.reader

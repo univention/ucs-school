@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
-## desc: Test if input_data is filled in legacy during pre_/post_delete hooks
+## desc: Test if pre_* hooks are executed
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous

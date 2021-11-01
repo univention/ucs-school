@@ -48,7 +48,7 @@ def test_migrate_ucsschool_import_user(ucr, schoolenv):
         schoolenv.create_teacher_and_staff,
         schoolenv.create_staff,
     ]:
-        user_name, user_dn = func(ou_name, use_cli=False, wait_for_replication=False)
+        user_name, user_dn = func(ou_name, wait_for_replication=False)
         user = User.from_dn(user_dn, None, lo)
         unambiguous_users.append(
             MyUser(user_name, user_dn, user.firstname, user.lastname, str(next_record_uid))
@@ -62,7 +62,7 @@ def test_migrate_ucsschool_import_user(ucr, schoolenv):
         schoolenv.create_teacher_and_staff,
         schoolenv.create_staff,
     ]:
-        user_name, user_dn = func(ou_name, use_cli=False, wait_for_replication=False)
+        user_name, user_dn = func(ou_name, wait_for_replication=False)
         user = User.from_dn(user_dn, None, lo)
         ambiguous_users.append(MyUser("", user_dn, user.firstname, user.lastname, str(next_record_uid)))
         next_record_uid += 1
@@ -71,7 +71,6 @@ def test_migrate_ucsschool_import_user(ucr, schoolenv):
                 ou_name,
                 firstname=user.firstname,
                 lastname=user.lastname,
-                use_cli=False,
                 wait_for_replication=False,
             )
             user2 = User.from_dn(user2_dn, None, lo)

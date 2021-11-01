@@ -149,7 +149,7 @@ def main():
     lo, po = get_admin_connection()
 
     # use factory.make_import_user() to get the user class from the import configuration
-    # (ImportUser, LegacyImportUser, CustomerImportUser ...)
+    # (ImportUser, CustomerImportUser ...)
     a_user = factory.make_import_user([])
 
     today_s = datetime.datetime.today().strftime("%Y%m%d%H%M%SZ")

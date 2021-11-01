@@ -34,7 +34,6 @@ py = "3" if PY3 else "2.7"
 MODULE_PATHS = (
     ("/usr/lib/python%s/dist-packages/ucsschool/lib/models" % (py,), "ucsschool.lib.models"),
     ("/usr/lib/python%s/dist-packages/ucsschool/importer/models" % (py,), "ucsschool.importer.models"),
-    ("/usr/lib/python%s/dist-packages/ucsschool/importer/legacy" % (py,), "ucsschool.importer.legacy"),
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test82_legacy_hook.sh")
@@ -62,11 +61,6 @@ EXPECTED_CLASSES = [
     "ImportTeachersAndStaff",
     "ImportUser",
     "IPComputer",
-    "LegacyImportStaff",
-    "LegacyImportStudent",
-    "LegacyImportTeacher",
-    "LegacyImportTeachersAndStaff",
-    "LegacyImportUser",
     "MacComputer",
     "MailDomain",
     "MarketplaceShare",
@@ -146,7 +140,6 @@ class TestLegacyHooksMeta(type):
                 continue
             if model.__name__ in (
                 "ImportUser",
-                "LegacyImportUser",
                 "SchoolComputer",
                 "User",
             ):
@@ -530,10 +523,6 @@ class TestLegacyHooks(with_metaclass(TestLegacyHooksMeta, TestCase)):
     _setup_ImportStudent = _setup_ImportStaff
     _setup_ImportTeacher = _setup_ImportStaff
     _setup_ImportTeachersAndStaff = _setup_ImportStaff
-    _setup_LegacyImportStaff = _setup_ImportStaff
-    _setup_LegacyImportStudent = _setup_ImportStaff
-    _setup_LegacyImportTeacher = _setup_ImportStaff
-    _setup_LegacyImportTeachersAndStaff = _setup_ImportStaff
 
 
 if __name__ == "__main__":
