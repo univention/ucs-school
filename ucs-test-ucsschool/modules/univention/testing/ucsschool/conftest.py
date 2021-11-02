@@ -4,8 +4,10 @@ import logging
 import os
 import pprint
 import random
+import subprocess
 import sys
 import tempfile
+import time
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type
 
 import pytest
@@ -600,3 +602,53 @@ def init_ucs_school_import_framework():
 @pytest.fixture(scope="session")
 def import_config(init_ucs_school_import_framework):
     return init_ucs_school_import_framework()
+
+
+@pytest.fixture(scope="session")
+def restart_services():
+    def _restart_services(*services):  # type: (*str) -> None
+        for path in ("/usr/bin/systemctl", "/bin/systemctl"):
+            if os.path.isfile(path) and os.access(path, os.R_OK | os.X_OK):
+                cmd = [path, "restart"] + list(services)
+                print("Restarting service(s): {!r}".format(cmd))
+                rv = subprocess.call(cmd)
+                print("=> return code: {}.".format(rv))
+                break
+        else:
+            raise RuntimeError("Could not find 'systemctl' executable.")
+
+    return _restart_services
+
+
+@pytest.fixture
+def schedule_restart_services(restart_services):
+    services_to_restart = []  # type: List[Tuple[str]]
+
+    def _schedule_restart_services(*services):  # type: (*str) -> None
+        services_to_restart.append(services)
+
+    yield _schedule_restart_services
+
+    for services in services_to_restart:
+        restart_services(*services)
+
+
+@pytest.fixture(scope="session")
+def restart_umc(restart_services):
+    def _restart_umc():
+        restart_services(
+            "univention-management-console-web-server", "univention-management-console-server"
+        )
+        # wait some time for UMC web server and UMC server to be ready before the next test is called
+        time.sleep(5)
+
+    return _restart_umc
+
+
+@pytest.fixture
+def schedule_restart_umc(schedule_restart_services):
+    schedule_restart_services(
+        "univention-management-console-web-server", "univention-management-console-server"
+    )
+    # wait some time for UMC web server and UMC server to be ready before the next test is called
+    time.sleep(5)

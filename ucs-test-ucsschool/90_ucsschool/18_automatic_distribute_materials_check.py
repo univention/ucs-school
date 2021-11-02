@@ -8,9 +8,6 @@
 from __future__ import print_function
 
 import time
-from subprocess import call
-
-import pytest
 
 import univention.testing.utils as utils
 from univention.config_registry import handler_set
@@ -19,35 +16,13 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
-@pytest.fixture
-def cleanup_restart_umc():
-    yield
-    call(
-        [
-            "/usr/bin/systemctl",
-            "restart",
-            "univention-management-console-web-server",
-            "univention-management-console-server",
-        ]
-    )
-    # wait some time for UMC web server and UMC server to be ready before the next test is called
-    time.sleep(5)
-
-
-def test_automatic_distribute_materials(schoolenv, cleanup_restart_umc, ucr):
+def test_automatic_distribute_materials(schoolenv, schedule_restart_umc, restart_umc, ucr):
     MIN_DIST_TIME = 8 * 60
     MIN_COLL_TIME = 18 * 60
     host = ucr.get("hostname")
     handler_set(["umc/http/session/timeout=1200"])
     handler_set(["umc/module/timeout=1200"])
-    call(
-        [
-            "/usr/bin/systemctl",
-            "restart",
-            "univention-management-console-web-server",
-            "univention-management-console-server",
-        ]
-    )
+    restart_umc()
     connection = Client(host)
 
     # Create ou, teacher, student, group
