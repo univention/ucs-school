@@ -1,3 +1,9 @@
+ucs-school-metapackage (13.0.10) unstable; urgency=low
+
+  * Bug #53983: add python-typing as build dependency for unit testing
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 02 Nov 2021 15:54:55 +0100
+
 ucs-school-metapackage (13.0.9) unstable; urgency=low
 
   * Bug #53988: fix linter errors
