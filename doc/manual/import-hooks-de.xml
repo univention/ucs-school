@@ -12,10 +12,10 @@
   <title>Python-Hooks</title>
   <para>
 	Ab &ucsUAS; 4.4 v9 kann vor und nach dem Anlegen, Ändern, Verschieben und Löschen von &ucsUAS; Objekten Python-Code ausgeführt werden. Dies kann z.B. im Rahmen des &ucsUAS; Imports von eingesetzt werden, um in Abhängigkeit von der
-	jeweiligen Umgebung zusätzlich einige weitere Einstellungen vorzunehmen.
+	jeweiligen Umgebung weitere Einstellungen vorzunehmen.
   </para>
       <para>
-          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") erlauben eine feingranulare Unterscheidung nach Objekttypen (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") erlauben es Objekttypen zu unterscheiden (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
           Die Hooks werden für alle Klassen, von denen Objekte erzeugt werden können und die von <classname>ucsschool.lib.models.base.UCSSchoolHelperAbstractClass</classname> ableiten, ausgeführt.
