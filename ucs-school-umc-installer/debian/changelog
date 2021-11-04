@@ -1,3 +1,9 @@
+ucs-school-umc-installer (8.0.6) unstable; urgency=low
+
+  * Bug #53942: Do not install veyon proxy on multiserver primary nodes
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 04 Nov 2021 10:25:00 +0200
+
 ucs-school-umc-installer (8.0.5) unstable; urgency=low
 
   * Bug #53988: fix linter errors
