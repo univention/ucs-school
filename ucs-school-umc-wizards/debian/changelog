@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.6) unstable; urgency=low
+
+  * Bug #54018: remove legacy user import
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 Nov 2021 11:29:00 +0100
+
 ucs-school-umc-wizards (12.0.5) unstable; urgency=low
 
   * Bug #53983: python-typing is always installed in UCS 5.0
