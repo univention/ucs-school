@@ -60,6 +60,7 @@ except ImportError:
 from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import User
+from ucsschool.lib.roles import create_ucsschool_role_string, role_computer_room_backend_veyon
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoollessons import SchoolLessons
@@ -444,8 +445,13 @@ class Instance(SchoolBaseModule):
     def rooms(self, request, ldap_user_read=None):
         """Returns a list of all available rooms"""
         rooms = []
+        veyon_backend_role = create_ucsschool_role_string(role_computer_room_backend_veyon, "-")
         try:
-            all_rooms = ComputerRoom.get_all(ldap_user_read, request.options["school"])
+            all_rooms = ComputerRoom.get_all(
+                ldap_user_read,
+                request.options["school"],
+                filter_str="(ucsschoolRole={})".format(veyon_backend_role),
+            )
         except udm_exceptions.noObject:
             all_rooms = []
 

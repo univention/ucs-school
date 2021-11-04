@@ -216,7 +216,7 @@ class ComputerRoomManager(dict):
     SCHOOL = None
     ROOM = None
     ROOM_DN = None
-    VEYON_BACKEND = False
+    VEYON_BACKEND = True
 
     def __init__(self):
         dict.__init__(self)
@@ -285,7 +285,7 @@ class ComputerRoomManager(dict):
             self.clear()
             ComputerRoomManager.ROOM = None
             ComputerRoomManager.ROOM_DN = None
-            ComputerRoomManager.VEYON_BACKEND = False
+            ComputerRoomManager.VEYON_BACKEND = True
 
     @LDAP_Connection()
     def _set(self, room, ldap_user_read=None):
