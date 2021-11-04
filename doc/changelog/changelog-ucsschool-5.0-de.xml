@@ -67,7 +67,22 @@ feedback@univention.de
 				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
 			</para>
 		</section>
-
+		<section id="changelog:computerroom-backend">
+			<title>Veyon löst iTALC als Computerraum Backend ab</title>
+			<para>
+			  Ab &ucsUAS; 5.0 wird Veyon als Computerraum Backend eingesetzt. iTALC wird für diese Version nicht weiter unterstützt.
+			  In den UMC-Modulen <guimenu>Computerraum</guimenu> und <guimenu>Klassenarbeiten</guimenu> werden fortan nur noch Computerräume angezeigt, deren Backend auf Veyon gesetzt ist.
+			</para>
+			<para>
+				Das Upgrade auf &ucsUAS; 5.0 in Single-Server-Umgebungen und &ucsReplicaDN; auf denen sich bereits Computerräumen befinden, ist noch nicht möglich.
+				In einem kommenden Errata Release wird dies freigeschaltet.
+			</para>
+			<para>
+				Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
+				Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
+				Die Schritte der Migration von iTALC zu Veyon sind auf https://help.univention.com/t/16937 beschrieben.
+			</para>
+		</section>
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
 			<itemizedlist>

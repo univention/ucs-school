@@ -39,7 +39,7 @@
             verbieten, muss an den Druckerfreigaben für diese Drucker der Zugriff durch Benutzer der
             OU-spezifischen Gruppe
             <systemitem class="groupname">schueler-<replaceable>OU</replaceable></systemitem>
-			(z.B. <systemitem class="groupname">schueler-gsmitte</systemitem>)
+            (z.B. <systemitem class="groupname">schueler-gsmitte</systemitem>)
             verboten werden. Für den PDF-Drucker <systemitem class="resource">PDFDrucker</systemitem> sollten keine
             Einschränkungen
             gemacht werden.
@@ -54,10 +54,10 @@
             Druckaufträge können dann durch den Lehrer an einen beliebigen physikalischen Drucker der Schule
             weitergeleitet oder auch verworfen werden.
         </para>
-		<para>
-			Lehrer können in dem UMC-Modul grundsätzlich nur die Druckaufträge der Schüler oder ihre eigenen Druckaufträge betrachten.
-			Druckaufträge von anderen Lehrern werden von dem UMC-Modul nicht angezeigt.
-		</para>
+        <para>
+            Lehrer können in dem UMC-Modul grundsätzlich nur die Druckaufträge der Schüler oder ihre eigenen Druckaufträge betrachten.
+            Druckaufträge von anderen Lehrern werden von dem UMC-Modul nicht angezeigt.
+        </para>
         <para>
             Um Ausnahmen von dieser strikte Regelung zu ermöglichen, kann der Lehrer im UMC-Modul
             <emphasis>Computerraum</emphasis>
@@ -65,7 +65,7 @@
             Druckmodus für einen einzelnen Computerraum beeinflussen. Die oben beschriebenen Einschränkungen für
             Schüler werden dabei als <emphasis>Standard (globale Einstellungen)</emphasis> beschrieben. Darüber
             hinaus kann auch der Druckmodus <emphasis>Drucken deaktiviert</emphasis> ausgewählt werden, der das Drucken
-			von den Rechnern des Computerraums vollständig untersagt.
+            von den Rechnern des Computerraums vollständig untersagt.
         </para>
 
         <section id="school:setup:generic:moderated-printer">
@@ -250,8 +250,8 @@
                 gesetzt werden.
             </para>
             <para>
-            	Um den NFS-Export einer Freigabe manuell ein- oder auszuschalten, kann im UMC-Modul <guimenu>Freigaben</guimenu> für jede
-            	Freigabe die Option <emphasis>Für NFS-Clients exportieren (NFSv3 und NFSv4)</emphasis> (de)aktiviert werden.
+               Um den NFS-Export einer Freigabe manuell ein- oder auszuschalten, kann im UMC-Modul <guimenu>Freigaben</guimenu> für jede
+               Freigabe die Option <emphasis>Für NFS-Clients exportieren (NFSv3 und NFSv4)</emphasis> (de)aktiviert werden.
             </para>
         </note>
     </section>
@@ -404,6 +404,21 @@
             Dies kann zu längeren Wartezeiten führen, wenn Rechner innerhalb des Computerraums ausgeschaltet sind oder eine Firewall den Befehl blockiert. Das Verhalten ist standardmäßig deaktiviert und kann durch Setzen der &ucsUCR;-Variable <envar>ucsschool/umc/computerroom/ping-client-ip-addresses</envar>
             aktiviert werden.
         </para>
+        <caution>
+          <para>
+          Ab &ucsUAS; 5.0 wird Veyon als Computerraum Backend eingesetzt.
+          In den UMC-Modulen <guimenu>Computerraum</guimenu> und <guimenu>Klassenarbeiten</guimenu> werden fortan nur noch Computerräume angezeigt, deren Backend auf Veyon gesetzt ist.
+          </para>
+            <para>
+            Das Upgrade auf &ucsUAS; 5.0 in Single-Server-Umgebungen und &ucsReplicaDN; auf denen sich bereits Computerräumen befinden, ist noch nicht möglich.
+            In einem kommenden Errata Release wird dies freigeschaltet.
+            </para>
+            <para>
+            Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
+            Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
+            Die Schritte der Migration von iTALC zu Veyon sind auf https://help.univention.com/t/16937 beschrieben.
+            </para>
+        </caution>
     </section>
     <section id="school:setup:generic:configureclasslists">
         <title>Konfiguration des Klassenlisten-Moduls</title>
