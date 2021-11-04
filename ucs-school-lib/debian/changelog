@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.7) unstable; urgency=low
+
+  * Bug #53988: use systemctl in /bin
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 Nov 2021 17:13:02 +0100
+
 ucs-school-lib (13.0.6) unstable; urgency=low
 
   * Bug #53988: fix linter errors

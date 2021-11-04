@@ -607,15 +607,10 @@ def import_config(init_ucs_school_import_framework):
 @pytest.fixture(scope="session")
 def restart_services():
     def _restart_services(*services):  # type: (*str) -> None
-        for path in ("/usr/bin/systemctl", "/bin/systemctl"):
-            if os.path.isfile(path) and os.access(path, os.R_OK | os.X_OK):
-                cmd = [path, "restart"] + list(services)
-                print("Restarting service(s): {!r}".format(cmd))
-                rv = subprocess.call(cmd)
-                print("=> return code: {}.".format(rv))
-                break
-        else:
-            raise RuntimeError("Could not find 'systemctl' executable.")
+        cmd = ["/bin/systemctl", "restart"] + list(services)
+        print("Restarting service(s): {!r}".format(cmd))
+        rv = subprocess.call(cmd)
+        print("=> return code: {}.".format(rv))
 
     return _restart_services
 

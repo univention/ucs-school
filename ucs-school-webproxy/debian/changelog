@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.0.5) unstable; urgency=low
+
+  * Bug #53988: use systemctl in /bin
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 04 Nov 2021 17:13:29 +0100
+
 ucs-school-webproxy (16.0.4) unstable; urgency=low
 
   * Bug #53988: fix linter errors
