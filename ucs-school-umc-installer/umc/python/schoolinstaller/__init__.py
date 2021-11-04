@@ -763,7 +763,12 @@ class Instance(Base):
                 )
             )
             if veyon_installed:
-                MODULE.process("Veyon proxy app already installed. Skip installation")
+                MODULE.process("Veyon proxy app already installed. Skip installation.")
+            elif setup == "multiserver":
+                MODULE.process(
+                    "Veyon proxy app is not installed by the installer on primary nodes in multiserver mode."
+                    "Skip installation."
+                )
             else:
                 MODULE.process(
                     "The output for the installation of the Veyon proxy app can be found in "
