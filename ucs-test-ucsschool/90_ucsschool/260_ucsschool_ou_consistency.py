@@ -43,7 +43,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 (
                     "ucsschoolRole",
                     self.lo.get(ou_b_dn, ["ucsschoolRole"], required=True),
-                    ["non-existent"],
+                    [b"non-existent"],
                 )
             ],
         )
@@ -84,7 +84,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                     (
                         "ucsschoolHomeShareFileServer",
                         self.lo.get(ou_c_dn, ["ucsschoolHomeShareFileServer"]),
-                        [self.ucr.get("ldap/hostdn")],
+                        [self.ucr.get("ldap/hostdn").encode("UTF-8")],
                     )
                 ],
             )
@@ -98,7 +98,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                     (
                         "ucsschoolClassShareFileServer",
                         self.lo.get(ou_c_dn, ["ucsschoolClassShareFileServer"]),
-                        [self.ucr.get("ldap/hostdn")],
+                        [self.ucr.get("ldap/hostdn").encode("UTF-8")],
                     )
                 ],
             )
@@ -113,7 +113,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                     (
                         "ucsschoolHomeShareFileServer",
                         self.lo.get(ou_b_dn, ["ucsschoolHomeShareFileServer"], required=True),
-                        [self.schoolB.winclient.dn],
+                        [self.schoolB.winclient.dn.encode("UTF-8")],
                     )
                 ],
             )
@@ -127,7 +127,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                     (
                         "ucsschoolClassShareFileServer",
                         self.lo.get(ou_b_dn, ["ucsschoolClassShareFileServer"], required=True),
-                        [self.schoolB.winclient.dn],
+                        [self.schoolB.winclient.dn.encode("UTF-8")],
                     )
                 ],
             )

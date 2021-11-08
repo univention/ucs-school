@@ -108,7 +108,7 @@ class Test(UniqueObjectTester):
             if i == 0:
                 new_mail = "{}{}@{}".format(person.email_prefix, 3, self.maildomain)
                 new_uid = "{}{}".format(person.username_prefix, 3)
-                change = [("mailPrimaryAddress", person.mail, new_mail)]
+                change = [("mailPrimaryAddress", person.mail.encode("UTF-8"), new_mail.encode("UTF-8"))]
                 obj_dn = person.dn
                 expected_warnings.append(
                     "cn={0},cn=unique-email,cn=ucsschool,cn=univention,{1}: email counter='2' but found "
@@ -116,7 +116,7 @@ class Test(UniqueObjectTester):
                 )
             elif i == 1:
                 new_uid = "{}{}".format(person.username_prefix, 3)
-                change = [("uid", person.username, new_uid)]
+                change = [("uid", person.username.encode("UTF-8"), new_uid.encode("UTF-8"))]
                 obj_dn = person.dn
                 expected_warnings.append(
                     "cn={0},cn=unique-usernames,cn=ucsschool,cn=univention,{1}: usernames counter='2' "
@@ -125,7 +125,7 @@ class Test(UniqueObjectTester):
             else:
                 unique_obj = "unique-email" if i % 2 == 0 else "unique-usernames"
                 if i < 4:
-                    new_value = ["0"]
+                    new_value = [b"0"]
                     expected_warnings.append(
                         "cn={},cn={},cn=ucsschool,cn=univention,{}: counter='0'".format(
                             person.username, unique_obj, ucr.get("ldap/base")
@@ -144,7 +144,7 @@ class Test(UniqueObjectTester):
                     scope="one",
                 )
                 obj_dn = obj_list[0]
-                change = [("ucsschoolUsernameNextNumber", ["2"], new_value)]
+                change = [("ucsschoolUsernameNextNumber", [b"2"], new_value)]
 
             self.lo.modify(obj_dn, change)
             self.log.info("change {}: {}".format(obj_dn, change))

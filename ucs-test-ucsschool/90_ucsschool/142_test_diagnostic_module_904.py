@@ -39,7 +39,7 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
         class_dn = self.lo.searchDn(filter=filter_str)[0]
         for user in (self.schoolA.teacher, self.schoolA.student):
             logger.info("*** Add {} to group {}".format(user.dn, class_dn))
-            self.lo.modify(class_dn, [["uniqueMember", None, user.dn], ["memberUid", None, user.name]])
+            self.lo.modify(class_dn, [["uniqueMember", None, user.dn.encode("UTF-8")], ["memberUid", None, user.name.encode("UTF-8")]])
 
         try:
             module = self.get_diagnostic_module()
@@ -57,7 +57,7 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
                 logger.info("*** Remove {} from group {}".format(user.dn, class_dn))
                 try:
                     self.lo.modify(
-                        class_dn, [["uniqueMember", user.dn, None], ["memberUid", user.name, None]]
+                        class_dn, [["uniqueMember", user.dn.encode("UTF-8"), None], ["memberUid", user.name.encode("UTF-8"), None]]
                     )
                 except Exception as exc:
                     logger.error("Failed to remove %r from %r: %r", user.dn, class_dn, exc)
