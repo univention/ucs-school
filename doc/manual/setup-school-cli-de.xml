@@ -20,7 +20,7 @@
   <caution>
 	<simpara>
 	Seit der &ucsUAS;-Version 3.2 R2 halten die kommandozeilenbasierten Importskripte zu Beginn
-	des jeweiligen Imports den &ucsUDN; auf dem Domänencontroller Master an. Nach Abschluss des Imports
+	des jeweiligen Imports den &ucsUDN; auf dem &ucsPrimaryDN; an. Nach Abschluss des Imports
 	wird der &ucsUDN; wieder gestartet.
 	</simpara>
   </caution>
@@ -32,11 +32,6 @@
 	</para>
 	<para>
 		Die Konfiguration des kommandozeilenbasierten Benutzerimports ist im <ulink url="https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html">Handbuch Import Schnittstelle</ulink> dokumentiert.
-	</para>
-	<para>
-		Die Dokumentation des alten Nutzerimports, welcher zuvor an dieser Stelle erläutert worden ist, wurde nach
-		<ulink url="https://docs.software-univention.de/ucsschool-import-legacy-5.0.html">&ucsUAS; <wordasword>Legacy Import</wordasword></ulink>
-		ausgelagert. Von seiner Verwendung wird abgeraten, da er vom neuen Benutzer-Import abgelöst wird.
 	</para>
   </section>
 

@@ -121,7 +121,7 @@
 		<note>
 			<para>
 				Wie die automatische Suche auch für andere (nicht schulbezogene) UMC-Module deaktiviert wird, steht im
-				<ulink url="http://docs.software-univention.de/performance-guide-4.3.html#umc:search:auto" lang="en">UCS performance guide</ulink> (nur in Englisch verfügbar).
+				<ulink url="http://docs.software-univention.de/performance-guide-5.0.html#umc:search:auto" lang="en">UCS performance guide</ulink> (nur in Englisch verfügbar).
 			</para>
 		</note>
     </section>

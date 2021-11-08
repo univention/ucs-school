@@ -112,22 +112,21 @@ feedback@univention.de
 
   <para>
     Der folgende Abschnitt beschreibt die Installation der Erweiterung &ucsUAS; auf einem UCS-System
-    über Univention App Center <biblioref linkend="ucs-app-center"/>. Dazu muss eine Anmeldung mit dem
+    über Univention App Center. Dazu muss eine Anmeldung mit dem
     Administrator-Konto (Benutzername: <systemitem class="username">Administrator</systemitem>) an der
     Univention Management Console (<uri>https://<replaceable>server_ip</replaceable>/umc</uri> oder
     <uri>http://<replaceable>server_ip</replaceable>/umc</uri>) erfolgen.
   </para>
 
   <para>
-    Bei der ersten Anmeldung erscheint ein Dialog, mit dem die UCS-Lizenz für das Univention App Center
-    freigeschaltet werden kann. Es muss dazu eine E-Mail-Adresse angegeben werden, an die der freigeschaltete
+    Bei der ersten Anmeldung muss im UMC-Modul <guimenu>Willkommen!</guimenu> eine UCS-Lizenz für das Univention App Center
+    freigeschaltet werden. Im Dialog, der über <guimenu>Neue Lizenz anfordern</guimenu> geöffnet wird, muss dazu eine E-Mail-Adresse angegeben werden, an die der freigeschaltete
     Lizenzschlüssel dann geschickt wird.
   </para>
 
   <para>
-    Der freigeschaltete Lizenzschlüssel kann über die UMC importiert werden, indem in der oberen rechte
-    Bildschirmzeile auf das Pfeil-Symbol neben dem Benutzernamen geklickt wird. Es muss der Menüpunkt
-    <guimenu>Lizenz -> Neue Lizenz einspielen</guimenu> ausgewählt werden. Nach dem Import des Lizenzschlüssels
+    Der Lizenzschlüssel kann über das UMC-Modul <guimenu>Willkommen!</guimenu> importiert werden. Es muss der Menüpunkt
+    <guimenu>Neue Lizenz importieren</guimenu> ausgewählt werden. Nach dem Import des Lizenzschlüssels
     kann das Univention App Center verwendet werden.
   </para>
 
@@ -488,12 +487,6 @@ feedback@univention.de
     <pubdate>2017</pubdate>
     <title>Inbetriebnahme und Konfiguration des Demosystems in VMware oder VirtualBox</title>
     <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=Inbetriebnahme_und_Konfiguration_des_Demosystems_in_VMware_oder_VirtualBox"/></releaseinfo>
-  </biblioentry>
-  <biblioentry id="ucs-app-center">
-    <publishername>Univention GmbH</publishername>
-    <pubdate>2017</pubdate>
-    <title>App Center</title>
-    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=UCS@school_4.4_Quickstart#Installation_von_UCS.40school_in_einer_Multi-Server-Umgebung"/></releaseinfo>
   </biblioentry>
   <biblioentry id="ucsschool-teacher">
     <publishername>Univention GmbH</publishername>
