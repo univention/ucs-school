@@ -40,13 +40,23 @@ feedback@univention.de
 	<chapter id="relnotes:highlights">
 		<title>Release-Highlights</title>
 		<para>
-			UCS@school 5.0 steht jetzt auch für das vierte Minor-Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
+			UCS@school 5.0 v1 steht jetzt für das fünfte Major-Release von Univention Corporate Server (UCS) zur Verfügung. Es profitiert von einer Reihe an
 			umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 5.0
 			eingeflossen sind. Die wichtigsten Änderungen im Überblick:
 			<itemizedlist>
 				<listitem>
 					<para>
-						...
+						Alle Komponenten wurden zu Python 3 migriert.
+					</para>
+					<para>
+						Alle &ucsUMC; Module wurden an das UCS 5 design angepasst.
+						-> Portal
+					</para>
+					<para>
+						Das legacy import Skript wurde entfernt.
+					</para>
+					<para>
+						Veyon löst iTALC als Computerraum Backend ab.
 					</para>
 				</listitem>
 			</itemizedlist>
