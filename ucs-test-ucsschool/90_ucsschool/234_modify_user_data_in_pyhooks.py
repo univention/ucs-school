@@ -9,16 +9,13 @@
 ## bugs: [47027]
 import os
 import os.path
-import random
 import shutil
-import string
 import subprocess
 import sys
 import tempfile
 
 import pytest
 
-import univention.testing.strings as uts
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 TESTHOOKSOURCE = os.path.join(os.path.dirname(__file__), "test234_modify_user_data_in_pyhooks.pyhookpy")

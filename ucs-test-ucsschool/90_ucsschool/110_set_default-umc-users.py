@@ -28,7 +28,6 @@ def test_set_default_umc_users(ucr):
         )
         print("*** Checking school {!r}".format(school))
         expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),)
-        found_attr = schoolenv.lo.search(
-            base=base, scope="base", attr=["univentionPolicyReference"]
-        )[0][1].get("univentionPolicyReference", [])
+        pol_ref = schoolenv.lo.search(base=base, scope="base", attr=["univentionPolicyReference"])
+        found_attr = pol_ref[0][1].get("univentionPolicyReference", [])
         assert expected_attr.encode("UTF-8") not in found_attr

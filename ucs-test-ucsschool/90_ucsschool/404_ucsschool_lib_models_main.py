@@ -225,12 +225,8 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
 def test_create_school_class(ucr_hostname, ucr_ldap_base):
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
-        user_name1, user_dn1 = schoolenv.create_student(
-            ou_name, wait_for_replication=False
-        )
-        user_name2, user_dn2 = schoolenv.create_teacher(
-            ou_name, wait_for_replication=False
-        )
+        user_name1, user_dn1 = schoolenv.create_student(ou_name, wait_for_replication=False)
+        user_name2, user_dn2 = schoolenv.create_teacher(ou_name, wait_for_replication=False)
         school_class_name = "{}-{}".format(ou_name, uts.random_username())
         description = uts.random_username()
         cmd = [
@@ -398,12 +394,8 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             should_exist=True,
         )
         description = uts.random_username()
-        user_name1, user_dn1 = schoolenv.create_student(
-            ou_name, wait_for_replication=False
-        )
-        user_name2, user_dn2 = schoolenv.create_teacher(
-            ou_name, wait_for_replication=False
-        )
+        user_name1, user_dn1 = schoolenv.create_student(ou_name, wait_for_replication=False)
+        user_name2, user_dn2 = schoolenv.create_teacher(ou_name, wait_for_replication=False)
         cmd = [
             sys.executable,
             "-m",

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.14) unstable; urgency=low
+
+  * Bug #54018: fix linting errors
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Nov 2021 10:33:04 +0100
+
 ucs-test-ucsschool (7.3.13) unstable; urgency=low
 
   * Bug #54018: remove legacy leftovers

@@ -43,7 +43,6 @@ import os
 import random
 import subprocess
 import sys
-import tempfile
 import time
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple
@@ -75,7 +74,6 @@ from ucsschool.lib.roles import (
     role_school_admin,
     role_school_class,
     role_staff,
-    role_student,
     role_teacher,
     role_workgroup,
 )

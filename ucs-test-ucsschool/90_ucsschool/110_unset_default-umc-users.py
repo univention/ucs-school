@@ -22,10 +22,8 @@ def test_unset_default_umc_users(ucr):
             schoolenv.get_ou_base_dn(school),
         )
         print("*** Checking school {!r}".format(school))
-        expected_attr = (
-            "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),)
-        ).encode("utf-8")
-        found_attr = schoolenv.lo.search(
-            base=base, scope="base", attr=["univentionPolicyReference"]
-        )[0][1]["univentionPolicyReference"]
+        _expected_attr = "cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get("ldap/base"),)
+        expected_attr = _expected_attr.encode("utf-8")
+        pol_ref = schoolenv.lo.search(base=base, scope="base", attr=["univentionPolicyReference"])
+        found_attr = pol_ref[0][1]["univentionPolicyReference"]
         assert expected_attr in found_attr
