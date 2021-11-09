@@ -46,7 +46,7 @@ univention-config-registry set \
 	ucsschool/ldap/default/dcs?"edukativ" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
-	ucsschool/import/generate/mail/domain?yes \
+	ucsschool/import/generate/mail/domain?no \
 	ucsschool/import/purge-expired-users/cron?'50 4 * * *' \
 	|| die
 
