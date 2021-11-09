@@ -236,12 +236,12 @@ Checking ldap_schema ...                          OK
 				<listitem><para>
 					The Demo Portal has been removed (<u:bug>53460</u:bug>).
 				</para></listitem>
-								<listitem>
+				<listitem>
 					<para>
 						The &ucsUAS; now uses the terms &ucsPrimaryDN; for "DC Master" &ucsReplicaDN; for "DC Slave" (see <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>). Accordingly, the documentation,
 						as well as the Debian package names have been adjusted. UCR-Variable names did not change yet (<u:bug>20064</u:bug>).
 					</para>
-								</listitem>
+				</listitem>
 				<listitem><para>
 					<package>iTALC</package> has been removed from UCS@school (<u:bug>53364</u:bug>).
 				</para></listitem>

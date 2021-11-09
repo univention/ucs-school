@@ -11,16 +11,16 @@
 <book lang="de" id="errata-changelog-5.0-de">
 
 	<bookinfo>
- 		<title>UCS@school 5.0 v2 Changelog</title>
-		<!-- <subtitle>Changelog für das Update von UCS@school 5.0 v1 nach 5.0 v2</subtitle> -->
+ 		<title>&ucsUAS; 5.0 v2 Changelog</title>
+		<!-- <subtitle>Changelog für das Update von &ucsUAS; 5.0 v1 nach 5.0 v2</subtitle> -->
 		<legalnotice>
 			<literallayout>
 Version 5.0 v2
-Stand: 31.03.2019
+Stand: 09.11.2021
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2019
+(c) 2002-2021
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -41,7 +41,7 @@ feedback@univention.de
 	<chapter id="changelog:main">
 		<title>&ucsUAS;-Update</title>
 		<para>
-			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.4 v9 nach 5.0 v1.
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 5.0 v1 nach 5.0 v2.
 			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
 			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
 		</para>
@@ -60,76 +60,17 @@ feedback@univention.de
 		<section id="changelog:newerrata">
 			<title>Updateprozess</title>
 			<para>
-				Größere Updates für UCS@school werden im Univention Appcenter als eigenständiges App-Update herausgegeben.
-				Kleinere Updates und Fehlerbereinigungen (Errata für UCS@school), die keine Interaktion mit dem Administrator erforderlich machen, werden im Repository der
-				bereits veröffentlichten App-Version von UCS@school herausgegeben. Die Changelog-Dokumente, die Univention mit jeder UCS@school-App-Version
+				Größere Updates für &ucsUAS; werden im Univention Appcenter als eigenständiges App-Update herausgegeben.
+				Kleinere Updates und Fehlerbereinigungen (Errata für &ucsUAS;), die keine Interaktion mit dem Administrator erforderlich machen, werden im Repository der
+				bereits veröffentlichten App-Version von &ucsUAS; herausgegeben. Die Changelog-Dokumente, die Univention mit jeder &ucsUAS;-App-Version
 				herausgibt, werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche
 				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
-			</para>
-		</section>
-		<section id="changelog:computerroom-backend">
-			<title>Veyon löst iTALC als Computerraum Backend ab</title>
-			<para>
-			  Ab &ucsUAS; 5.0 wird Veyon als Computerraum Backend eingesetzt. iTALC wird für diese Version nicht weiter unterstützt.
-			  In den UMC-Modulen <guimenu>Computerraum</guimenu> und <guimenu>Klassenarbeiten</guimenu> werden fortan nur noch Computerräume angezeigt, deren Backend auf Veyon gesetzt ist.
-			</para>
-			<para>
-				Das Upgrade auf &ucsUAS; 5.0 in Single-Server-Umgebungen und &ucsReplicaDN; auf denen sich bereits Computerräumen befinden, ist noch nicht möglich.
-				In einem kommenden Errata Release wird dies freigeschaltet.
-			</para>
-			<para>
-				Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
-				Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
-				Die Schritte der Migration von iTALC zu Veyon sind auf https://help.univention.com/t/16937 beschrieben.
 			</para>
 		</section>
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
 			<itemizedlist>
 				<listitem><para>
-					All components have been migrated to Python 3 (<u:bug>52608</u:bug>, <u:bug>52609</u:bug>, <u:bug>52611</u:bug>, <u:bug>52612</u:bug>, <u:bug>52613</u:bug>, <u:bug>52614</u:bug>, <u:bug>52615</u:bug>, <u:bug>52616</u:bug>, <u:bug>52617</u:bug>, <u:bug>52618</u:bug>, <u:bug>52619</u:bug>, <u:bug>52620</u:bug>, <u:bug>52621</u:bug>, <u:bug>52622</u:bug>, <u:bug>52623</u:bug>, <u:bug>52624</u:bug>, <u:bug>52625</u:bug>, <u:bug>52626</u:bug>, <u:bug>52627</u:bug>, <u:bug>52628</u:bug>, <u:bug>52630</u:bug>, <u:bug>52631</u:bug>, <u:bug>52632</u:bug>, <u:bug>52633</u:bug>, <u:bug>52634</u:bug>, <u:bug>52635</u:bug>, <u:bug>52636</u:bug>, <u:bug>52637</u:bug>, <u:bug>52638</u:bug>, <u:bug>52639</u:bug>, <u:bug>52640</u:bug>, <u:bug>52641</u:bug>, <u:bug>52642</u:bug>, <u:bug>52643</u:bug>, <u:bug>52644</u:bug>, <u:bug>52645</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>)
-				</para></listitem>
-				<listitem><para>
-					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The Demo Portal has been removed (<u:bug>53460</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					<package>iTALC</package> has been removed from UCS@school (<u:bug>53364</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					<package>UCC</package> has been removed from UCS@school (<u:bug>53365</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The LDAP ACL's for UVMM are only applied if the UVMM schema is installed (<u:bug>53392</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The printer URI of the default pdf printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					All importer `Reader` classes now need to implement the `get_imported_udm_property_names` method (<u:bug>53816</u:bug>).
 				</para></listitem>
 			</itemizedlist>
 			</section>
