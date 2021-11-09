@@ -1,3 +1,9 @@
+ucs-school-import (18.0.9) unstable; urgency=low
+
+  * Bug #54018: remove legacy leftovers
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 09 Nov 2021 10:19:47 +0100
+
 ucs-school-import (18.0.8) unstable; urgency=low
 
   * Bug #54018: remove legacy user import

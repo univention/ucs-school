@@ -43,7 +43,7 @@ def cleanup():
 def test_modify_user_data_in_pyhooks(ucr, schoolenv, cleanup):
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-    print("*** Trying non-legacy import - 1st to create users, 2nd to modify them.")
+    print("*** Running import - 1st to create users, 2nd to modify them.")
 
     with tempfile.NamedTemporaryFile() as csvfile:
         cmd = [
@@ -79,7 +79,7 @@ def test_modify_user_data_in_pyhooks(ucr, schoolenv, cleanup):
         exitcode = subprocess.call(cmd)
         print("*** Ignoring result of 1st import (exit code {!r})".format(exitcode))
 
-        print("*** Trying non-legacy import 2nd time - must fail.")
+        print("*** Running import 2nd time - must fail.")
 
         cmd = [
             "/usr/share/ucs-school-import/scripts/ucs-school-user-import",

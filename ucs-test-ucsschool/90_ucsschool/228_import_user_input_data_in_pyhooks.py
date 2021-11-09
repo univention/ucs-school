@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
-## desc: Test if input_data is filled in legacy during pre_/post_delete hooks
+## desc: Test if input_data is filled in during pre_/post_delete hooks
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -40,7 +40,7 @@ def cleanup():
 def test_import_user_input_data_in_pyhooks(ucr, schoolenv, cleanup):
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
-    print("*** Trying non-legacy import - 1st to create users, 2nd to remove them.")
+    print("*** Running import - 1st to create users, 2nd to remove them.")
 
     cmd = [
         "/usr/share/ucs-school-import/scripts/ucs-school-testuser-import",
@@ -57,7 +57,7 @@ def test_import_user_input_data_in_pyhooks(ucr, schoolenv, cleanup):
     exitcode = subprocess.call(cmd)
     print("*** Ignoring result of 1st import (exit code {!r})".format(exitcode))
 
-    print("*** Trying non-legacy import 2nd time - must fail.")
+    print("*** Running import 2nd time - must fail.")
 
     cmd = [
         "/usr/share/ucs-school-import/scripts/ucs-school-testuser-import",
@@ -73,6 +73,6 @@ def test_import_user_input_data_in_pyhooks(ucr, schoolenv, cleanup):
     sys.stderr.flush()
     exitcode = subprocess.call(cmd)
     assert exitcode != 0, "Import did not fail, although it should."
-    print("*** OK: non-legacy import process fail (exit code {!r})".format(exitcode))
+    print("*** OK: import process fail (exit code {!r})".format(exitcode))
 
     logger.info("*** OK: Test was successful.\n\n\n")
