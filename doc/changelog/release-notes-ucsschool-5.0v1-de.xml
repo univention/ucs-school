@@ -43,6 +43,7 @@ feedback@univention.de
 			&ucsUAS; 5.0 v1 steht jetzt für das fünfte Major-Release von Univention Corporate Server (UCS) zur Verfügung.
 			Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 5.0
 			eingeflossen sind.
+		</para>
 			<para>
 				Die wichtigsten Änderungen in &ucsUAS; im Überblick:
 			</para>
@@ -65,11 +66,10 @@ feedback@univention.de
 				<listitem>
 					<para>
 						Das &ucsUAS; verwendet jetzt die Begriffe &ucsPrimaryDN; für "DC Master" &ucsReplicaDN; für "DC Slave".
-						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>).
+						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>.
 					</para>
 				</listitem>
 			</itemizedlist>
-		</para>
 	</chapter>
 
 	<chapter id="relnotes:prepare">
@@ -209,6 +209,8 @@ Checking ldap_schema ...                          OK
 			</para>
 			<para>
 				Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
+			</para>
+			<para>
 				Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
 				Die Schritte der Migration von <package>iTALC</package> zu <package>Veyon</package> sind auf <ulink url="https://help.univention.com/t/16937"></ulink> beschrieben.
 			</para>
@@ -221,8 +223,6 @@ Checking ldap_schema ...                          OK
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
-		<section id="changelog:changelogs2" lang="en">
-			<title>Changelog</title>
 			<itemizedlist>
 				<listitem><para>
 					All components have been migrated to Python 3 (<u:bug>52608</u:bug>, <u:bug>52609</u:bug>, <u:bug>52611</u:bug>, <u:bug>52612</u:bug>, <u:bug>52613</u:bug>, <u:bug>52614</u:bug>, <u:bug>52615</u:bug>, <u:bug>52616</u:bug>, <u:bug>52617</u:bug>, <u:bug>52618</u:bug>, <u:bug>52619</u:bug>, <u:bug>52620</u:bug>, <u:bug>52621</u:bug>, <u:bug>52622</u:bug>, <u:bug>52623</u:bug>, <u:bug>52624</u:bug>, <u:bug>52625</u:bug>, <u:bug>52626</u:bug>, <u:bug>52627</u:bug>, <u:bug>52628</u:bug>, <u:bug>52630</u:bug>, <u:bug>52631</u:bug>, <u:bug>52632</u:bug>, <u:bug>52633</u:bug>, <u:bug>52634</u:bug>, <u:bug>52635</u:bug>, <u:bug>52636</u:bug>, <u:bug>52637</u:bug>, <u:bug>52638</u:bug>, <u:bug>52639</u:bug>, <u:bug>52640</u:bug>, <u:bug>52641</u:bug>, <u:bug>52642</u:bug>, <u:bug>52643</u:bug>, <u:bug>52644</u:bug>, <u:bug>52645</u:bug>).
@@ -270,15 +270,14 @@ Checking ldap_schema ...                          OK
 					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
+					Print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The printer URI of the default pdf printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					All importer `Reader` classes now need to implement the `get_imported_udm_property_names` method (<u:bug>53816</u:bug>).
+					All importer <emphasis>Reader</emphasis> classes now need to implement the <emphasis>get_imported_udm_property_names</emphasis> method (<u:bug>53816</u:bug>).
 				</para></listitem>
 			</itemizedlist>
-			</section>
 	</chapter>
 </book>
