@@ -17,7 +17,7 @@ This document describes how to prepare and execute an Errata Release for the UCS
   - Changelog will be modified
   - Upload of binaries to TestAppCenter
   - Moving of advisories to published
-- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')`.
+- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v1' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')`.
   This has to be executed **on omar**.
 
 ## Publish to production App Center
@@ -26,8 +26,7 @@ The following code should be executed on omar:
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to omar and lists all available app center repositories
-./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
+./copy_from_appcenter.test.sh 5.0 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
@@ -38,7 +37,7 @@ This Jenkins job requires manual intervention to approve the new documentation i
 
 ## Update public information
 
-Update [Release Ankündigungen für UCS@school 4.4](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-12-10-2020/12064)
+Update [Release Ankündigungen für UCS@school 5.0](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-12-10-2020/12064)
 by adding a new section **above** the existing ones.
 
 Send an internal announcement mail with the following text (**Adapt version and name**):
@@ -48,10 +47,10 @@ Subject: App Center: UCS@school aktualisiert
 
 Hallo zusammen,
 
-für UCS@school 4.4 v9 wurden soeben Errata freigegeben.
+für UCS@school 5.0 v1 wurden soeben Errata freigegeben.
 
 Das Changelog ist hier abrufbar:
-http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
 
 Auszüge aus dem Changelog:
 - ...
@@ -70,9 +69,9 @@ grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sor
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-Errata updates for UCS@school 4.4 v9 have been released.
+Errata updates for UCS@school 5.0 v1 have been released.
 
-https://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+https://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
 
 If this error occurs again, please clone this bug.
 </pre>
@@ -81,12 +80,12 @@ If this error occurs again, please clone this bug.
 
 Do the following checks and document the result in Taiga/Bugzilla/Gitlab:
 
-* OK: all packages have been uploaded to the public appcenter (http://appcenter.software-univention.de/univention-repository/4.4/maintained/component/ucsschool_20201208103021/)
+* OK: all packages have been uploaded to the public appcenter (http://appcenter.software-univention.de/univention-repository/5.0/maintained/component/ucsschool_20201208103021/)
 * OK: successfully updated in a multi-server env Primary Directory Node and Replica Directory Node
 * OK: all bugs have been closed (52945, 49102, 49557)
 * OK: all yaml files have been renamed (`doc/errata/published/2021-05-26-*`)
-* OK: manual updated (https://docs.software-univention.de/ucsschool-handbuch-4.4.html)
-* OK: the changelog has been build and uploaded (http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html)
+* OK: manual updated (https://docs.software-univention.de/ucsschool-handbuch-5.0.html)
+* OK: the changelog has been build and uploaded (http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html)
 * OK: help.univention.com text updated (https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-26-05-2021/12064)
 * OK: internal announcement mail
-* OK: new git tag (`release-4.4v10`) OR no new git tag, as the apps version didn't change
+* OK: new git tag (`release-5.0v10`) OR no new git tag, as the apps version didn't change

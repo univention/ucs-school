@@ -39,15 +39,15 @@ Last step for preparations is to create a Bug for the release commits.
 ## Create new version in Test AppCenter and push new packages
 
 ```shell
-univention-appcenter-control new-version "4.4/ucsschool=4.4 v8" "4.4/ucsschool=4.4 v9"
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v8" "5.0/ucsschool=5.0 v1"
 univention-appcenter-control status ucsschool  # Determine component_id for next step
-appcenter-modify-README -a ucsschool -r 4.4 -v "4.4 v9"
+appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v1"
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 4.4 -v "4.2 v9" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
+copy_app_binaries -r 5.0 -v "4.2 v1" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
-univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v1' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Create new changelog
@@ -60,7 +60,7 @@ create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
 
 For example:
 ```shell
-create_app_changelog -r 4.4 -v "4.4 v9" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
+create_app_changelog -r 5.0 -v "5.0 v1" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
 ```
 
 Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
@@ -70,12 +70,12 @@ vi ../../changelog/Makefile
 ```
 
 <pre>
-- MAIN := changelog-ucsschool-4.4-de
-+ MAIN := changelog-ucsschool-4.4v9-de
+- MAIN := changelog-ucsschool-5.0-de
++ MAIN := changelog-ucsschool-5.0v1-de
 </pre>
 
 ```shell
-git add ../../changelog/changelog-ucsschool-4.4v9-de.xml ../../changelog/Makefile
+git add ../../changelog/changelog-ucsschool-5.0v1-de.xml ../../changelog/Makefile
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```
@@ -97,7 +97,7 @@ git add src/content.yaml
 git commit -m 'Bug #xxxxx: Added xxxx'
 git push
 cd ~/git/docs.software-univention.de
-git add release-notes_4.4.html.*
+git add release-notes_5.0.html.*
 git commit -m 'Bug #xxxxx: Added xxxx'
 git push
 ```
@@ -110,14 +110,13 @@ Run [Publish Docs job](https://jenkins.knut.univention.de:8181/view/Publish/job/
 This code should be run **on dimma or omar**:
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to dimma/omar and lists all available app center repositories
-./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
+./copy_from_appcenter.test.sh 5.0 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
 ## Update public information
 
-Update [Release Ankündigungen für UCS@school 4.4](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-12-10-2020/12064)
+Update [Release Ankündigungen für UCS@school 5.0](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-12-10-2020/12064)
 by adding a new section **above** the existing ones.
 
 Send an internal announcement mail with the following text (**Adapt version and name**):
@@ -128,10 +127,10 @@ Subject: App Center: UCS@school aktualisiert
 Hallo zusammen,
 
 folgendes App-Update wurde eben freigegeben:
-- UCS@school 4.4 v9
+- UCS@school 5.0 v1
 
 Das Changelog ist hier abrufbar:
-http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
 
 Auszüge aus dem Changelog:
 - ...
@@ -150,9 +149,9 @@ grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sor
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 4.4 v9 has been released.
+UCS@school 5.0 v1 has been released.
 
-https://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+https://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
 
 If this error occurs again, please clone this bug.
 </pre>
