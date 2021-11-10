@@ -23,7 +23,7 @@ Depends:
  python3-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,
- univention-config-registry,
+ univention-config,
  univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
