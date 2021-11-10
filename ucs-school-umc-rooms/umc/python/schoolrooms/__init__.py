@@ -134,7 +134,6 @@ class Instance(SchoolBaseModule):
         group_props["hosts"] = group_props.get("computers")
 
         room = ComputerRoom(**group_props)
-        room.veyon_backend = True
         if room.get_relative_name() == room.name:
             room.name = "%(school)s-%(name)s" % group_props
         room.set_dn(group_props["$dn$"])
