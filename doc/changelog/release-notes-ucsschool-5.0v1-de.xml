@@ -9,8 +9,8 @@
 <book lang="de" id="releasenotes-5.0-de">
 
 	<bookinfo>
- 		<title>UCS@school 5.0 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 5.0 v1</subtitle>
+ 		<title>&ucsUAS; 5.0 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von &ucsUAS; 5.0 v1</subtitle>
 		<legalnotice>
 			<literallayout>
 Version 5.0 v1
@@ -231,37 +231,46 @@ Checking ldap_schema ...                          OK
 					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>)
 				</para></listitem>
 				<listitem><para>
-					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
+					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The Demo Portal has been removed (<u:bug>53460</u:bug>).
-				</para></listitem>
-				<listitem>
-					<para>
 						The &ucsUAS; now uses the terms &ucsPrimaryDN; for "DC Master" &ucsReplicaDN; for "DC Slave" (see <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>). Accordingly, the documentation,
 						as well as the Debian package names have been adjusted. UCR-Variable names did not change yet (<u:bug>20064</u:bug>).
-					</para>
-				</listitem>
+				</para></listitem>
 				<listitem><para>
-					<package>iTALC</package> has been removed from UCS@school (<u:bug>53364</u:bug>).
+					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					<package>Veyon</package> becomes the new standard of the computer room backend. A diagnostic module was written to make non-migrated computer rooms visible (<u:bug>53954</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
+					(<u:bug>27892</u:bug>) introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically creates mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
+					Typos in email addresses did not lead to an errors that the user can see, but instead to a bad email domain in the UCS domain, which potentially lead to errors in the mail system much later.
+					On new hosts this UCR variable is now set to "no" (<u:bug>53931</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The Demo Portal has been removed (<u:bug>53460</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>iTALC</package> has been removed from &ucsUAS; (<u:bug>53364</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>UCC</package> has been removed from &ucsUAS; (<u:bug>53365</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
+					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Print quota settings have been removed from &ucsUAS; (<u:bug>53452</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					All importer <emphasis>Reader</emphasis> classes now need to implement the <emphasis>get_imported_udm_property_names</emphasis> method (<u:bug>53816</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					<package>UCC</package> has been removed from UCS@school (<u:bug>53365</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The LDAP ACL's for UVMM are only applied if the UVMM schema is installed (<u:bug>53392</u:bug>).
@@ -270,13 +279,7 @@ Checking ldap_schema ...                          OK
 					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					Print quota settings have been removed from UCS@school (<u:bug>53452</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					The printer URI of the default pdf printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
-				</para></listitem>
-				<listitem><para>
-					All importer <emphasis>Reader</emphasis> classes now need to implement the <emphasis>get_imported_udm_property_names</emphasis> method (<u:bug>53816</u:bug>).
+					The printer URI of the default PDF printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
 				</para></listitem>
 			</itemizedlist>
 	</chapter>
