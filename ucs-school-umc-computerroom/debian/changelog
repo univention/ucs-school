@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (12.0.7) unstable; urgency=medium
+
+  * Bug #53954: only veyon rooms are visible in the umc computer room
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 16:58:22 +0100
+
 ucs-school-umc-computerroom (12.0.6) unstable; urgency=low
 
   * Bug #53988: use systemctl in /bin

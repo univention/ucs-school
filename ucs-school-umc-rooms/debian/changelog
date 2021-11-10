@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (17.0.6) unstable; urgency=medium
+
+  * Bug #53954: respect italc backend in ucs 5.0. new rooms are veyon. 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 16:59:51 +0100
+
 ucs-school-umc-rooms (17.0.5) unstable; urgency=low
 
   * Bug #53988: fix linter errors
