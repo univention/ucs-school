@@ -1,3 +1,9 @@
+ucs-school-import (18.0.10) unstable; urgency=medium
+
+  * Bug #53931: new default value for ucr-v 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 17:18:09 +0100
+
 ucs-school-import (18.0.9) unstable; urgency=low
 
   * Bug #54018: remove legacy leftovers
