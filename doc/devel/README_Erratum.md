@@ -26,7 +26,6 @@ The following code should be executed on omar:
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 4.4  # copies current state of test app center to omar and lists all available app center repositories
 ./copy_from_appcenter.test.sh 4.4 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
