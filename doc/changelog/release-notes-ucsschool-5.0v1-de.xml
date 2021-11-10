@@ -244,8 +244,8 @@ Checking ldap_schema ...                          OK
 					<package>Veyon</package> becomes the new standard of the computer room backend. A diagnostic module was written to make non-migrated computer rooms visible (<u:bug>53954</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					(<u:bug>27892</u:bug>) introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically creates mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
-					Typos in email addresses did not lead to an errors that the user can see, but instead to a bad email domain in the UCS domain, which potentially lead to errors in the mail system much later.
+					(<u:bug>27892</u:bug>) introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically create mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
+					Typos in email addresses did not lead to an errors that the user can see, but instead to bad email domains in the UCS domain, which potentially lead to errors in the mail system much later.
 					On new hosts this UCR variable is now set to "no" (<u:bug>53931</u:bug>).
 				</para></listitem>
 				<listitem><para>
