@@ -466,6 +466,25 @@ cd /usr/share/ucs-school-import/scripts/
 		</para>
 	  </section>
 	</section>
+
+    <section id="school:setup:kelvin-rest-api">
+        <title>UCS@school Kelvin REST API</title>
+        <para>
+            Die UCS@school Kelvin REST API App installiert eine REST
+            Schnittstelle zur Verwaltung von UCS@school-Objekten wie zum
+            Beispiel Schulen, Rollen, Klassen und Benutzern. Die Objekte können
+            über die Schnittstelle gelesen und abgefragt, verändert und gelöscht
+            werden. Die Schnittstelle dient dazu, den Verzeichnisdienst in
+            UCS@school per Netzwerkschnittstelle anzusprechen, zum Beispiel von
+            einer Schulverwaltungssoftware oder einem Bildungsangebot.
+        </para>
+        <para>
+            Weitere Informationen finden sich in der
+            <ulink url="https://docs.software-univention.de/ucsschool-kelvin-rest-api/index.html">
+            Entwicklerdokumentation der Schnittstelle
+            </ulink>.
+        </para>
+    </section>
 </chapter>
 
 <!--  LocalWords:  Benutzerkonten
