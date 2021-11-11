@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%entities;
+]>
+<book lang="de" id="releasenotes-5.0-de">
+
+	<bookinfo>
+ 		<title>&ucsUAS; 5.0 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von &ucsUAS; 5.0 v1</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 5.0 v1
+Stand: 09. November 2021
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2021
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+
+	<chapter id="relnotes:highlights">
+		<title>Release-Highlights</title>
+		<para>
+			&ucsUAS; 5.0 v1 steht jetzt für das fünfte Major-Release von Univention Corporate Server (UCS) zur Verfügung.
+			Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 5.0
+			eingeflossen sind.
+		</para>
+			<para>
+				Die wichtigsten Änderungen in &ucsUAS; im Überblick:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Alle Komponenten wurden zu Python 3 migriert.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						Alle &ucsUMC; Module wurden an das neue UCS 5 Design angepasst. Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2021/05/release-univention-corporate-server-5-0/"></ulink> .
+					</para>
+					</listitem>
+				<listitem>
+					<para>
+						<package>Veyon</package> löst <package>iTALC</package> als Computerraum Backend ab.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						&ucsUAS; verwendet jetzt die Begriffe "&ucsPrimaryDN;" für "&ucsMaster;" und "&ucsReplicaDN;" für "&ucsSlave;".
+						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>.
+					</para>
+				</listitem>
+			</itemizedlist>
+	</chapter>
+
+	<chapter id="relnotes:prepare">
+		<title>Hinweise zum Update</title>
+		<para>
+			Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+			kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+			erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+			einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+			Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+			installierter Software kann das Update zwischen 20 Minuten und mehreren Stunden
+			dauern.
+		</para>
+		<para>
+			Das Update von &ucsUAS; muss zunächst auf dem &ucsPrimaryDN; durchgeführt
+			werden, bevor das Update auf den übrigen &ucsUAS;-Systemen der Domäne gestartet werden
+			kann. Ansonsten wird es zu Problemen auf den übrigen &ucsUAS;-Schulservern kommen.
+		</para>
+		<para>
+			Das Upgrade auf &ucsUAS; 5.0 v1 in Single-Server-Umgebungen und &ucsReplicaDN; auf denen sich bereits Computerräumen befinden, ist noch nicht möglich.
+			In einem kommenden Errata Release wird dies freigeschaltet. Mehr dazu in <xref linkend="relnotes:computerroom-backend"/>.
+		</para>
+	</chapter>
+
+	<chapter id="relnotes:preparations">
+	  <title>Vorbereitung von Installation und Update</title>
+		<para>
+			Manuell erstellter Python-Programmcode muss vor dem Update auf Kompatibilität mit Python 3.7 geprüft und entsprechend angepasst werden. Das betrifft auch Univention Configuration Registry Templates, die Python-Code enthalten. In der [developer-reference] finden sich weitere Hinweise.
+		</para>
+	  <para>
+		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
+		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
+		der vorhanden Installation mindestens 2 GB weiteren Speicherplatz zum Herunterladen und
+		Installieren der Pakete.
+	  </para>
+
+	  <para>
+		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
+		<systemitem class="username">root</systemitem> durchgeführt und das Update dort gestartet werden. Alternativ
+		kann das Update über die &ucsUMC; durchgeführt werden.
+	  </para>
+
+	  <para>
+		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
+		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
+		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei einer Unterbrechung
+		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
+		<command>tmux</command>, <command>screen</command> oder <command>at</command> eingesetzt werden, das auf allen Systemrollen installiert sind.
+	  </para>
+
+		<para>
+			Mit UCS 5.0 bietet Univention wieder ein Skript an, mit dem Probleme, die das Update des UCS Systems verhindern würden, schon vor dem Update erkannt werden können.
+			Diese Skript kann vor dem Update manuell auf das System geladen und ausgeführt werden:
+			<screen><![CDATA[
+# download
+curl -OOf https://updates.software-univention.de/download/univention-update-checks/pre-update-checks-5.0-0{.gpg,}
+
+# verify and run script
+apt-key verify pre-update-checks-5.0-0{.gpg,} &&
+  bash pre-update-checks-5.0-0
+
+...
+
+Starting pre-update checks ...
+
+Checking app_appliance ...                        OK
+Checking block_update_of_NT_DC ...                OK
+Checking cyrus_integration ...                    OK
+Checking disk_space ...                           OK
+Checking hold_packages ...                        OK
+Checking ldap_connection ...                      OK
+Checking ldap_schema ...                          OK
+...
+			]]></screen>
+		</para>
+	</chapter>
+
+	<chapter id="relnotes:post">
+		<title>Nachbereitung des Updates</title>
+		<para>
+			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies kann auf zwei Wegen erfolgen: Entweder über das UMC-Modul  <guimenu>Domänenbeitritt</guimenu> oder durch Aufruf des Befehls <command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis>.
+		</para>
+		<para>
+			Anschließend muss das UCS-System neu gestartet werden.
+		</para>
+		<section id="relnotes:post:joinhooks" lang="de">
+			<title>Join-Hooks</title>
+			<para>
+				Der Installationsprozess nutzt das Feature <emphasis>Join-Hooks</emphasis>,
+				das ab &ucsUCS; 4.4 zur Verfügung steht. Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im
+				LDAP-Verzeichnis hinterlegt und automatisch während des Join-Vorgangs bzw. während der Ausführung von Joinskripten
+				ausgeführt. Der &ucsUAS;-Join-Hook installiert auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus
+				dem Univention App Center und installiert die auf dem jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese
+				noch fehlen.
+			</para>
+			<para>
+				Nach dem Update des &ucsPrimaryDN; auf UCS 5.0/&ucsUAS; 5.0 muss auf allen anderen Systemen der Domäne der Befehl
+				<command>univention-run-join-scripts</command> auf der Kommandozeile ausgeführt werden, was den Join-Hook auf
+				jedem System erstmalig ausführt. Für die Erstinstallation der benötigten Pakete wird der Join-Hook je nach Rolle
+				des Systems und dessen Systemperformance mehrere Minuten benötigen. Dieser Vorgang darf dabei nicht abgebrochen
+				werden.
+			</para>
+		</section>
+	</chapter>
+
+	<chapter id="relnotes:umc">
+		<title>Hinweise zum Zugriff auf die Univention Management Console</title>
+			<para>
+				&ucsUMC; verwendet für die Darstellung der Web-Oberfläche zahlreiche Javascript- und
+				CSS-Funktionen. Cookies müssen im Browser zugelassen sein. Die folgenden Browser werden
+				empfohlen:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>Chrome ab Version 85</para>
+				</listitem>
+				<listitem>
+					<para>Firefox ab Version 78</para>
+				</listitem>
+				<listitem>
+					<para>Safari und Safari Mobile ab Version 13</para>
+				</listitem>
+				<listitem>
+					<para>Microsoft Edge ab Version 88</para>
+				</listitem>
+			</itemizedlist>
+            <para>
+				Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
+			</para>
+	</chapter>
+	<chapter id="relnotes:computerroom-backend">
+	<title>Veyon löst iTALC als Computerraum Backend ab</title>
+			<para>
+			  Mit &ucsUAS; 4.4 v9 wurde <package>Veyon</package> als Nachfolger des Computerraum Backends <package>iTALC</package> eingeführt, um dieses in &ucsUAS; 5.0 v1 abzulösen. Ab &ucsUAS; 5.0 v1 wird nun ausschließlich <package>Veyon</package> als Computerraum Backend eingesetzt.
+			  In den UMC-Modulen <guimenu>Computerraum</guimenu> und <guimenu>Klassenarbeiten</guimenu> werden fortan nur noch Computerräume angezeigt, deren Backend auf  <package>Veyon</package> gesetzt ist.
+			</para>
+			<para>
+				Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
+			</para>
+			<para>
+				Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
+				Die Schritte der Migration von <package>iTALC</package> zu <package>Veyon</package> sind auf <ulink url="https://help.univention.com/t/16937"></ulink> beschrieben.
+			</para>
+    </chapter>
+	<chapter id="relnotes:changes">
+		<title>Changelog</title>
+		<para>
+		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den &ucsUAS;-Versionen 4.4 v9 und 5.0 v1. Die
+		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
+		  url="https://docs.software-univention.de/"/>.
+		</para>
+			<itemizedlist>
+				<listitem><para>
+					All components have been migrated to Python 3 (<u:bug>52608</u:bug>, <u:bug>52609</u:bug>, <u:bug>52611</u:bug>, <u:bug>52612</u:bug>, <u:bug>52613</u:bug>, <u:bug>52614</u:bug>, <u:bug>52615</u:bug>, <u:bug>52616</u:bug>, <u:bug>52617</u:bug>, <u:bug>52618</u:bug>, <u:bug>52619</u:bug>, <u:bug>52620</u:bug>, <u:bug>52621</u:bug>, <u:bug>52622</u:bug>, <u:bug>52623</u:bug>, <u:bug>52624</u:bug>, <u:bug>52625</u:bug>, <u:bug>52626</u:bug>, <u:bug>52627</u:bug>, <u:bug>52628</u:bug>, <u:bug>52630</u:bug>, <u:bug>52631</u:bug>, <u:bug>52632</u:bug>, <u:bug>52633</u:bug>, <u:bug>52634</u:bug>, <u:bug>52635</u:bug>, <u:bug>52636</u:bug>, <u:bug>52637</u:bug>, <u:bug>52638</u:bug>, <u:bug>52639</u:bug>, <u:bug>52640</u:bug>, <u:bug>52641</u:bug>, <u:bug>52642</u:bug>, <u:bug>52643</u:bug>, <u:bug>52644</u:bug>, <u:bug>52645</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					All &ucsUMC; modules have been adjusted to the styling of the UCS 5 design (<u:bug>53366</u:bug>, <u:bug>53367</u:bug>, <u:bug>53368</u:bug>, <u:bug>53369</u:bug>, <u:bug>53370</u:bug>, <u:bug>53371</u:bug>, <u:bug>53372</u:bug>, <u:bug>53373</u:bug>, <u:bug>53374</u:bug>, <u:bug>53375</u:bug>, <u:bug>53376</u:bug>, <u:bug>53377</u:bug>, <u:bug>53378</u:bug>, <u:bug>53379</u:bug>)
+				</para></listitem>
+				<listitem><para>
+					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
+				</para></listitem>
+				<listitem><para>
+						The &ucsUAS; now uses the terms &ucsPrimaryDN; for "DC Master" &ucsReplicaDN; for "DC Slave" (see <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>). Accordingly, the documentation,
+						as well as the Debian package names have been adjusted. UCR-Variable names did not change yet (<u:bug>20064</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>Veyon</package> becomes the new standard of the computer room backend. A diagnostic module was written to make non-migrated computer rooms visible (<u:bug>53954</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					(<u:bug>27892</u:bug>) introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically create mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
+					Typos in email addresses did not lead to an errors that the user can see, but instead to bad email domains in the UCS domain, which potentially lead to errors in the mail system much later.
+					On new hosts this UCR variable is now set to "no" (<u:bug>53931</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The Demo Portal has been removed (<u:bug>53460</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>iTALC</package> has been removed from &ucsUAS; (<u:bug>53364</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>UCC</package> has been removed from &ucsUAS; (<u:bug>53365</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					Print quota settings have been removed from &ucsUAS; (<u:bug>53452</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					All importer <emphasis>Reader</emphasis> classes now need to implement the <emphasis>get_imported_udm_property_names</emphasis> method (<u:bug>53816</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The LDAP ACL's for UVMM are only applied if the UVMM schema is installed (<u:bug>53392</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					<package>celery</package> has been migrated to <package>systemd</package> (<u:bug>53451</u:bug>).
+				</para></listitem>
+				<listitem><para>
+					The printer URI of the default PDF printer has been adjusted to meet the latest cups requirements (<u:bug>53598</u:bug>).
+				</para></listitem>
+			</itemizedlist>
+	</chapter>
+</book>
