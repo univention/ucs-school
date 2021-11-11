@@ -65,7 +65,7 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Das &ucsUAS; verwendet jetzt die Begriffe &ucsPrimaryDN; für "DC Master" &ucsReplicaDN; für "DC Slave".
+						&ucsUAS; verwendet jetzt die Begriffe "&ucsPrimaryDN;" für "&ucsMaster;" und "&ucsReplicaDN;" für "&ucsSlave;".
 						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>.
 					</para>
 				</listitem>
