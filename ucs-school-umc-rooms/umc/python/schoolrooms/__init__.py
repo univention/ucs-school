@@ -134,6 +134,11 @@ class Instance(SchoolBaseModule):
         group_props["hosts"] = group_props.get("computers")
 
         room = ComputerRoom(**group_props)
+        # Since we do not have any option on UCS@school 5.0 in the frontend,
+        # we need to retrieve the role from ldap.
+        room.veyon_backend = ComputerRoom.from_dn(
+            lo=ldap_user_read, dn=group_props["$dn$"], school=group_props["school"]
+        ).veyon_backend
         if room.get_relative_name() == room.name:
             room.name = "%(school)s-%(name)s" % group_props
         room.set_dn(group_props["$dn$"])
