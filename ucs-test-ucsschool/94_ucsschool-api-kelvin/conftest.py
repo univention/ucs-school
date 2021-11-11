@@ -117,7 +117,7 @@ def make_user_attrs(import_config, mail_domain, random_int, random_username):
                 "source_uid",
             ]
             random.shuffle(removable_attrs)
-            for k in res.keys():
+            for k in list(res):
                 if k not in removable_attrs[:num_attrs]:
                     del res[k]
         res.update(kwargs)
