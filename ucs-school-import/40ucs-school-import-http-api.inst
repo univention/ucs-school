@@ -109,6 +109,7 @@ RABBITMQ_USER="importhttpapi"
 RABBITMQ_VHOST="importhttpapi"
 POSTGRES_USER="importhttpapi"
 POSTGRES_DB="importhttpapi"
+POSTGRES_DB_BACKUP="/var/backups/postgres_importhttpapi_$(date +%Y%m%d_%H%M%S).sql"
 
 ADMINISTRATOR_UID="$(custom_username "Administrator")"
 
@@ -185,22 +186,33 @@ unset DJANGO_SETTINGS_MODULE
 python3 -m ucsschool.http_api.manage check --no-color --deploy || die
 echo "Collecting static files..."
 python3 -m ucsschool.http_api.manage collectstatic --no-color --noinput --link || die
-if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
-	echo "Handling django-celerys upgrade (faking DB schema migration)..."
-	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial djcelery
-fi
 
 if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 13 ]; then
-	echo "Upgrading schema from UCS@school 4.4 to UCS@school 5.0"
-	su - postgres -c "psql -d '$POSTGRES_DB' -c \"delete from django_migrations where app='import_api';\"" || die 'Failed removing django migrations'
-	python3 -m ucsschool.http_api.manage migrate --no-color --noinput django_celery_results || die 'Failed initializing django_celery_results'
-	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" DROP CONSTRAINT "import_api_userimportj_result_id_7383b884_fk_celery_taskmeta_id";'" || die 'Failed to drop djcelery constraint'
-	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER TABLE "import_api_userimportjob" ADD CONSTRAINT "impor_result_id_7383b884_fk_django_celery_results_taskresult_id" FOREIGN KEY ("result_id") REFERENCES "django_celery_results_taskresult" ("id") DEFERRABLE INITIALLY DEFERRED;'" || die 'Failed to create django_celery_results constraint'
-	printf "SELECT CONCAT('ALTER SEQUENCE django_celery_results_taskresult_id_seq RESTART WITH ', (SELECT nextval('celery_taskmeta_id_seq')), ';'); \\gexec" | su - postgres -c "psql -d '$POSTGRES_DB'" || die "Could not set AUTOINCREMENT value"
-	python3 -m ucsschool.http_api.manage migrate --no-color --noinput --fake-initial import_api
+	echo "Upgrading database schema from UCS@school 4.4 to UCS@school 5.0..."
+	NEXT_IMPORT_ID="$(python3 -m ucsschool.http_api.manage shell -c 'from ucsschool.http_api.import_api.models import UserImportJob; print(UserImportJob.objects.last().pk + 1) if UserImportJob.objects.exists() else print(1)')" || die
+	echo "Next user import ID will be '$NEXT_IMPORT_ID'."
+	echo "Creating backup of database '$POSTGRES_DB' in '$POSTGRES_DB_BACKUP'..."
+	TMP_FILE="/var/lib/postgresql/postgres.dump.importhttpapi.sql"
+  touch "$TMP_FILE"
+  chown postgres:postgres "$TMP_FILE"
+  chmod 640 "$TMP_FILE"
+	su - postgres -c "pg_dump -f '$TMP_FILE' importhttpapi" || die
+  chown root:root "$TMP_FILE"
+  chmod 440 "$TMP_FILE"
+  mv "$TMP_FILE" "$POSTGRES_DB_BACKUP" || die
+	echo "Dropping '$POSTGRES_DB' database..."
+	su - postgres -c "psql -c 'DROP DATABASE $POSTGRES_DB;'" || die
+	echo "Creating new PostgreSQL database..."
+  su - postgres -c "createdb -E UTF8 -O $POSTGRES_USER -T template0 $POSTGRES_DB" || die
+  echo "Creating tables..."
+  python3 -m ucsschool.http_api.manage migrate --no-color --noinput || die
+  echo "Setting next user import ID in database..."
+	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER SEQUENCE django_celery_results_taskresult_id_seq RESTART WITH $NEXT_IMPORT_ID;'" || die
+	echo "Schema upgrade done."
 fi
 echo "Migrating DB schema..."
 python3 -m ucsschool.http_api.manage migrate --no-color --noinput || die
+echo "Creating Django superuser (ignore next error message if it didn't exist)..."
 if python3 -m ucsschool.http_api.manage superuserexists "$ADMINISTRATOR_UID";
 then
     printf "\nSuper user exists.\n"
@@ -211,16 +223,15 @@ fi
 echo "Seeding DB with School entries..."
 python3 -m ucsschool.http_api.manage updateschools --all || die
 
+echo "Configuring Apache..."
 a2enmod proxy_http
 a2ensite ucs-school-import-http-api.conf
 
 echo "Enabling and starting services..."
+SERVICES="rabbitmq-server.service ucs-school-import-celery-worker.service postgresql.service ucs-school-import-http-api.service apache2.service"
 systemctl daemon-reload
-for SERVICE in  rabbitmq-server ucs-school-import-celery-worker postgresql ucs-school-import-http-api apache2;
-do
-    deb-systemd-invoke enable "$SERVICE.service"
-    deb-systemd-invoke start "$SERVICE.service"
-done
+deb-systemd-invoke enable $SERVICES
+deb-systemd-invoke start $SERVICES
 
 univention-directory-manager policies/umc create "$@" --ignore_exists \
 	--position "cn=UMC,cn=policies,$ldap_base" \
