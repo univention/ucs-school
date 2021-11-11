@@ -421,7 +421,7 @@ def test_move_teacher_one_school_only(
     logger.info("*** create_attrs=%r", create_attrs)
     assert create_attrs["school"].strip("/").split("/")[-1] == ou1
     assert create_attrs["schools"] == [create_attrs["school"]]
-    assert create_attrs["school_classes"].keys() == [ou1]
+    assert list(create_attrs["school_classes"].keys()) == [ou1]
     schoolenv.udm._cleanup.setdefault("groups/group", []).extend(extract_class_dns(create_attrs))
 
     create_result = create_remote_static((auth_header, create_attrs))
@@ -689,7 +689,7 @@ def test_move_teacher_remove_primary_no_classes_in_new_school(
         create_attrs["schools"][0].strip("/").split("/")[-1],
         create_attrs["schools"][1].strip("/").split("/")[-1],
     ] == ous
-    assert create_attrs["school_classes"].keys() == [ou1]
+    assert list(create_attrs["school_classes"].keys()) == [ou1]
     schoolenv.udm._cleanup.setdefault("groups/group", []).extend(extract_class_dns(create_attrs))
 
     create_result = create_remote_static((auth_header, create_attrs))
@@ -869,7 +869,7 @@ def test_modify_teacher_remove_all_classes(
     logger.info("*** Going to create teacher in OU %r, then remove all its classes. ***", ou)
     create_attrs = make_user_attrs([ou], partial=False, roles=("teacher",))
     logger.info("*** create_attrs=%r", create_attrs)
-    assert create_attrs["school_classes"].keys() == [ou]
+    assert list(create_attrs["school_classes"].keys()) == [ou]
     schoolenv.udm._cleanup.setdefault("groups/group", []).extend(extract_class_dns(create_attrs))
 
     create_result = create_remote_static((auth_header, create_attrs))
@@ -940,7 +940,7 @@ def test_modify_classes_2old_2new(
     logger.info("*** Going to create %s in OU %r. ***", role, ou)
     create_attrs = make_user_attrs([ou], partial=False, roles=(role,))
     logger.info("*** create_attrs=%r", create_attrs)
-    assert create_attrs["school_classes"].keys() == [ou]
+    assert list(create_attrs["school_classes"].keys()) == [ou]
     schoolenv.udm._cleanup.setdefault("groups/group", []).extend(extract_class_dns(create_attrs))
 
     create_result = create_remote_static((auth_header, create_attrs))
