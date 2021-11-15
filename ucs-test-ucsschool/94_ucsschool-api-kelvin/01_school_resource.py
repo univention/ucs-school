@@ -201,4 +201,7 @@ def test_create(auth_header, lo, schedule_delete_ou_at_end_of_session):
         attrs["name"], filter_s, res
     )
     school_attrs = res[0][1]
-    assert {"name": school_attrs["ou"][0], "display_name": school_attrs["displayName"][0]} == attrs
+    assert {
+        "name": school_attrs["ou"][0].decode("utf-8"),
+        "display_name": school_attrs["displayName"][0].decode("utf-8"),
+    } == attrs
