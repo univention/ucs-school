@@ -140,10 +140,11 @@ async def test_get(
     udm_kwargs,
     new_school_class_using_lib,
     create_ou_using_python,
+    mail_domain,
 ):
     ou = await create_ou_using_python()
     sc1_dn, sc1_attr = await new_school_class_using_lib(ou)
-    mail_address = f"{sc1_attr['name']}@example.org"
+    mail_address = f"{sc1_attr['name']}@{mail_domain}"
     async with UDM(**udm_kwargs) as udm:
         lib_obj: SchoolClass = await SchoolClass.from_dn(sc1_dn, ou, udm)
         lib_obj.udm_properties["mailAddress"] = mail_address
@@ -171,6 +172,7 @@ async def test_create(
     url_fragment,
     udm_kwargs,
     new_school_class_using_lib_obj,
+    mail_domain,
 ):
     school = await create_ou_using_python()
     lib_obj: SchoolClass = new_school_class_using_lib_obj(school)
@@ -180,7 +182,7 @@ async def test_create(
         "school": f"{url_fragment}/schools/{lib_obj.school}",
         "description": lib_obj.description,
         "users": lib_obj.users,
-        "udm_properties": {"mailAddress": f"{name}@example.org"},
+        "udm_properties": {"mailAddress": f"{name}@{mail_domain}"},
     }
     async with UDM(**udm_kwargs) as udm:
         assert await lib_obj.exists(udm) is False
@@ -194,12 +196,12 @@ async def test_create(
         assert response.status_code == 201
         api_obj = SchoolClassModel(**json_resp)
         assert lib_obj.dn == api_obj.dn
-        assert api_obj.udm_properties["mailAddress"] == f"{name}@example.org"
+        assert api_obj.udm_properties["mailAddress"] == f"{name}@{mail_domain}"
         assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is True
         await compare_lib_api_obj(lib_obj, api_obj, url_fragment)
         compare_ldap_json_obj(json_resp["dn"], json_resp, url_fragment)
         udm_obj = await udm.obj_by_dn(json_resp["dn"])
-        assert udm_obj.props["mailAddress"] == f"{name}@example.org"
+        assert udm_obj.props["mailAddress"] == f"{name}@{mail_domain}"
         await SchoolClass(name=lib_obj.name, school=lib_obj.school).remove(udm)
         assert await SchoolClass(name=lib_obj.name, school=lib_obj.school).exists(udm) is False
 
@@ -241,6 +243,7 @@ async def change_operation(
     udm_kwargs,
     new_school_class_using_lib,
     new_school_users,
+    mail_domain,
     operation: str,
     school: str,
 ):
@@ -265,7 +268,7 @@ async def change_operation(
         change_data = {
             "description": fake.text(max_nb_chars=50),
             "users": [f"{url_fragment}/users/{user.name}" for user in users],
-            "udm_properties": {"mailAddress": f"{sc1_attr['name']}@example.org"},
+            "udm_properties": {"mailAddress": f"{sc1_attr['name']}@{mail_domain}"},
         }
         if operation == "put":
             change_data["name"] = sc1_attr["name"]
@@ -284,8 +287,8 @@ async def change_operation(
         api_obj = SchoolClassModel(**json_resp)
         udm_obj = await udm.obj_by_dn(api_obj.dn)
         assert api_obj.dn == sc1_dn
-        assert api_obj.udm_properties["mailAddress"] == f"{sc1_attr['name']}@example.org"
-        assert udm_obj.props["mailAddress"] == f"{sc1_attr['name']}@example.org"
+        assert api_obj.udm_properties["mailAddress"] == f"{sc1_attr['name']}@{mail_domain}"
+        assert udm_obj.props["mailAddress"] == f"{sc1_attr['name']}@{mail_domain}"
         assert api_obj.description == change_data["description"]
         assert {api_obj.unscheme_and_unquote(url) for url in api_obj.users} == set(change_data["users"])
         usernames_in_response = {url2username(url) for url in api_obj.users}
@@ -305,6 +308,7 @@ async def test_put(
     new_school_class_using_lib,
     create_ou_using_python,
     new_school_users,
+    mail_domain,
 ):
     ou = await create_ou_using_python()
     await change_operation(
@@ -314,6 +318,7 @@ async def test_put(
         udm_kwargs,
         new_school_class_using_lib,
         new_school_users,
+        mail_domain,
         operation="put",
         school=ou,
     )
@@ -359,6 +364,7 @@ async def test_patch(
     new_school_class_using_lib,
     create_ou_using_python,
     new_school_users,
+    mail_domain,
 ):
     ou = await create_ou_using_python()
     await change_operation(
@@ -368,6 +374,7 @@ async def test_patch(
         udm_kwargs,
         new_school_class_using_lib,
         new_school_users,
+        mail_domain,
         operation="patch",
         school=ou,
     )
