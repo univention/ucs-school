@@ -317,7 +317,7 @@ def random_user_create_model(
                 sc_dn, sc_attr = await new_school_class_using_lib(ou_name)
                 school_classes = {ou_name: [sc_attr["name"]]}
         data = dict(
-            email=f"{user_props['username']}mail{fake.pyint()}@{mail_domain}".lower(),
+            email=f"{user_props['username']}mail{fake.unique.pyint()}@{mail_domain}".lower(),
             record_uid=user_props["username"],
             source_uid="Kelvin",
             birthday=fake.date(),
