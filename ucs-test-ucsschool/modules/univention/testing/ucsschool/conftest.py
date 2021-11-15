@@ -32,6 +32,7 @@ from ucsschool.lib.roles import (
     role_workgroup,
     role_workgroup_share,
 )
+from univention.testing.ucsschool.importusers import get_mail_domain
 
 if TYPE_CHECKING:
     from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
@@ -340,18 +341,8 @@ def get_import_user(import_config, lo):
 
 
 @pytest.fixture(scope="session")
-def mail_domain(udm_session, ucr_domainname, ucr, ucr_ldap_base):
-    if ucr_domainname not in ucr.get("mail/hosteddomains", "").split():
-        try:
-            udm_session.create_object(
-                "mail/domain",
-                set={"name": ucr_domainname},
-                position="cn=domain,cn=mail,{}".format(ucr_ldap_base),
-            )
-        except udm_test.UCSTestUDM_CreateUDMObjectFailed as exc:
-            print(exc)
-
-    return ucr_domainname
+def mail_domain():
+    return get_mail_domain()
 
 
 @pytest.fixture(scope="session")

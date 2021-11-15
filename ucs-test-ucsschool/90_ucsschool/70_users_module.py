@@ -16,6 +16,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse
 from univention.testing.ucsschool.user import User
 from univention.testing.umc import Client
@@ -77,7 +78,7 @@ def _test(student_classes, teacher_classes, schools, ucr, remove_from_school=Non
     print("\n>>>> Editing and removing (remove_from_school=%r) 4 users...\n" % (remove_from_school,))
     for num, user in enumerate(users):
         new_attrs = {
-            "email": "%s@%s" % (uts.random_name(), ucr.get("domainname")),
+            "email": "%s@%s" % (uts.random_name(), get_mail_domain()),
             "firstname": "first_name%d" % num,
             "lastname": "last_name%d" % num,
         }

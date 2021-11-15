@@ -21,6 +21,7 @@ from ucsschool.importer.utils.shell import (
     config,
     logger,
 )
+from univention.testing.ucsschool.importusers import get_mail_domain
 
 
 def main():
@@ -30,7 +31,7 @@ def main():
 
         def random_value(prop):
             if prop == "mailPrimaryAddress":
-                return "{}@{}".format(uts.random_name(), ucr["domainname"])
+                return "{}@{}".format(uts.random_name(), get_mail_domain())
             else:
                 return uts.random_name()
 

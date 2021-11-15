@@ -27,6 +27,7 @@ import univention.testing.udm
 import univention.testing.utils as utils
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.ucs_test_school import get_ucsschool_logger
 
 try:
@@ -184,10 +185,7 @@ class ImportTestbase(object):
         # will be initialized in run():
         self.schoolenv = None  # type: univention.testing.ucsschool.UCSTestSchool
         self.udm = None  # type: univention.testing.udm.UCSTestUDM  # will be initialized in run()
-        try:
-            self.maildomain = self.ucr["mail/hosteddomains"].split()[0]  # type: str
-        except (AttributeError, IndexError):
-            self.maildomain = self.ucr["domainname"]
+        self.maildomain = get_mail_domain()
 
     def cleanup(self):
         self.log.info("Performing ImportTestbase cleanup...")

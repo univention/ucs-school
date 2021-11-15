@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import os
+import random
 import tempfile
 from typing import List, Optional
 
@@ -72,7 +73,7 @@ class Person(object):
         self.record_uid = kwargs.get("record_uid", None)
         self.source_uid = kwargs.get("source_uid", None)
         self.description = kwargs.get("description", None)
-        self.mail = kwargs.get("mail", "%s@%s" % (self.username, configRegistry.get("domainname")))
+        self.mail = kwargs.get("mail", "{}@{}".format(self.username, get_mail_domain()))
         self.school_classes = kwargs.get("school_classes", {})
         self.mode = kwargs.get("mode", "A")
         self.active = kwargs.get("active", True)
@@ -724,14 +725,14 @@ class UserImport:
     def modify(self):
         for student in self.students:
             student.set_mode_to_modify()
-        self.students[1].mail = "%s@%s" % (uts.random_name(), configRegistry.get("domainname"))
+        self.students[1].mail = "%s@%s" % (uts.random_name(), get_mail_domain())
         self.students[2].firstname = uts.random_name()
         self.students[2].lastname = uts.random_name()
         self.students[2].set_inactive()
 
         for teacher in self.teachers:
             teacher.set_mode_to_modify()
-        self.students[0].mail = "%s@%s" % (uts.random_name(), configRegistry.get("domainname"))
+        self.students[0].mail = "%s@%s" % (uts.random_name(), get_mail_domain())
         self.students[2].firstname = uts.random_name()
         self.students[2].lastname = uts.random_name()
 
@@ -884,3 +885,18 @@ def _import_users_basics(udm):
                             remove_ou(school_name)
 
     utils.wait_for_replication()
+
+
+def get_mail_domain():  # type: () -> str
+    try:
+        mail_domain = random.choice(configRegistry["mail/hosteddomains"].split())
+    except (AttributeError, IndexError):
+        mail_domain = configRegistry["domainname"]
+    udm = udm_test.UCSTestUDM()
+    if not udm.list_objects("mail/domain", filter="cn={}".format(mail_domain)):
+        udm.create_object(
+            "mail/domain",
+            position="cn=domain,cn=mail,{}".format(configRegistry["ldap/base"]),
+            name=mail_domain,
+        )
+    return mail_domain
