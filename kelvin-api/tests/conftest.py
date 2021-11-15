@@ -295,10 +295,11 @@ def random_school_create_model() -> Callable[[], SchoolCreateModel]:
 
 
 @pytest.fixture
-def random_user_create_model(url_fragment, new_school_class_using_lib, udm_users_user_props):
+def random_user_create_model(
+    url_fragment, new_school_class_using_lib, udm_users_user_props, mail_domain
+):
     async def _create_random_user_data(ou_name: str, **kwargs) -> UserCreateModel:
         user_props = await udm_users_user_props(ou_name)
-        domainname = env_or_ucr("domainname")
         try:
             school = kwargs.pop("school")
         except KeyError:
@@ -316,7 +317,7 @@ def random_user_create_model(url_fragment, new_school_class_using_lib, udm_users
                 sc_dn, sc_attr = await new_school_class_using_lib(ou_name)
                 school_classes = {ou_name: [sc_attr["name"]]}
         data = dict(
-            email=f"{user_props['username']}mail{fake.pyint()}@{domainname}".lower(),
+            email=f"{user_props['username']}mail{fake.pyint()}@{mail_domain}".lower(),
             record_uid=user_props["username"],
             source_uid="Kelvin",
             birthday=fake.date(),
