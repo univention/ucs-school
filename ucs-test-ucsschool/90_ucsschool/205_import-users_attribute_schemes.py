@@ -36,7 +36,8 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("csv:mapping:record_uid", "record_uid")
         config.update_entry("csv:mapping:role", "__role")
         config.update_entry(
-            "scheme:email", "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com"
+            "scheme:email",
+            "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@{}".format(self.maildomain),
         )
         config.update_entry(
             "scheme:employeeNumber", "The user's name is <firstname:upper> <lastname> <description>"
@@ -69,7 +70,11 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("Testing mailPrimaryAddress and description...")
         for person in person_list:
             person.update_from_ldap(self.lo, ["dn", "username"])
-            mail = "%s.%s@example.com" % (person.firstname[0:3].lower(), person.lastname[2:5].lower())
+            mail = "%s.%s@%s" % (
+                person.firstname[0:3].lower(),
+                person.lastname[2:5].lower(),
+                self.maildomain,
+            )
             person.update(mail=mail)
             person.verify()
 

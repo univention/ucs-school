@@ -28,7 +28,9 @@ class Test(CLI_Import_v2_Tester):
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:DBID", "record_uid")
         config.update_entry("csv:mapping:role", "__role")
-        config.update_entry("scheme:email", "<:umlauts><firstname:lower>.<lastname:lower>@example.com")
+        config.update_entry(
+            "scheme:email", "<:umlauts><firstname:lower>.<lastname:lower>@{}".format(self.maildomain)
+        )
         config.update_entry(
             "scheme:employeeNumber", "The user's name is <firstname:upper> <lastname> <description>"
         )
@@ -64,7 +66,7 @@ class Test(CLI_Import_v2_Tester):
             for person in person_list:
                 # update dn+username of person and verify LDAP attributes
                 person.update_from_ldap(self.lo, ["dn", "username"])
-                mail = "%s.%s@example.com" % (person.firstname.lower(), person.lastname.lower())
+                mail = "%s.%s@%s" % (person.firstname.lower(), person.lastname.lower(), self.maildomain)
                 person.update(mail=mail)
                 person.verify()
 

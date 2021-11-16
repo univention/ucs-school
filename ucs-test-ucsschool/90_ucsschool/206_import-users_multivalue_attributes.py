@@ -12,17 +12,21 @@ import copy
 import pprint
 
 import univention.testing.strings as uts
-from univention.testing.ucsschool.importusers import Person
+from univention.testing.ucsschool.importusers import Person, get_mail_domain
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
 class MultiPerson(Person):
     def __init__(self, school, role):
-        Person.__init__(self, school, role)
-        self.mailAlternativeAddress = "%s@example.com;%s@example.com;%s@example.com" % (
+        super(MultiPerson, self).__init__(self, school, role)
+        mail_domain = get_mail_domain()
+        self.mailAlternativeAddress = "%s@%s;%s@%s;%s@%s" % (
             uts.random_name(),
+            mail_domain,
             uts.random_name(),
+            mail_domain,
             uts.random_name(),
+            mail_domain,
         )
 
     def map_to_dict(self, value_map):
@@ -76,7 +80,7 @@ class Test(CLI_Import_v2_Tester):
             )
             person.verify()
             # modify person and set 1 alternative mail address
-            person.update(mailAlternativeAddress="%s@example.com" % (uts.random_name(),))
+            person.update(mailAlternativeAddress="%s@%s" % (uts.random_name(), self.maildomain))
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
