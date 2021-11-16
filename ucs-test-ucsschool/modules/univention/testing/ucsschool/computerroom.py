@@ -116,7 +116,8 @@ class Room(object):
     def get_room_user(self, client):
         print("Executing command: computerroom/rooms in school:", self.school)
         reqResult = client.umc_command("computerroom/rooms", {"school": self.school}).result
-        return [x.get("user") for x in reqResult if x["label"] == self.name][0]
+        result = [x.get("user") for x in reqResult if x["label"] == self.name]
+        return result[0] if result else None
 
     def check_room_user(self, client, expected_user):
         print("Checking computer room(%s) users.........." % self.name)
@@ -127,7 +128,7 @@ class Room(object):
         else:
             user_id = current_user
         if expected_user != user_id:
-            utils.fail("Room in use by user %s, expected: %s" % (user_id, expected_user))
+            utils.fail("Room in use by user %r, expected: %r" % (user_id, expected_user))
 
     def aquire_room(self, client):
         print("Executing command: computerroom/room/acquire")
