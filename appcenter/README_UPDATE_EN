@@ -14,6 +14,9 @@
     <li>
         Username generation counter can now be raised above 100 (Bug 53987).
     </li>
+    <li>
+        The <code>no_proxy</code> environment variable is now honored by the Kelvin REST API when accessing the UDM REST API (Bug #54066).
+    </li>
 </ul>
 
 <h2>v1.5.0 (2021-09-10)</h2>
