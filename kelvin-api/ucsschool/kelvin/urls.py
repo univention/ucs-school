@@ -33,10 +33,8 @@ from pydantic import HttpUrl
 from starlette.datastructures import URL
 
 from ucsschool.lib.models.base import NoObject
-from ucsschool.lib.models.utils import env_or_ucr
+from ucsschool.lib.models.utils import env_or_ucr, udm_rest_client_cn_admin_kwargs as udm_kwargs
 from udm_rest_client import UDM
-
-from .ldap_access import udm_kwargs
 
 
 def name_from_dn(dn):
@@ -88,7 +86,7 @@ async def url_to_dn(request: Request, obj_type: str, url: str) -> str:
     if obj_type == "school":
         return f"ou={name},{env_or_ucr('ldap/base')}"
     elif obj_type == "user":
-        async with UDM(**await udm_kwargs()) as udm:
+        async with UDM(**udm_kwargs()) as udm:
             filter_s = f"(&(objectClass=ucsschoolType)(uid={escape_dn_chars(name)}))"
             async for obj in udm.get("users/user").search(filter_s, base=env_or_ucr("ldap/base")):
                 return obj.dn

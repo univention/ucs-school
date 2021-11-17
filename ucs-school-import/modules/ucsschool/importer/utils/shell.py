@@ -61,6 +61,7 @@ from ucsschool.lib.models.utils import (
     UniStreamHandler as _UniStreamHandler,
     env_or_ucr,
     get_stream_handler as _get_stream_handler,
+    udm_rest_client_cn_admin_kwargs as udm_kwargs,
 )
 
 from ..configuration import setup_configuration as _setup_configuration
@@ -123,29 +124,6 @@ logger.info("------ UCS@school import tool configured ------")
 logger.info("Used configuration files: %s.", config.conffiles)
 logger.info("Using command line arguments: %r", _config_args)
 logger.info("Configuration is:\n%s", pprint.pformat(config))
-
-_udm_kwargs: Dict[str, str] = {}
-CN_ADMIN_PASSWORD_FILE = Path(
-    "/var/lib/univention-appcenter/apps/ucsschool-kelvin-rest-api/conf/cn_admin.secret"
-)
-
-
-def udm_kwargs():
-    def cn_admin_password(path: Path) -> str:
-        with open(path, "r") as fp:
-            pw = fp.read()
-        return pw.strip()
-
-    if not _udm_kwargs:
-        host = env_or_ucr("ldap/master")
-        _udm_kwargs.update(
-            {
-                "username": "cn=admin",
-                "password": cn_admin_password(CN_ADMIN_PASSWORD_FILE),
-                "url": f"https://{host}/univention/udm/",
-            }
-        )
-    return _udm_kwargs
 
 
 import asyncio

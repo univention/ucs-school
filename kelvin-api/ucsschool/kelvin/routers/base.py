@@ -37,11 +37,11 @@ from fastapi import HTTPException, Request, status
 from pydantic import BaseModel, HttpUrl, validator
 
 from ucsschool.lib.models.base import NoObject, UCSSchoolModel
+from ucsschool.lib.models.utils import udm_rest_client_cn_admin_kwargs as udm_kwargs
 from udm_rest_client import UDM, UdmObject
 
 from ..config import UDM_MAPPING_CONFIG
 from ..exceptions import UnknownUDMProperty
-from ..ldap_access import udm_kwargs
 from ..urls import url_to_name
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -280,5 +280,5 @@ class BasePatchModel(BaseModel):
 
 
 async def udm_ctx():
-    async with UDM(**await udm_kwargs()) as udm:
+    async with UDM(**udm_kwargs()) as udm:
         yield udm

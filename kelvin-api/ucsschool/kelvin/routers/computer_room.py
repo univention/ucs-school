@@ -106,7 +106,7 @@
 #
 # @router.delete("/{name}", status_code=status.HTTP_204_NO_CONTENT)
 # async def delete(name: str, request: Request) -> None:
-#     async with UDM(**await udm_kwargs()) as udm:
+#     async with UDM(**udm_kwargs()) as udm:
 #         sc = await get_lib_obj(udm, ComputerRoom, name, None)
 #         if await sc.exists(udm):
 #             await sc.remove(udm)

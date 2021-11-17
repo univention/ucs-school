@@ -552,6 +552,7 @@ def udm_rest_client_cn_admin_kwargs() -> Dict[str, str]:
             "username": "cn=admin",
             "password": cn_admin_password,
             "url": f"https://{host}/univention/udm/",
+            "ssl_ca_cert": "/etc/ssl/certs/ca-certificates.crt",
         }
     return _udm_kwargs
 
