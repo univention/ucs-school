@@ -18,7 +18,7 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 class MultiPerson(Person):
     def __init__(self, school, role):
-        super(MultiPerson, self).__init__(self, school, role)
+        super(MultiPerson, self).__init__(school, role)
         mail_domain = get_mail_domain()
         self.mailAlternativeAddress = "%s@%s;%s@%s;%s@%s" % (
             uts.random_name(),
