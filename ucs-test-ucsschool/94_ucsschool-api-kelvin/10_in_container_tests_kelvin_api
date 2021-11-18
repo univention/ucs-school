@@ -16,11 +16,4 @@ make coverage")
 
 echo "Running in container:" "${CMD[@]}"
 
-function cleanup_mail_domain {
-	udm mail/domain remove --ignore_not_exists --dn cn=example.org,cn=domain,cn=mail,"$(ucr get ldap/base)"
-	udm mail/domain remove --ignore_not_exists --dn cn="$(ucr get domainname)",cn=domain,cn=mail,"$(ucr get ldap/base)"
-}
-trap cleanup_mail_domain EXIT
-udm mail/domain create --ignore_exists --position cn=domain,cn=mail,"$(ucr get ldap/base)" --set name=example.org
-udm mail/domain create --ignore_exists --position cn=domain,cn=mail,"$(ucr get ldap/base)" --set name="$(ucr get domainname)"
 univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/usr/bin/python.*pytest$'; exit $rv)
