@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.8) unstable; urgency=medium
+
+  * Bug #53954: set veyon backend in school lib
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Nov 2021 13:05:33 +0100
+
 ucs-school-lib (13.0.7) unstable; urgency=low
 
   * Bug #53988: use systemctl in /bin
