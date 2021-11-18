@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.9) unstable; urgency=medium
+
+  * Bug #53954: use create_without_hooks_roles method 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 18 Nov 2021 13:25:21 +0100
+
 ucs-school-lib (13.0.8) unstable; urgency=medium
 
   * Bug #53954: set veyon backend in school lib

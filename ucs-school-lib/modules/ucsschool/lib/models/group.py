@@ -347,12 +347,9 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
     users = None
     default_roles = [role_computer_room]
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        super(ComputerRoom, self).__init__(**kwargs)
-        # new computer rooms are configured to have the veyon backend
-        role_string = create_ucsschool_role_string(role_computer_room_backend_veyon, "-")
-        self.ucsschool_roles.append(role_string)
+    def create_without_hooks_roles(self, lo):
+        super().create_without_hooks_roles(lo)
+        self.veyon_backend = True
 
     def to_dict(self):  # type: () -> Dict[str, Any]
         ret = super(ComputerRoom, self).to_dict()
