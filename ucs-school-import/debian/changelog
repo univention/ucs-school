@@ -1,6 +1,13 @@
+ucs-school-import (18.0.11) unstable; urgency=low
+
+  * Bug #53792: drop and recreate complete import job DB when upgrading from
+    4.4 to 5.0
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 18 Nov 2021 07:45:05 +0100
+
 ucs-school-import (18.0.10) unstable; urgency=medium
 
-  * Bug #53931: new default value for ucr-v 
+  * Bug #53931: new default value for ucr-v
 
  -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 17:18:09 +0100
 
