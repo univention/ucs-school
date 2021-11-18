@@ -280,18 +280,7 @@
 		  z.B. für Benutzerkonten der Schulleitung, die neben ihrer Verwaltungstätigkeit auch lehrend tätig
 		  sind.
 		</para>
-		<para>
-		  Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
-		  angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
-		  Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
-		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
-		  Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
-		  Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
-		</para>
-		<para>
-		  Die Installationsschritte für Schulserver des Edukativnetzes und des Verwaltungsnetzes sind sehr ähnlich.
-		  In <xref linkend="school:installation:slave" /> werden diese ausführlich beschrieben.
-		</para>
+
 		<note>
 		  <para>
 			Die Einrichtung eines Verwaltungsnetzes ist in einer Single-Server-Umgebung nicht
@@ -307,6 +296,22 @@
 			  DHCP-DNS-Richtlinien in <xref linkend="school:installation:slave" /> beachtet werden.
 		  </para>
 		</caution>
+
+        <section id="structure:schoolservers-in-staffnet">
+          <title>Schulserver im Verwaltungsnetz</title>
+		    <para>
+		      Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
+		      angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
+		      Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
+		      Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
+		      Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
+		      Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
+		    </para>
+		    <para>
+		      Die Installationsschritte für Schulserver des Edukativnetzes und des Verwaltungsnetzes sind sehr ähnlich.
+		      In <xref linkend="school:installation:slave" /> werden diese ausführlich beschrieben.
+		    </para>
+        </section>
 	</section>
 
 	<section id="structure:ldap">
