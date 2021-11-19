@@ -41,6 +41,7 @@ import json
 import logging
 import os
 import random
+import re
 import subprocess
 import sys
 import time
@@ -85,6 +86,26 @@ if TYPE_CHECKING:
 
 TEMPLATE_OU_NAME_PREFIX = "testtempl"
 TEST_OU_CACHE_FILE = "/var/lib/ucs-test/ucsschool-test-ous.json"
+
+
+def syntax_date2_dateformat(userexpirydate):
+    # copied from 61_udm-users/26_password_expire_date
+    # Note: this is a timezone dependend value
+    _re_iso = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+    _re_de = re.compile(r"^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
+    if _re_iso.match(userexpirydate):
+        return "%Y-%m-%d"
+    elif _re_de.match(userexpirydate):
+        return "%d.%m.%y"
+    else:
+        raise ValueError
+
+
+def udm_formula_for_shadowExpire(userexpirydate):
+    # copied from 61_udm-users/26_password_expire_date
+    # Note: this is a timezone dependend value
+    dateformat = syntax_date2_dateformat(userexpirydate)
+    return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) // 3600 // 24 + 1))
 
 
 def force_ucsschool_logger_colorized_if_has_tty():

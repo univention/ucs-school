@@ -1,3 +1,9 @@
+ucs-school-import (18.0.13) unstable; urgency=low
+
+  * Bug #54116: use new ucsschool.lib expiration_date attribute
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 23 Nov 2021 16:30:42 +0100
+
 ucs-school-import (18.0.12) unstable; urgency=low
 
   * Bug #53792: update correct sequence number

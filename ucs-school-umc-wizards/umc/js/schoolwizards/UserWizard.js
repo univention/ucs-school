@@ -134,6 +134,12 @@ define([
 					label: _('Birthday'),
 					required: false
 				}, {
+					type: DateBox,
+					name: 'expiration_date',
+					label: _('Expiration date'),
+					required: false
+				},
+				 {
 					type: TextBox,
 					name: 'lastname',
 					label: _('Lastname'),
@@ -187,7 +193,7 @@ define([
 					['disabled'],
 					['name', 'birthday'],
 					['school_classes', 'newClass'],
-					['email'],
+					['email', 'expiration_date'],
 					['password'],
 					['schools', 'ucsschool_roles'],
 				]

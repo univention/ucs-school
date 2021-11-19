@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.21) unstable; urgency=low
+
+  * Bug #54116: adapt tests for expiration_date
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 23 Nov 2021 16:31:44 +0100
+
 ucs-test-ucsschool (7.3.20) unstable; urgency=medium
 
   * Bug #54117: fix 77_object_consistency_script.py

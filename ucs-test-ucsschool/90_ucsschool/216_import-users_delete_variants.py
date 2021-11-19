@@ -23,6 +23,7 @@ from univention.admin.uexceptions import authFail
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
+from univention.testing.ucsschool.ucs_test_school import udm_formula_for_shadowExpire
 
 
 class Test(CLI_Import_v2_Tester):
@@ -240,7 +241,7 @@ class Test(CLI_Import_v2_Tester):
             utils.verify_ldap_object(
                 person.dn,
                 expected_attr={
-                    "shadowExpire": [self.udm_formula_for_shadowExpire(exp_date)],
+                    "shadowExpire": [udm_formula_for_shadowExpire(exp_date)],
                     "krb5KDCFlags": ["126"],
                     "sambaAcctFlags": ["[U          ]"],
                     "ucsschoolPurgeTimestamp": [ldap_purge_date],

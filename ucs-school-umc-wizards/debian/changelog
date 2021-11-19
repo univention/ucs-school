@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.7) unstable; urgency=low
+
+  * Bug #54116: add optional field expiration date to umc module
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 23 Nov 2021 16:31:22 +0100
+
 ucs-school-umc-wizards (12.0.6) unstable; urgency=low
 
   * Bug #54018: remove legacy user import

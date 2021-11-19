@@ -207,19 +207,6 @@ class ImportTestbase(object):
         return res
 
     @classmethod
-    def syntax_date2_dateformat(cls, userexpirydate):
-        # copied from 61_udm-users/26_password_expire_date
-        # Note: this is a timezone dependend value
-        _re_iso = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-        _re_de = re.compile(r"^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$")
-        if _re_iso.match(userexpirydate):
-            return "%Y-%m-%d"
-        elif _re_de.match(userexpirydate):
-            return "%d.%m.%y"
-        else:
-            raise ValueError
-
-    @classmethod
     def pugre_timestamp_ldap2udm(cls, ldap_val):
         """Convert '20090101000000Z' to '2009-01-01'. Ignores timezones."""
         if not ldap_val:
@@ -234,13 +221,6 @@ class ImportTestbase(object):
             return ""
         udm_date = datetime.datetime.strptime(udm_val, cls.udm_date_format)
         return udm_date.strftime(cls.ldap_date_format)
-
-    @classmethod
-    def udm_formula_for_shadowExpire(cls, userexpirydate):
-        # copied from 61_udm-users/26_password_expire_date
-        # Note: this is a timezone dependend value
-        dateformat = cls.syntax_date2_dateformat(userexpirydate)
-        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) // 3600 // 24 + 1))
 
     def check_new_and_removed_users(self, exp_new, exp_removed):
         ldap_diff = self.diff_ldap_status()

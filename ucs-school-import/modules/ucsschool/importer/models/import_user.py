@@ -36,6 +36,7 @@ Representation of a user read from a file.
 import datetime
 import re
 import string
+import warnings
 from collections import defaultdict, namedtuple
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union
 
@@ -157,6 +158,7 @@ class ImportUser(User):
     _prop_regex = re.compile(r"<(.*?)(:.*?)*>")
     _prop_providers = {
         "birthday": "make_birthday",
+        "expiration_date": "make_expiration_date",
         "firstname": "make_firstname",
         "lastname": "make_lastname",
         "email": "make_email",
@@ -194,7 +196,6 @@ class ImportUser(User):
             except KeyError:
                 pass
 
-        self._userexpiry = None  # type: str
         self._purge_ts = None  # type: str
         # recursion prevention:
         self._used_methods = defaultdict(list)  # type: Dict[str, List[FunctionSignature]]
@@ -471,8 +472,16 @@ class ImportUser(User):
         Set the account expiration date. Caller must run modify().
 
         :param str expiry: expire date "%Y-%m-%d" or ""
+
+        .. deprecated:: 4.4 v9
+            Use `user.self.expiration_date = expiry` instead.
         """
-        self._userexpiry = expiry
+        self.expiration_date = expiry
+        warnings.warn(
+            "The method User.expire(expiry) is deprecated. Set the expiration date with "
+            "'user.expiration_date = expiry'.",
+            PendingDeprecationWarning,
+        )
 
     @classmethod
     def from_dict(cls, a_dict):  # type: (Dict[str, Any]) -> ImportUser
@@ -497,8 +506,6 @@ class ImportUser(User):
     def _alter_udm_obj(self, udm_obj):  # type: (UdmObjectType) -> None
         self._prevent_mapped_attributes_in_udm_properties()
         super(ImportUser, self)._alter_udm_obj(udm_obj)
-        if self._userexpiry is not None:
-            udm_obj["userexpiry"] = self._userexpiry
         if self._purge_ts is not None:
             udm_obj["ucsschoolPurgeTimestamp"] = self._purge_ts
 
@@ -564,10 +571,9 @@ class ImportUser(User):
         :return: whether the user account has expired
         :rtype: bool
         """
-        user_udm = self.get_udm_object(connection)
-        if not user_udm["userexpiry"]:
+        if not self.expiration_date:
             return False
-        expiry = datetime.datetime.strptime(user_udm["userexpiry"], "%Y-%m-%d")
+        expiry = datetime.datetime.strptime(self.expiration_date, "%Y-%m-%d")
         return datetime.datetime.now() > expiry
 
     def has_expiry(self, connection):  # type: (LoType) -> bool
@@ -579,8 +585,7 @@ class ImportUser(User):
         :return: whether the user account has an expiry date set
         :rtype: bool
         """
-        user_udm = self.get_udm_object(connection)
-        return bool(user_udm["userexpiry"])
+        return bool(self.expiration_date)
 
     @property
     def lo(self):  # type: () -> LoType
@@ -637,6 +642,7 @@ class ImportUser(User):
         self.make_birthday()
         self.make_disabled()
         self.make_email()
+        self.make_expiration_date()
 
     def prepare_udm_properties(self):  # type: () -> None
         """
@@ -683,6 +689,31 @@ class ImportUser(User):
         elif self.birthday == "":
             self.birthday = None
         return self.birthday
+
+    def make_expiration_date(self):  # type: () -> Optional[str]
+        """
+        Set User.expiration_date attribute.
+        """
+        if self.expiration_date:
+            self.logger.warning("The expiration date is usually set by the import itself. Setting it manually may lead to errors in future imports.")
+            try:
+                self.expiration_date = self.parse_date(self.expiration_date)
+            except ValueError:
+                self.logger.error("Could not parse expiration date.")
+        elif all(
+            [
+                self._schema_write_check("expiration_date", "userexpiry", ldap_attr)
+                for ldap_attr in ["krb5ValidEnd", "shadowExpire", "sambaKickoffTime"]
+            ]
+        ):
+            self.expiration_date = self.format_from_scheme(
+                "expiration_date", self.config["scheme"]["expiration_date"]
+            )  # type: str
+        elif self.old_user:
+            self.expiration_date = self.old_user.expiration_date
+        if self.expiration_date == "":
+            self.expiration_date = None
+        return self.expiration_date
 
     def parse_date(self, text):  # type: (str) -> str
         re_1 = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")  # yyyy-mm-dd
@@ -1140,7 +1171,7 @@ class ImportUser(User):
         from LDAP.
         """
         self.logger.info("Reactivating %s...", self)
-        self.expire("")
+        self.expiration_date = None
         self.disabled = "0"
         self.set_purge_timestamp("")
 

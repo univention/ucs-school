@@ -598,7 +598,7 @@ class UCSSchoolHelperAbstractClass(object):
         for name, attr in iteritems(self._attributes):
             if attr.udm_name:
                 value = getattr(self, name)
-                if value is not None and attr.map_to_udm:
+                if (value is not None or attr.map_if_none) and attr.map_to_udm:
                     udm_obj[attr.udm_name] = value
         # TODO: move g[s]et_default_options() from User here to update udm_obj.options
 
