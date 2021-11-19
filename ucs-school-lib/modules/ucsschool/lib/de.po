@@ -335,6 +335,10 @@ msgstr "Nachname"
 msgid "Birthday"
 msgstr "Geburtstag"
 
+#: models/user.py:85
+msgid "Expiration date"
+msgstr "Ablaufdatum"
+
 #: models/user.py:67
 msgid "Email"
 msgstr "E-Mail"
