@@ -207,7 +207,7 @@ if [ $JS_LAST_EXECUTED_VERSION -gt 0 ] && [ $JS_LAST_EXECUTED_VERSION -lt 13 ]; 
   echo "Creating tables..."
   python3 -m ucsschool.http_api.manage migrate --no-color --noinput || die
   echo "Setting next user import ID in database..."
-	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER SEQUENCE django_celery_results_taskresult_id_seq RESTART WITH $NEXT_IMPORT_ID;'" || die
+	su - postgres -c "psql -d '$POSTGRES_DB' -c 'ALTER SEQUENCE import_api_userimportjob_id_seq RESTART WITH $NEXT_IMPORT_ID;'" || die
 	echo "Schema upgrade done."
 fi
 echo "Migrating DB schema..."
