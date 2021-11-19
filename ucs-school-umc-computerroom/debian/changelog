@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (12.0.8) unstable; urgency=medium
+
+  * Bug #54095: Fix call to systemctl
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 19 Nov 2021 10:49:58 +0100
+
 ucs-school-umc-computerroom (12.0.7) unstable; urgency=medium
 
   * Bug #53954: only veyon rooms are visible in the umc computer room

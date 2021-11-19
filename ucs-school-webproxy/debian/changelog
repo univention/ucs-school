@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.0.6) unstable; urgency=medium
+
+  * Bug #54095: Fix call to systemctl
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 19 Nov 2021 10:49:21 +0100
+
 ucs-school-webproxy (16.0.5) unstable; urgency=low
 
   * Bug #53988: use systemctl in /bin

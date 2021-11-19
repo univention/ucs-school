@@ -54,7 +54,7 @@ def log(message):
 def reload_squid():
     log("Reloading %r now" % (reload_squid.name,))
     reload_squid.last = monotonic()
-    call(("/usr/bin/systemctl", "reload", "squid"))  # nosec
+    call(("/bin/systemctl", "reload", "squid"))  # nosec
 
 
 reload_squid.name = "squid"
