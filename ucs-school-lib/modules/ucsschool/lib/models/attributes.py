@@ -211,6 +211,11 @@ class Birthday(Attribute):
     syntax = iso8601Date
 
 
+class UserExpirationDate(Attribute):
+    udm_name = "userexpiry"
+    syntax = iso8601Date
+
+
 class Email(Attribute):
     udm_name = "mailPrimaryAddress"
     syntax = primaryEmailAddressValidDomain

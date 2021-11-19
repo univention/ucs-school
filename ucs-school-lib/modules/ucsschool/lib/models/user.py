@@ -52,6 +52,7 @@ from .attributes import (
     SchoolClassesAttribute,
     Schools,
     Username,
+    UserExpirationDate,
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from .computer import AnyComputer
@@ -80,6 +81,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     birthday = Birthday(
         _("Birthday"), aka=["Birthday", "Geburtstag"], unlikely_to_change=True
     )  # type: str
+    expiration_date = UserExpirationDate(
+        _("Expiration date"), aka=["Expiration date", "Ablaufdatum"]
+    )
     email = Email(_("Email"), aka=["Email", "E-Mail"], unlikely_to_change=True)  # type: str
     password = Password(_("Password"), aka=["Password", "Passwort"])  # type: Optional[str]
     disabled = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])  # type: bool
