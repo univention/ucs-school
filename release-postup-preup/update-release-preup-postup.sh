@@ -6,7 +6,7 @@ set -x
 exe="${0##*/}"
 
 component="ucsschool_20201208103021"
-version="5.0/ucsschool=5.0 b3"
+version="5.0/ucsschool=5.0 v1"
 
 # priv key for selfservice
 key="$HOME/ec2/keys/tech.pem"
