@@ -348,7 +348,7 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
     default_roles = [role_computer_room]
 
     def create_without_hooks_roles(self, lo):
-        super().create_without_hooks_roles(lo)
+        super(ComputerRoom, self).create_without_hooks_roles(lo)
         self.veyon_backend = True
 
     def to_dict(self):  # type: () -> Dict[str, Any]

@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.10) unstable; urgency=medium
+
+  * Bug #53954: make code python 2 compatible 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 19 Nov 2021 10:19:50 +0100
+
 ucs-school-lib (13.0.9) unstable; urgency=medium
 
   * Bug #53954: use create_without_hooks_roles method 
