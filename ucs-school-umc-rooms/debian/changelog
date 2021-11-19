@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (17.0.8) unstable; urgency=medium
+
+  * Bug #53954: set veyon_backend in ucsschool-lib
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 19 Nov 2021 13:18:40 +0100
+
 ucs-school-umc-rooms (17.0.7) unstable; urgency=medium
 
   * Bug #53954: read computer room backend from backend in ucs 5.0 
