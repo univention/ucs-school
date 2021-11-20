@@ -204,7 +204,7 @@ def test_case_insensitive_group_membership(
         ("staff", role_staff),
         ("teacher_and_staff", role_teacher),
     ),
-    ids=input_ids_wrong_school_role,
+    ids=lambda role_and_expected_value: role_and_expected_value[0],
 )
 def test_case_insensitive_school_roles(schoolenv, ucr_hostname, udm_instance, role_and_expected_value):
     role_str, expected = role_and_expected_value
