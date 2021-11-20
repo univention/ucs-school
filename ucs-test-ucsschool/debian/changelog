@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.252) unstable; urgency=medium
+
+  * Bug #54117: fix 77_object_consistency_script.py
+
+ -- Jürn Brodersen <brodersen@univention.de>  Sat, 20 Nov 2021 15:59:10 +0100
+
 ucs-test-ucsschool (6.0.251) unstable; urgency=low
 
   * Bug #53962: fix sync mapped_udm_properties to other projects
