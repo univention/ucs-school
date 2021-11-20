@@ -259,6 +259,32 @@ def test_not_existing_mandatory_group(udm_instance, ucr_hostname, group, create_
     assert_error_msg_in_script_output(stdout, group_dn, expected_error)
 
 
+@pytest.mark.parametrize(
+    "group",
+    (
+        ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{ldap_base}", "cn=DC-Edukativnetz"),
+        ("cn=OU{ou}-DC-Edukativnetz,cn=ucsschool,cn=groups,{ldap_base}", "cn=OU{ou}-DC-Edukativnetz"),
+    ),
+    ids=input_ids_not_existing_mandatory_group,
+)
+def test_missing_membership_group(udm_instance, ucr_hostname, group, create_ou):
+    name_edudc = "dcschool77"
+    ou_name, ou_dn = create_ou(use_cache=False, name_edudc=name_edudc)
+    dn_edudc = "cn={},cn=dc,cn=server,cn=computers,{}".format(name_edudc, ou_dn)
+
+    group_dn, expected_error = group
+    group_dn = group_dn.format(ou=ou_name, ldap_base=ldap_base)
+    expected_error = expected_error.format(ou=ou_name)
+
+    group_mod = udm_instance("groups/group")
+    obj = group_mod.get(group_dn)
+    obj.props.hosts.remove(dn_edudc)
+    obj.save()
+
+    stdout, stderr = exec_script(ou_name)
+    assert_error_msg_in_script_output(stdout, group_dn, expected_error)
+
+
 def input_ids_not_existing_mandatory_container(containers):  # type: (Tuple[str, str]) -> str
     container, expected = containers
     return container
