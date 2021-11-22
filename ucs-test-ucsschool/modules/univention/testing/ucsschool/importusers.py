@@ -26,12 +26,8 @@ from ucsschool.lib.models.user import (
     TeachersAndStaff as TeachersAndStaffLib,
 )
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
-from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
-
-utils.verify_ldap_object_orig = utils.verify_ldap_object
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 5)
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
 
