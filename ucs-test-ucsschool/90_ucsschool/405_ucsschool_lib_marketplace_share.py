@@ -30,7 +30,7 @@ def exp_ldap_attr(ucr_domainname, ucr_hostname, ucr_is_singlemaster):
         if ucr_is_singlemaster:
             share_host = ["{}.{}".format(ucr_hostname, ucr_domainname)]
         else:
-            share_host = ["dc{}-01.{}".format(ou_name, ucr_domainname)]
+            share_host = ["dc{}.{}".format(ou_name, ucr_domainname)]
         return {
             "objectClass": ["univentionShareSamba"],
             "univentionSharePath": ["/home/{}/groups/Marktplatz".format(ou_name)],
