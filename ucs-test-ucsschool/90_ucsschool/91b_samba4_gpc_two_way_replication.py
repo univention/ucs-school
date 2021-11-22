@@ -77,7 +77,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         if server_role == "domaincontroller_master":
             slave_filter = "(&(aRecord=%s)(objectClass=univentionDomainController))"
             filter_string = ldap.filter.filter_format(slave_filter, (self.remote_host,))
-            host_dn = lo.searchDn(filter=filter_string, attr=["dn"])[0]
+            host_dn = lo.searchDn(filter=filter_string)[0]
 
             def get_names(school):
                 for s in school.get_administrative_server_names(lo):
