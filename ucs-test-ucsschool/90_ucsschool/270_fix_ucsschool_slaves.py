@@ -27,7 +27,7 @@ def test_fix_ucsschool_slaves(schoolenv):
     if {b"univentionWindows", b"ucsschoolComputer"} & set(attrs.get("objectClass", [])):
         print("WARNING: Replica Directory Node's objectclass already broken!")
     for value in attrs.get("ucsschoolRole", []):
-        if value.startswith("win_computer:school:"):
+        if value.startswith(b"win_computer:school:"):
             print("WARNING: Replica Directory Node's ucschoolRole already broken! {!r}".format(value))
 
     lo.modify(
