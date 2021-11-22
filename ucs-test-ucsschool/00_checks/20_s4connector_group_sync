@@ -4,8 +4,7 @@
 ## tags:
 ## - apptest
 ## - ucsschool
-## packages:
-## - univention-s4-connector
+## packages: [univention-s4-connector, ucs-school-replica|ucs-school-multiserver]
 
 RETVAL=0
 

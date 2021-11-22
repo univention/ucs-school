@@ -5,6 +5,7 @@
 ## roles:
 ##  - domaincontroller_slave
 ## tags: [apptest, ucsschool]
+## package: [ucs-school-replica]
 
 
 def test_check_dns_ucr_variables(ucr):
