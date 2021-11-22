@@ -35,6 +35,7 @@ Representation of a user read from a file.
 import datetime
 import re
 import string
+import warnings
 from collections import defaultdict, namedtuple
 
 import lazy_object_proxy
@@ -160,7 +161,7 @@ class ImportUser(User):
     _prop_regex = re.compile(r"<(.*?)(:.*?)*>")
     _prop_providers = {
         "birthday": "make_birthday",
-        "expiration_date": "make_expiration_date"
+        "expiration_date": "make_expiration_date",
         "firstname": "make_firstname",
         "lastname": "make_lastname",
         "email": "make_email",
@@ -474,10 +475,16 @@ class ImportUser(User):
         Set the account expiration date. Caller must run modify().
 
         :param str expiry: expire date "%Y-%m-%d" or ""
+
+        .. deprecated:: 4.4 v9
+            Use `user.self.expiration_date = expiry` instead.
         """
         self.expiration_date = expiry
-        self.logger.warning("The method User.expire(expiry) is deprecated.")
-        self.logger.warning("Set the expiration date with user.expiration_date = expiry.")
+        warnings.warn(
+            "The method User.expire(expiry) is deprecated. Set the expiration date with "
+            "'user.expiration_date = expiry'.",
+            PendingDeprecationWarning,
+        )
 
     @classmethod
     def from_dict(cls, a_dict):  # type: (Dict[str, Any]) -> ImportUser
@@ -699,8 +706,12 @@ class ImportUser(User):
                 self.expiration_date = self.parse_date(self.expiration_date)
             except ValueError:
                 self.logger.error("Could not parse expiration date.")
-                # TODO
-        elif self._schema_write_check("userexpiry", "userexpiry", "userexpiry"):
+        elif all(
+            [
+                self._schema_write_check("expiration_date", "userexpiry", ldap_attr)
+                for ldap_attr in ["krb5ValidEnd", "shadowExpire", "sambaKickoffTime"]
+            ]
+        ):
             self.expiration_date = self.format_from_scheme(
                 "expiration_date", self.config["scheme"]["expiration_date"]
             )  # type: str
@@ -1166,7 +1177,7 @@ class ImportUser(User):
         from LDAP.
         """
         self.logger.info("Reactivating %s...", self)
-        self.expire("")
+        self.expiration_date = ""
         self.disabled = "0"
         self.set_purge_timestamp("")
 

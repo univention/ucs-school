@@ -266,9 +266,11 @@ cd /usr/share/ucs-school-import/scripts/
 		<para>
 		  Nach dem Anklicken der Schaltfläche <guimenu>Speichern</guimenu> wird das Benutzerkonto im
 		  Verzeichnisdienst angelegt und eine Benachrichtigung über den Erfolg der Aktion
-		  angezeigt. Anschließend wird wieder die zweite Seite des Assistenten angezeigt, um weitere
-		  Benutzerkonten anlegen zu können. Die Einstellungen für Schule und Benutzerrolle bleiben dabei
-		  erhalten. Mit der Verwendung der Schaltfläche <guimenu>Abbrechen</guimenu> gelangt man zurück zum
+		  angezeigt.
+		  Anschließend wird wieder die zweite Seite des Assistenten angezeigt, um weitere
+		  Benutzerkonten anlegen zu können.
+		  Die Einstellungen für Schule und Benutzerrolle bleiben dabei erhalten.
+		  Mit der Verwendung der Schaltfläche <guimenu>Abbrechen</guimenu> gelangt man zurück zum
 		  zentralen Suchdialog des UMC-Moduls.
 		</para>
 		<note>
@@ -279,7 +281,8 @@ cd /usr/share/ucs-school-import/scripts/
 		</note>
           <note>
 		  <simpara>
-		  Über die &ucsUCRV; <envar>ucsschool/wizards/schoolwizards/users/optional_visible_fields</envar> können die angezeigten optionalen Felder angepasst werden. Ab &ucsUAS; 4.4 v9 kann hier auch das Ablaufdatum (<emphasis>expiration_date</emphasis>) hinzugefügt werden werden.
+		  Über die &ucsUCRV; <envar>ucsschool/wizards/schoolwizards/users/optional_visible_fields</envar> können die angezeigten optionalen Felder angepasst werden.
+		  Ab &ucsUAS; 4.4 v9 kann hier auch das Ablaufdatum (<emphasis>expiration_date</emphasis>) hinzugefügt werden werden.
 		  </simpara>
 		</note>
 	  </section>

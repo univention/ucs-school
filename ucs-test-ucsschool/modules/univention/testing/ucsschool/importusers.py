@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import datetime
 import os
 import subprocess
 import tempfile
@@ -83,6 +84,7 @@ class Person(object):
         self.active = kwargs.get("active", True)
         self.password = kwargs.get("password", None)
         self.birthday = kwargs.get("birthday", None)
+        self.expiration_date = kwargs.get("expiration_date", None)
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
@@ -212,6 +214,7 @@ class Person(object):
             value_map.get("__role", "__EMPTY__"): self.role,
             value_map.get("password", "__EMPTY__"): self.password,
             value_map.get("birthday", "__EMPTY__"): self.birthday,
+            value_map.get("expiration_date", "__EMPTY__"): self.expiration_date,
         }
         if "__EMPTY__" in result.keys():
             del result["__EMPTY__"]
@@ -271,9 +274,28 @@ class Person(object):
     def is_teacher_staff(self):
         return self.role in ("teacher_staff", "teacher_and_staff")
 
+    @staticmethod
+    def udm_formula_for_shadowExpire(userexpirydate):
+        # Note: this is a timezone dependent value
+        dateformat = syntax_date2_dateformat(userexpirydate)
+        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1)).encode('ASCII')
+
     def expected_attributes(self):
         samba_home_path_server = self.get_samba_home_path_server()
         profile_path_server = self.get_profile_path_server()
+        # If one of "krb5ValidEnd", "shadowExpire", "sambaKickoffTime" is set,
+        # we assume the rest to be correct.
+        if not self.active:
+            shadow_expire = ["1"]
+        elif self.expiration_date:
+            shadow_expire = [udm_formula_for_shadowExpire(self.expiration_date)]
+        else:
+            shadow_expire = []
+        if datetime.datetime.strptime(self.expiration_date, "%Y-%m-%d") < datetime.date.today() or not self.active:
+            samba_acct_flags = ["[UD         ]"]
+        else:
+            samba_acct_flags = ["[U          ]"]
+
         attr = dict(
             departmentNumber=[self.school],
             givenName=[self.firstname],
@@ -281,8 +303,8 @@ class Person(object):
             krb5KDCFlags=["126"] if self.is_active() else ["254"],
             mail=[self.mail] if self.mail else [],
             mailPrimaryAddress=[self.mail] if self.mail else [],
-            sambaAcctFlags=["[U          ]"] if self.is_active() else ["[UD         ]"],
-            shadowExpire=[] if self.is_active() else ["1"],
+            sambaAcctFlags=samba_acct_flags,
+            shadowExpire=shadow_expire,
             sn=[self.lastname],
             uid=[self.username],
             ucsschoolRole=self.roles,
@@ -395,6 +417,7 @@ class Person(object):
             strict=False,
             should_exist=True,
         )
+
 
         for school, classes in self.school_classes.items():
             for cl in classes:
@@ -567,6 +590,7 @@ class ImportFile:
                 "password": user.password,
                 "disabled": "0" if user.is_active() else "1",
                 "birthday": user.birthday,
+                "expiration_date": user.expiration_date,
             }
             return kwargs
 
