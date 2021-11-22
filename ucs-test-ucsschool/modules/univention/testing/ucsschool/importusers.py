@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import datetime
 import os
 import subprocess
 import tempfile
@@ -28,6 +29,7 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_s
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
+from univention.testing.ucsschool.ucs_test_school import udm_formula_for_shadowExpire
 
 try:
     from typing import List, Optional  # noqa: F401
@@ -83,6 +85,7 @@ class Person(object):
         self.active = kwargs.get("active", True)
         self.password = kwargs.get("password", None)
         self.birthday = kwargs.get("birthday", None)
+        self.expiration_date = kwargs.get("expiration_date", None)
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
@@ -212,6 +215,7 @@ class Person(object):
             value_map.get("__role", "__EMPTY__"): self.role,
             value_map.get("password", "__EMPTY__"): self.password,
             value_map.get("birthday", "__EMPTY__"): self.birthday,
+            value_map.get("expiration_date", "__EMPTY__"): self.expiration_date,
         }
         if "__EMPTY__" in result.keys():
             del result["__EMPTY__"]
@@ -274,6 +278,11 @@ class Person(object):
     def expected_attributes(self):
         samba_home_path_server = self.get_samba_home_path_server()
         profile_path_server = self.get_profile_path_server()
+        # If one of "krb5ValidEnd", "shadowExpire", "sambaKickoffTime" is set,
+        # we assume the rest to be correct.
+        shadow_expire = [] if self.active else ["1"]
+        if self.expiration_date:
+            shadow_expire = [udm_formula_for_shadowExpire(self.expiration_date)]
         attr = dict(
             departmentNumber=[self.school],
             givenName=[self.firstname],
@@ -281,8 +290,8 @@ class Person(object):
             krb5KDCFlags=["126"] if self.is_active() else ["254"],
             mail=[self.mail] if self.mail else [],
             mailPrimaryAddress=[self.mail] if self.mail else [],
-            sambaAcctFlags=["[U          ]"] if self.is_active() else ["[UD         ]"],
-            shadowExpire=[] if self.is_active() else ["1"],
+            sambaAcctFlags=["[U          ]"] if self.active else ["[UD         ]"],
+            shadowExpire=shadow_expire,
             sn=[self.lastname],
             uid=[self.username],
             ucsschoolRole=self.roles,
@@ -567,6 +576,7 @@ class ImportFile:
                 "password": user.password,
                 "disabled": "0" if user.is_active() else "1",
                 "birthday": user.birthday,
+                "expiration_date": user.expiration_date,
             }
             return kwargs
 

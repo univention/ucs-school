@@ -74,6 +74,7 @@ class Attribute(object):
     extended = False
     value_type = None
     value_default = None
+    map_if_none = False
 
     def __init__(
         self,
@@ -209,11 +210,13 @@ class Lastname(Attribute):
 class Birthday(Attribute):
     udm_name = "birthday"
     syntax = iso8601Date
+    map_if_none = True
 
 
 class UserExpirationDate(Attribute):
     udm_name = "userexpiry"
     syntax = iso8601Date
+    map_if_none = True
 
 
 class Email(Attribute):

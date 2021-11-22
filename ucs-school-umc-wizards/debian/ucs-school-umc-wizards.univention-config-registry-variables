@@ -11,7 +11,7 @@ Type=bool
 Categories=management-umc
 
 [ucsschool/wizards/schoolwizards/users/optional_visible_fields]
-Description[de]=Diese UCR-Variable bestimmt, welche optionalen Felder im UMC Modul für Benutzer angezeigt werden. Der Wert ist eine von Leerzeichen getrennte Liste, die folgende Felder enthalten kann: schools, ucsschool_roles, birthday, disabled, email, password. Default: leere Liste
-Description[en]=This UCR variable defines which optional fields are displayed in the Users UMC module. The value has to be a list with whitespace as a delimiter. The following fields are optional: schools, ucsschool_roles, birthday, disabled, email, password. Default: empty list
+Description[de]=Diese UCR-Variable bestimmt, welche optionalen Felder im UMC Modul für Benutzer angezeigt werden. Der Wert ist eine von Leerzeichen getrennte Liste, die folgende Felder enthalten kann: schools, ucsschool_roles, birthday, disabled, email, password, expiration_date. Default: leere Liste
+Description[en]=This UCR variable defines which optional fields are displayed in the Users UMC module. The value has to be a list with whitespace as a delimiter. The following fields are optional: schools, ucsschool_roles, birthday, disabled, email, password, expiration_date. Default: empty list
 Type=str
 Categories=management-umc
