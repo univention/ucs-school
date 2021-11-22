@@ -253,14 +253,21 @@ cd /usr/share/ucs-school-import/scripts/
 		<para>
 		  Über die Schaltfläche <guimenu>Weiter</guimenu> gelangt man auf die zweite Seite des
 		  Assistenten. Dort werden die für &ucsUAS; relevanten Benutzerattribute abgefragt:
-		  <emphasis>Vorname</emphasis>, <emphasis>Nachname</emphasis>, <emphasis>Benutzername</emphasis>,
-		  ggf. <emphasis>Klasse</emphasis>, <emphasis>E-Mail-Adresse</emphasis> und
-		  <emphasis>Passwort</emphasis>. Über die Schaltfläche <guimenu>Neue Klasse erstellen</guimenu> ist es
+		  <emphasis>Vorname</emphasis>, <emphasis>Nachname</emphasis>, <emphasis>Benutzername</emphasis> und
+		  <emphasis>Klasse</emphasis>.
+		  Über die Schaltfläche <guimenu>Neue Klasse erstellen</guimenu> ist es
 		  möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu wechseln, um dort eine
-		  weitere Schulklasse anlegen zu können. Die Angabe von E-Mail-Adresse und Passwort ist optional. Ist
-		  kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer) zurückgesetzt werden,
+		  weitere Schulklasse anlegen zu können.
+		  Die Felder <emphasis>E-Mail</emphasis>, <emphasis>Passwort</emphasis>,
+		  <emphasis>deaktiviert</emphasis> und <emphasis>Geburtstag</emphasis> sind optional.
+		  Ist kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer) zurückgesetzt werden,
 		  bevor das Benutzerkonto vom Benutzer erstmals verwendet werden kann.
 		</para>
+          <note>
+		  <simpara>
+		  Über die &ucsUCRV; <envar>ucsschool/wizards/schoolwizards/users/optional_visible_fields</envar> können die angezeigten optionalen Felder angepasst werden. Ab &ucsUAS; 4.4 v9 kann hier auch das Ablaufdatum (<emphasis>expiration_date</emphasis>) hinzugefügt werden werden.
+		  </simpara>
+		</note>
 		<para>
 		  Nach dem Anklicken der Schaltfläche <guimenu>Speichern</guimenu> wird das Benutzerkonto im
 		  Verzeichnisdienst angelegt und eine Benachrichtigung über den Erfolg der Aktion
