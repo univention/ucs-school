@@ -83,7 +83,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     )  # type: str
     expiration_date = UserExpirationDate(
         _("Expiration date"), aka=["Expiration date", "Ablaufdatum"]
-    )
+    )  # type: str
     email = Email(_("Email"), aka=["Email", "E-Mail"], unlikely_to_change=True)  # type: str
     password = Password(_("Password"), aka=["Password", "Passwort"])  # type: Optional[str]
     disabled = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])  # type: bool
