@@ -119,7 +119,7 @@ class School(object):
         print("Creating school %s" % (self.name,))
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/schools/add", param, flavor).result
-        assert reqResult[0], "Unable to create school (%r)" % (reqResult,)
+        assert reqResult[0] is True, "Unable to create school (%r)" % (reqResult,)
         utils.wait_for_replication()
 
     def get(self):
