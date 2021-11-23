@@ -51,8 +51,8 @@ from .attributes import (
     Password,
     SchoolClassesAttribute,
     Schools,
-    Username,
     UserExpirationDate,
+    Username,
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from .computer import AnyComputer
@@ -373,8 +373,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if self.email is not None:
             udm_obj["e-mail"] = self.email
         udm_obj["departmentNumber"] = [self.school]
-        ret = super(User, self)._alter_udm_obj(udm_obj)
-        return ret
+        return super(User, self)._alter_udm_obj(udm_obj)
 
     def get_mail_domain(self):  # type: () -> MailDomain
         if self.email:

@@ -582,7 +582,6 @@ class UCSSchoolHelperAbstractClass(object):
         pass
 
     def _alter_udm_obj(self, udm_obj):  # type: (UdmObject) -> None
-        #
         for name, attr in iteritems(self._attributes):
             if attr.udm_name:
                 value = getattr(self, name)
