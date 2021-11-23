@@ -1,3 +1,9 @@
+ucs-school-import (17.0.74) unstable; urgency=medium
+
+  * Bug #54115: adapt importer to expect expiration_date from school lib
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Nov 2021 16:13:35 +0100
+
 ucs-school-import (17.0.73) unstable; urgency=low
 
   * Bug #53841: no not reset user data to state in LDAP during dry-run

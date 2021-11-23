@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (11.0.4) unstable; urgency=medium
+
+  * Bug #54115: add optional field expiration date to umc module 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Nov 2021 16:12:26 +0100
+
 ucs-school-umc-wizards (11.0.3) unstable; urgency=medium
 
   * Bug #53026: fix double star search raises traceback
