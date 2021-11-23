@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-import
+fix: 17.0.74A~4.4.0.202111231620
+desc: |
+ * Internal improvement: The UCS@school Import has been modified to handle the new UCS@school attribute <envar>expiration_date</envar> (Bug #54115).
+bug: [54115]

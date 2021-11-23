@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix: 12.2.37A~4.4.0.202111231618
+desc: |
+ * Internal improvement: The field <envar>expiration_date</envar> has been added to the UCS@school Python library (Bug #54115).
+bug: [54115]
