@@ -25,7 +25,7 @@ class LDAPACLCheck(UCSTestSchool):
         account = utils.UCSTestDomainAdminCredentials()
         self.admin_username = account.username
         self.admin_password = account.bindpw
-        self.master_fqdn = self.ucr.get("ldap/master")
+        self.ldap_upstream_servers = [self.ucr.get("ldap/master")] + self.ucr.get("ldap/backup").split()
 
     def setup(self):  # type: () -> None
         self.school = NameDnObj()
@@ -35,29 +35,33 @@ class LDAPACLCheck(UCSTestSchool):
         logger.debug("TEACHER NAME: %s", self.teacher_user.name)
         self.staff_user = NameDnObj()
 
-    def run_on_master(self, command_line):  # type: (str) -> Tuple[str, str]
-        cmd = (
-            "univention-ssh",
-            "-timeout",
-            "120",
-            "/dev/stdin",
-            "root@{}".format(self.master_fqdn),
-            command_line,
-        )
-        logger.info("CMD: %s", " ".join(cmd))
-        proc = subprocess.Popen(
-            cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        stdout, stderr = proc.communicate(self.admin_password.encode("UTF-8"))
-        return stdout.decode("UTF-8"), stderr.decode("UTF-8")
+    def run_on_ldap_upstream_servers(self, command_line):  # type: (str) -> Tuple[str, str]
+        ucr_value = None
+        for ldap_upstream_server in self.ldap_upstream_servers:
+            cmd = (
+                "univention-ssh",
+                "-timeout",
+                "120",
+                "/dev/stdin",
+                "root@{}".format(ldap_upstream_server),
+                command_line,
+            )
+            logger.info("CMD: %s", " ".join(cmd))
+            proc = subprocess.Popen(
+                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            stdout, stderr = proc.communicate(self.admin_password.encode("UTF-8"))
+            logger.debug("STDOUT:\n%s", stdout)
+            logger.debug("STDERR:\n%s", stderr)
+            if ldap_upstream_server == self.ucr.get("ldap/master"):
+                ucr_value = stdout.strip()
+        return ucr_value
 
     def run_test(self):  # type: () -> None
         # ssh to Primary Directory Node ==> get UCR + set to OFF
-        stdout, stderr = self.run_on_master("/usr/sbin/ucr get ucsschool/ldap/replicate_staff_to_edu")
-        logger.debug("STDOUT:\n%s", stdout)
-        logger.debug("STDERR:\n%s", stderr)
-        old_value = stdout.strip()
-        logger.info("OLD VALUE: %r", old_value)
+        old_value = self.run_on_ldap_upstream_servers(
+            "/usr/sbin/ucr get ucsschool/ldap/replicate_staff_to_edu"
+        )
 
         try:
             # HINT:
@@ -66,13 +70,11 @@ class LDAPACLCheck(UCSTestSchool):
             # not use the machine account
 
             # ssh to Primary Directory Node ==> set UCRV to ON and create Staff2 in test OU
-            stdout, stderr = self.run_on_master(
+            self.run_on_ldap_upstream_servers(
                 "/usr/sbin/ucr set ucsschool/ldap/replicate_staff_to_edu=yes ; "
                 "/usr/sbin/ucr commit /etc/ldap/slapd.conf ; "
                 "/usr/sbin/service slapd restart"
             )
-            logger.debug("STDOUT:\n%s", stdout)
-            logger.debug("STDERR:\n%s", stderr)
 
             # create Staff in test OU
             # check if staff is locally available
@@ -113,9 +115,7 @@ class LDAPACLCheck(UCSTestSchool):
             ]
             if not old_value:
                 cmd_list[0] = "/usr/sbin/ucr unset ucsschool/ldap/replicate_staff_to_edu"
-            stdout, stderr = self.run_on_master(" ; ".join(cmd_list))
-            logger.debug("STDOUT:\n%s", stdout)
-            logger.debug("STDERR:\n%s", stderr)
+            self.run_on_ldap_upstream_servers(" ; ".join(cmd_list))
 
 
 def test_ldap_acls_staff_on_edu_servers():
