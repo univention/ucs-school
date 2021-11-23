@@ -3,7 +3,7 @@
 ## desc: Check ucs config in ucs@school
 ## tags: [apptest, ucsschool]
 ## exposure: safe
-## package: [ucs-school-replica]
+## packages: [ucs-school-replica]
 
 import pytest
 
