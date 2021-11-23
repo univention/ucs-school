@@ -83,7 +83,10 @@ class Test(CLI_Import_v2_Tester):
         Bug #54115: Create/modify a new user for each role:
         - set ISO expiration_date for each user type
         """
-        for attribute in ["birthday", "expiration_date"]:
+        for attribute in [
+        # "birthday",
+        "expiration_date"
+        ]:
             self._test(attribute)
 
 

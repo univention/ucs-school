@@ -360,6 +360,7 @@ class UserImport(object):
                 )
                 user = self.school_move(imported_user, user)
         user.update(imported_user)
+        self.logger.debug("*** user.disabled=%r user.has_expiry()=%r user.has_purge_timestamp()=%r", user.disabled, user.has_expiry(self.connection), user.has_purge_timestamp(self.connection))
         if (
             user.disabled != "0"
             or user.has_expiry(self.connection)

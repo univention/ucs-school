@@ -574,10 +574,9 @@ class ImportUser(User):
         :return: whether the user account has expired
         :rtype: bool
         """
-        user_udm = self.get_udm_object(connection)
-        if not user_udm["userexpiry"]:
+        if not self.expiration_date:
             return False
-        expiry = datetime.datetime.strptime(user_udm["userexpiry"], "%Y-%m-%d")
+        expiry = datetime.datetime.strptime(self.expiration_date, "%Y-%m-%d")
         return datetime.datetime.now() > expiry
 
     def has_expiry(self, connection):  # type: (LoType) -> bool
@@ -589,8 +588,7 @@ class ImportUser(User):
         :return: whether the user account has an expiry date set
         :rtype: bool
         """
-        user_udm = self.get_udm_object(connection)
-        return bool(user_udm["userexpiry"])
+        return bool(self.expiration_date)
 
     @property
     def lo(self):  # type: () -> LoType
@@ -702,6 +700,7 @@ class ImportUser(User):
         Set User.expiration_date attribute.
         """
         if self.expiration_date:
+            self.logger.warning("The expiration date is usually set by the import itself. Setting it manually may lead to errors in future imports.")
             try:
                 self.expiration_date = self.parse_date(self.expiration_date)
             except ValueError:
@@ -717,7 +716,7 @@ class ImportUser(User):
             )  # type: str
         elif self.old_user:
             self.expiration_date = self.old_user.expiration_date
-        elif self.expiration_date == "":
+        if self.expiration_date == "":
             self.expiration_date = None
         return self.expiration_date
 

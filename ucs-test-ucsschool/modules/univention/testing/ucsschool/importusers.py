@@ -29,6 +29,7 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_s
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
+from univention.testing.ucsschool.ucs_test_school import udm_formula_for_shadowExpire
 
 try:
     from typing import List, Optional  # noqa: F401
@@ -274,28 +275,14 @@ class Person(object):
     def is_teacher_staff(self):
         return self.role in ("teacher_staff", "teacher_and_staff")
 
-    @staticmethod
-    def udm_formula_for_shadowExpire(userexpirydate):
-        # Note: this is a timezone dependent value
-        dateformat = syntax_date2_dateformat(userexpirydate)
-        return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) / 3600 / 24 + 1)).encode('ASCII')
-
     def expected_attributes(self):
         samba_home_path_server = self.get_samba_home_path_server()
         profile_path_server = self.get_profile_path_server()
         # If one of "krb5ValidEnd", "shadowExpire", "sambaKickoffTime" is set,
         # we assume the rest to be correct.
-        if not self.active:
-            shadow_expire = ["1"]
-        elif self.expiration_date:
+        shadow_expire = [] if self.active else ["1"]
+        if self.expiration_date:
             shadow_expire = [udm_formula_for_shadowExpire(self.expiration_date)]
-        else:
-            shadow_expire = []
-        if datetime.datetime.strptime(self.expiration_date, "%Y-%m-%d") < datetime.date.today() or not self.active:
-            samba_acct_flags = ["[UD         ]"]
-        else:
-            samba_acct_flags = ["[U          ]"]
-
         attr = dict(
             departmentNumber=[self.school],
             givenName=[self.firstname],
@@ -303,7 +290,7 @@ class Person(object):
             krb5KDCFlags=["126"] if self.is_active() else ["254"],
             mail=[self.mail] if self.mail else [],
             mailPrimaryAddress=[self.mail] if self.mail else [],
-            sambaAcctFlags=samba_acct_flags,
+            sambaAcctFlags=["[U          ]"] if self.active else ["[UD         ]"],
             shadowExpire=shadow_expire,
             sn=[self.lastname],
             uid=[self.username],
@@ -417,7 +404,6 @@ class Person(object):
             strict=False,
             should_exist=True,
         )
-
 
         for school, classes in self.school_classes.items():
             for cl in classes:
