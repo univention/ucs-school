@@ -14,15 +14,11 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse
 from univention.testing.ucsschool.user import User
 from univention.testing.umc import Client
-
-# this test fails every now and then, lets see if more waiting helps
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 50)
 
 
 def _test(student_classes, teacher_classes, schools, ucr, remove_from_school=None, connection=None):

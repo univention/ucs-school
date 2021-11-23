@@ -20,15 +20,10 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 from ucsschool.lib.models.user import User
 from univention.admin.uexceptions import authFail
-from univention.testing.decorators import SetTimeout
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 from univention.udm import UDM
-
-# this test fails every now and then for teachers when checking shadowExpire in (2/3)
-# lets see if more waiting helps
-utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object_orig, 1200)
 
 
 class Test(CLI_Import_v2_Tester):
