@@ -23,10 +23,6 @@ v1.4.4 (2021-06-29)
 * The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)
 * The UCS@school object validation now validate groups, schools and roles case-insensitive. (Bug #53044)
 
-v1.4.4 (2021-06-24)
-...................
-* The Kelvin API now supports UDM REST APIs using certificates, which are not signed by the UCS-CA. (Bug #52766)
-
 v1.4.3 (2021-06-16)
 ...................
 * A security error was fixed, that allowed the unrestricted use of the Kelvin API with unsigned authentication tokens.
