@@ -25,7 +25,9 @@ class LDAPACLCheck(UCSTestSchool):
         account = utils.UCSTestDomainAdminCredentials()
         self.admin_username = account.username
         self.admin_password = account.bindpw
-        self.ldap_upstream_servers = [self.ucr.get("ldap/master")] + self.ucr.get("ldap/backup").split()
+        self.ldap_upstream_servers = [self.ucr.get("ldap/master")] + self.ucr.get(
+            "ldap/backup", ""
+        ).split()
 
     def setup(self):  # type: () -> None
         self.school = NameDnObj()
