@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Set ISO dates for new users (Bug #41642)
+## desc: Set ISO birthday (2016-06-23) for new users (Bug 41642)
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -21,29 +21,28 @@ class Test(CLI_Import_v2_Tester):
     ou_B = None
     ou_C = None
 
-    def _test(self, attribute):
+    def test(self):  # formally test_iso_birthday()
+        """
+        Bug #41642: Create/modify a new user for each role:
+        - set ISO birthday (2016-06-23) for each user type
+        """
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config = copy.deepcopy(self.default_config)
         config.update_entry("source_uid", source_uid)
         config.update_entry("csv:mapping:Benutzername", "name")
         config.update_entry("csv:mapping:record_uid", "record_uid")
-        config.update_entry("csv:mapping:{}".format(attribute), attribute)
+        config.update_entry("csv:mapping:birthday", "birthday")
         config.update_entry("csv:mapping:role", "__role")
         config.update_entry("user_role", None)
 
-        self.log.info("*** Importing a new users of each role with ISO {}...".format(attribute))
+        self.log.info("*** Importing a new users of each role with ISO birthday...")
         person_list = []
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
-            # create person with ISO date (today)
+            # create person with ISO birthday (today)
             person = Person(self.ou_A.name, role)
             person.update(
-                **{
-                    attribute: time.strftime("%Y-%m-%d"),
-                   "record_uid": person.username,
-                   "source_uid": source_uid
-                }
+                record_uid=person.username, source_uid=source_uid, birthday=time.strftime("%Y-%m-%d")
             )
-
             person_list.append(person)
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
@@ -59,8 +58,8 @@ class Test(CLI_Import_v2_Tester):
             )
             person.verify()
 
-            # modify person and set attribute to new year's day
-            person.update(**{attribute: uts.random_date()})
+            # modify person and set birthday to new year's day
+            person.update(birthday="2016-01-01")
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
@@ -74,21 +73,6 @@ class Test(CLI_Import_v2_Tester):
                 pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)),
             )
             person.verify()
-
-
-    def test(self):  # formally test_iso_birthday()
-        """
-        Bug #41642: Create/modify a new user for each role:
-        - set ISO birthday for each user type
-        Bug #54115: Create/modify a new user for each role:
-        - set ISO expiration_date for each user type
-        """
-        for attribute in [
-        # "birthday",
-        "expiration_date"
-        ]:
-            self._test(attribute)
-
 
 
 if __name__ == "__main__":
