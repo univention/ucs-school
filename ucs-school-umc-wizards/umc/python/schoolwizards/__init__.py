@@ -449,7 +449,12 @@ class Instance(SchoolBaseModule, SchoolImport):
     def get_users(self, request, ldap_user_read=None):
         school = request.options["school"]
         user_class = USER_TYPES.get(request.options["type"], User)
-        return self._get_all(user_class, school, request.options.get("filter"), ldap_user_read)
+        account_status = request.options.get("accountStatus", "all")
+        users = self._get_all(user_class, school, request.options.get("filter"), ldap_user_read)
+        if account_status != "all":
+            disabled = "1" if account_status == "deactivated" else "0"
+            users = [user for user in users if user["disabled"] == disabled]
+        return users
 
     get_user = _get_obj
     modify_user = _modify_obj
