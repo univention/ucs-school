@@ -38,6 +38,7 @@ from enum import Enum
 import six
 
 import univention.admin.modules as udm_modules
+from univention.admin.filter import conjunction
 from ucsschool.lib.models.base import WrongModel
 from ucsschool.lib.models.computer import (
     IPComputer,
@@ -260,6 +261,13 @@ def sanitize_object(**kwargs):
     return _decorator
 
 
+def _sanitize_filter_str(filter_str):
+    sanitizer = LDAPSearchSanitizer(
+        required=False, default="", use_asterisks=True, add_asterisks=False
+    )
+    return sanitizer.sanitize("filter_str", {"filter_str": filter_str})
+
+
 class Instance(SchoolBaseModule, SchoolImport):
     def __init__(self):
         super(Instance, self).__init__()
@@ -440,19 +448,17 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"result": {"message": _('"%s" does not exist!') % obj.name}})
         return ret
 
-    def _get_all(self, klass, school, filter_str, lo):
+    def _get_all(self, klass, school, filter_str, lo, easy_filter=True):
         if school:
             schools = [School.cache(school)]
         else:
             schools = School.from_binddn(lo)
-        sanitizer = LDAPSearchSanitizer(
-            required=False, default="", use_asterisks=True, add_asterisks=False
-        )
-        filter_str = sanitizer.sanitize("filter_str", {"filter_str": filter_str})
+        if easy_filter:
+            filter_str = _sanitize_filter_str(filter_str)
         objs = []
         for school in schools:
             try:
-                objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=True))
+                objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=easy_filter))
             except noObject as exc:
                 MODULE.error("Could not get all objects of %r: %r" % (klass.__name__, exc))
         return [obj.to_dict() for obj in objs]
@@ -465,9 +471,18 @@ class Instance(SchoolBaseModule, SchoolImport):
     @response
     @LDAP_Connection()
     def get_users(self, request, ldap_user_read=None):
-        school = request.options["school"]
         user_class = USER_TYPES.get(request.options["type"], User)
-        return self._get_all(user_class, school, request.options.get("filter"), ldap_user_read)
+        filter_str = _sanitize_filter_str(request.options.get("filter"))
+        if filter_str:
+            filter_str = str(user_class.build_easy_filter(filter_str))
+        account_status = request.options.get("accountStatus", "all")
+        if account_status != "all":
+            disabled_filter = "(disabled={})".format("1" if account_status == "deactivated" else "0")
+            if filter_str:
+                filter_str = str(conjunction("&", [disabled_filter, filter_str]))
+            else:
+                filter_str = disabled_filter
+        return self._get_all(user_class, request.options["school"], filter_str, ldap_user_read, easy_filter=False)
 
     get_user = _get_obj
     modify_user = _modify_obj
