@@ -67,17 +67,7 @@ async def test_create_ou(create_ou_using_python, create_ou_using_ssh, udm_kwargs
         fp.write(
             f"in ssh, but not in kelvin: {sorted(dns_after_ssh_school_creation - dns_after_kelvin_school_creation)}\n"
         )
-    # IMHO there is a bug in the create_ou() code in 4.4: it uses as the DHCP server the last DC that was
-    # created for the OU, even in case of singlemaster, where we pass the singlemasters as "hostname"
-    # argument. So this is a workaround to make the test succeed: we add the master as a DHCP server as
-    # an _expected_ difference.
-    # TODO: The behavior should be investigated.
-    expected_difference = (
-        {f"cn={ucr['ldap/master'].split('.')[0]},cn={ou_name_ssh},cn=dhcp,ou={ou_name_ssh},{ldap_base}"}
-        if ucr.is_true("ucsschool/singlemaster")
-        else set()
-    )
-    assert (dns_after_kelvin_school_creation ^ dns_after_ssh_school_creation) == expected_difference
+    assert dns_after_kelvin_school_creation == dns_after_ssh_school_creation
 
 
 @pytest.mark.asyncio
