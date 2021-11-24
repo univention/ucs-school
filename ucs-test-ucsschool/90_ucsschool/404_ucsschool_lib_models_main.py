@@ -50,8 +50,8 @@ def test_list_models_details():
     cmd = [sys.executable, "-m", "ucsschool.lib.models", "list-models", "--attributes"]
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
     assert (
-        "Student\n    birthday\n    disabled\n    email\n    firstname [required]\n    "
-        "lastname [required]\n    name [required]\n    password\n    school [required]\n    "
+        "Student\n    birthday\n    disabled\n    email\n    expiration_date\n    firstname [required]\n"
+        "    lastname [required]\n    name [required]\n    password\n    school [required]\n    "
         "school_classes\n    schools\n    ucsschool_roles"
     ) in stdout
     assert (
@@ -59,9 +59,9 @@ def test_list_models_details():
         "ucsschool_roles"
     ) in stdout
     assert (
-        "ImportTeachersAndStaff\n    birthday\n    disabled\n    email\n    firstname [required]\n    "
-        "lastname [required]\n    name [required]\n    password\n    record_uid\n    "
-        "school [required]\n    school_classes\n    schools\n    source_uid\n    "
+        "ImportTeachersAndStaff\n    birthday\n    disabled\n    email\n    expiration_date\n    "
+        "firstname [required]\n    lastname [required]\n    name [required]\n    password\n    "
+        "record_uid\n    school [required]\n    school_classes\n    schools\n    source_uid\n    "
         "ucsschool_roles"
     ) in stdout
     assert (

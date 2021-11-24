@@ -35,6 +35,7 @@ class User(Person):
         lastname=None,
         password=None,
         mail=None,
+        expiration_date=None,
         schools=None,
         connection=None,
         birthday=None,
@@ -50,6 +51,8 @@ class User(Person):
             self.lastname = lastname
         if mail:
             self.mail = mail
+        if expiration_date:
+            self.expiration_date = expiration_date
         if school_classes:
             self.school_classes = school_classes
         self.schools = schools or [self.school]
@@ -87,6 +90,7 @@ class User(Person):
                     "schools": self.schools,
                     "school_classes": self.school_classes,
                     "email": self.mail,
+                    "expiration_date": self.expiration_date,
                     "name": self.username,
                     "type": self.typ,
                     "firstname": self.firstname,
@@ -131,6 +135,7 @@ class User(Person):
             "password": None,
             "type": self.typ,
             "email": self.mail,
+            "expiration_date": self.expiration_date,
             "objectType": "users/user",
             "school_classes": {},
             "ucsschool_roles": set(self.ucsschool_roles),
@@ -230,6 +235,9 @@ class User(Person):
             "school": self.school,
             "schools": self.schools,
             "email": new_attributes.get("email") if new_attributes.get("email") else self.mail,
+            "expiration_date": new_attributes.get("expiration_date")
+            if new_attributes.get("expiration_date")
+            else self.expiration_date,
             "name": self.username,
             "type": self.typ,
             "firstname": new_attributes.get("firstname")
@@ -254,6 +262,11 @@ class User(Person):
         self.set_mode_to_modify()
         self.school_classes = new_attributes.get("school_classes", self.school_classes)
         self.mail = new_attributes.get("email") if new_attributes.get("email") else self.mail
+        self.expiration_date = (
+            new_attributes.get("expiration_date")
+            if new_attributes.get("expiration_date")
+            else self.expiration_date
+        )
         self.firstname = (
             new_attributes.get("firstname") if new_attributes.get("firstname") else self.firstname
         )

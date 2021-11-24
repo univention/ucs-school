@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.22) unstable; urgency=low
+
+  * Bug #54116: fix tests
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 24 Nov 2021 10:44:33 +0100
+
 ucs-test-ucsschool (7.3.21) unstable; urgency=low
 
   * Bug #54116: adapt tests for expiration_date
