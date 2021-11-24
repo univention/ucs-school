@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.254) unstable; urgency=medium
+
+  * Bug #54115: fix tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 24 Nov 2021 09:09:57 +0100
+
 ucs-test-ucsschool (6.0.253) unstable; urgency=medium
 
   * Bug #54115: adapt tests for expiration_date 
