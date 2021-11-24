@@ -74,10 +74,16 @@ define([
 				description: _('Class of the %s.', this.objectNameSingular),
 				formatter: lang.hitch(this, 'school_classesFormatter'),
 				sortFormatter: lang.hitch(this, 'school_classesFormatter')
-//			}, {
-//				name: 'mailPrimaryAddress',
-//				label: _('E-Mail address'),
-//				description: _('E-Mail address of the %s.', this.objectNameSingular)
+			}, {
+				name: 'disabled',
+				label: _('Account status'),
+				formatter: function(value) {
+					if (value === '1') {
+						return _('Deactivated');
+					} else {
+						return _('Activated');
+					}
+				}
 			}];
 		},
 
@@ -92,7 +98,7 @@ define([
 		},
 
 		getSearchLayout: function() {
-			return [['school', 'type', 'filter']];
+			return [['school', 'type', 'accountStatus', 'filter']];
 		},
 
 		getDeleteConfirmMessage: function(objects) {
@@ -124,6 +130,22 @@ define([
 				size: 'TwoThirds',
 				sortDynamicValues: false,
 				dynamicValues: utils.getStaticValuesUserRolesWithAll
+			}, {
+				type: ComboBox,
+				'class': 'umcTextBoxOnBody',
+				name: 'accountStatus',
+				label: _('Account status'),
+				size: 'TwoThirds',
+				staticValues: [{
+					id: 'all',
+					label: _('All'),
+				}, {
+					id: 'activated',
+					label: _('Activated'),
+				}, {
+					id: 'deactivated',
+					label: _('Deactivated'),
+				}],
 			}, {
 				type: SearchBox,
 				'class': 'umcTextBoxOnBody',
