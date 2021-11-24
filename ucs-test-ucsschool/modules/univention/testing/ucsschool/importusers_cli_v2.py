@@ -7,12 +7,10 @@ import json
 import os
 import pprint
 import random
-import re
 import shutil
 import subprocess
 import sys
 import tempfile
-import time
 import traceback
 from collections import Mapping
 
@@ -46,6 +44,16 @@ class TestFailed(Exception):
     def __init__(self, msg, stack):
         self.msg = msg
         self.stack = stack
+
+
+def reset_notifier_restart_burst_limit():
+    """
+    Avoid "univention-directory-notifier.service: Failed with result 'start-limit-hit'." errors due to
+    too many notifier restarts.
+    This resets the burst limit counter, which includes successful service starts
+    (even though the option is called "reset-failed").
+    """
+    subprocess.call(("systemctl", "reset-failed", "univention-directory-notifier.service"))
 
 
 class ConfigDict(dict):
@@ -400,6 +408,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
                 os.remove(hook_fn)
             except (IOError, OSError):
                 self.log.warning("Failed to remove %r" % (hook_fn,))
+        reset_notifier_restart_burst_limit()
         super(CLI_Import_v2_Tester, self).cleanup()
         self.log.info("CLI_Import_v2_Tester cleanup done")
 
