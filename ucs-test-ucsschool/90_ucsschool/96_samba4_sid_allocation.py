@@ -73,7 +73,7 @@ class TestS4SIDAllocation(TestSamba4):
                 "stop." % connector_should_run
             )
 
-    def s4_search(self, filter_string, attribute):
+    def s4_search(self, filter_string, attribute, default=None):
         """
         Search in S4 LDAP via univention-s4-search
         """
@@ -88,7 +88,10 @@ class TestS4SIDAllocation(TestSamba4):
 
         matches = re.findall(r"^%s: (.*)$" % attribute, stdout, re.MULTILINE)
         if not matches:
-            utils.fail("The 'univention-s4search' did not produce any %s." % attribute)
+            if default is not None:
+                matches = default
+            else:
+                utils.fail("The 'univention-s4search' did not produce any %s." % attribute)
         return matches[0]
 
     def get_sid_via_ldbsearch(self, user_dn, ldburl):
@@ -154,7 +157,7 @@ class TestS4SIDAllocation(TestSamba4):
             dc_master_dn = "cn=%s,cn=dc,cn=computers,%s" % (dc_master, self.UCR.get("ldap/base"))
             master_services = self.LdapConnection.get(dc_master_dn)["univentionService"]
 
-            if "Samba 4" in master_services:
+            if b"Samba 4" in master_services:
                 print(
                     "\nThe Primary Directory Node has Samba4 running, the test will also check the SID "
                     "for the test user on the Primary Directory Node"
@@ -208,7 +211,7 @@ class TestS4SIDAllocation(TestSamba4):
             self.start_stop_s4_connector(False)
 
             # get 'rIDNextRID' from Samba4 before user creation:
-            initial_next_rid = self.s4_search("(objectClass=rIDSet)", "rIDNextRID")
+            initial_next_rid = self.s4_search("(objectClass=rIDSet)", "rIDNextRID", default=[0])
 
             # create regular user for the test. this skips the drs replication
             # check, as the s4-connector was previously stopped.
@@ -221,7 +224,7 @@ class TestS4SIDAllocation(TestSamba4):
             s4_user_filter = ldap.filter.filter_format("(cn=%s)", (test_user_cn,))
 
             # get 'rIDNextRID' after user is created and replicated
-            next_rid_pre_sync = self.s4_search("(objectClass=rIDSet)", "rIDNextRID")
+            next_rid_pre_sync = self.s4_search("(objectClass=rIDSet)", "rIDNextRID", default=[0])
             if next_rid_pre_sync != initial_next_rid:
                 utils.fail(
                     (
@@ -239,7 +242,7 @@ class TestS4SIDAllocation(TestSamba4):
             wait_for_drs_replication(s4_user_filter)
 
             # get 'rIDNextRID' after user is created and replicated
-            next_rid_post_sync = self.s4_search("(objectClass=rIDSet)", "rIDNextRID")
+            next_rid_post_sync = self.s4_search("(objectClass=rIDSet)", "rIDNextRID", default=[0])
             if next_rid_post_sync != initial_next_rid:
                 utils.fail(
                     (
