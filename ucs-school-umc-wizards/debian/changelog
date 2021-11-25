@@ -1,8 +1,14 @@
+ucs-school-umc-wizards (11.0.6) unstable; urgency=medium
+
+  * Bug #54115: fix build problem
+
+ -- Ole Schwiegert <wenzel@univention.de>  Thu, 25 Nov 2021 08:04:00 +0100
+
 ucs-school-umc-wizards (11.0.5) unstable; urgency=medium
 
   * Bug #54115: fix problem with translation and optional handling
 
- -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Nov 2021 16:12:26 +0100
+ -- Ole Schwiegert <wenzel@univention.de>  Thu, 25 Nov 2021 08:03:00 +0100
 
 ucs-school-umc-wizards (11.0.4) unstable; urgency=medium
 
