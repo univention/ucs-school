@@ -1,5 +1,6 @@
 import copy
 import importlib
+import logging
 import os
 import tempfile
 from typing import Any, Dict, Tuple
@@ -115,6 +116,9 @@ del REMOVE_MODULES["School"]  # (*1)
 # (*1) model does not support remove operation
 #
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 def _inside_docker():
     try:
@@ -160,7 +164,7 @@ def create_hook_file():
         path = files_to_remove.pop()
         try:
             os.unlink(path)
-            print(f"Deleted {path!r}.")
+            logger.debug("Deleted %r.", path)
         except FileNotFoundError:
             pass
 
@@ -170,12 +174,12 @@ def creation_kwargs(
     random_first_name, random_last_name, random_user_name, schedule_delete_udm_obj, udm_kwargs
 ):
     async def _create_dhcp_service(ou: str, name: str) -> DHCPService:
-        print("Creating DHCPService...")
+        logger.debug("Creating DHCPService...")
         dhcp_service = DHCPService(school=ou, name=name)
         async with UDM(**udm_kwargs) as udm:
             if not await dhcp_service.create(udm):
                 raise RuntimeError("Failed creating DHCPService.")
-        print(f"Created {dhcp_service!r}.")
+        logger.debug("Created %r.", dhcp_service)
         schedule_delete_udm_obj(dhcp_service.dn, "dhcp/service")
         return dhcp_service
 
@@ -279,7 +283,7 @@ async def test_create_hooks(
         await obj.create(udm)
     with open(target_file, "r") as fp:
         result = fp.read()
-    print(f"target_file content: {result}")
+    logger.debug("target_file content: %s", result)
     if model in ("Container", "OU"):
         assert not result
     else:
@@ -337,7 +341,7 @@ async def test_modify_hooks(
 
     with open(target_file, "r") as fp:
         result = fp.read()
-    print(f"target_file content: {result}")
+    logger.debug("target_file content: %s", result)
     if model in CLASSES_WITH_SCHOOL_NONE:
         assert obj.school is None
     else:
@@ -360,7 +364,7 @@ async def test_move_hooks(
     udm_kwargs,
 ):
     ou1, ou2 = await create_multiple_ous(2)
-    print(f"** ou1={ou1!r} ou2={ou2!r}")
+    logger.debug("** ou1=%r ou2=%r", ou1, ou2)
     hook_file, target_file = create_hook_file(model, method)
     module = importlib.import_module(CLASSES_MODULES[model])
     cls = getattr(module, model)
@@ -376,7 +380,7 @@ async def test_move_hooks(
         async with UDM(**udm_kwargs) as udm:
             # check that target container exists
             target_cn = await udm.get("container/cn").get(f"cn=admins,cn=users,ou={ou2},{ldap_base}")
-            print(f"Trying to move to existing {target_cn!r}.")
+            logger.debug("Trying to move to existing %r.", target_cn)
 
     if hasattr(obj, "schools"):
         async with UDM(**udm_kwargs) as udm:
@@ -392,7 +396,7 @@ async def test_move_hooks(
 
     with open(target_file, "r") as fp:
         result = fp.read()
-    print(f"target_file content: {result}")
+    logger.debug("target_file content: %s", result)
 
     if model == "Group":
         # see Group.get_class_for_udm_obj()
@@ -433,7 +437,7 @@ async def test_remove_hooks(
 
     with open(target_file, "r") as fp:
         result = fp.read()
-    print(f"target_file content: {result}")
+    logger.debug("target_file content: %s", result)
 
     if model == "Group":
         # see Group.get_class_for_udm_obj()

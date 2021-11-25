@@ -33,6 +33,10 @@ _cached_ous: Set[Tuple[str, str]] = set()
 fake = Faker()
 logger = logging.getLogger("ucsschool")
 logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("udm_rest_client")
+logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 @pytest.fixture(scope="session")
@@ -111,6 +115,11 @@ def school_class_attrs(ldap_base):
 
 
 class UserFactory(factory.Factory):
+    """
+    Not yet created lib User object (missing specific roles), you probably want to use
+    new_school_user() or new_udm_user().
+    """
+
     class Meta:
         model = ucsschool.lib.models.user.User
 
@@ -140,11 +149,11 @@ async def mail_domain(udm_kwargs) -> str:
         async for obj in mod.search():
             created_domain = ""
             name = obj.props.name
-            print(f"Using existing mail/domain {name!r}.")
+            logger.debug("Using existing mail/domain %r.", name)
             break
         else:
             name = env_or_ucr("domainname") or fake.domain_name()
-            print(f"Creating mail/domain object {name!r}...")
+            logger.debug("Creating mail/domain object %r...", name)
             obj = await mod.new()
             obj.props.name = name
             await obj.save()
@@ -153,7 +162,7 @@ async def mail_domain(udm_kwargs) -> str:
     yield name
 
     if created_domain:
-        print(f"Deleting mail/domain object {created_domain!r}...")
+        logger.debug("Deleting mail/domain object %r...", created_domain)
         async with UDM(**udm_kwargs) as udm:
             mod = udm.get("mail/domain")
             async for obj in mod.search(f"(cn={created_domain})"):
@@ -162,7 +171,12 @@ async def mail_domain(udm_kwargs) -> str:
 
 @pytest.fixture
 def school_user(mail_domain):
-    async def _func(school: str, **kwargs) -> ucsschool.lib.models.user.User:
+    """
+    Not yet created lib User object (missing specific roles), you probably want to use
+    new_school_user() or new_udm_user(). -> User
+    """
+
+    def _func(school: str, **kwargs) -> ucsschool.lib.models.user.User:
         if "email" not in kwargs:
             local_part = fake.ascii_company_email().split("@", 1)[0]
             kwargs["email"] = f"{local_part}@{mail_domain}"
@@ -175,8 +189,15 @@ def school_user(mail_domain):
 
 @pytest.fixture
 def udm_users_user_props(school_user):
+    """
+    Attributes for an UDM user that is _almost_ a school user. -> {attrs}
+
+    Missing ucsschoolRole, role groups, role options/OCs[, ucsschoolRecordUID, ucsschoolSourceUID].
+    """
+
     async def _func(school: str, **school_user_kwargs) -> Dict[str, Any]:
-        user = await school_user(school, **school_user_kwargs)
+        user = school_user(school, **school_user_kwargs)
+        school = sorted(user.schools)[0]
         return {
             "firstname": user.firstname,
             "lastname": user.lastname,
@@ -189,6 +210,8 @@ def udm_users_user_props(school_user):
             "description": fake.text(max_nb_chars=50),
             "password": user.password,
             "disabled": user.disabled,
+            "primaryGroup": f"cn=Domain Users {school},cn=groups,ou={school},dc=uni,dc=dtr",
+            "groups": [f"cn=Domain Users {ou},cn=groups,ou={ou},dc=uni,dc=dtr" for ou in user.schools],
         }
 
     return _func
@@ -196,7 +219,7 @@ def udm_users_user_props(school_user):
 
 @pytest.fixture
 async def new_school_class_using_udm(udm_kwargs, ldap_base, school_class_attrs):
-    """Create a new school class"""
+    """Create a new school class. -> (DN, {attrs})"""
     created_school_classes = []
     created_school_shares = []
 
@@ -211,7 +234,7 @@ async def new_school_class_using_udm(udm_kwargs, ldap_base, school_class_attrs):
             grp_obj.props.ucsschoolRole = sc_attrs["ucsschool_roles"]
             await grp_obj.save()
             created_school_classes.append(grp_obj.dn)
-            print("Created new SchoolClass: {!r}".format(grp_obj))
+            logger.debug("Created new SchoolClass: %r.", grp_obj)
 
             share_obj = await udm.get("shares/share").new()
             share_obj.position = f"cn=klassen,cn=shares,ou={school},{ldap_base}"
@@ -226,7 +249,7 @@ async def new_school_class_using_udm(udm_kwargs, ldap_base, school_class_attrs):
             ]
             await share_obj.save()
             created_school_shares.append(share_obj.dn)
-            print("Created new ClassShare: {!r}".format(share_obj))
+            logger.debug("Created new ClassShare: %r.", share_obj)
 
         return grp_obj.dn, sc_attrs
 
@@ -238,26 +261,26 @@ async def new_school_class_using_udm(udm_kwargs, ldap_base, school_class_attrs):
             try:
                 grp_obj = await grp_mod.get(dn)
             except UdmNoObject:
-                print(f"SchoolClass {dn!r} does not exist (anymore).")
+                logger.debug("SchoolClass %r does not exist (anymore).", dn)
                 continue
             await grp_obj.delete()
-            print(f"Deleted SchoolClass {dn!r} through UDM.")
+            logger.debug("Deleted SchoolClass %r through UDM.", dn)
         share_mod = udm.get("shares/share")
         for dn in created_school_shares:
             try:
                 share_obj = await share_mod.get(dn)
             except UdmNoObject:
-                print(f"ClassShare {dn!r} does not exist (anymore).")
+                logger.debug("ClassShare %r does not exist (anymore).", dn)
                 continue
             await share_obj.delete()
-            print(f"Deleted ClassShare {dn!r} through UDM.")
+            logger.debug("Deleted ClassShare %r through UDM.", dn)
 
 
 @pytest.fixture
 def new_udm_user(
     udm_kwargs, ldap_base, udm_users_user_props, new_school_class_using_udm, schedule_delete_user_dn
 ):
-    """Create a new UDM school user using UDM."""
+    """Create a new school user using UDM. -> (DN, {attrs})"""
 
     async def _func(
         school: str, role: str, udm_properties: Dict[str, Any] = None, **school_user_kwargs
@@ -303,7 +326,7 @@ def new_udm_user(
                 user_obj.props.groups.extend([cls_dn1, cls_dn2])
             await user_obj.save()
             schedule_delete_user_dn(user_obj.dn)
-            print(f"Created new {role[0].upper()}{role[1:]}: {user_obj!r}")
+            logger.debug("Created new %s%s: %r", role[0].upper(), role[1:], user_obj)
 
         return user_obj.dn, user_props
 
@@ -312,7 +335,11 @@ def new_udm_user(
 
 @pytest.fixture
 def new_school_user(new_udm_user, udm_kwargs):
-    """Create a new school user using UDM."""
+    """
+    Create a new school user using UDM. -> User
+
+    Wrapper around new_udm_user() that returns a lib User object.
+    """
 
     async def _func(
         school: str, role: str, udm_properties: Dict[str, Any] = None, **school_user_kwargs
@@ -328,7 +355,7 @@ def new_school_user(new_udm_user, udm_kwargs):
 
 @pytest.fixture
 def new_users(new_udm_user):
-    """Create multiple new UDM school users using UDM."""
+    """Create multiple new school users using UDM. -> [(DN, {attrs})]"""
 
     async def _func(
         school: str, roles: Dict[str, int], **school_user_kwargs
@@ -344,7 +371,7 @@ def new_users(new_udm_user):
 
 @pytest.fixture
 def new_school_users(new_school_user):
-    """Create multiple new school users using UDM."""
+    """Create multiple new school users using UDM. -> [User]"""
 
     async def _func(school: str, roles: Dict[str, int], **school_user_kwargs) -> List[User]:
         return [
@@ -371,10 +398,10 @@ async def schedule_delete_udm_obj(udm_kwargs):
             try:
                 udm_obj = await mod.get(dn)
             except UdmNoObject:
-                print(f"UDM {udm_mod_name!r} object {dn!r} does not exist (anymore).")
+                logger.debug("UDM %r object %r does not exist (anymore).", udm_mod_name, dn)
                 continue
             await udm_obj.delete()
-            print(f"Deleted UDM {udm_mod_name!r} object {dn!r} through UDM.")
+            logger.debug("Deleted UDM %r object %r through UDM.", udm_mod_name, dn)
 
 
 @pytest.fixture
@@ -401,9 +428,9 @@ async def schedule_delete_user_name_using_udm(udm_kwargs):
                 await user_obj.delete()
                 break
             else:
-                print(f"User {username!r} does not exist (anymore).")
+                logger.debug("User %r does not exist (anymore).", username)
                 continue
-            print(f"Deleted user {username!r} through UDM.")
+            logger.debug("Deleted user %r through UDM.", username)
 
 
 @pytest.fixture
@@ -435,7 +462,7 @@ async def new_cn(udm_kwargs, ldap_base, cn_attrs):
             obj.props.description = attr["description"]
             await obj.save()
             created_cns.append(obj.dn)
-            print("Created new container: {!r}".format(obj))
+            logger.debug("Created new container: %r.", obj)
 
         return obj.dn, attr
 
@@ -447,10 +474,10 @@ async def new_cn(udm_kwargs, ldap_base, cn_attrs):
             try:
                 obj = await mod.get(dn)
             except UdmNoObject:
-                print(f"Container {dn!r} does not exist (anymore).")
+                logger.debug("Container %r does not exist (anymore).", dn)
                 continue
             await obj.delete()
-            print(f"Deleted container {dn!r}.")
+            logger.debug("Deleted container %r.", dn)
 
 
 @pytest.fixture
@@ -466,14 +493,14 @@ def random_logger():
 @pytest.fixture(scope="session")
 def installed_ssh():
     if not Path("/usr/bin/ssh").exists() or not Path("/usr/bin/sshpass").exists():
-        print("Installing 'ssh' and 'sshpass'...")
+        logger.debug("Installing 'ssh' and 'sshpass'...")
         returncode, stdout, stderr = exec_cmd(
             ["apk", "add", "--no-cache", "openssh", "sshpass"], log=True
         )
-        print(f"stdout={stdout} or '<empty>'")
-        print(f"stderr={stderr or '<empty>'}")
+        logger.debug("stdout=%s", stdout or "<empty>")
+        logger.debug("stderr=%s", stderr or "<empty>")
     else:
-        print("'ssh' and 'sshpass' are already installed.")
+        logger.debug("'ssh' and 'sshpass' are already installed.")
 
 
 @pytest.fixture(scope="session")
@@ -489,10 +516,10 @@ def exec_with_ssh(docker_host_name, installed_ssh):
             "StrictHostKeyChecking no",
             f"root@{host}",
         ] + cmd
-        print(f"ssh to {host!r} and execute: {cmd!r}...")
+        logger.debug("ssh to %r and execute: %r...", host, cmd)
         returncode, stdout, stderr = exec_cmd(ssh_cmd, log=True)
-        print(f"stdout={stdout or '<empty>'}")
-        print(f"stderr={stderr or '<empty>'}")
+        logger.debug("stdout=%s", stdout or "<empty>")
+        logger.debug("stderr=%s", stderr or "<empty>")
         return returncode, stdout, stderr
 
     return _func
@@ -501,7 +528,7 @@ def exec_with_ssh(docker_host_name, installed_ssh):
 @pytest.fixture(scope="session")
 def delete_ou_using_ssh(exec_with_ssh, ldap_base):
     async def _func(ou_name: str, host: str):
-        print(f"Deleting OU {ou_name!r} on host {host!r}...")
+        logger.debug("Deleting OU %r on host %r...", ou_name, host)
         dn = f"ou={ou_name},{ldap_base}"
         retries = 2
         while retries > 0:
@@ -528,23 +555,25 @@ def delete_ou_cleanup(ldap_base, udm_kwargs):
         async with UDM(**udm_kwargs) as udm:
             mod = udm.get("groups/group")
             for dn in group_dns:
-                print(f"Deleting group: {dn!r}...")
+                logger.debug("Deleting group: %r...", dn)
                 try:
                     obj = await mod.get(dn)
                     await obj.delete()
                 except UdmNoObject:
-                    print(f"Error: group does not exist: {dn!r}")
+                    logger.debug("Error: group does not exist: %r", dn)
         if ucr.is_true("ucsschool/singlemaster"):
             master_hostname = env_or_ucr("ldap/master").split(".", 1)[0]
             async with UDM(**udm_kwargs) as udm:
                 mod = udm.get("computers/domaincontroller_master")
                 async for obj in mod.search(f"cn={master_hostname}"):
-                    print(f"Removing 'ucsschoolRole=single_master:school:{ou_name}' from {obj.dn!r}...")
+                    logger.debug(
+                        "Removing 'ucsschoolRole=single_master:school:%s' from %r...", ou_name, obj.dn
+                    )
                     try:
                         obj.props.ucsschoolRole.remove(f"single_master:school:{ou_name}")
                         await obj.save()
                     except ValueError:
-                        print(f"Error: role was no set: ucsschoolRole={obj.props.ucsschoolRole!r}")
+                        logger.debug("Error: role was no set: ucsschoolRole=%r", obj.props.ucsschoolRole)
 
     return _func
 
@@ -621,12 +650,12 @@ def create_ou_using_ssh(
 ):
     async def _func(ou_name: str = None, host: str = None, cache: bool = True) -> str:
         if cached_ou := get_ou_from_cache(ou_name, cache):
-            print(f"Using OU {ou_name!r} from cache.")
+            logger.debug("Using OU %r from cache.", ou_name)
             return cached_ou
         args = create_ou_kwargs(ou_name)
         ou_name = args["ou_name"]
         host = host or docker_host_name
-        print(f"Creating school {ou_name!r} on host {host!r} using SSH...")
+        logger.debug("Creating school %r on host %r using SSH...", ou_name, host)
         if cache:
             schedule_delete_ou_using_ssh_at_end_of_session(ou_name, host)
         else:
@@ -644,9 +673,9 @@ def create_ou_using_ssh(
         )
         assert (not stderr) or ("Already attached!" in stderr) or ("created successfully" in stderr)
         if "Already attached!" in stderr:
-            print(f" => OU {ou_name!r} exists in {host!r}.")
+            logger.debug(" => OU %r exists in %r.", ou_name, host)
         else:
-            print(f" => OU {ou_name!r} created in {host!r}.")
+            logger.debug(" => OU %r created in %r.", ou_name, host)
         async with UDM(**udm_kwargs) as udm:
             try:
                 await udm.get("container/ou").get(f"ou={ou_name},{ldap_base}")
@@ -668,18 +697,18 @@ def create_ou_using_python(
 ):
     async def _func(ou_name: str = None, cache: bool = True) -> str:
         if cached_ou := get_ou_from_cache(ou_name, cache):
-            print(f"Using cached school {cached_ou!r}.")
+            logger.debug("Using cached school %r.", cached_ou)
             return cached_ou
         args = create_ou_kwargs(ou_name)
         ou_name = args["ou_name"]
-        print(f"Creating school {ou_name!r} using Python...")
+        logger.debug("Creating school %r using Python...", ou_name)
         if cache:
             schedule_delete_ou_using_ssh_at_end_of_session(ou_name, docker_host_name)
         else:
             schedule_delete_ou_using_ssh(ou_name, docker_host_name)
         async with UDM(**udm_kwargs) as udm:
             if await School(ou_name).exists(udm):
-                print(f"School {ou_name!r} exists.")
+                logger.debug("School %r exists.", ou_name)
                 return ou_name
         is_single_master = ucr.is_true("ucsschool/singlemaster")
         master_hostname = env_or_ucr("ldap/master").split(".", 1)[0]
@@ -695,14 +724,14 @@ def create_ou_using_python(
             "is_single_master": is_single_master,
             "alter_dhcpd_base": False,
         }
-        print(f"=> kwargs for create_ou: {create_ou_python_kwargs!r}")
+        logger.debug("=> kwargs for create_ou: %r", create_ou_python_kwargs)
         async with UDM(**udm_kwargs) as udm:
             await create_ou(lo=udm, **create_ou_python_kwargs)
             try:
                 await udm.get("container/ou").get(f"ou={ou_name},{ldap_base}")
             except UdmNoObject:
                 raise AssertionError(f"Creation of OU {ou_name} failed.")
-        print(f"School {ou_name!r} created.")
+        logger.debug("School %r created.", ou_name)
         return ou_name
 
     return _func

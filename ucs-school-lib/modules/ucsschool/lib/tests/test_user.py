@@ -1,3 +1,4 @@
+import datetime
 import itertools
 import random
 from typing import Any, Dict, List, NamedTuple, Tuple, Type, Union
@@ -54,7 +55,7 @@ def compare_attr_and_lib_user(attr: Dict[str, Any], user: User):
             continue
         if k == "username":
             val1 = v
-            val2 = getattr(user, "name")
+            val2 = user.name
         elif k == "school":
             val1 = v
             val2 = [getattr(user, k)]
@@ -66,17 +67,19 @@ def compare_attr_and_lib_user(attr: Dict[str, Any], user: User):
             val2 = user.expiration_date
         elif k == "mailPrimaryAddress":
             val1 = v
-            val2 = getattr(user, "email")
+            val2 = user.email
         elif k == "e-mail":
             val1 = set(v)
-            val2 = {getattr(user, "email")}
+            val2 = {user.email}
+        elif k in ("primaryGroup", "groups"):
+            continue
         else:
             val1 = v
             val2 = getattr(user, k)
         if isinstance(v, list):
             val1 = set(val1)
             val2 = set(val2)
-        assert val1 == val2, "k={!r} v={!r} getattr(user, k)={!r}".format(k, v, getattr(user, k))
+        assert val1 == val2
 
 
 def role_id(value: Role) -> str:
@@ -198,7 +201,7 @@ async def test_modify(create_ou_using_python, new_udm_user, udm_kwargs, role: Ro
     ou = await create_ou_using_python()
     dn, attr = await new_udm_user(ou, role.name)
     async with UDM(**udm_kwargs) as udm:
-        user = await role.klass.from_dn(dn, ou, udm)
+        user: User = await role.klass.from_dn(dn, ou, udm)
         description = fake.text(max_nb_chars=50)
         user.description = description
         firstname = fake.first_name()
@@ -213,10 +216,14 @@ async def test_modify(create_ou_using_python, new_udm_user, udm_kwargs, role: Ro
         success = await user.modify(udm)
         assert success is True
         user = await role.klass.from_dn(dn, ou, udm)
-    attr["firstname"] = firstname
-    attr["lastname"] = lastname
-    attr["birthday"] = birthday
-    attr["userexpiry"] = expiration_date
+    attr.update(
+        {
+            "firstname": firstname,
+            "lastname": lastname,
+            "birthday": birthday,
+            "userexpiry": expiration_date,
+        }
+    )
     compare_attr_and_lib_user(attr, user)
 
 
@@ -487,12 +494,17 @@ async def test_unixhome(
     school = await create_ou_using_python()
     async with UDM(**udm_kwargs) as udm:
         user_props = await udm_users_user_props(school)
-        user_props["name"] = user_props["username"]
-        user_props["email"] = user_props["mailPrimaryAddress"]
-        user_props["school"] = school
-        user_props["birthday"] = str(user_props["birthday"])
-        user_props["expiration_date"] = str(user_props["userexpiry"])
+        user_props.update(
+            {
+                "name": user_props["username"],
+                "email": user_props["mailPrimaryAddress"],
+                "school": school,
+                "birthday": str(user_props["birthday"]),
+                "expiration_date": str(user_props["userexpiry"]),
+            }
+        )
         del user_props["e-mail"]
+        del user_props["userexpiry"]
         if role.klass != Staff:
             cls_dn1, cls_attr1 = await new_school_class_using_udm(school=school)
             cls_dn2, cls_attr2 = await new_school_class_using_udm(school=school)
