@@ -61,6 +61,9 @@ def compare_attr_and_lib_user(attr: Dict[str, Any], user: User):
         elif k == "birthday":
             val1 = str(v)
             val2 = getattr(user, k)
+        elif k == "userexpiry":
+            val1 = str(v)
+            val2 = user.expiration_date
         elif k == "mailPrimaryAddress":
             val1 = v
             val2 = getattr(user, "email")
@@ -169,7 +172,9 @@ async def test_create(
         user_props["email"] = user_props["mailPrimaryAddress"]
         user_props["school"] = school
         user_props["birthday"] = str(user_props["birthday"])
+        user_props["expiration_date"] = str(user_props["userexpiry"])
         del user_props["e-mail"]
+        del user_props["userexpiry"]
         if role.klass != Staff:
             cls_dn1, cls_attr1 = await new_school_class_using_udm(school=school)
             cls_dn2, cls_attr2 = await new_school_class_using_udm(school=school)
@@ -202,12 +207,16 @@ async def test_modify(create_ou_using_python, new_udm_user, udm_kwargs, role: Ro
         user.lastname = lastname
         birthday = fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d")
         user.birthday = birthday
+        start_date = datetime.datetime.strptime(user.expiration_date, "%Y-%m-%d").date()
+        expiration_date = fake.date_between(start_date=start_date, end_date="+15y").strftime("%Y-%m-%d")
+        user.expiration_date = expiration_date
         success = await user.modify(udm)
         assert success is True
         user = await role.klass.from_dn(dn, ou, udm)
     attr["firstname"] = firstname
     attr["lastname"] = lastname
     attr["birthday"] = birthday
+    attr["userexpiry"] = expiration_date
     compare_attr_and_lib_user(attr, user)
 
 
@@ -482,6 +491,7 @@ async def test_unixhome(
         user_props["email"] = user_props["mailPrimaryAddress"]
         user_props["school"] = school
         user_props["birthday"] = str(user_props["birthday"])
+        user_props["expiration_date"] = str(user_props["userexpiry"])
         del user_props["e-mail"]
         if role.klass != Staff:
             cls_dn1, cls_attr1 = await new_school_class_using_udm(school=school)

@@ -124,6 +124,9 @@ class UserFactory(factory.Factory):
     birthday = factory.LazyFunction(
         lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d")
     )
+    expiration_date = factory.LazyFunction(
+        lambda: fake.date_between(start_date="+1y", end_date="+10y").strftime("%Y-%m-%d")
+    )
     email = None
     password = factory.Faker("password", length=20)
     disabled = False
@@ -180,6 +183,7 @@ def udm_users_user_props(school_user):
             "username": user.name,
             "school": user.schools,
             "birthday": user.birthday,
+            "userexpiry": user.expiration_date,
             "mailPrimaryAddress": user.email,
             "e-mail": [user.email],
             "description": fake.text(max_nb_chars=50),

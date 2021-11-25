@@ -62,6 +62,7 @@ from .attributes import (
     Password,
     SchoolClassesAttribute,
     Schools,
+    UserExpirationDate,
     Username,
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
@@ -85,6 +86,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         _("Last name"), aka=["Last name", "Nachname"], required=True, unlikely_to_change=True
     )
     birthday: str = Birthday(_("Birthday"), aka=["Birthday", "Geburtstag"], unlikely_to_change=True)
+    expiration_date: str = UserExpirationDate(
+        _("Expiration date"), aka=["Expiration date", "Ablaufdatum"]
+    )
     email: str = Email(_("Email"), aka=["Email", "E-Mail"], unlikely_to_change=True)
     password: Optional[str] = Password(_("Password"), aka=["Password", "Passwort"])
     disabled: bool = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])
@@ -365,8 +369,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if self.email is not None:
             setattr(udm_obj.props, "e-mail", [self.email])
         udm_obj.props.departmentNumber = [self.school]
-        ret = await super(User, self)._alter_udm_obj(udm_obj)
-        return ret
+        return await super(User, self)._alter_udm_obj(udm_obj)
 
     def get_mail_domain(self) -> MailDomain:
         if self.email:

@@ -674,7 +674,7 @@ class UserImport(object):
             expiry = datetime.datetime.now() + datetime.timedelta(days=grace)
             expiry_str = expiry.strftime("%Y-%m-%d")
             self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-            user.expire(expiry_str)
+            user.expiration_date = expiry_str
             return True
 
     async def set_deletion_grace(self, user, grace):  # type: (ImportUser, int) -> bool
