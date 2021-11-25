@@ -63,6 +63,9 @@ msgstr "Zurück"
 msgid "Birthday"
 msgstr "Geburtstag"
 
+msgid "Expiration date"
+msgstr "Ablaufdatum"
+
 #: umc/js/schoolwizards/Grid.js:233 umc/js/schoolwizards/Grid.js:339
 #: umc/js/schoolwizards/SchoolGrid.js:149 umc/js/schoolwizards/Wizard.js:81
 #: umc/js/schoolwizards/ComputerWizard.js:145
