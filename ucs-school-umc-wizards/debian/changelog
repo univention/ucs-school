@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.9) unstable; urgency=medium
+
+  * Bug #54144: show the disabled state of user in 'Users (schools)' grid
+
+ -- Johannes Keiser <keiser@univention.de>  Thu, 25 Nov 2021 12:27:09 +0100
+
 ucs-school-umc-wizards (12.0.8) unstable; urgency=low
 
   * Bug #54116: fix problem with translation and optional handling
