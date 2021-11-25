@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-wizards
-fix: 11.0.4A~4.4.0.202111231623
+fix: 11.0.6A~4.4.0.202111250805
 desc: |
  * A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (Bug #53026, Bug #32177).
  * The optional field expiration_date can now be edited in the UMC. The optional fields can modified by setting the UCR-Variable
