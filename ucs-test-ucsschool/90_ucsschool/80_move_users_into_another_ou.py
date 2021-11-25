@@ -108,6 +108,7 @@ def test_move_users_into_another_ou(schoolenv, ucr, udm_session):
     workgroup.modify(lo)
     workgroup = WorkGroup.from_dn(workgroup_dn, None, lo)
     print("*** Users in workgroup {}: {}".format(workgroup.name, workgroup.users))
+    utils.wait_for_s4connector_replication()
 
     for (user, dn), roleshare_path, groups in users:
         user = User.from_dn(dn, None, lo)
@@ -128,6 +129,7 @@ def test_move_users_into_another_ou(schoolenv, ucr, udm_session):
             attrs.pop("departmentNumber")
 
         user.change_school(b, lo)
+        utils.wait_for_s4connector_replication()
         assert user.dn != dn
         assert b in user.dn
         udm.wait_for("users/user", user.dn, everything=True)
