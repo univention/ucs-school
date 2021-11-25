@@ -221,7 +221,7 @@ define([
 			if (currentPage === 'general') {
 				var classBox = this.getWidget('item', 'school_classes');
 				var newClassButton = this.getPage('item')._form.getButton('newClass');
-				array.forEach(['schools', 'ucsschool_roles', 'birthday', 'disabled', 'password', 'email'], function(fieldName) {
+				array.forEach(['schools', 'ucsschool_roles', 'birthday', 'disabled', 'password', 'email', 'expiration_date'], function(fieldName) {
 					var optionalWidget = this.getWidget('item', fieldName);
 					optionalWidget.set('visible', this._isOptionalFieldVisible(fieldName));
 				}, this)

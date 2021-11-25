@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.8) unstable; urgency=low
+
+  * Bug #54116: fix problem with translation and optional handling
+
+ -- Ole Schwiegert <wenzel@univention.de>  Thu, 25 Nov 2021 08:04:00 +01000
+
 ucs-school-umc-wizards (12.0.7) unstable; urgency=low
 
   * Bug #54116: add optional field expiration date to umc module
