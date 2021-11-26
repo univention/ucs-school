@@ -29,6 +29,7 @@ import base64
 import datetime
 import inspect
 import json
+import logging
 import os
 import random
 import shutil
@@ -105,6 +106,12 @@ MAPPED_UDM_PROPERTIES = [
 pytest_plugins = ["ucsschool.lib.tests.conftest"]
 
 fake = Faker()
+logger = logging.getLogger("ucsschool")
+logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("udm_rest_client")
+logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 @lru_cache(maxsize=1)
@@ -275,7 +282,7 @@ def setup_logging(temp_dir_session):
     tmp_log_file = Path(mkstemp()[1])
 
     with patch("ucsschool.kelvin.main.LOG_FILE_PATH", tmp_log_file):
-        print(f" -- logging to {tmp_log_file!s} --")
+        logger.debug(" -- Kelvin logging redirected to %s --", tmp_log_file)
         yield
 
     try:
@@ -372,9 +379,8 @@ def create_random_users(
                     data=user_data.json(),
                 )
                 assert response.status_code == 201, f"{response.__dict__}"
-                print(
-                    f"Created user {user_data.name!r} ({user_data.roles!r}) "
-                    f"with {user_data.dict()!r}."
+                logger.debug(
+                    "Created user %r (%r) with %r.", user_data.name, user_data.roles, user_data.dict()
                 )
                 users.append(user_data)
                 schedule_delete_user_name_using_udm(user_data.name)
@@ -391,7 +397,7 @@ def create_exam_user(new_udm_user, ldap_base, random_name, udm_kwargs):
             f"exam_user:school:{school}",
             f"exam_user:exam:{random_name()}-{school}",
         ]
-        print(f"Modifying student {user['username']!r} to be an exam user...")
+        logger.debug("Modifying student %r to be an exam user...", user["username"])
         async with UDM(**udm_kwargs) as udm:
             udm_user: UdmObject = await udm.get("users/user").get(dn)
             udm_user.options["ucsschoolExam"] = True
@@ -401,7 +407,7 @@ def create_exam_user(new_udm_user, ldap_base, random_name, udm_kwargs):
             )
             udm_user.props.ucsschoolRole = user["ucsschoolRole"]
             await udm_user.save()
-        print(f"Done: {dn!r}")
+        logger.debug("Done: %r", dn)
         return dn, user
 
     return _func
@@ -438,9 +444,9 @@ def schedule_delete_user_name_using_kelvin(auth_header, retry_http_502, url_frag
         )
         assert response.status_code in (204, 404), response.reason
         if response.status_code == 204:
-            print(f"Deleted user {username!r} through Kelvin API.")
+            logger.debug("Deleted user %r through Kelvin API.", username)
         else:
-            print(f"User {username!r} does not exist (anymore)")
+            logger.debug("User %r does not exist (anymore)", username)
 
 
 @pytest.fixture
@@ -480,7 +486,7 @@ async def new_school_class_using_lib(ldap_base, new_school_class_using_lib_obj, 
             success = await sc.create(udm)
             assert success
             created_school_classes.append(sc.dn)
-            print("Created new SchoolClass: {!r}".format(sc))
+            logger.debug("Created new SchoolClass: %r", sc)
 
         return sc.dn, sc.to_dict()
 
@@ -491,14 +497,14 @@ async def new_school_class_using_lib(ldap_base, new_school_class_using_lib_obj, 
             try:
                 obj = await ucsschool.lib.models.group.SchoolClass.from_dn(dn, None, udm)
             except ucsschool.lib.models.base.NoObject:
-                print(f"SchoolClass {dn!r} does not exist (anymore).")
+                logger.debug("SchoolClass %r does not exist (anymore).", dn)
                 continue
             await obj.remove(udm)
-            print(f"Deleted SchoolClass {dn!r} through UDM.")
+            logger.debug("Deleted SchoolClass %r through UDM.", dn)
 
 
 def restart_kelvin_api_server() -> None:
-    print("Restarting Kelvin API server...")
+    logger.debug("Restarting Kelvin API server...")
     subprocess.call(["/etc/init.d/ucsschool-kelvin-rest-api", "restart"])
     while True:
         time.sleep(0.5)
@@ -569,27 +575,27 @@ def add_to_import_config(restart_kelvin_api_server_session):  # noqa: C901
                     if old_value == new_value:
                         no_restart = True
             if no_restart:
-                print(f"Import config contains {kwargs!r} -> not restarting server.")
+                logger.debug("Import config contains %r -> not restarting server.", kwargs)
                 return
 
         if IMPORT_CONFIG["active"].exists():
             with open(IMPORT_CONFIG["active"], "r") as fp:
                 config = json.load(fp)
             if not IMPORT_CONFIG["bak"].exists():
-                print(f"Moving {IMPORT_CONFIG['active']!s} to {IMPORT_CONFIG['bak']!s}.")
+                logger.debug("Moving %s to %s.", IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
                 shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
             config.update(kwargs)
         else:
             config = kwargs
         with open(IMPORT_CONFIG["active"], "w") as fp:
             json.dump(config, fp, indent=4)
-        print(f"Wrote config to {IMPORT_CONFIG['active']!s}: {config!r}")
+        logger.debug("Wrote config to %s: %r", IMPORT_CONFIG["active"], config)
         restart_kelvin_api_server_session()
 
     yield _func
 
     if IMPORT_CONFIG["bak"].exists():
-        print(f"Moving {IMPORT_CONFIG['bak']!r} to {IMPORT_CONFIG['active']!r}.")
+        logger.debug("Moving %r to %r.", IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
         shutil.move(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
         restart_kelvin_api_server_session()
 
@@ -635,9 +641,9 @@ def check_password():
             "bind_pw": bind_pw,
             "raise_on_bind_error": True,
         }
-        print(f"Testing login (making LDAP search) with: {search_kwargs!r}")
+        logger.debug("Testing login (making LDAP search) with: %r", search_kwargs)
         results = await ldap_access.search(**search_kwargs)
-        print("Login success.")
+        logger.debug("Login success.")
         assert len(results) == 1
         result = results[0]
         expected_uid = bind_dn.split(",")[0].split("=")[1]
@@ -698,14 +704,14 @@ def log_http_502():
             f"=> HTTP 502 in {caller}() by request.{func}({', '.join(repr(a) for a in args)}, "
             f"{', '.join(f'{k!r}={v!r}'for k, v in kwargs.items())})"
         )
-        print(msg)
+        logger.debug(msg)
         msgs.append(msg)
 
     yield _func
 
     if not msgs:
         return
-    print(f" *** HTTP 502: {len(msgs)} times, see {log_file!r}. ***")
+    logger.debug(" *** HTTP 502: %d times, see %r. ***", len(msgs), log_file)
     with open(log_file, "w") as fp:
         fp.write("\n".join(msgs))
 

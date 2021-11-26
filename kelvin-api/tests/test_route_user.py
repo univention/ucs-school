@@ -27,6 +27,7 @@
 import asyncio
 import datetime
 import itertools
+import logging
 import random
 import time
 from typing import Any, Dict, List, NamedTuple, Tuple, Type, Union
@@ -73,6 +74,8 @@ USER_ROLES: List[Role] = [
     Role("teacher_and_staff", TeachersAndStaff),
 ]  # User.role_sting -> User
 random.shuffle(USER_ROLES)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def role_id(value: Role) -> str:
@@ -606,7 +609,7 @@ async def test_create(
     phone = [random_name(), random_name()]
     r_user.udm_properties["phone"] = phone
     data = r_user.json()
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, school, f"username={r_user.name}")
     assert len(lib_users) == 0
@@ -667,7 +670,7 @@ async def test_create_unmapped_udm_prop(
     r_user = await random_user_create_model(school, roles=[f"{url_fragment}/roles/teacher"])
     r_user.udm_properties["unmapped_prop"] = "some value"
     data = r_user.json()
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, school, f"username={r_user.name}")
     assert len(lib_users) == 0
@@ -712,7 +715,7 @@ async def test_create_without_username(
         lib_users = await User.get_all(udm, school, f"username={expected_name}")
     assert len(lib_users) == 0
     schedule_delete_user_name_using_udm(expected_name)
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     response = retry_http_502(
         requests.post,
         f"{url_fragment}/users/",
@@ -778,7 +781,7 @@ async def test_create_minimal_attrs(
         lib_users = await User.get_all(udm, school, f"username={expected_name}")
     assert len(lib_users) == 0
     schedule_delete_user_name_using_udm(expected_name)
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     response = retry_http_502(
         requests.post,
         f"{url_fragment}/users/",
@@ -829,7 +832,7 @@ async def test_create_requires_school_or_schools(
         lib_users = await User.get_all(udm, school, f"username={expected_name}")
     assert len(lib_users) == 0
     schedule_delete_user_name_using_udm(expected_name)
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     response = retry_http_502(
         requests.post,
         f"{url_fragment}/users/",
@@ -837,9 +840,9 @@ async def test_create_requires_school_or_schools(
         json=data,
     )
     assert response.status_code == 422, f"{response.__dict__!r}"
-    print(f"response.content={response.content!r}")
+    logger.debug("response.content=%r", response.content)
     response_json = response.json()
-    print(f"response_json={response_json!r}")
+    logger.debug("response_json=%r", response_json)
     assert "At least one of" in response_json["detail"][0]["msg"]
 
 
@@ -873,7 +876,7 @@ async def test_create_with_password_hashes(
     password_new, password_new_hashes = await password_hash()
     r_user.kelvin_password_hashes = password_new_hashes.dict()
     data = r_user.json()
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, school, f"username={r_user.name}")
     assert len(lib_users) == 0
@@ -894,7 +897,7 @@ async def test_create_with_password_hashes(
     await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
     compare_ldap_json_obj(api_user.dn, response_json, url_fragment)
     await check_password(response_json["dn"], password_new)
-    print("OK: can login as user with new password.")
+    logger.debug("OK: can login as user with new password.")
 
 
 @pytest.mark.asyncio
@@ -916,7 +919,7 @@ async def test_put(
     school = await create_ou_using_python()
     user: ImportUser = await new_import_user(school, role.name, disabled=False)
     await check_password(user.dn, user.password)
-    print("OK: can login with old password")
+    logger.debug("OK: can login with old password")
     old_user_data = import_user_to_create_model_kwargs(user)
     user_create_model = await random_user_create_model(
         school,
@@ -931,7 +934,7 @@ async def test_put(
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
     modified_user = UserCreateModel(**{**old_user_data, **new_user_data})
     modified_user.password = modified_user.password.get_secret_value()
-    print(f"PUT modified_user={modified_user.dict()!r}.")
+    logger.debug("PUT modified_user=%r.", modified_user.dict())
     response = retry_http_502(
         requests.put,
         f"{url_fragment}/users/{user.name}",
@@ -973,7 +976,7 @@ async def test_put_with_password_hashes(
     school = await create_ou_using_python()
     user: ImportUser = await new_import_user(school, role.name, disabled=False, school_classes={})
     await check_password(user.dn, user.password)
-    print("OK: can login with old password")
+    logger.debug("OK: can login with old password")
     old_user_data = import_user_to_create_model_kwargs(user)
     new_user_create_model = await random_user_create_model(
         school,
@@ -989,7 +992,7 @@ async def test_put_with_password_hashes(
     modified_user.password = None
     password_new, password_new_hashes = await password_hash()
     modified_user.kelvin_password_hashes = password_new_hashes.dict()
-    print(f"PUT modified_user={modified_user.dict()!r}.")
+    logger.debug("PUT modified_user=%r.", modified_user.dict())
     response = retry_http_502(
         requests.put,
         f"{url_fragment}/users/{user.name}",
@@ -1006,10 +1009,10 @@ async def test_put_with_password_hashes(
     json_resp = response.json()
     compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
     await check_password(lib_users[0].dn, password_new)
-    print("OK: can login as user with new password.")
+    logger.debug("OK: can login as user with new password.")
     with pytest.raises(LDAPBindError):
         await check_password(lib_users[0].dn, user.password)
-    print("OK: cannot login as user with old password.")
+    logger.debug("OK: cannot login as user with old password.")
 
 
 @pytest.mark.asyncio
@@ -1033,7 +1036,7 @@ async def test_patch(
     school = await create_ou_using_python()
     user: ImportUser = await new_import_user(school, role.name, disabled=False)
     await check_password(user.dn, user.password)
-    print("OK: can login with old password")
+    logger.debug("OK: can login with old password")
     old_user_data = import_user_to_create_model_kwargs(user)
     user_create_model = await random_user_create_model(
         school,
@@ -1052,7 +1055,7 @@ async def test_patch(
     new_user_data["udm_properties"] = {"title": title, "phone": phone}
     new_user_data[null_value] = None
     new_user_data["password"] = fake.password(length=20)
-    print(f"PATCH new_user_data={new_user_data!r}.")
+    logger.debug("PATCH new_user_data=%r.", new_user_data)
     response = retry_http_502(
         requests.patch,
         f"{url_fragment}/users/{user.name}",
@@ -1094,7 +1097,7 @@ async def test_patch_with_password_hashes(
     school = await create_ou_using_python()
     user: ImportUser = await new_import_user(school, role.name, disabled=False, school_classes={})
     await check_password(user.dn, user.password)
-    print("OK: can login with old password")
+    logger.debug("OK: can login with old password")
     old_user_data = import_user_to_create_model_kwargs(user)
     user_create_model = await random_user_create_model(
         school,
@@ -1108,7 +1111,7 @@ async def test_patch_with_password_hashes(
     )
     password_new, password_new_hashes = await password_hash()
     new_user_data["kelvin_password_hashes"] = password_new_hashes.dict()
-    print(f"PATCH new_user_data={new_user_data!r}.")
+    logger.debug("PATCH new_user_data=%r.", new_user_data)
     response = retry_http_502(
         requests.patch,
         f"{url_fragment}/users/{user.name}",
@@ -1125,10 +1128,10 @@ async def test_patch_with_password_hashes(
         await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
     compare_ldap_json_obj(api_user.dn, json_resp, url_fragment)
     await check_password(user.dn, password_new)
-    print("OK: can login as user with new password.")
+    logger.debug("OK: can login as user with new password.")
     with pytest.raises(LDAPBindError):
         await check_password(user.dn, user.password)
-    print("OK: cannot login as user with old password.")
+    logger.debug("OK: cannot login as user with old password.")
 
 
 @pytest.mark.asyncio
@@ -1558,7 +1561,7 @@ async def test_change_password(
     assert user.disabled is False
     old_password = user.password
     await check_password(user.dn, old_password)
-    print("OK: can login with old password")
+    logger.debug("OK: can login with old password")
     new_password = fake.password(length=20)
     user.password = new_password
     assert user.password != old_password
@@ -1595,15 +1598,15 @@ async def test_set_password_hashes(
     ldap_access = ucsschool.kelvin.ldap_access.LDAPAccess()
     user_dn = await ldap_access.get_dn_of_user(user.name)
     await check_password(user_dn, password_old)
-    print("OK: can login as user with its old password.")
+    logger.debug("OK: can login as user with its old password.")
     password_new, password_new_hashes = await password_hash()
     assert password_old != password_new
     await set_password_hashes(user_dn, password_new_hashes)
     await check_password(user_dn, password_new)
-    print("OK: can login as user with new password.")
+    logger.debug("OK: can login as user with new password.")
     with pytest.raises(LDAPBindError):
         await check_password(user_dn, password_old)
-    print("OK: cannot login as user with old password.")
+    logger.debug("OK: cannot login as user with old password.")
 
 
 @pytest.mark.asyncio

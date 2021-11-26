@@ -27,6 +27,7 @@
 
 import datetime
 import inspect
+import logging
 import random
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Type, Union
@@ -59,6 +60,8 @@ USER_ROLES: List[Role] = [
 ]  # User.role_sting -> User
 random.shuffle(USER_ROLES)
 fake = Faker()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class FormatFirstnamePyHook(FormatPyHook):
@@ -231,9 +234,9 @@ async def test_format_pyhook(
 ):
     hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "formattesthook.py"
     with open(hook_path, "r") as fp:
-        print(f"****** {hook_path!s} ******")
-        print(fp.read())
-        print("***********************************************")
+        logger.debug("****** %s ******", hook_path)
+        logger.debug(fp.read())
+        logger.debug("***********************************************")
     if role.name == "teacher_and_staff":
         roles = ["staff", "teacher"]
     else:
@@ -244,7 +247,7 @@ async def test_format_pyhook(
         ou, roles=[f"{url_fragment}/roles/{role_}" for role_ in roles], lastname=lastname
     )
     data = r_user.json(exclude={"record_uid"})
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, ou, f"username={r_user.name}")
     assert len(lib_users) == 0
@@ -281,9 +284,9 @@ async def test_user_pyhook(
 ):
     hook_path = ucsschool.kelvin.constants.KELVIN_IMPORTUSER_HOOKS_PATH / "usertesthook.py"
     with open(hook_path, "r") as fp:
-        print(f"****** {hook_path!s} ******")
-        print(fp.read())
-        print("***********************************************")
+        logger.debug("****** %s ******", hook_path)
+        logger.debug(fp.read())
+        logger.debug("***********************************************")
     if role.name == "teacher_and_staff":
         roles = ["staff", "teacher"]
     else:
@@ -294,7 +297,7 @@ async def test_user_pyhook(
     )
     schedule_delete_file(Path("/tmp", r_user.name))
     data = r_user.json()
-    print(f"POST data={data!r}")
+    logger.debug("POST data=%r", data)
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, ou, f"username={r_user.name}")
     assert len(lib_users) == 0

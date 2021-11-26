@@ -708,7 +708,7 @@ def create_ou_using_python(
             return cached_ou
         args = create_ou_kwargs(ou_name)
         ou_name = args["ou_name"]
-        logger.debug("Creating school %r using Python...", ou_name)
+        logger.debug(" ================ Creating school %r using Python... ================", ou_name)
         if cache:
             schedule_delete_ou_using_ssh_at_end_of_session(ou_name, docker_host_name)
         else:
@@ -738,7 +738,9 @@ def create_ou_using_python(
                 await udm.get("container/ou").get(f"ou={ou_name},{ldap_base}")
             except UdmNoObject:
                 raise AssertionError(f"Creation of OU {ou_name} failed.")
-        logger.debug("School %r created.", ou_name)
+        logger.debug(" ====================================================%s", len(ou_name) * "=")
+        logger.debug(" ================ School %r created. ================", ou_name)
+        logger.debug(" ====================================================%s", len(ou_name) * "=")
         return ou_name
 
     return _func
