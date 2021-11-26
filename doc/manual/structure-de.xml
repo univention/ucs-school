@@ -304,32 +304,32 @@
               können explizit auf Schulserver im Edukativnetz repliziert werden. Benutzer in dieser Rolle
               können sich anschließend gegen den Schulserver im Edukativnetz authentifizieren und so zum
               Beispiel Zugriff auf Dateifreigaben erhalten oder sich an einem Client anmelden, der Teil der lokalen
-              Domäne ist. Und sie können zu Arbeitsgruppen hinzugefügt werden. Mitarbeiter können allerdings keine
+              Domäne ist. Sie können zu Arbeitsgruppen hinzugefügt werden. Mitarbeiter können keine
               edukativen UMC Module verwenden, wie zum Beispiel die Computerraumverwaltung oder den
               Klassenarbeitsmodus.
           </para>
           <para>
               Folgende Schritte sind nötig, um die Replikation von Benutzern in der Rolle <emphasis>Mitarbeiter</emphasis>
-              zu aktivieren:
+              auf Schulserver im Edukativnetz zu aktivieren:
           </para>
           <orderedlist>
             <listitem>
-              <para>Auf dem Domaincontroller Master und <emphasis>allen</emphasis> Backup müssen die LDAP ACLs
+              <para>Auf dem &ucsPrimaryDN; und <emphasis>allen</emphasis> &ucsBackupDN; müssen die LDAP ACLs
                   angepasst und der LDAP-Server neu gestartet werden:
                 <programlisting>
 ucr set ucsschool/ldap/replicate_staff_to_edu="true"
 systemctl restart slapd
-                  </programlisting>
+                </programlisting>
               </para>
             </listitem>
             <listitem>
               <para>
-                Die Schulserver im Edukativnetz sollten der Domäne erneut beitreten.
-                Nach der Aktivierung zusätzlicher LDAP ACLs können alle Schulserver im Edukativnetz
-                die Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> vom UCS Master und den Backup Domaincontrollern lesen.
-                Es werden keine <emphasis>bestehenden</emphasis> Benutzerkonten <emphasis>automatisch</emphasis>
-                repliziert. Nur Benutzerkonten, die nach Abschluss von Schritt 1 modifiziert oder erstellt werden, werden auch
-                repliziert, wenn kein erneuter Domänenbeitritt gemacht wird.
+                Nach der Änderung der LDAP ACLs werden nur modifizierte und neu erstellte Benutzerkonten
+                <emphasis>automatisch</emphasis> repliziert, solange kein erneuter Domänenbeitritt durchgeführt wird.
+                Um <emphasis>bestehende</emphasis> Benutzerkonten zu replizieren, müssen die Schulserver im Edukativnetz
+                der Domäne erneut beitreten.
+                Nach der Aktivierung zusätzlicher LDAP ACLs können alle Schulserver im Edukativnetz die Benutzerkonten
+                der Rolle <emphasis>Mitarbeiter</emphasis> vom &ucsPrimaryDN; und den &ucsBackupDN;n lesen.
               </para>
               <para>
                 Wenn alle bestehenden Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> in einem Lauf repliziert
