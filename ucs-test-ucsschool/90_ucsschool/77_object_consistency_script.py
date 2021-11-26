@@ -233,12 +233,6 @@ def input_ids_not_existing_mandatory_group(group):  # type: (Tuple[str, str]) ->
 @pytest.mark.parametrize(
     "group",
     (
-        pytest.param(
-            ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{ldap_base}", "cn=DC-Edukativnetz"),
-            marks=pytest.mark.skip(
-                reason="Deleting this group breaks the replication for ALL educative domain servers"
-            ),
-        ),
         ("cn=Domain Users {ou},cn=groups,ou={ou},{ldap_base}", "cn=Domain Users"),
         ("cn=OU{ou}-Klassenarbeit,cn=ucsschool,cn=groups,{ldap_base}", "cn=OU{ou}-Klassenarbeit"),
     ),

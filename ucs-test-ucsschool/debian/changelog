@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.255) unstable; urgency=medium
+
+  * Bug #54117: fix 77_object_consistency_script.py (2)
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 26 Nov 2021 10:23:31 +0100
+
 ucs-test-ucsschool (6.0.254) unstable; urgency=medium
 
   * Bug #54115: fix tests
@@ -6,7 +12,7 @@ ucs-test-ucsschool (6.0.254) unstable; urgency=medium
 
 ucs-test-ucsschool (6.0.253) unstable; urgency=medium
 
-  * Bug #54115: adapt tests for expiration_date 
+  * Bug #54115: adapt tests for expiration_date
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Nov 2021 16:14:36 +0100
 
