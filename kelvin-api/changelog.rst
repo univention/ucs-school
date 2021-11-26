@@ -5,13 +5,14 @@
 Changelog
 ---------
 
-v1.5.1 (2021-11-17)
+v1.5.1 (2021-11-30)
 ...................
 * The Open Policy Agent component was added to components documentation (Bug #53960).
 * The log output of the Open Policy Agent is now written to ``/var/log/univention/ucsschool-kelvin-rest-api/opa.log`` (Bug #53961).
 * The test suite for the ``ucsschool.lib`` component was improved (Bug #53962).
 * Username generation counter can now be raised above 100 (Bug #53987).
 * The ``no_proxy`` environment variable is now honored by the Kelvin REST API when accessing the UDM REST API (Bug #54066).
+* The user resource now has an ``expiration_date`` attribute, which can be used to set the password expiration date. A user won't be able to login from that date on (Bug #54126).
 
 v1.5.0 (2021-09-10)
 ...................

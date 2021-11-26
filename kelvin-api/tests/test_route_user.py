@@ -24,6 +24,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
+import asyncio
 import datetime
 import itertools
 import random
@@ -49,6 +50,7 @@ from ucsschool.kelvin.routers.user import (
     UserModel,
     UserPatchModel,
     set_password_hashes,
+    userexpiry_to_shadowExpire,
 )
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
@@ -107,7 +109,7 @@ async def compare_lib_api_user(  # noqa: C901
                 [SchoolUserRole.from_lib_role(role).value for role in lib_user.ucsschool_roles]
             )
             assert api_roles == lib_roles
-        elif key == "birthday":
+        elif key in ("birthday", "expiration_date"):
             if value:
                 assert str(value) == getattr(lib_user, key)
             else:
@@ -145,6 +147,15 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
             assert value == ldap_obj["ucsschoolSourceUID"][0].decode("utf-8")
         elif attr == "birthday" and "univentionBirthday" in ldap_obj:
             assert value == ldap_obj["univentionBirthday"][0].decode("utf-8")
+        elif attr == "expiration_date" and "shadowExpire" in ldap_obj:
+            if json_resp["disabled"] is True:
+                check_value = "1"
+            elif value:
+                dt = datetime.datetime.strptime(value, "%Y-%m-%d").date()
+                check_value = userexpiry_to_shadowExpire(dt)
+            else:
+                check_value = "0"
+            assert check_value == ldap_obj["shadowExpire"][0].decode("utf-8")
         elif attr == "firstname" and "givenName" in ldap_obj:
             assert value == ldap_obj["givenName"][0].decode("utf-8")
         elif attr == "lastname" and "sn" in ldap_obj:
@@ -171,6 +182,7 @@ def import_user_to_create_model_kwargs(url_fragment):
     def _func(user: ImportUser, exclude: List[str] = None) -> Dict[str, Any]:
         user_data = user.to_dict()
         user_data["birthday"] = datetime.date.fromisoformat(user_data["birthday"])
+        user_data["expiration_date"] = datetime.date.fromisoformat(user_data["expiration_date"])
         user_data["roles"] = [
             f"{url_fragment}/roles/{SchoolUserRole.from_lib_role(lib_role).value}"
             for lib_role in user_data["ucsschool_roles"]
@@ -239,6 +251,7 @@ async def test_search_no_filter(
         "record_uid",
         "source_uid",
         "birthday",
+        "expiration_date",
         "disabled",
         "firstname",
         "lastname",
@@ -282,6 +295,9 @@ async def test_search_filter(  # noqa: C901
         create_kwargs = {}
 
     user: ImportUser = await new_import_user(ou_name, role, **create_kwargs)
+    if filter_param == "disabled":
+        # No idea why this is needed, but w/o it >50% of the "disabled" tests fail.
+        await asyncio.sleep(5)
     assert ou_name == user.school
     assert user.role_sting == role  # TODO: add 'r' when #47210 is fixed
     if filter_param == "school":
@@ -313,7 +329,7 @@ async def test_search_filter(  # noqa: C901
     assert response.status_code == 200, response.reason
     json_resp = response.json()
     api_users = {
-        data["name"]: UserModel(**data) for data in json_resp if data["school"].endswith(ou_name)
+        data["name"]: UserModel(**data) for data in json_resp if data["school"].split("/")[-1] == ou_name
     }
     if filter_param not in ("disabled", "roles", "school"):
         assert len(api_users) == 1
@@ -488,6 +504,7 @@ async def test_get(
             "disabled",
             "dn",
             "email",
+            "expiration_date",
             "firstname",
             "lastname",
             "name",
@@ -749,6 +766,7 @@ async def test_create_minimal_attrs(
             "disabled",
             no_school_s,
             "email",
+            "expiration_date",
             "name",
             "source_uid",
             "ucsschool_roles",
@@ -805,6 +823,7 @@ async def test_create_requires_school_or_schools(
     )
     data = r_user.dict(exclude={"school", "schools"})
     data["birthday"] = data["birthday"].isoformat()
+    data["expiration_date"] = data["expiration_date"].isoformat()
     expected_name = f"test.{r_user.firstname[:2]}.{r_user.lastname[:3]}".lower()
     async with UDM(**udm_kwargs) as udm:
         lib_users = await User.get_all(udm, school, f"username={expected_name}")
@@ -995,7 +1014,7 @@ async def test_put_with_password_hashes(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
-@pytest.mark.parametrize("null_value", ("birthday", "email"))
+@pytest.mark.parametrize("null_value", ("birthday", "email", "expiration_date"))
 async def test_patch(
     auth_header,
     check_password,
@@ -1025,6 +1044,7 @@ async def test_patch(
     )
     new_user_data = user_create_model.dict(exclude={"name", "record_uid", "source_uid"})
     new_user_data["birthday"] = str(new_user_data["birthday"])
+    new_user_data["expiration_date"] = str(new_user_data["expiration_date"])
     for key in random.sample(new_user_data.keys(), random.randint(1, len(new_user_data.keys()))):
         del new_user_data[key]
     title = random_name()
@@ -1084,7 +1104,7 @@ async def test_patch_with_password_hashes(
         schools=old_user_data["schools"],
     )
     new_user_data = user_create_model.dict(
-        exclude={"birthday", "name", "password", "record_uid", "source_uid"}
+        exclude={"birthday", "expiration_date", "name", "password", "record_uid", "source_uid"}
     )
     password_new, password_new_hashes = await password_hash()
     new_user_data["kelvin_password_hashes"] = password_new_hashes.dict()

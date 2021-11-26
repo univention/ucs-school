@@ -29,6 +29,7 @@ import base64
 import binascii
 import datetime
 import logging
+import time
 from collections.abc import Sequence
 from functools import lru_cache
 from operator import attrgetter
@@ -172,6 +173,7 @@ class UserBaseModel(UcsSchoolBaseModel):
     birthday: datetime.date = None
     disabled: bool = False
     email: str = None
+    expiration_date: datetime.date = None
     record_uid: str = None
     roles: List[HttpUrl]
     schools: List[HttpUrl]
@@ -233,6 +235,9 @@ class UserCreateModel(UserBaseModel):
             for school in kwargs["schools"]
         ]
         kwargs["birthday"] = str(self.birthday) if self.birthday else self.birthday
+        kwargs["expiration_date"] = (
+            str(self.expiration_date) if self.expiration_date else self.expiration_date
+        )
         if not kwargs["email"]:
             del kwargs["email"]
         kwargs["roles"] = [
@@ -276,6 +281,7 @@ class UserPatchModel(BasePatchModel):
     birthday: datetime.date = None
     disabled: bool = None
     email: str = None
+    expiration_date: datetime.date = None
     password: SecretStr = None
     record_uid: str = None
     roles: List[HttpUrl] = None
@@ -323,7 +329,7 @@ class UserPatchModel(BasePatchModel):
                 kwargs["school"] = url_to_name(
                     request, "school", UserCreateModel.unscheme_and_unquote(value)
                 )
-            elif key == "birthday":
+            elif key in ("birthday", "expiration_date"):
                 kwargs[key] = str(value) if value else None
             elif key == "disabled":
                 if not isinstance(value, bool):
@@ -352,6 +358,15 @@ class UserPatchModel(BasePatchModel):
         return kwargs
 
 
+def userexpiry_to_shadowExpire(user_expiry: datetime.date) -> str:
+    """
+    Convert UDM userexpiry value (ISO 8601) to str(int) stored in LDAP attribute shadowExpire.
+
+    Taken from _modlist_shadow_expire() in UDM-modules/modules/univention/admin/handlers/users/user.py.
+    """
+    return str(int(time.mktime(user_expiry.timetuple()) / 3600 / 24 + 1))
+
+
 def all_query_params(
     query_params: Mapping[str, Any], the_locals: Dict[str, Any], known_args: List[str]
 ) -> Tuple[str, Any]:
@@ -372,31 +387,38 @@ def search_query_params_to_udm_filter(  # noqa: C901
 ) -> Optional[str]:
     filter_parts = []
     for param, values in query_params:
-        if param == "roles":
-            # already handled
-            continue
         if values is None:
             # unused parameter
             continue
+        if param not in accepted_properties:
+            # invalid parameter
+            continue
         if param == "birthday":
-            values = values.strftime("%Y-%m-%d")
-        if param == "disabled":
+            values = str(values)
+        elif param == "disabled":
             values = str(int(values))
-        if param == "school":
+        elif param == "expiration_date":
+            # workaround Bug #54152
+            values = userexpiry_to_shadowExpire(values)
+        elif param in ("roles", "school"):
             # already handled
             continue
-        if param in accepted_properties:
-            if param in user_class._attributes.keys():
-                udm_name = user_class._attributes[param].udm_name
-            else:
-                # mapped_udm_properties
-                udm_name = param
-            if not isinstance(values, Sequence) or isinstance(values, str):
-                # prevent iterating over string, bool etc
-                values = [values]
-            filter_parts.extend(
-                [expression(udm_name, escape_filter_chars(val).replace(r"\2a", "*")) for val in values]
-            )
+
+        if param == "expiration_date":
+            # workaround Bug #54152
+            udm_name = "shadowExpire"
+        elif param in user_class._attributes.keys():
+            udm_name = user_class._attributes[param].udm_name
+        else:
+            # mapped_udm_properties
+            udm_name = param
+        if not isinstance(values, Sequence) or isinstance(values, str):
+            # prevent iterating over string, bool etc in code below
+            values = [values]
+        filter_parts.extend(
+            [expression(udm_name, escape_filter_chars(val).replace(r"\2a", "*")) for val in values]
+        )
+
     if filter_parts:
         return str(conjunction("&", filter_parts))
     else:
@@ -428,6 +450,11 @@ async def search(  # noqa: C901
         alias="birthday",
         description="Exact match only. Format must be YYYY-MM-DD.",
     ),
+    expiration_date: datetime.date = Query(
+        None,
+        alias="expiration_date",
+        description="Exact match only. Format must be YYYY-MM-DD.",
+    ),
     disabled: bool = Query(None),
     firstname: str = Query(None),
     lastname: str = Query(None),
@@ -455,6 +482,8 @@ async def search(  # noqa: C901
     - **source_uid**: identifier of the upstream database, used by the
         UCS@school import
     - **birthday**: birthday of user, **exact match only, format: YYYY-MM-DD**
+    - **expiration_date**: date of password expiration of user (will be disabled from that day on),
+        **exact match only, format: YYYY-MM-DD**
     - **disabled**: **true** to list only disabled users, **false** to list
         only active users
     - **firstname**: given name of users to look for
@@ -467,7 +496,7 @@ async def search(  # noqa: C901
     """
     logger.debug(
         "Searching for users with: school=%r username=%r ucsschool_roles=%r "
-        "email=%r record_uid=%r source_uid=%r birthday=%r disabled=%r "
+        "email=%r record_uid=%r source_uid=%r birthday=%r expiration_date=%r disabled=%r "
         "roles=%r request.query_params=%r",
         school,
         username,
@@ -476,6 +505,7 @@ async def search(  # noqa: C901
         record_uid,
         source_uid,
         birthday,
+        expiration_date,
         disabled,
         roles,
         request.query_params,
@@ -488,6 +518,7 @@ async def search(  # noqa: C901
         "record_uid",
         "source_uid",
         "birthday",
+        "expiration_date",
         "disabled",
         "roles",
     ]
@@ -618,6 +649,7 @@ async def create(
     - **school_classes**: school classes the user is a member of (optional,
         format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
     - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
     - **disabled**: whether the user should be created deactivated (optional,
         default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school
@@ -792,6 +824,7 @@ async def partial_update(  # noqa: C901
         **role** resources)
     - **password**: users password, a random one will be generated if unset
     - **email**: the users email address (**mailPrimaryAddress**)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
     - **record_uid**: identifier unique to the upstream database referenced by **source_uid**
     - **source_uid**: identifier of the upstream database)
     - **school_classes**: school classes the user is a member of (format: **{"school1": ["class1",
@@ -909,6 +942,7 @@ async def complete_update(  # noqa: C901
     - **email**: the users email address (**mailPrimaryAddress**), used only
         when the email domain is hosted on UCS, not to be confused with the
         contact property **e-mail** (optional)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
     - **record_uid**: identifier unique to the upstream database referenced by
         **source_uid** (**required**, used by the UCS@school import)
     - **source_uid**: identifier of the upstream database (optional, will be

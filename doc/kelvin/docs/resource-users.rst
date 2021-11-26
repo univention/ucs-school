@@ -31,6 +31,7 @@ The following JSON is an example User resource in the *UCS\@school Kelvin REST A
         "birthday": "2003-10-24",
         "disabled": false,
         "email": "demo_student@uni.ven",
+        "expiration_date": "2030-02-14",
         "record_uid": "demo_student12",
         "roles": ["https://<fqdn>/ucsschool/kelvin/v1/roles/student"],
         "schools": [
@@ -67,6 +68,7 @@ The following JSON is an example User resource in the *UCS\@school Kelvin REST A
     "birthday", "date", "The users birthday in ISO 8601 format: ``YYYY-MM-DD``.", ""
     "disabled", "boolean", "Whether the user should be deactivated.", ""
     "email", "string", "The users email address (``mailPrimaryAddress``), used only when the emails domain is hosted on UCS, not to be confused with the *contact* attribute ``e-mail``.", ""
+    "expiration_date", "string", "The users password expiration date. The user won't be able to log in from that date on.", ""
     "roles", "list", "The users UCS\@school roles. A list of URLs in the ``roles`` resource.", "required when creating, see section ``Changing roles`` below about changing a user''s roles"
     "school", "string", "School (OU) the user belongs to. A URL in the ``schools`` resource.", "required for creation when ``schools`` is not set"
     "schools", "list", "List of schools (OUs) the user belongs to. A list of URLs in the ``schools`` resource.", "required for creation when ``school`` is not set"
@@ -117,6 +119,7 @@ udm_properties
 The attribute ``udm_properties`` is an object that can contain arbitrary UDM properties.
 It must be configured in the file ``/var/lib/ucs-school-import/configs/kelvin.json``, or ``/etc/ucsschool/kelvin/mapped_udm_properties.json``;
 see :ref:`Configuration of user object management (import configuration)` and :ref:`UDM Properties`.
+It must not contain UDM properties that are already available as regular attributes (like ``username`` → ``name``, ``mailPrimaryAddress`` → ``email``, ...).
 
 
 List / Search
@@ -150,6 +153,7 @@ The response body will be::
             "birthday": null,
             "disabled": false,
             "email": null,
+            "expiration_date": null,
             "record_uid": null,
             "roles": ["https://<fqdn>/ucsschool/kelvin/v1/roles/teacher"],
             "schools": ["https://<fqdn>/ucsschool/kelvin/v1/schools/DEMOSCHOOL"],
@@ -185,6 +189,7 @@ The user in the example response is working in two schools as both staff and tea
             "birthday": "1988-03-18",
             "disabled": false,
             "email": "test.staff.teach@uni.dtr",
+            "expiration_date": null,
             "record_uid": "test.staff.teach12",
             "roles": [
                 "https://<fqdn>/ucsschool/kelvin/v1/roles/staff",
@@ -254,6 +259,7 @@ As an example, with the following being the content of ``/tmp/create_user.json``
         "birthday": "1945-02-06",
         "disabled": true,
         "email": null,
+        "expiration_date": null,
         "record_uid": "bob23",
         "password": "s3cr3t.s3cr3t.s3cr3t",
         "roles": ["https://<fqdn>/ucsschool/kelvin/v1/roles/teacher"],
@@ -294,6 +300,7 @@ Response body::
         "birthday": "1945-02-06",
         "disabled": true,
         "email": null,
+        "expiration_date": null,
         "record_uid": "bob23",
         "roles": ["https://<fqdn>/ucsschool/kelvin/v1/roles/teacher"],
         "schools": ["https://<fqdn>/ucsschool/kelvin/v1/schools/DEMOSCHOOL"],
@@ -363,6 +370,7 @@ Response body::
         "disabled": false,
         "dn": "uid=bob,cn=lehrer,cn=users,ou=DEMOSCHOOL,dc=uni,dc=ven",
         "email": null,
+        "expiration_date": null,
         "firstname": "Bob72",
         "lastname": "Marley72",
         "name": "bob",
@@ -412,6 +420,7 @@ Response body::
         "disabled": false,
         "dn": "uid=bob,cn=lehrer,cn=users,ou=DEMOSCHOOL,dc=uni,dc=ven",
         "email": null,
+        "expiration_date": null,
         "firstname": "Robert Nesta",
         ... # abbreviated: the rest is the same
     }

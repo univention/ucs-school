@@ -131,7 +131,7 @@ class UserFactory(factory.Factory):
     school = factory.LazyFunction(lambda: fake.user_name()[:10])
     schools = factory.LazyAttribute(lambda o: [o.school])
     birthday = factory.LazyFunction(
-        lambda: fake.date_of_birth(minimum_age=6, maximum_age=65).strftime("%Y-%m-%d")
+        lambda: fake.date_of_birth(minimum_age=6, maximum_age=18).strftime("%Y-%m-%d")
     )
     expiration_date = factory.LazyFunction(
         lambda: fake.date_between(start_date="+1y", end_date="+10y").strftime("%Y-%m-%d")
@@ -308,6 +308,12 @@ def new_udm_user(
             "teacher": school_search_base.teachers,
             "teacher_and_staff": school_search_base.teachersAndStaff,
         }[role]
+        role_groups = {
+            "staff": (school_search_base.staff_group,),
+            "student": (school_search_base.students_group,),
+            "teacher": (school_search_base.teachers_group,),
+            "teacher_and_staff": (school_search_base.staff_group, school_search_base.teachers_group),
+        }[role]
         user_props.update(udm_properties)
         async with UDM(**udm_kwargs) as udm:
             user_obj = await udm.get("users/user").new()
@@ -319,7 +325,8 @@ def new_udm_user(
                 "record_uid", user_props["username"]
             )
             user_obj.props.ucsschoolSourceUID = school_user_kwargs.get("source_uid", "Kelvin")
-            user_obj.props.groups.append(user_obj.props.primaryGroup)
+            user_obj.props.groups = [user_obj.props.primaryGroup]
+            user_obj.props.groups.extend(role_groups)
             if role != "staff" and "school_classes" not in school_user_kwargs:
                 cls_dn1, _ = await new_school_class_using_udm(school=school)
                 cls_dn2, _ = await new_school_class_using_udm(school=school)
