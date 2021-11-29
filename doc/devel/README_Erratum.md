@@ -35,8 +35,10 @@ sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public downl
 
 ## Publish manual
 
-Run [Publish Docs](https://jenkins.knut.univention.de:8181/view/Publish/job/Publish_docs.univention.de/).
-This Jenkins job requires manual intervention to approve the new documentation in two instances!
+Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
+commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
+
+If everything is in order run the deploy job to publish the new documentation.
 
 ## Update public information
 
