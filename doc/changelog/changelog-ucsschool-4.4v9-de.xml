@@ -865,7 +865,88 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-windows 4.5.2.0-2A~4.4.0.202110211713 -->
 <!-- CHANGELOG:2021-10-25:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2021-11-29" lang="en">
+					<title>Released on 2021-11-29:</title>
+					<!-- START ucs-school-import 17.0.74A~4.4.0.202111231620 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>17.0.74A~4.4.0.202111231620</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: The UCS@school Import has been modified to handle the new UCS@school attribute <envar>expiration_date</envar> (<u:bug>54115</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 17.0.74A~4.4.0.202111231620 -->
+					<!-- START ucs-school-lib 12.2.37A~4.4.0.202111231618 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.37A~4.4.0.202111231618</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal improvement: The field <envar>expiration_date</envar> has been added to the UCS@school Python library (<u:bug>54115</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.37A~4.4.0.202111231618 -->
+					<!-- START ucs-school-umc-groups 9.0.0-14A~4.4.0.202107201105 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-groups</emphasis> in version <emphasis>9.0.0-14A~4.4.0.202107201105</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-groups 9.0.0-14A~4.4.0.202107201105 -->
+					<!-- START ucs-school-umc-internetrules 15.0.3A~4.4.0.202107201113 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-internetrules</emphasis> in version <emphasis>15.0.3A~4.4.0.202107201113</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-internetrules 15.0.3A~4.4.0.202107201113 -->
+					<!-- START ucs-school-umc-printermoderation 16.0.3A~4.4.0.202107201116 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-printermoderation</emphasis> in version <emphasis>16.0.3A~4.4.0.202107201116</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-printermoderation 16.0.3A~4.4.0.202107201116 -->
+					<!-- START ucs-school-umc-rooms 16.1.3A~4.4.0.202107201118 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-rooms</emphasis> in version <emphasis>16.1.3A~4.4.0.202107201118</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-rooms 16.1.3A~4.4.0.202107201118 -->
+					<!-- START ucs-school-umc-users 15.0.3A~4.4.0.202107201120 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-users</emphasis> in version <emphasis>15.0.3A~4.4.0.202107201120</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-users 15.0.3A~4.4.0.202107201120 -->
+					<!-- START ucs-school-umc-wizards 11.0.7A~4.4.0.202111251159 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-wizards</emphasis> in version <emphasis>11.0.7A~4.4.0.202111251159</emphasis>:
+						<itemizedlist>
+							<listitem><para>A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (<u:bug>32177</u:bug>).</para></listitem>
+
+							<listitem><para>The optional field expiration_date can now be edited in the UMC. The optional fields can modified by setting the UCR-Variable <envar>ucsschool/wizards/schoolwizards/users/optional_visible_fields</envar> (<u:bug>54115</u:bug>).</para></listitem>
+
+							<listitem><para>The "Users (schools)" module now includes the account status of the users in the grid (<u:bug>54142</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-wizards 11.0.7A~4.4.0.202111251159 -->
+<!-- CHANGELOG:2021-11-29:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
+
 
 
 
