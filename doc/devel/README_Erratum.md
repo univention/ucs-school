@@ -24,6 +24,9 @@ This document describes how to prepare and execute an Errata Release for the UCS
 
 The following code should be executed on omar:
 
+The correct version string, for example `ucsschool_20180112151618` can be found here
+https://appcenter-test.software-univention.de/meta-inf/4.4/ucsschool/ by navigating to the last (published) version.
+
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
 ./copy_from_appcenter.test.sh 5.0 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
