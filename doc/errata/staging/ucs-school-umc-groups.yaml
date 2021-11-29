@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-groups
 fix: 9.0.0-14A~4.4.0.202107201105
 desc: |
- * A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (Bug #53026, Bug #32177).
-bug: [53026,32177]
+ * A traceback was triggered when searching for two consecutive stars in the UMC. This has been fixed (Bug #32177).
+bug: [32177]
