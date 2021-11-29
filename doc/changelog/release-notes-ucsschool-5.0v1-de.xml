@@ -41,7 +41,7 @@ feedback@univention.de
 		<title>Release-Highlights</title>
 		<para>
 			&ucsUAS; 5.0 v1 steht jetzt für das fünfte Major-Release von Univention Corporate Server (UCS) zur Verfügung.
-			Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen und Verbesserungen, neue Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 5.0
+			Es profitiert von einer Reihe an umfangreichen Funktionserweiterungen und Verbesserungen, neuen Eigenschaften sowie diverse Detailverbesserungen und Fehlerkorrekturen, die in UCS 5.0
 			eingeflossen sind.
 		</para>
 			<para>
@@ -55,17 +55,17 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Alle &ucsUMC; Module wurden an das neue UCS 5 Design angepasst. Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2021/05/release-univention-corporate-server-5-0/"></ulink> .
+						Alle Module für die &ucsUMC; wurden an das neue UCS-5-Design angepasst. Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2021/05/release-univention-corporate-server-5-0/"></ulink> .
 					</para>
 					</listitem>
 				<listitem>
 					<para>
-						<package>Veyon</package> löst <package>iTALC</package> als Computerraum Backend ab.
+						<package>Veyon</package> löst <package>iTALC</package> als Computerraum-Backend ab. <package>iTALC</package> wird ab UCS@school 5.0 nicht mehr unterstützt.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						&ucsUAS; verwendet jetzt die Begriffe "&ucsPrimaryDN;" für "&ucsMaster;" und "&ucsReplicaDN;" für "&ucsSlave;".
+						&ucsUAS; verwendet jetzt konsistent zu UCS 5.0 die Begriffe "&ucsPrimaryDN;" für "&ucsMaster;" und "&ucsReplicaDN;" für "&ucsSlave;".
 						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>.
 					</para>
 				</listitem>
@@ -89,15 +89,15 @@ feedback@univention.de
 			kann. Ansonsten wird es zu Problemen auf den übrigen &ucsUAS;-Schulservern kommen.
 		</para>
 		<para>
-			Das Upgrade auf &ucsUAS; 5.0 v1 in Single-Server-Umgebungen und &ucsReplicaDN; auf denen sich bereits Computerräumen befinden, ist noch nicht möglich.
-			In einem kommenden Errata Release wird dies freigeschaltet. Mehr dazu in <xref linkend="relnotes:computerroom-backend"/>.
+			Das Upgrade auf &ucsUAS; 5.0 v1 ist in Single-Server-Umgebungen bzw. in Multi-Server-Umgebungen mit &ucsReplicaDN;s, auf denen sich bereits Computerräume befinden, noch nicht möglich.
+			In einem kommenden Errata-Release für &ucsUAS; wird dies freigeschaltet. Mehr dazu in <xref linkend="relnotes:computerroom-backend"/>.
 		</para>
 	</chapter>
 
 	<chapter id="relnotes:preparations">
 	  <title>Vorbereitung von Installation und Update</title>
 		<para>
-			Manuell erstellter Python-Programmcode muss vor dem Update auf Kompatibilität mit Python 3.7 geprüft und entsprechend angepasst werden. Das betrifft auch Univention Configuration Registry Templates, die Python-Code enthalten. In der [developer-reference] finden sich weitere Hinweise.
+			Manuell erstellter Python-Programmcode muss <emphasis>vor</emphasis> dem Update auf Kompatibilität mit Python 2.7 und Python 3.7 geprüft und entsprechend angepasst werden. Das betrifft auch Univention Configuration Registry Templates, die Python-Code enthalten. In der [developer-reference] finden sich weitere Hinweise.
 		</para>
 	  <para>
 		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
@@ -122,7 +122,7 @@ feedback@univention.de
 	  </para>
 
 		<para>
-			Mit UCS 5.0 bietet Univention wieder ein Skript an, mit dem Probleme, die das Update des UCS Systems verhindern würden, schon vor dem Update erkannt werden können.
+			Mit UCS 5.0 bietet Univention wieder ein Skript an, mit dem Probleme, die das Update des UCS-Systems verhindern würden, schon vor dem Update erkannt werden können.
 			Diese Skript kann vor dem Update manuell auf das System geladen und ausgeführt werden:
 			<screen><![CDATA[
 # download
@@ -151,7 +151,7 @@ Checking ldap_schema ...                          OK
 	<chapter id="relnotes:post">
 		<title>Nachbereitung des Updates</title>
 		<para>
-			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies kann auf zwei Wegen erfolgen: Entweder über das UMC-Modul  <guimenu>Domänenbeitritt</guimenu> oder durch Aufruf des Befehls <command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis>.
+			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies kann auf zwei Wegen erfolgen: Entweder über das UMC-Modul  <guimenu>Domänenbeitritt</guimenu> oder durch Aufruf des Befehls <command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis> auf der Kommandozeile.
 		</para>
 		<para>
 			Anschließend muss das UCS-System neu gestartet werden.
@@ -160,18 +160,30 @@ Checking ldap_schema ...                          OK
 			<title>Join-Hooks</title>
 			<para>
 				Der Installationsprozess nutzt das Feature <emphasis>Join-Hooks</emphasis>,
-				das ab &ucsUCS; 4.4 zur Verfügung steht. Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im
+				das ab UCS 4.4 zur Verfügung steht. Join-Hooks werden in einer &ucsUAS;-Umgebung vom &ucsPrimaryDN; im
 				LDAP-Verzeichnis hinterlegt und automatisch während des Join-Vorgangs bzw. während der Ausführung von Joinskripten
 				ausgeführt. Der &ucsUAS;-Join-Hook installiert auf allen Systemen der Domäne automatisch die &ucsUAS;-App aus
 				dem Univention App Center und installiert die auf dem jeweiligen System benötigten &ucsUAS;-Pakete, sofern diese
 				noch fehlen.
 			</para>
+			<note>
+				<para>
+					Je nach Rolle des Systems und dessen Systemperformance kann dieser Vorgang mehrere Minuten benötigen und darf nicht abgebrochen
+					werden!
+				</para>
+			</note>
 			<para>
 				Nach dem Update des &ucsPrimaryDN; auf UCS 5.0/&ucsUAS; 5.0 muss auf allen anderen Systemen der Domäne der Befehl
-				<command>univention-run-join-scripts</command> auf der Kommandozeile ausgeführt werden, was den Join-Hook auf
-				jedem System erstmalig ausführt. Für die Erstinstallation der benötigten Pakete wird der Join-Hook je nach Rolle
-				des Systems und dessen Systemperformance mehrere Minuten benötigen. Dieser Vorgang darf dabei nicht abgebrochen
-				werden.
+				<command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis> auf der Kommandozeile ausgeführt werden, was den aktualisierten Join-Hook auf
+				jedem System erneut ausführt.
+			</para>
+			<para>
+				Auch nach einer erstmaligen Installation von &ucsUAS; in einer Domäne muss auf allen anderen Systemen der Domäne der Befehl
+				<command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis> auf der Kommandozeile ausgeführt werden.
+			</para>
+			<para>
+				Tritt ein einzelnes UCS-System nachträglich einer existierenden &ucsUAS;-Domäne bei, so wird der Join-Hook während des Join-Vorgangs automatisch ausgeführt.
+				Ein manueller Aufruf von <command>univention-run-join-scripts</command> ist dann nicht mehr notwendig.
 			</para>
 		</section>
 	</chapter>
@@ -204,15 +216,15 @@ Checking ldap_schema ...                          OK
 	<chapter id="relnotes:computerroom-backend">
 	<title>Veyon löst iTALC als Computerraum Backend ab</title>
 			<para>
-			  Mit &ucsUAS; 4.4 v9 wurde <package>Veyon</package> als Nachfolger des Computerraum Backends <package>iTALC</package> eingeführt, um dieses in &ucsUAS; 5.0 v1 abzulösen. Ab &ucsUAS; 5.0 v1 wird nun ausschließlich <package>Veyon</package> als Computerraum Backend eingesetzt.
+			  Mit &ucsUAS; 4.4 v9 wurde <package>Veyon</package> als Nachfolger des Computerraum Backends <package>iTALC</package> eingeführt, um dieses in &ucsUAS; 5.0 v1 abzulösen. Ab &ucsUAS; 5.0 v1 wird nun ausschließlich <package>Veyon</package> als Computerraum-Backend eingesetzt.
 			  In den UMC-Modulen <guimenu>Computerraum</guimenu> und <guimenu>Klassenarbeiten</guimenu> werden fortan nur noch Computerräume angezeigt, deren Backend auf  <package>Veyon</package> gesetzt ist.
 			</para>
 			<para>
-				Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; betrieben werden, die noch &ucsUAS; 4.4v9 verwenden, weiter verwendet werden.
+				In Multi-Server-Umgebungen ist für die Zeit der Migration von &ucsUAS; 4.4v9 auf &ucsUAS; 5.0 ein Mischbetrieb möglich. Computerräume, die iTALC als Backend verwenden und auf &ucsReplicaDN; mit &ucsUAS; 4.4v9 betrieben werden, können weiterhin genutzt werden.
 			</para>
 			<para>
-				Die Migration von iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;).
-				Die Schritte der Migration von <package>iTALC</package> zu <package>Veyon</package> sind auf <ulink url="https://help.univention.com/t/16937"></ulink> beschrieben.
+				Die Migration von iTALC auf Veyon erfolgt in diesen Mischumgebungen im UMC-Modul <guimenu>Computerräume verwalten</guimenu> auf dem entsprechenden &ucsReplicaDN; (und nicht auf dem &ucsPrimaryDN;!).
+				Die Schritte der Migration von <package>iTALC</package> zu <package>Veyon</package> sind in folgendem Help-Artikel beschrieben: <ulink url="https://help.univention.com/t/16937"></ulink> .
 			</para>
     </chapter>
 	<chapter id="relnotes:changes">
@@ -234,25 +246,25 @@ Checking ldap_schema ...                          OK
 					All packages now use modernized debhelper tools (<u:bug>52605</u:bug>).
 				</para></listitem>
 				<listitem><para>
-						The &ucsUAS; now uses the terms &ucsPrimaryDN; for "DC Master" &ucsReplicaDN; for "DC Slave" (see <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>). Accordingly, the documentation,
-						as well as the Debian package names have been adjusted. UCR-Variable names did not change yet (<u:bug>20064</u:bug>).
+						The &ucsUAS; now uses the terms "&ucsPrimaryDN;" for "Domaincontroller Master" and "&ucsReplicaDN;" for "Domaincontroller Slave" (see <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>). Accordingly, the documentation,
+						as well as the Debian package names have been adjusted. Names and values of UCR variables have not been changed yet (<u:bug>20064</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The portal entries have been migrated to the new portal objects (<u:bug>53399</u:bug>).
+					Entries for the Univention Portal have been migrated to the new portal object type (<u:bug>53399</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					<package>Veyon</package> becomes the new standard of the computer room backend. A diagnostic module was written to make non-migrated computer rooms visible (<u:bug>53954</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The <package>Veyon Proxy App</package> will not be installed on &ucsPrimaryDN; anymore, if a multiserver setup is chosen (<u:bug>53942</u:bug>).
+					The <package>Veyon Proxy App</package> will not be installed on &ucsPrimaryDN; anymore, if a multi server setup is chosen (<u:bug>53942</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					(<u:bug>27892</u:bug>) introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically create mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
-					Typos in email addresses did not lead to an errors that the user can see, but instead to bad email domains in the UCS domain, which potentially lead to errors in the mail system much later.
-					On new hosts this UCR variable is now set to "no" (<u:bug>53931</u:bug>).
+					<u:bug>27892</u:bug> introduced the UCR variable <envar>ucsschool/import/generate/mail/domain</envar> to automatically create mail domain objects, when a user was created with an email address that uses it. The default was set to "yes".
+					Typos in a user's mail address did not result in this error being detected by the administrator. Instead, additional UCS mail domain objects were created with the wrong mail domains, which later led to errors in mail processing.
+					Therefore this UCR variable is now set to "no" on new installations (<u:bug>53931</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The Demo Portal has been removed (<u:bug>53460</u:bug>).
+					The demo portal has been removed (<u:bug>53460</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					<package>iTALC</package> has been removed from &ucsUAS; (<u:bug>53364</u:bug>).
@@ -261,7 +273,7 @@ Checking ldap_schema ...                          OK
 					<package>UCC</package> has been removed from &ucsUAS; (<u:bug>53365</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The legacy import script for users has been removed (<u:bug>41513</u:bug>).
+					The legacy import script for users (<command>import_user</command>) and all associated code remnants have been removed (<u:bug>41513</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The package <package>ucs-school-s4-branch-site</package> has been removed (<u:bug>52629</u:bug>).
@@ -273,7 +285,7 @@ Checking ldap_schema ...                          OK
 					All importer <emphasis>Reader</emphasis> classes now need to implement the <emphasis>get_imported_udm_property_names</emphasis> method (<u:bug>53816</u:bug>).
 				</para></listitem>
 				<listitem><para>
-					The package <package>ucs-school-webproxy</package> has been migrated from init scripts to systemd (<u:bug>52606</u:bug>).
+					The package <package>ucs-school-webproxy</package> has been migrated from init.d scripts to systemd (<u:bug>52606</u:bug>).
 				</para></listitem>
 				<listitem><para>
 					The LDAP ACL's for UVMM are only applied if the UVMM schema is installed (<u:bug>53392</u:bug>).
