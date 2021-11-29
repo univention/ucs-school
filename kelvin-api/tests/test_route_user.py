@@ -29,7 +29,6 @@ import datetime
 import itertools
 import logging
 import random
-import time
 from typing import Any, Dict, List, NamedTuple, Tuple, Type, Union
 from urllib.parse import SplitResult, urlsplit
 
@@ -633,6 +632,7 @@ async def test_create(
     assert udm_props.title == title
     assert set(udm_props.phone) == set(phone)
     await compare_lib_api_user(lib_users[0], api_user, udm, url_fragment)
+    await asyncio.sleep(5)
     compare_ldap_json_obj(api_user.dn, response_json, url_fragment)
     if r_user.disabled:
         with pytest.raises(LDAPBindError):
@@ -1512,7 +1512,7 @@ async def test_change_disable(
     assert response.status_code == 200, response.reason
     response = retry_http_502(requests.get, f"{url_fragment}/users/{user.name}", headers=auth_header)
     assert response.status_code == 200, response.reason
-    time.sleep(5)
+    await asyncio.sleep(5)
     api_user = UserModel(**response.json())
     assert api_user.disabled == user.disabled
     with pytest.raises(LDAPBindError):
@@ -1534,7 +1534,7 @@ async def test_change_disable(
             data=user.json(),
         )
     assert response.status_code == 200, response.reason
-    time.sleep(5)
+    await asyncio.sleep(5)
     response = retry_http_502(requests.get, f"{url_fragment}/users/{user.name}", headers=auth_header)
     api_user = UserModel(**response.json())
     assert api_user.disabled == user.disabled
