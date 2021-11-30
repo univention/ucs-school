@@ -35,6 +35,10 @@ sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public downl
 
 ## Publish manual
 
+**Important**: For the build in UCS@school 4.4 please follow the steps in the [manual readme](../manual/README.md).
+
+Copy & commit the resulting html & pdf files in the repo `docs.univention.de`.
+
 Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
 commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
 
