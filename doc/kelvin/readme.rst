@@ -58,4 +58,5 @@ Add the files to the docs git repository and start a Jenkins job::
 
 
 The documentation will be build automatically in our pipeline https://git.knut.univention.de/univention/docs.univention.de/-/pipelines
+Check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
 You have to press a deploy button to publish the documentation.
