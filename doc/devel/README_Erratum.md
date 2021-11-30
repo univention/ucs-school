@@ -61,7 +61,9 @@ Viele Grüße,
  $NAME
 </pre>
 
-Set all Bugs published with this Erratum to *CLOSED*. You can get all relevant bug numbers with this snippet:
+Set all Bugs published with this Erratum to *CLOSED*. Search for all verified bugs for the corresponding target milestone in Bugzilla. Now click on *Change Several Bugs at Once* underneath the columns. This will enable you to select and modify the bugs you need.
+
+Alternatively you can get the bug numbers with this snippet:
 ```shell
 cd doc/errata/published/
 grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
