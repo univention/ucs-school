@@ -102,10 +102,15 @@ git commit -m 'Bug #xxxxx: Added xxxx'
 git push
 ```
 
-Run [Publish Docs job](https://jenkins.knut.univention.de:8181/view/Publish/job/Publish_docs.univention.de/).
-**Attention: This job needs manual intervention in two instances!**
+Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
+commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
+
+If everything is in order run the deploy job to publish the new documentation.
 
 ## Publish packages from TestAppCenter
+
+The correct version string, for example `ucsschool_20180112151618` can be found here
+https://appcenter-test.software-univention.de/meta-inf/4.4/ucsschool/ by navigating to the last (published) version.
 
 This code should be run **on dimma or omar**:
 ```shell
