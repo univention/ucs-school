@@ -318,6 +318,7 @@
                   angepasst und der LDAP-Server neu gestartet werden:
                 <programlisting>
 ucr set ucsschool/ldap/replicate_staff_to_edu="true"
+ucr commit /etc/ldap/slapd.conf
 systemctl restart slapd
                 </programlisting>
               </para>
