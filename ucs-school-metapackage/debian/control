@@ -120,6 +120,7 @@ Depends:
  univention-management-console-web-server (>= 1.0.320-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
  univention-samba4 (>= 8.0.0-32) | univention-samba (>= 13.0.0-11),
+ samba-dsdb-modules (>= 2:4.13.13-1),
  ${misc:Depends},
 Recommends:
  ucs-school-branding,
