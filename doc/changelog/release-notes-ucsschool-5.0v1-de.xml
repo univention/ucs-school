@@ -90,7 +90,9 @@ feedback@univention.de
 		</para>
 		<para>
 			Das Upgrade auf &ucsUAS; 5.0 v1 ist in Single-Server-Umgebungen bzw. in Multi-Server-Umgebungen mit &ucsReplicaDN;s, auf denen sich bereits Computerräume befinden, noch nicht möglich.
-			In einem kommenden Errata-Release für &ucsUAS; wird dies freigeschaltet. Mehr dazu in <xref linkend="relnotes:computerroom-backend"/>.
+			In einem kommenden Errata-Release für &ucsUAS; wird dies freigeschaltet.
+			Umgebungen ohne Computerräume sind davon nicht betroffen und können aktualisiert werden.
+			Mehr zur Migration des Computerraum Backends von iTALC zu Veyon in <xref linkend="relnotes:computerroom-backend"/>.
 		</para>
 	</chapter>
 
