@@ -280,18 +280,7 @@
 		  z.B. für Benutzerkonten der Schulleitung, die neben ihrer Verwaltungstätigkeit auch lehrend tätig
 		  sind.
 		</para>
-		<para>
-		  Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
-		  angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
-		  Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
-		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
-		  Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
-		  Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
-		</para>
-		<para>
-		  Die Installationsschritte für Schulserver des Edukativnetzes und des Verwaltungsnetzes sind sehr ähnlich.
-		  In <xref linkend="school:installation:replica_directory_node" /> werden diese ausführlich beschrieben.
-		</para>
+
 		<note>
 		  <para>
 			Die Einrichtung eines Verwaltungsnetzes ist in einer Single-Server-Umgebung nicht
@@ -307,6 +296,67 @@
 			  DHCP-DNS-Richtlinien in <xref linkend="school:installation:replica_directory_node" /> beachtet werden.
 		  </para>
 		</caution>
+
+        <section id="structure:staff-in-edunet">
+        <title>Mitarbeiter im Edukativnetz</title>
+          <para>
+              Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> aus dem Verwaltungsnetz
+              können explizit auf Schulserver im Edukativnetz repliziert werden. Benutzer in dieser Rolle
+              können sich anschließend gegen den Schulserver im Edukativnetz authentifizieren und so zum
+              Beispiel Zugriff auf Dateifreigaben erhalten oder sich an einem Client anmelden, der Teil der lokalen
+              Domäne ist. Sie können zu Arbeitsgruppen hinzugefügt werden. Mitarbeiter können keine
+              edukativen UMC Module verwenden, wie zum Beispiel die Computerraumverwaltung oder den
+              Klassenarbeitsmodus.
+          </para>
+          <para>
+              Folgende Schritte sind nötig, um die Replikation von Benutzern in der Rolle <emphasis>Mitarbeiter</emphasis>
+              auf Schulserver im Edukativnetz zu aktivieren:
+          </para>
+          <orderedlist>
+            <listitem>
+              <para>Auf dem &ucsPrimaryDN; und <emphasis>allen</emphasis> &ucsBackupDN; müssen die LDAP ACLs
+                  angepasst und der LDAP-Server neu gestartet werden:
+                <programlisting>
+ucr set ucsschool/ldap/replicate_staff_to_edu="true"
+ucr commit /etc/ldap/slapd.conf
+systemctl restart slapd
+                </programlisting>
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                Nach der Änderung der LDAP ACLs werden nur modifizierte und neu erstellte Benutzerkonten
+                <emphasis>automatisch</emphasis> repliziert, solange kein erneuter Domänenbeitritt durchgeführt wird.
+                Um <emphasis>bestehende</emphasis> Benutzerkonten zu replizieren, müssen die Schulserver im Edukativnetz
+                der Domäne erneut beitreten.
+                Nach der Aktivierung zusätzlicher LDAP ACLs können alle Schulserver im Edukativnetz die Benutzerkonten
+                der Rolle <emphasis>Mitarbeiter</emphasis> vom &ucsPrimaryDN; und den &ucsBackupDN;n lesen.
+              </para>
+              <para>
+                Wenn alle bestehenden Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> in einem Lauf repliziert
+                werden sollen, müssen edukative Schulserver mit <command>univention-join</command> der Domäne erneut beitreten.
+                Hierbei ist zu beachten, dass der erneute Domänenbeitritt eines edukativen Schulservers einige Zeit in Anspruch
+                nimmt und in der Zwischenzeit nicht verwendet werden kann. Planen Sie dafür ein Wartungsfenster ein.
+              </para>
+            </listitem>
+          </orderedlist>
+        </section>
+
+        <section id="structure:schoolservers-in-staffnet">
+          <title>Schulserver im Verwaltungsnetz</title>
+		  <para>
+		    Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
+		    angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
+		    Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
+		    Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
+		    Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
+		    Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
+		  </para>
+		  <para>
+		    Die Installationsschritte für Schulserver des Edukativnetzes und des Verwaltungsnetzes sind sehr ähnlich.
+		    In <xref linkend="school:installation:replica_directory_node" /> werden diese ausführlich beschrieben.
+          </para>
+        </section>
 	</section>
 
 	<section id="structure:ldap">
