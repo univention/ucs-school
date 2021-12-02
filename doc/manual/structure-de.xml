@@ -332,12 +332,14 @@ systemctl restart slapd
                 Nach der Aktivierung zusätzlicher LDAP ACLs können alle Schulserver im Edukativnetz die Benutzerkonten
                 der Rolle <emphasis>Mitarbeiter</emphasis> vom &ucsPrimaryDN; und den &ucsBackupDN;s lesen.
               </para>
-              <para>
-                Wenn alle bestehenden Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> in einem Lauf repliziert
-                werden sollen, müssen edukative Schulserver mit <command>univention-join</command> der Domäne erneut beitreten.
-                Hierbei ist zu beachten, dass der erneute Domänenbeitritt eines edukativen Schulservers einige Zeit in Anspruch
-                nimmt und in der Zwischenzeit nicht verwendet werden kann. Planen Sie dafür ein Wartungsfenster ein.
-              </para>
+              <caution>
+                <para>
+                  Wenn alle bestehenden Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> in einem Lauf repliziert
+                  werden sollen, müssen edukative Schulserver mit <command>univention-join</command> der Domäne erneut beitreten.
+                  Hierbei ist zu beachten, dass der erneute Domänenbeitritt eines edukativen Schulservers einige Zeit in Anspruch
+                  nimmt und in der Zwischenzeit nicht verwendet werden kann. Planen Sie dafür ein Wartungsfenster ein.
+                </para>
+              </caution>
             </listitem>
           </orderedlist>
         </section>
