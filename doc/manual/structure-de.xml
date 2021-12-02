@@ -314,7 +314,7 @@
           </para>
           <orderedlist>
             <listitem>
-              <para>Auf dem &ucsMaster; und <emphasis>allen</emphasis> &ucsBackup; müssen die LDAP ACLs
+              <para>Auf dem &ucsMaster; und <emphasis>allen</emphasis> &ucsBackup;-Servern müssen die LDAP ACLs
                   angepasst und der LDAP-Server neu gestartet werden:
                 <programlisting>
 ucr set ucsschool/ldap/replicate_staff_to_edu="true"
