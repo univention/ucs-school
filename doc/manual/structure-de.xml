@@ -314,7 +314,7 @@
           </para>
           <orderedlist>
             <listitem>
-              <para>Auf dem &ucsPrimaryDN; und <emphasis>allen</emphasis> &ucsBackupDN; müssen die LDAP ACLs
+              <para>Auf dem &ucsPrimaryDN; und <emphasis>allen</emphasis> &ucsBackupDN;s müssen die LDAP ACLs
                   angepasst und der LDAP-Server neu gestartet werden:
                 <programlisting>
 ucr set ucsschool/ldap/replicate_staff_to_edu="true"
@@ -330,7 +330,7 @@ systemctl restart slapd
                 Um <emphasis>bestehende</emphasis> Benutzerkonten zu replizieren, müssen die Schulserver im Edukativnetz
                 der Domäne erneut beitreten.
                 Nach der Aktivierung zusätzlicher LDAP ACLs können alle Schulserver im Edukativnetz die Benutzerkonten
-                der Rolle <emphasis>Mitarbeiter</emphasis> vom &ucsPrimaryDN; und den &ucsBackupDN;n lesen.
+                der Rolle <emphasis>Mitarbeiter</emphasis> vom &ucsPrimaryDN; und den &ucsBackupDN;s lesen.
               </para>
               <para>
                 Wenn alle bestehenden Benutzerkonten der Rolle <emphasis>Mitarbeiter</emphasis> in einem Lauf repliziert
