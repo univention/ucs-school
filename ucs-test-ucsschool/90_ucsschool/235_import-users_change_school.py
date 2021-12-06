@@ -11,6 +11,7 @@
 import copy
 
 import univention.testing.strings as uts
+import univention.testing.utils as utils
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
@@ -51,6 +52,7 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
+        utils.wait_for_replication()
         self.run_import(["-c", fn_config, "-i", fn_csv])
         for person in person_list:
             person.verify()
@@ -67,6 +69,7 @@ class Test(CLI_Import_v2_Tester):
 
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
+        utils.wait_for_replication()
         self.run_import(["-c", fn_config, "-i", fn_csv])
         for person in person_list:
             person.verify()
