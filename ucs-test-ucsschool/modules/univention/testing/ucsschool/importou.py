@@ -766,9 +766,10 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
         if must_exist:
             utils.verify_ldap_object(
                 grpdn,
-                expected_attr={"uniqueMember": [dc_dn]},
+                expected_attr={"uniqueMember": [dc_dn]} if expected_membership else None,
+                not_expected_attr={"uniqueMember": [dc_dn]} if not expected_membership else None,
                 strict=False,
-                should_exist=expected_membership,
+                should_exist=True,
                 retry_count=0,
             )
 
