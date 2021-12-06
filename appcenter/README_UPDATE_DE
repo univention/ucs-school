@@ -18,7 +18,7 @@
         The <code>no_proxy</code> environment variable is now honored by the Kelvin REST API when accessing the UDM REST API (Bug #54066).
     </li>
     <li>
-        The user resource now has an <code>expiration_date</code> attribute, which can be used to set the password expiration date. A user won't be able to login from that date on (Bug #54126).
+        The user resource now has an <code>expiration_date</code> attribute, which can be used to set the account expiration date. A user won't be able to login from that date on (Bug #54126).
     </li>
 </ul>
 

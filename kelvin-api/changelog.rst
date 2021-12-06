@@ -12,7 +12,7 @@ v1.5.1 (2021-11-30)
 * The test suite for the ``ucsschool.lib`` component was improved (Bug #53962).
 * Username generation counter can now be raised above 100 (Bug #53987).
 * The ``no_proxy`` environment variable is now honored by the Kelvin REST API when accessing the UDM REST API (Bug #54066).
-* The user resource now has an ``expiration_date`` attribute, which can be used to set the password expiration date. A user won't be able to login from that date on (Bug #54126).
+* The user resource now has an ``expiration_date`` attribute, which can be used to set the account expiration date. A user won't be able to login from that date on (Bug #54126).
 
 v1.5.0 (2021-09-10)
 ...................
