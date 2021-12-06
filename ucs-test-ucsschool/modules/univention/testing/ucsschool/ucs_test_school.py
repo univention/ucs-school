@@ -355,6 +355,10 @@ class UCSTestSchool(object):
         """ Removes the given school ou and all its corresponding objects like groups """
 
         logger.info("*** Purging OU %r and related objects", ou_name)
+        if wait_for_replication:
+            # Ensure the ou has been fully replicated before deleting it.
+            # Otherwise the s4 connector can get confused.
+            utils.wait_for_replication()
         # remove OU specific groups
         group_dns = [
             grpdn % {"ou": ou_name, "basedn": self.ucr["ldap/base"]}
