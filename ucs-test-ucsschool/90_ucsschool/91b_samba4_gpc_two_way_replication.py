@@ -221,6 +221,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
             utils.fail(
                 "The 'samba-tool' did not produce any output to the STDOUT, while GPO list was expected"
             )
+        print("\nSamba-tool produced the following output:\n", stdout)
 
         if container_dn not in stdout:
             utils.fail(
@@ -232,8 +233,6 @@ class TestGPCReplicationTwoWays(TestSamba4):
                 "The linked GPO was not referenced in the 'samba-tool output, possibly link was not "
                 "replicated"
             )
-
-        print("\nSamba-tool produced the following output:\n", stdout)
 
     def find_slave_in_domain(self):
         """
