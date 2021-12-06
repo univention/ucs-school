@@ -763,21 +763,14 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
     utils.verify_ldap_object(dc_dn, should_exist=must_exist)
 
     for (expected_membership, grpdn) in group_dn_list:
-        try:
-            if must_exist:
-                utils.verify_ldap_object(
-                    grpdn,
-                    expected_attr={"uniqueMember": [dc_dn]},
-                    strict=False,
-                    should_exist=True,
-                    retry_count=0,
-                )
-
-                if not expected_membership:
-                    raise DCisMemberOfGroup("%s DC %r is member of group %r" % (dc_type, dc_dn, grpdn))
-        except utils.LDAPObjectValueMissing:
-            if expected_membership:
-                raise
+        if must_exist:
+            utils.verify_ldap_object(
+                grpdn,
+                expected_attr={"uniqueMember": [dc_dn]},
+                strict=False,
+                should_exist=expected_membership,
+                retry_count=0,
+            )
 
 
 def parametrization_id_base64_decode(val):
