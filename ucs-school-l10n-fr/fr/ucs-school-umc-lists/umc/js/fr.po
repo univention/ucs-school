@@ -1,0 +1,78 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-umc-lists\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2022-02-24 18:47+0100\n"
+"PO-Revision-Date: 2022-01-06 01:26+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: umc/js/schoollists.js:120
+msgid "Class or workgroup"
+msgstr "Classe ou groupe de travail"
+
+#: umc/js/schoollists.js:137
+msgid "Download a list of group members"
+msgstr "Télécharger la liste des membres du groupe"
+
+#: umc/js/schoollists.js:153
+msgid "Download a list of group members (in an alternative format)"
+msgstr "Télécharger la liste des membres du groupe (dans un format alternatif)"
+
+#: umc/js/schoollists.js:131
+msgid "Exclude deactivated students"
+msgstr ""
+"Télécharger la liste des membres du groupe (dans un format alternatif)"
+
+#: umc/js/schoollists.js:154
+msgid "Export (Alternative format)"
+msgstr "Exporter (format alternatif)"
+
+#: umc/js/schoollists.js:138
+msgid "Export (Recommended)"
+msgstr "Exporter (recommandé)"
+
+#: umc/js/schoollists.js:147 umc/js/schoollists.js:162
+msgid "Please select a class or workgroup."
+msgstr "Veuillez sélectionner une classe ou un groupe de travail."
+
+#: umc/js/schoollists.js:109
+msgid "School"
+msgstr "École"
+
+#: umc/js/schoollists.js:119
+msgid "Select a class or workgroup."
+msgstr "Sélectionnez une classe ou un groupe de travail."
+
+#: umc/js/schoollists.js:108
+msgid "Select the school."
+msgstr "Sélectionnez l’école."
+
+#: umc/js/schoollists.js:94
+msgid ""
+"This module lets you export class and workgroup lists. The lists are in the "
+"CSV format. If you have problems opening the exported file, ensure the "
+"encoding is set to UTF-16 and the field separator is set to tabs.<p><a "
+"target='_blank' href=modules/schoollists/lo_import_hl_en.png>Help for "
+"LibreOffice</a></p><p>If you can't open that file you can try to export the "
+"list in an alternative format which is UTF-8 encoded and uses commas as "
+"field separators.</p>"
+msgstr ""
+"Ce module vous permet d’exporter des listes de classes et de groupes de "
+"travail. Les listes sont au format CSV. Si vous rencontrez des problèmes "
+"pour ouvrir le fichier exporté, assurez-vous que le codage est réglé sur "
+"UTF-16 et que le séparateur de champs sélectionné est la tabulation.<p><a "
+"target='_blank' href=modules/schoollists/lo_import_hl_en.png>Aide pour "
+"LibreOffice</a></p><p>Si vous ne pouvez pas ouvrir ce fichier, vous pouvez "
+"essayer d’exporter la liste dans un format alternatif codé en UTF-8 et "
+"utilisant des virgules comme séparateurs de champs.</p>"
+
+#: umc/js/schoollists.js:130
+msgid ""
+"When this check box is selected, deactivated students will not be exported."
+msgstr ""

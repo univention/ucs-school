@@ -1,0 +1,445 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-lib-common\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
+"PO-Revision-Date: 2022-02-21 11:21+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: modules/ucsschool/lib/models/attributes.py:111
+#, python-format
+msgid "\"%(label)s\" needs to be a %(type)s"
+msgstr "« %(label)s » doit être du type %(type)s"
+
+#: modules/ucsschool/lib/models/attributes.py:118
+#, python-format
+msgid "\"%s\" is required. Please provide this information."
+msgstr "« %s » est indispensable. Veuillez fournir cette information."
+
+#: modules/ucsschool/lib/models/attributes.py:194
+msgid "A valid NetBIOS hostname can not be longer than 13 characters."
+msgstr "Un nom d’hôte NetBIOS valide ne peut pas dépasser 13 caractères."
+
+#: modules/ucsschool/lib/models/school.py:90
+msgid "Administrative servers"
+msgstr "Serveurs administratifs"
+
+#: modules/ucsschool/lib/models/user.py:80
+msgid "Birthday"
+msgstr "Date de naissance"
+
+#: modules/ucsschool/lib/models/network.py:48
+#: modules/ucsschool/lib/models/dhcp.py:223
+msgid "Broadcast"
+msgstr "Diffusion"
+
+#: modules/ucsschool/lib/models/user.py:89
+msgid "Class"
+msgstr "Classe"
+
+#: modules/ucsschool/lib/models/computer.py:222
+msgid "Computer"
+msgstr "Ordinateur"
+
+#: modules/ucsschool/lib/models/misc.py:90
+msgid "Computer path"
+msgstr "Chemin d’accès à l’ordinateur"
+
+#: modules/ucsschool/lib/models/group.py:177
+msgid "Container"
+msgstr "Conteneur"
+
+#: modules/ucsschool/lib/models/base.py:1363
+#, python-brace-format
+msgid ""
+"Context {role}:{context_type}:{context} is not allowed for {dn}. Object is "
+"not in that school."
+msgstr ""
+"Le contexte {role}:{context_type}:{context} n’est pas autorisé pour {dn}. "
+"L’objet n’est pas dans cette école."
+
+#: modules/ucsschool/lib/school_umc_base.py:127
+msgid ""
+"Could not find any school. You have to create a school before continuing. "
+"Use the \"Schools\" UMC module to create one."
+msgstr ""
+"Impossible de trouver une école. Vous devez créer une école avant de "
+"continuer. Utilisez le module UMC « Écoles » pour en créer une."
+
+#: modules/ucsschool/lib/models/school.py:78
+msgid "DC Name"
+msgstr "Nom du contrôleur de domaine (DC)"
+
+#: modules/ucsschool/lib/models/school.py:79
+msgid "DC Name of the administrative server"
+msgstr "Nom du contrôleur de domaine (DC) pour le serveur administratif"
+
+#: modules/ucsschool/lib/models/misc.py:93
+msgid "DHCP path"
+msgstr "Chemin pour DHCP"
+
+#: modules/ucsschool/lib/models/dhcp.py:188
+#: modules/ucsschool/lib/models/dhcp.py:224
+msgid "DHCP service"
+msgstr "Service DHCP"
+
+#: modules/ucsschool/lib/models/group.py:102
+msgid "Description"
+msgstr "Description"
+
+#: modules/ucsschool/lib/models/computer.py:477
+msgid "Device with IP address"
+msgstr "Appareil avec une adresse IP"
+
+#: modules/ucsschool/lib/models/user.py:87
+msgid "Disabled"
+msgstr "Désactivé"
+
+#: modules/ucsschool/lib/models/school.py:86
+msgid "Display name"
+msgstr "Nom affiché"
+
+#: modules/ucsschool/lib/models/dhcp.py:60
+msgid "Domain"
+msgstr "Domaine"
+
+#: modules/ucsschool/lib/models/school.py:88
+msgid "Educational servers"
+msgstr "Serveurs éducatifs"
+
+#: modules/ucsschool/lib/models/user.py:85
+#: modules/ucsschool/lib/models/group.py:90
+msgid "Email"
+msgstr "E-mail"
+
+#: modules/ucsschool/lib/models/policy.py:75
+msgid "Empty attributes"
+msgstr "Attributs vides"
+
+#: modules/ucsschool/lib/models/user.py:802
+msgid "Exam student"
+msgstr "Élève pour l’examen"
+
+#: modules/ucsschool/lib/models/user.py:83
+msgid "Expiration date"
+msgstr "Date d’expiration"
+
+#: modules/ucsschool/lib/models/user.py:74
+msgid "First name"
+msgstr "Prénom"
+
+#: modules/ucsschool/lib/models/misc.py:92
+msgid "Group path"
+msgstr "Chemin d’accès au groupe"
+
+#: modules/ucsschool/lib/models/computer.py:97
+msgid "Groups"
+msgstr "Groupes"
+
+#: modules/ucsschool/lib/models/group.py:96
+msgid "Groups that are allowed to send e-mails to the group"
+msgstr "Groupes autorisés à envoyer des e-mails au groupe"
+
+#: modules/ucsschool/lib/models/dhcp.py:59
+msgid "Hostname"
+msgstr "Nom d’hôte"
+
+#: modules/ucsschool/lib/models/school.py:109
+#: modules/ucsschool/lib/models/school.py:113
+msgid "Hostname of educational DC and administrative DC must not be equal"
+msgstr ""
+"Les contrôleurs de domaine éducatif et administratif ne peuvent pas avoir "
+"le même nom d’hôte"
+
+#: modules/ucsschool/lib/models/group.py:345
+msgid "Hosts"
+msgstr "Hôtes"
+
+#: modules/ucsschool/lib/models/computer.py:216
+msgid "IP address"
+msgstr "Adresse IP"
+
+#: modules/ucsschool/lib/models/attributes.py:191
+msgid "Invalid Domain Controller name"
+msgstr "Nom du contrôleur de domaine non valide"
+
+#: modules/ucsschool/lib/models/attributes.py:182
+msgid "Invalid school name"
+msgstr "Nom de l’école non valide"
+
+#: modules/ucsschool/lib/models/computer.py:219
+msgid "Inventory number"
+msgstr "Numéro d’inventaire"
+
+#: modules/ucsschool/lib/models/user.py:423
+#: modules/ucsschool/lib/models/user.py:434
+#, python-format
+msgid ""
+"It is not supported to change the role of a user. %(old_role)s %(name)s "
+"cannot become a %(new_role)s."
+msgstr ""
+"Le changement de rôle d’un utilisateur ou d’une utilisatrice n’est pas pris "
+"en charge. %(name)s ne peut pas passer du rôle %(old_role)s au rôle "
+"%(new_role)s."
+
+#: modules/ucsschool/lib/models/user.py:77
+msgid "Last name"
+msgstr "Nom de famille"
+
+#: modules/ucsschool/lib/models/computer.py:218
+msgid "MAC address"
+msgstr "Adresse MAC"
+
+#: modules/ucsschool/lib/models/computer.py:468
+msgid "Mac OS X"
+msgstr "Mac OS X"
+
+#: modules/ucsschool/lib/models/attributes.py:132
+msgid "May not contain special characters"
+msgstr "Ne peut pas contenir de caractères spéciaux"
+
+#: modules/ucsschool/lib/models/base.py:253
+#: modules/ucsschool/lib/models/group.py:101
+#: modules/ucsschool/lib/models/group.py:233
+#: modules/ucsschool/lib/models/share.py:172
+msgid "Name"
+msgstr "Nom"
+
+#: modules/ucsschool/lib/models/network.py:46
+#: modules/ucsschool/lib/models/dhcp.py:222
+msgid "Netmask"
+msgstr "Masque de réseau"
+
+#: modules/ucsschool/lib/models/network.py:47
+msgid "Network"
+msgstr "Réseau"
+
+#: modules/ucsschool/lib/models/misc.py:91
+msgid "Network path"
+msgstr "Chemin d’accès réseau"
+
+#: modules/ucsschool/lib/schoollessons.py:59
+#: modules/ucsschool/lib/schoollessons.py:151
+msgid "Overlapping lessons are not allowed"
+msgstr "Les leçons qui se chevauchent ne sont pas autorisées"
+
+#: modules/ucsschool/lib/models/user.py:86
+msgid "Password"
+msgstr "Mot de passe"
+
+#: modules/ucsschool/lib/models/misc.py:94
+msgid "Policy path"
+msgstr "Chemin d’accès à la stratégie"
+
+#: modules/ucsschool/lib/models/misc.py:96
+msgid "Printer path"
+msgstr "Chemin d’accès à l’imprimante"
+
+#: modules/ucsschool/lib/models/attributes.py:378
+msgid "Role has bad format"
+msgstr "Le rôle a un mauvais format"
+
+#: modules/ucsschool/lib/models/base.py:1276
+msgid "Roles"
+msgstr "Rôles"
+
+#: modules/ucsschool/lib/models/base.py:254
+msgid "School"
+msgstr "École"
+
+#: modules/ucsschool/lib/models/user.py:727
+msgid "School Administrator"
+msgstr "Administrateur ou administratrice de l’école"
+
+#: modules/ucsschool/lib/models/share.py:284
+#: modules/ucsschool/lib/models/share.py:345
+msgid "School class"
+msgstr "Classe de l’école"
+
+#: modules/ucsschool/lib/models/school.py:77
+msgid "School name"
+msgstr "Nom de l’école"
+
+#: modules/ucsschool/lib/models/user.py:475
+msgid ""
+"School {school!r} in 'school_classes' is missing in the users 'school(s)' "
+"attribute."
+msgstr ""
+"L’école {school!r} mentionnée dans 'school_classes' est absente de "
+"l’attribut 'school(s)' de l’utilisateur ou utilisatrice."
+
+#: modules/ucsschool/lib/models/user.py:72
+msgid "Schools"
+msgstr "Écoles"
+
+#: modules/ucsschool/lib/models/school.py:84
+msgid "Server for Windows home directories"
+msgstr "Serveur pour les répertoires personnels Windows"
+
+#: modules/ucsschool/lib/models/school.py:81
+msgid "Server for class shares"
+msgstr "Serveur pour les partages de classe"
+
+#: modules/ucsschool/lib/models/dhcp.py:187
+msgid "Server name"
+msgstr "Nom du serveur"
+
+#: modules/ucsschool/lib/models/dhcp.py:58
+msgid "Service"
+msgstr "Service"
+
+#: modules/ucsschool/lib/models/misc.py:95
+msgid "Share path"
+msgstr "Chemin d’accès au partage"
+
+#: modules/ucsschool/lib/models/user.py:745
+msgid "Staff"
+msgstr "Personnel administratif"
+
+#: modules/ucsschool/lib/models/user.py:678
+msgid "Student"
+msgstr "Élève"
+
+#: modules/ucsschool/lib/models/network.py:149
+msgid "Subnet"
+msgstr "Sous-réseau"
+
+#: modules/ucsschool/lib/models/dhcp.py:221
+msgid "Subnet address"
+msgstr "Adresse de sous-réseau"
+
+#: modules/ucsschool/lib/models/computer.py:217
+msgid "Subnet mask"
+msgstr "Masque de sous-réseau"
+
+#: modules/ucsschool/lib/models/user.py:710
+msgid "Teacher"
+msgstr "Enseignant·e"
+
+#: modules/ucsschool/lib/models/user.py:785
+msgid "Teacher and Staff"
+msgstr "Personnel enseignant et administratif"
+
+#: modules/ucsschool/lib/models/user.py:450
+msgid ""
+"The email address is already taken by another user. Please change the email "
+"address."
+msgstr ""
+"L’adresse e-mail est déjà prise par un autre utilisateur ou une autre "
+"utilisatrice. Veuillez modifier l’adresse e-mail."
+
+#: modules/ucsschool/lib/models/computer.py:349
+msgid ""
+"The ip address is already taken by another computer. Please change the ip "
+"address."
+msgstr ""
+"L’adresse IP est déjà prise par un autre ordinateur. Veuillez modifier "
+"l’adresse IP."
+
+#: modules/ucsschool/lib/models/attributes.py:197
+msgid ""
+"The length of fully qualified domain name is greater than 63 characters."
+msgstr ""
+"La longueur du nom de domaine pleinement qualifié (FQDN) dépasse 63 "
+"caractères."
+
+#: modules/ucsschool/lib/models/computer.py:360
+msgid ""
+"The mac address is already taken by another computer. Please change the mac "
+"address."
+msgstr ""
+"L’adresse MAC est déjà prise par un autre ordinateur. Veuillez modifier "
+"l’adresse MAC."
+
+#: modules/ucsschool/lib/models/base.py:407
+msgid ""
+"The name is already used somewhere outside the school. It may not be taken "
+"twice and has to be changed."
+msgstr ""
+"Le nom est déjà utilisé quelque part à l’extérieur de l’école. Il ne peut "
+"pas être pris deux fois et doit être modifié."
+
+#: modules/ucsschool/lib/models/computer.py:395
+msgid "The newly created network would overlap with the existing network {}"
+msgstr "Le réseau nouvellement créé chevaucherait le réseau existant « {} »"
+
+#: modules/ucsschool/lib/school_umc_base.py:69
+msgid ""
+"The request did not specify any school. You have to create a school before "
+"continuing. Use the \"Schools\" UMC module to create one."
+msgstr ""
+"La requête ne précisait pas d’école. Vous devez créer une école avant de "
+"continuer. Utilisez le module UMC « Écoles » pour en créer une."
+
+#: modules/ucsschool/lib/models/base.py:415
+#, python-format
+msgid ""
+"The school \"%s\" does not exist. Please choose an existing one or create it."
+msgstr ""
+"L’école « %s » n’existe pas. Veuillez en choisir une existant ou la créer."
+
+#: modules/ucsschool/lib/models/computer.py:370
+msgid ""
+"The specified IP and subnet mask will cause the creation of a new network "
+"during the creation of the computer object."
+msgstr ""
+"L’adresse IP et le masque de sous-réseau spécifiés entraîneront la création "
+"d’un nouveau réseau lors de la création de l’objet ordinateur."
+
+#: modules/ucsschool/lib/models/base.py:435
+#, python-format
+msgid "The value changed from %(old)s. This seems unlikely."
+msgstr "La valeur n’est plus %(old)s. Un changement est inhabituel."
+
+#: modules/ucsschool/lib/models/computer.py:286
+msgid "There are no free addresses left in the subnet!"
+msgstr "Il n’y a plus d’adresses libres dans le sous-réseau !"
+
+#: modules/ucsschool/lib/models/user.py:464
+msgid "Type of 'school_classes' is {type!r}, but must be dictionary."
+msgstr ""
+"Le type de 'school_classes' est {type!r}, mais doit être un dictionnaire."
+
+#: modules/ucsschool/lib/models/attributes.py:380
+msgid "Unknown context type"
+msgstr "Type de contexte inconnu"
+
+#: modules/ucsschool/lib/models/attributes.py:382
+msgid "Unknown role"
+msgstr "Rôle inconnu"
+
+#: modules/ucsschool/lib/models/misc.py:89
+msgid "User path"
+msgstr "Chemin d’accès de compte d’utilisation"
+
+#: modules/ucsschool/lib/models/user.py:71
+msgid "Username"
+msgstr "Identifiant"
+
+#: modules/ucsschool/lib/models/group.py:103
+msgid "Users"
+msgstr "Utilisateurs et utilisatrices"
+
+#: modules/ucsschool/lib/models/group.py:93
+msgid "Users that are allowed to send e-mails to the group"
+msgstr ""
+"Utilisateurs et utilisatrices autorisé·es à envoyer des e-mails au groupe"
+
+#: modules/ucsschool/lib/models/computer.py:459
+msgid "Windows system"
+msgstr "Microsoft Windows"
+
+#: modules/ucsschool/lib/models/share.py:309
+msgid "Work group"
+msgstr "Groupe de travail"
+
+#: modules/ucsschool/lib/models/computer.py:220
+msgid "Zone"
+msgstr "Zone"

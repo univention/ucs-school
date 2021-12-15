@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-printermoderation\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:41+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -14,35 +14,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/printermoderation/__init__.py:245
+#: umc/python/printermoderation/__init__.py:278
 #, python-format
 msgid "Failed to connect to print server %(printserver)s."
 msgstr "Échec de la connexion au serveur d'impression %(printserver)s."
 
-#: umc/python/printermoderation/__init__.py:252
+#: umc/python/printermoderation/__init__.py:288
 #, python-format
 msgid "Failed to print on %(printer)s: %(stderr)s (error %(errno)d)."
 msgstr "Échec de l'impression sur %(printer)s : %(stderr)s (erreur %(errno)d)."
 
-#: umc/python/printermoderation/__init__.py:234
+#: umc/python/printermoderation/__init__.py:265
 #, python-format
 msgid "File %r could not be printed as it does not exist (anymore)."
 msgstr "Impossible d'imprimer le fichier « %r », car il n'existe pas (plus)."
 
-#: umc/python/printermoderation/__init__.py:90
-#: umc/python/printermoderation/__init__.py:170
+#: umc/python/printermoderation/__init__.py:97
+#: umc/python/printermoderation/__init__.py:203
 msgid "Invalid file"
 msgstr "Fichier non valable"
 
-#: umc/python/printermoderation/__init__.py:231
+#: umc/python/printermoderation/__init__.py:261
 msgid "Invalid printer URI"
 msgstr "URI de l'imprimante non valable"
 
-#: umc/python/printermoderation/__init__.py:249
+#: umc/python/printermoderation/__init__.py:284
 msgid "No permission to print"
 msgstr "Aucun droit d'impression"
 
-#: umc/python/printermoderation/__init__.py:250
+#: umc/python/printermoderation/__init__.py:285
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
-

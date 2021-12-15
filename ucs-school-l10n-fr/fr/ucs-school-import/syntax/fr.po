@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: univention-admin-syntax-ucsschool_import\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2022-03-03 05:29+0100\n"
+"POT-Creation-Date: 22022-03-09 15:23+0100\n"
+"Last-Translator: Johannes Lohmer <lohmer@univention.de>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: syntax.ucs-school-import.py:27
+msgid "Staff"
+msgstr "Personnel administratif"
+
+#: syntax.ucs-school-import.py:25
+msgid "Student"
+msgstr "Élève"
+
+#: syntax.ucs-school-import.py:26
+msgid "Teacher"
+msgstr "Personnel enseignant"
+
+#: syntax.ucs-school-import.py:28
+msgid "Teacher and Staff"
+msgstr "Personnel enseignant et administratif"

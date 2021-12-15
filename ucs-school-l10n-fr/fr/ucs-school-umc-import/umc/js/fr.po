@@ -1,0 +1,202 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-umc-import\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2022-02-24 19:03+0100\n"
+"PO-Revision-Date: 2022-03-01 13:49+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: umc/js/schoolimport.js:217
+msgid ""
+"A new import of %(role)s users at school %(school)s has been started. The "
+"import has the ID %(id)s."
+msgstr ""
+"Une nouvelle importation d’utilisateurs et utilisatrices %(role)s à l’école "
+"%(school)s a été lancée. L’importation a l’ID %(id)s."
+
+#: umc/js/schoolimport.js:347
+msgid "Aborted"
+msgstr "Interrompue"
+
+#: umc/js/schoolimport.js:157
+msgid "An error occurred."
+msgstr "Une erreur s’est produite."
+
+#: umc/js/schoolimport.js:246 umc/js/schoolimport.js:252
+msgid "Back to overview"
+msgstr "Retour à la vue d’ensemble"
+
+#: umc/js/schoolimport.js:191
+#, javascript-format
+msgid "Click %s to draft an email with all the required information."
+msgstr ""
+"Cliquez %s pour préparer un e-mail contenant toutes les informations "
+"requises."
+
+#: umc/js/schoolimport.js:142
+msgid "Data examination completed"
+msgstr "Examen des données terminé"
+
+#: umc/js/schoolimport.js:94
+msgid "Import user accounts"
+msgstr "Importer des comptes d’utilisation"
+
+#: umc/js/schoolimport.js:322
+msgid "Job ID"
+msgstr "ID de la tâche"
+
+#: umc/js/schoolimport.js:84
+msgid ""
+"List of running and completed user imports. For every completed user import "
+"a summary is provided with every change that was made as well as a list of "
+"passwords for newly created user accounts."
+msgstr ""
+"Liste des importations de comptes d’utilisation en cours d’exécution et "
+"terminées. Pour chaque importation de comptes d’utilisation terminée, une "
+"synthèse indique toutes les modifications apportées ainsi qu’une liste de "
+"mots de passe pour les comptes d’utilisation nouvellement créés."
+
+#: umc/js/schoolimport.js:343
+msgid "New"
+msgstr "Nouvelle"
+
+#: umc/js/schoolimport.js:82
+msgid "Overview User Imports"
+msgstr "Vue d’ensemble des importations de comptes d’utilisation"
+
+#: umc/js/schoolimport.js:352 umc/js/schoolimport.js:362
+msgid "Passwords"
+msgstr "Mots de passe"
+
+#: umc/js/schoolimport.js:194
+#, javascript-format
+msgid "Please examine the reason for this error: %s"
+msgstr "Veuillez examiner la raison de cette erreur : %s"
+
+#: umc/js/schoolimport.js:159 umc/js/schoolimport.js:189
+msgid "Please notify the system administrator about this error via email."
+msgstr ""
+"Veuillez informer l’administrateur ou administratrice système de cette "
+"erreur par e-mail."
+
+#: umc/js/schoolimport.js:125
+msgid ""
+"Please select a file. This will start a validation proccess of the data."
+msgstr ""
+"Veuillez sélectionner un fichier. Ceci lancera un processus de validation "
+"des données."
+
+#: umc/js/schoolimport.js:121
+msgid ""
+"Please select and upload the data export from the School Information System."
+msgstr ""
+"Veuillez sélectionner et télécharger les données exportées depuis le système "
+"d’information scolaire."
+
+#: umc/js/schoolimport.js:95
+msgid "Please select the school and the role of user for the import."
+msgstr ""
+"Veuillez sélectionner l’école et le rôle des comptes d’utilisation pour "
+"l’importation."
+
+#: umc/js/schoolimport.js:129
+msgid "Please wait until the examination of the data is complete."
+msgstr "Veuillez attendre que l’examen des données soit terminé."
+
+#: umc/js/schoolimport.js:309
+msgid "Reload"
+msgstr "Recharger"
+
+#: umc/js/schoolimport.js:344
+msgid "Scheduled"
+msgstr "Planifiée"
+
+#: umc/js/schoolimport.js:104 umc/js/schoolimport.js:331
+msgid "School"
+msgstr "École"
+
+#: umc/js/schoolimport.js:126
+msgid "Select file"
+msgstr "Sélectionner le fichier"
+
+#: umc/js/schoolimport.js:105
+msgid "Select the school where the import should be done."
+msgstr "Sélectionnez l’école dans laquelle l’importation doit être effectuée."
+
+#: umc/js/schoolimport.js:113
+msgid "Select the user role."
+msgstr "Sélectionnez le rôle des comptes d’utilisation."
+
+#: umc/js/schoolimport.js:243
+msgid "Start import"
+msgstr "Démarrer l’importation"
+
+#: umc/js/schoolimport.js:240 umc/js/schoolimport.js:314
+msgid "Start new user import"
+msgstr "Démarrer une nouvelle importation de comptes d’utilisation"
+
+#: umc/js/schoolimport.js:345
+msgid "Started"
+msgstr "Démarrée"
+
+#: umc/js/schoolimport.js:325
+msgid "Started at"
+msgstr "Démarrée à"
+
+#: umc/js/schoolimport.js:334
+msgid "Started by"
+msgstr "Démarrée par"
+
+#: umc/js/schoolimport.js:340
+msgid "Status"
+msgstr "État"
+
+#: umc/js/schoolimport.js:346
+msgid "Successful"
+msgstr "Réussie"
+
+#: umc/js/schoolimport.js:370 umc/js/schoolimport.js:380
+msgid "Summary"
+msgstr "Synthèse"
+
+#: umc/js/schoolimport.js:143
+msgid ""
+"The examination of the uploaded data completed successfully. In the "
+"following, you can see the output of the data import interface. Press "
+"\"Start Import\" to proceed with the actual user import."
+msgstr ""
+"L’examen des données téléchargées s’est terminé avec succès. Dans ce qui "
+"suit, vous voyez les résultats de l’interface d’importation des données. "
+"Cliquez sur « Démarrer l’importation » pour procéder à l’importation "
+"effective des comptes d’utilisation."
+
+#: umc/js/schoolimport.js:152
+msgid "The import was started successfully."
+msgstr "L’importation a été démarrée avec succès."
+
+#: umc/js/schoolimport.js:120
+msgid "Upload data"
+msgstr "Envoyer des données"
+
+#: umc/js/schoolimport.js:193
+#, javascript-format
+msgid "User import: Error in job %s"
+msgstr "Importation des comptes d’utilisation : erreur dans la tâche %s"
+
+#: umc/js/schoolimport.js:112 umc/js/schoolimport.js:337
+msgid "User role"
+msgstr "Rôle des comptes d’utilisation"
+
+#: umc/js/schoolimport.js:249
+msgid "View finished imports"
+msgstr "Afficher les importations terminées"
+
+#: umc/js/schoolimport.js:195
+msgid "here"
+msgstr "ici"

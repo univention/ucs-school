@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2016-07-03 19:31+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -15,21 +15,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/internetrules/__init__.py:212
+#: umc/python/internetrules/__init__.py:258
 #, python-format
 msgid "A rule with the same name does already exist: %s"
 msgstr "Une règle du même nom existe déjà : %s"
 
-#: umc/python/internetrules/__init__.py:148
+#: umc/python/internetrules/__init__.py:179
 #, python-format
 msgid "Filter type is unknown: %s"
 msgstr "Type de filtre inconnu : %s"
 
-#: umc/python/internetrules/__init__.py:162
+#: umc/python/internetrules/__init__.py:191
 msgid "Invalid domain "
 msgstr "Domaine invalide"
 
-#: umc/python/internetrules/__init__.py:144
+#: umc/python/internetrules/__init__.py:168
 #, python-format
 msgid ""
 "Invalid rule name \"%s\". The name needs to be a string, the following "
@@ -38,26 +38,26 @@ msgstr ""
 "Nom de règle « %s » invalide. Le nom doit être une chaîne de caractères et "
 "les caractères suivants ne sont pas autorisés : %s"
 
-#: umc/python/internetrules/__init__.py:286
+#: umc/python/internetrules/__init__.py:336
 msgid "No \"name\" attribute has been specified in the options."
 msgstr "Aucun attribut « nom » n'a été indiqué dans les options."
 
-#: umc/python/internetrules/__init__.py:132
+#: umc/python/internetrules/__init__.py:154
 #, python-format
 msgid "The key \"%s\" has not been specified: %s"
 msgstr "La clé « %s » n'a pas été indiquée : %s"
 
-#: umc/python/internetrules/__init__.py:140
+#: umc/python/internetrules/__init__.py:162
 #, python-format
 msgid "The key \"%s\" needs to be of type: %s"
 msgstr "La clé « %s » doit être du type : %s"
 
-#: umc/python/internetrules/__init__.py:291
+#: umc/python/internetrules/__init__.py:342
 #, python-format
 msgid "The rule does not exist and cannot be modified: %s"
 msgstr "La règle n'existe pas et ne peut pas être modifiée : %s"
 
-#: umc/python/internetrules/__init__.py:173
+#: umc/python/internetrules/__init__.py:204
 #, python-format
 msgid ""
 "The specified domain \"%s\" is not valid. Please specify a valid domain "

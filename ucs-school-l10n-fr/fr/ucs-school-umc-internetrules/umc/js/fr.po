@@ -5,34 +5,34 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
-"PO-Revision-Date: 2017-05-23 22:38+0100\n"
-"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
-"Language-Team: French <fr@workshop-chapina.com>\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
+"PO-Revision-Date: 2022-03-01 14:06+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
-#: umc/js/internetrules/AssignPage.js:188
+#: umc/js/internetrules/AssignPage.js:96 umc/js/internetrules/AssignPage.js:192
 msgid "-- None (unrestricted/no WLAN) --"
-msgstr "-- Aucun (sans restriction/sans WLAN) --"
+msgstr "-- aucune (sans restriction/sans WLAN) --"
 
-#: umc/js/internetrules/DetailPage.js:116
+#: umc/js/internetrules/DetailPage.js:113
 msgid "0 (low)"
 msgstr "0 (faible)"
 
-#: umc/js/internetrules/DetailPage.js:120
+#: umc/js/internetrules/DetailPage.js:117
 msgid "10 (high)"
 msgstr "10 (élevé)"
 
-#: umc/js/internetrules/DetailPage.js:118
+#: umc/js/internetrules/DetailPage.js:115
 msgid "5 (average)"
 msgstr "5 (moyen)"
 
-#: umc/js/internetrules/DetailPage.js:101
+#: umc/js/internetrules/DetailPage.js:98
 msgid ""
 "A <i>whitelist</i> defines the list of domains that can be browsed to, the "
 "access to all other domains will be blocked. A <i>blacklist</i> allows "
@@ -44,7 +44,7 @@ msgstr ""
 "noire</i> permet d'accéder à tous les domaines existants, seuls étant "
 "interdits les domaines énumérés dans la liste."
 
-#: umc/js/internetrules/DetailPage.js:129
+#: umc/js/internetrules/DetailPage.js:126
 msgid ""
 "A list of internet domains, such as wikipedia.org, youtube.com. It is "
 "recommended to specify only the last part of a domain, i.e., wikipedia.org "
@@ -54,146 +54,137 @@ msgstr ""
 "recommandé de n'indiquer que la dernière partie du domaine, par ex. "
 "wikipedia.org plutôt que www.wikipedia.org."
 
-#: umc/js/internetrules/AdminPage.js:79
+#: umc/js/internetrules/AdminPage.js:72
 msgid "Add rule"
 msgstr "Ajouter une règle"
 
-#: umc/js/internetrules/DetailPage.js:145
+#: umc/js/internetrules/DetailPage.js:142
 msgid "Advanced properties"
 msgstr "Propriétés avancées"
 
-#: umc/js/internetrules/AssignPage.js:82
+#: umc/js/internetrules/AssignPage.js:79
 msgid "Assign an internet rule to the selected groups"
 msgstr "Assigner une règle Internet aux groupes sélectionnés"
 
-#: umc/js/internetrules/AssignPage.js:242
+#: umc/js/internetrules/AssignPage.js:246
 msgid "Assign internet rule"
 msgstr "Assigner une règle Internet"
 
-#: umc/js/internetrules/AssignPage.js:81
-#: umc/js/internetrules/AssignPage.js:207
+#: umc/js/internetrules/AssignPage.js:78 umc/js/internetrules/AssignPage.js:212
 msgid "Assign rule"
-msgstr "Assigner une règle"
+msgstr "Assigner cette règle"
 
-#: umc/js/internetrules/AssignPage.js:95
+#: umc/js/internetrules/AssignPage.js:92
 msgid "Associated rule"
 msgstr "Règle associée"
 
-#: umc/js/internetrules/DetailPage.js:77
+#: umc/js/internetrules/DetailPage.js:74
 msgid "Back to overview"
 msgstr "Retour vers la vue globale"
 
-#: umc/js/internetrules/DetailPage.js:107
+#: umc/js/internetrules/DetailPage.js:104
 msgid "Blacklist"
 msgstr "Liste noire"
 
-#: umc/js/internetrules/AdminPage.js:205
-#: umc/js/internetrules/AssignPage.js:203
+#: umc/js/internetrules/AssignPage.js:207 umc/js/internetrules/AdminPage.js:199
 msgid "Cancel"
 msgstr "Annuler"
 
-#: umc/js/internetrules/AssignPage.js:184
+#: umc/js/internetrules/AssignPage.js:188
 msgid "Choose the internet rule"
 msgstr "Choisir la règle Internet"
 
-#: umc/js/internetrules/AdminPage.js:80
+#: umc/js/internetrules/AdminPage.js:73
 msgid "Create a new rule"
 msgstr "Créer une nouvelle règle"
 
-#: umc/js/internetrules/AdminPage.js:95
+#: umc/js/internetrules/AdminPage.js:88
 msgid "Delete"
 msgstr "Supprimer"
 
-#: umc/js/internetrules/AdminPage.js:96
+#: umc/js/internetrules/AdminPage.js:89
 msgid "Delete the selected rules."
 msgstr "Supprimer les règles sélectionnées."
 
-#: umc/js/internetrules/AdminPage.js:87
+#: umc/js/internetrules/AdminPage.js:80
 msgid "Edit"
 msgstr "Modifier"
 
-#: umc/js/internetrules/AdminPage.js:88
+#: umc/js/internetrules/AdminPage.js:81
 msgid "Edit the selected rule"
 msgstr "Modifier la règle sélectionnée"
 
-#: umc/js/internetrules/AssignPage.js:91
+#: umc/js/internetrules/AssignPage.js:88
 msgid "Group name"
 msgstr "Nom du groupe"
 
-#: umc/js/internetrules/AssignPage.js:185
+#: umc/js/internetrules/AssignPage.js:189
 msgid "Internet rule"
 msgstr "Règle Internet"
 
-#: umc/js/internetrules/AdminPage.js:106 umc/js/internetrules/DetailPage.js:95
+#: umc/js/internetrules/DetailPage.js:92 umc/js/internetrules/AdminPage.js:99
 msgid "Name"
 msgstr "Nom"
 
-#: umc/js/internetrules/AdminPage.js:201
+#: umc/js/internetrules/AdminPage.js:195
 #, javascript-format
 msgid "Please confirm to remove the following %d filter rules: %s"
 msgstr ""
 "Veuillez confirmer la suppression des %d règles de filtrage suivantes : %s"
 
-#: umc/js/internetrules/AdminPage.js:201
+#: umc/js/internetrules/AdminPage.js:195
 #, javascript-format
 msgid "Please confirm to remove the following filter rule: %s"
 msgstr ""
 "Veuillez confirmer la suppression de la règle de filtrage suivante : %s"
 
-#: umc/js/internetrules/AdminPage.js:130
-#: umc/js/internetrules/DetailPage.js:112
+#: umc/js/internetrules/DetailPage.js:109 umc/js/internetrules/AdminPage.js:123
 msgid "Priority"
 msgstr "Priorité"
 
-#: umc/js/internetrules/AdminPage.js:228
+#: umc/js/internetrules/AdminPage.js:222
 #, javascript-format
 msgid "Removal of the following rules failed:%s"
 msgstr "Échec de la suppression des règles suivantes : %s"
 
-#: umc/js/internetrules/AdminPage.js:209
+#: umc/js/internetrules/AdminPage.js:203
 msgid "Remove rule"
 msgstr "Supprimer la règle"
 
-#: umc/js/internetrules/AdminPage.js:209
+#: umc/js/internetrules/AdminPage.js:203
 msgid "Remove rules"
 msgstr "Supprimer les règles"
 
-#: umc/js/internetrules/DetailPage.js:139
+#: umc/js/internetrules/DetailPage.js:136
 msgid "Rule properties"
 msgstr "Propriétés de la règle"
 
-#: umc/js/internetrules/DetailPage.js:100
+#: umc/js/internetrules/DetailPage.js:97
 msgid "Rule type"
 msgstr "Type de règle"
 
-#: umc/js/internetrules/DetailPage.js:69
+#: umc/js/internetrules/DetailPage.js:66
 msgid "Save"
 msgstr "Enregistrer"
 
-#: umc/js/internetrules/AssignPage.js:118
+#: umc/js/internetrules/AssignPage.js:123
 msgid "School"
 msgstr "École"
 
-#: umc/js/internetrules/AdminPage.js:152
-#: umc/js/internetrules/AssignPage.js:124
+#: umc/js/internetrules/AssignPage.js:130 umc/js/internetrules/AdminPage.js:146
 msgid "Search pattern"
 msgstr "Motif de recherche"
 
-#: umc/js/internetrules/AdminPage.js:68
-msgid "Search results"
-msgstr "Résultats de la recherche"
-
-#: umc/js/internetrules/AdminPage.js:153
-#: umc/js/internetrules/AssignPage.js:125
+#: umc/js/internetrules/AssignPage.js:131 umc/js/internetrules/AdminPage.js:147
 msgid "Search..."
 msgstr "Chercher..."
 
-#: umc/js/internetrules/AssignPage.js:123
+#: umc/js/internetrules/AssignPage.js:129
 msgid ""
 "Specifies the substring pattern which is searched for in the group properties"
 msgstr "Précise le motif partiel cherché dans les propriétés du groupe"
 
-#: umc/js/internetrules/AdminPage.js:151
+#: umc/js/internetrules/AdminPage.js:145
 msgid ""
 "Specifies the substring pattern which is searched for in the rules' names "
 "and their domain lists"
@@ -201,20 +192,20 @@ msgstr ""
 "Précise le motif partiel cherché dans le nom et la liste de domaines de la "
 "règle"
 
-#: umc/js/internetrules/AssignPage.js:173
+#: umc/js/internetrules/AssignPage.js:177
 #, javascript-format
 msgid "The chosen internet rule will be assigned to the following group: %s"
 msgstr "La règle Internet choisie sera assignée au groupe suivant : %s"
 
-#: umc/js/internetrules/AssignPage.js:169
+#: umc/js/internetrules/AssignPage.js:173
 msgid "The chosen internet rule will be assigned to the following groups:"
 msgstr "La règle Internet choisie sera assignée aux groupes suivants :"
 
-#: umc/js/internetrules/DetailPage.js:96
+#: umc/js/internetrules/DetailPage.js:93
 msgid "The name of the rule"
 msgstr "Le nom de la règle"
 
-#: umc/js/internetrules/DetailPage.js:113
+#: umc/js/internetrules/DetailPage.js:110
 msgid ""
 "The priority allows to define an order in which a set of rules will be "
 "applied. A rule with a higher priority will overwrite rules with lower "
@@ -224,47 +215,49 @@ msgstr ""
 "seront appliqués. Une règle avec une priorité plus grande prendra le pas sur "
 "les règles qui ont des priorités plus faibles."
 
-#: umc/js/internetrules/AdminPage.js:110
+#: umc/js/internetrules/AdminPage.js:103
 msgid "Type"
 msgstr "Type"
 
-#: umc/js/internetrules/AdminPage.js:119
+#: umc/js/internetrules/AdminPage.js:112
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: umc/js/internetrules/DetailPage.js:125
+#: umc/js/internetrules/DetailPage.js:122
 msgid "WLAN authentification enabled"
 msgstr "Authentification WLAN activée"
 
-#: umc/js/internetrules/DetailPage.js:142
+#: umc/js/internetrules/DetailPage.js:139
 msgid "Web domain list"
 msgstr "Liste des domaines Web"
 
-#: umc/js/internetrules/DetailPage.js:133
+#: umc/js/internetrules/DetailPage.js:130
 msgid "Web domains (e.g., wikipedia.org, facebook.com)"
 msgstr "Domaines Web (ex : wikipedia.org, facebook.com)"
 
-#: umc/js/internetrules/DetailPage.js:104
+#: umc/js/internetrules/DetailPage.js:101
 msgid "Whitelist"
 msgstr "Liste blanche"
 
-#: umc/js/internetrules/AdminPage.js:123
+#: umc/js/internetrules/AdminPage.js:116
 msgid "Wifi"
 msgstr "Wi-Fi"
 
-#: umc/js/internetrules/AdminPage.js:117
+#: umc/js/internetrules/AdminPage.js:110
 msgid "blacklist"
 msgstr "liste noire"
 
-#: umc/js/internetrules/AdminPage.js:126
+#: umc/js/internetrules/AdminPage.js:119
 msgid "disabled"
 msgstr "désactivé"
 
-#: umc/js/internetrules/AdminPage.js:126
+#: umc/js/internetrules/AdminPage.js:119
 msgid "enabled"
 msgstr "activé"
 
-#: umc/js/internetrules/AdminPage.js:114
+#: umc/js/internetrules/AdminPage.js:107
 msgid "whitelist"
 msgstr "liste blanche"
 
+#~ msgid "Search results"
+#~ msgstr "Résultats de la recherche"
