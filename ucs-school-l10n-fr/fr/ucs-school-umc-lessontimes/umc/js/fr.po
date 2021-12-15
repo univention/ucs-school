@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2016-07-03 16:55+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -15,27 +15,27 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/js/lessontimes.js:67
+#: umc/js/lessontimes.js:64
 msgid "Description"
 msgstr "Description"
 
-#: umc/js/lessontimes.js:77
+#: umc/js/lessontimes.js:74
 msgid "End time"
 msgstr "Heure de fin"
 
-#: umc/js/lessontimes.js:84
+#: umc/js/lessontimes.js:81
 msgid "Lesson times"
 msgstr "Horaire du cours"
 
-#: umc/js/lessontimes.js:72
+#: umc/js/lessontimes.js:69
 msgid "Start time"
 msgstr "Heure de début"
 
-#: umc/js/lessontimes.js:101
+#: umc/js/lessontimes.js:97
 msgid "Submit"
 msgstr "Soumettre"
 
-#: umc/js/lessontimes.js:111
+#: umc/js/lessontimes.js:107
 msgid ""
 "The lesson times are used internally for the default session duration by the "
 "computer room module. It is advisable to set the end time of a lesson to a "
@@ -44,4 +44,3 @@ msgstr ""
 "L'horaire du cours est utilisé en interne par le module de salle "
 "informatique pour la durée de la session par défaut. Il est conseillé de "
 "définir une heure de fin de cours juste avant le début du cours suivant."
-

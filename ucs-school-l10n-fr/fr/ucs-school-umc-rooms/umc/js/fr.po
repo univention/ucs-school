@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-rooms\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:41+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -16,114 +16,129 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/js/schoolrooms.js:122 umc/js/schoolrooms.js:261
+#: umc/js/schoolrooms.js:70 umc/js/schoolrooms.js:191 umc/js/schoolrooms.js:208
 msgid "Add room"
 msgstr "Ajouter une salle"
 
-#: umc/js/schoolrooms.js:283 umc/js/schoolrooms/DetailPage.js:79
+#: umc/js/schoolrooms.js:187 umc/js/schoolrooms.js:230
+#: umc/js/schoolrooms/DetailPage.js:74
 msgid "Cancel"
 msgstr "Annuler"
 
-#: umc/js/schoolrooms.js:184
+#: umc/js/schoolrooms.js:117
 msgid "Choose the school"
 msgstr "Choisissez l'école"
 
-#: umc/js/schoolrooms/DetailPage.js:154
+#: umc/js/schoolrooms/DetailPage.js:141 umc/js/schoolrooms/DetailPage.js:168
 msgid "Computers"
 msgstr "Ordinateurs"
 
-#: umc/js/schoolrooms/DetailPage.js:117
+#: umc/js/schoolrooms/DetailPage.js:101
 msgid "Computers in the room"
 msgstr "Ordinateurs dans la salle"
 
-#: umc/js/schoolrooms.js:123
+#: umc/js/schoolrooms.js:71
 msgid "Create a new room"
 msgstr "Créer une nouvelle salle"
 
-#: umc/js/schoolrooms.js:262
+#: umc/js/schoolrooms.js:209
 msgid "Create room and assign computers"
 msgstr "Créer une salle et assigner les ordinateurs"
 
-#: umc/js/schoolrooms.js:138 umc/js/schoolrooms.js:286
+#: umc/js/schoolrooms.js:86 umc/js/schoolrooms.js:233
 msgid "Delete"
 msgstr "Supprimer"
 
-#: umc/js/schoolrooms.js:139
+#: umc/js/schoolrooms.js:87
 msgid "Deleting the selected objects."
 msgstr "Suppression des objets sélectionnés."
 
-#: umc/js/schoolrooms.js:153 umc/js/schoolrooms/DetailPage.js:112
+#: umc/js/schoolrooms.js:100 umc/js/schoolrooms/DetailPage.js:96
 msgid "Description"
 msgstr "Description"
 
-#: umc/js/schoolrooms.js:130
+#: umc/js/schoolrooms.js:78
 msgid "Edit"
 msgstr "Modifier"
 
-#: umc/js/schoolrooms.js:274
+#: umc/js/schoolrooms.js:221
 msgid "Edit room"
 msgstr "Modifier la salle"
 
-#: umc/js/schoolrooms.js:275
+#: umc/js/schoolrooms.js:222
 msgid "Edit room and assign computers"
 msgstr "Modifier la salle et assigner les ordinateurs"
 
-#: umc/js/schoolrooms.js:131
+#: umc/js/schoolrooms.js:79
 msgid "Edit the selected object"
 msgstr "Modifier l'objet sélectionné"
 
-#: umc/js/schoolrooms.js:149 umc/js/schoolrooms/DetailPage.js:107
+#: umc/js/schoolrooms.js:96 umc/js/schoolrooms/DetailPage.js:91
 msgid "Name"
 msgstr "Nom"
 
-#: umc/js/schoolrooms/DetailPage.js:151
+#: umc/js/schoolrooms.js:182
+msgid "No rooms found"
+msgstr ""
+
+#: umc/js/schoolrooms.js:183
+msgid "No rooms were found."
+msgstr ""
+
+#: umc/js/schoolrooms/DetailPage.js:138
 msgid "Properties"
 msgstr "Propriétés"
 
-#: umc/js/schoolrooms/DetailPage.js:195
+#: umc/js/schoolrooms/DetailPage.js:210
 #, javascript-format
 msgid "Room %s not created. It already exists."
 msgstr "Salle %s non créée. Elle existe déjà."
 
-#: umc/js/schoolrooms/DetailPage.js:72
+#: umc/js/schoolrooms/DetailPage.js:67
 msgid "Save"
 msgstr "Enregistrer"
 
-#: umc/js/schoolrooms.js:185 umc/js/schoolrooms/DetailPage.js:102
-#: umc/js/schoolrooms/DetailPage.js:121
+#: umc/js/schoolrooms.js:118 umc/js/schoolrooms/DetailPage.js:86
+#: umc/js/schoolrooms/DetailPage.js:105
 msgid "School"
 msgstr "École"
 
-#: umc/js/schoolrooms.js:195 umc/js/schoolrooms/DetailPage.js:127
+#: umc/js/schoolrooms.js:129 umc/js/schoolrooms/DetailPage.js:111
 msgid "Search pattern"
 msgstr "Motif de recherche"
 
-#: umc/js/schoolrooms.js:110
-msgid "Search results"
-msgstr "Résultats de la recherche"
-
-#: umc/js/schoolrooms.js:196
+#: umc/js/schoolrooms.js:130
 msgid "Search..."
 msgstr "Chercher..."
 
-#: umc/js/schoolrooms.js:280
+#: umc/js/schoolrooms.js:227
 msgid "Should the room {name} be deleted?"
 msgstr "La salle {name} doit-elle être supprimée ?"
 
-#: umc/js/schoolrooms.js:194
+#: umc/js/schoolrooms.js:128
 msgid ""
 "Specifies the substring pattern which is searched for in the displayed name"
 msgstr "Précise le motif partiel cherché dans le nom affiché"
 
-#: umc/js/schoolrooms.js:297
+#: umc/js/schoolrooms/DetailPage.js:183
+msgid "Teacher computer"
+msgstr ""
+
+#: umc/js/schoolrooms.js:242
 msgid "The room could not be deleted ({message})"
 msgstr "Impossible de supprimer la salle ({message})"
 
-#: umc/js/schoolrooms.js:295
+#: umc/js/schoolrooms.js:240
 msgid "The room has been deleted successfully"
 msgstr "Suppression de la salle réussie"
 
-#: umc/js/schoolrooms/DetailPage.js:113
+#: umc/js/schoolrooms/DetailPage.js:97
 msgid "Verbose description of the current group"
 msgstr "Description détaillée du groupe actuel"
 
+#: umc/js/schoolrooms.js:184
+msgid "Would you like to create a room now?"
+msgstr ""
+
+#~ msgid "Search results"
+#~ msgstr "Résultats de la recherche"

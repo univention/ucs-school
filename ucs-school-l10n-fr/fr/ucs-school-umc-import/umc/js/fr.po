@@ -1,0 +1,186 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Univention GmbH
+# This file is distributed under the same license as the ucs-school-umc-import package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-umc-import\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: umc/js/schoolimport.js:211
+msgid ""
+"A new import of %(role)s users at school %(school)s has been started. The "
+"import has the ID %(id)s."
+msgstr ""
+
+#: umc/js/schoolimport.js:341
+msgid "Aborted"
+msgstr ""
+
+#: umc/js/schoolimport.js:151
+msgid "An error occurred."
+msgstr ""
+
+#: umc/js/schoolimport.js:240 umc/js/schoolimport.js:246
+msgid "Back to overview"
+msgstr ""
+
+#: umc/js/schoolimport.js:185
+#, javascript-format
+msgid "Click %s to draft an email with all the required information."
+msgstr ""
+
+#: umc/js/schoolimport.js:137
+msgid "Data examination completed"
+msgstr ""
+
+#: umc/js/schoolimport.js:94
+msgid "Import user accounts"
+msgstr ""
+
+#: umc/js/schoolimport.js:316
+msgid "Job ID"
+msgstr ""
+
+#: umc/js/schoolimport.js:84
+msgid ""
+"List of running and completed user imports. For every completed user import "
+"a summary is provided with every change that was made as well as a list of "
+"passwords for newly created user accounts."
+msgstr ""
+
+#: umc/js/schoolimport.js:337
+msgid "New"
+msgstr ""
+
+#: umc/js/schoolimport.js:82
+msgid "Overview User Imports"
+msgstr ""
+
+#: umc/js/schoolimport.js:346 umc/js/schoolimport.js:356
+msgid "Passwords"
+msgstr ""
+
+#: umc/js/schoolimport.js:188
+#, javascript-format
+msgid "Please examine the reason for this error: %s"
+msgstr ""
+
+#: umc/js/schoolimport.js:153 umc/js/schoolimport.js:183
+msgid "Please notify the system administrator about this error via email."
+msgstr ""
+
+#: umc/js/schoolimport.js:120
+msgid ""
+"Please select a file. This will start a validation proccess of the data."
+msgstr ""
+
+#: umc/js/schoolimport.js:116
+msgid ""
+"Please select and upload the data export from the School Information System."
+msgstr ""
+
+#: umc/js/schoolimport.js:95
+msgid "Please select the school and the role of user for the import."
+msgstr ""
+
+#: umc/js/schoolimport.js:124
+msgid "Please wait until the examination of the data is complete."
+msgstr ""
+
+#: umc/js/schoolimport.js:303
+msgid "Reload"
+msgstr ""
+
+#: umc/js/schoolimport.js:338
+msgid "Scheduled"
+msgstr ""
+
+#: umc/js/schoolimport.js:99 umc/js/schoolimport.js:325
+msgid "School"
+msgstr ""
+
+#: umc/js/schoolimport.js:121
+msgid "Select file"
+msgstr ""
+
+#: umc/js/schoolimport.js:100
+msgid "Select the school where the import should be done."
+msgstr ""
+
+#: umc/js/schoolimport.js:108
+msgid "Select the user role."
+msgstr ""
+
+#: umc/js/schoolimport.js:237
+msgid "Start import"
+msgstr ""
+
+#: umc/js/schoolimport.js:234 umc/js/schoolimport.js:308
+msgid "Start new user import"
+msgstr ""
+
+#: umc/js/schoolimport.js:339
+msgid "Started"
+msgstr ""
+
+#: umc/js/schoolimport.js:319
+msgid "Started at"
+msgstr ""
+
+#: umc/js/schoolimport.js:328
+msgid "Started by"
+msgstr ""
+
+#: umc/js/schoolimport.js:334
+msgid "Status"
+msgstr ""
+
+#: umc/js/schoolimport.js:340
+msgid "Successful"
+msgstr ""
+
+#: umc/js/schoolimport.js:364 umc/js/schoolimport.js:374
+msgid "Summary"
+msgstr ""
+
+#: umc/js/schoolimport.js:138
+msgid ""
+"The examination of the uploaded data completed successfully. Following, you "
+"see the output of the data import interfrace. Press \"Start Import\" to "
+"proceed with the actual user import."
+msgstr ""
+
+#: umc/js/schoolimport.js:146
+msgid "The import was started successfully."
+msgstr ""
+
+#: umc/js/schoolimport.js:115
+msgid "Upload data"
+msgstr ""
+
+#: umc/js/schoolimport.js:187
+#, javascript-format
+msgid "User import: Error in job %s"
+msgstr ""
+
+#: umc/js/schoolimport.js:107 umc/js/schoolimport.js:331
+msgid "User role"
+msgstr ""
+
+#: umc/js/schoolimport.js:243
+msgid "View finished imports"
+msgstr ""
+
+#: umc/js/schoolimport.js:189
+msgid "here"
+msgstr ""

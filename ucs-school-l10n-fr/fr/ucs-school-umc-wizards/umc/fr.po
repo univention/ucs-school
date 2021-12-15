@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Thu, 12 Feb 2015 10:16:33 +0000\n"
+"POT-Creation-Date: Wed, 15 Dec 2021 15:38:47 +0100\n"
 "PO-Revision-Date: 2016-07-03 18:55+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -30,7 +30,9 @@ msgstr "Gestion des ordinateurs des écoles"
 msgid "Management of schools in the domain"
 msgstr "Gestion des écoles dans le domaine"
 
-msgid "Management of users for schools (students, teachers, staff)"
+#, fuzzy
+msgid ""
+"Management of users for schools (students, teachers, staff, schoolAdmin)"
 msgstr ""
 "Gestion des utilisateurs des écoles (étudiants, enseignants, personnel)"
 
@@ -39,4 +41,3 @@ msgstr "Écoles"
 
 msgid "Users (schools)"
 msgstr "Utilisateurs (écoles)"
-

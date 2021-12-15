@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:44+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -15,39 +15,60 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolwizards/__init__.py:207
+#: umc/python/schoolwizards/__init__.py:382
+#: umc/python/schoolwizards/__init__.py:566
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "« %s » existe déjà !"
 
-#: umc/python/schoolwizards/__init__.py:247
+#: umc/python/schoolwizards/__init__.py:430
 #, python-format
 msgid "\"%s\" does not exist!"
 msgstr "« %s » n'existe pas !"
 
-#: umc/python/schoolwizards/SchoolImport.py:115
+#: umc/python/schoolwizards/SchoolImport.py:110
 msgid "Could not create class"
 msgstr "Impossible de créer la classe"
 
-#: umc/python/schoolwizards/SchoolImport.py:129
+#: umc/python/schoolwizards/SchoolImport.py:130
 msgid "Could not create computer"
 msgstr "Impossible de créer l'ordinateur"
 
-#: umc/python/schoolwizards/SchoolImport.py:105
-msgid "Could not create user"
-msgstr "Impossible de créer l'utilisateur"
-
-#: umc/python/schoolwizards/SchoolImport.py:71
-#: umc/python/schoolwizards/SchoolImport.py:89
+#: umc/python/schoolwizards/SchoolImport.py:70
+#: umc/python/schoolwizards/SchoolImport.py:91
 msgid "Execution of command failed"
 msgstr "Échec de l'exécution de la commande"
 
-#: umc/python/schoolwizards/__init__.py:300
+#: umc/python/schoolwizards/__init__.py:516
 msgid "Failed to remove user from school."
 msgstr "Échec de la suppression de l'utilisateur de l'école."
 
-#: umc/python/schoolwizards/__init__.py:108
-#, python-format
-msgid "The %s %r does not exist or might have been removed in the meantime."
+#: umc/python/schoolwizards/__init__.py:209
+#: umc/python/schoolwizards/__init__.py:490
+#, fuzzy, python-format
+msgid ""
+"The %(attr)s %(name)r does not exist or might have been removed in the "
+"meantime."
 msgstr "%s %r n'existe pas ou a été supprimé entre temps."
 
+#: umc/python/schoolwizards/__init__.py:505
+#, python-format
+msgid ""
+"You do not have the right to delete the user with the dn %(dn)s from the "
+"school %(school)s."
+msgstr ""
+
+#: umc/python/schoolwizards/__init__.py:227
+#, python-format
+msgid ""
+"You do not have the right to modify the object with the DN %(dn)s from the "
+"schools [%(schools)s]."
+msgstr ""
+
+#: umc/python/schoolwizards/__init__.py:200
+#, python-format
+msgid "You do not have the rights to create an object for the schools [%s]."
+msgstr ""
+
+#~ msgid "Could not create user"
+#~ msgstr "Impossible de créer l'utilisateur"

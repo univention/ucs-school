@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam-master\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2016-07-03 16:49+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -15,12 +15,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolexam-master/__init__.py:420
-#, python-format
-msgid "Could not remove exam user %r: %s"
+#: umc/python/schoolexam-master/__init__.py:693
+#, fuzzy, python-format
+msgid "Could not remove exam role \"%s\" from %s: %s"
 msgstr "Impossible de supprimer l'utilisateur d'examen %r: %s"
 
-#: umc/python/schoolexam-master/__init__.py:275
+#: umc/python/schoolexam-master/__init__.py:698
+#: umc/python/schoolexam-master/__init__.py:717
+#, fuzzy, python-format
+msgid "Could not remove exam user %(userdn)r: %(exc)s"
+msgstr "Impossible de supprimer l'utilisateur d'examen %r: %s"
+
+#: umc/python/schoolexam-master/__init__.py:426
 #, python-format
 msgid ""
 "ERROR: Creation of exam user account failed\n"
@@ -29,17 +35,30 @@ msgstr ""
 "ERREUR : échec de création du compte utilisateur pour l'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:239
+#: umc/python/schoolexam-master/__init__.py:361
 #, python-format
 msgid "Exam for user %s"
 msgstr "Examen pour l'utilisateur %s"
 
-#: umc/python/schoolexam-master/__init__.py:405
+#: umc/python/schoolexam-master/__init__.py:662
+#: umc/python/schoolexam-master/__init__.py:664
+#: umc/python/schoolexam-master/__init__.py:668
 #, python-format
 msgid "Exam student %r not found."
 msgstr "Étudiant %r pour l'examen non trouvé."
 
-#: umc/python/schoolexam-master/__init__.py:131
+#: umc/python/schoolexam-master/__init__.py:547
+#, fuzzy, python-format
+msgid "Exam user %(exam_user_uid)r not found."
+msgstr "Étudiant %r pour l'examen non trouvé."
+
+#: umc/python/schoolexam-master/__init__.py:496
+#, fuzzy, python-format
+msgid ""
+"ExamStudent %(exam_user_dn)r added to LDAP but cannot be loaded: %(exc)r."
+msgstr "Étudiant %(user_dn)r ou utilisateur d'examen non trouvé: %(exc)r."
+
+#: umc/python/schoolexam-master/__init__.py:191
 #, python-format
 msgid ""
 "Failed to create exam container\n"
@@ -48,7 +67,7 @@ msgstr ""
 "Impossible de créer le conteneur d'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:108
+#: umc/python/schoolexam-master/__init__.py:166
 #, python-format
 msgid ""
 "Failed to create exam group\n"
@@ -57,22 +76,21 @@ msgstr ""
 "Impossible de créer le groupe d'examen\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:187
-#, python-format
+#: umc/python/schoolexam-master/__init__.py:300
+#, fuzzy, python-format
 msgid ""
-"Requested exam username %s is not allowed according to settings/"
-"prohibited_username object %s"
+"Requested exam username %(exam_user_uid)s is not allowed according to "
+"settings/prohibited_username object %(prohibited_object_name)s"
 msgstr ""
 "Le nom d'utilisateur d'examen %s demandé n'a pas les droits requis d'après "
 "l'objet « settings/prohibited_username » %s"
 
-#: umc/python/schoolexam-master/__init__.py:155
-#: umc/python/schoolexam-master/__init__.py:364
+#: umc/python/schoolexam-master/__init__.py:539
+#, fuzzy, python-format
+msgid "Student %(user_dn)r not found: %(exc)r."
+msgstr "Étudiant %(user_dn)r ou utilisateur d'examen non trouvé: %(exc)r."
+
+#: umc/python/schoolexam-master/__init__.py:226
 #, python-format
 msgid "Student %r not found."
 msgstr "Étudiant %r non trouvé."
-
-#: umc/python/schoolexam-master/__init__.py:346
-#, python-format
-msgid "Student %(user_dn)r or exam user not found: %(exc)r."
-msgstr "Étudiant %(user_dn)r ou utilisateur d'examen non trouvé: %(exc)r."

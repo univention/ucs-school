@@ -1,0 +1,79 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Univention GmbH
+# This file is distributed under the same license as the ucs-school-umc-import package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ucs-school-umc-import\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: umc/python/schoolimport/__init__.py:176
+msgid "A time out occurred during examining the data."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:163
+msgid "Examining data..."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:107
+msgid "No permissions for running an import for any school."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:119
+msgid "No permissions for running an import for any user role."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:150
+msgid "Please wait until the examination of the data is complete."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:289
+msgid "Staff"
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:290
+msgid "Student"
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:291
+msgid "Teacher"
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:292
+msgid "Teacher and Staff"
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:92
+#: umc/python/schoolimport/__init__.py:275
+#, python-format
+msgid "The UCS@school Import API HTTP server is not reachable: %s"
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:85
+msgid ""
+"The UCS@school import API HTTP server could not be reached. It seems it is "
+"misconfigured, not installed or a proxy/firewall is blocking it."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:160
+#: umc/python/schoolimport/__init__.py:235
+msgid "The connection to the import server could not be established."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:193
+msgid "The examination of the data failed."
+msgstr ""
+
+#: umc/python/schoolimport/__init__.py:162
+#: umc/python/schoolimport/__init__.py:237
+msgid "The permissions to perform a user import are not sufficient enough."
+msgstr ""

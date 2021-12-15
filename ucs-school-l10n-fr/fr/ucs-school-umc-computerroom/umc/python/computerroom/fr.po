@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:27+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -16,19 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/computerroom/__init__.py:81
-msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
-msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
-
-#: umc/python/computerroom/__init__.py:82
-msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
-msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
-
-#: umc/python/computerroom/__init__.py:422
+#: umc/python/computerroom/__init__.py:527
 msgid "A different user is already running a computer room session."
 msgstr "Un autre utilisateur est déjà dans une session de salle informatique"
 
-#: umc/python/computerroom/__init__.py:634
+#: umc/python/computerroom/__init__.py:727
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."
@@ -36,8 +28,24 @@ msgstr ""
 "Un examen est déjà en cours dans cette salle. Veuillez choisir une autre "
 "salle."
 
-#: umc/python/computerroom/__init__.py:90
+#: umc/python/computerroom/__init__.py:284
+#: umc/python/computerroom/__init__.py:288
+#: umc/python/computerroom/__init__.py:291
+#: umc/python/computerroom/__init__.py:297
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Nom distingué de salle invalide : %s"
 
+#: umc/python/computerroom/__init__.py:91
+msgid "screenshot_denied.svg"
+msgstr ""
+
+#: umc/python/computerroom/__init__.py:92
+msgid "screenshot_notready.svg"
+msgstr ""
+
+#~ msgid "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
+#~ msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_denied.jpg"
+
+#~ msgid "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"
+#~ msgstr "/usr/share/ucs-school-umc-computerroom/screenshot_notready.jpg"

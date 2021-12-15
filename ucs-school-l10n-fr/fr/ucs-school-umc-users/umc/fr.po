@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Wed, 09 May 2012 12:24:44 +0200\n"
+"POT-Creation-Date: Wed, 15 Dec 2021 15:38:47 +0100\n"
 "PO-Revision-Date: 2016-07-03 19:48+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -15,15 +15,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
+#, fuzzy
+msgid "Passwords (staff)"
+msgstr "Mots de passe (étudiants)"
+
 msgid "Passwords (students)"
 msgstr "Mots de passe (étudiants)"
 
 msgid "Passwords (teachers)"
 msgstr "Mots de passe (enseignants)"
 
+#, fuzzy
+msgid "Reset passwords of staff accounts"
+msgstr "Réinitialiser les mots de passe des comptes étudiants"
+
 msgid "Reset passwords of student accounts"
 msgstr "Réinitialiser les mots de passe des comptes étudiants"
 
 msgid "Reset passwords of teacher accounts"
 msgstr "Réinitialiser les mots de passe des comptes enseignants"
-

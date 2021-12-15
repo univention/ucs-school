@@ -31,8 +31,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: univention-management-console-helpdesk 0.1\n"
-"Report-Msgid-Bugs-To: forge.univention.org\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"Report-Msgid-Bugs-To: packages@univention.de\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2016-07-03 17:11+0100\n"
 "Last-Translator: Éric Bischoff <ebischoff@bureau-cornavin.com>\n"
 "Language-Team: French <fr@bureau-cornavin.com>\n"
@@ -43,11 +43,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:94
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:85
 msgid "Basic Values"
 msgstr "Valeurs de base"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:81
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:76
 msgid "Category"
 msgstr "Catégorie"
 
@@ -56,26 +56,26 @@ msgstr "Catégorie"
 msgid "Description"
 msgstr "Description"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:94
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:85
 msgid "General"
 msgstr "Général"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:82
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:77
 msgid "Helpdesk Category"
 msgstr "Catégorie du centre d'aide"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:60
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:62
 msgid "Name"
 msgstr "Nom"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:61
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:63
 msgid "Name of Console-Helpdesk-Settings-Object"
 msgstr "Nom de l'objet Console-Helpdesk-Settings"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:51
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:48
 msgid "Settings for Univention Console Helpdesk Module"
 msgstr "Réglages du module d'aide de la console Univention"
 
-#: modules/univention/admin/handlers/settings/console_helpdesk.py:50
+#: modules/univention/admin/handlers/settings/console_helpdesk.py:47
 msgid "Settings: Console Helpdesk"
 msgstr "Configuration : centre d'aide de la console"

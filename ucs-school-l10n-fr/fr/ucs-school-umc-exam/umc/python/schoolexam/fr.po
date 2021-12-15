@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:31+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -16,85 +16,85 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolexam/__init__.py:195
+#: umc/python/schoolexam/__init__.py:403
 #, python-format
 msgid ""
 "An exam with the name \"%s\" already exists. Please choose a different name "
 "for the exam."
 msgstr ""
-"Un examen nommé « %s » existe déjà. Veuillez choisir un autre nom pour "
-"cet examen."
+"Un examen nommé « %s » existe déjà. Veuillez choisir un autre nom pour cet "
+"examen."
 
-#: umc/python/schoolexam/__init__.py:547
+#: umc/python/schoolexam/__init__.py:1028
 #, python-format
 msgid "An unexpected error occurred during the preparation: %s"
 msgstr "Une erreur inattendue est survenue lors de la préparation : %s"
 
-#: umc/python/schoolexam/__init__.py:452
+#: umc/python/schoolexam/__init__.py:884
 msgid "Collecting exam files..."
 msgstr "Collecte des fichiers des examens..."
 
-#: umc/python/schoolexam/__init__.py:469
+#: umc/python/schoolexam/__init__.py:902
 msgid "Configuring the computer room..."
 msgstr "Configuration de la salle informatique..."
 
-#: umc/python/schoolexam/__init__.py:187
+#: umc/python/schoolexam/__init__.py:382 umc/python/schoolexam/__init__.py:562
 #, python-format
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Impossible d'authentifier l'utilisateur « %s » !"
 
-#: umc/python/schoolexam/__init__.py:349 umc/python/schoolexam/__init__.py:483
-msgid "Could not connect to local UMC server."
-msgstr "Impossible de se connecter au serveur UMC local."
-
-#: umc/python/schoolexam/__init__.py:224 umc/python/schoolexam/__init__.py:464
+#: umc/python/schoolexam/__init__.py:582 umc/python/schoolexam/__init__.py:897
 #, python-format
 msgid "Could not connect to Primary Directory Node %s."
 msgstr "Impossible de se connecter au Primary Directory Node %s."
 
-#: umc/python/schoolexam/__init__.py:336
+#: umc/python/schoolexam/__init__.py:749
 msgid "Distributing exam files"
 msgstr "Distribution des fichiers d'examen"
 
-#: umc/python/schoolexam/__init__.py:174 umc/python/schoolexam/__init__.py:441
+#: umc/python/schoolexam/__init__.py:1136
+msgid "Error loading group DN {!r}."
+msgstr ""
+
+#: umc/python/schoolexam/__init__.py:469
+msgid "Exam details are only visible to the exam owner himself."
+msgstr ""
+
+#: umc/python/schoolexam/__init__.py:551 umc/python/schoolexam/__init__.py:869
 msgid "Initializing"
 msgstr "Initialisation"
 
-#: umc/python/schoolexam/__init__.py:409
+#: umc/python/schoolexam/__init__.py:835
 msgid "No files have been distributed"
 msgstr "Aucun fichier n'a été distribué"
 
-#: umc/python/schoolexam/__init__.py:344
+#: umc/python/schoolexam/__init__.py:759
 msgid "Prepare room settings"
 msgstr "Préparer la configuration de la salle"
 
-#: umc/python/schoolexam/__init__.py:253
+#: umc/python/schoolexam/__init__.py:612
 msgid "Preparing exam accounts"
 msgstr "Préparation des comptes d'examen"
 
-#: umc/python/schoolexam/__init__.py:227
+#: umc/python/schoolexam/__init__.py:586
 msgid "Preparing the computer room for exam mode..."
 msgstr "Préparation de la salle informatique pour le mode examen..."
 
-#: umc/python/schoolexam/__init__.py:283
+#: umc/python/schoolexam/__init__.py:662
 msgid "Preparing user home directories"
 msgstr "Préparation des répertoires personnels des utilisateurs"
 
-#: umc/python/schoolexam/__init__.py:512
+#: umc/python/schoolexam/__init__.py:949
 msgid "Removing exam accounts"
 msgstr "Suppression des comptes de l'examen"
 
-#: umc/python/schoolexam/__init__.py:318
+#: umc/python/schoolexam/__init__.py:730
 msgid "Replication timeout: could not create all exam users"
 msgstr ""
 "Délai de réplication dépassé : impossible de créer tous les utilisateurs de "
 "l'examen"
 
-#: umc/python/schoolexam/__init__.py:479
-msgid "Resetting room settings"
-msgstr "Réinitialisation des réglages de la salle"
-
-#: umc/python/schoolexam/__init__.py:424
+#: umc/python/schoolexam/__init__.py:851
 #, python-format
 msgid ""
 "Room \"%s\" does not contain any computers. Empty rooms may not be used to "
@@ -103,7 +103,25 @@ msgstr ""
 "La salle « %s » ne contient pas d'ordinateur. Les salles vides ne peuvent "
 "pas être employées pour démarrer un examen."
 
-#: umc/python/schoolexam/__init__.py:376 umc/python/schoolexam/__init__.py:539
+#: umc/python/schoolexam/__init__.py:393
+msgid "The exam can only be modified by the owner himself."
+msgstr ""
+
+#: umc/python/schoolexam/__init__.py:395
+msgid "The exam was already started and can not be modified anymore!"
+msgstr ""
+
+#: umc/python/schoolexam/__init__.py:389
+#, python-format
+msgid "The specified exam does not exist: %s"
+msgstr ""
+
+#: umc/python/schoolexam/__init__.py:791 umc/python/schoolexam/__init__.py:1023
 msgid "finished..."
 msgstr "terminé..."
 
+#~ msgid "Could not connect to local UMC server."
+#~ msgstr "Impossible de se connecter au serveur UMC local."
+
+#~ msgid "Resetting room settings"
+#~ msgstr "Réinitialisation des réglages de la salle"

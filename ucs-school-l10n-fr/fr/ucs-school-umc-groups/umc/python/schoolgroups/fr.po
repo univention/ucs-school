@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-10-19 03:18+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:31+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -16,34 +16,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/python/schoolgroups/__init__.py:242
+#: umc/python/schoolgroups/__init__.py:386
 #, python-format
 msgid "Failed to create group (%s)."
 msgstr "Le groupe n'a pas pu être créé (%s)."
 
-#: umc/python/schoolgroups/__init__.py:217
+#: umc/python/schoolgroups/__init__.py:349
 #, python-format
 msgid "Failed to modify group (%s)."
 msgstr "Le groupe n'a pas pu être modifié (%s)."
 
-#: umc/python/schoolgroups/__init__.py:239
+#: umc/python/schoolgroups/__init__.py:377
+msgid ""
+"One or more errors during validation of the group occured:\n"
+"{}"
+msgstr ""
+
+#: umc/python/schoolgroups/__init__.py:380
 #, python-format
 msgid "The workgroup %r already exists!"
 msgstr "Le groupe de travail %r existe déjà !"
 
-#: umc/python/schoolgroups/__init__.py:202
-#: umc/python/schoolgroups/__init__.py:204
+#: umc/python/schoolgroups/__init__.py:306
+#: umc/python/schoolgroups/__init__.py:317
 #, python-format
 msgid "User %s does not belong to school %r."
 msgstr "L'utilisateur %s n'appartient pas à l'école %r."
 
-#: umc/python/schoolgroups/__init__.py:208
+#: umc/python/schoolgroups/__init__.py:327
 #, python-format
 msgid "User %s is not a student."
 msgstr "L'utilisateur %s n'est pas un étudiant."
 
-#: umc/python/schoolgroups/__init__.py:206
+#: umc/python/schoolgroups/__init__.py:322
 #, python-format
 msgid "User %s is not a teacher."
 msgstr "L'utilisateur %s n'est pas un professeur."
-

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2017-04-14 01:22+0200\n"
+"POT-Creation-Date: 2021-12-15 15:38+0100\n"
 "PO-Revision-Date: 2017-05-23 22:26+0100\n"
 "Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
@@ -16,24 +16,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: umc/js/computerroom.js:1209
+#: umc/js/computerroom.js:1282
 #, javascript-format
 msgid "%s minutes left"
 msgstr "%s minutes restantes"
 
-#: umc/js/computerroom.js:651
-msgid "(The computer does not support all iTALC features)"
-msgstr "(Cet ordinateur ne prend pas en charge toutes les fonctions iTALC)"
-
-#: umc/js/computerroom.js:1209
+#: umc/js/computerroom.js:1282
 msgid "1 minute left"
 msgstr "Une minute restante"
 
-#: umc/js/computerroom/SettingsDialog.js:123
+#: umc/js/computerroom/SettingsDialog.js:132
 msgid "<b>At least one web site is required!</b>"
 msgstr "<b>Au moins un site Web est requis !</b>"
 
-#: umc/js/computerroom.js:1053
+#: umc/js/computerroom.js:1050
 #, javascript-format
 msgid ""
 "<b>Note:</b> In this computer room the exam \"%s\" is currently being "
@@ -42,7 +38,7 @@ msgstr ""
 "<b>Remarque :</b> dans cette salle informatique, l'examen « %s » est conduit "
 "par %s."
 
-#: umc/js/computerroom.js:1056
+#: umc/js/computerroom.js:1055
 #, javascript-format
 msgid ""
 "<b>Note:</b> In this computer room the exam \"%s\" is currently being "
@@ -51,11 +47,23 @@ msgstr ""
 "<b>Remarque :</b> dans cette salle informatique, l'examen « %s » est "
 "actuellement écrit."
 
-#: umc/js/computerroom.js:1059
+#: umc/js/computerroom.js:1060
 #, javascript-format
 msgid "<b>Note:</b> This computer room is currently in use by %s."
 msgstr ""
 "<b>Remarque :</b> cette salle informatique est actuellement utilisée par %s."
+
+#: umc/js/computerroom.js:955
+#, fuzzy
+msgid ""
+"<p><b>Note:</b> All computers need to be either switched off or rebooted "
+"before they can be used again for regular schooling.</p>"
+msgstr ""
+"<p>L'examen s'est terminé avec succès. Tous les documents liés à l'examen "
+"ont été collectés depuis les répertoires personnels des étudiants.</"
+"p><p><b>Remarque :</b> Tous les ordinateurs devront être éteints ou "
+"redémarrés afin d'être utilisables à nouveau pour des études "
+"conventionnelles.</p>"
 
 #: umc/js/computerroom/SettingsDialog.js:82
 msgid ""
@@ -68,7 +76,7 @@ msgstr ""
 "Exemple : </p><p style=\"font-family: monospace\">univention.com<br/"
 ">wikipedia.org<br/></p>"
 
-#: umc/js/computerroom.js:873
+#: umc/js/computerroom.js:871
 msgid ""
 "<p>Please confirm to collect students' exam files.</p><p>This files will be "
 "stored in the corresponding exam folder of your home directory. It is "
@@ -79,7 +87,7 @@ msgstr ""
 "dans votre répertoire personnel. Il est possible de collecter les fichiers "
 "d'examen à plusieurs reprises au cours de l'examen.</p>"
 
-#: umc/js/computerroom.js:918
+#: umc/js/computerroom.js:909
 msgid ""
 "<p>Please confirm to irrevocably finish the current exam.</p><p>All "
 "corresponding exam files will be collected from the students' home "
@@ -91,20 +99,21 @@ msgstr ""
 "répertoires personnels des étudiants et stockés dans le dossier "
 "correspondant à l'examen dans votre répertoire personnel.</p>"
 
-#: umc/js/computerroom.js:956
+#: umc/js/computerroom.js:953
+#, fuzzy
 msgid ""
 "<p>The exam has been successfully finished. All related exam documents have "
-"been collected from the students' home directories.</p><p><b>Note:</b> All "
-"computers need to be either switched off or rebooted before they can be used "
-"again for regular schooling.</p>"
+"been collected from the students' home directories.</p>"
 msgstr ""
-"<p>L'examen s'est terminé avec succès. Tous les documents liés à l'examen "
-"ont été collectés depuis les répertoires personnels des étudiants.</"
-"p><p><b>Remarque :</b> Tous les ordinateurs devront être éteints ou "
-"redémarrés afin d'être utilisables à nouveau pour des études "
-"conventionnelles.</p>"
+"Tous les documents liés à l'examen ont été collectés avec succès depuis les "
+"répertoires personnels des étudiants."
 
-#: umc/js/computerroom.js:910
+#: umc/js/computerroom/ScreenshotView.js:286
+#, fuzzy
+msgid "All computers in this room are offline."
+msgstr "{0} ordinateurs sont dans cette salle"
+
+#: umc/js/computerroom.js:901
 msgid ""
 "All related exam documents have been collected successfully from the "
 "students' home directories."
@@ -112,50 +121,62 @@ msgstr ""
 "Tous les documents liés à l'examen ont été collectés avec succès depuis les "
 "répertoires personnels des étudiants."
 
-#: umc/js/computerroom/ScreenshotView.js:252
+#: umc/js/computerroom/ScreenshotView.js:253
 msgid "Back to overview"
 msgstr "Retour vers la vue globale"
 
-#: umc/js/computerroom.js:875 umc/js/computerroom.js:920
-#: umc/js/computerroom.js:1076 umc/js/computerroom.js:1107
-#: umc/js/computerroom/SettingsDialog.js:137
+#: umc/js/computerroom.js:137 umc/js/computerroom.js:873
+#: umc/js/computerroom.js:911 umc/js/computerroom.js:1078
+#: umc/js/computerroom.js:1154 umc/js/computerroom/SettingsDialog.js:115
 msgid "Cancel"
 msgstr "Annuler"
 
-#: umc/js/computerroom.js:193
+#: umc/js/computerroom.js:216
 msgid "Change room"
 msgstr "Modifier la salle"
 
-#: umc/js/computerroom.js:187
+#: umc/js/computerroom.js:210
 msgid "Change settings"
 msgstr "Modifier les réglages"
 
-#: umc/js/computerroom.js:1043
+#: umc/js/computerroom.js:1040
 msgid "Choose the computer room to monitor"
 msgstr "Choisissez la salle informatique à surveiller"
 
-#: umc/js/computerroom.js:1034
+#: umc/js/computerroom.js:1031
 msgid "Choose the school"
 msgstr "Choisissez l'école"
 
-#: umc/js/computerroom.js:175 umc/js/computerroom.js:879
+#: umc/js/computerroom.js:149
+msgid "Close exam mode"
+msgstr ""
+
+#: umc/js/computerroom.js:1138
+msgid "Close module"
+msgstr ""
+
+#: umc/js/computerroom.js:199 umc/js/computerroom.js:877
 msgid "Collect results"
 msgstr "Collecter les résultats"
 
-#: umc/js/computerroom.js:1042
+#: umc/js/computerroom.js:1039
 msgid "Computer room"
 msgstr "Salle informatique"
 
-#: umc/js/computerroom.js:557
+#: umc/js/computerroom.js:579
 #, javascript-format
 msgid "Computer room: %s"
 msgstr "Salle informatique : %s"
 
-#: umc/js/computerroom.js:661
+#: umc/js/computerroom.js:662
 msgid "Computer type"
 msgstr "Type d'ordinateur"
 
-#: umc/js/computerroom.js:1159
+#: umc/js/computerroom.js:141
+msgid "Continue without finishing"
+msgstr ""
+
+#: umc/js/computerroom.js:1230
 #, javascript-format
 msgid ""
 "Control over the computer room has been taken by \"%s\", your session has "
@@ -169,19 +190,19 @@ msgstr ""
 "sur cette salle informatique en la sélectionnant à nouveau depuis la liste "
 "des salles."
 
-#: umc/js/computerroom.js:693 umc/js/computerroom/ScreenshotView.js:194
-#: umc/js/computerroom/ScreenshotView.js:204
+#: umc/js/computerroom.js:693 umc/js/computerroom/ScreenshotView.js:183
+#: umc/js/computerroom/ScreenshotView.js:195
 msgid "Currently there is no screenshot available. Wait a few seconds."
 msgstr ""
-"Aucune capture d'écran n'est disponible actuellement. "
-"Veuillez patienter quelques secondes."
+"Aucune capture d'écran n'est disponible actuellement. Veuillez patienter "
+"quelques secondes."
 
 #: umc/js/computerroom/SettingsDialog.js:69
-#: umc/js/computerroom/SettingsDialog.js:106
+#: umc/js/computerroom/SettingsDialog.js:103
 msgid "Default (global settings)"
 msgstr "Par défaut (configuration générale)"
 
-#: umc/js/computerroom/SettingsDialog.js:98
+#: umc/js/computerroom/SettingsDialog.js:165
 msgid "Default (no restrictions)"
 msgstr "Par défaut (pas de restrictions)"
 
@@ -189,33 +210,46 @@ msgstr "Par défaut (pas de restrictions)"
 msgid "Defines restriction for the share access"
 msgstr "Définit les restrictions sur l'accès au partage"
 
-#: umc/js/computerroom.js:864
+#: umc/js/computerroom.js:857
 msgid "Do not remind again"
 msgstr "Ne pas me le rappeler"
 
-#: umc/js/computerroom.js:553
+#: umc/js/computerroom.js:134
+msgid ""
+"Do you really want to close the exam mode? FINISH EXAM finishes the exam and "
+"the results of all participants will be copied into your home directory. "
+"CONTINUE WITHOUT FINISHING closes the tab and the exam continues. By opening "
+"the computeroom module again you can return to the exam mode. Please do not "
+"forget to finish the exam at a later time."
+msgstr ""
+
+#: umc/js/computerroom.js:1135
+msgid "Do you want to create a computer room now or close the module?"
+msgstr ""
+
+#: umc/js/computerroom/SettingsDialog.js:164
+msgid "Exam files only"
+msgstr ""
+
+#: umc/js/computerroom.js:575
 #, javascript-format
 msgid "Exam mode - %s"
 msgstr "Mode d'examen - %s"
 
-#: umc/js/computerroom.js:818
+#: umc/js/computerroom.js:815
 msgid "Failed to open a new session for the room."
 msgstr "Échec de l'ouverture d'une nouvelle session pour cette salle."
 
-#: umc/js/computerroom.js:181 umc/js/computerroom.js:860
-#: umc/js/computerroom.js:924
+#: umc/js/computerroom.js:146 umc/js/computerroom.js:205
+#: umc/js/computerroom.js:865 umc/js/computerroom.js:915
 msgid "Finish exam"
 msgstr "Conclure l'examen"
 
-#: umc/js/computerroom.js:940
+#: umc/js/computerroom.js:937
 msgid "Finishing exam..."
 msgstr "Conclusion de l'examen..."
 
-#: umc/js/computerroom/SettingsDialog.js:108
-msgid "Free printing"
-msgstr "Impression libre"
-
-#: umc/js/computerroom.js:595
+#: umc/js/computerroom.js:616
 msgid ""
 "Here you can watch the students' computers, lock the computers, show "
 "presentations, control the internet access and define the available printers "
@@ -225,15 +259,11 @@ msgstr ""
 "ordinateurs, afficher des présentations, contrôler l'accès à Internet et "
 "définir les imprimantes et les partages disponibles."
 
-#: umc/js/computerroom/SettingsDialog.js:97
-msgid "Home directory only"
-msgstr "Répertoire personnel uniquement"
-
-#: umc/js/computerroom.js:665
+#: umc/js/computerroom.js:666
 msgid "IP address"
 msgstr "Adresse IP"
 
-#: umc/js/computerroom/ScreenshotView.js:273
+#: umc/js/computerroom/ScreenshotView.js:270
 msgid "Large"
 msgstr "Grand"
 
@@ -241,19 +271,19 @@ msgstr "Grand"
 msgid "List of allowed web sites for \"{myRules}\""
 msgstr "Liste des sites Internet autorisés pour \"{myRules}\""
 
-#: umc/js/computerroom.js:249
+#: umc/js/computerroom.js:272
 msgid "Lock input devices"
 msgstr "Verrouiller les périphériques d'entrée"
 
-#: umc/js/computerroom.js:280
+#: umc/js/computerroom.js:303
 msgid "Lock screen"
 msgstr "Verrouiller l'écran"
 
-#: umc/js/computerroom.js:210
+#: umc/js/computerroom.js:233
 msgid "Logout user"
 msgstr "Déconnecter l'utilisateur"
 
-#: umc/js/computerroom.js:1266
+#: umc/js/computerroom.js:1341
 msgid ""
 "Lost the connection to the computer room. Please try to reopen the computer "
 "room."
@@ -261,33 +291,47 @@ msgstr ""
 "La connexion à cette salle informatique a été perdue. Veuillez essayer "
 "d'ouvrir la salle informatique à nouveau."
 
-#: umc/js/computerroom.js:667
+#: umc/js/computerroom.js:668
 msgid "MAC address"
 msgstr "Adresse MAC"
 
-#: umc/js/computerroom.js:628
+#: umc/js/computerroom.js:1140
+#, fuzzy
+msgid "Manage computer rooms"
+msgstr "Sélectionnez la salle informatique"
+
+#: umc/js/computerroom.js:631
 msgid "Monitoring is activated"
 msgstr "La surveillance est activée"
 
-#: umc/js/computerroom.js:621
+#: umc/js/computerroom.js:624
 msgid "Name"
 msgstr "Nom"
 
-#: umc/js/computerroom.js:317
+#: umc/js/computerroom.js:340
 msgid "No computers were selected. Please select computers."
 msgstr "Aucun ordinateur sélectionné. Veuillez sélectionner des ordinateurs."
 
-#: umc/js/computerroom.js:544
+#: umc/js/computerroom.js:565
 msgid "No room selected"
 msgstr "Aucune salle sélectionnée"
 
-#: umc/js/computerroom/ScreenshotView.js:272
+#: umc/js/computerroom/ScreenshotView.js:164
+msgid "No user logged in"
+msgstr ""
+
+#: umc/js/computerroom/ScreenshotView.js:269
 msgid "Normal"
 msgstr "Normal"
 
-#: umc/js/computerroom.js:1161
+#: umc/js/computerroom.js:1232
 msgid "Ok"
 msgstr "Valider"
+
+#: umc/js/computerroom/SettingsDialog.js:164
+#, fuzzy
+msgid "Only own home directory"
+msgstr "Répertoire personnel uniquement"
 
 #: umc/js/computerroom/SettingsDialog.js:61
 msgid "Personal internet rules"
@@ -297,56 +341,61 @@ msgstr "Règles Internet personnelles"
 msgid "Personal settings for the computer room"
 msgstr "Réglages personnels pour cette salle informatique"
 
-#: umc/js/computerroom.js:900
+#: umc/js/computerroom.js:1136
+msgid ""
+"Please contact your system administrator for the creation of computer rooms."
+msgstr ""
+
+#: umc/js/computerroom.js:896
 msgid "Please wait while all exam documents are being collected."
 msgstr ""
 "Veuillez patienter pendant que tous les documents de l'examen sont collectés."
 
-#: umc/js/computerroom.js:408
+#: umc/js/computerroom.js:423
 msgid "Presentation"
 msgstr "Présentation"
 
-#: umc/js/computerroom/SettingsDialog.js:104
+#: umc/js/computerroom/SettingsDialog.js:101
 msgid "Print mode"
 msgstr "Mode d'impression"
 
-#: umc/js/computerroom/SettingsDialog.js:107
+#: umc/js/computerroom/SettingsDialog.js:104
 msgid "Printing deactivated"
 msgstr "Impression désactivée"
 
-#: umc/js/computerroom.js:869
+#: umc/js/computerroom.js:867
 msgid "Remind"
 msgstr "Rappeler"
 
-#: umc/js/computerroom.js:853
+#: umc/js/computerroom.js:850
 msgid "Remind again"
 msgstr "Rappeler à nouveau"
 
-#: umc/js/computerroom/SettingsDialog.js:132
+#: umc/js/computerroom/SettingsDialog.js:124
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: umc/js/computerroom.js:241
+#: umc/js/computerroom.js:264
 msgid "Restart computer"
 msgstr "Redémarrer l'ordinateur"
 
-#: umc/js/computerroom.js:1036
+#: umc/js/computerroom.js:1033
 msgid "School"
 msgstr "École"
 
-#: umc/js/computerroom/ScreenshotView.js:239
+#: umc/js/computerroom/ScreenshotView.js:241
 msgid "Screenshots of computers"
 msgstr "Captures d'écran des ordinateurs"
 
-#: umc/js/computerroom.js:1095
+#: umc/js/computerroom.js:1116
 msgid "Select computer room"
 msgstr "Sélectionnez la salle informatique"
 
-#: umc/js/computerroom.js:1071
+#: umc/js/computerroom.js:1082
 msgid "Select room"
 msgstr "Sélectionnez la salle"
 
-#: umc/js/computerroom/SettingsDialog.js:118
+#: umc/js/computerroom/SettingsDialog.js:128
 msgid "Set"
 msgstr "Définir"
 
@@ -354,39 +403,39 @@ msgstr "Définir"
 msgid "Share access"
 msgstr "Partager l'accès"
 
-#: umc/js/computerroom.js:221
+#: umc/js/computerroom.js:244
 msgid "Shutdown computer"
 msgstr "Éteindre l'ordinateur"
 
-#: umc/js/computerroom/ScreenshotView.js:267
+#: umc/js/computerroom/ScreenshotView.js:265
 msgid "Size"
 msgstr "Taille"
 
-#: umc/js/computerroom/ScreenshotView.js:271
+#: umc/js/computerroom/ScreenshotView.js:268
 msgid "Small"
 msgstr "Petit"
 
-#: umc/js/computerroom.js:269
+#: umc/js/computerroom.js:292
 msgid "Start presentation"
 msgstr "Démarrer la présentation"
 
-#: umc/js/computerroom.js:663
+#: umc/js/computerroom.js:664
 msgid "Status"
 msgstr "État"
 
-#: umc/js/computerroom.js:197
+#: umc/js/computerroom.js:220
 msgid "Stop presentation"
 msgstr "Arrêter la présentation"
 
-#: umc/js/computerroom.js:230
+#: umc/js/computerroom.js:253
 msgid "Switch on computer"
 msgstr "Démarrer l'ordinateur"
 
-#: umc/js/computerroom.js:1111
+#: umc/js/computerroom.js:1158
 msgid "Take over"
 msgstr "Prendre la main"
 
-#: umc/js/computerroom.js:851
+#: umc/js/computerroom.js:848
 msgid ""
 "The allowed time for this examination has been reached. The exam can now be "
 "extended or collected. Should be reminded again in 5 minutes?"
@@ -394,19 +443,19 @@ msgstr ""
 "Le temps imparti pour l'examen a été atteint. L'examen peut maintenant être "
 "étendu ou collecté. Doit-on vous le rappeler à nouveau dans 5 minutes ?"
 
-#: umc/js/computerroom.js:639
+#: umc/js/computerroom.js:642
 msgid "The computer is currently participating in a presentation"
 msgstr "L'ordinateur participe actuellement à une présentation"
 
-#: umc/js/computerroom.js:636
+#: umc/js/computerroom.js:639
 msgid "The computer is currently showing a presentation"
 msgstr "L'ordinateur affiche actuellement une présentation"
 
-#: umc/js/computerroom.js:624
+#: umc/js/computerroom.js:627
 msgid "The computer is not running"
 msgstr "L'ordinateur n'est pas démarré"
 
-#: umc/js/computerroom.js:630
+#: umc/js/computerroom.js:633
 msgid ""
 "The monitoring mode has failed. It seems that the monitoring service is not "
 "configured properly."
@@ -414,7 +463,7 @@ msgstr ""
 "Le mode de surveillance a échoué. Il semble que le service de surveillance "
 "ne soit pas configuré correctement."
 
-#: umc/js/computerroom.js:632
+#: umc/js/computerroom.js:635
 msgid ""
 "The monitoring mode has failed. Maybe the service is not installed or the "
 "Firewall is active."
@@ -422,7 +471,7 @@ msgstr ""
 "Le mode de surveillance a échoué. Le service n'est peut-être pas installé, "
 "ou le pare-feu est actif."
 
-#: umc/js/computerroom.js:408
+#: umc/js/computerroom.js:423
 msgid ""
 "The presentation is starting. This may take a few moments. When the "
 "presentation server is started a column presentation is shown that contains "
@@ -432,11 +481,11 @@ msgstr ""
 "serveur de présentation est démarré, une colonne de présentation est "
 "affichée, et définit un bouton « Arrêter » pour terminer la présentation."
 
-#: umc/js/computerroom.js:972
+#: umc/js/computerroom.js:971
 msgid "The presentation will stop now."
 msgstr "La présentation va maintenant se terminer."
 
-#: umc/js/computerroom.js:815
+#: umc/js/computerroom.js:812
 msgid ""
 "The room is empty or the computers are not configured correctly. Please "
 "select another room."
@@ -444,31 +493,41 @@ msgstr ""
 "La salle est vide ou les ordinateurs ne sont pas configurés convenablement. "
 "Veuillez sélectionner une autre salle."
 
-#: umc/js/computerroom.js:429 umc/js/computerroom.js:450
+#: umc/js/computerroom.js:444 umc/js/computerroom.js:470
 msgid "The selected computers are being locked."
 msgstr "Les ordinateurs sélectionnés sont verrouillés."
 
-#: umc/js/computerroom.js:429 umc/js/computerroom.js:450
+#: umc/js/computerroom.js:444 umc/js/computerroom.js:470
 msgid "The selected computers are being unlocked."
 msgstr "Les ordinateurs sélectionnés sont déverrouillés."
 
-#: umc/js/computerroom.js:399
+#: umc/js/computerroom.js:418
 msgid "The selected computers are booting up."
 msgstr "Les ordinateurs sélectionnés sont en train de démarrer."
 
-#: umc/js/computerroom.js:379
+#: umc/js/computerroom.js:398
 msgid "The selected computers are rebooting."
 msgstr "Les ordinateurs sélectionnés sont en train de redémarrer."
 
-#: umc/js/computerroom.js:378
+#: umc/js/computerroom.js:397
 msgid "The selected computers are shutting down."
 msgstr "Les ordinateurs sélectionnés sont en train de s'arrêter."
 
-#: umc/js/computerroom.js:361
+#: umc/js/computerroom.js:382
 msgid "The selected users are logging off."
 msgstr "Les utilisateurs sélectionnés se déconnectent."
 
-#: umc/js/computerroom.js:1105
+#: umc/js/computerroom.js:1137
+msgid "There are no computer rooms available"
+msgstr ""
+
+#: umc/js/computerroom.js:927
+msgid ""
+"There is no exam running in this room anymore. It seems like the exam was "
+"finished properly from somewhere else."
+msgstr ""
+
+#: umc/js/computerroom.js:1152
 #, javascript-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "
@@ -479,7 +538,7 @@ msgstr ""
 "prendre le contrôle sur la salle, mais le professeur actuel recevra une "
 "notification et sa session sera fermée."
 
-#: umc/js/computerroom/ScreenshotView.js:240
+#: umc/js/computerroom/ScreenshotView.js:242
 msgid ""
 "This page shows screenshots of selected computers that will be updated "
 "continuously."
@@ -487,27 +546,23 @@ msgstr ""
 "Cette page affiche des captures d'écran des ordinateurs sélectionnés et "
 "celles-ci seront actualisées en continu."
 
-#: umc/js/computerroom.js:1207
+#: umc/js/computerroom.js:1280
 msgid "Time is up"
 msgstr "Fin du temps imparti"
 
-#: umc/js/computerroom/ScreenshotView.js:270
+#: umc/js/computerroom/ScreenshotView.js:267
 msgid "Tiny"
 msgstr "Minuscule"
 
-#: umc/js/computerroom.js:651
-msgid "Univention Corporate Client"
-msgstr "Univention Corporate Client"
-
-#: umc/js/computerroom.js:652
+#: umc/js/computerroom.js:653
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: umc/js/computerroom.js:259
+#: umc/js/computerroom.js:282
 msgid "Unlock input devices"
 msgstr "Déverrouiller les périphériques d'entrée"
 
-#: umc/js/computerroom.js:291
+#: umc/js/computerroom.js:314
 msgid "Unlock screen"
 msgstr "Déverrouiller l'écran"
 
@@ -515,15 +570,11 @@ msgstr "Déverrouiller l'écran"
 msgid "User"
 msgstr "Utilisateur"
 
-#: umc/js/computerroom.js:606
-msgid "VNC-Access"
-msgstr "Accès VNC"
-
-#: umc/js/computerroom/SettingsDialog.js:113
+#: umc/js/computerroom/SettingsDialog.js:109
 msgid "Valid until"
 msgstr "Valable jusque"
 
-#: umc/js/computerroom.js:204 umc/js/computerroom.js:697
+#: umc/js/computerroom.js:227 umc/js/computerroom.js:697
 msgid "Watch"
 msgstr "Surveiller"
 
@@ -531,19 +582,34 @@ msgstr "Surveiller"
 msgid "Web access profile"
 msgstr "Profil d'accès au Web"
 
-#: umc/js/computerroom.js:650
+#: umc/js/computerroom.js:652
 msgid "Windows"
 msgstr "Windows"
 
-#: umc/js/computerroom.js:729
+#: umc/js/computerroom/ScreenshotView.js:185
+msgid "screenshot_notready.svg"
+msgstr ""
+
+#: umc/js/computerroom.js:730
 msgid "{0} computers are in this room"
 msgstr "{0} ordinateurs sont dans cette salle"
 
-#: umc/js/computerroom.js:732
+#: umc/js/computerroom.js:733
 msgid "{0} powered off/misconfigured"
 msgstr "{0} éteints / mal configurés"
 
-#: umc/js/computerroom.js:1182
+#: umc/js/computerroom.js:1255
 msgid "{time} minutes"
 msgstr "{time} minutes"
 
+#~ msgid "(The computer does not support all iTALC features)"
+#~ msgstr "(Cet ordinateur ne prend pas en charge toutes les fonctions iTALC)"
+
+#~ msgid "Free printing"
+#~ msgstr "Impression libre"
+
+#~ msgid "Univention Corporate Client"
+#~ msgstr "Univention Corporate Client"
+
+#~ msgid "VNC-Access"
+#~ msgstr "Accès VNC"
