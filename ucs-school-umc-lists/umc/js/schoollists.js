@@ -35,11 +35,12 @@ define([
 	"umc/widgets/Module",
 	"umc/widgets/Page",
 	"umc/widgets/ComboBox",
+	"umc/widgets/CheckBox",
 	"umc/widgets/Button",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/schoollists"
-], function(declare, lang, dialog, Module, Page, ComboBox, Button, ContainerWidget, SearchForm, _) {
+], function(declare, lang, dialog, Module, Page, ComboBox, CheckBox, Button, ContainerWidget, SearchForm, _) {
 
 	return declare("umc.modules.schoollists", [ Module ], {
 		idProperty: 'id',
@@ -124,6 +125,13 @@ define([
 					this.set('value', null);
 				}
 			}, {
+				type: CheckBox,
+				name: 'excludeDisabled',
+				description: _('If this check box is selected, disabled students will not be exported.'),
+				label: _('exclude disabled students'),
+				size: 'One',
+				checked: false,
+			}, {
 				type: Button,
 				name: 'csvUtf16',
 				description: _('Download a list of group members'),
@@ -158,6 +166,7 @@ define([
 
 			var layout = [
 				['school', 'group'],
+				['excludeDisabled'],
 				['csvUtf16'],
 				['csvUtf8']
 			];
@@ -170,7 +179,8 @@ define([
 					this.umcpCommand('schoollists/csvlist', {
 						school: values.school,
 						group: values.group,
-						separator: this._csvFormat === 'excel' ? '\t' : ','
+						separator: this._csvFormat === 'excel' ? '\t' : ',',
+						exclude: values.excludeDisabled
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});
