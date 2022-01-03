@@ -41,6 +41,7 @@ from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import DNSanitizer, StringSanitizer
@@ -78,6 +79,13 @@ class Instance(SchoolBaseModule):
         for student in self.students(ldap_user_read, school, group):
             row = []
             student_udm_obj = student.get_udm_object(ldap_user_read)
+            if school not in student.school_classes:
+                MODULE.error(
+                    "Student missing class in school {!r}: {!r}".format(
+                        school, student_udm_obj.dn
+                    )
+                )
+                continue
             for attr in attributes:
                 if attr == "Class":
                     row.append(student.school_classes[school][0].split("-", 1)[1])
