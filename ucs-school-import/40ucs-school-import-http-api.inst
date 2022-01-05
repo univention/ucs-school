@@ -53,7 +53,9 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set shortDescription="UCS@school Import Permissions" \
 	--set longDescription="Enables the configuration options of this group to control the UCS@school import permissions." \
 	--set translationShortDescription='"de_DE" "UCS@school Import-Berechtigungen"' \
-	--set translationLongDescription='"de_DE" "Aktiviert die Konfigurationsoptionen dieser Gruppe zur Steuerung der UCS@school-Import-Berechtigungen"' || die
+	--append translationShortDescription='"fr_FR" "français"' \
+	--set translationLongDescription='"de_DE" "Aktiviert die Konfigurationsoptionen dieser Gruppe zur Steuerung der UCS@school-Import-Berechtigungen"' \
+	--append translationLongDescription='"fr_FR" "français"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -65,10 +67,13 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set groupName="Import Permissions" \
 	--set groupPosition="2" \
 	--set translationGroupName='"de_DE" "Import-Berechtigungen"' \
+	--append translationGroupName='"fr_FR" "français"' \
 	--set shortDescription="Allowed schools for UCS@school Import" \
 	--set longDescription="Users of this group are allowed to do UCS@school user import for the selected schools." \
 	--set translationShortDescription='"de_DE" "Erlaubte Schulen für den UCS@school-Import"' \
+	--append translationShortDescription='"fr_FR" "français"' \
 	--set translationLongDescription='"de_DE" "Benutzer dieser Gruppe dürfen UCS@school-Benutzerimports für die gewählten Schulen ausführen."' \
+	--append translationLongDescription='"fr_FR" "français"' \
 	--set CLIName="ucsschoolImportSchool" \
 	--set objectClass=ucsschoolImportGroup \
 	--set ldapMapping=ucsschoolImportSchool \
@@ -87,10 +92,13 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set groupName="Import Permissions" \
 	--set groupPosition="2" \
 	--set translationGroupName='"de_DE" "Import-Berechtigungen"' \
+	--append translationGroupName='"fr_FR" "français"' \
 	--set shortDescription="Allowed roles for UCS@school Import" \
 	--set longDescription="Users of this group are allowed to do UCS@school user import for the selected user roles." \
 	--set translationShortDescription='"de_DE" "Erlaubte Benutzerrollen für den UCS@school-Import"' \
+	--append translationShortDescription='"fr_FR" "français"' \
 	--set translationLongDescription='"de_DE" "Benutzer dieser Gruppe dürfen UCS@school-Benutzerimports für die gewählten Benutzerrollen ausführen."' \
+	--append translationLongDescription='"fr_FR" "français"' \
 	--set CLIName="ucsschoolImportRole" \
 	--set objectClass=ucsschoolImportGroup \
 	--set ldapMapping=ucsschoolImportRole \
