@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [2]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-metapackage
-fix: 13.0.11A~5.0.0.202112021737
-desc: |
- * The latest samba update (ucs errata 157) resulted in apt not willing to install ucs@school during the join of replica serervs. This has been fixed with an explizit package dependency. No functional changes have been applied (Bug #54180).
-bug: [54180]
