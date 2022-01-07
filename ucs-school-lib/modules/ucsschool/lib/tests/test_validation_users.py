@@ -71,7 +71,7 @@ def base_user(firstname: str, lastname: str) -> Dict[str, Any]:
             "mobileTelephoneNumber": [],
             "postOfficeBox": [],
             "groups": [],
-            "sambahome": "\\\\{}\\{}.{}".format(lib_ucr["ldap/master"], firstname, lastname),
+            "sambahome": "\\\\{}\\{}.{}".format(lib_ucr("ldap/server/name"), firstname, lastname),
             "umcProperty": {},
             "overridePWLength": None,
             "uidNumber": 2021,

@@ -121,9 +121,9 @@ def getAdminConnection(start_tls=2, decode_ignorelist=[], reconnect=True):
     """
     with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
         bindpw = fp.read().rstrip("\n")
-    host = env_or_ucr("ldap/master")
+    host = env_or_ucr("ldap/server/name")
     base_dn = env_or_ucr("ldap/base")
-    port = int(env_or_ucr("ldap/master/port", "7389"))
+    port = int(env_or_ucr("ldap/base/port", "7389"))
     return access(
         host=host,
         port=port,
@@ -164,8 +164,8 @@ def getMachineConnection(  # nosec
 
     if ldap_master:
         # Connect to DC Master
-        host = env_or_ucr("ldap/master")
-        port = int(env_or_ucr("ldap/master/port", "7389"))
+        host = env_or_ucr("ldap/server/name")
+        port = int(env_or_ucr("ldap/server/port", "7389"))
     else:
         # Connect to ldap/server/name
         host = env_or_ucr("ldap/server/name")

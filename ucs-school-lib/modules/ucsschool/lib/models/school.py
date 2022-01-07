@@ -64,7 +64,7 @@ from .group import BasicGroup, BasicSchoolGroup, Group
 from .misc import OU, Container
 from .policy import DHCPDNSPolicy
 from .share import MarketplaceShare
-from .utils import _, flatten, ucr
+from .utils import _, env_or_ucr, flatten, ucr
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
@@ -292,7 +292,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     def get_dc_name(self, administrative: bool = False) -> str:
         if ucr.is_true("ucsschool/singlemaster", False):
-            return ucr.get("ldap/master").split(".", 1)[0]
+            return env_or_ucr("ldap/server/name").split(".", 1)[0]
         elif self.dc_name:
             if administrative:
                 return "%sv" % self.dc_name
@@ -777,8 +777,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if ucr.is_true("ucsschool/singlemaster", True):
             mod = udm.get("computers/domaincontroller_master")
             # UDM computer object of master can be found with "cn={hostname}", using the hostname
-            # from its fqdn, which is in ucr["ldap/master"].
-            filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
+            # from its fqdn, which is in the ucr-v ldap/server/name.
+            filter_s = filter_format("cn=%s", [env_or_ucr("ldap/server/name").split(".", 1)[0]])
             obj = [o async for o in mod.search(filter_s)][0]
             role = create_ucsschool_role_string(role_single_master, self.name)
             if role not in obj.props.ucsschoolRole:
@@ -925,7 +925,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # In a single server environment, the master is the DNS server.
             if ucr.is_true("ucsschool/singlemaster", False):
                 policy = await dhcp_dns_mod.get(dhcp_dns_policy_dn)
-                policy.props.domain_name_servers = [socket.gethostbyname(ucr["ldap/master"])]
+                policy.props.domain_name_servers = [socket.gethostbyname(env_or_ucr("ldap/server/name"))]
                 policy.props.domain_name = ucr["domainname"]
                 await policy.save()
 

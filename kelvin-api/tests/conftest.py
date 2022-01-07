@@ -151,7 +151,7 @@ class SchoolClassFactory(factory.Factory):
 def udm_kwargs() -> Dict[str, Any]:
     with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
         cn_admin_password = fp.read().strip()
-    host = env_or_ucr("ldap/master")
+    host = env_or_ucr("ldap/server/name")
     return {
         "username": "cn=admin",
         "password": cn_admin_password,

@@ -108,7 +108,7 @@ servers_school_ous() {
 	# ou=bar,dc=example,dc=com
 	# ou=foo,dc=example,dc=com
 	#
-	# $ servers_school_ous -h $(ucr get ldap/master) -p $(ucr get ldap/master/port)
+	# $ servers_school_ous -h $(ucr get ldap/server/name) -p $(ucr get ldap/server/port)
 	# ou=bar,dc=example,dc=com
 	local ldap_hostdn ldap_base ldap_server ldap_port IFS
 	. /usr/share/univention-lib/ucr.sh

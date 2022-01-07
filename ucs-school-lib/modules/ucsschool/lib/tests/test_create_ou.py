@@ -116,7 +116,7 @@ async def test_ucsschool_roles(create_ou_using_python, udm_kwargs):
     async with UDM(**udm_kwargs) as udm:
         ou_name = await create_ou_using_python()
         if ucr.is_true("ucsschool/singlemaster", True):
-            filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
+            filter_s = filter_format("cn=%s", [env_or_ucr("ldap/server/name").split(".", 1)[0]])
             mod = udm.get("computers/domaincontroller_master")
             obj = [o async for o in mod.search(filter_s)][0]
             ucsschool_role = create_ucsschool_role_string(role_single_master, ou_name)

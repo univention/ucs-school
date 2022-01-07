@@ -39,7 +39,7 @@ from univention.admin.uexceptions import noObject
 from .attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
 from .base import UCSSchoolHelperAbstractClass
 from .dhcp import DHCPSubnet
-from .utils import _, ucr
+from .utils import _, env_or_ucr, ucr
 
 
 class Network(UCSSchoolHelperAbstractClass):
@@ -151,7 +151,7 @@ class DNSReverseZone(UCSSchoolHelperAbstractClass):
         return "cn=dns,%s" % ucr.get("ldap/base")
 
     async def do_create(self, udm_obj: UdmObject, lo: UDM) -> None:
-        udm_obj.props.nameserver = ucr.get("ldap/master")
+        udm_obj.props.nameserver = env_or_ucr("ldap/server/name")
         udm_obj.props.contact = "root@%s" % ucr.get("domainname")
         return await super(DNSReverseZone, self).do_create(udm_obj, lo)
 

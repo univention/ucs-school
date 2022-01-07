@@ -84,7 +84,7 @@ def random_last_name():
 def udm_kwargs() -> Dict[str, Any]:
     with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
         cn_admin_password = fp.read().strip()
-    host = env_or_ucr("ldap/master")
+    host = env_or_ucr("ldap/server/name")
     return {
         "username": "cn=admin",
         "password": cn_admin_password,
@@ -569,7 +569,7 @@ def delete_ou_cleanup(ldap_base, udm_kwargs):
                 except UdmNoObject:
                     logger.debug("Error: group does not exist: %r", dn)
         if ucr.is_true("ucsschool/singlemaster"):
-            master_hostname = env_or_ucr("ldap/master").split(".", 1)[0]
+            master_hostname = env_or_ucr("ldap/server/name").split(".", 1)[0]
             async with UDM(**udm_kwargs) as udm:
                 mod = udm.get("computers/domaincontroller_master")
                 async for obj in mod.search(f"cn={master_hostname}"):
@@ -616,7 +616,7 @@ def create_ou_kwargs(ou_name: str = None) -> Dict[str, Any]:
     assert ou_name not in {ou[0] for ou in _cached_ous}
     short_ou_name = f"{ou_name}"[:10]
     is_single_master = ucr.is_true("ucsschool/singlemaster")
-    master_hostname = env_or_ucr("ldap/master").split(".", 1)[0]
+    master_hostname = env_or_ucr("ldap/server/name").split(".", 1)[0]
     edu_name = master_hostname if is_single_master else f"edu{short_ou_name}"
     admin_name = f"adm{short_ou_name}"
     hostname = master_hostname if is_single_master else None
@@ -718,7 +718,7 @@ def create_ou_using_python(
                 logger.debug("School %r exists.", ou_name)
                 return ou_name
         is_single_master = ucr.is_true("ucsschool/singlemaster")
-        master_hostname = env_or_ucr("ldap/master").split(".", 1)[0]
+        master_hostname = env_or_ucr("ldap/server/name").split(".", 1)[0]
         hostname = master_hostname if is_single_master else None
         create_ou_python_kwargs = {
             "ou_name": ou_name,
