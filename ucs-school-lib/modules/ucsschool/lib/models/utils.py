@@ -545,7 +545,7 @@ def _write_logging_config(path: str) -> None:
 def udm_rest_client_cn_admin_kwargs() -> Dict[str, str]:
     global _udm_kwargs
     if not _udm_kwargs:
-        host = env_or_ucr("ldap/master")
+        host = env_or_ucr("ldap/server/name")
         with open(CN_ADMIN_PASSWORD_FILE, "r") as fp:
             cn_admin_password = fp.read().strip()
         _udm_kwargs = {

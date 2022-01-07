@@ -33,7 +33,7 @@
 #  Join script that runs on the docker host.
 #
 
-VERSION=7
+VERSION=8
 
 APP_ID="ucsschool-kelvin-rest-api"
 ADMIN_GROUP="$APP_ID-admins"
@@ -51,6 +51,8 @@ UDM_CLIENT_UPDATE_SCRIPT="/var/lib/univention-appcenter/apps/$APP_ID/data/update
 
 main () {
     docker exec $appcenter_apps_ucsschool_kelvin_rest_api_container /usr/bin/univention-config-registry set \
+    ldap/server/name="$(ucr get ldap/server/name)" \
+    ldap/server/port="$(ucr get ldap/server/port)" \
     dhcpd/ldap/base="$(ucr get dhcpd/ldap/base)" \
     ucsschool/import/set/netlogon/script/path="$(ucr get ucsschool/import/set/netlogon/script/path)" \
     ucsschool/import/set/homedrive="$(ucr get ucsschool/import/set/homedrive)" \

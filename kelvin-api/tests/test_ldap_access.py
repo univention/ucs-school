@@ -70,7 +70,7 @@ async def test_udm_kwargs_fake(temp_file_func, random_name):
         udm_kwargs = await ucsschool.kelvin.ldap_access.udm_kwargs()
     assert udm_kwargs["username"] == "cn=admin"
     assert udm_kwargs["password"] == txt1
-    host = ucsschool.lib.models.utils.env_or_ucr("ldap/master")
+    host = ucsschool.lib.models.utils.env_or_ucr("ldap/server/name")
     assert udm_kwargs["url"] == f"https://{host}/univention/udm/"
 
 

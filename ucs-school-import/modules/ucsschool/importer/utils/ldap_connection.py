@@ -37,6 +37,7 @@ from typing import Tuple
 
 from univention.admin import uldap
 from univention.admin.uldap import LoType, PoType
+from ucsschool.lib.models.utils import ucr
 
 from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 
@@ -73,7 +74,8 @@ def get_machine_connection() -> Tuple[LoType, PoType]:
     """
     global _machine_connection, _machine_position
     if not _machine_connection or not _machine_position:
-        _machine_connection, _machine_position = uldap.getMachineConnection()
+        ldap_master = ucr["sever/role"] == "domaincontroller_master"
+        _machine_connection, _machine_position = uldap.getMachineConnection(ldap_master=ldap_master)
     return _machine_connection, _machine_position
 
 
