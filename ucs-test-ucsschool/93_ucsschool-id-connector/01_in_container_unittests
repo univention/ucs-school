@@ -4,7 +4,7 @@
 ## tags: [ucsschool-id-connector]
 
 APP="ucsschool-id-connector"
-CMD="cd /$APP/src; /usr/bin/python3 -m pytest -l -v tests/unittests"
+CMD="cd /$APP/src; /usr/bin/python3 -m pytest -m 'not id_broker' -l -v tests/unittests"
 
 echo "Running in container: sh -c \"$CMD\""
 
