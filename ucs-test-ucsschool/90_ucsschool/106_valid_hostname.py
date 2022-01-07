@@ -104,7 +104,7 @@ def test_valid_hostname(ucr, schoolenv):
             school.create()
             created = True
         except AssertionError as ex:
-            assert should_fail and "DC Name:" in str(
+            assert should_fail and "DC name:" in str(
                 ex
             ), "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)" % (
                 school.name,

@@ -6,31 +6,31 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2021-12-15 15:38+0100\n"
-"PO-Revision-Date: 2017-05-23 22:42+0100\n"
-"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
+"PO-Revision-Date: 2022-01-06 11:39+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: umc/js/schoolwizards/Grid.js:188
 msgid "%(nSelected)d %(objPlural)s of %(nTotal)d selected"
-msgstr "%(nSelected)d %(objPlural)s sur %(nTotal)d sélectionnés"
+msgstr "%(nSelected)d objets %(objPlural)s sélectionnés sur %(nTotal)d"
 
 #: umc/js/schoolwizards/Grid.js:186
 msgid "%(nSelected)d %(objSingular)s of %(nTotal)d selected"
-msgstr "%(nSelected)d %(objSingular)s sur %(nTotal)d sélectionné"
+msgstr "%(nSelected)d objet %(objSingular)s sélectionné sur %(nTotal)d"
 
 #: umc/js/schoolwizards/UserGrid.js:79 umc/js/schoolwizards/UserGrid.js:137
 msgid "Account status"
-msgstr ""
+msgstr "État du compte"
 
 #: umc/js/schoolwizards/UserGrid.js:84 umc/js/schoolwizards/UserGrid.js:144
 msgid "Activated"
-msgstr ""
+msgstr "Activé"
 
 #: umc/js/schoolwizards/Grid.js:121
 msgid "Add"
@@ -39,7 +39,7 @@ msgstr "Ajouter"
 #: umc/js/schoolwizards/Grid.js:122
 #, javascript-format
 msgid "Add a new %s"
-msgstr "Ajouter un nouveau %s"
+msgstr "Ajouter un nouvel objet %s"
 
 #: umc/js/schoolwizards/SchoolGrid.js:79
 msgid "Administrative servers"
@@ -75,7 +75,7 @@ msgstr "Retour"
 
 #: umc/js/schoolwizards/UserWizard.js:134
 msgid "Birthday"
-msgstr ""
+msgstr "Date de naissance"
 
 #: umc/js/schoolwizards/Wizard.js:81 umc/js/schoolwizards/SchoolGrid.js:150
 #: umc/js/schoolwizards/ComputerWizard.js:144 umc/js/schoolwizards/Grid.js:219
@@ -146,7 +146,7 @@ msgstr "Créer une école"
 
 #: umc/js/schoolwizards/UserGrid.js:82 umc/js/schoolwizards/UserGrid.js:147
 msgid "Deactivated"
-msgstr ""
+msgstr "Désactivé"
 
 #: umc/js/schoolwizards/Grid.js:145 umc/js/schoolwizards/Grid.js:328
 msgid "Delete"
@@ -161,7 +161,7 @@ msgstr ""
 #: umc/js/schoolwizards/Grid.js:146
 #, javascript-format
 msgid "Deleting the selected %s."
-msgstr "Suppression du %s sélectionné."
+msgstr "Suppression des objets %s sélectionnés."
 
 #: umc/js/schoolwizards/ClassWizard.js:58 umc/js/schoolwizards/ClassGrid.js:57
 msgid "Description"
@@ -169,7 +169,7 @@ msgstr "Description"
 
 #: umc/js/schoolwizards/UserWizard.js:130
 msgid "Disabled"
-msgstr ""
+msgstr "Désactivé"
 
 #: umc/js/schoolwizards/UserWizard.js:172
 msgid "E-Mail"
@@ -182,11 +182,11 @@ msgstr "Modifier"
 #: umc/js/schoolwizards/Grid.js:134
 #, javascript-format
 msgid "Edit the %s."
-msgstr "Modifier le %s."
+msgstr "Modifier l’objet %s."
 
 #: umc/js/schoolwizards/Wizard.js:59
 msgid "Edit {itemType} {itemName}"
-msgstr "Modifier {itemType} {itemName}"
+msgstr "Modifier l’objet {itemName}"
 
 #: umc/js/schoolwizards/SchoolGrid.js:75
 msgid "Educational servers"
@@ -214,11 +214,11 @@ msgstr "Saisissez les détails pour créer un nouvel ordinateur."
 
 #: umc/js/schoolwizards/UserWizard.js:96
 msgid "Enter details to create a new user"
-msgstr "Saisissez les détails pour créer un nouvel utilisateur."
+msgstr "Veuillez saisir les détails pour créer un nouveau compte d’utilisation"
 
 #: umc/js/schoolwizards/UserWizard.js:139
 msgid "Expiration date"
-msgstr ""
+msgstr "Date d’expiration"
 
 #: umc/js/schoolwizards/SchoolGrid.js:108
 #: umc/js/schoolwizards/ComputerGrid.js:109
@@ -275,16 +275,16 @@ msgstr "Gestion des écoles"
 
 #: umc/js/schoolwizards/UserWizard.js:157
 #: umc/js/schoolwizards/UserWizard.js:163
-#, fuzzy, javascript-format
+#, javascript-format
 msgid ""
 "Microsoft Active Directory limits usernames to 20 characters. To prevent "
 "logon problems with exam user accounts, usernames must not be longer than %s "
 "characters. Please choose a shorter username."
 msgstr ""
-"Microsoft Active Directory limite les noms d'utilisateur à 20 caractères. "
-"Pour éviter les problèmes d'authentification avec les comptes utilisateurs "
-"d'examen, ces identifiants ne peuvent dépasser %s caractères. Veuillez "
-"saisir un nom d'utilisateur plus court."
+"Microsoft Active Directory limite les identifiants à 20 caractères. Pour "
+"éviter des problèmes d’authentification avec les comptes de participants "
+"d’examen, les identifiants ne doivent pas dépasser %s caractères. Veuillez "
+"choisir un identifiant plus court."
 
 #: umc/js/schoolwizards/ClassWizard.js:53
 #: umc/js/schoolwizards/ComputerGrid.js:54
@@ -294,9 +294,8 @@ msgid "Name"
 msgstr "Nom"
 
 #: umc/js/schoolwizards/SchoolWizard.js:82
-#, fuzzy
 msgid "Name of administrative school server (optional)"
-msgstr "Nom du serveur d'école éducatif"
+msgstr "Nom du serveur d’administration de l’école (facultatif)"
 
 #: umc/js/schoolwizards/SchoolWizard.js:73
 msgid "Name of educational school server"
@@ -308,17 +307,17 @@ msgid "Name of the %s."
 msgstr "Nom du %s."
 
 #: umc/js/schoolwizards/SchoolWizard.js:84
-#, fuzzy
 msgid ""
 "Name of the administrative Replica Directory Node for the new school. The "
 "server name may consist of the letters a-z, the digits 0-9 and hyphens (-). "
 "The name of the administrative server may not be equal to the educational "
 "server! An administrative school server does not have to be specified."
 msgstr ""
-"Nom du Replica Directory Node éducatif pour la nouvelle école. Le nom du "
-"serveur peut contenir les lettres a-z, les chiffres 0-9 et des tirets (-). "
-"Le nom du serveur éducatif ne peut être identique à celui du serveur "
-"administratif !"
+"Nom du Replica Directory Node d’administration pour la nouvelle école. Le "
+"nom du serveur peut contenir les lettres a–z, les chiffres 0–9 et des tirets "
+"(-). Le serveur d’administration ne peut pas avoir le même nom que le "
+"serveur éducatif ! Spécifier un serveur d’administration pour l’école n’est "
+"pas obligatoire."
 
 #: umc/js/schoolwizards/SchoolWizard.js:75
 msgid ""
@@ -390,13 +389,13 @@ msgid ""
 "Please confirm to delete the %(num)d selected %(objectNamePlural)s from "
 "school %(school)s."
 msgstr ""
-"Veuillez confirmer la suppression des %(num)d %(objectNamePlural)s "
-"sélectionnés de l'école %(school)s."
+"Veuillez confirmer la suppression des %(num)d objets %(objectNamePlural)s "
+"sélectionnés de l’école %(school)s."
 
 #: umc/js/schoolwizards/Grid.js:313
 msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)s."
 msgstr ""
-"Veuillez confirmer la suppression des %(num)d %(objectNamePlural)s "
+"Veuillez confirmer la suppression des %(num)d objets %(objectNamePlural)s "
 "sélectionnés."
 
 #: umc/js/schoolwizards/SchoolGrid.js:126
@@ -434,9 +433,8 @@ msgid "School"
 msgstr "École"
 
 #: umc/js/schoolwizards/utils.js:61
-#, fuzzy
 msgid "School Administrator"
-msgstr "Informations sur l'école"
+msgstr "Compte d’administration de l’école"
 
 #: umc/js/schoolwizards/SchoolGrid.js:72
 #: umc/js/schoolwizards/SchoolWizard.js:58
@@ -525,9 +523,8 @@ msgid "This action cannot be undone."
 msgstr "Cette action ne peut être annulée."
 
 #: umc/js/schoolwizards/UserWizard.js:116
-#, fuzzy
 msgid "UCS@school roles"
-msgstr "utilisateurs de l'école"
+msgstr "Rôles dans UCS@school"
 
 #: umc/js/schoolwizards/UserWizard.js:216
 #, javascript-format

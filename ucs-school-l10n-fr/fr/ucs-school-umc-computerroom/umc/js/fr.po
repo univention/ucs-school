@@ -6,15 +6,15 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2021-12-15 15:38+0100\n"
-"PO-Revision-Date: 2017-05-23 22:26+0100\n"
-"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
+"PO-Revision-Date: 2022-01-06 01:28+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: umc/js/computerroom.js:1282
 #, javascript-format
@@ -54,16 +54,12 @@ msgstr ""
 "<b>Remarque :</b> cette salle informatique est actuellement utilisée par %s."
 
 #: umc/js/computerroom.js:955
-#, fuzzy
 msgid ""
 "<p><b>Note:</b> All computers need to be either switched off or rebooted "
 "before they can be used again for regular schooling.</p>"
 msgstr ""
-"<p>L'examen s'est terminé avec succès. Tous les documents liés à l'examen "
-"ont été collectés depuis les répertoires personnels des étudiants.</"
-"p><p><b>Remarque :</b> Tous les ordinateurs devront être éteints ou "
-"redémarrés afin d'être utilisables à nouveau pour des études "
-"conventionnelles.</p>"
+"<p><b>Remarque :</b> Tous les ordinateurs doivent être éteints ou redémarrés "
+"avant de pouvoir être à nouveau utilisés pour l’enseignement habituel.</p>"
 
 #: umc/js/computerroom/SettingsDialog.js:82
 msgid ""
@@ -100,18 +96,16 @@ msgstr ""
 "correspondant à l'examen dans votre répertoire personnel.</p>"
 
 #: umc/js/computerroom.js:953
-#, fuzzy
 msgid ""
 "<p>The exam has been successfully finished. All related exam documents have "
 "been collected from the students' home directories.</p>"
 msgstr ""
-"Tous les documents liés à l'examen ont été collectés avec succès depuis les "
-"répertoires personnels des étudiants."
+"<p>L’examen s'est terminé avec succès. Tous les documents liés à l’examen "
+"ont été collectés depuis les répertoires personnels des élèves.</p>"
 
 #: umc/js/computerroom/ScreenshotView.js:286
-#, fuzzy
 msgid "All computers in this room are offline."
-msgstr "{0} ordinateurs sont dans cette salle"
+msgstr "Tous les ordinateurs de cette salle sont hors ligne."
 
 #: umc/js/computerroom.js:901
 msgid ""
@@ -149,11 +143,11 @@ msgstr "Choisissez l'école"
 
 #: umc/js/computerroom.js:149
 msgid "Close exam mode"
-msgstr ""
+msgstr "Fermer le mode examen"
 
 #: umc/js/computerroom.js:1138
 msgid "Close module"
-msgstr ""
+msgstr "Fermer le module"
 
 #: umc/js/computerroom.js:199 umc/js/computerroom.js:877
 msgid "Collect results"
@@ -174,7 +168,7 @@ msgstr "Type d'ordinateur"
 
 #: umc/js/computerroom.js:141
 msgid "Continue without finishing"
-msgstr ""
+msgstr "Continuer sans conclure"
 
 #: umc/js/computerroom.js:1230
 #, javascript-format
@@ -222,19 +216,25 @@ msgid ""
 "the computeroom module again you can return to the exam mode. Please do not "
 "forget to finish the exam at a later time."
 msgstr ""
+"Voulez-vous vraiment fermer le mode examen ? CONLURE L’EXAMEN termine "
+"l’examen et les résultats des participant·es seront copiés dans votre "
+"répertoire personnel. CONTINUER SANS CONCLURE ferme l’onglet et l’examen "
+"continue. En ouvrant à nouveau le module « Salle informatique », vous "
+"pourrez revenir au mode examen. N’oubliez pas de terminer l’examen plus tard."
 
 #: umc/js/computerroom.js:1135
 msgid "Do you want to create a computer room now or close the module?"
 msgstr ""
+"Voulez-vous créer une salle informatique maintenant ou fermer le module ?"
 
 #: umc/js/computerroom/SettingsDialog.js:164
 msgid "Exam files only"
-msgstr ""
+msgstr "Fichiers d’examen uniquement"
 
 #: umc/js/computerroom.js:575
 #, javascript-format
 msgid "Exam mode - %s"
-msgstr "Mode d'examen - %s"
+msgstr "Mode examen - %s"
 
 #: umc/js/computerroom.js:815
 msgid "Failed to open a new session for the room."
@@ -296,9 +296,8 @@ msgid "MAC address"
 msgstr "Adresse MAC"
 
 #: umc/js/computerroom.js:1140
-#, fuzzy
 msgid "Manage computer rooms"
-msgstr "Sélectionnez la salle informatique"
+msgstr "Gérer les salles informatiques"
 
 #: umc/js/computerroom.js:631
 msgid "Monitoring is activated"
@@ -318,7 +317,7 @@ msgstr "Aucune salle sélectionnée"
 
 #: umc/js/computerroom/ScreenshotView.js:164
 msgid "No user logged in"
-msgstr ""
+msgstr "Personne n’est connecté"
 
 #: umc/js/computerroom/ScreenshotView.js:269
 msgid "Normal"
@@ -329,7 +328,6 @@ msgid "Ok"
 msgstr "Valider"
 
 #: umc/js/computerroom/SettingsDialog.js:164
-#, fuzzy
 msgid "Only own home directory"
 msgstr "Répertoire personnel uniquement"
 
@@ -345,6 +343,8 @@ msgstr "Réglages personnels pour cette salle informatique"
 msgid ""
 "Please contact your system administrator for the creation of computer rooms."
 msgstr ""
+"Veuillez contacter votre administrateur ou administratrice système pour la "
+"création de salles informatiques."
 
 #: umc/js/computerroom.js:896
 msgid "Please wait while all exam documents are being collected."
@@ -519,13 +519,15 @@ msgstr "Les utilisateurs sélectionnés se déconnectent."
 
 #: umc/js/computerroom.js:1137
 msgid "There are no computer rooms available"
-msgstr ""
+msgstr "Aucune salle informatique disponible"
 
 #: umc/js/computerroom.js:927
 msgid ""
 "There is no exam running in this room anymore. It seems like the exam was "
 "finished properly from somewhere else."
 msgstr ""
+"Il n’y a plus d’examen en cours dans cette salle. L’examen semble avoir été "
+"conclu correctement depuis un autre endroit."
 
 #: umc/js/computerroom.js:1152
 #, javascript-format

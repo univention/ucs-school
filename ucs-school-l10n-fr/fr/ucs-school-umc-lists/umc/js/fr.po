@@ -8,49 +8,51 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-lists\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2021-12-15 15:38+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2022-01-05 06:17+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: umc/js/schoollists.js:119
 msgid "Class or workgroup"
-msgstr ""
+msgstr "Classe ou groupe de travail"
 
 #: umc/js/schoollists.js:129
 msgid "Download a list of group members"
-msgstr ""
+msgstr "Télécharger la liste des membres du groupe"
 
 #: umc/js/schoollists.js:145
 msgid "Download a list of group members (in an alternative format)"
 msgstr ""
+"Télécharger la liste des membres du groupe (dans un format alternatif)"
 
 #: umc/js/schoollists.js:146
 msgid "Export (Alternative format)"
-msgstr ""
+msgstr "Exporter (format alternatif)"
 
 #: umc/js/schoollists.js:130
 msgid "Export (Recommended)"
-msgstr ""
+msgstr "Exporter (recommandé)"
 
 #: umc/js/schoollists.js:139 umc/js/schoollists.js:154
 msgid "Please select a class or workgroup."
-msgstr ""
+msgstr "Veuillez sélectionner une classe ou un groupe de travail."
 
 #: umc/js/schoollists.js:108
 msgid "School"
-msgstr ""
+msgstr "École"
 
 #: umc/js/schoollists.js:118
 msgid "Select a class or workgroup."
-msgstr ""
+msgstr "Sélectionnez une classe ou un groupe de travail."
 
 #: umc/js/schoollists.js:107
 msgid "Select the school."
-msgstr ""
+msgstr "Sélectionnez l’école."
 
 #: umc/js/schoollists.js:93
 msgid ""
@@ -62,3 +64,11 @@ msgid ""
 "list in an alternative format which is UTF-8 encoded and uses commas as "
 "field separators.</p>"
 msgstr ""
+"Ce module vous permet d’exporter des listes de classes et de groupes de "
+"travail. Les listes sont au format CSV. Si vous rencontrez des problèmes "
+"pour ouvrir le fichier exporté, assurez-vous que le codage est réglé sur "
+"UTF-16 et que le séparateur de champs sélectionné est la tabulation.<p><a "
+"target='_blank' href=modules/schoollists/lo_import_hl_en.png>Aide pour "
+"LibreOffice</a></p><p>Si vous ne pouvez pas ouvrir ce fichier, vous pouvez "
+"essayer d’exporter la liste dans un format alternatif codé en UTF-8 et "
+"utilisant des virgules comme séparateurs de champs.</p>"

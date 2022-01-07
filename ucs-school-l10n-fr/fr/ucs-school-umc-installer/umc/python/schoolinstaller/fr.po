@@ -6,15 +6,15 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2021-12-15 15:38+0100\n"
-"PO-Revision-Date: 2017-05-23 22:37+0100\n"
-"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
+"PO-Revision-Date: 2022-01-05 02:07+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: umc/python/schoolinstaller/__init__.py:913
 #, python-format
@@ -65,7 +65,7 @@ msgstr ""
 
 #: umc/python/schoolinstaller/__init__.py:358
 msgid "Initializing"
-msgstr "Initialisation..."
+msgstr "Initialisation"
 
 #: umc/python/schoolinstaller/__init__.py:749
 msgid "Installation of UCS@school packages"
@@ -76,13 +76,13 @@ msgid "Invalid UCS@school configuration."
 msgstr "Configuration UCS@school invalide."
 
 #: umc/python/schoolinstaller/__init__.py:614
-#, fuzzy
 msgid ""
 "Invalid server role! UCS@school can only be installed on the system roles "
 "Primary Directory Node, Backup Directory Node, or Replica Directory Node."
 msgstr ""
-"Rôle de serveur invalide ! UCS@school ne peut être installé que sur le "
-"Primary Directory Node, Backup Directory Node, ou le Replica Directory Node."
+"Rôle de serveur non valide ! UCS@school ne peut être installé que sur les "
+"rôles de système suivants : Primary Directory Node, Backup Directory Node ou "
+"Replica Directory Node."
 
 #: umc/python/schoolinstaller/__init__.py:550
 msgid ""
@@ -163,15 +163,14 @@ msgstr ""
 "serveurs UCS@school. Impossible d'effectuer l'installation sur ce système."
 
 #: umc/python/schoolinstaller/__init__.py:681
-#, fuzzy
 msgid ""
 "The UCS@school Primary Directory Node needs to be configured similarly to "
 "this Backup Directory Node. Please choose the correct environment type for "
 "this system."
 msgstr ""
-"Le UCS@school Primary Directory Node doit être configuré de manière "
-"identique à celle de ce système de secours. Veuillez choisir le type "
-"d'environnement correct pour ce système."
+"Le Primary Directory Node de UCS@school doit être configuré de la même "
+"manière que ce Backup Directory Node. Veuillez choisir le type "
+"d’environnement approprié pour ce système."
 
 #: umc/python/schoolinstaller/__init__.py:847
 msgid ""
@@ -181,12 +180,13 @@ msgid ""
 "\"Add school\" on the Primary Directory Node and perform a domain join on "
 "this machine via the UMC module \"Domain join\"."
 msgstr ""
-"Les paquetages logiciels de UCS@school ont été installés, cependant, une UO "
-"de l'école n'a pas pu être créée et par conséquent, le système n'a pas pu "
-"rejoindre à nouveau le domaine. Veuillez créer une nouvelle structure UO "
-"d'école par le biais du module UMC « Ajouter une école » sur le Primary "
-"Directory Node et faire en sorte que cette machine rejoigne le domaine par "
-"le biais du module UMC « Rejoindre le domaine »."
+"Les paquetages logiciels de UCS@school ont été installés, toutefois une "
+"unité organisationnelle d’école n’a pas pu être créée et, par conséquent, le "
+"système n’a pas pu rejoindre à nouveau le domaine. Veuillez créer une "
+"nouvelle structure d’unité organisationnelle d’école via le module UMC "
+"« Ajouter une école » sur le Primary Directory Node, puis effectuer la "
+"jonction de cette machine au domaine via le module UMC « Intégration au "
+"domaine »."
 
 #: umc/python/schoolinstaller/__init__.py:117
 msgid "The entered FQDN is not a valid value"
@@ -210,7 +210,7 @@ msgstr ""
 
 #: umc/python/schoolinstaller/__init__.py:604
 msgid "The specified school OU is not valid."
-msgstr "L'UO de l'école précisée est invalide."
+msgstr "L’unité organisationnelle d’école spécifiée n’est pas valide."
 
 #: umc/python/schoolinstaller/__init__.py:667
 #: umc/python/schoolinstaller/__init__.py:712
@@ -223,15 +223,15 @@ msgstr ""
 "pour pouvoir continuer."
 
 #: umc/python/schoolinstaller/__init__.py:877
-#, fuzzy
 msgid ""
 "Validating the LDAP school OU structure failed. It seems that the current "
 "Replica Directory Node has already been assigned to a different school or "
 "that the specified school OU name is already in use."
 msgstr ""
-"Échec de la validation de la structure LDAP de l'UO de l'école. Il semble "
-"que le Replica Directory Node actuel ait déjà été assigné à une école "
-"différente ou que le nom d'UO de l'école fourni est déjà utilisé."
+"Échec de la validation de la structure LDAP de l’unité organisationnelle de "
+"l’école. Il semble que le Replica Directory Node actuel soit déjà assigné à "
+"une autre école ou que le nom spécifié pour l’unité organisationnelle de "
+"l'école soit déjà utilisé."
 
 #: umc/python/schoolinstaller/__init__.py:902
 msgid "finished..."

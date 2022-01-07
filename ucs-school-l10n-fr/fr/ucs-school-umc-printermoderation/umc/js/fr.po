@@ -6,29 +6,28 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-printermoderation\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2021-12-15 15:38+0100\n"
-"PO-Revision-Date: 2017-05-23 22:38+0100\n"
-"Last-Translator: Nicolas Ternisien <nicolas@workshop-chapina.com>\n"
+"PO-Revision-Date: 2022-01-05 06:20+0100\n"
+"Last-Translator: Nicolas Sidi <nicolas.sidi@mailbox.org>\n"
 "Language-Team: French <fr@workshop-chapina.com>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: umc/js/printermoderation.js:276
-#, fuzzy
 msgid "A printer must be selected on which the document {0} should be printed."
 msgstr ""
-"Une imprimante sur laquelle les {0} documents seront imprimés doit être "
-"sélectionnée."
+"Il faut sélectionner une imprimante sur laquelle le document {0} doit être "
+"imprimé."
 
 #: umc/js/printermoderation.js:279
 msgid ""
 "A printer must be selected on which the {0} documents should be printed."
 msgstr ""
-"Une imprimante sur laquelle les {0} documents seront imprimés doit être "
-"sélectionnée."
+"Il faut sélectionner une imprimante sur laquelle les documents {0} doivent "
+"être imprimés."
 
 #: umc/js/printermoderation.js:169
 msgid "All classes and workgroups"

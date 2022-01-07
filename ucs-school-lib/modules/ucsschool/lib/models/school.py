@@ -75,8 +75,8 @@ if TYPE_CHECKING:
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     name = SchoolName(_("School name"))  # type: str
-    dc_name = DCName(_("DC Name"))  # type: str # ist hier der Educational Server gemeint?
-    dc_name_administrative = DCName(_("DC Name of the administrative server"))  # type: str
+    dc_name = DCName(_("DC name"))  # type: str # ist hier der Educational Server gemeint?
+    dc_name_administrative = DCName(_("DC name of the administrative server"))  # type: str
     class_share_file_server = ShareFileServer(
         _("Server for class shares"), udm_name="ucsschoolClassShareFileServer"
     )  # type: str
