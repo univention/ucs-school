@@ -93,6 +93,11 @@ define([
 				name: 'start',
 				headerText: _('Import user accounts'),
 				helpText: _('Please select the school and the role of user for the import.'),
+				/* Suggestions for modifying the helpText:
+				'Please select the school and the user role for the import.'
+				'Please select the school and the user role for this import.'
+				'Please select the school and user role for the import.'
+				*/
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
@@ -113,7 +118,7 @@ define([
 			},{
 				name: 'select-file',
 				headerText: _('Upload data'),
-				helpText: _('Please select and upload the data export from the School Information System.'),
+				helpText: _('Please select and upload the data export from the school information system.'),
 				widgets: [{
 					type: Uploader,
 					name: 'file',
@@ -135,7 +140,8 @@ define([
 			},{
 				name: 'dry-run-overview',
 				headerText: _('Data examination completed'),
-				helpText: _('The examination of the uploaded data completed successfully. Following, you see the output of the data import interfrace. Press "Start Import" to proceed with the actual user import.'),
+				helpText: _('The examination of the uploaded data completed successfully. In the following, you can see the output of the data import interface. Press "Start Import" to proceed with the actual user import.'),
+				// helpText: _('The examination of the uploaded data completed successfully. The output of the data import interface is displayed below. If it displays the desired changes, press "Start Import" to proceed with the actual user import.'),
 				widgets: [{
 					name: 'summary',
 					type: Text,

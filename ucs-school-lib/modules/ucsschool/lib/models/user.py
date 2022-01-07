@@ -472,8 +472,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.add_error(
                     "school_classes",
                     _(
-                        "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
-                        "attributes."
+                        "School {school!r} in 'school_classes' is missing in the user's 'school(s)' "
+                        "attribute."
                     ).format(school=school),
                 )
         # check syntax of all class names

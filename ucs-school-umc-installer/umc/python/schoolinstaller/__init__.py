@@ -847,7 +847,7 @@ class Instance(Base):
                             "The UCS@school software packages have been installed, however, a school "
                             "OU could not be created and consequently a re-join of the system has not "
                             "been performed. Please create a new school OU structure using the UMC "
-                            'module "Add school" on the Primary Directory Node and perform a domain '
+                            'module "Add schools" on the Primary Directory Node and perform a domain '
                             'join on this machine via the UMC module "Domain join".'
                         )
                     )
