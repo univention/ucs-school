@@ -99,7 +99,7 @@ class Instance(SchoolBaseModule):
                     except KeyError:
                         raise UMC_Error(
                             _(
-                                "{!r} is not a valid UDM-property. Please change the value of UCR "
+                                "{!r} is not a valid UDM-property. Please change the value of the UCR variable "
                                 "ucsschool/umc/lists/class/attributes."
                             ).format(attr)
                         )

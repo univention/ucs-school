@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2021-09-13 12:18+0200\n"
+"POT-Creation-Date: 2022-03-09 16:29+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:521
+#: umc/python/computerroom/__init__.py:527
 msgid "A different user is already running a computer room session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:721
+#: umc/python/computerroom/__init__.py:727
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."
@@ -24,18 +24,33 @@ msgstr ""
 "In diesem Raum wird derzeit schon eine Klassenarbeit geschrieben. Bitte "
 "wählen Sie einen anderen Raum."
 
-#: umc/python/computerroom/__init__.py:283
-#: umc/python/computerroom/__init__.py:287
-#: umc/python/computerroom/__init__.py:290
-#: umc/python/computerroom/__init__.py:296
+#: umc/python/computerroom/__init__.py:284
+#: umc/python/computerroom/__init__.py:288
+#: umc/python/computerroom/__init__.py:291
+#: umc/python/computerroom/__init__.py:297
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Ungültige Raum-DN: %s"
 
-#: umc/python/computerroom/__init__.py:90
+#: umc/python/computerroom/__init__.py:988
+msgid "Plugin not found."
+msgstr "Plugin nicht gefunden."
+
+#: umc/python/computerroom/__init__.py:267
+msgid "Unknown computer"
+msgstr "Unbekannter Computer"
+
+#: umc/python/computerroom/__init__.py:533
+#: umc/python/computerroom/__init__.py:552
+#: umc/python/computerroom/__init__.py:667
+#: umc/python/computerroom/__init__.py:764
+msgid "no room selected"
+msgstr "kein Raum ausgewählt"
+
+#: umc/python/computerroom/__init__.py:91
 msgid "screenshot_denied.svg"
 msgstr "screenshot_denied_de.svg"
 
-#: umc/python/computerroom/__init__.py:91
+#: umc/python/computerroom/__init__.py:92
 msgid "screenshot_notready.svg"
 msgstr "screenshot_notready_de.svg"

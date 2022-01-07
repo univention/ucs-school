@@ -92,7 +92,7 @@ define([
 			},{
 				name: 'start',
 				headerText: _('Import user accounts'),
-				helpText: _('Please select the school and the role of user for the import.'),
+				helpText: _('Please select the school and the user role for the import.')
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
@@ -135,7 +135,7 @@ define([
 			},{
 				name: 'dry-run-overview',
 				headerText: _('Data examination completed'),
-				helpText: _('The examination of the uploaded data completed successfully. Following, you see the output of the data import interfrace. Press "Start Import" to proceed with the actual user import.'),
+				helpText: _('The examination of the uploaded data completed successfully. In the following, you can see the output of the data import interface. Press "Start Import" to proceed with the actual user import.'),
 				widgets: [{
 					name: 'summary',
 					type: Text,

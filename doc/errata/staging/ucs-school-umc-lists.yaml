@@ -7,4 +7,5 @@ fix: 3.0.5A~5.0.0.202201211207
 desc: |
  * Deactivated students can be excluded from the class list export. (Bug #50335)
  * Students that are not assigned to a class are ignored when the class list is created. (Bug #52335)
-bug: [50335, 52335]
+ * Minor UMC output string enhancements were implemented (Bug #54030).
+bug: [50335, 52335, 54030]

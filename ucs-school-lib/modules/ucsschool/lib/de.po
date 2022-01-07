@@ -304,7 +304,7 @@ msgstr "Verwaltungsserver"
 #: models/school.py:78 models/school.py:79
 msgid "Hostname of educational DC and administrative DC must not be equal"
 msgstr ""
-"Hostnamen der educational DC und administrative DC dürfen nicht identisch "
+"Hostnamen der edukativen DC und administrativen DC dürfen nicht identisch "
 "sein"
 
 #: models/share.py:46

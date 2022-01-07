@@ -473,7 +473,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     "school_classes",
                     _(
                         "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
-                        "attributes."
+                        "attribute."
                     ).format(school=school),
                 )
         # check syntax of all class names

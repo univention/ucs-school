@@ -264,7 +264,7 @@ class ComputerSanitizer(StringSanitizer):
         try:
             return self.instance._computerroom.get(value)
         except KeyError:
-            raise UMC_Error("Unknown computer")
+            raise UMC_Error(_("Unknown computer"))
 
 
 class ComputerRoomDNSanitizer(DNSanitizer):
@@ -530,7 +530,7 @@ class Instance(SchoolBaseModule):
     def query(self, request, ldap_user_read=None):
         """Searches for entries. This is not allowed if the room could not be acquired."""
         if not self._computerroom.school or not self._computerroom.room:
-            raise UMC_Error("no room selected")
+            raise UMC_Error(_("no room selected"))
 
         if request.options.get("reload", False):
             self._computerroom.room = self._computerroom.room  # believe me that makes sense :)
@@ -549,7 +549,7 @@ class Instance(SchoolBaseModule):
         """
 
         if not self._computerroom.school or not self._computerroom.room:
-            raise UMC_Error("no room selected")
+            raise UMC_Error(_("no room selected"))
 
         computers = [computer.dict for computer in self._computerroom.values() if computer.hasChanged]
         info = _readRoomInfo(self._computerroom.roomDN)
@@ -664,7 +664,7 @@ class Instance(SchoolBaseModule):
         """Return the current settings for a room"""
 
         if not self._computerroom.school or not self._computerroom.room:
-            raise UMC_Error("no room selected")
+            raise UMC_Error(_("no room selected"))
 
         ucr.load()
         rule = ucr.get("proxy/filter/room/%s/rule" % self._computerroom.room, "none")
@@ -761,7 +761,7 @@ class Instance(SchoolBaseModule):
         """Defines settings for a room"""
 
         if not self._computerroom.school or not self._computerroom.room:
-            raise UMC_Error("no room selected")
+            raise UMC_Error(_("no room selected"))
 
         # find AT jobs for the room at remove them
         jobs = atjobs.list(extended=True)
@@ -985,6 +985,6 @@ class Instance(SchoolBaseModule):
     def plugins_execute(self, request):
         plugin = self._plugins.get(request.options["plugin"])
         if not plugin:
-            raise UMC_Error("Plugin not found.")
+            raise UMC_Error(_("Plugin not found."))
         result = plugin.execute(request.options["computer"])
         self.finished(request.id, result)
