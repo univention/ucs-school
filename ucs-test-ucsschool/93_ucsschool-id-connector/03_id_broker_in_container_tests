@@ -1,0 +1,20 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container integration tests for ID Broker (Provisioning API) plugin
+## exposure: dangerous
+## tags: [id-broker]
+
+APP="ucsschool-id-connector"
+CMD1="apk add --no-cache openssh-client sshpass"
+CMD2="cd /$APP/src; /usr/bin/python3 -lv -m pytest -m 'id_broker and not id_broker_compatibility' tests/unittests"
+CMD3="cd /$APP/src; /usr/bin/python3 -lv -m pytest -m 'id_broker and not id_broker_compatibility' -l -v tests/integration_tests"
+
+echo "IP of ID Broker: $(</var/www/IP_idbroker.txt)"
+
+echo "Running in container: $CMD1"
+univention-app shell "$APP" $CMD1
+
+echo "Running in container: sh -c \"$CMD2\""
+univention-app shell "$APP" sh -c "$CMD2"
+
+echo "Running in container: sh -c \"$CMD3\""
+univention-app shell "$APP" sh -c "$CMD3"

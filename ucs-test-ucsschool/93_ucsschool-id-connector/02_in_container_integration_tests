@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner bash
-## desc: In-container integration tests
+## desc: In-container integration tests for Kelvin plugin
 ## exposure: dangerous
 ## tags: [ucsschool-id-connector]
 
