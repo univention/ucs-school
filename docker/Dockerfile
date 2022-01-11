@@ -80,7 +80,7 @@ RUN apk add --no-cache --virtual mybuilddeps $(cat /tmp/alpine_apk_list.build) &
     python3 -m pip install --upgrade pip && \
 	python3 -m pip install --no-cache-dir --compile --upgrade pip wheel && \
 	# build ujson from source https://github.com/esnme/ultrajson/issues/326
-	python3 -m pip install git+git://github.com/esnme/ultrajson.git@2.0.3 && \
+	python3 -m pip install git+https://github.com/esnme/ultrajson.git@2.0.3 && \
 	# Install already, since it would fetch old versions from test.pypi.org in a later step.
 	python3 -m pip install aiohttp certifi && \
 	# python-debian for UCR
@@ -88,7 +88,7 @@ RUN apk add --no-cache --virtual mybuilddeps $(cat /tmp/alpine_apk_list.build) &
 	# install pre-build openapi-client-udm package, not yet built against app host
 	python3 -m pip install --no-cache-dir --compile -i https://test.pypi.org/simple/ openapi-client-udm && \
 	# install most current udm_rest_client package (instead of the one from pypi)
-	python3 -m pip install git+git://github.com/univention/python-udm-rest-api-client.git && \
+	python3 -m pip install git+https://github.com/univention/python-udm-rest-api-client.git && \
 	# install all remaining Python requirements
 	python3 -m pip install --no-cache-dir --compile -r /tmp/requirements_all.txt && \
     apk del --no-cache mybuilddeps && \
