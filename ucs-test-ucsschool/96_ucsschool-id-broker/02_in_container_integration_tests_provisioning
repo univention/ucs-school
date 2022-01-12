@@ -1,0 +1,14 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container integration tests for the ID Brokers Provisioning API
+## exposure: dangerous
+## tags: [ucsschool-id-broker]
+## packages: [id-broker-provisioning-api-plugin]
+
+APP="ucsschool-apis"
+PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-broker-provisioning-api"
+TEST_DIR="tests/integration_tests"
+CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v $TEST_DIR"
+
+echo "Running in container of app '$APP': sh -c \"$CMD\""
+
+univention-app shell "$APP" sh -c "$CMD"

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.25) unstable; urgency=low
+
+  * Bug #54293: split ID Broker test by API
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 Jan 2022 15:56:56 +0100
+
 ucs-test-ucsschool (7.3.24) unstable; urgency=medium
 
   * Bug #53543: improve id connector test section
@@ -6,7 +12,7 @@ ucs-test-ucsschool (7.3.24) unstable; urgency=medium
 
 ucs-test-ucsschool (7.3.23) unstable; urgency=medium
 
-  * Bug #53543: don't execute id broker tests in id connector section 
+  * Bug #53543: don't execute id broker tests in id connector section
 
  -- Tobias Wenzel <wenzel@univention.de>  Fri, 07 Jan 2022 12:02:49 +0100
 
