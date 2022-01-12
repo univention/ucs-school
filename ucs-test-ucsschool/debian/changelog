@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.257) unstable; urgency=low
+
+  * Bug #54293: remove ID Broker tests from 4.4
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 12 Jan 2022 15:52:05 +0100
+
 ucs-test-ucsschool (6.0.256) unstable; urgency=medium
 
   * Bug #53543: improve id connector test section
