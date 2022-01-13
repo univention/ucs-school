@@ -9,6 +9,15 @@ PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-br
 TEST_DIR="tests/integration_tests"
 CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v $TEST_DIR"
 
+if ! univention-app shell ucsschool-apis pytest --help >/dev/null; then
+  echo "Installing testing packages..."
+  univention-app shell "$APP" python3 -m pip install -U pip wheel
+  univention-app shell "$APP" python3 -m pip install poetry
+  univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; poetry export -f requirements.txt --output requirements.txt --dev --without-hashes"
+  univention-app shell "$APP" python3 -m pip uninstall --yes poetry
+  univention-app shell "$APP" python3 -m pip install -r $PLUGIN_DIR/requirements.txt
+fi
+
 echo "Running in container of app '$APP': sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
