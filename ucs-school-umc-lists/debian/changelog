@@ -1,3 +1,9 @@
+ucs-school-umc-lists (3.0.4) unstable; urgency=medium
+
+  * Bug #50335: deactivated students can be filtered from class lists
+
+ -- Fabian Wilhelm <wilhelm@univention.de>  Thu, 13 Jan 2022 08:49:15 +0100
+
 ucs-school-umc-lists (3.0.3) unstable; urgency=medium
 
   * Bug #53375: adjust modules to UCS 5 design
