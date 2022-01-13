@@ -1,3 +1,10 @@
+ucs-school-umc-lists (2.0.0-8) unstable; urgency=medium
+
+  * Bug #52335: Students that are not assigned to a class are ignored when the
+    class list is created
+
+ -- Fabian Wilhelm <wilhelm@univention.de>  Thu, 13 Jan 2022 08:08:10 +0100
+
 ucs-school-umc-lists (2.0.0-7) unstable; urgency=medium
 
   * Bug #52594: migrate to dh_python
