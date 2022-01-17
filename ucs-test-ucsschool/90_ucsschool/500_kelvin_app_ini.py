@@ -97,7 +97,7 @@ def test_ini_settings(ini_url):
     assert config.get("Application", "DockerImage").startswith(
         "docker.software-univention.de/ucsschool-kelvin-rest-api:"
     )
-    if int(version) >= 20200827122150:
+    if int(version) >= 20200827122150 and int(version) < 20220107154847:
         exp = {"domaincontroller_master"}
     else:
         exp = {"domaincontroller_master", "domaincontroller_backup"}

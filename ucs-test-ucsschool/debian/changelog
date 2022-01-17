@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.258) unstable; urgency=medium
+
+  * Bug #54310: fix ucs-tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 17 Jan 2022 10:00:29 +0100
+
 ucs-test-ucsschool (6.0.257) unstable; urgency=low
 
   * Bug #54293: remove ID Broker tests from 4.4
