@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.27) unstable; urgency=medium
+
+  * Bug #54310: fix test. kelvin is not installable on backups
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 17 Jan 2022 09:53:24 +0100
+
 ucs-test-ucsschool (7.3.26) unstable; urgency=low
 
   * Bug #54293: install test dependencies
