@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.28) unstable; urgency=medium
+
+  * Bug #54310: make test more pythonic 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 18 Jan 2022 08:34:33 +0100
+
 ucs-test-ucsschool (7.3.27) unstable; urgency=medium
 
   * Bug #54310: fix test. kelvin is not installable on backups
