@@ -65,20 +65,20 @@ class Instance(SchoolBaseModule):
         school=SchoolSanitizer(required=True),
         group=DNSanitizer(required=True, minimum=1),
         separator=StringSanitizer(required=True),
-        exclude=BooleanSanitizer(required=True)
+        exclude_deactivated=BooleanSanitizer(required=True)
     )
     @LDAP_Connection()
     def csv_list(self, request, ldap_user_read=None, ldap_position=None):
         school = request.options["school"]
         group = request.options["group"]
         separator = request.options["separator"]
-        exclude = request.options["exclude"]
+        exclude_deactivated = request.options["exclude_deactivated"]
         default = "firstname Firstname,lastname Lastname,Class Class,username Username"
         ucr_value = ucr.get("ucsschool/umc/lists/class/attributes", "") or default
         attributes, fieldnames = zip(*[field.split() for field in ucr_value.split(",")])
         rows = []
         for student in self.students(ldap_user_read, school, group):
-            if exclude and not student.is_active():
+            if exclude_deactivated and not student.is_active():
                 continue
             row = []
             student_udm_obj = student.get_udm_object(ldap_user_read)

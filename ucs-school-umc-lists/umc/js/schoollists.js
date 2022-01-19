@@ -180,7 +180,7 @@ define([
 						school: values.school,
 						group: values.group,
 						separator: this._csvFormat === 'excel' ? '\t' : ',',
-						exclude: values.excludeDeactivated
+						exclude_deactivated: values.excludeDeactivated
 					}).then(lang.hitch(this, 'openDownload'));
 				})
 			});
