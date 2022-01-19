@@ -71,7 +71,7 @@ def test_ucs_school_configurable_schoollists():
                 ),
                 u"filename": u"{}.csv".format(class_name),
             }
-            options = {"school": school_name, "group": class_dn, "separator": ",", "exclude": False}
+            options = {"school": school_name, "group": class_dn, "separator": ",", "exclude_deactivated": False}
             try:
                 class_list = connection.umc_command("schoollists/csvlist", options).result
             except HTTPError as exc:
