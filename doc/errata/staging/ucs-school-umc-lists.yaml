@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-lists
-fix: 3.0.4A~5.0.0.202201210942
+fix: 3.0.5A~5.0.0.202201211207
 desc: |
  * Deactivated students can be excluded from the class list export. (Bug #50335)
  * Students that are not assigned to a class are ignored when the class list is created. (Bug #52335)
