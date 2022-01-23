@@ -1,3 +1,9 @@
+ucs-school-import (18.0.14) unstable; urgency=low
+
+  * Bug #54030: add french ldap attribute translations
+
+ -- Johannes Lohmer <lohmer@univention.de>  Thu, 20 Jan 2022 18:36:12 +0100
+
 ucs-school-import (18.0.13) unstable; urgency=low
 
   * Bug #54116: use new ucsschool.lib expiration_date attribute

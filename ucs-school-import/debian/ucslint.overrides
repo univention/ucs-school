@@ -4,3 +4,5 @@
 0010-2:  modules/ucsschool/importer/contrib/csv.py
 0010-2:  modules/ucsschool/http_api/manage.py
 0010-2:  usr/share/doc/ucs-school-import-http-api/plantuml/Makefile
+0006-2: debian/ucs-school-import-http-api.postinst
+0006-2: debian/ucs-school-import.postinst

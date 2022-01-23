@@ -115,4 +115,127 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	fi
 fi
 
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl "18.0.14"; then
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=UCSschool-School-OU,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Unité organisationnelle UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cette unité organisationnelle est une école UCS@school"'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
+		--append translationShortDescription='"fr_FR" "Serveur pour les répertoires personnels Windows"' \
+		--append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de partage pour le répertoire personnel Windows des nouveaux comptes d’utilisation de cette UO (unité organisationnelle)."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
+		--append translationShortDescription='"fr_FR" "Serveur pour les partages de classe"' \
+		--append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de fichiers pour les partages des nouvelles classes de cette UO (unité organisationnelle)."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=UCSschool-School-displayName,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Nom affiché"' \
+		--append translationLongDescription='"fr_FR" "Le nom affiché est utilisé dans les différents modules de UCS@school."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleOU,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+
+	#### users/user & settings/usertemplate ####
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolStudent,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Élève UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e élève UCS@school"'
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolTeacher,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Enseignant·e UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e enseignant·e UCS@school"'
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolStaff,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Personnel administratif UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un personnel administratif dans UCS@school"'
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolAdministrator,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Responsable UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un administrateur ou une administratrice de UCS@school"'
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolExam,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Participant·e à un examen UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e participant·e à un examen dans UCS@school"'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles cet utilisateur ou cette utilisatice appartient."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolSourceUID,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Identifiant de la base de données externe"' \
+		--append translationLongDescription='"fr_FR" "Identifiant de la base de données externe depuis laquelle le compte d’utilisation a été importé."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRecordUID,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Clé primaire de la base de données externe."' \
+		--append translationLongDescription='"fr_FR" "Clé primaire de la base de données externe depuis laquelle le compte d’utilisation a été importé."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolPurgeTimestamp,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Date de suppression programmée"' \
+		--append translationLongDescription='"fr_FR" "À la date spécifiée ici, ce compte d’utilisation sera définitivement supprimé de l’annuaire LDAP."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleUsers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+
+	#### groups/group ####
+
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolAdministratorGroup,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Groupe d’administration de UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Spécifie que ce groupe contient des administrateurs et administratrices de UCS@school pour l’école en question"'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolSchool-AdministratorGroup,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Général"' \
+		--append translationShortDescription='"fr_FR" "Écoles"' \
+		--append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles ce groupe appartient"'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleGroups,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+
+	#### computers/* #####
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleClientComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+
+	#### shares/share ####
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolRoleShares,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+		--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."'
+fi
+
 exit 0

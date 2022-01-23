@@ -76,4 +76,24 @@ done
 # conditional restart of univention directory listener
 systemctl try-restart univention-directory-listener
 
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl "18.0.14"; then
+	eval "$(ucr shell)"
+	univention-directory-manager settings/extended_options modify --ignore_not_exists \
+		--dn "cn=ucsschoolImportGroup,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationShortDescription='"fr_FR" "Autorisations d’importation dans UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Active les options de configuration de ce groupe qui contrôlent les autorisations d’importation dans UCS@school."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolSchool-ImportSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Autorisations d’importation"' \
+		--append translationShortDescription='"fr_FR" "Écoles autorisées pour l’importation dans UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Les membres de ce groupe sont autorisés à importer des comptes d’utilisation dans UCS@school pour les écoles sélectionnées."'
+
+	univention-directory-manager settings/extended_attribute modify --ignore_not_exists \
+		--dn "cn=ucsschoolSchool-ImportRole,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--append translationGroupName='"fr_FR" "Autorisations d’importation"' \
+		--append translationShortDescription='"fr_FR" "Rôles autorisés pour l’importation dans UCS@school"' \
+		--append translationLongDescription='"fr_FR" "Les membres de ce groupe sont autorisés à importer des comptes d’utilisation dans UCS@school pour les rôles sélectionnés."'
+fi
+
 exit 0
