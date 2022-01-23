@@ -36,7 +36,6 @@
 build:
 
 include all_targets.mk
-$(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/ucs-school-ucr-l10n.mo: fr/ucs-school-ucr-l10n.po
 
 install: $(ALL_TARGETS)
 
