@@ -71,7 +71,7 @@ def test_ucs_school_schoollists_student_without_class(ucr, schoolenv):
     connection = Client(host, language="en_US")
     connection.authenticate(admin, passwd)
     for separator in [",", "\t"]:
-        options = {"school": school_name, "group": workg_dn, "separator": separator}
+        options = {"school": school_name, "group": workg_dn, "separator": separator, "exclude_deactivated": False}
         class_list = connection.umc_command("schoollists/csvlist", options).result
         expected_class_list = {
             u"csv": u"Firstname{sep}Lastname{sep}Class{sep}Username\r\n".format(sep=separator),
