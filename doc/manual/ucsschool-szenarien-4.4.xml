@@ -791,7 +791,7 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<para>
-							Beispiel für eine Anwendung wie bspw. Webmail (Zugriff von außen): <systemitem class="domainname">mail.example.org</systemitem>
+							Beispiel für eine Anwendung wie beispielsweise Webmail (Zugriff von außen): <systemitem class="domainname">mail.example.org</systemitem>
 						</para>
 					</listitem>
 				</itemizedlist>
@@ -859,14 +859,14 @@ feedback@univention.de
 							<para>
 								In UCS@school werden mindestens im Falle der Schulserver auch Samba Active Directory Domaincontroller betrieben.
 								Aus Gründen der Abwärtskompatibilität wird dabei auch immer ein NetBIOS- bzw. Legacy-Domain-Name erstellt. Im Falle von
-								<systemitem	class="domainname">example.org</systemitem> als DNS-Domänenname würde automatisch 
-								<systemitem class="domainname">EXAMPLE</systemitem> als NetBIOS-Domänenname gewählt. Der NetBIOS-Domänenname
+								<systemitem	class="domainname">example.org</systemitem> als DNS-Domänenname würde automatisch
+								<systemitem class="domainname">EXAMPLE</systemitem> als NetBIOS-Domänenname gesetzt sein. Der NetBIOS-Domänenname
 								ist auf 15 Zeichen begrenzt. Dies kann zu Situationen führen, in denen der NetBIOS-Domänenname ungünstig abgeschnitten wird.
 								Wählt man bspw. <systemitem	class="domainname">schulen-musterstadt.de</systemitem> als DNS-Domänenname, würde der automatisch
-								abgeleitete NetBIOS-Domänenname <systemitem	class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist bspw. beim Anmeldebildschirm
+								abgeleitete NetBIOS-Domänenname <systemitem	class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist beispielsweise beim Anmeldebildschirm
 								an Windows-Clients der Domäne zu sehen.
 								Möchte man nun lieber <systemitem	class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen, so ist auf dem &ucsUAS;-Server 
-								bereits während der Installation der gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> zu setzen (vgl.
+								bereits während der Installation der gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> zu setzen (siehe auch
 								<ulink url="https://help.univention.com/t/how-to-define-netbios-domain-in-installer/6390">How to define the NetBIOS name during installation</ulink>).
 							</para>
 						</listitem>
@@ -1293,7 +1293,7 @@ feedback@univention.de
 					Für weitere IT-Angebote können keine Minimalanforderungen
 					genannt werden, da diese sowohl von der Anzahl der
 					parallelen Benutzer als auch von der Anwendung selbst
-					abhängig sind.  Eine Abstimmung mit dem jeweiligen Hersteller ist
+					abhängig sind. Eine Abstimmung mit dem jeweiligen Hersteller ist
 					in aller Regel notwendig.
 				</para>
 			</section>
@@ -1522,19 +1522,19 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>
-						Ist die Verfügbarkeit von performanten Festplatten (bspw. SSDs) begrenzt und reicht nicht
+						Ist die Verfügbarkeit von performanten Festplatten (zum Beispiel SSDs) begrenzt und reicht nicht
 						für das gesamte System aus, so sollte zumindest <filename class="directory">/var/lib</filename> als eigene
 						Partition auf performanten Festplatten angelegt werden.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						Je nach System und verwendeten Diensten (bspw. für Schulserver mit lokalen Benutzerdaten) sollte die Auslagerung auf einem
+						Je nach System und verwendeten Diensten (beispielsweise für Schulserver mit lokalen Benutzerdaten) sollte die Auslagerung auf einem
 						eigenen Dateisystem auch für den Pfad
 						<filename class="directory">/home</filename> erfolgen.
 					</para>
 				</listitem>
-				
+
 			</itemizedlist>
 		</para>
 		<section id="installation_master">
@@ -1544,18 +1544,29 @@ feedback@univention.de
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>Die IP-Adresskonfiguration erfolgt
-							entsprechend des Netzkonzepts.</para></listitem>
-					<listitem><para>Als Externer DNS-Server bzw. DNS-Forwarder
+					<listitem>
+						<para>
+							Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.
+						</para>
+					</listitem>
+					<listitem>
+						<para>Als Externer DNS-Server bzw. DNS-Forwarder
 							ist die IP-Adresse des DNS-Servers des
 							Internetproviders oder des Rechenzentrum-Betreibers einzutragen.
-					</para></listitem>
+						</para>
+					</listitem>
 					<listitem><para>Die folgende Option ist auszuwählen, um den
 							&ucsMaster; zu installieren: <option>Erstellen einer
 								neuen &ucsUCS;-Domäne</option></para></listitem>
-					<listitem><para>Nach der Eingabe des Domänennamen wird automatisch
-					eine LDAP-Basis vorgeschlagen. Diese sollte entsprechend des Namenskonzeptes
-					angepasst werden.</para></listitem>
+					<listitem>
+						<para>
+                            Nach der Eingabe des Domänennamen wird automatisch
+                            eine LDAP-Basis vorgeschlagen. Diese sollte
+                            entsprechend des Namenskonzeptes
+                            angepasst werden.
+						</para>
+					</listitem>
 					<listitem><para>Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.</para></listitem>
@@ -1572,17 +1583,21 @@ feedback@univention.de
 							Umgebung&quot; zu wählen und der Assistent bis zum
 							Ende auszuführen.</para></listitem>
 					<listitem>
-						<para><emphasis>für Szenario <link
-									linkend="scenario-3">3</link> und <link
-									linkend="scenario-4">4</link></emphasis></para>
+						<para>
+							<emphasis>
+								für Szenario <link linkend="scenario-3">3</link>
+								und <link linkend="scenario-4">4</link>
+							</emphasis>
+						</para>
 						<para>
 							Um Gruppenrichtlinien für alle Schulen über eine zentrale Stelle
-							verwalten zu können, muss zudem über das Univention App Center die App 
+							verwalten zu können, muss zudem über das Univention App Center die App
 							<package>Active Directory kompatibler Domänen-Controller</package> installiert werden.
 							Soll der NetBIOS-Domänenname nicht automatisch erzeugt werden, ist dieser vor der Installation
-							explizit zu konfigurieren (vgl. <xref linkend="concepts_names_domain" />).
-							Sollen in der &ucsUAS;-Domäne mehr als 50.000 Benutzer verwaltet werden, setzen Sie sich bitte vorab mit Univention in Verbindung,
-							um Möglichkeiten zur Performanceoptimierung zu besprechen.
+							explizit zu konfigurieren (siehe auch <xref linkend="concepts_names_domain" />).
+							Sollen in der &ucsUAS;-Domäne mehr als 50.000 Benutzer verwaltet werden, setzen
+							Sie sich bitte vorab mit Univention in Verbindung, um Möglichkeiten zur
+							Performanceoptimierung zu besprechen.
 						</para>
 					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
@@ -1622,17 +1637,23 @@ feedback@univention.de
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren.  Anschließend ist der Domänenbeitritt
 							zu starten.</para></listitem>
-					<listitem><para>Während des Domänenbeitritts wird die
-							<package>&ucsUAS;</package> App automatisch installiert. 
+					<listitem>
+						<para>
+							Während des Domänenbeitritts wird die
+							<package>&ucsUAS;</package> App automatisch installiert.
 							Die ist über das Univention App Center zu prüfen.
-							</para></listitem>
-					<listitem><para>Im Anschluss an die Installation der
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Im Anschluss an die Installation der
 							<package>&ucsUAS;</package> App ist in der &ucsUMC;
 							in der Kategorie
 							<emphasis>Schuladministration</emphasis> zu prüfen, dass
-							der 
-							<emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
-							erfolgreich abgeschlossen wurde.</para></listitem>
+							der <emphasis>&ucsUAS; Einrichtungsassistent</emphasis>
+							erfolgreich abgeschlossen wurde.
+						</para>
+					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1661,23 +1682,35 @@ feedback@univention.de
 							DNS-Forwarder wird beim Domänenbeitritt automatisch
 							vom &ucsMaster; übernommen und braucht somit nicht
 							eingetragen zu werden.</para></listitem>
-					<listitem><para>Die folgende Option ist auszuwählen, um den
+					<listitem>
+						<para>
+							Die folgende Option ist auszuwählen, um den
 							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>.  Anschließend ist die Rolle
 							&ucsSlave; auszuwählen und zu bestätigen, dass es sich um einen
-							zentralen &ucsSlave; handelt und explizit nicht um einen Schulserver.</para></listitem>
-					<listitem><para>Das installierte System ist abschließend bis
+								zentralen &ucsSlave; handelt und explizit nicht um einen Schulserver.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Das installierte System ist abschließend bis
 							zum letzten verfügbaren Errata-Update zu
 							aktualisieren. Falls noch nicht erfolgt, ist der Domänenbeitritt
-							zu starten.</para></listitem>
+							zu starten.
+						</para>
+					</listitem>
 					<listitem><para>Nach Abschluss der Installation ist über das
 							Univention App Center die gewünschte App, zum
 							Beispiel <package>RADIUS</package>, zu
 							installieren.</para></listitem>
-					<listitem><para>Die App <package>&ucsUAS;</package> soll hier
+					<listitem>
+						<para>
+							Die App <package>&ucsUAS;</package> soll hier
 							<emphasis role="strong">nicht</emphasis> installiert
-							werden</para></listitem>
+							werden.
+						</para>
+					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1725,9 +1758,13 @@ feedback@univention.de
 							Informationen sind in <xref
 								linkend="concepts_monitoring" /> zu
 							finden.</para></listitem>
-					<listitem><para>Die App <package>&ucsUAS;</package> darf
+					<listitem>
+						<para>
+							Die App <package>&ucsUAS;</package> darf
 							<emphasis role="strong">nicht</emphasis> installiert
-							werden</para></listitem>
+							werden.
+						</para>
+					</listitem>
 					<listitem><para>Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
@@ -1758,50 +1795,86 @@ feedback@univention.de
 				<emphasis>für Szenario 3</emphasis>
 			</para>
 			<para>
-				Vor der Installation des Schulservers muss die zugehörige Schule mitsamt dem Namen für den Schulserver 
+				Vor der Installation des Schulservers muss die zugehörige Schule mitsamt dem Namen für den Schulserver
 				auf dem &ucsMaster; angelegt werden. Es ist zudem absolut empfehlenswert auch die der Schule zugehörigen
 				Netzwerke vorab zu importieren.
-				Bitte fahren Sie zunächst mit dem <xref linkend="import" /> fort, importieren zunächst mindestens Schulen und Netzwerke und kommen
+				Bitte fahren Sie zunächst mit dem <xref linkend="import" /> fort, importieren mindestens Schulen und Netzwerke und kommen
 				dann zu diesem Abschnitt für die Installation des Schulservers zurück.
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem><para>Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
-							alle verfügbaren Updates installiert wurden.</para></listitem>
-					<listitem><para>Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
-							Namen für den Schulserver sowie die Netzwerke auf dem &ucsMaster; entsprechend der Beschreibung in <xref linkend="import_schools" /> angelegt bzw. importiert wurden.
-							</para></listitem>
-					<listitem><para>Bei der Partitionierung sollte darauf geachtet werden, dass der
+					<listitem>
+						<para>
+							Es ist sicherzustellen, dass zuvor auf dem &ucsMaster;
+							alle verfügbaren Updates installiert wurden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
+							Namen für den Schulserver sowie die Netzwerke auf dem &ucsMaster; entsprechend der Beschreibung 
+							in <xref linkend="import_schools" /> angelegt bzw. importiert wurden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Bei der Partitionierung sollte darauf geachtet werden, dass der
 							Pfad <filename class="directory">/home</filename> auf einem eigenen Dateisystem abgelegt wird, damit
-							aufgrund von übermäßig vielen Benutzerdaten die Systempartition nicht voll läuft.</para></listitem>
-					<listitem><para>Die IP-Adresskonfiguration erfolgt
-							entsprechend des Netzkonzepts.</para></listitem>
-					<listitem><para>Als DNS-Server sind die IP-Adressen des
+							aufgrund von übermäßig vielen Benutzerdaten die Systempartition nicht voll läuft.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Die IP-Adresskonfiguration erfolgt
+							entsprechend des Netzkonzepts.
+						</para>
+					</listitem>
+					<listitem>
+						<para>Als DNS-Server sind die IP-Adressen des
 							&ucsMaster; und des &ucsBackup; einzutragen.  Der
 							DNS-Forwarder wird beim Domänenbeitritt automatisch
 							vom &ucsMaster; übernommen und braucht somit nicht
-							eingetragen zu werden.</para></listitem>
-					<listitem><para>Die folgende Option ist auszuwählen, um den
+						eingetragen zu werden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>Die folgende Option ist auszuwählen, um den
 							&ucsSlave; als Mitglied der Domäne zu installieren:
 							<option>Einer bestehenden &ucsUCS;-Domäne
 								beitreten</option>. Anschließend ist die Rolle
-							&ucsSlave; auszuwählen.</para></listitem>
-					<listitem><para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername 
+								&ucsSlave; auszuwählen.
+						</para>
+					</listitem>
+					<listitem>
+						<para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername 
 							mit dem Namen des Schulservers übereinstimmt, der beim Anlegen der Schule angegeben wurde.
 							Dies muss der Fall sein, damit der Server im weiteren Verlauf als (edukativer) Schulserver
 							eingerichtet werden kann und explizit nicht als zentraler &ucsSlave;.
-							</para></listitem>
-					<listitem><para>Das installierte System wird automatisch bis
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Das installierte System automatisch bis
 							zum letzten verfügbaren Errata-Update 
-							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.</para></listitem>
-					<listitem><para>Abschließend ist zu prüfen, ob alle
+							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Abschließend ist zu prüfen, ob alle
 							Joinskripte erfolgreich ausgeführt wurden.  Dies
 							kann in der &ucsUMC; in der Kategorie
 							<emphasis>Domäne</emphasis> mit dem Modul
 							<emphasis>Domänenbeitritt</emphasis> geprüft
-							werden.</para></listitem>
-					<listitem><para>Soll der Schulserver auch als DHCP-Server fungieren (empfohlen), muss noch die App
-							"DHCP-Server" über das Univention App Center installiert werden.</para></listitem>
+							werden.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Soll der Schulserver auch als DHCP-Server fungieren (empfohlen), muss noch die App
+							"DHCP-Server" über das Univention App Center installiert werden.
+						</para>
+					</listitem>
 				</itemizedlist>
 				Weitere Hinweise zur Installation eines Schulservers und zum &ucsUAS; Einrichtungsassistent finden sich auch im
 				<ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.4.html#school:installation:slave">&ucsUAS;
@@ -2110,9 +2183,9 @@ feedback@univention.de
 							<emphasis>Schulen</emphasis> ausfüllen.
 						</para>
 						<para>
-							Die Spalten für "Schulkürzel", "Schulname" und "Server Pädagogik" sind Pflichtfelder. 
+							Die Spalten für "Schulkürzel", "Schulname" und "Server Pädagogik" sind Pflichtfelder.
 							Die Spalte "Server Verwaltung" ist optional und die Spalte "Server Fileshare" sollte
-							nur in ganz bestimmten Fällen ausgefüllt werden und verbleibt i.d.R. leer.
+							nur in ganz bestimmten Fällen ausgefüllt werden und verbleibt in der Regel leer.
 						</para>
 						<para>
 							<figure id="fig-import-schools">
@@ -2159,7 +2232,8 @@ feedback@univention.de
 							Die CSV-Datei <filename>schulen.csv</filename> ist
 							auf dem &ucsMaster; in folgendem Verzeichnis
 							abzulegen:
-							<filename>/usr/local/ucsschool/import_data/</filename>. Das Verzeichnis muss ggf. zuerst angelegt werden: <filename>mkdir -p /usr/local/ucsschool/import_data</filename>
+							<filename>/usr/local/ucsschool/import_data/</filename>. Das Verzeichnis muss ggf.
+							zuerst angelegt werden: <filename>mkdir -p /usr/local/ucsschool/import_data</filename>
 						</para>
 					</listitem>
 					<listitem>
