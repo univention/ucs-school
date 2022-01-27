@@ -861,13 +861,16 @@ feedback@univention.de
 								Aus Gründen der Abwärtskompatibilität wird dabei auch immer ein NetBIOS- bzw. Legacy-Domain-Name erstellt. Im Falle von
 								<systemitem	class="domainname">example.org</systemitem> als DNS-Domänenname würde automatisch
 								<systemitem class="domainname">EXAMPLE</systemitem> als NetBIOS-Domänenname gesetzt sein. Der NetBIOS-Domänenname
-								ist auf 15 Zeichen begrenzt. Dies kann zu Situationen führen, in denen der NetBIOS-Domänenname ungünstig abgeschnitten wird.
-								Wählt man bspw. <systemitem	class="domainname">schulen-musterstadt.de</systemitem> als DNS-Domänenname, würde der automatisch
-								abgeleitete NetBIOS-Domänenname <systemitem	class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist beispielsweise beim Anmeldebildschirm
-								an Windows-Clients der Domäne zu sehen.
-								Möchte man nun lieber <systemitem	class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen, so ist auf dem &ucsUAS;-Server 
-								bereits während der Installation der gewünschte <systemitem class="domainname">NetBIOS-Domänenname</systemitem> zu setzen (siehe auch
-								<ulink url="https://help.univention.com/t/how-to-define-netbios-domain-in-installer/6390">How to define the NetBIOS name during installation</ulink>).
+								ist auf 15 Zeichen begrenzt. Dies kann zu Situationen führen, in denen der NetBIOS-Domänenname ungünstig
+								abgeschnitten wird. Wählt man beispielsweise <systemitem class="domainname">schulen-musterstadt.de</systemitem>
+								als DNS-Domänenname, würde der automatisch abgeleitete NetBIOS-Domänenname
+								<systemitem class="domainname">SCHULEN-MUSTERS</systemitem> lauten. Dieser Name ist beispielsweise
+								beim Anmeldebildschirm an Windows-Clients der Domäne zu sehen.
+								Möchte man nun lieber <systemitem class="domainname">MUSTERSTADT</systemitem> als Anzeigename dort sehen,
+								so ist auf dem &ucsUAS;-Server bereits während der Installation der gewünschte
+								<systemitem class="domainname">NetBIOS-Domänenname</systemitem> zu setzen (siehe auch
+								<ulink url="https://help.univention.com/t/how-to-define-netbios-domain-in-installer/6390">
+									How to define the NetBIOS name during installation</ulink>).
 							</para>
 						</listitem>
 					</itemizedlist>
@@ -1104,11 +1107,11 @@ feedback@univention.de
 							der OpenLDAP- und Samba-Datenbanken muss nicht zwingend
 							gesichert werden, da diese beim erneuten Domänenbeitritt
 							des Schulservers vom &ucsMaster; oder &ucsBackup; repliziert
-							werden</para></listitem>
+							werden.</para></listitem>
 					<listitem><para><filename>/home</filename>: Beinhaltet die
 							Benutzerprofile und die Heimatlaufwerke der
 							Benutzer, sowie die Freigaben der Klassen und
-							Arbeitsgruppen</para></listitem>
+							Arbeitsgruppen.</para></listitem>
 				</itemizedlist>
 			</para>
 			<para>
@@ -2265,7 +2268,8 @@ univention-install dos2unix
 							</programlisting>
 						</para>
 						<para>
-							Alternativ kann die Datei auf dem &ucsMaster; mit dem Editor <filename>Vim</filename> geöffnet und dieser zum konvertieren verwendet werden:
+							Alternativ kann die Datei auf dem &ucsMaster; mit dem Editor <filename>Vim</filename>
+							geöffnet und dieser zum konvertieren verwendet werden:
 							<programlisting>
 								<![CDATA[
 vim schulen.csv
@@ -2321,7 +2325,8 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/schulen.csv
 				ist das Datenformat für den Import beschrieben.  In der Datei
 				<ulink url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage
 				in der Tabelle <emphasis>Netze</emphasis> vorhanden, die
-				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner
+				in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
@@ -2384,7 +2389,8 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/networks.csv
 				Netz- und Namenskonzeptes enthält.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Rechner</emphasis> vorhanden, die
-				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner
+				in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
@@ -2440,7 +2446,8 @@ sed -i '1,2d' /usr/local/ucsschool/import_data/computers_SCHULE.csv
 				beschrieben.  In der Datei <ulink
 					url="ucsschool-import-vorlagen.xlsx"/> ist eine Vorlage in
 				der Tabelle <emphasis>Drucker</emphasis> vorhanden, die
-				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
+				verwendet werden kann. Es ist zu beachten, dass der Feldtrenner
+				6in diesem Fall "Tabulator" sein muss. Das weitere Vorgehen ist wie folgt:
 			</para>
 			<para>
 				<itemizedlist>
