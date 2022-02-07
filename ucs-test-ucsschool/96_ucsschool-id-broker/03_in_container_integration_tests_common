@@ -1,0 +1,27 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container integration tests for the ID Brokers common tools
+## exposure: dangerous
+## tags: [ucsschool-id-broker]
+## packages: [id-broker-common]
+
+APP="ucsschool-apis"
+PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-broker-common"
+TEST_DIR="tests/integration_tests"
+CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v $TEST_DIR"
+
+# copy host credentials to app for integration_tests/common/test_udm_rest.py test
+echo "$(ucr get hostname)\$" > /var/lib/univention-appcenter/apps/ucsschool-apis/data/hostaccount.txt
+cp /etc/machine.secret /var/lib/univention-appcenter/apps/ucsschool-apis/data/hostpassword.txt
+
+if ! univention-app shell ucsschool-apis pytest --help >/dev/null; then
+  echo "Installing testing packages..."
+  univention-app shell "$APP" python3 -m pip install -U pip wheel
+  univention-app shell "$APP" python3 -m pip install poetry
+  univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; poetry export -f requirements.txt --output requirements.txt --dev --without-hashes"
+  univention-app shell "$APP" python3 -m pip uninstall --yes poetry
+  univention-app shell "$APP" python3 -m pip install -r $PLUGIN_DIR/requirements.txt
+fi
+
+echo "Running in container of app '$APP': sh -c \"$CMD\""
+
+univention-app shell "$APP" sh -c "$CMD"

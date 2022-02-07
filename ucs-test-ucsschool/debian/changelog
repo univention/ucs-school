@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.32) unstable; urgency=medium
+
+  * Bug #54363: added id broker common in_container test
+
+ -- Felix Botner <botner@univention.de>  Mon, 07 Feb 2022 10:54:32 +0100
+
 ucs-test-ucsschool (7.3.31) unstable; urgency=medium
 
   * Bug #52335: fix test. schoollist for students without class assigned. 
