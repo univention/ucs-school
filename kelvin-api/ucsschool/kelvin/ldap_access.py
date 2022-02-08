@@ -98,12 +98,22 @@ class LDAPAccess:
         return pw.strip()
 
     async def check_auth_and_get_user(self, username: str, password: str) -> Optional[LdapUser]:
+        """
+        Get user data if user exists and the password is correct.
+
+        :param str username: user to load
+        :param str password: password for `username`
+        :return: LdapUser object if user is found and the password is correct, None otherwise.
+        """
         user_dn = await self.get_dn_of_user(username)
         if user_dn:
-            admin_group_members = await self.admin_group_members()
             user = await self.get_user(username, user_dn, password, school_only=False)
-            if user_dn in admin_group_members:
-                user.kelvin_admin = True
+            if user:
+                admin_group_members = await self.admin_group_members()
+                if user_dn in admin_group_members:
+                    user.kelvin_admin = True
+            else:
+                self.logger.debug("Wrong password for existing user %r.", username)
             return user
         else:
             self.logger.debug("No such user in LDAP: %r.", username)
@@ -214,6 +224,16 @@ class LDAPAccess:
         attributes: List[str] = None,
         school_only=True,
     ) -> Optional[LdapUser]:
+        """
+        Get data of user `username`.
+
+        :param str username: user to load
+        :param str bind_dn: DN of user as which to connect to LDAP (optional, machine account if empty)
+        :param str bind_pw: password for `bind_dn` (optional)
+        :param List[str] attributes: user LDAP attributes to read (optional)
+        :param bool school_only: search only for school user objects (optional, default: True)
+        :return: LdapUser object if user is found. None if not found or the LDAP bind was not successful.
+        """
         if not attributes:
             attributes = [
                 "displayName",

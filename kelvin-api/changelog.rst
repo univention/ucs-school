@@ -4,9 +4,13 @@
 
 Changelog
 ---------
+
+v1.5.3 (2022-02-08)
+...................
+* Fixed token requests with authorized user and wrong password leading to ``HTTP 500`` (Bug #54431).
+
 v1.5.2 (2022-01-07)
 ...................
-
 * The Kelvin API can now be installed on servers with the role DC Primary and DC Backup (Bug #54310).
 
 v1.5.1 (2021-11-30)
