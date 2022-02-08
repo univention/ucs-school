@@ -677,7 +677,7 @@ class v4netmask(simple):
         bits = 0
         for d in dotted:
             for i in range(0, 8):
-                if (d & 2 ** i) == 2 ** i:
+                if (d & 2**i) == 2**i:
                     bits += 1
         return bits
 

@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.3.0
+    rev: v4.1.0
     hooks:
     -   id: check-added-large-files
     -   id: check-json
@@ -12,7 +12,7 @@ repos:
     -   id: trailing-whitespace
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^doc/quickstart|^doc/errata|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/
 -   repo: https://github.com/timothycrosley/isort
-    rev: 5.6.4
+    rev: 5.10.1
     hooks:
     -   id: isort
         entry: isort -c
@@ -23,7 +23,7 @@ repos:
         entry: isort
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/
 -   repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 22.1.0
     hooks:
     -   id: black
         entry: black --check --diff --config .black
@@ -34,13 +34,13 @@ repos:
         entry: black --config .black
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/
 -   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 3.9.2
     hooks:
     -   id: flake8
         language_version: python3.8
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/|^ucs-school-lib|^ucs-school-import
 -   repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.7.0
+    rev: v1.9.0
     hooks:
     -   id: python-check-blanket-noqa
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/
@@ -49,15 +49,16 @@ repos:
     -   id: rst-backticks
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/
 -   repo: https://github.com/PyCQA/bandit
-    rev: 1.6.2
+    rev: 1.7.2
     hooks:
     -   id: bandit
         entry: bandit -c .bandit
         exclude: ^venv/|^doc/doc-common/|^doc/manual/|^ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import|^italc/|^italc-windows/|^ucs-school-branding/|^ucs-school-info/|^ucs-school-italc/|^ucs-school-l10n-fr/|^ucs-school-ldap-acls-master/|^ucs-school-metapackage/|^ucs-school-netlogon/|^ucs-school-netlogon-user-logonscripts/|^ucs-school-old-homedirs/|^ucs-school-old-sharedirs/|^ucs-school-ox-support/|^ucs-school-radius-802.1x/|^ucs-school-roleshares/|^ucs-school-s4-branch-site/|^ucs-school-selfservice-support/|^ucs-school-ucc-integration/|^ucs-school-umc-|^ucs-school-webproxy/|^ucs-test-ucsschool/|^univention-management-console-module-selective-udm/|^ucs-school-import/modules/ucsschool/importer/utils/test_user_creator.py|^kelvin-api/tests/
 -   repo: https://github.com/anderseknert/pre-commit-opa
-    rev: v1.4.0
+    rev: v1.5.0
     hooks:
     -   id: opa-fmt
     -   id: opa-check
+        args: ['kelvin-api/opa_policies']
     -   id: opa-test
         args: ['kelvin-api/opa_policies']

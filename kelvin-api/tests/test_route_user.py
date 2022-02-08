@@ -652,7 +652,7 @@ async def test_create(
             assert (
                 home_share_file_server
             ), f"No 'home_share_file_server' set for OU {lib_users[0].school!r}."
-            samba_home_path = fr"\\{school.get_name_from_dn(home_share_file_server)}\{lib_users[0].name}"
+            samba_home_path = rf"\\{school.get_name_from_dn(home_share_file_server)}\{lib_users[0].name}"
             assert user_udm.props.sambahome == samba_home_path
 
 

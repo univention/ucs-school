@@ -35,9 +35,9 @@ Create LDAP connections for import.
 
 from typing import Tuple
 
+from ucsschool.lib.models.utils import ucr
 from univention.admin import uldap
 from univention.admin.uldap import LoType, PoType
-from ucsschool.lib.models.utils import ucr
 
 from ..exceptions import LDAPWriteAccessDenied, UcsSchoolImportFatalError
 

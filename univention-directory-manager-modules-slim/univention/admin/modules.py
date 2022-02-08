@@ -40,7 +40,7 @@ from .client import UDM, HTTPError, Module, Object
 from .filter import flatten_filter, parse as filter_parse
 from .uexceptions import noObject
 
-MACHINE_PASSWORD_FILE = "/etc/machine.secret"
+MACHINE_PASSWORD_FILE = "/etc/machine.secret"  # nosec
 MachinePWCache = namedtuple("MachinePWCache", ["mtime", "password"])
 logger = logging.getLogger(__name__)
 _udm_http = None

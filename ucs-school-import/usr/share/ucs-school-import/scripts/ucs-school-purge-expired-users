@@ -97,7 +97,7 @@ def parse_cmdline():
 
 def roles_from_ocs(ocs, a_user, school):  # type: (List[str], ImportUser, str) -> List[str]
     class FakeUdmCls(object):
-        """"Fake UDM user object class for use with User.get_class_for_udm_obj()"""
+        """ "Fake UDM user object class for use with User.get_class_for_udm_obj()"""
 
         def __init__(self, ocs):
             self.oldattr = {"objectClass": ocs}

@@ -726,19 +726,19 @@ class Staff(User):
         return cls.get_search_base(school).staff
 
     async def get_samba_home_path(self, lo: UDM) -> None:
-        """	Do not set sambaHomePath for staff users. """
+        """Do not set sambaHomePath for staff users."""
         return None
 
     def get_samba_home_drive(self) -> None:
-        """	Do not set sambaHomeDrive for staff users. """
+        """Do not set sambaHomeDrive for staff users."""
         return None
 
     def get_samba_netlogon_script_path(self) -> None:
-        """	Do not set sambaLogonScript for staff users. """
+        """Do not set sambaLogonScript for staff users."""
         return None
 
     async def get_profile_path(self, lo) -> None:
-        """	Do not set sambaProfilePath for staff users. """
+        """Do not set sambaProfilePath for staff users."""
         return None
 
     def get_school_class_objs(self) -> List[SchoolClass]:

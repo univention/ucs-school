@@ -43,7 +43,7 @@ from .constants import TOKEN_HASH_ALGORITHM, TOKEN_SIGN_SECRET_FILE, UCRV_TOKEN_
 from .ldap_access import LDAPAccess, LdapUser
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=URL_TOKEN_BASE)
-_secret_key = ""
+_secret_key = ""  # nosec
 ldap_auth_instance: LDAPAccess = lazy_object_proxy.Proxy(LDAPAccess)
 
 
