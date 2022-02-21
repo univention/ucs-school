@@ -80,7 +80,8 @@ router = APIRouter()
 @lru_cache(maxsize=1)
 def accepted_udm_properties() -> Set[str]:
     return set(ImportUser._attributes.keys()).union(
-        set(get_import_config().get("mapped_udm_properties", []))
+        set(get_import_config().get("mapped_udm_properties", [])),
+        set(getattr(UDM_MAPPING_CONFIG, "user", [])),
     )
 
 
