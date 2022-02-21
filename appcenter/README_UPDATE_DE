@@ -5,6 +5,9 @@
     <li>
          Fixed token requests with authorized user and wrong password leading to <code>HTTP 500</code> (Bug #54431).
     </li>
+    <li>
+         The user get route now uses the correct filter when searching for UDM mapped properties (Bug #54474).
+    </li>
 </ul>
 
 <h2>v1.5.2 (2022-01-07)</h2>

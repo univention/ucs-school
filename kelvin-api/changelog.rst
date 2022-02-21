@@ -8,6 +8,7 @@ Changelog
 v1.5.3 (2022-02-08)
 ...................
 * Fixed token requests with authorized user and wrong password leading to ``HTTP 500`` (Bug #54431).
+* The user get route now uses the correct filter when searching for UDM mapped properties (Bug #54474).
 
 v1.5.2 (2022-01-07)
 ...................
