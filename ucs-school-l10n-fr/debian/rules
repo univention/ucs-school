@@ -35,3 +35,7 @@ export LC_ALL=C.UTF-8
 override_dh_auto_test:
 	dh_auto_test
 	ucslint -m 0008
+
+override_dh_auto_install:
+	dh_auto_install
+	mv debian/ucs-school-l10n-fr/usr/share/univention-management-console/i18n/fr/umc-core.mo debian/ucs-school-l10n-fr/usr/share/univention-management-console/i18n/fr/ucs-school-common.mo
