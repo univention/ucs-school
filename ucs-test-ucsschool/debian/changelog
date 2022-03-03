@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.262) unstable; urgency=medium
+
+  * Bug #54455: change id-broker plugin test path 
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 03 Mar 2022 12:21:31 +0100
+
 ucs-test-ucsschool (6.0.261) unstable; urgency=medium
 
   * Bug #54455: fix id broker tests 
