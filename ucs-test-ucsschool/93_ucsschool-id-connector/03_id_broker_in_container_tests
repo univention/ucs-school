@@ -4,8 +4,9 @@
 ## tags: [id-broker]
 
 APP="ucsschool-id-connector"
-CMD1="cd /$APP/src;  pytest -lv -m 'id_broker and not id_broker_compatibility' tests/unittests"
-CMD2="export UNSAFE_SSL=1 && cd /var/lib/univention-appcenter/apps/ucsschool-id-connector/conf/tests/id_broker/; pytest -lv  -m 'id_broker and not id_broker_compatibility' tests/integration_tests"
+TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
+CMD1="cd $TEST_PATH; pytest -lv  unittests"
+CMD2="export UNSAFE_SSL=1 && cd $TEST_PATH; pytest -lv -m 'not id_broker_compatibility' integration_tests"
 
 echo "IP of ID Broker: $(</var/www/IP_idbroker.txt)"
 
