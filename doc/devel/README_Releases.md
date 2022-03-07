@@ -146,15 +146,15 @@ Viele Grüße,
  $NAME
 </pre>
 
-Set all Bugs published with this Erratum to *CLOSED*. 
+Set all Bugs published with this Erratum to *CLOSED*.
 You can get the bug numbers with this snippet:
 ```shell
 cd doc/errata/published/
 grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
 ```
-List the bugs in Bugzilla in the extended search by pasting the list in *Bugs numbered*. 
-Now click on *Change Several Bugs at Once* underneath the columns. 
-This will enable you to select and modify the bugs you need. 
+List the bugs in Bugzilla in the extended search by pasting the list in *Bugs numbered*.
+Now click on *Change Several Bugs at Once* underneath the columns.
+This will enable you to select and modify the bugs you need.
 
 
 Use this text as the comment for closing the mentioned bugs:

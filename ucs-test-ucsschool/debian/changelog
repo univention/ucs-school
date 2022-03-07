@@ -6,13 +6,13 @@ ucs-test-ucsschool (7.3.35) unstable; urgency=medium
 
 ucs-test-ucsschool (7.3.34) unstable; urgency=medium
 
-  * Bug #54455: change id-broker plugin test path 
+  * Bug #54455: change id-broker plugin test path
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 03 Mar 2022 12:19:45 +0100
 
 ucs-test-ucsschool (7.3.33) unstable; urgency=medium
 
-  *  Bug #54455: fix id-broker tests 
+  *  Bug #54455: fix id-broker tests
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 22 Feb 2022 20:06:17 +0100
 
@@ -24,14 +24,14 @@ ucs-test-ucsschool (7.3.32) unstable; urgency=medium
 
 ucs-test-ucsschool (7.3.31) unstable; urgency=medium
 
-  * Bug #52335: fix test. schoollist for students without class assigned. 
+  * Bug #52335: fix test. schoollist for students without class assigned.
 
  -- Fabian Wilhelm <wilhelm@univention.de>  Mon, 24 Jan 2022 09:52:04 +0100
 
 ucs-test-ucsschool (7.3.30) unstable; urgency=medium
 
   * Bug #52335: Test that students who are not assigned to a class are
-    ignored when creating a class list 
+    ignored when creating a class list
 
  -- Fabian Wilhelm <wilhelm@univention.de>  Fri, 21 Jan 2022 11:48:28 +0100
 
@@ -43,7 +43,7 @@ ucs-test-ucsschool (7.3.29) unstable; urgency=medium
 
 ucs-test-ucsschool (7.3.28) unstable; urgency=medium
 
-  * Bug #54310: make test more pythonic 
+  * Bug #54310: make test more pythonic
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 18 Jan 2022 08:34:33 +0100
 

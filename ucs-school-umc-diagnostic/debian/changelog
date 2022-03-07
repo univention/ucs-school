@@ -1,6 +1,6 @@
 ucs-school-umc-diagnostic (2.0.9) unstable; urgency=medium
 
-  * Bug #53954: add diagnostic module to detect italc rooms in ucs 5.0  
+  * Bug #53954: add diagnostic module to detect italc rooms in ucs 5.0
 
  -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 16:55:20 +0100
 

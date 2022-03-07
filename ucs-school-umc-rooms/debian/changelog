@@ -6,13 +6,13 @@ ucs-school-umc-rooms (17.0.8) unstable; urgency=medium
 
 ucs-school-umc-rooms (17.0.7) unstable; urgency=medium
 
-  * Bug #53954: read computer room backend from backend in ucs 5.0 
+  * Bug #53954: read computer room backend from backend in ucs 5.0
 
  -- Tobias Wenzel <wenzel@univention.de>  Thu, 11 Nov 2021 09:39:59 +0100
 
 ucs-school-umc-rooms (17.0.6) unstable; urgency=medium
 
-  * Bug #53954: respect italc backend in ucs 5.0. new rooms are veyon. 
+  * Bug #53954: respect italc backend in ucs 5.0. new rooms are veyon.
 
  -- Tobias Wenzel <wenzel@univention.de>  Wed, 10 Nov 2021 16:59:51 +0100
 
