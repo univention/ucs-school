@@ -217,14 +217,6 @@ access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeache
 @$@STAFF2EDU@$@	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 @$@STAFF2EDU@$@	by * +0 break
 
-# FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU; explain why or fix it
-# TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
-# Managed Nodes duerfen Passwoerter aller Objekte unterhalb einer Schule lesen
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
-	by * +0 break
-
 # Alle Replica Directory Nodes muessen alle Benutzercontainer, Gruppen und GPO links jeder Schule lesen koennen
 access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit" attrs=entry,children,@$@SCHOOLOUATTRS@$@,@msGPO
 	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
@@ -297,8 +289,13 @@ access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
-# Schulserver duerfen die Passwoerter aller globalen Objekte replizieren
-access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
+# Schoolservers are allowed to replicate passwords of all global objects
+# Previously, schoolservers had no access to the password attributes of "global" users, which lead to replication failures, failed.ldifs etc.
+# Access to those is denied by an ACL in 70univention-ldap-server_acl-master-end, which gives access to password attributes to all DCs which lie under cn=dc,cn=cumputers,$base
+# which does not include school replicas.
+# The new ACL may seem like it gives too much access - e.g access to other schools users passwordattributes (which is of course unwanted), but it doesn't.
+# The ACLs which seperates the schools matches before this one. ACL evaluation is stopped before reaching this new ACL.
+access to attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaClearTextPassword,sambaPreviousClearTextPassword
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
