@@ -278,8 +278,8 @@ msgid "DC Name"
 msgstr "DC Name"
 
 #: models/school.py:58
-msgid "DC Name administrative server"
-msgstr "DC Name administrativer Server"
+msgid "DC Name of the administrative server"
+msgstr "DC Name des administrativen Servers"
 
 #: models/school.py:59
 msgid "Server for class shares"
@@ -379,9 +379,9 @@ msgstr ""
 #: models/user.py:419
 msgid ""
 "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
-"attributes."
+"attribute."
 msgstr ""
-"Schule {school!r} in 'school_classes' fehlt im 'school(s)' Attributen des "
+"Schule {school!r} in 'school_classes' fehlt im 'school(s)' Attribut des "
 "Benutzers."
 
 #: models/user.py:582
