@@ -1,3 +1,10 @@
+ucs-school-umc-installer (8.0.7) unstable; urgency=medium
+
+  * Bug #54030: adjusted the wording of some descriptions shown in UMC
+    modules
+
+ -- Johannes Lohmer <lohmer@univention.de>  Fri, 18 Mar 2022 11:37:01 +0100
+
 ucs-school-umc-installer (8.0.6) unstable; urgency=low
 
   * Bug #53942: Do not install veyon proxy on multiserver primary nodes

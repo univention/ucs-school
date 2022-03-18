@@ -1,3 +1,10 @@
+ucs-school-umc-import (3.0.5) unstable; urgency=medium
+
+  * Bug #54030: adjusted the wording of some descriptions shown in UMC
+    modules
+
+ -- Johannes Lohmer <lohmer@univention.de>  Fri, 18 Mar 2022 11:39:55 +0100
+
 ucs-school-umc-import (3.0.4) unstable; urgency=low
 
   * Bug #53988: fix linter errors
