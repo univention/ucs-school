@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-installer
-fix:
+fix: 8.0.7A~5.0.0.202203181230
 desc: |
- * Minor UMC output string enhancements were implemented (Bug #54030).
+ * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
 bug: [54030]
