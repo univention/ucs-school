@@ -92,7 +92,7 @@ define([
 			},{
 				name: 'start',
 				headerText: _('Import user accounts'),
-				helpText: _('Please select the school and the user role for the import.')
+				helpText: _('Please select the school and the user role for the import.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
