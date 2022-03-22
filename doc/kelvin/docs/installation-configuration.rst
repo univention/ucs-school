@@ -26,7 +26,18 @@ If problems occur during installation or join script execution, relevant log fil
 Configuration
 -------------
 
-The *UCS\@school Kelvin REST API* can be used out of the box, but there are various parameters that can be configured:
+The *UCS\@school Kelvin REST API* can be used out of the box, but there are various parameters that can be configured.
+
+*Hint*: ``univention-app configure --list ucsschool-kelvin-rest-api`` lists all available app settings and their current values.
+*Hint*: App Settings can be changed using the command line with ``univention-app configure ucsschool-kelvin-rest-api --set ucsschool/kelvin/log_level=DEBUG && univention-app restart ucsschool-kelvin-rest-api``
+
+
+Number of cores
+^^^^^^^^^^^^^^^
+
+The *UCS\@school Kelvin REST API* can be configured to use multiple cores by setting the number of workers used by gunicorn.
+The default is ``2``. Values below ``1`` start one process for each available CPU.
+The value can be changed through the *app settings* of the *UCS\@school Kelvin REST API* app in the *Univention App Center* UMC module.
 
 Token validity
 ^^^^^^^^^^^^^^

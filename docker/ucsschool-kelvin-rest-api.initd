@@ -10,8 +10,16 @@ else
     RELOAD=""
 fi
 
-command=/usr/bin/uvicorn
-command_args="$RELOAD --host 0.0.0.0 --port 8911 ucsschool.kelvin.main:app"
+num_workers=$(ucr get ucsschool/kelvin/processes)
+if [ "$num_workers" = "" ]; then
+    num_workers=2
+elif [ "$num_workers" -lt  "1" ]; then
+    num_workers=$(nproc)
+fi
+
+command=/usr/bin/gunicorn
+command_args="--workers $num_workers --worker-class uvicorn.workers.UvicornWorker $RELOAD --bind 0.0.0.0:8911 ucsschool.kelvin.main:app"
+
 name=ucsschool-kelvin-rest-api
 description="UCS@school Kelvin REST API server"
 

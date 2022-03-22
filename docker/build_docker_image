@@ -140,6 +140,6 @@ if [ "$PUSH_DEV" = 1 ]; then
     docker tag "$APP_IMG" "$APP_IMG_NO_TEST"
     docker images "$APP_IMG_NO_TEST_NO_VERSION"
     echo "Pushing image to docker registry..."
-    docker push "$APP_IMG_NO_TEST"
+    sudo docker push "$APP_IMG_NO_TEST"
   fi
 fi

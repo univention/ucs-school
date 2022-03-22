@@ -16,3 +16,4 @@ udm-rest-client>=1.0.4
 ujson>=2.0,<3.0
 univention-config-registry
 uvicorn
+gunicorn
