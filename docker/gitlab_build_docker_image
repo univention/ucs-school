@@ -1,0 +1,154 @@
+#!/busybox/sh
+
+set -ex
+
+APP_ID="ucsschool-kelvin-rest-api"
+APP_VERSION="$(cat ../kelvin-api/VERSION.txt)"
+[ -z "$APP_VERSION" ] && exit 1
+DOCKERFILE="$(basename "$(readlink -f Dockerfile)")"
+BASE_IMG="$(egrep ^FROM "$DOCKERFILE" | cut -d ' ' -f 2-)"
+APP_IMG_NO_VERSION="docker-test-upload.software-univention.de/${APP_ID}"
+APP_IMG="${APP_IMG_NO_VERSION}:${APP_VERSION}"
+APP_IMG_NO_TEST_NO_VERSION="docker-upload.software-univention.de/${APP_ID}"
+APP_IMG_NO_TEST="${APP_IMG_NO_TEST_NO_VERSION}:${APP_VERSION}"
+DOCKER_REGISTRY_SERVER="docker.knut.univention.de"
+DATE="$(date --iso-8601=seconds)"
+COMMIT="$(git rev-parse --short HEAD)"
+
+# QUICK=0
+# [ "$1" = "-q" ] && QUICK=1
+
+# if [ "$1" = "--release" ] || [ "$2" = "--release" ] || [ "$3" = "--release" ]; then
+#   RELEASE=1
+# fi
+
+# PUSH_DEV=0
+# if [ "$1" = "--push" ] || [ "$2" = "--push" ] || [ "$3" = "--push" ]; then
+#   PUSH_DEV=1
+# fi
+# if [ "$1" = "--yes" ] || [ "$2" = "--yes" ] || [ "$3" = "--yes" ]; then
+#   PUSH_YES=1
+# fi
+# if [ "$PUSH_DEV" = 1 ] && [ "$(hostname -f)" != "$DOCKER_REGISTRY_SERVER" ]; then
+#   echo "Pushing image to docker registry only possible on $DOCKER_REGISTRY_SERVER."
+#   exit 1
+# fi
+
+if [ -n "$http_proxy" ]; then
+    PROXY_ARGS="--build-arg http_proxy=$http_proxy --build-arg https_proxy=$http_proxy"
+fi
+
+echo "APP_ID=$APP_ID"
+echo "APP_VERSION=$APP_VERSION"
+echo "DATE=$DATE"
+echo "COMMIT=$COMMIT"
+echo "BASE_IMG=$BASE_IMG"
+echo "APP_IMG=$APP_IMG"
+echo "DOCKERFILE: $DOCKERFILE"
+echo "PROXY_ARGS: $PROXY_ARGS"
+
+# if [ "$QUICK" = "0" ] || [ "$PUSH_DEV" = "1" ]; then
+#      echo "Updating base image (use '-q' to skip)..."
+#      docker pull "$BASE_IMG"
+
+#      echo "Removing old final image (use '-q' to skip)..."
+#      docker rmi -f "$APP_IMG" || true
+# fi
+
+echo "Updating/Downloading patched UCR..."
+UCS_REPO_DIR="ucs"
+UCS_BRANCH="dtroeder/ucr.pip.installable"
+UCR_DIR="$UCS_REPO_DIR/base/univention-config-registry"
+# try to use local git repo "~/git/ucs" when on developer machine
+if [ -e ~/git/ucs/.git/config ] && grep -q '4.4-2' ~/git/ucs/.git/config; then
+  REPO_URI="file://$HOME/git/ucs/"
+else
+  REPO_URI="https://git.knut.univention.de/univention/ucs.git"
+  GIT_ARGS="-c http.sslVerify=false"
+fi
+if ! [ -d "$UCR_DIR" ]; then
+  git $GIT_ARGS clone --depth=1 -b "$UCS_BRANCH" "$REPO_URI" "$UCS_REPO_DIR"
+fi
+(cd "$UCS_REPO_DIR" && git checkout "$UCS_BRANCH" && git $GIT_ARGS pull)
+
+echo "Copying files to build directory..."
+[ -d build ] || mkdir build
+rsync -a --delete \
+    "${UCR_DIR}" \
+    ../.black \
+    ../.isort.cfg \
+    ../.flake8 \
+    ../kelvin-api \
+    ../univention-lib-slim \
+    ../univention-directory-manager-modules-slim \
+   ../ucs-school-lib \
+   ../ucs-school-import \
+   alpine_apk_list.* \
+   Dockerfile \
+   opa.initd \
+   ucsschool-kelvin-rest-api.initd \
+ build/
+
+echo "Create empty import configs"
+mkdir -p build/ucs-school-import/empty_configs
+for FILE in global user_import user_import_legacy user_import_http-api; do
+	if ! [ -e build/ucs-school-import/empty_configs/${FILE}.json ]; then
+		echo '{}' > build/ucs-school-import/empty_configs/${FILE}.json
+	fi
+done
+
+
+echo "Downloading OpenAPI Generator JAR file..."
+OPENAPI_CLIENT_GENERATOR_JAR="$(wget -O - https://raw.githubusercontent.com/univention/python-udm-rest-api-client/master/update_openapi_client | egrep '^JAR_URL = ' | cut -f 3 -d ' ')"
+if ! ls -l build/openapi-generator-cli-*.jar 2>/dev/null; then
+  wget -P build/ "${OPENAPI_CLIENT_GENERATOR_JAR//\"}"
+fi
+
+echo "Downloading Open Policy Agent..."
+wget https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static -O build/opa
+chmod +x build/opa
+
+echo "Collecting all Python dependencies..."
+# ... to minimize Docker image by installing and uninstalling in one step
+find build/ -name 'requirements*.txt' -exec cat {} + | egrep -v 'univention|school' | sort | uniq > build/requirements_all.txt
+
+echo "Building docker image..."
+if [ "$RELEASE" = 1 ]; then
+  BUILD_ARGS="--no-cache"
+fi
+
+/kaniko/executor \
+      --force \
+      --context "${CI_PROJECT_DIR}/docker" \
+      --dockerfile "${CI_PROJECT_DIR}/docker/$Dockerfile" \
+      --destination "${CI_REGISTRY_IMAGE}:${DOCKER_TAG}" \
+      ${ARG_DESTINATION_LATEST}
+
+# docker build \
+#   $PROXY_ARGS \
+#   $BUILD_ARGS \
+#   --build-arg app_id="$APP_ID" \
+#   --build-arg date="$DATE" \
+#   --build-arg version="$APP_VERSION" \
+#   --build-arg commit="$COMMIT"\
+#   -t "$APP_IMG" \
+#   build
+
+# echo "Local Docker images:"
+# docker images "$APP_IMG_NO_VERSION"
+
+# if [ "$PUSH_DEV" = 1 ]; then
+#   if [ -z "$PUSH_YES" ]; then
+#     read -p "Push 'Y' if you are sure you want to push '$APP_IMG' to the docker registry. " -n 1 -r
+#   else
+#     REPLY="y"
+#   fi
+#   echo
+#   if [[ $REPLY =~ ^[yY]$ ]]; then
+#     echo "Removing 'test' from image tag..."
+#     docker tag "$APP_IMG" "$APP_IMG_NO_TEST"
+#     docker images "$APP_IMG_NO_TEST_NO_VERSION"
+#     echo "Pushing image to docker registry..."
+#     docker push "$APP_IMG_NO_TEST"
+#   fi
+# fi
