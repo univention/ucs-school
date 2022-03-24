@@ -1582,7 +1582,7 @@ udm dns/host_record create \
 			</para>
 			<note>
 				<simpara>
-					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/python3.7/dist-packages/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
+					Der Quellcode der Klasse <classname>UserPyHook</classname> ist zu finden in <filename>/usr/lib/python3/dist-packages/ucsschool/importer/utils/user_pyhook.py</filename>. In ihm sind alle Methoden und Signaturen dokumentiert.
 				</simpara>
 			</note>
 			<para>
@@ -1749,7 +1749,7 @@ class MyUsernameHandler(UsernameHandler):
 				<methodname>always_counter_with_zeros()</methodname> verwendet <methodname>always_counter()</methodname> zur Erzeugung der nächsten freien Zahl, schreibt diese aber dann so um, dass sie immer vier Stellen lang ist (der Anfang wird mit Nullen aufgefüllt).
 			</para>
 			<para>
-				Wird die Klasse unter <filename class="directory">/usr/lib/python3.7/dist-packages/usernames_with_zeros.py</filename> abgespeichert, so kann sie unter Python als <classname>usernames_with_zeros.MyUsernameHandler</classname> verwendet werden.
+				Wird die Klasse unter <filename class="directory">/usr/lib/python3/dist-packages/usernames_with_zeros.py</filename> abgespeichert, so kann sie unter Python als <classname>usernames_with_zeros.MyUsernameHandler</classname> verwendet werden.
 			</para>
 			<para>
 				Ob Python die Klasse findet, lässt sich testen mit:
