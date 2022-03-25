@@ -5,9 +5,13 @@
 Changelog
 ---------
 
+v1.5.4 ()
+.........
+* A new App Setting was added to configure the amount of processes which are used by gunicorn to run the Kelvin REST API (Bug #54575)
+
+
 v1.5.3 (2022-02-08)
 ...................
-* A new App Setting was added to configure the amount of processes which are used by gunicorn to run the Kelvin REST API (Bug #54575)
 * Fixed token requests with authorized user and wrong password leading to ``HTTP 500`` (Bug #54431).
 * The user get route now uses the correct filter when searching for UDM mapped properties (Bug #54474).
 
