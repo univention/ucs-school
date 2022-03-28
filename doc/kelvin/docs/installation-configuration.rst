@@ -35,7 +35,7 @@ The *UCS\@school Kelvin REST API* can be used out of the box, but there are vari
 Number of cores
 ^^^^^^^^^^^^^^^
 
-The *UCS\@school Kelvin REST API* can be configured to use multiple cores by setting the number of workers used by gunicorn.
+The number of CPU cores used by the *UCS\@school Kelvin REST API* app can be configured.
 The default is ``2``. Values below ``1`` start one process for each available CPU.
 The value can be changed through the *app settings* of the *UCS\@school Kelvin REST API* app in the *Univention App Center* UMC module.
 

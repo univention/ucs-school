@@ -18,6 +18,6 @@ Description[de] = Standardmäßig verbindet sich die UCS@school Kelvin REST API 
 
 [ucsschool/kelvin/processes]
 Type = Int
-Description = Number of processes, which are used by gunicorn to run the UCS@school Kelvin REST API. Set below 1 to start one process for each core.
-Description[de] = Anzahl der Prozesse die von gunicorn verwendet werden, um die UCS@school Kelvin REST API zu betreiben. Werte kleiner als 1 starten für jede CPU einen Prozess.
+Description = Number of CPU cores utilized by the UCS@school Kelvin REST API. Set below 1 to start one process for each core.
+Description[de] = Anzahl der CPU Kerne die von der UCS@school Kelvin REST API verwendet werden. Werte kleiner als 1 starten für jede CPU einen Prozess.
 InitialValue = 2
