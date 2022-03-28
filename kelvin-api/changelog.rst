@@ -7,7 +7,7 @@ Changelog
 
 v1.5.4 ()
 .........
-* A new App Setting was added to configure the amount of processes which are used by gunicorn to run the Kelvin REST API (Bug #54575)
+* A new App Setting was added to configure the amount CPU cores utilized by the UCS@school Kelvin REST API (Bug #54575).
 
 v1.5.3 (2022-02-08)
 ...................
