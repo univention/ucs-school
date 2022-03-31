@@ -729,8 +729,11 @@ async def change_school(
     if new_school == user.school:
         return user
     logger.info("Moving %r from OU %r to OU %r...", user, user.school, new_school)
-    new_schools = new_schools or list(set(user.schools + [new_school]))
-    user.schools = new_schools
+
+    # For validation purposes.
+    # It has to include to old 'schools' since the validation looks at the current/old
+    # 'school_classes'
+    user.schools = list(set(user.schools + [new_school] + new_schools))
     try:
         await user.change_school(new_school, udm)
     except (LibValidationError, MoveError) as exc:
@@ -860,13 +863,35 @@ async def partial_update(  # noqa: C901
         )
 
     # 1. move
-    try:
-        new_school = to_change["school"]
-    except KeyError:
-        pass
-    else:
-        new_schools = to_change.get("schools", [])
-        user_current = await change_school(udm, logger, user_current, new_school, new_schools)
+    new_school = to_change.get("school", None)
+    new_schools = to_change.get("schools", None)
+    if new_school or new_schools:
+        # if 'new_school' is set and 'new_schools' not
+        # then we set 'schools' to [new_school]; the same behaviour as in PUT request.new_school_classes
+        # If we don't do this here then we can get unintuitive behaviour with 3+ schools.
+        #
+        # e.g.
+        # current
+        #     school: A
+        #     schools: [A, B, C]
+        #
+        # Now we PATCH 'school' to be 'B'
+        #
+        # Without setting 'schools' here to be [B] it would become
+        # new:
+        #     school: B
+        #     schools: [B, C]
+        #
+        # since the 'change_school' logic removes the current 'school' from the 'schools' list and appends the new
+        # school.
+        new_schools = new_schools or [new_school]
+        to_change.setdefault("schools", new_schools)
+        if not new_school and user_current.school not in new_schools:
+            new_school = sorted(new_schools)[0]
+        if new_school:
+            # copy "new_schools" since it is a reference to a list
+            # and "change_school" could modify it directly, which is not desired here
+            user_current = await change_school(udm, logger, user_current, new_school, new_schools.copy())
 
     # 2. rename
     try:
@@ -990,7 +1015,12 @@ async def complete_update(  # noqa: C901
     # 1. move
     new_school = user_request.school
     new_schools = user_request.schools
-    user_current = await change_school(udm, logger, user_current, new_school, new_schools)
+    if not new_school and user_current.school not in new_schools:
+        new_school = sorted(new_schools)[0]
+    if new_school:
+        # copy "new_schools" since it is a reference to a list
+        # and "change_school" could modify it directly, which is not desired here
+        user_current = await change_school(udm, logger, user_current, new_school, new_schools.copy())
 
     # 2. rename
     new_name = user_request.name
@@ -1008,8 +1038,10 @@ async def complete_update(  # noqa: C901
         if attr == "kelvin_password_hashes":
             # handled below
             continue
-        if attr in ("school", "schools"):
-            continue  # school change was already handled above
+        if attr == "school":
+            # school change was already handled above
+            # + "school" might be None since it is not a required argument (if "schools" is provided)
+            continue
         current_value = getattr(user_current, attr)
         new_value = getattr(user_request, attr)
         if attr == "ucsschool_roles" and new_value is None:

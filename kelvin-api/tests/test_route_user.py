@@ -1661,3 +1661,564 @@ async def test_krb_5_keys_are_base64_binaries(password_hash):
         _ = PasswordsHashes(**password_new_hashes.dict())
     assert "krb_5_key" in str(exc_info.value)
     assert "must be base64 encoded" in str(exc_info.value)
+
+
+# tests for multiple schools
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", USER_ROLES, ids=role_id)
+@pytest.mark.parametrize("dont_set_school_directly", (True, False))
+async def test_create_with_multiple_schools(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_multiple_ous,
+    random_user_create_model,
+    udm_kwargs,
+    schedule_delete_user_name_using_udm,
+    role: Role,
+    dont_set_school_directly: bool,
+):
+    if role.name == "teacher_and_staff":
+        roles = ["staff", "teacher"]
+    else:
+        roles = [role.name]
+    school1, school2, school3 = await create_multiple_ous(3)
+
+    r_user = await random_user_create_model(
+        school1,
+        schools=[
+            f"{url_fragment}/schools/{school1}",
+            f"{url_fragment}/schools/{school2}",
+            f"{url_fragment}/schools/{school3}",
+        ],
+        roles=[f"{url_fragment}/roles/{role_}" for role_ in roles],
+        disabled=False,
+    )
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={r_user.name}")
+    assert len(lib_users) == 0
+
+    data = r_user.dict(
+        exclude={
+            "birthday",
+            "disabled",
+            "email",
+            "expiration_date",
+            "source_uid",
+            "ucsschool_roles",
+            "udm_properties",
+        }
+    )
+    if dont_set_school_directly:
+        del data["school"]
+
+    schedule_delete_user_name_using_udm(r_user.name)
+    response = retry_http_502(
+        requests.post,
+        f"{url_fragment}/users/",
+        headers={"Content-Type": "application/json", **auth_header},
+        json=data,
+    )
+    assert response.status_code == 201, f"{response.__dict__!r}"
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={r_user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    expected_school = school1 if not dont_set_school_directly else sorted([school1, school2, school3])[0]
+    assert lib_user.school == expected_school
+    assert set(lib_user.schools) == {school1, school2, school3}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "role",
+    [
+        Role("student", Student),
+        Role("teacher", Teacher),
+        Role("teacher_and_staff", TeachersAndStaff),
+    ],
+    ids=role_id,
+)
+@pytest.mark.parametrize("method", ("patch", "put", "putwithschool"))
+async def test_add_additional_schools(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_random_users,
+    create_multiple_ous,
+    random_name,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    school1, school2, school3 = await create_multiple_ous(3)
+    school_class_names = {
+        school1: random_name(),
+        school2: random_name(),
+        school3: random_name(),
+    }
+    school_classes = {school1: [school_class_names[school1]]}
+    user = (
+        await create_random_users(
+            school1,
+            {role.name: 1},
+            school=f"{url_fragment}/schools/{school1}",
+            school_classes=school_classes,
+        )
+    )[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    assert lib_user.school == school1
+    assert lib_user.schools == [school1]
+    assert lib_user.school_classes[school1]
+    assert not lib_user.school_classes.get(school2)
+    assert not lib_user.school_classes.get(school3)
+
+    new_schools = [school1]
+    new_school_classes = school_classes.copy()
+    for new_school in [school2, school3]:
+        new_schools.append(new_school)
+        new_school_classes[new_school] = [school_class_names[new_school]]
+
+        if method == "patch":
+            patch_data = dict(
+                schools=[f"{url_fragment}/schools/{school}" for school in new_schools],
+                school_classes=new_school_classes,
+            )
+            response = retry_http_502(
+                requests.patch,
+                f"{url_fragment}/users/{user.name}",
+                headers=auth_header,
+                json=patch_data,
+            )
+        elif method in ("put", "putwithschool"):
+            exclude = {"school", "schools", "school_classes", "password"}
+            if method == "putwithschool":
+                exclude.remove("school")
+            old_data = user.dict(exclude=exclude)
+            modified_user = UserCreateModel(
+                schools=[f"{url_fragment}/schools/{school}" for school in new_schools],
+                school_classes=new_school_classes,
+                **old_data,
+            )
+            response = retry_http_502(
+                requests.put,
+                f"{url_fragment}/users/{user.name}",
+                headers=auth_header,
+                data=modified_user.json(exclude={"school"}),
+            )
+        json_response = response.json()
+        logger.debug("RESPONSE")
+        logger.debug(json_response)
+        assert response.status_code == 200, response.reason
+        async with UDM(**udm_kwargs) as udm:
+            async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
+                assert set(udm_user.props.school) == set(new_schools)
+            api_user = UserModel(**json_response)
+            lib_users = await User.get_all(udm, school1, f"username={user.name}")
+        assert len(lib_users) == 1
+        assert isinstance(lib_user, role.klass)
+        lib_user = lib_users[0]
+
+        # check main school
+        assert lib_user.school == school1
+        assert api_user.unscheme_and_unquote(str(api_user.school)) == f"{url_fragment}/schools/{school1}"
+
+        # check schools
+        assert set(lib_user.schools) == set(new_schools)
+        assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == set(
+            [f"{url_fragment}/schools/{school}" for school in new_schools]
+        )
+
+        # check roles
+        if role.name == "teacher_and_staff":
+            roles = []
+            for school in new_schools:
+                roles.append(f"staff:school:{school}")
+                roles.append(f"teacher:school:{school}")
+        else:
+            roles = [f"{role.name}:school:{school}" for school in new_schools]
+        assert set(lib_user.ucsschool_roles) == set(roles)
+
+        # check school_classes
+        for school in new_schools:
+            class_name = school_class_names[school]
+            assert api_user.school_classes[school] == [class_name]
+            assert lib_user.school_classes[school] == [f"{school}-{class_name}"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "role",
+    [
+        Role("student", Student),
+        Role("teacher", Teacher),
+        Role("teacher_and_staff", TeachersAndStaff),
+    ],
+    ids=role_id,
+)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_set_school_with_multiple_schools(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_random_users,
+    create_multiple_ous,
+    random_name,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    # setting "school" without "schools" should set "schools" to [school]
+    school1, school2, school3 = await create_multiple_ous(3)
+    school1_class = random_name()
+    school2_class = random_name()
+    school3_class = random_name()
+    school_classes = {
+        school1: [school1_class],
+        school2: [school2_class],
+        school3: [school3_class],
+    }
+    user = (
+        await create_random_users(
+            school1,
+            {role.name: 1},
+            school=f"{url_fragment}/schools/{school1}",
+            schools=[
+                f"{url_fragment}/schools/{school1}",
+                f"{url_fragment}/schools/{school2}",
+                f"{url_fragment}/schools/{school3}",
+            ],
+            school_classes=school_classes,
+        )
+    )[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    assert lib_user.school == school1
+    assert set(lib_user.schools) == {school1, school2, school3}
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+    assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
+
+    new_school_classes = {
+        school2: [school2_class],
+    }
+    new_school_classes[school2] = [school2_class]
+    if method == "patch":
+        patch_data = dict(school=f"{url_fragment}/schools/{school2}", school_classes=new_school_classes)
+        response = retry_http_502(
+            requests.patch,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"school", "schools", "school_classes"})
+        modified_user = UserCreateModel(
+            school=f"{url_fragment}/schools/{school2}", school_classes=new_school_classes, **old_data
+        )
+        response = retry_http_502(
+            requests.put,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    json_response = response.json()
+    assert response.status_code == 200, response.reason
+    async with UDM(**udm_kwargs) as udm:
+        async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
+            assert set(udm_user.props.school) == {school2}
+        api_user = UserModel(**json_response)
+        lib_users = await User.get_all(udm, school2, f"username={user.name}")
+    assert len(lib_users) == 1
+    assert isinstance(lib_user, role.klass)
+    lib_user = lib_users[0]
+
+    # check main school
+    assert lib_user.school == school2
+    assert api_user.unscheme_and_unquote(str(api_user.school)) == f"{url_fragment}/schools/{school2}"
+
+    # check schools
+    assert set(lib_user.schools) == {school2}
+    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+        f"{url_fragment}/schools/{school2}"
+    }
+
+    # check roles
+    if role.name == "teacher_and_staff":
+        roles = {
+            f"staff:school:{school2}",
+            f"teacher:school:{school2}",
+        }
+    else:
+        roles = {f"{role.name}:school:{school2}"}
+    assert set(lib_user.ucsschool_roles) == roles
+
+    # check school_classes
+    assert not api_user.school_classes.get(school1)
+    assert api_user.school_classes[school2] == [school2_class]
+    assert not lib_user.school_classes.get(school1)
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "role",
+    [
+        Role("student", Student),
+        Role("teacher", Teacher),
+        Role("teacher_and_staff", TeachersAndStaff),
+    ],
+    ids=role_id,
+)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_change_school_with_multiple_schools(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_random_users,
+    create_multiple_ous,
+    random_name,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    school1, school2, school3 = await create_multiple_ous(3)
+    school1_class = random_name()
+    school2_class = random_name()
+    school3_class = random_name()
+    school_classes = {
+        school1: [school1_class],
+        school2: [school2_class],
+        school3: [school3_class],
+    }
+    user = (
+        await create_random_users(
+            school1,
+            {role.name: 1},
+            school=f"{url_fragment}/schools/{school1}",
+            schools=[
+                f"{url_fragment}/schools/{school1}",
+                f"{url_fragment}/schools/{school2}",
+                f"{url_fragment}/schools/{school3}",
+            ],
+            school_classes=school_classes,
+        )
+    )[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    assert lib_user.school == school1
+    assert set(lib_user.schools) == {school1, school2, school3}
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+    assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
+
+    if method == "patch":
+        patch_data = dict(
+            school=f"{url_fragment}/schools/{school2}",
+            schools=[
+                f"{url_fragment}/schools/{school1}",
+                f"{url_fragment}/schools/{school2}",
+                f"{url_fragment}/schools/{school3}",
+            ],
+            school_classes=school_classes,
+        )
+        response = retry_http_502(
+            requests.patch,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"school"})
+        modified_user = UserCreateModel(school=f"{url_fragment}/schools/{school2}", **old_data)
+        response = retry_http_502(
+            requests.put,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=modified_user.json(),
+        )
+    json_response = response.json()
+    logger.debug("RESPONSE")
+    logger.debug(json_response)
+    assert response.status_code == 200, response.reason
+    async with UDM(**udm_kwargs) as udm:
+        async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
+            assert set(udm_user.props.school) == {school1, school2, school3}
+        api_user = UserModel(**json_response)
+        lib_users = await User.get_all(udm, school2, f"username={user.name}")
+    assert len(lib_users) == 1
+    assert isinstance(lib_user, role.klass)
+    lib_user = lib_users[0]
+
+    # check main school
+    assert lib_user.school == school2
+    assert api_user.unscheme_and_unquote(str(api_user.school)) == f"{url_fragment}/schools/{school2}"
+
+    # check schools
+    assert set(lib_user.schools) == {school1, school2, school3}
+    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+        f"{url_fragment}/schools/{school1}",
+        f"{url_fragment}/schools/{school2}",
+        f"{url_fragment}/schools/{school3}",
+    }
+
+    # check roles
+    if role.name == "teacher_and_staff":
+        roles = {
+            f"staff:school:{school1}",
+            f"teacher:school:{school1}",
+            f"staff:school:{school2}",
+            f"teacher:school:{school2}",
+            f"staff:school:{school3}",
+            f"teacher:school:{school3}",
+        }
+    else:
+        roles = {
+            f"{role.name}:school:{school1}",
+            f"{role.name}:school:{school2}",
+            f"{role.name}:school:{school3}",
+        }
+    assert set(lib_user.ucsschool_roles) == roles
+
+    # check school_classes
+    assert api_user.school_classes[school1] == [school1_class]
+    assert api_user.school_classes[school2] == [school2_class]
+    assert api_user.school_classes[school3] == [school3_class]
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+    assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "role",
+    [
+        Role("student", Student),
+        Role("teacher", Teacher),
+        Role("teacher_and_staff", TeachersAndStaff),
+    ],
+    ids=role_id,
+)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_change_school_and_schools(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_random_users,
+    create_multiple_ous,
+    random_name,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    school1, school2, school3 = await create_multiple_ous(3)
+    school1_class = random_name()
+    school2_class = random_name()
+    school3_class = random_name()
+    school_classes = {
+        school1: [school1_class],
+        school2: [school2_class],
+    }
+    user = (
+        await create_random_users(
+            school1,
+            {role.name: 1},
+            school=f"{url_fragment}/schools/{school1}",
+            schools=[f"{url_fragment}/schools/{school1}", f"{url_fragment}/schools/{school2}"],
+            school_classes=school_classes,
+        )
+    )[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    assert lib_user.school == school1
+    assert set(lib_user.schools) == {school1, school2}
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+
+    new_school_classes = {
+        school2: [school2_class],
+        school3: [school3_class],
+    }
+    if method == "patch":
+        patch_data = dict(
+            schools=[f"{url_fragment}/schools/{school2}", f"{url_fragment}/schools/{school3}"],
+            school_classes=new_school_classes,
+        )
+        response = retry_http_502(
+            requests.patch,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"school", "schools", "school_classes"})
+        modified_user = UserCreateModel(
+            schools=[f"{url_fragment}/schools/{school2}", f"{url_fragment}/schools/{school3}"],
+            school_classes=new_school_classes,
+            **old_data,
+        )
+        response = retry_http_502(
+            requests.put,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=modified_user.json(exclude={"school"}),
+        )
+    json_response = response.json()
+    expected_school = sorted([school2, school3])[0]
+    assert response.status_code == 200, response.reason
+    async with UDM(**udm_kwargs) as udm:
+        async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
+            assert set(udm_user.props.school) == {school2, school3}
+        api_user = UserModel(**json_response)
+        lib_users = await User.get_all(udm, expected_school, f"username={user.name}")
+    assert len(lib_users) == 1
+    assert isinstance(lib_user, role.klass)
+    lib_user = lib_users[0]
+
+    # check main school
+    assert lib_user.school == expected_school, "expected_school failed"
+    assert (
+        api_user.unscheme_and_unquote(str(api_user.school))
+        == f"{url_fragment}/schools/{expected_school}"
+    )
+
+    # check schools
+    assert set(lib_user.schools) == {school2, school3}
+    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+        f"{url_fragment}/schools/{school2}",
+        f"{url_fragment}/schools/{school3}",
+    }
+
+    # check roles
+    if role.name == "teacher_and_staff":
+        roles = {
+            f"staff:school:{school2}",
+            f"teacher:school:{school2}",
+            f"staff:school:{school3}",
+            f"teacher:school:{school3}",
+        }
+    else:
+        roles = {f"{role.name}:school:{school2}", f"{role.name}:school:{school3}"}
+    assert set(lib_user.ucsschool_roles) == roles
+
+    # check school_classes
+    assert not api_user.school_classes.get(school1)
+    assert api_user.school_classes[school2] == [school2_class]
+    assert api_user.school_classes[school3] == [school3_class]
+    assert not lib_user.school_classes.get(school1)
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+    assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
