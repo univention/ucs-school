@@ -901,6 +901,15 @@ Muss zwingend entweder in einer Konfigurationsdatei oder an der Kommandozeile ge
 				Schulübergreifende Benutzerkonten wurden mit &ucsUAS; 4.1R2 eingeführt (siehe <ulink url="https://docs.software-univention.de/release-notes-ucsschool-4.1R2v1-de.html"><citetitle>UCS@school 4.1 R2 v1 Release Notes</citetitle></ulink>) und werden von der Importsoftware unterstützt.
 				Entsprechend sind die Namen der Klassen so kodiert, dass sie eindeutig einer Schule zugeordnet werden können.
 				Anton geht also in die Klasse <literal>1A</literal> der Schule <literal>Schule1</literal> und in die Klasse <literal>2B</literal> der Schule <literal>Schule2</literal>.
+            </para>
+			<para>
+				Für die Aufbereitung der Daten ist es besonders wichtig darauf zu achten, dass Benutzern in der Rolle Schüler
+				immer eine Klasse zugewiesen ist. Benutzerkontodaten werden an anderen Stellen weiter verarbeitet. Wenn die Angabe
+				für die Klasse eines Schülers fehlt, kann die Weiterverarbeitung gestört werden. Detaillierte Informationen wie sich 
+				Benutzerkonten UCS@school von UCS unterschieden, finden sich im
+				<ulink url="https://help.univention.com/t/15630">
+					<citetitle>Knowledge Base Artikel "How a UCS@school user should look like"</citetitle>
+				</ulink>.                
 			</para>
 			<para>
 				Die Namen der Schulen bzw. Klassen sind ohne Leerzeichen und durch Komma getrennt, aufgelistet.

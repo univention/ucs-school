@@ -241,6 +241,14 @@ cd /usr/share/ucs-school-import/scripts/
 		  Schaltfläche <guimenu>Hinzufügen</guimenu> oberhalb der Tabelle auszuwählen. In &ucsUAS;-Umgebungen
 		  ohne bestehende Benutzer fragt das Modul automatisch beim Öffnen, ob jetzt der erste Benutzer
 		  angelegt werden soll.
+        </para>
+		<para>
+			Es ist wichtig, dass beim Anlegen einzelner Benutzer für UCS@school das UMC-Modul
+			<guimenu>Benutzer (Schulen)</guimenu> verwendet wird, weil sich UCS@school Benutzer von regulären
+			UCS Benutzern unterscheiden. Detaillierte Informationen zu den Unterschieden der Benutzerkonten finden sich im
+			<ulink url="https://help.univention.com/t/15630">
+				<citetitle>Knowledge Base Artikel "How a UCS@school user should look like"</citetitle>
+			</ulink>.
 		</para>
 		<para>
 		  Die erste Seite des Assistenten fragt zunächst die gewünschte Benutzerrolle für das neue
@@ -258,6 +266,11 @@ cd /usr/share/ucs-school-import/scripts/
 		  Über die Schaltfläche <guimenu>Neue Klasse erstellen</guimenu> ist es
 		  möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu wechseln, um dort eine
 		  weitere Schulklasse anlegen zu können.
+		  Ein Benutzer in der Rolle Schüler benötigt immer eine Klasse. Benutzerkontodaten werden an anderen
+		  Stellen weiter verarbeitet. Wenn die Angabe für die Klasse eines Schülers fehlt, kann die
+		  Weiterverarbeitung gestört werden.
+		</para>
+		<para>
 		  Die Attribute <emphasis>E-Mail</emphasis>, <emphasis>Passwort</emphasis>,
 		  <emphasis>deaktiviert</emphasis> und <emphasis>Geburtstag</emphasis> sind optional.
 		  Ist kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer) zurückgesetzt werden,

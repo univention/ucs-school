@@ -227,6 +227,15 @@
 						</para>
 					</listitem>
 				</itemizedlist>
+            </para>
+			<para>
+				Für die Aufbereitung der Daten ist es besonders wichtig darauf zu achten, dass Benutzern in der Rolle Schüler
+				immer eine Klasse zugewiesen ist. Benutzerkontodaten werden an anderen Stellen weiter verarbeitet. Wenn die Angabe
+				für die Klasse eines Schülers fehlt, kann die Weiterverarbeitung gestört werden. Detaillierte Informationen wie sich 
+				Benutzerkonten UCS@school von UCS unterschieden, finden sich im
+				<ulink url="https://help.univention.com/t/15630">
+					<citetitle>Knowledge Base Artikel "How a UCS@school user should look like"</citetitle>
+				</ulink>.
 			</para>
 			<para>
 				Beispieldaten für Testläufe können mit Hilfe eines Skripts erzeugt werden:
