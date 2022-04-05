@@ -266,7 +266,7 @@ cd /usr/share/ucs-school-import/scripts/
 		  Über die Schaltfläche <guimenu>Neue Klasse erstellen</guimenu> ist es
 		  möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu wechseln, um dort eine
 		  weitere Schulklasse anlegen zu können.
-		  Ein Benutzer in der Rolle Schüler benötigt immer eine Klasse. Benutzerkontodaten werden an anderen
+		  Ein Benutzer in der Rolle Schüler benötigt immer eine Schulklasse. Benutzerkontodaten werden an anderen
 		  Stellen weiter verarbeitet. Wenn die Angabe für die Klasse eines Schülers fehlt, kann die
 		  Weiterverarbeitung gestört werden.
 		</para>
