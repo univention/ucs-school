@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.13) unstable; urgency=medium
+
+  * Bug #54535: Invalid ucsschool-roles don't crash the validation.
+
+ -- Amir Teymuri <teymuri@univention.de>  Tue, 05 Apr 2022 13:50:40 +0200
+
 ucs-school-lib (13.0.12) unstable; urgency=medium
 
   * Bug #54030: adjusted the wording of some descriptions shown in UMC
