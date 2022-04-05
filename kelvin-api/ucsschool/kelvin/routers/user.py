@@ -888,10 +888,10 @@ async def partial_update(  # noqa: C901
         to_change.setdefault("schools", new_schools)
         if not new_school and user_current.school not in new_schools:
             new_school = sorted(new_schools)[0]
-        if new_school:
-            # copy "new_schools" since it is a reference to a list
-            # and "change_school" could modify it directly, which is not desired here
-            user_current = await change_school(udm, logger, user_current, new_school, new_schools.copy())
+    if new_school:
+        # copy "new_schools" since it is a reference to a list
+        # and "change_school" could modify it directly, which is not desired here
+        user_current = await change_school(udm, logger, user_current, new_school, new_schools.copy())
 
     # 2. rename
     try:

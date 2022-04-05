@@ -304,10 +304,7 @@ async def test_search_filter(  # noqa: C901
     assert user.role_sting == role  # TODO: add 'r' when #47210 is fixed
     if filter_param == "school":
         assert ou_name == ou2_name
-        assert set(school.rsplit("/", 1)[-1] for school in user.schools) == {
-            ou1_name,
-            ou2_name,
-        }
+        assert {school.rsplit("/", 1)[-1] for school in user.schools} == {ou1_name, ou2_name}
 
     param_value = getattr(user, filter_param)
     if filter_param in ("source_uid", "disabled"):
@@ -359,7 +356,7 @@ async def test_search_filter_udm_properties(
     random_name,
     filter_param: str,
 ):
-    if filter_param in ("description", "displayName", "employeeType", "organisation", "title"):
+    if filter_param in {"description", "displayName", "employeeType", "organisation", "title"}:
         filter_value = random_name()
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
     elif filter_param == "e-mail":
@@ -382,9 +379,9 @@ async def test_search_filter_udm_properties(
     assert user.role_sting == role  # TODO: add 'r' when #47210 is fixed
     async with UDM(**udm_kwargs) as udm:
         udm_user = await user.get_udm_object(udm)
-    if filter_param in ("uidNumber", "gidNumber"):
+    if filter_param in {"uidNumber", "gidNumber"}:
         filter_value = udm_user.props[filter_param]
-    elif filter_param in ("e-mail", "phone"):
+    elif filter_param in {"e-mail", "phone"}:
         assert set(udm_user.props[filter_param]) == set(create_kwargs["udm_properties"][filter_param])
     else:
         assert udm_user.props[filter_param] == create_kwargs["udm_properties"][filter_param]
@@ -402,7 +399,7 @@ async def test_search_filter_udm_properties(
     assert user.name in api_users
     api_user = api_users[user.name]
     created_value = api_user.udm_properties[filter_param]
-    if filter_param in ("e-mail", "phone"):
+    if filter_param in {"e-mail", "phone"}:
         assert set(created_value) == set(create_kwargs["udm_properties"][filter_param])
     else:
         assert created_value == filter_value
@@ -469,7 +466,7 @@ async def test_search_returns_no_exam_user(
     )
     assert response.status_code == 200, (response.reason, response.content)
     json_resp = response.json()
-    assert not any(u["name"] == exam_user["username"] for u in json_resp)
+    assert all(u["name"] != exam_user["username"] for u in json_resp)
     assert not any(role.startswith("exam") for user in json_resp for role in user["ucsschool_roles"])
 
 

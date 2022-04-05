@@ -318,7 +318,7 @@ def random_user_create_model(
         try:
             school_classes = kwargs.pop("school_classes")
         except KeyError:
-            if set(url.split("/")[-1] for url in kwargs["roles"]) == {"staff"}:
+            if {url.split("/")[-1] for url in kwargs["roles"]} == {"staff"}:
                 school_classes = {}
             else:
                 sc_dn, sc_attr = await new_school_class_using_lib(ou_name)
@@ -363,7 +363,7 @@ def create_random_users(
         if "school" not in data_kwargs:
             data_kwargs["school"] = f"{url_fragment}/schools/{ou_name}"
         for role, amount in roles.items():
-            for i in range(amount):
+            for _ in range(amount):
                 if role == "teacher_and_staff":
                     roles_ulrs = [
                         f"{url_fragment}/roles/staff",

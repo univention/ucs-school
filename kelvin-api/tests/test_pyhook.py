@@ -64,7 +64,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class FormatFirstnamePyHook(FormatPyHook):
+class CamelCaseLastnameFormatPyHook(FormatPyHook):
     priority = {
         "patch_fields_student": 10,
         "patch_fields_teacher_and_staff": 10,
@@ -194,7 +194,7 @@ def create_format_pyhook(create_pyhook):
     text = f"""from typing import Any, Dict
 from ucsschool.importer.utils.format_pyhook import FormatPyHook
 
-{inspect.getsource(FormatFirstnamePyHook)}
+{inspect.getsource(CamelCaseLastnameFormatPyHook)}
 """
     create_pyhook("formattesthook", text)
 
