@@ -35,8 +35,9 @@ import os
 import re
 import traceback
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
 
+import lazy_object_proxy
 import ldap
 from ldap.dn import escape_dn_chars, str2dn
 
@@ -45,7 +46,11 @@ if TYPE_CHECKING:
 
 from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.roles import (
+    InvalidUcsschoolRoleString,
+    UnknownContextType,
+    UnknownRole,
     create_ucsschool_role_string,
+    get_role_info,
     role_computer_room,
     role_exam_user,
     role_marketplace_share,
@@ -60,20 +65,22 @@ from ucsschool.lib.roles import (
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
-private_data_logger = None
-if os.geteuid() == 0:  # FIXME: this is a library, move somewhere else...
-    LOG_FILE = "/var/log/univention/ucs-school-validation.log"
-    VALIDATION_LOGGER = "UCSSchool-Validation"
-    private_data_logger = logging.getLogger(VALIDATION_LOGGER)
-    private_data_logger.setLevel("DEBUG")
-    backup_count = int(ucr.get("ucsschool/validation/logging/backupcount", "").strip() or 60)
-    private_data_logger.addHandler(
-        get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
-    )
+
+def get_private_data_logger():
+    private_data_logger = None
+    if os.geteuid() == 0:
+        LOG_FILE = "/var/log/univention/ucs-school-validation.log"
+        VALIDATION_LOGGER = "UCSSchool-Validation"
+        private_data_logger = logging.getLogger(VALIDATION_LOGGER)
+        private_data_logger.setLevel("DEBUG")
+        backup_count = int(ucr.get("ucsschool/validation/logging/backupcount", "").strip() or 60)
+        private_data_logger.addHandler(
+            get_file_handler("DEBUG", LOG_FILE, uid=0, gid=0, backupCount=backup_count)
+        )
+    return private_data_logger
 
 
-def split_roles(roles):  # type: (List[str]) -> List[List[str]]
-    return [r.split(":") for r in roles]
+private_data_logger = lazy_object_proxy.Proxy(get_private_data_logger)
 
 
 def get_position_from(dn):  # type: (str) -> Optional[str]
@@ -173,14 +180,19 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
+        errors = super(UserValidator, cls).validate(obj)
         schools = obj["props"].get("school", [])
         groups = obj["props"].get("groups", [])
-        roles = split_roles(obj["props"].get("ucsschoolRole", []))
-        errors = super(UserValidator, cls).validate(obj)
         errors.append(cls.validate_required_groups(groups, cls.expected_groups(obj)))
+        errors.extend(cls.validate_group_membership(groups))
+        roles = []
+        for role_str in obj["props"].get("ucsschoolRole", []):
+            try:
+                roles.append(get_role_info(role_str))
+            except (InvalidUcsschoolRoleString, UnknownRole, UnknownContextType) as exc:
+                errors.append(str(exc))
         errors.append(cls.validate_part_of_school(roles, schools))
         errors.append(cls.validate_student_roles(roles))
-        errors.extend(cls.validate_group_membership(groups))
         return errors
 
     @classmethod
@@ -219,7 +231,7 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def validate_part_of_school(cls, roles, schools):
-        # type: (List[List[str]], List[str]) -> Optional[str]
+        # type: (List[Tuple[str]], List[str]) -> Optional[str]
         """
         Users should not have roles with schools which they don't have.
         """
@@ -229,7 +241,7 @@ class UserValidator(SchoolValidator):
             return "is not part of schools: {!r}.".format(list(missing_schools))
 
     @classmethod
-    def validate_student_roles(cls, roles):  # type: (List[List[str]]) -> Optional[str]
+    def validate_student_roles(cls, roles):  # type: (List[Tuple[str]]) -> Optional[str]
         """
         Students should not have teacher, staff or school_admin role.
         """
@@ -314,18 +326,23 @@ class ExamStudentValidator(StudentValidator):
 
     @classmethod
     def validate(cls, obj):  # type: (Dict[str, Any]) -> List[str]
-        roles = obj["props"].get("ucsschoolRole", [])
         errors = super(ExamStudentValidator, cls).validate(obj)
+        roles = []
+        for role_str in obj["props"].get("ucsschoolRole", []):
+            try:
+                roles.append(get_role_info(role_str))
+            except (InvalidUcsschoolRoleString, UnknownRole, UnknownContextType) as exc:
+                errors.append(str(exc))
         errors.append(cls.validate_exam_contexts(roles))
         return errors
 
     @classmethod
-    def validate_exam_contexts(cls, roles):  # type: (List[str]) -> str
+    def validate_exam_contexts(cls, roles):  # type: (List[Tuple[str]]) -> str
         """
         ExamUsers should have a role with context `exam`,
         e.g exam_user:exam:demo-exam-DEMOSCHOOL.
         """
-        exam_roles = [r for r, c, s in split_roles(roles) if c == "exam" and r == role_exam_user]
+        exam_roles = [r for r, c, s in roles if c == "exam" and r == role_exam_user]
         if not exam_roles:
             return "is missing role with context exam."
 
