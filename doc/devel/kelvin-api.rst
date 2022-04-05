@@ -17,19 +17,16 @@ Pushing image to Docker registry
 
 To push the Docker image to Univentions Docker registry, the image has to be built on the host ``docker.knut.univention.de``::
 
-	$ ssh root@docker.knut.univention.de
+	$ ssh docker.knut.univention.de
 	# list existing images
 	$ docker images docker-test-upload.software-univention.de/ucsschool-kelvin-rest-api
-	# update ucsschool repo (branch feature/kelvin)
-	$ cd ucsschool-kelvin/ucsschool
-	$ git pull
 
-Optionally sync not yet commited changes from your local git repo to the server::
+Sync your local git repo to the server::
 
 	$ cd $UCSSCHOOL-GIT
 	$ git checkout feature/kelvin
 	$ make -C kelvin-api clean
-	$ rsync -avn --delete ./ root@docker:ucsschool-kelvin/ucsschool/ --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__  --exclude '*.egg-info' --exclude '*.eggs'
+	$ rsync -avn --delete ./ docker:git/ucsschool-kelvin/ --exclude docker/build --exclude docker/ucs --exclude .idea/ --exclude .git --exclude doc --exclude 'italc*' --exclude '*-umc-*' --exclude .pytest_cache --exclude __pycache__  --exclude '*.egg-info' --exclude '*.eggs'
 	# check output, changes should be only recent commits and your changes
 	# if OK: remove '-n' from rsync cmdline
 
@@ -37,9 +34,8 @@ If you want to build a new version of the docker image do not forget to increase
 
 Build image on the ``docker`` host and push it to the Docker registry::
 
-	$ ssh root@docker.knut.univention.de
-	$ cd ucsschool-kelvin/ucsschool/docker
-	$ git pull
+	$ ssh docker.knut.univention.de
+	$ cd git/ucsschool-kelvin/docker
 	$ ./build_docker_image --push
 
 If the build succeeds, you'll be asked::

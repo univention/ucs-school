@@ -882,8 +882,8 @@ async def partial_update(  # noqa: C901
         #     school: B
         #     schools: [B, C]
         #
-        # since the 'change_school' logic removes the current 'school' from the 'schools' list and appends the new
-        # school.
+        # since the 'change_school' logic removes the current 'school' from the 'schools' list and
+        # appends the new school.
         new_schools = new_schools or [new_school]
         to_change.setdefault("schools", new_schools)
         if not new_school and user_current.school not in new_schools:

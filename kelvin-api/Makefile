@@ -72,7 +72,7 @@ linters:  ## run isort, black, flake8 etc
 	fi
 
 lint-coverage: .coverage
-	coverage report --show-missing --fail-under=30
+	coverage report --show-missing --fail-under=28
 
 lint: linters lint-coverage ## check source code style
 
