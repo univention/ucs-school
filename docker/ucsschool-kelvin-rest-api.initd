@@ -22,6 +22,7 @@ command_args="--workers $num_workers --worker-class uvicorn.workers.UvicornWorke
 
 name=ucsschool-kelvin-rest-api
 description="UCS@school Kelvin REST API server"
+pidfile="/var/run/kelvin.pid"
 
 depend() {
     need opa
@@ -29,14 +30,13 @@ depend() {
 
 start() {
     ebegin "Starting $description"
-    start-stop-daemon --start --background --name "$name" --exec $command -- $command_args
+    start-stop-daemon --start --background -m -p $pidfile --name "$name" --exec $command -- $command_args
     eend $?
 }
 
 stop() {
     ebegin "Stopping $description"
-    pkill -INT -f multiprocessing || true
-    pkill -INT -f "$command" || true
+    start-stop-daemon --stop -p $pidfile --exec $command
     eend $?
 }
 status () {
