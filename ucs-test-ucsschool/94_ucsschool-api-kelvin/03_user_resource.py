@@ -237,7 +237,7 @@ def test_partial_update_user_parallel_from_external_different_classes(
     ou1, ou2 = ous
     logger.info("*** Using OUs %r and %r, parallelism=%d.", ou1, ou2, parallelism)
 
-    # create users sequentially and using WSGI interface
+    # create users sequentially using Python interface
     jobs = []
     for _i in range(parallelism):
         create_attrs = make_user_attrs(ous, school=ou1, schools=ous)  # overwrite URLs
@@ -266,7 +266,7 @@ def test_partial_update_user_parallel_from_external_different_classes(
         schoolenv.udm._cleanup.setdefault("groups/group", []).extend(extract_class_dns(attrs_new))
         jobs.append((create_attrs, attrs_new))
 
-    # modify users in parallel and using HTTP
+    # modify users in parallel using HTTP
     wait_for_listener_replication()
     wait_for_s4connector_replication()
     pool = Pool(processes=parallelism)
@@ -282,7 +282,8 @@ def test_partial_update_user_parallel_from_external_different_classes(
     wait_for_s4connector_replication()
     for num, result in enumerate(results, start=1):
         logger.info("*** Checking result %d/%d (%r)...", num, parallelism, result.get("name", "N/A"))
-        user = get_import_user(result["dn"])
+        logger.debug("***** result=%r", result)
+        user = get_import_user(result["dn"])  # this will fail, when an error was reported
         compare_import_user_and_resource(user, result)
         logger.info("*** OK: LDAP <-> resource")
         # now compare with attrs
@@ -301,6 +302,7 @@ def test_partial_update_user_parallel_from_external_different_classes(
         else:
             raise AssertionError("Could not find user with name {!r} in jobs.".format(user.name))
         import_user_cls = user.__class__
+        logger.debug("***** initializing %s 'user2' from attr=%r", user.__class__.__name__, attr)
         user2 = import_user_cls(**attr)
         user2.disabled = "1" if attr["disabled"] else "0"
         logger.debug(
@@ -308,8 +310,8 @@ def test_partial_update_user_parallel_from_external_different_classes(
         )
         user2.password = ""
         user2.roles = user.roles
-        user2.school = ou1
-        user2.schools = ous
+        user2.school = user2.school.split("/")[-1]  # URL 2 OU
+        user2.schools = [ou.split("/")[-1] for ou in user2.schools]  # URLs 2 OUs
         user2.ucsschool_roles = user.ucsschool_roles  # not in attr
         # add mapped udm_properties not in attr
         mup = import_config["mapped_udm_properties"]

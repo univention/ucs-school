@@ -117,9 +117,25 @@ def make_user_attrs(import_config, mail_domain, random_int, random_username):
                 "source_uid",
             ]
             random.shuffle(removable_attrs)
+            schools = res["schools"]
             for k in list(res):
                 if k not in removable_attrs[:num_attrs]:
                     del res[k]
+            if len(res.get("school_classes", {})) != 1 and "schools" not in res:
+                # Prevent "School '...' in 'school_classes' is missing in the users 'school(s)'
+                # attributes."
+                # Case 1: "school_classes" not in res
+                #         -> No 'school_classes' means: don't change existing school_classes. Thus, the
+                #            OUs in school_classes.keys() must be kept.
+                # Case 2: more than one OU in school_classes
+                #         -> 'schools' must contain all OUs
+                res["schools"] = schools
+        assert all(
+            [
+                urljoin(RESSOURCE_URLS["schools"], ou) in res.get("schools", [])
+                for ou in res.get("school_classes", {})
+            ]
+        )
         res.update(kwargs)
         return res
 
@@ -133,9 +149,8 @@ def empty_str2none(udm_props):  # type: (Dict[str, Any]) -> Dict[str, Any]
             res[k] = empty_str2none(v)
         elif isinstance(v, list):
             res[k] = [None if vv == "" else vv for vv in v]
-        else:
-            if v == "":
-                res[k] = None
+        elif v == "":
+            res[k] = None
     return res
 
 

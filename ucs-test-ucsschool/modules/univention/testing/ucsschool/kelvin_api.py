@@ -97,6 +97,7 @@ HTTP_502_ERRORS = []
 _ucs_school_import_framework_initialized = False
 _ucs_school_import_framework_error = None
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+logger = logging.getLogger("univention.testing.ucsschool")
 
 
 print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
@@ -157,7 +158,7 @@ class HttpApiUserTestBase(TestCase):
         cls.lo = cls.itb.lo
         cls.ucr = cls.itb.ucr
         cls.auth_headers = {"Authorization": "{} {}".format(*cls.get_token())}
-        print("*** auth_headers={!r}".format(cls.auth_headers))
+        logger("*** auth_headers={!r}".format(cls.auth_headers))
         handler_set(cls.ucrvs2set)
         if cls.should_restart_api_server:
             # for testing through HTTP (using WSGI directly not affected)
@@ -177,7 +178,7 @@ class HttpApiUserTestBase(TestCase):
         )
         if resp.ok:
             res = resp.json()
-            print("*** Got a token via HTTP from the Kelvin API. ***")
+            logger.info("*** Got a token via HTTP from the Kelvin API. ***")
             return res["token_type"], res["access_token"]
         else:
             raise RuntimeError(
@@ -188,11 +189,11 @@ class HttpApiUserTestBase(TestCase):
 
     @classmethod
     def set_up_import_config(cls):
-        print("*** HttpApiUserTestBase.set_up_import_config()")
+        logger.info("*** HttpApiUserTestBase.set_up_import_config()")
         # set_up_import_config()
         # return
         if os.path.exists(IMPORT_CONFIG["active"]):
-            print("Moving {!r} to {!r}.".format(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"]))
+            logger.info("Moving %r to %r.", IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
             shutil.move(IMPORT_CONFIG["active"], IMPORT_CONFIG["bak"])
             config_file = IMPORT_CONFIG["bak"]
         else:
@@ -209,15 +210,15 @@ class HttpApiUserTestBase(TestCase):
         config["verbose"] = True
         with open(IMPORT_CONFIG["active"], "w") as fp:
             json.dump(config, fp, indent=4)
-        print("Wrote config to {!r}: {!r}".format(IMPORT_CONFIG["active"], config))
+        logger.info("Wrote config to %r: %r", IMPORT_CONFIG["active"], config)
 
     @classmethod
     def revert_import_config(cls):
         if os.path.exists(IMPORT_CONFIG["bak"]):
-            print("Moving {!r} to {!r}.".format(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"]))
+            logger.info("Moving %r to %r.", IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
             shutil.move(IMPORT_CONFIG["bak"], IMPORT_CONFIG["active"])
         else:
-            print("Removing {!r}.".format(IMPORT_CONFIG["active"]))
+            logger.info("Removing %r.", IMPORT_CONFIG["active"])
             os.remove(IMPORT_CONFIG["active"])
 
     def compare_import_user_and_resource(self, import_user, resource, source="LDAP"):
@@ -388,9 +389,25 @@ class HttpApiUserTestBase(TestCase):
                 "source_uid",
             ]
             random.shuffle(removable_attrs)
-            for k in res.keys():
+            schools = res["schools"]
+            for k in list(res):
                 if k not in removable_attrs[:num_attrs]:
                     del res[k]
+            if len(res.get("school_classes", {})) != 1 and "schools" not in res:
+                # Prevent "School '...' in 'school_classes' is missing in the users 'school(s)'
+                # attributes."
+                # Case 1: "school_classes" not in res
+                #         -> No 'school_classes' means: don't change existing school_classes. Thus, the
+                #            OUs in school_classes.keys() must be kept.
+                # Case 2: more than one OU in school_classes
+                #         -> 'schools' must contain all OUs
+                res["schools"] = schools
+        assert all(
+            [
+                urljoin(RESSOURCE_URLS["schools"], ou) in res.get("schools", [])
+                for ou in res.get("school_classes", {})
+            ]
+        )
         res.update(kwargs)
         return res
 
@@ -459,7 +476,7 @@ def retry_http_502(request_method, *args, **kwargs):
                 ", ".join("{!r}={!r}".format(k, v) for k, v in kwargs.items()),
             )
             HTTP_502_ERRORS.append(msg)
-            print(msg)
+            logger.info(msg)
             retries -= 1
             time.sleep(2)
             continue
