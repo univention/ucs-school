@@ -1,6 +1,12 @@
+ucs-test-ucsschool (7.3.36) unstable; urgency=low
+
+  * Bug #54547: fix Kelvin test
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 08 Apr 2022 19:12:45 +0200
+
 ucs-test-ucsschool (7.3.35) unstable; urgency=medium
 
-  * Bug #54455: fix test 
+  * Bug #54455: fix test
 
  -- Tobias Wenzel <wenzel@univention.de>  Fri, 04 Mar 2022 14:05:38 +0100
 

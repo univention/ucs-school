@@ -55,7 +55,7 @@ ucr.load()
 
 
 def is_valid_ou_name(name):
-    """ check if given OU name is valid """
+    """check if given OU name is valid"""
     return bool(re.match("^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$", name))
 
 

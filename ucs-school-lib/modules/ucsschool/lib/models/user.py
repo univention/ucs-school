@@ -292,7 +292,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if password_created:
             # dont' show password in post_hooks
             # (it has already been saved to LDAP in super().do_create() above)
-            self.password = ""
+            self.password = ""  # nosec
         return success
 
     def do_modify(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
@@ -753,19 +753,19 @@ class Staff(User):
         return cls.get_search_base(school).staff
 
     def get_samba_home_path(self, lo):  # type: (LoType) -> None
-        """	Do not set sambaHomePath for staff users. """
+        """Do not set sambaHomePath for staff users."""
         return None
 
     def get_samba_home_drive(self):  # type: () -> None
-        """	Do not set sambaHomeDrive for staff users. """
+        """Do not set sambaHomeDrive for staff users."""
         return None
 
     def get_samba_netlogon_script_path(self):  # type: () -> None
-        """	Do not set sambaLogonScript for staff users. """
+        """Do not set sambaLogonScript for staff users."""
         return None
 
     def get_profile_path(self, lo):  # type: (LoType) -> None
-        """	Do not set sambaProfilePath for staff users. """
+        """Do not set sambaProfilePath for staff users."""
         return None
 
     def get_school_class_objs(self):  # type: () -> List[SchoolClass]

@@ -34,18 +34,15 @@ from UCSSchoolHelperAbstractClass.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Type, Union
 
 from ..pyhooks.pyhook import PyHook
 from .utils import ucr
 
 if TYPE_CHECKING:
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClassTV
     from univention.admin.uldap import access as LoType
     from univention.config_registry import ConfigRegistry
-
-UCSSchoolHelperAbstractClassTV = TypeVar(
-    "UCSSchoolHelperAbstractClassTV", bound="ucsschool.lib.models.base.UCSSchoolHelperAbstractClass"
-)
 
 
 class Hook(PyHook):

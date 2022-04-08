@@ -2,47 +2,50 @@
 # See https://pre-commit.com/hooks.html for more hooks
 exclude: "^django-pam/"
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.3.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
     hooks:
-    -   id: check-added-large-files
-    -   id: check-json
-    -   id: check-xml
-    -   id: check-yaml
-    -   id: trailing-whitespace
--   repo: https://github.com/timothycrosley/isort
-    rev: 5.6.4
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-xml
+      - id: check-yaml
+      - id: trailing-whitespace
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.10.1
     hooks:
-    -   id: isort
+      - id: isort
         entry: isort -c
-    -   id: isort
+      - id: isort
         alias: isort-edit
-        stages: [manual]
+        stages: [ manual ]
         entry: isort
--   repo: https://github.com/psf/black
-    rev: 20.8b1
+  - repo: https://github.com/psf/black
+    # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
+    # Version 21.11b0 adds super annoying Python 2 deprecation notice.
+    # Version 22.1.0 removes Python 2 support.
+    rev: 21.9b0
     hooks:
-    -   id: black
+      - id: black
         entry: black --check --diff --config .black
-    -   id: black
+      - id: black
         alias: black-edit
-        stages: [manual]
+        stages: [ manual ]
         entry: black --config .black
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
     hooks:
-    -   id: flake8
+      - id: flake8
         language_version: python3.7
--   repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.7.0
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
     hooks:
-    -   id: python-check-blanket-noqa
-    -   id: python-no-eval
-    -   id: rst-backticks
--   repo: https://github.com/PyCQA/bandit
-    rev: 1.6.2
+      - id: python-check-blanket-noqa
+      - id: python-no-eval
+      - id: rst-backticks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.4
     hooks:
-    -   id: bandit
+      - id: bandit
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
 default_language_version:
-    python: python3.7
+  python: python3.7

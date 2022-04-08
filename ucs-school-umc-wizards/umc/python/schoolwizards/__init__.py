@@ -39,7 +39,6 @@ from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union
 import six
 
 import univention.admin.modules as udm_modules
-from univention.admin.filter import conjunction
 from ucsschool.lib.models.base import WrongModel
 from ucsschool.lib.models.computer import IPComputer, MacComputer, SchoolComputer, WindowsComputer
 from ucsschool.lib.models.group import SchoolClass
@@ -48,6 +47,7 @@ from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, Teac
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, USER_WRITE, LDAP_Connection
+from univention.admin.filter import conjunction
 from univention.admin.uexceptions import base as uldapBaseException, noObject
 from univention.lib.i18n import Translation
 from univention.management.console.base import UMC_Error
@@ -252,9 +252,7 @@ def sanitize_object(**kwargs):
 
 
 def _sanitize_filter_str(filter_str):
-    sanitizer = LDAPSearchSanitizer(
-        required=False, default="", use_asterisks=True, add_asterisks=False
-    )
+    sanitizer = LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False)
     return sanitizer.sanitize("filter_str", {"filter_str": filter_str})
 
 
@@ -440,7 +438,9 @@ class Instance(SchoolBaseModule, SchoolImport):
         objs = []
         for school in schools:
             try:
-                objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=easy_filter))
+                objs.extend(
+                    klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=easy_filter)
+                )
             except noObject as exc:
                 MODULE.error("Could not get all objects of %r: %r" % (klass.__name__, exc))
         return [obj.to_dict() for obj in objs]
@@ -464,7 +464,9 @@ class Instance(SchoolBaseModule, SchoolImport):
                 filter_str = str(conjunction("&", [disabled_filter, filter_str]))
             else:
                 filter_str = disabled_filter
-        return self._get_all(user_class, request.options["school"], filter_str, ldap_user_read, easy_filter=False)
+        return self._get_all(
+            user_class, request.options["school"], filter_str, ldap_user_read, easy_filter=False
+        )
 
     get_user = _get_obj
     modify_user = _modify_obj

@@ -44,7 +44,11 @@ from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
-from univention.management.console.modules.sanitizers import BooleanSanitizer, DNSanitizer, StringSanitizer
+from univention.management.console.modules.sanitizers import (
+    BooleanSanitizer,
+    DNSanitizer,
+    StringSanitizer,
+)
 
 _ = Translation("ucs-school-umc-lists").translate
 
@@ -66,7 +70,7 @@ class Instance(SchoolBaseModule):
         school=SchoolSanitizer(required=True),
         group=DNSanitizer(required=True, minimum=1),
         separator=StringSanitizer(required=True),
-        exclude_deactivated=BooleanSanitizer(required=True)
+        exclude_deactivated=BooleanSanitizer(required=True),
     )
     @LDAP_Connection()
     def csv_list(self, request, ldap_user_read=None, ldap_position=None):
@@ -85,9 +89,7 @@ class Instance(SchoolBaseModule):
             student_udm_obj = student.get_udm_object(ldap_user_read)
             if school not in student.school_classes:
                 MODULE.error(
-                    "Student missing class in school {!r}: {!r}".format(
-                        school, student_udm_obj.dn
-                    )
+                    "Student missing class in school {!r}: {!r}".format(school, student_udm_obj.dn)
                 )
                 continue
             for attr in attributes:
@@ -99,8 +101,8 @@ class Instance(SchoolBaseModule):
                     except KeyError:
                         raise UMC_Error(
                             _(
-                                "{!r} is not a valid UDM-property. Please change the value of the UCR variable "
-                                "ucsschool/umc/lists/class/attributes."
+                                "{!r} is not a valid UDM-property. Please change the value of the UCR "
+                                "variable ucsschool/umc/lists/class/attributes."
                             ).format(attr)
                         )
                     if isinstance(value, list):

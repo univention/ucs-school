@@ -155,12 +155,12 @@ if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_sta
 
 
 def is_valid_ou_name(name):
-    """ check if given OU name is valid """
+    """check if given OU name is valid"""
     return bool(re.match(r"^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$", name))
 
 
 def is_valid_hostname(name):
-    """ check if given hostname is valid """
+    """check if given hostname is valid"""
     return bool(re.match(r"^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$", name))
 
 

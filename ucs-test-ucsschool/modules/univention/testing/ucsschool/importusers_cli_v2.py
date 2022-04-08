@@ -555,7 +555,7 @@ class UniqueObjectTester(CLI_Import_v2_Tester):
         super(UniqueObjectTester, self).cleanup()
 
     def check_unique_obj(self, obj_name, prefix, next_num):
-        """ check if history object exists"""
+        """check if history object exists"""
         self.log.info("Checking for %s object...", obj_name)
         dn = "cn={},cn={},cn=ucsschool,cn=univention,{}".format(prefix, obj_name, self.lo.base)
         attrs = {

@@ -231,7 +231,7 @@
 			<para>
 				Für die Aufbereitung der Daten ist es besonders wichtig darauf zu achten, dass Benutzern in der Rolle Schüler
 				immer eine Schulklasse zugewiesen ist. Benutzerkontodaten werden an anderen Stellen weiter verarbeitet. Wenn die Angabe
-				für die Schulklasse eines Schülers fehlt, kann die Weiterverarbeitung gestört werden. Detaillierte Informationen wie sich 
+				für die Schulklasse eines Schülers fehlt, kann die Weiterverarbeitung gestört werden. Detaillierte Informationen wie sich
 				Benutzerkonten UCS@school von UCS unterschieden, finden sich im
 				<ulink url="https://help.univention.com/t/15630">
 					<citetitle>Knowledge Base Artikel "How a UCS@school user should look like"</citetitle>

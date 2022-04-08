@@ -310,7 +310,7 @@ class UCSTestSchool(object):
         return msg
 
     def cleanup(self, wait_for_replication=True):
-        """ Cleanup all objects created by the UCS@school test environment """
+        """Cleanup all objects created by the UCS@school test environment"""
         logger.info("Performing UCSTestSchool cleanup...")
         for ou_name in self._cleanup_ou_names:
             self.cleanup_ou(ou_name, wait_for_replication=False)
@@ -352,7 +352,7 @@ class UCSTestSchool(object):
 
     def cleanup_ou(self, ou_name, wait_for_replication=True, retry=True):
         # type: (str, Optional[bool], Optional[bool]) -> bool
-        """ Removes the given school ou and all its corresponding objects like groups """
+        """Removes the given school ou and all its corresponding objects like groups"""
 
         logger.info("*** Purging OU %r and related objects", ou_name)
         if wait_for_replication:
