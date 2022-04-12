@@ -7,4 +7,5 @@ fix: 13.0.13A~5.0.0.202204051400
 desc: |
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
-bug: [54030, 54535]
+ * Check if Marktplatz is enabled before checking its consistency (Bug #54248).
+bug: [54030, 54535, 54248]

@@ -409,7 +409,7 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
         school_filter = "*"
         allow_wildcards = True
 
-    if ucr.is_true("ucsschool/import/generate/marktplatz", True):
+    if ucr.is_true("ucsschool/import/generate/share/marktplatz", True):
         for ou in all_schools:
             search_base = SchoolSearchBase([ou])
             marktplatz_share = "cn=Marktplatz,cn=shares,{}".format(search_base.schoolDN)
