@@ -65,12 +65,12 @@ from ucsschool.lib.roles import (
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
+LOG_FILE = "/var/log/univention/ucs-school-validation.log"
+VALIDATION_LOGGER = "UCSSchool-Validation"
 
 def get_private_data_logger():
     private_data_logger = None
     if os.geteuid() == 0:
-        LOG_FILE = "/var/log/univention/ucs-school-validation.log"
-        VALIDATION_LOGGER = "UCSSchool-Validation"
         private_data_logger = logging.getLogger(VALIDATION_LOGGER)
         private_data_logger.setLevel("DEBUG")
         backup_count = int(ucr.get("ucsschool/validation/logging/backupcount", "").strip() or 60)

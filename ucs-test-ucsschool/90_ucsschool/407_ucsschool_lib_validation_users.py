@@ -14,7 +14,6 @@
 import re
 import tempfile
 from typing import Any, Dict, List, Tuple
-
 import pytest
 
 import univention.testing.strings as uts
@@ -485,10 +484,19 @@ def test_false_ldap_position(caplog, get_user_a, get_user_b, random_logger):
     check_logs(user_a, caplog.record_tuples, random_logger.name, expected_msg)
 
 
-@pytest.mark.parametrize("dict_obj", all_user_role_objects, ids=all_user_roles_names)
-def test_wrong_ucsschool_role(caplog, dict_obj, random_logger):
+all_user_role_objects_with_names = [
+    (student_user(), "student"),
+    (teacher_user(), "teacher"),
+    (staff_user(), "staff"),
+    (exam_user(), "student"),
+    (teacher_and_staff_user(), "teacher"),
+    (admin_user(), "school_admin"),
+]
+
+@pytest.mark.parametrize("dict_obj,role", all_user_role_objects_with_names, ids=all_user_roles_names)
+def test_wrong_ucsschool_role(caplog, dict_obj, role, random_logger):
     wrong_school = uts.random_name()
-    dict_obj["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), wrong_school)]
+    dict_obj["props"]["ucsschoolRole"] = ["{}:school:{}".format(role, wrong_school)]
     validate(dict_obj, logger=random_logger)
     expected_msg = "is not part of schools: {!r}".format([wrong_school])
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
@@ -680,7 +688,7 @@ def test_validation_log_enabled(caplog, random_logger, logging_enabled):
 
         user = student_user()
         wrong_school = uts.random_name()
-        user["props"]["ucsschoolRole"] = ["{}:school:{}".format(uts.random_name(), wrong_school)]
+        user["props"]["ucsschoolRole"] = ["student:school:{}".format(wrong_school)]
         validate(user, logger=random_logger)
         expected_msg = "is not part of schools: {!r}".format([wrong_school])
 
