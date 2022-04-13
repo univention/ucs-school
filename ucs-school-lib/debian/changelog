@@ -1,4 +1,4 @@
-ucs-school-lib (13.0.15) unreleased; urgency=medium
+ucs-school-lib (13.0.15) unstable; urgency=medium
 
   * Bug #54535: Flake8 unittest style errors
 
