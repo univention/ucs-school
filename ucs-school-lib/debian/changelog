@@ -1,6 +1,12 @@
+ucs-school-lib (13.0.15) unreleased; urgency=medium
+
+  * Bug #54535: Flake8 unittest style errors
+
+ -- Amir Teymuri <teymuri@univention.de>  Wed, 13 Apr 2022 11:14:08 +0200
+
 ucs-school-lib (13.0.14) unstable; urgency=medium
 
-  * Fix incorrect variable name when checking if Marktplatz is enabled during
+  * Bug #54247: Fix incorrect variable name when checking if Marktplatz is enabled during
     911_ucsschool_consistency check.
 
  -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Mon, 11 Apr 2022 17:58:57 +0300

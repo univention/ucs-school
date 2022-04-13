@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.37) unstable; urgency=medium
+
+  * Bug #54535: fix validation test
+
+ -- Amir Teymuri <teymuri@univention.de>  Wed, 13 Apr 2022 12:37:38 +0200
+
 ucs-test-ucsschool (7.3.36) unstable; urgency=low
 
   * Bug #54547: fix Kelvin test
