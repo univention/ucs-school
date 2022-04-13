@@ -68,6 +68,7 @@ from ucsschool.lib.schoolldap import SchoolSearchBase
 LOG_FILE = "/var/log/univention/ucs-school-validation.log"
 VALIDATION_LOGGER = "UCSSchool-Validation"
 
+
 def get_private_data_logger():
     private_data_logger = None
     if os.geteuid() == 0:

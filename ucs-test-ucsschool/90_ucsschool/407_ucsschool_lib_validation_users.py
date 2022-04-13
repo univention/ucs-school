@@ -14,6 +14,7 @@
 import re
 import tempfile
 from typing import Any, Dict, List, Tuple
+
 import pytest
 
 import univention.testing.strings as uts
@@ -492,6 +493,7 @@ all_user_role_objects_with_names = [
     (teacher_and_staff_user(), "teacher"),
     (admin_user(), "school_admin"),
 ]
+
 
 @pytest.mark.parametrize("dict_obj,role", all_user_role_objects_with_names, ids=all_user_roles_names)
 def test_wrong_ucsschool_role(caplog, dict_obj, role, random_logger):
