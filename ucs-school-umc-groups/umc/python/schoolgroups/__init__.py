@@ -87,6 +87,63 @@ def get_exception_msg(e):
     return msg
 
 
+def _filter_users(
+    input_users,
+    school,
+    flavor,
+    ldap_machine_write=None,
+):
+    """Validate users according to the modification type (flavor).
+
+    Checks:
+      * User exists.
+      * User belongs to the given school.
+      * For flavor "workgroup-admin":
+        * User has to be student, administrator, staff or teacher.
+      * For flavor "class":
+        * User must be a teacher.
+      * For flavor "workgroup":
+        * User must be a student.
+
+    return: filtered list of users
+    """
+    users = []
+    # add only certain users to the group
+    for userdn in input_users:
+        try:
+            user = User.from_dn(userdn, None, ldap_machine_write)
+        except udm_exceptions.noObject as exc:
+            MODULE.error("Not adding not existing user %r to group: %r." % (userdn, exc))
+            continue
+        if not user.schools or not set(user.schools) & set([school]):
+            raise UMC_Error(
+                _("User %s does not belong to school %r.")
+                % (Display.user(user.get_udm_object(ldap_machine_write)), school)
+            )
+        if (
+            flavor == "workgroup-admin"
+            and not user.is_student(ldap_machine_write)
+            and not user.is_administrator(ldap_machine_write)
+            and not user.is_staff(ldap_machine_write)
+            and not user.is_teacher(ldap_machine_write)
+        ):
+            raise UMC_Error(
+                _("User %s does not belong to school %r.")
+                % (Display.user(user.get_udm_object(ldap_machine_write)), school)
+            )
+        if flavor == "class" and not user.is_teacher(ldap_machine_write):
+            raise UMC_Error(
+                _("User %s is not a teacher.") % (Display.user(user.get_udm_object(ldap_machine_write)),)
+            )
+        if flavor == "workgroup" and not user.is_student(ldap_machine_write):
+            raise UMC_Error(
+                _("User %s is not a student.") % (Display.user(user.get_udm_object(ldap_machine_write)),)
+            )
+        users.append(user.dn)
+
+    return users
+
+
 class Instance(SchoolBaseModule):
     @sanitize(
         school=SchoolSanitizer(required=True),
@@ -294,40 +351,12 @@ class Instance(SchoolBaseModule):
             ):
                 users.append(userdn)
 
-        # add only certain users to the group
-        for userdn in group_from_umc["members"]:
-            try:
-                user = User.from_dn(userdn, None, ldap_machine_write)
-            except udm_exceptions.noObject as exc:
-                MODULE.error("Not adding not existing user %r to group: %r." % (userdn, exc))
-                continue
-            if not user.schools or not set(user.schools) & set([group_from_ldap.school]):
-                raise UMC_Error(
-                    _("User %s does not belong to school %r.")
-                    % (Display.user(user.get_udm_object(ldap_machine_write)), group_from_ldap.school)
-                )
-            if (
-                request.flavor == "workgroup-admin"
-                and not user.is_student(ldap_machine_write)
-                and not user.is_administrator(ldap_machine_write)
-                and not user.is_staff(ldap_machine_write)
-                and not user.is_teacher(ldap_machine_write)
-            ):
-                raise UMC_Error(
-                    _("User %s does not belong to school %r.")
-                    % (Display.user(user.get_udm_object(ldap_machine_write)), group_from_ldap.school)
-                )
-            if request.flavor == "class" and not user.is_teacher(ldap_machine_write):
-                raise UMC_Error(
-                    _("User %s is not a teacher.")
-                    % (Display.user(user.get_udm_object(ldap_machine_write)),)
-                )
-            if request.flavor == "workgroup" and not user.is_student(ldap_machine_write):
-                raise UMC_Error(
-                    _("User %s is not a student.")
-                    % (Display.user(user.get_udm_object(ldap_machine_write)),)
-                )
-            users.append(user.dn)
+        users += _filter_users(
+            group_from_umc["members"],
+            group_from_ldap.school,
+            request.flavor,
+            ldap_machine_write,
+        )
 
         group_from_ldap.users = list(set(users) - removed_members)
         if group_from_umc.get("create_email", False):
@@ -362,7 +391,12 @@ class Instance(SchoolBaseModule):
                 "school": group["school"],
                 "name": "%(school)s-%(name)s" % group,
                 "description": group["description"],
-                "users": group["members"],
+                "users": _filter_users(
+                    group["members"],
+                    str(group["school"]),
+                    request.flavor,
+                    ldap_user_write,
+                ),
                 "create_share": group.get("create_share", True),
             }
             if group.get("create_email", False):
