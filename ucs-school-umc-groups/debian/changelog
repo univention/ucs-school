@@ -1,3 +1,9 @@
+ucs-school-umc-groups (10.0.5) unstable; urgency=medium
+
+  * Bug #54040: check users' schools when adding them to a work group
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Wed, 20 Apr 2022 17:33:06 +0300
+
 ucs-school-umc-groups (10.0.4) unstable; urgency=medium
 
   * Bug #53369: add missing icons to grid buttons
