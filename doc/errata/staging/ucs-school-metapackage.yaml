@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-metapackage
+fix:
+desc: |
+ * Add mail address for demo users (Bug #48896).
+bug: [48896]

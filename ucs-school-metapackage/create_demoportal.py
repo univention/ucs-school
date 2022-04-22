@@ -36,6 +36,7 @@ import sys
 
 import univention.admin.modules as modules
 from ucsschool.lib.models.group import SchoolClass
+from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher
 from ucsschool.lib.models.utils import ucr
@@ -90,6 +91,8 @@ def create_school():
             print("The following error occured while creating the Demo School object: \n")
             print(exc)
             sys.exit(1)
+    mail_domain = MailDomain(name="demoschool.example.com")
+    mail_domain.create(lo)
     kls = SchoolClass(name="{}-Democlass".format(SCHOOL[0]), school=SCHOOL[0])
     kls.create(lo)
     student = Student(
@@ -98,6 +101,7 @@ def create_school():
         name="demo_student",
         password=demo_password,
         school=SCHOOL[0],
+        email="demo_student@demoschool.example.com",
     )
     student.school_classes[SCHOOL[0]] = ["Democlass"]
     student.create(lo)
@@ -107,15 +111,26 @@ def create_school():
         name="demo_teacher",
         password=demo_password,
         school=SCHOOL[0],
+        email="demo_teacher@demoschool.example.com",
     )
     teacher.create(lo)
     staff = Staff(
-        firstname="Demo", lastname="Staff", name="demo_staff", password=demo_password, school=SCHOOL[0]
+        firstname="Demo",
+        lastname="Staff",
+        name="demo_staff",
+        password=demo_password,
+        school=SCHOOL[0],
+        email="demo_staff@demoschool.example.com",
     )
     staff.create(lo)
     # create school admin from teacher
     admin = Teacher(
-        firstname="Demo", lastname="Admin", name="demo_admin", password=demo_password, school=SCHOOL[0]
+        firstname="Demo",
+        lastname="Admin",
+        name="demo_admin",
+        password=demo_password,
+        school=SCHOOL[0],
+        email="demo_admin@demoschool.example.com",
     )
     admin.create(lo)
     admin_group = module_groups.lookup(None, lo, "name=admins-{}".format(SCHOOL[0]), pos.getBase())[0].dn
