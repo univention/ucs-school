@@ -3,6 +3,9 @@
 <h2>v1.5.4 ()</h2>
 <ul>
     <li>
+         The valid date range is now specified (Bug #54668).
+    </li>
+    <li>
          A new App Setting was added to configure the amount CPU cores utilized by the UCS@school Kelvin REST API (Bug #54575).
     </li>
     <li>

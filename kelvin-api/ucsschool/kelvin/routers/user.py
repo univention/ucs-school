@@ -649,8 +649,10 @@ async def create(
         **Kelvin** if unset, used by the UCS@school import)
     - **school_classes**: school classes the user is a member of (optional,
         format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
-    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
-    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
+    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
     - **disabled**: whether the user should be created deactivated (optional,
         default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school
@@ -828,12 +830,14 @@ async def partial_update(  # noqa: C901
         **role** resources)
     - **password**: users password, a random one will be generated if unset
     - **email**: the users email address (**mailPrimaryAddress**)
-    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
     - **record_uid**: identifier unique to the upstream database referenced by **source_uid**
     - **source_uid**: identifier of the upstream database)
     - **school_classes**: school classes the user is a member of (format: **{"school1": ["class1",
         "class2"], "school2": ["class3"]}**)
-    - **birthday**: birthday of user (format: **YYYY-MM-DD**)
+    - **birthday**: birthday of user (format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
     - **disabled**: whether the user should be created deactivated (default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school (auto-managed by system,
         setting and changing discouraged)
@@ -968,14 +972,16 @@ async def complete_update(  # noqa: C901
     - **email**: the users email address (**mailPrimaryAddress**), used only
         when the email domain is hosted on UCS, not to be confused with the
         contact property **e-mail** (optional)
-    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**)
+    - **expiration_date**: date of password expiration (optional, format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
     - **record_uid**: identifier unique to the upstream database referenced by
         **source_uid** (**required**, used by the UCS@school import)
     - **source_uid**: identifier of the upstream database (optional, will be
         **Kelvin** if unset, used by the UCS@school import)
     - **school_classes**: school classes the user is a member of (optional,
         format: **{"school1": ["class1", "class2"], "school2": ["class3"]}**)
-    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**)
+    - **birthday**: birthday of user (optional, format: **YYYY-MM-DD**,
+        valid range: 1961-01-01 to 2099-12-31)
     - **disabled**: whether the user should be created deactivated (optional,
         default: **false**)
     - **ucsschool_roles**: list of roles the user has in to each school
