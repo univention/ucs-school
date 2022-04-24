@@ -96,10 +96,11 @@ define([
 				queryWidgets: array.filter([{
 					type: ComboBox,
 					name: 'school',
+					visible: false,
 					label: _('School'),
 					dynamicValues: 'schoolgroups/schools',
 					umcpCommand: lang.hitch(this, 'umcpCommand'),
-					autoHide: true
+					autoHide: false
 				}, this.getMultiSelectGroup(), {
 					type: TextBox,
 					name: 'pattern',
