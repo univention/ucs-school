@@ -106,10 +106,8 @@ async def compare_lib_api_user(  # noqa: C901
             for prop, prop_val in value.items():
                 assert prop_val == getattr(udm_obj.props, prop)
         elif key == "roles":
-            api_roles = set([role.split("/")[-1] for role in value])
-            lib_roles = set(
-                [SchoolUserRole.from_lib_role(role).value for role in lib_user.ucsschool_roles]
-            )
+            api_roles = {role.split("/")[-1] for role in value}
+            lib_roles = {SchoolUserRole.from_lib_role(role).value for role in lib_user.ucsschool_roles}
             assert api_roles == lib_roles
         elif key in ("birthday", "expiration_date"):
             if value:
@@ -121,9 +119,9 @@ async def compare_lib_api_user(  # noqa: C901
                 assert value == {}
             for school, classes in value.items():
                 assert school in lib_user.school_classes
-                assert set(classes) == set(
+                assert set(classes) == {
                     kls.replace(f"{school}-", "") for kls in lib_user.school_classes[school]
-                )
+                }
         else:
             lib_user_value = getattr(lib_user, key)
             if isinstance(value, (list, set, tuple)) or isinstance(lib_user_value, (list, set, tuple)):
@@ -141,7 +139,7 @@ def compare_ldap_json_obj(dn, json_resp, url_fragment):  # noqa: C901
         if attr == "record_uid" and "ucsschoolRecordUID" in ldap_obj:
             assert value == ldap_obj["ucsschoolRecordUID"][0].decode("utf-8")
         elif attr == "ucsschool_roles" and "ucsschoolRole" in ldap_obj:
-            assert set(value) == set(r.decode("utf-8") for r in ldap_obj["ucsschoolRole"])
+            assert set(value) == {r.decode("utf-8") for r in ldap_obj["ucsschoolRole"]}
         elif attr == "email" and "mailPrimaryAddress" in ldap_obj:
             assert value in [o.decode("utf-8") for o in ldap_obj["mail"]]
             assert value in [o.decode("utf-8") for o in ldap_obj["mailPrimaryAddress"]]
@@ -1675,6 +1673,12 @@ async def test_create_with_multiple_schools(
     role: Role,
     dont_set_school_directly: bool,
 ):
+    """
+    Create user with 3 schools.
+    The primary OU (`school` parameter) will be sent in the POST request only if
+    `dont_set_school_directly` == False.
+    Only `school` and `schools` are validated.
+    """
     if role.name == "teacher_and_staff":
         roles = ["staff", "teacher"]
     else:
@@ -1722,7 +1726,7 @@ async def test_create_with_multiple_schools(
     assert len(lib_users) == 1
     lib_user = lib_users[0]
     assert isinstance(lib_user, role.klass)
-    expected_school = school1 if not dont_set_school_directly else sorted([school1, school2, school3])[0]
+    expected_school = sorted([school1, school2, school3])[0] if dont_set_school_directly else school1
     assert lib_user.school == expected_school
     assert set(lib_user.schools) == {school1, school2, school3}
 
@@ -1749,6 +1753,11 @@ async def test_add_additional_schools(
     role: Role,
     method: str,
 ):
+    """
+    Create user with 1 school and 1 school class.
+    Then add 2nd school and school class. Verify school, schools, school_classes, ucsschool_roles.
+    Then add 3rd school and school class. Verify school, schools, school_classes, ucsschool_roles.
+    """
     school1, school2, school3 = await create_multiple_ous(3)
     school_class_names = {
         school1: random_name(),
@@ -1792,7 +1801,7 @@ async def test_add_additional_schools(
                 headers=auth_header,
                 json=patch_data,
             )
-        elif method in ("put", "putwithschool"):
+        elif method in {"put", "putwithschool"}:
             exclude = {"school", "schools", "school_classes", "password"}
             if method == "putwithschool":
                 exclude.remove("school")
@@ -1827,16 +1836,15 @@ async def test_add_additional_schools(
 
         # check schools
         assert set(lib_user.schools) == set(new_schools)
-        assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == set(
-            [f"{url_fragment}/schools/{school}" for school in new_schools]
-        )
+        assert {api_user.unscheme_and_unquote(str(school)) for school in api_user.schools} == {
+            f"{url_fragment}/schools/{school}" for school in new_schools
+        }
 
         # check roles
         if role.name == "teacher_and_staff":
             roles = []
             for school in new_schools:
-                roles.append(f"staff:school:{school}")
-                roles.append(f"teacher:school:{school}")
+                roles.extend([f"staff:school:{school}", f"teacher:school:{school}"])
         else:
             roles = [f"{role.name}:school:{school}" for school in new_schools]
         assert set(lib_user.ucsschool_roles) == set(roles)
@@ -1870,7 +1878,13 @@ async def test_set_school_with_multiple_schools(
     role: Role,
     method: str,
 ):
-    # setting "school" without "schools" should set "schools" to [school]
+    """
+    Test that setting `school` without `schools` sets `schools` to `[school]`.
+
+    Create user with 3 schools and 3 school classes.
+    Then send 1 school and 1 school class.
+    Verify school, schools, school_classes, ucsschool_roles.
+    """
     school1, school2, school3 = await create_multiple_ous(3)
     school1_class = random_name()
     school2_class = random_name()
@@ -1944,7 +1958,7 @@ async def test_set_school_with_multiple_schools(
 
     # check schools
     assert set(lib_user.schools) == {school2}
-    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+    assert {api_user.unscheme_and_unquote(str(school)) for school in api_user.schools} == {
         f"{url_fragment}/schools/{school2}"
     }
 
@@ -1987,6 +2001,13 @@ async def test_change_school_with_multiple_schools(
     role: Role,
     method: str,
 ):
+    """
+    Test that it's possible to change `school` to one of the other OUs on `schools`.
+
+    Create user with 3 schools and 3 school classes.
+    Then change `school` to another OU from the ones in `schools`.
+    Verify school, schools, school_classes, ucsschool_roles.
+    """
     school1, school2, school3 = await create_multiple_ous(3)
     school1_class = random_name()
     school2_class = random_name()
@@ -2064,7 +2085,7 @@ async def test_change_school_with_multiple_schools(
 
     # check schools
     assert set(lib_user.schools) == {school1, school2, school3}
-    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+    assert {api_user.unscheme_and_unquote(str(school)) for school in api_user.schools} == {
         f"{url_fragment}/schools/{school1}",
         f"{url_fragment}/schools/{school2}",
         f"{url_fragment}/schools/{school3}",
@@ -2119,6 +2140,13 @@ async def test_change_school_and_schools(
     role: Role,
     method: str,
 ):
+    """
+    Test that it's possible to add and remove schools in the same request.
+
+    Create user with 2 schools and 2 school classes.
+    Then remove the primary OU from `schools` and add a 3rd school to it. Do not send the primary OU.
+    Verify school, schools, school_classes, ucsschool_roles.
+    """
     school1, school2, school3 = await create_multiple_ous(3)
     school1_class = random_name()
     school2_class = random_name()
@@ -2195,7 +2223,7 @@ async def test_change_school_and_schools(
 
     # check schools
     assert set(lib_user.schools) == {school2, school3}
-    assert set([api_user.unscheme_and_unquote(str(school)) for school in api_user.schools]) == {
+    assert {api_user.unscheme_and_unquote(str(school)) for school in api_user.schools} == {
         f"{url_fragment}/schools/{school2}",
         f"{url_fragment}/schools/{school3}",
     }
@@ -2218,4 +2246,127 @@ async def test_change_school_and_schools(
     assert api_user.school_classes[school3] == [school3_class]
     assert not lib_user.school_classes.get(school1)
     assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+    assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("role", [Role("student", Student)], ids=role_id)
+@pytest.mark.parametrize("method", ("patch", "put"))
+async def test_change_schools_and_classes(
+    auth_header,
+    retry_http_502,
+    url_fragment,
+    create_random_users,
+    create_multiple_ous,
+    random_name,
+    udm_kwargs,
+    role: Role,
+    method: str,
+):
+    """
+    Test that it's possible to add and remove schools in the same request.
+
+    Create user with 2 schools and 2 school classes.
+    Then remove the NON-primary OU from `schools` and add a 3rd school to it. Do not send the primary OU.
+    Verify school, schools, school_classes, ucsschool_roles.
+    """
+    school1, school2, school3 = await create_multiple_ous(3)
+    school1_class = random_name()
+    school2_class = random_name()
+    school3_class = random_name()
+    school_classes = {
+        school1: [school1_class],
+        school2: [school2_class],
+    }
+    user = (
+        await create_random_users(
+            school1,
+            {role.name: 1},
+            school=f"{url_fragment}/schools/{school1}",
+            schools=[f"{url_fragment}/schools/{school1}", f"{url_fragment}/schools/{school2}"],
+            school_classes=school_classes,
+        )
+    )[0]
+    async with UDM(**udm_kwargs) as udm:
+        lib_users = await User.get_all(udm, school1, f"username={user.name}")
+    assert len(lib_users) == 1
+    lib_user = lib_users[0]
+    assert isinstance(lib_user, role.klass)
+    assert lib_user.school == school1
+    assert set(lib_user.schools) == {school1, school2}
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
+    assert lib_user.school_classes[school2] == [f"{school2}-{school2_class}"]
+
+    new_school_classes = {
+        school1: [school1_class],
+        school3: [school3_class],
+    }
+    if method == "patch":
+        patch_data = dict(
+            schools=[f"{url_fragment}/schools/{school1}", f"{url_fragment}/schools/{school3}"],
+            school_classes=new_school_classes,
+        )
+        response = retry_http_502(
+            requests.patch,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            json=patch_data,
+        )
+    elif method == "put":
+        old_data = user.dict(exclude={"school", "schools", "school_classes"})
+        modified_user = UserCreateModel(
+            schools=[f"{url_fragment}/schools/{school1}", f"{url_fragment}/schools/{school3}"],
+            school_classes=new_school_classes,
+            **old_data,
+        )
+        response = retry_http_502(
+            requests.put,
+            f"{url_fragment}/users/{user.name}",
+            headers=auth_header,
+            data=modified_user.json(exclude={"school"}),
+        )
+    json_response = response.json()
+    expected_school = school1
+    assert response.status_code == 200, response.reason
+    async with UDM(**udm_kwargs) as udm:
+        async for udm_user in udm.get("users/user").search(filter_format("uid=%s", (user.name,))):
+            assert set(udm_user.props.school) == {school1, school3}
+        api_user = UserModel(**json_response)
+        lib_users = await User.get_all(udm, expected_school, f"username={user.name}")
+    assert len(lib_users) == 1
+    assert isinstance(lib_user, role.klass)
+    lib_user = lib_users[0]
+
+    # check main school
+    assert lib_user.school == expected_school, "expected_school failed"
+    assert (
+        api_user.unscheme_and_unquote(str(api_user.school))
+        == f"{url_fragment}/schools/{expected_school}"
+    )
+
+    # check schools
+    assert set(lib_user.schools) == {school1, school3}
+    assert {api_user.unscheme_and_unquote(str(school)) for school in api_user.schools} == {
+        f"{url_fragment}/schools/{school1}",
+        f"{url_fragment}/schools/{school3}",
+    }
+
+    # check roles
+    if role.name == "teacher_and_staff":
+        roles = {
+            f"staff:school:{school1}",
+            f"teacher:school:{school1}",
+            f"staff:school:{school3}",
+            f"teacher:school:{school3}",
+        }
+    else:
+        roles = {f"{role.name}:school:{school1}", f"{role.name}:school:{school3}"}
+    assert set(lib_user.ucsschool_roles) == roles
+
+    # check school_classes
+    assert not api_user.school_classes.get(school2)
+    assert api_user.school_classes[school1] == [school1_class]
+    assert api_user.school_classes[school3] == [school3_class]
+    assert not lib_user.school_classes.get(school2)
+    assert lib_user.school_classes[school1] == [f"{school1}-{school1_class}"]
     assert lib_user.school_classes[school3] == [f"{school3}-{school3_class}"]
