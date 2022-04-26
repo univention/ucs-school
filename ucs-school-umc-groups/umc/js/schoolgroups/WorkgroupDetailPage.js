@@ -53,6 +53,7 @@ define([
 					if (this._form.getWidget('create_email').value && !this._form.getWidget('email_exists').value) {
 						this._form.getWidget('email').set('value', this.calculateEmail());
 					}
+					this._form.getWidget(this.multiWidgetName).set('value', []);
 				}),
 			},
 				{
