@@ -79,7 +79,16 @@ define([
 			this.addChild(this._form);
 
 			this._form.getWidget(this.multiWidgetName).on('ShowDialog', lang.hitch(this, function(_dialog) {
-				_dialog._form.getWidget('school').setInitialValue(this._form.getWidget('school').get('value'), true);
+				// if the school changed in the WorkgroupDetailPage, change it also in the dialog and
+				// remove all cached users from the store
+				if (_dialog._form.getWidget('school').get('value') != this._form.getWidget('school').get('value')) {
+					_dialog._form.getWidget('school').set('value', this._form.getWidget('school').get('value'));
+					_dialog._multiSelect.store.fetch({
+							onItem: function(item) {
+								_dialog._multiSelect.store.deleteItem(item);
+							}
+					});
+				}
 			}));
 
 			this._form.on('submit', lang.hitch(this, '_save'));
