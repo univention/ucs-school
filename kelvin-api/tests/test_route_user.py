@@ -54,7 +54,6 @@ from ucsschool.kelvin.routers.user import (
 )
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
-from ucsschool.lib.models.utils import env_or_ucr
 from udm_rest_client import UDM
 
 pytestmark = pytest.mark.skipif(
@@ -349,6 +348,7 @@ async def test_search_filter_udm_properties(
     retry_http_502,
     url_fragment,
     new_import_user,
+    mail_domain,
     import_config,
     udm_kwargs,
     random_name,
@@ -358,10 +358,9 @@ async def test_search_filter_udm_properties(
         filter_value = random_name()
         create_kwargs = {"udm_properties": {filter_param: filter_value}}
     elif filter_param == "e-mail":
-        domainname = env_or_ucr("domainname")
-        email1 = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
-        filter_value = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
-        email3 = f"{random_name()}mail{fake.pyint()}@{domainname}".lower()
+        email1 = f"{random_name()}mail{fake.pyint()}@{mail_domain}".lower()
+        filter_value = f"{random_name()}mail{fake.pyint()}@{mail_domain}".lower()
+        email3 = f"{random_name()}mail{fake.pyint()}@{mail_domain}".lower()
         create_kwargs = {
             "email": filter_value,
             "udm_properties": {filter_param: [email1, filter_value, email3]},
