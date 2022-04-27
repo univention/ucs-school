@@ -2250,7 +2250,15 @@ async def test_change_school_and_schools(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("role", [Role("student", Student)], ids=role_id)
+@pytest.mark.parametrize(
+    "role",
+    [
+        Role("student", Student),
+        Role("teacher", Teacher),
+        Role("teacher_and_staff", TeachersAndStaff),
+    ],
+    ids=role_id,
+)
 @pytest.mark.parametrize("method", ("patch", "put"))
 async def test_change_schools_and_classes(
     auth_header,

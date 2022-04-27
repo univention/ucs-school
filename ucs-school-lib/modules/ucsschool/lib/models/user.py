@@ -302,6 +302,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         await self.create_mail_domain(lo)
         self.password = self.password or None
 
+        wanted_schools = self.schools.copy()
         removed_schools = set(udm_obj.props.school) - set(self.schools)
         if removed_schools:
             # change self.schools back, so schools can be removed by remove_from_school()
@@ -311,6 +312,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             if not await self.remove_from_school(removed_school, lo):
                 self.logger.error("Error removing %r from school %r.", self, removed_school)
                 return
+        self.schools = wanted_schools
 
         # remove SchoolClasses the user is not part of anymore
         # ignore all others (global groups, $OU-groups and workgroups)
