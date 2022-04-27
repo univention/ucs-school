@@ -8,7 +8,7 @@ Changelog
 v1.5.4 ()
 .........
 * A new App Setting was added to configure the amount CPU cores utilized by the UCS@school Kelvin REST API (Bug #54575).
-* It is now possible to define multiple schools for users via PATCH and PUT requests (Bug #54481).
+* It is now possible to define multiple schools for users via PATCH and PUT requests (Bug #54481, Bug #54690).
 
 v1.5.3 (2022-02-08)
 ...................
