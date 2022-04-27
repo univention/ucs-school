@@ -1,3 +1,10 @@
+ucs-school-webproxy (16.0.7) unstable; urgency=medium
+
+  * Removed trailing slash and replaced deprecated --force option with
+    --force-all in dpkg-statoverride commands.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Tue, 19 Apr 2022 08:39:06 +0300
+
 ucs-school-webproxy (16.0.6) unstable; urgency=medium
 
   * Bug #54095: Fix call to systemctl
