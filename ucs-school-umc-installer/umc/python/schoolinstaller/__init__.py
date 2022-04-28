@@ -62,7 +62,7 @@ from univention.management.console.config import ucr
 from univention.management.console.ldap import get_machine_connection
 from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import sanitize, simple_response
-from univention.management.console.modules.sanitizers import ChoicesSanitizer, StringSanitizer
+from univention.management.console.modules.sanitizers import ChoicesSanitizer, StringSanitizer, BooleanSanitizer
 
 _ = Translation("ucs-school-umc-installer").translate
 os.umask(0o022)  # switch back to default umask
@@ -446,6 +446,7 @@ class Instance(Base):
             "school_environment": self.get_school_environment(),
             "guessed_master": get_master_dns_lookup(),
             "hostname": ucr.get("hostname"),
+            "create_demo": ucr.is_true("ucsschool/join/create_demo", True),
         }
 
     @simple_response
@@ -567,6 +568,7 @@ class Instance(Base):
         nameEduServer=StringSanitizer(
             regex_pattern=RE_HOSTNAME_OR_EMPTY
         ),  # javascript wizard page always passes value to backend, even if empty
+        createDemo=BooleanSanitizer(default=True),
     )
     def install(self, request):
         # get all arguments

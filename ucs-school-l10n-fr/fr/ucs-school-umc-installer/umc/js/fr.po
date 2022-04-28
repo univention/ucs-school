@@ -27,15 +27,12 @@ msgstr ""
 #: umc/js/schoolinstaller.js:70
 msgid ""
 "<p>During the installation of UCS@school a demo school including some users "
-"will be configured for testing purposes. If you do not wish that, please set "
-"the UCR variable <emp>ucsschool/join/create_demo</emp> to <emp>no</emp> "
-"prior to the installation.</p>"
+"will be configured for testing purposes. If you do not wish that, please "
+"uncheck the checkbox on the right.</p>"
 msgstr ""
 "<p>Lors de l’installation de UCS@school, une école de démonstration "
 "comprenant quelques comptes d’utilisation sera configurée à des fins de "
-"test. Si vous ne le souhaitez pas, veuillez régler la variable UCR "
-"<emp>ucsschool/join/create_demo</emp> sur <emp>no</emp> avant l’installation."
-"</p>"
+"test. Si vous ne le souhaitez pas, veuillez décocher la case à droite.</p>"
 
 #: umc/js/schoolinstaller.js:100
 msgid ""

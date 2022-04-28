@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2021-09-10 17:53+0200\n"
+"POT-Creation-Date: 2022-05-23 09:18+0200\n"
 "PO-Revision-Date: 2017-03-08 17:42+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolinstaller.js:433 umc/js/schoolinstaller.js:448
+#: umc/js/schoolinstaller.js:443 umc/js/schoolinstaller.js:458
 msgid ""
 "\" is still in use. Otherwise the corresponding host object has to be "
 "deleted first."
@@ -20,20 +20,7 @@ msgstr ""
 "\" weiterhin in Benutzung ist. Falls nicht, muss das entsprechende "
 "Rechnerobjekt zuvor gelöscht werden."
 
-#: umc/js/schoolinstaller.js:70
-msgid ""
-"<p>During the installation of UCS@school a demo school including some users "
-"will be configured for testing purposes. If you do not wish that, please set "
-"the UCR variable <emp>ucsschool/join/create_demo</emp> to <emp>no</emp> "
-"prior to the installation.</p>"
-msgstr ""
-"<p>Während der Installation von UCS@school wird zu Testzwecken eine "
-"Demoschule inklusive einiger Nutzer vorkonfiguriert. Zur "
-"Deaktivierung dieser Funktion setzen Sie bitte die UCR Variable "
-"<emp>ucsschool/join/create_demo</emp> auf <emph>no</emph>, bevor Sie mit der "
-"Installation fortfahren.</p>"
-
-#: umc/js/schoolinstaller.js:100
+#: umc/js/schoolinstaller.js:101
 msgid ""
 "<p>In a multi server environment, the Primary Directory Node is configured "
 "as central instance hosting the complete set of LDAP data. Each school is "
@@ -56,7 +43,7 @@ msgstr ""
 "Node konfiguriert wurde, müssen ein oder mehrere Replica Directory Nodes "
 "konfiguriert werden und der Domäne beitreten."
 
-#: umc/js/schoolinstaller.js:101
+#: umc/js/schoolinstaller.js:102
 msgid ""
 "<p>In a single server environment, the Primary Directory Node is configured "
 "as standalone UCS@school server instance. All school related data and thus "
@@ -79,7 +66,7 @@ msgstr ""
 "Installation der Veyon Proxy App kann über ein entsprechendes Diagnosemodul "
 "überprüft werden.</p>"
 
-#: umc/js/schoolinstaller.js:189
+#: umc/js/schoolinstaller.js:196
 msgid ""
 "<p>The UCS@school multi server environment distinguishes between educational "
 "servers and administrative servers. The educational servers provide all "
@@ -96,7 +83,7 @@ msgstr ""
 "Fällen ist die Konfiguration des Replica Directory Node als edukativer "
 "Schulserver sinnvoll.</p>"
 
-#: umc/js/schoolinstaller.js:70
+#: umc/js/schoolinstaller.js:71
 msgid ""
 "<p>This wizard guides you step by step through the installation of "
 "UCS@school in your domain.</p><p>For the installation of UCS@school, there "
@@ -112,11 +99,11 @@ msgstr ""
 "Auswirkungen auf die nachfolgenden Installationsschritte. Weitere Hinweise "
 "für die jeweilige Umgebung werden untenstehend angezeigt.</p>"
 
-#: umc/js/schoolinstaller.js:196
+#: umc/js/schoolinstaller.js:203
 msgid "Administrative server"
 msgstr "Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:502
+#: umc/js/schoolinstaller.js:512
 msgid ""
 "All necessary information for the installation of UCS@school on this system "
 "has been collected. It is recommended to wait with any other activity on the "
@@ -128,7 +115,7 @@ msgstr ""
 "Installation keine anderen Aktionen auf dem System auszuführen. Bitte "
 "bestätigen Sie jetzt, um mit dem Installationsprozess zu beginnen."
 
-#: umc/js/schoolinstaller.js:214
+#: umc/js/schoolinstaller.js:221
 msgid ""
 "An error occurred during the installation of UCS@school. The following "
 "information will give you some more details on which problems occurred "
@@ -137,23 +124,31 @@ msgstr ""
 "Ein Fehler trat während der Installation von UCS@school auf. Die folgenden "
 "Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
 
-#: umc/js/schoolinstaller.js:504
+#: umc/js/schoolinstaller.js:514
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolinstaller.js:303
+#: umc/js/schoolinstaller.js:310
 msgid "Could not find the DNS entry for the Primary Directory Node."
 msgstr "Konnte keinen DNS-Eintrag für den Primary Directory Node finden."
 
-#: umc/js/schoolinstaller.js:143
+#: umc/js/schoolinstaller.js:125
+msgid ""
+"Create a demo school with demo users (1 teacher, 1 student, 1 schooladmin) "
+"and a demo class."
+msgstr ""
+"Erstellen einer Demo-Schule mit Demo-Benutzern (1 Lehrer, 1 Schüler, 1 Schuladministrator) "
+"und einer Demo-Klasse."
+
+#: umc/js/schoolinstaller.js:150
 msgid "Domain password"
 msgstr "Domänenpasswort"
 
-#: umc/js/schoolinstaller.js:138
+#: umc/js/schoolinstaller.js:145
 msgid "Domain username"
 msgstr "Domänenbenutzername"
 
-#: umc/js/schoolinstaller.js:202
+#: umc/js/schoolinstaller.js:209
 msgid ""
 "During installation this server will be configured as administrative server. "
 "To create the specified school, the name of a second/future Replica "
@@ -164,15 +159,15 @@ msgstr ""
 "Name eines zweiten/zukünftigen Replica Directory Node benötigt, der als "
 "edukativer Schulserver konfiguriert wird."
 
-#: umc/js/schoolinstaller.js:195
+#: umc/js/schoolinstaller.js:202
 msgid "Educational server"
 msgstr "Edukativer Schulserver"
 
-#: umc/js/schoolinstaller.js:437 umc/js/schoolinstaller.js:452
+#: umc/js/schoolinstaller.js:447 umc/js/schoolinstaller.js:462
 msgid "Error"
 msgstr "Fehler"
 
-#: umc/js/schoolinstaller.js:184
+#: umc/js/schoolinstaller.js:191
 msgid ""
 "For the single server environment, all school OUs are accessed from the "
 "Primary Directory Node itself."
@@ -180,7 +175,7 @@ msgstr ""
 "In einer Single-Server-Umgebung werden alle Schul-OUs vom Primary Directory "
 "Node selbst verwaltet."
 
-#: umc/js/schoolinstaller.js:149
+#: umc/js/schoolinstaller.js:156
 msgid ""
 "Fully qualified domain name of the Primary Directory Node (e.g. "
 "schoolprimary.example.com)"
@@ -188,7 +183,7 @@ msgstr ""
 "Der vollständige Domänenname des Primary Directory Node (bspw. schoolprimary."
 "example.com)"
 
-#: umc/js/schoolinstaller.js:159
+#: umc/js/schoolinstaller.js:166
 msgid ""
 "In UCS@school, each school is organized in its own LDAP organizational unit "
 "(so-called OU). All school related information (students, classes, "
@@ -202,7 +197,7 @@ msgstr ""
 "Namen der Schul-OU ein, die während des Installationsvorgangs erzeugt werden "
 "soll."
 
-#: umc/js/schoolinstaller.js:559
+#: umc/js/schoolinstaller.js:569
 msgid ""
 "In order to complete the installation of UCS@school, a restart of the UMC "
 "server components is necessary."
@@ -210,7 +205,7 @@ msgstr ""
 "Um die Installation von UCS@school abzuschließen, ist ein Neustart der UMC-"
 "Server-Komponenten notwendig."
 
-#: umc/js/schoolinstaller.js:374
+#: umc/js/schoolinstaller.js:384
 msgid ""
 "In order to install UCS@school on a Backup Directory Node, the system needs "
 "to be joined first."
@@ -218,7 +213,7 @@ msgstr ""
 "Bevor UCS@school auf einem Backup Directory Node installiert werden kann, "
 "muss dieses System zuerst der Domäne beigetreten sein."
 
-#: umc/js/schoolinstaller.js:132
+#: umc/js/schoolinstaller.js:139
 msgid ""
 "In order to setup this system as UCS@school Replica Directory Node, please "
 "enter the domain credentials of a domain account with join privileges."
@@ -226,25 +221,25 @@ msgstr ""
 "Bitte geben Sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
 "dieses System als Replica Directory Node für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:508
+#: umc/js/schoolinstaller.js:518
 msgid "Install"
 msgstr "Installieren"
 
-#: umc/js/schoolinstaller.js:304
+#: umc/js/schoolinstaller.js:311
 msgid "Make sure the DNS server is up and running or check the DNS settings."
 msgstr ""
 "Bitte stellen Sie sicher, dass die DNS-Server erreichbar sind oder "
 "überprüfen Sie die DNS-Einstellungen."
 
-#: umc/js/schoolinstaller.js:93
+#: umc/js/schoolinstaller.js:94
 msgid "Multi server environment"
 msgstr "Multi-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:206
+#: umc/js/schoolinstaller.js:213
 msgid "Name of educational school server"
 msgstr "Name des Schulservers im Edukativnetz"
 
-#: umc/js/schoolinstaller.js:207
+#: umc/js/schoolinstaller.js:214
 msgid ""
 "Name of the educational Replica Directory Node for the new school. The "
 "server name may consist of the letters a-z, the digits 0-9 and hyphens (-). "
@@ -256,16 +251,16 @@ msgstr ""
 "Bindestrich (-) bestehen. Der Name des edukativen Schulservers darf nicht "
 "identisch mit dem Namen des Verwaltungsservers sein!"
 
-#: umc/js/schoolinstaller.js:163
+#: umc/js/schoolinstaller.js:170
 msgid "Name of the school"
 msgstr "Name der Schule"
 
-#: umc/js/schoolinstaller.js:247
+#: umc/js/schoolinstaller.js:254
 #, javascript-format
 msgid "New school classes can be created with the %s."
 msgstr "Neue Schulklassen können mit dem %s erstellt werden."
 
-#: umc/js/schoolinstaller.js:179
+#: umc/js/schoolinstaller.js:186
 msgid ""
 "Note that each Replica Directory Node is directly associated with a school "
 "OU. A Replica Directory Node has only access to the data below its own "
@@ -275,35 +270,35 @@ msgstr ""
 "Directory Node hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-"
 "OU, auf Daten anderer Schulen kann nicht zugegriffen werden."
 
-#: umc/js/schoolinstaller.js:435 umc/js/schoolinstaller.js:450
+#: umc/js/schoolinstaller.js:445 umc/js/schoolinstaller.js:460
 msgid "Ok"
 msgstr "OK"
 
-#: umc/js/schoolinstaller.js:74
+#: umc/js/schoolinstaller.js:75
 msgid "Please choose an environment type:"
 msgstr "Bitte wählen Sie ein Installationsszenario aus:"
 
-#: umc/js/schoolinstaller.js:193
+#: umc/js/schoolinstaller.js:200
 msgid "Please choose the server type for this Replica Directory Node:"
 msgstr "Bitte wählen Sie den gewünschten Servertyp für dieses System aus:"
 
-#: umc/js/schoolinstaller.js:278
+#: umc/js/schoolinstaller.js:285
 msgid "Retry"
 msgstr "Wiederholen"
 
-#: umc/js/schoolinstaller.js:169
+#: umc/js/schoolinstaller.js:176
 msgid "School abbreviation"
 msgstr "Schulkürzel"
 
-#: umc/js/schoolinstaller.js:89
+#: umc/js/schoolinstaller.js:90
 msgid "Single server environment"
 msgstr "Single-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:517
+#: umc/js/schoolinstaller.js:527
 msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
-#: umc/js/schoolinstaller.js:250
+#: umc/js/schoolinstaller.js:257
 #, javascript-format
 msgid ""
 "Teachers and students can be added to the UCS@school domain with the %s."
@@ -311,17 +306,17 @@ msgstr ""
 "Lehrer und Schüler können mit dem %s in der UCS@school-Domäne neu angelegt "
 "werden."
 
-#: umc/js/schoolinstaller.js:253
+#: umc/js/schoolinstaller.js:260
 #, javascript-format
 msgid "Teachers can be assigned to classes with the %s."
 msgstr "Lehrer können mit dem %s Klassen zugeordnet werden."
 
-#: umc/js/schoolinstaller.js:305
+#: umc/js/schoolinstaller.js:312
 #, javascript-format
 msgid "The DNS settings can be adjusted in the %s."
 msgstr "Die DNS-Einstellungen können im %s angepasst werden."
 
-#: umc/js/schoolinstaller.js:127
+#: umc/js/schoolinstaller.js:134
 msgid ""
 "The UCS@school configuration wizard detected all necessary information to "
 "install UCS@school on this Backup Directory Node. Click <i>next</i> to start "
@@ -331,13 +326,13 @@ msgstr ""
 "erkannt, um UCS@school auf diesem Backup Directory Node zu installieren. "
 "Klicken Sie auf <i>Weiter</i> um die Installation zu starten."
 
-#: umc/js/schoolinstaller.js:164
+#: umc/js/schoolinstaller.js:171
 msgid "The given value will be shown as school's name within UCS@school."
 msgstr ""
 "Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die "
 "neue Schule verwendet."
 
-#: umc/js/schoolinstaller.js:170
+#: umc/js/schoolinstaller.js:177
 msgid ""
 "The given value will be used as object name for the new school OU object "
 "within the LDAP directory and as prefix for several school objects like "
@@ -350,11 +345,11 @@ msgstr ""
 "dem Unterstrich (_) bestehen. In der Regel kann der automatisch "
 "vorgeschlagene Wert unverändert übernommen werden."
 
-#: umc/js/schoolinstaller.js:224
+#: umc/js/schoolinstaller.js:231
 msgid "The installation of UCS@school has been finished successfully."
 msgstr "Die Installation von UCS@school wurde erfolgreich abgeschlossen."
 
-#: umc/js/schoolinstaller.js:245
+#: umc/js/schoolinstaller.js:252
 msgid ""
 "There are several modules that assist in further configuring the UCS@school "
 "domain:"
@@ -362,7 +357,7 @@ msgstr ""
 "Es gibt verschiedene Module, die bei der weiteren Konfiguration der "
 "UCS@school-Domäne behilflich sind:"
 
-#: umc/js/schoolinstaller.js:295
+#: umc/js/schoolinstaller.js:302
 msgid ""
 "This wizard guides you step by step through the installation of a UCS@school "
 "Replica Directory Node. Before continuing please make sure that a UCS@school "
@@ -374,35 +369,35 @@ msgstr ""
 "UCS@school Primary Directory Node bereits für eine Multi-Server-Umgebung "
 "eingerichtet wurde."
 
-#: umc/js/schoolinstaller.js:213
+#: umc/js/schoolinstaller.js:220
 msgid "UCS@school - an error ocurred"
 msgstr "UCS@school - ein Fehler trat auf"
 
-#: umc/js/schoolinstaller.js:131
+#: umc/js/schoolinstaller.js:138
 msgid "UCS@school - domain credentials"
 msgstr "UCS@school - Anmeldedaten"
 
-#: umc/js/schoolinstaller.js:188
+#: umc/js/schoolinstaller.js:195
 msgid "UCS@school - educational server vs. administrative server"
 msgstr "UCS@school - edukative Schulserver/Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:201
+#: umc/js/schoolinstaller.js:208
 msgid "UCS@school - extended school OU setup"
 msgstr "UCS@school - Erweiterte Schul-OU-Konfiguration"
 
-#: umc/js/schoolinstaller.js:223
+#: umc/js/schoolinstaller.js:230
 msgid "UCS@school - installation successful"
 msgstr "UCS@school - Installation erfolgreich"
 
-#: umc/js/schoolinstaller.js:158
+#: umc/js/schoolinstaller.js:165
 msgid "UCS@school - school OU setup"
 msgstr "UCS@school - Schul-OU-Konfiguration"
 
-#: umc/js/schoolinstaller.js:69 umc/js/schoolinstaller.js:123
+#: umc/js/schoolinstaller.js:70 umc/js/schoolinstaller.js:130
 msgid "UCS@school - server setup"
 msgstr "UCS@school - Server-Konfiguration"
 
-#: umc/js/schoolinstaller.js:368
+#: umc/js/schoolinstaller.js:378
 msgid ""
 "UCS@school can only be installed on the system roles Primary Directory Node, "
 "Backup Directory Node, or Replica Directory Node."
@@ -410,11 +405,11 @@ msgstr ""
 "UCS@school kann nur auf den Serverrollen Primary Directory Node, Backup "
 "Directory Node oder Replica Directory Node installiert werden."
 
-#: umc/js/schoolinstaller.js:232
+#: umc/js/schoolinstaller.js:239
 msgid "UCS@school has already been configured on this system."
 msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 
-#: umc/js/schoolinstaller.js:448
+#: umc/js/schoolinstaller.js:458
 msgid ""
 "UCS@school supports only one administrative server per school. Please check "
 "if the administrative server \""
@@ -422,7 +417,7 @@ msgstr ""
 "UCS@school unterstützt nur einen Verwaltungsserver pro Schule. Bitte prüfen "
 "Sie, ob der Verwaltungsserver \""
 
-#: umc/js/schoolinstaller.js:433
+#: umc/js/schoolinstaller.js:443
 msgid ""
 "UCS@school supports only one educational server per school. Please check if "
 "the educational server \""
@@ -430,14 +425,24 @@ msgstr ""
 "UCS@school unterstützt nur einen edukativen Schulserver pro Schule. Bitte "
 "prüfen Sie, ob der Schulserver \""
 
-#: umc/js/schoolinstaller.js:302
+#: umc/js/schoolinstaller.js:309
 msgid "Warning:"
 msgstr "Warnung:"
 
-#: umc/js/schoolinstaller.js:256
+#: umc/js/schoolinstaller.js:263
 #, javascript-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
+
+#~ msgid ""
+#~ "<p>During the installation of UCS@school a demo school including some "
+#~ "users will be configured for testing purposes. If you do not wish that, "
+#~ "please uncheck the checkbox on the right.</p>"
+#~ msgstr ""
+#~ "<p>Während der Installation von UCS@school wird zu Testzwecken eine "
+#~ "Demoschule inklusive einiger Nutzer vorkonfiguriert. Wenn Sie dies nicht "
+#~ "wünschen, deaktivieren Sie bitte das Kontrollkästchen auf der rechten "
+#~ "Seite.</p>"
 
 #~ msgid ""
 #~ "<p>The local server role is Replica Directory Node, for which only a "

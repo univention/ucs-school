@@ -39,6 +39,7 @@ define([
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
+	"umc/widgets/CheckBox",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
 	"umc/widgets/PasswordBox",
@@ -48,7 +49,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/modules/lib/server",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, array, topic, Deferred, when, entities, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
+], function(declare, lang, array, topic, Deferred, when, entities, tools, dialog, ComboBox, CheckBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
@@ -67,7 +68,7 @@ define([
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
-				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different environment types: the single server environment and the multi server environment. The selection of an environment type has implications for the following installation steps. Further information for the selected environment type will be displayed below.</p>') + _('<p>During the installation of UCS@school a demo school including some users will be configured for testing purposes. If you do not wish that, please set the UCR variable <emp>ucsschool/join/create_demo</emp> to <emp>no</emp> prior to the installation.</p>'),
+				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different environment types: the single server environment and the multi server environment. The selection of an environment type has implications for the following installation steps. Further information for the selected environment type will be displayed below.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'setup',
@@ -117,6 +118,12 @@ define([
 					type: Text,
 					name: 'infoText',
 					content: ''
+				}, {
+					type: CheckBox,
+					name: 'createDemo',
+					value: true,
+					label: _('Create a demo school with demo users (1 teacher, 1 student, 1 schooladmin) and a demo class.'),
+					size: 'Two',
 				}]
 			}, {
 				name: 'backupsetup',
@@ -307,6 +314,9 @@ define([
 					widget.set('content', _warningMessage);
 					widget.set('visible', true);
 				}
+
+				// update the value of the createDemo checkbox
+				this.getWidget('setup', 'createDemo').set('value', data.result.create_demo)
 			})));
 		},
 
