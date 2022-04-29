@@ -77,7 +77,7 @@ def check_create_demoportal_call_lists(
             name="demo_teacher",
             password=demo_password,
             school=random_school.name,
-            email="demo_student@demoschool.example.com",
+            email="demo_teacher@demoschool.example.com",
         ),
         call(
             firstname="Demo",
