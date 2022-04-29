@@ -77,6 +77,7 @@ def check_create_demoportal_call_lists(
             name="demo_teacher",
             password=demo_password,
             school=random_school.name,
+            email="demo_student@demoschool.example.com",
         ),
         call(
             firstname="Demo",
@@ -84,6 +85,7 @@ def check_create_demoportal_call_lists(
             name="demo_admin",
             password=demo_password,
             school=random_school.name,
+            email="demo_admin@demoschool.example.com",
         ),
     ]
     assert student_mock.call_args_list == [
@@ -93,6 +95,7 @@ def check_create_demoportal_call_lists(
             name="demo_student",
             password=demo_password,
             school=random_school.name,
+            email="demo_student@demoschool.example.com",
         )
     ]
     assert staff_mock.call_args_list == [
@@ -102,6 +105,7 @@ def check_create_demoportal_call_lists(
             name="demo_staff",
             password=demo_password,
             school=random_school.name,
+            email="demo_staff@demoschool.example.com",
         )
     ]
     assert school_class_mock.call_args_list == [
