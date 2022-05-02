@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-test-ucsschool
+fix: 7.3.37A~5.0.0.202205021018
+desc: |
+ * Check that demo users have their corresponding email set (Bug #48896).
+bug: [48896]
