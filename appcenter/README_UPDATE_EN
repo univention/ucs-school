@@ -3,6 +3,9 @@
 <h2>v1.5.4 (2022-04-27)</h2>
 <ul>
     <li>
+         Enable log rotation of the Open Policy Agent (Bug #54247).
+    </li>
+    <li>
          The valid date range is now specified (Bug #54668).
     </li>
     <li>

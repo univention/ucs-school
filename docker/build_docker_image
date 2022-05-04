@@ -85,6 +85,8 @@ rsync -a --delete \
    alpine_apk_list.* \
    Dockerfile \
    opa.initd \
+   logrotate_opa_info \
+   logrotate_opa_template \
    ucsschool-kelvin-rest-api.initd \
  build/
 

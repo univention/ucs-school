@@ -21,3 +21,13 @@ Type = Int
 Description = Number of CPU cores utilized by the UCS@school Kelvin REST API. Set below 1 to start one process for each core.
 Description[de] = Anzahl der CPU Kerne die von der UCS@school Kelvin REST API verwendet werden. Werte kleiner als 1 starten für jede CPU einen Prozess.
 InitialValue = 2
+
+[logrotate/opa/rotate/count]
+Type = String
+Description = Log files are rotated "count" times before being removed.
+InitialValue = 30
+
+[logrotate/opa/rotate]
+Type = String
+Description = Log files are rotated according to this criterion, e.g. "daily", "weekly", "monthly" or up to a size limit like "size 100M". See 'man logrotate.conf' for additional formats.
+InitialValue = daily

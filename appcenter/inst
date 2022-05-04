@@ -51,6 +51,12 @@ UDM_CLIENT_UPDATE_SCRIPT="/var/lib/univention-appcenter/apps/$APP_ID/data/update
 
 main () {
     docker exec $appcenter_apps_ucsschool_kelvin_rest_api_container /usr/bin/univention-config-registry set \
+    logrotate/opa/compress="$(ucr get logrotate/opa/compress)" \
+    logrotate/opa/create="$(ucr get logrotate/opa/create)" \
+    logrotate/opa/missingok="$(ucr get logrotate/opa/missingok)" \
+    logrotate/opa/notifempty="$(ucr get logrotate/opa/notifempty)" \
+    logrotate/opa/rotate/count="30" \
+    logrotate/opa/rotate="daily" \
     ldap/server/name="$(ucr get ldap/server/name)" \
     ldap/server/port="$(ucr get ldap/server/port)" \
     dhcpd/ldap/base="$(ucr get dhcpd/ldap/base)" \

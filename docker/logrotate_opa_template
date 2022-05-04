@@ -1,0 +1,16 @@
+@%@UCRWARNING=# @%@
+
+@!@
+import univention.lib.ucrLogrotate
+
+name = "opa"
+settings = univention.lib.ucrLogrotate.getLogrotateConfig(name, configRegistry)
+print("/var/log/univention/ucsschool-kelvin-rest-api/%s.log {" % name)
+for setting in sorted(settings):
+        print("\t%s" % settings[setting])
+print("\tpostrotate")
+print("\t\t/etc/init.d/opa --quiet --ifstarted restart || true")
+print("\tendscript")
+print("}")
+@!@
+
