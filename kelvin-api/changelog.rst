@@ -5,8 +5,14 @@
 Changelog
 ---------
 
+v1.5.5 (2022-05-04)
+.........
+
+* Enable log rotation of the Open Policy Agent (Bug #54247).
+
 v1.5.4 (2022-04-27)
 .........
+* The valid date range is now specified (Bug #54668).
 * A new App Setting was added to configure the amount CPU cores utilized by the UCS@school Kelvin REST API (Bug #54575).
 * It is now possible to define multiple schools for users via PATCH and PUT requests (Bug #54481, Bug #54690).
 
