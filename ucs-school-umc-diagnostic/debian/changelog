@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.10) unstable; urgency=low
+
+  * Bug #54415: correct school admin is not detected as wrong
+
+ -- Amir Teymuri <teymuri@univention.de>  Fri, 06 May 2022 15:11:17 +0200
+
 ucs-school-umc-diagnostic (2.0.9) unstable; urgency=medium
 
   * Bug #53954: add diagnostic module to detect italc rooms in ucs 5.0
