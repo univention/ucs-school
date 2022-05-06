@@ -215,6 +215,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
         self.test_schooladmin_base_dn()
         self.test_schooladmin_pw_reset()
         self.test_import_counter_objects()
+        self.test_non_school_ou_password_attributes_readable()
 
     def test_schooladmin_base_dn(self):  # type: () -> None
         """
@@ -379,6 +380,38 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
             for counter_dn in self.counter_dn_list:
                 acl_tester.test_object(str(counter_dn), permission)
         acl_tester.raise_on_error()
+
+    def test_non_school_ou_password_attributes_readable(self):  # type: () -> None
+        """
+        Check if password attributes of users in non-school ou are readable from school servers. This is needed for correct replication, see Bug #51279
+        """
+        expected_password_attributes = [
+            "krb5KeyVersionNumber",
+            "krb5Key",
+            "userPassword",
+            "pwhistory",
+        ]
+        ou_name = uts.random_name()
+        cn_name = uts.random_name()
+        user_name_root, user_name_customou, user_name_customcn = uts.random_name(), uts.random_name(), uts.random_name()
+        self.udm.create_object('container/ou', name=ou_name)
+        self.udm.create_object('container/cn', name=cn_name)
+        testuser = []
+        testuser.append(self.udm.create_user(username=user_name_root,))
+        testuser.append(self.udm.create_user(username=user_name_customou, position="ou={},{}".format(ou_name, self.ucr["ldap/base"])))
+        testuser.append(self.udm.create_user(username=user_name_customcn, position="cn={},{}".format(cn_name, self.ucr["ldap/base"])))
+        for dn, name in testuser:
+            for school_server_dn in [self.schoolA.schoolserver.dn, self.schoolB.schoolserver.dn, self.schoolC.schoolserver.dn, self.generic.slave.dn, self.generic.backup.dn]:
+                lo = univention.admin.uldap.access(
+                    host=self.ucr["ldap/master"],
+                    port=int(self.ucr.get("ldap/master/port", "7389")),
+                    base=self.ucr["ldap/base"],
+                    binddn=school_server_dn,
+                    bindpw="univention",
+                )
+                seen_attributes = lo.get(str(dn))
+                for attr_name in expected_password_attributes:
+                    assert attr_name in seen_attributes, "Did not found expected password attribute {} for non-school user {}.".format(attr_name, dn)
 
 
 def test_ldap_acls_specific_tests():
