@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-metapackage
-fix:
+fix: 13.0.14A~5.0.0.202205091620
 desc: |
  * Add mail address for demo users (Bug #48896).
  * Define additional variables for demo users (Bug #54205).
