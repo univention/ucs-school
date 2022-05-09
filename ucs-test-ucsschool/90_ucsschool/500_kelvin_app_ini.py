@@ -89,9 +89,10 @@ def test_ini_settings(ini_url):
         assert config.get("Application", "RequiredApps") == ""
     assert config.get("Application", "WebInterfacePortHttp") == "8911"
     assert config.get("Application", "WebInterfaceProxyScheme") == "http"
-    assert config.get("Application", "DockerImage").startswith(
-        "docker.software-univention.de/ucsschool-kelvin-rest-api:"
-    )
+    assert config.get("Application", "DockerImage").startswith((
+        "docker.software-univention.de/ucsschool-kelvin-rest-api:",
+        "gitregistry.knut.univention.de/univention/components/ucsschool-kelvin-rest-api:",
+    ))
     if 20200827122150 <= int(version) < 20220107154847:
         exp = {"domaincontroller_master"}
     else:
