@@ -133,6 +133,12 @@ def create_school():
         email="demo_admin@demoschool.example.com",
     )
     admin.create(lo)
+    # add additional attributes to demo users
+    for user in [student, teacher, staff, admin]:
+        user_udm = user.get_udm_object(lo)
+        user_udm["ucsschoolRecordUID"] = user.name
+        user_udm["ucsschoolSourceUID"] = "DEMOID"
+        user_udm.modify()
     admin_group = module_groups.lookup(None, lo, "name=admins-{}".format(SCHOOL[0]), pos.getBase())[0].dn
     admin_udm = admin.get_udm_object(lo)
     admin_udm.options.append("ucsschoolAdministrator")

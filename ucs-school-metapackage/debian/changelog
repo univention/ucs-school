@@ -1,3 +1,10 @@
+ucs-school-metapackage (13.0.14) unstable; urgency=medium
+
+  * Bug #54205: add `ucsschoolRecordUID` and `ucsschoolSourceUID` to demo
+    users.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Tue, 26 Apr 2022 08:12:50 +0300
+
 ucs-school-metapackage (13.0.13) unstable; urgency=medium
 
   * Bug #48896: add mailPrimaryAddress to demo users
