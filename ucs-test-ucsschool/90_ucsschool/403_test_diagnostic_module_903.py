@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check diagnostic tool 903_ucsschool_schoolcomputers
-## tags: [ucsschool, diganostic_test]
+## tags: [ucsschool, diganostic_test, apptest,ucsschool_base1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages: []
