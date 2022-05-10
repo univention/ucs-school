@@ -1,3 +1,9 @@
+ucs-school-metapackage (13.0.15) unstable; urgency=low
+
+  * Bug #54735: fix set_nt_acl_on_shares script on backup directory nodes
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 May 2022 17:11:18 +0200
+
 ucs-school-metapackage (13.0.14) unstable; urgency=medium
 
   * Bug #54205: add `ucsschoolRecordUID` and `ucsschoolSourceUID` to demo

@@ -40,9 +40,9 @@ from ucsschool.lib.models.utils import get_stream_handler, ucr
 
 
 def get_lo(options):
-    if ucr.get("server/role") == "domaincontroller_master":
+    if ucr.get("server/role") in {"domaincontroller_master", "domaincontroller_backup"}:
         lo, po = univention.admin.uldap.getAdminConnection()
-    elif ucr.get("server/role") == "domaincontroller_slave":
+    else:
         options.bindpw = open(options.bindpwdfile, "r").read()
         try:
             lo = univention.admin.uldap.access(
