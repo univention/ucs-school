@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.41) unstable; urgency=low
+
+  * Bug #54415: update tags for the diagnostic tests
+
+ -- Amir Teymuri <teymuri@univention.de>  Tue, 10 May 2022 08:44:50 +0200
+
 ucs-test-ucsschool (7.3.40) unstable; urgency=medium
 
   * Bug #54719: Support gitregistry.knut.univention.de Docker images for kelvin app ini.
