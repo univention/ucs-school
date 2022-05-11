@@ -286,10 +286,13 @@ def list(filterName=None, userRule=False):
 
 def getGroupRuleName(groupNames):
     """Return the name of the filter rule for the specified group name.
+
     Usage:
-        getGroupRuleName([<groupName>, ...]) -> { <groupName>:<ruleName>, ... }
-    or
-        getGroupRuleName(<groupName) -> <ruleName>"""
+        `getGroupRuleName([<groupName>, ...]) -> { <groupName>:<ruleName>, ... }`
+
+    or:
+        `getGroupRuleName(<groupName) -> <ruleName>`
+    """
     ucr.load()
     if not isinstance(groupNames, type([])):
         return ucr.get("proxy/filter/groupdefault/%s" % groupNames)
@@ -298,10 +301,13 @@ def getGroupRuleName(groupNames):
 
 def unsetGroupRuleName(groupNames):
     """Unset the default rule for the given group name.
+
     Usage:
-        setGroupRuleName(<groupName>)
-    or
-        setGroupRuleName([<groupName>, ... ])"""
+        `setGroupRuleName(<groupName>)`
+
+    or:
+        `setGroupRuleName([<groupName>, ... ])`
+    """
     vars = []
     if not isinstance(groupNames, type([])):
         vars.append("proxy/filter/groupdefault/%s" % groupNames)
@@ -312,10 +318,13 @@ def unsetGroupRuleName(groupNames):
 
 def setGroupRuleName(*args):
     """Set the default rule for the given group name.
+
     Usage:
-        setGroupRuleName(<groupName>, <ruleName>)
-    or
-        setGroupRuleName({ <groupName>: <ruleName>, ... })"""
+        `setGroupRuleName(<groupName>, <ruleName>)`
+
+    or:
+        `setGroupRuleName({ <groupName>: <ruleName>, ... })`
+    """
     vars = []
     if len(args) > 1:
         vars = ["proxy/filter/groupdefault/%s=%s" % (args[0], args[1])]
