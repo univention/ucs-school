@@ -84,12 +84,12 @@ def LDAP_Connection(*connection_types):
 
     This decorator can only be used after set_bind_function() has been executed.
 
-    example:
-    @LDAP_Connection()
-    def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
-        ...
-        ldap_user_read.searchDn(..., position=ldap_position)
-        ...
+    example::
+        @LDAP_Connection()
+        def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+            ...
+            ldap_user_read.searchDn(..., position=ldap_position)
+            ...
     """
 
     if not connection_types:
