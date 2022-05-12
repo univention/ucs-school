@@ -326,7 +326,8 @@ class Instance(SchoolBaseModule):
         if request.flavor == "workgroup-admin":
             # do not allow groups to be renamed in order to avoid conflicts with shares
             # grp.name = '%(school)s-%(name)s' % group
-            group_from_ldap.description = group_from_umc["description"]
+            if "description" in group_from_umc:
+                group_from_ldap.description = group_from_umc["description"]
 
         # Workgroup admin view → update teachers, admins, students, (staff)
         # Class view → update only the group's teachers (keep all non teachers)
