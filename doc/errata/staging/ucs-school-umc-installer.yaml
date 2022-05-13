@@ -3,7 +3,8 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-installer
-fix: 8.0.7A~5.0.0.202203181230
+fix:
 desc: |
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
-bug: [54030]
+ * The creation of demoschool is now configurable in the school installer (Bug #49533)
+bug: [54030, 49533]
