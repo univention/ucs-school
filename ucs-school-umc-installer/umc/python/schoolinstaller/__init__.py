@@ -50,6 +50,7 @@ import ldap
 import notifier
 import notifier.threads
 from six.moves.urllib_request import urlretrieve
+from univention.config_registry.frontend import ucr_update
 
 from ucsschool.lib.models.computer import SchoolDCSlave
 from ucsschool.lib.models.school import School
@@ -568,7 +569,7 @@ class Instance(Base):
         nameEduServer=StringSanitizer(
             regex_pattern=RE_HOSTNAME_OR_EMPTY
         ),  # javascript wizard page always passes value to backend, even if empty
-        createDemo=BooleanSanitizer(default=True),
+        createDemo=BooleanSanitizer(),
     )
     def install(self, request):
         # get all arguments
@@ -582,6 +583,7 @@ class Instance(Base):
         setup = request.options.get("setup")
         server_role = ucr.get("server/role")
         joined = os.path.exists("/var/univention-join/joined")
+        create_demo = request.options.get("createDemo")
 
         if self._installation_started:
             raise ValueError("The installation was started twice. This should not have happened.")
@@ -692,6 +694,8 @@ class Instance(Base):
                         " to be joined first."
                     )
                 )
+        if create_demo is not None:
+        	ucr_update(ucr, {"ucsschool/join/create_demo": str(create_demo).lower()})
 
         # everything ok, try to acquire the lock for the package installation
         lock_aquired = self.package_manager.lock(raise_on_fail=False)
