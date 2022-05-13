@@ -62,6 +62,7 @@ from ucsschool.lib.roles import (
     role_school_class,
     role_school_class_share,
 )
+from ucsschool.lib.models.computer import WindowsComputer, MacComputer, IPComputer
 
 # -> doesn't do:
 # check usernames for correct values (no spaces)
@@ -1976,9 +1977,30 @@ def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
     )
 
 
-def import_computer():
+def get_ip_iface(ip_address, line):
+    try:
+        ip_iface = ipaddress.IPv4Interface(u"%s" % ip_address)
+    except ipaddress.AddressValueError as e:
+        print(line)
+        print("%s is not a valid ip address" % e)
+        sys.exit(0)
+    except ipaddress.NetmaskValueError as e:
+        print(line)
+        print("%s is not a valid netmask" % e)
+        sys.exit(0)
 
-    # usage
+    if "/" not in ip_address:
+        ip_iface = ipaddress.IPv4Interface(u"%s/%s" % (ip_address, default_prefixlen))
+        print(
+            "WARNING: no netmask specified for ip address %s using %s"
+            % (ip_iface.with_prefixlen, ip_iface.netmask)
+        )
+    return ip_iface
+
+
+def import_computer():
+    # todo move to separate file
+    # todo improve this.
     usage = "%prog [options] <importFile>\n"
     usage += "  creates computer objects according to import file for UCS@school\n\n"
     usage += "Arguments:\n"
@@ -1986,7 +2008,6 @@ def import_computer():
     parser = optparse.OptionParser(usage=usage)
     options, args = parser.parse_args()
 
-    # argument is infile
     if len(args) > 0:
         infile = args[0]
     else:
@@ -1995,135 +2016,71 @@ def import_computer():
         sys.exit()
 
     print("infile is  : " + infile)
-
-    linecnt = 0
-
+    line_number = 0
+    computer_to_class_mapping = {
+                    "windows": WindowsComputer,
+                    "macos": MacComputer,
+                    "ipmanagedclient": IPComputer,
+                }
     with open(infile) as inf, stopped_notifier():
         for line in inf:
-            linecnt += 1
+            line_number += 1
 
             if emptyLineRe.match(line):
-                print("Skipping empty line")
                 continue
-
-            print("Processing line %d: %s" % (linecnt, line), end=" ")
+            # todo why not use a csv-parse?
+            print("Processing line %d: %s" % (line_number, line), end=" ")
             parsed = line.strip("\r\n").split(sepchar)
-            ctype = parsed[0]
-            name = parsed[1].lower()
-            MAC = parsed[2]
-            schoolNr = parsed[3]
-            IP = parsed[4]
-            inventoryNumbers = None
+            computer_type = parsed[0]
+            computer_name = parsed[1].lower()
+            mac_address = parsed[2]
+            school_id = parsed[3]
+            ip_address = parsed[4]
+            inventory_numbers = None
             if len(parsed) > 5:
-                inventoryNumbers = parsed[5].strip().split(",")
+                inventory_numbers = parsed[5].strip().split(",")
             zone = None
             if len(parsed) > 6:
                 zone = parsed[6]
 
-            verify_school_ou(schoolNr, None, lo, baseDN)
-
-            try:
-                ip_iface = ipaddress.IPv4Interface(u"%s" % IP)
-            except ipaddress.AddressValueError as e:
-                print(line)
-                print("%s is not a valid ip address" % e)
-                sys.exit(0)
-            except ipaddress.NetmaskValueError as e:
-                print(line)
-                print("%s is not a valid netmask" % e)
-                sys.exit(0)
-
-            # groups
-            groups = {}
-            if ctype == "memberserver":
-                if zone == "edukativ":
-                    groups[
-                        "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s"
-                        % (escape_dn_chars(schoolNr.lower()), baseDN)
-                    ] = 1
-                    groups["cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
-                if zone == "verwaltung":
-                    groups[
-                        "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s"
-                        % (escape_dn_chars(schoolNr.lower()), baseDN)
-                    ] = 1
-                    groups["cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
-
-            # invoke pre hooks
-            hooks.pre("computer", "A", line=line)
-
-            success = True
-            if "/" not in IP:
-                ip_iface = ipaddress.IPv4Interface(u"%s/%s" % (IP, default_prefixlen))
-                print(
-                    "WARNING: no netmask specified for ip address %s using %s"
-                    % (ip_iface.with_prefixlen, ip_iface.netmask)
-                )
-
-            module = univention.admin.modules.get("computers/%s" % ctype)
-            if not module:
-                print('ERROR: Type "%s" not found for computer "%s".' % (ctype, name))
-                print("Ignoring of line %d" % linecnt)
-                success = False
-            else:
-                position_basedn = univention.admin.uldap.position(baseDN)
-                univention.admin.modules.init(lo, position_basedn, module)
-
-                if check_computer(module, name, schoolNr):
-                    print("computer %s already exists (school %s)" % (name, schoolNr))
-                    success = False
-                elif check_macAddress(MAC):
+            if computer_type in computer_to_class_mapping:
+                verify_school_ou(school_id, None, lo, baseDN)
+                ip_iface = get_ip_iface(ip_address, line)
+                _cls = computer_to_class_mapping[computer_type]
+                computer = _cls(school=school_id, name=computer_name)
+                if computer.exists(lo):
+                    print("computer %s already exists (school %s)" % (computer_name, school_id))
+                elif check_macAddress(mac_address):
                     print(
-                        "mac %s for computer %s already used (school %s)"
+                        "mac_address %s for computer %s already used (school %s)"
                         % (
-                            MAC,
-                            name,
-                            schoolNr,
+                            mac_address,
+                            computer_name,
+                            school_id,
                         )
                     )
-                    success = False
-                else:
-                    print("generate computer %s (school %s)" % (name, schoolNr))
-
-                    success, dn = create_network(schoolNr, ip_iface.network)
-
-                    position.setDn("cn=computers,%s" % (getDN(schoolNr),))
-                    object = module.object(None, lo, position=position, superordinate=superordinate)
-                    object.open()
-                    object["name"] = name
-                    object["mac"] = MAC
-                    if inventoryNumbers:
-                        object["inventoryNumber"] = inventoryNumbers
-                    if ip_iface.ip != ip_iface.network.network_address:
-                        object["ip"] = str(ip_iface.ip)
-                        print(
-                            "set ip to %s is not net %s"
-                            % (ip_iface.ip, ip_iface.network.network_address)
-                        )
-                    object["network"] = "cn=%s-%s,cn=networks,%s" % (
-                        schoolNr.lower(),
-                        ip_iface.network.network_address,
-                        getDN(schoolNr),
+                computer.mac_address = [mac_address]
+                computer.zone = zone  # this seems to be only used in from_udm_obj, but might be used in hooks (?)
+                if inventory_numbers:
+                    computer.inventory_number = inventory_numbers
+                if ip_iface.ip != ip_iface.network.network_address:
+                    computer.ip_address = [str(ip_iface.ip)]  # todo only one ip address possible?
+                    print(
+                        "set ip to %s is not net %s"
+                        % (ip_iface.ip, ip_iface.network.network_address)
                     )
-                    for grp in groups:
-                        if grp not in object["groups"]:
-                            object["groups"].append(grp)
-                    try:
-                        create_object(object)
-                    except Exception:
-                        print(
-                            "WARNING: Error creating computer %s\n"
-                            % (object.dn, traceback.format_exc(100))
-                        )
-                        success = False
-
-                print("Processing of line %d completed" % linecnt)
-
-            # invoke post hooks
-            if success:
-                hooks.post("computer", "A", dn=object.dn, line=line)
-
-        inf.close()
+                try:
+                    computer.create(lo)
+                except Exception:
+                    # todo better error? not sure: there could also be errors in the hooks
+                    print(
+                        "WARNING: Error creating computer %s\n %s"
+                        % (computer.dn, traceback.format_exc(100))
+                    )
+                print("Processing of line %d completed" % line_number)
+            else:
+                print("Importing computer {} with type {} is not supported".format(computer_name, computer_type))
+                print("Ignoring of line %d" % line_number)
 
 
 def import_router():
