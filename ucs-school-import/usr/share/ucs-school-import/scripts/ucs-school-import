@@ -62,7 +62,7 @@ from ucsschool.lib.roles import (
     role_school_class,
     role_school_class_share,
 )
-from ucsschool.lib.models.computer import WindowsComputer, MacComputer, IPComputer
+from ucsschool.importer.utils.utils import verify_school_ou
 
 # -> doesn't do:
 # check usernames for correct values (no spaces)
@@ -362,13 +362,6 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
                 return o
 
     return None
-
-
-def verify_school_ou(schoolNr, co, lo, baseDN):
-    from ucsschool.lib.models.school import School
-
-    if not School(name=schoolNr).get_udm_object(lo):
-        raise SystemExit("ERROR: The specified school %r does not exist." % (schoolNr,))
 
 
 def create_school_ou(
@@ -955,7 +948,7 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
                         problem_hints + "there were problems verifying this ou %s\n" % schoolNr
                     )
                 position.setDn("cn=%s,cn=dhcp,%s" % (escape_dn_chars(schoolNr.lower()), getDN(schoolNr)))
-                print("need to create dhcp server: %s" % (position.getDn(),))
+                print("need to create dhcp server: %s" % (position.getDN(),))
                 object = dhcp_server_module.object(
                     None, lo, position=position, superordinate=dhcp_service_object
                 )
@@ -1396,7 +1389,7 @@ def create_network(
     assert isinstance(network, ipaddress.IPv4Network)
     success = True
     dn = None
-    verify_school_ou(schoolNr, None, lo, baseDN)
+    verify_school_ou(schoolNr, lo)
 
     if check_network(schoolNr, network):
         print("Network %s exists in school %s!" % (network.network_address, schoolNr))
@@ -1524,34 +1517,6 @@ def check_network(schoolNr, network):
     return None
 
 
-def check_macAddress(mac, base=""):
-    if not base:
-        base = baseDN
-    result = lo.search(
-        base=base, scope="sub", filter=filter_format("(macAddress=%s)", [mac]), attr=["macAddress"]
-    )
-
-    if result and result[0][1]["macAddress"][0].decode("ASCII") == mac:
-        return result[0][0]
-
-
-def check_computer(module, name, schoolNr):
-    objects = univention.admin.modules.lookup(
-        module,
-        None,
-        lo,
-        scope="sub",
-        superordinate=superordinate,
-        base="cn=computers,%s" % (getDN(schoolNr),),
-        filter=filter_format("cn=%s", [name]),
-    )
-    if objects:
-        for object in objects:
-            if object.dn == "cn=%s,cn=computers,%s" % (escape_dn_chars(name), getDN(schoolNr)):
-                return 1
-    return None
-
-
 def get_computer_dn(name):
     objects = univention.admin.modules.lookup(
         computer_module,
@@ -1600,7 +1565,7 @@ def import_networks(router_only=False):
             parsed = line.strip("\r\n").split(sepchar)
 
             schoolNr = parsed[0]
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
             # the network MUST include the netmask
             network = parsed[1]  # netmask new
             # the broadcast address is generated automatically by the
@@ -1977,112 +1942,6 @@ def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
     )
 
 
-def get_ip_iface(ip_address, line):
-    try:
-        ip_iface = ipaddress.IPv4Interface(u"%s" % ip_address)
-    except ipaddress.AddressValueError as e:
-        print(line)
-        print("%s is not a valid ip address" % e)
-        sys.exit(0)
-    except ipaddress.NetmaskValueError as e:
-        print(line)
-        print("%s is not a valid netmask" % e)
-        sys.exit(0)
-
-    if "/" not in ip_address:
-        ip_iface = ipaddress.IPv4Interface(u"%s/%s" % (ip_address, default_prefixlen))
-        print(
-            "WARNING: no netmask specified for ip address %s using %s"
-            % (ip_iface.with_prefixlen, ip_iface.netmask)
-        )
-    return ip_iface
-
-
-def import_computer():
-    # todo move to separate file
-    # todo improve this.
-    usage = "%prog [options] <importFile>\n"
-    usage += "  creates computer objects according to import file for UCS@school\n\n"
-    usage += "Arguments:\n"
-    usage += "  <importFile> computer import file"
-    parser = optparse.OptionParser(usage=usage)
-    options, args = parser.parse_args()
-
-    if len(args) > 0:
-        infile = args[0]
-    else:
-        parser.print_help()
-        print("must have one Argument for infile")
-        sys.exit()
-
-    print("infile is  : " + infile)
-    line_number = 0
-    computer_to_class_mapping = {
-                    "windows": WindowsComputer,
-                    "macos": MacComputer,
-                    "ipmanagedclient": IPComputer,
-                }
-    with open(infile) as inf, stopped_notifier():
-        for line in inf:
-            line_number += 1
-
-            if emptyLineRe.match(line):
-                continue
-            # todo why not use a csv-parse?
-            print("Processing line %d: %s" % (line_number, line), end=" ")
-            parsed = line.strip("\r\n").split(sepchar)
-            computer_type = parsed[0]
-            computer_name = parsed[1].lower()
-            mac_address = parsed[2]
-            school_id = parsed[3]
-            ip_address = parsed[4]
-            inventory_numbers = None
-            if len(parsed) > 5:
-                inventory_numbers = parsed[5].strip().split(",")
-            zone = None
-            if len(parsed) > 6:
-                zone = parsed[6]
-
-            if computer_type in computer_to_class_mapping:
-                verify_school_ou(school_id, None, lo, baseDN)
-                ip_iface = get_ip_iface(ip_address, line)
-                _cls = computer_to_class_mapping[computer_type]
-                computer = _cls(school=school_id, name=computer_name)
-                if computer.exists(lo):
-                    print("computer %s already exists (school %s)" % (computer_name, school_id))
-                elif check_macAddress(mac_address):
-                    print(
-                        "mac_address %s for computer %s already used (school %s)"
-                        % (
-                            mac_address,
-                            computer_name,
-                            school_id,
-                        )
-                    )
-                computer.mac_address = [mac_address]
-                computer.zone = zone  # this seems to be only used in from_udm_obj, but might be used in hooks (?)
-                if inventory_numbers:
-                    computer.inventory_number = inventory_numbers
-                if ip_iface.ip != ip_iface.network.network_address:
-                    computer.ip_address = [str(ip_iface.ip)]  # todo only one ip address possible?
-                    print(
-                        "set ip to %s is not net %s"
-                        % (ip_iface.ip, ip_iface.network.network_address)
-                    )
-                try:
-                    computer.create(lo)
-                except Exception:
-                    # todo better error? not sure: there could also be errors in the hooks
-                    print(
-                        "WARNING: Error creating computer %s\n %s"
-                        % (computer.dn, traceback.format_exc(100))
-                    )
-                print("Processing of line %d completed" % line_number)
-            else:
-                print("Importing computer {} with type {} is not supported".format(computer_name, computer_type))
-                print("Ignoring of line %d" % line_number)
-
-
 def import_router():
     """
     No computer object is created on importing routers! But the dhcp-routing
@@ -2132,7 +1991,7 @@ def import_group():
             )
             share_dn = "cn=%s,cn=klassen,cn=shares,%s" % (escape_dn_chars(ClassID), getDN(schoolNr))
 
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
 
             # invoke pre hooks
             hooks.pre("group", action, line=line)
@@ -2199,7 +2058,7 @@ def import_printer():
                 spoolHost = "%s.%s" % (spoolHost, ucr["domainname"])
             printerName = parsed[3]
             printerUri = parsed[4]
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
 
             def parseString(parsed, idx, default=None):
                 res = default
@@ -2419,7 +2278,7 @@ def export_computer():
     ou = args[0]
     outfile = args[1]
 
-    verify_school_ou(ou, None, lo, baseDN)
+    verify_school_ou(ou, lo)
     # outfile = os.path.basename(actgrp+'.csv')
     print("outfile is : " + outfile)
     if os.path.exists(outfile):
@@ -2484,7 +2343,7 @@ def set_ou_sharefileserver():
     else:
         ShareFileServer = objects[0]
 
-    verify_school_ou(ouname, None, lo, baseDN)
+    verify_school_ou(ouname, lo)
 
     with stopped_notifier():
         r = lo.get(getDN(ouname), ["objectClass"])
@@ -3053,8 +2912,6 @@ ud.debug(
 # select action
 if sys.argv[0].endswith("import_networks"):
     import_networks()
-elif sys.argv[0].endswith("import_computer"):
-    import_computer()
 elif sys.argv[0].endswith("import_router"):
     import_router()
 elif sys.argv[0].endswith("import_inventory_number"):
@@ -3197,7 +3054,7 @@ elif sys.argv[0].endswith("create_dc"):
         parser.print_help()
         sys.exit(1)
 
-    verify_school_ou(options.ou_name, None, lo, baseDN)
+    verify_school_ou(options.ou_name, lo)
 
     if not is_valid_hostname(options.dc_name):
         print("ERROR: invalid domaincontroller name given")
@@ -3256,7 +3113,7 @@ within an OU LDAP subtree to the given OU."""
         parser.print_help()
         sys.exit(1)
 
-    verify_school_ou(options.ou, None, lo, baseDN)
+    verify_school_ou(options.ou, lo)
 
     if not is_valid_hostname(options.dcname):
         print("ERROR: invalid domaincontroller name given")
