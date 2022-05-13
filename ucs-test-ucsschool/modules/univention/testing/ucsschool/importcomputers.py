@@ -101,14 +101,6 @@ class Computer(object):
         self.inventorynumbers.append(uts.random_name())
         self.inventorynumbers.append(uts.random_name())
 
-    def set_zone_verwaltung(self):
-        if self.ctype == "memberserver":
-            self.zone = "verwaltung"
-
-    def set_zone_edukativ(self):
-        if self.ctype == "memberserver":
-            self.zone = "edukativ"
-
     def __str__(self):
         delimiter = "\t"
         line = self.ctype
@@ -218,11 +210,6 @@ class Windows(Computer):
         super(Windows, self).__init__(school, "windows")
 
 
-class Memberserver(Computer):
-    def __init__(self, school):
-        super(Memberserver, self).__init__(school, "memberserver")
-
-
 class MacOS(Computer):
     def __init__(self, school):
         super(MacOS, self).__init__(school, "macos")
@@ -304,9 +291,6 @@ class ImportFile:
         for computer in self.computer_import.windows:
             kwargs = _set_kwargs(computer)
             WindowsComputerLib(**kwargs).create(lo)
-        # for computer in self.computer_import.memberservers:
-        # 	kwargs = _set_kwargs(computer)
-        # 	IPComputerLib(**kwargs).create(lo)
         for computer in self.computer_import.macos:
             kwargs = _set_kwargs(computer)
             MacComputerLib(**kwargs).create(lo)
@@ -384,7 +368,7 @@ exit 0
 
 
 class ComputerImport:
-    def __init__(self, ou_name, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
+    def __init__(self, ou_name, nr_windows=20, nr_macos=5, nr_ipmanagedclient=3):
         assert nr_windows > 2
         assert nr_macos > 2
         assert nr_ipmanagedclient > 2
@@ -395,36 +379,22 @@ class ComputerImport:
         for i in range(0, nr_windows):
             self.windows.append(Windows(self.school))
         self.windows[1].set_inventorynumbers()
-        self.windows[2].set_zone_verwaltung()
-
-        self.memberservers = []
-        for i in range(0, nr_memberserver):
-            self.memberservers.append(Memberserver(self.school))
-        if self.memberservers:
-            self.memberservers[2].set_inventorynumbers()
-            self.memberservers[0].set_zone_verwaltung()
 
         self.macos = []
         for i in range(0, nr_macos):
             self.macos.append(MacOS(self.school))
         self.macos[0].set_inventorynumbers()
-        self.macos[1].set_zone_edukativ()
 
         self.ipmanagedclients = []
         for i in range(0, nr_ipmanagedclient):
             self.ipmanagedclients.append(IPManagedClient(self.school))
         self.ipmanagedclients[0].set_inventorynumbers()
-        self.ipmanagedclients[0].set_zone_edukativ()
-        self.ipmanagedclients[1].set_zone_edukativ()
 
     def __str__(self):
         lines = []
 
         for windows in self.windows:
             lines.append(str(windows))
-
-        for memberserver in self.memberservers:
-            lines.append(str(memberserver))
 
         for macos in self.macos:
             lines.append(str(macos))
@@ -438,9 +408,6 @@ class ComputerImport:
         for windows in self.windows:
             windows.verify()
 
-        for memberserver in self.memberservers:
-            memberserver.verify()
-
         for macos in self.macos:
             macos.verify()
 
@@ -452,7 +419,6 @@ def create_and_verify_computers(
     use_cli_api=True,
     use_python_api=False,
     nr_windows=20,
-    nr_memberserver=10,
     nr_macos=5,
     nr_ipmanagedclient=3,
 ):
@@ -465,7 +431,6 @@ def create_and_verify_computers(
         computer_import = ComputerImport(
             ou_name,
             nr_windows=nr_windows,
-            nr_memberserver=nr_memberserver,
             nr_macos=nr_macos,
             nr_ipmanagedclient=nr_ipmanagedclient,
         )
@@ -477,5 +442,5 @@ def create_and_verify_computers(
         computer_import.verify()
 
 
-def import_computers_basics(use_cli_api=True, use_python_api=False, nr_memberserver=4):
-    create_and_verify_computers(use_cli_api, use_python_api, 5, nr_memberserver, 3, 3)
+def import_computers_basics(use_cli_api=True, use_python_api=False):
+    create_and_verify_computers(use_cli_api, use_python_api, 5, 3, 3)
