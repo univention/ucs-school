@@ -1,3 +1,10 @@
+ucs-school-umc-installer (8.0.8) unstable; urgency=medium
+
+  * Bug #49533: The creation of demoschool is now configurable in the school
+    installer.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Fri, 13 May 2022 13:15:56 +0300
+
 ucs-school-umc-installer (8.0.7) unstable; urgency=medium
 
   * Bug #54030: adjusted the wording of some descriptions shown in UMC
