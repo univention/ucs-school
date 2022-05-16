@@ -1,5 +1,5 @@
 [ucsschool/userlogon/commonshares]
-Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden (nach Änderungen muss das Listener-Modul ucs-school-user-logonscript neu initialisiert werden: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
+Description[de]=Kommagetrennte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden (nach Änderungen muss das Listener-Modul ucs-school-user-logonscript neu initialisiert werden: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
 Description[en]=Comma-separated list of network shares that are included for all users (after changes the listener module must be reinitialized: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
 Type=str
 Categories=ucsschool-netlogon
@@ -29,7 +29,7 @@ Type=bool
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/create_shortcuts]
-Description[de]=Verzeichnis mit Links anlegen? Vorraussetzung für ../shares_folder_icon und ../create_myfiles_link. (Standard: yes)
+Description[de]=Verzeichnis für Links anlegen? Voraussetzung für ../shares_folder_icon und ../create_myfiles_link. (Standard: yes)
 Description[en]=Create directory for links? Precondition for ../shares_folder_icon and ../create_myfiles_link. (Default: yes)
 Type=bool
 Categories=ucsschool-netlogon
@@ -47,14 +47,14 @@ Type=bool
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/disabled_share_links/*]
-Description[de]=Kommaseparierte Liste von Freigaben pro Server für die kein Link erzeugt werden soll. Die Namen der Freigaben sind als reguläre Ausdrücke zu formulieren. Bsp.: um zu verhindern, dass für die 1. Klasse der "GS_Nord" auf dem Server "mydc" Links zu Freigaben angelegt werden, sowie kein Link "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='^GS_Nord-1.*$,^Marktplatz$'. Der Wert "all" verhindert das Anlegen jeglicher Links zu Freigaben (Standard: nicht gesetzt).
+Description[de]=Kommagetrennte Liste von Freigaben pro Server für die kein Link erzeugt werden soll. Die Namen der Freigaben sind als reguläre Ausdrücke zu formulieren. Bsp.: Um zu verhindern, dass für die 1. Klasse der "GS_Nord" auf dem Server "mydc" Links zu Freigaben angelegt werden, sowie kein Link "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='^GS_Nord-1.*$,^Marktplatz$'. Der Wert "all" verhindert das Anlegen jeglicher Links zu Freigaben (Standard: nicht gesetzt).
 Description[en]=Comma separated list of shares per server for which not to create links. The shares names have to be specified as regular expressions. Example: To prevent the creation of links to shares for the 1st class of the school "GS_Nord" on the server "mydc" and the link to "Marktplatz": ucsschool/userlogon/disabled_share_links/mydc='^GS_Nord-1.*$,^Marktplatz$'. The value "all" prevents the creation of all share links. (default: not defined)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/netlogon/path]
 Description[de]=Definiert das Verzeichnis, in dem die Netlogon-Skripte durch das Listener-Modul ucs-school-user-logonscript erstellt werden (Standard: nicht gesetzt)
-Description[en]=Defines the directory in which the netlogon scripts will be created by the listener module ucs-school-user-logonscript (default: not defined)
+Description[en]=Defines the directory in which the Netlogon scripts will be created by the listener module ucs-school-user-logonscript (default: not defined)
 Type=str
 Categories=ucsschool-netlogon
 
@@ -101,13 +101,13 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares_folder_parent_path]
-Description[de]=Pfad des Verzeichnisses in dem das Verzeichnis mit den Links zu Laufwerken des Benutzers erstellt werden soll. Wenn nicht gesetzt, wird es vom Logon-Skript ausgerechnet. Beipiel: "%USERPROFILE%\Desktop". (Standard: nicht gesetzt)
+Description[de]=Pfad des Verzeichnisses, in dem das Verzeichnis mit den Links zu Laufwerken des Benutzers erstellt werden soll. Wenn nicht gesetzt, wird es vom Logon-Skript ausgerechnet. Beipiel: "%USERPROFILE%\Desktop". (Standard: nicht gesetzt)
 Description[en]=Path to the directory containing the directory for the links to the users shares. Will be calculated by the logon-script, if unset. Example: "%USERPROFILE%\Desktop". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/my_files_link_name]
-Description[de]=Name für den Link zu den "Eigenen Dateien" im Verzeichnis das Links der Benutzerfreigaben. (Standard: "Meine Dateien")
+Description[de]=Name für den Link zu den "Eigenen Dateien" in dem Verzeichnis, das Links der Benutzerfreigaben enthält. (Standard: "Meine Dateien")
 Description[en]=Name of the link to "My Files" in the directory containing links to the users shares. (default: "Meine Dateien")
 Type=str
 Categories=ucsschool-netlogon
@@ -119,13 +119,13 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/other_links_icon]
-Description[de]=Icon für Links zu anderen Freigaben des Benutzers als "Eigenen Dateien". Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,193". (Standard: nicht gesetzt)
-Description[en]=Icon for links to other shares than "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,193". (default: unset)
+Description[de]=Icon für Links aller Freigaben des Benutzers außer "Eigenen Dateien". Wenn nicht gesetzt, wird kein Icon erzeugt. Beipiel: "%SystemRoot%\system32\imageres.dll,193". (Standard: nicht gesetzt)
+Description[en]=Icon for links to all shares, except "My Files". No icon will be configured, if unset. Example: "%SystemRoot%\system32\imageres.dll,193". (default: unset)
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/shares/validservers]
-Description[de]=Definiert, von welchen Servern Freigaben eingebunden werden (default: nicht gesetzt, mögliche Werte: leer [nur Freigaben vom lokalen Rechner], kommaseparierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
+Description[de]=Definiert, von welchen Servern Freigaben eingebunden werden (default: nicht gesetzt, mögliche Werte: leer [nur Freigaben vom lokalen Rechner], kommagetrennte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
 Description[en]=Defines the valid servers for network shares (default: not defined, possible values: empty [only shares from the local host], comma-separated list of hostnames [shares from these servers], * [all shares]
 Type=str
 Categories=ucsschool-netlogon
@@ -137,20 +137,20 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/mac]
-Description[de]=Falls auf "true" gesetzt, wird ein Mac OS logon Skript erzeugt
-Description[en]=If set to "true" Mac OS logon scripts will be created
+Description[de]=Falls auf "true" gesetzt, wird ein macOS logon Skript erzeugt.
+Description[en]=If set to "true", a macOS logon script will be created.
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/umclink/re]
-Description[de]=Regulärer Ausdruck auf die LDAP-DN der Benutzer. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
-Description[en]=Regular expression on the LDAP-DN of users. If this expression matches, the netlogon Skript creates a UMC-Link on the users windows desktop (default: only teachers and staff).
+Description[de]=Regulärer Ausdruck auf die LDAP-DN der Benutzer. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das Netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
+Description[en]=Regular expression on the LDAP-DN of users. If this expression matches, the Netlogon script creates a UMC-Link on the users Windows desktop (default: only teachers and staff).
 Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/umclink/filter]
-Description[de]=LDAP Filter zur Suche nach Benutzern. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
-Description[en]=LDAP filter for search of users. If this expression matches, the netlogon Skript creates a UMC-Link on the users windows desktop (default: only teachers and staff).
+Description[de]=LDAP Filter zur Suche nach Benutzern. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das Netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
+Description[en]=LDAP filter for search of users. If this expression matches, the Netlogon script creates a UMC-Link on the users Windows desktop (default: only teachers and staff).
 Type=str
 Categories=ucsschool-netlogon
 
@@ -168,25 +168,25 @@ Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/daemon/debug/level]
 Description[de]=Definiert die Menge an Debug-Informationen, die in die Datei /var/log/univention/ucs-school-user-logonscript-daemon.log geschrieben werden. Mögliche Werte sind 0 bis 4. Ist die Variable nicht gesetzt, wird "3" verwendet.
-Description[en]=Specifies the amount of debug information to be written to /var/log/univention/ucs-school-user-logonscript-daemon.log. Possible values are 0-4. If the variable is unset, '3' applies.
+Description[en]=Specifies the amount of debug information to be written to /var/log/univention/ucs-school-user-logonscript-daemon.log. Possible values are 0 to 4. If the variable is unset, '3' applies.
 Type=int
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/daemon/check-interval]
-Description[de]=Definiert die Wartezeit in Sekunden zwischen der Prüfung von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Scripten (Standard: 180)
-Description[en]=Defines the sleep interval in seconds between checks of pending tasks for the netlogon script generator daemon (default: 180)
+Description[de]=Definiert die Wartezeit in Sekunden zwischen der Prüfung von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Skripten (Standard: 180)
+Description[en]=Defines the sleep interval in seconds between checks of pending tasks for the Netlogon script generator daemon (default: 180)
 Type=int
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/daemon/check-interval-minimum]
-Description[de]=Definiert die minimale Wartezeit in Sekunden zwischen zwei Prüfungen von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Scripten (Standard: 7)
-Description[en]=Defines the minimal sleep interval in seconds between two checks of pending tasks for the netlogon script generator daemon (default: 7)
+Description[de]=Definiert die minimale Wartezeit in Sekunden zwischen zwei Prüfungen von ausstehenden Jobs für den Daemon zum Generieren von Netlogon-Skripten (Standard: 7)
+Description[en]=Defines the minimal sleep interval in seconds between two checks of pending tasks for the Netlogon script generator daemon (default: 7)
 Type=int
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/daemon/error-delay]
 Description[de]=Definiert die Wartezeit in Sekunden, die nach einem Fehler während der Netlogon-Skript-Generierung abgewartet wird (Standard: 5)
-Description[en]=Defines the delay in seconds after an error occurred during netlogon script generation (default: 5)
+Description[en]=Defines the delay in seconds after an error occurred during Netlogon script generation (default: 5)
 Type=int
 Categories=ucsschool-netlogon
 
