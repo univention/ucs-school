@@ -3,9 +3,7 @@
 from __future__ import print_function
 
 import base64
-import os
 import random
-import stat
 import subprocess
 
 from six import string_types
@@ -31,7 +29,6 @@ from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 univention.admin.modules.update()
 add_stream_logger_to_schoollib()
 
-HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
 
 TYPE_DC_ADMINISTRATIVE = "administrative"
 TYPE_DC_EDUCATIONAL = "educational"
@@ -54,14 +51,6 @@ class DhcpdLDAPBase(Exception):
 
 
 class DhcpServerLocation(Exception):
-    pass
-
-
-class PreHookFailed(Exception):
-    pass
-
-
-class PostHookFailed(Exception):
     pass
 
 
@@ -176,79 +165,6 @@ def move_domaincontroller_to_ou_cli(dc_name, ou):
     subprocess.check_call(cmd_block)
 
 
-def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
-    pre_hook_base = os.path.join(HOOK_BASEDIR, "ou_create_pre.d")
-    pre_hook = os.path.join(pre_hook_base, uts.random_name())
-
-    successful_file = "%s-successful" % pre_hook
-
-    with open(pre_hook, "w+") as pre_hook_fd:
-        pre_hook_fd.write(
-            """#!/bin/sh
-set -x
-cat $1
-univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1\n"""
-            % {"ou_base": ou_base}
-        )
-        if singlemaster:
-            pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou})
-        elif dc:
-            pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
-        else:
-            pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou})
-
-        pre_hook_fd.write('touch "%s"' % successful_file)
-        os.fchmod(
-            pre_hook_fd.fileno(),
-            stat.S_IRUSR
-            | stat.S_IWUSR
-            | stat.S_IXUSR
-            | stat.S_IRGRP
-            | stat.S_IXGRP
-            | stat.S_IROTH
-            | stat.S_IXOTH,
-        )
-
-    return pre_hook, successful_file
-
-
-def import_ou_create_post_hook(ou, ou_base, dc, singlemaster):
-    post_hook_base = os.path.join(HOOK_BASEDIR, "ou_create_post.d")
-    post_hook = os.path.join(post_hook_base, uts.random_name())
-
-    successful_file = "%s-successful" % post_hook
-
-    with open(post_hook, "w+") as post_hook_fd:
-        post_hook_fd.write(
-            """#!/bin/sh
-set -x
-cat $1
-test "%(ou_base)s" = "$2" || exit 1
-univention-ldapsearch -b "$2" >/dev/null || exit 1\n"""
-            % {"ou_base": ou_base}
-        )
-        if singlemaster:
-            post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {"ou": ou})
-        elif dc:
-            post_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {"ou": ou, "dc": dc})
-        else:
-            post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {"ou": ou})
-
-        post_hook_fd.write('touch "%s"' % successful_file)
-        os.fchmod(
-            post_hook_fd.fileno(),
-            stat.S_IRUSR
-            | stat.S_IWUSR
-            | stat.S_IXUSR
-            | stat.S_IRGRP
-            | stat.S_IXGRP
-            | stat.S_IROTH
-            | stat.S_IXOTH,
-        )
-
-    return post_hook, successful_file
-
-
 def get_ou_base(ou, district_enable):
     ucr = univention.testing.ucr.UCSTestConfigRegistry()
     ucr.load()
@@ -319,7 +235,6 @@ def create_and_verify_ou(
     ucr.load()
 
     base_dn = ucr.get("ldap/base")
-    ou_base = get_ou_base(ou, district_enable)
 
     move_dc_after_create_ou = False
 
@@ -336,10 +251,6 @@ def create_and_verify_ou(
     else:
         dc_name = "dc%s" % ou
 
-    # create hooks
-    (pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc_name, singlemaster)
-    (post_hook, post_hook_successful) = import_ou_create_post_hook(ou, ou_base, dc_name, singlemaster)
-
     if use_cli_api:
         create_ou_cli(
             ou, dc, dc_administrative, sharefileserver, ou_displayname, alter_dhcpd_base_option
@@ -351,20 +262,6 @@ def create_and_verify_ou(
 
     if move_dc_after_create_ou:
         move_domaincontroller_to_ou_cli(dc_name, ou)
-
-    # cleanup hooks
-    os.remove(pre_hook)
-    os.remove(post_hook)
-
-    if os.path.exists(pre_hook_successful):
-        os.unlink(pre_hook_successful)
-    else:
-        raise PreHookFailed()
-
-    if os.path.exists(post_hook_successful):
-        os.unlink(post_hook_successful)
-    else:
-        raise PostHookFailed()
 
     verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist=True)
 

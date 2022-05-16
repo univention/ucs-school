@@ -21,26 +21,6 @@ import univention.testing.ucsschool.importou as eio
 import univention.testing.udm
 import univention.testing.utils as utils
 
-HOOKS_DIR = "/usr/share/ucs-school-import/hooks/ou_create_post.d"
-BACKUP_DIR = "/usr/share/ucs-school-import/hooks/ou_create_post.d.bak.{}".format(
-    datetime.datetime.now().isoformat()
-)
-
-
-@pytest.fixture(scope="module")
-def disable_hooks():
-    # remove hooks to make things faster
-    print("\n ** DISABLING ou_create_post HOOKS...")
-    os.mkdir(BACKUP_DIR)
-    for filename in os.listdir(HOOKS_DIR):
-        shutil.move(os.path.join(HOOKS_DIR, filename), BACKUP_DIR)
-    yield
-    # re-enable hooks
-    print("\n ** ENABLING ou_create_post HOOKS...")
-    for filename in os.listdir(BACKUP_DIR):
-        shutil.move(os.path.join(BACKUP_DIR, filename), HOOKS_DIR)
-    os.rmdir(BACKUP_DIR)
-
 
 @pytest.mark.parametrize(
     "ou_name,ou_displayname,dc,dc_administrative,sharefileserver,singlemaster,"

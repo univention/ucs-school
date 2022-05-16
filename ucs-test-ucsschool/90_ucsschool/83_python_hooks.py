@@ -200,19 +200,6 @@ class TestPythonHooks(TestCase):
         logger.info("Using OUs %r and %r.", cls.ou_name, cls.ou2_name)
         assert cls.ou_name != cls.ou2_name
 
-        # Fill _empty_hook_paths with all possible hook paths, so legacy hooks
-        # won't be executed (cleaner and faster environment for this test).
-        for model in cls.models:
-            try:
-                hook_type = model.Meta.hook_path  # 'group'
-            except AttributeError:
-                hook_type = model.Meta.udm_module.split("/")[-1]  # 'group'
-            for dir_name in (
-                "{}_{}_{}.d".format(hook_type.lower(), m, t) for m in cls.methods for t in cls.times
-            ):
-                path = os.path.join(LEGACY_HOOK_BASE_PATH, dir_name)
-                UCSSchoolHelperAbstractClass._empty_hook_paths.add(path)
-
     @classmethod
     def tearDownClass(cls):
         if cls._dhcp_service:

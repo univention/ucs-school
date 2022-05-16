@@ -10,4 +10,4 @@
 from univention.testing.ucsschool.importcomputers import import_computers_basics
 
 if __name__ == "__main__":
-    import_computers_basics(use_cli_api=False, use_python_api=True, nr_memberserver=0)
+    import_computers_basics(use_cli_api=False, use_python_api=True)
