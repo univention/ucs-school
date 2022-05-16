@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (16.0.4) unstable; urgency=medium
+
+  * Bug #54758: Correct spelling and grammar mistakes in UCR variable description
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 16 May 2022 13:24:17 +0200
+
 ucs-school-netlogon-user-logonscripts (16.0.3) unstable; urgency=low
 
   * Bug #53988: use systemctl in /bin
