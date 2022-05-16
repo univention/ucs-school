@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-netlogon-user-logonscripts
+fix:
+desc: |
+ * Corrected spelling and grammar mistakes in UCR variable descriptions (Bug #54758).
+bug: [54758]
