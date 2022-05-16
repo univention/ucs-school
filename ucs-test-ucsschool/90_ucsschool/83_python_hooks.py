@@ -38,7 +38,6 @@ MODULE_PATHS = (
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hookpy")
-LEGACY_HOOK_BASE_PATH = "/usr/share/ucs-school-import/hooks"
 RESULTFILE = "/tmp/test83_result.txt"
 EXPECTED_CLASSES = {
     "AnyComputer": "ucsschool.lib.models.computer",

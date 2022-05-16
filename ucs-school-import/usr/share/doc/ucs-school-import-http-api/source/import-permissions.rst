@@ -20,7 +20,7 @@ The above ``users`` property is how UDM shows it. An LDAP query would list the u
 -------------------------
 
 The join script ``40ucs-school-import-http-api.inst`` creates an import permission group with a name ``$OU-import-all`` *for each* OU.
-For all OUs that are created later, the import hook ``/usr/share/ucs-school-import/hooks/ou_create_post.d/53importgroup_create`` will create such a group automatically.
+For all OUs that are created later, such a group will be created automatically.
 
 Granularity
 -----------

@@ -224,7 +224,7 @@ class ImportUser(User):
     def _pyhook_supports_dry_run(kls):  # type: (Type["ImportUser"]) -> bool
         return bool(getattr(kls, "supports_dry_run", False))
 
-    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> bool
+    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> None
         """
         Runs PyHooks, then ucs-school-libs fork hooks.
 
@@ -232,7 +232,6 @@ class ImportUser(User):
         :param str func_name: `create`, `modify`, `move` or `remove`
         :param univention.admin.uldap.access lo: LDAP connection object
         :return: return code of lib hooks
-        :rtype: bool: result of a legacy hook or None if no legacy hook ran
         """
         if lo != self.lo:
             self.logger.warning('Received "lo" (%r) is not the same as self.lo (%r).', lo, self.lo)
@@ -268,11 +267,7 @@ class ImportUser(User):
         if self.config["dry_run"]:
             return True
         else:
-            try:
-                self.hook_path = self.config["hooks_dir_legacy"]
-            except KeyError:
-                pass
-            return super(ImportUser, self).call_hooks(hook_time, func_name, lo)
+            super(ImportUser, self).call_hooks(hook_time, func_name, lo)
 
     def call_format_hook(self, prop_name, fields):  # type: (str, Dict[str, Any]) -> Dict[str, Any]
         """

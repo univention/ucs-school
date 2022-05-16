@@ -170,61 +170,6 @@ class CreateObjectError(Exception):
     pass
 
 
-class Hooks(object):
-    OBJECTS = ("user", "group", "printer", "computer", "network", "router", "ou")
-    OPERATIONS = {"A": "create", "M": "modify", "D": "remove"}
-
-    PATH = "/usr/share/ucs-school-import/hooks/"
-
-    def _create_temp_file(self, line):
-        tmpfile = tempfile.NamedTemporaryFile("w+")
-        tmpfile.write(line)
-        tmpfile.flush()
-        return tmpfile
-
-    def __run(self, phase, module, action, **kwargs):
-        # verify phase
-        if action not in Hooks.OPERATIONS:
-            return False
-
-        # verify path
-        path = os.path.join(Hooks.PATH, "%s_%s_%s.d" % (module, Hooks.OPERATIONS[action], phase))
-        if not os.path.isdir(path) or not os.listdir(path):
-            return False
-
-        # create temporary file with data
-        if "line" in kwargs:
-            kwargs["line"] = kwargs["line"].strip() + "\n"
-            tmpfile = self._create_temp_file(kwargs.get("line"))
-
-        # invoke hook scripts
-        # <script> <temporary file> [<ldap dn>]
-        command = ["run-parts", path]
-        if "line" in kwargs:
-            command.extend(("--arg", tmpfile.name))
-        if "dn" in kwargs:
-            command.extend(("--arg", kwargs["dn"]))
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-        ret_code = subprocess.call(command)  # nosec
-
-        # close temporary file (also deletes the file)
-        if "line" in kwargs:
-            tmpfile.close()
-
-        return ret_code == 0
-
-    def pre(self, module, action, **kwargs):
-        return self.__run("pre", module, action, **kwargs)
-
-    def post(self, module, action, **kwargs):
-        return self.__run("post", module, action, **kwargs)
-
-
-hooks = Hooks()
-
-
 def extract_district(schoolNr):
     return schoolNr[:2]
 
@@ -428,13 +373,10 @@ def create_school_ou(
 
     ou_base = getDN(schoolNr)
 
-    # invoke pre hooks
     if dcName:
         dccn = dcName
     else:
         dccn = ""
-    myline = "%s\t%s" % (schoolNr, dccn)
-    hooks.pre("ou", "A", line=myline)
 
     # verify global dc groups
     groups_administrative = [
@@ -872,11 +814,6 @@ def create_school_ou(
                     modlist.append(("univentionPolicyReference", b"", poldn.encode("UTF-8")))
                     print("need to attach policy: %s" % poldn)
             lo.modify(containerdn, modlist)
-
-    # invoke post hooks
-    if created:
-        # for OUs the temporary file contains the LDAP DN
-        hooks.post("ou", "A", dn=ou_base, line=myline)
 
     if dcNameAdministrative:
         create_dc(None, lo, baseDN, schoolNr, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
@@ -1584,11 +1521,6 @@ def import_networks(router_only=False):
             nameserver = parseString(parsed, 4)  # new
             netbiosserver = parseString(parsed, 5)  # new
 
-            # invoke pre hooks
-            if router_only:
-                hooks.pre("router", "A", line=line)
-            else:
-                hooks.pre("network", "A", line=line)
             dn = None
             success = True
 
@@ -1690,13 +1622,6 @@ def import_networks(router_only=False):
                     nameserver=nameserver,
                     netbiosserver=netbiosserver,
                 )
-
-            # invoke post hooks
-            if success:
-                if router_only:
-                    hooks.post("router", "A", dn=dn, line=line)
-                else:
-                    hooks.post("network", "A", dn=dn, line=line)
 
 
 def set_inventory_number_for_computer():
@@ -1993,8 +1918,6 @@ def import_group():
 
             verify_school_ou(schoolNr, lo)
 
-            # invoke pre hooks
-            hooks.pre("group", action, line=line)
             success = True
             dn = None
 
@@ -2020,9 +1943,6 @@ def import_group():
                 delete_dn(group_dn, group_module, None, lo)
                 delete_dn(share_dn, share_module, None, lo)
                 dn = group_dn
-
-            if success:
-                hooks.post("group", action, dn=dn, line=line)
 
 
 def import_printer():
@@ -2073,8 +1993,6 @@ def import_printer():
             position_dn = "cn=%s,cn=printers,%s" % (escape_dn_chars(printerName), getDN(schoolNr))
             container = "cn=printers,%s" % (getDN(schoolNr),)
 
-            # invoke pre hooks
-            hooks.pre("printer", action, line=line)
             dn = None
             success = True
 
@@ -2105,10 +2023,6 @@ def import_printer():
             elif action == "D":  # D)elete printer
                 dn = position_dn
                 delete_dn(position_dn, printer_module, None, lo)
-
-            # invoke post hooks
-            if success:
-                hooks.post("printer", action, dn=dn, line=line)
 
 
 def activate_groupmembers():
@@ -2499,9 +2413,6 @@ def rename_class():
 
                 success = True
 
-                # group pre mod hook
-                hooks.pre("group", "M", line=line)
-
                 # rename group
                 groupObject.open()
                 groupObject["name"] = newName
@@ -2548,14 +2459,6 @@ def rename_class():
                             (True, "Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
                         )
 
-                # group post mod hook
-                if success:
-                    ud.debug(
-                        ud.MAIN,
-                        ud.PROCESS,
-                        "Calling group post-modify hooks",
-                    )
-                    hooks.post("group", "M", dn=groupObject.dn, line=line)
     ud.debug(ud.MAIN, ud.PROCESS, "Resuming notifier")
 
     # print warnings

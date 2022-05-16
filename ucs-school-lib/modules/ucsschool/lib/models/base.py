@@ -30,8 +30,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import os.path
-import tempfile
 from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
@@ -65,7 +63,7 @@ from ..roles import create_ucsschool_role_string
 from ..schoolldap import SchoolSearchBase
 from .attributes import CommonName, Roles, SchoolAttribute, ValidationError
 from .meta import UCSSchoolHelperMetaClass
-from .utils import _, exec_cmd, ucr
+from .utils import _, ucr
 from .validator import validate
 
 if TYPE_CHECKING:
@@ -232,8 +230,6 @@ class UCSSchoolHelperAbstractClass(object):
         returns something. If the operation was successful, another set of hooks
         are called.
 
-        ``/usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/``
-        are called with the name of a temporary file containing the hook_line via run-parts.
         ``%(module)s`` is ``'windows'`` for ``cls._meta.udm_module == 'computers/windows'`` by default
         and can be explicitely set with::
 
@@ -245,10 +241,8 @@ class UCSSchoolHelperAbstractClass(object):
     _machine_connection = None  # type: LoType
     _search_base_cache = {}  # type: Dict[str, SchoolSearchBase]
     _initialized_udm_modules = []  # type: List[str]
-    _empty_hook_paths = set()  # type: Set[str]
 
     hook_sep_char = "\t"
-    hook_path = "/usr/share/ucs-school-import/hooks/"
 
     name = CommonName(_("Name"), aka=["Name"])  # type: str
     school = SchoolAttribute(_("School"), aka=["School"])  # type: str
@@ -462,56 +456,6 @@ class UCSSchoolHelperAbstractClass(object):
             return False
         return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
-    def _call_legacy_hooks(self, hook_time, func_name):  # type: (str, str) -> bool
-        """
-        Run legacy fork hooks (run-parts /usr/share/u-s-i/hooks).
-
-        :param str hook_time: `pre` or `post`
-        :param str func_name: `create`, `modify`, `move` or `remove`
-        :return: return code of hooks or True if no legacy hook ran
-        :rtype: bool
-        """
-        # verify path
-        hook_path = self._meta.hook_path
-        path = os.path.join(self.hook_path, "%s_%s_%s.d" % (hook_path, func_name, hook_time))
-        if path in self._empty_hook_paths:
-            return True
-        if not os.path.isdir(path) or not os.listdir(path):
-            self.logger.debug("Hook directory %s not found or empty.", path)
-            self._empty_hook_paths.add(path)
-            return True
-        self.logger.debug("Hooks in %s shall be executed", path)
-
-        if hook_time == "post":
-            dn = self.old_dn
-        else:
-            dn = None
-
-        self.logger.debug("Building hook line: %s.build_hook_line(%r, %r)", self, hook_time, func_name)
-        line = self.build_hook_line(hook_time, func_name)
-        if not line:
-            self.logger.debug("No line created. Skipping.")
-            return True
-        line = line.strip() + "\n"
-
-        # create temporary file with data
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            tmpfile.write(line.encode("utf-8"))
-            tmpfile.flush()
-
-            # invoke hook scripts
-            # <script> <temporary file> [<ldap dn>]
-            command = ["run-parts", "--verbose", "--report", "--arg", tmpfile.name]
-            if dn:
-                command.extend(("--arg", dn))
-            command.extend(("--", path))
-
-            self.logger.debug("Executing command %r...", command)
-            ret_code, stdout, stderr = exec_cmd(command, log=True)
-            self.logger.debug("Command %r finished with exit code %r.", command, ret_code)
-
-            return ret_code == 0
-
     def _call_pyhooks(self, hook_time, func_name, lo):
         # type: (str, str, LoType) -> None
         """
@@ -542,9 +486,9 @@ class UCSSchoolHelperAbstractClass(object):
         finally:
             self._in_hook = state
 
-    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> bool
+    def call_hooks(self, hook_time, func_name, lo):  # type: (str, str, LoType) -> None
         """
-        Calls legacy hooks (run-parts /usr/share/u-s-i/hooks) and then Python
+        Calls Python
         based hooks (*.py files in /usr/share/u-s-i/pyhooks).
 
         In the case of `post`, this method is only called, if the corresponding
@@ -554,8 +498,6 @@ class UCSSchoolHelperAbstractClass(object):
         :param str hook_time: `pre` or `post`
         :param str func_name: `create`, `modify`, `move` or `remove`
         :param univention.admin.uldap.access lo: LDAP connection object
-        :return: `or`d return value of legacy hooks or True if no hook ran
-        :rtype: bool: `or`d return value of legacy hooks or True if no hook ran
         """
         lo_name = lo.__class__.__name__
         if lo_name == "access":
@@ -569,10 +511,7 @@ class UCSSchoolHelperAbstractClass(object):
             lo.binddn,
             self,
         )
-
-        res = self._call_legacy_hooks(hook_time, func_name)
         self._call_pyhooks(hook_time, func_name, lo)
-        return res
 
     def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
         """Must be overridden if the model wants to support hooks.

@@ -105,11 +105,6 @@ class HttpApiImportFrontend(UserImportCommandLine):
         # copy hooks (to complete isolated and fully documented import job)
         # in the future support per-OU hook configurations?
         shutil.copytree(
-            "/usr/share/ucs-school-import/hooks",
-            self.hook_dir,
-            ignore=shutil.ignore_patterns("computer_*", "network_*", "printer_*", "router_*"),
-        )
-        shutil.copytree(
             "/usr/share/ucs-school-import/pyhooks",
             self.pyhook_dir,
             ignore=shutil.ignore_patterns("*.py?"),
