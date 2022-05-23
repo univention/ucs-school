@@ -176,11 +176,9 @@ class SchoolName(CommonName):
 
     def validate(self, value):  # type: (str) -> None
         super(SchoolName, self).validate(value)
-        if ucr.is_true("ucsschool/singlemaster", False):
-            regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
-            if not regex.match(value):
-                raise ValueError(_("Invalid school name"))
-
+        regex = re.compile("^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$")
+        if not regex.match(value):
+            raise ValueError(_("Invalid school name"))
 
 class DCName(Attribute):
     def validate(self, value):  # type: (str) -> None
