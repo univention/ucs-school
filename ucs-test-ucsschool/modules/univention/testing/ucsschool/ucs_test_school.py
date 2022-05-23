@@ -46,7 +46,7 @@ import subprocess
 import sys
 import time
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple  # noqa: F401
 
 import lazy_object_proxy
 import ldap
@@ -81,7 +81,7 @@ from ucsschool.lib.roles import (
 from univention.admin.uexceptions import ldapError, noObject
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 
 TEMPLATE_OU_NAME_PREFIX = "testtempl"

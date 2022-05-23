@@ -1,5 +1,5 @@
 import csv
-from typing import Dict, Generator
+from typing import Dict, Generator # noqa: F401
 
 import pytest
 

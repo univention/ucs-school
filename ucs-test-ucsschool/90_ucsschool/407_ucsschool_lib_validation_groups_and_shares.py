@@ -12,7 +12,7 @@
 # $ pytest -s -l -v ./......py::test_*
 #
 import tempfile
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple # noqa: F401
 
 import pytest
 

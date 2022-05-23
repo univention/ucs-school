@@ -9,7 +9,7 @@
 from __future__ import absolute_import, print_function
 
 import re
-from typing import List
+from typing import List # noqa: F401
 
 from univention.admin.uexceptions import ldapError
 from univention.management.console.modules.diagnostic import Critical, Instance

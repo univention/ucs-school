@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 
 import logging
 import random
-from typing import Set
+from typing import Set # noqa: F401
 
 import pytest
 import requests

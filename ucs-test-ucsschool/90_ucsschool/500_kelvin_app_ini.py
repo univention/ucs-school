@@ -8,7 +8,7 @@
 import itertools
 import re
 import tempfile
-from typing import Iterable
+from typing import Iterable # noqa: F401
 
 import pytest
 import requests

@@ -11,7 +11,7 @@ import os
 import pwd
 import tempfile
 from pprint import pprint
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple  # noqa: F401
 
 from ldap.filter import filter_format
 
@@ -25,8 +25,8 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class,
 from univention.uldap import getMachineConnection
 
 if TYPE_CHECKING:
-    import univention.testing.ucsschool.ucs_test_school as utu
-    from univention.admin.uldap import access as LoType
+    import univention.testing.ucsschool.ucs_test_school as utu  # noqa: F401
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
     MegaSuperDuperPermissionTuple = Tuple[Tuple[Tuple[str, str], str], Dict[str, Tuple[str, str, str]]]
 

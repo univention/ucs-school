@@ -6,7 +6,7 @@
 ## tags: [apptest, ucsschool, base1]
 ## bugs: [52757]
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List  # noqa: F401
 
 import pytest
 
@@ -16,7 +16,7 @@ from univention.testing.ucsschool.conftest import UserType
 from univention.udm import UDM
 
 if TYPE_CHECKING:
-    from ucsschool.lib.models.user import User
+    from ucsschool.lib.models.user import User  # noqa: F401
 
 
 @pytest.fixture(scope="session")

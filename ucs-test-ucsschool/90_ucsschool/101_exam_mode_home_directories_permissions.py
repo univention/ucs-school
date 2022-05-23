@@ -11,7 +11,7 @@ import os
 import re
 import tempfile
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List  # noqa: F401
 
 from ldap.filter import escape_filter_chars
 
@@ -34,7 +34,7 @@ from univention.testing.ucsschool.exam import Exam
 from univention.testing.umc import Client
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 
 def check_nt_acls(filename):  # type: (str) -> None

@@ -4,13 +4,13 @@ import json
 import os
 import tempfile
 import time
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple  # noqa: F401
 
 import univention.testing.utils as utils
 from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
 
 if TYPE_CHECKING:
-    from ucsschool.http_api.client import Client, ResourceRepresentation
+    from ucsschool.http_api.client import Client, ResourceRepresentation  # noqa: F401
 
 
 class HttpApiImportTester(ImportTestbase):

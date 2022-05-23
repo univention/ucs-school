@@ -5,12 +5,7 @@ import os.path
 import random
 import shutil
 import time
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
-
-try:
-    from urlparse import urljoin  # py2
-except ImportError:
-    from urllib.parse import urljoin  # py3
+from typing import TYPE_CHECKING, Any, Dict, List, Optional  # noqa: F401
 
 import pytest
 import requests
@@ -20,8 +15,14 @@ from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.conftest import IMPORT_CONFIG_KWARGS
 from univention.testing.ucsschool.kelvin_api import HTTP_502_ERRORS, KELVIN_TOKEN_URL, RESSOURCE_URLS
 
+try:
+    from urlparse import urljoin  # py2
+except ImportError:
+    from urllib.parse import urljoin  # py3
+
+
 if TYPE_CHECKING:
-    from ucsschool.importer.models.import_user import ImportUser
+    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 
 pytest_plugins = ["univention.testing.ucsschool.conftest"]
 logger = logging.getLogger("univention.testing.ucsschool")

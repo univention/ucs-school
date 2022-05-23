@@ -5,7 +5,7 @@ from __future__ import print_function
 import os
 import random
 import tempfile
-from typing import List, Optional
+from typing import List, Optional # noqa: F401
 
 import ldap
 import passlib.hash

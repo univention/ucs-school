@@ -13,7 +13,7 @@
 #
 
 import sys
-from typing import Dict, List
+from typing import Dict, List # noqa: F401
 
 import pytest
 

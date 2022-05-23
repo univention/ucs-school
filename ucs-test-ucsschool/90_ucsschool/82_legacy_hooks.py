@@ -13,7 +13,7 @@ import os
 import os.path
 import pprint
 import re
-from typing import Type
+from typing import Type # noqa: F401
 from unittest import TestCase, main
 
 from six import PY3, with_metaclass

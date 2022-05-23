@@ -9,7 +9,7 @@
 
 from __future__ import absolute_import, print_function
 
-from typing import List
+from typing import List # noqa: F401
 
 import univention.testing.strings as uts
 from univention.management.console.modules.diagnostic import Critical, Instance, ProblemFixed

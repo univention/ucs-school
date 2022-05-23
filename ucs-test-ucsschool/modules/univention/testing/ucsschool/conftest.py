@@ -8,7 +8,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type  # noqa: F401
 
 import pytest
 import six
@@ -35,7 +35,7 @@ from ucsschool.lib.roles import (
 from univention.testing.ucsschool.importusers import get_mail_domain
 
 if TYPE_CHECKING:
-    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass  # noqa: F401
 
 
 IMPORT_CONFIG = {
@@ -307,7 +307,7 @@ def udm_session():
 @pytest.fixture
 def create_import_user(lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
-    from ucsschool.importer.models.import_user import (
+    from ucsschool.importer.models.import_user import (  # noqa: F401
         ImportStaff,
         ImportStudent,
         ImportTeacher,

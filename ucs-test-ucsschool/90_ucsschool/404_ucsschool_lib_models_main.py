@@ -8,7 +8,7 @@
 ##   - python3-ucsschool-lib
 
 import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple # noqa: F401
 
 import pytest
 

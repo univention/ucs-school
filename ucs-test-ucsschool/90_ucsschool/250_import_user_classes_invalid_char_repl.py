@@ -8,7 +8,7 @@
 ##   - ucs-school-import
 
 import random
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple # noqa: F401
 
 import pytest
 

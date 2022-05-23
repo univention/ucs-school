@@ -7,7 +7,7 @@
 ## packages:
 ##   - python3-ucsschool-lib
 
-from typing import Tuple
+from typing import Tuple # noqa: F401
 
 import pytest
 
