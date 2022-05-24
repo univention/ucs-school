@@ -197,7 +197,7 @@ class UserImport(object):
                             user.validate(
                                 self.connection, validate_unlikely_changes=True, check_username=True
                             )
-                            if self.errors:
+                            if user.errors:
                                 raise ValidationError(user.errors.copy())
                             user.call_hooks("pre", "create", self.connection)
                             self.logger.info("Dry-run: skipping user.create() for %s.", user)
@@ -212,7 +212,7 @@ class UserImport(object):
                             user.validate(
                                 self.connection, validate_unlikely_changes=True, check_username=False
                             )
-                            if self.errors:
+                            if user.errors:
                                 raise ValidationError(user.errors.copy())
                             user.call_hooks("pre", "modify", self.connection)
                             self.logger.info("Dry-run: skipping user.modify() for %s.", user)
