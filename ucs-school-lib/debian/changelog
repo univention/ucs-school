@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.16) unstable; urgency=medium
+
+  * Bug #53506: Schoolname validation is done regardless of server type.
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 24 May 2022 17:34:08 +0200
+
 ucs-school-lib (13.0.15) unstable; urgency=medium
 
   * Bug #54535: Flake8 unittest style errors
