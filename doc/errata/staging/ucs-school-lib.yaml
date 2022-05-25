@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.15A~5.0.0.202204131253
+fix: 13.0.16A~5.0.0.202205251725
 
 desc: |
  * The validation was adapted to prevent invalid school names in multiserver environments (Bug #53506)
