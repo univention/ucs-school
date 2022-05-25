@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.43) unstable; urgency=medium
+
+  * Bug #53506: Added test for school ou name validation.
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 25 May 2022 11:31:34 +0200
+
 ucs-test-ucsschool (7.3.42) unstable; urgency=medium
 
   * Bug #54774: Added '# noqa: F401' to all typing import statements
