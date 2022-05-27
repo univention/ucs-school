@@ -180,6 +180,7 @@ class SchoolName(CommonName):
         if not regex.match(value):
             raise ValueError(_("Invalid school name"))
 
+
 class DCName(Attribute):
     def validate(self, value):  # type: (str) -> None
         super(DCName, self).validate(value)

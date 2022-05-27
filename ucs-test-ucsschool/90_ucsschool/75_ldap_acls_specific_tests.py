@@ -28,7 +28,7 @@ import os
 import random
 import time
 import uuid
-from typing import List, Union # noqa: F401
+from typing import List, Union  # noqa: F401
 
 import univention.admin.uldap
 import univention.testing.strings as uts

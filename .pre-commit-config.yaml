@@ -26,8 +26,10 @@ repos:
     rev: 21.9b0
     hooks:
       - id: black
+        additional_dependencies: ['click>8.0,<8.1']
         entry: black --check --diff --config .black
       - id: black
+        additional_dependencies: ['click>8.0,<8.1']
         alias: black-edit
         stages: [ manual ]
         entry: black --config .black

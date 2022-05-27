@@ -12,7 +12,7 @@
 from __future__ import absolute_import, print_function
 
 import subprocess
-from typing import Tuple # noqa: F401
+from typing import Tuple  # noqa: F401
 
 import univention.admin.uldap as udm_uldap
 import univention.testing.utils as utils

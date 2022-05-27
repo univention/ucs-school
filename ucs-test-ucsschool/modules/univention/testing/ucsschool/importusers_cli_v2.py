@@ -33,7 +33,7 @@ try:
 except ImportError:
     DRSReplicationFailed = Exception
 
-from typing import Set # noqa: F401
+from typing import Set  # noqa: F401
 
 
 class ImportException(Exception):

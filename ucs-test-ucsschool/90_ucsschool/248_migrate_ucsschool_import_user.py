@@ -15,7 +15,7 @@ import os
 import random
 import subprocess
 import tempfile
-from typing import List # noqa: F401
+from typing import List  # noqa: F401
 
 import attr
 

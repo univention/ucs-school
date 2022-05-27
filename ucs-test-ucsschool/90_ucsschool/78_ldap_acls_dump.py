@@ -12,7 +12,7 @@ import re
 import subprocess
 import time
 from multiprocessing import Pool
-from typing import Dict, List, Optional, Set # noqa: F401
+from typing import Dict, List, Optional, Set  # noqa: F401
 
 import ldif
 
