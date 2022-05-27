@@ -143,10 +143,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     "Directory Node",
                 )
 
-    def build_hook_line(self, hook_time, func_name):
-        if func_name == "create":
-            return self._build_hook_line(self.name, self.get_dc_name())
-
     def get_district(self):
         if ucr.is_true("ucsschool/ldap/district/enable"):
             return self.name[:2]

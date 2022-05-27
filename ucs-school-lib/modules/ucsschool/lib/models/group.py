@@ -156,17 +156,6 @@ class Group(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             policy.attach(self, lo)
 
-    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-        code = self._map_func_name_to_code(func_name)
-        if code != "M":
-            return self._build_hook_line(code, self.school, self.name, self.description)
-        else:
-            # This is probably a bug. See ucs-school-import and Bug #34736
-            old_name = self.get_name_from_dn(self.old_dn)
-            new_name = self.name
-            if old_name != new_name:
-                return self._build_hook_line(code, old_name, new_name)
-
     class Meta:
         udm_module = "groups/group"
         name_is_unique = True
@@ -212,9 +201,6 @@ class BasicGroup(Group):
             return True
         except noObject:
             return False
-
-    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-        return None
 
     @classmethod
     def get_container(cls, school=None):  # type: (Optional[str]) -> str
@@ -329,9 +315,6 @@ class WorkGroup(EmailAttributesMixin, SchoolClass, _MayHaveSchoolPrefix):
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
         return cls.get_search_base(school).workgroups
-
-    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-        return None
 
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):

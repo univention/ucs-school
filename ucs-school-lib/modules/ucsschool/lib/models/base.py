@@ -224,12 +224,6 @@ class UCSSchoolHelperAbstractClass(object):
         for the instance's name before continuing.
         :py:meth:``validate()`` can be further customized.
 
-    Hooks:
-        Before :py:meth:``create``, :py:meth:``modify``, :py:meth:``move`` and :py:meth:``remove``,
-        hooks are called if :py:meth:``build_hook_line()``
-        returns something. If the operation was successful, another set of hooks
-        are called.
-
         ``%(module)s`` is ``'windows'`` for ``cls._meta.udm_module == 'computers/windows'`` by default
         and can be explicitely set with::
 
@@ -512,13 +506,6 @@ class UCSSchoolHelperAbstractClass(object):
             self,
         )
         self._call_pyhooks(hook_time, func_name, lo)
-
-    def build_hook_line(self, hook_time, func_name):  # type: (str, str) -> Optional[str]
-        """Must be overridden if the model wants to support hooks.
-        Do so by something like:
-        return self._build_hook_line(self.attr1, self.attr2, 'constant')
-        """
-        return None
 
     @classmethod
     def hook_init(cls, hook):  # type: (PYHOOKS_BASE_CLASS) -> None
@@ -1191,19 +1178,6 @@ class UCSSchoolHelperAbstractClass(object):
             return "D"
         elif func_name == "move":
             return "MV"
-
-    def _build_hook_line(self, *args):  # type: (*Any) -> str
-        attrs = []
-        for arg in args:
-            val = arg
-            if arg is None:
-                val = ""
-            if arg is False:
-                val = 0
-            if arg is True:
-                val = 1
-            attrs.append(str(val))
-        return self.hook_sep_char.join(attrs)
 
 
 class RoleSupportMixin(object):
