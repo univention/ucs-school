@@ -114,9 +114,6 @@ def import_computers(input_file: str) -> None:
             inventory_numbers = None
             if len(row) > 5:
                 inventory_numbers = row[5].strip().split(",")
-            zone = None
-            if len(row) > 6:
-                zone = row[6]
             print("Processing line %d: %s\n" % (line_number, "\t".join(row)), end=" ")
 
             if computer_type in computer_to_class_mapping:
@@ -138,8 +135,6 @@ def import_computers(input_file: str) -> None:
                     continue
                 # one mac address per computer
                 computer.mac_address = [mac_address] if mac_address else []
-                # zone is never saved -> todo create bug | discuss
-                computer.zone = zone
                 if inventory_numbers:
                     computer.inventory_number = inventory_numbers
                 try:

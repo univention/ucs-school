@@ -81,9 +81,7 @@ class Computer(object):
         self.ip = [random_ip()]
         self.school = school
         self.ctype = ctype
-
         self.inventorynumbers = []
-        self.zone = None
 
         self.school_base = get_school_base(self.school)
 
@@ -107,9 +105,6 @@ class Computer(object):
         line += delimiter
         if self.inventorynumbers:
             line += ",".join(self.inventorynumbers)
-        if self.zone:
-            line += delimiter
-            line += self.zone
 
         return line
 
@@ -216,7 +211,6 @@ class ImportFile:
                 "mac_address": computer.mac,
                 "type_name": computer.ctype,
                 "inventory_number": computer.inventorynumbers,
-                "zone": computer.zone,
             }
             return kwargs
 
@@ -276,8 +270,6 @@ class TestPreSchoolComputer(Hook):
             module_part = obj._meta.udm_module.split("/")[1]
             line = "\\t".join([module_part, obj.name, obj.mac_address[0],
             obj.school, obj.ip_address[0], ",".join(obj.get_inventory_numbers())])
-            if obj.zone:
-                line += "\\tobj.zone"
             line += "\\n"
             fout.write(line)
 """.format(
@@ -303,8 +295,6 @@ class TestPostSchoolComputer(Hook):
             module_part = obj._meta.udm_module.split("/")[1]
             line = "\t".join([module_part, obj.name, obj.mac_address[0],
             obj.school, obj.ip_address[0], ",".join(obj.get_inventory_numbers())])
-            if obj.zone:
-                line += "\\tobj.zone"
             line += "\\n"
             fout.write(line)
         """.format(
