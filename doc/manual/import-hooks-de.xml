@@ -15,7 +15,7 @@
 	jeweiligen Umgebung weitere Einstellungen vorzunehmen.
   </para>
       <para>
-          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") es Objekttypen zu unterscheiden (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+          Python-Hooks, im folgenden Abschnitt abgekürzt mit "Hooks", erlauben es Objekttypen zu unterscheiden (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
           Die Hooks werden für alle Klassen, von denen Objekte erzeugt werden können und die von <classname>ucsschool.lib.models.base.UCSSchoolHelperAbstractClass</classname> ableiten, ausgeführt.
@@ -97,7 +97,7 @@ Create an email address for the new school class.
           </programlisting>
           Die Klasse <classname>SchoolClass</classname> bietet kein Attribut an, um eine Email-Adresse anzugeben.
           Die Klassen in <classname>ucsschool.lib.models</classname> sind jedoch tatsächlich eine Abstraktion regulärer &ucsUDM; Objekte.
-          Um auf auf die darunter liegenden Objekte zuzugreifen, wird die Methode <methodname>get_udm_object()</methodname> verwendet.
+          Um auf die darunter liegenden Objekte zuzugreifen, wird die Methode <methodname>get_udm_object()</methodname> verwendet.
           Als Argument muss ihr ein sogenanntes LDAP Verbindungsobjekt (<varname>lo</varname>) mitgegeben werden.
       </para>
       <para>
