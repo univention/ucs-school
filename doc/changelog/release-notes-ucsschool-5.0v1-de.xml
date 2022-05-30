@@ -69,6 +69,12 @@ feedback@univention.de
 						Mehr Informationen finden sich unter <ulink url="https://www.univention.de/blog-de/2020/11/abschied-von-master-und-slave-ucs-5-0-bringt-neue-namen-fuer-systemrollen/"></ulink>.
 					</para>
 				</listitem>
+				<listitem>
+					<para>
+						Ab &ucsUAS; v1 werden keine Shell Hooks mehr unterstützt.
+						An ihre Stelle treten Python Hooks. Mehr Informationen finden sich unter <ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#pyhooks"></ulink>.
+					</para>
+				</listitem>
 			</itemizedlist>
 	</chapter>
 
