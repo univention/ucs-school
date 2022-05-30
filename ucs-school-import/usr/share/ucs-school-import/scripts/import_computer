@@ -36,7 +36,7 @@ import argparse
 import csv
 import sys
 import traceback
-from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
+from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError  # noqa: F401
 
 from ldap.filter import filter_format
 
@@ -47,7 +47,7 @@ from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.models.computer import IPComputer, MacComputer, WindowsComputer
 from ucsschool.lib.models.utils import stopped_notifier, ucr
 from univention.admin.uexceptions import authFail, insufficientInformation
-from univention.admin.uldap import access as LoType, getAdminConnection
+from univention.admin.uldap import access as LoType, getAdminConnection  # noqa: F401
 
 ud.init("/var/log/univention/ucs-school-import.log", ud.FLUSH, ud.NO_FUNCTION)
 ud.set_level(ud.MAIN, ud.ALL)
@@ -57,7 +57,7 @@ class ComputerImportError(Exception):
     pass
 
 
-def get_ip_iface(ip_address: str) -> IPv4Interface:
+def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
     try:
         ip_iface = IPv4Interface(u"%s" % ip_address)
     except AddressValueError as exc:
@@ -74,7 +74,7 @@ def get_ip_iface(ip_address: str) -> IPv4Interface:
     return ip_iface
 
 
-def mac_address_is_used(mac_address: str, lo: LoType) -> bool:
+def mac_address_is_used(mac_address, lo):  # type: (str, LoType) -> bool
     result = lo.search(
         base=ucr["ldap/base"],
         scope="sub",
@@ -84,7 +84,7 @@ def mac_address_is_used(mac_address: str, lo: LoType) -> bool:
     return result and result[0][1]["macAddress"][0].decode("ASCII") == mac_address
 
 
-def import_computers(input_file: str) -> None:
+def import_computers(input_file):  # type: (str) -> None
     try:
         lo, _ = getAdminConnection()
     except authFail as exc:
