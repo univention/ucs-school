@@ -6,8 +6,9 @@ src: ucs-school-lib
 fix: 13.0.16A~5.0.0.202205251725
 
 desc: |
+ * Internal: The code which executed shell hooks was removed from the UCS@school library (Bug #54755).
  * The validation was adapted to prevent invalid school names in multiserver environments (Bug #53506)
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
  * Check if Marktplatz is enabled before checking its consistency (Bug #54248).
-bug: [53506, 54030, 54535, 54248]
+bug: [53506, 54030, 54535, 54248, 54755]
