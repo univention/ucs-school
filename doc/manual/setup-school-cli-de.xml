@@ -380,6 +380,9 @@ ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
 		dem Schulserver der DHCP-Dienst installiert ist) und der angegebene
 		Rechnername über das Domain Name System (DNS) aufgelöst werden kann.
 	  </para>
+	  <para>
+		Ab UCS@school 5.0 v2 wird das Ausführen von Python Hooks während des Computer Imports unterstützt (siehe <xref linkend="pyhooks"/>).
+	  </para>
 	</section>
   </section>
 

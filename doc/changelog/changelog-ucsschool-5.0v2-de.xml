@@ -67,6 +67,16 @@ feedback@univention.de
 				Pakete veröffentlicht und welche Fehler dabei behoben wurden.
 			</para>
 		</section>
+		<section id="changelog:computer_import-pyhook-support">
+			<title>UCS@school Computer Import unterstützt Python Hooks</title>
+			<para>
+				Mit dieser Version können während der Ausführung des Skripts <command>/usr/share/ucs-school-import/scripts/import_computer</command> Python Hooks ausgeführt werden.
+				Mehr Informationen finden sich unter <ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#pyhooks"></ulink>.
+			</para>
+			<para>
+				Shell Hooks werden in &ucsUAS; 5.0 v2 nicht mehr ausgeführt und müssen zu Python Hooks migriert werden.
+			</para>
+		</section>
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
 			<itemizedlist>
