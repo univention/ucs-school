@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.44) unstable; urgency=medium
+
+  * Bug #54755: remove shell hook tests + modify import_computer tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 31 May 2022 08:53:22 +0200
+
 ucs-test-ucsschool (7.3.43) unstable; urgency=medium
 
   * Bug #53506: Added test for school ou name validation.

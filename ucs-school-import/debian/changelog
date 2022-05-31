@@ -1,3 +1,10 @@
+ucs-school-import (18.0.16) unstable; urgency=medium
+
+  * Bug #54755: remove shell hook support & add pyhook support for
+    import_computers
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 31 May 2022 08:51:38 +0200
+
 ucs-school-import (18.0.15) unstable; urgency=medium
 
   * Bug #54030: adjusted the wording of some descriptions shown in UMC

@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.17) unstable; urgency=medium
+
+  * Bug #54755: remove shell hook support from ucsschool-lib
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 31 May 2022 08:50:04 +0200
+
 ucs-school-lib (13.0.16) unstable; urgency=medium
 
   * Bug #53506: Schoolname validation is done regardless of server type.
