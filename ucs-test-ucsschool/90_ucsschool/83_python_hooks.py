@@ -38,7 +38,6 @@ MODULE_PATHS = (
 )
 BASE_CLASS = UCSSchoolHelperAbstractClass
 TEST_HOOK_SOURCE = os.path.join(os.path.dirname(__file__), "test83_python_hookpy")
-LEGACY_HOOK_BASE_PATH = "/usr/share/ucs-school-import/hooks"
 RESULTFILE = "/tmp/test83_result.txt"
 EXPECTED_CLASSES = {
     "AnyComputer": "ucsschool.lib.models.computer",
@@ -200,19 +199,6 @@ class TestPythonHooks(TestCase):
         (cls.ou_name, cls.ou_dn), (cls.ou2_name, cls.ou2_dn) = cls.ucs_test_school.create_multiple_ous(2)
         logger.info("Using OUs %r and %r.", cls.ou_name, cls.ou2_name)
         assert cls.ou_name != cls.ou2_name
-
-        # Fill _empty_hook_paths with all possible hook paths, so legacy hooks
-        # won't be executed (cleaner and faster environment for this test).
-        for model in cls.models:
-            try:
-                hook_type = model.Meta.hook_path  # 'group'
-            except AttributeError:
-                hook_type = model.Meta.udm_module.split("/")[-1]  # 'group'
-            for dir_name in (
-                "{}_{}_{}.d".format(hook_type.lower(), m, t) for m in cls.methods for t in cls.times
-            ):
-                path = os.path.join(LEGACY_HOOK_BASE_PATH, dir_name)
-                UCSSchoolHelperAbstractClass._empty_hook_paths.add(path)
 
     @classmethod
     def tearDownClass(cls):

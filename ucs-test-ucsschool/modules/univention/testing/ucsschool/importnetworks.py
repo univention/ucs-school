@@ -2,7 +2,6 @@
 
 from __future__ import print_function
 
-import difflib
 import ipaddress
 import os
 import random
@@ -10,14 +9,10 @@ import subprocess
 import tempfile
 
 import univention.config_registry
-import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from univention.testing.ucsschool.importcomputers import random_ip
 from univention.testing.ucsschool.importou import get_school_base
-
-HOOK_BASEDIR = "/usr/share/ucs-school-import/hooks"
-
 
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -195,24 +190,14 @@ class ImportFile:
         os.close(self.import_fd)
 
     def run_import(self, data):
-        hooks = NetworkHooks(self.router_mode)
         try:
             self.write_import(data)
             if self.use_cli_api:
                 self._run_import_via_cli()
             elif self.use_python_api:
                 self._run_import_via_python_api()
-            pre_result = hooks.get_pre_result()
-            post_result = hooks.get_post_result()
-            print("PRE  HOOK result: %s" % pre_result)
-            print("POST HOOK result: %s" % post_result)
             print("SCHOOL DATA     : %s" % data)
-            diff_pre = "".join(difflib.unified_diff(data.splitlines(), pre_result.splitlines()))
-            diff_post = "".join(difflib.unified_diff(data.splitlines(), post_result.splitlines()))
-            assert data == pre_result.strip(), (data, pre_result, diff_pre)
-            assert data == post_result.strip(), (data, post_result, diff_post)
         finally:
-            hooks.cleanup()
             os.remove(self.import_file)
 
     def _run_import_via_cli(self):
@@ -229,94 +214,6 @@ class ImportFile:
 
     def set_mode_to_router(self):
         self.router_mode = True
-
-
-class NetworkHooks:
-    def __init__(self, router_mode):
-        fd, self.pre_hook_result = tempfile.mkstemp()
-        os.close(fd)
-
-        fd, self.post_hook_result = tempfile.mkstemp()
-        os.close(fd)
-
-        self.router_mode = router_mode
-        self.pre_hooks = []
-        self.post_hooks = []
-
-        self.create_hooks()
-
-    def get_pre_result(self):
-        return open(self.pre_hook_result, "r").read()
-
-    def get_post_result(self):
-        return open(self.post_hook_result, "r").read()
-
-    def create_hooks(self):
-        self.pre_hooks = [
-            os.path.join(os.path.join(HOOK_BASEDIR, "network_create_pre.d"), uts.random_name()),
-            os.path.join(os.path.join(HOOK_BASEDIR, "router_create_pre.d"), uts.random_name()),
-        ]
-
-        self.post_hooks = [
-            os.path.join(os.path.join(HOOK_BASEDIR, "network_create_post.d"), uts.random_name()),
-            os.path.join(os.path.join(HOOK_BASEDIR, "router_create_post.d"), uts.random_name()),
-        ]
-
-        if self.router_mode:
-            search_object_class = "univentionPolicyDhcpRouting"
-        else:
-            search_object_class = "univentionNetworkClass"
-
-        for pre_hook in self.pre_hooks:
-            with open(pre_hook, "w+") as fd:
-                fd.write(
-                    """#!/bin/sh
-set -x
-test $# = 1 || exit 1
-cat $1 >>%(pre_hook_result)s
-exit 0
-"""
-                    % {"pre_hook_result": self.pre_hook_result}
-                )
-            os.chmod(pre_hook, 0o755)
-
-        for post_hook in self.post_hooks:
-            with open(post_hook, "w+") as fd:
-                fd.write(
-                    """#!/bin/sh
-debug_exit() {
-    echo "Hook failed: filter=(&(objectClass=%(search_object_class)s)(cn=$school-$network))" \
-        >>%(post_hook_result)s
-    echo "Expected DN: $dn" >>%(post_hook_result)s
-    echo "Found DN: $ldap_dn" >>%(post_hook_result)s
-    echo "Found similar objects" >>%(post_hook_result)s
-    univention-ldapsearch -LLL "objectClass=%(search_object_class)s" dn >>%(post_hook_result)s
-    exit "$@"
-}
-set -x
-dn="$2"
-network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
-school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch -LLL "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" \
-    dn | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
-test "$dn" = "$ldap_dn" || debug_exit 1
-cat $1 >>%(post_hook_result)s
-exit 0
-"""
-                    % {
-                        "post_hook_result": self.post_hook_result,
-                        "search_object_class": search_object_class,
-                    }
-                )
-            os.chmod(post_hook, 0o755)
-
-    def cleanup(self):
-        for pre_hook in self.pre_hooks:
-            os.remove(pre_hook)
-        for post_hook in self.post_hooks:
-            os.remove(post_hook)
-        os.remove(self.pre_hook_result)
-        os.remove(self.post_hook_result)
 
 
 class NetworkImport:

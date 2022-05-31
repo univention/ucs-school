@@ -45,9 +45,8 @@ Such a directory will for example include the following files and subdirectories
 * ``5_user_import_http-api.json`` : Custom configuration file used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
 * ``6_gsmitte.json`` : Custom configuration file for OU ``gsmitte`` used in import job. Copied from ``/var/lib/ucs-school-import/configs/``.
 * ``1528356738-10_teachers.csv``: Previously uploaded CSV input file.
-* ``hooks/``: Shell hooks directory copied from ``/usr/share/ucs-school-import/hooks``.
 * ``new_user_passwords.csv``: Passwords of new users created in import job, downloadable through HTTP-API and UMC module.
-* ``pyhooks/``: Python hooks directory copied from ``/usr/share/ucs-school-import/hooks``.
+* ``pyhooks/``: Python hooks directory copied from ``/var/lib/ucs-school-lib/hooks/``.
 * ``ucs-school-import.info``: Import job log file, severity ``info`` and above.
 * ``ucs-school-import.log``: Import job log file, severity ``debug`` and above, downloadable through HTTP-API and UMC module.
 * ``user_import_summary.csv``: Import job summary file, downloadable through HTTP-API and UMC module.

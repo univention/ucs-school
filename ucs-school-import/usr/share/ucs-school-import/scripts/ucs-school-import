@@ -62,6 +62,7 @@ from ucsschool.lib.roles import (
     role_school_class,
     role_school_class_share,
 )
+from ucsschool.importer.utils.utils import verify_school_ou
 
 # -> doesn't do:
 # check usernames for correct values (no spaces)
@@ -167,61 +168,6 @@ def is_valid_hostname(name):
 # exception classes
 class CreateObjectError(Exception):
     pass
-
-
-class Hooks(object):
-    OBJECTS = ("user", "group", "printer", "computer", "network", "router", "ou")
-    OPERATIONS = {"A": "create", "M": "modify", "D": "remove"}
-
-    PATH = "/usr/share/ucs-school-import/hooks/"
-
-    def _create_temp_file(self, line):
-        tmpfile = tempfile.NamedTemporaryFile("w+")
-        tmpfile.write(line)
-        tmpfile.flush()
-        return tmpfile
-
-    def __run(self, phase, module, action, **kwargs):
-        # verify phase
-        if action not in Hooks.OPERATIONS:
-            return False
-
-        # verify path
-        path = os.path.join(Hooks.PATH, "%s_%s_%s.d" % (module, Hooks.OPERATIONS[action], phase))
-        if not os.path.isdir(path) or not os.listdir(path):
-            return False
-
-        # create temporary file with data
-        if "line" in kwargs:
-            kwargs["line"] = kwargs["line"].strip() + "\n"
-            tmpfile = self._create_temp_file(kwargs.get("line"))
-
-        # invoke hook scripts
-        # <script> <temporary file> [<ldap dn>]
-        command = ["run-parts", path]
-        if "line" in kwargs:
-            command.extend(("--arg", tmpfile.name))
-        if "dn" in kwargs:
-            command.extend(("--arg", kwargs["dn"]))
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-        ret_code = subprocess.call(command)  # nosec
-
-        # close temporary file (also deletes the file)
-        if "line" in kwargs:
-            tmpfile.close()
-
-        return ret_code == 0
-
-    def pre(self, module, action, **kwargs):
-        return self.__run("pre", module, action, **kwargs)
-
-    def post(self, module, action, **kwargs):
-        return self.__run("post", module, action, **kwargs)
-
-
-hooks = Hooks()
 
 
 def extract_district(schoolNr):
@@ -363,13 +309,6 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
     return None
 
 
-def verify_school_ou(schoolNr, co, lo, baseDN):
-    from ucsschool.lib.models.school import School
-
-    if not School(name=schoolNr).get_udm_object(lo):
-        raise SystemExit("ERROR: The specified school %r does not exist." % (schoolNr,))
-
-
 def create_school_ou(
     schoolNr,
     co,
@@ -434,13 +373,10 @@ def create_school_ou(
 
     ou_base = getDN(schoolNr)
 
-    # invoke pre hooks
     if dcName:
         dccn = dcName
     else:
         dccn = ""
-    myline = "%s\t%s" % (schoolNr, dccn)
-    hooks.pre("ou", "A", line=myline)
 
     # verify global dc groups
     groups_administrative = [
@@ -879,11 +815,6 @@ def create_school_ou(
                     print("need to attach policy: %s" % poldn)
             lo.modify(containerdn, modlist)
 
-    # invoke post hooks
-    if created:
-        # for OUs the temporary file contains the LDAP DN
-        hooks.post("ou", "A", dn=ou_base, line=myline)
-
     if dcNameAdministrative:
         create_dc(None, lo, baseDN, schoolNr, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
         move_dhcp_server(schoolNr, dcNameAdministrative, dhcpd_ldap_base)
@@ -954,7 +885,7 @@ def move_dhcp_server(schoolNr, dccn, dhcpd_ldap_base):
                         problem_hints + "there were problems verifying this ou %s\n" % schoolNr
                     )
                 position.setDn("cn=%s,cn=dhcp,%s" % (escape_dn_chars(schoolNr.lower()), getDN(schoolNr)))
-                print("need to create dhcp server: %s" % (position.getDn(),))
+                print("need to create dhcp server: %s" % (position.getDN(),))
                 object = dhcp_server_module.object(
                     None, lo, position=position, superordinate=dhcp_service_object
                 )
@@ -1395,7 +1326,7 @@ def create_network(
     assert isinstance(network, ipaddress.IPv4Network)
     success = True
     dn = None
-    verify_school_ou(schoolNr, None, lo, baseDN)
+    verify_school_ou(schoolNr, lo)
 
     if check_network(schoolNr, network):
         print("Network %s exists in school %s!" % (network.network_address, schoolNr))
@@ -1523,34 +1454,6 @@ def check_network(schoolNr, network):
     return None
 
 
-def check_macAddress(mac, base=""):
-    if not base:
-        base = baseDN
-    result = lo.search(
-        base=base, scope="sub", filter=filter_format("(macAddress=%s)", [mac]), attr=["macAddress"]
-    )
-
-    if result and result[0][1]["macAddress"][0].decode("ASCII") == mac:
-        return result[0][0]
-
-
-def check_computer(module, name, schoolNr):
-    objects = univention.admin.modules.lookup(
-        module,
-        None,
-        lo,
-        scope="sub",
-        superordinate=superordinate,
-        base="cn=computers,%s" % (getDN(schoolNr),),
-        filter=filter_format("cn=%s", [name]),
-    )
-    if objects:
-        for object in objects:
-            if object.dn == "cn=%s,cn=computers,%s" % (escape_dn_chars(name), getDN(schoolNr)):
-                return 1
-    return None
-
-
 def get_computer_dn(name):
     objects = univention.admin.modules.lookup(
         computer_module,
@@ -1599,7 +1502,7 @@ def import_networks(router_only=False):
             parsed = line.strip("\r\n").split(sepchar)
 
             schoolNr = parsed[0]
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
             # the network MUST include the netmask
             network = parsed[1]  # netmask new
             # the broadcast address is generated automatically by the
@@ -1618,11 +1521,6 @@ def import_networks(router_only=False):
             nameserver = parseString(parsed, 4)  # new
             netbiosserver = parseString(parsed, 5)  # new
 
-            # invoke pre hooks
-            if router_only:
-                hooks.pre("router", "A", line=line)
-            else:
-                hooks.pre("network", "A", line=line)
             dn = None
             success = True
 
@@ -1724,13 +1622,6 @@ def import_networks(router_only=False):
                     nameserver=nameserver,
                     netbiosserver=netbiosserver,
                 )
-
-            # invoke post hooks
-            if success:
-                if router_only:
-                    hooks.post("router", "A", dn=dn, line=line)
-                else:
-                    hooks.post("network", "A", dn=dn, line=line)
 
 
 def set_inventory_number_for_computer():
@@ -1976,156 +1867,6 @@ def set_router_for_subnet(network, ip, schoolNr, overwrite_policy=False):
     )
 
 
-def import_computer():
-
-    # usage
-    usage = "%prog [options] <importFile>\n"
-    usage += "  creates computer objects according to import file for UCS@school\n\n"
-    usage += "Arguments:\n"
-    usage += "  <importFile> computer import file"
-    parser = optparse.OptionParser(usage=usage)
-    options, args = parser.parse_args()
-
-    # argument is infile
-    if len(args) > 0:
-        infile = args[0]
-    else:
-        parser.print_help()
-        print("must have one Argument for infile")
-        sys.exit()
-
-    print("infile is  : " + infile)
-
-    linecnt = 0
-
-    with open(infile) as inf, stopped_notifier():
-        for line in inf:
-            linecnt += 1
-
-            if emptyLineRe.match(line):
-                print("Skipping empty line")
-                continue
-
-            print("Processing line %d: %s" % (linecnt, line), end=" ")
-            parsed = line.strip("\r\n").split(sepchar)
-            ctype = parsed[0]
-            name = parsed[1].lower()
-            MAC = parsed[2]
-            schoolNr = parsed[3]
-            IP = parsed[4]
-            inventoryNumbers = None
-            if len(parsed) > 5:
-                inventoryNumbers = parsed[5].strip().split(",")
-            zone = None
-            if len(parsed) > 6:
-                zone = parsed[6]
-
-            verify_school_ou(schoolNr, None, lo, baseDN)
-
-            try:
-                ip_iface = ipaddress.IPv4Interface(u"%s" % IP)
-            except ipaddress.AddressValueError as e:
-                print(line)
-                print("%s is not a valid ip address" % e)
-                sys.exit(0)
-            except ipaddress.NetmaskValueError as e:
-                print(line)
-                print("%s is not a valid netmask" % e)
-                sys.exit(0)
-
-            # groups
-            groups = {}
-            if ctype == "memberserver":
-                if zone == "edukativ":
-                    groups[
-                        "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s"
-                        % (escape_dn_chars(schoolNr.lower()), baseDN)
-                    ] = 1
-                    groups["cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
-                if zone == "verwaltung":
-                    groups[
-                        "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s"
-                        % (escape_dn_chars(schoolNr.lower()), baseDN)
-                    ] = 1
-                    groups["cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
-
-            # invoke pre hooks
-            hooks.pre("computer", "A", line=line)
-
-            success = True
-            if "/" not in IP:
-                ip_iface = ipaddress.IPv4Interface(u"%s/%s" % (IP, default_prefixlen))
-                print(
-                    "WARNING: no netmask specified for ip address %s using %s"
-                    % (ip_iface.with_prefixlen, ip_iface.netmask)
-                )
-
-            module = univention.admin.modules.get("computers/%s" % ctype)
-            if not module:
-                print('ERROR: Type "%s" not found for computer "%s".' % (ctype, name))
-                print("Ignoring of line %d" % linecnt)
-                success = False
-            else:
-                position_basedn = univention.admin.uldap.position(baseDN)
-                univention.admin.modules.init(lo, position_basedn, module)
-
-                if check_computer(module, name, schoolNr):
-                    print("computer %s already exists (school %s)" % (name, schoolNr))
-                    success = False
-                elif check_macAddress(MAC):
-                    print(
-                        "mac %s for computer %s already used (school %s)"
-                        % (
-                            MAC,
-                            name,
-                            schoolNr,
-                        )
-                    )
-                    success = False
-                else:
-                    print("generate computer %s (school %s)" % (name, schoolNr))
-
-                    success, dn = create_network(schoolNr, ip_iface.network)
-
-                    position.setDn("cn=computers,%s" % (getDN(schoolNr),))
-                    object = module.object(None, lo, position=position, superordinate=superordinate)
-                    object.open()
-                    object["name"] = name
-                    object["mac"] = MAC
-                    if inventoryNumbers:
-                        object["inventoryNumber"] = inventoryNumbers
-                    if ip_iface.ip != ip_iface.network.network_address:
-                        object["ip"] = str(ip_iface.ip)
-                        print(
-                            "set ip to %s is not net %s"
-                            % (ip_iface.ip, ip_iface.network.network_address)
-                        )
-                    object["network"] = "cn=%s-%s,cn=networks,%s" % (
-                        schoolNr.lower(),
-                        ip_iface.network.network_address,
-                        getDN(schoolNr),
-                    )
-                    for grp in groups:
-                        if grp not in object["groups"]:
-                            object["groups"].append(grp)
-                    try:
-                        create_object(object)
-                    except Exception:
-                        print(
-                            "WARNING: Error creating computer %s\n"
-                            % (object.dn, traceback.format_exc(100))
-                        )
-                        success = False
-
-                print("Processing of line %d completed" % linecnt)
-
-            # invoke post hooks
-            if success:
-                hooks.post("computer", "A", dn=object.dn, line=line)
-
-        inf.close()
-
-
 def import_router():
     """
     No computer object is created on importing routers! But the dhcp-routing
@@ -2175,10 +1916,8 @@ def import_group():
             )
             share_dn = "cn=%s,cn=klassen,cn=shares,%s" % (escape_dn_chars(ClassID), getDN(schoolNr))
 
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
 
-            # invoke pre hooks
-            hooks.pre("group", action, line=line)
             success = True
             dn = None
 
@@ -2204,9 +1943,6 @@ def import_group():
                 delete_dn(group_dn, group_module, None, lo)
                 delete_dn(share_dn, share_module, None, lo)
                 dn = group_dn
-
-            if success:
-                hooks.post("group", action, dn=dn, line=line)
 
 
 def import_printer():
@@ -2242,7 +1978,7 @@ def import_printer():
                 spoolHost = "%s.%s" % (spoolHost, ucr["domainname"])
             printerName = parsed[3]
             printerUri = parsed[4]
-            verify_school_ou(schoolNr, None, lo, baseDN)
+            verify_school_ou(schoolNr, lo)
 
             def parseString(parsed, idx, default=None):
                 res = default
@@ -2257,8 +1993,6 @@ def import_printer():
             position_dn = "cn=%s,cn=printers,%s" % (escape_dn_chars(printerName), getDN(schoolNr))
             container = "cn=printers,%s" % (getDN(schoolNr),)
 
-            # invoke pre hooks
-            hooks.pre("printer", action, line=line)
             dn = None
             success = True
 
@@ -2289,10 +2023,6 @@ def import_printer():
             elif action == "D":  # D)elete printer
                 dn = position_dn
                 delete_dn(position_dn, printer_module, None, lo)
-
-            # invoke post hooks
-            if success:
-                hooks.post("printer", action, dn=dn, line=line)
 
 
 def activate_groupmembers():
@@ -2462,7 +2192,7 @@ def export_computer():
     ou = args[0]
     outfile = args[1]
 
-    verify_school_ou(ou, None, lo, baseDN)
+    verify_school_ou(ou, lo)
     # outfile = os.path.basename(actgrp+'.csv')
     print("outfile is : " + outfile)
     if os.path.exists(outfile):
@@ -2527,7 +2257,7 @@ def set_ou_sharefileserver():
     else:
         ShareFileServer = objects[0]
 
-    verify_school_ou(ouname, None, lo, baseDN)
+    verify_school_ou(ouname, lo)
 
     with stopped_notifier():
         r = lo.get(getDN(ouname), ["objectClass"])
@@ -2683,9 +2413,6 @@ def rename_class():
 
                 success = True
 
-                # group pre mod hook
-                hooks.pre("group", "M", line=line)
-
                 # rename group
                 groupObject.open()
                 groupObject["name"] = newName
@@ -2732,14 +2459,6 @@ def rename_class():
                             (True, "Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
                         )
 
-                # group post mod hook
-                if success:
-                    ud.debug(
-                        ud.MAIN,
-                        ud.PROCESS,
-                        "Calling group post-modify hooks",
-                    )
-                    hooks.post("group", "M", dn=groupObject.dn, line=line)
     ud.debug(ud.MAIN, ud.PROCESS, "Resuming notifier")
 
     # print warnings
@@ -3096,8 +2815,6 @@ ud.debug(
 # select action
 if sys.argv[0].endswith("import_networks"):
     import_networks()
-elif sys.argv[0].endswith("import_computer"):
-    import_computer()
 elif sys.argv[0].endswith("import_router"):
     import_router()
 elif sys.argv[0].endswith("import_inventory_number"):
@@ -3240,7 +2957,7 @@ elif sys.argv[0].endswith("create_dc"):
         parser.print_help()
         sys.exit(1)
 
-    verify_school_ou(options.ou_name, None, lo, baseDN)
+    verify_school_ou(options.ou_name, lo)
 
     if not is_valid_hostname(options.dc_name):
         print("ERROR: invalid domaincontroller name given")
@@ -3299,7 +3016,7 @@ within an OU LDAP subtree to the given OU."""
         parser.print_help()
         sys.exit(1)
 
-    verify_school_ou(options.ou, None, lo, baseDN)
+    verify_school_ou(options.ou, lo)
 
     if not is_valid_hostname(options.dcname):
         print("ERROR: invalid domaincontroller name given")

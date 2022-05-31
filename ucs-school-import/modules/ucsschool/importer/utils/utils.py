@@ -28,14 +28,10 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
-"""
-Diverse helper functions.
-"""
-
 from contextlib import contextmanager
 
 import univention.admin.modules
+from ucsschool.lib.models.school import School
 
 
 def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
@@ -54,3 +50,8 @@ def get_ldap_mapping_for_udm_property(udm_prop, udm_type):
 def nullcontext():
     """Context manager that does nothing."""
     yield None
+
+
+def verify_school_ou(school_nr, lo):
+    if not School(name=school_nr).exists(lo):
+        raise SystemExit("ERROR: The specified school %r does not exist." % (school_nr,))

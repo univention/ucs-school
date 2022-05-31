@@ -1,0 +1,179 @@
+#!/usr/bin/python3 -OO
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@school
+#
+# Copyright 2007-2022 Univention GmbH
+#
+# https://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+from __future__ import print_function
+
+import argparse
+import csv
+import sys
+import traceback
+from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError  # noqa: F401
+
+from ldap.filter import filter_format
+
+import univention.debug as ud
+from ucsschool.importer.utils.constants import get_default_prefixlen, get_sep_char
+from ucsschool.importer.utils.utils import verify_school_ou
+from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.lib.models.computer import IPComputer, MacComputer, WindowsComputer
+from ucsschool.lib.models.utils import stopped_notifier, ucr
+from univention.admin.uexceptions import authFail, insufficientInformation
+from univention.admin.uldap import access as LoType, getAdminConnection  # noqa: F401
+
+ud.init("/var/log/univention/ucs-school-import.log", ud.FLUSH, ud.NO_FUNCTION)
+ud.set_level(ud.MAIN, ud.ALL)
+
+
+class ComputerImportError(Exception):
+    pass
+
+
+def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
+    try:
+        ip_iface = IPv4Interface(u"%s" % ip_address)
+    except AddressValueError as exc:
+        raise ComputerImportError("%s is not a valid ip address" % (exc,))
+    except NetmaskValueError as exc:
+        raise ComputerImportError("%s is not a valid netmask" % (exc,))
+
+    if "/" not in ip_address:
+        ip_iface = IPv4Interface(u"%s/%s" % (ip_address, get_default_prefixlen()))
+        print(
+            "WARNING: no netmask specified for ip address %s using %s"
+            % (ip_iface.with_prefixlen, ip_iface.netmask)
+        )
+    return ip_iface
+
+
+def mac_address_is_used(mac_address, lo):  # type: (str, LoType) -> bool
+    result = lo.search(
+        base=ucr["ldap/base"],
+        scope="sub",
+        filter=filter_format("(macAddress=%s)", [mac_address]),
+        attr=["macAddress"],
+    )
+    return result and result[0][1]["macAddress"][0].decode("ASCII") == mac_address
+
+
+def import_computers(input_file):  # type: (str) -> None
+    try:
+        lo, _ = getAdminConnection()
+    except authFail as exc:
+        ud.debug(ud.MAIN, ud.WARN, "authentication error: %s" % (exc,))
+        print("ERROR: authentication error: %s" % (exc,))
+        sys.exit(13)
+
+    print("input file is  : " + input_file)
+    line_number = 0
+    computer_to_class_mapping = {
+        "windows": WindowsComputer,
+        "macos": MacComputer,
+        "ipmanagedclient": IPComputer,
+    }
+    sep_char = get_sep_char()
+    with open(input_file) as csv_file, stopped_notifier():
+        reader = csv.reader(csv_file, delimiter=sep_char)
+        for row in reader:
+            line_number += 1
+            if not row:
+                continue
+            computer_type = row[0]
+            computer_name = row[1].lower()
+            mac_address = row[2]
+            school_id = row[3]
+            ip_address = row[4]
+            inventory_numbers = None
+            if len(row) > 5:
+                inventory_numbers = row[5].strip().split(",")
+            print("Processing line %d: %s\n" % (line_number, "\t".join(row)), end=" ")
+
+            if computer_type in computer_to_class_mapping:
+                verify_school_ou(school_id, lo)
+                _cls = computer_to_class_mapping[computer_type]
+                computer = _cls(school=school_id, name=computer_name)
+                if computer.exists(lo):
+                    print("computer %s already exists (school %s)" % (computer_name, school_id))
+                    continue
+                elif mac_address_is_used(mac_address, lo):
+                    print(
+                        "mac_address %s for computer %s already used (school %s)"
+                        % (
+                            mac_address,
+                            computer_name,
+                            school_id,
+                        )
+                    )
+                    continue
+                # one mac address per computer
+                computer.mac_address = [mac_address] if mac_address else []
+                if inventory_numbers:
+                    computer.inventory_number = inventory_numbers
+                try:
+                    ip_iface = get_ip_iface(ip_address)
+                except ComputerImportError as exc:
+                    print("\t".join(row))
+                    raise exc
+
+                if ip_iface.ip != ip_iface.network.network_address:
+                    # one IP per computer
+                    computer.ip_address = [str(ip_iface.ip)]
+                    print("set ip to %s is not net %s" % (ip_iface.ip, ip_iface.network.network_address))
+                try:
+                    computer.create(lo)
+                except ValidationError:
+                    print(
+                        "WARNING: Error creating computer %s\n %s"
+                        % (computer.dn, traceback.format_exc(100))
+                    )
+                except insufficientInformation:
+                    # if ip | mac address is missing
+                    print(
+                        "WARNING: Error creating computer %s\n %s"
+                        % (computer.dn, traceback.format_exc(100))
+                    )
+                print("Processing of line %d completed" % line_number)
+            else:
+                print(
+                    "Importing computer {} with type {} is not supported".format(
+                        computer_name, computer_type
+                    )
+                )
+                print("Ignoring of line %d" % line_number)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="UCS@school import computer tool",
+    )
+    parser.add_argument("inputfile", help="computer import file")
+    options = parser.parse_args()
+    import_computers(options.inputfile)

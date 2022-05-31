@@ -15,7 +15,7 @@
 	jeweiligen Umgebung weitere Einstellungen vorzunehmen.
   </para>
       <para>
-          Python-Hooks (im folgenden Abschnitt abgekürzt mit "Hooks") es Objekttypen zu unterscheiden (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
+          Python-Hooks, im folgenden Abschnitt abgekürzt mit "Hooks", erlauben es Objekttypen zu unterscheiden (z.B. Schulklasse und Arbeitsgruppe oder Schüler und Lehrer) und haben Zugriff auf alle Attribute der Objekte.
       </para>
       <para>
           Die Hooks werden für alle Klassen, von denen Objekte erzeugt werden können und die von <classname>ucsschool.lib.models.base.UCSSchoolHelperAbstractClass</classname> ableiten, ausgeführt.
@@ -97,7 +97,7 @@ Create an email address for the new school class.
           </programlisting>
           Die Klasse <classname>SchoolClass</classname> bietet kein Attribut an, um eine Email-Adresse anzugeben.
           Die Klassen in <classname>ucsschool.lib.models</classname> sind jedoch tatsächlich eine Abstraktion regulärer &ucsUDM; Objekte.
-          Um auf auf die darunter liegenden Objekte zuzugreifen, wird die Methode <methodname>get_udm_object()</methodname> verwendet.
+          Um auf die darunter liegenden Objekte zuzugreifen, wird die Methode <methodname>get_udm_object()</methodname> verwendet.
           Als Argument muss ihr ein sogenanntes LDAP Verbindungsobjekt (<varname>lo</varname>) mitgegeben werden.
       </para>
       <para>
@@ -171,7 +171,6 @@ service univention-management-console-server restart
 Starting SchoolClass.call_hooks('pre', 'create', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
     name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-igel,cn=klassen,cn=schueler,
     cn=groups,ou=DEMOSCHOOL,dc=exam,dc=ple').
-Hook directory /usr/share/ucs-school-import/hooks/group_create_pre.d not found or empty.
 Searching for hooks of type 'Hook' in: /var/lib/ucs-school-lib/hooks...
 Found hook classes: MailForSchoolClass
 Loaded hooks: {'post_modify': ['MailForSchoolClass.post_modify'], 'post_create': [
@@ -180,7 +179,6 @@ Creating SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...')
 SchoolClass(name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...') successfully created
 Starting SchoolClass.call_hooks('post', 'create', lo('cn=admin,dc=uni,dc=dtr')) for SchoolClass(
     name='DEMOSCHOOL-igel', school='DEMOSCHOOL', dn='...').
-Hook directory /usr/share/ucs-school-import/hooks/group_create_post.d not found or empty.
 Running post_create hook MailForSchoolClass.post_create for SchoolClass(name='DEMOSCHOOL-igel',
     school='DEMOSCHOOL', dn='...')...
 Setting email address 'demoschool-igel@uni.dtr' on SchoolClass(name='DEMOSCHOOL-igel',
@@ -192,21 +190,18 @@ True
 
 Starting SchoolClass.call_hooks('pre', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
     name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...', old_dn='cn=DEMOSCHOOL-igel,...').
-Hook directory /usr/share/ucs-school-import/hooks/group_modify_pre.d not found or empty.
 Modifying SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...',
     old_dn='cn=DEMOSCHOOL-igel,...')
 SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...') successfully modified
 Starting SchoolClass.call_hooks('post', 'modify', lo('cn=admin,dc=exam,dc=ple')) for SchoolClass(
     name='DEMOSCHOOL-hase', school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...').
-Hook directory /usr/share/ucs-school-import/hooks/group_modify_post.d not found or empty.
 Running post_modify hook MailForSchoolClass.post_modify for SchoolClass(name='DEMOSCHOOL-hase',
     school='DEMOSCHOOL', dn='cn=DEMOSCHOOL-hase,...')...
 Changing the email address of SchoolClass(name='DEMOSCHOOL-hase', school='DEMOSCHOOL', ...)
     from 'demoschool-igel@example.com' to 'demoschool-hase@example.com'...
 True
           </programlisting>
-          Vor dem Anlegen des Objekts wird in <filename class="directory">/usr/share/ucs-school-import/hooks/group_create_pre.d/</filename> nach den Hook-Skripte  gesucht, welche ab &ucsUAS; 5.0 nicht mehr unterstützt werden.
-          Anschließend wird in <filename class="directory">/var/lib/ucs-school-lib/hooks/</filename> nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
+          Im Verzeichnis <filename class="directory">/var/lib/ucs-school-lib/hooks/</filename> wird nach Python-Hooks gesucht und die Klasse <classname>MailForSchoolClass</classname> gefunden.
           Nach dem Laden aller Hooks wird angezeigt, in welcher Reihenfolge welche Methoden für welche Phase ausgeführt werden.
           Da es keine <varname>pre-create</varname> Hooks gibt, wird nun das Objekt angelegt.
           Anschließend werden <varname>post-create</varname> Hooks ausgeführt.
