@@ -137,8 +137,16 @@
 				Aus Sicherheitsgründen speichern die Schulservern nur eine Teilreplikation
 				des LDAP-Verzeichnisses. Nur die für den Schulserver relevanten Teile
 				(z.B. Benutzer und Gruppen der jeweiligen Schule) sowie die globalen
-				Strukturen des LDAP-Verzeichnisses werden auf den Schul-Server
-				übertragen.
+				Strukturen des LDAP-Verzeichnisses, inklusive deren Benutzer und Gruppen,
+				werden auf den Schul-Server übertragen.
+				<caution>
+					<para>
+						Benutzer aus den globalen Strukturen des LDAP-Verzeichnisses
+						können ihr Passwort nur über die UMC des primären Servers ändern
+						(nicht über den Schulserver am Standort bzw. einem dort
+						angebundenen Windows-Client).
+					</para>
+				</caution>
 			</para>
 			<para>
 				In &ucsUAS; werden schulübergreifende Benutzerkonten unterstützt.
