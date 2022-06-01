@@ -9,9 +9,6 @@
 ##   - ucs-school-import
 
 import base64
-import datetime
-import os
-import shutil
 
 import pytest
 
@@ -42,7 +39,6 @@ def test_ou_basics(
     dhcp_dns_clearou,
     use_cli_api,
     use_python_api,
-    disable_hooks,
 ):
     with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
         with univention.testing.udm.UCSTestUDM() as udm:

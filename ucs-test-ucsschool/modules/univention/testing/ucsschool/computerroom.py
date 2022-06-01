@@ -65,7 +65,6 @@ class ComputerImport(object):
         self.windows = []
         for i in range(0, nr_windows):
             self.windows.append(Windows(self.school))
-        self.memberservers = []
         self.macos = []
         for i in range(0, nr_macos):
             self.macos.append(MacOS(self.school))
@@ -82,7 +81,6 @@ class ComputerImport(object):
                 "mac_address": computer.mac,
                 "type_name": computer.ctype,
                 "inventory_number": computer.inventorynumbers,
-                "zone": computer.zone,
             }
             return kwargs
 
@@ -877,7 +875,6 @@ class UmcComputer(object):
             "mac_address": [self.mac_address.lower()],
             "subnet_mask": self.subnet_mask,
             "inventory_number": self.inventory_number,
-            "zone": None,
             "type_name": self.type_name(),
             "objectType": "computers/%s" % self.typ,
             "ucsschool_roles": typ2roles[self.typ],

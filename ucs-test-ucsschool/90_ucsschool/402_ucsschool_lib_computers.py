@@ -19,9 +19,7 @@ def test_lookup(schoolenv):
     """
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
     print("********** Generate school data")
-    computer_import = ComputerImport(
-        ou_name, nr_windows=3, nr_memberserver=3, nr_macos=3, nr_ipmanagedclient=3
-    )
+    computer_import = ComputerImport(ou_name, nr_windows=3, nr_macos=3, nr_ipmanagedclient=3)
     print(computer_import)
     import_file = ImportFile(False, True)
 
