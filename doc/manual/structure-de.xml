@@ -141,10 +141,12 @@
 				werden auf den Schul-Server übertragen.
 				<caution>
 					<para>
-						Benutzer aus den globalen Strukturen des LDAP-Verzeichnisses
-						können ihr Passwort nur über die UMC des primären Servers ändern
+						Benutzer, deren Benutzerkonto nicht unterhalb einer Organisationseinheit der Schule (Schul-OU) liegt, 
+						können ihr Passwort nur über die UMC des &ucsPrimaryDN; oder eines &ucsBackupDN; ändern
 						(nicht über den Schulserver am Standort bzw. einem dort
 						angebundenen Windows-Client).
+
+						Ebenso dürfen Benutzer, deren Benutzerkonto unterhalb einer Schul-Organisationseinheit liegt, aus Sicherheitsgründen nicht Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem> sein.
 					</para>
 				</caution>
 			</para>
