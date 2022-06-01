@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.46) unstable; urgency=medium
+
+  * Bug #51279: Add test for the readability of global users by school replicas
+
+ -- Julia Bremer <bremer@univention.de>  Wed, 01 Jun 2022 15:32:33 +0200
+
 ucs-test-ucsschool (7.3.45) unstable; urgency=medium
 
   * Bug #54755: fix computer & ou import tests
