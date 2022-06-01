@@ -2,10 +2,12 @@ product: ucsschool
 release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
-src:
-fix:
+src: ucs-school-ldap-acls-master
+fix: 18.0.4A~5.0.0.202206011518
 desc: |
- * UCS@school replication works now if users are added to organizational units,
-   which are not schools, for example, an organizational unit for domain administrators,
-   who do not belong to a school. (Bug #51279)
+ * Users which don't belong to any school, and which were created outside of
+   cn=users could not be replicated to school servers, since they didn't have
+   the necessary rights to read all attributes of these users.
+   The LDAP ACLs have been adjusted to make the replication possible.
+   (Bug #51279)
 bug: [51279]
