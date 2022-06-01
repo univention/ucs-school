@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-groups
-fix:
+fix: 10.0.5A~5.0.0.202206011523
 desc: |
  * Verify that the users belong to the work group's school when adding users to an existing work group (Bug #54040).
 bug: [54040]
