@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.47) unstable; urgency=medium
+
+  * Bug #54755: remove zone attr from tests as it is not used
+    in the computerroom anymore
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 03 Jun 2022 20:30:08 +0200
+
 ucs-test-ucsschool (7.3.46) unstable; urgency=medium
 
   * Bug #51279: Add test for the readability of global users by school replicas

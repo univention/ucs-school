@@ -857,6 +857,8 @@ class UmcComputer(object):
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}}]
         reqResult = self.client.umc_command("schoolwizards/computers/get", param, flavor).result
+        # zone is not used in the computer room anymore.
+        reqResult[0].pop("zone")
         assert reqResult[0], "Unable to get computer (%s): %r" % (self.name, reqResult)
         return reqResult[0]
 
