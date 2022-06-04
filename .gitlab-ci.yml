@@ -1,25 +1,15 @@
-image: docker:stable
-
-variables:
-  UCS_REGISTRY: docker-registry.knut.univention.de
-  RELEASE_IMAGE: $UCS_REGISTRY/ucsschool/pre-commit
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-
-services:
-  - name: docker-registry.knut.univention.de/ucs/docker:dind
-    alias: docker
+include:
+  - project: univention/dist/docker-services
+    file: kaniko.yml
 
 build:
-  tags:
-    - docker
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /[1-9][0-9]*[.][0-9]+/'
       when: never
     - changes:
       - .gitlab-ci/Dockerfile.pre-commit
       - .*
-      when: always
-  script:
-    - docker build --pull -t $RELEASE_IMAGE:$CI_COMMIT_BRANCH -f .gitlab-ci/Dockerfile.pre-commit .
-    - docker push $RELEASE_IMAGE
+  extends: .kaniko_knut
+  variables:
+    CI_REGISTRY_IMAGE: $UCS_REGISTRY/ucsschool/pre-commit
+    DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
