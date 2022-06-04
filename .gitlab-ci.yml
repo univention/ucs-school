@@ -11,5 +11,5 @@ build:
       - .*
   extends: .kaniko_knut
   variables:
-    CI_REGISTRY_IMAGE: $UCS_REGISTRY/ucsschool/pre-commit
+    IMAGE_TAG: $CI_REGISTRY/ucsschool/pre-commit:$CI_COMMIT_REF_SLUG
     DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
