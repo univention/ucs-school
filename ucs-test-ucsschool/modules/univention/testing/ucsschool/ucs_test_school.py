@@ -385,6 +385,7 @@ class UCSTestSchool(object):
         # get list of OU and objects below
         ok = True
         logger.info("*** Removing school %r (%s) and its children ...", ou_name, oudn)
+        self.remove_dcs_from_global_groups(ou_name)
         try:
             obj_list = self.lo.searchDn(base=oudn, scope="sub")  # type: List[str]
         except noObject:
@@ -409,7 +410,6 @@ class UCSTestSchool(object):
                 if not ok and retry:
                     logger.info("*** Retrying cleanup_ou(%r)...", ou_name)
                     ok = self.cleanup_ou(ou_name, wait_for_replication, retry=False)
-        self.remove_dcs_from_global_groups(ou_name)
         self.remove_ucsschool_role_from_dcs(ou_name)
         self.cleanup_default_containers(ou_name)
         log_func = logger.info if ok else logger.error
