@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.48) unstable; urgency=medium
+
+  * Bug #54755: run school lib test without import
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 07 Jun 2022 11:18:57 +0200
+
 ucs-test-ucsschool (7.3.47) unstable; urgency=medium
 
   * Bug #54755: remove zone attr from tests as it is not used
