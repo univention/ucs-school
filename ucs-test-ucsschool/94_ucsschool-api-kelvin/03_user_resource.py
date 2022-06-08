@@ -19,7 +19,7 @@ import requests
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.user import Staff as LibStaff, User as LibUser
 from univention.testing.ucsschool.kelvin_api import (
-    RESSOURCE_URLS,
+    RESOURCE_URLS,
     api_call,
     create_remote_static,
     partial_update_remote_static,
@@ -57,7 +57,7 @@ def extract_class_dns(lo):
 
 def test_list_resource_from_external(auth_header, lo):
     response = requests.get(
-        RESSOURCE_URLS["users"], headers=auth_header, params={"school": "DEMOSCHOOL"}
+        RESOURCE_URLS["users"], headers=auth_header, params={"school": "DEMOSCHOOL"}
     )
     res = response.json()
     assert isinstance(res, list), repr(res)
@@ -365,11 +365,11 @@ def test_rename_single_user(
     assert name_new == resource_new["name"]
     user = get_import_user(resource_new["dn"])
     assert name_new == user.name
-    url = urljoin(RESSOURCE_URLS["users"], name_new)
+    url = urljoin(RESOURCE_URLS["users"], name_new)
     assert resource_new["url"] == url
     resource_new2 = api_call("get", url, headers=auth_header)
     assert resource_new == resource_new2
-    url = urljoin(RESSOURCE_URLS["users"], name_old)
+    url = urljoin(RESOURCE_URLS["users"], name_old)
     response = requests.get(url, headers=auth_header)
     assert response.status_code == 404
     compare_import_user_and_resource(user, resource_new)
@@ -457,7 +457,7 @@ def test_move_teacher_one_school_only(
     user = get_import_user(resource_new["dn"])
     logger.debug("*** user.school_classes=%r", user.school_classes)
     assert create_result["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], create_result["name"])
+    url = urljoin(RESOURCE_URLS["users"], create_result["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
@@ -550,7 +550,7 @@ def test_move_teacher_remove_primary(
     user = get_import_user(resource_new["dn"])
     logger.debug("*** user.school_classes=%r", user.school_classes)
     assert create_result["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], create_result["name"])
+    url = urljoin(RESOURCE_URLS["users"], create_result["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
@@ -645,7 +645,7 @@ def test_move_teacher_remove_primary_with_classes(
         ou2: ["{}-{}".format(ou2, k) for k in create_attrs["school_classes"][ou2]]
     }
     assert create_result["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], create_result["name"])
+    url = urljoin(RESOURCE_URLS["users"], create_result["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
@@ -740,7 +740,7 @@ def test_move_teacher_remove_primary_no_classes_in_new_school(
     logger.debug("*** user.school_classes=%r", user.school_classes)
     assert user.school_classes == {}
     assert create_result["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], create_result["name"])
+    url = urljoin(RESOURCE_URLS["users"], create_result["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
@@ -839,7 +839,7 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
         ou2: ["{}-{}".format(ou2, k) for k in create_attrs["school_classes"][ou2]]
     }
     assert modify_attrs["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], modify_attrs["name"])
+    url = urljoin(RESOURCE_URLS["users"], modify_attrs["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
@@ -917,7 +917,7 @@ def test_modify_teacher_remove_all_classes(
     logger.debug("*** user.school_classes=%r", user.school_classes)
     assert user.school_classes == {}
     assert create_result["name"] == user.name
-    url = urljoin(RESSOURCE_URLS["users"], create_result["name"])
+    url = urljoin(RESOURCE_URLS["users"], create_result["name"])
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)

@@ -19,7 +19,7 @@ from six import string_types
 
 import univention.testing.strings as uts
 from ucsschool.lib.models.school import School as LibSchool
-from univention.testing.ucsschool.kelvin_api import RESSOURCE_URLS
+from univention.testing.ucsschool.kelvin_api import RESOURCE_URLS
 from univention.udm import UDM, NoObject as UdmNoObject
 
 try:
@@ -102,7 +102,7 @@ def schedule_delete_ou_at_end_of_session(delete_ou, delete_ou_cleanup):
 
 
 def test_not_authenticated_connection():
-    response = requests.get(RESSOURCE_URLS["schools"])
+    response = requests.get(RESOURCE_URLS["schools"])
     assert response.status_code == 401, "response.status_code = {} for URL {!r} -> {!r}".format(
         response.status_code, response.url, response.text
     )
@@ -110,7 +110,7 @@ def test_not_authenticated_connection():
 
 def test_list(auth_header):
     print(" ** auth_header={!r}".format(auth_header))
-    response = requests.get(RESSOURCE_URLS["schools"], headers=auth_header)
+    response = requests.get(RESOURCE_URLS["schools"], headers=auth_header)
     assert response.status_code == 200, "response.status_code = {} for URL {!r} -> {!r}".format(
         response.status_code, response.url, response.text
     )
@@ -136,7 +136,7 @@ def test_get(auth_header, lo):
     udm = UDM.admin().version(1)
     for school in schools:
         logger.info("*** school.to_dict()=%r", school.to_dict())
-        school_url = urljoin(RESSOURCE_URLS["schools"], school.name)
+        school_url = urljoin(RESOURCE_URLS["schools"], school.name)
         response = requests.get(school_url, headers=auth_header)
         assert response.status_code == 200, "response.status_code = {} for URL {!r} -> {!r}".format(
             response.status_code, response.url, response.text
@@ -188,7 +188,7 @@ def test_create(auth_header, lo, schedule_delete_ou_at_end_of_session):
     }
     schedule_delete_ou_at_end_of_session(attrs["name"])
 
-    response = requests.post(RESSOURCE_URLS["schools"], headers=auth_header, json=attrs)
+    response = requests.post(RESOURCE_URLS["schools"], headers=auth_header, json=attrs)
     assert response.status_code == 201, "response.status_code = {} for URL {!r} -> {!r}".format(
         response.status_code, response.url, response.text
     )

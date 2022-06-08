@@ -13,7 +13,7 @@ import six
 
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing.ucsschool.conftest import IMPORT_CONFIG_KWARGS
-from univention.testing.ucsschool.kelvin_api import HTTP_502_ERRORS, KELVIN_TOKEN_URL, RESSOURCE_URLS
+from univention.testing.ucsschool.kelvin_api import HTTP_502_ERRORS, KELVIN_TOKEN_URL, RESOURCE_URLS
 
 try:
     from urlparse import urljoin  # py2
@@ -91,10 +91,10 @@ def make_user_attrs(import_config, mail_domain, random_int, random_username):
             "lastname": random_username(),
             "password": random_username(16),
             "record_uid": random_username(),
-            "roles": [urljoin(RESSOURCE_URLS["roles"], role) for role in roles],
-            "school": urljoin(RESSOURCE_URLS["schools"], sorted(ous)[0]),
+            "roles": [urljoin(RESOURCE_URLS["roles"], role) for role in roles],
+            "school": urljoin(RESOURCE_URLS["schools"], sorted(ous)[0]),
             "school_classes": school_classes,
-            "schools": [urljoin(RESSOURCE_URLS["schools"], ou) for ou in sorted(ous)],
+            "schools": [urljoin(RESOURCE_URLS["schools"], ou) for ou in sorted(ous)],
             "source_uid": import_config["source_uid"],
             "udm_properties": {
                 "phone": [random_username(), random_username()],
@@ -133,7 +133,7 @@ def make_user_attrs(import_config, mail_domain, random_int, random_username):
                 res["schools"] = schools
         assert all(
             [
-                urljoin(RESSOURCE_URLS["schools"], ou) in res.get("schools", [])
+                urljoin(RESOURCE_URLS["schools"], ou) in res.get("schools", [])
                 for ou in res.get("school_classes", {})
             ]
         )
@@ -168,9 +168,9 @@ def compare_import_user_and_resource(auth_header):
             elif k == "dn":
                 assert dn == v, "Expected DN {!r} got {!r}.".format(dn, v)
             elif k == "school":
-                assert v == urljoin(RESSOURCE_URLS["schools"], import_user.school)
+                assert v == urljoin(RESOURCE_URLS["schools"], import_user.school)
             elif k == "schools":
-                assert set(v) == {urljoin(RESSOURCE_URLS["schools"], s) for s in import_user.schools}
+                assert set(v) == {urljoin(RESOURCE_URLS["schools"], s) for s in import_user.schools}
             elif k == "disabled":
                 assert v in (True, False), "Value of {!r} is {!r}.".format(k, v)
                 val = "1" if v is True else "0"
@@ -180,7 +180,7 @@ def compare_import_user_and_resource(auth_header):
                 )
             elif k == "roles":
                 import_user_roles = {"student" if r == "pupil" else r for r in import_user.roles}
-                assert set(v) == {urljoin(RESSOURCE_URLS["roles"], r) for r in import_user_roles}
+                assert set(v) == {urljoin(RESOURCE_URLS["roles"], r) for r in import_user_roles}
             elif k == "school_classes":
                 if source == "LDAP":
                     val = dict(

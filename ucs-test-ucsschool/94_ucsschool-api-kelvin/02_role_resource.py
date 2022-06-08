@@ -14,7 +14,7 @@ from unittest import TestCase, main
 import requests
 
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from univention.testing.ucsschool.kelvin_api import RESSOURCE_URLS, HttpApiUserTestBase
+from univention.testing.ucsschool.kelvin_api import RESOURCE_URLS, HttpApiUserTestBase
 
 try:
     from urlparse import urljoin  # py2
@@ -33,7 +33,7 @@ class Test(TestCase):
         print("*** auth_headers={!r}".format(cls.auth_headers))
 
     def test_01_list_unauth_connection(self):
-        response = requests.get(RESSOURCE_URLS["roles"])
+        response = requests.get(RESOURCE_URLS["roles"])
         self.assertEqual(
             response.status_code,
             401,
@@ -43,7 +43,7 @@ class Test(TestCase):
         )
 
     def test_02_list_auth_connection(self):
-        response = requests.get(RESSOURCE_URLS["roles"], headers=self.auth_headers)
+        response = requests.get(RESOURCE_URLS["roles"], headers=self.auth_headers)
         self.assertEqual(
             response.status_code,
             200,
@@ -59,23 +59,23 @@ class Test(TestCase):
                 {
                     "name": "staff",
                     "display_name": "staff",
-                    "url": "{}staff".format(RESSOURCE_URLS["roles"]),
+                    "url": "{}staff".format(RESOURCE_URLS["roles"]),
                 },
                 {
                     "name": "student",
                     "display_name": "student",
-                    "url": "{}student".format(RESSOURCE_URLS["roles"]),
+                    "url": "{}student".format(RESOURCE_URLS["roles"]),
                 },
                 {
                     "name": "teacher",
                     "display_name": "teacher",
-                    "url": "{}teacher".format(RESSOURCE_URLS["roles"]),
+                    "url": "{}teacher".format(RESOURCE_URLS["roles"]),
                 },
             ],
         )
 
     def test_04_get_existing_roles(self):
-        response = requests.get(RESSOURCE_URLS["roles"], headers=self.auth_headers)
+        response = requests.get(RESOURCE_URLS["roles"], headers=self.auth_headers)
         self.assertEqual(
             response.status_code,
             200,
@@ -96,7 +96,7 @@ class Test(TestCase):
         )
 
         for role in ("staff", "student", "teacher"):
-            response = requests.get(urljoin(RESSOURCE_URLS["roles"], role), headers=self.auth_headers)
+            response = requests.get(urljoin(RESOURCE_URLS["roles"], role), headers=self.auth_headers)
             res = response.json()
             self.assertEqual(
                 response.status_code,

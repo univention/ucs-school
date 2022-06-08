@@ -15,7 +15,7 @@ import requests
 
 from univention.testing.ucsschool.kelvin_api import (
     OPENAPI_JSON_URL,
-    RESSOURCE_URLS,
+    RESOURCE_URLS,
     URL_BASE_PATH,
     HttpApiUserTestBase,
 )
@@ -48,11 +48,11 @@ class Test(TestCase):
         )
         res = response.json()
         print("*** Resource paths in openapi.json: {!r}".format(res["paths"].keys()))
-        for resource in RESSOURCE_URLS:
+        for resource in RESOURCE_URLS:
             self.assertIn("{}{}/".format(URL_BASE_PATH, resource), res["paths"].keys())
 
     def test_03_unauth_connection_to_resources_not_allowed(self):
-        for url in RESSOURCE_URLS.values():
+        for url in RESOURCE_URLS.values():
             response = requests.get(url, verify=False)
             self.assertEqual(
                 response.status_code,
@@ -61,7 +61,7 @@ class Test(TestCase):
             )
 
     def test_04_auth_connection_to_resources_allowed(self):
-        for url in RESSOURCE_URLS.values():
+        for url in RESOURCE_URLS.values():
             response = requests.get(url, headers=self.auth_headers, verify=False)
             self.assertEqual(
                 response.status_code,

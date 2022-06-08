@@ -87,7 +87,7 @@ URL_BASE_PATH = "/ucsschool/kelvin/v1/"
 _localhost_root_url = "https://{}.{}{}".format(ucr["hostname"], ucr["domainname"], URL_BASE_PATH)
 API_ROOT_URL = ucr.get("tests/ucsschool/http-api/root_url", _localhost_root_url).rstrip("/") + "/"
 OPENAPI_JSON_URL = urljoin(API_ROOT_URL, "openapi.json")
-RESSOURCE_URLS = {
+RESOURCE_URLS = {
     "roles": urljoin(API_ROOT_URL, "roles/"),
     "schools": urljoin(API_ROOT_URL, "schools/"),
     "users": urljoin(API_ROOT_URL, "users/"),
@@ -103,7 +103,7 @@ logger = logging.getLogger("univention.testing.ucsschool")
 print("*** API_ROOT_URL={!r} ***".format(API_ROOT_URL))
 print("*** OPENAPI_JSON_URL={!r} ***".format(OPENAPI_JSON_URL))
 print("*** KELVIN_TOKEN_URL={!r} ***".format(KELVIN_TOKEN_URL))
-print("*** RESSOURCE_URLS={!r} ***".format(RESSOURCE_URLS))
+print("*** RESOURCE_URLS={!r} ***".format(RESOURCE_URLS))
 
 
 def setup_logging():
@@ -357,14 +357,14 @@ class HttpApiUserTestBase(TestCase):
             "lastname": uts.random_username(),
             "password": uts.random_username(16),
             "record_uid": uts.random_username(),
-            "roles": [urljoin(RESSOURCE_URLS["roles"], role) for role in roles],
-            "school": urljoin(RESSOURCE_URLS["schools"], sorted(ous)[0]),
+            "roles": [urljoin(RESOURCE_URLS["roles"], role) for role in roles],
+            "school": urljoin(RESOURCE_URLS["schools"], sorted(ous)[0]),
             "school_classes": {}
             if roles == ("staff",)
             else dict(
                 (ou, sorted([uts.random_username(4), uts.random_username(4)])) for ou in sorted(ous)
             ),
-            "schools": [urljoin(RESSOURCE_URLS["schools"], ou) for ou in sorted(ous)],
+            "schools": [urljoin(RESOURCE_URLS["schools"], ou) for ou in sorted(ous)],
             "source_uid": self.import_config["source_uid"],
             "udm_properties": {
                 "phone": [uts.random_username(), uts.random_username()],
@@ -404,7 +404,7 @@ class HttpApiUserTestBase(TestCase):
                 res["schools"] = schools
         assert all(
             [
-                urljoin(RESSOURCE_URLS["schools"], ou) in res.get("schools", [])
+                urljoin(RESOURCE_URLS["schools"], ou) in res.get("schools", [])
                 for ou in res.get("school_classes", {})
             ]
         )
@@ -518,13 +518,13 @@ def api_call(method, url, auth=None, headers=None, json_data=None):
 def create_remote_static(attribs):
     # type: (Tuple[Dict[Text, Text], Dict[Text, Any]]) -> Dict[Text, Any]
     auth_headers, attrs = attribs
-    return api_call("post", RESSOURCE_URLS["users"], json_data=attrs, headers=auth_headers)
+    return api_call("post", RESOURCE_URLS["users"], json_data=attrs, headers=auth_headers)
 
 
 def partial_update_remote_static(old_username_and_new_attrs):
     # type: (Tuple[Dict[Text, Text], Text, Dict[Text, Any]]) -> Dict[Text, Any]
     auth_headers, old_username, new_attrs = old_username_and_new_attrs
-    url = urljoin(RESSOURCE_URLS["users"], old_username)
+    url = urljoin(RESOURCE_URLS["users"], old_username)
     return api_call("patch", url, json_data=new_attrs, headers=auth_headers)
 
 
