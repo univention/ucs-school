@@ -91,6 +91,7 @@ RESOURCE_URLS = {
     "roles": urljoin(API_ROOT_URL, "roles/"),
     "schools": urljoin(API_ROOT_URL, "schools/"),
     "users": urljoin(API_ROOT_URL, "users/"),
+    "workgroups": urljoin(API_ROOT_URL, "workgroups/"),
 }
 KELVIN_TOKEN_URL = API_ROOT_URL.replace("/v1/", "/token")
 HTTP_502_ERRORS = []

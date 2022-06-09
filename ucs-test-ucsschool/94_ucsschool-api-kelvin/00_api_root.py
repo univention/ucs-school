@@ -62,7 +62,12 @@ class Test(TestCase):
 
     def test_04_auth_connection_to_resources_allowed(self):
         for url in RESOURCE_URLS.values():
-            response = requests.get(url, headers=self.auth_headers, verify=False)
+            params = {}
+            # workgroups has a required parameter for GET
+            if url == RESOURCE_URLS["workgroups"]:
+                schools = requests.get(RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False).json()
+                params["school"] = schools[0]["name"]
+            response = requests.get(url, headers=self.auth_headers, verify=False, params=params)
             self.assertEqual(
                 response.status_code,
                 200,
