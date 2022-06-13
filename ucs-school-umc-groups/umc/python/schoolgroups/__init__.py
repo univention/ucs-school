@@ -199,7 +199,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, result)
 
     @sanitize(
-        pattern=LDAPSearchSanitizer(required=True, default="", use_asterisks=True, add_asterisks=False),
+        pattern=LDAPSearchSanitizer(required=True, default="", use_asterisks=True, add_asterisks=True),
         school=SchoolSanitizer(required=True),
     )
     @LDAP_Connection(USER_WRITE)
@@ -207,6 +207,9 @@ class Instance(SchoolBaseModule):
         klasses = [get_group_class(request)]
         if klasses[0] is Teacher:
             klasses.append(TeachersAndStaff)
+            school_prefix = False
+        else:
+            school_prefix = True
         groups = []
         for klass in klasses:
             groups.extend(
@@ -215,6 +218,7 @@ class Instance(SchoolBaseModule):
                     request.options["school"],
                     filter_str=request.options["pattern"],
                     easy_filter=True,
+                    school_prefix=school_prefix,
                 )
             )
         self.finished(request.id, [group.to_dict() for group in groups])

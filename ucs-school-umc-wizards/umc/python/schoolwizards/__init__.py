@@ -251,8 +251,10 @@ def sanitize_object(**kwargs):
     return _decorator
 
 
-def _sanitize_filter_str(filter_str):
-    sanitizer = LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False)
+def _sanitize_filter_str(filter_str, use_asterisks=True, add_asterisks=False):
+    sanitizer = LDAPSearchSanitizer(
+        required=False, default="", use_asterisks=use_asterisks, add_asterisks=add_asterisks
+    )
     return sanitizer.sanitize("filter_str", {"filter_str": filter_str})
 
 
@@ -428,18 +430,24 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"result": {"message": _('"%s" does not exist!') % obj.name}})
         return ret
 
-    def _get_all(self, klass, school, filter_str, lo, easy_filter=True):
+    def _get_all(self, klass, school, filter_str, lo, easy_filter=True, school_prefix=True):
         if school:
             schools = [School.cache(school)]
         else:
             schools = School.from_binddn(lo)
         if easy_filter:
-            filter_str = _sanitize_filter_str(filter_str)
+            filter_str = _sanitize_filter_str(filter_str, add_asterisks=True)
         objs = []
         for school in schools:
             try:
                 objs.extend(
-                    klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=easy_filter)
+                    klass.get_all(
+                        lo,
+                        school.name,
+                        filter_str=filter_str,
+                        easy_filter=easy_filter,
+                        school_prefix=school_prefix,
+                    )
                 )
             except noObject as exc:
                 MODULE.error("Could not get all objects of %r: %r" % (klass.__name__, exc))
@@ -454,7 +462,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     @LDAP_Connection()
     def get_users(self, request, ldap_user_read=None):
         user_class = USER_TYPES.get(request.options["type"], User)
-        filter_str = _sanitize_filter_str(request.options.get("filter"))
+        filter_str = _sanitize_filter_str(request.options.get("filter"), add_asterisks=True)
         if filter_str:
             filter_str = str(user_class.build_easy_filter(filter_str))
         account_status = request.options.get("accountStatus", "all")
@@ -465,7 +473,12 @@ class Instance(SchoolBaseModule, SchoolImport):
             else:
                 filter_str = disabled_filter
         return self._get_all(
-            user_class, request.options["school"], filter_str, ldap_user_read, easy_filter=False
+            user_class,
+            request.options["school"],
+            filter_str,
+            ldap_user_read,
+            easy_filter=False,
+            school_prefix=False,
         )
 
     get_user = _get_obj
@@ -522,14 +535,16 @@ class Instance(SchoolBaseModule, SchoolImport):
     @sanitize(
         school=StringSanitizer(required=True),
         type=ChoicesSanitizer(["all"] + list(COMPUTER_TYPES), required=True),
-        filter=StringSanitizer(default=""),
+        filter=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=True),
     )
     @response
     @LDAP_Connection()
     def get_computers(self, request, ldap_user_read=None):
         school = request.options["school"]
         computer_class = COMPUTER_TYPES.get(request.options["type"], SchoolComputer)
-        return self._get_all(computer_class, school, request.options.get("filter"), ldap_user_read)
+        return self._get_all(
+            computer_class, school, request.options.get("filter"), ldap_user_read, school_prefix=False
+        )
 
     get_computer = _get_obj
     modify_computer = _modify_obj
@@ -573,7 +588,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     delete_computer = _delete_obj
 
-    @sanitize(school=StringSanitizer(required=True), filter=StringSanitizer(default=""))
+    @sanitize(
+        school=StringSanitizer(required=True),
+        filter=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=True),
+    )
     @response
     @LDAP_Connection()
     def get_classes(self, request, ldap_user_read=None):
@@ -586,7 +604,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     delete_class = _delete_obj
 
     @sanitize(
-        filter=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+        filter=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=True),
     )
     @response
     @LDAP_Connection()

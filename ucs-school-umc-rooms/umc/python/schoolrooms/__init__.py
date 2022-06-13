@@ -82,7 +82,9 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None):
         school = request.options["school"]
-        pattern = LDAP_Filter.forGroups(request.options.get("pattern", ""), school)
+        pattern = LDAP_Filter.forGroups(
+            request.options.get("pattern", ""), school, _escape_filter_chars=False, school_prefix=school
+        )
         result = [
             {"name": x.get_relative_name(), "description": x.description or "", "$dn$": x.dn}
             for x in ComputerRoom.get_all(ldap_user_read, school, pattern)

@@ -293,7 +293,6 @@ class SchoolBaseModule(Base):
         attr = attr or []
         users = []
         user_module = udm_modules.get("users/user")
-
         if group not in (None, "None"):
             # The following code block prevents a massive performance loss if the group
             # contains far less users than all available users. The else-block opens
@@ -302,10 +301,11 @@ class SchoolBaseModule(Base):
             user_dns = [
                 group.decode("utf-8") for group in ldap_connection.get(group).get("uniqueMember", [])
             ]
+
             for userdn in set(user_dns):
                 search_filter_list = [LDAP_Filter.forSchool(school)]
                 if pattern:
-                    search_filter_list.append(LDAP_Filter.forUsers(pattern))
+                    search_filter_list.append(LDAP_Filter.forUsers(pattern, False))
                 for cls in classes:
                     search_filter_list.append(cls.type_filter)
                     # concatenate LDAP filters
@@ -338,7 +338,7 @@ class SchoolBaseModule(Base):
                             "&",
                             [
                                 parse(LDAP_Filter.forSchool(school)),
-                                parse(LDAP_Filter.forUsers(pattern)),
+                                parse(LDAP_Filter.forUsers(pattern, False)),
                                 parse(cls.type_filter),
                             ],
                         )
@@ -354,13 +354,22 @@ class LDAP_Filter:
         return filter_format("(ucsschoolSchool=%s)", [school])
 
     @staticmethod
-    def forUsers(pattern):  # type: (str) -> str
-        return LDAP_Filter.forAll(pattern, ["lastname", "username", "firstname"])
+    def forUsers(pattern, _escape_filter_chars=True):  # type: (str, Optional[bool]) -> str
+        return LDAP_Filter.forAll(
+            pattern, ["lastname", "username", "firstname"], _escape_filter_chars=_escape_filter_chars
+        )
 
     @staticmethod
-    def forGroups(pattern, school=None):  # type: (str, Optional[str]) -> str
+    def forGroups(
+        pattern, school=None, _escape_filter_chars=True, school_prefix=""
+    ):  # type: (str, Optional[str], Optional[bool], Optional[str]) -> str
         # school parameter is deprecated
-        return LDAP_Filter.forAll(pattern, ["name", "description"])
+        return LDAP_Filter.forAll(
+            pattern,
+            ["name", "description"],
+            _escape_filter_chars=_escape_filter_chars,
+            school_prefix=school_prefix,
+        )
 
     @staticmethod
     def forComputers(pattern):  # type: (str) -> str
@@ -369,14 +378,25 @@ class LDAP_Filter:
     regWhiteSpaces = re.compile(r"\s+")
 
     @staticmethod
-    def forAll(pattern, subMatch=[], fullMatch=[], prefixes={}):
-        # type: (str, Optional[List[str]], Optional[List[str]], Optional[Dict[str, Any]]) -> str
+    def forAll(
+        pattern,  # type: str
+        subMatch=[],  # type: Optional[List[str]]
+        fullMatch=[],  # type: Optional[List[str]]
+        prefixes={},  # type: Optional[Dict[str, Any]]
+        _escape_filter_chars=True,  # type: Optional[bool]
+        school_suffix="",  # type: Optional[str]
+        school_prefix="",  # type: Optional[str]
+        seperator="-",  # type: Optional[str]
+    ):
+        # type: (...) -> str
         expressions = []
         for iword in LDAP_Filter.regWhiteSpaces.split(pattern or ""):
             # evaluate the subexpression (search word over different attributes)
+
             subexpr = []
-            # all expressions for a full string match
-            iword = escape_filter_chars(iword)
+            if _escape_filter_chars:
+                # all expressions for a full string match
+                iword = escape_filter_chars(iword)
             if iword:
                 subexpr += ["(%s=%s)" % (jattr, iword) for jattr in fullMatch]
 
@@ -385,8 +405,13 @@ class LDAP_Filter:
                 iword = "*"
             elif iword.find("*") < 0:
                 iword = "*%s*" % iword
-            subexpr += ["(%s=%s%s)" % (jattr, prefixes.get(jattr, ""), iword) for jattr in subMatch]
 
+            if school_prefix:
+                iword = school_prefix + seperator + iword
+            if school_suffix:
+                iword = iword + seperator + school_suffix
+
+            subexpr += ["(%s=%s%s)" % (jattr, prefixes.get(jattr, ""), iword) for jattr in subMatch]
             # append to list of all search expressions
             expressions.append("(|%s)" % "".join(subexpr))
 

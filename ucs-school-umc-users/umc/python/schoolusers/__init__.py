@@ -66,14 +66,13 @@ class Instance(SchoolBaseModule):
             "school": SchoolSanitizer(required=True),
             "class": StringSanitizer(required=True),  # allow_none=True
             "pattern": LDAPSearchSanitizer(
-                required=True, default="", use_asterisks=True, add_asterisks=False
+                required=True, default="", use_asterisks=True, add_asterisks=True
             ),
         }
     )
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None, ldap_position=None):
         """Searches for students"""
-
         klass = request.options.get("class")
         if klass in (None, "None"):
             klass = None

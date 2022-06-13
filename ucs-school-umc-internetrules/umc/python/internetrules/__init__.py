@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import fnmatch
 import re
 
 import six
@@ -65,7 +66,7 @@ _filterTypesInv = dict((_i[1], _i[0]) for _i in _filterTypes.items())
 
 class Instance(SchoolBaseModule):
     @sanitize(
-        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False)
+        pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=True)
     )
     def query(self, request):
         """Searches for internet filter rules
@@ -90,9 +91,10 @@ class Instance(SchoolBaseModule):
                 wlan=irule.wlan,
             )
             for irule in rules.list()
-            if pattern in irule.name.lower() or _matchDomain(irule.domains)
+            if pattern in irule.name.lower()
+            or _matchDomain(irule.domains)
+            or fnmatch.fnmatchcase(irule.name, pattern)
         ]
-
         MODULE.info("internetrules.query: results: %s" % (result,))
         self.finished(request.id, result)
 
@@ -392,12 +394,37 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection()
     def groups_query(self, request, ldap_user_read=None, ldap_position=None):
         """List all groups (classes, workgroups) and their assigned internet rule"""
-        pattern = LDAP_Filter.forAll(request.options.get("pattern", ""), ["name", "description"])
         school = request.options["school"]
+        pattern = LDAP_Filter.forAll(
+            request.options.get("pattern", ""),
+            ["name", "description"],
+            _escape_filter_chars=False,
+            school_prefix=school,
+        )
+        pattern_with_school_suffix = LDAP_Filter.forAll(
+            request.options.get("pattern", ""),
+            ["name", "description"],
+            _escape_filter_chars=False,
+            school_suffix=school,
+        )
+        pattern_with_space_school_suffix = LDAP_Filter.forAll(
+            request.options.get("pattern", ""),
+            ["name", "description"],
+            _escape_filter_chars=False,
+            school_suffix=school,
+            seperator=" ",  # For the case: Domain Users <OU> and possibly others?!
+        )
         groups = [
-            x for x in Group.get_all(ldap_user_read, school, pattern) if not x.self_is_computerroom()
+            x
+            for x in Group.get_all(
+                ldap_user_read,
+                school,
+                "(|{}{}{})".format(
+                    pattern, pattern_with_school_suffix, pattern_with_space_school_suffix
+                ),
+            )
+            if not x.self_is_computerroom()
         ]
-
         internet_rules = rules.getGroupRuleName([i.name for i in groups])
         name = re.compile("-%s$" % (re.escape(school)), flags=re.I)
         result = [
@@ -411,7 +438,6 @@ class Instance(SchoolBaseModule):
             for i in groups
         ]
         result.sort(key=lambda x: x["name"])
-
         self.finished(request.id, result)
 
     @sanitize(

@@ -901,8 +901,10 @@ class UCSSchoolHelperAbstractClass(object):
         cls._initialized_udm_modules.append(cls._meta.udm_module)
 
     @classmethod
-    def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
-        # type: (LoType, str, Optional[str], Optional[bool], Optional[SuperOrdinateType]) -> List[UCSSchoolModel]  # noqa: E501
+    def get_all(
+        cls, lo, school, filter_str=None, easy_filter=False, superordinate=None, school_prefix=False
+    ):
+        # type: (LoType, str, Optional[str], Optional[bool], Optional[SuperOrdinateType], Optional[bool]) -> List[UCSSchoolModel]  # noqa: E501
         """
         Returns a list of all objects that can be found in cls.get_container() with the
         correct udm_module
@@ -911,6 +913,8 @@ class UCSSchoolHelperAbstractClass(object):
         """
         cls.init_udm_module(lo)
         complete_filter = cls._meta.udm_filter
+        if school_prefix:
+            filter_str = school + "-" + filter_str
         if complete_filter and not complete_filter.startswith("("):
             complete_filter = "({})".format(complete_filter)
         if easy_filter:
