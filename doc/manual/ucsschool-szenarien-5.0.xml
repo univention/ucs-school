@@ -1653,9 +1653,7 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<para>
-							Alle benötigten Pakete werden während des
-							Domänenbeitritts installiert
-							und für die zu replizierende Schule konfiguriert.
+                            Alle benötigten Pakete werden während des Domänenbeitritts installiert.
 						</para>
 					</listitem>
 					<listitem>
