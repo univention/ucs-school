@@ -1,0 +1,16 @@
+@startuml
+title Role and Access Model - Sequence Diagram
+skinparam sequenceMessageAlign center
+Browser -> IDP : Credentials
+Browser <- IDP : Token
+Browser -> "UMC Frontend API (BFF)" as BFF : Token, Target-ID
+BFF -> IDP : verify Token
+IDP -> BFF : OK/Error
+BFF -> "Kelvin API" as Kelvin : Credentials, Target-ID, Actor-ID
+Kelvin -> BFF : Target-Data, Actor-Data
+BFF -> OPA : Rule, Target-Data, Actor-Data
+OPA -> BFF : Filtered Target-Data, Metadata
+BFF -> "UDM REST API" as UDM : Target-Data
+UDM -> BFF : Type Data for users/user
+BFF -> Browser : Filtered Target-Data, Metadata
+@enduml
