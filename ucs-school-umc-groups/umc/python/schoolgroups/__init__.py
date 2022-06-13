@@ -36,6 +36,7 @@ from ldap.filter import filter_format
 
 import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.attributes import ValidationError
+from ucsschool.lib.models.base import WrongObjectType
 from ucsschool.lib.models.group import SchoolClass, SchoolGroup, WorkGroup
 from ucsschool.lib.models.share import GroupShare
 from ucsschool.lib.models.user import Teacher, TeachersAndStaff, User
@@ -95,6 +96,9 @@ def _filter_users(
 ):
     """Validate users according to the modification type (flavor).
 
+    Only users are checked, DNs of other objects (e.g., computers) are always
+    kept.
+
     Checks:
       * User exists.
       * User belongs to the given school.
@@ -112,6 +116,11 @@ def _filter_users(
     for userdn in input_users:
         try:
             user = User.from_dn(userdn, None, ldap_machine_write)
+        except WrongObjectType:
+            # the object is not a user, so it will just be added without filtering
+            users.append(userdn)
+            MODULE.info("Adding non user object %r." % userdn)
+            continue
         except udm_exceptions.noObject as exc:
             MODULE.error("Not adding not existing user %r to group: %r." % (userdn, exc))
             continue

@@ -19,6 +19,7 @@ from univention.lib.umc import BadRequest
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.schoolgroups import _filter_users
+from univention.testing.ucsschool.computerroom import UmcComputer
 from univention.testing.ucsschool.user import User as TestUser
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
@@ -163,3 +164,34 @@ def test_add_student_from_other_school_to_workgroup_fails(ucr, schoolenv):
                 }
             ],
         )
+
+
+def test_non_user_objects_are_not_removed(ucr, schoolenv, lo):
+    host = ucr.get("hostname")
+    school, _ = schoolenv.create_ou(name_edudc=host)
+    connection = Client.get_test_connection()
+    work_group = Workgroup(school, connection=connection)
+    work_group.create()
+    computer = UmcComputer(school, "windows")
+    computer.create()
+    utils.wait_for_replication()
+    work_group.verify_exists(group_should_exist=True, share_should_exist=True)
+    users = [computer.dn()]
+
+    result = _filter_users(users, school, "workgroup-admin", lo)
+    assert result == users
+
+    add_computer = connection.umc_command(
+        "schoolgroups/put",
+        flavor="workgroup-admin",
+        options=[
+            {
+                "object": {
+                    "$dn$": work_group.dn(),
+                    "members": users,
+                }
+            }
+        ],
+    ).result
+
+    assert add_computer
