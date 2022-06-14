@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.50) unstable; urgency=medium
+
+  * Bug #54040: add test for _filter_users function to check that non user
+    objects are not filtered out.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Tue, 14 Jun 2022 06:28:22 +0300
+
 ucs-test-ucsschool (7.3.49) unstable; urgency=medium
 
   * Bug #54833: Remove dcs from global groups before their deletion
