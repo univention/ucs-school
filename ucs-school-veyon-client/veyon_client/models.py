@@ -31,7 +31,18 @@ import enum as enum
 from collections import namedtuple
 
 
+class VeyonConnectionError(Exception):
+    """Raised when communication with the Veyon WebAPI Server is not possible"""
+
+
 class VeyonError(Exception):
+    """Raised when the Veyon WebAPI returns a non-zero error code
+
+    See the official documentation within
+    https://docs.veyon.io/en/latest/developer/webapi.html#general
+    for possible error codes.
+    """
+
     def __init__(self, message, code):
         super(VeyonError, self).__init__(message)
         self.code = code

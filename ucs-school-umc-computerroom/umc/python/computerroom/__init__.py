@@ -280,7 +280,7 @@ class ComputerSanitizer(StringSanitizer):
     def _sanitize(self, value, name, further_args):
         value = super(ComputerSanitizer, self)._sanitize(value, name, further_args)
         try:
-            return self.instance._italc.get(value)
+            return self.instance._computerroom.get(value)
         except KeyError:
             raise UMC_Error("Unknown computer")
 
@@ -338,7 +338,7 @@ class Instance(SchoolBaseModule):
     def init(self):
         SchoolBaseModule.init(self)
         ComputerSanitizer.instance = self
-        self._italc = ComputerRoomManager()
+        self._computerroom = ComputerRoomManager()
         self._random = Random()
         self._random.seed()
         self._lessons = SchoolLessons()
@@ -359,7 +359,7 @@ class Instance(SchoolBaseModule):
                     MODULE.info("Loading plugin %r from module %r" % (plugin, module))
                     if not name.startswith("_") and plugin is not Plugin and issubclass(plugin, Plugin):
                         try:
-                            plugin = plugin(self, self._italc)
+                            plugin = plugin(self, self._computerroom)
                         except Exception:
                             MODULE.error(traceback.format_exc())
                         else:
@@ -368,18 +368,19 @@ class Instance(SchoolBaseModule):
     def destroy(self):
         """Remove lock file when UMC module exists"""
         MODULE.info("Cleaning up")
-        if self._italc.room:
+        if self._computerroom.room:
             # do not remove lock file during exam mode
-            info = _readRoomInfo(self._italc.roomDN)
+            info = _readRoomInfo(self._computerroom.roomDN)
             MODULE.info("room info: %s" % info)
             if info and not info.get("exam"):
                 MODULE.info(
-                    "Removing lock file for room %s (%s)" % (self._italc.room, self._italc.roomDN)
+                    "Removing lock file for room %s (%s)"
+                    % (self._computerroom.room, self._computerroom.roomDN)
                 )
-                _freeRoom(self._italc.roomDN, self.user_dn)
-            for comp in self._italc.values():
+                _freeRoom(self._computerroom.roomDN, self.user_dn)
+            for comp in self._computerroom.values():
                 comp.should_run = False
-            while any([comp.is_alive() for comp in self._italc.values()]):
+            while any([comp.is_alive() for comp in self._computerroom.values()]):
                 time.sleep(0.1)
             MODULE.info("All threads dead!")
         _exit(0)
@@ -414,11 +415,16 @@ class Instance(SchoolBaseModule):
             message = "UNKNOWN_ROOM"
         else:
             # set room and school
-            if self._italc.school != school:
-                self._italc.school = school
-            if self._italc.room != roomDN:
+            if self._computerroom.school != school:
+                self._computerroom.school = school
+
+            # The expression "self._computerroom.room != roomDN" will always resolve to true
+            # because room is the computerroom name and not a DN. Should be removed?
+            if self._computerroom.room != roomDN:
                 try:
-                    self._italc.room = roomDN
+                    # setting the room attribute will, among other things, trigger
+                    # a connection test in room_management.py if the Veyon backend is used (Bug #54886)
+                    self._computerroom.room = roomDN
                 except ComputerRoomError:
                     success = False
                     message = "EMPTY_ROOM"
@@ -531,24 +537,24 @@ class Instance(SchoolBaseModule):
         )
 
     def _checkRoomAccess(self):
-        if not self._italc.room:
+        if not self._computerroom.room:
             return  # no room has been selected so far
 
         # make sure that we run the current room session
-        userDN = _getRoomOwner(self._italc.roomDN)
+        userDN = _getRoomOwner(self._computerroom.roomDN)
         if userDN and not compare_dn(userDN, self.user_dn):
             raise UMC_Error(_("A different user is already running a computer room session."))
 
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None):
         """Searches for entries. This is not allowed if the room could not be acquired."""
-        if not self._italc.school or not self._italc.room:
+        if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error("no room selected")
 
         if request.options.get("reload", False):
-            self._italc.room = self._italc.room  # believe me that makes sense :)
+            self._computerroom.room = self._computerroom.room  # believe me that makes sense :)
 
-        result = [computer.dict for computer in self._italc.values()]
+        result = [computer.dict for computer in self._computerroom.values()]
         result.sort(key=lambda c: c["id"])
 
         MODULE.info("computerroom.query: result: %s" % (result,))
@@ -561,11 +567,11 @@ class Instance(SchoolBaseModule):
         be included in the result
         """
 
-        if not self._italc.school or not self._italc.room:
+        if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error("no room selected")
 
-        computers = [computer.dict for computer in self._italc.values() if computer.hasChanged]
-        info = _readRoomInfo(self._italc.roomDN)
+        computers = [computer.dict for computer in self._computerroom.values() if computer.hasChanged]
+        info = _readRoomInfo(self._computerroom.roomDN)
         result = {
             "computers": computers,
             "room_info": info,
@@ -670,10 +676,10 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, response, mimetype="application/x-vnc")
 
     def _read_rules_end_at(self):
-        room_file = _getRoomFile(self._italc.roomDN)
+        room_file = _getRoomFile(self._computerroom.roomDN)
         rule_end_at = None
         if os.path.exists(room_file):
-            roomInfo = _readRoomInfo(self._italc.roomDN)
+            roomInfo = _readRoomInfo(self._computerroom.roomDN)
             atjob_id = roomInfo.get("atjobID")
             if atjob_id is not None:
                 job = atjobs.load(atjob_id, extended=True)
@@ -681,9 +687,9 @@ class Instance(SchoolBaseModule):
                     rule_end_at = job.execTime
         else:
             # Fallback in case the roomInfo file was deleted
-            MODULE.warn("No room file {}".format(self._italc.roomDN))
+            MODULE.warn("No room file {}".format(self._computerroom.roomDN))
             for job in atjobs.list(extended=True):
-                if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
+                if job.comments.get(Instance.ATJOB_KEY, False) == self._computerroom.room:
                     if job.execTime >= datetime.datetime.now():
                         rule_end_at = job.execTime
                     break
@@ -693,14 +699,14 @@ class Instance(SchoolBaseModule):
     def settings_get(self):
         """Return the current settings for a room"""
 
-        if not self._italc.school or not self._italc.room:
+        if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error("no room selected")
 
         ucr.load()
-        rule = ucr.get("proxy/filter/room/%s/rule" % self._italc.room, "none")
+        rule = ucr.get("proxy/filter/room/%s/rule" % self._computerroom.room, "none")
         if rule == self._username:
             rule = "custom"
-        shareMode = ucr.get("samba/sharemode/room/%s" % self._italc.room, "all")
+        shareMode = ucr.get("samba/sharemode/room/%s" % self._computerroom.room, "all")
         # load custom rule:
         key_prefix = "proxy/filter/setting-user/%s/domain/whitelisted/" % self._username
         custom_rules = []
@@ -708,7 +714,7 @@ class Instance(SchoolBaseModule):
             if key.startswith(key_prefix):
                 custom_rules.append(ucr[key])
 
-        printMode = ucr.get("samba/printmode/room/%s" % self._italc.room, "default")
+        printMode = ucr.get("samba/printmode/room/%s" % self._computerroom.room, "default")
 
         # find end of lesson
         period = self._lessons.current
@@ -746,7 +752,7 @@ class Instance(SchoolBaseModule):
     def finish_exam(self):
         """Finish the exam in the current room"""
         self._settings_set(printMode="default", internetRule="none", shareMode="all", customRule="")
-        _updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, examEndTime=None)
+        _updateRoomInfo(self._computerroom.roomDN, exam=None, examDescription=None, examEndTime=None)
 
     @check_room_access
     def _start_exam(self, room, exam, examDescription, examEndTime):
@@ -758,7 +764,10 @@ class Instance(SchoolBaseModule):
             )
 
         _updateRoomInfo(
-            self._italc.roomDN, exam=exam, examDescription=examDescription, examEndTime=examEndTime
+            self._computerroom.roomDN,
+            exam=exam,
+            examDescription=examDescription,
+            examEndTime=examEndTime,
         )
 
     @sanitize(
@@ -787,28 +796,28 @@ class Instance(SchoolBaseModule):
     def _settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
         """Defines settings for a room"""
 
-        if not self._italc.school or not self._italc.room:
+        if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error("no room selected")
 
         # find AT jobs for the room at remove them
         jobs = atjobs.list(extended=True)
         for job in jobs:
-            if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
+            if job.comments.get(Instance.ATJOB_KEY, False) == self._computerroom.room:
                 job.rm()
         lo, po = getMachineConnection()
         hosts = list(
             itertools.chain.from_iterable(
                 [
                     c.ip_address
-                    for c in ComputerRoom.from_dn(self._italc.roomDN, None, lo).get_computers(lo)
+                    for c in ComputerRoom.from_dn(self._computerroom.roomDN, None, lo).get_computers(lo)
                     if not c.teacher_computer
                 ]
             )
         )
-        reset_room_settings(self._italc.room, hosts)
-        _updateRoomInfo(self._italc.roomDN, atjobID=None)
+        reset_room_settings(self._computerroom.room, hosts)
+        _updateRoomInfo(self._computerroom.roomDN, atjobID=None)
 
-        roomInfo = _readRoomInfo(self._italc.roomDN)
+        roomInfo = _readRoomInfo(self._computerroom.roomDN)
         in_exam_mode = roomInfo.get("exam")
 
         # reset to defaults. No atjob is necessary.
@@ -827,21 +836,21 @@ class Instance(SchoolBaseModule):
         if printMode == "none":
             vappend["samba/printmode/hosts/%s" % printMode] = hosts
             vappend["cups/printmode/hosts/%s" % printMode] = hosts
-            vset["samba/printmode/room/%s" % self._italc.room] = printMode
+            vset["samba/printmode/room/%s" % self._computerroom.room] = printMode
         else:
-            vunset_now.append("samba/printmode/room/%s" % self._italc.room)
+            vunset_now.append("samba/printmode/room/%s" % self._computerroom.room)
 
         # share mode
         if shareMode == "home":
-            vset["samba/sharemode/room/%s" % self._italc.room] = shareMode
+            vset["samba/sharemode/room/%s" % self._computerroom.room] = shareMode
             vappend["samba/othershares/hosts/deny"] = hosts
             vappend["samba/share/Marktplatz/hosts/deny"] = hosts
         else:
-            vunset_now.append("samba/sharemode/room/%s" % self._italc.room)
+            vunset_now.append("samba/sharemode/room/%s" % self._computerroom.room)
 
         # internet rule
         if internetRule != "none":
-            vappend["proxy/filter/room/%s/ip" % self._italc.room] = hosts
+            vappend["proxy/filter/room/%s/ip" % self._computerroom.room] = hosts
             if internetRule == "custom":
                 # remove old rules
                 i = 1
@@ -852,7 +861,7 @@ class Instance(SchoolBaseModule):
                         i += 1
                     else:
                         break
-                vset["proxy/filter/room/%s/rule" % self._italc.room] = self._username
+                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = self._username
                 vset["proxy/filter/setting-user/%s/filtertype" % self._username] = "whitelist-block"
                 i = 1
                 for domain in (customRule or "").split("\n"):
@@ -872,10 +881,10 @@ class Instance(SchoolBaseModule):
                         ] = parsed.path
                         i += 1
             else:
-                vset["proxy/filter/room/%s/rule" % self._italc.room] = internetRule
+                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = internetRule
         else:
-            vunset_now.append("proxy/filter/room/%s/ip" % self._italc.room)
-            vunset_now.append("proxy/filter/room/%s/rule" % self._italc.room)
+            vunset_now.append("proxy/filter/room/%s/ip" % self._computerroom.room)
+            vunset_now.append("proxy/filter/room/%s/rule" % self._computerroom.room)
         # write configuration
         # remove old values
         handler_unset(vunset_now)
@@ -917,7 +926,7 @@ class Instance(SchoolBaseModule):
 
         # create at job to remove settings
         cmd = "/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules --room %s" % (
-            quote(self._italc.roomDN)
+            quote(self._computerroom.roomDN)
         )
         MODULE.info("command for reinitialization is: %s" % (cmd,))
 
@@ -933,8 +942,8 @@ class Instance(SchoolBaseModule):
 
             # AT job for the normal case
             MODULE.info("Remove settings at %s" % (starttime,))
-            atjob_id = atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._italc.room}).nr
-            _updateRoomInfo(self._italc.roomDN, atjobID=atjob_id)
+            atjob_id = atjobs.add(cmd, starttime, {Instance.ATJOB_KEY: self._computerroom.room}).nr
+            _updateRoomInfo(self._computerroom.roomDN, atjobID=atjob_id)
             self._ruleEndAt = starttime
 
         self.reset_smb_connections()
@@ -948,7 +957,7 @@ class Instance(SchoolBaseModule):
 
     def reset_smb_connections(self):
         smbstatus = SMB_Status()
-        italc_users = [x.lower() for x in self._italc.users if x]
+        italc_users = [x.lower() for x in self._computerroom.users if x]
         MODULE.info("iTALC users: %s" % ", ".join(italc_users))
         for process in smbstatus:
             MODULE.info("SMB process: %s" % str(process))
@@ -960,14 +969,14 @@ class Instance(SchoolBaseModule):
     @check_room_access
     def demo_start(self, request):
         """Starts a presentation mode"""
-        self._italc.startDemo(request.options["server"], True)
+        self._computerroom.startDemo(request.options["server"], True)
         self.finished(request.id, True)
 
     @check_room_access
     def demo_stop(self, request):
         """Stops a presentation mode"""
 
-        self._italc.stopDemo()
+        self._computerroom.stopDemo()
         self.finished(request.id, True)
 
     @sanitize(

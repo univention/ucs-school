@@ -60,12 +60,19 @@ from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
-from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
+from ucsschool.veyon_client.models import (
+    AuthenticationMethod,
+    Feature,
+    ScreenshotFormat,
+    VeyonConnectionError,
+    VeyonError,
+)
 from univention.admin.uexceptions import noObject
 from univention.admin.uldap import access as LoType
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.computerroom import wakeonlan
 
 LV = TypeVar("LV")
@@ -749,6 +756,17 @@ class ComputerRoomManager(dict):
     ROOM_DN = None
     VEYON_BACKEND = False
 
+    UMC_VEYON_CLIENT_ERROR_MESSAGE = _(
+        "Computers in the computerroom can currently not be remote controlled, "
+        "because the associated service is not available. "
+        "The system will try to restart this service, please try again "
+        "in a few moments. "
+        "If the problem persists, please contact the system administrator."
+    )
+    UMC_VEYON_CLIENT_ERROR_LOG_MESSAGE = (
+        "Connection to Veyon WebAPI Server (UCS@school Veyon Proxy) failed."
+    )
+
     def __init__(self):
         dict.__init__(self)
         self._user_map = UserMap(ITALC_USER_REGEX)
@@ -793,6 +811,7 @@ class ComputerRoomManager(dict):
         if not self._veyon_client:
             with open(VEYON_KEY_FILE, "r") as fp:
                 key_data = fp.read().strip()
+
             self._veyon_client = VeyonClient(
                 "http://localhost:11080/api/v1",
                 credentials={"keyname": "teacher", "keydata": key_data},
@@ -808,6 +827,8 @@ class ComputerRoomManager(dict):
         return [x.ipAddress for x in values]
 
     def _clear(self):
+        if self.veyon_backend:
+            self._test_veyon_backend_connection()
         if ComputerRoomManager.ROOM:
             for name, computer in self.items():
                 computer.stop()
@@ -817,6 +838,17 @@ class ComputerRoomManager(dict):
             ComputerRoomManager.ROOM = None
             ComputerRoomManager.ROOM_DN = None
             ComputerRoomManager.VEYON_BACKEND = False
+
+    def _test_veyon_backend_connection(self):
+        try:
+            self.veyon_client.test_connection()
+        except VeyonConnectionError:
+            MODULE.error(ComputerRoomManager.UMC_VEYON_CLIENT_ERROR_LOG_MESSAGE)
+            MODULE.error(traceback.format_exc())
+            raise UMC_Error(
+                message=ComputerRoomManager.UMC_VEYON_CLIENT_ERROR_MESSAGE,
+                traceback=traceback.format_exc(),
+            )
 
     @LDAP_Connection()
     def _set(self, room, ldap_user_read=None):
@@ -858,6 +890,9 @@ class ComputerRoomManager(dict):
             )
         )
         if self.veyon_backend:
+
+            # test the availability of the veyon service, if used as a backend
+            self._test_veyon_backend_connection()
             self._user_map = UserMap(VEYON_USER_REGEX)
         else:
             self._user_map = UserMap(ITALC_USER_REGEX)

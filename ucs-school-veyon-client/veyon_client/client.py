@@ -33,7 +33,14 @@ from threading import Lock
 
 import requests
 
-from .models import AuthenticationMethod, ScreenshotFormat, VeyonError, VeyonSession, VeyonUser
+from .models import (
+    AuthenticationMethod,
+    ScreenshotFormat,
+    VeyonConnectionError,
+    VeyonError,
+    VeyonSession,
+    VeyonUser,
+)
 from .utils import check_veyon_error
 
 try:
@@ -142,12 +149,25 @@ class VeyonClient:
                 "{}/authentication".format(self._url),
                 headers={"Connection-Uid": session_uid},
             )
+        except (requests.ConnectionError, requests.Timeout):
+            raise VeyonConnectionError
         except VeyonError:
             pass  # We do not care if the connection was already invalid or does not exist anymore
         if host in self._session_cache:
             del self._session_cache[host]
         if host in self._last_used:
             del self._last_used[host]
+
+    def test_connection(self):
+        """Check if the veyon WebAPI Server is reachable
+
+        :raises VeyonConnectionError: if the there is no response.
+        """
+        try:
+            requests.head("{}/feature".format(self._url), timeout=self._ping_timeout)
+        except (requests.ConnectionError, requests.Timeout):
+            raise VeyonConnectionError("No response from WebAPI Server ({}).".format(self._url))
+        return True
 
     def get_screenshot(
         self,
