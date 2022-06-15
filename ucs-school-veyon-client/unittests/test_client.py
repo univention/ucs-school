@@ -38,7 +38,13 @@ import pytest
 import requests
 from requests import ConnectionError, Response
 from veyon_client.client import VeyonClient
-from veyon_client.models import AuthenticationMethod, VeyonError, VeyonSession, VeyonUser
+from veyon_client.models import (
+    AuthenticationMethod,
+    VeyonConnectionError,
+    VeyonError,
+    VeyonSession,
+    VeyonUser,
+)
 
 
 def monkey_get(*args, **kwargs):
@@ -126,6 +132,12 @@ def test_connection_error_on_unreachable_url(monkeypatch):
     with pytest.raises(ConnectionError):
         client = VeyonClient("unreachable", {})
         client.ping()
+
+
+def test_connection_test(monkeypatch):
+    with pytest.raises(VeyonConnectionError):
+        client = VeyonClient("http://unreachableurl", {})
+        client.test_connection()
 
 
 def test_authentication_method_not_available(monkeypatch):
