@@ -65,6 +65,7 @@ from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanit
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
+from ucsschool.veyon_client.models import VeyonConnectionError
 from univention.admin.syntax import gid
 from univention.admin.uldap import getMachineConnection
 from univention.config_registry import handler_set, handler_unset
@@ -387,6 +388,19 @@ class Instance(SchoolBaseModule):
         success = True
         message = "OK"
 
+        umc_veyon_client_error_message = _(
+            "Computers in the computerroom can currently not be remote controlled, "
+            "because communication with the Veyon WebAPI Server has failed. "
+            "It is possible that the associated service is not running. "
+            "Please contact the system administrator."
+        )
+        try:
+            self._computerroom.veyon_client.test_connection()
+        except VeyonConnectionError:
+            MODULE.error("Connection to Veyon WebAPI Server failed.")
+            MODULE.error(traceback.format_exc())
+            raise UMC_Error(message=umc_veyon_client_error_message, traceback=traceback.format_exc())
+
         # match the corresponding school OU
         try:
             room = ComputerRoom.from_dn(roomDN, None, ldap_user_read)
@@ -404,6 +418,12 @@ class Instance(SchoolBaseModule):
                 except ComputerRoomError:
                     success = False
                     message = "EMPTY_ROOM"
+                except VeyonConnectionError:
+                    MODULE.error("Connection to Veyon WebAPI Server failed.")
+                    MODULE.error(traceback.format_exc())
+                    raise UMC_Error(
+                        message=umc_veyon_client_error_message, traceback=traceback.format_exc()
+                    )
 
         # update the room info file
         if success:

@@ -262,6 +262,7 @@ class ComputerRoomManager(dict):
         if not self._veyon_client:
             with open(VEYON_KEY_FILE, "r") as fp:
                 key_data = fp.read().strip()
+
             self._veyon_client = VeyonClient(
                 "http://localhost:11080/api/v1",
                 credentials={"keyname": "teacher", "keydata": key_data},
