@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-lib
+fix:
+
+desc: |
+ * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54812).
+bug: [54812]
