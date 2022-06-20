@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.17A~5.0.0.202206201725
+fix: 13.0.18A~5.0.0.202206201929
 
 desc: |
  * Internal: The code which executed shell hooks was removed from the UCS@school library (Bug #54755).
