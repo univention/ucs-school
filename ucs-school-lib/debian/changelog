@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.18) unstable; urgency=medium
+
+  * Bug #54812: Change the userExpiry date syntax from iso8601Date to date2.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Fri, 17 Jun 2022 06:15:37 +0300
+
 ucs-school-lib (13.0.17) unstable; urgency=medium
 
   * Bug #54755: remove shell hook support from ucsschool-lib

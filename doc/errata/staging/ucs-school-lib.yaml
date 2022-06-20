@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.17A~5.0.0.202205310903
+fix:
 
 desc: |
  * Internal: The code which executed shell hooks was removed from the UCS@school library (Bug #54755).
@@ -11,4 +11,5 @@ desc: |
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
  * Check if Marktplatz is enabled before checking its consistency (Bug #54248).
-bug: [53506, 54030, 54535, 54248, 54755]
+ * Internal: changed the userexpiry date syntax class (Bug #54812).
+bug: [53506, 54030, 54535, 54248, 54755, 54812]
