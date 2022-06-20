@@ -4,7 +4,7 @@ skinparam sequenceMessageAlign center
 Browser -> IDP : Credentials
 Browser <- IDP : Token
 Browser -> "UMC Frontend API (BFF)" as BFF : Token, Target-ID
-BFF -> IDP : verify Token
+BFF -> IDP : Verify Token
 IDP -> BFF : OK/Error
 BFF -> "Kelvin API" as Kelvin : Credentials, Target-ID, Actor-ID
 Kelvin -> BFF : Target-Data, Actor-Data
