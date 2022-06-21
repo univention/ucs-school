@@ -10,6 +10,6 @@ desc: |
  * The validation was adapted to prevent invalid school names in multiserver environments (Bug #53506)
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
- * Check if Marktplatz is enabled before checking its consistency (Bug #54248).
- * Internal: changed the userexpiry date syntax class (Bug #54812).
+ * A UCR variable was corrected, which was used to check Markplatz shares consistency inside a diagnostic check (Bug #54248).
+ * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54812).
 bug: [53506, 54030, 54535, 54248, 54755, 54812]
