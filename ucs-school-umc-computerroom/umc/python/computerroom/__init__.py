@@ -395,10 +395,13 @@ class Instance(SchoolBaseModule):
             "in a few moments. "
             "If the problem persists, please contact the system administrator."
         )
+        umc_veyon_client_error_log_message = (
+            "Connection to Veyon WebAPI Server (UCS@school Veyon Proxy) failed."
+        )
         try:
             self._computerroom.veyon_client.test_connection()
         except VeyonConnectionError:
-            MODULE.error("Connection to Veyon WebAPI Server (UCS@school Veyon Proxy) failed.")
+            MODULE.error(umc_veyon_client_error_log_message)
             MODULE.error(traceback.format_exc())
             raise UMC_Error(message=umc_veyon_client_error_message, traceback=traceback.format_exc())
 
@@ -420,7 +423,7 @@ class Instance(SchoolBaseModule):
                     success = False
                     message = "EMPTY_ROOM"
                 except VeyonConnectionError:
-                    MODULE.error("Connection to Veyon WebAPI Server failed.")
+                    MODULE.error(umc_veyon_client_error_log_message)
                     MODULE.error(traceback.format_exc())
                     raise UMC_Error(
                         message=umc_veyon_client_error_message, traceback=traceback.format_exc()
