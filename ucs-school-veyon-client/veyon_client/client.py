@@ -158,7 +158,7 @@ class VeyonClient:
     def test_connection(self):
         """Check if the veyon WebAPI Server is reachable
 
-        :raises VeyonConnectionError: Raises VeyonConnectionError if the there is no response.
+        :raises VeyonConnectionError: if the there is no response.
         """
         try:
             requests.head("{}/feature".format(self._url), timeout=self._ping_timeout)
