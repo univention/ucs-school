@@ -390,14 +390,15 @@ class Instance(SchoolBaseModule):
 
         umc_veyon_client_error_message = _(
             "Computers in the computerroom can currently not be remote controlled, "
-            "because communication with the Veyon WebAPI Server has failed. "
-            "It is possible that the associated service is not running. "
-            "Please contact the system administrator."
+            "because the associated service is not available. "
+            "The system will try to restart this service, please try again "
+            "in a few moments. "
+            "If the problem persists, please contact the system administrator."
         )
         try:
             self._computerroom.veyon_client.test_connection()
         except VeyonConnectionError:
-            MODULE.error("Connection to Veyon WebAPI Server failed.")
+            MODULE.error("Connection to Veyon WebAPI Server (UCS@school Veyon Proxy) failed.")
             MODULE.error(traceback.format_exc())
             raise UMC_Error(message=umc_veyon_client_error_message, traceback=traceback.format_exc())
 
