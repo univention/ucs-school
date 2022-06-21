@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (12.0.10) unstable; urgency=medium
+
+  * Bug #53421: Added a connection check for the Veyon Web Api server
+    with a new dedicated error message.
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 21 Jun 2022 08:32:57 +0200
+
 ucs-school-umc-computerroom (12.0.9) unstable; urgency=medium
 
   * Bug #54030: adjusted the wording of some descriptions shown in UMC
