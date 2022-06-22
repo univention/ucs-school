@@ -1,3 +1,9 @@
+ucs-school-umc-exam (10.0.5) unstable; urgency=medium
+
+  * Bug #54896: ignore operational attributes in exam module user copy
+
+ -- Florian Best <best@univention.de>  Fri, 24 Jun 2022 10:54:00 +0200
+
 ucs-school-umc-exam (10.0.4) unstable; urgency=low
 
   * Bug #53988: fix linter errors

@@ -386,6 +386,21 @@ class Instance(SchoolBaseModule):
                 # ignore blacklisted attributes
                 if key in blacklisted_attributes:
                     continue
+                # ignore operational attributes
+                if key in (
+                    "hasSubordinates",
+                    "subschemaSubentry",
+                    "entryDN",
+                    "modifiersName",
+                    "modifyTimestamp",
+                    "entryCSN",
+                    "memberOf",
+                    "createTimestamp",
+                    "creatorsName",
+                    "entryUUID",
+                    "structuralObjectClass",
+                ):
+                    continue
                 if key == "sambaUserWorkstations":  # special handling for this attribute
                     continue
                 # ignore blacklisted attribute values
