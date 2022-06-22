@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-veyon-client
+fix:
+desc: |
+ * An new connection test method has been added (Bug #54886).
+bug: [54886]
