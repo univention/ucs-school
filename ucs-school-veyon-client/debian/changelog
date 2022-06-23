@@ -1,3 +1,9 @@
+ucs-school-veyon-client (2.0.4) unstable; urgency=medium
+
+  * Bug #53421: Added python-typing to build dependencies
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 23 Jun 2022 10:47:14 +0200
+
 ucs-school-veyon-client (2.0.3) unstable; urgency=medium
 
   * Bug #53421: Added a simple connection test method
