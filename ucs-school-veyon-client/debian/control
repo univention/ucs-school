@@ -6,6 +6,7 @@ Build-Depends:
  debhelper (>= 10),
  dh-python,
  python-requests,
+ python-typing,
  ucslint,
  univention-unittests,
 Standards-Version: 3.7.2
