@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-exam
 fix:
 desc: |
- * The creation of exam students does not copy operational LDAP attributes from the original user. This is required for compatibility with UCS 5.0-2 where operational LDAP attributes are exposed in the user information (Bug #54896).
+ * The creation of exam students will no longer copy a specific operational LDAP attributes from the original user. In effect the LDAP attribute blacklist stored in the UCR variable <envar>ucsschool/exam/user/ldap/blacklist</envar> is implicitly extended by a hardcoded set of operational attribute names. This change is required for compatibility with UCS 5.0-2 where operational LDAP attributes are added to the internal user information of UDM (Bug #54896).
 bug: [54896]
