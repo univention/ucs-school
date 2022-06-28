@@ -389,7 +389,7 @@ class Project(_Dict):
         if self.name.startswith(".") or self.name.endswith("."):
             raise ValueError(_('The specified project directory may not start nor end with a ".".'))
         if self.name.endswith(" ") or self.name.startswith(" "):
-            raise ValueError(_("The specified project directory may not end with a space."))
+            raise ValueError(_("The specified project directory may not start nor end with a space."))
         if len(self.name) >= 255:
             raise ValueError(_("The specified project directory may at most be 254 characters long."))
         if not (isinstance(self.description, string_types) and self.description):

@@ -433,7 +433,12 @@ class Instance(SchoolBaseModule):
                 )
             project = util.distribution.Project(new_values)
             logger.info("project=%r", project)
-        project.validate()
+
+        try:
+            project.validate()
+        except ValueError as exc:
+            raise UMC_Error(str(exc))
+
         project.save()
         # copy files into project directory
         if self._tmpDir:
