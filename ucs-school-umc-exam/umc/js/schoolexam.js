@@ -72,6 +72,17 @@ define([
 		return name.slice(0, 255);
 	};
 
+	// helper function that sanitizes a given project directory name
+	var sanitizeDirectoryName = function(name) {
+	    name = name.trim();
+		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g, /^\./g, /\.$/g], function(ichar) {
+			name = name.replace(ichar, '_');
+		});
+
+		// limit the directory name length
+		return name.slice(0, 255);
+	};
+
 	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
 
 		umcpCommand: null,
@@ -223,9 +234,10 @@ define([
 					type: TextBox,
 					required: true,
 					label: _('Directory name'),
-					description: _('The name of the project directory as it will be displayed in the file system. The following special characters are not allowed: "/", "\\", "?", "%", "*", ":", "|", """, "<", ">", "$", "\'".'),
+					invalidMessage: _('The following special characters are not allowed: "/", "\\", "?", "%", "*", ":", "|", """, "<", ">", "$", "\'". Additionally, the project directory may not start nor end with a "." or a space.'),
+					description: _('The name of the project directory as it will be displayed in the file system. The following special characters are not allowed: "/", "\\", "?", "%", "*", ":", "|", """, "<", ">", "$", "\'". Additionally, the project directory may not start nor end with a "." or a space.'),
 					validator: function(value) {
-						return value == sanitizeFilename(value) && value.length > 0;
+						return value == sanitizeDirectoryName(value) && value.length > 0;
 					}
 				}, {
 					type: MultiUploader,
