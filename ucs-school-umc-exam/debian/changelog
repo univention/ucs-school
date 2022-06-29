@@ -1,3 +1,11 @@
+ucs-school-umc-exam (9.0.1-56) unstable; urgency=medium
+
+  * Bug 54908: The directory name validation now detects all incorrect names
+    and displays a user friendly error message. Additionally, the exam directory
+    description has been improved.
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 29 Jun 2022 15:27:12 +0200
+
 ucs-school-umc-exam (9.0.1-55) unstable; urgency=medium
 
   * Bug #52587: migrate to dh_python
