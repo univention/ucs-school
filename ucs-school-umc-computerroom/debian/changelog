@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (11.0.0-34) unstable; urgency=medium
+
+  * Bug #54884: remove veyon invalid session
+
+ -- Felix Botner <botner@univention.de>  Thu, 30 Jun 2022 13:52:59 +0200
+
 ucs-school-umc-computerroom (11.0.0-33) unstable; urgency=medium
 
   * Bug #54886: Added a connection check for the Veyon Web Api server

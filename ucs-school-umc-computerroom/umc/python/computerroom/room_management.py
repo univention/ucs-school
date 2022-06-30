@@ -32,6 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import copy
+import random
 import re
 import subprocess
 import tempfile
@@ -1001,7 +1002,7 @@ class VeyonComputer(threading.Thread):
     def run(self):
         while self.should_run:
             self.update()
-            time.sleep(1.0)
+            time.sleep(1.0 + random.uniform(0, 1))
 
     @property
     def name(self):  # type: () -> Optional[str]
@@ -1193,6 +1194,11 @@ class VeyonComputer(threading.Thread):
                 )
             except VeyonError as exc:
                 MODULE.warn("Veyon error on {}: {}".format(self.name, exc))
+                # InvalidConnection (2)from WebAPI
+                # remove current session as it is invalid
+                # (e.g. webapi has been restarted)
+                if exc.code == 2:
+                    self._veyon_client.remove_session(host=self.ipAddress)
             if veyon_user is None:
                 MODULE.warn("{}: Updating information was not successful.".format(self.name))
                 self.reset_state()
