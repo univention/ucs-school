@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-computerroom
-fix: 11.0.0-33A~4.4.0.202206271621
+fix: 11.0.0-34A~4.4.0.202206301412
 desc: |
  * An error message regarding the Veyon WebAPI Server has been improved (Bug #54886).
  * After a veyon session becomes invalid, a new session is established (Bug #54884).
