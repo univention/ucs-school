@@ -46,3 +46,13 @@ Provides:
  ${python:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
+
+Package: ucs-test-ucsschool-veyon
+Architecture: all
+Depends:
+ ucs-test-ucsschool (= ${source:Version}),
+ python3-molotov
+Provides:
+ ucs-test-module,
+Description: Additional UCS@school tests for ucs-test
+ This package includes some veyon related tests for ucs-test.
