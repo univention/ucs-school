@@ -76,7 +76,13 @@ def test_modify(create_ou, lo, user_ldap_attributes, user_school_attributes):
         utils.verify_ldap_object(dn, expected_attr={"uniqueMember": [obj.dn]}, strict=False)
 
 
-def test_delete(create_ou, lo, model_ldap_object_classes, user_ldap_attributes, user_school_attributes):
+def test_delete(
+    create_ou,
+    lo,
+    model_ldap_object_classes,
+    user_ldap_attributes,
+    user_school_attributes,
+):
     ou_name, ou_dn = create_ou()
     ldap_attrs = user_ldap_attributes([ou_name], UserType.SchoolAdmin)
     groups = [x.decode("UTF-8") for x in ldap_attrs.pop("groups")]
@@ -97,3 +103,27 @@ def test_delete(create_ou, lo, model_ldap_object_classes, user_ldap_attributes, 
     filter_ocs = "".join("(objectClass={})".format(oc) for oc in ocs)
     filter_s = "(&(cn={}){})".format(obj.name, filter_ocs)
     assert lo.searchDn(filter_s) == []
+
+
+def test_remove_from_groups_of_school(create_ou, lo, user_school_attributes, ucr_ldap_base):
+    # Bug 54368
+    # remove_from_groups_of_school() doesn't remove school admins from admins-OU group
+    ou_name, _ = create_ou()
+    attrs = user_school_attributes([ou_name], UserType.SchoolAdmin)
+    admin = SchoolAdmin(**attrs)
+    assert admin.create(lo)
+
+    du_school_dn = f"cn=Domain Users {ou_name},cn=groups,ou={ou_name},{ucr_ldap_base}"
+    ou_admins_dn = f"cn=admins-{ou_name},cn=ouadmins,cn=groups,{ucr_ldap_base}"
+
+    for dn in (du_school_dn, ou_admins_dn):
+        assert admin.dn in [
+            x.decode("UTF-8") for x in lo.get(dn, attr=["uniqueMember"]).get("uniqueMember", [])
+        ]
+
+    admin.remove_from_groups_of_school(ou_name, lo)
+
+    for dn in (du_school_dn, ou_admins_dn):
+        assert admin.dn not in [
+            x.decode("UTF-8") for x in lo.get(dn, attr=["uniqueMember"]).get("uniqueMember", [])
+        ]

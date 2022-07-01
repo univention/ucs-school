@@ -66,7 +66,7 @@ from .attributes import (
     Username,
     WorkgroupsAttribute,
 )
-from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
+from .base import NoObject, RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from .computer import AnyComputer
 from .group import BasicGroup, Group, SchoolClass, SchoolGroup, WorkGroup
 from .misc import MailDomain
@@ -81,10 +81,16 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     name = Username(_("Username"), aka=["Username", "Benutzername"])  # type: str
     schools = Schools(_("Schools"))  # type: List[str]
     firstname = Firstname(
-        _("First name"), aka=["First name", "Vorname"], required=True, unlikely_to_change=True
+        _("First name"),
+        aka=["First name", "Vorname"],
+        required=True,
+        unlikely_to_change=True,
     )  # type: str
     lastname = Lastname(
-        _("Last name"), aka=["Last name", "Nachname"], required=True, unlikely_to_change=True
+        _("Last name"),
+        aka=["Last name", "Nachname"],
+        required=True,
+        unlikely_to_change=True,
     )  # type: str
     birthday = Birthday(
         _("Birthday"), aka=["Birthday", "Geburtstag"], unlikely_to_change=True
@@ -451,7 +457,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     "It is not supported to change the role of a user. %(old_role)s %(name)s cannot "
                     "become a %(new_role)s."
                 )
-                % {"old_role": exc.model.type_name, "name": self.name, "new_role": self.type_name},
+                % {
+                    "old_role": exc.model.type_name,
+                    "name": self.name,
+                    "new_role": self.type_name,
+                },
             )
         if udm_obj:
             original_class = self.get_class_for_udm_obj(udm_obj, self.school)
@@ -470,7 +480,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 )
         if self.email:
             if self.get_first_udm_obj(
-                lo, filter_format("&(!(uid=%s))(mailPrimaryAddress=%s)", (self.name, self.email))
+                lo,
+                filter_format("&(!(uid=%s))(mailPrimaryAddress=%s)", (self.name, self.email)),
             ):
                 self.add_error(
                     "email",
@@ -560,6 +571,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return True
 
     def remove_from_groups_of_school(self, school, lo):  # type: (str, LoType) -> None
+
         for cls in (SchoolClass, WorkGroup, SchoolGroup):
             for group in cls.get_all(lo, school, filter_format("uniqueMember=%s", (self.dn,))):
                 try:
@@ -568,9 +580,35 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     pass
                 else:
                     self.logger.info(
-                        "Removing %r from group %r of school %r.", self.dn, group.dn, school
+                        "Removing %r from group %r of school %r.",
+                        self.dn,
+                        group.dn,
+                        school,
                     )
                     group.modify(lo)
+
+        if self.is_administrator(lo):
+            # Bug 54368
+            # remove_from_groups_of_school() doesn't remove school admins from admins-OU group
+            admin_group_dns = self.get_school_admin_groups()
+            for dn in admin_group_dns:
+                try:
+                    admin_group = BasicGroup.from_dn(dn, school, lo)
+                except NoObject:
+                    continue
+
+                try:
+                    admin_group.users.remove(self.dn)
+                except ValueError:
+                    pass
+                else:
+                    self.logger.info(
+                        "Removing %r from group %r of school %r.",
+                        self.dn,
+                        admin_group.dn,
+                        school,
+                    )
+                    admin_group.modify(lo)
 
     def get_group_dn(self, group_name, school):  # type: (str, str) -> str
         return Group.cache(group_name, school).dn
@@ -724,7 +762,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     def lookup(cls, lo, school, filter_s="", superordinate=None):
         # type: (LoType, str, Optional[UldapFilter], Optional[SuperOrdinateType]) -> List[UdmObject]
         filter_object_type = conjunction(
-            "&", [parse(cls.type_filter), parse(filter_format("ucsschoolSchool=%s", [school]))]
+            "&",
+            [
+                parse(cls.type_filter),
+                parse(filter_format("ucsschoolSchool=%s", [school])),
+            ],
         )
         if filter_s:
             filter_object_type = conjunction("&", [filter_object_type, parse(filter_s)])
@@ -732,7 +774,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             cls._meta.udm_module,
             None,
             lo,
-            filter=u"{}".format(filter_object_type),
+            filter="{}".format(filter_object_type),
             scope="sub",
             superordinate=superordinate,
         )
