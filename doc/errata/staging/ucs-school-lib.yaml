@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.18A~5.0.0.202206201929
+fix: 13.0.19A~5.0.0.202207071332
 
 desc: |
  * Internal: The code which executed shell hooks was removed from the UCS@school library (Bug #54755).
@@ -12,4 +12,5 @@ desc: |
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
  * A UCR variable was corrected, which was used to check Markplatz shares consistency inside a diagnostic check (Bug #54248).
  * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54812).
-bug: [53506, 54030, 54535, 54248, 54755, 54812]
+ * Internal: The ucsschool lib was adapted to handle searches more consistent (Bug #50797).
+bug: [53506, 54030, 54535, 54248, 54755, 54812, 50797]
