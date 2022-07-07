@@ -412,7 +412,7 @@ class VeyonComputer(threading.Thread):
     def run(self):
         while self.should_run:
             self.update()
-            time.sleep(1.0 + random.uniform(0, 1))
+            time.sleep(1.0 + random.uniform(0, 1))  # nosec
 
     @property
     def name(self):  # type: () -> Optional[str]

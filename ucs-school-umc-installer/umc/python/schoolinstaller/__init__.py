@@ -50,11 +50,11 @@ import ldap
 import notifier
 import notifier.threads
 from six.moves.urllib_request import urlretrieve
-from univention.config_registry.frontend import ucr_update
 
 from ucsschool.lib.models.computer import SchoolDCSlave
 from ucsschool.lib.models.school import School
 from univention.admin.uexceptions import noObject
+from univention.config_registry.frontend import ucr_update
 from univention.lib.i18n import Translation
 from univention.lib.package_manager import PackageManager
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
@@ -63,7 +63,11 @@ from univention.management.console.config import ucr
 from univention.management.console.ldap import get_machine_connection
 from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import sanitize, simple_response
-from univention.management.console.modules.sanitizers import ChoicesSanitizer, StringSanitizer, BooleanSanitizer
+from univention.management.console.modules.sanitizers import (
+    BooleanSanitizer,
+    ChoicesSanitizer,
+    StringSanitizer,
+)
 
 _ = Translation("ucs-school-umc-installer").translate
 os.umask(0o022)  # switch back to default umask
@@ -695,7 +699,7 @@ class Instance(Base):
                     )
                 )
         if create_demo is not None:
-        	ucr_update(ucr, {"ucsschool/join/create_demo": str(create_demo).lower()})
+            ucr_update(ucr, {"ucsschool/join/create_demo": str(create_demo).lower()})
 
         # everything ok, try to acquire the lock for the package installation
         lock_aquired = self.package_manager.lock(raise_on_fail=False)

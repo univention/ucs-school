@@ -56,9 +56,7 @@ def extract_class_dns(lo):
 
 
 def test_list_resource_from_external(auth_header, lo):
-    response = requests.get(
-        RESOURCE_URLS["users"], headers=auth_header, params={"school": "DEMOSCHOOL"}
-    )
+    response = requests.get(RESOURCE_URLS["users"], headers=auth_header, params={"school": "DEMOSCHOOL"})
     res = response.json()
     assert isinstance(res, list), repr(res)
     assert isinstance(res[0], dict), repr(res)

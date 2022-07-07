@@ -29,6 +29,7 @@ def molotov():
                 "-r" "1",
             ]
         )
+
     yield _run_molotov
 
 

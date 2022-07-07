@@ -141,7 +141,7 @@
 				werden auf den Schul-Server übertragen.
 				<caution>
 					<para>
-						Benutzer, deren Benutzerkonto nicht unterhalb einer Organisationseinheit der Schule (Schul-OU) liegt, 
+						Benutzer, deren Benutzerkonto nicht unterhalb einer Organisationseinheit der Schule (Schul-OU) liegt,
 						können ihr Passwort nur über die UMC des &ucsPrimaryDN; oder eines &ucsBackupDN; ändern
 						(nicht über den Schulserver am Standort bzw. einem dort
 						angebundenen Windows-Client).

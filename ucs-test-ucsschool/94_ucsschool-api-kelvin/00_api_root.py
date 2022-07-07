@@ -65,7 +65,9 @@ class Test(TestCase):
             params = {}
             # workgroups has a required parameter for GET
             if url == RESOURCE_URLS["workgroups"]:
-                schools = requests.get(RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False).json()
+                schools = requests.get(
+                    RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False
+                ).json()
                 params["school"] = schools[0]["name"]
             response = requests.get(url, headers=self.auth_headers, verify=False, params=params)
             self.assertEqual(
