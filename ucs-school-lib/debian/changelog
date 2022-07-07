@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.19) unstable; urgency=medium
+
+  * Bug #50797: ucsschool lib handles searchs involving asterisks more consistent.
+
+ -- Amir Teymuri <teymuri@univention.de>  Thu, 07 Jul 2022 11:30:36 +0200
+
 ucs-school-lib (13.0.18) unstable; urgency=medium
 
   * Bug #54812: Change the userExpiry date syntax from iso8601Date to date2.

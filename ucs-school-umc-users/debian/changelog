@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.5) unstable; urgency=medium
+
+  * Bug #50797: Searchs involving asterisks behave consistent
+
+ -- Amir Teymuri <teymuri@univention.de>  Thu, 07 Jul 2022 11:37:48 +0200
+
 ucs-school-umc-users (16.0.4) unstable; urgency=low
 
   * Bug #53988: fix linter errors
