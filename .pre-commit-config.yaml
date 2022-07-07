@@ -49,5 +49,3 @@ repos:
     hooks:
       - id: bandit
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
-default_language_version:
-  python: python3.7
