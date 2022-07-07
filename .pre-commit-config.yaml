@@ -49,3 +49,21 @@ repos:
     hooks:
       - id: bandit
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
+  - repo: https://github.com/jackdewinter/pymarkdown
+    rev: v0.9.7
+    hooks:
+      - id: pymarkdown
+        # TODO: clean those up:
+        exclude: "^doc/devel/README.*.md$\
+                 |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\
+                 |^ucs-school-import/.*.md$\
+                 "
+        args:
+          - --disable-rules
+          - MD013,MD024,MD034
+          - scan
+          # Rules pymarkdown: https://github.com/jackdewinter/pymarkdown/blob/main/docs/rules.md
+          # Rules markdownlint: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+          # MD013: Allow arbitrary line length
+          # MD024: Allow duplicate headings
+          # MD034: Allow bare URLs
