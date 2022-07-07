@@ -12,5 +12,5 @@ desc: |
  * The UCS@school validation does not crash anymore with custom UCS@school roles (Bug #54535).
  * A UCR variable was corrected, which was used to check Markplatz shares consistency inside a diagnostic check (Bug #54248).
  * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54812).
- * Internal: The ucsschool lib was adapted to handle searches more consistent (Bug #50797).
+ * Internal: The UCS@school lib was adapted to handle UMC searches consistently (Bug #50797).
 bug: [53506, 54030, 54535, 54248, 54755, 54812, 50797]

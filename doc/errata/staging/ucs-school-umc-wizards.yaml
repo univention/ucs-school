@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-wizards
 fix: 12.0.10A~5.0.0.202207071456
 desc: |
- * Internal: The ucsschool lib was adapted to handle searches more consistent (Bug #50797).
+ * Searches in the UMC now handle asterisks consistently (Bug #50797).
 bug: [50797]
