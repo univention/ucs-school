@@ -57,6 +57,12 @@ it is the only solution that will attract new developers and scales.
 
 ## More Information
 
+Diagrams:
+
+![Components and layers of RAM Architecture](../architecture-graphs/Role_and_Access_Model/RAM-Architecture.png "Components and layers of RAM Architecture") *Components and layers of RAM Architecture*
+
+![Sequence diagram](../architecture-graphs/Role_and_Access_Model/RAM_Sequence.png "Sequence diagram of an example page access") *Sequence diagram of an example page access*
+
 Links to related decisions and resources:
 
 - [ADR 0002 js-framework](0002-js-framework.md)
