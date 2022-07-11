@@ -69,7 +69,8 @@ class Test(CLI_Import_v2_Tester):
         fn_config = self.create_config_json(values=config)
         self.save_ldap_status()  # save ldap state for later comparison
         self.run_import(["-c", fn_config])  # start import
-        wait_for_drs_replication(filter_format("cn=%s", (person_list[-1].username,)))
+        for person in person_list:
+            wait_for_drs_replication(filter_format("cn=%s", (person.username,)))
         self.check_new_and_removed_users(4, 0)  # check for new users in LDAP
         for person in person_list:
             person.verify()  # verify LDAP attributes
@@ -99,6 +100,7 @@ class Test(CLI_Import_v2_Tester):
         person_ldap = udm.obj_by_dn(person.dn)
         person_ldap.props.description = ""
         person_ldap.save()
+        time.sleep(10)
 
         self.run_import(["-c", fn_config])
         self.log.info("Sleeping 60s for s4 sync...")

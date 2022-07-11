@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.56) unstable; urgency=medium
+
+  * Issue #795: Stabilize flaky test 90_ucsschool/253_import-users_deactivate
+
+ -- Johannes Königer <koeniger@univention.de>  Fr, 15 Jul 2022 10:41:00 +0200
+
 ucs-test-ucsschool (7.3.55) unstable; urgency=medium
 
   * Bug #52335: fix - univention.udm.exceptions.ConnectionError: Could not read secret file
