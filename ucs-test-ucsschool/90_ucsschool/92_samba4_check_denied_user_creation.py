@@ -83,7 +83,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
                 "output to STDERR."
             )
 
-        if not bool(self.fail_pattern.match(stderr)):
+        if not bool(self.fail_pattern.findall(stderr)):
             utils.fail(
                 "The 'samba-tool' output produced to STDERR does not match the '%s' pattern. STDERR: "
                 "'%s'" % (self.fail_pattern.pattern, stderr)
