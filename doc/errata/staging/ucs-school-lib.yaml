@@ -5,5 +5,5 @@ scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-lib
 fix: 12.2.38A~4.4.0.202206211319
 desc: |
- * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54812).
-bug: [54812]
+ * Internal: The syntax class of the user's attribute expiration_date was changed (Bug #54973).
+bug: [54973]

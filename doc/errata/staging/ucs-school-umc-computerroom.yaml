@@ -6,5 +6,5 @@ src: ucs-school-umc-computerroom
 fix: 11.0.0-34A~4.4.0.202206301412
 desc: |
  * An error message regarding the Veyon WebAPI Server has been improved (Bug #54886).
- * After a veyon session becomes invalid, a new session is established (Bug #54884).
+ * After a Veyon session becomes invalid, a new session is established (Bug #54884).
 bug: [54886, 54884]
