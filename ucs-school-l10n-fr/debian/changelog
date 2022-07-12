@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (5.0.4) unstable; urgency=medium
+
+  * Bug #49533: update translation of schoolinstaller
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Tue, 12 Jul 2022 13:38:55 +0200
+
 ucs-school-l10n-fr (5.0.3) unstable; urgency=medium
 
   * Bug #54030: Update French UCS@school translation
