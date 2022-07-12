@@ -7,5 +7,5 @@ fix: 12.0.11A~5.0.0.202206301342
 desc: |
  * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
  * An error message regarding the Veyon WebAPI Server has been improved (Bug #53421).
- * After a veyon session becomes invalid, a new session is established (Bug #53558).
+ * After a Veyon session becomes invalid, a new session is established (Bug #53558).
 bug: [54030, 53421, 53558]

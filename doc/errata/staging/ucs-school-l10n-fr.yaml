@@ -5,6 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-l10n-fr
 fix: 5.0.3A~5.0.0.202203171757
 desc: |
- * The French translation package has been given a comprehensive update to align it to the current source code.
-   All missing translation strings have been added and all outdated strings have been updated (Bug #54030).
+ * The French translation package has been given a comprehensive update to align it to the current source code. All missing translation strings have been added and all outdated strings have been updated (Bug #54030).
 bug: [54030]
