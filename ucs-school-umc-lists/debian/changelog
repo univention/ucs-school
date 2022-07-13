@@ -1,3 +1,9 @@
+ucs-school-umc-lists (2.0.0-9) unstable; urgency=medium
+
+  * Bug #52335: revert as it is not needed in 4.4
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 13 Jul 2022 13:57:50 +0200
+
 ucs-school-umc-lists (2.0.0-8) unstable; urgency=medium
 
   * Bug #52335: Students that are not assigned to a class are ignored when the
