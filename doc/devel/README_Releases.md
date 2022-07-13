@@ -5,7 +5,7 @@ This document describes how to prepare and execute a full Release for the UCS@sc
 
 ## Preparations
 The manual release process needs access to some commands. The easiest way is to set up an environment
-like this **on dimma or omar**:
+like this **on dimma**:
 ```shell
 cd git  # Or whatever folder you want to use for your repositories
 git clone --depth 1 git@git.knut.univention.de:univention/ucsschool.git
@@ -39,15 +39,15 @@ Last step for preparations is to create a Bug for the release commits.
 ## Create new version in Test AppCenter and push new packages
 
 ```shell
-univention-appcenter-control new-version "5.0/ucsschool=5.0 v8" "5.0/ucsschool=5.0 v1"
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v1" "5.0/ucsschool=5.0 v2"
 univention-appcenter-control status ucsschool  # Determine component_id for next step
-appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v1"
+# appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v2" # does not exist (?)
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 5.0 -v "4.2 v1" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
+copy_app_binaries -r 5.0 -v "5.0 v2" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
-univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v1' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v2' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Create new changelog
@@ -60,7 +60,7 @@ create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
 
 For example:
 ```shell
-create_app_changelog -r 5.0 -v "5.0 v1" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
+create_app_changelog -r 5.0 -v "5.0 v2" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
 ```
 
 Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
@@ -71,11 +71,11 @@ vi ../../changelog/Makefile
 
 <pre>
 - MAIN := changelog-ucsschool-5.0-de
-+ MAIN := changelog-ucsschool-5.0v1-de
++ MAIN := changelog-ucsschool-5.0v2-de
 </pre>
 
 ```shell
-git add ../../changelog/changelog-ucsschool-5.0v1-de.xml ../../changelog/Makefile
+git add ../../changelog/changelog-ucsschool-5.0v2-de.xml ../../changelog/Makefile
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```
@@ -110,7 +110,7 @@ If everything is in order run the deploy job to publish the new documentation.
 ## Publish packages from TestAppCenter
 
 The correct version string, for example `ucsschool_20180112151618` can be found here
-https://appcenter-test.software-univention.de/meta-inf/4.4/ucsschool/ by navigating to the last (published) version.
+https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/ by navigating to the last (published) version.
 
 This code should be run **on dimma or omar**:
 ```shell
@@ -132,7 +132,7 @@ Subject: App Center: UCS@school aktualisiert
 Hallo zusammen,
 
 folgendes App-Update wurde eben freigegeben:
-- UCS@school 5.0 v1
+- UCS@school 5.0 v2
 
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
@@ -159,9 +159,9 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 5.0 v1 has been released.
+UCS@school 5.0 v2 has been released.
 
-https://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
+https://docs.software-univention.de/changelog-ucsschool-5.0v2-de.html
 
 If this error occurs again, please clone this bug.
 </pre>
