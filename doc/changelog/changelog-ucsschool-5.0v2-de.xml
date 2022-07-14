@@ -55,12 +55,6 @@ feedback@univention.de
 				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
 				Produktivumgebung sein.
 			</para>
-			<para>
-				Das Upgrade auf &ucsUAS; 5.0 v2 ist in Single-Server-Umgebungen bzw. in Multi-Server-Umgebungen mit &ucsReplicaDN;s, auf denen sich bereits Computerräume befinden, noch nicht möglich.
-				In einem kommenden Errata-Release für &ucsUAS; wird dies freigeschaltet.
-				Umgebungen ohne Computerräume sind davon nicht betroffen und können aktualisiert werden.
-				Mehr zur Migration des Computerraum Backends von iTALC zu Veyon in <ulink url="https://docs.software-univention.de/release-notes-ucsschool-5.0v1-de.html#relnotes:computerroom-backend"></ulink>.
-		</para>
 		</section>
 
 		<section id="changelog:newerrata">
