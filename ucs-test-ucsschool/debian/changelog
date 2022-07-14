@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.55) unstable; urgency=medium
+
+  * Bug #52335: fix - univention.udm.exceptions.ConnectionError: Could not read secret file
+
+ -- Fabian Wilhelm <wilhelm@univention.de>  Thu, 14 Jul 2022 16:53:36 +0200
+
 ucs-test-ucsschool (7.3.54) unstable; urgency=medium
 
   * Issue #804: added workaround for samba-tool output

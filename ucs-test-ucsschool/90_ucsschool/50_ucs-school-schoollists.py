@@ -66,7 +66,12 @@ def test_ucs_school_schoollists_student_without_class(ucr, schoolenv):
     )
     workg_name, workg_dn = schoolenv.create_workgroup(school_name, users=[studn])
 
-    class_mod = UDM.admin().version(2).get("groups/group")
+    if ucr.get("server/role") in {"domaincontroller_master", "domaincontroller_backup"}:
+        udm = UDM.admin().version(2)
+    else:
+        udm = UDM.machine().version(2)
+
+    class_mod = udm.get("groups/group")
     class_obj = class_mod.get(class_dn)
     class_obj.props.users = []
     class_obj.save()
