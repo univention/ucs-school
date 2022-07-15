@@ -129,19 +129,19 @@ Send an internal announcement mail with the following text (**Adapt version and 
 To: app-announcement@univention.de
 Subject: App Center: UCS@school aktualisiert
 
-Hallo zusammen,
+Hello all,
 
-folgendes App-Update wurde eben freigegeben:
+the following app update has just been released:
 - UCS@school 5.0 v2
 
-Das Changelog ist hier abrufbar:
-http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
+The changelog is available here:
+http://docs.software-univention.de/changelog-ucsschool-5.0v2-de.html
 
-Auszüge aus dem Changelog:
+Excerpts from the changelog:
 - ...
 - ...
 
-Viele Grüße,
+Greetings,
 
  $NAME
 </pre>
