@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix:
+fix: 18.0.17A~5.0.0.202207181604
 desc: |
  * The UCS@School import dryrun does not raise VaidationErrors for all subsequent users after an error (Bug #54118).
 bug: [54118]
