@@ -1,3 +1,9 @@
+ucs-school-import (18.0.17) unstable; urgency=medium
+
+  * Bug #54118: fix dry-run raises VaidationError
+
+ -- Fabian Wilhelm <wilhelm@univention.de>  Mon, 18 Jul 2022 15:57:11 +0200
+
 ucs-school-import (18.0.16) unstable; urgency=medium
 
   * Bug #54755: remove shell hook support & add pyhook support for
