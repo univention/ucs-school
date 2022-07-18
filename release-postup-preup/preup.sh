@@ -8,7 +8,7 @@ if [ "x$phase" = "xpost" ] && [ "x$version" = "x5.0-0" ]; then
 	[ -f /etc/apt/preferences.d/99ucsschool500.pref ] ||
 		cat >/etc/apt/preferences.d/99ucsschool500.pref <<__PREF__
 Package: *
-Pin: release ucs@school, o=Univention, l=ucs@school, v=$school_version
+Pin: release v=$school_version,o=Univention,n=$school_version/all,l=Univention
 Pin-Priority: 1002
 __PREF__
 

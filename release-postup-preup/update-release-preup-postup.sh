@@ -35,12 +35,13 @@ update_release () {
 	for arch in amd64 all i386; do
 		[ ! -d "$arch" ] && mkdir "$arch"
 		# create release file
-		ssh -i "$key" root@selfservice "apt-ftparchive release \
+		ssh -i "$key" root@selfservice "rm $repo/$arch/Release"
+		ssh -i "$key" root@selfservice "LC_ALL=C apt-ftparchive release \
 			-o APT::FTPArchive::Release::Origin='Univention' \
-			-o APT::FTPArchive::Release::Label='ucs@school' \
+			-o APT::FTPArchive::Release::Label='Univention' \
 			-o APT::FTPArchive::Release::Codename='$component/$arch' \
-			-o APT::FTPArchive::Release::Version='$component' \
-			-o APT::FTPArchive::Release::Suite='apt'  $repo/$arch > $repo/$arch/Release"
+			-o APT::FTPArchive::Release::Version='$component' $repo/$arch > $repo/$arch/Release.tmp"
+		ssh -i "$key" root@selfservice "mv $repo/$arch/Release.tmp $repo/$arch/Release"
 		# copy to omar (and here) and sign it
 		scp -i "$key" root@selfservice:"$repo/$arch/Release" "$arch/"
 		# shellcheck disable=SC2029
