@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.57) unstable; urgency=medium
+
+  * Bug #54118: add test to check for ValidationErrors in dry run of cli import
+
+ -- Fabian Wilhelm <wilhelm@univention.de>  Mon, 18 Jul 2022 16:11:18 +0200
+
 ucs-test-ucsschool (7.3.56) unstable; urgency=medium
 
   * Issue #795: Stabilize flaky test 90_ucsschool/253_import-users_deactivate
