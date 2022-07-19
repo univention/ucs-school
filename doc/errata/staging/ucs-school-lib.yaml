@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix:
+fix: 13.0.20A~5.0.0.202207191615
 desc: |
  * User objects now have the workgroups attribute (Bug #54943).
 bug: [54943]
