@@ -32,7 +32,7 @@
 
 import os.path
 from collections import Mapping
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
 
 from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import filter_format
@@ -43,7 +43,16 @@ import univention.admin.syntax as syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
+from ..roles import (
+    get_role_info,
+    role_exam_user,
+    role_pupil,
+    role_school_admin,
+    role_staff,
+    role_student,
+    role_teacher,
+    role_workgroup,
+)
 from .attributes import (
     Birthday,
     Disabled,
@@ -55,6 +64,7 @@ from .attributes import (
     Schools,
     UserExpirationDate,
     Username,
+    WorkgroupsAttribute,
 )
 from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from .computer import AnyComputer
@@ -87,6 +97,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     disabled = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])  # type: bool
     school_classes = SchoolClassesAttribute(
         _("Class"), aka=["Class", "Klasse"]
+    )  # type: Dict[str, List[str]]
+    workgroups = WorkgroupsAttribute(
+        _("WorkGroup"), aka=["WorkGroup", "Workgroup"]
     )  # type: Dict[str, List[str]]
 
     type_name = None  # type: str
@@ -254,6 +267,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
         obj.password = None
         obj.school_classes = cls.get_school_classes(udm_obj, obj)
+        obj.workgroups = cls.get_workgroups(udm_obj, obj)
         return obj
 
     def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
@@ -309,18 +323,29 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 self.logger.error("Error removing %r from school %r.", self, removed_school)
                 return
 
-        # remove SchoolClasses the user is not part of anymore
-        # ignore all others (global groups, $OU-groups and workgroups)
+        # remove SchoolClasses or WorkGroups the user is not part of anymore
+        # ignore all others (global groups and $OU-groups)
         mandatory_groups = self.groups_used(lo)
         for group_dn in [dn for dn in udm_obj["groups"] if dn not in mandatory_groups]:
             try:
                 school_class = SchoolClass.from_dn(group_dn, None, lo)
+                classes = self.school_classes.get(school_class.school, [])
+                if school_class.name not in classes and school_class.get_relative_name() not in classes:
+                    self.logger.debug("Removing %r from SchoolClass %r.", self, group_dn)
+                    udm_obj["groups"].remove(group_dn)
+            # it's not a class but could be a workgroup
             except noObject:
-                continue
-            classes = self.school_classes.get(school_class.school, [])
-            if school_class.name not in classes and school_class.get_relative_name() not in classes:
-                self.logger.debug("Removing %r from SchoolClass %r.", self, group_dn)
-                udm_obj["groups"].remove(group_dn)
+                try:
+                    workgroup = WorkGroup.from_dn(group_dn, None, lo)
+                    workgroups = self.workgroups.get(workgroup.school, [])
+                    if (
+                        workgroup.name not in workgroups
+                        and workgroup.get_relative_name() not in workgroups
+                    ):
+                        self.logger.debug("Removing %r from WorkGroup %r.", self, group_dn)
+                        udm_obj["groups"].remove(group_dn)
+                except noObject:
+                    continue
 
         # make sure user is in all mandatory groups and school classes
         current_groups = set(grp_dn.lower() for grp_dn in udm_obj["groups"])
@@ -339,6 +364,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         self.remove_from_groups_of_school(old_school, lo)
         self._udm_obj_searched = False
         self.school_classes.pop(old_school, None)
+        self.workgroups.pop(old_school, None)
         udm_obj = self.get_udm_object(lo)
         udm_obj["primaryGroup"] = self.primary_group_dn(lo)
         groups = set(udm_obj["groups"])
@@ -407,6 +433,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         groups = self.get_domain_users_groups()
         for school_class in self.get_school_class_objs():
             groups.append(self.get_class_dn(school_class.name, school_class.school, lo))
+        for workgroup in self.get_workgroup_objs():
+            groups.append(self.get_workgroup_dn(workgroup.name, workgroup.school, lo))
         return groups
 
     def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
@@ -484,6 +512,32 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 except valueError as exc:
                     self.add_error("school_classes", str(exc))
 
+        if not isinstance(self.workgroups, Mapping):
+            self.add_error(
+                "workgroups",
+                _("Type of 'workgroups' is {type!r}, but must be dictionary.").format(
+                    type=type(self.workgroups)
+                ),
+            )
+
+        # verify user is (or will be) in all schools of its work groups
+        for school, workgroups in iteritems(self.workgroups):
+            if school.lower() not in (s.lower() for s in self.schools + [self.school]):
+                self.add_error(
+                    "workgroups",
+                    _(
+                        "School {school!r} in 'workgroups' is missing in the users 'school(s)' "
+                        "attributes."
+                    ).format(school=school),
+                )
+        # check syntax of all work group names
+        for school, workgroups in iteritems(self.workgroups):
+            for work_group_name in workgroups:
+                try:
+                    syntax.gid.parse(work_group_name)
+                except valueError as exc:
+                    self.add_error("workgroups", str(exc))
+
     def remove_from_school(self, school, lo):  # type: (str, LoType) -> bool
         if not self.exists(lo):
             self.logger.warning("User does not exists, not going to remove.")
@@ -502,6 +556,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         else:
             self.remove_from_groups_of_school(school, lo)
         self.school_classes.pop(school, None)
+        self.workgroups.pop(school, None)
         return True
 
     def remove_from_groups_of_school(self, school, lo):  # type: (str, LoType) -> None
@@ -529,6 +584,15 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 class_name = "%s-%s" % (school, class_name)
                 school_class = SchoolClass.cache(class_name, school)
         return school_class.dn
+
+    def get_workgroup_dn(self, workgroup_name, school, lo):  # type: (str, str, LoType) -> str
+        school_workgroup = WorkGroup.cache(workgroup_name, school)
+        if school_workgroup.get_relative_name() == school_workgroup.name:
+            wg = WorkGroup.cache(workgroup_name, school)
+            if not wg.exists(lo):
+                workgroup_name = "%s-%s" % (school, workgroup_name)
+                school_workgroup = WorkGroup.cache(workgroup_name, school)
+        return school_workgroup.dn
 
     def primary_group_dn(self, lo):  # type: (LoType) -> str
         dn = self.get_group_dn("Domain Users %s" % self.school, self.school)
@@ -569,6 +633,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     @classmethod
     def get_or_create_group_udm_object(cls, group_dn, lo, fresh=False):
         # type: (str, LoType, Optional[bool]) -> Group
+        """
+        In the case of work groups, this function assumes that they already exists.
+
+        :raises RuntimeError: if a work group does not exist.
+        """
         name = cls.get_name_from_dn(group_dn)
         school = cls.get_school_from_dn(group_dn)
         if school is None and name.startswith(cls.get_search_base(school).group_prefix_admins):
@@ -576,6 +645,12 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             group = BasicGroup.from_dn(group_dn, None, lo)
         elif Group.is_school_class(school, group_dn):
             group = SchoolClass.cache(name, school)
+        elif Group.is_school_workgroup(school, group_dn):
+            group = WorkGroup.cache(name, school)
+            if group.exists(lo):
+                return group
+            # this should not happen
+            raise RuntimeError("Work group '%s' does not exist, please create it first." % group_dn)
         else:
             group = Group.cache(name, school)
         if fresh:
@@ -598,6 +673,10 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         for school_class in self.get_school_class_objs():
             school_classes.setdefault(school_class.school, []).append(school_class.name)
         ret["school_classes"] = school_classes
+        workgroups = {}
+        for workgroup in self.get_workgroup_objs():
+            workgroups.setdefault(workgroup.school, []).append(workgroup.name)
+        ret["workgroups"] = workgroups
         ret["type_name"] = self.type_name
         ret["type"] = self.__class__.__name__
         ret["type"] = ret["type"][0].lower() + ret["type"][1:]
@@ -610,6 +689,13 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 ret.append(SchoolClass.cache(school_class, school))
         return ret
 
+    def get_workgroup_objs(self):  # type: () -> List[WorkGroup]
+        ret = []
+        for school, workgroups in iteritems(self.workgroups):
+            for workgroup in workgroups:
+                ret.append(WorkGroup.cache(workgroup, school))
+        return ret
+
     @classmethod
     def get_school_classes(cls, udm_obj, obj):  # type: (UdmObject, "User") -> Dict[str, List[str]]
         school_classes = {}
@@ -619,6 +705,16 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     school_class_name = cls.get_name_from_dn(group)
                     school_classes.setdefault(school, []).append(school_class_name)
         return school_classes
+
+    @classmethod
+    def get_workgroups(cls, udm_obj, obj):  # type: (UdmObject, "User") -> Dict[str, List[str]]
+        workgroups = {}
+        for group in udm_obj["groups"]:
+            for school in obj.schools:
+                if Group.is_school_workgroup(school, group):
+                    workgroup_name = cls.get_name_from_dn(group)
+                    workgroups.setdefault(school, []).append(workgroup_name)
+        return workgroups
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str

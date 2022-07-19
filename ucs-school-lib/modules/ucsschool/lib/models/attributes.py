@@ -255,6 +255,12 @@ class WorkgroupAttribute(Attribute):
     pass
 
 
+class WorkgroupsAttribute(Attribute):
+    udm_name = None
+    value_type = dict
+    value_default = dict
+
+
 class Description(Attribute):
     udm_name = "description"
 

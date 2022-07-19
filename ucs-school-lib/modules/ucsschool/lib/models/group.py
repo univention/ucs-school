@@ -38,6 +38,7 @@ from univention.admin.uexceptions import noObject
 
 from ..roles import (
     create_ucsschool_role_string,
+    get_role_info,
     role_computer_room,
     role_computer_room_backend_veyon,
     role_school_class,
@@ -322,6 +323,16 @@ class WorkGroup(EmailAttributesMixin, SchoolClass, _MayHaveSchoolPrefix):
         if not cls.is_school_workgroup(school, udm_obj.dn):
             return
         return cls
+
+    def exists(self, lo):
+        # type: (LoType) -> bool
+        """Check if the work group exists avoiding collisions with other groups."""
+        work_group_object = self.get_udm_object(lo)
+        if not work_group_object:
+            return False
+        return any(
+            get_role_info(r)[0] == role_workgroup for r in work_group_object.info["ucsschoolRole"]
+        )
 
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):
