@@ -22,6 +22,8 @@ class User(Person):
     :type role: str ['student', 'teacher', 'staff', 'teacherAndStaff']
     :param school_classes: dictionary of school -> list of names of the class which contain the user
     :type school_classes: dict
+    :param workgroups: dictionary of school -> list of names of the workgroups which contain the user
+    :type workgroups: dict
     """
 
     def __init__(
@@ -29,6 +31,7 @@ class User(Person):
         school,
         role,
         school_classes,
+        workgroups=None,
         mode="A",
         username=None,
         firstname=None,
@@ -59,6 +62,7 @@ class User(Person):
         self.typ = "teachersAndStaff" if self.role == "teacher_staff" else self.role
         self.mode = mode
         self.birthday = birthday
+        self.workgroups = workgroups if workgroups else {}
 
         utils.wait_for_replication()
         self.ucr = ucr_test.UCSTestConfigRegistry()
@@ -89,6 +93,7 @@ class User(Person):
                     "school": self.school,
                     "schools": self.schools,
                     "school_classes": self.school_classes,
+                    "workgroups": self.workgroups,
                     "email": self.mail,
                     "expiration_date": self.expiration_date,
                     "name": self.username,
@@ -138,6 +143,7 @@ class User(Person):
             "expiration_date": self.expiration_date,
             "objectType": "users/user",
             "school_classes": {},
+            "workgroups": self.workgroups,
             "ucsschool_roles": set(self.ucsschool_roles),
         }
         if self.is_student() or self.is_teacher() or self.is_teacher_staff():
@@ -227,6 +233,10 @@ class User(Person):
                 del self.school_classes[remove_from_school]
             except KeyError:
                 pass
+            try:
+                del self.workgroups[remove_from_school]
+            except KeyError:
+                pass
 
     def edit(self, new_attributes):
         """Edit object user"""
@@ -250,6 +260,9 @@ class User(Person):
             if new_attributes.get("password")
             else self.password,
             "$dn$": self.dn,
+            "workgroups": new_attributes.get("workgroups")
+            if new_attributes.get("workgroups")
+            else self.workgroups,
         }
         if self.typ not in ("teacher", "staff", "teacherAndStaff"):
             object_props["school_classes"] = new_attributes.get("school_classes", self.school_classes)
@@ -261,6 +274,7 @@ class User(Person):
         assert reqResult[0], "Unable to edit user (%s) with the parameters (%r)" % (self.username, param)
         self.set_mode_to_modify()
         self.school_classes = new_attributes.get("school_classes", self.school_classes)
+        self.workgroups = new_attributes.get("workgroups", self.workgroups)
         self.mail = new_attributes.get("email") if new_attributes.get("email") else self.mail
         self.expiration_date = (
             new_attributes.get("expiration_date")

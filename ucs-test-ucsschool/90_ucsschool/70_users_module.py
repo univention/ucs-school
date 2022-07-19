@@ -18,6 +18,7 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse
 from univention.testing.ucsschool.user import User
+from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
@@ -151,3 +152,41 @@ def test_users_module(schoolenv, ucr):
         utils.wait_for_replication()
         wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
         user.verify()
+
+
+def test_users_module_workgroups_attribute(schoolenv, ucr):
+    umc_connection = Client.get_test_connection(ucr.get("ldap/master"))
+    (ou, oudn) = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
+    wg = Workgroup(school=ou, name="testwg", connection=umc_connection)
+    wg.create()
+    user_workgroups = {ou: ["%s-%s" % (ou, wg.name)]}
+    cl = Klasse(school=ou, connection=umc_connection)
+    cl.create()
+    user = User(
+        school=ou,
+        role="student",
+        school_classes={ou: [cl.name]},
+        workgroups=deepcopy(user_workgroups),
+        schools=[ou],
+        connection=umc_connection,
+    )
+    print(
+        "\n>>>> Going to create user with workgroups (user: {} workgroups: {}).".format(
+            user.dn, user_workgroups
+        )
+    )
+    user.create()
+    user.get()
+    user_dict = user.get()
+    assert user_dict["workgroups"] == user_workgroups
+    print(
+        "\n>>>> Cleaning up user, workgroup and class (user: {} workgroup: {}, class: {}).".format(
+            user.dn, wg.dn, cl.dn
+        )
+    )
+    user.remove()
+    wg.remove()
+    cl.remove()
+    utils.wait_for_replication()
+    wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
+    user.verify()
