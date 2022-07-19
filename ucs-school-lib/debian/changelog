@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.20) unstable; urgency=medium
+
+  * Bug #54943: add workgroups attribute to user
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Mon, 18 Jul 2022 11:13:18 +0300
+
 ucs-school-lib (13.0.19) unstable; urgency=medium
 
   * Bug #50797: ucsschool lib handles searchs involving asterisks more consistent.

@@ -1,3 +1,9 @@
+ucs-school-import (18.0.18) unstable; urgency=medium
+
+  * Bug #54943: preserve workgroups during import
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 18 Jul 2022 18:23:08 +0200
+
 ucs-school-import (18.0.17) unstable; urgency=medium
 
   * Bug #54118: fix dry-run raises VaidationError
