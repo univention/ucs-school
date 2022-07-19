@@ -40,6 +40,7 @@ class Test(CLI_Import_v2_Tester):
         workgroup_A_dn, workgroup_A_name = self.udm.create_group(
             position="cn=schueler,cn=groups,%s" % (self.ou_A.dn,),
             name="{}-{}".format(self.ou_A.name, uts.random_groupname()),
+            ucsschoolRole=[f"workgroup:school:{self.ou_A.name}"],
         )
         class_A_dn, class_A_name = self.udm.create_group(
             position="cn=klassen,cn=schueler,cn=groups,%s" % (self.ou_A.dn,),
@@ -56,6 +57,7 @@ class Test(CLI_Import_v2_Tester):
         workgroup_B_dn, workgroup_B_name = self.udm.create_group(
             position="cn=schueler,cn=groups,%s" % (self.ou_B.dn,),
             name="{}-{}".format(self.ou_B.name, uts.random_groupname()),
+            ucsschoolRole=[f"workgroup:school:{self.ou_B.name}"],
         )
         class_B_dn, class_B_name = self.udm.create_group(
             position="cn=klassen,cn=schueler,cn=groups,%s" % (self.ou_B.dn,),
