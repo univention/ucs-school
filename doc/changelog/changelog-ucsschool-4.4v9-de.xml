@@ -945,6 +945,43 @@ feedback@univention.de
 					<!-- END ucs-school-umc-wizards 11.0.7A~4.4.0.202111251159 -->
 <!-- CHANGELOG:2021-11-29:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2022-07-20" lang="en">
+					<title>Released on 2022-07-20:</title>
+					<!-- START ucs-school-lib 12.2.38A~4.4.0.202207201150 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>12.2.38A~4.4.0.202207201150</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal: The syntax class of the user's attribute expiration_date was changed (<u:bug>54973</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 12.2.38A~4.4.0.202207201150 -->
+					<!-- START ucs-school-veyon-client 1.0.1-9A~4.4.0.202206271612 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-client</emphasis> in version <emphasis>1.0.1-9A~4.4.0.202206271612</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal: An new connection test method has been added (<u:bug>54886</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-client 1.0.1-9A~4.4.0.202206271612 -->
+					<!-- START ucs-school-umc-computerroom 11.0.0-34A~4.4.0.202206301412 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-computerroom</emphasis> in version <emphasis>11.0.0-34A~4.4.0.202206301412</emphasis>:
+						<itemizedlist>
+							<listitem><para>An error message regarding the Veyon WebAPI Server has been improved (<u:bug>54886</u:bug>).</para></listitem>
+							<listitem><para>After a Veyon session becomes invalid, a new session is established  (<u:bug>54884</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-computerroom 11.0.0-34A~4.4.0.202206301412 -->
+					<!-- START univention-management-console-module-selective-udm 8.0.0-3A~4.4.0.202106030048 -->
+					<para>
+						Source package <emphasis>univention-management-console-module-selective-udm</emphasis> in version <emphasis>8.0.0-3A~4.4.0.202106030048</emphasis>:
+						<itemizedlist>
+							<listitem><para>The package <package>univention-management-console-module-selective-udm</package> has been migrated to dh_python (<u:bug>52601</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END univention-management-console-module-selective-udm 8.0.0-3A~4.4.0.202106030048 -->
+<!-- CHANGELOG:2022-07-20:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
 
