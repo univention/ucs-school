@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix:
+fix: 9.0.1-56A~4.4.0.202207201645
 desc: |
  * The directory name validation now detects all incorrect names and displays a user friendly error message. Additionally, the exam directory name description has been improved. (Bug #54908).
 bug: [54908]

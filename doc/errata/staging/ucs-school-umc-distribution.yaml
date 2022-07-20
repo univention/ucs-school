@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-distribution
-fix:
+fix: 17.0.1-10A~4.4.0.202207201642
 desc: |
  * Improved error message during project directory name validation (Bug #54908).
 bug: [54908]
