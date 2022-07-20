@@ -1,3 +1,12 @@
+ucs-school-lib (13.0.22) unstable; urgency=medium
+
+  * Bug #55016: Add `check_name` parameter to the `validate` method of
+    multiple classes which allows disabling name checks such as
+    checking if a user with the same user name already exists in another
+    school.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Mon, 22 Aug 2022 14:24:37 +0200
+
 ucs-school-lib (13.0.21) unstable; urgency=medium
 
   * Bug #54368 - fix remove_from_groups_of_school() doesn't remove school admins from admins-OU group

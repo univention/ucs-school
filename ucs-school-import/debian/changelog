@@ -1,3 +1,9 @@
+ucs-school-import (18.0.20) unstable; urgency=medium
+
+  * Bug #55016: fix user validation in mass import with dry-run
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Wed, 20 Jul 2022 11:49:56 +0200
+
 ucs-school-import (18.0.19) unstable; urgency=medium
 
   * Bug #55083: fix RecursionError in UserValidationError string
