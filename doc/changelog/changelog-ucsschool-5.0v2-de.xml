@@ -55,6 +55,15 @@ feedback@univention.de
 				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
 				Produktivumgebung sein.
 			</para>
+			<caution>
+				<para>
+					Das Update auf &ucsUAS; 5.0 v2 mit dem Kommandozeilen-Tool <command>univention-upgrade</command>
+					bricht aufgrund eines Fehlers (<u:bug>53666</u:bug>) in den Versionen UCS 5.0-0 bis 5.0-1 errata223
+					mit einem Fehler ab. Um zunächst auf die entsprechende UCS Version zu aktualisieren, kann der Befehl
+					<command>univention-upgrade --disable-app-updates</command> verwendet werden. Danach kann das Update
+					auf &ucsUAS; 5.0 v2 installiert werden. Das UMC Updater-Modul bzw. die Maintenance-Richtlinien sind nicht betroffen.
+				</para>
+			</caution>
 		</section>
 
 		<section id="changelog:newerrata">
