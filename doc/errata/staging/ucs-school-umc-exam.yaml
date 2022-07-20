@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-umc-exam
+fix: 10.0.6A~5.0.0.202207201619
+desc: |
+ * The directory name validation now detects all incorrect names. Additionally, the exam directory name description has been improved (Bug #52719).
+bug: [52719]
