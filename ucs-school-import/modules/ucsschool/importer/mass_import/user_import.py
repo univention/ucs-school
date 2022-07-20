@@ -210,7 +210,10 @@ class UserImport(object):
                         store = self.modified_users[cls_name]
                         if self.dry_run:
                             user.validate(
-                                self.connection, validate_unlikely_changes=True, check_username=False
+                                self.connection,
+                                validate_unlikely_changes=True,
+                                check_username=False,
+                                check_name=False,
                             )
                             if user.errors:
                                 raise ValidationError(user.errors.copy())

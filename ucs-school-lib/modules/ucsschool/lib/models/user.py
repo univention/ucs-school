@@ -434,8 +434,12 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             groups.append(self.get_workgroup_dn(workgroup.name, workgroup.school, lo))
         return groups
 
-    def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
-        super(User, self).validate(lo, validate_unlikely_changes)
+    def validate(
+        self, lo, validate_unlikely_changes=False, check_name=True
+    ):  # type: (LoType, Optional[bool]) -> None
+        super(User, self).validate(
+            lo, validate_unlikely_changes=validate_unlikely_changes, check_name=check_name
+        )
         try:
             udm_obj = self.get_udm_object(lo)
         except UnknownModel:

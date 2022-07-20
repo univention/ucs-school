@@ -376,7 +376,9 @@ class UCSSchoolHelperAbstractClass(object):
         self.position = ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
         self.old_dn = dn
 
-    def validate(self, lo, validate_unlikely_changes=False):  # type: (LoType, Optional[bool]) -> None
+    def validate(
+        self, lo, validate_unlikely_changes=False, check_name=True
+    ):  # type: (LoType, Optional[bool], Optional[bool]) -> None
         from ucsschool.lib.models.school import School
 
         self.errors.clear()
@@ -387,7 +389,7 @@ class UCSSchoolHelperAbstractClass(object):
                 attr.validate(value)
             except ValueError as e:
                 self.add_error(name, str(e))
-        if self._meta.name_is_unique and not self._meta.allow_school_change:
+        if self._meta.name_is_unique and not self._meta.allow_school_change and check_name:
             if self.exists_outside_school(lo):
                 self.add_error(
                     "name",

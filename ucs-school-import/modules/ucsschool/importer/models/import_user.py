@@ -1188,7 +1188,7 @@ class ImportUser(User):
         else:
             return super(ImportUser, self).remove_without_hooks(lo)
 
-    def validate(self, lo, validate_unlikely_changes=False, check_username=False):
+    def validate(self, lo, validate_unlikely_changes=False, check_username=False, check_name=True):
         # type: (LoType, Optional[bool], Optional[bool]) -> None
         """
         Runs self-tests in the following order:
@@ -1212,6 +1212,7 @@ class ImportUser(User):
         :param bool validate_unlikely_changes: whether to create messages in self.warnings for changes
             to certain attributes
         :param bool check_username: if username and password checks should run
+        :param bool check_name: if name checks should run
         :return: None
         :raises MissingMandatoryAttribute: ...
         :raises UniqueIdError: ...
@@ -1247,7 +1248,9 @@ class ImportUser(User):
                     import_user=self,
                 )
 
-        super(ImportUser, self).validate(lo, validate_unlikely_changes)
+        super(ImportUser, self).validate(
+            lo, validate_unlikely_changes=validate_unlikely_changes, check_name=check_name
+        )
 
         _ma = None
         mandatory_attributes = {}
