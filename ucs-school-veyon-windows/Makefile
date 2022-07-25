@@ -28,8 +28,8 @@
 # <https://www.gnu.org/licenses/>.
 
 PACKAGE := ucs-school-veyon-windows
-SOURCE := veyon-4.5.2.0-win64-setup.exe
-TARGET := veyon-4.5.2.0-win64-setup.exe
+SOURCE := veyon-4.7.3.0-win64-setup.exe
+TARGET := veyon-4.7.3.0-win64-setup.exe
 
 empty :=
 space := $(empty) $(empty)
@@ -47,7 +47,7 @@ install: $(SOURCE)
 get-orig-source: $(SOURCE)
 veyon-%-win64-setup.exe:
 	wget -O "$@" "https://updates.software-univention.de/download/large-build-files/ucsschool/$@"
-	echo "5ac169c8d70da049e532f0a306652c50b892b3ed562f6a18f9f947103fd8f6d5c9748834c8289e79726730653a0be5082c352c972d661e6eaf9515103bd75fa8 $@" | sha512sum -c
+	echo "a8a23544134fddc925ed47fbf95176b67d17a7875333d5c2ab4ade0310ccc46e94a45ca2959383b6a3514e3f583578f157ea8083b7b2ecfe02b24f8f01499ac0 $@" | sha512sum -c
 
 clean:
 	rm -f veyon-*-win64-setup.exe
