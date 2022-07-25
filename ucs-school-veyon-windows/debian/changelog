@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.5.2.0-ucs5.0-1) unstable; urgency=medium
+
+  * Bug #55029: update veyon windows installer and add update readme
+
+ -- Amir Teymuri <teymuri@univention.de>  Mon, 25 Jul 2022 20:50:20 +0200
+
 ucs-school-veyon-windows (4.5.2.0-ucs5.0-1) unstable; urgency=low
 
   * Bug #53963: add hostname to veyon certificate file name
