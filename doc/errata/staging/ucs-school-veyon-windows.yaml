@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-veyon-windows
+fix: 4.7.3.0-ucs5.0-1A~5.0.0.202207261041
+desc: |
+ * The veyon windows installer has been updated from 4.5.2 to 4.7.3 (Bug #55029).
+bug: [55029]
