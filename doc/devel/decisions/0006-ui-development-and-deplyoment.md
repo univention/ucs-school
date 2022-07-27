@@ -3,7 +3,7 @@
 
 ---
 
-- status: proposed
+- status: accepted
 - deciders: UCS@school development team
 - consulted: UCS@school development team
 - informed: Ingo, Marie
