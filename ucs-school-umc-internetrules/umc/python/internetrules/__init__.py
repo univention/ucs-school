@@ -412,15 +412,29 @@ class Instance(SchoolBaseModule):
             ["name", "description"],
             _escape_filter_chars=False,
             school_suffix=school,
-            seperator=" ",  # For the case: Domain Users <OU> and possibly others?!
+            seperator=" ",  # For the case: Domain Users <OU> and possibly others?
         )
+
+        # Bug #55034: In case values in ucsschool/ldap/default/groupprefix/*
+        # are changed and do not end with a space or "-".
+        pattern_with_school_suffix_without_separator = LDAP_Filter.forAll(
+            request.options.get("pattern", ""),
+            ["name", "description"],
+            _escape_filter_chars=False,
+            school_suffix=school,
+            seperator="",
+        )
+
         groups = [
             x
             for x in Group.get_all(
                 ldap_user_read,
                 school,
-                "(|{}{}{})".format(
-                    pattern, pattern_with_school_suffix, pattern_with_space_school_suffix
+                "(|{}{}{}{})".format(
+                    pattern,
+                    pattern_with_school_suffix,
+                    pattern_with_space_school_suffix,
+                    pattern_with_school_suffix_without_separator,
                 ),
             )
             if not x.self_is_computerroom()
