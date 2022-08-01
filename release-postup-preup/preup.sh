@@ -10,6 +10,10 @@ if [ "x$phase" = "xpost" ] && [ "x$version" = "x5.0-0" ]; then
 Package: *
 Pin: release v=$school_version,o=Univention,n=$school_version/all,l=Univention
 Pin-Priority: 1002
+
+Package: *
+Pin: release v=$school_version,o=Univention,n=$school_version/amd64,l=Univention
+Pin-Priority: 1002
 __PREF__
 
 fi
