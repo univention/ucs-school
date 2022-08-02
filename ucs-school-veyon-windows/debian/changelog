@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.7.4.0-ucs5.0-1) unstable; urgency=medium
+
+  * Bug #55029: update veyon windows installer
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 02 Aug 2022 12:42:07 +0200
+
 ucs-school-veyon-windows (4.7.3.0-ucs5.0-1) unstable; urgency=medium
 
   * Bug #55029: update veyon windows installer and add update readme
