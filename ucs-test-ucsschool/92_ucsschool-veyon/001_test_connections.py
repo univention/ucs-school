@@ -41,7 +41,7 @@ def run_around_tests():
 
 
 def test_unauthenticated_to_invalid_host(molotov):
-    molotov("unauthenticated_not_exists", 1000)
+    molotov("unauthenticated_not_exists", 250)
 
 
 def test_unauthenticated_to_valid_host(molotov):

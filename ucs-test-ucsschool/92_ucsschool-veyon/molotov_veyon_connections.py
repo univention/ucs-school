@@ -8,13 +8,13 @@ from ucsschool.veyon_client.models import AuthenticationMethod
 
 _VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
 _API = "http://127.0.0.1:11080/api/v1"
-_WINDOWS_HOST_ENV = "WINDOWS_HOST"
 
 
 @global_setup()
 def init_test(args):
-    assert os.environ.get(_WINDOWS_HOST_ENV), f"{_WINDOWS_HOST_ENV} has to be set!"
-    host_exists = os.environ[_WINDOWS_HOST_ENV]
+    WINDOWS_HOST = os.environ.get("UCS_ENV_WINDOWS_CLIENTS")
+    assert WINDOWS_HOST, "No windows clients in env var UCS_ENV_WINDOWS_CLIENT!"
+    host_exists = WINDOWS_HOST.split(" ")[0]
     host_not_exists = "192.168.4.2"  # TODO fix
     with open(_VEYON_KEY_FILE, "r") as fp:
         key_data = fp.read().strip()
