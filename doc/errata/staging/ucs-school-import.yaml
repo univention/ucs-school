@@ -6,5 +6,5 @@ src: ucs-school-import
 fix: 18.0.18A~5.0.0.202207191615
 desc: |
  * The UCS@School import dryrun does not raise VaidationErrors for all subsequent users after an error (Bug #54118).
-  * Internal change: preserve workgroups during import, to avoid a behavior change (Bug #54943).
+ * Internal change: preserve workgroups during import, to avoid a behavior change (Bug #54943).
 bug: [54118, 54943]
