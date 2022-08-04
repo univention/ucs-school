@@ -74,7 +74,8 @@ def test_move_users_into_another_ou(schoolenv, ucr, udm_session):
     two_klasses = "{0}-{1},{0}-{2}".format(a, grp1_name, grp2_name)
     group_name = "{}-{}".format(a, uts.random_username())
     workgroup_dn, workgroup_name = udm.create_group(
-        position="cn=schueler,cn=groups,%s" % (a_dn,), name=group_name,
+        position="cn=schueler,cn=groups,%s" % (a_dn,),
+        name=group_name,
         ucsschoolRole=[f"workgroup:school:{a}"],
     )
     global_group_dn, global_group_name = udm.create_group()

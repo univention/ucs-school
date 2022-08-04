@@ -8,9 +8,7 @@
 import time
 
 
-def test_normal_feature_change(
-    windows_client, get_veyon_client, wait_for_demo_mode, set_demo_mode
-):
+def test_normal_feature_change(windows_client, get_veyon_client, wait_for_demo_mode, set_demo_mode):
     client = get_veyon_client(windows_client)
     print(client.get_user_info())
     wait_for_demo_mode(client, False)
@@ -24,9 +22,7 @@ def test_normal_feature_change(
     print("normal feature change ok")
 
 
-def test_reconnect_feature_change(
-    windows_client, get_veyon_client, wait_for_demo_mode, set_demo_mode
-):
+def test_reconnect_feature_change(windows_client, get_veyon_client, wait_for_demo_mode, set_demo_mode):
     client = get_veyon_client(windows_client)
     print(client.get_user_info())
     wait_for_demo_mode(client, False)

@@ -4,10 +4,7 @@ import time
 import pytest
 
 from ucsschool.veyon_client.client import VeyonClient
-from ucsschool.veyon_client.models import (
-    AuthenticationMethod,
-    Feature,
-)
+from ucsschool.veyon_client.models import AuthenticationMethod, Feature
 
 VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
 API = "http://localhost:11080/api/v1"
