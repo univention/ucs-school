@@ -57,6 +57,36 @@ feedback@univention.de
 			</para>
 		</section>
 
+                <section id="changelog:veyon_update">
+                    <title>Update der Software zur Kontrolle und Überwachung von Computerräumen</title>
+                    <para>
+                        Die Leistung und Stabilität der Computerraumüberwachung ist mit &ucsUAS; 5.0 v3 verbessert worden.
+                    </para>
+                    <caution>
+                        <para>
+                            Die Applikation <literal>UCS@school Veyon Proxy</literal> aus dem App-Center muss auf <literal>4.7.4.6</literal> aktualisiert werden.
+                            Zudem müssen die Windows-Rechner mit der passenden Veyon-Applikation ausgestattet werden.
+                            Eine passende Version wird mit &ucsUAS; mitgeliefert (<literal>4.7.4</literal>), und kann wie im
+                            <ulink url="https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:windows:veyon">Handbuch für Administratoren</ulink>
+                            beschrieben installiert werden.
+                        </para>
+                    </caution>
+                    <para>
+                        Die Statusindikatoren der Computerraum-Modul-Seite können mit bis zu einer Minute Verzögerung aktualisiert werden.
+                        Dies ist ein bekanntes Problem und wird bald mit einem Errata-Update korrigiert.
+                    </para>
+                    <para>
+                        Je nach vorhandener Hardware, Bandbreite und Anzahl der PCs im Computerraum ist es möglich, dass Feineinstellungen
+                        am Präsentationsmodus vorgenommen werden müssen, wenn die Performance nicht zufriedenstellend ist.
+                        Siehe hierzu die <ulink url="https://help.univention.com/t/how-to-performance-des-prasentationsmodus-verbessern/20264">
+                        Kurzanleitung: Performance des Präsentationsmodus verbessern</ulink> auf help.univention.com.
+                    </para>
+                    <para>
+                        Mit diesem Release wird zudem die Update-Sperre für Systeme mit Computerräumen aufgehoben und können von UCS 4.4
+                        auf UCS 5.0 aktualisiert werden, wenn auf dem System keine Computerräume bestehen die noch iTALC benutzen.
+                    </para>
+                </section>
+
 		<section id="changelog:newerrata">
 			<title>Updateprozess</title>
 			<para>
