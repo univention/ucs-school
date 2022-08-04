@@ -25,7 +25,7 @@ charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ß
 
 
 def setRandomDisplayNameViaCreateOU(ou_name):
-    """ Tries to set an optional display name while creating/updating the given OU """
+    """Tries to set an optional display name while creating/updating the given OU"""
     ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
     # create new ou with display name
     cmd = [

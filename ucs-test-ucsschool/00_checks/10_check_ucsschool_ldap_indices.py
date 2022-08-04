@@ -25,7 +25,7 @@ def test_school_ldap_indicies():
         attr_list = ucr.get("ldap/index/%s" % (index,), "").split(",")
         for expected_attr in EXPECTED_ATTRS.get(index, []):
             assert expected_attr in attr_list, (
-                "Expected attribute %r to be found LDAP index ldap/index/%s, but this was not the case: %s"
-                % (expected_attr, index, attr_list)
+                "Expected attribute %r to be found LDAP index ldap/index/%s, but this was not the "
+                "case: %s" % (expected_attr, index, attr_list)
             )
             print("OK: %r found in ldap/index/%s" % (expected_attr, index))

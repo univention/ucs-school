@@ -1,4 +1,5 @@
-## Accounting
+# Accounting
+
 - Customer
 - Task
 
@@ -18,7 +19,7 @@ A little context to the issue. Where does the task come from, what is needed for
 
 A user story should be self-contained and provide value when shipped. It should also contain a "single source of truth".
 
-Additional points:
+## Additional points
 
 - If possible, list implementation constraints here (e.g. after a refinement)
 - Separation to other user stories

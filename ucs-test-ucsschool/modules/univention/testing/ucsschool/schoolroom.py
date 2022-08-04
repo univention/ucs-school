@@ -190,8 +190,8 @@ class ComputerRoom(object):
             if current_attributes.get(key) != new_attributes.get(key)
         )
         assert set(current_attributes) == set(new_attributes), (
-            "Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r\ndiff: %s"
-            % (self.name, current_attributes, new_attributes, diff)
+            "Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r\n"
+            "diff: %s" % (self.name, current_attributes, new_attributes, diff)
         )
 
     def remove(self):

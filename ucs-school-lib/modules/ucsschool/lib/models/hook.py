@@ -44,7 +44,8 @@ try:
     from univention.config_registry import ConfigRegistry
 
     UCSSchoolHelperAbstractClassTV = TypeVar(
-        "UCSSchoolHelperAbstractClassTV", bound="ucsschool.lib.models.base.UCSSchoolHelperAbstractClass"
+        "UCSSchoolHelperAbstractClassTV",
+        bound="ucsschool.lib.models.base.UCSSchoolHelperAbstractClass",  # noqa: F821
     )
 except ImportError:
     pass

@@ -1820,7 +1820,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Es ist sicherzustellen, dass zuvor die Schule mitsamt dem
-							Namen für den Schulserver sowie die Netzwerke auf dem &ucsMaster; entsprechend der Beschreibung 
+							Namen für den Schulserver sowie die Netzwerke auf dem &ucsMaster; entsprechend der Beschreibung
 							in <xref linkend="import_schools" /> angelegt bzw. importiert wurden.
 						</para>
 					</listitem>
@@ -1854,7 +1854,7 @@ feedback@univention.de
 						</para>
 					</listitem>
 					<listitem>
-						<para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername 
+						<para>Es ist darauf zu achten, dass der bei der Installation angegebene Rechnername
 							mit dem Namen des Schulservers übereinstimmt, der beim Anlegen der Schule angegeben wurde.
 							Dies muss der Fall sein, damit der Server im weiteren Verlauf als (edukativer) Schulserver
 							eingerichtet werden kann und explizit nicht als zentraler &ucsSlave;.
@@ -1863,7 +1863,7 @@ feedback@univention.de
 					<listitem>
 						<para>
 							Das installierte System automatisch bis
-							zum letzten verfügbaren Errata-Update 
+							zum letzten verfügbaren Errata-Update
 							aktualisieren, den Domänenbeitritt starten und dabei die &ucsUAS; App installieren.
 						</para>
 					</listitem>

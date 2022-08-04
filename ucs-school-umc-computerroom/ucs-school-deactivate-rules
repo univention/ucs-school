@@ -53,7 +53,7 @@ def deactivate_rules(roomDN):
         hosts += pc.ip_address
     reset_room_settings(room.get_relative_name(), hosts)
     # reload cups
-    subprocess.call(["service", "cups", "reload"])
+    subprocess.call(["service", "cups", "reload"])  # nosec
 
 
 def deprecated_deactivate_rules(options, hosts):
@@ -82,7 +82,7 @@ def deprecated_deactivate_rules(options, hosts):
 
     # reload cups
     if os.path.exists("/etc/init.d/cups"):
-        subprocess.call(["/etc/init.d/cups", "reload"])
+        subprocess.call(["/etc/init.d/cups", "reload"])  # nosec
 
 
 if __name__ == "__main__":

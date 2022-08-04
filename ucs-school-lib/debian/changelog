@@ -6,7 +6,7 @@ ucs-school-lib (12.2.38) unstable; urgency=medium
 
 ucs-school-lib (12.2.37) unstable; urgency=medium
 
-  * Bug #54115: add expiration_date to ucsschool-lib 
+  * Bug #54115: add expiration_date to ucsschool-lib
 
  -- Tobias Wenzel <wenzel@univention.de>  Tue, 23 Nov 2021 16:11:18 +0100
 
