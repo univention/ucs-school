@@ -76,7 +76,9 @@ feedback@univention.de
 					<para>
 						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>18.0.18A~5.0.0.202207191615</emphasis>:
 						<itemizedlist>
-							<listitem><para>The UCS@School import dryrun does not raise VaidationErrors for all subsequent users after an error (<u:bug>54118</u:bug>). * Internal change: preserve workgroups during import, to avoid a behavior change (<u:bug>54943</u:bug>).</para></listitem>
+							<listitem><para>The UCS@School import dryrun does not raise VaidationErrors for all subsequent users after an error (<u:bug>54118</u:bug>).</para></listitem>
+
+							<listitem><para>Internal change: preserve workgroups during import, to avoid a behavior change (<u:bug>54943</u:bug>).</para></listitem>
 
 						</itemizedlist>
 					</para>
