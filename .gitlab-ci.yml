@@ -1,8 +1,14 @@
+stages:
+  - prepare
+  - lint
+
 include:
   - project: univention/dist/docker-services
     file: kaniko.yml
+  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
 
-build:
+build-image:
+  stage: prepare
   rules:
     - if: '$CI_COMMIT_BRANCH !~ /[1-9][0-9]*[.][0-9]+/'
       when: never
@@ -13,3 +19,11 @@ build:
   variables:
     IMAGE_TAG: $CI_REGISTRY/ucsschool/pre-commit:$CI_COMMIT_REF_SLUG
     DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
+
+run pre-commit:
+  stage: lint
+  image:
+    name: docker-registry.knut.univention.de/ucsschool/pre-commit:4-4
+    entrypoint: [""]
+  script:
+    - pre-commit run -a
