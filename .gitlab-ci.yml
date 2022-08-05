@@ -14,7 +14,12 @@ build-image:
       when: never
     - changes:
       - .gitlab-ci/Dockerfile.pre-commit
-      - .*
+      - .bandit
+      - .black
+      - .dockerignore
+      - .flake8
+      - .isort.cfg
+      - .pre-commit-config.yaml
   extends: .kaniko_knut
   variables:
     IMAGE_TAG: $CI_REGISTRY/ucsschool/pre-commit:$CI_COMMIT_REF_SLUG
