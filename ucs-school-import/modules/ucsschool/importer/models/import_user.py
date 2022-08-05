@@ -1093,8 +1093,8 @@ class ImportUser(User):
     def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
         # type: (LoType, Optional[bool], Optional[bool]) -> bool
         # preserve workgroups during import
-        # always getting the UDM object shouldn't have a big impact on performance since it will be retrieved anyway
-        # and it is cached
+        # always getting the UDM object shouldn't have a big impact on performance since it will be
+        # retrieved anyway and it is cached
         udm_obj = self.get_udm_object(lo)
         self.workgroups = self.get_workgroups(udm_obj, self)
         if not self.school_classes and self.config.get("school_classes_keep_if_empty", False):

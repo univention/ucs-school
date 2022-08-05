@@ -32,7 +32,7 @@
 
 import os.path
 from collections import Mapping
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
 from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import filter_format
@@ -43,16 +43,7 @@ import univention.admin.syntax as syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import (
-    get_role_info,
-    role_exam_user,
-    role_pupil,
-    role_school_admin,
-    role_staff,
-    role_student,
-    role_teacher,
-    role_workgroup,
-)
+from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
 from .attributes import (
     Birthday,
     Disabled,
