@@ -82,8 +82,8 @@ feedback@univention.de
                         Kurzanleitung: Performance des Präsentationsmodus verbessern</ulink> auf help.univention.com.
                     </para>
                     <para>
-                        Mit diesem Release wird zudem die Update-Sperre für Systeme mit Computerräumen aufgehoben und können von UCS 4.4
-                        auf UCS 5.0 aktualisiert werden, wenn auf dem System keine Computerräume bestehen die noch iTALC benutzen.
+                        Mit diesem Release wird zudem die Update-Sperre für Systeme mit Computerräumen aufgehoben.
+                        Somit können Systeme von UCS 4.4 auf UCS 5.0 aktualisiert werden, wenn auf dem System keine Computerräume existieren, die noch iTALC benutzen.
                     </para>
                 </section>
 

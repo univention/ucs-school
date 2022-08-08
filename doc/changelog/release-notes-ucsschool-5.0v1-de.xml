@@ -95,10 +95,8 @@ feedback@univention.de
 			kann. Ansonsten wird es zu Problemen auf den übrigen &ucsUAS;-Schulservern kommen.
 		</para>
 		<para>
-			Das Upgrade auf &ucsUAS; 5.0 v1 ist in Single-Server-Umgebungen und in Multi-Server-Umgebungen auf &ucsReplicaDN;s, auf denen sich bereits Computerräume befinden, noch nicht möglich.
-			&ucsPrimaryDN;s in Multi-Server-Umgebungen können bereits das Upgrade durchführen.
-			In einem kommenden Errata-Release für &ucsUAS; wird dies freigeschaltet.
-			Umgebungen ohne Computerräume sind davon nicht betroffen und können aktualisiert werden.
+			Die Update-Sperre für Systeme mit Computerräumen ist aufgehoben. Somit können Systeme von UCS 4.4
+			auf UCS 5.0 aktualisiert werden, wenn auf dem System alle Computerräume auf Veyon migriert wurden.
 			Mehr zur Migration des Computerraum Backends von iTALC zu Veyon in <xref linkend="relnotes:computerroom-backend"/>.
 		</para>
 		<caution>
