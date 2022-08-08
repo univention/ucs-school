@@ -57,6 +57,11 @@ feedback@univention.de
 			</para>
 			<caution>
 				<para>
+					Es wird empfohlen, Updates von UCS Systemen mit &ucsUAS; von UCS Version 4.4-9 auf UCS Version 5.0-2
+					mit dem Kommandozeilen-Tool <command>univention-upgrade</command> und nicht über das UMC Update-Modul durchzuführen.
+					Mehr Informationen finden sich unter <ulink url="https://help.univention.com/t/20283"></ulink>.
+				</para>
+				<para>
 					Das Update auf &ucsUAS; 5.0 v2 mit dem Kommandozeilen-Tool <command>univention-upgrade</command>
 					bricht aufgrund eines Fehlers (<u:bug>53666</u:bug>) in den Versionen UCS 5.0-0 bis 5.0-1 errata223
 					mit einem Fehler ab. Um zunächst auf die entsprechende UCS Version zu aktualisieren, kann der Befehl
