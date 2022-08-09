@@ -83,7 +83,7 @@ feedback@univention.de
                     </para>
                     <para>
                         Mit diesem Release wird zudem die Update-Sperre für Systeme mit Computerräumen aufgehoben.
-                        Somit können Systeme von UCS 4.4 auf UCS 5.0 aktualisiert werden, wenn auf dem System keine Computerräume existieren, die noch iTALC benutzen.
+                        Somit können Systeme von UCS 4.4 auf UCS 5.0 aktualisiert werden, wenn auf dem System alle Computerräume auf Veyon migriert wurden.
                     </para>
                 </section>
 
