@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-veyon-windows
+fix:
+desc: |
+ * The veyon windows installer has been updated from 4.5.2 to 4.7.4 (Bug #55076).
+bug: [55076]
