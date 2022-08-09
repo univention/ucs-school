@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.7.4.0-ucs4.4-1) unstable; urgency=medium
+
+  * Bug #55076: update veyon windows installer
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 09 Aug 2022 10:33:49 +0200
+
 ucs-school-veyon-windows (4.5.2.0-2) unstable; urgency=low
 
   * Bug #53963: add hostname to veyon certificate file name
