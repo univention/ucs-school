@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.61) unstable; urgency=medium
+
+  * Bug #55034: Added test for wildcard search in assign internet rules module
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 10 Aug 2022 16:22:03 +0200
+
 ucs-test-ucsschool (7.3.60) unstable; urgency=medium
 
   * Bug #53558: added 92_ucsschool-veyon
