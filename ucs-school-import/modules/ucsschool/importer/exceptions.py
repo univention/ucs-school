@@ -229,7 +229,7 @@ class UserValidationError(UcsSchoolImportError):
         self.validation_error = validation_error
 
     def __str__(self):
-        return "{} {!r}".format(self, self.validation_error)
+        return "{} {!r}".format(self.args[0], self.validation_error)
 
 
 class WrongUserType(UcsSchoolImportError):
