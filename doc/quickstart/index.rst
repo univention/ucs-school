@@ -58,7 +58,7 @@ Software-Auswahl
    Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden
    und ist auf eine Länge von 13 Zeichen beschränkt.
 
-.. _quickstart-ucsschoolinstalation:
+.. _quickstart-ucsschool-installation:
 
 *************************************
 Installation der |UCSUAS|-Erweiterung
@@ -79,7 +79,7 @@ Der Lizenzschlüssel kann über das UMC-Modul *Willkommen!* importiert werden. E
 muss der Menüpunkt :guilabel:`Neue Lizenz importieren` ausgewählt werden. Nach
 dem Import des Lizenzschlüssels kann das Univention App Center verwendet werden.
 
-.. _install-via-appcenter:
+.. _install-via-app-center:
 
 .. figure:: /images/appcenter-de.png
 
@@ -303,7 +303,7 @@ Suspend/Resume-Zyklen zu inkorrekten Systemuhren führen können.
 System` kann der Basiskonfigurationsdialog erreicht werden. Nun muss
 *Einstellungen ändern* gewählt und auf :guilabel:`Ändern` geklickt werden.
 
-.. _join-win7:
+.. _join-windows:
 
 .. figure:: /images/join-win7-de.png
 
@@ -361,7 +361,7 @@ Installation weiterer Schulserver zu einer Multi-Server-Umgebung ausgebaut
 werden. Die dazu nötigen Schritte sind im Kapitel
 :cite:t:`ucsschool-multi-server` des |UCSUAS|-Handbuch beschrieben.
 
-.. _quickstart-furtherinfo:
+.. _quickstart-further-info:
 
 ****************************
 Weiterführende Informationen
@@ -384,6 +384,8 @@ Weiterführende Informationen
   gestellt werden.
 
 * :cite:t:`ucs-quickstart`.
+
+.. _biblio:
 
 *************
 Bibliographie
