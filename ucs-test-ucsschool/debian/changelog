@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.62) unstable; urgency=medium
+
+  * Bug #55034: move test to different file
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 16 Aug 2022 13:57:19 +0200
+
 ucs-test-ucsschool (7.3.61) unstable; urgency=medium
 
   * Bug #55034: Added test for wildcard search in assign internet rules module
