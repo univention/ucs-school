@@ -38,6 +38,16 @@ stages:
   script:
     - make -C $base -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" spelling
 
+# The child pipeline needs at minimum one job to run - otherwise the sub-pipeline fails
+webframe:
+  stage: build
+  image: $DOC
+  script:
+    - cp -rTu /DocBook/webframe public
+  artifacts:
+    paths:
+      - public
+
 production:
   stage: production
   cache:
