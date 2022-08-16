@@ -81,7 +81,7 @@ neuer Benutzer, Zusammenfassung).
    im SSL-Zertifikat verwendeten FQDN enthalten.
 
    Nach dem Setzen der beiden
-   UCR-Variablen müssen einige Dienste neu gestartet werden: 
+   UCR-Variablen müssen einige Dienste neu gestartet werden:
 
    .. code-block:: console
 
