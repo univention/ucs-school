@@ -9,7 +9,7 @@ stages:
   image: $SPHINX_DOC
   variables:
     DOC_TARGET_VERSION: "5.0"
-    DOC_TARGET: ucsschool-$DOC_NAME/$DOC_TARGET_VERSION/$language
+    DOC_TARGET: $DOC_NAME/$DOC_TARGET_VERSION/$language
   artifacts:
     paths:
       - $base/_build
