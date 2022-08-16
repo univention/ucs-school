@@ -7,10 +7,13 @@ stages:
 .sphinx-doc:
   stage: build
   image: $SPHINX_DOC
+  variables:
+    DOC_TARGET_VERSION: "5.0"
+    DOC_TARGET: ucsschool-$DOC_NAME/$DOC_TARGET_VERSION/$language
   artifacts:
     paths:
       - $base/_build
-      - $CI_PROJECT_DIR/public
+      - $CI_PROJECT_DIR/out
     reports:
       codequality: $base/codeclimate.json
 
@@ -18,15 +21,15 @@ stages:
   extends: .sphinx-doc
   script:
     - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" html
-    - mkdir -p $CI_PROJECT_DIR/public/$DOC_NAME/$DOC_TARGET_VERSION/$language
-    - rsync -av --delete --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/html/ $CI_PROJECT_DIR/public/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - mkdir -p $CI_PROJECT_DIR/out/$DOC_TARGET
+    - rsync -av --delete --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/html/ $CI_PROJECT_DIR/out/$DOC_TARGET
 
 .sphinx-pdf:
   extends: .sphinx-doc
   script:
     - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" latexpdf
-    - mkdir -p $CI_PROJECT_DIR/public/$DOC_NAME/$DOC_TARGET_VERSION/$language
-    - rsync -av --exclude-from doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/public/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - mkdir -p $CI_PROJECT_DIR/out/$DOC_TARGET
+    - rsync -av --exclude-from doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_TARGET
 
 .sphinx-linkcheck:
   extends: .sphinx-doc
@@ -61,7 +64,6 @@ production:
     GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
     GIT_COMMITTER_NAME: $GITLAB_USER_NAME
     GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
-    DOCS_TARGET: ucsschool-$DOC_NAME
   resource_group: prod
   image: $SPHINX_DOC
   rules:
@@ -77,11 +79,11 @@ production:
     - git clean --force -d
     - git fetch --no-tags origin
     - git reset --hard origin/master
-    - mkdir -p ./"$DOCS_TARGET"/"$DOC_TARGET_VERSION"
-    - rsync -av --delete "$CI_PROJECT_DIR"/out/ ./"$DOCS_TARGET"/"$DOC_TARGET_VERSION"/
+    - mkdir -p ./"$DOC_TARGET"
+    - rsync -av --delete "$CI_PROJECT_DIR"/out/ ./
     - git add -- .
     - git commit -m "Automatic doc deployment from $CI_PROJECT_PATH by GitLab commit $CI_COMMIT_SHA"
     - git push
   environment:
     name: production
-    url: http://updates.knut.univention.de/download/docs/$DOCS_TARGET
+    url: http://updates.knut.univention.de/download/docs/$DOC_TARGET

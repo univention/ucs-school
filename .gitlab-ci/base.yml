@@ -16,3 +16,4 @@ variables:
   SPHINX_DOC: docker-registry.knut.univention.de/sphinx
   IMAGE_TAG: $CI_REGISTRY_IMAGE
   DOC: docker-registry.knut.univention.de/docbook
+
