@@ -17,7 +17,7 @@ variables:
 
 generate-config:
   stage: prepare
-  image: 
+  image:
     name: $BUILD
     entrypoint: [""]
   script:
