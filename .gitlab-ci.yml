@@ -1,11 +1,45 @@
 stages:
   - prepare
   - lint
+  - build
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_OPEN_MERGE_REQUESTS
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true"
 
 include:
   - project: univention/dist/docker-services
     file: kaniko.yml
-  - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
+
+variables:
+  BUILD: docker-registry.knut.univention.de/knut/deb-builder
+
+generate-config:
+  stage: prepare
+  image: 
+    name: $BUILD
+    entrypoint: [""]
+  script:
+    - .gitlab-ci/build-ci
+  artifacts:
+    paths:
+      - generated-config-doc.yml
+
+doc-pipeline:
+  stage: build
+  rules:
+    - changes:
+      - "doc/**/*"
+  needs:
+    - job: generate-config
+  trigger:
+    include:
+      - artifact: generated-config-doc.yml
+        job: generate-config
+    strategy: depend
+    forward:
+      pipeline_variables: true
 
 build-image:
   stage: prepare

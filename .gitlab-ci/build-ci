@@ -1,0 +1,42 @@
+#!/bin/sh
+# shellcheck disable=SC2016
+set -e -u
+
+exec >generated-config-doc.yml
+cat "${0%/*}/base.yml"
+cat "${0%/*}/base-doc.yml"
+
+doc_job () { # <extends> [<suffix> [<language>]]
+	echo
+	echo "build ${pkg}${3:+ "$3"}${2:+ "$2"}:"
+	echo '  variables:'
+	echo "    base: $path"
+	echo "    DOC_NAME: ${path##*/}"
+	echo '    DOC_TARGET_VERSION: "5.0"'
+	[ -n "${3+empty}" ] && echo "    language: $3"
+	echo "  extends: ${1:?extends}"
+	echo '  rules:'
+	echo '    - changes:'
+	echo "      - ${path}/**/*"
+}
+
+for make in doc/*/Makefile
+do
+	[ -f "$make" ] || continue
+	path="${make%/Makefile}"
+	pkg="${path##*/}"
+
+	# Automatically detect Sphinx or Docbook
+	if [ -f "${path}/conf.py" ] # Use Sphinx's conf.py as hint to Sphinx
+	then
+		for l_path in "$path"/locales/* "de"
+		do
+			language="${l_path##*/}"
+			[ "$language" = '*' ] && continue
+			doc_job '.sphinx-html' html "$language"
+			doc_job '.sphinx-pdf' pdf "$language"
+			doc_job '.sphinx-linkcheck' linkcheck "$language"
+			doc_job '.sphinx-spelling' spelling "$language"
+		done
+	fi
+done
