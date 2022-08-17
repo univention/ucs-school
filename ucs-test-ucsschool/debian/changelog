@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.63) unstable; urgency=medium
+
+  * Bug #55034: fix test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 17 Aug 2022 13:58:57 +0200
+
 ucs-test-ucsschool (7.3.62+nmu1) unstable; urgency=low
 
   * Bug #47622: run info test on all system roles, reduce dependencies
