@@ -13,6 +13,9 @@ include:
     file: kaniko.yml
 
 variables:
+  pipeline:
+    value: ""
+    description: "Skip or force jobs: '(skip|force)-(doc)'"
   BUILD: docker-registry.knut.univention.de/knut/deb-builder
 
 generate-config:
@@ -29,6 +32,9 @@ generate-config:
 doc-pipeline:
   stage: build
   rules:
+    - if: "$CI_COMMIT_MESSAGE =~ /skip-doc/ || $pipeline =~ /skip-doc/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /force-doc/ || $pipeline =~ /force-doc/"
     - changes:
       - "doc/**/*"
   needs:
