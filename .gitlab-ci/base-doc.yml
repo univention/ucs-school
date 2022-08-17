@@ -28,7 +28,7 @@ stages:
   script:
     - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" latexpdf
     - mkdir -p $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
-    - rsync -av --exclude-from doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - rsync -av --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
 
 .sphinx-linkcheck:
   extends: .sphinx-doc
@@ -79,7 +79,7 @@ webframe:
     - rsync -av --delete "$CI_PROJECT_DIR"/out/"$DOC_NAME"/ ./"$DOC_NAME"/
     - git add -- .
     - git commit -m "Automatic deployment for $DOC_NAME from $CI_PROJECT_PATH by commit $CI_COMMIT_SHA"
-#    - git push
+    - git push
   environment:
     name: production
     url: http://updates.knut.univention.de/download/docs/
