@@ -982,6 +982,34 @@ feedback@univention.de
 					<!-- END univention-management-console-module-selective-udm 8.0.0-3A~4.4.0.202106030048 -->
 <!-- CHANGELOG:2022-07-20:APPEND -->
 				</section>
+				<section id="changelog:ucsschool:2022-08-17" lang="en">
+					<title>Released on 2022-08-17:</title>
+					<!-- START ucs-school-umc-distribution 17.0.1-10A~4.4.0.202207201642 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-distribution</emphasis> in version <emphasis>17.0.1-10A~4.4.0.202207201642</emphasis>:
+						<itemizedlist>
+							<listitem><para>Improved error message during project directory name validation (<u:bug>54908</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-distribution 17.0.1-10A~4.4.0.202207201642 -->
+					<!-- START ucs-school-umc-exam 9.0.1-56A~4.4.0.202207201645 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-56A~4.4.0.202207201645</emphasis>:
+						<itemizedlist>
+							<listitem><para>The directory name validation now detects all incorrect names and displays a user friendly error message. Additionally, the exam directory name description has been improved. (<u:bug>54908</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-56A~4.4.0.202207201645 -->
+					<!-- START ucs-school-veyon-windows 4.7.4.0-ucs4.4-1A~4.4.0.202208091055 -->
+					<para>
+						Source package <emphasis>ucs-school-veyon-windows</emphasis> in version <emphasis>4.7.4.0-ucs4.4-1A~4.4.0.202208091055</emphasis>:
+						<itemizedlist>
+							<listitem><para>The veyon windows installer has been updated from 4.5.2 to 4.7.4 (<u:bug>55076</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-veyon-windows 4.7.4.0-ucs4.4-1A~4.4.0.202208091055 -->
+<!-- CHANGELOG:2022-08-17:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
 
