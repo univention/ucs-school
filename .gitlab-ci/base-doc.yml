@@ -77,8 +77,8 @@ production:
     - git clean --force -d
     - git fetch --no-tags origin
     - git reset --hard origin/master
-    - echo "CI_PROJECT_DIR: $CI_PROJECT_DIR"
-    - echo "DOC_TARGET: $DOC_TARGET"
+    - echo "CI_PROJECT_DIR:" "$CI_PROJECT_DIR"
+    - echo "DOC_TARGET:" "$DOC_TARGET"
     - mkdir -p ./"$DOC_TARGET"
     - rsync -av --delete "$CI_PROJECT_DIR"/out/"$DOC_TARGET"/ ./"$DOC_TARGET"/
     - git add -- .
