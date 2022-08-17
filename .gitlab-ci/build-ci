@@ -19,6 +19,14 @@ doc_job () { # <extends> [<suffix> [<language>]]
 	echo "      - ${path}/**/*"
 }
 
+prod_job () {
+    echo
+    echo "production ${pkg}:"
+    echo '  variables:'
+    echo "    DOC_NAME: ${path##*/}"
+    echo '  extends: .production'
+}
+
 for make in doc/*/Makefile
 do
 	[ -f "$make" ] || continue
@@ -37,5 +45,6 @@ do
 			doc_job '.sphinx-linkcheck' linkcheck "$language"
 			doc_job '.sphinx-spelling' spelling "$language"
 		done
+        prod_job
 	fi
 done

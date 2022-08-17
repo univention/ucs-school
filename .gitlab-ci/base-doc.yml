@@ -9,7 +9,6 @@ stages:
   image: $SPHINX_DOC
   variables:
     DOC_TARGET_VERSION: "5.0"
-    DOC_TARGET: $DOC_NAME/$DOC_TARGET_VERSION/$language
   artifacts:
     paths:
       - $base/_build
@@ -21,15 +20,15 @@ stages:
   extends: .sphinx-doc
   script:
     - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" html
-    - mkdir -p $CI_PROJECT_DIR/out/$DOC_TARGET
-    - rsync -av --delete --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/html/ $CI_PROJECT_DIR/out/$DOC_TARGET
+    - mkdir -p $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - rsync -av --delete --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/html/ $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
 
 .sphinx-pdf:
   extends: .sphinx-doc
   script:
     - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" latexpdf
-    - mkdir -p $CI_PROJECT_DIR/out/$DOC_TARGET
-    - rsync -av --exclude-from doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_TARGET
+    - mkdir -p $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - rsync -av --exclude-from doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
 
 .sphinx-linkcheck:
   extends: .sphinx-doc
@@ -51,7 +50,7 @@ webframe:
     paths:
       - public
 
-production:
+.production:
   stage: production
   cache:
     key: docs-$CI_COMMIT_REF_SLUG
@@ -77,16 +76,10 @@ production:
     - git clean --force -d
     - git fetch --no-tags origin
     - git reset --hard origin/master
-    - echo "CI_PROJECT_DIR:" "$CI_PROJECT_DIR"
-    - echo "DOC_TARGET:" "$DOC_TARGET"
-    - mkdir -p ./"$DOC_TARGET"
-    - rsync -av --delete "$CI_PROJECT_DIR"/out/"$DOC_TARGET"/ ./"$DOC_TARGET"/
+    - rsync -av --delete "$CI_PROJECT_DIR"/out/"$DOC_NAME"/ ./"$DOC_NAME"/
     - git add -- .
-    - git commit -m "Automatic doc deployment from $CI_PROJECT_PATH by GitLab commit $CI_COMMIT_SHA"
+    - git commit -m "Automatic deployment for $DOC_NAME from $CI_PROJECT_PATH by commit $CI_COMMIT_SHA"
 #    - git push
   environment:
     name: production
-    url: http://updates.knut.univention.de/download/docs/$DOC_TARGET
-  artifacts:
-    paths:
-      - univention-docs
+    url: http://updates.knut.univention.de/download/docs/
