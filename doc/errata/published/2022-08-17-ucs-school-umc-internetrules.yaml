@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-internetrules
 fix: 16.0.4A~5.0.0.202208110901
 desc: |
- * A bug was fixed which caused groups not being displayed in the <literal>Assign internet rules</literal> module when group prefixes were set via an UCR variable  (Bug #55034).
+ * A bug was fixed which caused groups not being displayed in the <literal>Assign internet rules</literal> module when group prefixes were set via an UCR variable (Bug #55034).
 bug: [55034]

@@ -153,6 +153,26 @@ feedback@univention.de
 					<!-- END ucs-school-veyon-windows 4.7.4.0-ucs5.0-1A~5.0.0.202208021248 -->
 <!-- CHANGELOG:2022-08-04:APPEND -->
 				</section>
+			<section id="changelog:ucsschool:2022-08-17" lang="en">
+					<title>Released on 2022-08-17:</title>
+					<!-- START ucs-school-import 18.0.19A~5.0.0.202208171134 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>18.0.19A~5.0.0.202208171134</emphasis>:
+						<itemizedlist>
+							<listitem><para>A validation error causing an infinite recursion error was fixed (<u:bug>55083</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 18.0.19A~5.0.0.202208171134 -->
+					<!-- START ucs-school-umc-internetrules 16.0.4A~5.0.0.202208110901 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-internetrules</emphasis> in version <emphasis>16.0.4A~5.0.0.202208110901</emphasis>:
+						<itemizedlist>
+							<listitem><para>A bug was fixed which caused groups not being displayed in the <literal>Assign internet rules</literal> module when group prefixes were set via an UCR variable (<u:bug>55034</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-internetrules 16.0.4A~5.0.0.202208110901 -->
+<!-- CHANGELOG:2022-08-17:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
 		</section>
