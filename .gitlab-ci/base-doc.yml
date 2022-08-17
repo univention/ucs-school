@@ -67,9 +67,7 @@ production:
   resource_group: prod
   image: $SPHINX_DOC
   rules:
-    - changes:
-      - "$DOCS_DIR/**/*"
-      if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: manual
   script:
     - git config --global credential.$CI_SERVER_URL.username ucs-docs-deployment
