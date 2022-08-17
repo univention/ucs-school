@@ -5,13 +5,9 @@
 
 APP="ucsschool-id-connector"
 TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
-CMD1="cd $TEST_PATH; pytest -lv  unittests"
-CMD2="export UNSAFE_SSL=1 && cd $TEST_PATH; pytest -lv -m 'not id_broker_compatibility' integration_tests"
+CMD="export UNSAFE_SSL=1 && cd $TEST_PATH; pytest -lv -m 'not id_broker_compatibility' integration_tests"
 
 echo "IP of ID Broker: $(</var/www/IP_idbroker.txt)"
 
-echo "Running in container: $CMD1"
-univention-app shell "$APP" sh -c $CMD1
-
-echo "Running in container: sh -c \"$CMD2\""
-univention-app shell "$APP" sh -c "$CMD2"
+echo "Running in container: sh -c \"$CMD\""
+univention-app shell "$APP" sh -c "$CMD"

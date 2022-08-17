@@ -3,17 +3,19 @@
 ## desc: Print UCS@school installation information
 ## tags: [apptest, ucsschool]
 ## exposure: safe
-## packages:
-##   - ucs-school-import
 
+import logging
 import os
 import sys
 
 from apt.cache import Cache as AptCache
 
-from univention.testing.ucsschool.importusers_cli_v2 import ImportTestbase
+import univention.testing.ucr
 
-itb = ImportTestbase()
+logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+logger = logging.getLogger()
+ucr = univention.testing.ucr.UCSTestConfigRegistry()
+ucr.load()
 apt_cache = AptCache()
 pck_s = [
     "{:<40} {}".format(
@@ -21,16 +23,16 @@ pck_s = [
     )
     for pck in sorted([pck for pck in apt_cache.keys() if "school" in pck])
 ]
-itb.log.info("Installed package versions:\n%s", "\n".join(pck_s))
+logger.info("Installed package versions:\n%s", "\n".join(pck_s))
 
-itb.log.info("=" * 79)
+logger.info("=" * 79)
 
 for filename in os.listdir("/etc/apt/sources.list.d/"):
     path = os.path.join("/etc/apt/sources.list.d", filename)
-    itb.log.info("Content of %r:\n%s", path, open(path, "rb").read())
+    logger.info("Content of %r:\n%s", path, open(path, "rb").read())
 
-itb.log.info("=" * 79)
+logger.info("=" * 79)
 
-itb.log.info("UCR:\n%s", "\n".join("{!r}: {!r}".format(k, itb.ucr[k]) for k in sorted(itb.ucr.keys())))
+logger.info("UCR:\n%s", "\n".join("{!r}: {!r}".format(k, ucr[k]) for k in sorted(ucr.keys())))
 
 sys.exit(0)

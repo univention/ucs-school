@@ -1,0 +1,13 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container unit tests for ID Broker (Provisioning API) plugin
+## exposure: dangerous
+## tags: [id-broker]
+
+APP="ucsschool-id-connector"
+TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
+CMD="cd $TEST_PATH; pytest -lv  unittests"
+
+echo "IP of ID Broker: $(</var/www/IP_idbroker.txt)"
+
+echo "Running in container: sh -c \"$CMD\""
+univention-app shell "$APP" sh -c "$CMD"
