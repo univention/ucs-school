@@ -24,15 +24,15 @@ Before starting the release, check if there are any tests failing connected with
   - ~~Upload of binaries to TestAppCenter~~
   - ~~Moving of advisories to published~~
 
-- On dimma, upload the packages to the test app center. For example, to upload `ucs-school-import ucs-school-umc-internetrules` to UCS@school 5.0 v3:
- `~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v3" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml`. You need to have  `~/git/jenkins/ucsschool-errata-announce` checked out and in your path.
-  - Check if the displayed packages and versions are OK
-  - You will have to confirm in a funny way.
-  - If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.0 ucs-school-lib`
+Instead:
+- See [Manual release](README_manual_release.md) to do the release in dimma via cli.
  - As of now, the release changelogs have to be adapted manually.
  - The advisories have to be copied to public & have to be renamed.
-- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v3' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')`.
-  This has to be executed **on omar**.
+- Upload current `ucs-test-ucsschool` package to Test Appcenter
+
+```
+univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
+```
 
 ## Publish to production App Center
 

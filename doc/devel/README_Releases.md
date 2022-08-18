@@ -2,32 +2,11 @@
 
 This document describes how to prepare and execute a full Release for the UCS@school App.
 
-TODO update content see README_Erratum.md.
+Before starting the release, check if there are any tests failing connected with the to be released changes.
 
 
 ## Preparations
-The manual release process needs access to some commands. The easiest way is to set up an environment
-like this **on dimma**:
-```shell
-cd git  # Or whatever folder you want to use for your repositories
-git clone --depth 1 git@git.knut.univention.de:univention/ucsschool.git
-git clone --depth 1 git@git.knut.univention.de:univention/jenkins.git
-ln -s ~/git/jenkins/ucsschool-errata-announce/univention-appcenter-control ~/bin  # Or whatever other folder you have in your $PATH
-ln -s ~/git/jenkins/ucsschool-errata-announce/copy_app_binaries ~/bin
-echo $USER > ~/.univention-appcenter-user
-vi ~/.univention-appcenter-pwd  # Save your appcenter account password here
-chmod 400 ~/.univention-appcenter-user ~/.univention-appcenter-pwd
-```
-
-Check that it works properly:
-```shell
-univention-appcenter-control status ucsschool  # no username & password should be asked here
-```
-
-Every time you want to do another release make sure that the local repositories are up to date!
-```shell
-for DIR in ~/git/*; do (cd $DIR; git pull); done
-```
+See Preparation section in [Manual release](README_manual_release.md).
 
 Last step for preparations is to create a Bug for the release commits.
 
@@ -41,15 +20,15 @@ Last step for preparations is to create a Bug for the release commits.
 ## Create new version in Test AppCenter and push new packages
 
 ```shell
-univention-appcenter-control new-version "5.0/ucsschool=5.0 v1" "5.0/ucsschool=5.0 v2"
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v4" "5.0/ucsschool=5.0 v4"
 univention-appcenter-control status ucsschool  # Determine component_id for next step
-# appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v2" # does not exist (?)
+# appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v4" # does not exist (?)
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 5.0 -v "5.0 v2" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
+copy_app_binaries -r 5.0 -v "5.0 v4" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
-univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v2' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v4' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Create new changelog
@@ -62,7 +41,7 @@ create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
 
 For example:
 ```shell
-create_app_changelog -r 5.0 -v "5.0 v2" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
+create_app_changelog -r 5.0 -v "5.0 v4" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
 ```
 
 Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
@@ -73,11 +52,11 @@ vi ../../changelog/Makefile
 
 <pre>
 - MAIN := changelog-ucsschool-5.0-de
-+ MAIN := changelog-ucsschool-5.0v2-de
++ MAIN := changelog-ucsschool-5.0v4-de
 </pre>
 
 ```shell
-git add ../../changelog/changelog-ucsschool-5.0v2-de.xml ../../changelog/Makefile
+git add ../../changelog/changelog-ucsschool-5.0v4-de.xml ../../changelog/Makefile
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```
@@ -134,10 +113,10 @@ Subject: App Center: UCS@school aktualisiert
 Hello all,
 
 the following app update has just been released:
-- UCS@school 5.0 v2
+- UCS@school 5.0 v4
 
 The changelog is available here:
-http://docs.software-univention.de/changelog-ucsschool-5.0v2-de.html
+http://docs.software-univention.de/changelog-ucsschool-5.0v4-de.html
 
 Excerpts from the changelog:
 - ...
@@ -161,9 +140,9 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 5.0 v2 has been released.
+UCS@school 5.0 v4 has been released.
 
-https://docs.software-univention.de/changelog-ucsschool-5.0v2-de.html
+https://docs.software-univention.de/changelog-ucsschool-5.0v4-de.html
 
 If this error occurs again, please clone this bug.
 </pre>
