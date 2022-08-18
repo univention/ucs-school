@@ -2,22 +2,36 @@
 
 This document describes how to prepare and execute an Errata Release for the UCS@school App.
 
+Before starting the release, check if there are any tests failing connected with the to be released changes.
+
 ## Check packages for readiness
 
 - Collect the YAML files for all packages that are to be released in the erratum.
 - Check errata texts for mistakes and unclear content. Correct if need be.
-- Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.
+- ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
+  to verify that all selected packages are ready for release.~~ Instead:
+  - compare the debian-changelog and advisory versions
+  - all bugs must be verified, have an assignee + qa and must have the correct target milestone, e.g. UCS@school 5.0 v3 errata.
+  - packages, which depend on other packages with not verified bugs-fixes must not be released.
+  - This [script](https://git.knut.univention.de/univention/internal/research-library/-/blob/main/personal/twenzel/scripts/check_yamls.py) might help to detect mistakes.
 
 ## Update TestAppCenter
 
-- Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
-  with the chosen yaml files to release an Errata for the latest UCS@school version.
-  - **This will need manual interaction to verify the changelog changes before committing!**
-  - Changelog will be modified
-  - Upload of binaries to TestAppCenter
-  - Moving of advisories to published
-- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v1' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')`.
+- ~~Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
+  with the chosen yaml files to release an Errata for the latest UCS@school version.~~
+  - ~~**This will need manual interaction to verify the changelog changes before committing!**~~
+  - ~~Changelog will be modified~~
+  - ~~Upload of binaries to TestAppCenter~~
+  - ~~Moving of advisories to published~~
+
+- On dimma, upload the packages to the test app center. For example, to upload `ucs-school-import ucs-school-umc-internetrules` to UCS@school 5.0 v3:
+ `~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v3" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml`. You need to have  `~/git/jenkins/ucsschool-errata-announce` checked out and in your path.
+  - Check if the displayed packages and versions are OK
+  - You will have to confirm in a funny way.
+  - If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.0 ucs-school-lib`
+ - As of now, the release changelogs have to be adapted manually.
+ - The advisories have to be copied to public & have to be renamed.
+- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v3' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')`.
   This has to be executed **on omar**.
 
 ## Publish to production App Center
@@ -25,7 +39,7 @@ This document describes how to prepare and execute an Errata Release for the UCS
 The following code should be executed on omar:
 
 The correct version string, for example `ucsschool_20180112151618` can be found here
-https://appcenter-test.software-univention.de/meta-inf/4.4/ucsschool/ by navigating to the last (published) version.
+https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/ by navigating to the last (published) version.
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
@@ -34,6 +48,8 @@ sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public downl
 ```
 
 ## Publish manual
+
+The documentation, as well as the changelogs have to be build manually or with a [Jenkins branch job](http://jenkins.knut.univention.de:8080/view/Doku/job/BuildDocBookBranchUCSSchool/). A pipeline is already on it's way. Copy & commit the artifacts, i.e. HTML, PDF and new image files if there are any to the docs.univention.de repository.
 
 Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
 commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
@@ -52,7 +68,7 @@ Subject: App Center: UCS@school aktualisiert
 
 Hallo zusammen,
 
-für UCS@school 5.0 v1 wurden soeben Errata freigegeben.
+für UCS@school 5.0 v3 wurden soeben Errata freigegeben.
 
 Das Changelog ist hier abrufbar:
 http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
@@ -70,7 +86,7 @@ Set all Bugs published with this Erratum to *CLOSED*.
 You can get the bug numbers with this snippet:
 ```shell
 cd doc/errata/published/
-grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
+grep bug: 2022-08-17-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
 ```
 
 List the bugs in Bugzilla in the extended search by pasting the list in *Bugs numbered*.
@@ -80,7 +96,7 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-Errata updates for UCS@school 5.0 v1 have been released.
+Errata updates for UCS@school 5.0 v3 have been released.
 
 https://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
 

@@ -2,6 +2,8 @@
 
 This document describes how to prepare and execute a full Release for the UCS@school App.
 
+TODO update content see README_Erratum.md.
+
 
 ## Preparations
 The manual release process needs access to some commands. The easiest way is to set up an environment
