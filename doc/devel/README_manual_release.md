@@ -29,12 +29,12 @@ for DIR in ~/git/*; do (cd $DIR; git pull); done
 
 # Push changes to Test Appcenter
 
-For example, to upload `ucs-school-import ucs-school-umc-internetrules` to UCS@school 4.4 v9:
+For example, to upload `ucs-school-import ucs-school-umc-internetrules` to UCS@school 5.0 v3:
 
 ```
-`~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 4.4 -v "4.4 v9" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml`
+`~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v3" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml`
 ```
 
 - Check if the displayed packages and versions are OK
 - You will have to confirm in a funny way.
-- If the package version can't be found, rebuilding can help, e.g. `b44-scope ucs-school-4.4 ucs-school-lib`
+- If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.0 ucs-school-lib`
