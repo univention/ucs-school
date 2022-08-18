@@ -2,52 +2,37 @@
 
 This document describes how to prepare and execute a full Release for the UCS@school App.
 
+Before starting the release, check if there are any tests failing connected with the to be released changes.
 
 ## Preparations
-The manual release process needs access to some commands. The easiest way is to set up an environment
-like this **on dimma or omar**:
-```shell
-cd git  # Or whatever folder you want to use for your repositories
-git clone --depth 1 git@git.knut.univention.de:univention/ucsschool.git
-git clone --depth 1 git@git.knut.univention.de:univention/jenkins.git
-ln -s ~/git/jenkins/ucsschool-errata-announce/univention-appcenter-control ~/bin  # Or whatever other folder you have in your $PATH
-ln -s ~/git/jenkins/ucsschool-errata-announce/copy_app_binaries ~/bin
-echo $USER > ~/.univention-appcenter-user
-vi ~/.univention-appcenter-pwd  # Save your appcenter account password here
-chmod 400 ~/.univention-appcenter-user ~/.univention-appcenter-pwd
-```
 
-Check that it works properly:
-```shell
-univention-appcenter-control status ucsschool  # no username & password should be asked here
-```
-
-Every time you want to do another release make sure that the local repositories are up to date!
-```shell
-for DIR in ~/git/*; do (cd $DIR; git pull); done
-```
+See Preparation section in [Manual release](README_manual_release.md).
 
 Last step for preparations is to create a Bug for the release commits.
 
 ## Check packages for readiness
 
-- Collect the YAML files for all packages that are to be released in the new app version.
+- Collect the YAML files for all packages that are to be released in the erratum.
 - Check errata texts for mistakes and unclear content. Correct if need be.
-- Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.
+- ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
+  to verify that all selected packages are ready for release.~~ Instead:
+  - compare the debian-changelog and advisory versions
+  - all bugs must be verified, have an assignee + qa and must have the correct target milestone, e.g. UCS@school 5.0 v3 errata.
+  - packages, which depend on other packages with not verified bugs-fixes must not be released.
+  - This [script](https://git.knut.univention.de/univention/internal/research-library/-/blob/main/personal/twenzel/scripts/check_yamls.py) might help to detect mistakes.
 
 ## Create new version in Test AppCenter and push new packages
 
 ```shell
-univention-appcenter-control new-version "4.4/ucsschool=4.4 v8" "4.4/ucsschool=4.4 v9"
+univention-appcenter-control new-version "4.4/ucsschool=4.4 v9" "4.4/ucsschool=4.4 v10"
 univention-appcenter-control status ucsschool  # Determine component_id for next step
-appcenter-modify-README -a ucsschool -r 4.4 -v "4.4 v9"
+appcenter-modify-README -a ucsschool -r 4.4 -v "4.4 v10"
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 4.4 -v "4.2 v9" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
+copy_app_binaries -r 4.4 -v "4.4 v10" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
-univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v10' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Create new changelog
@@ -60,7 +45,7 @@ create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
 
 For example:
 ```shell
-create_app_changelog -r 4.4 -v "4.4 v9" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
+create_app_changelog -r 4.4 -v "4.4 v10" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
 ```
 
 Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
@@ -71,11 +56,11 @@ vi ../../changelog/Makefile
 
 <pre>
 - MAIN := changelog-ucsschool-4.4-de
-+ MAIN := changelog-ucsschool-4.4v9-de
++ MAIN := changelog-ucsschool-4.4v10-de
 </pre>
 
 ```shell
-git add ../../changelog/changelog-ucsschool-4.4v9-de.xml ../../changelog/Makefile
+git add ../../changelog/changelog-ucsschool-4.4v10-de.xml ../../changelog/Makefile
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```
@@ -132,10 +117,10 @@ Subject: App Center: UCS@school aktualisiert
 Hallo zusammen,
 
 folgendes App-Update wurde eben freigegeben:
-- UCS@school 4.4 v9
+- UCS@school 4.4 v10
 
 Das Changelog ist hier abrufbar:
-http://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+http://docs.software-univention.de/changelog-ucsschool-4.4v10-de.html
 
 Auszüge aus dem Changelog:
 - ...
@@ -159,9 +144,9 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 4.4 v9 has been released.
+UCS@school 4.4 v10 has been released.
 
-https://docs.software-univention.de/changelog-ucsschool-4.4v9-de.html
+https://docs.software-univention.de/changelog-ucsschool-4.4v10-de.html
 
 If this error occurs again, please clone this bug.
 </pre>

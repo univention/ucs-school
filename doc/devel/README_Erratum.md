@@ -2,23 +2,37 @@
 
 This document describes how to prepare and execute an Errata Release for the UCS@school App.
 
+Before starting the release, check if there are any tests failing connected with the to be released changes.
+
 ## Check packages for readiness
 
 - Collect the YAML files for all packages that are to be released in the erratum.
 - Check errata texts for mistakes and unclear content. Correct if need be.
-- Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.
+- ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
+  to verify that all selected packages are ready for release.~~ Instead:
+  - compare the debian-changelog and advisory versions
+  - all bugs must be verified, have an assignee + qa and must have the correct target milestone, e.g. UCS@school 5.0 v3 errata.
+  - packages, which depend on other packages with not verified bugs-fixes must not be released.
+  - This [script](https://git.knut.univention.de/univention/internal/research-library/-/blob/main/personal/twenzel/scripts/check_yamls.py) might help to detect mistakes.
 
 ## Update TestAppCenter
 
-- Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
-  with the chosen yaml files to release an Errata for the latest UCS@school version.
-  - **This will need manual interaction to verify the changelog changes before committing!**
-  - Changelog will be modified
-  - Upload of binaries to TestAppCenter
-  - Moving of advisories to published
-- Upload current *ucs-test-ucsschool* package to TestAppCenter with `univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')`.
-  This has to be executed **on omar**.
+- ~~Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
+  with the chosen yaml files to release an Errata for the latest UCS@school version.~~
+  - ~~**This will need manual interaction to verify the changelog changes before committing!**~~
+  - ~~Changelog will be modified~~
+  - ~~Upload of binaries to TestAppCenter~~
+  - ~~Moving of advisories to published~~
+
+Instead:
+- See [Manual release](README_manual_release.md) to do the release in dimma via cli.
+- As of now, the release changelogs have to be adapted manually.
+- The advisories have to be copied to public & have to be renamed.
+- Upload current `ucs-test-ucsschool` package to Test Appcenter
+
+```
+univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
+```
 
 ## Publish to production App Center
 
