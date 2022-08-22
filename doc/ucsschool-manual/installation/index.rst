@@ -63,6 +63,7 @@ ucsschool/join/create_demo=no` möglich.
    13 Zeichen beschränkt.
 
 .. toctree::
+   :caption: Kapitelinhalte
 
    single
    multi

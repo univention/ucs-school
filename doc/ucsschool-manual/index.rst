@@ -40,6 +40,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
 
    structure
    installation/index
+   management/index
 
 .. toctree::
    :hidden:
