@@ -1,12 +1,8 @@
+.. _introduction:
+
 #######################################
 |UCSUAS| - Handbuch für Administratoren
 #######################################
-
-.. _introduction:
-
-**********
-Einführung
-**********
 
 |UCSUAS| ist eine auf |UCSUCS| (UCS) basierende IT-Komplettlösung mit
 zahlreichen Zusatzkomponenten für Nutzung, Betrieb und Management von
@@ -43,7 +39,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    :numbered:
 
    structure
-
+   installation/index
 
 .. toctree::
    :hidden:

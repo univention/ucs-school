@@ -10,6 +10,8 @@
 .. |UCSREPLICADN_e| replace:: *Replica Directory Node*
 .. |UCSS4C| replace:: Univention S4 Connector
 .. |UCSUAS| replace:: UCS\@school
+.. |UCSUAS_e| replace:: *UCS\@school*
+.. |UCSUAS_p| replace:: :program:`UCS\@school`
 .. |UCSUASp| replace:: :program:`UCS\@school`
 .. |UCSUCRVs| replace:: Univention Configuration Registry Variables
 .. |UCSUCRV| replace:: Univention Configuration Registry Variable

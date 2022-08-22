@@ -39,6 +39,7 @@ extensions = [
     "univention_sphinx_extension",
     "sphinxcontrib.spelling",
     "sphinx_last_updated_by_git",
+    "sphinx.ext.intersphinx",
     "sphinx_sitemap",
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
@@ -104,8 +105,6 @@ root_doc = "index"
 
 rst_epilog = """
 .. include:: /../substitutions-de.txt
-
-.. include:: /links-de.txt
 """
 
 latex_engine = 'lualatex'
@@ -121,3 +120,7 @@ latex_elements = {
 figure_language_filename = "{root}-{language}{ext}"
 
 univention_use_doc_base = True
+
+intersphinx_mapping = {
+    "uv-manual": ("https://docs.software-univention.de/manual/5.0/en", None),
+}
