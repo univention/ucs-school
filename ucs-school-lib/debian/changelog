@@ -11,7 +11,7 @@ ucs-school-lib (13.0.21) unstable; urgency=medium
 
   * Bug #54368 - fix remove_from_groups_of_school() doesn't remove school admins from admins-OU group
 
- -- Fabian Wilhelm <wilhelm@univention.de>  Mon, 11 Jul 2022 12:37:37 +0200
+ -- Fabian Wilhelm <wilhelm@univention.de>  Mon, 18 Jul 2022 12:37:37 +0200
 
 ucs-school-lib (13.0.20) unstable; urgency=medium
 
