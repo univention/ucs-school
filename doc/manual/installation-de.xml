@@ -52,8 +52,9 @@
 		  je nach Rolle des Systems und dessen Systemperformance mehrere Minuten benötigen. Der Join-Vorgang darf dabei nicht abgebrochen werden.
 	  </para>
 	  <para>
-		  Der Hostname darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (a-z, 0-9 und -) und zur Trennung nur einzelne Punkte enthalten.
-		  Der Hostname darf außerdem nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt.
+		  Der Hostname darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (<code>a-z</code>, <code>0-9</code> und <code>-</code>).
+		  Der Hostname darf nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt.
+		  Bei Abweichungen von diesen Vorgaben kann es zu Problemen bei der Verwendung von Windows-Clients kommen.
 	  </para>
   </caution>
 
@@ -103,11 +104,11 @@
 		  Auf der zweiten Seite muss der Name der Schule und das Schulkürzel eingegeben werden. Der Name der Schule kann
 		  dabei Leerzeichen und Sonderzeichen enthalten. Innerhalb von &ucsUAS; wird dieser Name immer wieder angezeigt.
 		  Sobald der Name der Schule eingetragen ist und in das Feld für das Schulkürzel geklickt wird, wird ein Wert
-		  für das Schulkürzel vorgeschlagen. Dieser Wert kann entsprechend angepasst werden. Das Schulkürzel darf nur aus
-		  Buchstaben, Zahlen und Unterstrichen bestehen. Das Schulkürzel wird im Verzeichnisdienst als Name für die
-		  Organisationseinheiten (OU) verwendet (siehe auch <xref linkend="structure"/>), zusätzlich wird das Schulkürzel
-		  als Grundlage für Gruppen-, Freigabe- und Rechnernamen verwendet. Das Schulkürzel kann nach der initialen
-		  Konfiguration von &ucsUAS; nicht mehr modifiziert werden.
+		  für das Schulkürzel vorgeschlagen. Dieser Wert kann entsprechend angepasst werden.
+		  Das Schulkürzel darf ausschließlich aus Buchstaben (<code>a-z</code> und <code>A-Z</code>), Ziffern (<code>0-9</code>) und dem Bindestrich (<code>-</code>) bestehen.
+		  Das Schulkürzel wird im Verzeichnisdienst als Name für die Organisationseinheiten (OU) verwendet (siehe auch <xref linkend="structure"/>).
+		  Der Wert wird unter anderem zur Erzeugung der Namen von Gruppen, Freigaben und Rechnern verwendet.
+		  Das Schulkürzel kann nach der initialen Konfiguration von &ucsUAS; nicht mehr modifiziert werden.
 		  <figure id="install-umc-wizard-single-schoolname">
 		    <title>Eingabe der Schuldaten</title>
 		    <graphic scalefit="1" width="67%" align="center" fileref="illustrations50/installation-singleserver-schoolname.png"/>

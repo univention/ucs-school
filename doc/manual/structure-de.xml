@@ -170,11 +170,13 @@
 			  &ucsUAS; unterscheidet in seinem Verzeichnisdienst zwischen dem Namen einer Schule und dem Schulkürzel
 			  (OU-Namen).  Der Name einer Schule kann frei gewählt werden und wird primär in den
 			  UMC-Modulen angezeigt (in anderem Kontexten wird dieser Wert häufig auch als Anzeigename
-			  bezeichnet).  Der eigentliche Name der Organisationseinheit (OU) wird nachfolgend auch als
-			  Schulkürzel bezeichnet.  Das Schulkürzel sollte ausschließlich aus Buchstaben, Ziffern oder dem
-			  Bindestrich bestehen, da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen
-			  bildet. Häufig kommen hier Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel
+			  bezeichnet). Der eigentliche Name der Organisationseinheit (OU) wird nachfolgend auch als Schulkürzel bezeichnet.
+			  Das Schulkürzel darf ausschließlich aus Buchstaben, Ziffern und dem Bindestrich bestehen (<code>a-z</code>, <code>A-Z</code>, <code>0-9</code> und <code>-</code>).
+			  Der Wert wird unter anderem zur Erzeugung der Namen von Gruppen, Freigaben und Rechnern verwendet.
+			  Häufig kommen hier Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel
 			  wie <wordasword>g123m</wordasword> oder <wordasword>gymmitte</wordasword> zum Einsatz.
+			  Das Schulkürzel darf Unterstriche (<code>_</code>) enthalten, wenn der Name des Schul- bzw. Verwaltungsservers explizit angegeben wird.
+			  Dieser darf <emphasis>keinen</emphasis> Unterstrich enthalten.
 			</para>
 		</section>
 		<section id="structure:ou:schoolserver-multiple-ous">

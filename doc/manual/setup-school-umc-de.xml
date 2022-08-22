@@ -102,14 +102,17 @@
 		  </caution>
 		  <note>
 			<para>
-			  Das Schulkürzel sollte ausschließlich aus Buchstaben (a-z und A-Z), Ziffern (0-9) oder dem Bindestrich (-) bestehen,
-			  da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet.
+			  Das Schulkürzel darf ausschließlich aus Buchstaben, Ziffern und dem Bindestrich bestehen (<code>a-z</code>, <code>A-Z</code>, <code>0-9</code> und <code>-</code>).
+			  Der Wert wird unter anderem zur Erzeugung der Namen von Gruppen, Freigaben und Rechnern verwendet.
 			</para>
 			<para>
-			  Der Name des Schulservers bzw. Verwaltungsservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
-			  bestehen (a-z, 0-9 und -). Der Name darf nur mit einem Kleinbuchstaben beginnen, mit einem
-			  Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 12 Zeichen beschränkt. Bei
-			  Abweichungen von diesen Vorgaben kann es zu Problemen bei der Verwendung von Windows-Clients kommen.
+			  Das Schulkürzel darf Unterstriche (<code>_</code>) enthalten, wenn der Name des Schul- bzw. Verwaltungsservers explizit angegeben wird.
+			  Dieser darf <emphasis>keinen</emphasis> Unterstrich enthalten und muss den folgenden Regeln entsprechen.
+			</para>
+			<para>
+			  Der Name des Schulservers bzw. Verwaltungsservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (<code>a-z</code>, <code>0-9</code> und <code>-</code>).
+			  Der Name darf nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt.
+			  Bei Abweichungen von diesen Vorgaben kann es zu Problemen bei der Verwendung von Windows-Clients kommen.
 			</para>
 		  </note>
 		</section>
