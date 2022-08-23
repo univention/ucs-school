@@ -1,7 +1,7 @@
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix:
+fix: 13.0.22A~5.0.0.202208231815
 desc: |
  * Add `check_name` parameter to the `validate` method of multiple classes which allows disabling name checks such as checking if a user with the same user name already exists in another school (Bug #55016).
 bug: [55016]
