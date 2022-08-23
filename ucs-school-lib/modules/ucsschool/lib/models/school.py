@@ -113,35 +113,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 _("Hostname of educational DC and administrative DC must not be equal"),
             )
         if self.dc_name:
-            ldap_filter_str = ""
+            err_msg = "The educational DC for the school must not be a Backup Directory Node"
             if ucr.is_true("ucsschool/singlemaster"):
-                ldap_filter_str = filter_format(
-                    "(&(objectClass=univentionDomainController)(cn=%s)(univentionServerRole=backup))",
-                    [self.dc_name.lower()],
-                )
+                role_filter = "(univentionServerRole=backup)"
             else:
-                ldap_filter_str = filter_format(
-                    "(&"
-                    "(objectClass=univentionDomainController)"
-                    "(cn=%s)"
-                    "(|"
-                    "(univentionServerRole=backup)"
-                    "(univentionServerRole=master)"
-                    ")"
-                    ")",
-                    [self.dc_name.lower()],
-                )
-            dcs = lo.searchDn(ldap_filter_str)
-            if dcs and ucr.is_true("ucsschool/singlemaster"):
-                self.add_error(
-                    "dc_name", "The educational DC for the school must not be a Backup Directory Node"
-                )
-            elif dcs:
-                self.add_error(
-                    "dc_name",
-                    "The educational DC for the school must not be a Backup Directory Node or Primary "
-                    "Directory Node",
-                )
+                role_filter = "(|(univentionServerRole=backup)(univentionServerRole=master))"
+                err_msg += " or Primary Directory Node"
+            ldap_filter_str = filter_format(
+                "(&(objectClass=univentionDomainController)(cn=%s){})".format(role_filter),
+                [self.dc_name.lower()],
+            )
+            if lo.searchDn(ldap_filter_str):
+                self.add_error("dc_name", err_msg)
 
     def get_district(self):
         if ucr.is_true("ucsschool/ldap/district/enable"):
