@@ -46,6 +46,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    extended-configuration
    windows
    modules
+   proxy
 
 .. toctree::
    :hidden:
