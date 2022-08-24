@@ -337,10 +337,6 @@ durch Leerzeichen zu trennen, z.B. ``255.255.255.255 10.200.18.255``.
    UMC-Modulen *Computerraum* und *Klassenarbeiten* werden fortan nur noch
    Computerräume angezeigt, deren Backend auf Veyon gesetzt ist.
 
-   Das Upgrade auf |UCSUAS| 5.0 in Single-Server-Umgebungen und |UCSREPLICADN|
-   auf denen sich bereits Computerräumen befinden, ist noch nicht möglich. In
-   einem kommenden Errata Release wird dies freigeschaltet.
-
    Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume,
    die iTALC als Backend verwenden und auf |UCSREPLICADN| betrieben werden, die
    noch |UCSUAS| 4.4v9 verwenden, weiter verwendet werden. Die Migration von
