@@ -47,6 +47,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    windows
    modules
    proxy
+   radius
 
 .. toctree::
    :hidden:
