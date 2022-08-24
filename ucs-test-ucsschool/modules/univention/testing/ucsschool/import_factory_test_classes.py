@@ -4,7 +4,7 @@
 """
 Classes to test subclassing / factory code of import script
 """
-# Copyright 2016-2021 Univention GmbH
+# Copyright 2016-2022 Univention GmbH
 #
 # http://www.univention.de/
 #

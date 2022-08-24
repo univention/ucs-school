@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.23) unstable; urgency=low
+
+  * Bug #55125: allow underscore in OU name (Issue #853)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 24 Aug 2022 16:06:07 +0200
+
 ucs-school-lib (13.0.22) unstable; urgency=medium
 
   * Bug #55016: Add `check_name` parameter to the `validate` method of

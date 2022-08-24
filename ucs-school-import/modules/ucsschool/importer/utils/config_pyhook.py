@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-# Copyright 2019-2021 Univention GmbH
+# Copyright 2019-2022 Univention GmbH
 #
 # https://www.univention.de/
 #
