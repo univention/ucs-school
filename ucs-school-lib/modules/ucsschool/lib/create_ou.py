@@ -66,10 +66,14 @@ def create_ou(
     """
     Create a ucsschool OU.
 
-    :param str ou_name: name for the OU
+    :param str ou_name: name for the OU, see models.attributes::SchoolName for allowed values, may
+        contain dashes and underscores, but the latter only if DC name(s) are passed explicitly (without
+        underscore), max length is 11 chars if DC names are not passed explicitly.
     :param str display_name: display name for the OU
-    :param str edu_name: host name of educational school server
-    :param str admin_name: host name of administrative school server
+    :param str edu_name: host name of educational school server, see models.attributes::DCName for
+        allowed values, may contain dashes but no underscores, max 13 chars
+    :param str admin_name: host name of administrative school server, see models.attributes::DCName for
+        allowed values, may contain dashes but no underscores, max 13 chars
     :param str share_name: host name
     :param univention.uldap.access lo: LDAP connection object
     :param str baseDN: base DN
@@ -80,13 +84,11 @@ def create_ou(
     :raises ValueError: on validation errors
     :raises uidAlreadyUsed:
     """
-    is_edu_name_generated = False
-    if not edu_name:
+    if edu_name:
+        is_edu_name_generated = False
+    else:
         is_edu_name_generated = True
-        if is_single_master:
-            edu_name = hostname
-        else:
-            edu_name = "dc{}".format(ou_name)
+        edu_name = hostname if is_single_master else "dc{}".format(ou_name)
 
     if admin_name and len(admin_name) > MAX_HOSTNAME_LENGTH:
         raise ValueError(
