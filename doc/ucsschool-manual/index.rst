@@ -42,6 +42,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    installation/index
    management/index
    manage-school-imports
+   extended-configuration
 
 .. toctree::
    :hidden:
