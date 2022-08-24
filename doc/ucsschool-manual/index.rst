@@ -45,6 +45,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    manage-school-imports
    extended-configuration
    windows
+   modules
 
 .. toctree::
    :hidden:
