@@ -36,6 +36,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
 :cite:t:`ucsschool-teacher` bereit.
 
 .. toctree::
+   :caption: Inhalt
    :numbered:
 
    structure
@@ -43,6 +44,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    management/index
    manage-school-imports
    extended-configuration
+   windows
 
 .. toctree::
    :hidden:
