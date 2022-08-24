@@ -6,6 +6,7 @@ import os
 import random
 import subprocess
 import tempfile
+from ipaddress import IPv4Interface, IPv4Network
 
 import ucsschool.lib.models.utils
 import univention.config_registry
@@ -46,9 +47,12 @@ def random_mac():
 
 
 class IP_Iter(object):
+    NETMASKS = ["/255.255.255.0", "/255.255.248.0", "/255.255.0.0"]
+
     def __init__(self):
         self.max_range = 120
         self.index = 11
+        self.network_index = 0
 
     def __iter__(self):
         return self
@@ -64,8 +68,15 @@ class IP_Iter(object):
             ip = ".".join(map(str, ip_list))
             self.index += 1
             return ip
-        else:
-            raise StopIteration()
+        raise StopIteration()
+
+    def next_network(self):  # type: () -> str
+        # get network address from random IP address and next netmask
+        temp_address = self.next()
+        netmask = self.NETMASKS[self.network_index % len(self.NETMASKS)]
+        self.network_index += 1
+        address = IPv4Interface("{}{}".format(temp_address, netmask))
+        return "{}/{}".format(address.network.network_address, address.netmask)
 
     next = __next__
 
@@ -74,11 +85,16 @@ def random_ip(ip_iter=IP_Iter()):
     return next(ip_iter)
 
 
+def random_network(ip_iter=IP_Iter()):
+    return ip_iter.next_network()
+
+
 class Computer(object):
     def __init__(self, school, ctype):
         self.name = uts.random_name()
         self.mac = [random_mac()]
         self.ip = [random_ip()]
+        self.network = None
         self.school = school
         self.ctype = ctype
         self.inventorynumbers = []
@@ -86,6 +102,10 @@ class Computer(object):
         self.school_base = get_school_base(self.school)
 
         self.dn = "cn=%s,cn=computers,%s" % (self.name, self.school_base)
+
+    def set_network_address(self):
+        self.ip = []
+        self.network = [random_network()]
 
     def set_inventorynumbers(self):
         self.inventorynumbers.append(uts.random_name())
@@ -101,7 +121,7 @@ class Computer(object):
         line += delimiter
         line += self.school
         line += delimiter
-        line += self.ip[0]
+        line += self.ip[0] if self.ip else self.network[0]
         line += delimiter
         if self.inventorynumbers:
             line += ",".join(self.inventorynumbers)
@@ -112,9 +132,10 @@ class Computer(object):
         attr = {
             "cn": [self.name],
             "macAddress": self.mac,
-            "aRecord": self.ip,
             "univentionObjectType": ["computers/%s" % self.ctype],
         }
+        if self.ip:
+            attr["aRecord"] = self.ip
         if self.inventorynumbers:
             attr["univentionInventoryNumber"] = self.inventorynumbers
         return attr
@@ -123,6 +144,14 @@ class Computer(object):
         print("verify computer: %s" % self.name)
 
         utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
+
+        if self.network:
+            lo = utils.get_ldap_connection()
+            values = lo.get(self.dn, attr=["aRecord"])
+            network = IPv4Network(self.network[0])
+            assert "aRecord" in values
+            aRecord = IPv4Interface(values["aRecord"][0].decode("utf-8"))
+            assert aRecord in network, (self.name, aRecord, network)
 
 
 class Windows(Computer):
@@ -171,7 +200,8 @@ class ImportFile:
             for expected, pre, post in zip(
                 str(self.computer_import).split("\n"), pre_result.split("\n"), post_result.split("\n")
             ):
-                expected = expected.strip()
+                # remove possible subnet from ip address field via split
+                expected = expected.strip().split("/", 1)[0]
                 pre, post = pre.strip(), post.strip()
                 assert expected == pre, (expected, pre)
                 assert expected == post, (expected, post)
@@ -207,10 +237,11 @@ class ImportFile:
             kwargs = {
                 "school": computer.school,
                 "name": computer.name,
-                "ip_address": computer.ip,
+                "ip_address": computer.ip if computer.ip else [computer.network[0].split("/", 1)[0]],
                 "mac_address": computer.mac,
                 "type_name": computer.ctype,
                 "inventory_number": computer.inventorynumbers,
+                "subnet_mask": computer.network[0].split("/", 1)[0] if computer.network else None,
             }
             return kwargs
 
@@ -269,7 +300,8 @@ class TestPreSchoolComputer(Hook):
         with open("{}", "a") as fout:
             module_part = obj._meta.udm_module.split("/")[1]
             line = "\\t".join([module_part, obj.name, obj.mac_address[0],
-            obj.school, obj.ip_address[0], ",".join(obj.get_inventory_numbers())])
+            obj.school, obj.ip_address[0] if obj.ip_address else "None",
+            ",".join(obj.get_inventory_numbers())])
             line += "\\n"
             fout.write(line)
 """.format(
@@ -294,7 +326,8 @@ class TestPostSchoolComputer(Hook):
         with open("{}", "a") as fout:
             module_part = obj._meta.udm_module.split("/")[1]
             line = "\t".join([module_part, obj.name, obj.mac_address[0],
-            obj.school, obj.ip_address[0], ",".join(obj.get_inventory_numbers())])
+            obj.school, obj.ip_address[0] if obj.ip_address else "None",
+            ",".join(obj.get_inventory_numbers())])
             line += "\\n"
             fout.write(line)
         """.format(
@@ -313,8 +346,8 @@ class TestPostSchoolComputer(Hook):
 
 class ComputerImport:
     def __init__(self, ou_name, nr_windows=20, nr_macos=5, nr_ipmanagedclient=3):
-        assert nr_windows > 2
-        assert nr_macos > 2
+        assert nr_windows > 3
+        assert nr_macos > 3
         assert nr_ipmanagedclient > 2
 
         self.school = ou_name
@@ -323,16 +356,19 @@ class ComputerImport:
         for i in range(0, nr_windows):
             self.windows.append(Windows(self.school))
         self.windows[1].set_inventorynumbers()
+        self.windows[2].set_network_address()
 
         self.macos = []
         for i in range(0, nr_macos):
             self.macos.append(MacOS(self.school))
         self.macos[0].set_inventorynumbers()
+        self.macos[1].set_network_address()
 
         self.ip_managed_clients = []
         for i in range(0, nr_ipmanagedclient):
             self.ip_managed_clients.append(IPManagedClient(self.school))
         self.ip_managed_clients[0].set_inventorynumbers()
+        self.ip_managed_clients[1].set_network_address()
 
     def __str__(self):
         lines = []
@@ -387,4 +423,4 @@ def create_and_verify_computers(
 
 
 def import_computers_basics(use_cli_api=True, use_python_api=False):
-    create_and_verify_computers(use_cli_api, use_python_api, 5, 3, 3)
+    create_and_verify_computers(use_cli_api, use_python_api, 5, 4, 4)

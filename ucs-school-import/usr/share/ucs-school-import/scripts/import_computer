@@ -68,8 +68,8 @@ def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
     if "/" not in ip_address:
         ip_iface = IPv4Interface(u"%s/%s" % (ip_address, get_default_prefixlen()))
         print(
-            "WARNING: no netmask specified for ip address %s using %s"
-            % (ip_iface.with_prefixlen, ip_iface.netmask)
+            "WARNING: either ip_address or netmask was not specified for ip address %s."
+            " Using %s" % (ip_iface.with_prefixlen, ip_iface.netmask)
         )
     return ip_iface
 
@@ -143,9 +143,9 @@ def import_computers(input_file):  # type: (str) -> None
                     print("\t".join(row))
                     raise exc
 
+                computer.ip_address = [str(ip_iface.ip)]
+                computer.subnet_mask = ip_iface.netmask
                 if ip_iface.ip != ip_iface.network.network_address:
-                    # one IP per computer
-                    computer.ip_address = [str(ip_iface.ip)]
                     print("set ip to %s is not net %s" % (ip_iface.ip, ip_iface.network.network_address))
                 try:
                     computer.create(lo)
