@@ -48,7 +48,7 @@ ucsschool/join/create_demo=no` möglich.
 
    Join-Hooks werden in einer |UCSUAS|-Umgebung vom |UCSPRIMARYDN| im
    LDAP-Verzeichnis hinterlegt und automatisch während des Join-Vorgangs bzw.
-   während der Ausführung von Joinskripten ausgeführt. Der |UCSUAS|-Join-Hook
+   während der Ausführung von Join-Skripten ausgeführt. Der |UCSUAS|-Join-Hook
    installiert auf allen Systemen der Domäne automatisch die App |UCSUAS_p| aus
    dem Univention App Center und installiert die auf dem jeweiligen System
    benötigten |UCSUAS|-Pakete, sofern diese fehlen. Für die Erstinstallation der

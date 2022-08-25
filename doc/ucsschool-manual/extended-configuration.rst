@@ -333,16 +333,16 @@ durch Leerzeichen zu trennen, z.B. ``255.255.255.255 10.200.18.255``.
 
 .. caution::
 
-   Ab |UCSUAS| 5.0 wird Veyon als Computerraum Backend eingesetzt. In den
+   Ab |UCSUAS| 5.0 wird *Veyon* als Computerraum Backend eingesetzt. In den
    UMC-Modulen *Computerraum* und *Klassenarbeiten* werden fortan nur noch
-   Computerräume angezeigt, deren Backend auf Veyon gesetzt ist.
+   Computerräume angezeigt, deren Backend auf *Veyon* gesetzt ist.
 
    Für die Zeit der Migration in Multi-Server-Umgebungen können Computerräume,
    die iTALC als Backend verwenden und auf |UCSREPLICADN| betrieben werden, die
    noch |UCSUAS| 4.4v9 verwenden, weiter verwendet werden. Die Migration von
-   iTALC auf Veyon in diesen Mischumgebungen erfolgt im UMC-Modul *Computerräume
+   iTALC auf *Veyon* in diesen Mischumgebungen erfolgt im UMC-Modul *Computerräume
    verwalten* auf dem entsprechenden |UCSREPLICADN| (und nicht auf dem
-   |UCSPRIMARYDN|). Die Schritte der Migration von iTALC zu Veyon sind in
+   |UCSPRIMARYDN|). Die Schritte der Migration von iTALC zu *Veyon* sind in
    :uv:help:`Migration of the computer room backend iTALC to Veyon <16937>`
    beschrieben.
 

@@ -8,7 +8,7 @@ wurden, können bei Bedarf nachträglich in eine Multi-Server-Umgebung umgewande
 werden. Die Umwandlung ermöglicht die Aufnahme von Schulservern in die Domäne.
 
 Für die Umwandlung sind einige Befehle auf der Kommandozeile des |UCSPRIMARYDN|\
-s auszuführen, die einen Austausch des |UCSUAS|\ -Metapakets sowie eine
+s auszuführen, die einen Austausch des |UCSUAS|\ -Meta-Pakets sowie eine
 Konfigurationsänderung durchführen. Bitte beachten Sie das Minuszeichen hinter
 dem zweiten Paketnamen am Ende der ersten Zeile:
 

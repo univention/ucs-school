@@ -47,8 +47,8 @@ Skalierung von |UCSUAS| Samba 4 Umgebungen
 
 .. _school-performance-additionalmanaged-node-server:
 
-Installation zusätzlicher Managed-Node-Server
----------------------------------------------
+Installation zusätzlicher |UCSMANAGEDNODE| Server
+-------------------------------------------------
 
 In |UCSUAS| Umgebungen in denen Samba 4 Active Directory kompatible Dienste
 bereitstellt, kann ein zusätzlicher |UCSMANAGEDNODE|-Server an einem

@@ -146,17 +146,15 @@ dieser OU werden Container für z.B. Benutzerobjekte, Gruppen,
 DHCP-Einstellungen, usw. angelegt. Diese OUs werden direkt unterhalb der
 LDAP-Basis angelegt.
 
-|UCSUAS| unterscheidet in seinem Verzeichnisdienst zwischen dem Namen
-einer Schule und dem Schulkürzel (OU-Namen). Der Name einer Schule kann
-frei gewählt werden und wird primär in den UMC-Modulen angezeigt (in
-anderem Kontexten wird dieser Wert häufig auch als Anzeigename
-bezeichnet). Der eigentliche Name der Organisationseinheit (OU) wird
-nachfolgend auch als Schulkürzel bezeichnet. Das Schulkürzel sollte
-ausschließlich aus Buchstaben, Ziffern oder dem Bindestrich bestehen, da
-es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen
-bildet. Häufig kommen hier Schulnummern wie *340*
-oder zusammengesetzte Kürzel wie g123m oder
-gymmitte zum Einsatz.
+|UCSUAS| unterscheidet in seinem Verzeichnisdienst zwischen dem Namen einer
+Schule und dem Schulkürzel (OU-Namen). Der Name einer Schule kann frei gewählt
+werden und wird primär in den UMC-Modulen angezeigt (in anderem Kontexten wird
+dieser Wert häufig auch als Anzeigename bezeichnet). Der eigentliche Name der
+Organisationseinheit (OU) wird nachfolgend auch als Schulkürzel bezeichnet. Das
+Schulkürzel sollte ausschließlich aus Buchstaben, Ziffern oder dem Bindestrich
+bestehen, da es unter anderem die Grundlage für Gruppen-, Freigabe- und
+Rechnernamen bildet. Häufig kommen hier Schulnummern wie *340* oder
+zusammengesetzte Kürzel wie ``g123m`` oder ``gymmitte`` zum Einsatz.
 
 .. _structure-ou-schoolserver-multiple-ous:
 
@@ -447,7 +445,7 @@ erläutert.
 
   Diese Gruppen werden beim Erstellen der ersten Schul-OU einmalig angelegt und
   sind nicht spezifisch für eine bestimmte OU. Sie enthalten (entsprechend ihrem
-  Namen) als Gruppenmitglieder die Schul-DCs oder die Managed-Node-Server der
+  Namen) als Gruppenmitglieder die Schul-DCs oder die |UCSMANAGEDNODE| Server der
   Schulstandorte, wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
   getrennt werden. Über diese Gruppen werden Zugriffsrechte von
   |UCSUAS|-Systemen auf die |UCSUAS|-Objekte im LDAP gesteuert. Primary
@@ -464,9 +462,9 @@ erläutert.
 
   Diese OU-spezifischen Gruppen werden während des Anlegens der Schul-OU
   erstellt. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die
-  Schul-DCs oder die Managed-Node-Server der jeweiligen OU (hier gymmitte),
-  wobei diese jeweils nach Verwaltungsnetz und Edukativnetz getrennt werden.
-  Primary Directory Node und Backup Directory Node dürfen **kein** Mitglied in
+  Schul-DCs oder die |UCSMANAGEDNODE| Server der jeweiligen OU (hier
+  ``gymmitte``), wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
+  getrennt werden. |UCSPRIMARYDN| und |UCSBACKUPDN| dürfen **kein** Mitglied in
   einer dieser Gruppen sein.
 
 * ``cn=OUgymmitte-Klassenarbeit,cn=ucsschool,cn=groups,dc=example,dc=com``

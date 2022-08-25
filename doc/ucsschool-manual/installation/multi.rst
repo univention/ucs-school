@@ -99,7 +99,7 @@ Ein Backup Directory Node dient als Fallback-System des |UCSPRIMARYDN|. Sollte
 dieser ausfallen, kann ein Backup Directory Node die Rolle des |UCSPRIMARYDN|
 dauerhaft übernehmen. Der Einsatz eines Backup Directory Node ist optional.
 
-Es muss ein neues Backup-Directory-Node-System installiert werden. Während des
+Es muss ein neues |UCSBACKUPDN| System installiert werden. Während des
 Domänenbeitritts (oder der Ausführung von
 :command:`univention-run-join-scripts`) werden auf diesem System durch den in
 den vorigen Abschnitten bereits erwähnten |UCSUAS|-Join-Hook automatisch die
@@ -161,9 +161,8 @@ einfach der Name oder die IP-Adresse des Servers in die Adresszeile des
 Webbrowsers eingegeben werden. Es erscheint eine Kachel mit der Bezeichnung
 *Systemeinstellungen*. Nach einem Klick auf die Kachel wird eine Anmeldemaske
 angezeigt. Dort erfolgt die Anmeldung mit dem Benutzer ``Administrator``, sofern
-noch nicht geändert, entspricht das Passwort dem während der
-Primary-Directory-Node-Installation vergebenen Passwort für den Benutzer
-``root``.
+noch nicht geändert, entspricht das Passwort dem während der |UCSPRIMARYDN|
+Installation vergebenen Passwort für den Benutzer ``root``.
 
 .. caution::
 

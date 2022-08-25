@@ -12,4 +12,4 @@ Beispiel von einer Schulverwaltungssoftware oder einem Bildungsangebot.
 
 Weitere Informationen finden sich in der
 :external+uv-kelvin:doc:`Entwicklerdokumentation der Schnittstelle <index>` (nur
-in English verfügbar).
+in Englisch verfügbar).

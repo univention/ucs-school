@@ -123,13 +123,13 @@ und kann über die folgenden |UCSUCRV|\ n konfiguriert werden:
 
 .. envvar:: ucsschool/exam/cron/backup/activated
 
-   Definiert, ob das Skript :command:`exam-backup` automatisch durch cron
+   Definiert, ob das Skript :command:`exam-backup` automatisch durch Cron
    gestartet wird. Standardmäßig deaktiviert.
 
 .. envvar:: ucsschool/exam/cron/backup
 
    Definiert den Zeitpunkt, an dem das Skript :command:`exam-backup` automatisch
-   durch cron gestartet wird. Standardmäßig alle 5 Minuten; Beispiel: ``*/5 * *
+   durch Cron gestartet wird. Standardmäßig alle 5 Minuten; Beispiel: ``*/5 * *
    * *``)
 
 .. envvar:: ucsschool/exam/backup/compress

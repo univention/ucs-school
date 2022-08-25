@@ -174,7 +174,7 @@ gesetzt ist (siehe :ref:`school-setup-generic-computerroom`).
    *Veyon* in |UCSUAS| enthalten.
 
 Die Binärpakete sind direkt über die Samba-Freigabe *Veyon-Installation* abruf-
-und installierbar. Die Installationsdatei der 64bit-Version von *Veyon* findet
+und installierbar. Die Installationsdatei der 64-Bit Version von *Veyon* findet
 sich auf dem Schulserver im Verzeichnis
 :file:`/usr/share/ucs-school-veyon-windows/`.
 

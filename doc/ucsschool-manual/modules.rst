@@ -162,6 +162,6 @@ UCR-Variablen ändern:
 
 .. envvar:: ucsschool/passwordreset/force-password-change-on-next-login
 
-   Wenn mit ``true`` eingeschaltet, wird das Ändern des Checkbox-Werts
+   Wenn mit ``true`` eingeschaltet, wird das Ändern des Wertes in der Checkbox
    verhindert.
 
