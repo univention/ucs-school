@@ -25,7 +25,7 @@ Before starting the release, check if there are any tests failing connected with
   - ~~Moving of advisories to published~~
 
 Instead:
-- See [Manual release](README_manual_release.md) to do the release in dimma via cli.
+- See [Manual release to Test Appcenter](README_manual_release.md) to do the release in dimma via cli.
 - As of now, the release changelogs have to be adapted manually.
 - The advisories have to be copied to public & have to be renamed.
 - Upload current `ucs-test-ucsschool` package to Test Appcenter

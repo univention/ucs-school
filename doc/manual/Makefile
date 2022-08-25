@@ -3,7 +3,7 @@ MAIN := ucsschool-handbuch-4.4 ucsschool-lehrer-handbuch-4.4 ucsschool-lehrer-ha
 STYLESHEET := ucsschool
 lang := de
 
-COMMON_DIR ?= ../../../doc-common/docbook
+COMMON_DIR ?= ../../../doc-common
 include $(COMMON_DIR)/Makefile
 
 OPTIONS += --stringparam front.cover "$(CURDIR)/page-background-title-page.jpg"

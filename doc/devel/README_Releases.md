@@ -6,7 +6,7 @@ Before starting the release, check if there are any tests failing connected with
 
 ## Preparations
 
-See Preparation section in [Manual release](README_manual_release.md).
+See Preparation section in [Manual release to Test Appcenter](README_manual_release.md).
 
 Last step for preparations is to create a Bug for the release commits.
 
