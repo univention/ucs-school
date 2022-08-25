@@ -1,14 +1,6 @@
 .. _app-whitelist-srp: http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf
 .. _gh-ucsschool-hook-example1: https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example1.py
 .. _gh-ucsschool-hook-example2: https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example2.py
-.. _ms-kb-555324: https://support.microsoft.com/kb/555324
-.. _ms-kb-823732: https://support.microsoft.com/kb/823732
-.. _ms-technet-driver-install-control-gpo: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc731387(v=ws.10)
-.. _ms-technet-ext-storage: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/hh125922(v=ws.10)
-.. _ms-technet-gpo-processing: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc785665(v=ws.10)
-.. _ms-technet-removable-devives: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc771759(v=ws.10)
-.. _ms-technet-software-restriction-policies: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh994606(v=ws.11)
-.. _ms-technet-srp-protect-unauthorized: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-xp/bb457006(v=technet.10)
 .. _uv-wiki-migration-s3-s4: https://wiki.univention.de/index.php?title=UCS%40school_Samba_3_to_Samba_4_Migration
 .. _uv-wiki-radius-win10: https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_10
 .. _uv-wiki-radius-win7: https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_7

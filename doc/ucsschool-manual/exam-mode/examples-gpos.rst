@@ -57,8 +57,7 @@ Klassenarbeitsmodus notwendig.
       den Betriebssystemversionen von Windows 2000 oder Windows Server 2003
       nicht verfügbar.”
 
-      — Quelle: `Group Policy processing and precedence
-      <ms-technet-gpo-processing_>`_
+      — Quelle: :cite:t:`ms-technet-gpo-processing`
 
 .. _school-exam-gpo-general:
 
@@ -246,8 +245,7 @@ empfehlen.
    Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch auf
    Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen
    Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation
-   beachtet werden: `Threats and Countermeasures Guide: External Storage Devices
-   <ms-technet-ext-storage_>`_.
+   beachtet werden: :cite:t:`ms-technet-ext-storage`.
 
 .. _school-exam-gpo-usb-xp:
 
@@ -255,9 +253,9 @@ Zugriff auf USB-Speicher an Windows XP einschränken
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in
-`Microsoft Knowledgebase Artikel 555324 <ms-kb-555324_>`_ beschrieben ist. Erst
-nach Einbinden der Administrative Vorlage (ADMX) können folgende Einstellungen
-getroffen werden. Beispiele für ADMX-Dateien liegen unter
+:cite:t:`ms-kb-555324` beschrieben ist. Erst nach Einbinden der Administrative
+Vorlage (ADMX) können folgende Einstellungen getroffen werden. Beispiele für
+ADMX-Dateien liegen unter
 :file:`/usr/share/doc/ucs-school-umc-exam/examples/GPO`. Zum Einbinden der
 ADMX-Dateien müssen diese auf die :file:`SYSVOL`-Freigabe kopiert werden (siehe
 :ref:`school-exam-gpo-general`).
@@ -282,8 +280,8 @@ ADMX-Dateien müssen diese auf die :file:`SYSVOL`-Freigabe kopiert werden (siehe
 Installation neuer Gerätetreiber für USB-Speicher an Windows XP verbieten
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen
-gemäß `Microsoft Knowledgebase Artikel 823732 <ms-kb-823732_>`_.
+Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen gemäß
+:cite:t:`ms-kb-823732`.
 
 #. In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt
    anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung
@@ -339,8 +337,8 @@ Zugriff auf USB-Speicher an Windows 7 einschränken
 
 .. note::
 
-   Weitere Informationen zu diesem Thema liefert z.B. `Controlling the Use of
-   Removable Devices and Media <ms-technet-removable-devives_>`_.
+   Weitere Informationen zu diesem Thema liefert z.B.
+   :cite:t:`ms-technet-removable-devices`.
 
 .. _school-exam-gpo-usb-w7-drivers:
 
@@ -380,10 +378,8 @@ verhindern, die nicht in anderen Richtlinien beschrieben sind* erreicht werden.
 
 .. note::
 
-   Weitere Informationen zu diesem Thema liefert z.B. `Device Management and
-   Installation Step-by-Step Guide: Controlling Device Driver Installation and
-   Usage with Group Policy
-   <ms-technet-driver-install-control-gpo_>`_.
+   Weitere Informationen zu diesem Thema liefert z.B.
+   :cite:t:`ms-technet-driver-install-control-gpo`.
 
 .. _school-exam-gpo-proxy:
 
@@ -575,11 +571,9 @@ Zugriff auf bestimmte Programme einschränken
    Gegebenheiten zu testen. Insbesondere sollten folgende
    Microsoft-Dokumentationen beachtet werden:
 
-   * `Using Software Restriction Policies to Protect Against Unauthorized
-     Software <ms-technet-srp-protect-unauthorized_>`_.
+   * :cite:t:`ms-technet-srp-protect-unauthorized`
 
-   * `Administer Software Restriction Policies
-     <ms-technet-software-restriction-policies_>`_.
+   * :cite:t:`ms-technet-software-restriction-policies`.
 
 .. _school-exam-gpo-cmd-cli:
 
@@ -638,11 +632,9 @@ sollten auf Ausführbarkeit getestet werden.
    Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation
    beachtet werden:
 
-   * `Using Software Restriction Policies to Protect Against Unauthorized
-     Software <ms-technet-srp-protect-unauthorized_>`_.
+   * :cite:t:`ms-technet-srp-protect-unauthorized`.
 
-   * `Administer Software Restriction Policies
-     <ms-technet-software-restriction-policies_>`_.
+   * :cite:t:`ms-technet-software-restriction-policies`.
 
 #. In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt
    anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung
