@@ -49,6 +49,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    proxy
    radius
    exam-mode/index
+   python-hooks
 
 .. toctree::
    :hidden:

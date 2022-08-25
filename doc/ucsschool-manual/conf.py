@@ -124,4 +124,5 @@ univention_use_doc_base = True
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
     "uv-kelvin": ("https://docs.software-univention.de/ucsschool-kelvin-rest-api/", None),
+    "python-docs": ("https://docs.python.org/3.7/", None),
 }
