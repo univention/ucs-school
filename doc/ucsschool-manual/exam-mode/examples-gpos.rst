@@ -618,9 +618,6 @@ Aufgrund der Tiefe des Eingriffs der *Software Restriction Policies* ist zu
 empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der
 Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen.
 
-Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction
-Policies liefert z.B. `<app-whitelist-srp_>`_.
-
 Die *Software Restriction Policies* greifen auch in die Bearbeitung von Login-
 und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade
 sollten auf Ausführbarkeit getestet werden.
@@ -742,10 +739,6 @@ sollten auf Ausführbarkeit getestet werden.
    Zugriff nicht per Software Restriction Policy eingeschränkt ist, Benutzern
    die Möglichkeit geben, Programmdateien dort abzulegen und so die definierten
    Regeln zu umgehen.
-
-   Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction
-   Policies liefert z.B.
-   `<app-whitelist-srp_>`_.
 
 
 .. _school-exam-gpo-profiles:
