@@ -4,7 +4,7 @@
 Erweiterte Konfiguration
 ************************
 
-.. _school-setup-generic-printmoderation:
+.. _school-setup-generic-print-moderation:
 
 Einrichtung der Druckmoderation
 ===============================
@@ -189,7 +189,7 @@ findet mit der Option *Container* beim Anlegen einer Freigabe statt. Für die OU
    UMC-Modul *Freigaben* für jede Freigabe die Option *Für NFS-Clients
    exportieren (NFSv3 und NFSv4)* (de)aktiviert werden.
 
-.. _school-setup-generic-roleshares:
+.. _school-setup-generic-role-shares:
 
 Lehrerzugriff auf Benutzerfreigaben
 ===================================
@@ -227,7 +227,7 @@ auf ``no`` gesetzt wurde. Dies gewährleistet eine einheitliche Anlage der
 Heimatverzeichnisse und sollte erst nach einer manuellen Migration der
 Heimatverzeichnisse geändert werden.
 
-.. _school-setup-generic-schooladmins:
+.. _school-setup-generic-school-admins:
 
 Anlegen von Benutzerkonten für Schuladministratoren
 ===================================================
@@ -346,7 +346,7 @@ durch Leerzeichen zu trennen, z.B. ``255.255.255.255 10.200.18.255``.
    :uv:help:`Migration of the computer room backend iTALC to Veyon <16937>`
    beschrieben.
 
-.. _school-setup-generic-configureclasslists:
+.. _school-setup-generic-configure-class-lists:
 
 Konfiguration des Klassenlisten-Moduls
 ======================================
@@ -363,7 +363,7 @@ Zuordnung durch Kommata zu trennen, z.B. ``firstname Vorname,lastname
 Nachname,Class Klasse,username Username``. Für ``Class`` wird dabei die
 ausgewählte Klasse eingesetzt.
 
-.. _school-setup-generic-configureworkgroupemails:
+.. _school-setup-generic-configure-workgroup-emails:
 
 Konfiguration von Email-Adressen für Arbeitsgruppen
 ===================================================

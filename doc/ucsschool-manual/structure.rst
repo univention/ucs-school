@@ -44,7 +44,7 @@ Schuladministrator
    Lehrerpasswörter zurücksetzen. Schuladministratoren, die mit dem
    |UCSUAS|-UMC-Modul erstellt werden, besitzen nicht die Option
    *UCS\@school-Lehrer* und befinden sich nicht in der Gruppe :samp:`{lehrer-OU}`
-   (siehe auch :ref:`school-setup-generic-schooladmins`).
+   (siehe auch :ref:`school-setup-generic-school-admins`).
 
 Mitarbeiter
    Der Benutzertyp *Mitarbeiter* kommt häufig im Umfeld der Schulverwaltung zum
@@ -478,4 +478,4 @@ erläutert.
 
   Benutzer, die Mitglied dieser Gruppe sind, werden von |UCSUAS| in der
   betreffenden OU automatisch als Schuladministrator behandelt. Siehe dazu auch
-  :ref:`school-setup-generic-schooladmins`.
+  :ref:`school-setup-generic-school-admins`.

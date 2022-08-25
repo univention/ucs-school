@@ -25,7 +25,7 @@ kann eine Lizenzaktivierung notwendig sein. Details dazu sind im
 :cite:t:`ucs-manual` zu finden.
 
 
-.. _install-via-appcenter:
+.. _install-via-app-center:
 
 .. figure:: /images/appcenter_ucsschool.png
    :alt: Installation von UCS@school über das Univention App Center

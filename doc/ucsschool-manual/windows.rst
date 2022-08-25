@@ -163,7 +163,7 @@ den Schüler-PCs. Die Administration durch die Lehrkräfte ist in
 :cite:t:`ucsschool-teacher` beschrieben.
 
 Für die Nutzung der Rechnerüberwachungs- und Präsentationsfunktionen in der
-Computerraumverwaltung (siehe :ref:`ucsschool-moduluebersicht`) wird
+Computerraumverwaltung (siehe :ref:`ucsschool-modules`) wird
 vorausgesetzt, dass auf den Windows-Clients die Software *Veyon* installiert
 wurde und als Computerraum Backend des entsprechenden Computerraums *Veyon*
 gesetzt ist (siehe :ref:`school-setup-generic-computerroom`).

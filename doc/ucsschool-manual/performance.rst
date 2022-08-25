@@ -45,7 +45,7 @@ Skalierung von |UCSUAS| Samba 4 Umgebungen
    Bei |UCSUAS| muss das Backend für BIND zwingend auf Samba 4 gesetzt
    sein (UCR-Variable :envvar:`dns/backend` ``= samba4``).
 
-.. _school-performance-additionalmanaged-node-server:
+.. _school-performance-additional-managed-node:
 
 Installation zusätzlicher |UCSMANAGEDNODE| Server
 -------------------------------------------------

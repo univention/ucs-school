@@ -4,7 +4,7 @@
 Übersicht über die schulspezifischen Anwendungen
 ************************************************
 
-.. _ucsschool-moduluebersicht:
+.. _ucsschool-modules:
 
 Modulübersicht
 ==============
@@ -110,7 +110,7 @@ Internetregeln definieren
 
    Mit dem Modul *Internetregeln definieren* können die Regeln verwaltet werden.
 
-.. _ucsschool-passwoerterzuruecksetzen:
+.. _ucsschool-reset-passwords:
 
 Passwörter zurücksetzen
 =======================

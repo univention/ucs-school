@@ -39,7 +39,7 @@ kann eine Lizenzaktivierung notwendig sein. Details dazu sind im
 :cite:t:`ucs-manual` unter :ref:`software-appcenter` zu finden.
 
 
-.. _install-via-appcenter-primary-directory-node:
+.. _install-via-app-center-primary-directory-node:
 
 .. figure:: /images/appcenter_ucsschool.png
    :alt: Installation von |UCSUAS| über das Univention App Center
