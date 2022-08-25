@@ -69,12 +69,12 @@ Bei der OU ``gym17`` muss beispielsweise ``gym17/printers`` ausgewählt werden.
 
 Für die Verwendung der Druckermoderation muss ein PDF-Drucker unterhalb der OU
 der Schule angelegt werden. Dies geschieht in der Regel automatisch bei der
-Installation von |UCSUAS| bzw. dem Ausführen der Joinskripte.
+Installation von |UCSUAS| bzw. dem Ausführen der Join-Skripte.
 
 Sollte der PDF-Drucker für eine OU fehlen, gibt es zwei Möglichkeiten dieses für
 eine OU zu erstellen:
 
-* Auf dem Schulserver kann über das UMC-Modul *Domänenbeitritt* das Joinskript
+* Auf dem Schulserver kann über das UMC-Modul *Domänenbeitritt* das Join-Skript
   *99ucs-school-umc-printermoderation* (erneut) ausgeführt werden.
 
 * Alternativ kann das LDAP-Objekt im zuständigen Container für Druckerfreigaben
@@ -202,7 +202,7 @@ Dateifreigabe erfolgen.
 
 Das Paket installiert das Skript
 :command:`/usr/share/ucs-school-import/scripts/create_roleshares`, welches über
-das Joinskript automatisch aufgerufen wird und später auch manuell aufgerufen
+das Join-Skript automatisch aufgerufen wird und später auch manuell aufgerufen
 werden kann. Mit der Standardoption ``--create student`` aufgerufen, legt es für
 alle Dateiserver des Schulstandorts jeweils eine Freigabe mit dem Namensschema
 :samp:`schueler-{OU}` an. Die Freigabe erlaubt der Gruppe :samp:`lehrer-{OU}`
