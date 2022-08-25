@@ -10,9 +10,9 @@ dem Univention App Center eingebunden. Die :ref:`Installation von UCS
 nur auf ggf. auftretende Unterschiede zur Grundinstallation von |UCSUCS| sowie
 die Installation von |UCSUAS| selbst eingegangen.
 
-Im Folgenden werden zwei Installationsvarianten beschrieben: 
+Im Folgenden werden zwei Installationsvarianten beschrieben:
 
-#. Die Installation als Single-Server-Umgebung 
+#. Die Installation als Single-Server-Umgebung
 
 #. Die Installation als Multi-Server-Umgebung mit einem |UCSPRIMARYDN| und
    mindestens einem Schulserver.

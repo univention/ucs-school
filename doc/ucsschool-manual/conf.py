@@ -12,21 +12,22 @@
 #
 import os
 import sys
+from datetime import date
+
 # sys.path.insert(0, os.path.abspath('.'))
 
-from datetime import date
 
 # -- Project information -----------------------------------------------------
 
-project = 'UCS@school - Handbuch für Administratoren'
-copyright = '2021-{}, Univention GmbH'.format(date.today().year)
-author = ''
+project = "UCS@school - Handbuch für Administratoren"
+copyright = "2021-{}, Univention GmbH".format(date.today().year)
+author = ""
 
 # The full version, including alpha/beta/rc tags
-release = '5.0'
+release = "5.0"
 
 html_show_copyright = True
-language = 'de'
+language = "de"
 
 html_title = project
 
@@ -55,12 +56,12 @@ copybutton_prompt_is_regexp = True
 copybutton_line_continuation_character = "\\"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -70,7 +71,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 pdf_doc_base = os.path.basename(os.path.dirname(__file__))
 
-html_theme = 'univention_sphinx_book_theme'
+html_theme = "univention_sphinx_book_theme"
 html_context = {
     "pdf_download_filename": f"{pdf_doc_base}.pdf",
 }
@@ -82,7 +83,7 @@ html_static_path = []  # value usually is ['_static']
 html_last_updated_fmt = "%a, %d. %b %Y at %H:%M (UTC%z)"
 
 # https://github.com/mgeier/sphinx-last-updated-by-git
-git_last_updated_timezone = 'Europe/Berlin'
+git_last_updated_timezone = "Europe/Berlin"
 
 numfig = True
 
@@ -96,10 +97,10 @@ if "spelling" in sys.argv:
     extensions.remove("sphinx_last_updated_by_git")
     extensions.remove("sphinx_sitemap")
     # Warnings may come up by sphinx-last-updated-by-git. Shall be suppressed in spelling job
-    suppress_warnings = ['git.too_shallow', "bibtex"]
+    suppress_warnings = ["git.too_shallow", "bibtex"]
 
 if "linkcheck" in sys.argv:
-    suppress_warnings = ['git.too_shallow', "bibtex"]
+    suppress_warnings = ["git.too_shallow", "bibtex"]
 
 root_doc = "index"
 
@@ -109,10 +110,10 @@ rst_epilog = """
 .. include:: /links-de.txt
 """
 
-latex_engine = 'lualatex'
+latex_engine = "lualatex"
 latex_show_pagerefs = True
 latex_show_urls = "footnote"
-latex_documents = [(root_doc, f'{pdf_doc_base}.tex', "", author, "manual", False)]
+latex_documents = [(root_doc, f"{pdf_doc_base}.tex", "", author, "manual", False)]
 latex_elements = {
     "papersize": "a4paper",
     "babel": "\\usepackage{babel}",
@@ -125,8 +126,14 @@ univention_use_doc_base = True
 
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
-    "uv-kelvin": ("https://docs.software-univention.de/ucsschool-kelvin-rest-api/", None),
-    "uv-performance": ("https://docs.software-univention.de/ext-performance/5.0/en/", None),
+    "uv-kelvin": (
+        "https://docs.software-univention.de/ucsschool-kelvin-rest-api/",
+        None,
+    ),
+    "uv-performance": (
+        "https://docs.software-univention.de/ext-performance/5.0/en/",
+        None,
+    ),
     "python-docs": ("https://docs.python.org/3.7/", None),
 }
 
