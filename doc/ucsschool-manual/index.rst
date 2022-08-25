@@ -48,6 +48,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    modules
    proxy
    radius
+   exam-mode/index
 
 .. toctree::
    :hidden:
