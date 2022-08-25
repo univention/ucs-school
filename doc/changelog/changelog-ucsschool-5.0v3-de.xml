@@ -173,6 +173,28 @@ feedback@univention.de
 					<!-- END ucs-school-umc-internetrules 16.0.4A~5.0.0.202208110901 -->
 <!-- CHANGELOG:2022-08-17:APPEND -->
 				</section>
+			<section id="changelog:ucsschool:2022-08-25" lang="en">
+					<title>Released on 2022-08-25:</title>
+					<!-- START ucs-school-import 18.0.21A~5.0.0.202208241614 -->
+					<para>
+						Source package <emphasis>ucs-school-import</emphasis> in version <emphasis>18.0.21A~5.0.0.202208241614</emphasis>:
+						<itemizedlist>
+							<listitem><para>Fix user validation in mass import with dry-run (<u:bug>55016</u:bug>).</para></listitem>
+							<listitem><para>Underscores are now allowed in OU names, when the hostname of the school server is also passed (<u:bug>55125</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-import 18.0.21A~5.0.0.202208241614 -->
+					<!-- START ucs-school-lib 13.0.23A~5.0.0.202208241612 -->
+					<para>
+						Source package <emphasis>ucs-school-lib</emphasis> in version <emphasis>13.0.23A~5.0.0.202208241612</emphasis>:
+						<itemizedlist>
+							<listitem><para>Internal: Add `check_name` parameter to the `validate` method of multiple classes which allows disabling name checks such as checking if a user with the same user name already exists in another school (<u:bug>55016</u:bug>).</para></listitem>
+                            <listitem><para>Underscores are now allowed in OU names, when the hostname of the school server is also passed (<u:bug>55125</u:bug>).</para></listitem>
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-lib 13.0.23A~5.0.0.202208241612 -->
+<!-- CHANGELOG:2022-08-25:APPEND -->
+				</section>
 <!-- CHANGELOG-NEW-SECTION -->
 
 		</section>
