@@ -29,7 +29,7 @@ ausgeführt. Diese Klassen finden sich in im Python Paket
    nicht statt.
 
 Hooks für |UCSUAS| Objekte ähneln den bekannten Hooks für den Benutzerimport
-(siehe :cite:t:`ucs-school-import-manual`), werden jedoch auch ohne den Import
+(siehe :cite:t:`ucsschool-import`), werden jedoch auch ohne den Import
 zu verwenden ausgeführt und haben einige andere Attribute.
 
 Zur Nutzung der Hook-Funktionalität muss eine eigene Python-Klasse erstellt

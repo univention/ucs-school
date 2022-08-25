@@ -50,6 +50,7 @@ Für die Bedienung der |UCSUAS|-spezifischen Module der |UCSUMC| steht
    radius
    exam-mode/index
    python-hooks
+   performance
 
 .. toctree::
    :hidden:
