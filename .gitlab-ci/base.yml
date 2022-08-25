@@ -14,7 +14,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: none
   GIT_DEPTH: "3"
   SPHINX_DOC: docker-registry.knut.univention.de/sphinx
-  PRODUCTION_DOC: docker-registry.knut.univention.de/knut/docs-production
+  GIT_SYNC: docker-registry.knut.univention.de/knut/git-sync
   IMAGE_TAG: $CI_REGISTRY_IMAGE
   DOC: docker-registry.knut.univention.de/docbook
 

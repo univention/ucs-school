@@ -64,7 +64,7 @@ webframe:
     GIT_COMMITTER_NAME: $GITLAB_USER_NAME
     GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
   resource_group: prod
-  image: $PRODUCTION_DOC
+  image: $GIT_SYNC
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: manual
