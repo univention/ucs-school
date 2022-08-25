@@ -105,6 +105,8 @@ root_doc = "index"
 
 rst_epilog = """
 .. include:: /../substitutions-de.txt
+
+.. include:: /links-de.txt
 """
 
 latex_engine = 'lualatex'
@@ -126,4 +128,9 @@ intersphinx_mapping = {
     "uv-kelvin": ("https://docs.software-univention.de/ucsschool-kelvin-rest-api/", None),
     "uv-performance": ("https://docs.software-univention.de/ext-performance/5.0/en/", None),
     "python-docs": ("https://docs.python.org/3.7/", None),
+}
+
+linkcheck_allowed_redirects = {
+    r"https://support\.microsoft\.com/kb/\d+": r"https://(support|docs)\.microsoft\.com/en-(us|US)/.+",
+    r"https://help\.univention\.com/t/\d+": r"https://help\.univention\.com/t/[\w-]+/\d+",
 }

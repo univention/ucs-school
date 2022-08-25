@@ -84,11 +84,9 @@ mit den folgenden Parametern konfigurieren:
 Die Konfiguration unterscheidet sich je nach Betriebssystem des Clients. Im
 Univention Wiki findet sich eine exemplarische Schritt-für-Schritt-Anleitung:
 
-* Einrichtung unter `Windows 7
-  <https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_7>`_
+* Einrichtung unter `Windows 7 <uv-wiki-radius-win7_>`_
 
-* Einrichtung unter `Windows 10
-  <https://wiki.univention.de/index.php/Einrichtung_des_WLAN-Zugriffs_%C3%BCber_RADIUS_f%C3%BCr_Windows_10>`_
+* Einrichtung unter `Windows 10 <uv-wiki-radius-win10_>`_
 
 .. _radius-wlan:
 

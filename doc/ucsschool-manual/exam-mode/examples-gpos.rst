@@ -58,7 +58,7 @@ Klassenarbeitsmodus notwendig.
       nicht verfügbar.”
 
       — Quelle: `Group Policy processing and precedence
-      <http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx>`_
+      <ms-technet-gpo-processing_>`_
 
 .. _school-exam-gpo-general:
 
@@ -247,7 +247,7 @@ empfehlen.
    Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen
    Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation
    beachtet werden: `Threats and Countermeasures Guide: External Storage Devices
-   <http://technet.microsoft.com/de-de/library/hh125922%28v=ws.10%29.aspx>`_.
+   <ms-technet-ext-storage_>`_.
 
 .. _school-exam-gpo-usb-xp:
 
@@ -255,10 +255,9 @@ Zugriff auf USB-Speicher an Windows XP einschränken
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in
-`Microsoft Knowledgebase Artikel 555324
-<http://support.microsoft.com/kb/555324>`_ beschrieben ist. Erst nach Einbinden
-der Administrative Vorlage (ADMX) können folgende Einstellungen getroffen
-werden. Beispiele für ADMX-Dateien liegen unter
+`Microsoft Knowledgebase Artikel 555324 <ms-kb-555324_>`_ beschrieben ist. Erst
+nach Einbinden der Administrative Vorlage (ADMX) können folgende Einstellungen
+getroffen werden. Beispiele für ADMX-Dateien liegen unter
 :file:`/usr/share/doc/ucs-school-umc-exam/examples/GPO`. Zum Einbinden der
 ADMX-Dateien müssen diese auf die :file:`SYSVOL`-Freigabe kopiert werden (siehe
 :ref:`school-exam-gpo-general`).
@@ -284,7 +283,7 @@ Installation neuer Gerätetreiber für USB-Speicher an Windows XP verbieten
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen
-gemäß `Microsoft Knowledgebase Artikel 823732 <http://support.microsoft.com/kb/823732>`_.
+gemäß `Microsoft Knowledgebase Artikel 823732 <ms-kb-823732_>`_.
 
 #. In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt
    anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung
@@ -341,8 +340,7 @@ Zugriff auf USB-Speicher an Windows 7 einschränken
 .. note::
 
    Weitere Informationen zu diesem Thema liefert z.B. `Controlling the Use of
-   Removable Devices and Media
-   <http://technet.microsoft.com/de-de/library/cc771759%28v=ws.10%29.aspx>`_.
+   Removable Devices and Media <ms-technet-removable-devives_>`_.
 
 .. _school-exam-gpo-usb-w7-drivers:
 
@@ -385,7 +383,7 @@ verhindern, die nicht in anderen Richtlinien beschrieben sind* erreicht werden.
    Weitere Informationen zu diesem Thema liefert z.B. `Device Management and
    Installation Step-by-Step Guide: Controlling Device Driver Installation and
    Usage with Group Policy
-   <http://technet.microsoft.com/de-de/library/cc731387%28v=ws.10%29.aspx>`_.
+   <ms-technet-driver-install-control-gpo_>`_.
 
 .. _school-exam-gpo-proxy:
 
@@ -578,10 +576,10 @@ Zugriff auf bestimmte Programme einschränken
    Microsoft-Dokumentationen beachtet werden:
 
    * `Using Software Restriction Policies to Protect Against Unauthorized
-     Software <http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA>`_.
+     Software <ms-technet-srp-protect-unauthorized_>`_.
 
    * `Administer Software Restriction Policies
-     <http://technet.microsoft.com/en-us/library/hh994606.aspx>`_.
+     <ms-technet-software-restriction-policies_>`_.
 
 .. _school-exam-gpo-cmd-cli:
 
@@ -627,7 +625,7 @@ empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der
 Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen.
 
 Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction
-Policies liefert z.B. `<http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf>`_.
+Policies liefert z.B. `<app-whitelist-srp_>`_.
 
 Die *Software Restriction Policies* greifen auch in die Bearbeitung von Login-
 und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade
@@ -641,10 +639,10 @@ sollten auf Ausführbarkeit getestet werden.
    beachtet werden:
 
    * `Using Software Restriction Policies to Protect Against Unauthorized
-     Software <http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA>`_.
+     Software <ms-technet-srp-protect-unauthorized_>`_.
 
    * `Administer Software Restriction Policies
-     <http://technet.microsoft.com/en-us/library/hh994606.aspx>`_.
+     <ms-technet-software-restriction-policies_>`_.
 
 #. In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt
    anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung
@@ -755,7 +753,7 @@ sollten auf Ausführbarkeit getestet werden.
 
    Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction
    Policies liefert z.B.
-   `<http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf>`_.
+   `<app-whitelist-srp_>`_.
 
 
 .. _school-exam-gpo-profiles:

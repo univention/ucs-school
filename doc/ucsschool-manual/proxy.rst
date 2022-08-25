@@ -21,8 +21,7 @@ Einrichtung
 .. highlight:: console
 
 Die Proxykonfiguration wird in der Grundeinstellung durch DHCP über die
-WPAD-Option verteilt. Siehe `WAPD auf Wikipedia
-<https://de.wikipedia.org/wiki/Web_Proxy_Autodiscovery_Protocol>`_.
+WPAD-Option verteilt. Siehe `WAPD auf Wikipedia <w_wpap_>`_.
 
 Soll die WPAD-Option abgeschaltet werden, so muss die Option an dem betreffenden
 DHCP-Service-Objekt entfernt werden. Dies kann entweder im UMC-Modul

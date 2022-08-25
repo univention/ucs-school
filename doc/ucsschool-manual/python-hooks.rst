@@ -43,10 +43,8 @@ abgeleiteten Klasse muss auf :file:`.py` enden und im Verzeichnis
 Zwei Beispiele finden sich auf Servern der Rolle |UCSPRIMARYDN| in
 :file:`hook_example1.py` und :file:`hook_example2.py` unter
 :file:`/usr/share/doc/ucs-school-lib-common/` bzw. online auf
-`https://github.com/.../hook_example1.py
-<https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example1.py>`_
-und `https://github.com/.../hook_example2.py
-<https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example2.py>`_.
+`https://github.com/.../hook_example1.py <gh-ucsschool-hook-example1_>`_ und
+`https://github.com/.../hook_example2.py <gh-ucsschool-hook-example2_>`_.
 
 Im Folgenden wird anhand des Beispiels in :file:`hook_example2.py` erklärt, wie
 mit Hilfe eines Hooks jeder Schulklasse eine E-Mailadresse zugeordnet werden
