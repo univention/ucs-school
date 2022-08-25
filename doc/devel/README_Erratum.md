@@ -25,13 +25,13 @@ Before starting the release, check if there are any tests failing connected with
   - ~~Moving of advisories to published~~
 
 Instead:
-- See [Manual release](README_manual_release.md) to do the release in dimma via cli.
+- See [Manual release to Test Appcenter](README_manual_release.md) to do the release in dimma via cli.
  - As of now, the release changelogs have to be adapted manually.
  - The advisories have to be copied to public & have to be renamed.
 - Upload current `ucs-test-ucsschool` package to Test Appcenter
 
 ```
-univention-appcenter-control upload --upload-packages-although-published '4.4/ucsschool=4.4 v9' $(find /var/univention/buildsystem2/apt/ucs_4.4-0-ucs-school-4.4/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v3' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Publish to production App Center
