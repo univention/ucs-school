@@ -39,6 +39,7 @@ doc-pipeline:
     - if: "$CI_COMMIT_MESSAGE =~ /force-doc/ || $pipeline =~ /force-doc/"
     - changes:
       - "doc/**/*"
+    - when: manual
   needs:
     - job: generate-config
   trigger:
