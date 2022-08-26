@@ -156,13 +156,15 @@ class TestUserCreator(object):
         )
         total_users_num = sum(job[0] for job in jobs)
         total_users_count = 0
+        given_name_gen = self._get_new_given_name()
+        family_name_gen = self._get_new_family_name()
 
         for num, kind in jobs:
             if num == 0:
                 continue
             for user_num in range(num):
-                given_name = next(self._get_new_given_name())
-                family_name = next(self._get_new_family_name())
+                given_name = next(given_name_gen)
+                family_name = next(family_name_gen)
                 user = dict(
                     Schulen=None,
                     Benutzertyp=kind,
