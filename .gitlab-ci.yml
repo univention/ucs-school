@@ -38,7 +38,8 @@ doc-pipeline:
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /force-doc/ || $pipeline =~ /force-doc/"
     - changes:
-      - "doc/**/*"
+      - "doc/ucsschool-quickstart/**/*"
+      - "doc/ucsschool-umc-user-import/**/*"
     - when: manual
       allow_failure: true
   needs:
