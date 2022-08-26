@@ -40,6 +40,7 @@ doc-pipeline:
     - changes:
       - "doc/**/*"
     - when: manual
+      allow_failure: true
   needs:
     - job: generate-config
   trigger:
