@@ -18,12 +18,11 @@ variables:
   pipeline:
     value: ""
     description: "Skip or force jobs: '(skip|force)-(doc)'"
-  BUILD: docker-registry.knut.univention.de/knut/deb-builder
 
 generate-config:
   stage: prepare
   image:
-    name: $BUILD
+    name: docker-registry.knut.univention.de/knut/deb-builder
     entrypoint: [""]
   script:
     - .gitlab-ci/build-ci
