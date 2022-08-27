@@ -19,5 +19,4 @@ RUN git init /tmp/seed && \
 	pre-commit install-hooks --config /home/pre-commit/.pre-commit-config.yaml && \
 	rm -rf /tmp/seed
 
-ENTRYPOINT ["pre-commit"]
-CMD ["run", "-a"]
+CMD ["pre-commit", "run", "-a"]

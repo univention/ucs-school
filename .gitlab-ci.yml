@@ -74,6 +74,5 @@ run pre-commit:
       optional: true
   image:
     name: $IMAGE_TAG
-    entrypoint: [""]
   script:
     - pre-commit run -a
