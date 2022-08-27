@@ -70,8 +70,13 @@ build pre-commit:
 
 run pre-commit:
   stage: lint
+  variables:
+    IMAGE_TAG: docker-registry.knut.univention.de/ucsschool/pre-commit:5-0
+  needs:
+    - job: build pre-commit
+      optional: true
   image:
-    name: docker-registry.knut.univention.de/ucsschool/pre-commit:5-0
+    name: $IMAGE_TAG
     entrypoint: [""]
   script:
     - pre-commit run -a
