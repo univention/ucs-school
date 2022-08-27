@@ -53,8 +53,6 @@ doc-pipeline:
 build pre-commit:
   stage: prepare
   rules:
-    - if: '$CI_COMMIT_BRANCH !~ /[1-9][0-9]*[.][0-9]+/'
-      when: never
     - changes:
       - .gitlab-ci/Dockerfile.pre-commit
       - .bandit
