@@ -40,8 +40,6 @@ doc-pipeline:
     - changes:
       - "doc/ucsschool-quickstart/**/*"
       - "doc/ucsschool-umc-user-import/**/*"
-    - when: manual
-      allow_failure: true
   needs:
     - job: generate-config
   trigger:
