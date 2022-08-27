@@ -64,6 +64,7 @@ build pre-commit:
   extends: .kaniko
   variables:
     DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
+    KANIKO_ARGS: --cache=true
 
 run pre-commit:
   stage: lint
