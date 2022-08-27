@@ -61,15 +61,14 @@ build pre-commit:
       - .flake8
       - .isort.cfg
       - .pre-commit-config.yaml
-  extends: .kaniko_knut
+  extends: .kaniko
   variables:
-    IMAGE_TAG: $CI_REGISTRY/ucsschool/pre-commit:$CI_COMMIT_REF_SLUG
     DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
 
 run pre-commit:
   stage: lint
   variables:
-    IMAGE_TAG: docker-registry.knut.univention.de/ucsschool/pre-commit:5-0
+    IMAGE_TAG: $CI_REGISTRY_IMAGE
   needs:
     - job: build pre-commit
       optional: true
