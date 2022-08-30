@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.66) unstable; urgency=medium
+
+  * Bug #54755: removed empty file from 90_ucsschool
+
+ -- Amir Teymuri <teymuri@univention.de>  Tue, 30 Aug 2022 14:32:52 +0200
+
 ucs-test-ucsschool (7.3.65) unstable; urgency=medium
 
   * Bug #55127: add new test section
