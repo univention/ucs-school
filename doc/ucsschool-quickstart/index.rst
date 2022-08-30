@@ -370,7 +370,7 @@ Weiterführende Informationen
 * Ausführliche Beschreibungen zum Konzept und zur Administration von |UCSUAS|
   können dem :cite:t:`ucsschool-admin` entnommen werden.
 
-* Für Lehrer existiert darüberhinaus das gesonderte Dokument
+* Für Lehrer existiert darüber hinaus das gesonderte Dokument
   :cite:t:`ucsschool-teacher`, das die Verwendung der webbasierten
   Administrationsschnittstellen beschreibt.
 
