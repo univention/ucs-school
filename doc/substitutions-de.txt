@@ -1,10 +1,13 @@
 .. |UCSADC| replace:: Univention AD Connector
 .. |UCSAPPC| replace:: Univention App Center
 .. |UCSBACKUPDN| replace:: Backup Directory Node
+.. |UCSBACKUPDN_e| replace:: *Backup Directory Node*
 .. |UCSMANAGEDNODE| replace:: Managed Node
+.. |UCSMANAGEDNODE_e| replace:: *Managed Node*
 .. |UCSPRIMARYDN_e| replace:: *Primary Directory Node*
 .. |UCSPRIMARYDN| replace:: Primary Directory Node
 .. |UCSREPLICADN| replace:: Replica Directory Node
+.. |UCSREPLICADN_e| replace:: *Replica Directory Node*
 .. |UCSS4C| replace:: Univention S4 Connector
 .. |UCSUAS| replace:: UCS\@school
 .. |UCSUASp| replace:: :program:`UCS\@school`
