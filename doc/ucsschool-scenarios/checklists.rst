@@ -12,6 +12,8 @@ am Anfang der Projektplanung Gedanken machen sollten.
 Organisation
 ============
 
+.. rst-class:: white-square
+
 * Welches Szenario soll umgesetzt werden? Siehe :ref:`scenarios`.
 
 * Wer ist Betreiber der Gesamtinfrastruktur?
@@ -52,6 +54,8 @@ Organisation
 
 Zentral bereitgestellte IT-Angebote
 ===================================
+
+.. rst-class:: white-square
 
 * Wo werden die zentralen Server betrieben? Siehe
   :ref:`infrastructure-and-hardware-requirements-servers`.
@@ -101,6 +105,8 @@ Zentral bereitgestellte IT-Angebote
 
 Dezentral an den Schulen bereitgestellte IT-Angebote
 ====================================================
+
+.. rst-class:: white-square
 
 * Wer ist lokaler Ansprechpartner für die IT-Infrastruktur in der Schule?
 

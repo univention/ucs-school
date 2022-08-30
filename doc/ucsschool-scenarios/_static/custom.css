@@ -1,0 +1,30 @@
+@import 'styles/univention.css';
+
+:root {
+    --white-square-padding-left: 1em;
+    --white-square-content: "\25A1";
+}
+
+ul.white-square {
+    padding-left: var(--white-square-padding-left);
+}
+
+ul.white-square li {
+    padding-left: var(--white-square-padding-left);
+}
+
+ul.white-square li ul {
+    padding-left: var(--white-square-padding-left);
+}
+
+ul.white-square li ul li {
+    padding-left: var(--white-square-padding-left);
+}
+
+ul.white-square > li::marker {
+    content: var(--white-square-content);
+}
+
+ul.white-square li ul > li::marker {
+    content: var(--white-square-content);
+}
