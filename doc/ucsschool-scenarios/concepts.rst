@@ -29,6 +29,7 @@ für 65.536 IP-Adressen bietet und nach Bedarf in weitere Subnetze unterteilt
 wird.
 
 .. list-table:: Zuteilung der Subnetze zu Schulen
+   :name: table-network-concept-schools
    :header-rows: 1
    :widths: 4 8
 
@@ -80,6 +81,7 @@ In :ref:`import-networks` ist beschrieben wie der Import vorzunehmen ist, welche
 Informationen anzugeben sind und welche Hilfsmittel dafür zur Verfügung stehen.
 
 .. list-table:: Zentrales Subnetz
+   :name: table-network-concept-central
    :header-rows: 1
    :widths: 3 3 3 3
 
@@ -104,6 +106,7 @@ Beispiel Subnetz Grundschule
 ----------------------------
 
 .. list-table:: Netze für Beispiel-Grundschule
+   :name: table-network-concept-small-school
    :header-rows: 1
    :widths: 3 3 3 3
 
@@ -128,6 +131,7 @@ Beispiel Subnetz Berufsschule
 -----------------------------
 
 .. list-table:: Netze für Beispiel-Berufsschule
+   :name: table-network-concept-large-school
    :header-rows: 1
    :widths: 2 3 2 5
 

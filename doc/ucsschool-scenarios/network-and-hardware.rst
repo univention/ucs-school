@@ -259,6 +259,7 @@ Geräte. Dabei ist zu beachten, dass z.B. zum Schulstundenbeginn oder zum
 Pausenbeginn mit Lastspitzen zu rechnen ist.
 
 .. list-table:: Minimalanforderungen für die Anbindung nach Schultyp
+   :name: table-infrastructure-and-hardware-requirements-infrastructure-internet
    :header-rows: 1
    :widths: 3 2 5 2
 

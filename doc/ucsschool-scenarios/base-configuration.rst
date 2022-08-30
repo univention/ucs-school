@@ -193,6 +193,7 @@ Dazu wird eine neue Richtlinie vom Typ |UCSUCR| im Container
 enthalten:
 
 .. list-table:: UCR-Variablen zur Zeitserver-Konfiguration
+   :name: table-central-ucr-settings
    :header-rows: 1
    :widths: 2 5 5
 
