@@ -116,6 +116,10 @@ intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
     "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
     "uv-inst": ("https://docs.software-univention.de/ext-installation/5.0/en/", None),
+    "uv-ucsschool-manual": (
+        "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+        None,
+    ),
 }
 
 rst_epilog = """

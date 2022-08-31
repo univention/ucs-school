@@ -28,16 +28,18 @@ Installation von UCS
 
 Dieser Quickstart Guide beschreibt die Installation als Single-Server-Umgebung.
 Weiterführende Hinweise zu Multi-Server-Umgebungen finden sich in
-:ref:`quickstart-ucsschool-multi-server` sowie im |UCSUAS|-Handbuch
-:cite:t:`ucsschool-multi-server`.
+:ref:`quickstart-ucsschool-multi-server` sowie in
+:ref:`school-installation-primary-directory-node2` in
+:cite:t:`ucsschool-admin`.
 
 UCS steht als 64 Bit-Variante (*amd64*) kostenlos im `Download-Bereich
 <https://www.univention.de/download/download-ucs/>`_ zur Verfügung. Alternativ
-kann UCS auch in der Amazon EC2 Cloud installiert (siehe :cite:t:`amazon-ec2`)
-und für |UCSUAS| verwendet werden. Des Weiteren kann für die Installation von
-|UCSUAS| auch das VMware-Image für UCS verwendet (siehe :cite:t:`ucs-vm-images`)
-und darin die Erweiterung |UCSUASp| installiert werden. Auch hierfür gelten die
-als nächstes beschriebenen abweichenden Einstellungen.
+kann UCS auch in der Amazon EC2 Cloud installiert (siehe
+:ref:`installation-amazon-ec2` in :cite:t:`ucs-manual`) und für |UCSUAS|
+verwendet werden. Des Weiteren kann für die Installation von |UCSUAS| auch das
+VMware-Image für UCS verwendet (siehe :ref:`installation-vmware` in
+:cite:t:`ucs-manual`) und darin die Erweiterung |UCSUASp| installiert werden.
+Auch hierfür gelten die als nächstes beschriebenen abweichenden Einstellungen.
 
 Wählen Sie für die Installation folgende abweichende Einstellungen vom UCS
 Quickstart Guide :cite:t:`ucs-quickstart`, um |UCSUAS| zu installieren:
@@ -319,7 +321,7 @@ Abschließend sollte der Client neu gestartet werden.
 
 Durch den Domänenbeitritt wird für den Microsoft Windows-Client automatisch ein
 Eintrag in der Rechnerverwaltung und DNS-Einträge angelegt. Weitere Hinweise
-finden sich im UCS-Handbuch im Kapitel :cite:t:`ucs-computer-management`.
+finden sich in :ref:`computers-general` in :cite:t:`ucs-manual`.
 
 .. _quickstart-manage-win-clients:
 
@@ -329,19 +331,20 @@ Management von Microsoft Windows-Clients
 
 Die Netzkonfiguration der Microsoft Windows-Clients wird über in UCS integrierte
 DNS- und DHCP-Dienste durchgeführt. Die MAC- und IP-Adressen werden beim Import
-direkt zugewiesen. Weiterführende Hinweise finden sich im |UCSUAS|-Handbuch im
-Abschnitt :cite:t:`ucsschool-computer-import`.
+direkt zugewiesen. Weiterführende Hinweise finden sich in
+:ref:`school-schoolcreate-computers` in :cite:t:`ucsschool-admin`.
 
 Die Windows-PCs der Schüler und Lehrer können über Gruppenrichtlinien
-konfiguriert werden und ist im Kapitel :cite:t:`ucs-computer-windows` des
-UCS-Handbuchs beschrieben.
+konfiguriert werden und ist in :ref:`windows-samba4-desktopmanagement` in
+:cite:t:`ucs-manual` beschrieben.
 
 Auf den Windows-Clients der Schüler kann die Software Veyon installiert werden.
 Sie wird vom UMC-Modul Computerraumverwaltung verwendet und erlaubt Lehrern den
 Desktop der Schüler einzuschränken und z.B. Bildschirme und Eingabegeräte zu
 sperren. Außerdem kann ein Übertragungsmodus aktiviert werden, der die
 Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt.
-Veyon wird im Kapitel :cite:t:`ucsschool-veyon` |UCSUAS|-Handbuch dokumentiert.
+Veyon ist in :ref:`school-windows-veyon` in :cite:t:`ucsschool-admin`
+dokumentiert.
 
 .. _quickstart-ucsschool-multi-server:
 
@@ -358,8 +361,9 @@ einzelnen Schulservern sind nur die Daten der jeweiligen Schule gespeichert.
 
 Die in diesem Quickstart Guide beschriebene Installation kann durch die
 Installation weiterer Schulserver zu einer Multi-Server-Umgebung ausgebaut
-werden. Die dazu nötigen Schritte sind im Kapitel
-:cite:t:`ucsschool-multi-server` des |UCSUAS|-Handbuch beschrieben.
+werden. Die dazu nötigen Schritte sind in
+:ref:`school-installation-primary-directory-node2` in :cite:t:`ucsschool-admin`
+beschrieben.
 
 .. _quickstart-further-info:
 
