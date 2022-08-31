@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-MAIN := ucsschool-lehrer-handbuch-5.0 ucsschool-lehrer-handbuch-5.0-fr ucsschool-import-handbuch-5.0
+MAIN := ucsschool-lehrer-handbuch-5.0 ucsschool-lehrer-handbuch-5.0-fr
 STYLESHEET := ucsschool
 lang := de
 
