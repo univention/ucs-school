@@ -25,6 +25,7 @@ prod_job () {
     echo '  variables:'
     echo "    DOC_NAME: ${path##*/}"
     echo '  extends: .production'
+    echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
 }
 
 for make in doc/*/Makefile
