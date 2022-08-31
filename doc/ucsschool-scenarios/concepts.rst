@@ -417,7 +417,7 @@ Lehrkräfte und Mitarbeiter*innen:
    Mareike
 
 Für Benutzerkonten kann das gewünschte Schema im Importmechanismus hinterlegt
-werden, siehe :cite:t:`ucsschool-cli-import`.
+werden, siehe :cite:t:`ucsschool-import`.
 
 Klassennamen müssen mit der Kurzbezeichnung der Schule (hier im Beispiel ``042`` und
 ``011``) als Präfix beginnen:

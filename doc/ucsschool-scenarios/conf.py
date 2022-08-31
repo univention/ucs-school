@@ -132,6 +132,10 @@ intersphinx_mapping = {
         "https://docs.software-univention.de/ucsschool-umc-user-import/5.0/de",
         None,
     ),
+    "uv-ucsschool-manual": (
+        "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+        None,
+    ),
 }
 
 linkcheck_allowed_redirects = {

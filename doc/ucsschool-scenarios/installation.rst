@@ -5,11 +5,10 @@ Installation
 ************
 
 Die Installation von |UCSUAS| ist grundlegend in :ref:`installation-chapter` in
-:cite:t:`ucs-manual` und in `Installation
-<https://docs.software-univention.de/ucsschool-handbuch-5.0.html#installation>`_
-in :cite:t:`ucsschool-admin` beschrieben. In diesem Abschnitt geben wir
-zusätzliche Hinweise zur Installation, insbesondere im Hinblick auf die
-Umsetzung der definierten Konzepte.
+:cite:t:`ucs-manual` und in :external+uv-ucsschool-manual:ref:`install` in
+:cite:t:`ucsschool-admin` beschrieben. In diesem Abschnitt geben wir zusätzliche
+Hinweise zur Installation, insbesondere im Hinblick auf die Umsetzung der
+definierten Konzepte.
 
 * Zur Installation wird das `aktuellste UCS Installationsmedium
   <https://www.univention.de/download/download-ucs/>`_
@@ -122,9 +121,8 @@ aufgesetzt werden.
   *Domänenbeitritt* geprüft werden.
 
 Weitere Hinweise zur Installation eines Schulservers und zum |UCSUAS|
-Einrichtungsassistent finden sich auch in `Installation eines Schulservers
-<https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:installation:replica_directory_node>`_
-in :cite:t:`ucsschool-admin`.
+Einrichtungsassistent finden sich auch in
+:ref:`school-installation-replica-directory-node` in :cite:t:`ucsschool-admin`.
 
 .. _installation-replica-directory-node:
 
@@ -276,6 +274,5 @@ des Schulservers zurück.
   App :program:`DHCP-Server` über das Univention App Center installiert werden.
 
 Weitere Hinweise zur Installation eines Schulservers und zum |UCSUAS|
-Einrichtungsassistent finden sich auch in `Installation eines Schulservers
-<https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:installation:replica_directory_node>`_
-in :cite:t:`ucsschool-admin`.
+Einrichtungsassistent finden sich auch in
+:ref:`school-installation-replica-directory-node` in :cite:t:`ucsschool-admin`.

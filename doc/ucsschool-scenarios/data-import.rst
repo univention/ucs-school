@@ -130,9 +130,8 @@ einrichten zu können. Beim Import werden unter anderem passende Richtlinien fü
 DHCP, DNS und Routing erstellt.
 
 Die Netze sind entsprechend der :ref:`concepts-network` in eine CSV-Datei
-einzutragen. In `Skriptbasierter Import von Netzwerken
-<https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:schoolcreate:network:import>`_
-in :cite:t:`ucsschool-admin` ist das Datenformat für den Import beschrieben.
+einzutragen. In :ref:`school-schoolcreate-network-import` in
+:cite:t:`ucsschool-admin` ist das Datenformat für den Import beschrieben.
 
 In der Datei :download:`ucsschool-import-vorlagen.xlsx
 </ucsschool-import-vorlagen.xlsx>` ist eine Vorlage in der Tabelle *Netze*
@@ -176,8 +175,7 @@ Schulen mit der richtigen MAC-Adresse in |UCSUAS| zu hinterlegen, so dass diese
 Weitere Dienste, wie Softwareverteilungslösungen verwenden diese Informationen
 ebenfalls weiter.
 
-Das Datenformat der CSV-Datei ist in `Import von Rechnerkonten für Windows-PCs
-<https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:schoolcreate:computers>`_
+Das Datenformat der CSV-Datei ist in :ref:`school-schoolcreate-computers`
 in :cite:t:`ucsschool-admin` beschrieben.
 
 Es sollte eine CSV-Datei je Schule erstellt werden, die alle Rechner der
@@ -225,7 +223,7 @@ entsprechende DNS- und DHCP-Konfiguration vorgenommen wird und die Drucker
 sofort in der Schule im Netz verfügbar sind.
 
 Das Datenformat der CSV-Datei ist in
-`Konfiguration von Druckern an der Schule <https://docs.software-univention.de/ucsschool-handbuch-5.0.html#school:setup:cli:printers>`_ in :cite:t:`ucsschool-admin`
+:ref:`school-setup-cli-printers` in :cite:t:`ucsschool-admin`
 beschrieben.
 
 In der Datei :download:`ucsschool-import-vorlagen.xlsx
@@ -268,7 +266,7 @@ Für |UCSUAS| gibt es momentan mehrere Möglichkeiten Nutzer und Klassen in das
 System zu importieren.
 
 Die Konfiguration des kommandozeilenbasierten Benutzerimports ist in
-:cite:t:`ucsschool-cli-import` dokumentiert.
+:cite:t:`ucsschool-import` dokumentiert.
 
 Die Einrichtung und Verwendung des zugehörigen |UCSUMC| Moduls ist in
 :ref:`install-conf-format` in :cite:t:`ucsschool-umc-user-import` nachzulesen.
