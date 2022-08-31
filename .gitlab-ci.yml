@@ -37,7 +37,10 @@ doc-pipeline:
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /force-doc/ || $pipeline =~ /force-doc/"
     - changes:
+      - "doc/ucsschool-import/**/*"
+      - "doc/ucsschool-manual/**/*"
       - "doc/ucsschool-quickstart/**/*"
+      - "doc/ucsschool-scenarios/**/*"
       - "doc/ucsschool-umc-user-import/**/*"
   needs:
     - job: generate-config
