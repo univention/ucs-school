@@ -13,6 +13,11 @@ doc_job () { # <extends> [<suffix> [<language>]]
 	echo "    base: $path"
 	echo "    DOC_NAME: ${path##*/}"
 	[ -n "${3+empty}" ] && echo "    language: $3"
+
+    if [ "$pkg" = "ucsschool-changelog" ] && ( [ "$2" = "html" ] || [ "$2" = "pdf" ] )
+    then
+        echo '    DOC_TARGET_VERSION: $CHANGELOG_TARGET_VERSION'
+    fi
 	echo "  extends: ${1:?extends}"
 	echo '  rules:'
 	echo '    - changes:'
@@ -44,7 +49,14 @@ do
 	# Automatically detect Sphinx or Docbook
 	if [ -f "${path}/conf.py" ] # Use Sphinx's conf.py as hint to Sphinx
 	then
-		for l_path in "$path"/locales/* "de"
+	    if [ "$pkg" = "ucsschool-changelog" ]
+		then
+			lang_default="en"
+		else
+			lang_default="de"
+		fi
+
+		for l_path in "$path"/locales/* "$lang_default"
 		do
 			language="${l_path##*/}"
 			[ "$language" = '*' ] && continue

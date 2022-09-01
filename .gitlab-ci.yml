@@ -42,6 +42,7 @@ doc-pipeline:
       - "doc/ucsschool-quickstart/**/*"
       - "doc/ucsschool-scenarios/**/*"
       - "doc/ucsschool-umc-user-import/**/*"
+      - "doc/ucsschool-changelog/**/*"
   needs:
     - job: generate-config
   trigger:
