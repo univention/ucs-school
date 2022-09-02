@@ -11,23 +11,23 @@ Released on 2022-08-04:
 
 Source package *ucs-school-import* in version ``18.0.18A~5.0.0.202207191615``:
 
-* The |UCSUAS| import dryrun does not raise VaidationErrors for all subsequent
-  users after an error (:uv:bug:`54118`).
+* The |UCSUAS| import *dry-run* does not raise *ValidationErrors* for all
+  subsequent users after an error (:uv:bug:`54118`).
 
 * Internal change: preserve workgroups during import, to avoid a behavior change
   (:uv:bug:`54943`).
 
 Source package *ucs-school-lib* in version ``13.0.21A~5.0.0.202207281220``:
 
-* User objects now have the workgroups attribute (:uv:bug:`54943`).
+* User objects now have the ``workgroups`` attribute (:uv:bug:`54943`).
 
-* School admins are removed from admins-OU group when
+* School admins are removed from ``admins-OU`` group when
   :py:meth:`remove_from_groups_of_school` is called (:uv:bug:`54368`).
 
 Source package *ucs-school-umc-distribution* in version
 ``18.0.6A~5.0.0.202207201625``:
 
-* Invalid project directories named ``'.'`` or ``'..'`` are now handled
+* Invalid project directories named ``.`` or ``..`` are now handled
   correctly (:uv:bug:`52719`).
 
 Source package *ucs-school-umc-exam* in version ``10.0.6A~5.0.0.202207201619``:
@@ -65,7 +65,7 @@ Released on 2022-08-25:
 
 Source package *ucs-school-import* in version ``18.0.21A~5.0.0.202208241614``:
 
-* Fix user validation in mass import with dry-run (:uv:bug:`55016`).
+* Fix user validation in mass import with *dry-run* (:uv:bug:`55016`).
 
 * Underscores are now allowed in OU names, when the hostname of the school
   server is also passed (:uv:bug:`55125`).

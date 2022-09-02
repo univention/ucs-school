@@ -4,64 +4,61 @@
 |UCSUAS|-Update
 ***************
 
-Dieses Dokument enthält die Changelogs mit den detaillierten
-Änderungsinformationen zum Update von |UCSUAS| von Version 5.0 v2 nach 5.0 v3.
+This document contains the changelogs with the detailed change information for
+the update of |UCSUAS| from version 5.0 v2 to 5.0 v3.
 
-Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten
-Abschnitt behandelt. Die Changelogs werden nur in Englisch gepflegt. Die
-Änderungsinformationen für vorherige Versionssprünge finden sich unter
-https://docs.software-univention.de/.
+If necessary, important notes about the update are covered in a separate
+section. The changelogs are maintained in English only. The change information
+for previous version jumps can be found at https://docs.software-univention.de/.
 
 .. _changelog-prepare:
 
-Generelle Hinweise zum Update
-=============================
+General notes on the update
+===========================
 
-Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der
-Domäne kommen. Aus diesem Grund sollte das Update innerhalb eines
-Wartungsfensters erfolgen. Grundsätzlich wird empfohlen das Update zunächst in
-einer Testumgebung einzuspielen und zu testen. Die Testumgebung sollte dabei
-identisch zur Produktivumgebung sein.
+During the update, services within the domain may fail. For this reason, the
+update should be performed within a maintenance window. It is generally
+recommended to install and test the update in a test environment first. The test
+environment should be identical to the production environment.
 
 .. _changelog-veyon-update:
 
-Update der Software zur Kontrolle und Überwachung von Computerräumen
-====================================================================
+Update of the software for control and monitoring of computer rooms
+===================================================================
 
-Die Leistung und Stabilität der Computerraumüberwachung ist mit |UCSUAS| 5.0 v3
-verbessert worden.
+The performance and stability of computer room monitoring has been improved with
+|UCSUAS| 5.0 v3.
 
 .. caution::
 
-   Die Applikation ``UCS@school Veyon Proxy`` aus dem App-Center muss auf
-   ``4.7.4.6`` aktualisiert werden. Zudem müssen die Windows-Rechner mit der
-   passenden Veyon-Applikation ausgestattet werden. Eine passende Version wird
-   mit |UCSUAS| mitgeliefert (``4.7.4``), und kann wie in
-   :ref:`school-windows-veyon` beschrieben installiert werden.
+   The application :program:`UCS\@school Veyon Proxy` from the App Center must
+   be updated to ``4.7.4.6``. In addition, the Windows computers must be
+   equipped with the suitable *Veyon* application. A suitable version is supplied
+   with |UCSUAS| (4.7.4), and can be installed as described in
+   :external+uv-ucsschool-admin:ref:`school-windows-veyon`.
 
-Die Statusindikatoren der Computerraum-Modul-Seite können mit bis zu einer
-Minute Verzögerung aktualisiert werden. Dies ist ein bekanntes Problem und wird
-bald mit einem Errata-Update korrigiert.
+The status indicators of the computer room module page can be updated with a
+delay of up to one minute. This is a known issue and will be corrected soon with
+an errata update.
 
-Je nach vorhandener Hardware, Bandbreite und Anzahl der PCs im Computerraum ist
-es möglich, dass Feineinstellungen am Präsentationsmodus vorgenommen werden
-müssen, wenn die Performance nicht zufriedenstellend ist. Siehe hierzu die
-:uv:help:`Kurzanleitung: Performance des Präsentationsmodus verbessern <20264>`.
+Depending on the available hardware, bandwidth, and number of PCs in the
+computer room, it may be necessary to make fine adjustments to Presentation Mode
+if performance is not satisfactory. See the :uv:help:`Quick Start Guide:
+Improving Presentation Mode Performance <20264>`.
 
-Mit diesem Release wird zudem die Update-Sperre für Systeme mit Computerräumen
-aufgehoben. Somit können Systeme von UCS 4.4 auf UCS 5.0 aktualisiert werden,
-wenn auf dem System alle Computerräume auf Veyon migriert wurden.
+This release also removes the update lock for systems with computer rooms. Thus,
+systems can be updated from UCS 4.4 to UCS 5.0 if all computer rooms on the
+system have been migrated to *Veyon*.
 
 .. _changelog-newerrata:
 
-Updateprozess
-=============
+Update process
+==============
 
-Größere Updates für |UCSUAS| werden im Univention App Center als eigenständiges
-App-Update herausgegeben. Kleinere Updates und Fehlerbereinigungen (Errata für
-|UCSUAS|), die keine Interaktion mit dem Administrator erforderlich machen,
-werden im Repository der bereits veröffentlichten App-Version von |UCSUAS|
-herausgegeben. Die Changelog-Dokumente, die Univention mit jeder |UCSUAS|
-App-Version herausgibt, werden dann entsprechend um einen neuen Abschnitt
-erweitert, aus dem ersichtlich wird, zu welchem Zeitpunkt welche Pakete
-veröffentlicht und welche Fehler dabei behoben wurden.
+Major updates for |UCSUAS| are released in the Univention App Center as a
+standalone app update. Minor updates and bug fixes (errata for |UCSUAS|) that do
+not require interaction with the administrator are released in the repository of
+the already released app version of |UCSUAS|. The changelog documents that
+Univention issues with each |UCSUAS| app version are then expanded accordingly
+with a new section that shows which packages were released at what time and
+which errors were fixed in the process.

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 20:59+0200\n"
-"PO-Revision-Date: 2022-09-16 11:36+0200\n"
+"POT-Creation-Date: 2022-09-02 13:01+0200\n"
+"PO-Revision-Date: 2022-09-02 13:03+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
@@ -11,10 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../indices.rst:3
-msgid "Indices"
-msgstr "Stichwortverzeichnis"
+#: ../../contents.rst:3
+msgid "|UCSUAS| |release| Changelog"
+msgstr "|UCSUAS| |release| Changelog"
 
-#: ../../indices.rst:5
-msgid "The :ref:`genindex` provides direct links to curated content topics."
-msgstr "Das :ref:`genindex` bietet direkt Links zu den Inhaltsthemen."
