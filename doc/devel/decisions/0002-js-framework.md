@@ -13,7 +13,7 @@
 
 - We want to replace the old "Dojo Toolkit" JavaScript UI framework with a modern UI framework.
 - In its current version it makes a lot of work to improve accessibility aspects.
-- It is also not very popular amongst frontend developers, which makes current employees unhappy and recruitment difficult.
+- It is also not a very popular amongst frontend developers, which makes current employees unhappy and recruitment difficult.
 - The new JS framework will have to implement the architecture decided upon in [ADR 0001 change-ui-architecture](0001-change-ui-architecture.md):
   Instead of communicating with a UMC Python backend, it'll call REST APIs.
 
@@ -27,55 +27,30 @@
 
 - [Vue](https://vuejs.org/)
 - [Dojo Toolkit](https://dojotoolkit.org/)
-- TODO - more?
+- [Dojo](https://dojo.io/home) (the rewrite of Dojo Toolkit)
 
 ## Decision Outcome
 
 Chosen option: "Vue", because
-TODO - {justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | … | comes out best (see below)}.
+In the Phoenix project the Univention Portal were to be reimplemented with accessibility in mind.
+For that we chose [Vue](https://vuejs.org/) as framework to address the same issues and decision drivers as above.
+We had time with rewriting the Portal in Vue to evaluate that decision. There are no major hurdles with working with
+Vue, and it is also a popular modern framework which makes requiting easier.
+
+We additionally chose Vue for this project also because we don't want to use multiple frontend frameworks for different
+projects which would make development and consistency between the implementations unnecessarily harder.
+
 
 ### Positive Consequences
 
-- TODO -{e.g., improvement of one or more desired qualities, …}
 - Vue is currently popular amongst frontend developers, which will make Univention a desirable employer.
+- Vue is already used in the Univention Portal. 
 
 ### Negative Consequences
 
-- TODO - {e.g., compromising one or more desired qualities, …}
 - Using Vue instead of Dojo means, that the currently employed developers must learn a new web framework.
 - Using Vue instead of Dojo means, that existing widgets etc. cannot be reused, but must be newly created.
 
-## Validation
-
-<!-- This is an optional element. Feel free to remove. -->
-
-{describe how the implementation of/compliance with the ADR is validated. E.g., by a review or an ArchUnit test}
-
-## Pros and Cons of the Options
-
-<!-- This is an optional element. Feel free to remove. -->
-
-### {title of option 1}
-
-<!-- This is an optional element. Feel free to remove. -->
-
-{example | description | pointer to more information | …}
-
-- Good, because {argument a}
-- Good, because {argument b}
-- Neutral, because {argument c}  <!-- use "neutral" if the given argument weights neither for good nor bad -->
-- Bad, because {argument d}
-- … <!-- numbers of pros and cons can vary -->
-
-### {title of other option}
-
-{example | description | pointer to more information | …}
-
-- Good, because {argument a}
-- Good, because {argument b}
-- Neutral, because {argument c}
-- Bad, because {argument d}
-- …
 
 ## More Information
 

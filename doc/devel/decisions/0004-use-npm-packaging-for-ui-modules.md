@@ -11,78 +11,50 @@
 
 ## Context and Problem Statement
 
-We want to make (self developed) UI components installable the same way, public JavaScript software is added to our projects.
+We want a (self developed) UI library that can be used by multiple projects.
+The library should contain the basic building blocks and styles to develop our different frontends in the same look
+and behaviour.
 
-Our CI/CD system offers the internal [Gitlab npm registry](https://docs.gitlab.com/ee/user/packages/npm_registry/).
+The main question is how the library will be installed/used.
 
-TODO - {Describe the context and problem statement, e.g., in free form using two to three sentences or in the form of an illustrative story.
- You may want to articulate the problem in form of a question and add links to collaboration boards or issue management systems.}
 
 ## Decision Drivers
 
-<!-- This is an optional element. Feel free to remove. -->
+For the new Univention Portal there were generic components created, that would be used in other projects, but they
+are in the same repository (and tangled withing the other Portal code) as the Portal.
 
-- {decision driver 1, e.g., a force, facing concern, …}
-- {decision driver 2, e.g., a force, facing concern, …}
-- … <!-- numbers of drivers can vary -->
+For the RAM project we now want to use those components and therefore create a component library repository.
+
 
 ## Considered Options
 
-- {title of option 1}
-- {title of option 2}
-- {title of option 3}
-- … <!-- numbers of options can vary -->
+- Gitlab npm registry: The library is build and pushed to an internal [Gitlab npm registry](https://docs.gitlab.com/ee/user/packages/npm_registry/).
+  The library can then be installed via npm like any other npm dependency.
+- CDN: The library is provided via a CDN and downloaded via `<script>` tag.
+- File on Host: The library is installed/put on the host and downloaded via `<script>` tag.
 
 ## Decision Outcome
 
-Chosen option: "{title of option 1}", because
-{justification. e.g., only option, which meets k.o. criterion decision driver | which resolves force {force} | … | comes out best (see below)}.
+Chosen option: "Gitlab npm registry", because
+the Pros of the Gitlab npm registry out-ways the Cons of its option and also the Pros of the others (see below)}.
 
-### Positive Consequences
+### Gitlab npm registry
 
-<!-- This is an optional element. Feel free to remove. -->
+- Good, because it integrates easily in the development process (also enables optimizations in bundling like tree-shaking etc.).
+- Good, because the using project has more certainty about the stable-ness of its releases since the library version is a hard dependency.
+- Bad, because if a new version of the library is released, all using projects have to release a new version with the
+  library version updated.
 
-- {e.g., improvement of one or more desired qualities, …}
-- …
+### CDN
 
-### Negative Consequences
+- Good, because releasing a new library version is easy.
+- Neutral, because without versioning using frontend could break when new version is released.
+- Bad, because a running network connection and reachable CDN is required.
 
-<!-- This is an optional element. Feel free to remove. -->
+### File on host
 
-- {e.g., compromising one or more desired qualities, …}
-- …
-
-## Validation
-
-<!-- This is an optional element. Feel free to remove. -->
-
-{describe how the implementation of/compliance with the ADR is validated. E.g., by a review or an ArchUnit test}
-
-## Pros and Cons of the Options
-
-<!-- This is an optional element. Feel free to remove. -->
-
-### {title of option 1}
-
-<!-- This is an optional element. Feel free to remove. -->
-
-{example | description | pointer to more information | …}
-
-- Good, because {argument a}
-- Good, because {argument b}
-- Neutral, because {argument c}  <!-- use "neutral" if the given argument weights neither for good nor bad -->
-- Bad, because {argument d}
-- … <!-- numbers of pros and cons can vary -->
-
-### {title of other option}
-
-{example | description | pointer to more information | …}
-
-- Good, because {argument a}
-- Good, because {argument b}
-- Neutral, because {argument c}
-- Bad, because {argument d}
-- …
+- Good, because only the library has to be updated and all frontends that use it have the new version.
+- Bad, because the library could be updated independently of the using frontend (and vive versa) and break things.
 
 ## More Information
 
