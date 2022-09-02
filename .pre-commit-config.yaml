@@ -57,6 +57,7 @@ repos:
         exclude: "^doc/devel/README.*.md$\
                  |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\
                  |^ucs-school-import/.*.md$\
+                 |^.gitlab/issue_templates/ucsscschool-issue.md$\
                  "
         args:
           - --disable-rules
