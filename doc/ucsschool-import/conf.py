@@ -39,7 +39,7 @@ html_title = project
 extensions = [
     "univention_sphinx_extension",
     "sphinxcontrib.spelling",
-    #    "sphinx_last_updated_by_git",
+    "sphinx_last_updated_by_git",
     "sphinx.ext.intersphinx",
     "sphinxcontrib.bibtex",
 ]
