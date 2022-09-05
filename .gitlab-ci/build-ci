@@ -27,7 +27,7 @@ prod_job () {
     echo '  extends: .production'
     echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
     echo '  rules:'
-    echo '    - change:'
+    echo '    - changes:'
     echo "      - ${path}/**/*"
 }
 
