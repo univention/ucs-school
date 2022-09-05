@@ -17,6 +17,8 @@ doc_job () { # <extends> [<suffix> [<language>]]
 	echo '  rules:'
 	echo '    - changes:'
 	echo "      - ${path}/**/*"
+	echo '      - doc/bibliography-de.bib'
+	echo '      - doc/substitutions-de.txt'
 }
 
 prod_job () {
