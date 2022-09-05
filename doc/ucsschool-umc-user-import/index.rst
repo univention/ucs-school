@@ -23,10 +23,9 @@ Gruppen die Berechtigung gegeben werden, Importe für bestimmte Schulen
 durchführen und deren Ergebnisse einsehen zu können.
 
 Technisch basiert das UMC-Modul *Benutzerimport* auf Komponenten der Software,
-die in `UCS@school-Handbuch zur CLI-Import-Schnittstelle
-<https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html>`_
-beschrieben sind. Die Konfiguration dieser Komponenten ist nicht Teil dieses
-Dokuments.
+die in :external+uv-ucsschool-import:doc:`UCS@school-Handbuch zur
+CLI-Import-Schnittstelle <index>` beschrieben sind. Die Konfiguration dieser
+Komponenten ist nicht Teil dieses Dokuments.
 
 .. toctree::
    :numbered:

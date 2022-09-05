@@ -41,6 +41,7 @@ extensions = [
     "sphinxcontrib.spelling",
     "sphinx_copybutton",
     "sphinx_last_updated_by_git",
+    "sphinx.ext.intersphinx",
 ]
 
 copybutton_prompt_text = r"\$ "
@@ -114,3 +115,10 @@ univention_use_doc_base = True
 rst_epilog = """
 .. include:: /../substitutions-de.txt
 """
+
+intersphinx_mapping = {
+    "uv-ucsschool-import": (
+        "https://docs.software-univention.de/ucsschool-import/5.0/de/",
+        None,
+    ),
+}

@@ -31,8 +31,7 @@ klicken.
 
 
 Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die
-im `Handbuch Import-Schnittstelle
-<https://docs.software-univention.de/ucsschool-import-handbuch-5.0.html>`_
+im :external+uv-ucsschool-import:doc:`Handbuch Import-Schnittstelle <index>`
 beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei
 :file:`/usr/share/ucs-school-import/configs/user_import_http-api.json` sollte
 als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden. Die
