@@ -27,6 +27,8 @@ prod_job () {
     echo '  extends: .production'
     echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
     echo '  rules:'
+    echo "    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'"
+    echo '      when: manual'
     echo '    - changes:'
     echo "      - ${path}/**/*"
 }

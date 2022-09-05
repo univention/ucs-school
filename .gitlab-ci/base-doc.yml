@@ -66,9 +66,6 @@ webframe:
     GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
   resource_group: prod
   image: $GIT_SYNC
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      when: manual
   script:
     - git config --global credential.$CI_SERVER_URL.username ucs-docs-deployment
     - git config --global credential.$CI_SERVER_URL.helper '!f() { [ "$1" = get ] && echo password="$DOCS_REPO_TOKEN"; }; f'
