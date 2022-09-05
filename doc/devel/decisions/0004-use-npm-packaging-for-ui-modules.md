@@ -17,14 +17,12 @@ and behaviour.
 
 The main question is how the library will be installed/used.
 
-
 ## Decision Drivers
 
 For the new Univention Portal there were generic components created, that would be used in other projects, but they
 are in the same repository (and tangled withing the other Portal code) as the Portal.
 
 For the RAM project we now want to use those components and therefore create a component library repository.
-
 
 ## Considered Options
 

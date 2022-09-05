@@ -40,17 +40,15 @@ Vue, and it is also a popular modern framework which makes requiting easier.
 We additionally chose Vue for this project also because we don't want to use multiple frontend frameworks for different
 projects which would make development and consistency between the implementations unnecessarily harder.
 
-
 ### Positive Consequences
 
 - Vue is currently popular amongst frontend developers, which will make Univention a desirable employer.
-- Vue is already used in the Univention Portal. 
+- Vue is already used in the Univention Portal.
 
 ### Negative Consequences
 
 - Using Vue instead of Dojo means, that the currently employed developers must learn a new web framework.
 - Using Vue instead of Dojo means, that existing widgets etc. cannot be reused, but must be newly created.
-
 
 ## More Information
 

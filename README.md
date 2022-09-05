@@ -19,6 +19,15 @@ UCS@school requires Univention Corporate Server (UCS). In order to run UCS@schoo
 1. [Download](https://www.univention.com/downloads/ucs-download/) either an ISO image or a virtual machine image of UCS and setup UCS.
 2. Login to the UCS management system and open the App Center and install the [UCS@school app](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
 
+## Run pre-commit locally
+
+This project uses pre-commit to run checks on commits. The pipeline has a pre-commit job. To run the checks prior to push, you can run the following command from the project's root directory:
+
+```
+docker run -it --rm -v "$PWD:/project" -w /project --pull always gitregistry.knut.univention.de/univention/ucsschool:latest
+```
+
+
 ## Documentation and Support
 
 The UCS@school documentation, including a Quickstart guide, can be found at [docs.software-univention.de](https://docs.software-univention.de/) .
