@@ -26,6 +26,9 @@ prod_job () {
     echo "    DOC_NAME: ${path##*/}"
     echo '  extends: .production'
     echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
+    echo '  rules:'
+    echo '    - change:'
+    echo "      - ${path}/**/*"
 }
 
 for make in doc/*/Makefile
