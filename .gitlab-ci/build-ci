@@ -35,9 +35,11 @@ prod_job () {
     echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
     echo '  rules:'
     echo '    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"'
-    echo '      when: manual'
-    echo '    - changes:'
+    echo '      changes:'
     echo "      - ${path}/**/*"
+    echo '      - doc/bibliography-de.bib'
+    echo '      - doc/substitutions-de.txt'
+    echo '      when: manual'
 }
 
 for make in doc/*/Makefile
