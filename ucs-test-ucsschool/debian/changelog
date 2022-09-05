@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.67) unstable; urgency=medium
+
+  * Bug #55127: use external-junit in
+    97_ucsschool-ram-rankine/01_in_container_integration_tests
+
+ -- Felix Botner <botner@univention.de>  Mon, 05 Sep 2022 16:44:29 +0200
+
 ucs-test-ucsschool (7.3.66) unstable; urgency=medium
 
   * Bug #54755: removed empty file from 90_ucsschool

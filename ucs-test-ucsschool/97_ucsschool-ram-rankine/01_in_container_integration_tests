@@ -2,10 +2,11 @@
 ## desc: In-container integration tests for the ucsschool-bff backends
 ## exposure: dangerous
 ## tags: [ucsschool-bff-users]
+## external-junit: /tmp/rankine_in_container_integration_tests.xml
 
 APP="ucsschool-bff-users"
 TEST_DIR="tests/"
-CMD="python3 -m pytest -l -v $TEST_DIR"
+CMD="cd $TEST_DIR && python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-prefix=97_ucsschool-ram-rankine.01_in_container_integration_tests ."
 
 if ! univention-app shell $APP pytest --help >/dev/null; then
   echo "Installing testing packages..."
@@ -19,3 +20,5 @@ fi
 echo "Running in container of app '$APP': sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/rankine_in_container_integration_tests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/rankine_in_container_integration_tests.xml
