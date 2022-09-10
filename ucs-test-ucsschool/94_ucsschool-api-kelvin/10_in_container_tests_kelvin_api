@@ -4,6 +4,7 @@
 ## exposure: dangerous
 ## packages: []
 ## bugs: []
+## external-junit: /tmp/kelvin_api_in_container_integration_tests.xml
 
 APP="ucsschool-kelvin-rest-api"
 MIN_COVERAGE=70
@@ -17,3 +18,5 @@ make coverage")
 echo "Running in container: ${CMD[@]}"
 
 univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/usr/bin/python.*pytest$'; exit $rv)
+rm -f /tmp/kelvin_api_in_container_integration_tests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/kelvin_api_in_container_integration_tests.xml
