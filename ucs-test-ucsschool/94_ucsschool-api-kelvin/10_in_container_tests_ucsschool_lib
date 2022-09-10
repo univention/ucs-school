@@ -4,13 +4,17 @@
 ## exposure: dangerous
 ## packages: []
 ## bugs: []
+## external-junit: /tmp/kelvin-ucsschool-lib_in_container_integration_tests.xml
+
 
 APP="ucsschool-kelvin-rest-api"
 
 declare -a CMD=(sh -c "
 cd /kelvin/ucs-school-lib/modules &&
-python3 -m pytest")
+python3 -m pytest --junit-xml=/tmp/junit.xml --junit-prefix=94_ucsschool-api-kelvin.10_in_container_tests_ucsschool_lib")
+
+rm -f /tmp/kelvin-ucsschool-lib_in_container_integration_tests.xml
 
 echo "Running in container: ${CMD[@]}"
 
-univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/usr/bin/python.*pytest$'; exit $rv)
+univention-app shell "$APP" "${CMD[@]}" cat /tmp/junit.xml > /tmp/kelvin-ucsschool-lib_in_container_integration_tests.xml || (rv=$?; pkill -f '^/usr/bin/python.*pytest$'; exit $rv)
