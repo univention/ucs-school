@@ -15,7 +15,9 @@ echo "IP of Traeger 2: $(</var/www/IP_traeger2.txt)"
 echo "Running in container: $CMD1"
 univention-app shell "$APP" $CMD1
 
-rm -f /tmp/id_connector_in_container_integration_tests.xml
 
 echo "Running in container: sh -c \"$CMD2\""
-univention-app shell "$APP" sh -c "$CMD2" cat /tmp/junit.xml > /tmp/id_connector_in_container_integration_tests.xml
+univention-app shell "$APP" sh -c "$CMD2"
+rm -f /tmp/id_connector_in_container_integration_tests.xml
+
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_connector_in_container_integration_tests.xml

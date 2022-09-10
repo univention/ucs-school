@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.69) unstable; urgency=medium
+
+  * Bug #55127: correct ucs-test for containers
+
+ -- Tobias Wenzel <wenzel@univention.de>  Sat, 10 Sep 2022 18:09:40 +0200
+
 ucs-test-ucsschool (7.3.68) unstable; urgency=medium
 
   * Bug #55127: use external-junit in container tests
