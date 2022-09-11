@@ -3,11 +3,12 @@
 ## exposure: safe
 ## tags: [ucsschool-id-broker]
 ## packages: [id-broker-provisioning-api-plugin]
+## external-junit: /tmp/id_broker_provisioning_in_container_unittests.xml
 
 APP="ucsschool-apis"
 PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-broker-provisioning-api"
 TEST_DIR="tests/unittests"
-CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v $TEST_DIR"
+CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-prefix=96_ucsschool-id-broker.01_in_container_unittests_provisioning $TEST_DIR"
 
 if ! univention-app shell ucsschool-apis pytest --help >/dev/null; then
   echo "Installing testing packages..."
@@ -21,3 +22,6 @@ fi
 echo "Running in container of app '$APP': sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/id_broker_provisioning_in_container_unittests.xml
+
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_broker_provisioning_in_container_unittests.xml

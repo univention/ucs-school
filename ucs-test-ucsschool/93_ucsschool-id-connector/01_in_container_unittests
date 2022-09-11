@@ -2,10 +2,13 @@
 ## desc: In-container unit tests
 ## exposure: safe
 ## tags: [ucsschool-id-connector]
+## external-junit: /tmp/id_connector_in_container_unittests.xml
 
 APP="ucsschool-id-connector"
-CMD="cd /$APP/src; /usr/bin/python3 -m pytest -m 'not id_broker' -l -v tests/unittests"
+CMD="cd /$APP/src; /usr/bin/python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.01_in_container_unittests tests/unittests"
 
 echo "Running in container: sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/id_connector_in_container_unittests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_connector_in_container_unittests.xml

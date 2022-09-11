@@ -3,11 +3,12 @@
 ## exposure: dangerous
 ## tags: [ucsschool-id-broker]
 ## packages: [id-broker-common]
+## external-junit: /tmp/id_broker_common_in_container_integration_tests.xml
 
 APP="ucsschool-apis"
 PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-broker-common"
 TEST_DIR="tests/integration_tests"
-CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v $TEST_DIR"
+CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-prefix=96_ucsschool-id-broker.03_in_container_integration_tests_common $TEST_DIR"
 
 # copy host credentials to app for integration_tests/common/test_udm_rest.py test
 echo "$(ucr get hostname)\$" > /var/lib/univention-appcenter/apps/ucsschool-apis/data/hostaccount.txt
@@ -25,3 +26,5 @@ fi
 echo "Running in container of app '$APP': sh -c \"$CMD\""
 
 univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/id_broker_common_in_container_integration_tests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_broker_common_in_container_integration_tests.xml
