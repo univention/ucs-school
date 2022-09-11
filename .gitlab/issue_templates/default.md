@@ -5,8 +5,8 @@
 
 ## Story
 
-As a \<role\><br/>
-I can \<capability\>,<br/>
+As a \<role\>
+I can \<capability\>,
 so that \<receive benefit\>.
 
 ## Context/description
@@ -27,4 +27,3 @@ Additional points:
 
 - [ ]
 - [ ]
-
