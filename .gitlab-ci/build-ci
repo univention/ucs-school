@@ -32,7 +32,19 @@ prod_job () {
     echo '  variables:'
     echo "    DOC_NAME: ${path##*/}"
     echo '  extends: .production'
-    echo "  needs: [\"build ${pkg} de html\", \"build ${pkg} de pdf\"]"
+
+    echo "  needs: "
+    for l_path in "$path"/locales/* "$lang_default"
+    do
+        language="${l_path##*/}"
+        [ "$language" = '*' ] && continue
+        echo "    - job: build ${pkg} ${language} html"
+        echo "    - job: build ${pkg} ${language} pdf"
+        echo "    - job: build ${pkg} ${language} spelling"
+        echo "      artifacts: false"
+        echo "    - job: build ${pkg} ${language} linkcheck"
+        echo "      artifacts: false"
+    done
     echo '  rules:'
     echo '    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"'
     echo '      changes:'
