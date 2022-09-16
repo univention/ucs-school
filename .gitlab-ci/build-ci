@@ -24,7 +24,6 @@ doc_job () { # <extends> [<suffix> [<language>]]
 	echo "      - ${path}/**/*"
 	echo '      - doc/bibliography-de.bib'
 	echo '      - doc/substitutions-de.txt'
-	echo '    - if: "$pipeline =~' "/force-doc-${pkg}/\""
 }
 
 prod_job () {
@@ -53,7 +52,6 @@ prod_job () {
     echo '      - doc/bibliography-de.bib'
     echo '      - doc/substitutions-de.txt'
     echo '      when: manual'
-    echo '    - if: "$pipeline =~' "/force-doc-${pkg}/\""
 }
 
 for make in doc/*/Makefile
