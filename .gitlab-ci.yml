@@ -17,7 +17,7 @@ include:
 variables:
   pipeline:
     value: ""
-    description: "Skip or force jobs: '(skip|force)-(doc)'"
+    description: "Skip or force jobs: '(skip|force)-(doc)'. With 'force-doc-$doc-basename the jobs run for a distinct document."
 
 generate-config:
   stage: prepare
