@@ -1,0 +1,24 @@
+#!/usr/share/ucs-test/runner bash
+## desc: In-container integration tests for the ucsschool-bff backends
+## exposure: dangerous
+## tags: [ucsschool-bff-users]
+## external-junit: /tmp/ui_users_in_container_integration_tests.xml
+
+APP="ucsschool-bff-users"
+TEST_DIR="tests/"
+CMD="cd $TEST_DIR && python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-prefix=97_ucsschool-ram-rankine.01_in_container_ui_users_integration_tests ."
+
+if ! univention-app shell $APP pytest --help >/dev/null; then
+  echo "Installing testing packages..."
+  univention-app shell "$APP" python3 -m pip install -U pip wheel
+  univention-app shell "$APP" python3 -m pip install poetry
+  univention-app shell "$APP" sh -c "poetry export -f requirements.txt --output requirements.txt --dev --without-hashes"
+  univention-app shell "$APP" python3 -m pip uninstall --yes poetry
+  univention-app shell "$APP" python3 -m pip install -r requirements.txt
+fi
+
+echo "Running in container of app '$APP': sh -c \"$CMD\""
+
+univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/ui_users_in_container_integration_tests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/ui_users_in_container_integration_tests.xml
