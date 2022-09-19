@@ -118,8 +118,6 @@ def adapt_settings_to_translation(app, config):
         config.tokenizer_lang = "fr_FR"
         config.rst_epilog = """
 .. include:: /../substitutions-fr.txt
-
-.. include:: /links-fr.txt
 """
 
 
