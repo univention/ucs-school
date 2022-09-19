@@ -82,7 +82,8 @@ git_last_updated_timezone = "Europe/Berlin"
 numfig = True
 
 if "spelling" in sys.argv:
-    spelling_lang = "en_US"
+    spelling_lang = "de_DE"
+    tokenizer_lang = "de_DE"
     spelling_show_suggestions = True
     spelling_warning = True
     spelling_word_list_filename = ["spelling-word-list.txt"]
