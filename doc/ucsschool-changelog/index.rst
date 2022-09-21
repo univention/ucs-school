@@ -8,8 +8,8 @@ This document contains the changelogs with the detailed change information for
 the update of |UCSUAS| from version 5.0 v2 to 5.0 v3.
 
 If necessary, important notes about the update are covered in a separate
-section. The changelogs are maintained in English only. The change information
-for previous version jumps can be found at https://docs.software-univention.de/.
+section. The change information for previous version jumps can be found at
+https://docs.software-univention.de/.
 
 .. _changelog-prepare:
 
