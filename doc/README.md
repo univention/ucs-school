@@ -23,5 +23,3 @@ For each new UCS@school errata release, you **must** update the
 `CHANGELOG_TARGET_VERSION` in [base-doc.yml](./../.gitlab-ci/base-doc.yml), for
 example `5.0v3`. The version string **must not** contain spaces. Keep in mind,
 the version string is used for the deployment path of the document.
-
-
