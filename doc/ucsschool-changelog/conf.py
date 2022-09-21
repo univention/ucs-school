@@ -46,7 +46,7 @@ release = read_version_from_ci()
 
 # insert space before "v" in release string
 position_v = release.find("v")
-release = release[0:position_v] + ' ' + release[position_v:]
+release = release[0:position_v] + " " + release[position_v:]
 
 project = f"UCS@school - {release} Changelog"
 copyright = "2021-{}, Univention GmbH".format(date.today().year)
