@@ -43,6 +43,10 @@ def read_version_from_ci() -> str:
 
 # The full version, including alpha/beta/rc tags
 release = read_version_from_ci()
+# insert space before "v" in release string
+
+position_v = release.find("v")
+release = release[0:position_v] + ' ' + release[position_v:]
 
 project = f"UCS@school - {release} Changelog"
 copyright = "2021-{}, Univention GmbH".format(date.today().year)
