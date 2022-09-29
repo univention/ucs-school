@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.267) unstable; urgency=medium
+
+  * Bug #55127: revert external-junit in id-broker test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 29 Sep 2022 14:10:09 +0200
+
 ucs-test-ucsschool (6.0.266) unstable; urgency=medium
 
   * Bug #55127: use external-junit in container test
