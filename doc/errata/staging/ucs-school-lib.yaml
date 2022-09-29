@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-lib
+fix:
+desc: |
+ * UCS@school validation errors are logged with level warning instead of log level error (Bug #55233).
+bug: [55233]

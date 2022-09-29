@@ -518,18 +518,19 @@ def validate(obj, logger=None):  # type: (Dict[str, Any], logging.Logger) -> Non
         errors = [err for err in errors if err is not None]
         if errors:
             validation_uuid = str(uuid.uuid4())
-            errors_str = "{} UCS@school Object {} with options {} has validation errors:\n\t- {}".format(
+            errors_str = "{} UCS@school Object {} with options {} has validation errors: {}".format(
                 validation_uuid,
                 dict_obj.get("dn", ""),
                 "{!r}".format(options),
-                "\n\t- ".join(errors),
+                ", ".join(errors),
             )
-            log_enabled = ucr.is_true("ucsschool/validation/logging/enabled", True)
-            if log_enabled:  # tests: 00_validation_log_enabled
+            varname = "ucsschool/validation/logging/enabled"
+            if ucr.is_true(varname, True) or ucr.get(varname) in (
+                "",
+                None,
+            ):  # tests: 00_validation_log_enabled
                 if logger:
-                    logger.error(errors_str)
+                    logger.warning(errors_str)
                 if private_data_logger:
-                    private_data_logger.error(errors_str)
-                    private_data_logger.error(dict_obj)
                     stack_trace = " ".join(traceback.format_stack()[:-2]).replace("\n", " ")
-                    private_data_logger.error(stack_trace)
+                    private_data_logger.warning("\t".join([errors_str, str(dict_obj), stack_trace]))

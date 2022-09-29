@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.24) unstable; urgency=medium
+
+  * Bug #55233: reduce the log level of validation errors
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 29 Sep 2022 16:06:45 +0200
+
 ucs-school-lib (13.0.23) unstable; urgency=low
 
   * Bug #55125: allow underscore in OU name (Issue #853)
