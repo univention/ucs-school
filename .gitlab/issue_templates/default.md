@@ -1,7 +1,7 @@
 ## Accounting
 
 - Univention GmbH (424)
-- Development: Development: UCS@school Development (22605)
+- Development: UCS@school Development (22605)
 
 ## Story
 
