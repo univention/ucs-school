@@ -304,10 +304,6 @@ OU voranzustellen oder zu integrieren (z.B. ``340win01`` für Schule *340*).
      - ``edukativ``, ``verwaltung``
      - ``edukativ``
 
-.. spelling::
-
-   Inventarnr
-
 Die Subnetzmaske kann sowohl als Präfix (``24``) als auch in Oktettschreibweise
 (``255.255.255.0``) angegeben werden. Die Angabe der Subnetzmaske ist optional.
 Wird sie weggelassen, wird die Subnetzmaske ``255.255.255.0`` angenommen.
