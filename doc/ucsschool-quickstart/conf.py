@@ -86,7 +86,7 @@ if "spelling" in sys.argv:
     tokenizer_lang = "de_DE"
     spelling_show_suggestions = True
     spelling_warning = True
-    spelling_word_list = []
+    spelling_word_list_filename = []
     # Warnings may come up by sphinx-last-updated-by-git. Shall be suppressed in spelling job
     suppress_warnings = ["git.too_shallow"]
 
