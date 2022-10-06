@@ -396,8 +396,3 @@ Bibliographie
 *************
 
 .. bibliography::
-
-.. spelling::
-
-   Resume
-   Veyon
