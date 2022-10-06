@@ -411,10 +411,6 @@ Lehrkräfte und Mitarbeiter*innen:
 
 * Beispiel Namenskonflikt: Martina Müller → ``mmueller2``
 
-.. spelling::
-
-   Sander
-   Mareike
 
 Für Benutzerkonten kann das gewünschte Schema im Importmechanismus hinterlegt
 werden, siehe :cite:t:`ucsschool-import`.
