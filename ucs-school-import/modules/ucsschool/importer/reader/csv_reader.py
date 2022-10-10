@@ -48,6 +48,7 @@ from typing import (
     List,
     Optional,
     Text,
+    Type,
     Union,
 )
 
@@ -69,7 +70,7 @@ if TYPE_CHECKING:
     from ..models.import_user import ImportUser
 
 
-def py3_decode(data, encoding):
+def py3_decode(data, encoding):  # type: (Union[str, bytes], str) -> str
     return data.decode(encoding) if PY3 and isinstance(data, bytes) else data
 
 
@@ -143,11 +144,12 @@ class CsvReader(BaseReader):
             encoding = "utf-8-sig"
         return encoding
 
-    def get_dialect(self, fp, encoding):  # type: (BinaryIO) -> Dialect
+    def get_dialect(self, fp, encoding):  # type: (BinaryIO, str) -> Type[Dialect]
         """
         Overwrite me to force a certain CSV dialect.
 
         :param file fp: open file to read from
+        :param encoding: encoding in file
         :return: CSV dialect
         :rtype: csv.Dialect
         """
