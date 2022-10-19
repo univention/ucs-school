@@ -70,6 +70,7 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
+    "univention_sphinx_changelog",
 ]
 
 bibtex_bibfiles = ["../bibliography-de.bib"]
@@ -159,3 +160,6 @@ intersphinx_mapping = {
 linkcheck_allowed_redirects = {
     r"https://help\.univention\.com/t/\d+": r"https://help\.univention\.com/t/[\w-]+/\d+",
 }
+
+univention_changelog_previous_release = "5.0 v3"
+univention_changelog_builder = "ucsschool"
