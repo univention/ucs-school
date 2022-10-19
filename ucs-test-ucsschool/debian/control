@@ -56,3 +56,14 @@ Provides:
  ucs-test-module,
 Description: Additional UCS@school tests for ucs-test
  This package includes some veyon related tests for ucs-test.
+
+Package: ucs-test-ucsschool-ram-performance
+Architecture: all
+Depends:
+ ucs-test-ucsschool (= ${source:Version}),
+ python3-venv,
+ libffi-dev
+Provides:
+ ucs-test-module
+Description: Additional UCS@school tests for ucs-test
+ This packages provides performance tests for the RAM applications.
