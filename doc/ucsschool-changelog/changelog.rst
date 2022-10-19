@@ -7,7 +7,7 @@ Changelog
 .. _changelog-ucsschool-2022-08-04:
 
 Released on 2022-08-04:
------------------------
+=======================
 
 Source package *ucs-school-import* in version ``18.0.18A~5.0.0.202207191615``:
 
@@ -44,7 +44,7 @@ Source package *ucs-school-veyon-windows* in version
 .. _changelog-ucsschool-2022-08-17:
 
 Released on 2022-08-17:
------------------------
+=======================
 
 Source package *ucs-school-import* in version ``18.0.19A~5.0.0.202208171134``:
 
@@ -61,7 +61,7 @@ Source package *ucs-school-umc-internetrules* in version
 .. _changelog-ucsschool-2022-08-25:
 
 Released on 2022-08-25:
------------------------
+=======================
 
 Source package *ucs-school-import* in version ``18.0.21A~5.0.0.202208241614``:
 
