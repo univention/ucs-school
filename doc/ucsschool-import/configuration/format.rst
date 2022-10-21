@@ -421,6 +421,36 @@ Konfiguration des Benutzerimports
    Standard (``int``)
       ``15``
 
+   Abhängig vom Vorhandensein spezifischer Benutzerpasswörter in den Importdaten
+   geht der Importvorgang wie folgt mit Passwörtern um:
+
+   Keine Passwörter definiert
+      In den Importdaten sind **keine** Passwörter definiert: Der Importvorgang
+      erzeugt zufällige Benutzerpasswörter in der konfigurierten Passwortlänge.
+
+
+   Passwörter definiert
+      In den Importdaten sind Benutzerpasswörter definiert:
+
+      a. Länge der Benutzerpasswörter ``< password_length``: Der
+         Importvorgang bricht ab mit folgender Meldung:
+         ``ucsschool.importer.exceptions.BadPassword: Password is shorter than
+         15 characters``.
+
+      #. Länge der Benutzerpasswörter ``> password_length``: Der
+         Importvorgang wird durchgeführt. Die Benutzerpasswörter werden auf die
+         Länge von ``password_length`` gekürzt.
+
+   Benutzer können zu jedem späteren Zeitpunkt ihr Passwort selbst setzen. Dabei
+   greift die :ref:`Passwortrichtlinie für Benutzer <users-passwords>`. Der Wert
+   aus ``password_length`` hat keinen Einfluss auf die Passwortrichtlinie. Nur
+   der Importvorgang verwendet den Wert aus ``password_length``.
+
+   .. seealso::
+
+      Informationen über Passwortrichtlinien für Benutzer
+         :ref:`users-passwords` in :cite:t:`ucs-manual`
+
 
 .. option:: school, -s, --school
 
