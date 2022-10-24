@@ -32,8 +32,8 @@ the UCS@school 5.0 v4 release version.
 
    To create the changelog content only from a subset of files, use the following command:
 
-   ```
-   sphinx-build -b changelog . _build/changelog ../errata/published/<file1> ../errata/published/<file-filter>
+   ```console
+   $ sphinx-build -b changelog . _build/changelog ../errata/published/<file1> ../errata/published/<file-filter>
    ```
 
    For example: `sphinx-build -b changelog . _build/changelog ../errata/published/2022-08*`
