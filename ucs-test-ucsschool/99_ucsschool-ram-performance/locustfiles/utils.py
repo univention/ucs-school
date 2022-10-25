@@ -23,6 +23,8 @@ except ImportError:
     KEYCLOAK_DEFAULT_FQDN = "ucs-sso-ng.ram.local"
     BFF_DEFAULT_HOST = "rankine.ram.local"
 
+KELVIN_DEFAULT_HOST = BFF_DEFAULT_HOST
+
 logger = getLogger(__name__)
 
 
@@ -36,6 +38,8 @@ class Settings(BaseSettings):
     BFF_GROUPS_HOST: str = Field(env="UCS_ENV_BFF_GROUPS_HOST", default=BFF_DEFAULT_HOST)
     BFF_TEST_ADMIN_PASSWORD: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_PASSWORD", default="univention")
     BFF_TEST_ADMIN_USERNAME: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_USERNAME", default="Administrator")
+    BFF_TEST_TOKEN_RENEW_PERIOD: int = Field(env="UCS_ENV_BFF_TEST_TOKEN_RENEW_PERIOD", default=60)
+    KELVIN_HOST: str = Field(env="UCS_ENV_KELVIN_HOST", default=KELVIN_DEFAULT_HOST)
 
     class Config:
         allow_population_by_field_name = True
@@ -111,7 +115,7 @@ class TestData(object):
         return random.choice(self.db[school]["classes"])
 
 
-def get_token(username: str, password: str, client_id: str = "school-ui-users-dev") -> str:
+def get_token_info(username: str, password: str, client_id: str = "school-ui-users-dev") -> Dict:
     settings = get_settings()
     url = f"https://{settings.KEYCLOAK_FQDN}/realms/ucs/protocol/openid-connect/token"
 
@@ -129,7 +133,7 @@ def get_token(username: str, password: str, client_id: str = "school-ui-users-de
     response = requests.post(url, data=data, verify=False, headers=headers)  # nosec
     if response.status_code != 200:
         raise HTTPError(f"{response.content!r}/{response.status_code}")
-    return response.json()["access_token"]
+    return response.json()
 
 
 @lru_cache(maxsize=1)

@@ -14,10 +14,10 @@ from conftest import BFF_DEFAULT_HOST, set_locust_environment_vars
 BASE_DIR = "/var/lib/ram-performance-tests/"
 LOCUST_FILES_DIRNAME = "locustfiles"
 LOCUST_FILE = "locust_users_post.py"
-RESULT_FILES_NAME = "users-post"
+RESULT_FILES_NAME = "warmup"
 
 
-RESULT_DIR = os.path.join(BASE_DIR, "results")
+RESULT_DIR = os.path.join(BASE_DIR, "warmup_results")
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 LOCUST_FILES_DIR = os.path.join(TEST_DIR, LOCUST_FILES_DIRNAME)
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
@@ -42,26 +42,16 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir):
     verify_test_sent_requests(RESULT_FILE_BASE_PATH)
 
 
-# The only requirement from https://git.knut.univention.de/groups/univention/-/epics/379
-# is: The time to create a user must be below 2 seconds.
-# At the time of writing, the number of concurrent users is still unknown.
-
-
 LOCUST_ENV_VARIABLES = {
-    "LOCUST_RUN_TIME": "2m",
-    "LOCUST_SPAWN_RATE": "1",
-    "LOCUST_STOP_TIMEOUT": "15",
-    "LOCUST_USERS": "1",
+    "LOCUST_RUN_TIME": "1m30s",
+    "LOCUST_SPAWN_RATE": "4",
+    "LOCUST_STOP_TIMEOUT": "30",
+    "LOCUST_USERS": "4",
 }
 
-
-def test_failure_count(check_failure_count, run_test):
-    check_failure_count(RESULT_FILE_BASE_PATH)
-
-
-def test_rps(check_rps, run_test):
-    check_rps(RESULT_FILE_BASE_PATH, URL_NAME, 0.5)
+# As this is only a warmup, the test passes when run_test finishes without exceptions
+# note that failing requests do not make this test fail
 
 
-def test_95_percentile(check_95_percentile, run_test):
-    check_95_percentile(RESULT_FILE_BASE_PATH, URL_NAME, 2000)
+def test_warmup(run_test):
+    pass

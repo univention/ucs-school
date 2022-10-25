@@ -66,4 +66,4 @@ Depends:
 Provides:
  ucs-test-module
 Description: Additional UCS@school tests for ucs-test
- This packages provides performance tests for the RAM applications.
+ This package provides performance tests for the RAM applications.

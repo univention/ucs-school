@@ -26,6 +26,10 @@ it is not changeable via an environment variable.
   - Fully qualified domain name for the groups bff
 - `UCS_ENV_BFF_TEST_ADMIN_PASSWORD` Default: `univention`
 - `UCS_ENV_BFF_TEST_ADMIN_USERNAME` Default: `Administrator`
+- `UCS_ENV_BFF_TEST_TOKEN_RENEW_PERIOD` Default: 60
+  - The timeframe for renewal before an auth token expires
+- `UCS_ENV_KELVIN_HOST`
+  - Fully qualified domain name for the Kelvin API
 
 ## Installation and usage
 
