@@ -113,6 +113,11 @@ figure_language_filename = "{root}-{language}{ext}"
 
 univention_use_doc_base = True
 
+# See Univention Sphinx Extension for its options and information about the
+# feedback link.
+# https://git.knut.univention.de/univention/documentation/univention_sphinx_extension
+univention_feedback = True
+
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
     "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
