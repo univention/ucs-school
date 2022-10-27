@@ -1,3 +1,9 @@
+ucs-school-import (18.0.23) unstable; urgency=medium
+
+  * Bug #55130: respect subnet mask in import_computer
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 27 Oct 2022 13:14:26 +0200
+
 ucs-school-import (18.0.22) unstable; urgency=low
 
   * Bug #55134: Fix non unique test users
