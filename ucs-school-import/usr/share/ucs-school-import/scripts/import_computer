@@ -69,7 +69,8 @@ def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
         ip_iface = IPv4Interface(u"%s/%s" % (ip_address, get_default_prefixlen()))
         print(
             "WARNING: no netmask specified for ip address %s using %s"
-            % (ip_iface.with_prefixlen, ip_iface.netmask))
+            % (ip_iface.with_prefixlen, ip_iface.netmask)
+        )
     return ip_iface
 
 
