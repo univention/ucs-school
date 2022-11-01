@@ -65,15 +65,11 @@ def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
     except NetmaskValueError as exc:
         raise ComputerImportError("%s is not a valid netmask" % (exc,))
 
-    if is_subnet_mask(ip_address):
-        raise ComputerImportError("%s is not an ip address, but a subnet mask" % (ip_address, ))
-
     if "/" not in ip_address:
         ip_iface = IPv4Interface(u"%s/%s" % (ip_address, get_default_prefixlen()))
         print(
-            "WARNING: either ip_address or netmask was not specified for ip address %s."
-            " Using %s" % (ip_iface.with_prefixlen, ip_iface.netmask)
-        )
+            "WARNING: no netmask specified for ip address %s using %s"
+            % (ip_iface.with_prefixlen, ip_iface.netmask))
     return ip_iface
 
 
