@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix: 18.0.23A~5.0.0.202210271327
+fix: 18.0.24A~5.0.0.202211011527
 desc: |
  * Fix: Creating large dataset of test users sometimes failed due to non unique record_uids (Bug #55134).
  * Fix: When importing computers with a specified network instead of specific IP address, the import failed (Bug #55130).
