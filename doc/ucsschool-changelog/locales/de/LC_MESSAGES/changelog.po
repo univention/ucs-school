@@ -33,24 +33,24 @@ msgid "Source package *ucs-school-import* in version ``18.0.24A~5.0.0.2022110115
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.24A~5.0.0.202211011527``:"
 
 #: ../../changelog.rst:19
-msgid "Fix: Creating large dataset of test users sometimes failed due to non unique ``record_uids`` (:uv:bug:`55134`)."
+msgid "Fix: Creating large data sets of test users sometimes failed due to non unique ``record_uids`` (:uv:bug:`55134`)."
 msgstr "Fix: Das Erstellen von großen Datensets an Test Benutzers schlug fehl, da die ``record_uids`` nicht eindeutig waren (:uv:bug:`55134`)."
 
-#: ../../changelog.rst:22
+#: ../../changelog.rst:21
 msgid "Fix: When importing computers with a specified network instead of specific IP address, the import failed (:uv:bug:`55130`)."
 msgstr "Fix: Wenn Computer importiert wurden und ein Netzwerk angegeben wurde, schlug der Import fehl (:uv:bug:`55130`)."
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:27
 msgid "Released on 2022-08-04:"
 msgstr "Veröffentlicht am 4. August 2022"
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:29
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.18A~5.0.0.202207191615``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.18A~5.0.0.202207191615``:"
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:31
 msgid ""
 "The |UCSUAS| import *dry-run* does not raise *ValidationErrors* for all "
 "subsequent users after an error (:uv:bug:`54118`)."
@@ -58,7 +58,7 @@ msgstr ""
 "Der |UCSUAS| Import *dry-run* löst nach einem Fehler keine "
 "*ValidationErrors* für alle nachfolgenden Benutzer aus (:uv:bug:`54118`)."
 
-#: ../../changelog.rst:35
+#: ../../changelog.rst:34
 msgid ""
 "Internal change: preserve workgroups during import, to avoid a behavior "
 "change (:uv:bug:`54943`)."
@@ -66,17 +66,17 @@ msgstr ""
 "Interne Änderung: Beibehaltung von Arbeitsgruppen beim Import, um eine "
 "Verhaltensänderung zu vermeiden (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:38
+#: ../../changelog.rst:37
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.21A~5.0.0.202207281220``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.21A~5.0.0.202207281220``:"
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:39
 msgid "User objects now have the ``workgroups`` attribute (:uv:bug:`54943`)."
 msgstr "Benutzerobjekte haben jetzt das Attribut ``workgroups`` (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:41
 msgid ""
 "School admins are removed from ``admins-OU`` group when "
 ":py:meth:`remove_from_groups_of_school` is called (:uv:bug:`54368`)."
@@ -85,7 +85,7 @@ msgstr ""
 ":py:meth:`remove_from_groups_of_school` aufgerufen wird "
 "(:uv:bug:`54368`)."
 
-#: ../../changelog.rst:45
+#: ../../changelog.rst:44
 msgid ""
 "Source package *ucs-school-umc-distribution* in version "
 "``18.0.6A~5.0.0.202207201625``:"
@@ -93,7 +93,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-distribution* in Version "
 "``18.0.6A~5.0.0.202207201625``:"
 
-#: ../../changelog.rst:48
+#: ../../changelog.rst:47
 msgid ""
 "Invalid project directories named ``.`` or ``..`` are now handled "
 "correctly (:uv:bug:`52719`)."
@@ -101,7 +101,7 @@ msgstr ""
 "Ungültige Projektverzeichnisse mit dem Namen ``.`` oder ``..`` werden nun"
 " korrekt behandelt (:uv:bug:`52719`)."
 
-#: ../../changelog.rst:51
+#: ../../changelog.rst:50
 msgid ""
 "Source package *ucs-school-umc-exam* in version "
 "``10.0.6A~5.0.0.202207201619``:"
@@ -109,7 +109,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-exam* in Version "
 "``10.0.6A~5.0.0.202207201619``:"
 
-#: ../../changelog.rst:53
+#: ../../changelog.rst:52
 msgid ""
 "The directory name validation now detects all incorrect names. "
 "Additionally, the exam directory name description has been improved "
@@ -119,7 +119,7 @@ msgstr ""
 " außerdem wurde die Beschreibung des Prüfungs-Verzeichnisnamens "
 "verbessert (:uv:bug:`52719`)."
 
-#: ../../changelog.rst:56
+#: ../../changelog.rst:55
 msgid ""
 "Source package *ucs-school-veyon-windows* in version "
 "``4.7.4.0-ucs5.0-1A~5.0.0.202208021248``:"
@@ -127,7 +127,7 @@ msgstr ""
 "Quellpaket *ucs-school-veyon-windows* in Version "
 "``4.7.4.0-ucs5.0-1A~5.0.0.202208021248``:"
 
-#: ../../changelog.rst:59
+#: ../../changelog.rst:58
 msgid ""
 "The *Veyon* windows installer has been updated from 4.5.2 to 4.7.4 "
 "(:uv:bug:`55029`)."
@@ -135,17 +135,17 @@ msgstr ""
 "Der *Veyon* Windows Installer wurde von 4.5.2 auf 4.7.4 aktualisiert "
 "(:uv:bug:`55029`)."
 
-#: ../../changelog.rst:65
+#: ../../changelog.rst:64
 msgid "Released on 2022-08-17:"
 msgstr "Veröffentlicht am 17. August 2022"
 
-#: ../../changelog.rst:67
+#: ../../changelog.rst:66
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.19A~5.0.0.202208171134``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.19A~5.0.0.202208171134``:"
 
-#: ../../changelog.rst:69
+#: ../../changelog.rst:68
 msgid ""
 "A validation error causing an infinite recursion error was fixed "
 "(:uv:bug:`55083`)."
@@ -153,7 +153,7 @@ msgstr ""
 "Ein Überprüfungsfehler, der eine unendliche Rekursion "
 "verursachte, wurde behoben (:uv:bug:`55083`)."
 
-#: ../../changelog.rst:72
+#: ../../changelog.rst:71
 msgid ""
 "Source package *ucs-school-umc-internetrules* in version "
 "``16.0.4A~5.0.0.202208110901``:"
@@ -161,7 +161,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-internetrules* in Version "
 "``16.0.4A~5.0.0.202208110901``:"
 
-#: ../../changelog.rst:75
+#: ../../changelog.rst:74
 msgid ""
 "A bug was fixed which caused groups not being displayed in the *Assign "
 "internet rules* module when group prefixes were set via an UCR variable "
@@ -171,23 +171,23 @@ msgstr ""
 "*Internetregeln zuweisen* nicht angezeigt wurden, wenn Gruppenpräfixe "
 "über eine UCR-Variable gesetzt wurden (:uv:bug:`55034`)."
 
-#: ../../changelog.rst:82
+#: ../../changelog.rst:81
 msgid "Released on 2022-08-25:"
 msgstr "Veröffentlicht am 25. August 2022"
 
-#: ../../changelog.rst:84
+#: ../../changelog.rst:83
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.21A~5.0.0.202208241614``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.21A~5.0.0.202208241614``:"
 
-#: ../../changelog.rst:86
+#: ../../changelog.rst:85
 msgid "Fix user validation in mass import with *dry-run* (:uv:bug:`55016`)."
 msgstr ""
 "Korrektur der Benutzerüberprüfung beim Massenimport mit *dry-run* "
 "(:uv:bug:`55016`)."
 
-#: ../../changelog.rst:88 ../../changelog.rst:97
+#: ../../changelog.rst:87 ../../changelog.rst:96
 msgid ""
 "Underscores are now allowed in OU names, when the hostname of the school "
 "server is also passed (:uv:bug:`55125`)."
@@ -195,13 +195,13 @@ msgstr ""
 "Unterstriche sind jetzt in OU-Namen erlaubt, wenn der Hostname des "
 "Schulservers mit übergeben wird (:uv:bug:`55125`)."
 
-#: ../../changelog.rst:91
+#: ../../changelog.rst:90
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.23A~5.0.0.202208241612``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.23A~5.0.0.202208241612``:"
 
-#: ../../changelog.rst:93
+#: ../../changelog.rst:92
 msgid ""
 "Internal: Add ``check_name`` parameter to the :py:meth:`validate` method "
 "of multiple classes which allows disabling name checks such as checking "
