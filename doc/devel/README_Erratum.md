@@ -98,7 +98,7 @@ Use this text as the comment for closing the mentioned bugs:
 <pre>
 Errata updates for UCS@school 5.0 v3 have been released.
 
-https://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html
+https://docs.software-univention.de/ucsschool-changelog/5.0v3/de/changelog.html
 
 If this error occurs again, please clone this bug.
 </pre>
