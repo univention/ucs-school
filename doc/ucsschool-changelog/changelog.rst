@@ -4,6 +4,24 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2022-11-02:
+
+Released on 2022-11-02
+======================
+
+Source package *ucs-school-lib* in version ``13.0.24A~5.0.0.202210061204``:
+
+* UCS\@school validation errors are logged with level warning instead of log
+  level error (:uv:bug:`55233`).
+
+Source package *ucs-school-import* in version ``18.0.24A~5.0.0.202211011527``:
+
+* Fix: Creating large dataset of test users sometimes failed due to non unique
+  record_uids (:uv:bug:`55134`).
+
+* Fix: When importing computers with a specified network instead of specific IP
+  address, the import failed (:uv:bug:`55130`).
+
 .. _changelog-ucsschool-2022-08-04:
 
 Released on 2022-08-04:
