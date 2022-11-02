@@ -25,20 +25,20 @@ msgid "Source package *ucs-school-lib* in version ``13.0.24A~5.0.0.202210061204`
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.24A~5.0.0.202210061204``:"
 
 #: ../../changelog.rst:14
-msgid "UCS\\@school validation errors are logged with level warning instead of log level error (:uv:bug:`55233`)."
-msgstr "UCS\\@school Validierungsfehler werden mit Loglevel error statt mit Loglevel warning geloggt (:uv:bug:`55233`)."
+msgid "UCS\\@school validation errors are logged with level ``WARNING`` instead of log level ``ERROR`` (:uv:bug:`55233`)."
+msgstr "Fehler in der UCS\\@school Validierung werden mit Debuglevel ``WARNING`` statt mit Debuglevel ``ERROR`` geloggt (:uv:bug:`55233`)."
 
 #: ../../changelog.rst:17
 msgid "Source package *ucs-school-import* in version ``18.0.24A~5.0.0.202211011527``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.24A~5.0.0.202211011527``:"
 
 #: ../../changelog.rst:19
-msgid "Fix: Creating large dataset of test users sometimes failed due to non unique record_uids (:uv:bug:`55134`)."
-msgstr "Fix: Das Erstellen von großen Datensets an Test Benutzers schlug fehl, da die record_uids nicht eindeutig waren (:uv:bug:`55134`)."
+msgid "Fix: Creating large dataset of test users sometimes failed due to non unique ``record_uids`` (:uv:bug:`55134`)."
+msgstr "Fix: Das Erstellen von großen Datensets an Test Benutzers schlug fehl, da die ``record_uids`` nicht eindeutig waren (:uv:bug:`55134`)."
 
 #: ../../changelog.rst:22
 msgid "Fix: When importing computers with a specified network instead of specific IP address, the import failed (:uv:bug:`55130`)."
-msgstr "Fix: When Computer importiert wurden und ein Netzwerk angegeben wurde, schlug der Import fehl (:uv:bug:`55130`)."
+msgstr "Fix: Wenn Computer importiert wurden und ein Netzwerk angegeben wurde, schlug der Import fehl (:uv:bug:`55130`)."
 
 #: ../../changelog.rst:28
 msgid "Released on 2022-08-04:"
