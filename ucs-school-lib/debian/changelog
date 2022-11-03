@@ -1,3 +1,10 @@
+ucs-school-lib (13.0.25) UNRELEASED; urgency=medium
+
+  * Bug #55355: Integration for allowing arbitrary context types for
+    UCS@school users
+
+ -- Alexander Steffen <asteffen@pallra.knut.univention.de>  Thu, 03 Nov 2022 09:24:59 +0100
+
 ucs-school-lib (13.0.24) unstable; urgency=medium
 
   * Bug #55233: reduce the log level of validation errors
