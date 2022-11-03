@@ -91,6 +91,8 @@ git_last_updated_timezone = "Europe/Berlin"
 
 numfig = True
 
+suppress_warnings = ["git.too_shallow"]
+
 if "spelling" in sys.argv:
     spelling_lang = "de_DE"
     tokenizer_lang = "de_DE"
@@ -100,11 +102,10 @@ if "spelling" in sys.argv:
     # Don't load extension to speed up the job
     extensions.remove("sphinx_last_updated_by_git")
     extensions.remove("sphinx_sitemap")
-    # Warnings may come up by sphinx-last-updated-by-git. Shall be suppressed in spelling job
-    suppress_warnings = ["git.too_shallow", "bibtex"]
+    suppress_warnings.append("bibtex")
 
 if "linkcheck" in sys.argv:
-    suppress_warnings = ["git.too_shallow", "bibtex"]
+    suppress_warnings.append("bibtex")
 
 root_doc = "index"
 
