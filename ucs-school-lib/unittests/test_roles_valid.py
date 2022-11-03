@@ -3,12 +3,16 @@ import sys
 import pytest  # isort: skip
 
 sys.path.insert(1, "modules")
+from ucsschool.lib.models.school import School  # noqa: E402
 from ucsschool.lib.models.utils import ucr  # noqa: E402
 from ucsschool.lib.models.validator import TeacherValidator  # noqa: E402
 
+ldapbase = ucr.get("ldap/base")
+School.get_search_base("MustermannSchule")
+School._search_base_cache["MustermannSchule"]._schoolDN = "ou=MustermannSchule,{}".format(ldapbase)
+
 
 def make_udmobj(school_roles):
-    dnbase = ucr.get("ldap/base")
     return {
         "props": {
             "username": "mmustermann",
@@ -61,11 +65,11 @@ def make_udmobj(school_roles):
             "homedrive": "I:",
             "sambaRID": "5032",
             "groups": [
-                "cn=lehrer-mustermannschule,cn=groups,ou=MustermannSchule,{0}".format(dnbase),
-                "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{0}".format(dnbase),
+                "cn=lehrer-mustermannschule,cn=groups,ou=MustermannSchule,{0}".format(ldapbase),
+                "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{0}".format(ldapbase),
             ],
             "primaryGroup": "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{0}".format(
-                dnbase
+                ldapbase
             ),
             "mailHomeServer": "",
             "mailPrimaryAddress": "",
@@ -90,8 +94,8 @@ def make_udmobj(school_roles):
             "ucsschoolPurgeTimestamp": "",
             "ucsschoolRole": school_roles,
         },
-        "dn": "uid=mmustermann,cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(dnbase),
-        "position": "cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(dnbase),
+        "dn": "uid=mmustermann,cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(ldapbase),
+        "position": "cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(ldapbase),
         "options": {"ucsschoolTeacher": True, "default": True},
     }
 
