@@ -13,10 +13,10 @@ variables:
   GIT_STRATEGY: fetch
   GIT_SUBMODULE_STRATEGY: none
   GIT_DEPTH: "3"
-  CI_REGISTRY: docker-registry.knut.univention.de
-  SPHINX_FULL: $CI_REGISTRY/sphinx
-  SPHINX_BASE: $CI_REGISTRY/knut/sphinx-base
-  GIT_SYNC: $CI_REGISTRY/knut/git-sync
-  IMAGE_TAG: $CI_REGISTRY_IMAGE
-  DOC: $CI_REGISTRY/docbook
+  KNUT_REGISTRY: docker-registry.knut.univention.de
+  SPHINX_FULL: $KNUT_REGISTRY/sphinx
+  SPHINX_BASE: $KNUT_REGISTRY/knut/sphinx-base
+  GIT_SYNC: $KNUT_REGISTRY/knut/git-sync
+  IMAGE_TAG: $KNUT_REGISTRY
+  DOC: $KNUT_REGISTRY/docbook
 

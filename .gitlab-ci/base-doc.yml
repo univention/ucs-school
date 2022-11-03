@@ -1,7 +1,10 @@
+include:
+  - project: 'univention/documentation/sphinx-docker'
+    file: 'pipeline/sphinx.yml'
+
 stages:
   - build
-  - review
-  - staging
+  - merge
   - production
 
 .sphinx-doc:
@@ -12,35 +15,47 @@ stages:
     CHANGELOG_TARGET_VERSION: "5.0v3"
   artifacts:
     paths:
-      - $base/_build
+      - $DOCS_DIR/_build
       - $CI_PROJECT_DIR/out
     reports:
-      codequality: $base/codeclimate.json
+      codequality: $DOCS_DIR/codeclimate.json
 
 .sphinx-html:
-  extends: .sphinx-doc
+  extends:
+    - .sphinx-html-template
+    - .sphinx-doc
   script:
-    - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" html
-    - mkdir -p $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
-    - rsync -av --delete --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/html/ $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - mkdir -p "$CI_PROJECT_DIR"/out/$DOC_NAME/"$DOC_TARGET_VERSION"/"$language"
+    - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-v -D language='$language'" -e BUILDDIR="_build/$language" html
+    - rsync -av --delete "$DOCS_DIR"/_build/"$language"/html/ "$CI_PROJECT_DIR"/out/"$DOC_NAME"/"$DOC_TARGET_VERSION"/"$language"
 
 .sphinx-pdf:
-  extends: .sphinx-doc
-  image: $SPHINX_FULL
+  extends: 
+    - .sphinx-doc
+    - .sphinx-pdf-template
   script:
-    - make -C $base -e SPHINXOPTS="-D language='$language'" -e BUILDDIR="_build/$language" latexpdf
-    - mkdir -p $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
-    - rsync -av --exclude-from=doc/pipeline-rsync-exclude.txt $base/_build/$language/latex/*.pdf $CI_PROJECT_DIR/out/$DOC_NAME/$DOC_TARGET_VERSION/$language
+    - mkdir -p "$CI_PROJECT_DIR"/out/"$DOC_NAME"/"$DOC_TARGET_VERSION"/"$language"
+    - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-v -D language='$language'" -e BUILDDIR="_build/$language" latexpdf
+    - cp "$DOCS_DIR"/_build/"$language"/latex/"$DOC_NAME".pdf "$CI_PROJECT_DIR"/out/"$DOC_NAME"/"$DOC_TARGET_VERSION"/"$language"/"$DOC_NAME".pdf
 
 .sphinx-linkcheck:
-  extends: .sphinx-doc
+  extends:
+    - .sphinx-doc
+    - .sphinx-linkcheck-template
   script:
-    - make -C $base -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" linkcheck
+    - make -C $DOCS_DIR -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-v -D language='$language'" -e BUILDDIR="_build/$language" linkcheck
 
 .sphinx-spelling:
-  extends: .sphinx-doc
+  extends:
+    - .sphinx-doc
+    - .sphinx-spelling-template
   script:
-    - make -C $base -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" spelling
+    - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" spelling
+
+.sphinx-warnings:
+  extends: .sphinx-warnings-template
+  script:
+    - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" html
 
 # The child pipeline needs at minimum one job to run - otherwise the sub-pipeline fails
 webframe:
@@ -51,34 +66,3 @@ webframe:
   artifacts:
     paths:
       - public
-
-.production:
-  stage: production
-  cache:
-    key: docs-$CI_COMMIT_REF_SLUG
-    paths:
-      - univention-docs
-  interruptible: false
-  variables:
-    GIT_STRATEGY: none
-    GIT_AUTHOR_NAME: $GITLAB_USER_NAME
-    GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
-    GIT_COMMITTER_NAME: $GITLAB_USER_NAME
-    GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
-  resource_group: prod
-  image: $GIT_SYNC
-  script:
-    - git config --global credential.$CI_SERVER_URL.username ucs-docs-deployment
-    - git config --global credential.$CI_SERVER_URL.helper '!f() { [ "$1" = get ] && echo password="$DOCS_REPO_TOKEN"; }; f'
-    - '[ -d univention-docs ] || git clone --branch master --depth 1 --single-branch $CI_SERVER_URL/univention/docs.univention.de.git univention-docs'
-    - cd univention-docs
-    - git clean --force -d
-    - git fetch --no-tags origin
-    - git reset --hard origin/master
-    - rsync -av --delete "$CI_PROJECT_DIR"/out/"$DOC_NAME"/ ./"$DOC_NAME"/
-    - git add -- .
-    - git commit -m "Automatic deployment for $DOC_NAME from $CI_PROJECT_PATH by commit $CI_COMMIT_SHA"
-    - git push
-  environment:
-    name: production
-    url: http://updates.knut.univention.de/download/docs/
