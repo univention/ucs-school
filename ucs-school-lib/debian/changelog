@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.27) unstable; urgency=medium
+
+  * Bug #55355: adapt test to work on build server
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 03 Nov 2022 11:15:58 +0100
+
 ucs-school-lib (13.0.26) unstable; urgency=medium
 
   * Bug #55355: rebuild
