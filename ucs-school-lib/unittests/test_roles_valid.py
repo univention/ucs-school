@@ -1,11 +1,13 @@
 import sys
 
+import pytest  # isort: skip
+
 sys.path.insert(1, "modules")
 from ucsschool.lib.models.utils import ucr  # noqa: E402
 from ucsschool.lib.models.validator import TeacherValidator  # noqa: E402
 
 
-def make_udmobj(school_role):
+def make_udmobj(school_roles):
     dnbase = ucr.get("ldap/base")
     return {
         "props": {
@@ -86,7 +88,7 @@ def make_udmobj(school_role):
             "ucsschoolSourceUID": "",
             "ucsschoolRecordUID": "",
             "ucsschoolPurgeTimestamp": "",
-            "ucsschoolRole": [school_role],
+            "ucsschoolRole": school_roles,
         },
         "dn": "uid=mmustermann,cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(dnbase),
         "position": "cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(dnbase),
@@ -96,62 +98,103 @@ def make_udmobj(school_role):
 
 class TestRoleValidation:
 
-    ROLE = "foo"
-    CONTEXT_TYPE = "bar"
+    UNKNOWN_ROLE = "foo"
+    UNKNOWN_CONTEXT_TYPE = "bar"
 
     def test_valid(self):
-        role_str = "teacher:school:MustermannSchule"
+        role_str = ["teacher:school:MustermannSchule"]
         result = TeacherValidator.validate(make_udmobj(role_str))
         expected_errstrs = [
             self.split_errstr(role_str),
             self.destructuring_errstr(role_str),
-            self.invalid_role_errstr(role_str, TestRoleValidation.ROLE),
-            self.invalid_context_errstr(role_str, TestRoleValidation.CONTEXT_TYPE),
+            self.invalid_role_errstr(role_str, TestRoleValidation.UNKNOWN_ROLE),
+            self.invalid_context_errstr(role_str, TestRoleValidation.UNKNOWN_CONTEXT_TYPE),
         ]
         assert set(result).isdisjoint(set(expected_errstrs))
 
+    # error string generators
     def split_errstr(self, role_str):
         return "Invalid UCS@school role string: {!r}.".format(role_str)
-
-    def test_wrong_number_of_elems_1(self):
-        """
-        Can't split at all!
-        """
-        role_str = "teacher-bad-format"
-        assert self.split_errstr(role_str) in TeacherValidator.validate(make_udmobj(role_str))
 
     def destructuring_errstr(self, role_str):
         return "Invalid UCS@school role string: {!r}.".format(role_str)
 
-    def test_wrong_number_of_elems_2(self):
-        """
-        splits 4 items, we destructure this into 3 items!
-        """
-        role_str = "a:s:d:f"
-        assert self.destructuring_errstr(role_str) in TeacherValidator.validate(make_udmobj(role_str))
-
     def invalid_role_errstr(self, role_str, role):
         return "The role string {!r} includes the unknown role {!r}.".format(role_str, role)
-
-    def test_invalid_role_name(self):
-        """
-        correct number of elements, but the role is not in roles.py all_roles
-        """
-        role_str = TestRoleValidation.ROLE + ":x:y"
-        assert self.invalid_role_errstr(role_str, TestRoleValidation.ROLE) in TeacherValidator.validate(
-            make_udmobj(role_str)
-        )
 
     def invalid_context_errstr(self, role_str, context_type):
         return "The role string {!r} includes the unknown context type {!r}.".format(
             role_str, context_type
         )
 
-    def test_invalid_context_type(self):
+    # tests
+    def test_wrong_number_of_elems_1(self):
+        """
+        Can't split at all!
+        """
+        roles = ["teacher-bad-format"]
+        assert self.split_errstr(roles[0]) in TeacherValidator.validate(make_udmobj(roles))
+
+    def test_wrong_number_of_elems_2(self):
+        """
+        splits 4 items, we destructure this into 3 items!
+        """
+        roles = ["a:s:d:f"]
+        assert self.destructuring_errstr(roles[0]) in TeacherValidator.validate(make_udmobj(roles))
+
+    @pytest.mark.parametrize(
+        "role",
+        [
+            UNKNOWN_ROLE + ":school:y",
+            UNKNOWN_ROLE + ":" + UNKNOWN_CONTEXT_TYPE + ":y",
+        ],
+    )
+    def test_invalid_role_name(self, role):
+        """
+        correct number of elements, but the role is not in roles.py all_roles
+        """
+        validator_result = [
+            result for result in TeacherValidator.validate(make_udmobj([role])) if result is not None
+        ]
+
+        if role.split(":")[1] != TestRoleValidation.UNKNOWN_CONTEXT_TYPE:
+            assert self.invalid_role_errstr(role, role.split(":")[0]) in validator_result
+        else:
+            assert ["is missing roles ['teacher:school:MustermannSchule']"] == validator_result
+
+    @pytest.mark.parametrize(
+        "role",
+        [
+            UNKNOWN_ROLE + ":" + UNKNOWN_CONTEXT_TYPE + ":x",
+            "teacher:school:x",
+        ],
+    )
+    def test_unknown_context_type_is_valid(self, role):
         """
         correct number of elements, but the context_type is not in roles.py all_context_types
         """
-        role_str = "teacher:" + TestRoleValidation.CONTEXT_TYPE + ":x"
-        assert self.invalid_context_errstr(
-            role_str, TestRoleValidation.CONTEXT_TYPE
-        ) in TeacherValidator.validate(make_udmobj(role_str))
+        validator_result = [
+            result for result in TeacherValidator.validate(make_udmobj(role)) if result is not None
+        ]
+        assert (
+            self.invalid_context_errstr(role, TestRoleValidation.UNKNOWN_CONTEXT_TYPE)
+            not in validator_result
+        )
+
+    def test_role_and_context_variations(self):
+        roles = [
+            "teacher:school:MustermannSchule",
+            TestRoleValidation.UNKNOWN_ROLE + ":school:y",
+            "teacher:" + TestRoleValidation.UNKNOWN_CONTEXT_TYPE + ":y",
+            TestRoleValidation.UNKNOWN_ROLE + ":" + TestRoleValidation.UNKNOWN_CONTEXT_TYPE + ":y",
+        ]
+        expected_errstr = [
+            self.invalid_role_errstr(
+                TestRoleValidation.UNKNOWN_ROLE + ":school:y", TestRoleValidation.UNKNOWN_ROLE
+            ),
+        ]
+        validator_result = [
+            result for result in TeacherValidator.validate(make_udmobj(roles)) if result is not None
+        ]
+
+        assert expected_errstr == validator_result
