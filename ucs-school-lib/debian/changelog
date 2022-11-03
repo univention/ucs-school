@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.26) unstable; urgency=medium
+
+  * Bug #55355: rebuild
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 03 Nov 2022 10:16:13 +0100
+
 ucs-school-lib (13.0.25) unstable; urgency=medium
 
   * Bug #55355: Integration for allowing arbitrary context types for
