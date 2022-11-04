@@ -450,23 +450,18 @@ Monitoring
 
 Die rechtzeitige Erkennung von Fehlern und möglichen Anzeichen ist ein
 elementarer Bestandteil des professionellen IT-Betriebs. |UCSUCS| hat deshalb
-die Monitoring-Software *Nagios* fest integriert und für viele relevante
-Parameter vorkonfiguriert. *Nagios* selbst dient zum Monitoring des aktuellen
-Zustands.
+die App :program:`UCS Dashboard` fest integriert und für viele relevante
+Parameter vorkonfiguriert. *UCS Dashboard* überwacht den aktuellen Zustand der
+überwachten Systeme.
 
 Das Monitoring erfolgt für |UCSUAS| immer aus der Zentrale heraus. Entsprechend
 ist ein Server-System für den Betrieb des Monitoring-Dienstes vorzusehen, siehe
-:ref:`installation-managed-node`.
+:ref:`installation-replica-node-monitoring`.
 
-*Nagios* selbst ist nicht darauf ausgelegt, Informationen darüber zu liefern,
-in welche Richtung sich eine Umgebung entwickelt, da keine Langzeitinformationen
-gespeichert werden.
-
-Ein Beispiel ist die Entwicklung der Belegung des Festplattenplatzes. Solche
-Informationen sind für den Betrieb einer umfangreichen IT-Infrastruktur
-erforderlich. Um diese Informationen zu erfassen, kann zum Beispiel die App
-:program:`UCS Dashboard` verwendet werden, deren :ref:`dashboard-general` in
-:cite:t:`ucs-manual` dokumentiert ist.
+*UCS Dashboard* speichert Langzeitinformationen, so dass Informationen darüber
+vorliegen, in welche Richtung sich eine Umgebung entwickelt. Ein Beispiel ist
+die Entwicklung der Belegung des Festplattenplatzes. Solche Informationen sind
+für den Betrieb einer umfangreichen IT-Infrastruktur erforderlich.
 
 .. _concepts-backup:
 

@@ -165,9 +165,10 @@ Rolle |UCSREPLICADN_e| verwendet werden.
   *Domänenbeitritt* geprüft werden.
 
 .. _installation-managed-node:
+.. _installation-replica-node-monitoring:
 
-Installation eines zentralen |UCSMANAGEDNODE| für Monitoring
-============================================================
+Installation eines zentralen |UCSREPLICADN| für Monitoring
+==========================================================
 
 .. admonition:: Gültigkeit
 
@@ -194,7 +195,9 @@ Installation eines zentralen |UCSMANAGEDNODE| für Monitoring
   starten.
 
 * Nach Abschluss der Installation ist über das Univention App Center die App
-  :program:`Nagios`, zu installieren.
+  :program:`UCS Dashboard`, zu installieren. Zur Installation, siehe dazu
+  :ref:`Installation von UCS Dashboard <dashboard-installation>` in
+  :cite:t:`ucs-manual`.
 
 * Es ist empfohlen, das Monitoring des aktuellen Zustands der Umgebung um die
   Speicherung von Langzeitinformationen zu ergänzen. Weitere Informationen sind
@@ -206,15 +209,13 @@ Installation eines zentralen |UCSMANAGEDNODE| für Monitoring
   wurden. Dies kann in der |UCSUMC| in der Kategorie *Domäne* mit dem Modul
   *Domänenbeitritt* geprüft werden.
 
-* Damit :program:`Nagios` lauffähig ist, muss sichergestellt sein, dass die globale
-  |UCSUCR|-Richtlinie ``ucsschool-ucr-settings`` auf alle anderen Systeme wirkt.
+* Damit :program:`UCS Dashboard` umfassend funktioniert, muss sichergestellt
+  sein, dass die App :program:`UCS Dashboard Client` auf allen UCS Systemen
+  installiert ist, die über das Monitoring überwacht werden sollen.
 
-  Dies kann überprüft werden, indem der Wert der |UCSUCR|-Variable
-  :envvar:`nagios/client/allowedhosts` auf den anderen Servern abgerufen wird.
-
-  Sollten trotzdem keine Statusinformationen über einen Server angezeigt werden,
-  so müssen ggf. die Dienste :command:`univention-directory-listener` und
-  :command:`nagios-nrpe-server` neu gestartet werden.
+* Wenn Benachrichtigungen beim Erreichen von Alarmen versendet werden sollen,
+  hilft die App :program:`Prometheus Alertmanager` weiter. Nähere Informationen
+  finden sich unter :ref:`monitoring` in :cite:t:`ucs-manual`.
 
 .. _installation-schulserver:
 
