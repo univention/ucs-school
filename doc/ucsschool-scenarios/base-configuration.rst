@@ -142,13 +142,6 @@ sollte die Richtlinie erweitert werden:
    Wert: ``true``
 
 
-.. envvar:: nagios/client/allowedhosts
-
-   Erlaubt den Zugriff des Monitoring-Servers, :program:`Nagios`, auf den
-   *NRPE-Dienst* der übrigen Systeme.
-
-   Wert: ``[IP-Adresse des Monitoring Servers, zum Beispiel 10.0.0.20]``
-
 .. envvar:: ucsschool/helpdesk/recipient
 
    Definiert die E-Mailadresse, an die Nachrichten vom |UCSUAS| Helpdesk-Modul
