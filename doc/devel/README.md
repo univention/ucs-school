@@ -9,6 +9,28 @@
 1. Die Inhalte erheben **keinen Anspruch auf Richtigkeit**! Es wird keine gezielte QA für dieses Dokument gemacht. Wem ein Fehler auffällt, möge ihn bitte korrigieren. Das Dokument ist mit der Zeit ggf. auch out-of-sync mit dem Code.
 1. ...
 
+## User objects
+
+**Question:** why does the diagnostic check demands that a OU-spanning teacher who is admin on 1 school also needs the same admin rights on other schools?
+
+```
+##################### Start 911_ucsschool_consistency ######################
+## Check failed: 911_ucsschool_consistency - UCS@school Consistency Check ##
+UCS@school requires its LDAP objects to follow certain rules.
+Inconsistencies in these objects can trigger erratic behaviour.
+
+~~~ The following issues concern users ~~~
+
+  uid=a.mueller,cn=lehrer,cn=users,ou=SchuleA,dc=training,dc=ucs
+&nbsp;&nbsp;&nbsp;- User does not have UCS@school Role school_admin:school:SchuleB
+&nbsp;&nbsp;&nbsp;- Not member of group cn=admins-schuleb,cn=ouadmins,cn=groups,dc=training,dc=ucs
+
+For help please visit https://help.univention.com/t/how-a-ucs-school-user-should-look-like/15630
+###################### End 911_ucsschool_consistency #######################
+```
+
+**Answer:** At least the LDAP ACLs currently are still using the LDAP object class `ucsschoolAdministrator` to decide if a user is an UCS@school admin. If the user is not member of the admin group of each school, there is an inconsistant state, which might cause other problems.
+
 ## Selektive Replikation
 
 Generell wird versucht, auf Schulserver nur das replizieren, was auf ihnen auch benötigt wird. So werden z.B. nur (schulübergreifende) Benutzer auf einen Schulserver repliziert, wenn diese auch Mitglied/Teil der Schule sind.
