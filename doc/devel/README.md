@@ -1,5 +1,7 @@
 # UCS@school Knowledge Collection
 
+[TOC]
+
 ## DISCLAIMER
 
 1. Die Inhalte in diesem Dokument stellen eine **Best-Effort-Doku** dar, die für den **internen Gebrauch** gedacht ist.
