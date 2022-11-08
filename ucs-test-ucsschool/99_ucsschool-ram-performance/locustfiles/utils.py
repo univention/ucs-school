@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     BFF_TEST_ADMIN_USERNAME: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_USERNAME", default="Administrator")
     BFF_TEST_TOKEN_RENEW_PERIOD: int = Field(env="UCS_ENV_BFF_TEST_TOKEN_RENEW_PERIOD", default=60)
     KELVIN_HOST: str = Field(env="UCS_ENV_KELVIN_HOST", default=KELVIN_DEFAULT_HOST)
+    ROLES = ["teacher", "student"]
 
     class Config:
         allow_population_by_field_name = True
@@ -96,7 +97,7 @@ class TestData(object):
 
     def random_users(self, school: str, k: int = 10) -> List[str]:
         """Return ``k`` random ``username``s from ``school``"""
-        return random.choices(list(self.db[school]["users"].keys()), k=k)
+        return random.sample(list(self.db[school]["users"].keys()), k=k)
 
     def random_student(self, school: str) -> str:
         """Return the ``username`` of a random student from ``school``"""
@@ -104,7 +105,7 @@ class TestData(object):
 
     def random_students(self, school: str, k: int = 10) -> List[str]:
         """Return ``k`` random ``username``s from ``school`` which have the role student"""
-        return random.choices(list(self.db[school]["students"].keys()), k=k)
+        return random.sample(list(self.db[school]["students"].keys()), k=k)
 
     def random_workgroup(self, school: str) -> str:
         """Return a random workgroup from ``school``"""

@@ -20,13 +20,20 @@ BASE_DIR = "/var/lib/ram-performance-tests"
 VENV = os.path.join(BASE_DIR, "venv")
 LOCUST_EXE = os.path.join(VENV, "bin", "locust")
 
-ENV_LOCUST_DEFAULTS = {
+ENV_LOCUST_DEFAULTS: Dict[str, str] = {
     "LOCUST_LOGLEVEL": "INFO",
     "LOCUST_RUN_TIME": "10s",
-    "LOCUST_SPAWN_RATE": "0.5",
+    "LOCUST_SPAWN_RATE": "1",
     "LOCUST_STOP_TIMEOUT": "10",
-    "LOCUST_USERS": "3",
+    "LOCUST_USERS": "1",
+    "LOCUST_WAIT_TIME": "0.05",
 }
+
+BASE_DIR = "/var/lib/ram-performance-tests/"
+LOCUST_FILES_DIRNAME = "locustfiles"
+RESULT_DIR = os.path.join(BASE_DIR, "results")
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+LOCUST_FILES_DIR = os.path.join(TEST_DIR, LOCUST_FILES_DIRNAME)
 
 
 def set_locust_environment_vars(locust_env_vars: Dict[str, str]):
@@ -116,7 +123,13 @@ def execute_test():
     https://docs.locust.io/en/stable/configuration.html#all-available-configuration-options
     """
 
-    def _func(locust_path: str, result_file_base_path: str, host: str, loglevel: str = None) -> None:
+    def _func(
+        locust_path: str,
+        locust_user_class: str,
+        result_file_base_path: str,
+        host: str,
+        loglevel: str = None,
+    ) -> None:
         for k, v in ENV_LOCUST_DEFAULTS.items():
             if k not in os.environ:
                 os.environ[k] = v
@@ -134,7 +147,9 @@ def execute_test():
             f"--csv={result_file_base_path}",
             f"--html={result_file_base_path}.html",
             "--print-stats",
+            locust_user_class,
         ]
+        print("Executing {!r}...".format(" ".join(cmd)))
         print(f"Redirecting stdout and stderr for Locust execution to {logfile!r}.")
         msg = f"Running with 'LOCUST_' environment variables: {envs!r}\nExecuting: {cmd!r}\n"
         print(msg)
