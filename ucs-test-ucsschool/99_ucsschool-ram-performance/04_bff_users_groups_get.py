@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: warmup backends with route POST /ucsschool/bff-users/v1/users/
+## desc: check performance of GET /ucsschool/bff-users/v1/groups/[school]
 ## tags: [ucsschool-bff-users, performance]
 ## exposure: dangerous
 import copy
@@ -16,9 +16,9 @@ from conftest import (
 )
 
 LOCUST_FILE = "generic_user_bff_users.py"
-LOCUST_USER_CLASS = "CreateUser"
-RESULT_FILES_NAME = "warmup"
-URL_NAME = "/ucsschool/bff-users/v1/users/"
+LOCUST_USER_CLASS = "GetGroups"
+RESULT_FILES_NAME = "bff-users-groups-get"
+URL_NAME = "/ucsschool/bff-users/v1/groups/[school]"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 
@@ -38,15 +38,21 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir):
     verify_test_sent_requests(RESULT_FILE_BASE_PATH)
 
 
+# The only requirement from https://git.knut.univention.de/groups/univention/-/epics/379
+# is: The time to get groups must be below 2 seconds.
+# At the time of writing, the number of concurrent users is still unknown.
+
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
-LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
-LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "4"
-LOCUST_ENV_VARIABLES["LOCUST_USERS"] = "2"
-LOCUST_ENV_VARIABLES["LOCUST_STOP_TIMEOUT"] = "30"
-
-# As this is only a warmup, the test passes when run_test finishes without exceptions
-# note that failing requests do not make this test fail
+LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "3m"
 
 
-def test_warmup(run_test):
-    pass
+def test_failure_count(check_failure_count, run_test):
+    check_failure_count(RESULT_FILE_BASE_PATH)
+
+
+def test_rps(check_rps, run_test):
+    check_rps(RESULT_FILE_BASE_PATH, URL_NAME, 0.5)
+
+
+def test_95_percentile(check_95_percentile, run_test):
+    check_95_percentile(RESULT_FILE_BASE_PATH, URL_NAME, 2000)

@@ -1,30 +1,26 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of POST /ucsschool/bff-users/v1/users/
+## desc: check performance of GET /ucsschool/bff-users/v1/pages/addView/settings/[username]
 ## tags: [ucsschool-bff-users, performance]
 ## exposure: dangerous
-## packages: []
-## bugs: []
-
+import copy
 import os
 
 import pytest
-from conftest import BFF_DEFAULT_HOST, set_locust_environment_vars
+from conftest import (
+    BFF_DEFAULT_HOST,
+    ENV_LOCUST_DEFAULTS,
+    LOCUST_FILES_DIR,
+    RESULT_DIR,
+    set_locust_environment_vars,
+)
 
-BASE_DIR = "/var/lib/ram-performance-tests/"
-LOCUST_FILES_DIRNAME = "locustfiles"
-LOCUST_FILE = "locust_users_post.py"
-RESULT_FILES_NAME = "users-post"
-
-
-RESULT_DIR = os.path.join(BASE_DIR, "results")
-TEST_DIR = os.path.dirname(os.path.abspath(__file__))
-LOCUST_FILES_DIR = os.path.join(TEST_DIR, LOCUST_FILES_DIRNAME)
+LOCUST_FILE = "generic_user_bff_users.py"
+LOCUST_USER_CLASS = "GetPagesAddViewSettings"
+RESULT_FILES_NAME = "bff-users-pages-addView-settings-get"
+URL_NAME = "/ucsschool/bff-users/v1/pages/addView/settings/[username]"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
-
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
-BFF_USERS_HOST = BFF_DEFAULT_HOST
-URL_NAME = "/ucsschool/bff-users/v1/users/"
 
 
 @pytest.fixture(scope="module")
@@ -36,23 +32,18 @@ def create_result_dir():
 @pytest.fixture(scope="module")
 def run_test(execute_test, verify_test_sent_requests, create_result_dir):
     set_locust_environment_vars(LOCUST_ENV_VARIABLES)
-    execute_test(LOCUST_FILE_PATH, RESULT_FILE_BASE_PATH, BFF_USERS_HOST)
+    execute_test(LOCUST_FILE_PATH, LOCUST_USER_CLASS, RESULT_FILE_BASE_PATH, BFF_DEFAULT_HOST)
     # fail in fixture, so pytest prints the output of Locust,
     # regardless which test_*() function started Locust
     verify_test_sent_requests(RESULT_FILE_BASE_PATH)
 
 
 # The only requirement from https://git.knut.univention.de/groups/univention/-/epics/379
-# is: The time to create a user must be below 2 seconds.
+# is: The time to get the addView must be below 2 seconds.
 # At the time of writing, the number of concurrent users is still unknown.
 
-
-LOCUST_ENV_VARIABLES = {
-    "LOCUST_RUN_TIME": "2m",
-    "LOCUST_SPAWN_RATE": "1",
-    "LOCUST_STOP_TIMEOUT": "15",
-    "LOCUST_USERS": "1",
-}
+LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
+LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "1m"
 
 
 def test_failure_count(check_failure_count, run_test):
