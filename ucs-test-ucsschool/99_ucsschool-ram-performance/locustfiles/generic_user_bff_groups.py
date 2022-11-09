@@ -1,8 +1,8 @@
 from generic_user import GenericUser, PagesGenericUser
 from tasks.bff_groups.groups_delete import delete_group
 from tasks.bff_groups.groups_post import create_group
-from tasks.bff_groups.groups_delete import delete_group
 from tasks.bff_groups.groups_search_get import search_groups
+from tasks.bff_groups.pages_addView_settings_get import get_pages_addView_settings
 from tasks.bff_groups.pages_listView_settings_get import get_pages_listView_settings
 from tasks.bff_groups.token_post import token_post
 
@@ -39,6 +39,10 @@ class SearchGroupWorkgroup(GenericUser):
 
 class GetPagesListViewSettings(PagesGenericUser):
     tasks = [get_pages_listView_settings]
+
+
+class GetPagesAddViewSettings(PagesGenericUser):
+    tasks = [get_pages_addView_settings]
 
 
 class GetToken(GenericUser):
