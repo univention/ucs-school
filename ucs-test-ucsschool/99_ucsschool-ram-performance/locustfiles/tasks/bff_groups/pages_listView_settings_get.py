@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Univention Management Console
-#  module: selective-udm
-#
-# Copyright 2012-2021 Univention GmbH
+# Copyright 2022 Univention GmbH
 #
 # http://www.univention.de/
 #
