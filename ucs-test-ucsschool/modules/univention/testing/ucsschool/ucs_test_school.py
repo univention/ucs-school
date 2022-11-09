@@ -857,6 +857,7 @@ class UCSTestSchool(object):
         is_active=True,  # type: Optional[bool]
         password="univention",  # type: Optional[str]
         wait_for_replication=True,  # type: Optional[bool]
+        check_password_policies=False,  # type: Optional[bool]
     ):  # type: (...) -> Tuple[str, str]
         """
         Create a user in specified OU with given attributes. If attributes are not specified, random
@@ -910,7 +911,7 @@ class UCSTestSchool(object):
         # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
         User.init_udm_module(self.lo)
         roles = cls.default_roles
-        result = cls(**kwargs).create(self.lo)
+        result = cls(**kwargs).create(self.lo, check_password_policies=check_password_policies)
         logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
 
         utils.verify_ldap_object(

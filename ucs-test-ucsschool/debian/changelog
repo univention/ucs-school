@@ -1,8 +1,14 @@
-ucs-test-ucsschool (7.3.77) unstable; urgency=medium
+ucs-test-ucsschool (7.3.78) unstable; urgency=medium
 
   * Issue #916: Create a preformance test for bff API
 
  -- Ivan Barbecho Delgado <delgado.extern@univention.de>  Tue, 08 Nov 2022 14:07:42 +0100
+
+ucs-test-ucsschool (7.3.77) unstable; urgency=medium
+
+  * Bug #55392: add test for password policies
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 07 Nov 2022 10:53:02 +0100
 
 ucs-test-ucsschool (7.3.76) unstable; urgency=medium
 
