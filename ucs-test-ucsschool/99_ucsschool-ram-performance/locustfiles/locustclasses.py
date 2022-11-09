@@ -60,7 +60,6 @@ class UiUserClient(HttpUser):
 
         if add_auth_token:
             headers.update({"Authorization": f"Bearer {self._auth_token}"})
-        print(f"Request headers: {headers}")
         assert operation in ["get", "post", "put", "delete", "patch"]
         r = getattr(self.client, operation)(*args, headers=headers, **kwargs)
         if response_codes and r.status_code not in response_codes:
