@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.79) unstable; urgency=medium
+
+  * Issue #890: Add new performance test for DELETE workgroup
+  * Issue #888: Add new performance test for DELETE school_class
+
+ -- Ivan Barbecho Delgado <delgado.extern@univention.de>  Fri, 11 Nov 2022 12:49:04 +0100
+
 ucs-test-ucsschool (7.3.78) unstable; urgency=medium
 
   * Issue #916: Create a preformance test for bff API
