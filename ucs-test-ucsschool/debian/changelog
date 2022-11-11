@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.80) unstable; urgency=low
+
+  * Issue #34: handle comparing unsorted lists in response
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 11 Nov 2022 19:04:20 +0100
+
 ucs-test-ucsschool (7.3.79) unstable; urgency=medium
 
   * Issue #890: Add new performance test for DELETE workgroup

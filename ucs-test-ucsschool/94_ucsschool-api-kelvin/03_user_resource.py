@@ -55,6 +55,15 @@ def extract_class_dns(lo):
     return _func
 
 
+def assert_equal_dicts(dict1, dict2):
+    assert set(dict1.keys()) == set(dict2.keys())
+    for k, v in dict1.items():
+        if isinstance(v, list):
+            assert set(v) == set(dict2[k])
+        else:
+            assert v == dict2[k]
+
+
 def test_list_resource_from_external(auth_header, lo):
     response = requests.get(RESOURCE_URLS["users"], headers=auth_header, params={"school": "DEMOSCHOOL"})
     res = response.json()
@@ -366,12 +375,12 @@ def test_rename_single_user(
     url = urljoin(RESOURCE_URLS["users"], name_new)
     assert resource_new["url"] == url
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
     url = urljoin(RESOURCE_URLS["users"], name_old)
     response = requests.get(url, headers=auth_header)
     assert response.status_code == 404
-    compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
+    compare_import_user_and_resource(user, resource_new)
 
 
 def test_create_user_without_name(
@@ -459,7 +468,7 @@ def test_move_teacher_one_school_only(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
@@ -552,7 +561,7 @@ def test_move_teacher_remove_primary(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
@@ -647,7 +656,7 @@ def test_move_teacher_remove_primary_with_classes(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
@@ -742,7 +751,7 @@ def test_move_teacher_remove_primary_no_classes_in_new_school(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
@@ -841,7 +850,7 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
@@ -919,7 +928,7 @@ def test_modify_teacher_remove_all_classes(
     assert resource_new["url"] == url
 
     resource_new2 = api_call("get", url, headers=auth_header)
-    assert resource_new == resource_new2
+    assert_equal_dicts(resource_new, resource_new2)
 
     compare_import_user_and_resource(user, resource_new)
     logger.info("*** OK: LDAP <-> resource")
