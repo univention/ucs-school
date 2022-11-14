@@ -1,3 +1,9 @@
+ucs-school-import (18.0.25) unstable; urgency=medium
+
+  * Bug #55400: add option to enable password policy eval during import
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Nov 2022 09:26:55 +0100
+
 ucs-school-import (18.0.24) unstable; urgency=medium
 
   * Bug #55130: change warning text in import_computer

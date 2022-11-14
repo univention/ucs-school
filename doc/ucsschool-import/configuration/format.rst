@@ -451,6 +451,12 @@ Konfiguration des Benutzerimports
       Informationen über Passwortrichtlinien für Benutzer
          :ref:`users-passwords` in :cite:t:`ucs-manual`
 
+.. option:: evaluate_password_policies
+
+     Ab |UCSUAS| Version 5.0 v3: Schaltet die Evaluierung von Passwort Richtlinien während des Imports neuer Benutzer ein.
+
+     Standard (``boolean``)
+          ``false``
 
 .. option:: school, -s, --school
 
