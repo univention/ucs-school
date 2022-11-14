@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.81) unstable; urgency=medium
+
+  * Bug #55355: add test: arbitrary context types in ucsschool_roles
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Nov 2022 11:13:53 +0100
+
 ucs-test-ucsschool (7.3.80) unstable; urgency=low
 
   * Issue #34: handle comparing unsorted lists in response

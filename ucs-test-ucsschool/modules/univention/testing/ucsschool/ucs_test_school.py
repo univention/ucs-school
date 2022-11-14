@@ -856,6 +856,7 @@ class UCSTestSchool(object):
         is_staff=False,  # type: Optional[bool]
         is_active=True,  # type: Optional[bool]
         password="univention",  # type: Optional[str]
+        ucsschool_roles=None,  # type: Optional[List]
         wait_for_replication=True,  # type: Optional[bool]
         check_password_policies=False,  # type: Optional[bool]
     ):  # type: (...) -> Tuple[str, str]
@@ -911,14 +912,17 @@ class UCSTestSchool(object):
         # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:
         User.init_udm_module(self.lo)
         roles = cls.default_roles
+        school_roles = [create_ucsschool_role_string(role, ou_name) for role in roles]
+        expected_roles = school_roles
+        if ucsschool_roles:
+            expected_roles.extend(ucsschool_roles)
+            kwargs["ucsschool_roles"] = expected_roles
         result = cls(**kwargs).create(self.lo, check_password_policies=check_password_policies)
         logger.info("*** Result of %s(...).create(): %r", cls.__name__, result)
 
         utils.verify_ldap_object(
             user_dn,
-            expected_attr={
-                "ucsschoolRole": [create_ucsschool_role_string(role, ou_name) for role in roles]
-            },
+            expected_attr={"ucsschoolRole": expected_roles},
             strict=False,
             should_exist=True,
             primary=True,
