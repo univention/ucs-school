@@ -16,10 +16,10 @@ Package: ucs-school-umc-wizards
 Architecture: all
 Depends:
  python-apt,
- python-ucs-school (>= 12.1.9),
+ python-ucs-school (>= 13.0.28),
  python-univention-directory-manager,
  python3-apt,
- python3-ucsschool-lib,
+ python3-ucsschool-lib (>= 13.0.28),
  python3-univention-directory-manager,
  shell-ucs-school,
  ucs-school-umc-common,

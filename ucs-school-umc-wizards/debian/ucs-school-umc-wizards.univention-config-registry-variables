@@ -15,3 +15,9 @@ Description[de]=Diese UCR-Variable bestimmt, welche optionalen Felder im UMC Mod
 Description[en]=This UCR variable defines which optional fields are displayed in the Users UMC module. The value has to be a list with whitespace as a delimiter. The following fields are optional: schools, ucsschool_roles, birthday, disabled, email, password, expiration_date. Default: empty list
 Type=str
 Categories=management-umc
+
+[ucsschool/wizards/schoolwizards/users/check-password-policies]
+Description[de]=Schaltet die Evaluierung von Passwort Richtlinien während des Anlegens neuer Benutzer im UMC Modul für Benutzer ein (Standard: no).
+Description[en]=Enables the evaluation of password policies during the creation of new Users in the Users UMC module (default: no).
+Type=bool
+Categories=management-umc

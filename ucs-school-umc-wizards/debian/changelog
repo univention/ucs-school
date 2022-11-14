@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.11) unstable; urgency=medium
+
+  * Bug #55415: allow enabling password policies during user creation
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Nov 2022 13:25:10 +0100
+
 ucs-school-umc-wizards (12.0.10) unstable; urgency=medium
 
   * Bug #50797: Searchs involving asterisks behave consistent

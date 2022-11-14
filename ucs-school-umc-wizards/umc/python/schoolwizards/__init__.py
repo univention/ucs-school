@@ -269,6 +269,10 @@ class Instance(SchoolBaseModule, SchoolImport):
         # Bug #44641: workaround with security implications!
         return ucr.is_true("ucsschool/wizards/schoolwizards/workaround/admin-connection")
 
+    @property
+    def check_password_policies(self):
+        return ucr.is_true("ucsschool/wizards/schoolwizards/users/check-password-policies", False)
+
     @LDAP_Connection(ADMIN_WRITE)
     def own_schools(self, ldap_admin_write=None):  # type: (Optional[LoType]) -> Set[str]
         """
@@ -364,7 +368,6 @@ class Instance(SchoolBaseModule, SchoolImport):
         # Bug #44641: workaround with security implications!
         if self.admin_workaround_active:
             ldap_user_write = ldap_admin_write
-
         ret = []
         for obj in iter_objects_in_request(
             request, ldap_user_write, OperationType.CREATE, self.own_schools(), self.is_domain_admin()
@@ -376,7 +379,10 @@ class Instance(SchoolBaseModule, SchoolImport):
                 MODULE.process("Validation failed %r" % (ret[-1],))
                 continue
             try:
-                if obj.create(ldap_user_write, validate=False):
+                params = {"lo": ldap_user_write, "validate": False}
+                if isinstance(obj, User):
+                    params["check_password_policies"] = self.check_password_policies
+                if obj.create(**params):
                     ret.append(True)
                 else:
                     ret.append({"result": {"message": _('"%s" already exists!') % obj.name}})
@@ -403,7 +409,7 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"result": {"message": obj.get_error_msg()}})
                 continue
             try:
-                obj.modify(ldap_user_write, validate=False)
+                obj.modify(ldap_user_write, validate=False, check_password_policies=True)
             except uldapBaseException as exc:
                 ret.append({"result": {"message": get_exception_msg(exc)}})
             else:

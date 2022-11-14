@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-umc-wizards
+fix:
+desc: |
+ * The evaluation of password policies during the creation of new users in the UMC can now be enabled by setting the UCR-Variable ``ucsschool/wizards/schoolwizards/users/check-password-policies``. It is disabled by default (Bug #55415).
+bug: [55415]

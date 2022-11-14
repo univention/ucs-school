@@ -1,5 +1,11 @@
 ucs-test-ucsschool (7.3.81) unstable; urgency=medium
 
+  * Bug #55415: add test for password policies in umc
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Nov 2022 13:24:07 +0100
+
+ucs-test-ucsschool (7.3.81) unstable; urgency=medium
+
   * Bug #55355: add test: arbitrary context types in ucsschool_roles
 
  -- Tobias Wenzel <wenzel@univention.de>  Mon, 14 Nov 2022 11:13:53 +0100

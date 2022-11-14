@@ -10,10 +10,12 @@ from __future__ import print_function
 
 from copy import deepcopy
 
+import pytest
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+from univention.config_registry import handler_set
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse
@@ -190,3 +192,53 @@ def test_users_module_workgroups_attribute(schoolenv, ucr):
     utils.wait_for_replication()
     wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
     user.verify()
+
+
+@pytest.mark.parametrize("check_password_policies", [True, False])
+def test_create_check_password_policies(schoolenv, check_password_policies):
+    # 00_password_policies
+    umc_connection = Client.get_test_connection(schoolenv.ucr.get("ldap/master"))
+    (ou, oudn) = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
+    ucr_var_name = "ucsschool/wizards/schoolwizards/users/check-password-policies"
+    handler_set(["{}={}".format(ucr_var_name, check_password_policies)])
+    cl = Klasse(school=ou, connection=umc_connection)
+    cl.create()
+    user = User(
+        school=ou,
+        role="student",
+        school_classes={ou: [cl.name]},
+        schools=[ou],
+        password="funk",
+        connection=umc_connection,
+    )
+    if check_password_policies:
+        with pytest.raises(AssertionError):
+            user.create()
+    else:
+        user.create()
+        user.remove()
+    cl.remove()
+    utils.wait_for_replication()
+    wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
+
+
+def test_modify_always_check_password_policies(schoolenv):
+    # 00_password_policies
+    umc_connection = Client.get_test_connection(schoolenv.ucr.get("ldap/master"))
+    (ou, oudn) = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
+    cl = Klasse(school=ou, connection=umc_connection)
+    cl.create()
+    user = User(
+        school=ou,
+        role="student",
+        school_classes={ou: [cl.name]},
+        schools=[ou],
+        connection=umc_connection,
+    )
+    user.create()
+    with pytest.raises(AssertionError):
+        new_attributes = {"password": "funky"}
+        user.edit(new_attributes)
+    cl.remove()
+    utils.wait_for_replication()
+    wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)

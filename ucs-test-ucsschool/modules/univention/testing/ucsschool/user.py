@@ -108,7 +108,7 @@ class User(Person):
         print("#### Creating user %s" % (self.username,))
         print("#### param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/users/add", param, flavor).result
-        assert reqResult[0], "Unable to create user (%r)" % (param,)
+        assert reqResult[0] is True, "Unable to create user (%r): %r" % (param, reqResult[0])
         utils.wait_for_replication()
 
     def get(self):
@@ -122,7 +122,7 @@ class User(Person):
                 reqResult = [""]
             else:
                 raise
-        assert reqResult[0], "Unable to get user (%s)" % self.username
+        assert reqResult[0], "Unable to get user (%s): %r" % (self.username, reqResult[0])
         return reqResult[0]
 
     def check_get(self, expected_attrs={}):
@@ -222,7 +222,7 @@ class User(Person):
             {"object": {"remove_from_school": remove_from_school, "$dn$": self.dn}, "options": None}
         ]
         reqResult = self.client.umc_command("schoolwizards/users/remove", param, flavor).result
-        assert reqResult[0], "Unable to remove user (%s)" % self.username
+        assert reqResult[0], "Unable to remove user (%r): %r" % (self.username, reqResult[0])
         schools = self.schools[:]
         schools.remove(remove_from_school)
         if not schools:
@@ -271,7 +271,11 @@ class User(Person):
         print("#### Editing user %s" % (self.username,))
         print("#### param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/users/put", param, flavor).result
-        assert reqResult[0], "Unable to edit user (%s) with the parameters (%r)" % (self.username, param)
+        assert reqResult[0] is True, "Unable to edit user (%s) with the parameters (%r) : %r" % (
+            self.username,
+            param,
+            reqResult[0],
+        )
         self.set_mode_to_modify()
         self.school_classes = new_attributes.get("school_classes", self.school_classes)
         self.workgroups = new_attributes.get("workgroups", self.workgroups)

@@ -67,6 +67,15 @@ Ist kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer)
 zurückgesetzt werden, bevor das Benutzerkonto vom Benutzer erstmals verwendet
 werden kann.
 
+.. note::
+
+   Ab |UCSUAS| Version 5.0 v3 kann über die |UCSUCRV|
+   :envvar:`ucsschool/wizards/schoolwizards/users/check-password-policies`
+   die Evaluierung von Passwort Richtlinien während des Anlegens neuer Benutzer eingeschaltet werden.
+   Sie ist standardmäßig ausgeschaltet.
+   Passwort Richtlinien werden beim Bearbeiten von Benutzern immer evaluiert.
+
+
 Nach dem Anklicken der Schaltfläche :guilabel:`Speichern` wird das Benutzerkonto
 im Verzeichnisdienst angelegt und eine Benachrichtigung über den Erfolg der
 Aktion angezeigt. Anschließend wird wieder die zweite Seite des Assistenten
