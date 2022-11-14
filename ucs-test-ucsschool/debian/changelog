@@ -1,4 +1,4 @@
-ucs-test-ucsschool (7.3.81) unstable; urgency=medium
+ucs-test-ucsschool (7.3.82) unstable; urgency=medium
 
   * Bug #55415: add test for password policies in umc
 
