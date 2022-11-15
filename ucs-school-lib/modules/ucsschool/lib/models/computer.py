@@ -44,8 +44,10 @@ from ..roles import (
     role_dc_slave_admin,
     role_dc_slave_edu,
     role_ip_computer,
+    role_linux_computer,
     role_mac_computer,
     role_teacher_computer,
+    role_ubuntu_computer,
     role_win_computer,
 )
 from .attributes import Attribute, Groups, InventoryNumber, IPAddress, MACAddress, SubnetMask
@@ -407,6 +409,10 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
             return MacComputer
         if b"univentionClient" in object_classes:
             return IPComputer
+        if b"univentionUbuntuClient" in object_classes:
+            return UbuntuComputer
+        if b"univentionLinuxClient" in object_classes:
+            return LinuxComputer
 
     @classmethod
     def from_udm_obj(cls, udm_obj, school, lo):  # type: (UdmObject, str, LoType) -> SchoolComputer
@@ -467,4 +473,22 @@ class IPComputer(RoleSupportMixin, SchoolComputer):
 
     class Meta(SchoolComputer.Meta):
         udm_module = "computers/ipmanagedclient"
+        hook_path = "computer"
+
+
+class UbuntuComputer(RoleSupportMixin, SchoolComputer):
+    type_name = _("Ubuntu system")
+    default_roles = [role_ubuntu_computer]
+
+    class Meta(SchoolComputer.Meta):
+        udm_module = "computers/ubuntu"
+        hook_path = "computer"
+
+
+class LinuxComputer(RoleSupportMixin, SchoolComputer):
+    type_name = _("Linux system")
+    default_roles = [role_linux_computer]
+
+    class Meta(SchoolComputer.Meta):
+        udm_module = "computers/linux"
         hook_path = "computer"

@@ -200,6 +200,14 @@ msgstr "MAC-Adresse"
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
+#: modules/ucsschool/lib/models/computer.py:476
+msgid "Ubuntu system"
+msgstr "Ubuntu-System"
+
+#: modules/ucsschool/lib/models/computer.py:485
+msgid "Linux system"
+msgstr "Linux-System"
+
 #: modules/ucsschool/lib/models/attributes.py:133
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"

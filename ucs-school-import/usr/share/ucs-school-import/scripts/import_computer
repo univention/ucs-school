@@ -44,7 +44,13 @@ import univention.debug as ud
 from ucsschool.importer.utils.constants import get_default_prefixlen, get_sep_char
 from ucsschool.importer.utils.utils import verify_school_ou
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.lib.models.computer import IPComputer, MacComputer, WindowsComputer
+from ucsschool.lib.models.computer import (
+    IPComputer,
+    LinuxComputer,
+    MacComputer,
+    UbuntuComputer,
+    WindowsComputer,
+)
 from ucsschool.lib.models.utils import stopped_notifier, ucr
 from univention.admin.uexceptions import authFail, insufficientInformation
 from univention.admin.uldap import access as LoType, getAdminConnection  # noqa: F401
@@ -98,6 +104,8 @@ def import_computers(input_file):  # type: (str) -> None
         "windows": WindowsComputer,
         "macos": MacComputer,
         "ipmanagedclient": IPComputer,
+        "ubuntu": UbuntuComputer,
+        "linux": LinuxComputer,
     }
     sep_char = get_sep_char()
     with open(input_file) as csv_file, stopped_notifier():

@@ -229,8 +229,8 @@ angegebene Netzwerk neu setzt. Es verwendet das gleiche Format wie
 
 .. _school-schoolcreate-computers:
 
-Import von Rechnerkonten für Windows-PCs
-========================================
+Import von Rechnerkonten
+========================
 
 Rechnerkonten können entweder einzeln über ein spezielles UMC-Modul oder über
 ein spezielles Import-Skript als Massenimport angelegt werden. Die Rechnerkonten
@@ -239,7 +239,7 @@ sichergestellt wird, dass die für den Betrieb von |UCSUAS| notwendigen
 Informationen im LDAP-Verzeichnis vorhanden sind und die Objekte an der
 korrekten Position im LDAP-Verzeichnis abgelegt wurden.
 
-Nach dem Anlegen der Rechnerkonten können Windows-PCs über den im UCS-Handbuch
+Nach dem Anlegen der Rechnerkonten können die PCs über den im UCS-Handbuch
 beschriebenen Weg der Domäne beitreten.
 
 .. _school-schoolcreate-computers-import:
@@ -270,7 +270,7 @@ OU voranzustellen oder zu integrieren (z.B. ``340win01`` für Schule *340*).
 
    * - Rechnertype
      - Typ des Rechnerobjektes
-     - ``ipmanagedclient``, ``macos``, ``windows``
+     - ``ipmanagedclient``, ``macos``, ``windows``, ``ubuntu``, ``linux``
      - ``windows``
 
    * - Name
@@ -320,7 +320,10 @@ Beispiel für eine Importdatei:
    windows          wing123m-01      10:00:ee:ff:cc:00  g123m  10.0.5.5
    windows          wing123m-02      10:00:ee:ff:cc:01  g123m  10.0.5.6
    macos            macg123m-01      10:00:ee:ff:cc:03  g123m  10.0.5.7
-   ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
+   ubuntu           ubuntug123m-01    10:00:ee:ff:cc:04  g123m  10.0.5.8
+   linux            linuxg123m-01     10:00:ee:ff:cc:05  g123m  10.0.5.9
+   ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:06  g123m  10.0.5.250
+
 
 
 Die importierten Rechner werden so konfiguriert, dass ihnen die angegebene

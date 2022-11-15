@@ -1,3 +1,9 @@
+ucs-school-import (18.0.26) unstable; urgency=medium
+
+  * Bug #55119: support ubuntu and linux computers in import_computers
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Nov 2022 11:44:02 +0100
+
 ucs-school-import (18.0.25) unstable; urgency=medium
 
   * Bug #55400: add option to enable password policy eval during import

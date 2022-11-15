@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.30) unstable; urgency=medium
+
+  * Bug #55119: add ubuntu and linux computers to school lib
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Nov 2022 11:41:32 +0100
+
 ucs-school-lib (13.0.29) unstable; urgency=medium
 
   * Bug #55355: allow arbitrary context types in roles

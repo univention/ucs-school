@@ -15,7 +15,9 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
 from ucsschool.lib.models.computer import (
     IPComputer as IPComputerLib,
+    LinuxComputer as LinuxComputerLib,
     MacComputer as MacComputerLib,
+    UbuntuComputer as UbuntuComputerLib,
     WindowsComputer as WindowsComputerLib,
 )
 from ucsschool.lib.models.school import School as SchoolLib
@@ -169,6 +171,16 @@ class IPManagedClient(Computer):
         super(IPManagedClient, self).__init__(school, "ipmanagedclient")
 
 
+class Ubuntu(Computer):
+    def __init__(self, school):
+        super(Ubuntu, self).__init__(school, "ubuntu")
+
+
+class Linux(Computer):
+    def __init__(self, school):
+        super(Linux, self).__init__(school, "linux")
+
+
 class ImportFile:
     def __init__(self, use_cli_api, use_python_api):
         self.use_cli_api = use_cli_api
@@ -254,6 +266,12 @@ class ImportFile:
         for computer in self.computer_import.ip_managed_clients:
             kwargs = _set_kwargs(computer)
             IPComputerLib(**kwargs).create(lo)
+        for computer in self.computer_import.linux_computer:
+            kwargs = _set_kwargs(computer)
+            LinuxComputerLib(**kwargs).create(lo)
+        for computer in self.computer_import.ubuntu_computers:
+            kwargs = _set_kwargs(computer)
+            UbuntuComputerLib(**kwargs).create(lo)
 
 
 class ComputerHooks:
@@ -345,10 +363,14 @@ class TestPostSchoolComputer(Hook):
 
 
 class ComputerImport:
-    def __init__(self, ou_name, nr_windows=20, nr_macos=5, nr_ipmanagedclient=3):
+    def __init__(
+        self, ou_name, nr_windows=20, nr_macos=5, nr_ipmanagedclient=3, nr_linux=5, nr_ubuntu=5
+    ):
         assert nr_windows > 3
         assert nr_macos > 3
         assert nr_ipmanagedclient > 2
+        assert nr_linux > 3
+        assert nr_ubuntu > 3
 
         self.school = ou_name
 
@@ -370,6 +392,18 @@ class ComputerImport:
         self.ip_managed_clients[0].set_inventorynumbers()
         self.ip_managed_clients[1].set_network_address()
 
+        self.linux_computer = []
+        for i in range(0, nr_linux):
+            self.linux_computer.append(Linux(self.school))
+        self.linux_computer[0].set_inventorynumbers()
+        self.linux_computer[1].set_network_address()
+
+        self.ubuntu_computers = []
+        for i in range(0, nr_ubuntu):
+            self.ubuntu_computers.append(Ubuntu(self.school))
+        self.ubuntu_computers[0].set_inventorynumbers()
+        self.ubuntu_computers[1].set_network_address()
+
     def __str__(self):
         lines = []
 
@@ -381,6 +415,12 @@ class ComputerImport:
 
         for ipmanagedclient in self.ip_managed_clients:
             lines.append(str(ipmanagedclient))
+
+        for linux in self.linux_computer:
+            lines.append(str(linux))
+
+        for ubuntu in self.ubuntu_computers:
+            lines.append(str(ubuntu))
 
         return "\n".join(lines)
 
@@ -394,6 +434,12 @@ class ComputerImport:
         for ipmanagedclient in self.ip_managed_clients:
             ipmanagedclient.verify()
 
+        for linux in self.linux_computer:
+            linux.verify()
+
+        for ubuntu in self.ubuntu_computers:
+            ubuntu.verify()
+
 
 def create_and_verify_computers(
     use_cli_api=True,
@@ -401,6 +447,8 @@ def create_and_verify_computers(
     nr_windows=20,
     nr_macos=5,
     nr_ipmanagedclient=3,
+    nr_ubuntu=5,
+    nr_linux=5,
 ):
     assert use_cli_api != use_python_api
 
@@ -413,6 +461,8 @@ def create_and_verify_computers(
             nr_windows=nr_windows,
             nr_macos=nr_macos,
             nr_ipmanagedclient=nr_ipmanagedclient,
+            nr_linux=nr_linux,
+            nr_ubuntu=nr_ubuntu,
         )
         print(computer_import)
         import_file = ImportFile(use_cli_api, use_python_api)
