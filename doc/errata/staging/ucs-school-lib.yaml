@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.29A~5.0.0.202211141125
+fix: 13.0.30A~5.0.0.202211151535
 desc: |
  * |UCSUAS| users now might be created with context types, which are unknown to the |UCSUAS| library (Bug #55355).
  * Internal: Added an option to evaluate password policies when creating or modifying |UCSUAS| users (Bug #55392).
