@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.12) unstable; urgency=medium
+
+  * Bug #55415: only set check_password_policies for users during modify
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 15 Nov 2022 09:11:22 +0100
+
 ucs-school-umc-wizards (12.0.11) unstable; urgency=medium
 
   * Bug #55415: allow enabling password policies during user creation

@@ -409,7 +409,10 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"result": {"message": obj.get_error_msg()}})
                 continue
             try:
-                obj.modify(ldap_user_write, validate=False, check_password_policies=True)
+                params = {"lo": ldap_user_write, "validate": False}
+                if isinstance(obj, User):
+                    params["check_password_policies"] = True
+                obj.modify(**params)
             except uldapBaseException as exc:
                 ret.append({"result": {"message": get_exception_msg(exc)}})
             else:
