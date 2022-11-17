@@ -30,7 +30,7 @@ msgstr ""
 #: ../../changelog.rst:14
 msgid ""
 "The evaluation of password policies during the creation of new users in the "
-"UMC can now be enabled by setting the UCR-Variable ``ucsschool/wizards/"
+"UMC can now be enabled by setting the UCR Variable ``ucsschool/wizards/"
 "schoolwizards/users/check-password-policies``. It is disabled by default (:"
 "uv:bug:`55415`)."
 msgstr ""

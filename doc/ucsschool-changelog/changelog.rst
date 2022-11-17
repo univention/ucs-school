@@ -12,7 +12,7 @@ Released on 2022-11-17
 Source package *ucs-school-umc-wizards* in version ``12.0.12A~5.0.0.202211150913``:
 
 * The evaluation of password policies during the creation of new users in the
-  UMC can now be enabled by setting the UCR-Variable
+  UMC can now be enabled by setting the UCR Variable
   ``ucsschool/wizards/schoolwizards/users/check-password-policies``. It is
   disabled by default (:uv:bug:`55415`).
 
