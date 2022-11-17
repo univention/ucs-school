@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.85) unstable; urgency=medium
+
+  * Bug #55415: remove wait for replication in test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 17 Nov 2022 09:41:42 +0100
+
 ucs-test-ucsschool (7.3.84) unstable; urgency=medium
 
   * Bug #55119: Adjust test 83_python_hooks

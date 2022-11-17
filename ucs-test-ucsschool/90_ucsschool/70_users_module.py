@@ -218,8 +218,6 @@ def test_create_check_password_policies(schoolenv, check_password_policies):
         user.create()
         user.remove()
     cl.remove()
-    utils.wait_for_replication()
-    wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
 
 
 def test_modify_always_check_password_policies(schoolenv):
@@ -240,5 +238,3 @@ def test_modify_always_check_password_policies(schoolenv):
         new_attributes = {"password": "funky"}
         user.edit(new_attributes)
     cl.remove()
-    utils.wait_for_replication()
-    wait_for_drs_replication(filter_format("cn=%s", (user.username,)), should_exist=False)
