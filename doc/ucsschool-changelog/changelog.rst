@@ -4,6 +4,38 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2022-11-17:
+
+Released on 2022-11-17
+======================
+
+Source package *ucs-school-umc-wizards* in version ``12.0.12A~5.0.0.202211150913``:
+
+* The evaluation of password policies during the creation of new users in the
+  UMC can now be enabled by setting the UCR-Variable
+  ``ucsschool/wizards/schoolwizards/users/check-password-policies``. It is
+  disabled by default (:uv:bug:`55415`).
+
+Source package *ucs-school-lib* in version ``13.0.30A~5.0.0.202211151535``:
+
+* |UCSUAS| users now might be created with context types, which are unknown to
+  the |UCSUAS| library (:uv:bug:`55355`).
+
+* Internal: Added an option to evaluate password policies when creating or
+  modifying |UCSUAS| users (:uv:bug:`55392`).
+
+* Internal: Add classes UbuntuComputer and LinuxComputer to |UCSUAS| library
+  (:uv:bug:`55119`).
+
+Source package *ucs-school-import* in version ``18.0.26A~5.0.0.202211151540``:
+
+* The evaluation of password policies during the import of new users can now be
+  enabled by setting the configuration option ``evaluate_password_policies``. It
+  is disabled by default (:uv:bug:`55400`).
+
+* Regression: The script ``import_computers`` supports computers of type
+  ``linux`` and ``ubuntu`` again (:uv:bug:`55119`).
+
 Released on 2022-11-02
 ======================
 

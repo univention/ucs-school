@@ -32,8 +32,8 @@ for DIR in ~/git/*; do (cd $DIR; git pull); done
 For example, to upload `ucs-school-import ucs-school-umc-internetrules` to UCS@school 5.0 v3:
 
 ```
-cd doc/errata/staging/
-`~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v3" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml`
+cd ~/git/ucsschool/doc/errata/staging
+~/git/jenkins/ucsschool-errata-announce/copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v3" -u ucs-school-import.yaml ucs-school-umc-internetrules.yaml
 ```
 
 - Check if the displayed packages and versions are OK

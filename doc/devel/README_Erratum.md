@@ -43,7 +43,8 @@ https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/ by navigat
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 5.0 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
+./copy_from_appcenter.test.sh 5.0
+./copy_from_appcenter.test.sh 5.0 ucsschool_20220727135154  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
