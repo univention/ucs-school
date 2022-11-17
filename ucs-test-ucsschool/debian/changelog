@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.84) unstable; urgency=medium
+
+  * Bug #55119: Adjust test 83_python_hooks
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 16 Nov 2022 16:27:59 +0100
+
 ucs-test-ucsschool (7.3.83) unstable; urgency=medium
 
   * Bug #55119: adjust tests for import_computers

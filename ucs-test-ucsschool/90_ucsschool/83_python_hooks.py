@@ -61,6 +61,7 @@ EXPECTED_CLASSES = {
     "ImportTeacher": "ucsschool.importer.models.import_user",
     "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
     "ImportUser": "ucsschool.importer.models.import_user",
+    "LinuxComputer": "ucsschool.lib.models.computer",
     "MacComputer": "ucsschool.lib.models.computer",
     "MailDomain": "ucsschool.lib.models.misc",
     "MarketplaceShare": "ucsschool.lib.models.share",
@@ -79,6 +80,7 @@ EXPECTED_CLASSES = {
     "Student": "ucsschool.lib.models.user",
     "Teacher": "ucsschool.lib.models.user",
     "TeachersAndStaff": "ucsschool.lib.models.user",
+    "UbuntuComputer": "ucsschool.lib.models.computer",
     "UMCPolicy": "ucsschool.lib.models.policy",
     "User": "ucsschool.lib.models.user",
     "WindowsComputer": "ucsschool.lib.models.computer",
@@ -572,6 +574,8 @@ class TestPythonHooks(TestCase):
 
     _create_MacComputer = _create_IPComputer
     _create_WindowsComputer = _create_IPComputer
+    _create_LinuxComputer = _create_IPComputer
+    _create_UbuntuComputer = _create_IPComputer
 
     def _create_Share(self):
         group_model = random.choice((SchoolClass, WorkGroup))
