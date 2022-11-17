@@ -12,15 +12,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../changelog.rst:5
+#: ../../changelog.rst:4
 msgid "Changelog"
 msgstr "Changelog"
 
-#: ../../changelog.rst:10
+#: ../../changelog.rst:9
 msgid "Released on 2022-11-17"
 msgstr "Veröffentlicht am 17. November 2022"
 
-#: ../../changelog.rst:12
+#: ../../changelog.rst:11
 msgid ""
 "Source package *ucs-school-umc-wizards* in version "
 "``12.0.12A~5.0.0.202211150913``:"
@@ -28,7 +28,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-wizards* in Version "
 "``12.0.12A~5.0.0.202211150913``:"
 
-#: ../../changelog.rst:14
+#: ../../changelog.rst:13
 msgid ""
 "The evaluation of password policies during the creation of new users in the "
 "UMC can now be enabled by setting the UCR-Variable ``ucsschool/wizards/"
@@ -39,13 +39,13 @@ msgstr ""
 "in der UMC kann jetzt über die UCR-Variable ``ucsschool/wizards/"
 "schoolwizards/users/check-password-policies`` aktiviert werden. Sie ist standardmäßig deaktiviert (uv:bug:`55415`)."
 
-#: ../../changelog.rst:19
+#: ../../changelog.rst:18
 msgid ""
 "Source package *ucs-school-lib* in version ``13.0.30A~5.0.0.202211151535``:"
 msgstr ""
 "Quellpaket *ucs-school-lib* in Version ``13.0.30A~5.0.0.202211151535``:"
 
-#: ../../changelog.rst:21
+#: ../../changelog.rst:20
 msgid ""
 "|UCSUAS| users now might be created with context types, which are unknown to "
 "the |UCSUAS| library (:uv:bug:`55355`)."
@@ -53,7 +53,7 @@ msgstr ""
 "|UCSUAS| Benutzer können jetzt mit Kontext Typen erstellt werden, die nicht von"
 "der |UCSUAS| Bibliothek gesetzt werden (:uv:bug:`55355`)."
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:23
 msgid ""
 "Internal: Added an option to evaluate password policies when creating or "
 "modifying |UCSUAS| users (:uv:bug:`55392`)."
@@ -61,7 +61,7 @@ msgstr ""
 "Intern: Es wurde eine Option hinzugefügt, die die Evaluierung der Passwort Richtlinien"
 "während des Erstellens und Bearbeitens von |UCSUAS| Benutzern aktiviert (:uv:bug:`55392`)."
 
-#: ../../changelog.rst:27
+#: ../../changelog.rst:26
 msgid ""
 "Internal: Add classes UbuntuComputer and LinuxComputer to |UCSUAS| library (:"
 "uv:bug:`55119`)."
@@ -70,14 +70,14 @@ msgstr ""
 
 
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:29
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.26A~5.0.0.202211151540``:"
 msgstr ""
 "Quellpaket *ucs-school-import* in Version ``18.0.26A~5.0.0.202211151540``:"
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:31
 msgid ""
 "The evaluation of password policies during the import of new users can now "
 "be enabled by setting the configuration option "
@@ -87,7 +87,7 @@ msgstr ""
 "durch Setzen der Konfigurationsoption ``evaluate_password_policies`` eingeschaltet werden"
 "Sie ist standardmäßig deaktiviert (:uv:bug:`55400`)."
 
-#: ../../changelog.rst:36
+#: ../../changelog.rst:35
 msgid ""
 "Regression: The script ``import_computers`` supports computers of type "
 "``linux`` and ``ubuntu`` again (:uv:bug:`55119`)."
@@ -95,17 +95,17 @@ msgstr ""
 "Regression: Das Skript: ``import_computers`` unterstützt wieder den Import von"
 "Computern der Typen ``linux`` und ``ubuntu`` (:uv:bug:`55119`)."
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:39
 msgid "Released on 2022-11-02"
 msgstr "Veröffentlicht am 2. November 2022"
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:41
 msgid ""
 "Source package *ucs-school-lib* in version ``13.0.24A~5.0.0.202210061204``:"
 msgstr ""
 "Quellpaket *ucs-school-lib* in Version ``13.0.24A~5.0.0.202210061204``:"
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:43
 msgid ""
 "|UCSUAS| validation errors are logged with level ``WARNING`` instead of log "
 "level ``ERROR`` (:uv:bug:`55233`)."
@@ -113,14 +113,14 @@ msgstr ""
 "Fehler in der |UCSUAS| Validierung werden mit Debuglevel ``WARNING`` statt "
 "mit Debuglevel ``ERROR`` geloggt (:uv:bug:`55233`)."
 
-#: ../../changelog.rst:47
+#: ../../changelog.rst:46
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.24A~5.0.0.202211011527``:"
 msgstr ""
 "Quellpaket *ucs-school-import* in Version ``18.0.24A~5.0.0.202211011527``:"
 
-#: ../../changelog.rst:49
+#: ../../changelog.rst:48
 msgid ""
 "Fix: Creating large data sets of test users sometimes failed due to non "
 "unique ``record_uids`` (:uv:bug:`55134`)."
@@ -128,7 +128,7 @@ msgstr ""
 "Fix: Das Erstellen von großen Datensets an Test Benutzers schlug fehl, da "
 "die ``record_uids`` nicht eindeutig waren (:uv:bug:`55134`)."
 
-#: ../../changelog.rst:52
+#: ../../changelog.rst:51
 msgid ""
 "Fix: When importing computers with a specified network instead of specific "
 "IP address, the import failed (:uv:bug:`55130`)."
@@ -136,24 +136,24 @@ msgstr ""
 "Fix: Wenn Computer importiert wurden und ein Netzwerk angegeben wurde, "
 "schlug der Import fehl (:uv:bug:`55130`)."
 
-#: ../../changelog.rst:59
+#: ../../changelog.rst:58
 msgid "Released on 2022-08-25:"
 msgstr "Veröffentlicht am 25. August 2022"
 
-#: ../../changelog.rst:61
+#: ../../changelog.rst:60
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.21A~5.0.0.202208241614``:"
 msgstr ""
 "Quellpaket *ucs-school-import* in Version ``18.0.21A~5.0.0.202208241614``:"
 
-#: ../../changelog.rst:63
+#: ../../changelog.rst:62
 msgid "Fix user validation in mass import with *dry-run* (:uv:bug:`55016`)."
 msgstr ""
 "Korrektur der Benutzerüberprüfung beim Massenimport mit *dry-run* (:uv:bug:"
 "`55016`)."
 
-#: ../../changelog.rst:65 ../../changelog.rst:74
+#: ../../changelog.rst:64 ../../changelog.rst:73
 msgid ""
 "Underscores are now allowed in OU names, when the hostname of the school "
 "server is also passed (:uv:bug:`55125`)."
@@ -161,13 +161,13 @@ msgstr ""
 "Unterstriche sind jetzt in OU-Namen erlaubt, wenn der Hostname des "
 "Schulservers mit übergeben wird (:uv:bug:`55125`)."
 
-#: ../../changelog.rst:68
+#: ../../changelog.rst:67
 msgid ""
 "Source package *ucs-school-lib* in version ``13.0.23A~5.0.0.202208241612``:"
 msgstr ""
 "Quellpaket *ucs-school-lib* in Version ``13.0.23A~5.0.0.202208241612``:"
 
-#: ../../changelog.rst:70
+#: ../../changelog.rst:69
 msgid ""
 "Internal: Add ``check_name`` parameter to the :py:meth:`validate` method of "
 "multiple classes which allows disabling name checks such as checking if a "
@@ -179,18 +179,18 @@ msgstr ""
 "deaktivieren, wie z.B. die Prüfung, ob ein Benutzer mit demselben "
 "Benutzernamen bereits in einer anderen Schule existiert (:uv:bug:`55016`)."
 
-#: ../../changelog.rst:80
+#: ../../changelog.rst:79
 msgid "Released on 2022-08-17:"
 msgstr "Veröffentlicht am 17. August 2022"
 
-#: ../../changelog.rst:82
+#: ../../changelog.rst:81
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.19A~5.0.0.202208171134``:"
 msgstr ""
 "Quellpaket *ucs-school-import* in Version ``18.0.19A~5.0.0.202208171134``:"
 
-#: ../../changelog.rst:84
+#: ../../changelog.rst:83
 msgid ""
 "A validation error causing an infinite recursion error was fixed (:uv:bug:"
 "`55083`)."
@@ -198,7 +198,7 @@ msgstr ""
 "Ein Überprüfungsfehler, der eine unendliche Rekursion verursachte, wurde "
 "behoben (:uv:bug:`55083`)."
 
-#: ../../changelog.rst:87
+#: ../../changelog.rst:86
 msgid ""
 "Source package *ucs-school-umc-internetrules* in version "
 "``16.0.4A~5.0.0.202208110901``:"
@@ -206,7 +206,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-internetrules* in Version "
 "``16.0.4A~5.0.0.202208110901``:"
 
-#: ../../changelog.rst:90
+#: ../../changelog.rst:89
 msgid ""
 "A bug was fixed which caused groups not being displayed in the *Assign "
 "internet rules* module when group prefixes were set via an UCR variable (:uv:"
@@ -216,18 +216,18 @@ msgstr ""
 "*Internetregeln zuweisen* nicht angezeigt wurden, wenn Gruppenpräfixe über "
 "eine UCR-Variable gesetzt wurden (:uv:bug:`55034`)."
 
-#: ../../changelog.rst:97
+#: ../../changelog.rst:96
 msgid "Released on 2022-08-04:"
 msgstr "Veröffentlicht am 4. August 2022"
 
-#: ../../changelog.rst:99
+#: ../../changelog.rst:98
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.18A~5.0.0.202207191615``:"
 msgstr ""
 "Quellpaket *ucs-school-import* in Version ``18.0.18A~5.0.0.202207191615``:"
 
-#: ../../changelog.rst:101
+#: ../../changelog.rst:100
 msgid ""
 "The |UCSUAS| import *dry-run* does not raise *ValidationErrors* for all "
 "subsequent users after an error (:uv:bug:`54118`)."
@@ -235,7 +235,7 @@ msgstr ""
 "Der |UCSUAS| Import *dry-run* löst nach einem Fehler keine "
 "*ValidationErrors* für alle nachfolgenden Benutzer aus (:uv:bug:`54118`)."
 
-#: ../../changelog.rst:104
+#: ../../changelog.rst:103
 msgid ""
 "Internal change: preserve workgroups during import, to avoid a behavior "
 "change (:uv:bug:`54943`)."
@@ -243,18 +243,18 @@ msgstr ""
 "Interne Änderung: Beibehaltung von Arbeitsgruppen beim Import, um eine "
 "Verhaltensänderung zu vermeiden (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:107
+#: ../../changelog.rst:106
 msgid ""
 "Source package *ucs-school-lib* in version ``13.0.21A~5.0.0.202207281220``:"
 msgstr ""
 "Quellpaket *ucs-school-lib* in Version ``13.0.21A~5.0.0.202207281220``:"
 
-#: ../../changelog.rst:109
+#: ../../changelog.rst:108
 msgid "User objects now have the ``workgroups`` attribute (:uv:bug:`54943`)."
 msgstr ""
 "Benutzerobjekte haben jetzt das Attribut ``workgroups`` (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:111
+#: ../../changelog.rst:110
 msgid ""
 "School admins are removed from ``admins-OU`` group when :py:meth:"
 "`remove_from_groups_of_school` is called (:uv:bug:`54368`)."
@@ -262,7 +262,7 @@ msgstr ""
 "Schuladministratoren werden aus der Gruppe ``admins-OU`` entfernt, wenn :py:"
 "meth:`remove_from_groups_of_school` aufgerufen wird (:uv:bug:`54368`)."
 
-#: ../../changelog.rst:114
+#: ../../changelog.rst:113
 msgid ""
 "Source package *ucs-school-umc-distribution* in version "
 "``18.0.6A~5.0.0.202207201625``:"
@@ -270,7 +270,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-distribution* in Version "
 "``18.0.6A~5.0.0.202207201625``:"
 
-#: ../../changelog.rst:117
+#: ../../changelog.rst:116
 msgid ""
 "Invalid project directories named ``.`` or ``..`` are now handled correctly "
 "(:uv:bug:`52719`)."
@@ -278,14 +278,14 @@ msgstr ""
 "Ungültige Projektverzeichnisse mit dem Namen ``.`` oder ``..`` werden nun "
 "korrekt behandelt (:uv:bug:`52719`)."
 
-#: ../../changelog.rst:120
+#: ../../changelog.rst:119
 msgid ""
 "Source package *ucs-school-umc-exam* in version "
 "``10.0.6A~5.0.0.202207201619``:"
 msgstr ""
 "Quellpaket *ucs-school-umc-exam* in Version ``10.0.6A~5.0.0.202207201619``:"
 
-#: ../../changelog.rst:122
+#: ../../changelog.rst:121
 msgid ""
 "The directory name validation now detects all incorrect names. Additionally, "
 "the exam directory name description has been improved (:uv:bug:`52719`)."
@@ -294,7 +294,7 @@ msgstr ""
 "außerdem wurde die Beschreibung des Prüfungs-Verzeichnisnamens verbessert (:"
 "uv:bug:`52719`)."
 
-#: ../../changelog.rst:125
+#: ../../changelog.rst:124
 msgid ""
 "Source package *ucs-school-veyon-windows* in version ``4.7.4.0-"
 "ucs5.0-1A~5.0.0.202208021248``:"
@@ -302,7 +302,7 @@ msgstr ""
 "Quellpaket *ucs-school-veyon-windows* in Version ``4.7.4.0-"
 "ucs5.0-1A~5.0.0.202208021248``:"
 
-#: ../../changelog.rst:128
+#: ../../changelog.rst:127
 msgid ""
 "The *Veyon* windows installer has been updated from 4.5.2 to 4.7.4 (:uv:bug:"
 "`55029`)."
