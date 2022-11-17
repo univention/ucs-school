@@ -72,7 +72,7 @@ werden kann.
    Ab |UCSUAS| Version 5.0 v3 kann über die |UCSUCRV|
    :envvar:`ucsschool/wizards/schoolwizards/users/check-password-policies`
    die Evaluierung von Passwort Richtlinien während des Anlegens neuer Benutzer eingeschaltet werden.
-   Sie ist standardmäßig ausgeschaltet.
+   Gültige Werte sind :envvar:`yes` und :envvar:`no`. Die Evaluierung ist standardmäßig ausgeschaltet.
    Passwort Richtlinien werden beim Bearbeiten von Benutzern immer evaluiert.
 
 
