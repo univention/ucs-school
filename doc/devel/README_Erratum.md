@@ -8,8 +8,7 @@ Before starting the release, check if there are any tests failing connected with
 
 - Collect the YAML files for all packages that are to be released in the erratum.
 - Check errata texts for mistakes and unclear content. Correct if need be.
-- ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.~~ Instead:
+- Check the bug stati:
   - compare the debian-changelog and advisory versions
   - all bugs must be verified, have an assignee + qa and must have the correct target milestone, e.g. UCS@school 5.0 v3 errata.
   - packages, which depend on other packages with not verified bugs-fixes must not be released.
@@ -17,14 +16,6 @@ Before starting the release, check if there are any tests failing connected with
 
 ## Update TestAppCenter
 
-- ~~Run [Errata Announce](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/Announce%20UCSschool%204.3%20Erratum/)
-  with the chosen yaml files to release an Errata for the latest UCS@school version.~~
-  - ~~**This will need manual interaction to verify the changelog changes before committing!**~~
-  - ~~Changelog will be modified~~
-  - ~~Upload of binaries to TestAppCenter~~
-  - ~~Moving of advisories to published~~
-
-Instead:
 - See [Manual release to Test Appcenter](README_manual_release.md) to do the release in dimma via cli.
  - As of now, the release changelogs have to be adapted manually.
  - The advisories have to be copied to public & have to be renamed.
@@ -38,7 +29,7 @@ univention-appcenter-control upload --upload-packages-although-published '5.0/uc
 
 The following code should be executed on omar:
 
-The correct version string, for example `ucsschool_20180112151618` can be found here
+The correct version string, for example `ucsschool_20220727135154` can be found here
 https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/ by navigating to the last (published) version.
 
 ```shell
@@ -48,14 +39,20 @@ cd /mnt/omar/vmwares/mirror/appcenter
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
+## Update Changelog
+
+Please follow the instructions in the changelog [README](../ucsschool-changelog/README.md)
+to extract the new content from the advisory, extraction of the text and translation.
+
+
 ## Publish manual
 
-The documentation, as well as the changelogs have to be build manually or with a [Jenkins branch job](http://jenkins.knut.univention.de:8080/view/Doku/job/BuildDocBookBranchUCSSchool/). A pipeline is already on it's way. Copy & commit the artifacts, i.e. HTML, PDF and new image files if there are any to the docs.univention.de repository.
+The documentation is built in a gitlab pipeline. When it's merged to main the documentation, which
+was changed can be published by manually triggering the production job.
 
-Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
-commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
+Afterwards, check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
 
-If everything is in order run the deploy job to publish the new documentation.
+If everything is in order, run the `deploy job` to publish the new documentation.
 
 ## Update public information
 
@@ -112,8 +109,7 @@ Do the following checks and document the result in Taiga/Bugzilla/Gitlab:
 * OK: successfully updated in a multi-server env Primary Directory Node and Replica Directory Node
 * OK: all bugs have been closed (52945, 49102, 49557)
 * OK: all yaml files have been renamed (`doc/errata/published/2021-05-26-*`)
-* OK: manual updated (https://docs.software-univention.de/ucsschool-handbuch-5.0.html)
+* OK: manuals have been updated (e.g. https://docs.software-univention.de/ucsschool-handbuch-5.0.html)
 * OK: the changelog has been build and uploaded (http://docs.software-univention.de/changelog-ucsschool-5.0v1-de.html)
-* OK: help.univention.com text updated (https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-26-05-2021/12064)
+* OK: help.univention.com text updated (https://help.univention.com/t/release-ankundigungen-fur-ucs-school-5-0-stand-17-11-2022/20184)
 * OK: internal announcement mail
-* OK: new git tag (`release-5.0v10`) OR no new git tag, as the apps version didn't change

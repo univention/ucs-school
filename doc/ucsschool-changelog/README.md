@@ -8,6 +8,10 @@ The content for the changelog comes from the errata updates described in the
 errata YAML files in the directory
 [/doc/errata/published](../errata/published). The changelog associates the
 changes in their respective section in the changelog.
+When doing a release, move the advisory files for the packages you want to release to `published` and name them e.g.
+`2022-11-18-ucs-school-lib.yaml`. The format is important because it is used to create the `changelog.rst`.
+
+If you correct anything, please do so in the advisories, not in the `changelog.rst`
 
 ## Create a changelog
 
@@ -54,3 +58,4 @@ For the UCS@school target group we also translate the release notes with
 changelog to German. To translate the document, follow the steps outline in
 [Translate Sphinx
 documents](https://hutten.knut.univention.de/mediawiki/index.php/Translate_Sphinx_documents#Translation).
+There is a docker-way described there, too, which works very well.
