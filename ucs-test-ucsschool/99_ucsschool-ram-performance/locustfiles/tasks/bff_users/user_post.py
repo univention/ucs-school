@@ -43,6 +43,7 @@ def create_user(self):
         "school": school,
         "schoolClasses": [school_class],
         "role": random.choice(self.settings.ROLES),  # nosec
+        "password": self.fake.password(length=20),
     }
     with self.client.rename_request("/ucsschool/bff-users/v1/users/"):
         url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/"

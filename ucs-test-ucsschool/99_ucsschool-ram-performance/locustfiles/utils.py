@@ -1,5 +1,9 @@
+import concurrent.futures
+import multiprocessing
 import random
+import time
 from collections import deque
+from dataclasses import dataclass
 from functools import lru_cache
 from logging import getLogger
 from pathlib import Path
@@ -24,6 +28,7 @@ except ImportError:
     BFF_DEFAULT_HOST = "rankine.ram.local"
 
 KELVIN_DEFAULT_HOST = BFF_DEFAULT_HOST
+CLEANUP_DELETE_PARALLELISM = multiprocessing.cpu_count()
 
 logger = getLogger(__name__)
 
@@ -37,7 +42,7 @@ class Settings(BaseSettings):
     BFF_USERS_HOST: str = Field(env="UCS_ENV_BFF_USERS_HOST", default=BFF_DEFAULT_HOST)
     BFF_GROUPS_HOST: str = Field(env="UCS_ENV_BFF_GROUPS_HOST", default=BFF_DEFAULT_HOST)
     BFF_TEST_ADMIN_PASSWORD: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_PASSWORD", default="univention")
-    BFF_TEST_ADMIN_USERNAME: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_USERNAME", default="Administrator")
+    BFF_TEST_ADMIN_USERNAME: str = Field(env="UCS_ENV_BFF_TEST_ADMIN_USERNAME", default="admin")
     BFF_TEST_TOKEN_RENEW_PERIOD: int = Field(env="UCS_ENV_BFF_TEST_TOKEN_RENEW_PERIOD", default=60)
     KELVIN_HOST: str = Field(env="UCS_ENV_KELVIN_HOST", default=KELVIN_DEFAULT_HOST)
     ROLES = ["teacher", "student"]
@@ -56,10 +61,24 @@ class TestCleaner:
         self._users_to_delete.append(username)
 
     def delete(self):
-        for username in self._users_to_delete:
-            logger.info(f"Removing user {username} ...")
+        logger.info(
+            "Removing %d users (%r in parallel)...",
+            len(self._users_to_delete),
+            CLEANUP_DELETE_PARALLELISM,
+        )
+        auth_token = retrieve_token(
+            self.settings.BFF_TEST_ADMIN_USERNAME, self.settings.BFF_TEST_ADMIN_PASSWORD
+        )
+        headers = {
+            "accept": "application/json",
+            "Accept-Language": "en-US",
+            "Authorization": f"Bearer {auth_token.token}",
+        }
+
+        def del_user(username: str) -> None:
             response = requests.delete(
-                f"http://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/{username}"
+                f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/{username}",
+                headers=headers,
             )
             if response.status_code != 204:
                 logger.warning(
@@ -68,6 +87,10 @@ class TestCleaner:
                 )
             else:
                 logger.info(f"Removed user {username}")
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=CLEANUP_DELETE_PARALLELISM) as executor:
+            for username in self._users_to_delete:
+                executor.submit(del_user, username)
 
 
 class TestData(object):
@@ -116,7 +139,19 @@ class TestData(object):
         return random.choice(self.db[school]["classes"])
 
 
-def get_token_info(username: str, password: str, client_id: str = "school-ui-users-dev") -> Dict:
+@dataclass
+class AuthToken:
+    token: str
+    expiration_time: int
+
+    @property
+    def expired(self) -> bool:
+        return self.expiration_time - time.time() < 10
+
+
+def retrieve_token_info(
+    username: str, password: str, client_id: str = "school-ui-users-dev"
+) -> Dict[str, Any]:
     settings = get_settings()
     url = f"https://{settings.KEYCLOAK_FQDN}/realms/ucs/protocol/openid-connect/token"
 
@@ -135,6 +170,14 @@ def get_token_info(username: str, password: str, client_id: str = "school-ui-use
     if response.status_code != 200:
         raise HTTPError(f"{response.content!r}/{response.status_code}")
     return response.json()
+
+
+def retrieve_token(username: str, password: str) -> AuthToken:
+    token_info = retrieve_token_info(username=username, password=password)
+    return AuthToken(
+        token=token_info["access_token"],
+        expiration_time=time.time() + token_info["expires_in"],
+    )
 
 
 @lru_cache(maxsize=1)

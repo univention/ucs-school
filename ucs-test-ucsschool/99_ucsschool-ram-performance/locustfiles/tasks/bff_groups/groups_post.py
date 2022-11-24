@@ -43,5 +43,4 @@ def create_group(self):
             "description": description,
             "users": self.test_data.random_users(school, k=10),
         }
-        headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        self.request("post", url, json=json, headers=headers, response_codes=[201])
+        self.request("post", url, json=json, response_codes=[201])
