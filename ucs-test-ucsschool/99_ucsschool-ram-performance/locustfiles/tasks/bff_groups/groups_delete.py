@@ -41,5 +41,5 @@ def delete_group(self):
             f"https://{self.settings.BFF_USERS_HOST}"
             f"/ucsschool/bff-groups/v1/groups/{self.group_type}/{group_name}"
         )
-        headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        headers = {"content-type": "application/json", "accept": "application/json"}
         self.request("delete", url, headers=headers, response_codes=[204])

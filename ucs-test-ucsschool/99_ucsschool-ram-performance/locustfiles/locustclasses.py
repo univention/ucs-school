@@ -47,18 +47,19 @@ class UiUserClient(HttpUser):
         """Wrapper method for HttpUser.client.post, adds auth token automatically"""
 
         headers = headers or {}
+        header_keys = {h.lower() for h in headers}
 
-        if "accept" not in headers:
+        if "accept" not in header_keys:
             headers["accept"] = "application/json"
 
-        if "Accept-Language" not in headers:
-            headers["Accept-Language"] = "en-US"
+        if "accept-language" not in header_keys:
+            headers["accept-language"] = "en-US"
 
-        if "Content-Type" not in headers:
-            headers["Content-Type"] = "application/json"
+        if "content-type" not in header_keys:
+            headers["content-type"] = "application/json"
 
         if add_auth_token:
-            headers["Authorization"] = f"Bearer {self.get_token(self.username, self.password)}"
+            headers["authorization"] = f"Bearer {self.get_token(self.username, self.password)}"
         assert operation in {"get", "post", "put", "delete", "patch"}
         r = getattr(self.client, operation)(*args, headers=headers, **kwargs)
         if response_codes and r.status_code not in response_codes:

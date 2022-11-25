@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.86) unstable; urgency=low
+
+  * Issue #920: fix token handling, authentication, logging
+  * Issue #920: fix headers, urls, not existent endpoint
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 25 Nov 2022 17:45:52 +0100
+
 ucs-test-ucsschool (7.3.85) unstable; urgency=medium
 
   * Bug #55415: remove wait for replication in test

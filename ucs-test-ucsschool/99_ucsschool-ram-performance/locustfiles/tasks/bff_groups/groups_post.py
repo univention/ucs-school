@@ -35,10 +35,10 @@ def create_group(self):
     school = self.test_data.random_school()
     name = f"testgroup-{str(uuid4())}"
     description = f"Randomly generated group for {school} created by locust, group name: {name}"
-    with self.client.rename_request(f"/ucsschool/bff-groups/v1/groups/{self.group_type}/"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-groups/v1/groups/{self.group_type}/"
+    with self.client.rename_request(f"/ucsschool/bff-groups/v1/groups/{self.group_type}"):
+        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-groups/v1/groups/{self.group_type}"
         json = {
-            "name": name,
+            "name": f"{school}-{name}",
             "school": school,
             "description": description,
             "users": self.test_data.random_users(school, k=10),

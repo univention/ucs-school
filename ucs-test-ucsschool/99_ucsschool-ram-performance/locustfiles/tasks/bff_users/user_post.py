@@ -45,7 +45,7 @@ def create_user(self):
         "role": random.choice(self.settings.ROLES),  # nosec
         "password": self.fake.password(length=20),
     }
-    with self.client.rename_request("/ucsschool/bff-users/v1/users/"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/"
+    with self.client.rename_request("/ucsschool/bff-users/v1/users"):
+        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users"
         self.request("post", url, json=json, response_codes=[201])
         self.test_cleaner.delete_later_user(name)
