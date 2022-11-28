@@ -72,7 +72,7 @@ def search_user(self):
         {"role": random_role, "group": random_class, "disabled": "true"},  # search_type 13
     ]
     with self.client.rename_request("/ucsschool/bff-users/v1/users/search/[school]"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/search/{school}"
+        url = f"{self.user_base_url}/users/search/{school}"
         self.request(
             "get", url, params=search_scenario_parameters[self.search_type - 1], response_codes=[200]
         )

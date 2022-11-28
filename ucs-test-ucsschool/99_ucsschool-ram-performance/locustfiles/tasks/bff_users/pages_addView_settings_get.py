@@ -31,8 +31,5 @@
 
 def get_pages_addView_settings(self):
     with self.client.rename_request("/ucsschool/bff-users/v1/pages/addView/settings/[username]"):
-        url = (
-            f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/pages/addView/settings/"
-            f"{self.username}"
-        )
+        url = f"{self.user_base_url}/pages/addView/settings/{self.username}"
         self.request("get", url, response_codes=[200])

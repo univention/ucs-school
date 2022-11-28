@@ -31,8 +31,5 @@
 
 def get_pages_listView_settings(self):
     with self.client.rename_request("/ucsschool/bff-groups/v1/pages/listView/settings/[username]"):
-        url = (
-            f"https://{self.settings.BFF_USERS_HOST}"
-            f"/ucsschool/bff-groups/v1/pages/listView/settings/{self.username}"
-        )
+        url = f"{self.group_base_url}/pages/listView/settings/{self.username}"
         self.request("get", url, response_codes=[200])

@@ -43,7 +43,7 @@ def search_groups(self):
     group_name = group.split("-")[1]
     group_name_regex = group_name[0] + "*"
     with self.client.rename_request("/ucsschool/bff-groups/v1/groups/search/[school]"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-groups/v1/groups/search/{school}"
+        url = f"{self.group_base_url}/groups/search/{school}"
         # encode arguments in url
         params = {"quickSearch": group_name_regex}
         self.request("get", url, params=params, response_codes=[200])

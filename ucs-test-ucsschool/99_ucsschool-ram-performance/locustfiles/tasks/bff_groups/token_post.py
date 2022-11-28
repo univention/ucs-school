@@ -33,10 +33,7 @@ def token_post(self):
     school = self.test_data.random_school()
     name = self.test_data.random_user(school)
     with self.client.rename_request("/ucsschool/bff-groups/v1/token"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-groups/v1/token"
+        url = f"{self.group_base_url}/token"
         headers = {"content-type": "application/x-www-form-urlencoded", "accept": "application/json"}
-        data = {
-            "username": name,
-            "password": self.password,
-        }
+        data = {"username": name, "password": self.password}
         self.request("post", url, data=data, headers=headers, response_codes=[200])

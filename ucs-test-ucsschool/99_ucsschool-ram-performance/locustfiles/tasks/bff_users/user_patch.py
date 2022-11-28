@@ -58,5 +58,5 @@ def modify_user(self):
         json["schools"] = [school, school2]
 
     with self.client.rename_request("/ucsschool/bff-users/v1/users/detail/[name]"):
-        url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1/users/detail/{name}"
+        url = f"{self.user_base_url}/users/detail/{name}"
         self.request("patch", url, json=json, response_codes=[204])

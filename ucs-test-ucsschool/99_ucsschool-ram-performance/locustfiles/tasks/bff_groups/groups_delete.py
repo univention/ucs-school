@@ -37,9 +37,5 @@ def delete_group(self):
         else self.test_data.random_class(school)
     )
     with self.client.rename_request(f"/ucsschool/bff-groups/v1/groups/{self.group_type}/[group]"):
-        url = (
-            f"https://{self.settings.BFF_USERS_HOST}"
-            f"/ucsschool/bff-groups/v1/groups/{self.group_type}/{group_name}"
-        )
-        headers = {"content-type": "application/json", "accept": "application/json"}
-        self.request("delete", url, headers=headers, response_codes=[204])
+        url = f"{self.group_base_url}/groups/{self.group_type}/{group_name}"
+        self.request("delete", url, response_codes=[204])

@@ -21,6 +21,8 @@ class GenericUser(UiUserClient):
 
     def __init__(self, *args, **kwargs):
         self.settings = get_settings()
+        self.group_base_url = f"https://{self.settings.BFF_GROUPS_HOST}/ucsschool/bff-groups/v1"
+        self.user_base_url = f"https://{self.settings.BFF_USERS_HOST}/ucsschool/bff-users/v1"
         self.fake = Faker()
         self.test_data: TestData = TestData()
         self.test_cleaner = test_cleaner
