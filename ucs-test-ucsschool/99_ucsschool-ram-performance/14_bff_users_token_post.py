@@ -43,7 +43,9 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir):
 # At the time of writing, the number of concurrent users is still unknown.
 
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
-LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "1m"
+LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
+LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "1"
+LOCUST_ENV_VARIABLES["LOCUST_USERS"] = "120"
 
 
 def test_failure_count(check_failure_count, run_test):
