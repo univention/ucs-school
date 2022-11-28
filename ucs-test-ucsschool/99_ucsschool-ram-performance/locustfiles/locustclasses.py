@@ -13,6 +13,7 @@ settings = get_settings()
 class UiUserClient(HttpUser):
     abstract = True
     auth_token: AuthToken = None  # share token with all threads
+    token_sem = BoundedSemaphore()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,15 +26,14 @@ class UiUserClient(HttpUser):
 
     @classmethod
     def get_token(cls, username: str, password: str) -> str:
-        with BoundedSemaphore():  # prevent multiple threads fetching a token at the same time
-            if not cls.auth_token or cls.auth_token.expired:
-                cls.auth_token = retrieve_token(username, password)
-                logging.info("Renewed token for %r.", username)
-                logging.info(
-                    "Token expires in %.1f seconds.", cls.auth_token.expiration_time - time.time()
-                )
-                logging.info("Token: %r...%r", cls.auth_token.token[:30], cls.auth_token.token[-30:])
-            return cls.auth_token.token
+        cls.token_sem.acquire()  # prevent multiple threads fetching a token at the same time
+        if not cls.auth_token or cls.auth_token.expired:
+            cls.auth_token = retrieve_token(username, password)
+            logging.info("Renewed token for %r.", username)
+            logging.info("Token expires in %.1f seconds.", cls.auth_token.expiration_time - time.time())
+            logging.info("Token: %r...%r", cls.auth_token.token[:30], cls.auth_token.token[-30:])
+        cls.token_sem.release()
+        return cls.auth_token.token
 
     def request(
         self,
@@ -74,4 +74,7 @@ class UiUserClient(HttpUser):
                 kwargs,
             )
             logging.error("Response content: %r", r.content)
+            if r.status_code == 401:
+                with BoundedSemaphore():
+                    self.auth_token = None
         return r

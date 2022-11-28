@@ -50,7 +50,9 @@ def modify_user(self):
         json["lastname"] = self.fake.last_name()
     if self.scenario == 2:
         json["schoolClasses"] = {
-            school: [self.test_data.random_class(school) for _ in range(random.randint(1, 3))]
+            school: [
+                self.test_data.random_class(school).split("-", 1)[1] for _ in range(random.randint(1, 3))
+            ]
         }
     elif self.scenario == 3:
         json["schools"] = [school, school2]
