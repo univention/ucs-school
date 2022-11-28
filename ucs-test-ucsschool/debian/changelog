@@ -1,3 +1,14 @@
+ucs-test-ucsschool (7.3.87) unstable; urgency=low
+
+  * Issue #920: slowly raise parallel users in all tests
+  * Issue #920: wait_for_replication after tests changing LDAP
+  * Issue #920: fix token handling, error case, class name
+  * Issue #920: share url base
+  * Issue #920: endpoint splitdtroeder@sommar2:~/git/ucsschool5.0$ (5.0 %>)
+
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 28 Nov 2022 18:02:16 +0100
+
 ucs-test-ucsschool (7.3.86) unstable; urgency=low
 
   * Issue #920: fix token handling, authentication, logging

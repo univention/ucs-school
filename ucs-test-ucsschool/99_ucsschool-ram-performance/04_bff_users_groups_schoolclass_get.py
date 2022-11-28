@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of GET /ucsschool/bff-users/v1/groups/[school]
+## desc: check performance of GET /ucsschool/bff-users/v1/groups/school_class/[school]
 ## tags: [ucsschool-bff-users, performance]
 ## exposure: dangerous
 import copy
@@ -17,9 +17,9 @@ from conftest import (
 )
 
 LOCUST_FILE = "generic_user_bff_users.py"
-LOCUST_USER_CLASS = "GetGroups"
-RESULT_FILES_NAME = "bff-users-groups-get"
-URL_NAME = "/ucsschool/bff-users/v1/groups/[school]"
+LOCUST_USER_CLASS = "GetWorkgroups"
+RESULT_FILES_NAME = "bff-users-groups-school_class-get"
+URL_NAME = "/ucsschool/bff-users/v1/groups/school_class/[school]"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 
@@ -44,8 +44,8 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir):
 # At the time of writing, the number of concurrent users is still unknown.
 
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
-LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "3m"
-LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.1"
+LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
+LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.05"
 LOCUST_ENV_VARIABLES["LOCUST_USERS"] = str(int(1.5 * multiprocessing.cpu_count()))
 
 

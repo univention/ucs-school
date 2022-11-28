@@ -42,7 +42,13 @@ class GetUser(GenericUser):
     tasks = [get_user]
 
 
-class GetGroups(GenericUser):
+class GetWorkgroups(GenericUser):
+    group_kind = "workgroup"
+    tasks = [get_groups]
+
+
+class GetSchoolClasses(GenericUser):
+    group_kind = "school_class"
     tasks = [get_groups]
 
 
