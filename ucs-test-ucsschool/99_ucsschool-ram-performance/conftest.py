@@ -5,6 +5,8 @@ from typing import Dict, Iterable, List
 
 import pytest
 
+import univention.testing.utils as utils
+
 try:
     import univention.testing.ucr
 
@@ -172,3 +174,11 @@ def verify_test_sent_requests(rows):
             break  # found a row with request statistics
 
     return _func
+
+
+@pytest.fixture(scope="module")
+def wait_for_replication():
+    yield
+    print("Waiting for replication...")
+    utils.wait_for_replication()
+    print("done.")
