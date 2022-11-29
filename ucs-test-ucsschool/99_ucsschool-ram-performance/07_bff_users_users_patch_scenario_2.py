@@ -31,7 +31,7 @@ def create_result_dir():
 
 
 @pytest.fixture(scope="module")
-def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_for_replication):
+def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_for_replication, sleep10):
     set_locust_environment_vars(LOCUST_ENV_VARIABLES)
     execute_test(LOCUST_FILE_PATH, LOCUST_USER_CLASS, RESULT_FILE_BASE_PATH, BFF_DEFAULT_HOST)
     # fail in fixture, so pytest prints the output of Locust,

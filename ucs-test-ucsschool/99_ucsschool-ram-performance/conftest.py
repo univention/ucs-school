@@ -1,8 +1,11 @@
 import csv
+import os
 import os.path
 import subprocess
+import time
 from typing import Dict, Iterable, List
 
+import psutil
 import pytest
 
 import univention.testing.utils as utils
@@ -182,3 +185,14 @@ def wait_for_replication():
     print("Waiting for replication...")
     utils.wait_for_replication()
     print("done.")
+
+
+@pytest.fixture(scope="module")
+def sleep10():
+    """Sleep 10 sec. if executed by 'ucs-test'. (Give system time to settle down.)"""
+    yield
+    this_proc = psutil.Process(os.getpid())
+    next_proc = psutil.Process(this_proc.ppid())
+    if next_proc.name() == "ucs-test":
+        print("Sleeping 10s...")
+        time.sleep(10)

@@ -31,7 +31,7 @@ def create_result_dir():
 
 
 @pytest.fixture(scope="module")
-def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_for_replication):
+def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_for_replication, sleep10):
     set_locust_environment_vars(LOCUST_ENV_VARIABLES)
     execute_test(LOCUST_FILE_PATH, LOCUST_USER_CLASS, RESULT_FILE_BASE_PATH, BFF_DEFAULT_HOST)
     # fail in fixture, so pytest prints the output of Locust,
@@ -46,7 +46,7 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_fo
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
 LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
 LOCUST_ENV_VARIABLES["LOCUST_STOP_TIMEOUT"] = "15"
-LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "1"
+LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.05"
 LOCUST_ENV_VARIABLES["LOCUST_USERS"] = str(int(1.5 * multiprocessing.cpu_count()))
 
 
