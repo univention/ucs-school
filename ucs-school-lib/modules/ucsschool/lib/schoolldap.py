@@ -294,18 +294,18 @@ class SchoolSearchBase(object):
 
     def isWorkgroup(self, groupDN):  # type: (str) -> bool
         # a workgroup cannot lie in a sub directory
-        if not groupDN.endswith(self.workgroups):
+        if not groupDN.lower().endswith(self.workgroups.lower()):
             return False
         return len(explode_dn(groupDN)) - len(explode_dn(self.workgroups)) == 1
 
     def isGroup(self, groupDN):  # type: (str) -> bool
-        return groupDN.endswith(self.groups)
+        return groupDN.lower().endswith(self.groups.lower())
 
     def isClass(self, groupDN):  # type: (str) -> bool
-        return groupDN.endswith(self.classes)
+        return groupDN.lower().endswith(self.classes.lower())
 
     def isRoom(self, groupDN):  # type: (str) -> bool
-        return groupDN.endswith(self.rooms)
+        return groupDN.lower().endswith(self.rooms.lower())
 
     @classmethod
     def get_is_teachers_group_regex(cls):  # type: () -> Pattern

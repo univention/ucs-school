@@ -98,7 +98,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
             if (
                 force_dhcp_server_move
                 or not ucr.is_true("ucsschool/singlemaster", False)
-                or dhcp_server.dn.endswith(",%s" % dhcpd_ldap_base)
+                or dhcp_server.dn.lower().endswith(",%s" % dhcpd_ldap_base.lower())
             ):
                 # move if existing DN does not match with desired DN
                 if existing_dhcp_server_dn != dhcp_server.dn:

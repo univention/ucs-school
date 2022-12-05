@@ -193,33 +193,35 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     @classmethod
     def _legacy_is_student(cls, school, dn):  # type: (str, str) -> bool
         cls.logger.warning("Using deprecated method is_student()")
-        return dn.endswith(cls.get_search_base(school).students)
+        return dn.lower().endswith(cls.get_search_base(school).students.lower())
 
     @classmethod
     def _legacy_is_exam_student(cls, school, dn):  # type: (str, str) -> bool
         cls.logger.warning("Using deprecated method is_exam_student()")
-        return dn.endswith(cls.get_search_base(school).examUsers)
+        return dn.lower().endswith(cls.get_search_base(school).examUsers.lower())
 
     @classmethod
     def _legacy_is_teacher(cls, school, dn):  # type: (str, str) -> bool
         cls.logger.warning("Using deprecated method is_teacher()")
         search_base = cls.get_search_base(school)
         return (
-            dn.endswith(search_base.teachers)
-            or dn.endswith(search_base.teachersAndStaff)
-            or dn.endswith(search_base.admins)
+            dn.lower().endswith(search_base.teachers.lower())
+            or dn.lower().endswith(search_base.teachersAndStaff.lower())
+            or dn.lower().endswith(search_base.admins.lower())
         )
 
     @classmethod
     def _legacy_is_staff(cls, school, dn):  # type: (str, str) -> bool
         cls.logger.warning("Using deprecated method is_staff()")
         search_base = cls.get_search_base(school)
-        return dn.endswith(search_base.staff) or dn.endswith(search_base.teachersAndStaff)
+        return dn.lower().endswith(search_base.staff.lower()) or dn.lower().endswith(
+            search_base.teachersAndStaff.lower()
+        )
 
     @classmethod
     def _legacy_is_admininstrator(cls, school, dn):  # type: (str, str) -> bool
         cls.logger.warning("Using deprecated method is_admininstrator()")
-        return dn.endswith(cls.get_search_base(school).admins)
+        return dn.lower().endswith(cls.get_search_base(school).admins.lower())
 
     def __check_object_class(self, lo, object_class, fallback):
         # type: (LoType, str, Callable[[str, str], bool]) -> bool

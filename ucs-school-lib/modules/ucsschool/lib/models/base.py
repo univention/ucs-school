@@ -450,7 +450,7 @@ class UCSSchoolHelperAbstractClass(object):
         udm_obj = self.get_udm_object(lo)
         if udm_obj is None:
             return False
-        return not udm_obj.dn.endswith(School.cache(self.school).dn)
+        return not udm_obj.dn.lower().endswith(School.cache(self.school).dn.lower())
 
     def _call_pyhooks(self, hook_time, func_name, lo):
         # type: (str, str, LoType) -> None
