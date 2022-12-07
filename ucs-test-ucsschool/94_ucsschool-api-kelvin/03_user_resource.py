@@ -135,9 +135,7 @@ def test_create_user_parallel_from_external_different_classes(
         user2.ucsschool_roles = user.ucsschool_roles  # not in attr
         # add mapped udm_properties not in attr
         mup = import_config["mapped_udm_properties"]
-        user2.udm_properties.update(
-            dict((prop, None) for prop in mup if prop not in user2.udm_properties)
-        )
+        user2.udm_properties.update({prop: None for prop in mup if prop not in user2.udm_properties})
         compare_import_user_and_resource(user2, result, "ATTR")
         logger.info("*** OK: attr <-> resource")
 
@@ -219,9 +217,7 @@ def test_create_user_parallel_from_external_same_classes(
         user2.ucsschool_roles = user.ucsschool_roles  # not in attr
         # add mapped udm_properties not in attr
         mup = import_config["mapped_udm_properties"]
-        user2.udm_properties.update(
-            dict((prop, None) for prop in mup if prop not in user2.udm_properties)
-        )
+        user2.udm_properties.update({prop: None for prop in mup if prop not in user2.udm_properties})
         compare_import_user_and_resource(user2, result, "ATTR")
         logger.info("*** OK: attr <-> resource")
 
@@ -322,9 +318,7 @@ def test_partial_update_user_parallel_from_external_different_classes(
         user2.ucsschool_roles = user.ucsschool_roles  # not in attr
         # add mapped udm_properties not in attr
         mup = import_config["mapped_udm_properties"]
-        user2.udm_properties.update(
-            dict((prop, None) for prop in mup if prop not in user2.udm_properties)
-        )
+        user2.udm_properties.update({prop: None for prop in mup if prop not in user2.udm_properties})
         compare_import_user_and_resource(user2, result, "ATTR")
         logger.info("*** OK: attr <-> resource")
 
@@ -532,12 +526,12 @@ def test_move_teacher_remove_primary(
     ):
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
-    create_attrs_school_classes = dict(
-        (ou, ["{}-{}".format(ou, k) for k in kls]) for ou, kls in create_attrs["school_classes"].items()
-    )
+    create_attrs_school_classes = {
+        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+    }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert user_old.school_classes == create_attrs_school_classes
+    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -624,12 +618,13 @@ def test_move_teacher_remove_primary_with_classes(
     ):
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
-    create_attrs_school_classes = dict(
-        (ou, ["{}-{}".format(ou, k) for k in kls]) for ou, kls in create_attrs["school_classes"].items()
-    )
+    create_attrs_school_classes = {
+        ou: {f"{ou}-{k}" for k in kls} for ou, kls in create_attrs["school_classes"].items()
+    }
+
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert user_old.school_classes == create_attrs_school_classes
+    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -721,12 +716,12 @@ def test_move_teacher_remove_primary_no_classes_in_new_school(
     ):
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
-    create_attrs_school_classes = dict(
-        (ou, ["{}-{}".format(ou, k) for k in kls]) for ou, kls in create_attrs["school_classes"].items()
-    )
+    create_attrs_school_classes = {
+        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+    }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert user_old.school_classes == create_attrs_school_classes
+    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -816,12 +811,12 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
     ):
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
-    create_attrs_school_classes = dict(
-        (ou, ["{}-{}".format(ou, k) for k in kls]) for ou, kls in create_attrs["school_classes"].items()
-    )
+    create_attrs_school_classes = {
+        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+    }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert user_old.school_classes == create_attrs_school_classes
+    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "name": random_username(),
@@ -842,8 +837,8 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
 
     user = get_import_user(resource_new["dn"])
     logger.debug("*** user.school_classes=%r", user.school_classes)
-    assert user.school_classes == {
-        ou2: ["{}-{}".format(ou2, k) for k in create_attrs["school_classes"][ou2]]
+    assert {s: set(c) for s, c in user.school_classes.items()} == {
+        ou2: {"{}-{}".format(ou2, k) for k in create_attrs["school_classes"][ou2]}
     }
     assert modify_attrs["name"] == user.name
     url = urljoin(RESOURCE_URLS["users"], modify_attrs["name"])
@@ -899,12 +894,13 @@ def test_modify_teacher_remove_all_classes(
     ):
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
-    create_attrs_school_classes = dict(
-        (ou, ["{}-{}".format(ou, k) for k in kls]) for ou, kls in create_attrs["school_classes"].items()
-    )
+    create_attrs_school_classes = {
+        ou: {f"{ou}-{k}" for k in kls} for ou, kls in create_attrs["school_classes"].items()
+    }
+
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert user_old.school_classes == create_attrs_school_classes
+    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school_classes": {},
@@ -963,9 +959,10 @@ def test_modify_classes_2old_2new(
     old_school_classes = user_old.school_classes
     logger.debug("*** old_school_classes=%r", old_school_classes)
 
-    new_school_classes = dict(
-        (ou, sorted([random_username(4), random_username(4)])) for ou in old_school_classes.keys()
-    )
+    new_school_classes = {
+        ou: sorted([random_username(4), random_username(4)]) for ou in old_school_classes.keys()
+    }
+
     logger.debug("*** new_school_classes=%r", new_school_classes)
     modify_attrs = {
         "school_classes": new_school_classes,
@@ -980,9 +977,10 @@ def test_modify_classes_2old_2new(
     user = get_import_user(resource_new["dn"])
     assert create_result["name"] == user.name
     logger.debug("*** user.school_classes=%r", user.school_classes)
-    classes_without_ous = dict(
-        (ou, [k.split("-", 1)[1] for k in kls]) for ou, kls in user.school_classes.items()
-    )
+    classes_without_ous = {
+        ou: [k.split("-", 1)[1] for k in kls] for ou, kls in user.school_classes.items()
+    }
+
     logger.debug("*** user.school_classes without ous=%r", classes_without_ous)
     assert classes_without_ous == new_school_classes
     logger.info("*** OK: 2 classes in old and 2 changed classes in new")
@@ -1017,9 +1015,10 @@ def test_modify_classes_0old_2new(
     logger.debug("*** old_school_classes=%r", old_school_classes)
     assert old_school_classes == {}
 
-    new_school_classes = dict(
-        (ou, sorted([random_username(4), random_username(4)])) for ou in old_school_classes.keys()
-    )
+    new_school_classes = {
+        ou: sorted([random_username(4), random_username(4)]) for ou in old_school_classes.keys()
+    }
+
     logger.debug("*** new_school_classes=%r", new_school_classes)
     modify_attrs = {
         "school_classes": new_school_classes,
@@ -1034,9 +1033,10 @@ def test_modify_classes_0old_2new(
     user = get_import_user(resource_new["dn"])
     assert create_result["name"] == user.name
     logger.debug("*** user.school_classes=%r", user.school_classes)
-    classes_without_ous = dict(
-        (ou, [k.split("-", 1)[1] for k in kls]) for ou, kls in user.school_classes.items()
-    )
+    classes_without_ous = {
+        ou: [k.split("-", 1)[1] for k in kls] for ou, kls in user.school_classes.items()
+    }
+
     logger.debug("*** user.school_classes without ous=%r", classes_without_ous)
     assert classes_without_ous == new_school_classes
     logger.info("*** OK: 0 classes in old and 2 classes in new")
