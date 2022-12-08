@@ -17,7 +17,7 @@ from conftest import (
 )
 
 LOCUST_FILE = "generic_user_bff_users.py"
-LOCUST_USER_CLASS = "GetSchoolClasses"
+LOCUST_USER_CLASS = "GetWorkgroups"
 RESULT_FILES_NAME = "bff-users-groups-workgroup-get"
 URL_NAME = "/ucsschool/bff-users/v1/workgroup"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
