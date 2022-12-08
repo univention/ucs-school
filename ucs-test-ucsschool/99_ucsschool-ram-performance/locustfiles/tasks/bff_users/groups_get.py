@@ -34,6 +34,7 @@ import random
 def get_groups(self):
     group_kind = getattr(self, "group_kind", random.choice(["school_class", "workgroup"]))
     school = self.test_data.random_school()
-    with self.client.rename_request("/ucsschool/bff-users/v1/groups/[school]"):
-        url = f"{self.user_base_url}/groups/{group_kind}/{school}"
-        self.request("get", url, response_codes=[200])
+    with self.client.rename_request(f"/ucsschool/bff-users/v1/{group_kind}"):
+        url = f"{self.user_base_url}/groups/{group_kind}"
+        params = {"school": school}
+        self.request("get", url, response_codes=[200], params=params)

@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of PATCH /ucsschool/bff-users/v1/users/detail/[name]
+## desc: check performance of PATCH /ucsschool/bff-users/v1/users/[name]
 ## tags: [ucsschool-bff-users, performance]
 ## exposure: dangerous
 import copy
@@ -19,7 +19,7 @@ from conftest import (
 LOCUST_FILE = "generic_user_bff_users.py"
 LOCUST_USER_CLASS = "ModifyUserScenario2"
 RESULT_FILES_NAME = "bff-users-users-patch-scenario-2"
-URL_NAME = "/ucsschool/bff-users/v1/users/detail/[name]"
+URL_NAME = "/ucsschool/bff-users/v1/users/[name]"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 

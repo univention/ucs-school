@@ -30,6 +30,6 @@
 
 
 def get_pages_addView_settings(self):
-    with self.client.rename_request("/ucsschool/bff-groups/v1/pages/addView/settings/[username]"):
-        url = f"{self.group_base_url}/pages/addView/settings/{self.username}"
+    with self.client.rename_request("/ucsschool/bff-groups/v1/pageconf/addView"):
+        url = f"{self.group_base_url}/pageconf/addView"
         self.request("get", url, response_codes=[200])

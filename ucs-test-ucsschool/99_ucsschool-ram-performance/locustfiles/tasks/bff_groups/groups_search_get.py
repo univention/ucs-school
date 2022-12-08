@@ -42,8 +42,8 @@ def search_groups(self):
     )
     group_name = group.split("-")[1]
     group_name_regex = group_name[0] + "*"
-    with self.client.rename_request("/ucsschool/bff-groups/v1/groups/search/[school]"):
-        url = f"{self.group_base_url}/groups/search/{school}"
+    with self.client.rename_request("/ucsschool/bff-groups/v1/groups"):
+        url = f"{self.group_base_url}/groups"
         # encode arguments in url
-        params = {"quickSearch": group_name_regex}
+        params = {"quickSearch": group_name_regex, "school": school}
         self.request("get", url, params=params, response_codes=[200])

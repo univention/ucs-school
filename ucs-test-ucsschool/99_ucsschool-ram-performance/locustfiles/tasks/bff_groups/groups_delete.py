@@ -36,6 +36,6 @@ def delete_group(self):
         if self.group_type == "workgroup"
         else self.test_data.random_class(school)
     )
-    with self.client.rename_request(f"/ucsschool/bff-groups/v1/groups/{self.group_type}/[group]"):
-        url = f"{self.group_base_url}/groups/{self.group_type}/{group_name}"
+    with self.client.rename_request(f"/ucsschool/bff-groups/v1/{self.group_type}/[group]"):
+        url = f"{self.group_base_url}/{self.group_type}/{group_name}"
         self.request("delete", url, response_codes=[204])

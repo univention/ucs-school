@@ -46,7 +46,7 @@ def create_user(self):
         "password": self.fake.password(length=20),
     }
     with self.client.rename_request("/ucsschool/bff-users/v1/users"):
-        url = f"{self.user_base_url}/users/"
+        url = f"{self.user_base_url}/users"
         res = self.request("post", url, json=json, response_codes=[201])
         if res.status_code < 400:
             self.test_cleaner.delete_later_user(name)

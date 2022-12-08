@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of GET /ucsschool/bff-groups/v1/pages/listView/settings/[username]
+## desc: check performance of GET /ucsschool/bff-groups/v1/pageconf/listView
 ## tags: [ucsschool-bff-groups, performance]
 ## exposure: dangerous
 import copy
@@ -19,7 +19,7 @@ from conftest import (
 LOCUST_FILE = "generic_user_bff_groups.py"
 LOCUST_USER_CLASS = "GetPagesListViewSettings"
 RESULT_FILES_NAME = "bff-groups-pages-listView-settings-get"
-URL_NAME = "/ucsschool/bff-groups/v1/pages/listView/settings/[username]"
+URL_NAME = "/ucsschool/bff-groups/v1/pageconf/listView"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 

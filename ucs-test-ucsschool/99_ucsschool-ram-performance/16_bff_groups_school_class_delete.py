@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of DELETE /ucsschool/bff-groups/v1/groups/school_class/{group}
+## desc: check performance of DELETE /ucsschool/bff-groups/v1/school_class/{group}
 ## tags: [ucsschool-bff-groups, performance]
 ## exposure: dangerous
 import copy
@@ -19,7 +19,7 @@ from conftest import (
 LOCUST_FILE = "generic_user_bff_groups.py"
 LOCUST_USER_CLASS = "DeleteGroupClass"
 RESULT_FILES_NAME = "bff-groups-school-class-delete"
-URL_NAME = "/ucsschool/bff-groups/v1/groups/school_class/[group]"
+URL_NAME = "/ucsschool/bff-groups/v1/school_class/[group]"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 

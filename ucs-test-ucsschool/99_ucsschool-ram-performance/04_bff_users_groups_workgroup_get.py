@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
-## desc: check performance of GET /ucsschool/bff-users/v1/groups/workgroup/[school]
+## desc: check performance of GET /ucsschool/bff-users/v1/workgroup
 ## tags: [ucsschool-bff-users, performance]
 ## exposure: dangerous
 import copy
@@ -19,7 +19,7 @@ from conftest import (
 LOCUST_FILE = "generic_user_bff_users.py"
 LOCUST_USER_CLASS = "GetSchoolClasses"
 RESULT_FILES_NAME = "bff-users-groups-workgroup-get"
-URL_NAME = "/ucsschool/bff-users/v1/groups/workgroup/[school]"
+URL_NAME = "/ucsschool/bff-users/v1/workgroup"
 LOCUST_FILE_PATH = os.path.join(LOCUST_FILES_DIR, LOCUST_FILE)
 RESULT_FILE_BASE_PATH = os.path.join(RESULT_DIR, RESULT_FILES_NAME)
 

@@ -30,6 +30,6 @@
 
 
 def get_pages_listView_settings(self):
-    with self.client.rename_request("/ucsschool/bff-groups/v1/pages/listView/settings/[username]"):
-        url = f"{self.group_base_url}/pages/listView/settings/{self.username}"
+    with self.client.rename_request("/ucsschool/bff-groups/v1/pageconf/listView"):
+        url = f"{self.group_base_url}/pageconf/listView"
         self.request("get", url, response_codes=[200])
