@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.90) unstable; urgency=medium
+
+  * Issue #924: fix performance test routes
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 09 Dec 2022 15:55:25 +0100
+
 ucs-test-ucsschool (7.3.89) unstable; urgency=low
 
   * Bug #55472: ignore order when comparing lists of classes
