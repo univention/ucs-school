@@ -8,7 +8,7 @@
 APP="ucsschool-kelvin-rest-api"
 declare -a CMD=(sh -c '
 cd /kelvin/kelvin-api &&
-make lint')
+make lint-coverage')
 
 echo "Running in container: ${CMD[@]}"
 univention-app shell "$APP" "${CMD[@]}" || (rv=$?; pkill -f '^/usr/bin/python.*pytest$'; exit $rv)

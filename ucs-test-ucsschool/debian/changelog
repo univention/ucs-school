@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.91) unstable; urgency=medium
+
+  * Bug #55408: don't run lint in kelvin tests
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 12 Dec 2022 08:44:21 +0100
+
 ucs-test-ucsschool (7.3.90) unstable; urgency=medium
 
   * Issue #924: fix performance test routes
