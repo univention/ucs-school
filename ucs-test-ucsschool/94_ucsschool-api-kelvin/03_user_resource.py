@@ -527,7 +527,8 @@ def test_move_teacher_remove_primary(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        ou: sorted("{}-{}".format(ou, k) for k in kls) for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted("{}-{}".format(ou, k) for k in kls)
+        for ou, kls in create_attrs["school_classes"].items()
     }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
@@ -812,7 +813,8 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        ou: sorted("{}-{}".format(ou, k) for k in kls) for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted("{}-{}".format(ou, k) for k in kls)
+        for ou, kls in create_attrs["school_classes"].items()
     }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
