@@ -527,11 +527,11 @@ def test_move_teacher_remove_primary(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted("{}-{}".format(ou, k) for k in kls) for ou, kls in create_attrs["school_classes"].items()
     }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
+    assert {s: sorted(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -619,12 +619,12 @@ def test_move_teacher_remove_primary_with_classes(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        ou: {f"{ou}-{k}" for k in kls} for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted(f"{ou}-{k}" for k in kls) for ou, kls in create_attrs["school_classes"].items()
     }
 
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
+    assert {s: sorted(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -717,11 +717,11 @@ def test_move_teacher_remove_primary_no_classes_in_new_school(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted(f"{ou}-{k}" for k in kls) for ou, kls in create_attrs["school_classes"].items()
     }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
+    assert {s: sorted(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "school": create_result["school"].replace(ou1, ou2),
@@ -812,11 +812,11 @@ def test_move_teacher_remove_primary_with_classes_and_rename(
         assert any(dn.startswith(grp_name) for dn in old_groups)
 
     create_attrs_school_classes = {
-        (ou, {"{}-{}".format(ou, k) for k in kls}) for ou, kls in create_attrs["school_classes"].items()
+        ou: sorted("{}-{}".format(ou, k) for k in kls) for ou, kls in create_attrs["school_classes"].items()
     }
     logger.info("*** user_old.school_classes    =%r", user_old.school_classes)
     logger.info("*** create_attrs_school_classes=%r", create_attrs_school_classes)
-    assert {s: set(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
+    assert {s: sorted(c) for s, c in user_old.school_classes.items()} == create_attrs_school_classes
 
     modify_attrs = {
         "name": random_username(),
