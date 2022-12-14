@@ -37,6 +37,7 @@ Depends:
  ucs-test-libs,
  ucs-test-selenium-runner,
  univention-unittests,
+ python3-pytest-xvfb,
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},
