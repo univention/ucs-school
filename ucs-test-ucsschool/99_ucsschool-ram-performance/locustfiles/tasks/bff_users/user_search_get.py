@@ -71,7 +71,7 @@ def search_user(self):
         {"role": random_role, "group": random_class, "disabled": "false"},  # search_type 12
         {"role": random_role, "group": random_class, "disabled": "true"},  # search_type 13
     ]
-    params = search_scenario_parameters[self.search_type - 1] | {"school": school}
+    params = {**search_scenario_parameters[self.search_type - 1], **{"school": school}}
     with self.client.rename_request("/ucsschool/bff-users/v1/users"):
         url = f"{self.user_base_url}/users"
         self.request("get", url, params=params, response_codes=[200])
