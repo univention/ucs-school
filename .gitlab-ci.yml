@@ -12,7 +12,9 @@ workflow:
 
 include:
   - project: univention/dist/docker-services
-    file: kaniko.yml
+    file:
+    - kaniko.yml
+    - pre-commit.yml
 
 variables:
   pipeline:
@@ -72,10 +74,8 @@ run pre-commit:
   stage: lint
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE
+    PRE_COMMIT_IMAGE: $IMAGE_TAG
   needs:
     - job: build pre-commit
       optional: true
-  image:
-    name: $IMAGE_TAG
-  script:
-    - pre-commit run -a
+  extends: .pre-commit
