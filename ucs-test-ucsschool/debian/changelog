@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.95) unstable; urgency=medium
+
+  * Issue #924: fix performance test routes
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 19 Dec 2022 14:15:42 +0100
+
 ucs-test-ucsschool (7.3.94) unstable; urgency=medium
 
   * Issue #30: added 97_ucsschool-ram-rankine/03_host_integration_tests_groups_and_users.py
