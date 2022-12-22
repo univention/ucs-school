@@ -299,10 +299,10 @@ OU voranzustellen oder zu integrieren (z.B. ``340win01`` für Schule *340*).
      - ---
      - ``TR47110815-XA-3``
 
-   * - (Zone)
-     - Optionale Zone
-     - ``edukativ``, ``verwaltung``
-     - ``edukativ``
+   * - (Weitere Felder)
+     - Optionale zusätzliche Attribute
+     - ---
+     - ``description``
 
 Die Subnetzmaske kann sowohl als Präfix (``24``) als auch in Oktettschreibweise
 (``255.255.255.0``) angegeben werden. Die Angabe der Subnetzmaske ist optional.
@@ -320,8 +320,8 @@ Beispiel für eine Importdatei:
    windows          wing123m-01      10:00:ee:ff:cc:00  g123m  10.0.5.5
    windows          wing123m-02      10:00:ee:ff:cc:01  g123m  10.0.5.6
    macos            macg123m-01      10:00:ee:ff:cc:03  g123m  10.0.5.7
-   ubuntu           ubuntug123m-01    10:00:ee:ff:cc:04  g123m  10.0.5.8
-   linux            linuxg123m-01     10:00:ee:ff:cc:05  g123m  10.0.5.9
+   ubuntu           ubuntug123m-01   10:00:ee:ff:cc:04  g123m  10.0.5.8
+   linux            linuxg123m-01    10:00:ee:ff:cc:05  g123m  10.0.5.9
    ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:06  g123m  10.0.5.250
 
 
@@ -333,6 +333,40 @@ System (DNS) aufgelöst werden kann.
 
 Ab |UCSUAS| 5.0 v2 wird das Ausführen von Python Hooks während des Computer
 Imports unterstützt (siehe :ref:`pyhooks`).
+
+Ab |UCSUAS| 5.0 v3 wird das Ausführen von Python Hooks unterstützt, die
+ausschließlich während des Computer Imports ausgeführt werden.
+Sie werden vor bzw. nach den Python Hooks beim Erstellen der |UCSUAS| Objekte ausgeführt.
+
+Ähnlich wie bei den :ref:`pyhooks`, muss zur Nutzung der Hook-Funktionalität
+eine Python-Klasse erstellt werden, die von :py:class:`ucsschool.importer.utils.computer_pyhook.ComputerPyHook` ableitet. Der Name der Datei mit der abgeleiteten Klasse muss auf :file:`.py` enden und die Datei im Verzeichnis
+:file:`/usr/share/ucs-school-import/pyhooks` abgespeichert werden.
+Neben den Funktionalitäten der Python Hooks steht in den Hook Methoden der Parameter
+``row`` als Liste zur Verfügung, der die Werte der CSV Zeile als Liste enthält.
+Dies erlaubt es zusätzliche Werte zu setzen.
+
+
+.. py:class:: SchoolComputerImportHook
+
+   .. code-block:: python
+
+     from typing import List
+     from ucsschool.lib.models.computer import SchoolComputer
+     from ucsschool.importer.utils.computer_pyhook import ComputerPyHook
+
+      class SchoolComputerImportHook(ComputerPyHook):
+          model = SchoolComputer
+          priority = {
+              "pre_create": 10,
+              "post_create": 20,
+          }
+
+          def post_create(self, obj: SchoolComputer, row: List[str]) -> None:
+              ...
+
+          def post_create(self, obj: SchoolComputer, row: List[str]) -> None:
+              ...
+
 
 .. _school-setup-cli-printers:
 
