@@ -42,12 +42,14 @@ from ldap.filter import filter_format
 
 import univention.debug as ud
 from ucsschool.importer.utils.constants import get_default_prefixlen, get_sep_char
+from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
 from ucsschool.importer.utils.utils import verify_school_ou
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.models.computer import (
     IPComputer,
     LinuxComputer,
     MacComputer,
+    SchoolComputer,
     UbuntuComputer,
     WindowsComputer,
 )
@@ -61,6 +63,25 @@ ud.set_level(ud.MAIN, ud.ALL)
 
 class ComputerImportError(Exception):
     pass
+
+
+def call_hook(lo, meth_name, obj, line):  # type: (LoType, str, SchoolComputer, list[str]) -> None
+    hooks = get_import_pyhooks(
+        "ucsschool.importer.utils.computer_pyhook.ComputerPyHook",
+        None,
+        lo=lo,
+        dry_run=False,
+    )  # result is cached on the lib side
+    try:
+        for func in hooks.get(meth_name, []):
+            print(
+                "Running {} hook {}.{} for {}.".format(
+                    meth_name, func.__self__.__class__.__name__, func.__name__, obj
+                )
+            )
+            func(obj, line)
+    except Exception as exc:
+        raise ComputerImportError("In hook stage %s: %s" % (meth_name, exc))
 
 
 def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
@@ -155,6 +176,7 @@ def import_computers(input_file):  # type: (str) -> None
                 computer.subnet_mask = ip_iface.netmask
                 if ip_iface.ip != ip_iface.network.network_address:
                     print("set ip to %s is not net %s" % (ip_iface.ip, ip_iface.network.network_address))
+                call_hook(lo=lo, meth_name="pre_create", obj=computer, line=row)
                 try:
                     computer.create(lo)
                 except ValidationError:
@@ -168,6 +190,7 @@ def import_computers(input_file):  # type: (str) -> None
                         "WARNING: Error creating computer %s\n %s"
                         % (computer.dn, traceback.format_exc(100))
                     )
+                call_hook(lo=lo, meth_name="post_create", obj=computer, line=row)
                 print("Processing of line %d completed" % line_number)
             else:
                 print(
