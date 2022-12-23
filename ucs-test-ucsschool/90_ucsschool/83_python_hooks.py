@@ -27,7 +27,7 @@ from ucsschool.lib.models.base import PYHOOKS_PATH, UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.dhcp import DHCPService
 from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
-from univention.testing.ucsschool.importcomputers import random_ip, random_mac
+from univention.testing.ucsschool.computer import random_ip, random_mac
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 
 py = "3" if PY3 else "2.7"

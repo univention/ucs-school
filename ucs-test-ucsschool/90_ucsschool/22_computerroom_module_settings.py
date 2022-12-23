@@ -10,7 +10,7 @@ from ucsschool.lib.models.utils import ucr as lib_ucr
 from univention.config_registry import handler_set
 from univention.testing import utils
 from univention.testing.network import NetworkRedirector
-from univention.testing.ucsschool.computerroom import Computers, Room
+from univention.testing.ucsschool.computer import Computers, Room
 from univention.testing.umc import Client
 
 

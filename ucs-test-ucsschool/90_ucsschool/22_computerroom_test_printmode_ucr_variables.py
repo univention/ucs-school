@@ -12,7 +12,7 @@ from __future__ import print_function
 import datetime
 
 import univention.testing.strings as uts
-from univention.testing.ucsschool.computerroom import Computers, Room, add_printer
+from univention.testing.ucsschool.computer import Computers, Room, add_printer
 from univention.testing.umc import Client
 
 
@@ -25,7 +25,7 @@ def test_computerroom_test_printmode_ucr_variables(schoolenv, ucr):
     computers = Computers(open_ldap_co, school, 3, 0, 0)
     created_computers = computers.create()
     computers_dns = computers.get_dns(created_computers)
-    computers_ips = computers.get_ips(created_computers)
+    computers_ips = [x.ip for x in created_computers]
 
     # setting computer rooms contains the created computers
     room1 = Room(school, host_members=computers_dns[0])

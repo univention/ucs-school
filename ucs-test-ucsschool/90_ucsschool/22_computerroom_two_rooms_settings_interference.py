@@ -61,7 +61,7 @@ def test_computerroom_two_room_settings_interference(schoolenv, ucr):
         computers = Computers(open_ldap_co, school, 2, 0, 0)
         created_computers = computers.create()
         computers_dns = computers.get_dns(created_computers)
-        computers_ips = computers.get_ips(created_computers)
+        computers_ips = [x.ip for x in computers]
 
         # setting computer rooms contains the created computers
         room1 = Room(school, host_members=computers_dns[0])

@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
@@ -34,7 +33,7 @@
 Base class for all Python based Computer hooks.
 """
 
-from typing import Dict, Union
+from typing import Dict, List, Optional
 
 from ucsschool.lib.models.computer import SchoolComputer
 
@@ -47,7 +46,6 @@ class ComputerPyHook(ImportPyHook):
 
     The base class' :py:meth:`__init__()` provides the following attributes:
 
-    * self.dry_run     # whether hook is executed during a dry-run (1)
     * self.lo          # LDAP connection object (2)
     * self.logger      # Python logging instance
 
@@ -55,18 +53,11 @@ class ComputerPyHook(ImportPyHook):
     priority numbers run before those with lower priorities. None disables
     a function (no need to remove it / comment it out).
 
-    (1) Hooks are only executed during dry-runs, if the class attribute
-    :py:attr:`supports_dry_run` is set to `True` (default is `False`). Hooks
-    with `supports_dry_run == True` must not modify LDAP objects.
-    Therefore, the LDAP connection object self.lo will be a read-only connection
-    during a dry-run.
-    (2) Read-write cn=admin connection in a real run, read-only cn=admin
-    connection during a dry-run.
     """
 
-    priority = {"pre_create": None, "post_create": None}  # type: Dict[str, Union[int, None]]
+    priority = {"pre_create": None, "post_create": None}  # type: Dict[str, Optional[int]]
 
-    def pre_create(self, computer, row):  # type: (SchoolComputer, str) -> None
+    def pre_create(self, computer, row):  # type: (SchoolComputer, List[str]) -> None
         """
         Run code before creating a computer.
 
@@ -75,12 +66,12 @@ class ComputerPyHook(ImportPyHook):
         * set `priority["pre_create"]` to an `int`, to enable this method
 
         :param SchoolComputer computer: Computer (subclass of SchoolComputer)
-        :param str row:
+        :param List[str] row: the CSV line (split by the separator)
         :return: None
         """
         pass
 
-    def post_create(self, computer, row):  # type: (SchoolComputer, str) -> None
+    def post_create(self, computer, row):  # type: (SchoolComputer, List[str]) -> None
         """
         Run code after creating a computer.
 
@@ -89,7 +80,7 @@ class ComputerPyHook(ImportPyHook):
         * set `priority["post_create"]` to an int, to enable this method
 
         :param SchoolComputer computer: Computer (subclass of SchoolComputer)
-        :param str row:
+        :param List[str] row: the CSV line (split by the separator)
         :return: None
         """
         pass

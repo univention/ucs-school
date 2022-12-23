@@ -9,7 +9,7 @@
 from ldap.filter import filter_format
 
 from univention.testing.ucsschool.acl import Acl
-from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 

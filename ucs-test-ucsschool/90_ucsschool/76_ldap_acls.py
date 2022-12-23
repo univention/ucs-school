@@ -11,7 +11,7 @@
 from __future__ import print_function
 
 from univention.testing.ucsschool.acl import run_commands
-from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 from univention.uldap import getMachineConnection
 

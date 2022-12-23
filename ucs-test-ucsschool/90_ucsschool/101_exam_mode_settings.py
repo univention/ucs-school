@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 import univention.testing.strings as uts
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.testing.ucsschool.computerroom import Computers, Room
+from univention.testing.ucsschool.computer import Computers, Room
 from univention.testing.ucsschool.exam import (
     Exam,
     get_s4_rejected,

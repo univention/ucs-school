@@ -11,7 +11,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
-from univention.testing.ucsschool.importcomputers import random_ip
+from univention.testing.ucsschool.computer import random_ip
 from univention.testing.ucsschool.importou import (
     TYPE_DC_ADMINISTRATIVE,
     TYPE_DC_EDUCATIONAL,

@@ -10,8 +10,8 @@ from __future__ import print_function
 
 import time
 
+from univention.testing.ucsschool.computer import random_ip, random_mac
 from univention.testing.ucsschool.computerroom import UmcComputer
-from univention.testing.ucsschool.importcomputers import random_ip, random_mac
 
 
 def test_computers_module(schoolenv, ucr):

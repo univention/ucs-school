@@ -40,7 +40,7 @@
 import pytest
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 

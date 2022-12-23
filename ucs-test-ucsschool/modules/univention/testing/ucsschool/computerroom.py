@@ -17,11 +17,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.utils as utils
-from ucsschool.lib.models.computer import (
-    IPComputer as IPComputerLib,
-    MacComputer as MacComputerLib,
-    WindowsComputer as WindowsComputerLib,
-)
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
@@ -31,13 +26,7 @@ from ucsschool.lib.roles import (
 )
 from univention.lib.umc import ConnectionError
 from univention.testing.decorators import SetTimeout
-from univention.testing.ucsschool.importcomputers import (
-    IPManagedClient,
-    MacOS,
-    Windows,
-    random_ip,
-    random_mac,
-)
+from univention.testing.ucsschool.computer import random_ip, random_mac
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 from univention.testing.ucsschool.workgroup import Workgroup
@@ -57,42 +46,6 @@ def retry_cmd(func):
         )
 
     return decorated
-
-
-class ComputerImport(object):
-    def __init__(self, school=None, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
-        self.school = school if school else uts.random_name()
-        self.windows = []
-        for i in range(0, nr_windows):
-            self.windows.append(Windows(self.school))
-        self.macos = []
-        for i in range(0, nr_macos):
-            self.macos.append(MacOS(self.school))
-        self.ipmanagedclients = []
-        for i in range(0, nr_ipmanagedclient):
-            self.ipmanagedclients.append(IPManagedClient(self.school))
-
-    def run_import(self, open_ldap_co):
-        def _set_kwargs(computer):
-            kwargs = {
-                "school": computer.school,
-                "name": computer.name,
-                "ip_address": computer.ip,
-                "mac_address": computer.mac,
-                "type_name": computer.ctype,
-                "inventory_number": computer.inventorynumbers,
-            }
-            return kwargs
-
-        for computer in self.windows:
-            kwargs = _set_kwargs(computer)
-            WindowsComputerLib(**kwargs).create(open_ldap_co)
-        for computer in self.macos:
-            kwargs = _set_kwargs(computer)
-            MacComputerLib(**kwargs).create(open_ldap_co)
-        for computer in self.ipmanagedclients:
-            kwargs = _set_kwargs(computer)
-            IPComputerLib(**kwargs).create(open_ldap_co)
 
 
 class Room(object):
@@ -732,45 +685,6 @@ def remove_printer(name, school, ldap_base):
         "cn=%(name)s,cn=printers,ou=%(school)s,%(ldap_base)s",
     ]
     print(run_commands([cmd_remove_printer], {"name": name, "school": school, "ldap_base": ldap_base}))
-
-
-class Computers(object):
-    def __init__(self, open_ldap_co, school, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
-        self.open_ldap_co = open_ldap_co
-        self.school = school
-        self.nr_windows = nr_windows
-        self.nr_macos = nr_macos
-        self.nr_ipmanagedclient = nr_ipmanagedclient
-
-    def create(self):
-        computer_import = ComputerImport(
-            self.school,
-            nr_windows=self.nr_windows,
-            nr_macos=self.nr_macos,
-            nr_ipmanagedclient=self.nr_ipmanagedclient,
-        )
-
-        print("********** Create computers")
-        computer_import.run_import(self.open_ldap_co)
-
-        created_computers = []
-        for computer in computer_import.windows:
-            created_computers.append(computer)
-        for computer in computer_import.macos:
-            created_computers.append(computer)
-        for computer in computer_import.ipmanagedclients:
-            created_computers.append(computer)
-
-        return sorted(created_computers, key=lambda x: x.name)
-
-    def get_dns(self, computers):
-        return [x.dn for x in computers]
-
-    def get_ips(self, computers):
-        return [x.ip for x in computers]
-
-    def get_hostnames(self, computers):
-        return ["%s$" % x.name for x in computers]
 
 
 def set_windows_pc_password(dn, password):

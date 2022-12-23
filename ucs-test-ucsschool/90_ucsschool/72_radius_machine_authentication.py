@@ -14,7 +14,7 @@ from ldap.filter import filter_format
 
 import univention.testing.utils as utils
 from univention.testing.ucs_samba import wait_for_drs_replication
-from univention.testing.ucsschool.computerroom import Computers, set_windows_pc_password
+from univention.testing.ucsschool.computer import Computers, set_windows_pc_password
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.radius import test_peap_auth as _test_peap_auth
 from univention.testing.ucsschool.workgroup import Workgroup
@@ -51,7 +51,7 @@ def test_radius_machine_authentication(schoolenv, ucr):
     for computer in created_computers:
         set_windows_pc_password(computer.dn, password)
     dns = computers.get_dns(created_computers)
-    hostnames = computers.get_hostnames(created_computers)
+    hostnames = ["%s$" % x.name for x in created_computers]
 
     group = Workgroup(school, members=[dns[0]])
     group.create()

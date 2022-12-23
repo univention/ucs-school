@@ -15,7 +15,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.lib.umc import HTTPError
-from univention.testing.ucsschool.computerroom import Computers, Room
+from univention.testing.ucsschool.computer import Computers, Room
 from univention.testing.ucsschool.exam import (
     Exam,
     ExamSaml,

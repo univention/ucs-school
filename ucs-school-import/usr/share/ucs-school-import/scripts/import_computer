@@ -38,77 +38,25 @@ import sys
 import traceback
 from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError  # noqa: F401
 
-from ldap.filter import filter_format
-
 import univention.debug as ud
-from ucsschool.importer.utils.constants import get_default_prefixlen, get_sep_char
-from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
+from ucsschool.importer.exceptions import ComputerImportError
+from ucsschool.importer.utils.computer_import import call_hook, get_ip_iface, mac_address_is_used
+from ucsschool.importer.utils.constants import get_sep_char
 from ucsschool.importer.utils.utils import verify_school_ou
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.models.computer import (
     IPComputer,
     LinuxComputer,
     MacComputer,
-    SchoolComputer,
     UbuntuComputer,
     WindowsComputer,
 )
-from ucsschool.lib.models.utils import stopped_notifier, ucr
+from ucsschool.lib.models.utils import stopped_notifier
 from univention.admin.uexceptions import authFail, insufficientInformation
 from univention.admin.uldap import access as LoType, getAdminConnection  # noqa: F401
 
 ud.init("/var/log/univention/ucs-school-import.log", ud.FLUSH, ud.NO_FUNCTION)
 ud.set_level(ud.MAIN, ud.ALL)
-
-
-class ComputerImportError(Exception):
-    pass
-
-
-def call_hook(lo, meth_name, obj, line):  # type: (LoType, str, SchoolComputer, list[str]) -> None
-    hooks = get_import_pyhooks(
-        "ucsschool.importer.utils.computer_pyhook.ComputerPyHook",
-        None,
-        lo=lo,
-        dry_run=False,
-    )  # result is cached on the lib side
-    try:
-        for func in hooks.get(meth_name, []):
-            print(
-                "Running {} hook {}.{} for {}.".format(
-                    meth_name, func.__self__.__class__.__name__, func.__name__, obj
-                )
-            )
-            func(obj, line)
-    except Exception as exc:
-        raise ComputerImportError("In hook stage %s: %s" % (meth_name, exc))
-
-
-def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
-    try:
-        ip_iface = IPv4Interface(u"%s" % ip_address)
-    except AddressValueError as exc:
-        raise ComputerImportError("%s is not a valid ip address" % (exc,))
-    except NetmaskValueError as exc:
-        raise ComputerImportError("%s is not a valid netmask" % (exc,))
-
-    if "/" not in ip_address:
-        ip_iface = IPv4Interface(u"%s/%s" % (ip_address, get_default_prefixlen()))
-        print(
-            "WARNING: no netmask specified for ip address %s using %s"
-            % (ip_iface.with_prefixlen, ip_iface.netmask)
-        )
-    return ip_iface
-
-
-def mac_address_is_used(mac_address, lo):  # type: (str, LoType) -> bool
-    result = lo.search(
-        base=ucr["ldap/base"],
-        scope="sub",
-        filter=filter_format("(macAddress=%s)", [mac_address]),
-        attr=["macAddress"],
-    )
-    return result and result[0][1]["macAddress"][0].decode("ASCII") == mac_address
 
 
 def import_computers(input_file):  # type: (str) -> None
@@ -118,8 +66,7 @@ def import_computers(input_file):  # type: (str) -> None
         ud.debug(ud.MAIN, ud.WARN, "authentication error: %s" % (exc,))
         print("ERROR: authentication error: %s" % (exc,))
         sys.exit(13)
-
-    print("input file is  : " + input_file)
+    print("input file is  : {}".format(input_file))
     line_number = 0
     computer_to_class_mapping = {
         "windows": WindowsComputer,
@@ -143,7 +90,7 @@ def import_computers(input_file):  # type: (str) -> None
             inventory_numbers = None
             if len(row) > 5:
                 inventory_numbers = row[5].strip().split(",")
-            print("Processing line %d: %s\n" % (line_number, "\t".join(row)), end=" ")
+            print("Processing line %d: %s\n" % (line_number, sep_char.join(row)), end=" ")
 
             if computer_type in computer_to_class_mapping:
                 verify_school_ou(school_id, lo)
@@ -169,7 +116,7 @@ def import_computers(input_file):  # type: (str) -> None
                 try:
                     ip_iface = get_ip_iface(ip_address)
                 except ComputerImportError as exc:
-                    print("\t".join(row))
+                    print(sep_char.join(row))
                     raise exc
 
                 computer.ip_address = [str(ip_iface.ip)]

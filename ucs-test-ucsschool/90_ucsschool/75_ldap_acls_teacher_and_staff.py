@@ -10,7 +10,7 @@ from ldap.filter import filter_format
 
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.ucsschool.acl import Acl
-from univention.testing.ucsschool.computerroom import Computers
+from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.schoolroom import ComputerRoom
 
 
