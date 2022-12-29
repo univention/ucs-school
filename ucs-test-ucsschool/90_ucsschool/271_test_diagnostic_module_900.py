@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Check diagnostic tool UCS@school Replica Directory Node groupmemberships
 ## roles: [domaincontroller_master]
-## tags: [ucsschool,diagnostic_test]
+## tags: [ucsschool,diagnostic_test,apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-import]
 
@@ -36,7 +36,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         # Remove a Replica Directory Node from DC-Edukativnetz
         grp_dn = "cn=DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(self.ucr.get("ldap/base"))
         try:
-            self.lo.modify(grp_dn, [("uniqueMember", slave_dn, None)])
+            self.lo.modify(grp_dn, [("uniqueMember", slave_dn.encode("UTF-8"), None)])
         except ldapError:
             # makes running subsequent running of the script easier.
             logger.debug("{} already removed from group {}.".format(slave_dn, grp_dn))
@@ -119,7 +119,7 @@ class UCSSchoolSlaveGroupMemberships(AutoMultiSchoolEnv):
         logger.info("Ran diagnostic tool {} successfully.".format(module_name))
 
 
-def test_diagnostic_module_090():
+def test_diagnostic_module_900():
     with UCSSchoolSlaveGroupMemberships() as test_suite:
         test_suite.create_multi_env_global_objects()
         test_suite.create_multi_env_school_objects()

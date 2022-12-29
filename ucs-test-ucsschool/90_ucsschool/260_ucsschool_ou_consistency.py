@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
-## desc: Check ucschool ou consistency diagnostic tool
+## desc: Check ucsschool ou consistency diagnostic tool
 ## roles: [domaincontroller_master]
-## tags: [ucsschool,diagnostic_test]
+## tags: [ucsschool,diagnostic_test,apptest,ucsschool_base1]
 ## exposure: dangerous
 ## packages: []
 ## bugs: [50500]

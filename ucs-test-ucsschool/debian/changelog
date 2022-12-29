@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.97) unstable; urgency=medium
+
+  * Bug #50500: fix: diagnostic test were not executed
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 29 Dec 2022 10:18:08 +0100
+
 ucs-test-ucsschool (7.3.96) unstable; urgency=medium
 
   * Bug #45972: change runner to python3 as pytest ignores classes with init

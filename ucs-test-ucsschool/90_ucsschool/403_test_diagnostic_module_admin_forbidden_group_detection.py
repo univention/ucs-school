@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: test forbidden groups diagnosis for a school admin of multiple schools
 ## roles: [domaincontroller_master]
-## tags: [ucsschool, diagnostic_test, apptest,ucsschool_base1]
+## tags: [ucsschool,diagnostic_test,apptest,ucsschool_base1]
 ## exposure: dangerous
 ## bugs: [54415]
 ## packages:
