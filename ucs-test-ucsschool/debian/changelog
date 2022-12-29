@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.96) unstable; urgency=medium
+
+  * Bug #45972: change runner to python3 as pytest ignores classes with init
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 29 Dec 2022 09:44:33 +0100
+
 ucs-test-ucsschool (7.3.95) unstable; urgency=medium
 
   * Issue #924: fix performance test routes
