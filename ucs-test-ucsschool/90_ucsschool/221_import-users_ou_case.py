@@ -11,11 +11,9 @@
 import random
 import string
 
-import pytest
-
 import univention.testing.strings as uts
 from univention.testing.ucsschool.importusers import Person
-from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
+from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
 class Test(CLI_Import_v2_Tester):
