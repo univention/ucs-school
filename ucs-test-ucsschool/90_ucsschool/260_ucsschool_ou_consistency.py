@@ -11,6 +11,8 @@ from __future__ import absolute_import, print_function
 from univention.management.console.modules.diagnostic import Critical, Instance
 from univention.testing.ucsschool.ucs_test_school import AutoMultiSchoolEnv, logger
 
+MODULE_NAME = "902_ucsschool_ou_consistency"
+
 
 class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
     def run_all_tests(self):  # type: () -> None
@@ -36,23 +38,24 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
         self.lo.modify(
             ou_a_dn, [("ucsschoolRole", self.lo.get(ou_a_dn, ["ucsschoolRole"], required=True), [])]
         )
-        expected_warnings.append("ucsschoolRole is not set\n")
+        expected_warnings.append("ucsschoolRole is not set")
+        correct_role = self.lo.get(ou_b_dn, ["ucsschoolRole"], required=True)
         self.lo.modify(
             ou_b_dn,
             [
                 (
                     "ucsschoolRole",
-                    self.lo.get(ou_b_dn, ["ucsschoolRole"], required=True),
+                    correct_role,
                     [b"non-existent"],
                 )
             ],
         )
-        expected_warnings.append('ucsschoolRole "school:school:non-existent" not found\n')
+        expected_warnings.append('ucsschoolRole "school:school:schoolB" not found')
 
         self.lo.modify(
             ou_a_dn, [("displayName", self.lo.get(ou_a_dn, ["displayName"], required=True), [])]
         )
-        expected_warnings.append("displayName is not set\n")
+        expected_warnings.append("displayName is not set")
 
         self.lo.modify(
             ou_a_dn,
@@ -64,7 +67,7 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 )
             ],
         )
-        expected_warnings.append("ucsschoolHomeShareFileServer is not set\n")
+        expected_warnings.append("ucsschoolHomeShareFileServer is not set")
         self.lo.modify(
             ou_a_dn,
             [
@@ -75,74 +78,48 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
                 )
             ],
         )
-        expected_warnings.append("ucsschoolClassShareFileServer is not set\n")
+        expected_warnings.append("ucsschoolClassShareFileServer is not set")
 
         if not self.ucr.is_true("ucsschool/singlemaster", False):
-            self.lo.modify(
-                ou_c_dn,
-                [
-                    (
-                        "ucsschoolHomeShareFileServer",
-                        self.lo.get(ou_c_dn, ["ucsschoolHomeShareFileServer"]),
-                        [self.ucr.get("ldap/hostdn").encode("UTF-8")],
-                    )
-                ],
-            )
-            expected_warnings.append(
-                "ucsschoolHomeShareFileServer is set to Primary Directory Node in a UCS@school multi "
-                "server environment\n"
-            )
-            self.lo.modify(
-                ou_c_dn,
-                [
-                    (
-                        "ucsschoolClassShareFileServer",
-                        self.lo.get(ou_c_dn, ["ucsschoolClassShareFileServer"]),
-                        [self.ucr.get("ldap/hostdn").encode("UTF-8")],
-                    )
-                ],
-            )
-            expected_warnings.append(
-                "ucsschoolClassShareFileServer is set to Primary Directory Node in a UCS@school multi "
-                "server environment\n"
-            )
+            for attr in ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer"):
+                self.lo.modify(
+                    ou_c_dn,
+                    [
+                        (
+                            attr,
+                            self.lo.get(ou_c_dn, [attr]),
+                            [self.ucr.get("ldap/hostdn").encode("UTF-8")],
+                        )
+                    ],
+                )
+                expected_warnings.append(
+                    "{} is set to Primary Directory Node "
+                    "in a UCS@school multi server environment".format(attr)
+                )
         else:
-            self.lo.modify(
-                ou_b_dn,
-                [
-                    (
-                        "ucsschoolHomeShareFileServer",
-                        self.lo.get(ou_b_dn, ["ucsschoolHomeShareFileServer"], required=True),
-                        [self.schoolB.winclient.dn.encode("UTF-8")],
-                    )
-                ],
-            )
-            expected_warnings.append(
-                "ucsschoolHomeShareFileServer is not set to Primary Directory Node in a UCS@school "
-                "single server environment\n"
-            )
-            self.lo.modify(
-                ou_b_dn,
-                [
-                    (
-                        "ucsschoolClassShareFileServer",
-                        self.lo.get(ou_b_dn, ["ucsschoolClassShareFileServer"], required=True),
-                        [self.schoolB.winclient.dn.encode("UTF-8")],
-                    )
-                ],
-            )
-            expected_warnings.append(
-                "ucsschoolClassShareFileServer is not set to Primary Directory Node in a UCS@school "
-                "single server environment\n"
-            )
+            for attr in ("ucsschoolHomeShareFileServer", "ucsschoolClassShareFileServer"):
+                self.lo.modify(
+                    ou_c_dn,
+                    [
+                        (
+                            attr,
+                            self.lo.get(ou_c_dn, [attr], required=True),
+                            [self.schoolB.winclient.dn.encode("UTF-8")],
+                        )
+                    ],
+                )
+                expected_warnings.append(
+                    "{} is not set to Primary Directory Node in a UCS@school "
+                    "single server environment".format(attr)
+                )
 
         logger.info(
-            "Run diagnostic tool, capture the stderr and test if the expected warnings were raised."
+            "Run diagnostic tool {}, capture the stderr and test"
+            " if the expected warnings were raised.".format(MODULE_NAME)
         )
-        module_name = "902_ucsschool_ou_consistency"
         instance = Instance()
         instance.init()
-        module = instance.get(module_name)
+        module = instance.get(MODULE_NAME)
         out = None
         try:
             out = module.execute(None)
@@ -153,9 +130,9 @@ class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
         for warning in expected_warnings:
             if warning not in out["description"]:
                 raise Exception(
-                    "diagnostic tool {} did not raise warning {}!\n".format(module_name, warning)
+                    "diagnostic tool {} did not raise warning {}!\n".format(MODULE_NAME, warning)
                 )
-        logger.info("Ran diagnostic tool {} successfully.".format(module_name))
+        logger.info("Ran diagnostic tool {} successfully.".format(MODULE_NAME))
 
 
 def test_ou_consistency():
