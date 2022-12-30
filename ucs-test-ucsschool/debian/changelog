@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.98) unstable; urgency=medium
+
+  * Bug #55455: fix test importing with scrambled ou is possible now
+
+ -- Tobias Wenzel <wenzel@univention.de>  Fri, 30 Dec 2022 11:00:54 +0100
+
 ucs-test-ucsschool (7.3.97) unstable; urgency=medium
 
   * Bug #50500: fix: diagnostic test were not executed

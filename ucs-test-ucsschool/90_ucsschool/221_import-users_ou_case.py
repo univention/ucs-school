@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
-## desc: Import users via CLI v2 with a OU name in wrong upper/lower case
+## desc: Import users via CLI v2 with a OU name in scrambled upper/lower case
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
@@ -52,8 +52,8 @@ class Test(CLI_Import_v2_Tester):
             new_users = [x for x in self.diff_ldap_status().new if x.startswith("uid=")]
             person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
             person.verify()
-            self.log.info("*** OK - import is functional. Trying with bad OU name now.")
-
+            self.log.info("*** OK - import is functional.")
+            self.log.info("Importing with scrambled case ou name should work, too.")
             ou = ori_ou.name
             while ou == ori_ou.name:
                 index = random.choice(range(len(ou)))
@@ -72,8 +72,7 @@ class Test(CLI_Import_v2_Tester):
                 "user_role": role,
             }
             fn_config = self.create_config_json(values=config)
-            with pytest.raises(ImportException):
-                self.run_import(["-c", fn_config])
+            self.run_import(["-c", fn_config])
             self.log.info("*** OK - import stopped.")
 
 
