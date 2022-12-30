@@ -131,21 +131,24 @@ def run(_umc_instance):
                 result["memberserver"]["admin"]["ou_grp"] = True
 
         # check for inconsistencies
-        for hosttype in ("slave", "memberserver"):
+        for host_type in ("slave", "memberserver"):
+            host_type_name = "Replica Directory Node" if host_type == "slave" else "Managed Node"
             for schooltype in ("edu", "admin"):
-                if result[hosttype][schooltype]["global_grp"] != result[hosttype][schooltype]["ou_grp"]:
+                if (
+                    result[host_type][schooltype]["global_grp"]
+                    != result[host_type][schooltype]["ou_grp"]
+                ):
                     problematic_objects.setdefault(obj_dn, []).append(
                         _(
                             "Host object is member in global %s group but not in OU specific %s group "
                             "(or the other way around)"
                         )
-                        % (schooltype, hosttype)
+                        % (schooltype, host_type_name)
                     )
-            if any(list(result[hosttype]["edu"].values()) + list(result[hosttype]["admin"].values())):
-                if any(result[hosttype]["edu"].values()) == any(result[hosttype]["admin"].values()):
-                    problematic_objects.setdefault(obj_dn, []).append(
-                        _("Host object is member in edu groups AND in admin groups which is not allowed")
-                    )
+            if any(result[host_type]["edu"].values()) == any(result[host_type]["admin"].values()):
+                problematic_objects.setdefault(obj_dn, []).append(
+                    _("Host object is member in edu groups AND in admin groups which is not allowed")
+                )
         if obj_attrs.get("univentionObjectType", [b""])[0] == b"computers/domaincontroller_slave":
             if any(
                 list(result["memberserver"]["edu"].values())
