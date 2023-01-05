@@ -10,7 +10,7 @@
 # Univention Management Console
 #  module: Internet Rules Module
 #
-# Copyright 2012-2022 Univention GmbH
+# Copyright 2012-2023 Univention GmbH
 #
 # http://www.univention.de/
 #

@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2021 Univention GmbH
+# Copyright 2020-2023 Univention GmbH
 #
 # http://www.univention.de/
 #

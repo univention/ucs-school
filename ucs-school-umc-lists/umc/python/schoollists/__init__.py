@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Get csv class lists
 #
-# Copyright 2018-2021 Univention GmbH
+# Copyright 2018-2023 Univention GmbH
 #
 # http://www.univention.de/
 #

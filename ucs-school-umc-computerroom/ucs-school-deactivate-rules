@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Control computers of pupils in a room
 #
-# Copyright 2012-2021 Univention GmbH
+# Copyright 2012-2023 Univention GmbH
 #
 # http://www.univention.de/
 #
