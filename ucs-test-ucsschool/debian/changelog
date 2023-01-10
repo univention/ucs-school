@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.99) unstable; urgency=low
+
+  * Issue #916: don't try to delete already deleted objects
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 10 Jan 2023 16:03:28 +0100
+
 ucs-test-ucsschool (7.3.98) unstable; urgency=medium
 
   * Bug #55455: fix test importing with scrambled ou is possible now
