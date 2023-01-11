@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.11) unstable; urgency=medium
+
+  * Bug #55557: terminology in diagnostic check
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 11 Jan 2023 16:12:54 +0100
+
 ucs-school-umc-diagnostic (2.0.10) unstable; urgency=low
 
   * Bug #54415: correct school admin is not detected as wrong

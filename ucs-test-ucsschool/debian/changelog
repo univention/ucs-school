@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.100) unstable; urgency=medium
+
+  * Bug #55557: fix diagnostic test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 11 Jan 2023 16:12:15 +0100
+
 ucs-test-ucsschool (7.3.99) unstable; urgency=low
 
   * Issue #916: don't try to delete already deleted objects

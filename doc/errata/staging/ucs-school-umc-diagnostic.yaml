@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-umc-diagnostic
+fix:
+desc: |
+ * Update the terminology to replication and primary directory node (Bug #55557).
+bug: []
