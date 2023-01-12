@@ -3,7 +3,8 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix: 18.0.27A~5.0.0.202212070855
+fix: 18.0.28A~5.0.0.202301121201
 desc: |
+ * Allow executing python import hooks during the script <code>import_computer</code>(Bug #55014).
  * Internal bugfix: OU names are now compared case insensitive (Bug #55455).
-bug: [55455]
+bug: [55014, 55455]
