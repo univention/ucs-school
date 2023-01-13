@@ -16,13 +16,8 @@ import itertools
 import univention.testing.strings as uts
 from univention.lib.umc import ConnectionError
 from univention.testing.network import NetworkRedirector
-from univention.testing.ucsschool.computerroom import (
-    Computers,
-    Room,
-    add_printer,
-    clean_folder,
-    remove_printer,
-)
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room, add_printer, clean_folder, remove_printer
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client

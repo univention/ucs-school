@@ -23,7 +23,8 @@ from ucsschool.lib.roles import (
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set
 from univention.testing import utils
-from univention.testing.ucsschool.computer import Computers, Room
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import (
     Exam,
     get_s4_rejected,

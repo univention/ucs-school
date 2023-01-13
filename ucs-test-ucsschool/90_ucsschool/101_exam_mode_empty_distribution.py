@@ -17,7 +17,8 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.testing.ucsschool.computer import Computers, Room
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import (
     Exam,
     get_s4_rejected,

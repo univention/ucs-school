@@ -7,7 +7,8 @@
 
 from __future__ import print_function
 
-from univention.testing.ucsschool.computer import Computers, Room
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.umc import Client
 
 

@@ -22,7 +22,8 @@ from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin.uexceptions import noObject
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
-from univention.testing.ucsschool.computer import Computers, Room
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import Exam
 
 SLEEP_INTERVAL = 10

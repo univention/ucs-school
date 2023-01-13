@@ -15,7 +15,8 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.testing.ucsschool.computer import Computers, Room
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import (
     Exam,
     ExamSaml,

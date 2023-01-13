@@ -19,9 +19,9 @@ import univention.testing.strings as uts
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
+from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import (
     CmdCheckFail,
-    Computers,
     Room,
     check_change_permissions,
     check_create_share_folder,

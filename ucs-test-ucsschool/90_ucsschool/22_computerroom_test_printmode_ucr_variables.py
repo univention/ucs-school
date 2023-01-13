@@ -12,7 +12,8 @@ from __future__ import print_function
 import datetime
 
 import univention.testing.strings as uts
-from univention.testing.ucsschool.computer import Computers, Room, add_printer
+from univention.testing.ucsschool.computer import Computers
+from univention.testing.ucsschool.computerroom import Room, add_printer
 from univention.testing.umc import Client
 
 
