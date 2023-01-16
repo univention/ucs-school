@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.104) unstable; urgency=medium
+
+  * Issue #927: fix import in selenium test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Mon, 16 Jan 2023 08:23:29 +0100
+
 ucs-test-ucsschool (7.3.103) unstable; urgency=medium
 
   * Issue #927: rerun kelvin tests once
