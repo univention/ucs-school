@@ -44,7 +44,7 @@
 
 from __future__ import absolute_import
 
-from typing import Dict, List
+from typing import Dict, Set
 
 from ldap.filter import filter_format
 
@@ -71,7 +71,7 @@ def run(_umc_instance):
     if ucr.get("server/role") != "domaincontroller_master":
         return
 
-    problematic_objects = {}  # type: Dict[str, List[str]]
+    problematic_objects = {}  # type: Dict[str, Set[str]]
 
     lo = getAdminConnection()
     obj_list = lo.search(
@@ -138,15 +138,17 @@ def run(_umc_instance):
                     result[host_type][schooltype]["global_grp"]
                     != result[host_type][schooltype]["ou_grp"]
                 ):
-                    problematic_objects.setdefault(obj_dn, []).append(
+                    problematic_objects.setdefault(obj_dn, set()).add(
                         _(
                             "Host object is member in global %s group but not in OU specific %s group "
                             "(or the other way around)"
                         )
                         % (schooltype, host_type_name)
                     )
-            if any(result[host_type]["edu"].values()) == any(result[host_type]["admin"].values()):
-                problematic_objects.setdefault(obj_dn, []).append(
+            is_edu_group = any(result[host_type]["edu"].values())
+            is_admin_group = any(result[host_type]["admin"].values())
+            if is_edu_group and is_admin_group:
+                problematic_objects.setdefault(obj_dn, set()).add(
                     _("Host object is member in edu groups AND in admin groups which is not allowed")
                 )
         if obj_attrs.get("univentionObjectType", [b""])[0] == b"computers/domaincontroller_slave":
@@ -154,12 +156,12 @@ def run(_umc_instance):
                 list(result["memberserver"]["edu"].values())
                 + list(result["memberserver"]["admin"].values())
             ):
-                problematic_objects.setdefault(obj_dn, []).append(
+                problematic_objects.setdefault(obj_dn, set()).add(
                     _("Replica Directory Node object is member in Managed Node groups")
                 )
         else:
             if any(list(result["slave"]["edu"].values()) + list(result["slave"]["admin"].values())):
-                problematic_objects.setdefault(obj_dn, []).append(
+                problematic_objects.setdefault(obj_dn, set()).add(
                     _("Managed Node object is member in Replica Directory Node groups")
                 )
 
