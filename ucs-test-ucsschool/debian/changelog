@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.105) unstable; urgency=low
+
+  * Issue ucs#1418: raise parallel user count
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 Jan 2023 16:35:54 +0100
+
 ucs-test-ucsschool (7.3.104) unstable; urgency=medium
 
   * Issue #927: fix import in selenium test

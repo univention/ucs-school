@@ -4,7 +4,6 @@
 ## tags: [ucsschool-bff-groups, performance]
 ## exposure: dangerous
 import copy
-import multiprocessing
 import os
 
 import pytest
@@ -45,8 +44,8 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir, wait_fo
 
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
 LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
-LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.05"
-LOCUST_ENV_VARIABLES["LOCUST_USERS"] = str(int(1.5 * multiprocessing.cpu_count()))
+LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.4"
+LOCUST_ENV_VARIABLES["LOCUST_USERS"] = str(4 * 3 * 4)  # 4 parallel per CPU on 3 backups with 4 CPUs
 
 
 def test_failure_count(check_failure_count, run_test):

@@ -40,8 +40,8 @@ def run_test(execute_test, verify_test_sent_requests, create_result_dir, sleep10
 
 LOCUST_ENV_VARIABLES = copy.deepcopy(ENV_LOCUST_DEFAULTS)
 LOCUST_ENV_VARIABLES["LOCUST_RUN_TIME"] = "2m"
-LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "4"
-LOCUST_ENV_VARIABLES["LOCUST_USERS"] = "2"
+LOCUST_ENV_VARIABLES["LOCUST_SPAWN_RATE"] = "0.4"
+LOCUST_ENV_VARIABLES["LOCUST_USERS"] = str(4 * 3 * 4)  # 4 parallel per CPU on 3 backups with 4 CPUs
 LOCUST_ENV_VARIABLES["LOCUST_STOP_TIMEOUT"] = "30"
 
 # As this is only a warmup, the test passes when run_test finishes without exceptions
