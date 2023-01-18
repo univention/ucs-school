@@ -1,13 +1,42 @@
 import logging
+import multiprocessing
+import os
+import subprocess
+import sys
 import time
 from typing import Optional, Set
 
 import requests
 from gevent.lock import BoundedSemaphore
-from locust import HttpUser
+from locust import HttpUser, events
 from utils import AuthToken, get_settings, retrieve_token
 
 settings = get_settings()
+
+
+@events.init.add_listener
+def on_locust_init(environment, **kwargs):
+    if environment.parsed_options.master:
+        environment.worker_processes = []
+        master_args = [*sys.argv]
+        worker_args = [sys.argv[0]]
+        if "-f" in master_args:
+            i = master_args.index("-f")
+            worker_args += [master_args.pop(i), master_args.pop(i)]
+        if "--locustfile" in master_args:
+            i = master_args.index("--locustfile")
+            worker_args += [master_args.pop(i), master_args.pop(i)]
+        worker_args += ["--worker"]
+        workers = multiprocessing.cpu_count() - 1
+        workers = workers if workers > 0 else 1
+        for _ in range(workers):
+            p = subprocess.Popen(
+                worker_args,
+                start_new_session=True,
+                # LOCUST_RUN_TIME not allowed for workers
+                env={k: v for k, v in os.environ.items() if k != "LOCUST_RUN_TIME"},
+            )
+            environment.worker_processes.append(p)
 
 
 class UiUserClient(HttpUser):

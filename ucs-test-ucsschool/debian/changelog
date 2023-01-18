@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.106) unstable; urgency=medium
+
+  * Issue #1418: locust multi-process mode
+    univention/ucs#1418
+
+ -- Felix Botner <botner@univention.de>  Wed, 18 Jan 2023 09:51:47 +0100
+
 ucs-test-ucsschool (7.3.105) unstable; urgency=low
 
   * Issue ucs#1418: raise parallel user count

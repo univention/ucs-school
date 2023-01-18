@@ -24,6 +24,7 @@ except ImportError:
 BASE_DIR = "/var/lib/ram-performance-tests"
 VENV = os.path.join(BASE_DIR, "venv")
 LOCUST_EXE = os.path.join(VENV, "bin", "locust")
+LOCUST_WORKER = os.environ.get("UCS_ENV_LOCUST_WORKER", "0")
 
 ENV_LOCUST_DEFAULTS: Dict[str, str] = {
     "LOCUST_LOGLEVEL": "INFO",
@@ -154,6 +155,10 @@ def execute_test():
             "--print-stats",
             locust_user_class,
         ]
+
+        if LOCUST_WORKER == "1":
+            cmd.append("--master")
+
         print("Executing {!r}...".format(" ".join(cmd)))
         print(f"Redirecting stdout and stderr for Locust execution to {logfile!r}.")
         msg = f"Running with 'LOCUST_' environment variables: {envs!r}\nExecuting: {cmd!r}\n"
