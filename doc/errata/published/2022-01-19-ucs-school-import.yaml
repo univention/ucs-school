@@ -1,0 +1,10 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-import
+fix: 18.0.28A~5.0.0.202301121201
+desc: |
+ * Allow executing python import hooks during the script ``import_computer``. Learn more about the implementation of this type of hook in the `|UCSUAS| Administrators manual <https://docs.software-univention.de/ucsschool-manual/5.0/de/manage-school-imports.html#skriptbasierter-import-von-pcs>`_ (Bug #55014).
+ * Internal bugfix: More OU names are now compared case insensitive (Bug #55455).
+bug: [55014, 55455]
