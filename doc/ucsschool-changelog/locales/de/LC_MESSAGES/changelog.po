@@ -44,7 +44,7 @@ msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.31A~5.0.0.202212070852``:"
 
 #: ../../changelog.rst:19
 msgid ""
-"Internal bugfix: More DNs are now compared case insensitive "
+"Internal bug fix: More DNs are now compared case insensitive "
 "(:uv:bug:`55455`)."
 msgstr ""
 "Intern: Mehr DNs werden ohne Berücksichtigung der Groß- und "
@@ -72,7 +72,7 @@ msgstr ""
 
 #: ../../changelog.rst:29
 msgid ""
-"Internal bugfix: More OU names are now compared case insensitive "
+"Internal bug fix: More OU names are now compared case insensitive "
 "(:uv:bug:`55455`)."
 msgstr ""
 "Intern: Mehr Schulnamen werden ohne Berücksichtigung der Groß- und "

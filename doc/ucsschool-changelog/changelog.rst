@@ -16,7 +16,7 @@ Source package *ucs-school-umc-diagnostic* in version ``2.0.12A~5.0.0.2023011618
 
 Source package *ucs-school-lib* in version ``13.0.31A~5.0.0.202212070852``:
 
-* Internal bugfix: More DNs are now compared case insensitive (:uv:bug:`55455`).
+* Internal bug fix: More DNs are now compared case insensitive (:uv:bug:`55455`).
 
 Source package *ucs-school-import* in version ``18.0.28A~5.0.0.202301121201``:
 
@@ -26,7 +26,7 @@ Source package *ucs-school-import* in version ``18.0.28A~5.0.0.202301121201``:
   manual/5.0/de/manage-school-imports.html#skriptbasierter-import-von-pcs>`_
   (:uv:bug:`55014`).
 
-* Internal bugfix: More OU names are now compared case insensitive
+* Internal bug fix: More OU names are now compared case insensitive
   (:uv:bug:`55455`).
 
 .. _changelog-ucsschool-2022-11-17:
