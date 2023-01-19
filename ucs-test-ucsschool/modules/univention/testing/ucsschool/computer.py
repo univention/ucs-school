@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Optional
 
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from ucsschool.importer.utils.constants import get_sep_char
 from ucsschool.lib.models.computer import (
     IPComputer as IPComputerLib,
     LinuxComputer as LinuxComputerLib,
@@ -17,6 +16,7 @@ from univention.testing.ucsschool.importou import get_school_base
 
 if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType
+
 
 
 class SupportedComputer(Enum):
@@ -119,7 +119,7 @@ class Computer(object):
     def __str__(self):
         _ip = self.ip[0] if self.ip else self.network[0]
         _inventory_numbers = ",".join(self.inventory_numbers)
-        return get_sep_char().join(
+        return "\t".join(
             el
             for el in (
                 self.ctype,
