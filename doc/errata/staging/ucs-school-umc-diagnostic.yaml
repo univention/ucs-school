@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-diagnostic
 fix: 2.0.12A~5.0.0.202301161803
 desc: |
- * Update the terminology to replication and primary directory node (Bug #55557).
+ * Updated the terminology to replication and primary directory node (Bug #55557).
 bug: [55557]

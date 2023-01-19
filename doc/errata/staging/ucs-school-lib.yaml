@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
 fix: 13.0.31A~5.0.0.202212070852
 desc: |
- * Internal bugfix: more DNs are now compared case insensitive (Bug #55455).
+ * Internal bugfix: More DNs are now compared case insensitive (Bug #55455).
 bug: [55455]

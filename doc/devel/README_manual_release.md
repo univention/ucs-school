@@ -10,8 +10,8 @@ like this **on dimma**:
 cd git  # Or whatever folder you want to use for your repositories
 git clone --depth 1 git@git.knut.univention.de:univention/ucsschool.git
 git clone --depth 1 git@git.knut.univention.de:univention/jenkins.git
-ln -s ~/git/jenkins/ucsschool-errata-announce/univention-appcenter-control ~/bin  # Or whatever other folder you have in your $PATH
-ln -s ~/git/jenkins/ucsschool-errata-announce/copy_app_binaries ~/bin
+ln -s ~/git/jenkins/ucsschool-errata-announce/univention-appcenter-control ~/bin/univention-appcenter-control  # Or whatever other folder you have in your $PATH
+ln -s ~/git/jenkins/ucsschool-errata-announce/copy_app_binaries ~/bin/copy_app_binaries
 echo $USER > ~/.univention-appcenter-user
 vi ~/.univention-appcenter-pwd  # Save your appcenter account password here
 chmod 400 ~/.univention-appcenter-user ~/.univention-appcenter-pwd
