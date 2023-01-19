@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType
 
 
-
 class SupportedComputer(Enum):
     windows = 1
     macos = 2
