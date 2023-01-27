@@ -2,12 +2,16 @@
 ## desc: In-container integration tests for ID Broker (Provisioning API) plugin
 ## exposure: dangerous
 ## tags: [id-broker]
+## external-junit: /tmp/id_broker_id_connector_in_container_integration_tests.xml
+
 
 APP="ucsschool-id-connector"
 TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
-CMD="export UNSAFE_SSL=1 && cd $TEST_PATH; pytest -lv -m 'not id_broker_compatibility' integration_tests"
+CMD="export UNSAFE_SSL=1 && cd $TEST_PATH; pytest -lv -m 'not id_broker_compatibility' --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.03_id_broker_in_container_integration_tests integration_tests"
 
 echo "IP of ID Broker: $(</var/www/IP_idbroker.txt)"
 
 echo "Running in container: sh -c \"$CMD\""
 univention-app shell "$APP" sh -c "$CMD"
+rm -f /tmp/id_broker_id_connector_in_container_integration_tests.xml
+univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_broker_id_connector_in_container_integration_tests.xml
