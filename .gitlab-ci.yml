@@ -79,3 +79,5 @@ run pre-commit:
     - job: build pre-commit
       optional: true
   extends: .pre-commit
+  script:
+    git config --global --add safe.directory /builds/univention/ucsschool
