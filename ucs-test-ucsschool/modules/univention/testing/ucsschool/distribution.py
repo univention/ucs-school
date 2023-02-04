@@ -244,7 +244,7 @@ html5
         """
         print("Checking %s addition" % (self.name,))
         current = self.query(pattern=self.name)
-        if not (self.name in current):
+        if self.name not in current:
             utils.fail("Project %s was not added successfully" % (self.name,))
 
     def put(
