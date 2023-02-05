@@ -15,8 +15,8 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-from univention.testing import utils
 from univention.lib.umc import Forbidden, HTTPError
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.umc import Client
 

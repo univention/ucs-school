@@ -13,8 +13,8 @@ import re
 import subprocess
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from univention.lib.umc import Unauthorized
+from univention.testing import utils
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 

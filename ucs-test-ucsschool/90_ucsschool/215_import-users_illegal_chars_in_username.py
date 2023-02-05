@@ -16,10 +16,10 @@ import time
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.importer.exceptions import FormatError
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.lib.models.utils import ucr_username_max_length
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import UniqueObjectTester

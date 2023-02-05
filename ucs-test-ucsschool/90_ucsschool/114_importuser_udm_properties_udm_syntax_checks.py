@@ -11,7 +11,6 @@
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.importer.exceptions import NotSupportedError, UDMValueError
 from ucsschool.importer.utils.shell import (
     ImportStaff,
@@ -21,6 +20,7 @@ from ucsschool.importer.utils.shell import (
     config,
     logger,
 )
+from univention.testing import utils
 from univention.testing.ucsschool.importusers import get_mail_domain
 
 

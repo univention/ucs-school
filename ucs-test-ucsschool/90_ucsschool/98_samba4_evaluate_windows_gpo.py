@@ -19,11 +19,11 @@ from subprocess import PIPE, STDOUT, Popen
 from sys import exit
 
 import univention.testing.udm
-from univention.testing import utils
 import univention.winexe
 from ucsschool.lib.models.school import School
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import ConfigRegistry
+from univention.testing import utils
 from univention.testing.codes import TestCodes
 from univention.testing.strings import random_username
 from univention.testing.ucs_samba import force_drs_replication, get_available_s4connector_dc

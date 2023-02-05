@@ -14,8 +14,8 @@ import pytest
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from univention.config_registry import handler_set
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse

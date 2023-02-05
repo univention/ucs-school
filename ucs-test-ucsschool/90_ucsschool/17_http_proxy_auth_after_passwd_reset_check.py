@@ -15,8 +15,8 @@ import pycurl
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from univention.config_registry import handler_set, handler_unset
+from univention.testing import utils
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 from univention.testing.umc import Client
 

@@ -9,7 +9,6 @@
 ## bugs: [41861]
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.importer.utils.shell import (
     ImportStaff,
     ImportStudent,
@@ -18,6 +17,7 @@ from ucsschool.importer.utils.shell import (
     config,
     logger,
 )
+from univention.testing import utils
 
 
 def test_import_shell(ucr, schoolenv):

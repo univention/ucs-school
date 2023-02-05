@@ -18,10 +18,10 @@ from typing import Dict, List  # noqa: F401
 import pytest
 
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.lib.models.share import MarketplaceShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_marketplace_share
+from univention.testing import utils
 
 
 @pytest.fixture(scope="session")

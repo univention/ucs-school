@@ -16,7 +16,6 @@ import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm as udm_test
-from univention.testing import utils
 import univention.uldap
 from ucsschool.lib.models.school import School as SchoolLib
 from ucsschool.lib.models.user import (
@@ -26,6 +25,7 @@ from ucsschool.lib.models.user import (
     TeachersAndStaff as TeachersAndStaffLib,
 )
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
 from univention.testing.ucsschool.ucs_test_school import udm_formula_for_shadowExpire

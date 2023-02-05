@@ -11,8 +11,8 @@ import socket
 import subprocess
 import time
 
-from univention.testing import utils
 from ucsschool.lib.smbstatus import SMB_Status
+from univention.testing import utils
 
 
 def test_smbstatus_parser(ucr):

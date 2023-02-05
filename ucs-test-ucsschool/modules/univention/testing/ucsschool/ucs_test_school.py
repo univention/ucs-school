@@ -56,7 +56,6 @@ import univention.admin.uldap as udm_uldap
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm as udm_test
-from univention.testing import utils
 from ucsschool.lib.models.computer import SchoolComputer
 from ucsschool.lib.models.group import ComputerRoom, SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
@@ -77,6 +76,7 @@ from ucsschool.lib.roles import (
     role_workgroup,
 )
 from univention.admin.uexceptions import ldapError, noObject
+from univention.testing import utils
 
 if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType  # noqa: F401

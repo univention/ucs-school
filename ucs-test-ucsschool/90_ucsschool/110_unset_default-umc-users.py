@@ -4,8 +4,8 @@
 ## tags: [apptest,ucsschool_base1]
 ## exposure: dangerous
 
-from univention.testing import utils
 from univention.config_registry import handler_unset
+from univention.testing import utils
 
 
 def test_unset_default_umc_users(ucr):

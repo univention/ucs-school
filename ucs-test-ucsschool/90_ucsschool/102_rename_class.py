@@ -17,11 +17,11 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-from univention.testing import utils
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.share import ClassShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
+from univention.testing import utils
 from univention.uldap import getMachineConnection
 
 if TYPE_CHECKING:

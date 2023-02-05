@@ -13,8 +13,8 @@ import subprocess
 
 import pycurl
 
-from univention.testing import utils
 from univention.config_registry import handler_set, handler_unset
+from univention.testing import utils
 from univention.testing.ucsschool.simplecurl import SimpleCurl
 
 

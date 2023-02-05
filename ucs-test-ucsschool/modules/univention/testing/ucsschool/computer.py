@@ -4,7 +4,6 @@ from ipaddress import IPv4Interface, IPv4Network
 from typing import TYPE_CHECKING, Optional  # noqa: F401
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.lib.models.computer import (
     IPComputer as IPComputerLib,
     LinuxComputer as LinuxComputerLib,
@@ -12,6 +11,7 @@ from ucsschool.lib.models.computer import (
     UbuntuComputer as UbuntuComputerLib,
     WindowsComputer as WindowsComputerLib,
 )
+from univention.testing import utils
 from univention.testing.ucsschool.importou import get_school_base
 
 if TYPE_CHECKING:

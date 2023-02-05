@@ -32,7 +32,17 @@ import importlib
 import logging
 import sys
 from operator import attrgetter
-from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type  # noqa: F401
+from typing import (  # noqa: F401
+    TYPE_CHECKING,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+)
 
 import click
 from ldap.filter import escape_filter_chars

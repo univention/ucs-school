@@ -50,8 +50,8 @@ import psutil
 from ldap.filter import filter_format
 from six.moves.urllib_parse import urlsplit
 
-from ucsschool.lib import internetrules
 import univention.admin.uexceptions as udm_exceptions
+from ucsschool.lib import internetrules
 
 try:
     from .room_management import ComputerRoomError, ComputerRoomManager

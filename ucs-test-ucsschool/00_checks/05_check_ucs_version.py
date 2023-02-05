@@ -5,6 +5,7 @@
 ## bugs: [40475]
 
 import subprocess
+
 import univention.config_registry
 
 EXPECTED_VERSION = "5.0"

@@ -12,8 +12,8 @@ import pytest
 
 import univention.admin.uexceptions
 import univention.admin.uldap
-from univention.testing import utils
 from univention.config_registry import handler_set
+from univention.testing import utils
 
 
 def test_modify_userattributes_and_ldap_acl(schoolenv, udm_session, ucr):

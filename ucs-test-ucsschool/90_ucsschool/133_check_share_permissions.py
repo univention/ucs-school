@@ -14,11 +14,11 @@ from typing import List  # noqa: F401
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.testing import utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucsschool.computerroom import check_change_permissions, check_create_share_folder
 

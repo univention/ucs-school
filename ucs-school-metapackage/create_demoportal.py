@@ -34,12 +34,12 @@ import string
 import subprocess
 import sys
 
-from univention.admin import modules
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.user import Staff, Student, Teacher
 from ucsschool.lib.models.utils import ucr
+from univention.admin import modules
 from univention.management.console.ldap import get_admin_connection
 
 lo, pos = get_admin_connection()

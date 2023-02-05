@@ -16,7 +16,6 @@ import univention.lib.atjobs as ula
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
@@ -25,6 +24,7 @@ from ucsschool.lib.roles import (
     role_win_computer,
 )
 from univention.lib.umc import ConnectionError
+from univention.testing import utils
 from univention.testing.decorators import SetTimeout
 from univention.testing.ucsschool.computer import random_ip, random_mac
 from univention.testing.ucsschool.internetrule import InternetRule

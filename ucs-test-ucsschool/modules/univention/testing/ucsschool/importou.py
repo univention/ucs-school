@@ -16,7 +16,6 @@ import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm
-from univention.testing import utils
 import univention.uldap
 from ucsschool.lib.models.dhcp import DHCPServer
 from ucsschool.lib.models.school import School
@@ -24,6 +23,7 @@ from ucsschool.lib.models.user import User
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
 from univention.config_registry.interfaces import Interfaces
+from univention.testing import utils
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 univention.admin.modules.update()

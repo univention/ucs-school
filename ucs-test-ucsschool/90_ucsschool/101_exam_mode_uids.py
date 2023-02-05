@@ -17,10 +17,10 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin.uexceptions import noObject
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import Room

@@ -39,7 +39,19 @@ import logging
 import os.path
 from collections import defaultdict
 from os import listdir
-from typing import IO, TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union  # noqa: F401
+from typing import (  # noqa: F401
+    IO,
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from six import iteritems, string_types
 

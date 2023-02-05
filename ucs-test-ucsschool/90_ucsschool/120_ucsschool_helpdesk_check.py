@@ -10,8 +10,8 @@ from __future__ import print_function
 import tempfile
 import time
 
-from univention.testing import utils
 from univention.config_registry import handler_set
+from univention.testing import utils
 from univention.testing.mail import MailSink
 from univention.testing.network import NetworkRedirector
 from univention.testing.umc import Client

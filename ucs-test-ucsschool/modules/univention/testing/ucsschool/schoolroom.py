@@ -3,13 +3,13 @@ from __future__ import print_function
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.lib.roles import (
     context_type_school,
     create_ucsschool_role_string,
     role_computer_room,
     role_computer_room_backend_veyon,
 )
+from univention.testing import utils
 from univention.testing.umc import Client, ClientSaml
 
 

@@ -12,13 +12,13 @@ from unittest.mock import patch
 import pytest
 
 import univention.admin.uexceptions as udm_exceptions
-from univention.testing import utils
 from ucsschool.lib.models import User
 from ucsschool.lib.school_umc_base import Display
 from univention.lib.umc import BadRequest
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.schoolgroups import _filter_users
+from univention.testing import utils
 from univention.testing.ucsschool.computerroom import UmcComputer
 from univention.testing.ucsschool.user import User as TestUser
 from univention.testing.ucsschool.workgroup import Workgroup

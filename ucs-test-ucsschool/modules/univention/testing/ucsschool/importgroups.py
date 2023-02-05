@@ -10,10 +10,10 @@ import ucsschool.lib.models.utils
 import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-from univention.testing import utils
 from ucsschool.lib.models.group import SchoolClass as GroupLib
 from ucsschool.lib.models.school import School as SchoolLib
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
+from univention.testing import utils
 from univention.testing.ucsschool.importou import get_school_base
 
 configRegistry = univention.config_registry.ConfigRegistry()

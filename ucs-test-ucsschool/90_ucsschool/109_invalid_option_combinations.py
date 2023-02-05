@@ -11,10 +11,10 @@
 import pytest
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.roles import create_ucsschool_role_string
 from univention.admin.uexceptions import invalidOptions
+from univention.testing import utils
 from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed
 
 blacklisted_option_combinations = {

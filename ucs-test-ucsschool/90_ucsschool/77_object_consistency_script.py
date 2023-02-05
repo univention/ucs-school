@@ -12,11 +12,11 @@ from typing import Tuple  # noqa: F401
 import pytest
 
 import univention.testing.ucr as ucr_test
-from univention.testing import utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.testing import utils
 from univention.udm import UDM
 
 with ucr_test.UCSTestConfigRegistry() as ucr:

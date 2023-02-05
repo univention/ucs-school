@@ -5,8 +5,8 @@
 ## exposure: dangerous
 ## packages: []
 
-from univention.testing import utils
 from univention.config_registry import handler_set
+from univention.testing import utils
 
 
 def test_set_default_umc_users(ucr):

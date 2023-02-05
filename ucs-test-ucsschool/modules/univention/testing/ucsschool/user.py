@@ -7,9 +7,9 @@
 from __future__ import print_function
 
 import univention.testing.ucr as ucr_test
-from univention.testing import utils
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 from univention.lib.umc import BadRequest
+from univention.testing import utils
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.umc import Client
 

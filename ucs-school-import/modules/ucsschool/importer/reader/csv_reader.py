@@ -35,20 +35,18 @@ import codecs
 import sys
 from csv import Error as CsvError, Sniffer, reader as csv_reader
 from io import IOBase
-from typing import (
-    TYPE_CHECKING,
-    Any,  # noqa: F401
-    BinaryIO,  # noqa: F401
-    Callable,  # noqa: F401
-    Dict,  # noqa: F401
-    Iterable,  # noqa: F401
-    Iterator,  # noqa: F401
-    List,  # noqa: F401
-    Optional,  # noqa: F401
-    Text,  # noqa: F401
-    Type,  # noqa: F401
-    Union,  # noqa: F401
-)
+from typing import Any  # noqa: F401
+from typing import BinaryIO  # noqa: F401
+from typing import Callable  # noqa: F401
+from typing import Dict  # noqa: F401
+from typing import Iterable  # noqa: F401
+from typing import Iterator  # noqa: F401
+from typing import List  # noqa: F401
+from typing import Optional  # noqa: F401
+from typing import Text  # noqa: F401
+from typing import Type  # noqa: F401
+from typing import Union  # noqa: F401
+from typing import TYPE_CHECKING
 
 import magic
 from six import PY3, reraise, string_types

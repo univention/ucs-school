@@ -13,7 +13,6 @@ import random
 import pytest
 
 import univention.testing.strings as uts
-from univention.testing import utils
 from ucsschool.importer.exceptions import EmptyMandatoryAttribute, MissingMandatoryAttribute
 from ucsschool.importer.utils.shell import (
     ImportStaff,
@@ -23,6 +22,7 @@ from ucsschool.importer.utils.shell import (
     config,
     logger,
 )
+from univention.testing import utils
 
 
 def test_import_user_validate_mandatory_attributes(ucr, schoolenv):

@@ -12,8 +12,8 @@
 # $ pytest -s -l -v ./......py::test_create
 #
 
-from univention.testing import utils
 from ucsschool.lib.models.user import SchoolAdmin
+from univention.testing import utils
 from univention.testing.ucsschool.conftest import UserType
 
 
