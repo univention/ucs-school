@@ -61,9 +61,7 @@ def keycloak_config(ucr: ConfigRegistry) -> SimpleNamespace:
 
 @pytest.fixture
 def selenium() -> webdriver.Chrome:
-    """
-    Browser based testing for using Selenium.
-    """
+    """Browser based testing for using Selenium."""
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")  # chrome complains about being executed as root
     chrome_options.add_argument("ignore-certificate-errors")

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Write the passwords of newly created users to a CSV file.
-"""
+"""Write the passwords of newly created users to a CSV file."""
 
 import itertools
 
@@ -41,9 +39,7 @@ from ..writer.result_exporter import ResultExporter
 
 
 class NewUserPasswordCsvExporter(ResultExporter):
-    """
-    Export passwords of new users to a CSV file.
-    """
+    """Export passwords of new users to a CSV file."""
 
     field_names = ("username", "password", "role", "lastname", "firstname", "schools", "classes")
 
@@ -53,17 +49,13 @@ class NewUserPasswordCsvExporter(ResultExporter):
         self.a_user = self.factory.make_import_user([])
 
     def get_iter(self, user_import):
-        """
-        Return only the new users.
-        """
+        """Return only the new users."""
         li = list(itertools.chain(*user_import.added_users.values()))
         li.sort(key=lambda x: int(x["entry_count"]) if isinstance(x, dict) else int(x.entry_count))
         return li
 
     def get_writer(self):
-        """
-        Use the user result csv writer.
-        """
+        """Use the user result csv writer."""
         return self.factory.make_user_writer(field_names=self.field_names)
 
     def serialize(self, user):

@@ -30,9 +30,7 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-"""
-This module check the constistency of USC@school users, shares and groups
-"""
+"""This module check the constistency of USC@school users, shares and groups"""
 import re
 import sys
 from typing import Dict, List, Optional, Tuple

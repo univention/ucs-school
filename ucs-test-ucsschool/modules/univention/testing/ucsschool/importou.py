@@ -805,9 +805,7 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 
 
 def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
-    """
-    Creates 3 OUs in a row
-    """
+    """Creates 3 OUs in a row"""
     with univention.testing.ucr.UCSTestConfigRegistry() as ucr, univention.testing.udm.UCSTestUDM() as udm:  # noqa: E501
         create_mail_domain(ucr, udm)
         for singlemaster in [True, False]:

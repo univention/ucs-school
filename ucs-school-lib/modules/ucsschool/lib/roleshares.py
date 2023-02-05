@@ -28,9 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Role specific shares
-"""
+"""Role specific shares"""
 from __future__ import print_function
 
 import os

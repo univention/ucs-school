@@ -42,7 +42,6 @@ _ = Translation("ucs-school-umc-wizards").translate
 
 
 class SchoolImport(object):
-
     """Wrapper for the ucs-school-import script"""
 
     _SCRIPT_PATH = "/usr/share/ucs-school-import/scripts"

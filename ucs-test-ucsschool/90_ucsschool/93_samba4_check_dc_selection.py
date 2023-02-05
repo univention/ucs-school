@@ -25,9 +25,7 @@ from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 class TestS4DCLocatorDNS(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor
-        """
+        """Test class constructor"""
         super(TestS4DCLocatorDNS, self).__init__()
 
         self.site_dcs = []  # stores DCs located at the same school site/branch
@@ -62,9 +60,7 @@ class TestS4DCLocatorDNS(TestSamba4):
         )
 
     def get_dc_names(self):
-        """
-        Uses 'net ads lookup' to find and return located Domain Controller.
-        """
+        """Uses 'net ads lookup' to find and return located Domain Controller."""
         cmd = ("net", "ads", "lookup")
 
         stdout, stderr = self.create_and_run_process(cmd)

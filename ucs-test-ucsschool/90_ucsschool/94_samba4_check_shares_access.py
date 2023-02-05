@@ -23,9 +23,7 @@ from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 class TestS4DCLocatorSharesAccess(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor.
-        """
+        """Test class constructor."""
         super(TestS4DCLocatorSharesAccess, self).__init__()
         self.TestSchool = UCSTestSchool()
 
@@ -87,9 +85,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
             )
 
     def create_student(self):
-        """
-        Creates a student and returns username, dn and password used.
-        """
+        """Creates a student and returns username, dn and password used."""
         student_name = "ucs_test_school_user_" + random_username(8)
         student_password = "Foo3" + random_username(8)
 

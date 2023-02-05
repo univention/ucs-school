@@ -56,7 +56,8 @@ def _print(_str):
 
 
 def get_object(dn, module):
-    """Get a single object.
+    """
+    Get a single object.
 
     @param dn Object dn
     """
@@ -68,7 +69,8 @@ def get_object(dn, module):
 
 
 def get_objects(module, base=baseDN):
-    """Get objects.
+    """
+    Get objects.
 
     @param ou School OU
     """

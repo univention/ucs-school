@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Test base code.
-"""
+"""Test base code."""
 
 from __future__ import unicode_literals
 

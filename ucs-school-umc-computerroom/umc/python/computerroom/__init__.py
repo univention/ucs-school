@@ -567,11 +567,11 @@ class Instance(SchoolBaseModule):
 
     @LDAP_Connection()
     def update(self, request, ldap_user_read=None):
-        """Returns an update for the computers in the selected
+        """
+        Returns an update for the computers in the selected
         room. Just attributes that have changed since the last call will
         be included in the result
         """
-
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
 
@@ -622,7 +622,6 @@ class Instance(SchoolBaseModule):
     @simple_response
     def lock(self, computer, device, lock):
         """Lock or Unlock the screen or input of a specific computer"""
-
         MODULE.warn("Locking device %s" % (device,))
         if device == "screen":
             computer.lockScreen(lock)
@@ -633,10 +632,10 @@ class Instance(SchoolBaseModule):
     @check_room_access
     @sanitize(computer=ComputerSanitizer(required=True))
     def screenshot(self, request):
-        """Returns a JPEG image containing a screenshot of the given computer
+        """
+        Returns a JPEG image containing a screenshot of the given computer
         or a premade SVG image for special situations like when a screenshots is not ready yet
         """
-
         computer = request.options["computer"]
         tmpfile = computer.screenshot
         if computer.hide_screenshot:
@@ -686,7 +685,6 @@ class Instance(SchoolBaseModule):
     @simple_response
     def settings_get(self):
         """Return the current settings for a room"""
-
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
 
@@ -783,7 +781,6 @@ class Instance(SchoolBaseModule):
     @check_room_access
     def _settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
         """Defines settings for a room"""
-
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
 
@@ -967,7 +964,6 @@ class Instance(SchoolBaseModule):
     @check_room_access
     def demo_stop(self, request):
         """Stops a presentation mode"""
-
         self._computerroom.stopDemo()
         self.finished(request.id, True)
 
@@ -979,7 +975,6 @@ class Instance(SchoolBaseModule):
     @simple_response
     def computer_state(self, computer, state):
         """Stops, starts or restarts a computer"""
-
         if state == "poweroff":
             computer.powerOff()
         elif state == "poweron":
@@ -993,7 +988,6 @@ class Instance(SchoolBaseModule):
     @simple_response
     def user_logout(self, computer):
         """Log out the user at the given computer"""
-
         computer.logOut()
         return True
 

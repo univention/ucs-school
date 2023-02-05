@@ -46,13 +46,13 @@ def test_search_with_wildcards_in_assign_internetrules(ucr):
         all_group_names = work_group_names + class_names + default_names
 
         def check_group_names(pattern, expected_group_names):  # type: (str, List[str]) -> None
-            """Query for groups and check the result
+            """
+            Query for groups and check the result
 
             - Do a group query with `pattern`
             - Check if all `expected_group_names` are within the group query result
             - Check if there are any unexpected group names in the group query result
             """
-
             param = {"school": ou_name, "pattern": pattern}
             request_result = umc_connection.umc_command("internetrules/groups/query", param)
 

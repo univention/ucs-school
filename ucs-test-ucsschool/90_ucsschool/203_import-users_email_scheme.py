@@ -26,9 +26,7 @@ class Test(UniqueObjectTester):
         self.ou_C = None
 
     def test(self):
-        """
-        Test creation of email addresses from a special scheme (Bug #44993).
-        """
+        """Test creation of email addresses from a special scheme (Bug #44993)."""
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:record_uid", "record_uid")
         config.update_entry("csv:mapping:role", "__role")

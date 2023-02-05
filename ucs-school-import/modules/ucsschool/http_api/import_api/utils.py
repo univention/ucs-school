@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Diverse helper functions.
-"""
+"""Diverse helper functions."""
 
 import grp
 import pwd

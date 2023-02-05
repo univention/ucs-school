@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Default implementation of the Abstract Factory.
-"""
+"""Default implementation of the Abstract Factory."""
 
 import logging
 from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar

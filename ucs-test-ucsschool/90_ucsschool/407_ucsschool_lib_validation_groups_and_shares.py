@@ -47,9 +47,7 @@ container_students = SchoolSearchBase._containerStudents
 
 
 def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) -> str
-    """
-    get all log messages for logger with name
-    """
+    """get all log messages for logger with name"""
     return "".join([m for n, _, m in logs if n == name])
 
 

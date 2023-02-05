@@ -28,9 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Parser for smbstatus
-"""
+"""Parser for smbstatus"""
 
 import re
 import subprocess

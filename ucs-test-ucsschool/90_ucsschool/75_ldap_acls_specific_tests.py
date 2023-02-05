@@ -244,7 +244,6 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
         - domain admins
         - global users
         """
-
         acl_tester = ACLTester(self.ucr, self.schoolA.admin1.dn)
         for permission, dn in [
             # generic

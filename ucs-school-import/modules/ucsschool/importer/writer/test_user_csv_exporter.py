@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Class to export test user data from TestUserCreator to CSV.
-"""
+"""Class to export test user data from TestUserCreator to CSV."""
 
 from .csv_writer import CsvWriter
 from .result_exporter import ResultExporter

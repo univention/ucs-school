@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Django Views
-"""
+"""Django Views"""
 
 from __future__ import unicode_literals
 
@@ -88,9 +86,7 @@ class UserImportJobFilter(FilterSet):
 
 
 class RoleFilterBackend(BaseFilterBackend):
-    """
-    Used to list only Roles the user has any permissions on.
-    """
+    """Used to list only Roles the user has any permissions on."""
 
     filter_s = (
         "(&"
@@ -130,9 +126,7 @@ class RoleFilterBackend(BaseFilterBackend):
 
 
 class SchoolFilterBackend(BaseFilterBackend):
-    """
-    Used to list only Schools the user has any permissions on.
-    """
+    """Used to list only Schools the user has any permissions on."""
 
     filter_s = (
         "(&"
@@ -163,9 +157,7 @@ class SchoolFilterBackend(BaseFilterBackend):
 
 
 class UserImportJobFilterBackend(BaseFilterBackend):
-    """
-    Used to list only ImportJobs the user has any permissions on.
-    """
+    """Used to list only ImportJobs the user has any permissions on."""
 
     filter_s = (
         "(&"
@@ -204,9 +196,7 @@ class UserImportJobFilterBackend(BaseFilterBackend):
 
 
 class RoleViewPermission(BasePermission):
-    """
-    Used to read only Role objects the user has any permissions on.
-    """
+    """Used to read only Role objects the user has any permissions on."""
 
     def has_object_permission(self, request, view, obj):
         # obj is a Role object
@@ -219,9 +209,7 @@ class RoleViewPermission(BasePermission):
 
 
 class SchoolViewPermission(BasePermission):
-    """
-    Used to read only School objects the user has any permissions on.
-    """
+    """Used to read only School objects the user has any permissions on."""
 
     def has_object_permission(self, request, view, obj):
         # obj is a School object
@@ -265,9 +253,7 @@ class TextArtifactViewPermission(BasePermission):
 
 
 class UserImportJobViewPermission(BasePermission):
-    """
-    Used to read only UserImport objects the user has any permissions on.
-    """
+    """Used to read only UserImport objects the user has any permissions on."""
 
     # not needed: restrict who can use the view
     #
@@ -297,16 +283,17 @@ class UserImportJobViewSet(
 ):
     # fmt: off
     """
-Manage Import jobs.
+    Manage Import jobs.
 
-* Only GET and POST are allowed.
-* In a POST request `source_uid`, `dryrun`, `input_file` and `school` are mandatory.
-* `source_uid` is of type string
-* `dryrun` is of type boolean
-* `input_file` has to be the key for a multipart-encoded file upload
-* `school` must be an absolute URI from `/{version}/schools/`
-* `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
+    * Only GET and POST are allowed.
+    * In a POST request `source_uid`, `dryrun`, `input_file` and `school` are mandatory.
+    * `source_uid` is of type string
+    * `dryrun` is of type boolean
+    * `input_file` has to be the key for a multipart-encoded file upload
+    * `school` must be an absolute URI from `/{version}/schools/`
+    * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
     """
+
     # fmt: on
     queryset = UserImportJob.objects.all()
     serializer_class = UserImportJobSerializer
@@ -448,10 +435,11 @@ class SubResourceMixin(object):
 class LogFileViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
     # fmt: off
     """
-Log file of import job.
+    Log file of import job.
 
-* Only GET is allowed.
+    * Only GET is allowed.
     """
+
     # fmt: on
     serializer_class = LogFileSerializer
 
@@ -459,10 +447,11 @@ Log file of import job.
 class PasswordsViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
     # fmt: off
     """
-New users password file of import job.
+    New users password file of import job.
 
-* Only GET is allowed.
+    * Only GET is allowed.
     """
+
     # fmt: on
     serializer_class = PasswordFileSerializer
 
@@ -470,19 +459,19 @@ New users password file of import job.
 class SummaryViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
     # fmt: off
     """
-Summary file of import job.
+    Summary file of import job.
 
-* Only GET is allowed.
+    * Only GET is allowed.
     """
+
     # fmt: on
     serializer_class = SummarySerializer
 
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
     # fmt: off
-    """
-Read-only list of Roles.
-    """
+    """Read-only list of Roles."""
+
     # fmt: on
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
@@ -511,12 +500,13 @@ Read-only list of Roles.
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     # fmt: off
     """
-Read-only list of Schools (OUs).
+    Read-only list of Schools (OUs).
 
-* `roles` provides navigation to a list of roles the connected user has permissions on the respective
+    * `roles` provides navigation to a list of roles the connected user has permissions on the respective
     school.
-* `user_imports` provides navigation to start an import for the respective school.
+    * `user_imports` provides navigation to start an import for the respective school.
     """
+
     # fmt: on
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
@@ -557,9 +547,7 @@ Read-only list of Schools (OUs).
 
     @detail_route(methods=["get", "post"], url_path="imports/users")
     def user_imports(self, request, *args, **kwargs):
-        """
-        schools/{ou}/imports/users/
-        """
+        """schools/{ou}/imports/users/"""
         instance = self.get_object()
         uivs = UserImportJobViewSet(request=request, **kwargs)
         uivs.initial(request=request, *args, **kwargs)

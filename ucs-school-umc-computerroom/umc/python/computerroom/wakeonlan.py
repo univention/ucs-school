@@ -96,7 +96,6 @@ def send_wol_packet(
         broadcasting
     :type target_broadcast_ips: None or Iterable[str]
     """
-
     # remove usual delimiter characters
     addr = mac_address
     for c in ".:-":

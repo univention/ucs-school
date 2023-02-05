@@ -36,9 +36,7 @@ except ImportError:
 
 class TestS4DNSSRVReplication(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor.
-        """
+        """Test class constructor."""
         super(TestS4DNSSRVReplication, self).__init__()
 
         self.ldap_base = ""
@@ -183,7 +181,6 @@ class TestS4DNSSRVReplication(TestSamba4):
         The first element in each list will be corresponding to a first record
         location values, the second to a second location, etc.
         """
-
         record_name, zone_name, dns_searchbase = self.get_samba4_dns_searchbase_for_record(record_name)
         zone_searchbase = "DC=%s,%s" % (zone_name, dns_searchbase)
 
@@ -437,9 +434,7 @@ class TestS4DNSSRVReplication(TestSamba4):
             self.return_code_result_skip()
 
     def get_ucr_settings_for_test(self):
-        """
-        Writes all UCR variables needed for the test to the global vars.
-        """
+        """Writes all UCR variables needed for the test to the global vars."""
         self.get_ucr_test_credentials()
         try:
             self.ldap_master = self.UCR["ldap/master"]

@@ -17,9 +17,7 @@ from univention.testing.umc import Client
 
 class TestSamba4(object):
     def __init__(self):
-        """
-        Test class constructor
-        """
+        """Test class constructor"""
         self.UCR = ConfigRegistry()
         self.UCR.load()
         self.client = None
@@ -32,15 +30,11 @@ class TestSamba4(object):
         self.gpo_reference = ""
 
     def return_code_result_skip(self):
-        """
-        Stops the test returning the code 77 (RESULT_SKIP).
-        """
+        """Stops the test returning the code 77 (RESULT_SKIP)."""
         exit(TestCodes.REASON_INSTALL)
 
     def remove_samba_warnings(self, input_str):
-        """
-        Removes the Samba Warning/Note from the given input_str.
-        """
+        """Removes the Samba Warning/Note from the given input_str."""
         # ignoring following messages (Bug #37362):
         input_str = input_str.replace("WARNING: No path in service IPC$ - making it unavailable!", "")
         return input_str.replace("NOTE: Service IPC$ is flagged unavailable.", "").strip()
@@ -96,9 +90,7 @@ class TestSamba4(object):
             )
 
     def dc_master_has_samba4(self):
-        """
-        Returns 'True' when Primary Directory Node has Samba4 according to "service=Samba 4"
-        """
+        """Returns 'True' when Primary Directory Node has Samba4 according to 'service=Samba 4'"""
         if not self.ldap_master:
             self.ldap_master = self.UCR.get("ldap/master")
 
@@ -114,9 +106,7 @@ class TestSamba4(object):
             return True
 
     def grep_for_key(self, grep_in, key):
-        """
-        Runs grep on given 'grep_in' with a given 'key'. Returns the output.
-        """
+        """Runs grep on given 'grep_in' with a given 'key'. Returns the output."""
         stdout, stderr = self.create_and_run_process(("grep", key), PIPE, grep_in)
         if stderr:
             utils.fail(
@@ -125,9 +115,7 @@ class TestSamba4(object):
         return stdout
 
     def sed_for_key(self, input, key):
-        """
-        Runs sed on given 'input' with a given 'key'. Returns the output.
-        """
+        """Runs sed on given 'input' with a given 'key'. Returns the output."""
         cmd = ("sed", "-n", "s/%s//p" % (key,))
         stdout, stderr = self.create_and_run_process(cmd, PIPE, input)
         if stderr:
@@ -172,9 +160,7 @@ class TestSamba4(object):
         return self.get_udm_list_dcs("domaincontroller_slave", with_ucsschool=with_ucsschool)
 
     def select_school_ou(self, schoolname_only=False):
-        """
-        Returns the first found School OU from the list of Replica Directory Nodes in domain.
-        """
+        """Returns the first found School OU from the list of Replica Directory Nodes in domain."""
         print("\nSelecting the School OU for the test")
 
         sed_stdout = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^DN: ")
@@ -192,9 +178,7 @@ class TestSamba4(object):
             )
 
     def get_samba_sam_ldb_path(self):
-        """
-        Returns the 'sam.ldb' path using samba conf or defaults.
-        """
+        """Returns the 'sam.ldb' path using samba conf or defaults."""
         print("\nObtaining the Samba configuration to determine Samba private path")
         smb_conf_path = getenv("SMB_CONF_PATH")
         SambaLP = LoadParm()
@@ -207,9 +191,7 @@ class TestSamba4(object):
         return SambaLP.private_path("sam.ldb")
 
     def get_ucr_test_credentials(self):
-        """
-        Loads the UCR to get credentials for the test.
-        """
+        """Loads the UCR to get credentials for the test."""
         account = utils.UCSTestDomainAdminCredentials()
         self.admin_username = account.username
         self.admin_password = account.bindpw
@@ -231,9 +213,7 @@ class TestSamba4(object):
             self.client.authenticate(self.admin_username, self.admin_password)
 
     def delete_samba_gpo(self):
-        """
-        Deletes the Group Policy Object using the 'samba-tool gpo del'.
-        """
+        """Deletes the Group Policy Object using the 'samba-tool gpo del'."""
         print(
             "\nRemoving previously created Group Policy Object (GPO) with a reference: %s"
             % self.gpo_reference

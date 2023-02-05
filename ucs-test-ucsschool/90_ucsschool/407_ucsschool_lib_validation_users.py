@@ -332,9 +332,7 @@ def reload_school_search_base_after_test(reload_school_search_base):
 
 
 def filter_log_messages(logs, name):  # type: (List[Tuple[str, int, str]], str) -> str
-    """
-    get all log messages for logger with name
-    """
+    """get all log messages for logger with name"""
     return "".join([m for n, _, m in logs if n == name])
 
 
@@ -379,9 +377,7 @@ def test_get_class(dict_obj, ObjectClass):
 
 @pytest.mark.parametrize("dict_obj", all_user_role_objects, ids=all_user_roles_names)
 def test_correct_object(caplog, dict_obj, random_logger):
-    """
-    correct objects should not produce validation errors (logs).
-    """
+    """correct objects should not produce validation errors (logs)."""
     validate(dict_obj, logger=random_logger)
     check_did_not_log_any_error(dict_obj, caplog.record_tuples, random_logger.name)
 
@@ -410,9 +406,7 @@ def test_altered_group_prefix(
     reload_school_search_base,
     reload_school_search_base_after_test,
 ):
-    """
-    Changing the group prefix should not produce validation errors (Bug 52880)
-    """
+    """Changing the group prefix should not produce validation errors (Bug 52880)"""
     with ucr_test.UCSTestConfigRegistry():
         new_value = uts.random_name()
         handler_set(["ucsschool/ldap/default/groupprefix/{}={}".format(role, new_value)])
@@ -438,9 +432,7 @@ def test_group_and_role_case_insensitivity(caplog, user_generator, random_logger
 
 
 def test_correct_uuid(caplog, random_logger):
-    """
-    the uuids for the logging event should be identical in both loggers.
-    """
+    """the uuids for the logging event should be identical in both loggers."""
     user_dict = student_user()
     user_dict["props"]["school"] = []
     validate(user_dict, logger=random_logger)

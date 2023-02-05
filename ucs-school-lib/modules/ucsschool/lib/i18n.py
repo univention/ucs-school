@@ -46,7 +46,6 @@ ucs_school_l10n_languages = {
 
 def ucs_school_name_i18n(name, lang="de"):
     """i18n function for localization of UCS@school standard names"""
-
     # return _(name)  # this would be simple..
     if lang in ucs_school_l10n_languages:
         return ucs_school_l10n_languages[lang].get(name, name)

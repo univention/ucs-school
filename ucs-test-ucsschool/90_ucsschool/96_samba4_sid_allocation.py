@@ -28,18 +28,14 @@ from univention.uldap import getMachineConnection
 
 class TestS4SIDAllocation(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor.
-        """
+        """Test class constructor."""
         super(TestS4SIDAllocation, self).__init__()
 
         self.test_remotely = None
         self.LdapConnection = getMachineConnection(ldap_master=False)
 
     def start_stop_s4_connector_on_master(self, action):
-        """
-        Makes a UMC request to Primary Directory Node to stop or start the S4-Connector.
-        """
+        """Makes a UMC request to Primary Directory Node to stop or start the S4-Connector."""
         print(
             "\nMaking a UMC request to %s the S4-Connector service on the Primary Directory Node\n"
             % action
@@ -74,10 +70,7 @@ class TestS4SIDAllocation(TestSamba4):
             )
 
     def s4_search(self, filter_string, attribute, default=None):
-        """
-        Search in S4 LDAP via univention-s4-search
-        """
-
+        """Search in S4 LDAP via univention-s4-search"""
         print("\nLooking for %s using univention-s4search." % attribute)
         cmd = ("univention-s4search", filter_string, attribute)
 

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for configuration hooks.
-"""
+"""Base class for configuration hooks."""
 
 from typing import TYPE_CHECKING, Any, Dict, List
 

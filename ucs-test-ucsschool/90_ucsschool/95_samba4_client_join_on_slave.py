@@ -36,9 +36,7 @@ from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
 
 class TestS4ClientJoinIntoSchool(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor.
-        """
+        """Test class constructor."""
         super(TestS4ClientJoinIntoSchool, self).__init__()
 
         self.domain_name = ""

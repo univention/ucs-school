@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Create historically unique usernames/email addresses.
-"""
+"""Create historically unique usernames/email addresses."""
 
 from __future__ import absolute_import
 
@@ -420,9 +418,7 @@ class UsernameHandler(object):
         return username
 
     def format_username(self, name):  # type: (str) -> str
-        """
-        Deprecated method. Please use format_name() instead.
-        """
+        """Deprecated method. Please use format_name() instead."""
         return self.format_name(name)
 
     @property

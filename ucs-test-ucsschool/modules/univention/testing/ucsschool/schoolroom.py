@@ -80,9 +80,11 @@ class ComputerRoom(object):
         utils.verify_ldap_object(self.dn(), should_exist=must_exist)
 
     def get(self, should_exist=True):
-        """gets school room via UMCP\n
+        """
+        gets school room via UMCP\n
         :param should_exist: True if the school room is expected to be found
-        :type should_exist: bool"""
+        :type should_exist: bool
+        """
         print("Calling %s for %s" % ("schoolrooms/get", self.dn()))
         reqResult = self.client.umc_command("schoolrooms/get", [self.dn()]).result
         assert (
@@ -91,7 +93,8 @@ class ComputerRoom(object):
         return reqResult[0]
 
     def check_get(self, expected_attrs):
-        """checks if the result of get command matches the
+        """
+        checks if the result of get command matches the
         expected attributes.
         """
         current_attrs = self.get()
@@ -103,7 +106,8 @@ class ComputerRoom(object):
         )
 
     def query(self):
-        """Get all school rooms via UMCP\n
+        """
+        Get all school rooms via UMCP\n
         :returns: [str] list of school rooms names
         """
         print("Calling %s = get all school rooms" % ("schoolrooms/query"))
@@ -119,7 +123,8 @@ class ComputerRoom(object):
         ), "Rooms query result: %r, expected to contain at least:%r" % (current_rooms, rooms)
 
     def put(self, new_attributes):
-        """Modify school room via UMCP\n
+        """
+        Modify school room via UMCP\n
         with no args passed this only reset the school room properties\n
         :param new_attributes:
         :type new_attributes: dict

@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Celery tasks
-"""
+"""Celery tasks"""
 
 #
 # To monitor the celery queue run in an ncurses terminal UI:

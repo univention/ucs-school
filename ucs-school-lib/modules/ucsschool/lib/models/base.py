@@ -292,7 +292,8 @@ class UCSSchoolHelperAbstractClass(object):
 
     def __init__(self, name=None, school=None, **kwargs):
         # type: (Optional[str], Optional[str], **Any) -> None
-        """Initializes a new instance with kwargs.
+        """
+        Initializes a new instance with kwargs.
         Not every kwarg is accepted, though: The name
         must be defined as a attribute at class level
         (or by a base class). All attributes are
@@ -338,7 +339,8 @@ class UCSSchoolHelperAbstractClass(object):
 
     @property
     def dn(self):  # type: () -> str
-        """Generates a DN where the lib would assume this
+        """
+        Generates a DN where the lib would assume this
         instance to be. Changing name or school of self will most
         likely change the outcome of self.dn as well
         """
@@ -367,7 +369,8 @@ class UCSSchoolHelperAbstractClass(object):
                 )
 
     def set_dn(self, dn):  # type: (str) -> None
-        """Does not really set dn, as this is generated
+        """
+        Does not really set dn, as this is generated
         on-the-fly. Instead, sets old_dn in case it was
         missed in the beginning or after create/modify/remove/move
         Also resets cached udm_obj as it may point to somewhere else
@@ -593,7 +596,8 @@ class UCSSchoolHelperAbstractClass(object):
         pass
 
     def do_create(self, udm_obj, lo):  # type: (UdmObject, LoType) -> None
-        """Actual udm_obj manipulation. Override this if
+        """
+        Actual udm_obj manipulation. Override this if
         you want to further change values of udm_obj, e.g.
         def do_create(self, udm_obj, lo):
             udm_obj['used_in_ucs_school'] = '1'
@@ -880,9 +884,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str
-        """
-        raises NotImplementedError by default. Needs to be overridden!
-        """
+        """raises NotImplementedError by default. Needs to be overridden!"""
         raise NotImplementedError("%s.get_container()" % (cls.__name__,))
 
     @classmethod

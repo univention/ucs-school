@@ -156,7 +156,6 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection(USER_READ, USER_WRITE)
     def remove(self, request, ldap_user_write=None, ldap_user_read=None):
         """Deletes a room"""
-
         try:
             room_dn = request.options[0]["object"][0]
             room = ComputerRoom.from_dn(room_dn, None, ldap_user_write)

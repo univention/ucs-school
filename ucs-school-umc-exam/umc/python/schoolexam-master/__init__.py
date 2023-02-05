@@ -168,9 +168,7 @@ class Instance(SchoolBaseModule):
         return self._examGroup
 
     def examUserContainerDN(self, ldap_admin_write, ldap_position, school):
-        """
-        lookup examUserContainerDN, create it if missing
-        """
+        """lookup examUserContainerDN, create it if missing"""
         if school not in self._examUserContainerDN:
             search_base = School.get_search_base(school)
             examUsers = search_base.examUsers
@@ -203,7 +201,8 @@ class Instance(SchoolBaseModule):
     )
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
-        """Create an exam account cloned from a given user account.
+        """
+        Create an exam account cloned from a given user account.
         The exam account is added to a special exam group to allow GPOs and other restrictions
         to be enforced via the name of this group.
         The group has to be created earlier, e.g. by create_ou (ucs-school-import).
@@ -536,9 +535,7 @@ class Instance(SchoolBaseModule):
     def add_exam_users_to_groups(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None
     ):
-        """
-        Add previously created exam users to groups.
-        """
+        """Add previously created exam users to groups."""
         self._room_host_cache.clear()
         logger.info("school=%r users=%r", request.options["school"], request.options["users"])
 
@@ -645,10 +642,11 @@ class Instance(SchoolBaseModule):
     )
     @LDAP_Connection(USER_READ, ADMIN_WRITE)
     def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
-        """Remove an exam account cloned from a given user account.
+        """
+        Remove an exam account cloned from a given user account.
         Also the original sambaUserWorkstations of the original user are restored.
-        The exam account is removed from the special exam group."""
-
+        The exam account is removed from the special exam group.
+        """
         userdn = request.options["userdn"]
         school = request.options["school"]
         exam = request.options["exam"]
@@ -743,7 +741,6 @@ class Instance(SchoolBaseModule):
         Add all member hosts except teacher_computers of a given computer room to the special exam
         group.
         """
-
         roomdn = request.options["roomdn"]
         logger.info("roomdn=%r", roomdn)
         try:
@@ -774,7 +771,6 @@ class Instance(SchoolBaseModule):
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None
     ):
         """Remove all member hosts of a given computer room from the special exam group."""
-
         roomdn = request.options["roomdn"]
         logger.info("roomdn=%r", roomdn)
         try:

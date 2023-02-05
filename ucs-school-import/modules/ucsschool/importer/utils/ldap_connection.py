@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Create LDAP connections for import.
-"""
+"""Create LDAP connections for import."""
 
 from typing import TYPE_CHECKING, Tuple
 

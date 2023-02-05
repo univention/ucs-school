@@ -22,9 +22,7 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formally test_lowercase_username_with_counter()
-        """
-        Bug #41645: a username scheme with <:lower> and [COUNTER2]
-        """
+        """Bug #41645: a username scheme with <:lower> and [COUNTER2]"""
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:DBID", "record_uid")
         config.update_entry("csv:mapping:role", "__role")

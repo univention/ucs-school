@@ -29,15 +29,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for output writers.
-"""
+"""Base class for output writers."""
 
 
 class BaseWriter(object):
-    """
-    Abstraction of a data dump mechanism like CSV, JSON, XML, sockets etc.
-    """
+    """Abstraction of a data dump mechanism like CSV, JSON, XML, sockets etc."""
 
     def __init__(self, *arg, **kwargs):
         """

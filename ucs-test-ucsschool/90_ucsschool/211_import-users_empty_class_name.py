@@ -20,9 +20,7 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formally test_create_with_empty_class_name()
-        """
-        Bug #41847: import users with an empty class name
-        """
+        """Bug #41847: import users with an empty class name"""
         config = copy.deepcopy(self.default_config)
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config.update_entry("source_uid", source_uid)

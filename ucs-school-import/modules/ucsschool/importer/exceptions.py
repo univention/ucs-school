@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-All exceptions raised by code in ucsschool.importer.
-"""
+"""All exceptions raised by code in ucsschool.importer."""
 
 
 class UcsSchoolImportError(Exception):
@@ -224,9 +222,7 @@ class UsernameToLong(UcsSchoolImportError):
 
 
 class UserValidationError(UcsSchoolImportError):
-    """
-    Wraps ucsschool.lib.models.attributes.ValidationError
-    """
+    """Wraps ucsschool.lib.models.attributes.ValidationError"""
 
     def __init__(self, msg, validation_error, *args, **kwargs):
         super(UserValidationError, self).__init__(msg, *args, **kwargs)

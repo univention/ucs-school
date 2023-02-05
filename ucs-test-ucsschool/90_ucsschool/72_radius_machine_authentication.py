@@ -22,9 +22,7 @@ from univention.testing.ucsschool.workgroup import Workgroup
 
 
 def random_case(txt):  # type: (str) -> str
-    """
-    Try up to 1000 times to randomize given string by using upper/lowercase variants of its characters.
-    """
+    """Try up to 1000 times to randomize given string by using upper/lowercase variants of its characters."""
     assert txt, "Given string should not be empty!"
     result = []
     for i in range(1000):

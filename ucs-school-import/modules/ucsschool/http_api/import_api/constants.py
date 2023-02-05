@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Constants
-"""
+"""Constants"""
 
 JOB_NEW = "New"
 JOB_SCHEDULED = "Scheduled"

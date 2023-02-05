@@ -38,10 +38,7 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formally test_create_modify_with_extended_attribute()
-        """
-        Bug #41707: set values in extended attribute
-        """
-
+        """Bug #41707: set values in extended attribute"""
         ext_attr_name = uts.random_name()
         properties = {
             "position": self.udm.UNIVENTION_CONTAINER,

@@ -85,8 +85,10 @@ class Rule(object):
 
     @property
     def domains(self):
-        """Return list of all domains, the order respects the indeces.
-        Show only the entries that match the current filter type."""
+        """
+        Return list of all domains, the order respects the indeces.
+        Show only the entries that match the current filter type.
+        """
         return [i[1] for i in self._getDomains(self.type)]
 
     @domains.setter
@@ -106,9 +108,11 @@ class Rule(object):
         self._domains.append((idx, domain, listType))
 
     def save(self):
-        """Save the current rule as UCR variables. If the rule already exists,
+        """
+        Save the current rule as UCR variables. If the rule already exists,
         only the changed properties will be saved. In case the rules are similar,
-        no changes will be done."""
+        no changes will be done.
+        """
         # load original rule
         orgRule = load(self.name)
 
@@ -171,8 +175,10 @@ class Rule(object):
 
 
 def findUCRVariables(filterName=None, userRule=False):
-    """Returns a dict of all UCR variables or all variables matching the
-    specified rule name."""
+    """
+    Returns a dict of all UCR variables or all variables matching the
+    specified rule name.
+    """
     # refresh internal UCR cache
     ucr.load()
 
@@ -215,12 +221,13 @@ def load(name, userRule=False):
 
 
 def list(filterName=None, userRule=False):
-    """Returns a list of all existing rules. If name is given, returns only the
+    """
+    Returns a list of all existing rules. If name is given, returns only the
     rule matching the specified name or None. userRule specifies whether all
     common rules (=False) or only user-specific rules (=True) are listed.
     If filterName is specified, only rule matching this name is returned as
-    single object (not as list!)."""
-
+    single object (not as list!).
+    """
     # iterate over all UCR variables
     rules = {}
     for k, v in findUCRVariables(filterName, userRule).items():
@@ -285,7 +292,8 @@ def list(filterName=None, userRule=False):
 
 
 def getGroupRuleName(groupNames):
-    """Return the name of the filter rule for the specified group name.
+    """
+    Return the name of the filter rule for the specified group name.
 
     Usage:
         `getGroupRuleName([<groupName>, ...]) -> { <groupName>:<ruleName>, ... }`
@@ -300,7 +308,8 @@ def getGroupRuleName(groupNames):
 
 
 def unsetGroupRuleName(groupNames):
-    """Unset the default rule for the given group name.
+    """
+    Unset the default rule for the given group name.
 
     Usage:
         `setGroupRuleName(<groupName>)`
@@ -317,7 +326,8 @@ def unsetGroupRuleName(groupNames):
 
 
 def setGroupRuleName(*args):
-    """Set the default rule for the given group name.
+    """
+    Set the default rule for the given group name.
 
     Usage:
         `setGroupRuleName(<groupName>, <ruleName>)`

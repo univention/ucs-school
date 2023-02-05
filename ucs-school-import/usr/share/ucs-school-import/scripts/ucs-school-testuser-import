@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Tool to create lots of test users.
-"""
+"""Tool to create lots of test users."""
 # Copyright 2016-2023 Univention GmbH
 #
 # https://www.univention.de/

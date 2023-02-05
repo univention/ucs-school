@@ -68,9 +68,7 @@ if TYPE_CHECKING:
 
 
 class ExtendConfigByRole(ConfigPyHook):
-    """
-    Config hooks that changes the configuration depending on the user role.
-    """
+    """Config hooks that changes the configuration depending on the user role."""
 
     priority = {
         "post_config_files_read": 10,

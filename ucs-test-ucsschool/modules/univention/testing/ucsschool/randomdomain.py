@@ -10,7 +10,6 @@ import univention.testing.strings as uts
 
 
 class RandomDomain(object):
-
     """Generates random internet domain names"""
 
     def __init__(self):
@@ -35,7 +34,8 @@ class RandomDomain(object):
         self.domain = "%s.%s" % (self.name, self.tail)
 
     def getDomainList(self, count):
-        """Generate list of domains names\n
+        """
+        Generate list of domains names\n
         :param count: number of wanted domains
         :type count: int
         :returns: [str] domains list

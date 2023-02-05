@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for all Python based User hooks.
-"""
+"""Base class for all Python based User hooks."""
 
 from typing import TYPE_CHECKING, Dict, Union
 

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # UCS test
-"""
-Classes to test subclassing / factory code of import script
-"""
+"""Classes to test subclassing / factory code of import script"""
 # Copyright 2016-2023 Univention GmbH
 #
 # http://www.univention.de/
@@ -54,9 +52,7 @@ logger = get_ucsschool_logger()
 
 
 class NullImport(MassImport):
-    """
-    This MassImport does not import users.
-    """
+    """This MassImport does not import users."""
 
     def import_users(self):
         self.logger.info("*** NullImport.import_users()")
@@ -64,9 +60,7 @@ class NullImport(MassImport):
 
 
 class UniventionPasswordExporter(NewUserPasswordCsvExporter):
-    """
-    Export password table as if all passwords were 'univention'.
-    """
+    """Export password table as if all passwords were 'univention'."""
 
     def serialize(self, user):
         logger.info("*** UniventionPasswordExporter.serialize()")
@@ -76,9 +70,7 @@ class UniventionPasswordExporter(NewUserPasswordCsvExporter):
 
 
 class AnonymizeResultExporter(UserImportCsvResultExporter):
-    """
-    Export import job results with wrong names and birthday.
-    """
+    """Export import job results with wrong names and birthday."""
 
     def serialize(self, obj):
         logger.info("*** AnonymizeResultExporter.serialize()")
@@ -88,9 +80,7 @@ class AnonymizeResultExporter(UserImportCsvResultExporter):
 
 
 class BirthdayUserImport(UserImport):
-    """
-    Prevent deletion of users on their birthday.
-    """
+    """Prevent deletion of users on their birthday."""
 
     def do_delete(self, user):
         self.logger.info("*** BirthdayUserImport.do_delete() user.birthday=%r", user.birthday)
@@ -102,9 +92,7 @@ class BirthdayUserImport(UserImport):
 
 
 class FooUsernameHandler(UsernameHandler):
-    """
-    Adds [FOO] modifier. Always appends "foo" to a username -> works only once per username!
-    """
+    """Adds [FOO] modifier. Always appends "foo" to a username -> works only once per username!"""
 
     @property
     def counter_variable_to_function(self):
@@ -118,9 +106,7 @@ class FooUsernameHandler(UsernameHandler):
 
 
 class JsonWriter(BaseWriter):
-    """
-    Crude JSON writer
-    """
+    """Crude JSON writer"""
 
     def __init__(self, *arg, **kwargs):
         logger.info("*** JsonWrite.__init()")

@@ -17,8 +17,8 @@ from univention.testing.umc import Client
 
 
 class Workgroup(object):
-
-    """Contains the needed functionality for workgroups in an already created OU,
+    """
+    Contains the needed functionality for workgroups in an already created OU,
     By default they are randomly formed except the OU, should be provided\n
     :param school: name of the ou
     :type school: str
@@ -76,7 +76,8 @@ class Workgroup(object):
         self.ucr.revert_to_original_registry()
 
     def create(self, expect_creation_fails_due_to_duplicated_name=False):
-        """Creates object workgroup\n
+        """
+        Creates object workgroup\n
         :param expect_creation_fails_due_to_duplicated_name: if user allow duplicate names no exception
             is raised, no group is created either
         :type expect_creation_fails_due_to_duplicated_name: bool
@@ -140,7 +141,8 @@ class Workgroup(object):
         utils.wait_for_replication()
 
     def addMembers(self, memberListdn, options=None):
-        """Add members to workgroup\n
+        """
+        Add members to workgroup\n
         :param memberListdn: list of the new members
         :type memberListdn: list
         :param options:
@@ -159,7 +161,8 @@ class Workgroup(object):
         self.set_members(currentMembers)
 
     def removeMembers(self, memberListdn, options=None):
-        """Remove members from workgroup\n
+        """
+        Remove members from workgroup\n
         :param memberListdn: list of the removed members
         :type memberListdn: list
         :param options:
@@ -176,9 +179,7 @@ class Workgroup(object):
         self.set_members(currentMembers)
 
     def deactivate_email(self):
-        """
-        Deactivates the email address for the workgroup via UMC
-        """
+        """Deactivates the email address for the workgroup via UMC"""
         print("Deactivating email for the workgroup {}".format(self.dn()))
         flavor = "workgroup-admin"
         group_dn = self.dn()
@@ -206,7 +207,8 @@ class Workgroup(object):
         utils.wait_for_replication()
 
     def set_members(self, new_members, options=None):
-        """Set members for workgroup\n
+        """
+        Set members for workgroup\n
         :param new_members: list of the new members
         :type new_members: list
         """

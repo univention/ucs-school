@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-App registry
-"""
+"""App registry"""
 
 from __future__ import unicode_literals
 

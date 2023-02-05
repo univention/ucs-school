@@ -24,9 +24,7 @@ from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 class TestGPCReplicationTwoWays(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor
-        """
+        """Test class constructor"""
         super(TestGPCReplicationTwoWays, self).__init__()
 
         self.host_or_ip = ""

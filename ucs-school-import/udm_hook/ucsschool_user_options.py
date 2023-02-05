@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-UCS@school UDM-hook to prevent invalid combinations of user options
-"""
+"""UCS@school UDM-hook to prevent invalid combinations of user options"""
 
 import univention.admin.localization
 import univention.admin.modules

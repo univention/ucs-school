@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Configuration checks for SingleSourcePartialImport scenario.
-"""
+"""Configuration checks for SingleSourcePartialImport scenario."""
 
 from ucsschool.importer.exceptions import InitialisationError
 from ucsschool.importer.utils.configuration_checks import ConfigurationChecks

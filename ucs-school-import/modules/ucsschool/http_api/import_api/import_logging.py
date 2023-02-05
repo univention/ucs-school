@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Logging configuration for the HTTP API
-"""
+"""Logging configuration for the HTTP API"""
 
 from __future__ import absolute_import, unicode_literals
 

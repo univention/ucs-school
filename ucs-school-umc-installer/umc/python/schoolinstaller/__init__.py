@@ -468,9 +468,7 @@ class Instance(Base):
 
     @simple_response
     def get_metainfo(self):
-        """
-        Queries the specified Primary Directory Node for metainformation about the UCS@school environment
-        """
+        """Queries the specified Primary Directory Node for metainformation about the UCS@school environment"""
         master = ucr.get("ldap/master") or get_master_dns_lookup()
         if not master:
             return
@@ -502,7 +500,6 @@ class Instance(Base):
         Fetches LDAP information from Primary Directory Node about specified OU.
         This function assumes that the given arguments have already been validated!
         """
-
         school_name = school
         try:
             lo, po = get_machine_connection(write=True)
@@ -932,10 +929,12 @@ class Instance(Base):
         self.finished(request.id, None)
 
     def retrieve_root_certificate(self, master):
-        """On a Replica Directory Node, download the root certificate from the specified Primary
+        """
+        On a Replica Directory Node, download the root certificate from the specified Primary
         Directory Node and install it on the system. In this way it can be ensured that secure
         connections can be performed even though the system has not been joined yet.
-        Returns the renamed original file if it has been renamed. Otherwise None is returned."""
+        Returns the renamed original file if it has been renamed. Otherwise None is returned.
+        """
         if ucr.get("server/role") != "domaincontroller_slave":
             # only do this on a Replica Directory Node
             return

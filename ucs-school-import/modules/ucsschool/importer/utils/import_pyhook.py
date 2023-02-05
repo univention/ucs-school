@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for all Python based import hooks.
-"""
+"""Base class for all Python based import hooks."""
 
 from __future__ import absolute_import
 

@@ -133,16 +133,12 @@ class TestRoleValidation:
 
     # tests
     def test_wrong_number_of_elems_1(self):
-        """
-        Can't split at all!
-        """
+        """Can't split at all!"""
         roles = ["teacher-bad-format"]
         assert self.split_errstr(roles[0]) in TeacherValidator.validate(make_udmobj(roles))
 
     def test_wrong_number_of_elems_2(self):
-        """
-        splits 4 items, we destructure this into 3 items!
-        """
+        """splits 4 items, we destructure this into 3 items!"""
         roles = ["a:s:d:f"]
         assert self.destructuring_errstr(roles[0]) in TeacherValidator.validate(make_udmobj(roles))
 
@@ -154,9 +150,7 @@ class TestRoleValidation:
         ],
     )
     def test_invalid_role_name(self, role):
-        """
-        correct number of elements, but the role is not in roles.py all_roles
-        """
+        """correct number of elements, but the role is not in roles.py all_roles"""
         validator_result = [
             result for result in TeacherValidator.validate(make_udmobj([role])) if result is not None
         ]
@@ -174,9 +168,7 @@ class TestRoleValidation:
         ],
     )
     def test_unknown_context_type_is_valid(self, role):
-        """
-        correct number of elements, but the context_type is not in roles.py all_context_types
-        """
+        """correct number of elements, but the context_type is not in roles.py all_context_types"""
         validator_result = [
             result for result in TeacherValidator.validate(make_udmobj(role)) if result is not None
         ]

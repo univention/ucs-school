@@ -252,7 +252,8 @@ class LDAPACLTestMatrix(object):
         self.matrix = {}
 
     def assert_acl(self, target_dn, access, attr, access_allowance=None):
-        """Test ACL rule:\n
+        """
+        Test ACL rule:\n
         :param target_dn: Target dn to test access to
         :type target_dn: ldap object dn
         :param attrs: names of the attributes to test acl against

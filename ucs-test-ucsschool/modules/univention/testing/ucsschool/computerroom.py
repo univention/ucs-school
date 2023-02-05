@@ -144,7 +144,8 @@ class Room(object):
         return reqResult
 
     def check_internetRules(self, client):
-        """Check if the fetched internetrules match the already defined ones
+        """
+        Check if the fetched internetrules match the already defined ones
         in define internet module.
         :param client: umc connection
         :type client: Client(uce.get('hostname'))
@@ -883,9 +884,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
 def check_create_share_folder(
     share, username, dir_name, samba_workstation=""
 ):  # type: (str, str, str, str) -> None
-    """
-    test if a user can create folders inside a given share, i.e. they have edit rights.
-    """
+    """test if a user can create folders inside a given share, i.e. they have edit rights."""
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(
         pipes.quote(username), pipes.quote(share), dir_name
     )
@@ -900,9 +899,7 @@ def check_create_share_folder(
 def check_change_permissions(
     filename, user_name, allowed, samba_workstation=""
 ):  # type: (str, str, bool, str) -> None
-    """
-    test if user can change the permissions a given file in a share folder.
-    """
+    """test if user can change the permissions a given file in a share folder."""
     new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
     cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)
     if samba_workstation:

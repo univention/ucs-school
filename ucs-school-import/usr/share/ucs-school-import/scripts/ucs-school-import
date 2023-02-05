@@ -1046,9 +1046,7 @@ def verify_containers(position_dn, module, co, lo, superordinate, base, path="")
 
 
 def verify_container(position_dn, module, co, lo, superordinate, base, path="userPath"):
-    """
-    look if goal-container exists, else create it
-    """
+    """look if goal-container exists, else create it"""
     container_exists = 0
     attr = str2dn(position_dn)[0][0][0]
     name = str2dn(position_dn)[0][0][1]
@@ -1429,9 +1427,7 @@ def create_network(
 
 
 def check_network(schoolNr, network):
-    """
-    @param network ipaddress.IPv4Network object
-    """
+    """@param network ipaddress.IPv4Network object"""
     objects = univention.admin.modules.lookup(
         network_module,
         None,
@@ -2473,9 +2469,7 @@ def rename_class():
 
 
 def move_domaincontroller_to_ou(co, lo, baseDN, options):
-    """
-    Move specified domaincontroller (options.dcname) to specified OU (options.ou).
-    """
+    """Move specified domaincontroller (options.dcname) to specified OU (options.ou)."""
     slaves = univention.admin.modules.lookup(
         server_module,
         None,

@@ -26,9 +26,7 @@ class Test(UniqueObjectTester):
         self.ou_C = None
 
     def test(self):  # formerly test_create_with_username_scheme()
-        """
-        Test creation of usernames from a special username scheme (Bug #41243, #41244).
-        """
+        """Test creation of usernames from a special username scheme (Bug #41243, #41244)."""
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:record_uid", "record_uid")
         config.update_entry("csv:mapping:role", "__role")

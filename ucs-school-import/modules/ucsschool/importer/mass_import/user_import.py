@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Default user import class.
-"""
+"""Default user import class."""
 
 import copy
 import datetime
@@ -82,9 +80,7 @@ class UserImport(object):
     """
 
     def __init__(self, dry_run=True):
-        """
-        :param bool dry_run: set to False to actually commit changes to LDAP
-        """
+        """:param bool dry_run: set to False to actually commit changes to LDAP"""
         self.dry_run = dry_run
         self.errors = []  # type: List[UcsSchoolImportError]
         self.imported_users = []  # type: List[ImportUser]
@@ -708,9 +704,7 @@ class UserImport(object):
             return True
 
     def log_stats(self):  # type: () -> str
-        """
-        Log statistics about read, created, modified and deleted users.
-        """
+        """Log statistics about read, created, modified and deleted users."""
         self.logger.info("------ User import statistics ------")
         lines = ["Read users from input data: {}".format(self.imported_users_len)]
         cls_names = list(self.added_users)

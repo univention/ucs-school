@@ -252,9 +252,7 @@ class ImportTestbase(object):
             self.fail("Stopping because of invalid number of removed users.")
 
     def fail(self, msg, returncode=1):
-        """
-        Print package versions, traceback and error message.
-        """
+        """Print package versions, traceback and error message."""
         self.log.error("\n%s\n%s%s", "=" * 79, "".join(traceback.format_stack()), "=" * 79)
         utils.fail(msg, returncode)
 

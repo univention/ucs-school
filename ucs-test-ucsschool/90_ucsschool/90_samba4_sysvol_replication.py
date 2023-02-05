@@ -103,9 +103,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             )
 
     def run_local_sysvol_replication(self):
-        """
-        Triggers 'sysvol-sync.sh' locally.
-        """
+        """Triggers 'sysvol-sync.sh' locally."""
         repl_script = "/usr/share/univention-samba4/scripts/sysvol-sync.sh"
 
         print("\nLocally executing the replication script '%s'" % repl_script)

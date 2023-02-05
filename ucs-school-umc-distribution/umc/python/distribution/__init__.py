@@ -113,7 +113,8 @@ class Instance(SchoolBaseModule):
     )
     @simple_response
     def checkfiles(self, project, filenames):
-        """Checks whether the given filename has already been uploaded:
+        """
+        Checks whether the given filename has already been uploaded:
 
         request.options: { 'filenames': [ '...', ... ], project: '...' }
 
@@ -124,7 +125,6 @@ class Instance(SchoolBaseModule):
             'distributed': True|False
         }
         """
-
         # load project
         if project:
             project = util.Project.load(project)
@@ -345,7 +345,8 @@ class Instance(SchoolBaseModule):
     @sanitize(StringSanitizer(required=True))
     @LDAP_Connection()
     def get(self, request, ldap_user_read=None, ldap_position=None):
-        """Returns the objects for the given IDs
+        """
+        Returns the objects for the given IDs
 
         requests.options = [ <ID>, ... ]
 

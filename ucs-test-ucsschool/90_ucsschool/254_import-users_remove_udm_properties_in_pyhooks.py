@@ -43,10 +43,7 @@ class Test(CLI_Import_v2_Tester):
         super(Test, self).cleanup()
 
     def test(self):  # formally test_delete_variants()
-        """
-        Bug #53649: Test that udm_properties are loaded for users that are marked for deletion
-        """
-
+        """Bug #53649: Test that udm_properties are loaded for users that are marked for deletion"""
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:Benutzername", "name")
         config.update_entry("csv:mapping:record_uid", "record_uid")

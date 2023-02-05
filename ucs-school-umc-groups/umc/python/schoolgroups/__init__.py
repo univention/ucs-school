@@ -94,7 +94,8 @@ def _filter_users(
     flavor,
     ldap_machine_write=None,
 ):
-    """Validate users according to the modification type (flavor).
+    """
+    Validate users according to the modification type (flavor).
 
     Only users are checked, DNs of other objects (e.g., computers) are always
     kept.
@@ -303,13 +304,13 @@ class Instance(SchoolBaseModule):
     @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
     @LDAP_Connection(USER_READ, MACHINE_WRITE)
     def put(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
-        """Returns the objects for the given IDs
+        """
+        Returns the objects for the given IDs
 
         requests.options = [ { object : ..., options : ... }, ... ]
 
         return: True|<error message>
         """
-
         if request.flavor == "teacher":
             request.options = request.options[0]["object"]
             return self.add_teacher_to_classes(request)

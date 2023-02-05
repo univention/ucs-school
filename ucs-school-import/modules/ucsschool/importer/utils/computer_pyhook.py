@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for all Python based Computer hooks.
-"""
+"""Base class for all Python based Computer hooks."""
 
 from typing import Dict, List, Optional
 

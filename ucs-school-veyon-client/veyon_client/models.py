@@ -36,7 +36,8 @@ class VeyonConnectionError(Exception):
 
 
 class VeyonError(Exception):
-    """Raised when the Veyon WebAPI returns a non-zero error code
+    """
+    Raised when the Veyon WebAPI returns a non-zero error code
 
     See the official documentation within
     https://docs.veyon.io/en/latest/developer/webapi.html#general

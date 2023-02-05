@@ -101,7 +101,6 @@ def check_target_dir(directory):
 
 def check_source_dir(prefixlist, directory):
     """either returns "" if everything is ok, or returns an error message"""
-
     # check directory
     if not os.path.isdir(directory):
         return "%s is not a directory" % directory
@@ -121,7 +120,6 @@ def check_source_dir(prefixlist, directory):
 
 def check_filesystem(directory):
     """make sure that we are dealing with a known filesystem"""
-
     ret, out = getstatusoutput("LC_ALL=C stat -f %s" % pipes.quote(directory))  # nosec
     myFs = ""
     for line in out.splitlines():
@@ -154,8 +152,10 @@ def move_dir(src, dst):
 
 
 def handler(dn, new, old, command):
-    """remove empty share directories
-    if object is really removed (not renamed)"""
+    """
+    remove empty share directories
+    if object is really removed (not renamed)
+    """
     if old and not new and not command == "r":
         name = old["cn"][0].decode("UTF-8")
 

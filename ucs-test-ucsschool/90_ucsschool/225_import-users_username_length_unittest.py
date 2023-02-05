@@ -27,9 +27,7 @@ class Test(CLI_Import_v2_Tester):
         self.usernames = []
 
     def test(self):
-        """
-        Bug #45577, #47222: allow import with usernames longer than 15 characters
-        """
+        """Bug #45577, #47222: allow import with usernames longer than 15 characters"""
         if self.ucr.get("ucsschool/username/max_length") is not None:
             univention.config_registry.handler_unset(["ucsschool/username/max_length"])
 

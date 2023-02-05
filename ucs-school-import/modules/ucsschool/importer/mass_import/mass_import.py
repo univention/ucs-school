@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Default mass import class.
-"""
+"""Default mass import class."""
 
 import datetime
 import logging
@@ -64,9 +62,7 @@ class MassImport(object):
     _pyhook_cache = {}
 
     def __init__(self, dry_run=True):  # type: (Optional[bool]) -> None
-        """
-        :param bool dry_run: set to False to actually commit changes to LDAP
-        """
+        """:param bool dry_run: set to False to actually commit changes to LDAP"""
         self.dry_run = dry_run
         self.config = Configuration()
         self.logger = logging.getLogger(__name__)

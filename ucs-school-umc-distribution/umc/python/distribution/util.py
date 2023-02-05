@@ -80,10 +80,11 @@ class InvalidProjectFilename(DistributionException):
 
 
 class _Dict(object):
-
-    """Custom dict-like class. The initial set of keyword arguments is stored
+    """
+    Custom dict-like class. The initial set of keyword arguments is stored
     in an internal dict. Entries of this intial set can be accessed directly
-    on the object (myDict.myentry = ...)."""
+    on the object (myDict.myentry = ...).
+    """
 
     def __init__(self, type, **initDict):
         initDict["__type__"] = type
@@ -146,7 +147,6 @@ class _Dict(object):
 
 
 class _DictEncoder(json.JSONEncoder):
-
     """A custom JSONEncoder class that can encode _Dict objects."""
 
     def default(self, obj):
@@ -333,8 +333,10 @@ class Project(_Dict):
         return os.path.join(user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name)
 
     def _convStr2Time(self, key):
-        """Converts the string value of the specified key in the internal dict
-        to a datetime instance."""
+        """
+        Converts the string value of the specified key in the internal dict
+        to a datetime instance.
+        """
         _dict = object.__getattribute__(self, "_dict")
         try:
             return datetime.strptime(_dict.get(key), "%Y-%m-%d %H:%M")
@@ -343,8 +345,10 @@ class Project(_Dict):
         return None
 
     def _convTime2String(self, key, time):
-        """Converts the time value of the specified key to string and saves it to
-        the internal dict. Parameter time may an instance of string or datetime."""
+        """
+        Converts the time value of the specified key to string and saves it to
+        the internal dict. Parameter time may an instance of string or datetime.
+        """
         _dict = object.__getattribute__(self, "_dict")
         if time is None:
             # unset value
@@ -375,8 +379,10 @@ class Project(_Dict):
         self._convTime2String("deadline", time)
 
     def validate(self):
-        """Validate the project data. In case of any errors with the data,
-        a ValueError with a proper error message is raised."""
+        """
+        Validate the project data. In case of any errors with the data,
+        a ValueError with a proper error message is raised.
+        """
         if not (isinstance(self.name, string_types) and self.name):
             raise ValueError(_("The given project directory name must be non-empty."))
         # disallow certain characters to avoid problems in Windows/Mac/Unix systems:
@@ -517,7 +523,6 @@ class Project(_Dict):
 
     def _register_at_jobs(self):
         """Registers at-jobs for distributing and collecting files."""
-
         # register the starting job
         # make sure that the startime, if given, lies in the future
         if self.starttime and self.starttime > datetime.now():
@@ -562,7 +567,6 @@ class Project(_Dict):
 
     def distribute(self, usersFailed=None):
         """Distribute the project data to all registrated receivers."""
-
         if not isinstance(usersFailed, list):
             usersFailed = []
 

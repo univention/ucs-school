@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Model/HTTP-API Serializers
-"""
+"""Model/HTTP-API Serializers"""
 
 from __future__ import unicode_literals
 
@@ -77,9 +75,7 @@ class TaskResultSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UsernameField(serializers.CharField):
-    """
-    Reduce a Django user object to its username string.
-    """
+    """Reduce a Django user object to its username string."""
 
     def run_validation(self, data=serializers.empty):
         if data and isinstance(data, User):

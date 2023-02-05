@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Default command line frontend for import.
-"""
+"""Default command line frontend for import."""
 
 import os
 from argparse import ArgumentParser
@@ -41,14 +39,10 @@ from six import string_types
 
 
 class ParseUserImportCmdline(object):
-    """
-    Setup a command line frontend.
-    """
+    """Setup a command line frontend."""
 
     def __init__(self):
-        """
-        Setup the parser. Override to add more arguments or change the defaults.
-        """
+        """Setup the parser. Override to add more arguments or change the defaults."""
         self.args = None
         # TODO: read defaults from user_import_defaults.json
         self.defaults = dict(
@@ -187,9 +181,7 @@ class ParseUserImportCmdline(object):
         return self.args
 
     def apply_quirks(self, settings):  # type: (Dict[str, Any]) -> Dict[str, Any]
-        """
-        Apply modifications that cannot be done automatically.
-        """
+        """Apply modifications that cannot be done automatically."""
         # A default for config["disabled_checks"] does not exist in any
         # official config file, thus setting the value type in
         # ReadOnlyDict._recursive_typed_update() will not work. Converting the

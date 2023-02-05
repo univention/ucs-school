@@ -729,13 +729,13 @@ def get_package_version(package_name):  # type: (str) -> str
 
 
 def add_or_remove_ucrv_value(ucrv, action, value, delimiter):
-    """Adds or removes a value to a ucrv. Delimiter splits the value of the existing ucr.
+    """
+    Adds or removes a value to a ucrv. Delimiter splits the value of the existing ucr.
 
     This code was refactored from ucs-school-lib/modify_ucr_list, so that it could also
     be used in the school_creation listener. Bcause the method is also called from a cli
     script it returns 0.
     """
-
     if action == "remove" and ucrv not in ucr.keys():
         return 0
     cur_val = ucr.get(ucrv, "")

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-CSV reader for CSV files created by TestUserCsvExporter.
-"""
+"""CSV reader for CSV files created by TestUserCsvExporter."""
 
 from ..configuration import Configuration
 from ..reader.csv_reader import CsvReader

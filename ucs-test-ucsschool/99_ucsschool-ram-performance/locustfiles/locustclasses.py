@@ -74,7 +74,6 @@ class UiUserClient(HttpUser):
         **kwargs
     ) -> requests.Response:
         """Wrapper method for HttpUser.client.post, adds auth token automatically"""
-
         headers = headers or {}
         header_keys = {h.lower() for h in headers}
 

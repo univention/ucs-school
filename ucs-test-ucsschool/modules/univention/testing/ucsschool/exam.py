@@ -63,8 +63,8 @@ def wait_replications_check_rejected_uniqueMember(existing_rejects):
 
 
 class Exam(object):
-
-    """Contains the needed functionality for exam module.\n
+    """
+    Contains the needed functionality for exam module.\n
     :param school: name of the school
     :type school: str
     :param room: name of room of the exam
@@ -196,7 +196,8 @@ class Exam(object):
         assert reqResult["success"], "Unable to finish exam (%r)" % param
 
     def genData(self, file_name, content_type, boundary, override_file_name=None):
-        """Generates data in the form to be sent via http POST request.\n
+        """
+        Generates data in the form to be sent via http POST request.\n
         :param file_name: file name to be uploaded
         :type file_name: str
         :param content_type: type of the content of the file
@@ -228,7 +229,8 @@ html5
         return data.replace("\n", "\r\n")
 
     def uploadFile(self, file_name, content_type=None, override_file_name=None):
-        """Uploads a file via http POST request.\n
+        """
+        Uploads a file via http POST request.\n
         :param file_name: file name to be uploaded
         :type file_name: str
         :param content_type: type of the content of the file

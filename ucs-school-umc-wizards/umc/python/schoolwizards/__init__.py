@@ -275,9 +275,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
     @LDAP_Connection(ADMIN_WRITE)
     def own_schools(self, ldap_admin_write=None):  # type: (Optional[LoType]) -> Set[str]
-        """
-        Returns a set of all schools the current user has.
-        """
+        """Returns a set of all schools the current user has."""
         if self._own_schools is None:
             try:
                 current_user = User.from_dn(self.user_dn, None, ldap_admin_write)  # type: User
@@ -290,9 +288,7 @@ class Instance(SchoolBaseModule, SchoolImport):
         return self._own_schools
 
     def is_domain_admin(self):  # type: () -> bool
-        """
-        Returns if the currently logged in user is a domain admin or not.
-        """
+        """Returns if the currently logged in user is a domain admin or not."""
         if self._user_is_domain_admin is None:
             self._user_is_domain_admin = (
                 "cn=Domain Admins,cn=groups,{}".format(ucr.get("ldap/base"))

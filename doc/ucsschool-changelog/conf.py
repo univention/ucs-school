@@ -18,7 +18,8 @@ from datetime import date
 
 
 def read_version_from_ci() -> str:
-    """Read the version for the documentation from the pipeline definition
+    """
+    Read the version for the documentation from the pipeline definition
 
     To not maintain the documentation version in different places, just define
     at one place and use it in different places.
@@ -31,7 +32,6 @@ def read_version_from_ci() -> str:
 
     :rtype: str
     """
-
     import yaml
 
     with open("../../.gitlab-ci/base-doc.yml", "r") as f:

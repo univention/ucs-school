@@ -52,9 +52,7 @@ class NoOXExamUserPyHook(ExamUserPyHook):
         super(NoOXExamUserPyHook, self).__init__(lo, dry_run=dry_run, *args, **kwargs)
 
     def pre_create(self, user_dn, al):
-        """
-        Deactivate OX user flag.
-        """
+        """Deactivate OX user flag."""
         for num, (k, v) in enumerate(al):
             if k == "isOxUser" and v == [b"OK"]:
                 al[num] = (k, [b"Not"])

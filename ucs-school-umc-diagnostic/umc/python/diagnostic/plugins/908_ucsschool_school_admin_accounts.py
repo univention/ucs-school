@@ -99,9 +99,7 @@ def make_warning_message(problem_dict, problem_desc):
 
 def search_admin_objects(lo, user_filter):
     # type: (access, str) -> Tuple[List[Dict[str, Union[str, List[str]]]], List[str]]
-    """
-    Searches for admin objects with object class ucsschoolAdministrator
-    """
+    """Searches for admin objects with object class ucsschoolAdministrator"""
     admins = []  # type: List[Dict[str, Union[str, List[str]]]]
     admin_dns = []  # type: List[str]
     for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool", "ucsschoolRole"]):
@@ -120,9 +118,7 @@ def search_admin_objects(lo, user_filter):
 
 def get_admin_schools(admin):
     # type: (Dict[str, List[str]]) -> List[str]
-    """
-    Retrieves the school names of the admin from its role property.
-    """
+    """Retrieves the school names of the admin from its role property."""
     return [get_role_info(role)[2] for role in admin["roles"] if role_school_admin in role]
 
 

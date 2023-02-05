@@ -69,7 +69,8 @@ class Instance(SchoolBaseModule):
         pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=True)
     )
     def query(self, request):
-        """Searches for internet filter rules
+        """
+        Searches for internet filter rules
         requests.options = {}
         'pattern' -- pattern to match within the rule name or the list of domains
         """
@@ -100,7 +101,8 @@ class Instance(SchoolBaseModule):
 
     @sanitize(StringSanitizer())
     def get(self, request):
-        """Returns the specified rules
+        """
+        Returns the specified rules
         requests.options = [ <ruleName>, ... ]
         """
         MODULE.info("internetrules.get: options: %s" % (request.options,))
@@ -124,7 +126,8 @@ class Instance(SchoolBaseModule):
 
     @sanitize(DictSanitizer(dict(object=StringSanitizer()), required=True))
     def remove(self, request):
-        """Removes the specified rules
+        """
+        Removes the specified rules
         requests.options = [ { "object": <ruleName> }, ... ]
         """
         MODULE.info("internetrules.remove: options: %s" % (request.options,))
@@ -235,7 +238,8 @@ class Instance(SchoolBaseModule):
         )
     )
     def add(self, request):
-        """Add the specified new rules:
+        """
+        Add the specified new rules:
         requests.options = [ {
             'object': {
                 'name': <str>,
@@ -246,7 +250,6 @@ class Instance(SchoolBaseModule):
             }
         }, ... ]
         """
-
         # try to create all specified projects
         result = []
         for ientry in request.options:
@@ -323,7 +326,6 @@ class Instance(SchoolBaseModule):
             }
         }, ... ]
         """
-
         # try to create all specified projects
         result = []
         for ientry in request.options:
@@ -459,7 +461,8 @@ class Instance(SchoolBaseModule):
     )
     @LDAP_Connection()
     def groups_assign(self, request, ldap_user_read=None, ldap_position=None):
-        """Assigns default rules to groups:
+        """
+        Assigns default rules to groups:
         request.options = [ { 'group': <groupDN>, 'rule': <ruleName> }, ... ]
         """
         MODULE.info("internetrules.groups_assign: options: %s" % str(request.options))

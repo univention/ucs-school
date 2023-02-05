@@ -103,7 +103,8 @@ class SchoolSearchBase(object):
 
     @classmethod
     def getOU(cls, dn):  # type: (str) -> str
-        """Return the school OU for a given DN.
+        """
+        Return the school OU for a given DN.
 
         >>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
         'dc1'
@@ -115,7 +116,8 @@ class SchoolSearchBase(object):
 
     @classmethod
     def getOUDN(cls, dn):  # type: (str) -> str
-        """Return the School OU-DN part for a given DN.
+        """
+        Return the School OU-DN part for a given DN.
 
         >>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
         'Ou=dc1,oU=dc,dc=foo,dc=bar'

@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-HTTP API Client
-"""
+"""HTTP API Client"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -86,49 +84,37 @@ class ApiError(Exception):
 
 
 class BadRequest(ApiError):
-    """
-    HTTP 400
-    """
+    """HTTP 400"""
 
     pass
 
 
 class PermissionError(ApiError):
-    """
-    HTTP 401|403
-    """
+    """HTTP 401|403"""
 
     pass
 
 
 class ObjectNotFound(ApiError):
-    """
-    HTTP 404
-    """
+    """HTTP 404"""
 
     pass
 
 
 class ServerError(ApiError):
-    """
-    HTTP 5xx
-    """
+    """HTTP 5xx"""
 
     pass
 
 
 class ConnectionError(ApiError):
-    """
-    Cannot establish / lost connection to server.
-    """
+    """Cannot establish / lost connection to server."""
 
     pass
 
 
 class IllegalURLError(ApiError):
-    """
-    URLs returned from API root do not meet expectation.
-    """
+    """URLs returned from API root do not meet expectation."""
 
     pass
 

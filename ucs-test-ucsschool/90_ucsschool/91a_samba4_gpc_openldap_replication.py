@@ -47,9 +47,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
                 self.delete_samba_gpo()
 
     def create_gpo(self):
-        """
-        Using samba-tool creates a GPO.
-        """
+        """Using samba-tool creates a GPO."""
         display_name = "ucs_test_school_gpo_" + random_username(8)
 
         print(
@@ -95,9 +93,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         return self.create_and_run_process(cmd)
 
     def check_gpo_replicated(self, gpo_reference):
-        """
-        Check the Primary Directory Node OpenLDAP for a created GPO object.
-        """
+        """Check the Primary Directory Node OpenLDAP for a created GPO object."""
         gpo_search = ldap.filter.filter_format("(cn=%s)", (gpo_reference,))
         for _ in range(5):
             try:

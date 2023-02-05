@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Django settings for the UCS@school import HTTP API.
-"""
+"""Django settings for the UCS@school import HTTP API."""
 
 from __future__ import absolute_import, unicode_literals
 

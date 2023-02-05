@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for UCS@school import tool cmdline frontends.
-"""
+"""Base class for UCS@school import tool cmdline frontends."""
 import grp
 import logging
 import os

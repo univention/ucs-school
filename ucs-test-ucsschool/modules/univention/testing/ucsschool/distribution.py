@@ -20,8 +20,8 @@ from univention.testing.umc import Client
 
 
 class Distribution(object):
-
-    """Contains the needed functionality for Materials distribution.
+    """
+    Contains the needed functionality for Materials distribution.
     By default the distribution is manual.\n
     :param school: name of the ou
     :type school: str
@@ -119,7 +119,8 @@ class Distribution(object):
         ]
 
     def query(self, filt="private", pattern=""):
-        """Calles 'distribution/query'
+        """
+        Calles 'distribution/query'
         :param pattern: the pattern to use in the search
         :type pattern: str
         """
@@ -136,7 +137,8 @@ class Distribution(object):
         return reqResult[0]
 
     def idir(self, path):
-        """Dir a specific path.\n
+        """
+        Dir a specific path.\n
         :param path: wanted path
         :type path: str
         :return: list of file names
@@ -148,7 +150,8 @@ class Distribution(object):
         return files
 
     def genData(self, file_name, content_type, boundary, flavor, override_file_name=None):
-        """Generates data in the form to be sent via http POST request.\n
+        """
+        Generates data in the form to be sent via http POST request.\n
         :param file_name: file name to be uploaded
         :type file_name: str
         :param content_type: type of the content of the file
@@ -184,7 +187,8 @@ html5
         return data.replace("\n", "\r\n")
 
     def uploadFile(self, file_name, content_type=None, override_file_name=None):
-        """Uploads a file via http POST request.\n
+        """
+        Uploads a file via http POST request.\n
         :param file_name: file name to be uploaded
         :type file_name: str
         :param content_type: type of the content of the file
@@ -200,7 +204,8 @@ html5
         self.client.request("POST", "upload/distribution/upload", data, headers=header_content).result
 
     def add(self):
-        """Create files and upload them then add the project,
+        """
+        Create files and upload them then add the project,
         calls: 'distribution/add'
         """
         # creatng and uploading the files
@@ -239,7 +244,8 @@ html5
             utils.fail("Unable to add project (%r)" % (param,))
 
     def check_add(self):
-        """Calls 'distribution/query'
+        """
+        Calls 'distribution/query'
         and check the existance of the added project
         """
         print("Checking %s addition" % (self.name,))
@@ -259,7 +265,8 @@ html5
         files=[],
         recipients=[],
     ):
-        """Modifies the already existing project.\n
+        """
+        Modifies the already existing project.\n
         :param description: description of the project to be added later
         :type description: str
         :param distributeTime: time for automatic distribution
@@ -335,7 +342,8 @@ html5
             self.recipients = recipients
 
     def check_put(self, previousGetResult):
-        """Calls 'distribution/get' and check the modified project
+        """
+        Calls 'distribution/get' and check the modified project
         :param previousGetResult: info from previous get
         :type previousGetResult: dict
         check changing sates for distribution and collection
@@ -420,7 +428,8 @@ html5
         )
 
     def put_fail(self, before_type, after_type, before_time, after_time, before_atJob, after_atJob):
-        """Checks if the atjobs are in the expected formats
+        """
+        Checks if the atjobs are in the expected formats
         :param before_type: type before using put command
         :type before_type: str
         :param after_type: type after using put command
@@ -466,7 +475,8 @@ html5
         assert reqResult[0]["success"], "Unable to distribute project (%r)" % (self.name,)
 
     def check_distribute(self, users):
-        """Checks if the distribution was successful
+        """
+        Checks if the distribution was successful
         by checking the file system.\n
         :param users: names of users to have the material distributed for
         :type users: list of str
@@ -492,7 +502,8 @@ html5
         assert reqResult[0]["success"], "Unable to collect project (%r)" % (self.name,)
 
     def check_collect(self, users):
-        """Checks if the collection was successful
+        """
+        Checks if the collection was successful
         by checking the file system.\n
         :param users: names of users to have the material collected from
         :type users: list of str
@@ -519,7 +530,8 @@ html5
         assert not reqResult, "Unable to remove project (%r)" % (param,)
 
     def check_remove(self):
-        """Calls 'distribution/query'
+        """
+        Calls 'distribution/query'
         and check the existance of the removed project
         """
         print("Checking %s removal" % (self.name,))
@@ -547,7 +559,8 @@ html5
         assert project_name in q, "Project %s was not adopted successfully" % (project_name,)
 
     def getUserFilesPath(self, user, purpose="distribute", version=1):
-        """Gets the correct files path for a specific user depending on
+        """
+        Gets the correct files path for a specific user depending on
         the value of the ucr variable ucsschool/import/roleshare.\n
         :param user: user name
         :type user: str

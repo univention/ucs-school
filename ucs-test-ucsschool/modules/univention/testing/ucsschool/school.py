@@ -65,8 +65,8 @@ def create_dc_slave(udm, school=None):
 
 
 class School(object):
-
-    """Contains the needed functuality for schools in the UMC module schoolwizards/schools.
+    """
+    Contains the needed functuality for schools in the UMC module schoolwizards/schools.
     By default they are randomly formed.\n
     :param connection:
     :type connection: UMC connection object

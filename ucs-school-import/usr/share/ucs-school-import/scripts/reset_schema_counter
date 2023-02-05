@@ -28,9 +28,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Reset counter of unique usernames and email addresses.
-"""
+"""Reset counter of unique usernames and email addresses."""
 
 import sys
 from argparse import ArgumentParser

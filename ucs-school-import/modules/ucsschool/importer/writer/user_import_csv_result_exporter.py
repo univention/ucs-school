@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Write the result of a user import job to a CSV file.
-"""
+"""Write the result of a user import job to a CSV file."""
 
 from ucsschool.lib.roles import role_pupil
 
@@ -41,9 +39,7 @@ from .result_exporter import ResultExporter
 
 
 class UserImportCsvResultExporter(ResultExporter):
-    """
-    Export the results of the user import to a CSV file.
-    """
+    """Export the results of the user import to a CSV file."""
 
     field_names = (
         "line",

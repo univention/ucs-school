@@ -47,9 +47,7 @@ class Test(CLI_Import_v2_Tester):
         super(Test, self).cleanup()
 
     def test(self):
-        """
-        Bug #42144 / #45524: create users and check if the FormatTestPyHook did do its job.
-        """
+        """Bug #42144 / #45524: create users and check if the FormatTestPyHook did do its job."""
         source_uid = "source_uid-{}".format(uts.random_string())
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:Benutzername", "name")

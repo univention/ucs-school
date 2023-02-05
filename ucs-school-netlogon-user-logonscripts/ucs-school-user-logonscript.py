@@ -107,9 +107,7 @@ def relevant_change(
 
 def handle_share(dn, new, old, lo, user_queue):
     # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
-    """
-    Handles changes of share objects by triggering group changes for the relevant groups.
-    """
+    """Handles changes of share objects by triggering group changes for the relevant groups."""
 
     def add_group_change_to_queue(gidNumber):  # type: (str) -> None
         if not gidNumber:
@@ -151,9 +149,7 @@ def handle_share(dn, new, old, lo, user_queue):
 
 def handle_group(dn, new, old, lo, user_queue):
     # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
-    """
-    Handles group changes by adding relevant user object DNs to the user queue.
-    """
+    """Handles group changes by adding relevant user object DNs to the user queue."""
     old_members = set(old.get("uniqueMember", []))
     new_members = set(new.get("uniqueMember", []))
     Log.info("handle_group: dn: %s" % (dn,))
@@ -187,9 +183,7 @@ def handle_group(dn, new, old, lo, user_queue):
 
 def handle_user(dn, new, old, lo, user_queue):
     # type: (str, Dict[str,List[bytes]], Dict[str,List[bytes]], univention.admin.uldap.access, SqliteQueue) -> None  # noqa: E501
-    """
-    Handles user changes by adding the DN of the user object to the user queue.
-    """
+    """Handles user changes by adding the DN of the user object to the user queue."""
     Log.info("handle_user: add %s" % (dn,))
     if old and new:
         attr_list = [

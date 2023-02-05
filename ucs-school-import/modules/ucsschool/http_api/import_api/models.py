@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Database / Resource models
-"""
+"""Database / Resource models"""
 
 from __future__ import unicode_literals
 

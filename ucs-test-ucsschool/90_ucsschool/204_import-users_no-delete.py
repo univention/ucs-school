@@ -20,9 +20,7 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formerly test_create_modify_only()
-        """
-        Bug #41775, #41350: check if the --no-delete option works as expected
-        """
+        """Bug #41775, #41350: check if the --no-delete option works as expected"""
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config = copy.deepcopy(self.default_config)
         config.update_entry("csv:mapping:Benutzername", "name")

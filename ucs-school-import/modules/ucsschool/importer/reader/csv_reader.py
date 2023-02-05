@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-CSV reader for CSV files using the new import format.
-"""
+"""CSV reader for CSV files using the new import format."""
 
 import codecs
 import sys
@@ -75,9 +73,7 @@ def py3_decode(data, encoding):  # type: (Union[str, bytes], str) -> str
 
 
 class CsvReader(BaseReader):
-    """
-    Reads CSV files and turns lines to ImportUser objects.
-    """
+    """Reads CSV files and turns lines to ImportUser objects."""
 
     _attrib_names = {}  # type: Dict[str, Iterable[str]]  # cache for Attribute names
     _role_method = None  # type: Callable  # method to get users role

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Singleton to the factory currently in use.
-"""
+"""Singleton to the factory currently in use."""
 
 
 import importlib
@@ -70,9 +68,7 @@ def load_class(dotted_class_name):  # type: (str) -> type
 
 
 class Factory(object):
-    """
-    Singleton to the global abstract factory object.
-    """
+    """Singleton to the global abstract factory object."""
 
     class __SingleFac:
         def __init__(self, factory):  # type: (Optional[DefaultUserImportFactory]) -> None

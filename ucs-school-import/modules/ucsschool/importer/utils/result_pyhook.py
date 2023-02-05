@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for all Python based Result-Pyhooks.
-"""
+"""Base class for all Python based Result-Pyhooks."""
 
 from typing import TYPE_CHECKING
 

@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Configuration classes.
-"""
+"""Configuration classes."""
 
 import json
 import logging
@@ -134,9 +132,7 @@ class ConfigurationFile(object):
 
     @classmethod
     def get_schema(cls):  # type: () -> Dict[str, Any]
-        """
-        :raises InitialisationError: when the json schema cannot be read
-        """
+        """:raises InitialisationError: when the json schema cannot be read"""
         if not cls._schema:
             try:
                 with open(USER_IMPORT_SCHEMA_FILE, "rb") as schema_file:
@@ -215,9 +211,7 @@ class ReadOnlyDict(dict):
 
 
 class Configuration(object):
-    """
-    Singleton to the global configuration object.
-    """
+    """Singleton to the global configuration object."""
 
     class __SingleConf:
         conffiles = []

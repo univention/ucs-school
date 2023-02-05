@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-CSV reader for CSV files created for HTTP-API import.
-"""
+"""CSV reader for CSV files created for HTTP-API import."""
 
 from ucsschool.lib.models.user import Staff
 
@@ -52,9 +50,7 @@ class HttpApiCsvReader(CsvReader):
         super(HttpApiCsvReader, self).__init__(filename, header_lines)
 
     def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
-        """
-        Handle class names (prepend school name to class names).
-        """
+        """Handle class names (prepend school name to class names)."""
         if mapping_value == "school_classes":
             if not isinstance(import_user, Staff):  # ignore column if user is staff
                 import_user.school_classes = {

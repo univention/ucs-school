@@ -50,9 +50,7 @@ def run_cmd(cmd, stdout=PIPE, stdin=None, std_in=None):
 
 
 def remove_samba_warnings(input_str):
-    """
-    Removes the Samba Warning/Note from the given input_str.
-    """
+    """Removes the Samba Warning/Note from the given input_str."""
     # ignoring following messages (Bug #37362):
     input_str = input_str.replace("WARNING: No path in service IPC$ - making it unavailable!", "")
     return input_str.replace("NOTE: Service IPC$ is flagged unavailable.", "").strip()
@@ -203,9 +201,7 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
 
 
 def samba_check_gpo_exists(gpo_name):
-    """
-    Checks that GPO with 'gpo_name' exists via samba-tool.
-    """
+    """Checks that GPO with 'gpo_name' exists via samba-tool."""
     print("\nChecking that GPO '%s' exists." % gpo_name)
     cmd = ("samba-tool", "gpo", "listall")
 
@@ -220,9 +216,7 @@ def samba_check_gpo_exists(gpo_name):
 
 
 def windows_set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_type, server=""):
-    """
-    Sets the 'value_name', 'value' and 'value_type' for 'gpo_name' Registry Key
-    """
+    """Sets the 'value_name', 'value' and 'value_type' for 'gpo_name' Registry Key"""
     print("\nModifying the '%s' GPO '%s' registry key " % (gpo_name, reg_key))
     try:
         ret_code, stdout, stderr = Win.Set_GPRegistryValue(
@@ -238,9 +232,7 @@ def windows_set_gpo_registry_value(gpo_name, reg_key, value_name, value, value_t
 
 
 def samba_get_gpo_uid_by_name(gpo_name):
-    """
-    Returns the {GPO UID} for the given gpo_name using samba-tool.
-    """
+    """Returns the {GPO UID} for the given gpo_name using samba-tool."""
     stdout, stderr = run_samba_tool(("samba-tool", "gpo", "listall"))
     if not stdout:
         utils.fail("The samba-tool did not produce any output when list of all GPOs is expected.")
@@ -375,9 +367,7 @@ def samba_check_gpo_application_listed(gpo_name, username):
 
 
 def dns_get_host_ip(host_name, all=False):
-    """
-    Lookup host_name;
-    """
+    """Lookup host_name;"""
     print("\nLooking for '%s' host ip address:" % host_name)
 
     ips = []
@@ -432,9 +422,7 @@ def udm_get_windows_computer():
 
 
 def windows_check_domain():
-    """
-    Runs powershell script via Winexe to check Windows Host domain is correct.
-    """
+    """Runs powershell script via Winexe to check Windows Host domain is correct."""
     print("Trying to check Windows host '%s' domain" % Win.client)
     try:
         Win.winexec("check-domain", domainname)

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class for result exporters.
-"""
+"""Base class for result exporters."""
 
 import os.path
 import stat

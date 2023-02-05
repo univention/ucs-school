@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Representation of a user read from a file.
-"""
+"""Representation of a user read from a file."""
 
 import datetime
 import re
@@ -460,9 +458,7 @@ class ImportUser(User):
                 )
 
     def deactivate(self):  # type: () -> None
-        """
-        Deactivate user account. Caller must run modify().
-        """
+        """Deactivate user account. Caller must run modify()."""
         self.disabled = "1"
 
     def expire(self, expiry):  # type: (str) -> None
@@ -667,9 +663,7 @@ class ImportUser(User):
         self.make_source_uid()
 
     def make_birthday(self):  # type: () -> Optional[str]
-        """
-        Set User.birthday attribute.
-        """
+        """Set User.birthday attribute."""
         if self.birthday:
             try:
                 self.birthday = self.parse_date(self.birthday)
@@ -686,9 +680,7 @@ class ImportUser(User):
         return self.birthday
 
     def make_expiration_date(self):  # type: () -> Optional[str]
-        """
-        Set User.expiration_date attribute.
-        """
+        """Set User.expiration_date attribute."""
         if self.expiration_date:
             self.logger.warning(
                 "The expiration date is usually set by the import itself. Setting it manually may lead "
@@ -806,9 +798,7 @@ class ImportUser(User):
         return self.school_classes
 
     def make_disabled(self):  # type: () -> str
-        """
-        Set User.disabled attribute.
-        """
+        """Set User.disabled attribute."""
         if self.disabled is not None:
             return self.disabled
 
@@ -828,9 +818,7 @@ class ImportUser(User):
         return self.disabled
 
     def make_firstname(self):  # type: () -> str
-        """
-        Normalize given name if set from import data or create from scheme.
-        """
+        """Normalize given name if set from import data or create from scheme."""
         if self.firstname:
             if self.config.get("normalize", {}).get("firstname", False):
                 self.firstname = self.normalize(self.firstname)  # type: str
@@ -841,9 +829,7 @@ class ImportUser(User):
         return self.firstname or ""
 
     def make_lastname(self):  # type: () -> str
-        """
-        Normalize family name if set from import data or create from scheme.
-        """
+        """Normalize family name if set from import data or create from scheme."""
         if self.lastname:
             if self.config.get("normalize", {}).get("lastname", False):
                 self.lastname = self.normalize(self.lastname)  # type: str
@@ -899,17 +885,13 @@ class ImportUser(User):
         return self.email or ""
 
     def make_password(self):  # type: () -> str
-        """
-        Create random password (if not already set).
-        """
+        """Create random password (if not already set)."""
         if not self.password:
             self.password = create_passwd(self.config["password_length"])  # type: str
         return self.password
 
     def make_record_uid(self):  # type: () -> str
-        """
-        Create ucsschoolRecordUID (record_uid) (if not already set).
-        """
+        """Create ucsschoolRecordUID (record_uid) (if not already set)."""
         if self.record_uid:
             pass
         elif self._schema_write_check("record_uid", "record_uid", "ucsschoolRecordUID"):
@@ -921,9 +903,7 @@ class ImportUser(User):
         return self.record_uid or ""
 
     def make_source_uid(self):  # type: () -> str
-        """
-        Set the ucsschoolSourceUID (source_uid) (if not already set).
-        """
+        """Set the ucsschoolSourceUID (source_uid) (if not already set)."""
         if self.source_uid:
             if self.source_uid != self.config["source_uid"]:
                 raise NotSupportedError(
@@ -1149,9 +1129,7 @@ class ImportUser(User):
         return s
 
     def normalize_udm_properties(self):  # type: () -> None
-        """
-        Normalize data in `self.udm_properties`.
-        """
+        """Normalize data in `self.udm_properties`."""
 
         def normalize_recursive(item):
             if isinstance(item, dict):
@@ -1584,9 +1562,7 @@ class ImportUser(User):
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):
         # type: (UdmObjectType, str) -> Union[None, Type["ImportUser"]]
-        """
-        IMPLEMENTME if you subclass!
-        """
+        """IMPLEMENTME if you subclass!"""
         klass = super(ImportUser, cls).get_class_for_udm_obj(udm_obj, school)
         if issubclass(klass, TeachersAndStaff):
             return ImportTeachersAndStaff

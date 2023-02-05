@@ -25,9 +25,7 @@ from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 class TestS4SlaveUserCreationDenied(TestSamba4):
     def __init__(self):
-        """
-        Test class constructor.
-        """
+        """Test class constructor."""
         super(TestS4SlaveUserCreationDenied, self).__init__()
 
         self.credentials = []  # for use with 'samba-tool'
@@ -90,9 +88,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
             )
 
     def main(self):
-        """
-        Test that user objects creation is blocked on S4 Replica Directory Node.
-        """
+        """Test that user objects creation is blocked on S4 Replica Directory Node."""
         try:
             self.get_ucr_test_credentials()
             self.credentials = ["--username=" + self.admin_username, "--password=" + self.admin_password]

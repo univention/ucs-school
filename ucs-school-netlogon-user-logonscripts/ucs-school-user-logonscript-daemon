@@ -67,9 +67,7 @@ class Log(object):
 
     @classmethod
     def set_debug_level(cls, level):
-        """
-        Set debug log level (e.g. to logging.DEBUG)
-        """
+        """Set debug log level (e.g. to logging.DEBUG)"""
         cls.setup()
         cls.logger.setLevel(level)
 
@@ -450,9 +448,7 @@ class QueueHandler:
             os.chmod(filepath, 0o755)  # nosec
 
     def get_group_memberships(self, dn):
-        """
-        Returns a frozenset of gidNumbers the specified user is member of.
-        """
+        """Returns a frozenset of gidNumbers the specified user is member of."""
         try:
             res = self.lo.search(
                 scope="sub",
@@ -478,9 +474,7 @@ class QueueHandler:
             raise
 
     def handle_user_change(self, dn, unchecked_uid):  # type: (str, str) -> None
-        """
-        (Re)Create a vbs logonscript for the user specified by the given user DN.
-        """
+        """(Re)Create a vbs logonscript for the user specified by the given user DN."""
         Log.debug("fetching data for %s", dn)
         new = self.lo.get(dn)
         if not new:
@@ -586,16 +580,12 @@ class QueueHandler:
         os.chmod(self.FN_PID, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     def teardown_signal_handling(self):
-        """
-        Removes PID file, if it still exists.
-        """
+        """Removes PID file, if it still exists."""
         if os.path.isfile(self.FN_PID):
             os.remove(self.FN_PID)
 
     def signal_term(self, signal_number, frame):
-        """
-        shut down gracefully
-        """
+        """shut down gracefully"""
         Log.warning("signal received - shutting down gracefully")
         self.shutdown_requested = True
 

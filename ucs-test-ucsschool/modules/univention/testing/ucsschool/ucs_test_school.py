@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # UCS test
-"""
-API for testing UCS@school and cleaning up after performed tests
-"""
+"""API for testing UCS@school and cleaning up after performed tests"""
 # Copyright 2014-2023 Univention GmbH
 #
 # http://www.univention.de/
@@ -353,7 +351,6 @@ class UCSTestSchool(object):
     def cleanup_ou(self, ou_name, wait_for_replication=True, retry=True):
         # type: (str, Optional[bool], Optional[bool]) -> bool
         """Removes the given school ou and all its corresponding objects like groups"""
-
         logger.info("*** Purging OU %r and related objects", ou_name)
         if wait_for_replication:
             # Ensure the ou has been fully replicated before deleting it.
@@ -776,9 +773,7 @@ class UCSTestSchool(object):
             raise SchoolError('The OU name "%s" is too short for district mode' % ou_name)
 
     def get_ou_base_dn(self, ou_name):
-        """
-        Returns the LDAP DN for the given school OU name (the district mode will be considered).
-        """
+        """Returns the LDAP DN for the given school OU name (the district mode will be considered)."""
         return "%(school)s,%(district)s%(basedn)s" % {
             "school": "ou=%s" % ou_name,
             "basedn": self.LDAP_BASE,
@@ -788,9 +783,7 @@ class UCSTestSchool(object):
         }
 
     def get_user_container(self, ou_name, is_teacher=False, is_staff=False):
-        """
-        Returns user container for specified user role and ou_name.
-        """
+        """Returns user container for specified user role and ou_name."""
         if is_teacher and is_staff:
             return "cn=%s,cn=users,%s" % (self.CN_TEACHERS_STAFF, self.get_ou_base_dn(ou_name))
         if is_teacher:
@@ -800,15 +793,11 @@ class UCSTestSchool(object):
         return "cn=%s,cn=users,%s" % (self.CN_STUDENT, self.get_ou_base_dn(ou_name))
 
     def get_workinggroup_dn(self, ou_name, group_name):
-        """
-        Return the DN of the specified working group.
-        """
+        """Return the DN of the specified working group."""
         return "cn=%s-%s,cn=schueler,cn=groups,%s" % (ou_name, group_name, self.get_ou_base_dn(ou_name))
 
     def get_workinggroup_share_dn(self, ou_name, group_name):
-        """
-        Return the DN of the share object for the specified working group.
-        """
+        """Return the DN of the share object for the specified working group."""
         return "cn=%s-%s,cn=shares,%s" % (ou_name, group_name, self.get_ou_base_dn(ou_name))
 
     def create_teacher(self, *args, **kwargs):
@@ -1514,9 +1503,7 @@ class OUCloner(object):
 
     @staticmethod
     def replace_case_sesitive_and_lower(s, ori, new):  # type: (str, str, str) -> str
-        """
-        Replace the string `ori` in `s` with `new`. Do it both case-sensitive and with both lower-case.
-        """
+        """Replace the string `ori` in `s` with `new`. Do it both case-sensitive and with both lower-case."""
         try:
             new_s = s.replace(ori, new)
             return new_s.replace(ori.lower(), new.lower())

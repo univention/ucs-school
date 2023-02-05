@@ -15,8 +15,8 @@ from univention.testing.umc import Client
 
 
 class Klasse(object):
-
-    """Contains the needed functionality for classes in an already created OU,
+    """
+    Contains the needed functionality for classes in an already created OU,
     By default they are randomly formed except the OU, should be provided\n
     :param school: name of the ou
     :type school: str

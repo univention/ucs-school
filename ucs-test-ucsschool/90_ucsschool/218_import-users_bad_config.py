@@ -27,9 +27,7 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formally test_bad_config()
-        """
-        Bug #42373: check that errors in configuration files are written to a logfile
-        """
+        """Bug #42373: check that errors in configuration files are written to a logfile"""
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config = copy.deepcopy(self.default_config)
         config.update_entry("source_uid", source_uid)

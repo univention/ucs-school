@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-UCS@school import frontend class
-"""
+"""UCS@school import frontend class"""
 
 from __future__ import unicode_literals
 
@@ -54,9 +52,7 @@ from .utils import get_wsgi_uid_gid
 
 
 class HttpApiImportFrontend(UserImportCommandLine):
-    """
-    Fake cmdline import frontend class. Simulates argparse results and starts import.
-    """
+    """Fake cmdline import frontend class. Simulates argparse results and starts import."""
 
     # TODO: replace this with a class with an interface appropriate for remote API calls.
     # Especially we have to (not) catch the exceptions here, so they end up in the TaskResult.

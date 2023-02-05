@@ -84,7 +84,6 @@ class Test(CLI_Import_v2_Tester):
           3. has 0 classes -> import w/o classes -> has 0 classes
           4. has 2 classes from 2 OUs -> import w/o classes -> has 2 classes from 2 OUs
         """
-
         self.log.info("*** Test case 1/4: has 2 classes -> import w/o classes -> has 2 classes")
         self.log.info("*** (1/4) Importing new users of all roles and two classes from 1 OU.")
         config, source_uid = self.new_config()

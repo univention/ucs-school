@@ -145,9 +145,7 @@ class SchoolValidator(object):
 
     @classmethod
     def roles_at_school(cls, schools):  # type: (List[str]) -> List[str]
-        """
-        Get all roles for all schools which the object is expected to have.
-        """
+        """Get all roles for all schools which the object is expected to have."""
         expected_roles = []
         for role in cls.roles:
             for school in schools:
@@ -203,9 +201,7 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def expected_groups(cls, obj):  # type: (Dict[str, Any]) -> List[str]
-        """
-        Collect expected groups of user. Overwrite for special cases in subclasses.
-        """
+        """Collect expected groups of user. Overwrite for special cases in subclasses."""
         expected_groups = []
         schools = obj["props"].get("school", [])
         expected_groups.extend(cls.domain_users_group(schools))
@@ -233,9 +229,7 @@ class UserValidator(SchoolValidator):
     @classmethod
     def validate_part_of_school(cls, roles, schools):
         # type: (List[Tuple[str]], List[str]) -> Optional[str]
-        """
-        Users should not have roles with schools which they don't have.
-        """
+        """Users should not have roles with schools which they don't have."""
         schools = [s.lower() for s in schools]
         missing_schools = set(s for r, c, s in roles if c == "school" and s.lower() not in schools)
         if missing_schools:
@@ -243,9 +237,7 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def validate_student_roles(cls, roles):  # type: (List[Tuple[str]]) -> Optional[str]
-        """
-        Students should not have teacher, staff or school_admin role.
-        """
+        """Students should not have teacher, staff or school_admin role."""
         not_allowed_for_students = [role_teacher, role_staff, role_school_admin]
         for r, c, s in roles:
             if (cls.is_student and r in not_allowed_for_students) or (
@@ -255,9 +247,7 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def domain_users_group(cls, schools):  # type: (List[str]) -> List[str]
-        """
-        Users should be inside the `Domain Users OU` of their schools.
-        """
+        """Users should be inside the `Domain Users OU` of their schools."""
         return [
             "cn=Domain Users {0},cn=groups,ou={0},{1}".format(escape_dn_chars(school), ucr["ldap/base"])
             for school in schools
@@ -274,9 +264,7 @@ class UserValidator(SchoolValidator):
 
     @classmethod
     def validate_group_membership(cls, groups):  # type: (List[str]) -> List[str]
-        """
-        Validate group membership, e.g. students should not be in teachers group.
-        """
+        """Validate group membership, e.g. students should not be in teachers group."""
         return [
             "Disallowed member of group {}".format(dn)
             for dn in groups
@@ -296,9 +284,7 @@ class StudentValidator(UserValidator):
 
     @classmethod
     def expected_groups(cls, obj):  # type: (Dict[str, Any]) -> List[str]
-        """
-        Students have at least one class at every school.
-        """
+        """Students have at least one class at every school."""
         schools = obj["props"].get("school", [])
         expected_groups = super(StudentValidator, cls).expected_groups(obj)
         expected_groups.extend([cls.get_search_base(school).classes for school in schools])
@@ -432,9 +418,7 @@ class GroupAndShareValidator(SchoolValidator):
 
     @classmethod
     def school_prefix(cls, name, school):  # type: (str, str) -> Optional[str]
-        """
-        Groups and Shares should have a school prefix in their name, like `DEMOSCHOOL-Democlass`
-        """
+        """Groups and Shares should have a school prefix in their name, like `DEMOSCHOOL-Democlass`"""
         if role_marketplace_share not in cls.roles:
             if school and name and not name.startswith("{}-".format(school)):
                 return "has an incorrect school prefix for school {}.".format(school)

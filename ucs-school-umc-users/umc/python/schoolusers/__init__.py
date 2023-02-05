@@ -141,7 +141,6 @@ class Instance(SchoolBaseModule):
         :return: -1 if no expiration day is set, 0 if already expired, >0 otherwise
         :rtype: int
         """
-
         if not timestr:
             return -1
         current_timestamp = time()

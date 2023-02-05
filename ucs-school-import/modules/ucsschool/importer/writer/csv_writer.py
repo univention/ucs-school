@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Write the result of a user import job to a CSV file.
-"""
+"""Write the result of a user import job to a CSV file."""
 
 import os
 from csv import QUOTE_ALL, DictWriter, excel

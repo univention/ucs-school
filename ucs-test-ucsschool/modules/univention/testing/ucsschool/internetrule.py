@@ -26,8 +26,8 @@ except NameError:
 
 
 class InternetRule(object):
-
-    """Contains the needed functionality for internet rules.
+    """
+    Contains the needed functionality for internet rules.
     By default they are randomly formed\n
     :param connection:
     :type connection: UMC connection object
@@ -93,9 +93,11 @@ class InternetRule(object):
         assert reqResult[0]["success"], "Unable to define rule (%r)" % (param,)
 
     def get(self, should_exist):
-        """gets internet rule via UMCP\n
+        """
+        gets internet rule via UMCP\n
         :param should_exist: True if the rule is expected to be found
-        :type should_exist: bool"""
+        :type should_exist: bool
+        """
         print("Calling %s for %s" % ("internetrules/get", self.name))
         reqResult = self.client.umc_command("internetrules/get", [self.name]).result
         assert bool(reqResult) == should_exist, "Unexpected fetching result for internet rule (%r)" % (
@@ -103,7 +105,8 @@ class InternetRule(object):
         )
 
     def put(self, new_name=None, new_type=None, new_domains=None, new_wlan=None, new_priority=None):
-        """Modify internet rule via UMCP\n
+        """
+        Modify internet rule via UMCP\n
         with no args passed this only reset the rule properties\n
         :param new_name:
         :type new_name: str
@@ -154,7 +157,8 @@ class InternetRule(object):
     # Fetch the values from ucr and check if it matches
     # the correct values for the rule
     def checkUcr(self, should_match):
-        """check ucr for internet rule\n
+        """
+        check ucr for internet rule\n
         Fetch the values from ucr and check if it matches
         the correct values for the rule\n
         :param should_match:
@@ -195,7 +199,8 @@ class InternetRule(object):
     # Assign internet rules to workgroups/classes
     # return a tuple (groupName, ruleName)
     def assign(self, school, groupName, groupType, default=False):
-        """Assign internet rule via UMCP\n
+        """
+        Assign internet rule via UMCP\n
         :param school: name of the ou
         :type school: str
         :param groupName: name of the group or class
@@ -229,7 +234,8 @@ class InternetRule(object):
 
     # returns a list of all the existing internet rules via UMCP
     def allRules(self):
-        """Get all defined rules via UMCP\n
+        """
+        Get all defined rules via UMCP\n
         :returns: [str] list of rules names
         """
         print("Calling %s = get all defined rules" % ("internetrules/query"))
@@ -240,8 +246,8 @@ class InternetRule(object):
 
 
 class Check(object):
-
-    """Contains the needed functuality for checks related to internet rules
+    """
+    Contains the needed functuality for checks related to internet rules
     within groups/classes.\n
     :param school: name of the ou
     :type school: str

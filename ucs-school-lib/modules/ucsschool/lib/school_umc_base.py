@@ -76,7 +76,8 @@ class SchoolSanitizer(StringSanitizer):
 
 
 class SchoolBaseModule(Base):
-    """This class serves as base class for UCS@school UMC modules that need
+    """
+    This class serves as base class for UCS@school UMC modules that need
     LDAP access. It initiates the list of available OUs (self.availableSchools) and
     initiates the search bases (self.searchBase). set_bind_function() is called
     automatically to allow LDAP connections. In order to integrate this class

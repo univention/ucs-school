@@ -109,7 +109,8 @@ class Instance(SchoolBaseModule):
     @sanitize(school=SchoolSanitizer(required=True))
     @LDAP_Connection()
     def printers(self, request, ldap_user_read=None):
-        """List all available printers except PDF printers
+        """
+        List all available printers except PDF printers
         return: [{'id': <spool host>://<printer name>, 'label': <display name>}, ...]
         """
         try:
@@ -189,7 +190,8 @@ class Instance(SchoolBaseModule):
     @allow_get_request
     @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     def download(self, request):
-        """Searches for print jobs
+        """
+        Searches for print jobs
 
         requests.options = {}
         'username' -- owner of the print job
@@ -208,7 +210,8 @@ class Instance(SchoolBaseModule):
     @sanitize(username=StringSanitizer(required=True), printjob=StringSanitizer(required=True))
     @simple_response
     def delete(self, username, printjob):
-        """Delete a print job
+        """
+        Delete a print job
 
         requests.options = {}
         'username' -- owner of the print job
@@ -243,7 +246,8 @@ class Instance(SchoolBaseModule):
     )
     @simple_response
     def printit(self, username, printjob, printer):
-        """Print a given document on the given printer
+        """
+        Print a given document on the given printer
 
         requests.options = {}
         'username' -- owner of the print job
@@ -252,7 +256,6 @@ class Instance(SchoolBaseModule):
 
         return: <PDF document>
         """
-
         path = self._get_path(username, printjob)
 
         try:

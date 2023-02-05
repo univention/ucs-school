@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed.
-"""
+"""Tool to delete users whose deletion grace time (ucsschoolPurgeTimestamp) has passed."""
 
 import datetime
 import logging

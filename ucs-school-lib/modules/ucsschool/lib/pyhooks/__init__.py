@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-"""
-Python based hooks.
-"""
+"""Python based hooks."""
 # Copyright 2017-2023 Univention GmbH
 #
 # http://www.univention.de/

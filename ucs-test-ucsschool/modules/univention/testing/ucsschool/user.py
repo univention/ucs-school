@@ -15,7 +15,8 @@ from univention.testing.umc import Client
 
 
 class User(Person):
-    """Contains the needed functuality for users in the UMC module schoolwizards/users.\n
+    """
+    Contains the needed functuality for users in the UMC module schoolwizards/users.\n
     :param school: school name of the user
     :type school: str
     :param role: role of the user

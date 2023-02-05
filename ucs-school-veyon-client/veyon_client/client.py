@@ -156,7 +156,8 @@ class VeyonClient:
             del self._last_used[host]
 
     def test_connection(self):
-        """Check if the veyon WebAPI Server is reachable
+        """
+        Check if the veyon WebAPI Server is reachable
 
         :raises VeyonConnectionError: if the there is no response.
         """

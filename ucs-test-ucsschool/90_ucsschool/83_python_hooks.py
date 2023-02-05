@@ -171,9 +171,7 @@ class TestPythonHooksMeta(type):
 
 @add_metaclass(TestPythonHooksMeta)
 class TestPythonHooks(TestCase):
-    """
-    This class is extended by the metaclass with >100 "test_Student_modify" methods.
-    """
+    """This class is extended by the metaclass with >100 "test_Student_modify" methods."""
 
     ucs_test_school = None
     lo = None

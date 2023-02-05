@@ -64,7 +64,8 @@ ADMIN_WRITE = "ldap_admin_write"
 
 
 def LDAP_Connection(*connection_types):
-    """This decorator function provides access to internally cached LDAP connections that can
+    """
+    This decorator function provides access to internally cached LDAP connections that can
     be accessed via adding specific keyword arguments to the function.
 
     The function which uses this decorator may specify the following additional keyword arguments:
@@ -93,7 +94,6 @@ def LDAP_Connection(*connection_types):
             ldap_user_read.searchDn(..., position=ldap_position)
             ...
     """
-
     if not connection_types:
         # TODO: remove. We still need this for backwards compatibility with other broken decorators
         connection_types = (USER_READ,)

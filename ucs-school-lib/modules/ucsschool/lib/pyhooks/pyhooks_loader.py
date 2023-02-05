@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Loader for Python based hooks.
-"""
+"""Loader for Python based hooks."""
 
 import imp
 import importlib

@@ -29,9 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Base class of all input readers.
-"""
+"""Base class of all input readers."""
 
 import logging
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional, Text

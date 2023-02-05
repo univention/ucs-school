@@ -30,9 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-Single source database, partial import user import class.
-"""
+"""Single source database, partial import user import class."""
 
 import copy
 from typing import TYPE_CHECKING, Optional
@@ -76,9 +74,7 @@ class SingleSourcePartialUserImport(UserImport):
     """
 
     def __init__(self, dry_run=True):
-        """
-        :param bool dry_run: set to False to actually commit changes to LDAP
-        """
+        """:param bool dry_run: set to False to actually commit changes to LDAP"""
         super(SingleSourcePartialUserImport, self).__init__(dry_run)
         self.limbo_ou = self.config.get("limbo_ou")
 

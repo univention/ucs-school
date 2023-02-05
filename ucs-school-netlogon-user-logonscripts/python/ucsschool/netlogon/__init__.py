@@ -96,9 +96,7 @@ class Cursor(object):
 
 
 class SqliteQueue(object):
-    """
-    Holds items (user DNs) in a FIFO queue.
-    """
+    """Holds items (user DNs) in a FIFO queue."""
 
     IDX_DB_DN = 0
 
@@ -109,7 +107,6 @@ class SqliteQueue(object):
 
     def setup_database(self):  # type: () -> None
         """Open DB connection, optionally create it, create cursor."""
-
         # create directory if missing
         if not os.path.exists(os.path.dirname(self.filename)):
             self.logger.error("directory %r does not exist" % (os.path.dirname(self.filename),))
@@ -191,9 +188,7 @@ class SqliteQueue(object):
         self.logger.debug("removed entry: userdn=%r" % (userdn,))
 
     def query_next_user(self):  # type: () -> [str]
-        """
-        Returns next user dn and username of user_queue as UTF-8 encoded strings.
-        """
+        """Returns next user dn and username of user_queue as UTF-8 encoded strings."""
         query = u"SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1"
         self.logger.debug("starting sqlite query: %r" % (query,))
         with Cursor(self.filename) as cursor:

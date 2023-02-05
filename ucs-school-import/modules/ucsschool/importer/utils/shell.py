@@ -44,9 +44,7 @@
 # * store command line arguments in a JSON file in ~/.import_shell_args
 #
 
-"""
-Module to ease interactive use of import system.
-"""
+"""Module to ease interactive use of import system."""
 
 from __future__ import absolute_import
 
