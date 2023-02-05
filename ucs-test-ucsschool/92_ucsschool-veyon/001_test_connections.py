@@ -30,7 +30,7 @@ def molotov():
             ]
         )
 
-    yield _run_molotov
+    return _run_molotov
 
 
 @pytest.fixture(autouse=True)
