@@ -45,7 +45,7 @@ def create_import_csv(err: bool) -> str:
 
     tmp = []
 
-    with open(csv_fn, newline="", mode="r") as csv_file:
+    with open(csv_fn, newline="") as csv_file:
         reader = csv.DictReader(csv_file, delimiter=",", quotechar='"')
 
         tmp.append(reader.fieldnames)

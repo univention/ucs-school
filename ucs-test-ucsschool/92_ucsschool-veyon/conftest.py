@@ -19,7 +19,7 @@ def windows_client():
 
 @pytest.fixture
 def veyon_key_data():
-    with open(VEYON_KEY_FILE, "r") as fp:
+    with open(VEYON_KEY_FILE) as fp:
         return fp.read().strip()
 
 

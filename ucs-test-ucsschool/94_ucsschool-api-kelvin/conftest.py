@@ -254,7 +254,7 @@ def add_to_import_config():  # noqa: C901
         if os.path.exists(IMPORT_CONFIG["active"]):
             logger.info("Checking if %r contains %r...", IMPORT_CONFIG["active"], kwargs)
             restart = False
-            with open(IMPORT_CONFIG["active"], "r") as fp:
+            with open(IMPORT_CONFIG["active"]) as fp:
                 config = json.load(fp)
             for k, v in kwargs.items():
                 if isinstance(v, list):

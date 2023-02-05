@@ -383,7 +383,7 @@ def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
                 if os.path.exists(src_fn):
                     # merge all given sub-blacklist files into one global blacklist file
                     try:
-                        content = open(src_fn, "r").read().strip()
+                        content = open(src_fn).read().strip()
                     except (IOError, OSError) as ex:
                         logerror("Cannot read %r: %s" % (src_fn, ex))
                         continue
@@ -461,13 +461,13 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
     # create all db files
     subprocess.call(  # nosec
-        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null", "r"), close_fds=True
+        ("squidGuard", "-c", fn_temp_config, "-C", "all"), stdin=open("/dev/null"), close_fds=True
     )
     # fix permissions
     subprocess.call(("chmod", "-R", "a=,ug+rw", DIR_TEMP, fn_temp_config), close_fds=True)  # nosec
     subprocess.call(("chown", "-R", "root:proxy", DIR_TEMP, fn_temp_config), close_fds=True)  # nosec
     # fix squidguard config (replace DIR_TEMP with DIR_DATA)
-    content = open(fn_temp_config, "r").read()
+    content = open(fn_temp_config).read()
     content = content.replace("\ndbhome %s/\n" % DIR_TEMP, "\ndbhome %s/\n" % DIR_DATA)
     content = content.replace(TXT_GLOBAL_BLACKLIST_COMMENT, "")  # reenable global blacklist entries
     with open(fn_temp_config, "w") as tempConfig:

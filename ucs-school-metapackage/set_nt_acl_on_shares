@@ -43,7 +43,7 @@ def get_lo(options):
     if ucr.get("server/role") in {"domaincontroller_master", "domaincontroller_backup"}:
         lo, po = univention.admin.uldap.getAdminConnection()
     else:
-        options.bindpw = open(options.bindpwdfile, "r").read()
+        options.bindpw = open(options.bindpwdfile).read()
         try:
             lo = univention.admin.uldap.access(
                 host=ucr["ldap/master"],

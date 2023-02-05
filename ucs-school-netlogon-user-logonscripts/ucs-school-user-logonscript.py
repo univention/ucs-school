@@ -222,7 +222,7 @@ def handler(dn, new, old):  # type: (str, Dict[str,List[bytes]], Dict[str,List[b
         pid = None
         try:
             if os.path.isfile(FN_PID):
-                content = open(FN_PID, "r").read().strip()
+                content = open(FN_PID).read().strip()
                 try:
                     pid = int(content)
                 except ValueError:

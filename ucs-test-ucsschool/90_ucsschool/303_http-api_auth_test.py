@@ -13,7 +13,7 @@ from univention.testing.ucs_samba import wait_for_drs_replication
 
 
 def count_unicode_exceptions_in_gunicorn_log():
-    with open("/var/log/univention/ucs-school-import/gunicorn_error.log", "r") as fd:
+    with open("/var/log/univention/ucs-school-import/gunicorn_error.log") as fd:
         content = fd.read()
     return content.count("UnicodeEncodeError: 'ascii' codec can't encode characters in position")
 

@@ -465,7 +465,7 @@ def main():  # type: () -> None
     if options.hook_type in ("join/post-joinscripts",):
         parser.error("The specified hook type is not supported by this script")
 
-    options.bindpw = open(options.bindpwdfile, "r").read().strip()
+    options.bindpw = open(options.bindpwdfile).read().strip()
 
     LEVELS = [logging.FATAL, logging.ERROR, logging.WARN, logging.INFO, logging.DEBUG]
     try:

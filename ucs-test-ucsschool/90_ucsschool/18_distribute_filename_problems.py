@@ -43,7 +43,7 @@ def test_distribute_filename_problems(ucr):
                 if os.path.getsize(filename) == 256:
                     try:
                         if (
-                            token == open(filename, "r").read()
+                            token == open(filename).read()
                             and os.path.basename(filename) == "foobar.txt"
                         ):
                             found = True

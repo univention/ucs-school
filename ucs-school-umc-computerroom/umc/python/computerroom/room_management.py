@@ -259,7 +259,7 @@ class ComputerRoomManager(dict):
     @property
     def veyon_client(self):  # type: () -> VeyonClient
         if not self._veyon_client:
-            with open(VEYON_KEY_FILE, "r") as fp:
+            with open(VEYON_KEY_FILE) as fp:
                 key_data = fp.read().strip()
 
             self._veyon_client = VeyonClient(

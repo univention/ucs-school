@@ -92,7 +92,7 @@ def main():
         alter_dhcpd_base = False
     if options.infile:
         try:
-            with open(options.infile, "r") as fd:
+            with open(options.infile) as fd:
                 reader = csv.reader(fd, delimiter=",")
                 for row in reader:
                     if len(row) != 5:

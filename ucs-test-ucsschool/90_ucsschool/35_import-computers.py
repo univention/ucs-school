@@ -72,10 +72,10 @@ class ImportComputerHooks:
         self.create_hooks()
 
     def get_pre_result(self):  # type: () -> str
-        return open(self.pre_hook_result, "r").read().rstrip()
+        return open(self.pre_hook_result).read().rstrip()
 
     def get_post_result(self):  # type: () -> str
-        return open(self.post_hook_result, "r").read().rstrip()
+        return open(self.post_hook_result).read().rstrip()
 
     def create_hooks(self):
         with open(self.pre_hook, "w") as fd:

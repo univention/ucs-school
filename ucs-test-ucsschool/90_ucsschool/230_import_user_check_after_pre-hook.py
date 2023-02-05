@@ -44,7 +44,7 @@ class Test(CLI_Import_v2_Tester):
 
     def create_pyhook(self, action, code):
         self.log.info("*** Creating PyHook for action %r (%r)...", action, TESTHOOKTARGET)
-        with open(TESTHOOKSOURCE, "r") as fp:
+        with open(TESTHOOKSOURCE) as fp:
             text = fp.read()
         with open(TESTHOOKTARGET, "w") as fp:
             fp.write(text.replace("%ACTION%", action).replace("%CODE%", code))

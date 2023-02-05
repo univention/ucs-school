@@ -66,7 +66,7 @@ def _test_ruleset(ucr, test_settings):
     ucr.load()
 
     # read and normalize content of squidGuard.conf
-    content = open("/etc/squidguard/squidGuard.conf", "r").read()
+    content = open("/etc/squidguard/squidGuard.conf").read()
     content = re.sub(r"[ \t]+", " ", content)  # merge whitespaces
     content = re.sub(r"\n +", "\n", content)  # remove leading whitespace
     content = re.sub(r" +\n", "\n", content)  # remove trailing whitespace

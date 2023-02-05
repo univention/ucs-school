@@ -826,7 +826,7 @@ class Project(_Dict):
 
         try:
             # load project dictionary from JSON file
-            with open(fn_project, "r") as fd:
+            with open(fn_project) as fd:
                 project = jsonDecode(fd.read())
             if not project.isDistributed:
                 #  Projects created before bug #47160 was fixed didn't save their distribution status

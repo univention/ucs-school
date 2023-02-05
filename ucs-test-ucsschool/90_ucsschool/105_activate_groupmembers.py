@@ -48,7 +48,7 @@ def get_new_password(outfile, lastname):
 def check_usernames_in_csv(outfile, usernames):
     """Check if all given usernames are found in specified CSV file. Bug #31187"""
     found_usernames = set()
-    csvreader = csv.reader(open(outfile, "r"), dialect=csv.Dialect.delimiter, delimiter="\t")
+    csvreader = csv.reader(open(outfile), dialect=csv.Dialect.delimiter, delimiter="\t")
     for row in csvreader:
         found_usernames.add(row[2])  # row 2 is username
     if not set(usernames).issubset(found_usernames):

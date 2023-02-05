@@ -41,7 +41,7 @@ class Test(CLI_Import_v2_Tester):
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
 
-        with open(fn_csv, "r") as fp:
+        with open(fn_csv) as fp:
             self.log.info("Header of created CSV: %r", fp.readline())
 
         self.log.info("*** Importing users with empty csv:allowed_missing_columns (should fail)...")

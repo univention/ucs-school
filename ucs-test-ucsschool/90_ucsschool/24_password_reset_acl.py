@@ -51,7 +51,7 @@ class _TestCases(object):
         self.schoolenv = schoolenv
 
         print("---[START /etc/ldap/slapd.conf]---", file=sys.stderr)
-        print(open("/etc/ldap/slapd.conf", "r").read(), file=sys.stderr)
+        print(open("/etc/ldap/slapd.conf").read(), file=sys.stderr)
         print("---[END /etc/ldap/slapd.conf]---", file=sys.stderr)
         sys.stderr.flush()
 

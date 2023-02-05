@@ -279,7 +279,7 @@ def main():  # type: () -> None
     if options.password_fn:
         if not os.path.isfile(options.password_fn):
             parser.error("%r does not exist or is no file!" % (options.password_fn,))
-        with open(options.password_fn, "r") as fd:
+        with open(options.password_fn) as fd:
             options.password = fd.read().strip("\r\n")
 
     if options.noninteractive:

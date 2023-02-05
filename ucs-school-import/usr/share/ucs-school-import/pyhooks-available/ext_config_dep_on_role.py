@@ -96,7 +96,7 @@ class ExtendConfigByRole(ConfigPyHook):
         include_file = config["include"]["by_role"][user_role]
         self.logger.debug("Reading %r...", include_file)
         try:
-            with open(include_file, "r") as fp:
+            with open(include_file) as fp:
                 include_config = json.load(fp)
         except (IOError, ValueError) as exc:
             self.logger.exception("Reading include file %r: %s", include_file, exc)

@@ -123,7 +123,7 @@ def force_ucsschool_logger_colorized_if_has_tty():
     else:
         # try to use the stdout of the parent process if it's ucs-test
         ppid = os.getppid()
-        with open("/proc/{}/cmdline".format(ppid), "r") as fp:
+        with open("/proc/{}/cmdline".format(ppid)) as fp:
             if "ucs-test" in fp.read():
                 fd = sys.stdout
                 if fd.isatty():
@@ -1179,7 +1179,7 @@ class UCSTestSchool(object):
     def load_test_ous(cls):
         cls._test_ous = {}
         try:
-            with open(TEST_OU_CACHE_FILE, "r") as fp:
+            with open(TEST_OU_CACHE_FILE) as fp:
                 loaded = json.load(fp)
         except (ValueError, IOError) as exc:
             logger.info("*** Warning: reading %r: %s", TEST_OU_CACHE_FILE, exc)
@@ -1261,7 +1261,7 @@ class AutoMultiSchoolEnv(UCSTestSchool):
 
     def __enter__(self):
         logger.info("---[START /etc/ldap/slapd.conf]---")
-        logger.info(open("/etc/ldap/slapd.conf", "r").read())
+        logger.info(open("/etc/ldap/slapd.conf").read())
         logger.info("---[END /etc/ldap/slapd.conf]---")
         for handler in logger.handlers:
             handler.flush()

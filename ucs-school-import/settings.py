@@ -62,7 +62,7 @@ POSTGRES_PORT = "5432"
 RABBITMQ_VHOST = "importhttpapi"
 
 
-with open(os.path.join(CONF_DIR, "django_key.secret"), "r") as fp:
+with open(os.path.join(CONF_DIR, "django_key.secret")) as fp:
     SECRET_KEY = fp.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -121,7 +121,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ucsschool.http_api.app.wsgi.application"
 
-with open(os.path.join(CONF_DIR, "postgres.secret"), "r") as fp:
+with open(os.path.join(CONF_DIR, "postgres.secret")) as fp:
     _postgres_pw = fp.read().strip()
 
 DATABASES = {
@@ -148,7 +148,7 @@ AUTHENTICATION_BACKENDS = ["django_pam.auth.backends.PAMBackend"] + list(
 
 TIME_ZONE = ucr.get("ucsschool/import/http_api/TIME_ZONE")
 if not TIME_ZONE:
-    with open("/etc/timezone", "r") as fp:
+    with open("/etc/timezone") as fp:
         TIME_ZONE = fp.read().strip()
     if not re.match(r"\w+/\w+", TIME_ZONE):
         TIME_ZONE = "Europe/Berlin"
@@ -193,7 +193,7 @@ REST_FRAMEWORK = {
 
 
 # Celery settings
-with open(os.path.join(CONF_DIR, "rabbitmq.secret"), "r") as fp:
+with open(os.path.join(CONF_DIR, "rabbitmq.secret")) as fp:
     _celery_broker_credentials = fp.read().strip()
 
 BROKER_URL = "amqp://{}@localhost:5672/{}".format(_celery_broker_credentials, RABBITMQ_VHOST)

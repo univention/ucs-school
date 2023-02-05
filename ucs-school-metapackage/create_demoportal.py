@@ -55,7 +55,7 @@ else:
 hostdn = ucr.get("ldap/hostdn")
 demo_secret_path = "/etc/ucsschool/demoschool.secret"  # nosec
 if os.path.isfile(demo_secret_path):
-    with open(demo_secret_path, "r") as fd:
+    with open(demo_secret_path) as fd:
         demo_password = fd.read().strip()
 else:
     _chars = string.ascii_letters + string.digits

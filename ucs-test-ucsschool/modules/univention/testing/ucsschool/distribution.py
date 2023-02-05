@@ -162,7 +162,7 @@ class Distribution(object):
         :type flavor: str
         """
         mime_file_name = override_file_name or os.path.basename(file_name)
-        with open(file_name, "r") as f:
+        with open(file_name) as f:
             data = r"""--{0}
 Content-Disposition: form-data; name="uploadedfile"; filename="{1}"
 Content-Type: {2}

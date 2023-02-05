@@ -16,7 +16,7 @@ def init_test(args):
     assert WINDOWS_HOST, "No windows clients in env var UCS_ENV_WINDOWS_CLIENT!"
     host_exists = WINDOWS_HOST.split(" ")[0]
     host_not_exists = "192.168.4.2"  # TODO fix
-    with open(_VEYON_KEY_FILE, "r") as fp:
+    with open(_VEYON_KEY_FILE) as fp:
         key_data = fp.read().strip()
         credentials = {"keyname": "teacher", "keydata": key_data}
     auth_headers = get_veyon_session(host_exists, credentials)

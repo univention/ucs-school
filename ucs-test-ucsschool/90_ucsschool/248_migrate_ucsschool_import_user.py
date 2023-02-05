@@ -113,11 +113,11 @@ def test_migrate_ucsschool_import_user(ucr, schoolenv):
         )
 
         print("******** RESULT OF GUESSING ***********")
-        print(open(fd_target.name, "r").read())
+        print(open(fd_target.name).read())
         print("*******************")
 
         # check CSV file from guessing
-        fd_target2 = open(fd_target.name, "r")
+        fd_target2 = open(fd_target.name)
         reader = csv.reader(fd_target2, dialect="excel")
         # drop CSV header and comments
         row = next(reader)

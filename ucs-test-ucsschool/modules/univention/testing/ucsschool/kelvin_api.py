@@ -197,7 +197,7 @@ class HttpApiUserTestBase(TestCase):
             config_file = IMPORT_CONFIG["bak"]
         else:
             config_file = IMPORT_CONFIG["default"]
-        with open(config_file, "r") as fp:
+        with open(config_file) as fp:
             config = json.load(fp)
         config["configuration_checks"] = ["defaults", "mapped_udm_properties"]
         config["mapped_udm_properties"] = cls.mapped_udm_properties

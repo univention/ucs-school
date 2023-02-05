@@ -238,7 +238,7 @@ class TestPythonHooks(TestCase):
             # create hook only once per class, as it contains code for
             # all of (pre, post) x (create, modify, move, remove)
             _pyhook_loader.drop_cache()
-            with open(TEST_HOOK_SOURCE, "r") as fpr:
+            with open(TEST_HOOK_SOURCE) as fpr:
                 hook_source_text = fpr.read()
             hook_file_path = os.path.join(
                 PYHOOKS_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
@@ -303,7 +303,7 @@ class TestPythonHooks(TestCase):
             obj.create(self.lo)
             if klass not in ("Staff", "Student"):
                 patterns_and_words.extend([(r"^pre_create", words), (r"^post_create", words)])
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             txt = fp.read()
         logger.debug("Content of result file: ---\n%s\n---", txt)
         for pattern, words in patterns_and_words:
@@ -320,7 +320,7 @@ class TestPythonHooks(TestCase):
         self.assertTrue(
             os.path.isfile(hook_file_path), "Not a / not existing file: {!r}".format(hook_file_path)
         )
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             self.assertEqual(len(fp.read()), 0, "Result file {!r} is not empty.".format(RESULTFILE))
 
     def _test_create(self):
@@ -344,7 +344,7 @@ class TestPythonHooks(TestCase):
             self.ou_name,
         )
         obj.create(self.lo)
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             txt = fp.read()
         logger.debug("Content of result file: ---\n%s\n---", txt)
         if self.model.__name__ in CLASSES_WITH_SCHOOL_NONE:
@@ -408,7 +408,7 @@ class TestPythonHooks(TestCase):
             obj.netmask = "21"  # prevent UDM valueMayNotChange exception (value is 255.255.248.0)
             obj.broadcast = "12.40.232.255"  # change something (was None)
         obj.modify(self.lo)
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             txt = fp.read()
         logger.debug("Content of result file:\n---\n%s---", txt)
         if self.model is School:
@@ -475,7 +475,7 @@ class TestPythonHooks(TestCase):
             )
             obj.school = self.ou_name
 
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             txt = fp.read()
         logger.debug("Content of result file: ---\n%s\n---", txt)
         if self.model is School:
@@ -523,7 +523,7 @@ class TestPythonHooks(TestCase):
                 "No object found for class {!r}. Probably create() failed.".format(self.model.__name__)
             )
         obj.remove(self.lo)
-        with open(RESULTFILE, "r") as fp:
+        with open(RESULTFILE) as fp:
             txt = fp.read()
         logger.debug("Content of result file: ---\n%s\n---", txt)
         patterns_and_words = (

@@ -478,7 +478,7 @@ class CLI_Import_v2_Tester(ImportTestbase):
             config_path = os.path.join(base_dir, config)
             if not os.path.isfile(config_path):
                 continue
-            with open(config_path, "r") as config_file:
+            with open(config_path) as config_file:
                 if len(json.load(config_file)) != 0:
                     msg = (
                         'The config under "%s" seems to be non-empty. That often causes problems for '

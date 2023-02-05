@@ -48,11 +48,11 @@ def test_squidguard_test_dbtemp_option():
             fd.write("\n".join([prefix, CONF_SQUIDGUARD % {"tempdir": tempdir}]))
 
     def print_sg_log():
-        print(open(fn_log, "r").read() + "\n")
+        print(open(fn_log).read() + "\n")
 
     def exists_in_sg_log(searchstring):
         # check if given string exists in logfile
-        content = open(fn_log, "r").read()
+        content = open(fn_log).read()
         return searchstring in content
 
     def write_lists():
@@ -104,7 +104,7 @@ def test_squidguard_test_dbtemp_option():
         write_sg_cfg("")
         exitcode = subprocess.call(
             ["squidGuard", "-d", "-c", fn_cfg, "-C", "all"],
-            stdin=open("/dev/null", "r"),
+            stdin=open("/dev/null"),
             stdout=open(fn_log, "a+"),
             stderr=open(fn_log, "a+"),
         )
@@ -118,7 +118,7 @@ def test_squidguard_test_dbtemp_option():
         cnt_old_tempdir = count_bdb_files(tempdir)
         exitcode = subprocess.call(
             ["squidGuard", "-d", "-c", fn_cfg],
-            stdin=open("/dev/null", "r"),
+            stdin=open("/dev/null"),
             stdout=open(fn_log, "a+"),
             stderr=open(fn_log, "a+"),
         )
@@ -149,7 +149,7 @@ def test_squidguard_test_dbtemp_option():
         cnt_old_tempdir = count_bdb_files(tempdir)
         exitcode = subprocess.call(
             ["squidGuard", "-d", "-c", fn_cfg],
-            stdin=open("/dev/null", "r"),
+            stdin=open("/dev/null"),
             stdout=open(fn_log, "a+"),
             stderr=open(fn_log, "a+"),
         )

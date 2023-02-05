@@ -293,7 +293,7 @@ class QueueHandler:
         """
         if path not in self._template_cache:
             # read file into list of strings
-            with open(path, "r") as fp:
+            with open(path) as fp:
                 tmp = fp.readlines()
             # remove icon lines
             for key in no_icons or []:

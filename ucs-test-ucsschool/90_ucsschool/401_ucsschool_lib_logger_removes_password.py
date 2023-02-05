@@ -57,7 +57,7 @@ def test_password_not_in_arg_is_logged(random_logger):
     random_arg = {"foo": uts.random_string()}
     logger.debug("random_arg: %r", random_arg)
     logger.handlers[-1].flush()
-    with open(logger.handlers[-1].baseFilename, "r") as fp:
+    with open(logger.handlers[-1].baseFilename) as fp:
         txt = fp.read()
     assert random_string in txt
     assert password_string in txt
@@ -73,7 +73,7 @@ def test_password_in_single_arg_is_not_logged(random_logger):
     dict_with_pw = {"bar": uts.random_string(), "password": password_string}
     logger.debug("dict with pw: %r", dict_with_pw)
     logger.handlers[-1].flush()
-    with open(logger.handlers[-1].baseFilename, "r") as fp:
+    with open(logger.handlers[-1].baseFilename) as fp:
         txt = fp.read()
     assert "a dict: {!r}".format(random_dict) in txt
     assert password_string not in txt
@@ -96,7 +96,7 @@ def test_password_in_multiple_args_is_not_logged(random_logger):
         "dict no pw: %r dict with pw: %r dict no pw: %r", random_dict2, dict_with_pw, random_dict3
     )
     logger.handlers[-1].flush()
-    with open(logger.handlers[-1].baseFilename, "r") as fp:
+    with open(logger.handlers[-1].baseFilename) as fp:
         txt = fp.read()
     assert "a dict: {!r}".format(random_dict1) in txt
     assert password_string not in txt
@@ -120,7 +120,7 @@ def test_remove_password_in_msg(random_logger):
     dict_with_pw = {"bar": uts.random_string(), "password": password_string}
     logger.debug(dict_with_pw)
     logger.handlers[-1].flush()
-    with open(logger.handlers[-1].baseFilename, "r") as fp:
+    with open(logger.handlers[-1].baseFilename) as fp:
         txt = fp.read()
     assert repr(random_dict1) in txt
     assert password_string not in txt

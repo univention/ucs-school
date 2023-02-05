@@ -85,7 +85,7 @@ class ValidationDataFilter(logging.Filter):
 
 
 def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
-    with open(path, "r") as fp:
+    with open(path) as fp:
         config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
     return config
 

@@ -274,7 +274,7 @@ def machine_account_dn(ucr):
 
 @pytest.fixture(scope="session")
 def machine_password():
-    with open(MACHINE_ACCOUNT_PW_FILE, "r") as fp:
+    with open(MACHINE_ACCOUNT_PW_FILE) as fp:
         return fp.read().strip()
 
 

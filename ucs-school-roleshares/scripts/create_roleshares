@@ -86,11 +86,11 @@ if __name__ == "__main__":
         password = opts.bindpwd
     elif opts.binddn and opts.bindpwdfile:
         binddn = opts.binddn
-        with open(opts.bindpwdfile, "r") as fp:
+        with open(opts.bindpwdfile) as fp:
             password = fp.read()
     elif ucr["server/role"] in ("domaincontroller_master", "domaincontroller_backup"):
         try:
-            with open("/etc/ldap.secret", "r") as fp:
+            with open("/etc/ldap.secret") as fp:
                 password = fp.read()
             binddn = "cn=admin,{}".format(ucr["ldap/base"])
             print("Using cn=admin account")

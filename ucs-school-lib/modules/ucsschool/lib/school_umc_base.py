@@ -105,7 +105,7 @@ class SchoolBaseModule(Base):
             # which allows to execute ldap operations as machine account
             try:  # to get machine account password
                 MODULE.warn("Using machine account for local user: %s" % self.username)
-                with open("/etc/machine.secret", "r") as fd:
+                with open("/etc/machine.secret") as fd:
                     password = fd.read().strip()
                 user_dn = ucr.get("ldap/hostdn")
             except IOError as exc:

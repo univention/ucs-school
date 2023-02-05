@@ -64,7 +64,7 @@ class HttpApiImportTester(ImportTestbase):
     @property
     def default_config(self):
         if not self._default_config:
-            with open(self.default_config_path, "r") as fp:
+            with open(self.default_config_path) as fp:
                 self._default_config.update(json.load(fp))
         return self._default_config
 
@@ -150,7 +150,7 @@ class TempHttpApiConfig(object):
             return
         # copy original to backup file. copy only content, leaving permissions intact.
         with open(self.original_config_backup, "w") as fpw:
-            with open(self.default_config_path, "r") as fpr:
+            with open(self.default_config_path) as fpr:
                 fpw.write(fpr.read())
         with open(self.default_config_path, "w") as fpw:
             json.dump(self.config, fpw)
@@ -159,6 +159,6 @@ class TempHttpApiConfig(object):
         if self.config is None:
             return
         with open(self.default_config_path, "w") as fpw:
-            with open(self.original_config_backup, "r") as fpr:
+            with open(self.original_config_backup) as fpr:
                 fpw.write(fpr.read())
         os.remove(self.original_config_backup)

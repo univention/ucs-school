@@ -1890,7 +1890,7 @@ def import_group():
         sys.exit()
 
     print("infile is  : " + infile)
-    inf = open(infile, "r")
+    inf = open(infile)
 
     with stopped_notifier():
         for line in inf:
@@ -2321,7 +2321,7 @@ def rename_class():
         myShares[cn] = share
 
     print("infile is  : " + infile)
-    inf = open(infile, "r")
+    inf = open(infile)
 
     # get old and new group name from infile
     newGroups = []

@@ -34,7 +34,7 @@ def read_version_from_ci() -> str:
     """
     import yaml
 
-    with open("../../.gitlab-ci/base-doc.yml", "r") as f:
+    with open("../../.gitlab-ci/base-doc.yml") as f:
         ci = yaml.safe_load(f)
         return ci.get(".sphinx-doc").get("variables").get("CHANGELOG_TARGET_VERSION", "5.0v3")
 

@@ -123,7 +123,7 @@ class Test(CLI_Import_v2_Tester):
             expected_result.append(r"^deleted_{}={}$".format(role, deleted(role)))
         self.log.debug("expected_result:\n%s", "\n".join(expected_result))
 
-        for num, line in enumerate(open(RESULTFILE, "r")):
+        for num, line in enumerate(open(RESULTFILE)):
             assert re.match(expected_result[num], line)
             self.log.debug("OK: {!r}".format(line.strip("\n")))
 

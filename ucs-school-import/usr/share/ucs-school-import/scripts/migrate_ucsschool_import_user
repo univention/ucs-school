@@ -169,7 +169,7 @@ class UcsSchoolUserMigration(object):
         if not os.path.exists(self.args.input_file):
             fatal_argp("Input file {!r} does not exist!".format(self.args.input_file))
         try:
-            with open(self.args.input_file, "r") as fd:
+            with open(self.args.input_file) as fd:
                 fd.read(1)
         except (IOError, OSError) as exc:
             fatal_argp("Cannot open {!r}: {}".format(self.args.input_file, exc))

@@ -44,7 +44,7 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** OK - error was expected: %r", exc.value)
         # look for error message in logfile
         msg = r"InitialisationError.*Error in configuration file '{}'".format(fn_config)
-        for line in open("/var/log/univention/ucs-school-import.log", "r"):
+        for line in open("/var/log/univention/ucs-school-import.log"):
             found = re.findall(msg, line)
             if found:
                 self.log.info("Found in logfile: %r", found[0])
