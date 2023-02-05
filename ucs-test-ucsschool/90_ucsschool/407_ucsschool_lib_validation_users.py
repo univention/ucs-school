@@ -19,7 +19,7 @@ import pytest
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-from ucsschool.lib.models import validator as validator
+from ucsschool.lib.models import validator
 from ucsschool.lib.models.utils import ucr as lib_ucr  # 'ucr' already exists as fixture
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,

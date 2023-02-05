@@ -27,7 +27,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import enum as enum
+import enum
 from collections import namedtuple
 
 
