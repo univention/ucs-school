@@ -30,7 +30,7 @@ class Test(TestCase):
         print("*** auth_headers={!r}".format(cls.auth_headers))
 
     def test_01_unauth_connection_to_openapi_json_allowed(self):
-        response = requests.get(OPENAPI_JSON_URL, verify=False)
+        response = requests.get(OPENAPI_JSON_URL, verify=False)  # noqa: S501
         self.assertEqual(
             response.status_code,
             200,
@@ -40,7 +40,7 @@ class Test(TestCase):
         )
 
     def test_02_expected_resources_exit_in_openapi_json(self):
-        response = requests.get(OPENAPI_JSON_URL, verify=False)
+        response = requests.get(OPENAPI_JSON_URL, verify=False)  # noqa: S501
         self.assertEqual(
             response.status_code,
             200,
@@ -53,7 +53,7 @@ class Test(TestCase):
 
     def test_03_unauth_connection_to_resources_not_allowed(self):
         for url in RESOURCE_URLS.values():
-            response = requests.get(url, verify=False)
+            response = requests.get(url, verify=False)  # noqa: S501
             self.assertEqual(
                 response.status_code,
                 401,
@@ -66,10 +66,10 @@ class Test(TestCase):
             # workgroups has a required parameter for GET
             if url == RESOURCE_URLS["workgroups"]:
                 schools = requests.get(
-                    RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False
+                    RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False  # noqa: S501
                 ).json()
                 params["school"] = schools[0]["name"]
-            response = requests.get(url, headers=self.auth_headers, verify=False, params=params)
+            response = requests.get(url, headers=self.auth_headers, verify=False, params=params)  # noqa: S501
             self.assertEqual(
                 response.status_code,
                 200,

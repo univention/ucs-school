@@ -166,7 +166,7 @@ def retrieve_token_info(
         "grant_type": "password",
     }
 
-    response = requests.post(url, data=data, verify=False, headers=headers)  # nosec
+    response = requests.post(url, data=data, verify=False, headers=headers)  # nosec  # noqa: S501
     if response.status_code != 200:
         raise HTTPError(f"{response.content!r}/{response.status_code}")
     return response.json()
