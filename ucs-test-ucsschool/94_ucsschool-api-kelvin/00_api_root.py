@@ -31,34 +31,20 @@ class Test(TestCase):
 
     def test_01_unauth_connection_to_openapi_json_allowed(self):
         response = requests.get(OPENAPI_JSON_URL, verify=False)  # noqa: S501
-        self.assertEqual(
-            response.status_code,
-            200,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
-            ),
-        )
+        assert response.status_code == 200
 
     def test_02_expected_resources_exit_in_openapi_json(self):
         response = requests.get(OPENAPI_JSON_URL, verify=False)  # noqa: S501
-        self.assertEqual(
-            response.status_code,
-            200,
-            "{!r} -> [{}] {!r}".format(response.url, response.status_code, response.text),
-        )
+        assert response.status_code == 200
         res = response.json()
         print("*** Resource paths in openapi.json: {!r}".format(res["paths"].keys()))
         for resource in RESOURCE_URLS:
-            self.assertIn("{}{}/".format(URL_BASE_PATH, resource), res["paths"].keys())
+            assert "{}{}/".format(URL_BASE_PATH, resource) in res["paths"].keys()
 
     def test_03_unauth_connection_to_resources_not_allowed(self):
         for url in RESOURCE_URLS.values():
             response = requests.get(url, verify=False)  # noqa: S501
-            self.assertEqual(
-                response.status_code,
-                401,
-                "{!r} -> [{}] {!r}".format(response.url, response.status_code, response.text),
-            )
+            assert response.status_code == 401
 
     def test_04_auth_connection_to_resources_allowed(self):
         for url in RESOURCE_URLS.values():
@@ -70,11 +56,7 @@ class Test(TestCase):
                 ).json()
                 params["school"] = schools[0]["name"]
             response = requests.get(url, headers=self.auth_headers, verify=False, params=params)  # noqa: S501
-            self.assertEqual(
-                response.status_code,
-                200,
-                "{!r} -> [{}] {!r}".format(response.url, response.status_code, response.text),
-            )
+            assert response.status_code == 200
 
 
 if __name__ == "__main__":

@@ -34,25 +34,13 @@ class Test(TestCase):
 
     def test_01_list_unauth_connection(self):
         response = requests.get(RESOURCE_URLS["roles"])
-        self.assertEqual(
-            response.status_code,
-            401,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
-            ),
-        )
+        assert response.status_code == 401
 
     def test_02_list_auth_connection(self):
         response = requests.get(RESOURCE_URLS["roles"], headers=self.auth_headers)
-        self.assertEqual(
-            response.status_code,
-            200,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
-            ),
-        )
+        assert response.status_code == 200
         res = response.json()
-        self.assertIsInstance(res, list)
+        assert isinstance(res, list)
         self.assertSequenceEqual(
             res,
             [
@@ -76,20 +64,14 @@ class Test(TestCase):
 
     def test_04_get_existing_roles(self):
         response = requests.get(RESOURCE_URLS["roles"], headers=self.auth_headers)
-        self.assertEqual(
-            response.status_code,
-            200,
-            "response.status_code = {} for URL {!r} -> {!r}".format(
-                response.status_code, response.url, response.text
-            ),
-        )
+        assert response.status_code == 200
         res = response.json()
-        self.assertIsInstance(res, list)
-        self.assertIsInstance(res[0], dict)
+        assert isinstance(res, list)
+        assert isinstance(res[0], dict)
 
         expected_roles = ["staff", "student", "teacher"]
         for attrs in res:
-            self.assertIn(attrs["name"], expected_roles, "Unknown role {!r}.".format(attrs["name"]))
+            assert attrs["name"] in expected_roles
             expected_roles.remove(attrs["name"])
         self.assertSequenceEqual(
             expected_roles, [], "Role(s) {!r} were not returned in listing.".format(expected_roles)
@@ -98,14 +80,8 @@ class Test(TestCase):
         for role in ("staff", "student", "teacher"):
             response = requests.get(urljoin(RESOURCE_URLS["roles"], role), headers=self.auth_headers)
             res = response.json()
-            self.assertEqual(
-                response.status_code,
-                200,
-                "response.status_code = {} for URL {!r} -> {!r}".format(
-                    response.status_code, response.url, response.text
-                ),
-            )
-            self.assertEqual(res["name"], role, "Expected {!r}, got res={!r}".format(role, res))
+            assert response.status_code == 200
+            assert res["name"] == role
 
 
 if __name__ == "__main__":

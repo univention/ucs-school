@@ -307,21 +307,15 @@ class TestPythonHooks(TestCase):
             txt = fp.read()
         logger.debug("Content of result file: ---\n%s\n---", txt)
         for pattern, words in patterns_and_words:
-            self.assertTrue(
-                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
-                "---\n{}\n---".format(pattern, words, txt.strip()),
-            )
+            assert check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words)
 
     def _check_test_setup(self):
         hook_file_path = os.path.join(
             PYHOOKS_PATH, "test83_{}_hook.py".format(self.model.__name__.lower())
         )
-        self.assertTrue(
-            os.path.isfile(hook_file_path), "Not a / not existing file: {!r}".format(hook_file_path)
-        )
+        assert os.path.isfile(hook_file_path)
         with open(RESULTFILE) as fp:
-            self.assertEqual(len(fp.read()), 0, "Result file {!r} is not empty.".format(RESULTFILE))
+            assert len(fp.read()) == 0
 
     def _test_create(self):
         logger.info(
@@ -360,11 +354,7 @@ class TestPythonHooks(TestCase):
                 (r"^post_create", (obj.__class__.__name__, obj.name, obj.school)),
             )
         for pattern, words in patterns_and_words:
-            self.assertTrue(
-                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
-                "---\n{}\n---".format(pattern, words, txt.strip()),
-            )
+            assert check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words)
 
         self.objects[self.model] = obj  # save object for next test function (_test_modify)
         logger.info(
@@ -433,11 +423,7 @@ class TestPythonHooks(TestCase):
                 (r"^post_modify", (obj.__class__.__name__, self.ou_name, obj.name)),
             )
         for pattern, words in patterns_and_words:
-            self.assertTrue(
-                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
-                "---\n{}\n---".format(pattern, words, txt.strip()),
-            )
+            assert check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words)
         logger.info(
             "** OK %d/%d modify() of model %r.",
             self.progress_counter,
@@ -469,10 +455,7 @@ class TestPythonHooks(TestCase):
             obj.school = self.ou2_name
             # the move will fail - that's expected - see patterns_and_words below
             move_success = obj.move(self.lo)
-            self.assertFalse(
-                move_success,
-                "=====> Move of {!r} model succeeded unexpectedly.".format(self.model.__name__),
-            )
+            assert not move_success
             obj.school = self.ou_name
 
         with open(RESULTFILE) as fp:
@@ -491,11 +474,7 @@ class TestPythonHooks(TestCase):
             # this is expected for various models
             patterns_and_words = ((r"^pre_move", (obj.__class__.__name__, self.ou2_name, obj.name)),)
         for pattern, words in patterns_and_words:
-            self.assertTrue(
-                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
-                "---\n{}\n---".format(pattern, words, txt.strip()),
-            )
+            assert check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words)
         logger.info(
             "** OK %d/%d move() of model %r.",
             self.progress_counter,
@@ -531,11 +510,7 @@ class TestPythonHooks(TestCase):
             (r"^post_remove", (obj.__class__.__name__, obj.school, obj.name)),
         )
         for pattern, words in patterns_and_words:
-            self.assertTrue(
-                check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words),
-                "=====> Could not find expected pattern {!r} and words {!r} in result file:\n"
-                "---\n{}\n---".format(pattern, words, txt.strip()),
-            )
+            assert check_lines_for_pattern_and_words(txt.split("\n"), pattern, *words)
         logger.info(
             "** OK %d/%d remove() of model %r.",
             self.progress_counter,

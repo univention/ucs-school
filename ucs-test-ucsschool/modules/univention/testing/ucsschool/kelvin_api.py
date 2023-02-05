@@ -229,72 +229,34 @@ class HttpApiUserTestBase(TestCase):
             if k == "url":
                 continue
             elif k == "dn":
-                self.assertEqual(dn, v, "Expected DN {!r} got {!r}.".format(dn, v))
+                assert dn == v
             elif k == "school":
                 response = requests.get(v, headers=self.auth_headers)
-                self.assertEqual(
-                    response.status_code,
-                    200,
-                    "response.status_code = {} for URL {!r} -> {!r}".format(
-                        response.status_code, response.url, response.text
-                    ),
-                )
+                assert response.status_code == 200
                 obj = response.json()
-                self.assertEqual(
-                    obj.get("name"),
-                    import_user.school,
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
-                    "({!r}).".format(k, source, import_user.school, v, obj.get("name"), dn),
-                )
+                assert obj.get("name") == import_user.school
             elif k == "schools":
                 objs = []
                 for url in v:
                     response = requests.get(url, headers=self.auth_headers)
-                    self.assertEqual(
-                        response.status_code,
-                        200,
-                        "response.status_code = {} for URL {!r} -> {!r}".format(
-                            response.status_code, response.url, response.text
-                        ),
-                    )
+                    assert response.status_code == 200
                     objs.append(response.json())
                 school_names = {obj.get("name") for obj in objs}
-                self.assertEqual(
-                    school_names,
-                    set(import_user.schools),
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
-                    "({!r}).".format(k, source, import_user.schools, v, school_names, dn),
-                )
+                assert school_names == set(import_user.schools)
             elif k == "disabled":
-                self.assertIn(v, (True, False), "Value of {!r} is {!r}.".format(k, v))
+                assert v in (True, False)
                 val = "1" if v is True else "0"
-                self.assertEqual(
-                    val,
-                    import_user.disabled,
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
-                    "({!r}).".format(k, source, import_user.disabled, v, val, dn),
-                )
+                assert val == import_user.disabled
             elif k == "roles":
                 objs = []
                 for url in v:
                     response = requests.get(url, headers=self.auth_headers)
-                    self.assertEqual(
-                        response.status_code,
-                        200,
-                        "response.status_code = {} for URL {!r} -> {!r}".format(
-                            response.status_code, response.url, response.text
-                        ),
-                    )
+                    assert response.status_code == 200
                     objs.append(response.json())
                 role_names = {
                     "pupil" if obj.get("name") == "student" else obj.get("name") for obj in objs
                 }
-                self.assertEqual(
-                    role_names,
-                    set(import_user.roles),
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} -> {!r} "
-                    "({!r}).".format(k, source, import_user.roles, v, role_names, dn),
-                )
+                assert role_names == set(import_user.roles)
             elif k == "school_classes":
                 if source == "LDAP":
                     val = {
@@ -322,7 +284,7 @@ class HttpApiUserTestBase(TestCase):
                     elif isinstance(udm_v, dict):
                         self.assertDictEqual(udm_v, v[udm_k], msg)
                     else:
-                        self.assertEqual(udm_v, v[udm_k], msg)
+                        assert udm_v == v[udm_k]
             elif getattr(import_user, k) is None and v == "":
                 continue
             else:
@@ -332,13 +294,7 @@ class HttpApiUserTestBase(TestCase):
                 else:
                     import_user_val = getattr(import_user, k)
                     resource_val = v
-                self.assertEqual(
-                    import_user_val,
-                    resource_val,
-                    "Value of attribute {!r} in {} is {!r} and in resource is {!r} ({!r}).".format(
-                        k, source, getattr(import_user, k), v, dn
-                    ),
-                )
+                assert import_user_val == resource_val
 
     def make_user_attrs(self, ous, partial=False, **kwargs):
         # type: (List[Text], Optional[bool], **Any) -> Dict[Text, Any]
