@@ -570,7 +570,12 @@ def get_logger(
         fmt = "%(log_color)s{}".format(CMDLINE_LOG_FORMATS[level])
         fmt_cls = colorlog.TTYColoredFormatter
     else:
-        handler_defaults = {"cls": UniFileHandler, "filename": target, "when": "D", "backupCount": 10000000}
+        handler_defaults = {
+            "cls": UniFileHandler,
+            "filename": target,
+            "when": "D",
+            "backupCount": 10000000,
+        }
         fmt = FILE_LOG_FORMATS[level]
         fmt_cls = logging.Formatter
     handler_defaults.update(handler_kwargs)

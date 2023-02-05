@@ -118,9 +118,7 @@ class Instance(SchoolBaseModule):
                 "e-mail": [],
                 "phone": [],
             }
-        mails = (
-            {user["mailPrimaryAddress"]} | set(user["mailAlternativeAddress"]) | set(user["e-mail"])
-        )
+        mails = {user["mailPrimaryAddress"]} | set(user["mailAlternativeAddress"]) | set(user["e-mail"])
 
         sender = user["mailPrimaryAddress"]
         if not sender:

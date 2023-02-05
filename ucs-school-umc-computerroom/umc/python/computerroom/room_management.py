@@ -117,9 +117,9 @@ class UserMap(dict):
 
         blacklisted_groups = {
             x.strip().lower()
-                for x in ucr.get(
-                    "ucsschool/umc/computerroom/hide_screenshots/groups", "Domain Admins"
-                ).split(",")
+            for x in ucr.get(
+                "ucsschool/umc/computerroom/hide_screenshots/groups", "Domain Admins"
+            ).split(",")
         }
         users_groupmemberships = {explode_rdn(x, True)[0].lower() for x in userobj["groups"]}
         MODULE.info(

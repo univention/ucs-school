@@ -195,7 +195,7 @@ class TestUserCreator(object):
                     # [staff]teachers can be in multiple classes
                     user["Klassen"] = {
                         school: [self._get_class_name(school) for _x in range(self.num_inclasses)]
-                            for school in user["Schulen"]
+                        for school in user["Schulen"]
                     }
                 total_users_count += 1
                 self.logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)

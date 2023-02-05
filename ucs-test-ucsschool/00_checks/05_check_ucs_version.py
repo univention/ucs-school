@@ -15,7 +15,7 @@ def test_ucs_version():
     ucr = univention.config_registry.ConfigRegistry()
     ucr.load()
 
-    subprocess.call(['univention-app', 'info'])
+    subprocess.call(["univention-app", "info"])
     current_version = ucr.get("version/version", "")
     assert (
         current_version == EXPECTED_VERSION

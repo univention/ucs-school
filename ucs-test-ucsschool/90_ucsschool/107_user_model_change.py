@@ -59,7 +59,11 @@ def test_user_model_change(schoolenv, ucr):
             if (opt in udm_obj.options and opt not in cls_options_map[user.__class__.__name__]) or (
                 opt not in udm_obj.options and opt in cls_options_map[user.__class__.__name__]
             ):
-                raise AssertionError("UDM object of user {} has options {}, but should have {}.\n (Ignoring non-ucsschool* options.)".format(user, udm_obj.options, cls_options_map[user.__class__.__name__]))
+                raise AssertionError(
+                    "UDM object of user {} has options {}, but should have {}.\n (Ignoring non-ucsschool* options.)".format(
+                        user, udm_obj.options, cls_options_map[user.__class__.__name__]
+                    )
+                )
 
     for cls in [User, Staff, Student, Teacher, TeachersAndStaff]:
         print("*** Testing {}.from_dn()...".format(cls.__name__))

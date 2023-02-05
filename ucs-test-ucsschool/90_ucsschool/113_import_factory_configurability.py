@@ -240,7 +240,11 @@ class Test_FactoryConf(object):
             if num == 0:
                 # header
                 continue
-            found = {"firstname": row["firstname"], "lastname": row["lastname"], "birthday": row["birthday"]}
+            found = {
+                "firstname": row["firstname"],
+                "lastname": row["lastname"],
+                "birthday": row["birthday"],
+            }
             assert expected == found, "Output not as expected: expected=%r found=%r" % (expected, found)
         self.logger.info("\n\n*** OK: result is anonymized.\n\n")
 

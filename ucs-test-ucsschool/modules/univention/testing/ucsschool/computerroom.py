@@ -753,7 +753,9 @@ class UmcComputer(object):
                 )
             )
         else:
-            raise AssertionError("Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult))
+            raise AssertionError(
+                "Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult)
+            )
 
     def remove(self):
         """Remove computer"""

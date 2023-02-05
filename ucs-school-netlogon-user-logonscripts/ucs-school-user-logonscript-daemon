@@ -346,7 +346,9 @@ class QueueHandler:
     def generate_header_and_functions_snippet(self):
         str_replacements = {
             "desktop_folder_icon": self.desktop_folder_icon,
-            "desktop_folder_name": self.desktop_folder_name.translate(str.maketrans("", "", r'\/:*?"<>|')),
+            "desktop_folder_name": self.desktop_folder_name.translate(
+                str.maketrans("", "", r'\/:*?"<>|')
+            ),
             "desktop_folder_path": self.desktop_folder_path,
             "domainname": self.domainname,
             "hostname": self.hostname,

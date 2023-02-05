@@ -42,10 +42,7 @@ def test_distribute_filename_problems(ucr):
                 filename = os.path.join(dirname, filename)
                 if os.path.getsize(filename) == 256:
                     try:
-                        if (
-                            token == open(filename).read()
-                            and os.path.basename(filename) == "foobar.txt"
-                        ):
+                        if token == open(filename).read() and os.path.basename(filename) == "foobar.txt":
                             found = True
                     except (IOError, OSError) as exc:
                         print("Failed to check %r: %r" % (filename, exc))

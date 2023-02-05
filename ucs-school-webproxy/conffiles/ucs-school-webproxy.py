@@ -374,10 +374,10 @@ def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
         with open(dst_fn, "w") as fout:
             for fn in {
                 name.strip()
-                    for name in configRegistry.get(
-                        "proxy/filter/global/blacklists/%s" % (listtype,), ""
-                    ).split(" ")
-                    if name.strip()
+                for name in configRegistry.get(
+                    "proxy/filter/global/blacklists/%s" % (listtype,), ""
+                ).split(" ")
+                if name.strip()
             }:
                 src_fn = os.path.join(DIR_DATA, fn)
                 if os.path.exists(src_fn):

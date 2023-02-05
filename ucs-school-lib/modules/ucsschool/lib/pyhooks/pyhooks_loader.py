@@ -209,12 +209,10 @@ class PyHooksLoader(object):
             self.logger.info(
                 "Loaded hooks: %r.",
                 {
-                    meth_name:
-                            [
-                                "{}.{}".format(m.__self__.__class__.__name__, m.__func__.__name__)
-                                for m in meths
-                            ]
-                        for meth_name, meths in iteritems(self._pyhook_obj_cache)
+                    meth_name: [
+                        "{}.{}".format(m.__self__.__class__.__name__, m.__func__.__name__) for m in meths
+                    ]
+                    for meth_name, meths in iteritems(self._pyhook_obj_cache)
                 },
             )
         return self._pyhook_obj_cache

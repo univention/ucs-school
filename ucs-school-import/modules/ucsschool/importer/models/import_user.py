@@ -1346,10 +1346,10 @@ class ImportUser(User):
                 # (and we have to loop over the query result anyway)
                 self.__class__._all_usernames = {
                     attr["uid"][0].decode("UTF-8"): UsernameUniquenessTuple(
-                            attr.get("ucsschoolRecordUID", [b""])[0].decode("UTF-8") or None,
-                            attr.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8") or None,
-                            dn,
-                        )
+                        attr.get("ucsschoolRecordUID", [b""])[0].decode("UTF-8") or None,
+                        attr.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8") or None,
+                        dn,
+                    )
                     for dn, attr in lo.search(
                         "objectClass=posixAccount",
                         attr=["uid", "ucsschoolRecordUID", "ucsschoolSourceUID"],

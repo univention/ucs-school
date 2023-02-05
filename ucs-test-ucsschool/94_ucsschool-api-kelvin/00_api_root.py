@@ -55,7 +55,9 @@ class Test(TestCase):
                     RESOURCE_URLS["schools"], headers=self.auth_headers, verify=False  # noqa: S501
                 ).json()
                 params["school"] = schools[0]["name"]
-            response = requests.get(url, headers=self.auth_headers, verify=False, params=params)  # noqa: S501
+            response = requests.get(
+                url, headers=self.auth_headers, verify=False, params=params
+            )  # noqa: S501
             assert response.status_code == 200
 
 

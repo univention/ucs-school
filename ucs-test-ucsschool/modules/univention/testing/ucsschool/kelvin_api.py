@@ -316,9 +316,7 @@ class HttpApiUserTestBase(TestCase):
             "school": urljoin(RESOURCE_URLS["schools"], sorted(ous)[0]),
             "school_classes": {}
             if roles == ("staff",)
-            else {
-                ou: sorted([uts.random_username(4), uts.random_username(4)]) for ou in sorted(ous)
-            },
+            else {ou: sorted([uts.random_username(4), uts.random_username(4)]) for ou in sorted(ous)},
             "schools": [urljoin(RESOURCE_URLS["schools"], ou) for ou in sorted(ous)],
             "source_uid": self.import_config["source_uid"],
             "udm_properties": {

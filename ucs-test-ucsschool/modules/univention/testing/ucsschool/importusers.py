@@ -282,12 +282,16 @@ class Person(object):
             "description": [self.description] if self.description else [],
             "ucsschoolSchool": self.schools,
             "univentionBirthday": [self.birthday] if self.birthday else [],
-            "sambaLogonScript": [samba_logon_script] if samba_logon_script and not self.is_staff() else [],
+            "sambaLogonScript": [samba_logon_script]
+            if samba_logon_script and not self.is_staff()
+            else [],
             "sambaHomeDrive": [homedrive] if homedrive and not self.is_staff() else [],
             "sambaHomePath": []
             if self.is_staff() or not samba_home_path_server
             else ["\\\\{}\\{}".format(samba_home_path_server, self.username)],
-            "sambaProfilePath": [] if self.is_staff() or not profile_path_server else [profile_path_server],
+            "sambaProfilePath": []
+            if self.is_staff() or not profile_path_server
+            else [profile_path_server],
         }
 
         if self.password:

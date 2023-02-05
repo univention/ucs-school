@@ -370,8 +370,8 @@ class Instance(SchoolBaseModule):
                 """
                 return {
                     x.replace("||", "|")
-                        for x in re.split("(?<![|])[|](?![|])", ucr.get(ucrvar, ""))
-                        if x
+                    for x in re.split("(?<![|])[|](?![|])", ucr.get(ucrvar, ""))
+                    if x
                 }
 
             blacklisted_attributes = getBlacklistSet("ucsschool/exam/user/ldap/blacklist")

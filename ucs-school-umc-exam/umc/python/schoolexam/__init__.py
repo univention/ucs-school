@@ -938,9 +938,9 @@ class Instance(SchoolBaseModule):
 
                 parallel_users_local = {
                     iuser.dn: iproject.description
-                        for iproject in util.distribution.Project.list(only_distributed=True)
-                        if iproject.name != project.name
-                        for iuser in iproject.recipients
+                    for iproject in util.distribution.Project.list(only_distributed=True)
+                    if iproject.name != project.name
+                    for iuser in iproject.recipients
                 }
                 logger.info("parallel_users_local=%r", parallel_users_local)
 
