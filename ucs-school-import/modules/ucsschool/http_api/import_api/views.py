@@ -229,7 +229,7 @@ class TextArtifactViewPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # obj is a TextArtifact object (LogFile, PasswordsFile, SummaryFile)
-        userimportjob_related_name = getattr(view, "userimportjob_related_name")
+        userimportjob_related_name = view.userimportjob_related_name
         if not userimportjob_related_name:
             raise RuntimeError("View has no/empty userimportjob_related_name attribute.")
 
