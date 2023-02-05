@@ -891,19 +891,19 @@ class Staff(User):
 
     def get_samba_home_path(self, lo):  # type: (LoType) -> None
         """Do not set sambaHomePath for staff users."""
-        return None
+        return
 
     def get_samba_home_drive(self):  # type: () -> None
         """Do not set sambaHomeDrive for staff users."""
-        return None
+        return
 
     def get_samba_netlogon_script_path(self):  # type: () -> None
         """Do not set sambaLogonScript for staff users."""
-        return None
+        return
 
     def get_profile_path(self, lo):  # type: (LoType) -> None
         """Do not set sambaProfilePath for staff users."""
-        return None
+        return
 
     def get_school_class_objs(self):  # type: () -> List[SchoolClass]
         return []

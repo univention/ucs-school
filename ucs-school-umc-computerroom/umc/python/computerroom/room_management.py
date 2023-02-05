@@ -648,7 +648,7 @@ class VeyonComputer(threading.Thread):
     def _set_feature(self, feature, active=True):  # type: (Feature, bool) -> None
         if not self.connected():
             MODULE.warn("{} not connected - skipping setting feature {}".format(self.name, feature))
-            return None
+            return
         try:
             self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
         except VeyonError:

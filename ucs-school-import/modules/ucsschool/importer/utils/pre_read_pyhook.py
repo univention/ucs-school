@@ -81,4 +81,4 @@ class PreReadPyHook(ImportPyHook):
 
         :return: None
         """
-        return None
+        return

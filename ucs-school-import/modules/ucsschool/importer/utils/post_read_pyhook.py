@@ -79,7 +79,7 @@ class PostReadPyHook(ImportPyHook):
         :return: None
         :raises UcsSchoolImportSkipImportRecord: if an entry (e.g. a CSV line) should be skipped
         """
-        return None
+        return
 
     def all_entries_read(self, imported_users, errors):
         """
@@ -94,4 +94,4 @@ class PostReadPyHook(ImportPyHook):
             records
         :return: None
         """
-        return None
+        return

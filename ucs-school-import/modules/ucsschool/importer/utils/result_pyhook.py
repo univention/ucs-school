@@ -75,4 +75,4 @@ class ResultPyHook(ImportPyHook):
         :param UserImportData user_import_data: relevant data from the UserImport class
         :return: None
         """
-        return None
+        return
