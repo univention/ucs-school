@@ -772,7 +772,7 @@ class ImportUser(User):
             res = defaultdict(list)
             self.school_classes = self.school_classes.strip(" \n\r\t,")
             for a_class in [klass.strip() for klass in self.school_classes.split(",") if klass.strip()]:
-                school, sep, cls_name = [x.strip() for x in a_class.partition("-")]
+                school, sep, cls_name = (x.strip() for x in a_class.partition("-"))
                 if sep and not cls_name:
                     raise InvalidClassName("Empty class name.")
                 if not sep:
