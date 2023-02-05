@@ -8,7 +8,7 @@
 import pytest
 
 import univention.config_registry
-import univention.testing.utils as utils
+from univention.testing import utils
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()

@@ -11,7 +11,7 @@ from __future__ import print_function
 
 from ldap.filter import filter_format
 
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 def test_check_dns_settings(ucr):

@@ -8,7 +8,7 @@ from __future__ import print_function
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
+from univention.testing import utils
 import univention.uldap
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
 from univention.testing.ucsschool.computer import random_ip

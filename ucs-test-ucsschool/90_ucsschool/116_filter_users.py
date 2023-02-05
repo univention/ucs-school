@@ -12,7 +12,7 @@ from unittest.mock import patch
 import pytest
 
 import univention.admin.uexceptions as udm_exceptions
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models import User
 from ucsschool.lib.school_umc_base import Display
 from univention.lib.umc import BadRequest

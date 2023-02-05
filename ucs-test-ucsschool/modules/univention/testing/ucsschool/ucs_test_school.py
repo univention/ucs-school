@@ -56,7 +56,7 @@ import univention.admin.uldap as udm_uldap
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm as udm_test
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.computer import SchoolComputer
 from ucsschool.lib.models.group import ComputerRoom, SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School

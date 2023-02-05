@@ -13,7 +13,7 @@ from io import BytesIO
 
 import pycurl
 
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 class SimpleCurl(object):

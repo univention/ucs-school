@@ -16,7 +16,7 @@ import pytest
 
 import univention.admin.uldap as udm_uldap
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 class MyObj(object):

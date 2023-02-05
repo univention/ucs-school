@@ -18,7 +18,7 @@ from sys import exit
 
 import workaround
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.strings import random_string
 from univention.testing.ucsschool.test_samba4 import TestSamba4
 

@@ -50,7 +50,7 @@ import psutil
 from ldap.filter import filter_format
 from six.moves.urllib_parse import urlsplit
 
-import ucsschool.lib.internetrules as internetrules
+from ucsschool.lib import internetrules
 import univention.admin.uexceptions as udm_exceptions
 
 try:

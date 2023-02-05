@@ -12,7 +12,7 @@ import copy
 import pprint
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 

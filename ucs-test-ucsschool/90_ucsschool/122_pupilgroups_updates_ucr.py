@@ -9,7 +9,7 @@
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.school import School
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester

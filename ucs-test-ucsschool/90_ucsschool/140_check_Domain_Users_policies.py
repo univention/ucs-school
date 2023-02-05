@@ -7,7 +7,7 @@
 ##  - domaincontroller_slave
 ## tags: [apptest,ucsschool,ucsschool_base1]
 
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 def test_check_domain_users_policies(schoolenv, ucr):

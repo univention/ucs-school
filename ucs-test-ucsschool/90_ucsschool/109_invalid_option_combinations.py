@@ -11,7 +11,7 @@
 import pytest
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.user import ExamStudent, Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.lib.roles import create_ucsschool_role_string
 from univention.admin.uexceptions import invalidOptions

@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.admin.uexceptions import noObject

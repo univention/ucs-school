@@ -33,7 +33,7 @@
 """This module checks the consistency of USC@school users, shares, containers and groups"""
 import argparse
 
-import ucsschool.lib.consistency as consistency
+from ucsschool.lib import consistency
 from ucsschool.lib.models.school import School
 from univention.admin.uldap import getMachineConnection
 

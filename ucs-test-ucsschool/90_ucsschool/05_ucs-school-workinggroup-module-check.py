@@ -9,7 +9,7 @@ from __future__ import print_function
 
 import time
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 

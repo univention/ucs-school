@@ -16,7 +16,7 @@ import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm
-import univention.testing.utils as utils
+from univention.testing import utils
 import univention.uldap
 from ucsschool.lib.models.dhcp import DHCPServer
 from ucsschool.lib.models.school import School

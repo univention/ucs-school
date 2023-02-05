@@ -7,7 +7,7 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 

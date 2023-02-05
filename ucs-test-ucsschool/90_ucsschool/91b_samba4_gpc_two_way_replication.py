@@ -16,7 +16,7 @@ import ldap
 import workaround
 
 import ucsschool.lib.models
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.admin.uldap import getMachineConnection
 from univention.testing.strings import random_username
 from univention.testing.ucsschool.test_samba4 import TestSamba4

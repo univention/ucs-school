@@ -9,7 +9,7 @@
 ## packages: [ucs-school-umc-distribution]
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.distribution import Distribution
 from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client

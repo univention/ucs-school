@@ -15,7 +15,7 @@ import subprocess
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as ut_school
-import univention.testing.utils as utils
+from univention.testing import utils
 
 ucr = univention.testing.ucr.UCSTestConfigRegistry()
 ucr.load()

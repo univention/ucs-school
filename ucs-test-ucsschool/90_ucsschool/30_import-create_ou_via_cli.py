@@ -16,7 +16,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.importou as eio
 import univention.testing.udm
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 @pytest.mark.parametrize(

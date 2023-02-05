@@ -28,7 +28,7 @@ from samba.credentials import DONT_USE_KERBEROS, Credentials
 from samba.net import LIBNET_JOIN_AUTOMATIC, Net
 from samba.param import LoadParm
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.strings import random_username
 from univention.testing.ucsschool.test_samba4 import TestSamba4
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool

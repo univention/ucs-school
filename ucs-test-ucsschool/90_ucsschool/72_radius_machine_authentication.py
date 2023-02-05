@@ -12,7 +12,7 @@ import random
 
 from ldap.filter import filter_format
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import set_windows_pc_password

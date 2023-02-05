@@ -39,7 +39,7 @@ from ldap.filter import filter_format
 from six import iteritems
 
 import univention.admin.modules as udm_modules
-import univention.admin.syntax as syntax
+from univention.admin import syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 

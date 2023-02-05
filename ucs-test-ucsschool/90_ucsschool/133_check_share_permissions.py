@@ -14,7 +14,7 @@ from typing import List  # noqa: F401
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import ClassShare, MarketplaceShare, WorkGroupShare
 from ucsschool.lib.models.utils import exec_cmd

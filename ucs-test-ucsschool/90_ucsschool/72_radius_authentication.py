@@ -12,7 +12,7 @@ import random
 
 from ldap.filter import filter_format
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.internetrule import InternetRule
 from univention.testing.ucsschool.radius import test_peap_auth as _test_peap_auth

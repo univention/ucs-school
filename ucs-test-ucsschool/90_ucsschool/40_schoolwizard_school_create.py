@@ -12,7 +12,7 @@ import pytest
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.udm
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.ucs_test_school import UCSTestSchool, get_ucsschool_logger
 from univention.testing.umc import Client
 

@@ -15,7 +15,7 @@ import subprocess
 from typing import Tuple  # noqa: F401
 
 import univention.admin.uldap as udm_uldap
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.ucs_test_school import NameDnObj, UCSTestSchool, logger
 
 

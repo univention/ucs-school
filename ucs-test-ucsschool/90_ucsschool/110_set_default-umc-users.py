@@ -5,7 +5,7 @@
 ## exposure: dangerous
 ## packages: []
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.config_registry import handler_set
 
 

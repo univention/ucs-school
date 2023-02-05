@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.umc import Client
 
 

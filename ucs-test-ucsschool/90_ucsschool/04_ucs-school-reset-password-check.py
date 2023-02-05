@@ -12,7 +12,7 @@ import pytest
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.lib.umc import Forbidden, HTTPError
 from univention.testing.umc import Client
 

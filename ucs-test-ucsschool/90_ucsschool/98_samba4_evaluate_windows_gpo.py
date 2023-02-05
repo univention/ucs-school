@@ -19,7 +19,7 @@ from subprocess import PIPE, STDOUT, Popen
 from sys import exit
 
 import univention.testing.udm
-import univention.testing.utils as utils
+from univention.testing import utils
 import univention.winexe
 from ucsschool.lib.models.school import School
 from ucsschool.lib.schoolldap import SchoolSearchBase

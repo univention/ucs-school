@@ -12,7 +12,7 @@ import random
 import univention.config_registry
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.user import Student
 from univention.lib.umc import HTTPError
 from univention.testing.umc import Client

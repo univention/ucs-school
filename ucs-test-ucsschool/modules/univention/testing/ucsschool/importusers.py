@@ -16,7 +16,7 @@ import univention.config_registry
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.udm as udm_test
-import univention.testing.utils as utils
+from univention.testing import utils
 import univention.uldap
 from ucsschool.lib.models.school import School as SchoolLib
 from ucsschool.lib.models.user import (

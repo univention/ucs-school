@@ -20,7 +20,7 @@ from typing import List  # noqa: F401
 import attr
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.user import User
 
 

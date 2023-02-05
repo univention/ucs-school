@@ -14,7 +14,7 @@ from sys import exit
 from dns import resolver
 from ldap.filter import escape_filter_chars
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.strings import random_username
 from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.test_samba4 import TestSamba4

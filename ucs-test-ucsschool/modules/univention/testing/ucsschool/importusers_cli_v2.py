@@ -22,7 +22,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import get_mail_domain

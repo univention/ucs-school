@@ -12,7 +12,7 @@ from re import search
 from subprocess import check_call, check_output
 
 import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
+from univention.testing import utils
 
 
 class GPO(object):

@@ -7,7 +7,7 @@
 
 from subprocess import PIPE, Popen
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_s4connector
 
 

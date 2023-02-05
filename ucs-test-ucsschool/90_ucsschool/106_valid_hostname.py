@@ -13,7 +13,7 @@ import subprocess
 import pytest
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.attributes import ValidationError
 from univention.testing.ucsschool.school import School
 from univention.testing.umc import Client

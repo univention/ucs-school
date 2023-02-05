@@ -11,7 +11,7 @@ import socket
 import subprocess
 import time
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.smbstatus import SMB_Status
 
 

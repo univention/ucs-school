@@ -7,7 +7,7 @@
 
 import random
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.internetrule import Check, InternetRule
 from univention.testing.ucsschool.klasse import Klasse
 from univention.testing.ucsschool.workgroup import Workgroup

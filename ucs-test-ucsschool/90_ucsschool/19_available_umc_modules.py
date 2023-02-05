@@ -5,7 +5,7 @@
 ## exposure: dangerous
 ## packages: [ucs-school-multiserver|ucs-school-replica|ucs-school-singleserver]
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.umc import Client
 
 

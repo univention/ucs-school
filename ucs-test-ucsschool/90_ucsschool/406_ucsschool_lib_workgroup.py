@@ -7,7 +7,7 @@
 ## packages:
 ##   - python3-ucsschool-lib
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.group import WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare
 

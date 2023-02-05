@@ -25,7 +25,7 @@ from samba.dcerpc import dnsp
 from samba.ndr import ndr_pack, ndr_unpack
 from samba.provision.sambadns import SRVRecord
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.testing.ucsschool.test_samba4 import TestSamba4
 
 try:

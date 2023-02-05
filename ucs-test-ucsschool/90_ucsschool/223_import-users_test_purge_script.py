@@ -17,7 +17,7 @@ import sys
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine

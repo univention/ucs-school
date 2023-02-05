@@ -12,7 +12,7 @@
 # $ pytest -s -l -v ./......py::test_create
 #
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.user import SchoolAdmin
 from univention.testing.ucsschool.conftest import UserType
 

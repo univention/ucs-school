@@ -12,7 +12,7 @@ from __future__ import print_function
 import random
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 
 # multiple whitespaces to increase chance to get several words
 charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '

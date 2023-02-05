@@ -4,7 +4,7 @@
 ## tags: [apptest, ucsschool]
 ## exposure: safe
 
-import univention.testing.utils as utils
+from univention.testing import utils
 
 role_packages = {
     "dc_multi_master": "ucs-school-multiserver",

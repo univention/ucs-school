@@ -13,7 +13,7 @@ import random
 import pytest
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.importer.exceptions import EmptyMandatoryAttribute, MissingMandatoryAttribute
 from ucsschool.importer.utils.shell import (
     ImportStaff,

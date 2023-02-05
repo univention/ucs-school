@@ -10,7 +10,7 @@ from __future__ import print_function
 import tempfile
 import time
 
-import univention.testing.utils as utils
+from univention.testing import utils
 from univention.config_registry import handler_set
 from univention.testing.mail import MailSink
 from univention.testing.network import NetworkRedirector

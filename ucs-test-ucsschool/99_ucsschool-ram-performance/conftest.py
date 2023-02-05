@@ -8,7 +8,7 @@ from typing import Dict, Iterable, List
 import psutil
 import pytest
 
-import univention.testing.utils as utils
+from univention.testing import utils
 
 try:
     import univention.testing.ucr

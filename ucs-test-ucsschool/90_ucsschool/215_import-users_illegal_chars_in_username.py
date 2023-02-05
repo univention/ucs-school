@@ -16,7 +16,7 @@ import time
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.importer.exceptions import FormatError
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.lib.models.utils import ucr_username_max_length

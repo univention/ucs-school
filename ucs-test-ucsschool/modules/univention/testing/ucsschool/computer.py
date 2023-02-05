@@ -4,7 +4,7 @@ from ipaddress import IPv4Interface, IPv4Network
 from typing import TYPE_CHECKING, Optional
 
 import univention.testing.strings as uts
-import univention.testing.utils as utils
+from univention.testing import utils
 from ucsschool.lib.models.computer import (
     IPComputer as IPComputerLib,
     LinuxComputer as LinuxComputerLib,
