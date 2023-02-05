@@ -758,7 +758,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             # UDM computer object of Primary Directory Node can be found with "cn={hostname}", using the
             # hostname from its fqdn, which is in ucr["ldap/master"].
             filter_s = filter_format("cn=%s", [ucr["ldap/master"].split(".", 1)[0]])
-            obj = [o for o in mod.search(filter_s)][0]
+            obj = list(mod.search(filter_s))[0]
             role = create_ucsschool_role_string(role_single_master, self.name)
             if role not in obj.props.ucsschoolRole:
                 obj.props.ucsschoolRole.append(role)
@@ -775,7 +775,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 (adm_net_filter, "dc_slave_admin"),
                 (edu_net_filter, "dc_slave_edu"),
             ]:
-                groups = [grp for grp in udm.get("groups/group").search(ldap_filter, base=base)]
+                groups = list(udm.get("groups/group").search(ldap_filter, base=base))
                 if groups:
                     try:
                         server_dn = groups[0].props.hosts[0]

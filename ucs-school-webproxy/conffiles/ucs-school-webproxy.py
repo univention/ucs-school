@@ -227,7 +227,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
                 usergroupSetting.append((priority, usergroupname, default))
 
     # src usergroup
-    for (priority, usergroupname, proxy_setting) in reversed(sorted(usergroupSetting)):
+    for (priority, usergroupname, proxy_setting) in sorted(usergroupSetting, reverse=True):
         f.write("src usergroup-%s {\n" % quote(usergroupname))
         f.write("        userlist usergroup-%s\n" % quote(usergroupname))
         f.write("}\n\n")
@@ -318,7 +318,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
                 f.write("	}\n")
 
     # acl usergroup
-    for priority, usergroupname, proxy_setting in reversed(sorted(usergroupSetting)):
+    for priority, usergroupname, proxy_setting in sorted(usergroupSetting, reverse=True):
         filtertype = configRegistry.get(
             "proxy/filter/setting/%s/filtertype" % proxy_setting, "whitelist-blacklist-pass"
         )

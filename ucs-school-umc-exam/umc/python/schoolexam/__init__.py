@@ -100,7 +100,7 @@ _ = Translation("ucs-school-umc-exam").translate
 CREATE_USER_POST_HOOK_DIR = "/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-if "schoolexam" not in [handler for handler in logger.handlers]:
+if "schoolexam" not in list(logger.handlers):
     _module_handler = ModuleHandler(udebug_facility=ud.MODULE)
     _module_handler.set_name("schoolexam")
     _formatter = logging.Formatter(fmt="%(funcName)s:%(lineno)d  %(message)s")

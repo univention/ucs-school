@@ -545,7 +545,7 @@ def test_exam_student_missing_exam_group(caplog, random_logger):
 
 def test_missing_role_teachers_and_staff(caplog, random_logger):
     dict_obj = teacher_and_staff_user()
-    missing_roles = [role for role in dict_obj["props"]["ucsschoolRole"]]
+    missing_roles = list(dict_obj["props"]["ucsschoolRole"])
     dict_obj["props"]["ucsschoolRole"] = []
     validate(dict_obj, logger=random_logger)
     public_logs = filter_log_messages(caplog.record_tuples, random_logger.name)
