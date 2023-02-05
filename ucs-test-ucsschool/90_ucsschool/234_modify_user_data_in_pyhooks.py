@@ -26,7 +26,7 @@ logger.info("*** Copying %r to %r...", TESTHOOKSOURCE, TESTHOOKTARGET)
 shutil.copy2(TESTHOOKSOURCE, TESTHOOKTARGET)
 
 
-@pytest.fixture
+@pytest.fixture()
 def cleanup():
     yield
     for ext in ["", "c", "o"]:

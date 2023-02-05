@@ -313,7 +313,7 @@ all_user_roles_names = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def reload_school_search_base():
     """force reload of SchoolSearchBase data"""
 
@@ -324,7 +324,7 @@ def reload_school_search_base():
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def reload_school_search_base_after_test(reload_school_search_base):
     """force reload of SchoolSearchBase data after test run"""
     yield

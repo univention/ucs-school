@@ -13,7 +13,7 @@ _APP = "ucsschool-veyon-proxy"
 _MOLOTOV_FILE = "molotov_veyon_connections.py"
 
 
-@pytest.fixture
+@pytest.fixture()
 def molotov():
     def _run_molotov(scenario, processes):
         check_call(

@@ -278,13 +278,13 @@ def machine_password():
         return fp.read().strip()
 
 
-@pytest.fixture
+@pytest.fixture()
 def schoolenv():
     with utu.UCSTestSchool() as _schoolenv:
         yield _schoolenv
 
 
-@pytest.fixture
+@pytest.fixture()
 def create_ou(schoolenv, ucr_hostname):
     def _func(**kwargs):  # type: (**Any) -> Tuple[str, str]
         kwargs["name_edudc"] = kwargs.get("name_edudc") or ucr_hostname
@@ -293,7 +293,7 @@ def create_ou(schoolenv, ucr_hostname):
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def lo(schoolenv):
     return schoolenv.lo
 
@@ -304,7 +304,7 @@ def udm_session():
         yield udm
 
 
-@pytest.fixture
+@pytest.fixture()
 def create_import_user(lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
     from ucsschool.importer.models.import_user import (  # noqa: F401
@@ -326,7 +326,7 @@ def create_import_user(lo):
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def get_import_user(import_config, lo):
     # ucs-test-ucsschool must not depend on ucs-school-import package
     from ucsschool.importer.models.import_user import ImportUser
@@ -527,7 +527,7 @@ def workgroup_share_school_attributes(workgroup_share_ldap_attributes):
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def random_logger():
     with tempfile.NamedTemporaryFile() as f:
         handler = get_file_handler("DEBUG", f.name)
@@ -606,7 +606,7 @@ def restart_services():
     return _restart_services
 
 
-@pytest.fixture
+@pytest.fixture()
 def schedule_restart_services(restart_services):
     services_to_restart = []  # type: List[Tuple[str]]
 
@@ -631,7 +631,7 @@ def restart_umc(restart_services):
     return _restart_umc
 
 
-@pytest.fixture
+@pytest.fixture()
 def schedule_restart_umc(schedule_restart_services):
     schedule_restart_services(
         "univention-management-console-web-server", "univention-management-console-server"

@@ -20,7 +20,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from univention.config_registry import ConfigRegistry
 
 
-@pytest.fixture
+@pytest.fixture()
 def portal_config(ucr: ConfigRegistry) -> SimpleNamespace:
     config = {
         "url": f"https://{ucr['hostname']}.{ucr['domainname']}/univention/portal",
@@ -39,7 +39,7 @@ def portal_config(ucr: ConfigRegistry) -> SimpleNamespace:
     return SimpleNamespace(**config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def keycloak_config(ucr: ConfigRegistry) -> SimpleNamespace:
     url = f"https://ucs-sso-ng.{ucr['domainname']}"
     config = {
@@ -59,7 +59,7 @@ def keycloak_config(ucr: ConfigRegistry) -> SimpleNamespace:
     return SimpleNamespace(**config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def selenium() -> webdriver.Chrome:
     """Browser based testing for using Selenium."""
     chrome_options = webdriver.ChromeOptions()
@@ -69,13 +69,13 @@ def selenium() -> webdriver.Chrome:
     return driver
 
 
-@pytest.fixture
+@pytest.fixture()
 def ucr() -> ConfigRegistry:
     ucr = ConfigRegistry()
     return ucr.load()
 
 
-@pytest.fixture
+@pytest.fixture()
 def portal(selenium: webdriver.Chrome, portal_config: SimpleNamespace) -> webdriver.Chrome:
     selenium.get(portal_config.url)
     wait_for_id(selenium, portal_config.categories_id)

@@ -17,7 +17,7 @@ import univention.testing.strings as uts
 from ucsschool.lib.models.utils import get_file_handler
 
 
-@pytest.fixture
+@pytest.fixture()
 def random_logger():
     def _func():
         handler = get_file_handler("DEBUG", tempfile.mkstemp()[1])

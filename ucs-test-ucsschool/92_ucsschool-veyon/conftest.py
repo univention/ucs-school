@@ -10,20 +10,20 @@ VEYON_KEY_FILE = "/etc/ucsschool-veyon/key.pem"
 API = "http://localhost:11080/api/v1"
 
 
-@pytest.fixture
+@pytest.fixture()
 def windows_client():
     windows_hosts = os.environ.get("UCS_ENV_WINDOWS_CLIENTS")
     assert windows_hosts, "No windows clients in env var UCS_ENV_WINDOWS_CLIENT!"
     return windows_hosts.split(" ")[0]
 
 
-@pytest.fixture
+@pytest.fixture()
 def veyon_key_data():
     with open(VEYON_KEY_FILE) as fp:
         return fp.read().strip()
 
 
-@pytest.fixture
+@pytest.fixture()
 def get_veyon_client(veyon_key_data):
     def _func(host):
         credentials = {"keyname": "teacher", "keydata": veyon_key_data}
@@ -38,7 +38,7 @@ def get_veyon_client(veyon_key_data):
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def wait_for_demo_mode():
     def _func(client, desired_status):
         feature = Feature.DEMO_SERVER
@@ -56,7 +56,7 @@ def wait_for_demo_mode():
     return _func
 
 
-@pytest.fixture
+@pytest.fixture()
 def set_demo_mode():
     def _func(client, status):
         feature = Feature.DEMO_SERVER

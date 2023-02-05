@@ -44,7 +44,7 @@ def get_class_dn(class_name, school, lo):
     return school_class.dn
 
 
-@pytest.fixture
+@pytest.fixture()
 def extract_class_dns(lo):
     def _func(attrs):
         school_class_objs = []

@@ -32,7 +32,7 @@ sys.path.append("/usr/share/ucs-school-import/pyhooks/")
 from bdaytest import BIRTHDAYS, PRE_ACTION_BIRTHDAYS  # noqa: E402
 
 
-@pytest.fixture
+@pytest.fixture()
 def cleanup_ext():
     yield
     for ext in ["", "c", "o"]:
