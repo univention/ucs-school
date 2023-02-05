@@ -65,10 +65,10 @@ def make_udmobj(school_roles):
             "homedrive": "I:",
             "sambaRID": "5032",
             "groups": [
-                "cn=lehrer-mustermannschule,cn=groups,ou=MustermannSchule,{0}".format(ldapbase),
-                "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{0}".format(ldapbase),
+                "cn=lehrer-mustermannschule,cn=groups,ou=MustermannSchule,{}".format(ldapbase),
+                "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{}".format(ldapbase),
             ],
-            "primaryGroup": "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{0}".format(
+            "primaryGroup": "cn=Domain Users MustermannSchule,cn=groups,ou=MustermannSchule,{}".format(
                 ldapbase
             ),
             "mailHomeServer": "",
@@ -94,8 +94,8 @@ def make_udmobj(school_roles):
             "ucsschoolPurgeTimestamp": "",
             "ucsschoolRole": school_roles,
         },
-        "dn": "uid=mmustermann,cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(ldapbase),
-        "position": "cn=lehrer,cn=users,ou=MustermannSchule,{0}".format(ldapbase),
+        "dn": "uid=mmustermann,cn=lehrer,cn=users,ou=MustermannSchule,{}".format(ldapbase),
+        "position": "cn=lehrer,cn=users,ou=MustermannSchule,{}".format(ldapbase),
         "options": {"ucsschoolTeacher": True, "default": True},
     }
 

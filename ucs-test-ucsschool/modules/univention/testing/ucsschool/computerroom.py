@@ -321,7 +321,7 @@ class Room(object):
             {
                 "ip": ip,
                 "printer": printer,
-                "user": "{0}%{1}".format(user, "univention"),
+                "user": "{}%{}".format(user, "univention"),
                 "filename": f.name,
             },
         )[0]
@@ -923,7 +923,7 @@ def check_share_read(user, ip_address, share, passwd="univention", filename="/*"
     cmd_read_share = ["smbclient", "//%(ip)s/%(share)s", "-U", "%(user)s", "-c", "dir %(filename)s"]
     read = run_commands(
         [cmd_read_share],
-        {"ip": ip_address, "share": share, "user": "{0}%{1}".format(user, passwd), "filename": filename},
+        {"ip": ip_address, "share": share, "user": "{}%{}".format(user, passwd), "filename": filename},
     )
     assert read[0] == expected_result, "Read share (%r) result (%r), expected (%r)" % (
         share,
@@ -953,7 +953,7 @@ def check_share_write(
         {
             "ip": ip_address,
             "share": share,
-            "user": "{0}%{1}".format(user, passwd),
+            "user": "{}%{}".format(user, passwd),
             "filename": f.name,
             "remote_filename": remote_filename,
         },

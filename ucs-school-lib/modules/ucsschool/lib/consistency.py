@@ -107,16 +107,16 @@ class UserCheck(object):
         self.all_schools = [ou.name for ou in School.get_all(self.lo)]
         for ou in self.all_schools:
             self.domain_users_ou[ou] = "cn=Domain Users {0},cn=groups,ou={0},{1}".format(ou, ldap_base)
-            self.students_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
-                students_prefix, ou.lower(), ldap_base, ou
+            self.students_ou[ou] = "cn={}{},cn=groups,ou={},{}".format(
+                students_prefix, ou.lower(), ou, ldap_base
             )
-            self.teachers_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
-                teachers_prefix, ou.lower(), ldap_base, ou
+            self.teachers_ou[ou] = "cn={}{},cn=groups,ou={},{}".format(
+                teachers_prefix, ou.lower(), ou, ldap_base
             )
-            self.staff_ou[ou] = "cn={0}{1},cn=groups,ou={3},{2}".format(
-                staff_prefix, ou.lower(), ldap_base, ou
+            self.staff_ou[ou] = "cn={}{},cn=groups,ou={},{}".format(
+                staff_prefix, ou.lower(), ou, ldap_base
             )
-            self.admins_ou[ou] = "cn={0}{1},cn=ouadmins,cn=groups,{2}".format(
+            self.admins_ou[ou] = "cn={}{},cn=ouadmins,cn=groups,{}".format(
                 admins_prefix, ou.lower(), ldap_base
             )
 
@@ -327,18 +327,18 @@ def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[
         issues = []
         mandatory_groups = [
             "cn=Domain Users {0},cn=groups,ou={0},{1}".format(escape_dn_chars(ou), ldap_base),
-            "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
-            "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+            "cn=OU{}-DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(escape_dn_chars(ou), ldap_base),
+            "cn=OU{}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
                 escape_dn_chars(ou), ldap_base
             ),
-            "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+            "cn=OU{}-Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(
                 escape_dn_chars(ou), ldap_base
             ),
-            "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+            "cn=OU{}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
                 escape_dn_chars(ou), ldap_base
             ),
-            "cn=OU{0}-Klassenarbeit,cn=ucsschool,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
-            "cn=admins-{0},cn=ouadmins,cn=groups,{1}".format(escape_dn_chars(ou), ldap_base),
+            "cn=OU{}-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(escape_dn_chars(ou), ldap_base),
+            "cn=admins-{},cn=ouadmins,cn=groups,{}".format(escape_dn_chars(ou), ldap_base),
         ]
         for mandatory_group in mandatory_groups:
             try:
@@ -504,16 +504,16 @@ def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict
             continue
 
     for ou in all_schools:
-        dn_dc_edu = "cn=OU{0}-DC-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+        dn_dc_edu = "cn=OU{}-DC-Edukativnetz,cn=ucsschool,cn=groups,{}".format(
             escape_dn_chars(ou), ldap_base
         )
-        dn_dc_admin = "cn=OU{0}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+        dn_dc_admin = "cn=OU{}-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
             escape_dn_chars(ou), ldap_base
         )
-        dn_member_edu = "cn=OU{0}-Member-Edukativnetz,cn=ucsschool,cn=groups,{1}".format(
+        dn_member_edu = "cn=OU{}-Member-Edukativnetz,cn=ucsschool,cn=groups,{}".format(
             escape_dn_chars(ou), ldap_base
         )
-        dn_member_admin = "cn=OU{0}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{1}".format(
+        dn_member_admin = "cn=OU{}-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,{}".format(
             escape_dn_chars(ou), ldap_base
         )
         role_dc_edu_str = create_ucsschool_role_string(role_dc_slave_edu, ou)

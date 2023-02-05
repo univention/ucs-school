@@ -579,11 +579,11 @@ html5
             "ucsschool/datadistribution/datadir/recipient", "Unterrichtsmaterial"
         )
         if purpose == "distribute":
-            path = "/home/{0}/schueler/{1}/{2}/{3}".format(
+            path = "/home/{}/schueler/{}/{}/{}".format(
                 self.school, user, recipient_dir_name, self.name
             )
         elif purpose == "collect":
-            path = "/home/{0}/lehrer/{1}/{2}/{3}{4}/{5}-{6:03d}".format(
+            path = "/home/{}/lehrer/{}/{}/{}{}/{}-{:03d}".format(
                 self.school,
                 self.sender,
                 sender_dir_name,

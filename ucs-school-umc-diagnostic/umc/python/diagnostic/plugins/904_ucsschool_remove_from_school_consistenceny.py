@@ -85,7 +85,7 @@ def run(_umc_instance):
     obj_list = None
 
     obj_list = lo.search(
-        filter="(&(univentionObjectType=groups/group)(ucsschoolRole={0}:school:*))".format(
+        filter="(&(univentionObjectType=groups/group)(ucsschoolRole={}:school:*))".format(
             role_school_class
         ),
         attr=[UCSSCHOOLROLE, "uniqueMember"],
