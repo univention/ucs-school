@@ -2,20 +2,20 @@
 
 @!@
 try:
-	import univention.lib.ucrLogrotate
+    import univention.lib.ucrLogrotate
 except ImportError:
-	pass
+    pass
 else:
-	name = "ucs-school-user-logonscript-daemon"
-	settings = univention.lib.ucrLogrotate.getLogrotateConfig(name, configRegistry)
+    name = "ucs-school-user-logonscript-daemon"
+    settings = univention.lib.ucrLogrotate.getLogrotateConfig(name, configRegistry)
 
-	print("/var/log/univention/%s.log {" % name)
-	for setting in sorted(settings):
-		print("\t%s" % settings[setting])
+    print("/var/log/univention/%s.log {" % name)
+    for setting in sorted(settings):
+        print("\t%s" % settings[setting])
 
-	# Add additional entry to trigger a daemon restart for reloading of logfiles
-	print('\tlastaction')
-	print('\t\tsystemctl try-restart ucs-school-netlogon-user-logonscripts.service')
-	print('\tendscript')
-	print("}")
+    # Add additional entry to trigger a daemon restart for reloading of logfiles
+    print('\tlastaction')
+    print('\t\tsystemctl try-restart ucs-school-netlogon-user-logonscripts.service')
+    print('\tendscript')
+    print("}")
 @!@
