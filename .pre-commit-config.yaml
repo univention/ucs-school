@@ -10,6 +10,15 @@ repos:
       - id: check-xml
       - id: check-yaml
       - id: trailing-whitespace
+  - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
+    rev: '0.0.7'
+    hooks:
+      - id: ucr-flake8
+      - id: ucr-ruff
+      - id: ucr-autopep8
+        stages: [ manual ]
+      - id: ucr-ruff-fix
+        stages: [ manual ]
   - repo: https://github.com/timothycrosley/isort
     rev: 5.11.5
     hooks:
