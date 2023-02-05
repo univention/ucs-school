@@ -281,7 +281,7 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
+            {"filename": StringSanitizer(required=True), "tmpfile": StringSanitizer(required=True)},
             required=True,
         )
     )
@@ -369,15 +369,15 @@ class Instance(SchoolBaseModule):
             for i_dn in request.options.get("recipients", [])
         ]
         recipients = [recipient for recipient in recipients if recipient]
-        new_values = dict(
-            name=request.options["directory"],
-            description=request.options["name"],
-            files=request.options.get("files"),
-            sender=sender,
-            room=request.options["room"],
-            recipients=recipients,
-            deadline=request.options["examEndTime"],
-        )
+        new_values = {
+            "name": request.options["directory"],
+            "description": request.options["name"],
+            "files": request.options.get("files"),
+            "sender": sender,
+            "room": request.options["room"],
+            "recipients": recipients,
+            "deadline": request.options["examEndTime"],
+        }
         if not sender:
             raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
         project = util.distribution.Project.load(request.options.get("name", ""))
@@ -552,7 +552,7 @@ class Instance(SchoolBaseModule):
 
         # create that holds a reference to project, otherwise _thread() cannot
         # set the project variable in the scope of start_exam:
-        my = type("", (), dict(project=None))()
+        my = type("", (), {"project": None})()
 
         # create a User object for the teacher
         # perform this LDAP operation outside the thread, to avoid tracebacks
@@ -586,7 +586,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Preparing the computer room for exam mode..."))
             client.umc_command(
                 "schoolexam-master/set-computerroom-exammode",
-                dict(school=request.options["school"], roomdn=request.options["room"]),
+                {"school": request.options["school"], "roomdn": request.options["room"]},
             ).result  # FIXME: no error handling
             progress.add_steps(5)
 
@@ -628,12 +628,12 @@ class Instance(SchoolBaseModule):
                 try:
                     ires = client.umc_command(
                         "schoolexam-master/create-exam-user",
-                        dict(
-                            school=request.options["school"],
-                            userdn=iuser.dn,
-                            room=request.options["room"],
-                            exam=request.options["name"],
-                        ),
+                        {
+                            "school": request.options["school"],
+                            "userdn": iuser.dn,
+                            "room": request.options["room"],
+                            "exam": request.options["name"],
+                        },
                     ).result
                     if not ires:  # occurs if disabled user gets ignored
                         continue
@@ -902,7 +902,7 @@ class Instance(SchoolBaseModule):
             progress.component(_("Configuring the computer room..."))
             client.umc_command(
                 "schoolexam-master/unset-computerroom-exammode",
-                dict(roomdn=request.options["room"], school=school),
+                {"roomdn": request.options["room"], "school": school},
             ).result
             progress.add_steps(5)
 
@@ -936,14 +936,12 @@ class Instance(SchoolBaseModule):
                         len(project.recipients),
                     )
 
-                parallel_users_local = dict(
-                    [
-                        (iuser.dn, iproject.description)
+                parallel_users_local = {
+                    iuser.dn: iproject.description
                         for iproject in util.distribution.Project.list(only_distributed=True)
                         if iproject.name != project.name
                         for iuser in iproject.recipients
-                    ]
-                )
+                }
                 logger.info("parallel_users_local=%r", parallel_users_local)
 
                 progress.component(_("Removing exam accounts"))
@@ -1000,7 +998,7 @@ class Instance(SchoolBaseModule):
                             # remove LDAP user entry
                             client.umc_command(
                                 "schoolexam-master/remove-exam-user",
-                                dict(userdn=iuser.dn, school=school, exam=request.options["exam"]),
+                                {"userdn": iuser.dn, "school": school, "exam": request.options["exam"]},
                             ).result
                         if iuser.dn not in parallel_users_local:
                             Instance.set_datadir_immutable_flag([iuser], project, False)
@@ -1094,7 +1092,7 @@ class Instance(SchoolBaseModule):
             )
         )
         project_students = []
-        for student in set((s.username, s.dn) for s in temp_students):
+        for student in {(s.username, s.dn) for s in temp_students}:
             try:
                 user_obj = User.from_dn(student[1], None, lo)
             except noObject:

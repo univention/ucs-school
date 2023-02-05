@@ -59,11 +59,11 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
 
         roles = ("staff", "student", "teacher", "teacher_and_staff")
-        user_num = dict((role, random.randint(1, 4)) for role in roles)
+        user_num = {role: random.randint(1, 4) for role in roles}
         _roles = list(user_num.keys())
         random.shuffle(_roles)  # moar random
-        roles1 = dict((k, user_num[k]) for k in _roles[:2])
-        roles2 = dict((k, user_num[k]) for k in _roles[1:])  # overlap 1
+        roles1 = {k: user_num[k] for k in _roles[:2]}
+        roles2 = {k: user_num[k] for k in _roles[1:]}  # overlap 1
 
         person_list1 = []
         person_list2 = []

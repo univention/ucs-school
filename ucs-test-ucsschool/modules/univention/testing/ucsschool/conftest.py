@@ -334,7 +334,7 @@ def get_import_user(import_config, lo):
     def _func(dn, school=None):  # type: (str, Optional[str]) -> ImportUser
         user = ImportUser.from_dn(dn, school, lo)
         udm_obj = user.get_udm_object(lo)
-        user.udm_properties = dict((k, udm_obj[k]) for k in import_config["mapped_udm_properties"])
+        user.udm_properties = {k: udm_obj[k] for k in import_config["mapped_udm_properties"]}
         return user
 
     return _func

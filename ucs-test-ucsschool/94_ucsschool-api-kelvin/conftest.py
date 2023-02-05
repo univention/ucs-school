@@ -40,7 +40,7 @@ def get_access_token(username="Administrator", password="univention"):  # type: 
     response = requests.post(
         url=KELVIN_TOKEN_URL,
         headers={"Content-Type": "application/x-www-form-urlencoded"},
-        data=dict(username=username, password=password),
+        data={"username": username, "password": password},
     )
     assert response.status_code == 200, repr(response.__dict__)
     response_json = response.json()
@@ -183,10 +183,10 @@ def compare_import_user_and_resource(auth_header):
                 assert set(v) == {urljoin(RESOURCE_URLS["roles"], r) for r in import_user_roles}
             elif k == "school_classes":
                 if source == "LDAP":
-                    val = dict(
-                        (school, ["{}-{}".format(school, kls) for kls in classes])
+                    val = {
+                        school: ["{}-{}".format(school, kls) for kls in classes]
                         for school, classes in v.items()
-                    )
+                    }
                 else:
                     val = v
                 msg = (

@@ -798,7 +798,7 @@ class UmcComputer(object):
         }
         get_result = self.get()
         if get_result != info:
-            diff = set(x for x in get_result if get_result[x] != info[x])
+            diff = {x for x in get_result if get_result[x] != info[x]}
         assert get_result == info, (
             "Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\n"
             "Difference = %r" % (self.name, get_result, info, diff)

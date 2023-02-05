@@ -425,7 +425,7 @@ class UserImport(object):
             ]
 
         ucs_user_ids = set(self.get_ids_of_existing_users())
-        imported_user_ids = set((iu.source_uid, iu.record_uid) for iu in self.imported_users)
+        imported_user_ids = {(iu.source_uid, iu.record_uid) for iu in self.imported_users}
         users_to_delete = ucs_user_ids - imported_user_ids
         users_to_delete = [(u[0], u[1], []) for u in users_to_delete]
         self.logger.debug("users_to_delete=%r", users_to_delete)

@@ -258,7 +258,7 @@ class HttpApiUserTestBase(TestCase):
                         ),
                     )
                     objs.append(response.json())
-                school_names = set(obj.get("name") for obj in objs)
+                school_names = {obj.get("name") for obj in objs}
                 self.assertEqual(
                     school_names,
                     set(import_user.schools),
@@ -286,9 +286,9 @@ class HttpApiUserTestBase(TestCase):
                         ),
                     )
                     objs.append(response.json())
-                role_names = set(
+                role_names = {
                     "pupil" if obj.get("name") == "student" else obj.get("name") for obj in objs
-                )
+                }
                 self.assertEqual(
                     role_names,
                     set(import_user.roles),
@@ -297,10 +297,10 @@ class HttpApiUserTestBase(TestCase):
                 )
             elif k == "school_classes":
                 if source == "LDAP":
-                    val = dict(
-                        (school, ["{}-{}".format(school, kls) for kls in classes])
+                    val = {
+                        school: ["{}-{}".format(school, kls) for kls in classes]
                         for school, classes in v.items()
-                    )
+                    }
                 else:
                     val = v
                 msg = (
@@ -360,9 +360,9 @@ class HttpApiUserTestBase(TestCase):
             "school": urljoin(RESOURCE_URLS["schools"], sorted(ous)[0]),
             "school_classes": {}
             if roles == ("staff",)
-            else dict(
-                (ou, sorted([uts.random_username(4), uts.random_username(4)])) for ou in sorted(ous)
-            ),
+            else {
+                ou: sorted([uts.random_username(4), uts.random_username(4)]) for ou in sorted(ous)
+            },
             "schools": [urljoin(RESOURCE_URLS["schools"], ou) for ou in sorted(ous)],
             "source_uid": self.import_config["source_uid"],
             "udm_properties": {
@@ -448,7 +448,7 @@ class HttpApiUserTestBase(TestCase):
     def get_import_user(self, dn, school=None):  # type: (str, Optional[str]) -> ImportUser
         user = ImportUser.from_dn(dn, school, self.lo)
         udm_obj = user.get_udm_object(self.lo)
-        user.udm_properties = dict((k, udm_obj[k]) for k in self.import_config["mapped_udm_properties"])
+        user.udm_properties = {k: udm_obj[k] for k in self.import_config["mapped_udm_properties"]}
         return user
 
     def create_import_user(self, **kwargs):  # type: (**Any) -> ImportUser

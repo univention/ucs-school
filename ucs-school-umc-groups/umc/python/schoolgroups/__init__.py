@@ -125,7 +125,7 @@ def _filter_users(
         except udm_exceptions.noObject as exc:
             MODULE.error("Not adding not existing user %r to group: %r." % (userdn, exc))
             continue
-        if not user.schools or not set(user.schools) & set([school]):
+        if not user.schools or not set(user.schools) & {school}:
             raise UMC_Error(
                 _("User %s does not belong to school %r.")
                 % (Display.user(user.get_udm_object(ldap_machine_write)), school)
@@ -284,7 +284,7 @@ class Instance(SchoolBaseModule):
                     % (member_dn,)
                 )
                 continue
-            if not user.schools or not set(user.schools).intersection(set([group.school])):
+            if not user.schools or not set(user.schools).intersection({group.school}):
                 continue
             if request.flavor == "class" and not user.is_teacher(ldap_user_read):
                 continue  # only display teachers
@@ -301,7 +301,7 @@ class Instance(SchoolBaseModule):
             members.append({"id": user.dn, "label": Display.user(user.get_udm_object(ldap_user_read))})
         return members
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}))
     @LDAP_Connection(USER_READ, MACHINE_WRITE)
     def put(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
         """
@@ -329,7 +329,7 @@ class Instance(SchoolBaseModule):
         old_members = self._filter_members(
             request, group_from_ldap, group_from_ldap.users, ldap_user_read
         )
-        removed_members = set(o["id"] for o in old_members) - set(group_from_umc["members"])
+        removed_members = {o["id"] for o in old_members} - set(group_from_umc["members"])
 
         MODULE.info(
             'Modifying group "%s" with members: %s' % (group_from_ldap.dn, group_from_ldap.users)
@@ -356,7 +356,7 @@ class Instance(SchoolBaseModule):
                 # no permissions/is not a user/does not exists → keep the old value
                 users.append(userdn)
                 continue
-            if not user.schools or not set(user.schools) & set([group_from_ldap.school]):
+            if not user.schools or not set(user.schools) & {group_from_ldap.school}:
                 users.append(userdn)
                 continue
             if (
@@ -394,7 +394,7 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, success)
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}))
     @only_workgroup_admin
     @LDAP_Connection(USER_READ, USER_WRITE)
     def add(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
@@ -436,7 +436,7 @@ class Instance(SchoolBaseModule):
 
         self.finished(request.id, success)
 
-    @sanitize(DictSanitizer(dict(object=ListSanitizer(min_elements=1))))
+    @sanitize(DictSanitizer({"object": ListSanitizer(min_elements=1)}))
     @only_workgroup_admin
     @LDAP_Connection(USER_READ, USER_WRITE)
     def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):

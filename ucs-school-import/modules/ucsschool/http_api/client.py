@@ -548,7 +548,7 @@ class Client(object):
             :return: Resource object
             :rtype: ResourceRepresentation
             """
-            list_kwargs = dict(ordering="-{}".format(self.pk_name), limit="1")
+            list_kwargs = {"ordering": "-{}".format(self.pk_name), "limit": "1"}
             list_kwargs.update(params)
             for ioj in self.list(**list_kwargs):
                 return ioj

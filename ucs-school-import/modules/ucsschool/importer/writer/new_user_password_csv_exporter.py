@@ -68,12 +68,12 @@ class NewUserPasswordCsvExporter(ResultExporter):
                 "Expected ImportUser or dict but got {}. Repr: {}".format(type(user), repr(user))
             )
 
-        return dict(
-            username=user.name,
-            password=user.password,
-            role=user.role_sting,
-            lastname=user.lastname,
-            firstname=user.firstname,
-            schools=",".join(user.schools),
-            classes=user.school_classes_as_str,
-        )
+        return {
+            "username": user.name,
+            "password": user.password,
+            "role": user.role_sting,
+            "lastname": user.lastname,
+            "firstname": user.firstname,
+            "schools": ",".join(user.schools),
+            "classes": user.school_classes_as_str,
+        }

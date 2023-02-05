@@ -156,15 +156,15 @@ def _updateRoomInfo(roomDN, **kwargs):
 
 def _writeRoomInfo(roomDN, user=None, exam=None, examDescription=None, examEndTime=None, atjobID=None):
     """Set infos for a room and lock the room."""
-    info = dict(
-        room=roomDN,
-        user=user,
-        exam=exam,
-        examDescription=examDescription,
-        examEndTime=examEndTime,
-        atjobID=atjobID,
-        pid=os.getpid(),
-    )
+    info = {
+        "room": roomDN,
+        "user": user,
+        "exam": exam,
+        "examDescription": examDescription,
+        "examEndTime": examEndTime,
+        "atjobID": atjobID,
+        "pid": os.getpid(),
+    }
     MODULE.info('Writing info file for room "%s": %s' % (roomDN, info))
     try:
         # write user DN in the room file
@@ -451,17 +451,17 @@ class Instance(SchoolBaseModule):
 
         self.finished(
             request.id,
-            dict(
-                success=success,
-                message=message,
-                info=dict(
-                    exam=info.get("exam"),
-                    examDescription=info.get("examDescription"),
-                    examEndTime=info.get("examEndTime"),
-                    room=info.get("room"),
-                    user=info.get("user"),
-                ),
-            ),
+            {
+                "success": success,
+                "message": message,
+                "info": {
+                    "exam": info.get("exam"),
+                    "examDescription": info.get("examDescription"),
+                    "examEndTime": info.get("examEndTime"),
+                    "room": info.get("room"),
+                    "user": info.get("user"),
+                },
+            },
         )
 
     @sanitize(school=SchoolSanitizer(required=True))

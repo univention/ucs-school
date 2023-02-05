@@ -167,9 +167,9 @@ class InternetRule(object):
         print("Checking UCR for %s" % self.name)
         self.ucr.load()
         # extract related items from ucr
-        exItems = dict(
-            [(key.split("/")[-1], value) for (key, value) in self.ucr.items() if self.name in key]
-        )
+        exItems = {
+            key.split("/")[-1]: value for (key, value) in self.ucr.items() if self.name in key
+        }
         assert bool(exItems) == should_match, "Unexpected registery items (should_match=%r items=%r)" % (
             should_match,
             exItems,
@@ -184,9 +184,9 @@ class InternetRule(object):
             curtype = exItems["filtertype"]
             curWlan = exItems["wlan"]
             curPriority = int(exItems["priority"])
-            exDomains = dict(
-                [(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()]
-            )
+            exDomains = {
+                key: value for (key, value) in exItems.items() if unicode(key).isnumeric()
+            }
             curDomains = sorted(exDomains.values())
             currentState = (curtype, curPriority, curWlan, curDomains)
             assert currentState == (

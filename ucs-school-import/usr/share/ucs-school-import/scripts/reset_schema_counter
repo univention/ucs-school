@@ -41,7 +41,7 @@ from ucsschool.importer.utils.ldap_connection import get_admin_connection, get_u
 
 
 def parse_cmdline():
-    defaults = dict(email=False, pattern="*", username=False, write=False)
+    defaults = {"email": False, "pattern": "*", "username": False, "write": False}
     parser = ArgumentParser(
         description="UCS@school import tool to reset counters of unique names from schema."
     )

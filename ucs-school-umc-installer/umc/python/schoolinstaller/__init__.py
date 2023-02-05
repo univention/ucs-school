@@ -365,13 +365,13 @@ class Progress(object):
         self.errors = []
 
     def poll(self):
-        return dict(
-            finished=self.finished,
-            steps=100 * float(self.steps) / self.max_steps,
-            component=self.component,
-            info=self.info,
-            errors=self.errors,
-        )
+        return {
+            "finished": self.finished,
+            "steps": 100 * float(self.steps) / self.max_steps,
+            "component": self.component,
+            "info": self.info,
+            "errors": self.errors,
+        }
 
     def finish(self):
         self.finished = True

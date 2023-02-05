@@ -755,11 +755,11 @@ class ImportUser(User):
                         self,
                         self.old_user.school_classes,
                     )
-                    self.school_classes = dict(
-                        (school, classes)
+                    self.school_classes = {
+                        school: classes
                         for school, classes in iteritems(self.old_user.school_classes)
                         if school in self.schools
-                    )
+                    }
             elif "school_classes" not in input_dict:
                 # no mapping -> try to get previous data
                 if self.old_user:
@@ -958,7 +958,7 @@ class ImportUser(User):
             self.schools = [self.school]
         elif isinstance(self.schools, string_types):
             self.schools = self.schools.strip(",").split(",")
-            self.schools = sorted(set(self.normalize(s.strip()) for s in self.schools))
+            self.schools = sorted({self.normalize(s.strip()) for s in self.schools})
         else:
             raise RuntimeError("Unknown data in attribute 'schools': '{}'".format(self.schools))
 
@@ -1091,11 +1091,11 @@ class ImportUser(User):
                 self.config.get("school_classes_keep_if_empty", False),
                 self.school_classes,
             )
-            self.school_classes = dict(
-                (school, classes)
+            self.school_classes = {
+                school: classes
                 for school, classes in iteritems(school_classes)
                 if school in self.schools
-            )
+            }
         if self.config["dry_run"]:
             self.logger.info("Dry-run: skipping user.modify() for %s.", self)
             return True
@@ -1344,21 +1344,18 @@ class ImportUser(User):
                 # fetch usernames of all users only once per import job
                 # its faster to filter out computer names in Python than in LDAP
                 # (and we have to loop over the query result anyway)
-                self.__class__._all_usernames = dict(
-                    (
-                        attr["uid"][0].decode("UTF-8"),
-                        UsernameUniquenessTuple(
+                self.__class__._all_usernames = {
+                    attr["uid"][0].decode("UTF-8"): UsernameUniquenessTuple(
                             attr.get("ucsschoolRecordUID", [b""])[0].decode("UTF-8") or None,
                             attr.get("ucsschoolSourceUID", [b""])[0].decode("UTF-8") or None,
                             dn,
-                        ),
-                    )
+                        )
                     for dn, attr in lo.search(
                         "objectClass=posixAccount",
                         attr=["uid", "ucsschoolRecordUID", "ucsschoolSourceUID"],
                     )
                     if not attr["uid"][0].endswith(b"$")
-                )
+                }
             self._check_username_uniqueness()
 
     def _check_username_uniqueness(self):  # type: () -> None
@@ -1584,9 +1581,9 @@ class ImportUser(User):
     @classmethod
     def attribute_udm_names(cls):  # type: () -> Dict[str, str]
         if not cls._attribute_udm_names:
-            cls._attribute_udm_names = dict(
-                (attr.udm_name, name) for name, attr in cls._attributes.items() if attr.udm_name
-            )
+            cls._attribute_udm_names = {
+                attr.udm_name: name for name, attr in cls._attributes.items() if attr.udm_name
+            }
         return cls._attribute_udm_names
 
     def _prevent_mapped_attributes_in_udm_properties(self):  # type: () -> None

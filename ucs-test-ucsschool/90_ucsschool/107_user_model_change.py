@@ -10,19 +10,19 @@ import univention.testing.strings as uts
 from ucsschool.lib.models.base import WrongModel
 from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
 
-cls_role_map = dict(
-    Staff=["is_staff"],
-    Student=["is_student"],
-    Teacher=["is_teacher"],
-    TeachersAndStaff=["is_staff", "is_teacher"],
-)
+cls_role_map = {
+    "Staff": ["is_staff"],
+    "Student": ["is_student"],
+    "Teacher": ["is_teacher"],
+    "TeachersAndStaff": ["is_staff", "is_teacher"],
+}
 role_funcs = ["is_staff", "is_student", "is_teacher", "is_administrator"]
-cls_options_map = dict(
-    Staff=["ucsschoolStaff"],
-    Student=["ucsschoolStudent"],
-    Teacher=["ucsschoolTeacher"],
-    TeachersAndStaff=["ucsschoolStaff", "ucsschoolTeacher"],
-)
+cls_options_map = {
+    "Staff": ["ucsschoolStaff"],
+    "Student": ["ucsschoolStudent"],
+    "Teacher": ["ucsschoolTeacher"],
+    "TeachersAndStaff": ["ucsschoolStaff", "ucsschoolTeacher"],
+}
 options = ["ucsschoolStaff", "ucsschoolStudent", "ucsschoolTeacher"]
 
 

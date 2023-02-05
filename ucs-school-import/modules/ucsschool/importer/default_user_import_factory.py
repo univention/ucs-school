@@ -160,10 +160,10 @@ class DefaultUserImportFactory(object):
 
         if self.config["input"]["type"] == "csv":
             kwargs.update(
-                dict(
-                    filename=self.config["input"]["filename"],
-                    header_lines=self.config["csv"]["header_lines"],
-                )
+                {
+                    "filename": self.config["input"]["filename"],
+                    "header_lines": self.config["csv"]["header_lines"],
+                }
             )
             return CsvReader(**kwargs)
         else:

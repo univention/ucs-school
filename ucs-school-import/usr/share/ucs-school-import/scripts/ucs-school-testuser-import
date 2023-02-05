@@ -51,20 +51,20 @@ CONF_FILE_TARGET_VAR = os.path.join(CONF_FILE_TARGET_DIR, "user_import.json")
 
 
 def parse_cmdline():
-    defaults = dict(
-        csvfile="test_users_%Y-%m-%d_%H:%M:%S.csv",
-        nostart=False,
-        httpapi=False,
-        staff=0,
-        students=0,
-        teachers=0,
-        staffteachers=0,
-        classes=0,
-        inclasses=2,
-        schools=2,
-        email=False,
-        verbose=False,
-    )
+    defaults = {
+        "csvfile": "test_users_%Y-%m-%d_%H:%M:%S.csv",
+        "nostart": False,
+        "httpapi": False,
+        "staff": 0,
+        "students": 0,
+        "teachers": 0,
+        "staffteachers": 0,
+        "classes": 0,
+        "inclasses": 2,
+        "schools": 2,
+        "email": False,
+        "verbose": False,
+    }
     parser = ArgumentParser(
         description="UCS@school import test users tool",
         epilog="When using --create-email-addresses either an email domain must be created in the "

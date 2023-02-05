@@ -67,7 +67,7 @@ def test_password_not_in_arg_is_logged(random_logger):
 
 def test_password_in_single_arg_is_not_logged(random_logger):
     logger = random_logger()
-    random_dict = dict([(uts.random_string(), uts.random_string())])
+    random_dict = {uts.random_string(): uts.random_string()}
     logger.debug("a dict: %r", random_dict)
     password_string = uts.random_string(20)
     dict_with_pw = {"bar": uts.random_string(), "password": password_string}
@@ -86,11 +86,11 @@ def test_password_in_single_arg_is_not_logged(random_logger):
 
 def test_password_in_multiple_args_is_not_logged(random_logger):
     logger = random_logger()
-    random_dict1 = dict([(uts.random_string(), uts.random_string())])
+    random_dict1 = {uts.random_string(): uts.random_string()}
     logger.debug("a dict: %r", random_dict1)
     password_string = uts.random_string(20)
-    random_dict2 = dict([(uts.random_string(), uts.random_string())])
-    random_dict3 = dict([(uts.random_string(), uts.random_string())])
+    random_dict2 = {uts.random_string(): uts.random_string()}
+    random_dict3 = {uts.random_string(): uts.random_string()}
     dict_with_pw = {"bar": uts.random_string(), "password": password_string}
     logger.debug(
         "dict no pw: %r dict with pw: %r dict no pw: %r", random_dict2, dict_with_pw, random_dict3
@@ -114,7 +114,7 @@ def test_password_in_multiple_args_is_not_logged(random_logger):
 
 def test_remove_password_in_msg(random_logger):
     logger = random_logger()
-    random_dict1 = dict([(uts.random_string(), uts.random_string())])
+    random_dict1 = {uts.random_string(): uts.random_string()}
     logger.debug(random_dict1)
     password_string = uts.random_string(20)
     dict_with_pw = {"bar": uts.random_string(), "password": password_string}

@@ -75,7 +75,7 @@ class AnonymizeResultExporter(UserImportCsvResultExporter):
     def serialize(self, obj):
         logger.info("*** AnonymizeResultExporter.serialize()")
         res = super(AnonymizeResultExporter, self).serialize(obj)
-        res.update(dict(firstname="s3cr31", lastname="S3cr3t", birthday="1970-01-01"))
+        res.update({"firstname": "s3cr31", "lastname": "S3cr3t", "birthday": "1970-01-01"})
         return res
 
 

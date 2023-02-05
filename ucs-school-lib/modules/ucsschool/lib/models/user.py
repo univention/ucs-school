@@ -234,7 +234,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type["User"]
-        ocs = set(x.decode("UTF-8") for x in udm_obj.oldattr.get("objectClass", []))
+        ocs = {x.decode("UTF-8") for x in udm_obj.oldattr.get("objectClass", [])}
         if ocs >= {"ucsschoolTeacher", "ucsschoolStaff"}:
             return TeachersAndStaff
         if ocs >= {"ucsschoolExam", "ucsschoolStudent"}:
@@ -364,7 +364,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     continue
 
         # make sure user is in all mandatory groups and school classes
-        current_groups = set(grp_dn.lower() for grp_dn in udm_obj["groups"])
+        current_groups = {grp_dn.lower() for grp_dn in udm_obj["groups"]}
         groups_to_add = [dn for dn in mandatory_groups if dn.lower() not in current_groups]
         # [dn for dn in mandatory_groups if dn.lower() not in current_groups]
         if groups_to_add:

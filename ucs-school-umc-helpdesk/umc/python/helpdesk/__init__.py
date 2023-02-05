@@ -119,7 +119,7 @@ class Instance(SchoolBaseModule):
                 "phone": [],
             }
         mails = (
-            set([user["mailPrimaryAddress"]]) | set(user["mailAlternativeAddress"]) | set(user["e-mail"])
+            {user["mailPrimaryAddress"]} | set(user["mailAlternativeAddress"]) | set(user["e-mail"])
         )
 
         sender = user["mailPrimaryAddress"]

@@ -119,9 +119,9 @@ class DHCPService(UCSSchoolHelperAbstractClass):
             # copy subnets
             # find local interfaces
             interfaces = []
-            for interface_name in set(
-                [key.split("/")[1] for key in ucr.keys() if key.startswith("interfaces/eth")]
-            ):
+            for interface_name in {
+                key.split("/")[1] for key in ucr.keys() if key.startswith("interfaces/eth")
+            }:
                 try:
                     address = ipaddress.IPv4Network(
                         u"%s/%s"

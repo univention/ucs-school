@@ -203,7 +203,7 @@ class HttpApiImportFrontend(UserImportCommandLine):
     def make_job_state(
         description, percentage=0, done=0, total=0, celery_task_state=CELERY_STATES_STARTED, **kwargs
     ):
-        kwargs.update(dict(description=description, percentage=percentage, done=done, total=total))
+        kwargs.update({"description": description, "percentage": percentage, "done": done, "total": total})
         return kwargs
 
     def setup_config(self):

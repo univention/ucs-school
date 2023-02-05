@@ -131,21 +131,21 @@ class UserImportCsvResultExporter(ResultExporter):
             user = self.factory.make_import_user([role_pupil])  # set some role
             user.roles = []  # remove role
 
-        return dict(
-            line=getattr(user, "entry_count", 0),
-            success=int(not is_error),
-            error=int(is_error),
-            action=user.action,
-            role=user.role_sting if user.roles else "",
-            username=user.name,
-            schools=" ".join(user.schools) if user.schools else user.school,
-            firstname=user.firstname,
-            lastname=user.lastname,
-            birthday=user.birthday,
-            email=user.email,
-            disabled="0" if user.disabled == "0" else "1",
-            classes=user.school_classes_as_str,
-            source_uid=user.source_uid,
-            record_uid=user.record_uid,
-            error_msg=str(obj) if is_error else "",
-        )
+        return {
+            "line": getattr(user, "entry_count", 0),
+            "success": int(not is_error),
+            "error": int(is_error),
+            "action": user.action,
+            "role": user.role_sting if user.roles else "",
+            "username": user.name,
+            "schools": " ".join(user.schools) if user.schools else user.school,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "birthday": user.birthday,
+            "email": user.email,
+            "disabled": "0" if user.disabled == "0" else "1",
+            "classes": user.school_classes_as_str,
+            "source_uid": user.source_uid,
+            "record_uid": user.record_uid,
+            "error_msg": str(obj) if is_error else "",
+        }

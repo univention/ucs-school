@@ -235,12 +235,12 @@ class Test_FactoryConf(object):
             "error_msg",
         )  # from UserImportCsvResultExporter
         myreader = DictReader(outfile, dialect=dialect, fieldnames=field_names)
-        expected = dict(firstname="s3cr31", lastname="S3cr3t", birthday="1970-01-01")
+        expected = {"firstname": "s3cr31", "lastname": "S3cr3t", "birthday": "1970-01-01"}
         for num, row in enumerate(myreader):
             if num == 0:
                 # header
                 continue
-            found = dict(firstname=row["firstname"], lastname=row["lastname"], birthday=row["birthday"])
+            found = {"firstname": row["firstname"], "lastname": row["lastname"], "birthday": row["birthday"]}
             assert expected == found, "Output not as expected: expected=%r found=%r" % (expected, found)
         self.logger.info("\n\n*** OK: result is anonymized.\n\n")
 

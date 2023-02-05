@@ -163,17 +163,17 @@ class TestUserCreator(object):
             for user_num in range(num):
                 given_name = next(given_name_gen)
                 family_name = next(family_name_gen)
-                user = dict(
-                    Schulen=None,
-                    Benutzertyp=kind,
-                    Vorname=given_name,
-                    Nachname=family_name,
-                    Klassen=None,
-                    Beschreibung="A {}.".format(kind),
-                    Telefon="+{:>02}-{:>03}-{}".format(  # nosec
+                user = {
+                    "Schulen": None,
+                    "Benutzertyp": kind,
+                    "Vorname": given_name,
+                    "Nachname": family_name,
+                    "Klassen": None,
+                    "Beschreibung": "A {}.".format(kind),
+                    "Telefon": "+{:>02}-{:>03}-{}".format(  # nosec
                         random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999)
                     ),
-                )
+                }
                 if self.email:
                     user["EMail"] = ImportUser.normalize(
                         "{}m.{}m@{}".format(given_name, family_name, self.mail_domain)
@@ -188,17 +188,15 @@ class TestUserCreator(object):
                     user["Klassen"] = {}
                 elif kind == "student":
                     # students are in 1 class
-                    user["Klassen"] = dict(
-                        [(school, [self._get_class_name(school)]) for school in user["Schulen"]]
-                    )
+                    user["Klassen"] = {
+                        school: [self._get_class_name(school)] for school in user["Schulen"]
+                    }
                 else:
                     # [staff]teachers can be in multiple classes
-                    user["Klassen"] = dict(
-                        [
-                            (school, [self._get_class_name(school) for _x in range(self.num_inclasses)])
+                    user["Klassen"] = {
+                        school: [self._get_class_name(school) for _x in range(self.num_inclasses)]
                             for school in user["Schulen"]
-                        ]
-                    )
+                    }
                 total_users_count += 1
                 self.logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
                 yield user

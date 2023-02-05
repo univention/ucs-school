@@ -108,7 +108,7 @@ class Instance(SchoolBaseModule):
                 result["teacher_computers"].append(host_dn)
         self.finished(request.id, [result])
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}))
     @LDAP_Connection(USER_READ, USER_WRITE)
     def add(self, request, ldap_user_write=None, ldap_user_read=None):
         """Adds a new room"""
@@ -127,7 +127,7 @@ class Instance(SchoolBaseModule):
         )
         self.finished(request.id, [success])
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}))
     @LDAP_Connection(USER_READ, USER_WRITE)
     def put(self, request, ldap_user_write=None, ldap_user_read=None):
         """Modify an existing room"""
@@ -152,7 +152,7 @@ class Instance(SchoolBaseModule):
         )
         self.finished(request.id, [True])
 
-    @sanitize(DictSanitizer(dict(object=ListSanitizer(DNSanitizer(required=True), min_elements=1))))
+    @sanitize(DictSanitizer({"object": ListSanitizer(DNSanitizer(required=True), min_elements=1)}))
     @LDAP_Connection(USER_READ, USER_WRITE)
     def remove(self, request, ldap_user_write=None, ldap_user_read=None):
         """Deletes a room"""

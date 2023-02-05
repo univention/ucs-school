@@ -60,8 +60,8 @@ from univention.management.console.modules.sanitizers import (
 
 _ = Translation("ucs-school-umc-internetrules").translate
 
-_filterTypes = dict(whitelist=rules.WHITELIST, blacklist=rules.BLACKLIST)
-_filterTypesInv = dict((_i[1], _i[0]) for _i in _filterTypes.items())
+_filterTypes = {"whitelist": rules.WHITELIST, "blacklist": rules.BLACKLIST}
+_filterTypesInv = {_i[1]: _i[0] for _i in _filterTypes.items()}
 
 
 class Instance(SchoolBaseModule):
@@ -84,13 +84,13 @@ class Instance(SchoolBaseModule):
 
         # filter out all rules that match the given pattern
         result = [
-            dict(
-                name=irule.name,
-                type=_filterTypesInv[irule.type],
-                domains=len(irule.domains),
-                priority=irule.priority,
-                wlan=irule.wlan,
-            )
+            {
+                "name": irule.name,
+                "type": _filterTypesInv[irule.type],
+                "domains": len(irule.domains),
+                "priority": irule.priority,
+                "wlan": irule.wlan,
+            }
             for irule in rules.list()
             if pattern in irule.name.lower()
             or _matchDomain(irule.domains)
@@ -110,13 +110,13 @@ class Instance(SchoolBaseModule):
         # fetch all rules with the given names (we need to make sure that "name" is UTF8)
         names = set(request.options)
         result = [
-            dict(
-                name=irule.name,
-                type=_filterTypesInv[irule.type],
-                domains=irule.domains,
-                priority=irule.priority,
-                wlan=irule.wlan,
-            )
+            {
+                "name": irule.name,
+                "type": _filterTypesInv[irule.type],
+                "domains": irule.domains,
+                "priority": irule.priority,
+                "wlan": irule.wlan,
+            }
             for irule in rules.list()
             if irule.name in names
         ]
@@ -124,7 +124,7 @@ class Instance(SchoolBaseModule):
         MODULE.info("internetrules.get: results: %s" % (result,))
         self.finished(request.id, result)
 
-    @sanitize(DictSanitizer(dict(object=StringSanitizer()), required=True))
+    @sanitize(DictSanitizer({"object": StringSanitizer()}, required=True))
     def remove(self, request):
         """
         Removes the specified rules
@@ -138,7 +138,7 @@ class Instance(SchoolBaseModule):
             success = False
             if iname:
                 success = rules.remove(iname)
-            result.append(dict(name=iname, success=success))
+            result.append({"name": iname, "success": success})
 
         MODULE.info("internetrules.remove: results: %s" % (result,))
         self.finished(request.id, result)
@@ -222,18 +222,18 @@ class Instance(SchoolBaseModule):
 
     @sanitize(
         DictSanitizer(
-            dict(
-                object=DictSanitizer(
-                    dict(
-                        name=StringSanitizer(required=True),
-                        type=ChoicesSanitizer(list(_filterTypes.keys()), required=True),
-                        wlan=BooleanSanitizer(required=True),
-                        priority=IntegerSanitizer(required=True),
-                        domains=ListSanitizer(StringSanitizer(required=True), required=True),
-                    ),
+            {
+                "object": DictSanitizer(
+                    {
+                        "name": StringSanitizer(required=True),
+                        "type": ChoicesSanitizer(list(_filterTypes.keys()), required=True),
+                        "wlan": BooleanSanitizer(required=True),
+                        "priority": IntegerSanitizer(required=True),
+                        "domains": ListSanitizer(StringSanitizer(required=True), required=True),
+                    },
                     required=True,
                 )
-            ),
+            },
             required=True,
         )
     )
@@ -280,32 +280,32 @@ class Instance(SchoolBaseModule):
                 MODULE.info("Created new rule: %s" % newRule)
 
                 # everything ok
-                result.append(dict(name=iprops["name"], success=True))
+                result.append({"name": iprops["name"], "success": True})
             except (ValueError, KeyError) as e:
                 # data not valid... create error info
                 MODULE.info(
                     'data for internet filter rule "%s" is not valid: %s' % (iprops.get("name"), e)
                 )
-                result.append(dict(name=iprops.get("name"), success=False, details=str(e)))
+                result.append({"name": iprops.get("name"), "success": False, "details": str(e)})
 
         # return the results
         self.finished(request.id, result)
 
     @sanitize(
         DictSanitizer(
-            dict(
-                object=DictSanitizer(
-                    dict(
-                        name=StringSanitizer(required=True),
-                        type=ChoicesSanitizer(list(_filterTypes.keys()), required=True),
-                        wlan=BooleanSanitizer(required=True),
-                        priority=IntegerSanitizer(required=True),
-                        domains=ListSanitizer(StringSanitizer(required=True), required=True),
-                    ),
+            {
+                "object": DictSanitizer(
+                    {
+                        "name": StringSanitizer(required=True),
+                        "type": ChoicesSanitizer(list(_filterTypes.keys()), required=True),
+                        "wlan": BooleanSanitizer(required=True),
+                        "priority": IntegerSanitizer(required=True),
+                        "domains": ListSanitizer(StringSanitizer(required=True), required=True),
+                    },
                     required=True,
                 ),
-                options=DictSanitizer(dict(name=StringSanitizer()), required=True),
-            ),
+                "options": DictSanitizer({"name": StringSanitizer()}, required=True),
+            },
             required=True,
         )
     )
@@ -378,13 +378,13 @@ class Instance(SchoolBaseModule):
                 MODULE.info("Saved rule: %s" % irule)
 
                 # everything ok
-                result.append(dict(name=iname, success=True))
+                result.append({"name": iname, "success": True})
             except ValueError as e:
                 # data not valid... create error info
                 MODULE.info(
                     'data for internet filter rule "%s" is not valid: %s' % (iprops.get("name"), e)
                 )
-                result.append(dict(name=iprops.get("name"), success=False, details=str(e)))
+                result.append({"name": iprops.get("name"), "success": False, "details": str(e)})
 
         # return the results
         self.finished(request.id, result)
@@ -457,7 +457,7 @@ class Instance(SchoolBaseModule):
         self.finished(request.id, result)
 
     @sanitize(
-        DictSanitizer(dict(group=StringSanitizer(required=True), rule=StringSanitizer(required=True)))
+        DictSanitizer({"group": StringSanitizer(required=True), "rule": StringSanitizer(required=True)})
     )
     @LDAP_Connection()
     def groups_assign(self, request, ldap_user_read=None, ldap_position=None):
@@ -487,7 +487,7 @@ class Instance(SchoolBaseModule):
             else:
                 try:
                     # make sure the rule name is valid
-                    self._parseRule(dict(name=irule))
+                    self._parseRule({"name": irule})
                 except ValueError as exc:
                     raise UMC_Error(str(exc))
 

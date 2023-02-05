@@ -51,7 +51,7 @@ if TYPE_CHECKING:
 
 
 def parse_cmdline():
-    defaults = dict(dry_run=False, logfile=None, verbose=False)
+    defaults = {"dry_run": False, "logfile": None, "verbose": False}
     parser = ArgumentParser(
         description="UCS@school delete tool for expired user accounts (ucsschoolPurgeTimestamp)"
     )

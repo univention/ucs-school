@@ -75,7 +75,7 @@ def run(_umc_instance):
     for (obj_dn, obj_attrs) in obj_list:
         ucsschool_roles = obj_attrs.get(UCSSCHOOLROLE, [])
         roles = {role.decode("UTF-8").split(":")[-1] for role in ucsschool_roles if b":school:" in role}
-        school = set(x.decode("UTF-8") for x in obj_attrs.get(UCSSCHOOLSCHOOL, []))
+        school = {x.decode("UTF-8") for x in obj_attrs.get(UCSSCHOOLSCHOOL, [])}
         if school != roles:
             problematic_objects.setdefault(obj_dn, []).append(
                 _("{0} is not part of the school but in {1}").format(obj_dn, roles)

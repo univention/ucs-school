@@ -1322,7 +1322,7 @@ class RoleSupportMixin(object):
         object, if it was removed from school(s).
         """
         roles = self.roles_as_dicts
-        old_schools = set(role["context"] for role in roles if role["context"] != "-")
+        old_schools = {role["context"] for role in roles if role["context"] != "-"}
         cur_schools = set(self.get_schools())
         new_schools = cur_schools - old_schools
         removed_schools = old_schools - cur_schools

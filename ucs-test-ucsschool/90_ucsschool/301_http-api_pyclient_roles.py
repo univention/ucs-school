@@ -63,8 +63,8 @@ class Test(HttpApiImportTester):
 
         self.log.info("*** Checking schools via Python-API...")
         schools = client.school.list()
-        expected_schools = set(ou.name for ou in ous)
-        received_schools = set(s.name for s in schools)
+        expected_schools = {ou.name for ou in ous}
+        received_schools = {s.name for s in schools}
         self.log.info("Expected schools: %r", expected_schools)
         self.log.info("Received schools: %r", received_schools)
         assert expected_schools == received_schools
@@ -73,7 +73,7 @@ class Test(HttpApiImportTester):
         for ou in ous:
             expected_roles = groups[ou]["roles"]
             roles_from_api = client.school.get(ou.name).roles
-            received_roles = set(r.name for r in roles_from_api)
+            received_roles = {r.name for r in roles_from_api}
             self.log.info("Expected roles: %r", expected_roles)
             self.log.info("Received roles: %r", received_roles)
             assert expected_roles == received_roles

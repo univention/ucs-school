@@ -174,10 +174,10 @@ class Instance(SchoolBaseModule):
 
         for student in students:
             username = student.info["username"]
-            path_username = dict(
-                (self._get_path(username, ""), username)
+            path_username = {
+                self._get_path(username, ""): username
                 for username in self._get_all_username_variants(username)
-            )
+            }
             for user_path, username in six.iteritems(path_username):
                 printjoblist.extend(
                     Printjob(student, username, document).json()

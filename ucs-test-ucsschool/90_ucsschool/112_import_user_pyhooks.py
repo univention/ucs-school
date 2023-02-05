@@ -50,15 +50,15 @@ def test_import_user_pyhooks(cleanup_ext, ucr, schoolenv):
     lo = schoolenv.open_ldap_connection(admin=True)
     for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
         username = uts.random_username()
-        kwargs = dict(
-            school=ou_name,
-            schools=[ou_name],
-            name=username,
-            firstname=uts.random_name(),
-            lastname=uts.random_name(),
-            school_classes={},
-            record_uid=uts.random_name(),
-        )
+        kwargs = {
+            "school": ou_name,
+            "schools": [ou_name],
+            "name": username,
+            "firstname": uts.random_name(),
+            "lastname": uts.random_name(),
+            "school_classes": {},
+            "record_uid": uts.random_name(),
+        }
         logger.info("*** Creating %r in %r...", kls.__name__, ou_name)
         kwargs["birthday"] = PRE_ACTION_BIRTHDAYS["pre_create"]
         user = kls(**kwargs)

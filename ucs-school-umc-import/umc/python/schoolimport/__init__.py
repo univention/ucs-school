@@ -101,7 +101,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @simple_response
     def schools(self):
         schools = [
-            dict(id=school.name, label=school.displayName) for school in self.client.school.list()
+            {"id": school.name, "label": school.displayName} for school in self.client.school.list()
         ]
         if not schools:
             raise UMC_Error(_("No permissions for running an import for any school."))
@@ -113,7 +113,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
         if not school:
             return []
         userroles = [
-            dict(id=role.name, label=role.displayName) for role in self.client.school.get(school).roles
+            {"id": role.name, "label": role.displayName} for role in self.client.school.get(school).roles
         ]
         if not userroles:
             raise UMC_Error(_("No permissions for running an import for any user role."))

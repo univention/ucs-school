@@ -115,15 +115,13 @@ class UserMap(dict):
             dict.__setitem__(self, userstr, UserInfo("", ""))
             return
 
-        blacklisted_groups = set(
-            [
-                x.strip().lower()
+        blacklisted_groups = {
+            x.strip().lower()
                 for x in ucr.get(
                     "ucsschool/umc/computerroom/hide_screenshots/groups", "Domain Admins"
                 ).split(",")
-            ]
-        )
-        users_groupmemberships = set(explode_rdn(x, True)[0].lower() for x in userobj["groups"])
+        }
+        users_groupmemberships = {explode_rdn(x, True)[0].lower() for x in userobj["groups"]}
         MODULE.info(
             "UserMap: %s: hide screenshots for following groups: %s" % (username, blacklisted_groups)
         )

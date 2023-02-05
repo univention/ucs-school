@@ -372,15 +372,13 @@ def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
         if "proxy/filter/global/blacklists/%s" % (listtype,) not in changes:
             continue
         with open(dst_fn, "w") as fout:
-            for fn in set(
-                [
-                    name.strip()
+            for fn in {
+                name.strip()
                     for name in configRegistry.get(
                         "proxy/filter/global/blacklists/%s" % (listtype,), ""
                     ).split(" ")
                     if name.strip()
-                ]
-            ):
+            }:
                 src_fn = os.path.join(DIR_DATA, fn)
                 if os.path.exists(src_fn):
                     # merge all given sub-blacklist files into one global blacklist file

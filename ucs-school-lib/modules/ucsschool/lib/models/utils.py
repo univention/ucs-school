@@ -243,15 +243,15 @@ class UniStreamHandler(colorlog.StreamHandler):
 class ModuleHandler(logging.Handler):
     """Adapter: use Python logging but emit through univention debug"""
 
-    LOGGING_TO_UDEBUG = dict(
-        CRITICAL=ud.ERROR,
-        ERROR=ud.ERROR,
-        WARN=ud.WARN,
-        WARNING=ud.WARN,
-        INFO=ud.PROCESS,
-        DEBUG=ud.INFO,
-        NOTSET=ud.INFO,
-    )
+    LOGGING_TO_UDEBUG = {
+        "CRITICAL": ud.ERROR,
+        "ERROR": ud.ERROR,
+        "WARN": ud.WARN,
+        "WARNING": ud.WARN,
+        "INFO": ud.PROCESS,
+        "DEBUG": ud.INFO,
+        "NOTSET": ud.INFO,
+    }
 
     def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
         # type: (Optional[int], Optional[int]) -> None
@@ -566,15 +566,15 @@ def get_logger(
         formatter_kwargs = {}
 
     if isinstance(target, IOBase) or hasattr(target, "write"):
-        handler_defaults = dict(cls=UniStreamHandler, stream=target)
+        handler_defaults = {"cls": UniStreamHandler, "stream": target}
         fmt = "%(log_color)s{}".format(CMDLINE_LOG_FORMATS[level])
         fmt_cls = colorlog.TTYColoredFormatter
     else:
-        handler_defaults = dict(cls=UniFileHandler, filename=target, when="D", backupCount=10000000)
+        handler_defaults = {"cls": UniFileHandler, "filename": target, "when": "D", "backupCount": 10000000}
         fmt = FILE_LOG_FORMATS[level]
         fmt_cls = logging.Formatter
     handler_defaults.update(handler_kwargs)
-    fmt_kwargs = dict(cls=fmt_cls, fmt=fmt, datefmt=str(LOG_DATETIME_FORMAT))
+    fmt_kwargs = {"cls": fmt_cls, "fmt": fmt, "datefmt": str(LOG_DATETIME_FORMAT)}
     fmt_kwargs.update(formatter_kwargs)
     if issubclass(fmt_cls, colorlog.ColoredFormatter):
         fmt_kwargs["log_colors"] = LOG_COLORS

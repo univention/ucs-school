@@ -45,15 +45,15 @@ class ParseUserImportCmdline(object):
         """Setup the parser. Override to add more arguments or change the defaults."""
         self.args = None
         # TODO: read defaults from user_import_defaults.json
-        self.defaults = dict(
-            dry_run=False,
-            logfile=None,
-            no_delete=False,
-            school=None,
-            source_uid=None,
-            user_role=None,
-            verbose=False,
-        )
+        self.defaults = {
+            "dry_run": False,
+            "logfile": None,
+            "no_delete": False,
+            "school": None,
+            "source_uid": None,
+            "user_role": None,
+            "verbose": False,
+        }
         self.parser = ArgumentParser(description="UCS@school import tool")
         self.parser.add_argument(
             "-c",

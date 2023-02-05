@@ -246,7 +246,7 @@ def response(func):
 
 def sanitize_object(**kwargs):
     def _decorator(func):
-        return sanitize(DictSanitizer(dict(object=DictSanitizer(kwargs))))(func)
+        return sanitize(DictSanitizer({"object": DictSanitizer(kwargs)}))(func)
 
     return _decorator
 

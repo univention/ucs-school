@@ -267,30 +267,30 @@ class Person(object):
         shadow_expire = [] if self.active else ["1"]
         if self.expiration_date:
             shadow_expire = [udm_formula_for_shadowExpire(self.expiration_date)]
-        attr = dict(
-            departmentNumber=[self.school],
-            givenName=[self.firstname],
-            homeDirectory=[self.homedir],
-            krb5KDCFlags=["126"] if self.is_active() else ["254"],
-            mail=[self.mail] if self.mail else [],
-            mailPrimaryAddress=[self.mail] if self.mail else [],
-            sambaAcctFlags=["[U          ]"] if self.active else ["[UD         ]"],
-            shadowExpire=shadow_expire,
-            sn=[self.lastname],
-            uid=[self.username],
-            ucsschoolRole=self.roles,
-            ucsschoolSourceUID=[self.source_uid] if self.source_uid else [],
-            ucsschoolRecordUID=[self.record_uid] if self.record_uid else [],
-            description=[self.description] if self.description else [],
-            ucsschoolSchool=self.schools,
-            univentionBirthday=[self.birthday] if self.birthday else [],
-            sambaLogonScript=[samba_logon_script] if samba_logon_script and not self.is_staff() else [],
-            sambaHomeDrive=[homedrive] if homedrive and not self.is_staff() else [],
-            sambaHomePath=[]
+        attr = {
+            "departmentNumber": [self.school],
+            "givenName": [self.firstname],
+            "homeDirectory": [self.homedir],
+            "krb5KDCFlags": ["126"] if self.is_active() else ["254"],
+            "mail": [self.mail] if self.mail else [],
+            "mailPrimaryAddress": [self.mail] if self.mail else [],
+            "sambaAcctFlags": ["[U          ]"] if self.active else ["[UD         ]"],
+            "shadowExpire": shadow_expire,
+            "sn": [self.lastname],
+            "uid": [self.username],
+            "ucsschoolRole": self.roles,
+            "ucsschoolSourceUID": [self.source_uid] if self.source_uid else [],
+            "ucsschoolRecordUID": [self.record_uid] if self.record_uid else [],
+            "description": [self.description] if self.description else [],
+            "ucsschoolSchool": self.schools,
+            "univentionBirthday": [self.birthday] if self.birthday else [],
+            "sambaLogonScript": [samba_logon_script] if samba_logon_script and not self.is_staff() else [],
+            "sambaHomeDrive": [homedrive] if homedrive and not self.is_staff() else [],
+            "sambaHomePath": []
             if self.is_staff() or not samba_home_path_server
             else ["\\\\{}\\{}".format(samba_home_path_server, self.username)],
-            sambaProfilePath=[] if self.is_staff() or not profile_path_server else [profile_path_server],
-        )
+            "sambaProfilePath": [] if self.is_staff() or not profile_path_server else [profile_path_server],
+        }
 
         if self.password:
             attr["sambaNTPassword"] = [passlib.hash.nthash.hash(self.password).upper()]

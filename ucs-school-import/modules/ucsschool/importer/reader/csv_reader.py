@@ -194,7 +194,7 @@ class CsvReader(BaseReader):
                 line = next(_reader)
                 fp.seek(start)
                 header = [str(x) for x in range(len(line))]
-            csv_reader_args = dict(fieldnames=header, dialect=dialect)
+            csv_reader_args = {"fieldnames": header, "dialect": dialect}
             csv_reader_args.update(kwargs.get("csv_reader_args", {}))
             fpu = UTF8Recoder(fp, encoding)
             reader = DictReader(fpu, **csv_reader_args)

@@ -286,7 +286,7 @@ class Instance(SchoolBaseModule):
                     exam_user.name,
                     exam,
                 )
-            self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user.dn))
+            self.finished(request.id, {"success": True, "userdn": userdn, "examuserdn": exam_user.dn})
             return
 
         # Check if it's blacklisted
@@ -316,7 +316,7 @@ class Instance(SchoolBaseModule):
             univention.admin.allocators.release(ldap_admin_write, ldap_position, "uid", exam_user_uid)
             logger.warning("The exam account does already exist for: %r", exam_user_uid)
             self.finished(
-                request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn), success=True
+                request.id, {"success": True, "userdn": userdn, "examuserdn": exam_user_dn}, success=True
             )
             return
 
@@ -368,13 +368,11 @@ class Instance(SchoolBaseModule):
                     ])
                 set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
                 """
-                return set(
-                    [
-                        x.replace("||", "|")
+                return {
+                    x.replace("||", "|")
                         for x in re.split("(?<![|])[|](?![|])", ucr.get(ucrvar, ""))
                         if x
-                    ]
-                )
+                }
 
             blacklisted_attributes = getBlacklistSet("ucsschool/exam/user/ldap/blacklist")
 
@@ -525,7 +523,7 @@ class Instance(SchoolBaseModule):
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "sid", userSid)
         univention.admin.allocators.confirm(ldap_admin_write, ldap_position, "uidNumber", uidNum)
 
-        self.finished(request.id, dict(success=True, userdn=userdn, examuserdn=exam_user_dn))
+        self.finished(request.id, {"success": True, "userdn": userdn, "examuserdn": exam_user_dn})
 
     @sanitize(
         users=ListSanitizer(DNSanitizer(required=True), required=True),
@@ -714,7 +712,7 @@ class Instance(SchoolBaseModule):
             try:
                 schools = None
                 if school:
-                    schools = list(set(user.schools) - set([school]))
+                    schools = list(set(user.schools) - {school})
                 if schools:
                     logger.warning(
                         "remove_exam_user() User %r will not be removed as he currently participates "

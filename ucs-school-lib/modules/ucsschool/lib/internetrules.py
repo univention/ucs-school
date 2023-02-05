@@ -304,7 +304,7 @@ def getGroupRuleName(groupNames):
     ucr.load()
     if not isinstance(groupNames, type([])):
         return ucr.get("proxy/filter/groupdefault/%s" % groupNames)
-    return dict([(iname, ucr.get("proxy/filter/groupdefault/%s" % iname)) for iname in groupNames])
+    return {iname: ucr.get("proxy/filter/groupdefault/%s" % iname) for iname in groupNames}
 
 
 def unsetGroupRuleName(groupNames):

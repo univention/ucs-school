@@ -231,7 +231,7 @@ class UserValidator(SchoolValidator):
         # type: (List[Tuple[str]], List[str]) -> Optional[str]
         """Users should not have roles with schools which they don't have."""
         schools = [s.lower() for s in schools]
-        missing_schools = set(s for r, c, s in roles if c == "school" and s.lower() not in schools)
+        missing_schools = {s for r, c, s in roles if c == "school" and s.lower() not in schools}
         if missing_schools:
             return "is not part of schools: {!r}.".format(list(missing_schools))
 

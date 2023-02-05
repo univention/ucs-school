@@ -86,7 +86,7 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            dict(filename=StringSanitizer(required=True), tmpfile=StringSanitizer(required=True)),
+            {"filename": StringSanitizer(required=True), "tmpfile": StringSanitizer(required=True)},
             required=True,
         )
     )
@@ -132,7 +132,7 @@ class Instance(SchoolBaseModule):
         result = []
         for ifile in filenames:
             # check whether file has already been upload in this session
-            iresult = dict(sessionDuplicate=False, projectDuplicate=False, distributed=False)
+            iresult = {"sessionDuplicate": False, "projectDuplicate": False, "distributed": False}
             iresult["filename"] = ifile
             iresult["sessionDuplicate"] = self._tmpDir is not None and os.path.exists(
                 os.path.join(self._tmpDir, ifile)
@@ -155,15 +155,15 @@ class Instance(SchoolBaseModule):
     @simple_response
     def query(self, pattern, filter):
         result = [
-            dict(
+            {
                 # only show necessary information
-                description=i.description,
-                name=i.name,
-                sender=i.sender.username,
-                recipients=len(i.recipients),
-                files=len(i.files),
-                isDistributed=i.isDistributed,
-            )
+                "description": i.description,
+                "name": i.name,
+                "sender": i.sender.username,
+                "recipients": len(i.recipients),
+                "files": len(i.files),
+                "isDistributed": i.isDistributed,
+            }
             for i in util.Project.list()
             if (pattern.match(i.name) or pattern.match(i.description))
             and (filter == "all" or compare_dn(i.sender.dn, self.user_dn))
@@ -180,13 +180,13 @@ class Instance(SchoolBaseModule):
         except udm_exceptions.base as exc:
             raise UMC_Error(_("Failed to load user information: %s") % exc)
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True)), required=True))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}, required=True))
     def put(self, request):
         """Modify an existing project"""
         result = [self._save(entry["object"], True) for entry in request.options]
         self.finished(request.id, result)
 
-    @sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True)), required=True))
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}, required=True))
     def add(self, request):
         """Add a new project"""
         result = [self._save(entry["object"], False) for entry in request.options]
@@ -442,9 +442,9 @@ class Instance(SchoolBaseModule):
                     )
 
                 # save result
-                result.append(dict(name=iid, success=True))
+                result.append({"name": iid, "success": True})
             except (ValueError, IOError) as exc:
-                result.append(dict(name=iid, success=False, details=str(exc)))
+                result.append({"name": iid, "success": False, "details": str(exc)})
 
         # return the results
         self.finished(request.id, result)
@@ -480,9 +480,9 @@ class Instance(SchoolBaseModule):
                     )
 
                 # save result
-                result.append(dict(name=iid, success=True))
+                result.append({"name": iid, "success": True})
             except (ValueError, IOError) as exc:
-                result.append(dict(name=iid, success=False, details=str(exc)))
+                result.append({"name": iid, "success": False, "details": str(exc)})
 
         # return the results
         self.finished(request.id, result)
@@ -505,12 +505,12 @@ class Instance(SchoolBaseModule):
                 iproject.sender = sender
                 iproject.save()
             except (ValueError, IOError) as exc:
-                result.append(dict(name=iid, success=False, details=str(exc)))
+                result.append({"name": iid, "success": False, "details": str(exc)})
 
         # return the results
         self.finished(request.id, result)
 
-    @sanitize(DictSanitizer(dict(object=StringSanitizer(required=True)), required=True))
+    @sanitize(DictSanitizer({"object": StringSanitizer(required=True)}, required=True))
     def remove(self, request):
         """Removes the specified projects"""
         for iproject in [util.Project.load(ientry.get("object")) for ientry in request.options]:

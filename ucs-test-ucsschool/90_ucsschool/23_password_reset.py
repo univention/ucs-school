@@ -204,7 +204,7 @@ class _TestPasswordReset(object):
         # expect_flavor_teacher_disallow = EXPECT_DISALLOW
         expect_flavor_student_allow = EXPECT_OK if flavor == "student" else EXPECT_DISALLOW
         schoolenv, school = self.schoolenv, self.school
-        kw = dict(wait_for_replication=False)
+        kw = {"wait_for_replication": False}
         # create_school_admin() creates a new teacher, teacher_and_staff or staff user and converts
         # it to a school admin. Since staff users are not replicated to Replica Directory Nodes, we
         # have to assure on Replica Directory Nodes, that only teachers are used for school admins.

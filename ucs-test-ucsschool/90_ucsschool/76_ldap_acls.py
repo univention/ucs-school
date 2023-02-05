@@ -302,13 +302,13 @@ class LDAPACLTestMatrix(object):
         }
         """
         containers = list(self.walkThroughContainer(base))
-        return dict([(y, [k for k in x]) for y, x in containers])
+        return {y: [k for k in x] for y, x in containers}
 
     def gather_attributes_as_set(self, base_list):
         result = {"children", "entry"}
         for base in base_list:
             containers = list(self.walkThroughContainer(base))
-            s = set([u for x, y in containers for u in y])
+            s = {u for x, y in containers for u in y}
             result = result | s
         return result
 

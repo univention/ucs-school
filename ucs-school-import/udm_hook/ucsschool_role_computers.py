@@ -134,7 +134,7 @@ class UcsschoolRoleComputers(simpleHook):
         if role_str == "ignore":
             return aml
 
-        all_schools = dict((school.name, school.dn) for school in School.get_all(obj.lo))
+        all_schools = {school.name: school.dn for school in School.get_all(obj.lo)}
         existing_ocs, existing_roles = self._existing_ocs_roles(obj, aml)
 
         if oc not in existing_ocs:
@@ -189,7 +189,7 @@ class UcsschoolRoleComputers(simpleHook):
         # type: (univention.admin.handlers.simpleComputer, List[Union[AddType, ModType]]) -> Tuple[Set[bytes], Set[bytes]]  # noqa: E501
         """Get objectClasses and ucsschoolRoles from obj."""
         existing_ocs = set(obj.oldattr.get("objectClass", []))
-        existing_roles = set(x.encode("UTF-8") for x in obj.get("ucsschoolRole", []))
+        existing_roles = {x.encode("UTF-8") for x in obj.get("ucsschoolRole", [])}
         for things in aml:
             attr = things[0]
             val = things[-1]

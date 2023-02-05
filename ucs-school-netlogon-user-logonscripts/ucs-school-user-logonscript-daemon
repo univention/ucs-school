@@ -344,20 +344,20 @@ class QueueHandler:
         return res
 
     def generate_header_and_functions_snippet(self):
-        str_replacements = dict(
-            desktop_folder_icon=self.desktop_folder_icon,
-            desktop_folder_name=self.desktop_folder_name.translate(str.maketrans("", "", r'\/:*?"<>|')),
-            desktop_folder_path=self.desktop_folder_path,
-            domainname=self.domainname,
-            hostname=self.hostname,
-            my_files_link_icon=self.fix_win10_icon_index(self.my_files_link_icon),
-            my_files_link_name=self.my_files_link_name,
-            mypictures_name=self.mypictures_name,
-            myshares_name=self.myshares_name,
-            other_links_icon=self.fix_win10_icon_index(self.other_links_icon),
-            umc_link=self.umcLink,
-            portal_link=self.portalLink,
-        )
+        str_replacements = {
+            "desktop_folder_icon": self.desktop_folder_icon,
+            "desktop_folder_name": self.desktop_folder_name.translate(str.maketrans("", "", r'\/:*?"<>|')),
+            "desktop_folder_path": self.desktop_folder_path,
+            "domainname": self.domainname,
+            "hostname": self.hostname,
+            "my_files_link_icon": self.fix_win10_icon_index(self.my_files_link_icon),
+            "my_files_link_name": self.my_files_link_name,
+            "mypictures_name": self.mypictures_name,
+            "myshares_name": self.myshares_name,
+            "other_links_icon": self.fix_win10_icon_index(self.other_links_icon),
+            "umc_link": self.umcLink,
+            "portal_link": self.portalLink,
+        }
         no_icons = []
         if not self.desktop_folder_icon:
             no_icons.append("desktop_folder_icon")
@@ -688,10 +688,10 @@ class QueueHandler:
             "ucsschool/userlogon/umclink/filter",
             "(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))",
         )
-        self.template_paths = dict(
-            main="/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs",
-            mac_script="/usr/share/ucs-school-netlogon-user-logonscripts/mac_script",
-        )
+        self.template_paths = {
+            "main": "/usr/share/ucs-school-netlogon-user-logonscripts/net-logon-script.vbs",
+            "mac_script": "/usr/share/ucs-school-netlogon-user-logonscripts/mac_script",
+        }
 
         value = self.ucr.get("ucsschool/userlogon/daemon/check-interval", "").strip()
         if value:

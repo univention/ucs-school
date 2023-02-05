@@ -44,7 +44,7 @@ class Test(CLI_Import_v2_Tester):
     def test(self):
         for role in ("student", "teacher", "teacher_and_staff"):
             self.log.info("*** Creating user 1 with role %r in OU %r", role, self.ou_A.name)
-            kwargs = dict(ou_name=self.ou_A.name, schools=[self.ou_A.name])
+            kwargs = {"ou_name": self.ou_A.name, "schools": [self.ou_A.name]}
             if role in ["teacher", "teacher_and_staff"]:
                 kwargs["is_teacher"] = True
             if role in ["staff", "teacher_and_staff"]:
@@ -54,7 +54,7 @@ class Test(CLI_Import_v2_Tester):
             self.log.info(
                 "*** Creating user 2 with role %r in OUs %r", role, [self.ou_A.name, self.ou_B.name]
             )
-            kwargs = dict(ou_name=self.ou_A.name, schools=[self.ou_A.name, self.ou_B.name])
+            kwargs = {"ou_name": self.ou_A.name, "schools": [self.ou_A.name, self.ou_B.name]}
             if role in ["teacher", "teacher_and_staff"]:
                 kwargs["is_teacher"] = True
             if role in ["staff", "teacher_and_staff"]:
