@@ -39,7 +39,7 @@ import datetime
 import json
 import logging
 import os
-from typing import Tuple
+from typing import Tuple  # noqa: F401
 
 import lazy_object_proxy
 from django.conf import settings

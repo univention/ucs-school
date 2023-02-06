@@ -39,7 +39,7 @@ import threading
 import time
 import traceback
 import uuid
-from typing import TYPE_CHECKING, Any, List, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, List, Optional, TypeVar  # noqa: F401
 
 import ldap
 from ldap.dn import explode_rdn
@@ -58,7 +58,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules.computerroom import wakeonlan
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 LV = TypeVar("LV")
 

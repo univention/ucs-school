@@ -32,7 +32,7 @@
 
 import re
 from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type  # noqa: F401
 
 import six
 from ldap.filter import filter_format
@@ -58,9 +58,9 @@ from .network import Network
 from .utils import _, ucr
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
-    from .base import SuperOrdinateType, UdmObject
+    from .base import SuperOrdinateType, UdmObject  # noqa: F401
 
 
 class AnyComputer(UCSSchoolHelperAbstractClass):

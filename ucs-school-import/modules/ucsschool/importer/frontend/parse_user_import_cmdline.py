@@ -33,7 +33,7 @@
 
 import os
 from argparse import ArgumentParser
-from typing import Any, Dict
+from typing import Any, Dict  # noqa: F401
 
 from six import string_types
 

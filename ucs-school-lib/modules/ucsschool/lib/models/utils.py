@@ -43,7 +43,7 @@ from contextlib import contextmanager
 from io import IOBase
 from logging.handlers import MemoryHandler, TimedRotatingFileHandler
 from random import choice, shuffle
-from typing import IO, Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import IO, Any, Dict, List, Optional, Sequence, Tuple, Union  # noqa: F401
 
 import apt
 import colorlog

@@ -31,12 +31,12 @@
 
 """Base class for configuration hooks."""
 
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List  # noqa: F401
 
 from .import_pyhook import ImportPyHook
 
 if TYPE_CHECKING:
-    from ..configuration import ReadOnlyDict
+    from ..configuration import ReadOnlyDict  # noqa: F401
 
 
 class ConfigPyHook(ImportPyHook):

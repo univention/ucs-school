@@ -1,14 +1,14 @@
 from __future__ import print_function
 
 from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError
-from typing import List
+from typing import List  # noqa: F401
 
 from ldap.filter import filter_format
 
 from ucsschool.importer.exceptions import ComputerImportError
 from ucsschool.importer.utils.constants import get_default_prefixlen
 from ucsschool.importer.utils.import_pyhook import get_import_pyhooks
-from ucsschool.lib.models.computer import SchoolComputer
+from ucsschool.lib.models.computer import SchoolComputer  # noqa: F401
 from ucsschool.lib.models.utils import ucr
 from univention.admin.uldap import access as LoType  # noqa: F401
 

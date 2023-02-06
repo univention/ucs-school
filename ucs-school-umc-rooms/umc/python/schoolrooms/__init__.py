@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List  # noqa: F401
 
 import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models.computer import SchoolComputer
@@ -49,7 +49,7 @@ from univention.management.console.modules.sanitizers import (
 )
 
 if TYPE_CHECKING:
-    import univention.admin.uldap.access
+    import univention.admin.uldap.access  # noqa: F401
 
 
 _ = Translation("ucs-school-umc-rooms").translate

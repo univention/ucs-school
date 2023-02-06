@@ -31,7 +31,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from threading import Lock
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional  # noqa: F401
 
 import requests
 
@@ -46,7 +46,7 @@ from .models import (
 from .utils import check_veyon_error
 
 if TYPE_CHECKING:
-    from .models import Dimension, Feature
+    from .models import Dimension, Feature  # noqa: F401
 
 
 class VeyonClient:

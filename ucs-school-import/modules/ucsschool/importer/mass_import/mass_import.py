@@ -33,7 +33,7 @@
 
 import datetime
 import logging
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar  # noqa: F401
 
 from ucsschool.lib.models.utils import stopped_notifier
 

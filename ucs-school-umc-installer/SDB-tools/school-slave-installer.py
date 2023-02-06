@@ -41,7 +41,7 @@ import tempfile
 import time
 import traceback
 from argparse import ArgumentParser
-from typing import Any
+from typing import Any  # noqa: F401
 
 from ldap.filter import filter_format
 from six.moves import input

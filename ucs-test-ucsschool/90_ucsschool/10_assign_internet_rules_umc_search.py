@@ -5,7 +5,7 @@
 ## exposure: dangerous
 ## packages:  [ucs-school-umc-internetrules]
 
-from typing import List
+from typing import List  # noqa: F401
 
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.testing.umc import Client

@@ -36,7 +36,7 @@ Used by create_ou script and customer single user HTTP API.
 """
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional  # noqa: F401
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
@@ -45,7 +45,7 @@ from ucsschool.lib.models.school import School
 from ucsschool.lib.models.utils import ucr
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 
 MAX_HOSTNAME_LENGTH = 13

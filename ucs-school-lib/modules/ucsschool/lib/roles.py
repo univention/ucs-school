@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple  # noqa: F401
 
 
 class UcsschoolRoleStringError(Exception):

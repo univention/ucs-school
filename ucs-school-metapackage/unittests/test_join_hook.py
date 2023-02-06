@@ -31,7 +31,7 @@
 import imp
 import os.path
 import sys
-from typing import TYPE_CHECKING, Any, List, NamedTuple, Optional
+from typing import TYPE_CHECKING, Any, List, NamedTuple, Optional  # noqa: F401
 
 import pytest
 
@@ -48,12 +48,12 @@ else:
     mock_import_func = "__builtin__.__import__"
 
 if TYPE_CHECKING:
-    import logging
+    import logging  # noqa: F401
 
     from typing_extensions import Protocol
 
-    from univention.config_registry import ConfigRegistry
-    from univention.lib.package_manager import PackageManager
+    from univention.config_registry import ConfigRegistry  # noqa: F401
+    from univention.lib.package_manager import PackageManager  # noqa: F401
 
     StdoutStderr = NamedTuple("StdoutStderr", [("stdout", str), ("stderr", "str")])
 

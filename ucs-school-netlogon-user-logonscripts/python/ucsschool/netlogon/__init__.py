@@ -30,7 +30,7 @@
 import os
 import sqlite3
 import stat
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple  # noqa: F401
 
 import univention.config_registry
 

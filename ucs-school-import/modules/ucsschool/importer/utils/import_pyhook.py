@@ -34,7 +34,7 @@
 from __future__ import absolute_import
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Type, TypeVar, Union  # noqa: F401
 
 from ucsschool.lib.pyhooks import PyHook, PyHooksLoader
 
@@ -42,7 +42,7 @@ from ..exceptions import InitialisationError
 from .ldap_connection import get_admin_connection, get_readonly_connection
 
 if TYPE_CHECKING:
-    import univention.admin.uldap
+    import univention.admin.uldap  # noqa: F401
 
 ImportPyHookTV = TypeVar("ImportPyHookTV", bound="ImportPyHook")
 

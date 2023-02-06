@@ -34,7 +34,7 @@
 import functools
 import re
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union  # noqa: F401
 
 import six
 
@@ -67,7 +67,7 @@ from univention.udm import UDM
 if TYPE_CHECKING:
     LibModel = Union[School, User, SchoolComputer, SchoolClass]
 
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 _ = Translation("ucs-school-umc-wizards").translate
 

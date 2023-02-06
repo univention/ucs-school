@@ -41,7 +41,7 @@ import tempfile
 import time
 import traceback
 from itertools import chain
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List  # noqa: F401
 
 import ldap
 import notifier
@@ -93,7 +93,7 @@ from univention.management.console.modules.sanitizers import (
 from univention.management.console.modules.schoolexam import util
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 _ = Translation("ucs-school-umc-exam").translate
 

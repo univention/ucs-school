@@ -32,7 +32,7 @@
 
 import socket
 import subprocess
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List  # noqa: F401
 
 import ldap
 from ldap.dn import escape_dn_chars
@@ -70,7 +70,7 @@ from .share import MarketplaceShare
 from .utils import _, flatten, ucr
 
 if TYPE_CHECKING:
-    from .base import LoType
+    from .base import LoType  # noqa: F401
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):

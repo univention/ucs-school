@@ -34,15 +34,15 @@ from UCSSchoolHelperAbstractClass.
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Type, Union  # noqa: F401
 
 from ..pyhooks.pyhook import PyHook
 from .utils import ucr
 
 if TYPE_CHECKING:
-    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClassTV
-    from univention.admin.uldap import access as LoType
-    from univention.config_registry import ConfigRegistry
+    from ucsschool.lib.models.base import UCSSchoolHelperAbstractClassTV  # noqa: F401
+    from univention.admin.uldap import access as LoType  # noqa: F401
+    from univention.config_registry import ConfigRegistry  # noqa: F401
 
 
 class Hook(PyHook):

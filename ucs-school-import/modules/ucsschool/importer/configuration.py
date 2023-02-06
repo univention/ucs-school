@@ -34,7 +34,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type  # noqa: F401
 
 from jsonschema import ValidationError, validate
 from six import string_types

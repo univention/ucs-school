@@ -35,7 +35,7 @@
 
 from __future__ import absolute_import
 
-from typing import Dict, Set
+from typing import Dict, Set  # noqa: F401
 
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr

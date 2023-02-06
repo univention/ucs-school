@@ -34,7 +34,7 @@
 from __future__ import absolute_import
 
 import logging
-from typing import Optional
+from typing import Optional  # noqa: F401
 
 from ucsschool.lib.models.utils import UniFileHandler, UniStreamHandler, get_file_handler
 

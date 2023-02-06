@@ -35,14 +35,14 @@ import os
 import re
 import traceback
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union  # noqa: F401
 
 import lazy_object_proxy
 import ldap
 from ldap.dn import escape_dn_chars, str2dn
 
 if TYPE_CHECKING:
-    from .base import UdmObject
+    from .base import UdmObject  # noqa: F401
 
 from ucsschool.lib.models.utils import get_file_handler, ucr
 from ucsschool.lib.roles import (

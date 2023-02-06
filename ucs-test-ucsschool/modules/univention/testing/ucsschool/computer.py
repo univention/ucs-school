@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 from ipaddress import IPv4Interface, IPv4Network
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional  # noqa: F401
 
 import univention.testing.strings as uts
 from univention.testing import utils
@@ -15,7 +15,7 @@ from ucsschool.lib.models.computer import (
 from univention.testing.ucsschool.importou import get_school_base
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
 
 class SupportedComputer(Enum):

@@ -42,7 +42,7 @@ import csv
 import logging
 import os
 import sys
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional  # noqa: F401
 
 import attr
 from ldap.filter import filter_format
@@ -54,7 +54,7 @@ from ucsschool.lib.models.utils import get_file_handler, get_stream_handler
 from univention.config_registry import ConfigRegistry
 
 if TYPE_CHECKING:
-    from univention.admin.uldap import access as LoType, position as PoType
+    from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 
 
 LOG_FILE = "/var/log/univention/ucs-school-migration-import-user.log"

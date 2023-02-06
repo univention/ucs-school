@@ -33,7 +33,7 @@ from __future__ import print_function
 
 import os
 import sys
-from typing import List, Optional
+from typing import List, Optional  # noqa: F401
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions

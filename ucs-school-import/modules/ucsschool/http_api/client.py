@@ -39,7 +39,7 @@ import inspect
 import logging
 import os.path
 from io import IOBase
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List  # noqa: F401
 
 import dateutil.parser
 import magic

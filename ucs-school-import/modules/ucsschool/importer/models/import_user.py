@@ -36,7 +36,7 @@ import re
 import string
 import warnings
 from collections import defaultdict, namedtuple
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, Union  # noqa: F401
 
 import lazy_object_proxy
 from ldap.filter import filter_format
@@ -93,13 +93,13 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.utils import get_ldap_mapping_for_udm_property
 
 if TYPE_CHECKING:
-    from univention.config_registry import ConfigRegistry
+    from univention.config_registry import ConfigRegistry  # noqa: F401
 
-    from ..configuration import ReadOnlyDict
-    from ..default_user_import_factory import DefaultUserImportFactory
-    from ..reader.base_reader import BaseReader
-    from ..utils.ldap_connection import LoType, UdmObjectType
-    from ..utils.username_handler import UsernameHandler
+    from ..configuration import ReadOnlyDict  # noqa: F401
+    from ..default_user_import_factory import DefaultUserImportFactory  # noqa: F401
+    from ..reader.base_reader import BaseReader  # noqa: F401
+    from ..utils.ldap_connection import LoType, UdmObjectType  # noqa: F401
+    from ..utils.username_handler import UsernameHandler  # noqa: F401
 
 
 FunctionSignature = namedtuple("FunctionSignature", ["name", "args", "kwargs"])

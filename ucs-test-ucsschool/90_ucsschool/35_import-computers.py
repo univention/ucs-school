@@ -15,7 +15,7 @@ import re
 import subprocess
 import tempfile
 from collections import defaultdict
-from typing import List
+from typing import List  # noqa: F401
 
 import pytest
 

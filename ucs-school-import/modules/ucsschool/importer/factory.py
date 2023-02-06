@@ -33,12 +33,12 @@
 
 
 import importlib
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Optional, Type  # noqa: F401
 
 from .exceptions import InitialisationError
 
 if TYPE_CHECKING:
-    from .default_user_import_factory import DefaultUserImportFactory
+    from .default_user_import_factory import DefaultUserImportFactory  # noqa: F401
 
 
 def setup_factory(factory_cls_name):  # type: (str) -> DefaultUserImportFactory

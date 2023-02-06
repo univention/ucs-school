@@ -36,7 +36,7 @@ from typing import TYPE_CHECKING
 from .import_pyhook import ImportPyHook
 
 if TYPE_CHECKING:
-    from ..mass_import.user_import import UserImportData
+    from ..mass_import.user_import import UserImportData  # noqa: F401
 
 
 class ResultPyHook(ImportPyHook):

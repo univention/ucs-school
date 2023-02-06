@@ -33,7 +33,7 @@
 import inspect
 import logging
 from functools import partial
-from typing import Any, Dict
+from typing import Any, Dict  # noqa: F401
 
 import lazy_object_proxy
 from six import iteritems

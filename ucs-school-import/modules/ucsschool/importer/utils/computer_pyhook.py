@@ -31,9 +31,9 @@
 
 """Base class for all Python based Computer hooks."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional  # noqa: F401
 
-from ucsschool.lib.models.computer import SchoolComputer
+from ucsschool.lib.models.computer import SchoolComputer  # noqa: F401
 
 from .import_pyhook import ImportPyHook
 

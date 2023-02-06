@@ -37,17 +37,17 @@ from csv import Error as CsvError, Sniffer, reader as csv_reader
 from io import IOBase
 from typing import (
     TYPE_CHECKING,
-    Any,
-    BinaryIO,
-    Callable,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Text,
-    Type,
-    Union,
+    Any,  # noqa: F401
+    BinaryIO,  # noqa: F401
+    Callable,  # noqa: F401
+    Dict,  # noqa: F401
+    Iterable,  # noqa: F401
+    Iterator,  # noqa: F401
+    List,  # noqa: F401
+    Optional,  # noqa: F401
+    Text,  # noqa: F401
+    Type,  # noqa: F401
+    Union,  # noqa: F401
 )
 
 import magic
@@ -63,9 +63,9 @@ from ..exceptions import ConfigurationError, InitialisationError, NoRole, Unknow
 from .base_reader import BaseReader
 
 if TYPE_CHECKING:
-    from csv import Dialect
+    from csv import Dialect  # noqa: F401
 
-    from ..models.import_user import ImportUser
+    from ..models.import_user import ImportUser  # noqa: F401
 
 
 def py3_decode(data, encoding):  # type: (Union[str, bytes], str) -> str

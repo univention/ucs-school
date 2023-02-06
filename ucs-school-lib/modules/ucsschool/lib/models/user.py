@@ -32,7 +32,7 @@
 
 import os.path
 from collections import Mapping
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
 
 from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import filter_format
@@ -65,7 +65,7 @@ from .school import School
 from .utils import _, create_passwd, ucr
 
 if TYPE_CHECKING:
-    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter
+    from .base import LoType, SuperOrdinateType, UdmObject, UldapFilter  # noqa: F401
 
 
 class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):

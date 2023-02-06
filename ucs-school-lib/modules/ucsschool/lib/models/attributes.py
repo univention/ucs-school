@@ -31,7 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
-from typing import TYPE_CHECKING, Any, List, Optional, Type
+from typing import TYPE_CHECKING, Any, List, Optional, Type  # noqa: F401
 
 from ldap.dn import escape_dn_chars
 
@@ -61,7 +61,7 @@ from ..roles import all_roles
 from .utils import _, ucr
 
 if TYPE_CHECKING:
-    from univention.admin.syntax import simple
+    from univention.admin.syntax import simple  # noqa: F401
 
 
 class ValidationError(Exception):

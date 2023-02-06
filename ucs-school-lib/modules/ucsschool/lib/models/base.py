@@ -33,15 +33,15 @@
 from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Type,
+    Any,  # noqa: F401
+    Dict,  # noqa: F401
+    Iterable,  # noqa: F401
+    List,  # noqa: F401
+    Optional,  # noqa: F401
+    Sequence,  # noqa: F401
+    Set,  # noqa: F401
+    Tuple,  # noqa: F401
+    Type,  # noqa: F401
     TypeVar,
     Union,
 )
@@ -68,7 +68,7 @@ from .validator import validate
 
 if TYPE_CHECKING:
     import univention.admin.handlers.simpleLdap
-    from univention.admin.uldap import access as LoType
+    from univention.admin.uldap import access as LoType  # noqa: F401
 
     UdmObject = univention.admin.handlers.simpleLdap
     SuperOrdinateType = Union[str, UdmObject]

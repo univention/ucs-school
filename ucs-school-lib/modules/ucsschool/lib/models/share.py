@@ -32,7 +32,7 @@
 
 import grp
 import os.path
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, List, Optional  # noqa: F401
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
@@ -47,7 +47,7 @@ from .base import RoleSupportMixin, UCSSchoolHelperAbstractClass, WrongObjectTyp
 from .utils import _, ucr
 
 if TYPE_CHECKING:
-    from .base import LoType, UdmObject
+    from .base import LoType, UdmObject  # noqa: F401
 
 
 class NoSID(Exception):

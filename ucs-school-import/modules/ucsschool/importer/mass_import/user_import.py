@@ -37,7 +37,7 @@ import datetime
 import logging
 import sys
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union  # noqa: F401
 
 import six
 from ldap.filter import filter_format
@@ -63,8 +63,8 @@ from ..utils.ldap_connection import get_admin_connection, get_readonly_connectio
 from ..utils.post_read_pyhook import PostReadPyHook
 
 if TYPE_CHECKING:
-    from ..configuration import ReadOnlyDict
-    from ..models.import_user import ImportUser
+    from ..configuration import ReadOnlyDict  # noqa: F401
+    from ..models.import_user import ImportUser  # noqa: F401
 
 
 class UserImport(object):

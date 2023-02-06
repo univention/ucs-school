@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Type
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Type  # noqa: F401
 
 from ldap.dn import str2dn
 
@@ -52,7 +52,7 @@ from .share import ClassShare, WorkGroupShare
 from .utils import _, ucr
 
 if TYPE_CHECKING:
-    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject
+    from .base import PYHOOKS_BASE_CLASS, LoType, UdmObject  # noqa: F401
 
 
 class _MayHaveSchoolPrefix(object):

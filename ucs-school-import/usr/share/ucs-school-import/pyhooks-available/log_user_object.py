@@ -27,7 +27,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from typing import TYPE_CHECKING, Any, List, Tuple
+from typing import TYPE_CHECKING, Any, List, Tuple  # noqa: F401
 
 from ldap.dn import str2dn
 from ldap.filter import filter_format
@@ -35,7 +35,7 @@ from ldap.filter import filter_format
 from ucsschool.importer.utils.user_pyhook import UserPyHook
 
 if TYPE_CHECKING:
-    from ucsschool.importer.models.import_user import ImportUser
+    from ucsschool.importer.models.import_user import ImportUser  # noqa: F401
 
 
 #

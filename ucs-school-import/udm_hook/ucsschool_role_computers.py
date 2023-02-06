@@ -32,14 +32,14 @@ and central Managed Node objects.
 """
 
 import inspect
-from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Set, Tuple, Union  # noqa: F401
 
 from six import iteritems
 
 from univention.admin.hook import simpleHook  # pylint: disable=no-name-in-module,import-error
 
 if TYPE_CHECKING:
-    import univention.admin.handlers.simpleComputer
+    import univention.admin.handlers.simpleComputer  # noqa: F401
 
 try:
     from ucsschool.lib.models.school import School

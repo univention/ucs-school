@@ -33,7 +33,7 @@ import os
 import shutil
 import signal
 import subprocess
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional  # noqa: F401
 
 import ldap
 import listener

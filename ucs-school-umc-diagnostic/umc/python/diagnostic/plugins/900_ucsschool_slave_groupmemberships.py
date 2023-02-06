@@ -44,7 +44,7 @@
 
 from __future__ import absolute_import
 
-from typing import Dict, Set
+from typing import Dict, Set  # noqa: F401
 
 from ldap.filter import filter_format
 

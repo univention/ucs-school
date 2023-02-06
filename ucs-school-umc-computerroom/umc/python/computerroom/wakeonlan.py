@@ -34,7 +34,7 @@ from __future__ import absolute_import, print_function
 
 import argparse
 import socket
-from typing import Iterable, Optional, Set
+from typing import Iterable, Optional, Set  # noqa: F401
 
 import netifaces
 

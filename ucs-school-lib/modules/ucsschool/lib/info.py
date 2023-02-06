@@ -39,7 +39,7 @@ from ldap.filter import filter_format
 from univention.config_registry import ConfigRegistry
 
 if TYPE_CHECKING:
-    import univention.uldap
+    import univention.uldap  # noqa: F401
 
 ucr = ConfigRegistry()
 ucr.load()

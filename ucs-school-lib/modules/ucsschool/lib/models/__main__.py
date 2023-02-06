@@ -32,7 +32,7 @@ import importlib
 import logging
 import sys
 from operator import attrgetter
-from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type
+from typing import TYPE_CHECKING, Dict, Iterable, List, NamedTuple, Optional, Set, Tuple, Type  # noqa: F401
 
 import click
 from ldap.filter import escape_filter_chars
@@ -53,9 +53,9 @@ from univention.admin.uexceptions import ldapError, noObject
 from univention.admin.uldap import getAdminConnection
 
 if TYPE_CHECKING:
-    import univention.admin.handlers.simpleLdap
-    from ucsschool.lib.models.base import UCSSchoolModel
-    from univention.admin.uldap import access as LoType, position as PoType
+    import univention.admin.handlers.simpleLdap  # noqa: F401
+    from ucsschool.lib.models.base import UCSSchoolModel  # noqa: F401
+    from univention.admin.uldap import access as LoType, position as PoType  # noqa: F401
 
 
 ModuleAndClass = NamedTuple("ModuleAndClass", [("module_name", str), ("class_name", str)])

@@ -55,7 +55,7 @@ nothing will be done.
 import json
 import pprint
 import sys
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List  # noqa: F401
 
 import six
 
@@ -64,7 +64,7 @@ from ucsschool.importer.utils.config_pyhook import ConfigPyHook
 from ucsschool.lib.roles import supported_roles
 
 if TYPE_CHECKING:
-    import ucsschool.importer.configuration.ReadOnlyDict
+    import ucsschool.importer.configuration.ReadOnlyDict  # noqa: F401
 
 
 class ExtendConfigByRole(ConfigPyHook):

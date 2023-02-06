@@ -31,7 +31,7 @@
 
 """UCS@school new import tool cmdline frontend."""
 
-from typing import List
+from typing import List  # noqa: F401
 
 from .cmdline import CommandLine
 

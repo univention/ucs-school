@@ -32,7 +32,7 @@
 """Default implementation of the Abstract Factory."""
 
 import logging
-from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, Optional, TypeVar  # noqa: F401
 
 from ucsschool.lib.models.utils import ucr
 
@@ -47,8 +47,8 @@ if TYPE_CHECKING:
     import ucsschool.importer.utils.username_handler.UsernameHandler
     import ucsschool.importer.writer.csv_writer.CsvWriter
     import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
-    import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter
-    import univention.config_registry.ConfigRegistry
+    import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter  # noqa: F401
+    import univention.config_registry.ConfigRegistry  # noqa: F401
 
     from .models.import_user import ImportUser
 

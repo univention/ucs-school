@@ -30,7 +30,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import requests
+    import requests  # noqa: F401
 
 from .models import VeyonError
 

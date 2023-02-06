@@ -33,7 +33,7 @@
 """Single source database, partial import user import class."""
 
 import copy
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional  # noqa: F401
 
 from ldap.filter import filter_format
 
@@ -43,7 +43,7 @@ from ..exceptions import InvalidSchools, UserValidationError
 from .user_import import UserImport
 
 if TYPE_CHECKING:
-    from ..models.import_user import ImportUser
+    from ..models.import_user import ImportUser  # noqa: F401
 
 
 class SingleSourcePartialUserImport(UserImport):
