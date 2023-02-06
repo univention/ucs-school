@@ -76,7 +76,7 @@ class PasswordReset(object):
                 user, new_password, change_password_on_next_login=change_password_on_next_login
             )
         except HTTPError as exc:
-            assert False, "Could not change password: %s" % (exc,)
+            raise AssertionError("Could not change password: %s" % (exc,))
         assert isinstance(response, bool) and response is True, "Failed to reset password: %r" % (
             response,
         )
@@ -122,7 +122,7 @@ class PasswordReset(object):
                 "permission denied" in str(exc).lower()
             ), 'Exception did not contain "permission denied": %s' % (exc,)
         else:
-            assert False, "did not fail: %r" % (response,)
+            raise AssertionError("did not fail: %r" % (response,))
 
 
 class Error(Exception):

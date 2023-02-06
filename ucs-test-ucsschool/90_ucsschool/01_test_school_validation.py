@@ -31,7 +31,7 @@ def test_schoolname_underscore_name_validation(schoolenv):
     try:
         schoolenv.create_ou(ou_name=underscore_ou_name, name_edudc="Ok-name1")
     except ValidationError:
-        assert False, "Ou name %r is allowed but validation failed " % underscore_ou_name
+        raise AssertionError("Ou name %r is allowed but validation failed " % underscore_ou_name)
 
 
 def test_create_ou_validation(schoolenv, mocker):
@@ -67,4 +67,4 @@ def test_create_ou_validation(schoolenv, mocker):
             False,
         )
     except ValueError:
-        assert False, "Ou name %r is allowed but validation failed " % underscore_ou_name
+        raise AssertionError("Ou name %r is allowed but validation failed " % underscore_ou_name)

@@ -753,7 +753,7 @@ class UmcComputer(object):
                 )
             )
         else:
-            assert False, "Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult)
+            raise AssertionError("Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult))
 
     def remove(self):
         """Remove computer"""
@@ -877,7 +877,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
                 os.makedirs(home_dir)
             break
         else:
-            assert False, "No homeDirectory attribute found for %r" % (dn,)
+            raise AssertionError("No homeDirectory attribute found for %r" % (dn,))
 
 
 @SetTimeout

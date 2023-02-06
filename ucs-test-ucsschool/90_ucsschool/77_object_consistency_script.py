@@ -52,7 +52,7 @@ def assert_error_msg_in_script_output(script_output, dn, error_msg):
             assert error_msg in line
             break
     else:
-        assert False, "No line containing DN {!r} found.".format(dn)
+        raise AssertionError("No line containing DN {!r} found.".format(dn))
 
 
 def assert_error_msg_not_in_script_output(script_output, dn, error_msg):

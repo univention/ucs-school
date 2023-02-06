@@ -53,4 +53,4 @@ def test_ucsschool_helpdesk(schoolenv, ucr):
             time.sleep(1)
         print()
         ms.stop()
-        assert False, "Unique id was not found in target file"
+        raise AssertionError("Unique id was not found in target file")

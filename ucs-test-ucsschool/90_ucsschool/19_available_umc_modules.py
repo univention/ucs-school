@@ -141,13 +141,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
     else:
         success = contains(modules, res)
     if not success:
-        assert (
-            False
-        ), 'Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r' % (
-            (userType, serverRole, singleMaster),
-            expected - found,
-            found - expected,
-        )
+        raise AssertionError('Modules for "%r" are not correct.\nExpected, but missing: %r\nNot expected:    %r' % ((userType, serverRole, singleMaster), expected - found, found - expected))
 
 
 def test_available_umc_modules(schoolenv, udm_session, ucr):

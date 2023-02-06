@@ -286,7 +286,7 @@ class LDAPACLTestMatrix(object):
                 else:
                     return True
         else:
-            assert False, "command %r was not executed successfully" % cmd
+            raise AssertionError("command %r was not executed successfully" % cmd)
 
     def walkThroughContainer(self, base):
         lo = getMachineConnection()

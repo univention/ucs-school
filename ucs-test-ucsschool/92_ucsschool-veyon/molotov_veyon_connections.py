@@ -44,7 +44,7 @@ async def authenticated_existing_session(session):
         assert res.status in (200, 429), f"response: {res} {res.status}"
     except TimeoutError:
         print("We have a timeout error")
-        assert False
+        raise AssertionError()
 
 
 @scenario(weight=40)
@@ -58,7 +58,7 @@ async def authenticated_new_session(session):
         assert res.status == 200, f"response: {res} {res.status}"
     except TimeoutError:
         print("We have a timeout error")
-        assert False
+        raise AssertionError()
 
 
 @scenario(weight=40)
@@ -71,7 +71,7 @@ async def unauthenticated_not_exists(session):
         assert res.status in (408, 429), f"response: {res} {res.status}"
     except TimeoutError:
         print("We have a timeout error")
-        assert False
+        raise AssertionError()
 
 
 @scenario(weight=40)
@@ -84,4 +84,4 @@ async def unauthenticated_exists(session):
         assert res.status in (200, 429), f"response: {res} {res.status}"
     except TimeoutError:
         print("We have a timeout error")
-        assert False
+        raise AssertionError()

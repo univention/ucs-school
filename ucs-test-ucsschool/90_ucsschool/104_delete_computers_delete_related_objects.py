@@ -69,7 +69,7 @@ def check_ldap(school, computers, should_exist):
 
         except NO_SUCH_OBJECT as ex:
             if should_exist:
-                assert False, ex
+                raise AssertionError(ex)
 
 
 def test_delete_computers_delete_related_objects(schoolenv):
