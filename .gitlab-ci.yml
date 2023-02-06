@@ -63,7 +63,7 @@ build pre-commit:
       - .black
       - .dockerignore
       - .flake8
-      - .isort.cfg
+      - pyproject.toml
       - .pre-commit-config.yaml
   extends: .kaniko
   variables:

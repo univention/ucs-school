@@ -12,7 +12,7 @@ RUN addgroup --system pre-commit && \
 	adduser --system --ingroup pre-commit --disabled-password pre-commit
 USER pre-commit
 
-COPY --chown=pre-commit:pre-commit [".bandit", ".black", ".flake8", ".isort.cfg", ".pre-commit-config.yaml", "/home/pre-commit/"]
+COPY --chown=pre-commit:pre-commit [".bandit", ".black", ".flake8", "pyproject.toml", ".pre-commit-config.yaml", "/home/pre-commit/"]
 
 RUN git init /tmp/seed && \
 	cd /tmp/seed && \

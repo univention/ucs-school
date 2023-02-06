@@ -1,0 +1,13 @@
+[tool.isort]
+py_version = "37"
+combine_as_imports = true
+filter_files = true
+force_grid_wrap = false
+known_first_party = "ucsschool,univention"
+known_third_party = "ConfigParser,PyQt4,StringIO,apt,cStringIO,celery,colorlog,commands,cups,dateutil,django,django_filters,dns,ipaddr,lazy_object_proxy,ldap,ldif,listener,magic,mock,netifaces,notifier,psutil,pycurl,pytest,requests,rest_framework,ruamel,samba,sip,six,smbpasswd,urllib3,urlparse,utils,wakeonlan"
+line_length = 105
+multi_line_output = 3
+include_trailing_comma = true
+profile="black"
+skip = "doc/doc-common/,ucs-school-import/usr/share/doc/ucs-school-import-http-api/source/conf.py,ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import,ucs-test-ucsschool/90_ucsschool/112_import_user_pyhooks.py"
+skip_glob = "venv/*"
