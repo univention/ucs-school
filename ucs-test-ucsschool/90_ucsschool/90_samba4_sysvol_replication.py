@@ -75,7 +75,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         print("\nWaiting for SYSVOL synchronisation to happen (up to 370 sec.)")
         remote_stdout = ""
 
-        for attempt in range(37):
+        for _attempt in range(37):
             remote_stdout = self.execute_cmd_on_host(host, command_line)
             if remote_stdout == "True":
                 # folder created, replication works

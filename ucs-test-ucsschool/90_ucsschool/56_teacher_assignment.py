@@ -22,7 +22,7 @@ def schoolenv():
         hostname = schoolenv.ucr["hostname"]
         schoolenv.schools = schoolenv.create_multiple_ous(2, name_edudc=hostname)
         schoolenv.teachers = {}
-        for school, school_dn in schoolenv.schools:
+        for school, _school_dn in schoolenv.schools:
             school_class, _ = schoolenv.create_school_class(school, uts.random_string())
             _, schoolenv.teachers[school] = schoolenv.create_teacher(
                 school, classes=school_class, schools=[s[0] for s in schoolenv.schools]

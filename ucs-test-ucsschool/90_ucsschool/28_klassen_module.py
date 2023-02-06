@@ -13,7 +13,7 @@ def test_klassen_module(schoolenv, ucr):
     ou, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
     klassen = []
 
-    for i in range(2):
+    for _i in range(2):
         klasse = Klasse(school=ou)
         klasse.create()
         klasse.check_existence(True)

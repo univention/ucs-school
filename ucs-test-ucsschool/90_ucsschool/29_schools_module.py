@@ -18,7 +18,7 @@ def test_schools_module(udm_session):
     udm = udm_session
     schools = []
     try:
-        for i in range(2):
+        for _i in range(2):
             school = School()
             school.create()
             school.verify_ldap(True)

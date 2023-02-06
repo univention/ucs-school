@@ -123,7 +123,7 @@ def test_valid_hostname(ucr, schoolenv):
                 school.remove()
 
     # Checking legal chars in dc_name
-    for count in range(5):
+    for _count in range(5):
         dc_name = uts.random_name()
         school = uts.random_name()
         process_school(school, dc_name, should_fail=False)

@@ -289,7 +289,7 @@ class UcsSchoolRolesMigration(object):
                     if cls == User and obj.is_administrator(lo):
                         # user is school admin only for OUs in which she is in group admins-$OU
                         schools = []
-                        for dn, attr in lo.search(
+                        for _dn, attr in lo.search(
                             filter_format("(&(cn=admins-*)(uniqueMember=%s))", (obj.dn,))
                         ):
                             schools.extend(x.decode("UTF-8") for x in attr["ucsschoolSchool"])

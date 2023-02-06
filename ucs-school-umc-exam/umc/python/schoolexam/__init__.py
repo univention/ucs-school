@@ -254,7 +254,7 @@ class Instance(SchoolBaseModule):
         for exam_user in exam_users:
             folder = exam_user.unixhome
             Instance.init_windows_profiles(exam_user)
-            for root, sub, files in os.walk(folder):
+            for root, _sub, files in os.walk(folder):
                 deny_owner_change_permissions(root)
                 for f in files:
                     deny_owner_change_permissions(os.path.join(root, f))

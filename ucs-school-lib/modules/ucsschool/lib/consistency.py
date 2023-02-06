@@ -426,7 +426,7 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     # check if there is a school class for each class share
     classes = []
     role_classes_string = create_ucsschool_role_string(role_school_class, school_filter)
-    for dn, attrs in lo.search(
+    for _dn, attrs in lo.search(
         filter=maybe_allow_wildcards(filter_format("(ucsschoolRole=%s)", [role_classes_string]))
     ):
         classes.append(attrs["cn"][0].decode("UTF-8"))
@@ -465,7 +465,7 @@ def check_shares(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
 def check_server_group_membership(school=None):  # type: (Optional[str]) -> Dict[str, List[str]]
     def server_in_group_errors(lo, role, members, group_dn):
         problematic_objects = {}
-        for dn, attrs in lo.search(filter=filter_format("(ucsschoolRole=%s)", [role])):
+        for dn, _attrs in lo.search(filter=filter_format("(ucsschoolRole=%s)", [role])):
             if dn not in members:
                 problematic_objects.setdefault(dn, []).append(
                     "is not a member of group {}".format(group_dn)

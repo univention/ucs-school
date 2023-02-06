@@ -51,7 +51,7 @@ def test_ucs_school_printermoderatoion_find_printer_in_ou(schoolenv, ucr):
     doPrinter("A", newPrinterName, schoolName1, host, domainname)
 
     # check if the printer exists in the correct OU
-    for i in range(5):
+    for _i in range(5):
         assert printerExist(
             connection, newPrinterName, schoolName1
         ), "Printer not found in the specified OU"

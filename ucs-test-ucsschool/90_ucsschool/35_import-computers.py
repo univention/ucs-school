@@ -38,7 +38,7 @@ class ComputerImport:
 
     def _create_computer(self, ctype):  # type: (str) -> None
         amount = 5
-        for i in range(amount):
+        for _i in range(amount):
             self._test_computers[ctype].append(Computer(school=self._school, ctype=ctype))
         i, j = random.sample(range(amount), 2)
         self._test_computers[ctype][i].set_inventory_numbers()

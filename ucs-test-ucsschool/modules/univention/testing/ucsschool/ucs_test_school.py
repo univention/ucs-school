@@ -742,7 +742,7 @@ class UCSTestSchool(object):
 
     def cleanup_old_template_ous(self):  # type: () -> None
         current_template_name = self._current_test_ou_template_name()
-        for ou_dn, ou_attrs in self.lo.search(
+        for _ou_dn, ou_attrs in self.lo.search(
             "(&(objectClass=ucsschoolOrganizationalUnit)(ou={}*))".format(TEMPLATE_OU_NAME_PREFIX),
             attr=["ou"],
         ):

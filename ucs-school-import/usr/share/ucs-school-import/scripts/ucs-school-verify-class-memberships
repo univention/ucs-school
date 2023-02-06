@@ -205,7 +205,7 @@ def parse_line(lo, line):
     groups = lo.search(filter_format("uniqueMember=%s", (dn,)), ucr["ldap/base"])
     correct = False
     invalid_groups = set()
-    for gdn, group in groups:  # pylint: disable=W0612
+    for gdn, _group in groups:  # pylint: disable=W0612
         if not gdn.endswith(",cn=klassen,cn=schueler,cn=groups,%s" % (oubase,)):
             if not gdn.endswith(oubase) and re.search(r",ou=[^,]+,%s$" % (ucr["ldap/base"],), gdn, re.I):
                 raise StudentIsInAnotherClassInAnotherSchool(line, uid, dn, gdn)

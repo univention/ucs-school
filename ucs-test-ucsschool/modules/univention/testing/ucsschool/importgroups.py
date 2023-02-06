@@ -141,7 +141,7 @@ class GroupImport:
         self.school = ou_name
 
         self.groups = []
-        for i in range(0, nr_groups):
+        for _i in range(0, nr_groups):
             self.groups.append(Group(self.school))
 
     def __str__(self):

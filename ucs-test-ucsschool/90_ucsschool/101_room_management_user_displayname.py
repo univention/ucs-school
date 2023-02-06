@@ -46,7 +46,7 @@ user_map_veyon = UserMap(VEYON_USER_REGEX)
 
 
 def veyon_random_user_str(n):  # type (int) -> str
-    for i in range(n):
+    for _i in range(n):
         domain_name = "{}-{}.{}".format(uts.random_string(), uts.random_string(), uts.random_string())
         yield "{}\\{}".format(domain_name, uts.random_username())
 

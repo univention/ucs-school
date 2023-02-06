@@ -116,7 +116,7 @@ class PrinterImport:
         self.school = ou_name
 
         self.printers = []
-        for i in range(0, nr_printers):
+        for _i in range(0, nr_printers):
             self.printers.append(Printer(self.school))
         self.printers[0].model = None
         self.printers[1].uri = "file:/dev/null"

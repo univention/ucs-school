@@ -278,7 +278,7 @@ class ComputerRoomManager(dict):
 
     def _clear(self):
         if ComputerRoomManager.ROOM:
-            for name, computer in self.items():
+            for _name, computer in self.items():
                 computer.stop()
                 computer.close()
                 del computer  # FIXME: no-op, needs to be removed from dict

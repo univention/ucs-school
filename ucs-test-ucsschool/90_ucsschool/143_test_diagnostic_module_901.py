@@ -46,7 +46,7 @@ class Test(UniqueObjectTester):
             "scheme:username:default", "<:umlauts><firstname>[0].<lastname>[{}]".format(scheme)
         )
         person_list = []
-        for i in range(6):
+        for _i in range(6):
             person = Person(self.ou_A.name, role)
             person.update(record_uid=uts.random_name(), source_uid=source_uid, username=None, mail=None)
             person.email_prefix = None

@@ -79,7 +79,7 @@ def check_exam_user_home_dir_permissions(
         for home_dir in lo.getAttr(dn, "homeDirectory"):
             home_dir = home_dir.decode("UTF-8")
             print("# check nt acls for {} and it's subfolders.".format(home_dir))
-            for root, sub, files in os.walk(home_dir):
+            for root, _sub, files in os.walk(home_dir):
                 check_nt_acls(root)
                 for f in files:
                     check_nt_acls(os.path.join(root, f))

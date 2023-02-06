@@ -66,7 +66,7 @@ def test_migrate_ucsschool_import_user(ucr, schoolenv):
         user = User.from_dn(user_dn, None, lo)
         ambiguous_users.append(MyUser("", user_dn, user.firstname, user.lastname, str(next_record_uid)))
         next_record_uid += 1
-        for i in range(2):
+        for _i in range(2):
             user2_name, user2_dn = func(
                 ou_name,
                 firstname=user.firstname,

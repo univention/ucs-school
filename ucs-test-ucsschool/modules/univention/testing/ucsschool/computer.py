@@ -169,23 +169,23 @@ def create_test_computers(
     """Utility function to create test computers (~ python import)"""
     created_computers = []
     school = school if school else uts.random_name()
-    for i in range(nr_windows):
+    for _i in range(nr_windows):
         computer = Computer(school=school, ctype="windows")
         WindowsComputerLib(**computer.get_args()).create(lo)
         created_computers.append(computer)
-    for i in range(nr_macos):
+    for _i in range(nr_macos):
         computer = Computer(school=school, ctype="macos")
         MacComputerLib(**computer.get_args()).create(lo)
         created_computers.append(computer)
-    for i in range(nr_ip_managed_clients):
+    for _i in range(nr_ip_managed_clients):
         computer = Computer(school=school, ctype="ipmanagedclient")
         IPComputerLib(**computer.get_args()).create(lo)
         created_computers.append(computer)
-    for i in range(nr_linux):
+    for _i in range(nr_linux):
         computer = Computer(school=school, ctype="linux")
         LinuxComputerLib(**computer.get_args()).create(lo)
         created_computers.append(computer)
-    for i in range(nr_ubuntu):
+    for _i in range(nr_ubuntu):
         computer = Computer(school=school, ctype="ubuntu")
         UbuntuComputerLib(**computer.get_args()).create(lo)
         created_computers.append(computer)
@@ -217,23 +217,23 @@ class Computers(object):
         print("********** Create computers")
         created_computers = []
         school = self.school if self.school else uts.random_name()
-        for i in range(self.nr_windows):
+        for _i in range(self.nr_windows):
             computer = Computer(school=school, ctype="windows")
             WindowsComputerLib(**computer.get_args()).create(self.lo)
             created_computers.append(computer)
-        for i in range(self.nr_macos):
+        for _i in range(self.nr_macos):
             computer = Computer(school=school, ctype="macos")
             MacComputerLib(**computer.get_args()).create(self.lo)
             created_computers.append(computer)
-        for i in range(self.nr_ip_managed_clients):
+        for _i in range(self.nr_ip_managed_clients):
             computer = Computer(school=school, ctype="ipmanagedclient")
             IPComputerLib(**computer.get_args()).create(self.lo)
             created_computers.append(computer)
-        for i in range(self.nr_linux):
+        for _i in range(self.nr_linux):
             computer = Computer(school=school, ctype="linux")
             LinuxComputerLib(**computer.get_args()).create(self.lo)
             created_computers.append(computer)
-        for i in range(self.nr_ubuntu):
+        for _i in range(self.nr_ubuntu):
             computer = Computer(school=school, ctype="ubuntu")
             UbuntuComputerLib(**computer.get_args()).create(self.lo)
             created_computers.append(computer)

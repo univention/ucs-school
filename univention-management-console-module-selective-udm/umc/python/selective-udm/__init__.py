@@ -72,7 +72,7 @@ class Instance(SchoolBaseModule):
         if not result:
             raise UMC_Error("No group memberships for SID %s found." % (usersid,))
 
-        for dn, attr in result:
+        for _dn, attr in result:
             if attr["cn"][0].decode("UTF-8") in allowed_groups:
                 return
 

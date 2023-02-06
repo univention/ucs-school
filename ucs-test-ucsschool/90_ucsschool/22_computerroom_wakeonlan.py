@@ -32,10 +32,10 @@ def test_computerroom_wakeonlan(schoolenv, ucr):
     computer.create()
     mac_address = computer.mac_address
     regexes = {}
-    for j, b_ip in enumerate(target_broadcast_ips):
+    for _j, b_ip in enumerate(target_broadcast_ips):
         regexes[b_ip] = r".*{}.+?{} WOL \d+ MagicPacket for {}.*".format(server_ip, b_ip, mac_address)
 
-    for i in range(max_iterations):
+    for _i in range(max_iterations):
         start = time.time()
         wol_received = {b_ip: False for b_ip in target_broadcast_ips}
         logger.info(

@@ -80,7 +80,7 @@ def test_list(auth_header, lo, schoolenv):
     assert isinstance(json_response, list)
     for obj in json_response:
         assert EXPECTED_WORKGROUP_RESOURCE_ATTRS.issubset(set(obj.keys()))
-        for k, v in obj.items():
+        for k, _v in obj.items():
             assert k in obj
             if k in (
                 "ucsschool_roles",

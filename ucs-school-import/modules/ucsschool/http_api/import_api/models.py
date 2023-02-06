@@ -249,7 +249,7 @@ class School(models.Model):
         res = cls._get_ous_from_ldap(ou_str)
         if ou_str and not res:
             raise RuntimeError("Unknown school {!r}.".format(ou_str))
-        for dn, ou in res:
+        for _dn, ou in res:
             name = ou["ou"][0].decode("UTF-8")
             display_name = ou.get("displayName", [ou["ou"][0]])[0].decode("UTF-8")
             obj, created = cls.objects.get_or_create(name=name, defaults={"displayName": display_name})

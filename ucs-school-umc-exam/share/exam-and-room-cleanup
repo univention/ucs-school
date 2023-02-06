@@ -88,7 +88,7 @@ class ExamCleanupHelper(object):
 
     def running_exam_iter(self):
         ou_list = self.lo.search(filter="(objectClass=ucsschoolOrganizationalUnit)")
-        for ou_dn, ou_attrs in ou_list:
+        for _ou_dn, ou_attrs in ou_list:
             ou_name = ou_attrs.get("ou")[0].decode("UTF-8")
             try:
                 room_list = self.umcp.umc_command("computerroom/rooms", {"school": ou_name}).result

@@ -586,25 +586,25 @@ class UserImport:
         self.school = school_name
 
         self.students = []
-        for i in range(0, nr_students):
+        for _i in range(0, nr_students):
             self.students.append(Student(self.school))
         self.students[2].set_inactive()
         self.students[0].password = uts.random_name()
 
         self.teachers = []
-        for i in range(0, nr_teachers):
+        for _i in range(0, nr_teachers):
             self.teachers.append(Teacher(self.school))
         self.teachers[1].set_inactive()
         self.teachers[1].password = uts.random_name()
 
         self.staff = []
-        for i in range(0, nr_staff):
+        for _i in range(0, nr_staff):
             self.staff.append(Staff(self.school))
         self.staff[2].set_inactive()
         self.staff[1].password = uts.random_name()
 
         self.teacher_staff = []
-        for i in range(0, nr_teacher_staff):
+        for _i in range(0, nr_teacher_staff):
             self.teacher_staff.append(TeacherStaff(self.school))
         self.teacher_staff[1].set_inactive()
         self.teacher_staff[2].password = uts.random_name()

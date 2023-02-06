@@ -11,7 +11,7 @@ import subprocess
 
 
 def test_ucs_school_info(ucr, lo):
-    for dn, ou_attrs in lo.search(
+    for _dn, ou_attrs in lo.search(
         base=ucr["ldap/base"],
         filter="(objectClass=ucsschoolOrganizationalUnit)",
         scope="one",

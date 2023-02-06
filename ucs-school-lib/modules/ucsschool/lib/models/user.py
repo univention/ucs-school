@@ -526,7 +526,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             )
 
         # verify user is (or will be) in all schools of its school_classes
-        for school, classes in iteritems(self.school_classes):
+        for school, _classes in iteritems(self.school_classes):
             if school.lower() not in (s.lower() for s in self.schools + [self.school]):
                 self.add_error(
                     "school_classes",
@@ -552,7 +552,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             )
 
         # verify user is (or will be) in all schools of its work groups
-        for school, workgroups in iteritems(self.workgroups):
+        for school, _workgroups in iteritems(self.workgroups):
             if school.lower() not in (s.lower() for s in self.schools + [self.school]):
                 self.add_error(
                     "workgroups",

@@ -239,7 +239,7 @@ class UserValidator(SchoolValidator):
     def validate_student_roles(cls, roles):  # type: (List[Tuple[str]]) -> Optional[str]
         """Students should not have teacher, staff or school_admin role."""
         not_allowed_for_students = [role_teacher, role_staff, role_school_admin]
-        for r, c, s in roles:
+        for r, _c, _s in roles:
             if (cls.is_student and r in not_allowed_for_students) or (
                 not cls.is_student and r in [role_student, role_exam_user]
             ):

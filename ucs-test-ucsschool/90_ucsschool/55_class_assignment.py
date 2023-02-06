@@ -31,7 +31,7 @@ def schoolenv():
         name_edudcs = [hostname, name_edudc_2, name_edudc_2]
         schoolenv.school_classes = {}
         client = Client.get_test_connection(hostname=schoolenv.ucr["ldap/master"])
-        for (school, school_dn), name_edudc in zip(schoolenv.schools, name_edudcs):
+        for (school, _school_dn), name_edudc in zip(schoolenv.schools, name_edudcs):
             class_name = uts.random_string()
             grp_dn = "cn={}-{},cn=klassen,cn=schueler,cn=groups,ou={},{}".format(
                 school, class_name, school, schoolenv.LDAP_BASE

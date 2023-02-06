@@ -37,11 +37,11 @@ def test_radius_internetrules_priority(schoolenv, ucr):
         rule.define()
         rules.append(rule)
 
-    for i in range(2):
+    for _i in range(2):
         tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
         stu, stu_dn = schoolenv.create_user(school)
         users.append([tea, stu])
-        for j in range(2):
+        for _j in range(2):
             group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
             group.create()
             groups.append(group)
@@ -49,7 +49,7 @@ def test_radius_internetrules_priority(schoolenv, ucr):
     tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
     stu, stu_dn = schoolenv.create_user(school)
     users.append([tea, stu])
-    for j in range(4):
+    for _j in range(4):
         group = Workgroup(school, members=[tea_dn, stu_dn], connection=umc_connection)
         group.create()
         groups.append(group)

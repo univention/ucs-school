@@ -269,21 +269,21 @@ class Test(UniqueObjectTester):
                     )
                 continue
         self.log.info("*** Starting unit test for UsernameHandler.format_username() (2/5)")
-        for i in range(1000):
+        for _i in range(1000):
             name = uts.random_username(15)
             self.unique_basenames_to_remove.append(name)
             out = unh.format_username(name)
             if out != name:
                 self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
         self.log.info("*** Starting unit test for UsernameHandler.format_username() (3/5)")
-        for i in range(1000):
+        for _i in range(1000):
             name = uts.random_name(20)
             self.unique_basenames_to_remove.append(name)
             out = unh.format_username(name)
             if out.startswith(".") or out.endswith(".") or len(out) > 15:
                 self.fail("UsernameHandler.format_username(%r) returned %r." % (name, out))
         self.log.info("*** Starting unit test for UsernameHandler.format_username() (4/5)")
-        for i in range(1000):
+        for _i in range(1000):
             name = uts.random_name_special_characters(20)
             if str is bytes:  # Py 2
                 name = name.translate(None, "[]")

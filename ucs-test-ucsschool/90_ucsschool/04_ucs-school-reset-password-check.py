@@ -89,7 +89,7 @@ def school_environment():
         studentsDn = []
         admins = []
         adminsDn = []
-        for i in [0, 1, 2]:
+        for _i in [0, 1, 2]:
             tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
             teachers.append(tea)
             teachersDn.append(teadn)

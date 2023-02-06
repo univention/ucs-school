@@ -223,7 +223,7 @@ class NetworkImport:
         self.school = ou_name
 
         self.networks = []
-        for i in range(0, nr_networks):
+        for _i in range(0, nr_networks):
             self.networks.append(Network(self.school, prefixlen=random.randint(8, 24)))
         self.networks[1].iprange = None
 

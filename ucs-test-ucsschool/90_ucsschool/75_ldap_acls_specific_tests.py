@@ -416,7 +416,7 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
                 username=user_name_customcn, position="cn={},{}".format(cn_name, self.ucr["ldap/base"])
             )
         )
-        for dn, name in testuser:
+        for dn, _name in testuser:
             for school_server_dn in [
                 self.schoolA.schoolserver.dn,
                 self.schoolB.schoolserver.dn,
