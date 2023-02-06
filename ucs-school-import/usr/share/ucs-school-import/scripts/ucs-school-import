@@ -1870,7 +1870,6 @@ def import_router():
 
 
 def import_group():
-
     # usage
     usage = "%prog [options] <importFile>\n"
     usage += "  creates/modifies/deletes group objects accoring to import file for UCS@school\n\n"
@@ -1912,9 +1911,6 @@ def import_group():
 
             verify_school_ou(schoolNr, lo)
 
-            success = True
-            dn = None
-
             if action in ["A", "M"]:  # Add/Modify group
                 # verify_group(group_dn, None, lo, superordinate, baseDN, schoolNr)
                 # object = univention.admin.objects.get(group_module, None, lo, position='', dn=group_dn)
@@ -1932,11 +1928,9 @@ def import_group():
                 print("Changed Description of %s from %s to %s" % (group_dn, oldDescrpt, Descrpt))
                 object.modify()
                 verify_group_share(schoolNr, ClassID, None, lo, superordinate, baseDN)
-                dn = object.dn
             elif action == "D":  # D)elete group
                 delete_dn(group_dn, group_module, None, lo)
                 delete_dn(share_dn, share_module, None, lo)
-                dn = group_dn
 
 
 def import_printer():
@@ -1987,9 +1981,6 @@ def import_printer():
             position_dn = "cn=%s,cn=printers,%s" % (escape_dn_chars(printerName), getDN(schoolNr))
             container = "cn=printers,%s" % (getDN(schoolNr),)
 
-            dn = None
-            success = True
-
             if action in ["A", "M"]:  # Add/Modify printer
                 position = univention.admin.uldap.position(baseDN)
                 position.setDn(container)
@@ -2009,13 +2000,10 @@ def import_printer():
                     object["model"] = "None"
                 if action == "A":
                     create_object(object)
-                    dn = object.dn
                 else:
                     print("modifying object %s" % position_dn)
                     object.modify()
-                    dn = object.dn
             elif action == "D":  # D)elete printer
-                dn = position_dn
                 delete_dn(position_dn, printer_module, None, lo)
 
 
