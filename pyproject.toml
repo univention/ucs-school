@@ -11,3 +11,183 @@ include_trailing_comma = true
 profile="black"
 skip = "doc/doc-common/,ucs-school-import/usr/share/doc/ucs-school-import-http-api/source/conf.py,ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import,ucs-test-ucsschool/90_ucsschool/112_import_user_pyhooks.py"
 skip_glob = "venv/*"
+
+[tool.ruff]
+# ruff 0.0.241
+external = ["W601", "F812", "E403", "E704"]
+line-length = 105
+update-check = false
+ignore-init-module-imports = true
+
+select = ["ALL"]
+ignore = [
+ "T20",  # allow use of print()
+ "I",  # isort, the original isort is still more acurate
+ "N",  # ignore non PEP-8 conform names
+ "ANN",  # missing type annotation
+ "ERA",  # don't remove commented out code
+ "ARG",  # ignore unused arguments
+ "EM",  # ignore strings instead of variable preference in exception raising
+ "FBT",  # ignore boolean trap in function arguments
+ "DTZ",  # ignore use of datetime without explicit timezone given
+ "PTH",  # don't use pathlib for everything
+ "RSE102",  # we want parentheses when raising exceptions
+ "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", # ignore missing docstring
+ "D203",  # ignore 1 blank line required before class docstring, conflicts with D211
+ "D212",  # multiline docstring should not start at first line!
+ "D214", "D215", "D405", "D406", "D407", "D408", "D409", "D410", "D411", "D412", "D413", "D414", "D416", # we don't have sections
+ "D400",  # first line should end with period
+ "D415",  # first line should end with period, question, exclamation: maybe somewhen?!
+ "UP031",  # allow %-interpolation
+ "PD011",  # we don't use pandas
+ "INP001",  # implicit namespace package
+ "EXE001",  # Shebang is present but file is not executable
+ "S101",  # allow to use assert (must be used in pytest)
+ "S105", "S106", "S107",  # allow hardcoded password
+ "SLF001",  # allow private member access
+ "Q000",  # allow single quotes
+ "Q001",  # allow single quote multiline strings
+ "RET502",  # allow implicit return None
+ "RET503",  # allow missing explicit return None
+ "B905",  # allow zip() without an explicit strict= parameter
+ "RUF001",  # allow ambiguous-unicode-character-string
+ "PLR2004",  # allow magic-value-comparison
+ "A001", "A002", "A003",  # allow builtin-variable-shadowing
+ "B006",  # allow mutable-argument-default
+ "B008",  # allow function-call-argument-default
+ "B020",  # allow loop-variable-overrides-iterator
+ "BLE001",  # allow catching Exception (blind-except)
+ "PLR0911",  # too-many-return-statements
+ "PLR0912",  # too-many-branches
+ "PLR0913",  # too-many-args
+ "PLR0915",  # too-many-statements
+
+ # current violations
+ "B007",  # unused-loop-control-variable
+ "PLR1701",  # Merge these isinstance calls: `isinstance(pk, (int, string_types))`
+ "PLW0120",  # Else clause on loop without a break statement, remove the else and de-indent all the code inside it
+ "B011",  # Do not `assert False` (`python -O` removes these calls), raise `AssertionError()`
+ "B023",  # Function definition does not bind loop variable `idomain`
+ "B026",  # Star-arg unpacking after a keyword argument is strongly discouraged
+ "ISC001",  # Implicitly concatenated string literals on one line
+ "SIM101",  # Multiple `isinstance` calls for `pk`, merge into a single call
+ "SIM103",  # Return the condition `access_allowance not in result` directly
+ "SIM110",  # Use `return any(regex.match(line) and all(str(word) in line for word in words) for line in lines)` instead of `for` loop
+ "SIM114",  # if-with-same-arms
+ "SIM201",  # Use `command != "r"` instead of `not command == "r"`
+ "SIM210",  # Use `bool(reg and reg.groupdict()['context_type'] == 'school')` instead of `True if reg and reg.groupdict()['context_type'] == 'school' else False`
+ "SIM300",  # Yoda conditions are discouraged, use `context_obj.props.contextid == DEFAULT_CONTEXT_ID` instead
+ "UP030",  # Use implicit references for positional format fields
+ "UP034",  # Avoid extraneous parentheses
+ "D417",  # Missing argument descriptions in the docstring: `base_dn`, `must_exist`, `ou`
+ "S501",  # Probable use of `requests` call with `verify=False` disabling SSL certificate checks
+ "PT009",  # Use a regular `assert` instead of unittest-style `assertSequenceEqual`
+ "PT013",  # Found incorrect import of pytest, use simple `import pytest` instead
+ "PT015",  # Assertion always fails, replace with `pytest.fail()`
+ "PIE790",  # Unnecessary `pass` statement
+ "PIE800",  # Unnecessary spread `**`
+ "COM812",  # Trailing comma missing
+ "COM818",  # Trailing comma on bare tuple prohibited
+ "EXE002",  # The file is executable but no shebang is present
+ "EXE003",  # Shebang should contain "python"
+ "RUF004",  # Keyword argument `request` must come after starred arguments
+
+# # not py2 compatible
+ "UP004", "UP008", "UP009", "UP010", "UP025", "UP029",  # be Python 2 compatible
+ "YTT202",  # six-py3-referenced
+ "RUF005",  # unpack-instead-of-concatenating-to-collection-literal
+ "TCH",  # type checking
+# "S324",  # hashlib-insecure-hash-function
+ "S113",  # request-without-timeout
+ "S108",  # hardcoded-temp-file
+ "S103",  # bad-file-permissions
+ "S110",  # try-except-pass
+# "UP006",  # use-pep585-annotation
+ "UP003",  # type-of-primitive
+ "UP012",  # unnecessary-encode-utf8
+# #"UP016",  # remove-six-compat
+ "UP018",  # native-literals
+# "UP019",  # typing-text-str-alias
+ "UP020",  # open-alias
+# "UP023",  # rewrite-c-element-tree
+ "UP024",  # os-error-alias
+ "UP026",  # rewrite-mock-import
+ "UP028",  # rewrite-yield-from
+ "UP032",  # f-string
+ "UP035",  # import-replacements
+# "UP036",  # outdated-version-block
+# F401: not py2 compat because of "typing" type hint comments: https://github.com/charliermarsh/ruff/issues/1619
+
+ # would be nice but no autofix available
+ "TID252",  # relative-imports
+ "B904",  # allow raise-without-from-inside-except → too many violations
+ "RET505",  # superfluous-else-return
+ "RET506",  # superfluous-else-raise
+ "RET507",  # superfluous-else-continue
+ "RET508",  # superfluous-else-break
+ "SIM115",  # open-file-with-context-handler
+ "SIM102",  # nested-if-statements
+ "SIM105",  # use-contextlib-suppress
+ "G",  # logging
+ "TRY",  # tryceratops
+ "PT004", "PT007", "PT011", "PT012", "PT017", "PT018",  # pytest
+# "PGH003",  # blanket-type-ignore
+ "UP014",  # convert-named-tuple-functional-to-class
+ "RET504",  # unnecessary-assign, https://github.com/charliermarsh/ruff/issues/2263
+ "SIM108",  # use-ternary-operator: hm, sometimes great, sometimes not
+ "SIM117",  # multiple-with-statements
+ "D205",  # 1 blank line required between summary line and description
+ "D300",  # Use """triple double quotes"""
+ "D301",  # Use r""" if any backslashes in a docstring
+ "D401",  # First line of docstring should be in imperative mood
+ "D402",  # First line should not be the function's signature
+ "D403",  # First word of the first line should be properly capitalized
+ "D404",  # First word of the docstring should not be "This"
+ "PIE804",  # no-unnecessary-dict-kwargs
+
+ "SIM118",  # unsure if everything is a dict, let's select each individually somewhen
+
+ "RUF100",  # https://github.com/charliermarsh/ruff/issues/2406, https://github.com/charliermarsh/ruff/issues/2407
+]
+
+unfixable = ["RUF100", "T20"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+allowed-confusables = ["’", "`", "´"]
+
+target-version = "py37"
+
+extend-exclude = ["django-pam"]
+
+task-tags = ["TODO", "FIXME"]
+
+[tool.ruff.flake8-builtins]
+builtins-ignorelist = ["copyright", "license", "object", "exit", "quit", "credits"]
+
+[tool.ruff.mccabe]
+max-complexity = 72
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+multiline-quotes = "double"
+inline-quotes = "single"
+
+[tool.ruff.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.flake8-pytest-style]
+parametrize-names-type = "csv"
+
+[tool.ruff.isort]
+combine-as-imports = true
+#filter-files = true
+#force-grid-wrap = false
+known-first-party = ["ucsschool", "univention"]
+known-third-party = ["ConfigParser", "PyQt4", "StringIO", "apt", "cStringIO", "celery", "colorlog", "commands", "cups", "dateutil", "django", "django_filters", "dns", "ipaddr", "lazy_object_proxy", "ldap", "ldif", "listener", "magic", "mock", "netifaces", "notifier", "psutil", "pycurl", "pytest", "requests", "rest_framework", "ruamel", "samba", "sip", "six", "smbpasswd", "urllib3", "urlparse", "utils", "wakeonlan"]
+#line-length = 105
+#multi-line-output = 3
+#include-trailing-comma = true
+#skip = "doc/doc-common/,ucs-school-import/usr/share/doc/ucs-school-import-http-api/source/conf.py,ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import,ucs-test-ucsschool/90_ucsschool/112_import_user_pyhooks.py"
+#skip-glob = "venv/*"
