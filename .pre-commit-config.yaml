@@ -19,6 +19,14 @@ repos:
         stages: [ manual ]
       - id: ucr-ruff-fix
         stages: [ manual ]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.246'
+    hooks:
+      - id: ruff
+      - id: ruff
+        alias: "ruff-edit"
+        stages: [ manual ]
+        args: ["--fix"]
   - repo: https://github.com/timothycrosley/isort
     rev: 5.11.5
     hooks:
