@@ -7,6 +7,8 @@
 ## packages:
 ##   - python3-ucsschool-lib
 
+import pytest
+
 import univention.testing.ucsschool.ucs_test_school as utu
 import univention.testing.udm as udm_test
 from univention.testing.utils import verify_ldap_object
@@ -24,8 +26,7 @@ def test_dhcp_search_base():
             assert "dhcpd/ldap/base cn=dhcp,{}".format(ou_dn) in props["registry"]
             break
         else:
-            # test also fails if there is no policy.
-            assert True is False
+            pytest.fail("no policy found")
         expected_attr = {"univentionPolicyReference": [policy_dn]}
         verify_ldap_object(ou_dn, expected_attr=expected_attr, strict=False)
 

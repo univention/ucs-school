@@ -7,6 +7,8 @@
 ## packages:
 ##   - python3-ucsschool-lib
 
+import pytest
+
 from univention.testing.utils import verify_ldap_object
 
 
@@ -35,5 +37,4 @@ def test_set_ucsschool_role(schoolenv):
                     verify_ldap_object(server_dn, expected_attr=expected_attr, strict=False)
                     break
         else:
-            # test also fails if no edu or adm server with type "computers/domaincontroller_slave"
-            assert True is False
+            pytest.fail('no edu or adm server with type "computers/domaincontroller_slave"')
