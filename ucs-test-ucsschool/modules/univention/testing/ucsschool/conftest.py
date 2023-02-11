@@ -1,17 +1,13 @@
-import datetime
 import enum
 import logging
 import os
-import pprint
 import random
 import subprocess
-import sys
 import tempfile
 import time
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type  # noqa: F401
 
 import pytest
-import six
 
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
@@ -38,46 +34,7 @@ if TYPE_CHECKING:
     from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass  # noqa: F401
 
 
-IMPORT_CONFIG = {
-    "active": "/var/lib/ucs-school-import/configs/user_import.json",
-    "bak": "/var/lib/ucs-school-import/configs/user_import.json.bak.{}".format(
-        datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-    ),
-    "default": "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json",
-}
 MACHINE_ACCOUNT_PW_FILE = "/etc/machine.secret"
-MAPPED_UDM_PROPERTIES = (
-    "title",
-    "description",
-    "displayName",
-    "e-mail",
-    "employeeType",
-    "organisation",
-    "phone",
-    "uidNumber",
-    "gidNumber",
-)  # keep in sync with MAPPED_UDM_PROPERTIES in [ucsschool-repo/feature-kelvin]kelvin-api/tests/...
-# ... conftest.py and [ucs-repo(4.4|5.0)]/test/utils/ucsschool_id_connector.py
-# if changed: check kelvin-api/tests/test_route_user.test_search_filter_udm_properties()
-IMPORT_CONFIG_KWARGS = {
-    "configuration_checks": ["defaults", "mapped_udm_properties"],
-    "dry_run": False,
-    "logfile": "/var/log/univention/ucsschool-kelvin-rest-api/http.log",
-    "scheme": {
-        "firstname": "<lastname>",
-        "username": {"default": "<:lower>test.<firstname>[:2].<lastname>[:3]"},
-    },
-    "skip_tests": ["uniqueness"],
-    "mapped_udm_properties": MAPPED_UDM_PROPERTIES,
-    "source_uid": "TESTID",
-    "verbose": True,
-}
-_ucs_school_import_framework_initialized = False
-_ucs_school_import_framework_error = None  # type: Optional[InitialisationError]
-
-
-class InitialisationError(Exception):
-    pass
 
 
 class UCSSchoolType(enum.Enum):
@@ -535,64 +492,6 @@ def random_logger():
         logger.addHandler(handler)
         logger.setLevel("DEBUG")
         yield logger
-
-
-@pytest.fixture(scope="session")
-def init_ucs_school_import_framework():
-    # ucs-test-ucsschool must not depend on ucs-school-import package
-    from ucsschool.importer.configuration import (
-        Configuration,
-        setup_configuration as _setup_configuration,
-    )
-    from ucsschool.importer.exceptions import UcsSchoolImportError
-    from ucsschool.importer.factory import setup_factory as _setup_factory
-    from ucsschool.importer.frontend.user_import_cmdline import (
-        UserImportCommandLine as _UserImportCommandLine,
-    )
-
-    def _func(**config_kwargs):
-        global _ucs_school_import_framework_initialized, _ucs_school_import_framework_error
-
-        if _ucs_school_import_framework_initialized:
-            return Configuration()
-        if _ucs_school_import_framework_error:
-            # prevent "Changing the configuration is not allowed." error if we
-            # return here after raising an InitialisationError
-            etype, exc, etraceback = sys.exc_info()
-            six.reraise(_ucs_school_import_framework_error, exc, etraceback)
-
-        _config_args = IMPORT_CONFIG_KWARGS
-        _config_args.update(config_kwargs)
-        _ui = _UserImportCommandLine()
-        _config_files = _ui.configuration_files
-        logger = logging.getLogger("univention.testing.ucsschool")
-        try:
-            config = _setup_configuration(_config_files, **_config_args)
-            if "mapped_udm_properties" not in config.get("configuration_checks", []):
-                raise UcsSchoolImportError(
-                    'Missing "mapped_udm_properties" in configuration checks, e.g.: '
-                    '{.., "configuration_checks": ["defaults", "mapped_udm_properties"], ..}'
-                )
-            _ui.setup_logging(config["verbose"], config["logfile"])
-            _setup_factory(config["factory"])
-        except UcsSchoolImportError as exc:
-            logger.exception("Error initializing UCS@school import framework: %s", exc)
-            etype, exc, etraceback = sys.exc_info()
-            _ucs_school_import_framework_error = InitialisationError(str(exc))
-            six.reraise(etype, exc, etraceback)
-        logger.info("------ UCS@school import tool configured ------")
-        logger.info("Used configuration files: %s.", config.conffiles)
-        logger.info("Using command line arguments: %r", _config_args)
-        logger.info("Configuration is:\n%s", pprint.pformat(config))
-        _ucs_school_import_framework_initialized = True
-        return config
-
-    return _func
-
-
-@pytest.fixture(scope="session")
-def import_config(init_ucs_school_import_framework):
-    return init_ucs_school_import_framework()
 
 
 @pytest.fixture(scope="session")
