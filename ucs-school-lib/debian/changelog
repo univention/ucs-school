@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.32) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:31 +0100
+
 ucs-school-lib (13.0.31) unstable; urgency=low
 
   * Bug 55455: compare DNs case insensitive

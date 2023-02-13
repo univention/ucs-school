@@ -1,3 +1,9 @@
+ucs-school-umc-diagnostic (2.0.13) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:32 +0100
+
 ucs-school-umc-diagnostic (2.0.12) unstable; urgency=medium
 
   * Bug #55557: collect errors as sets and improve evaluation

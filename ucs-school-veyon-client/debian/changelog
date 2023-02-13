@@ -1,3 +1,9 @@
+ucs-school-veyon-client (2.0.5) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:34 +0100
+
 ucs-school-veyon-client (2.0.4) unstable; urgency=medium
 
   * Bug #53421: Added python-typing to build dependencies

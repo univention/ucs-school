@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (12.0.13) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:34 +0100
+
 ucs-school-umc-wizards (12.0.12) unstable; urgency=medium
 
   * Bug #55415: only set check_password_policies for users during modify

@@ -1,3 +1,9 @@
+ucs-school-import (18.0.29) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:31 +0100
+
 ucs-school-import (18.0.28) unstable; urgency=medium
 
   * Issue #927: add python import hooks to import_computer

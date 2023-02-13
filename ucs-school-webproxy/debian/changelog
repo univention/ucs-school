@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.0.8) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:34 +0100
+
 ucs-school-webproxy (16.0.7) unstable; urgency=medium
 
   * Removed trailing slash and replaced deprecated --force option with

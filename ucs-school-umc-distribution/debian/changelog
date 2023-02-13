@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (18.0.7) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:33 +0100
+
 ucs-school-umc-distribution (18.0.6) unstable; urgency=medium
 
   * Bug #52719: Fixed incorrect comparison which leads to a TypeError

@@ -1,3 +1,9 @@
+ucs-school-roleshares (8.0.4) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:32 +0100
+
 ucs-school-roleshares (8.0.3) unstable; urgency=medium
 
   * Bug #52602: change server role terminology

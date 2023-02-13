@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (16.0.5) unstable; urgency=medium
+
+  * Bug #31771: refactor code using "ruff"
+
+ -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:33 +0100
+
 ucs-school-umc-internetrules (16.0.4) unstable; urgency=medium
 
   * Bug #55034: Fix object search in ucs-school-umc-internetrules
