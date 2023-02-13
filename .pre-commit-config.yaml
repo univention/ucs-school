@@ -27,15 +27,6 @@ repos:
         alias: "ruff-edit"
         stages: [ manual ]
         args: ["--fix"]
-  - repo: https://github.com/timothycrosley/isort
-    rev: 5.11.5
-    hooks:
-      - id: isort
-        entry: isort -c
-      - id: isort
-        alias: isort-edit
-        stages: [ manual ]
-        entry: isort
   - repo: https://github.com/psf/black
     # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
     # Version 21.11b0 adds super annoying Python 2 deprecation notice.
