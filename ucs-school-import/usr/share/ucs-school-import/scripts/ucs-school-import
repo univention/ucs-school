@@ -232,7 +232,7 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
                 print("Objectclass univentionPolicyReference cannot be added to %s\n" % (objdn))
                 problem_hints = (
                     problem_hints
-                    + "there were problems verifying ou %s: Objectclass univentionPolicyReference cannot be added to %s\n"
+                    + "there were problems verifying ou %s: Objectclass univentionPolicyReference cannot be added to %s\n"  # noqa: E501
                     % (schoolNr, objdn)
                 )
         # add all missing policies
@@ -333,7 +333,7 @@ def create_school_ou(
         verify_container(getDN(schoolNr, base="district"), ou_module, None, lo, superordinate, baseDN)
 
     print("verify ou for school nr %s" % schoolNr)
-    # list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
+    # list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container  # noqa: E501
     container = {
         "0printerPath": ["cn=printers"],
         "1userPath": [
@@ -366,7 +366,7 @@ def create_school_ou(
         container["4groupPath"].append("cn=%s,cn=groups" % escape_dn_chars(cn_staff))
     # FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
     # z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
-    # container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=UMC,cn=policies,' + baseDN] }
+    # container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=UMC,cn=policies,' + baseDN] }  # noqa: E501
     container_policies = {}
 
     ou_base = getDN(schoolNr)
@@ -423,7 +423,7 @@ def create_school_ou(
             zone = "edukativ"
             dcobject.open()
             # TODO FIXME The following snippet does not make any sense:
-            # if the DC is member of DC-Verwaltungsnetz then is added again to that group?!? Looks like this code is unused.
+            # if the DC is member of DC-Verwaltungsnetz then is added again to that group?!? Looks like this code is unused.  # noqa: E501
             for grp in dcobject["groups"]:
                 if grp.startswith("cn=DC-Verwaltungsnetz,"):
                     zone = "verwaltung"
@@ -644,7 +644,7 @@ def create_school_ou(
 
         # * check if computer exists
         # * if computer is exists, test the following things
-        #   * is computer a Primary Directory Node or Backup Directory Node ==> do not add computer to any groups
+        #   * is computer a Primary Directory Node or Backup Directory Node ==> do not add computer to any groups  # noqa: E501
         #   * is computer a Replica Directory Node ==> add computer to groups specified by dcgroups
         #   * is computer no dc ==> return error and exit
         #
@@ -673,7 +673,7 @@ def create_school_ou(
                 print("ERROR: cannot read %s: %s" % (grpdn, e))
 
             if hostlist:
-                continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item
+                continue  # if at least one DC has control over this OU then jump to next 'school_dcs' item  # noqa: E501
 
         if server_exists:
             # check if existing system is a Primary Directory Node or Backup Directory Node
@@ -713,14 +713,14 @@ def create_school_ou(
 
                 if not is_master_or_backup and not is_slave:
                     print(
-                        "WARNING: given system name %s is already in use and no domaincontroller system. Please choose another name"
+                        "WARNING: given system name %s is already in use and no domaincontroller system. Please choose another name"  # noqa: E501
                         % dcName
                     )
                     sys.exit(1)
 
                 if is_master_or_backup and is_slave:
                     print(
-                        "ERROR: implementation error: %s seems to be a Replica Directory Node and Primary Directory Node at the same time"
+                        "ERROR: implementation error: %s seems to be a Replica Directory Node and Primary Directory Node at the same time"  # noqa: E501
                         % dcName
                     )
                     sys.exit(1)
@@ -1159,7 +1159,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
         # set default server
         serverfqdn = "dc%s.%s" % (schoolNr.lower(), domainname)
 
-        # get alternative server (defined at ou object if a Replica Directory Node is responsible for more than one ou)
+        # get alternative server (defined at ou object if a Replica Directory Node is responsible for more than one ou)  # noqa: E501
         ou_dn = getDN(schoolNr, basedn=base)
         ou_attr_LDAPAccessWrite = lo.get(ou_dn, ["univentionLDAPAccessWrite"])
         alternativeServer_dn = None
@@ -1169,7 +1169,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
             )
             if (
                 len(ou_attr_LDAPAccessWrite) > 1
-            ):  # TODO FIXME This doesn't look correct to me - ou_attr_LDAPAccessWrite is a dict and not a list!
+            ):  # TODO FIXME This doesn't look correct to me - ou_attr_LDAPAccessWrite is a dict and not a list!  # noqa: E501
                 print(
                     "WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s"
                     % schoolNr
@@ -1318,7 +1318,7 @@ def create_network(
     @param defaultrouter IP-Address, if no netmask is profided it's derived from network
     @param nameserver IP-Address, if no netmask is profided it's derived from network
     @param netbiosserver IP-Address, if no netmask is profided it's derived from network
-    """
+    """  # noqa: E501
     assert isinstance(network, ipaddress.IPv4Network)
     success = True
     dn = None
@@ -2606,7 +2606,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
         "ucsschool/ldap/noneducational/create/objects", True
     ):
         print(
-            "ERROR: cannot create administrative DC - noneducational objects disabled via ucsschool/ldap/noneducational/create/objects"
+            "ERROR: cannot create administrative DC - noneducational objects disabled via ucsschool/ldap/noneducational/create/objects"  # noqa: E501
         )
         sys.exit(1)
 
@@ -2664,7 +2664,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
     )
     if host_objects and not slave_objects:
         print(
-            'ERROR: given host name "%s" is already in use and no Replica Directory Node system. Please choose another name.'
+            'ERROR: given host name "%s" is already in use and no Replica Directory Node system. Please choose another name.'  # noqa: E501
             % dc_name
         )
         sys.exit(1)
@@ -2823,7 +2823,7 @@ Arguments:
         type="string",
         dest="ShareFileServer",
         default=None,
-        help="hostname of the fileserver within given OU that is used for class shares and user home shares",
+        help="hostname of the fileserver within given OU that is used for class shares and user home shares",  # noqa: E501
     )
     parser.add_option(
         "--displayName",
@@ -2831,7 +2831,7 @@ Arguments:
         type="string",
         dest="displayName",
         default=None,
-        help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")',
+        help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")',  # noqa: E501
     )
 
     options, args = parser.parse_args()

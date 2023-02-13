@@ -468,7 +468,10 @@ class Instance(Base):
 
     @simple_response
     def get_metainfo(self):
-        """Queries the specified Primary Directory Node for metainformation about the UCS@school environment"""
+        """
+        Queries the specified Primary Directory Node
+        for metainformation about the UCS@school environment
+        """
         master = ucr.get("ldap/master") or get_master_dns_lookup()
         if not master:
             return

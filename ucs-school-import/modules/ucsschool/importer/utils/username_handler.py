@@ -281,7 +281,7 @@ class UsernameHandler(object):
     ''
     >>> UsernameHandler(20).format_username('[FOObar]')
     'FOObar'
-    """
+    """  # noqa: E501
 
     attribute_name = "username"
     attribute_storage_name = "usernames"

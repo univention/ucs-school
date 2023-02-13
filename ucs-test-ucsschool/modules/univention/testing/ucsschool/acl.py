@@ -416,7 +416,10 @@ class Acl(object):
         self.assert_acl(container_dn, access, attrs)
 
     def assert_computers(self, computer_dn, access):
-        """Mitglieder der lokalen Administratoren duerfen MAC-Adressen im Rechner- und DHCP-Objekt aendern"""
+        """
+        Mitglieder der lokalen Administratoren duerfen
+        MAC-Adressen im Rechner- und DHCP-Objekt aendern
+        """
         attrs = [
             "macAddress",
         ]

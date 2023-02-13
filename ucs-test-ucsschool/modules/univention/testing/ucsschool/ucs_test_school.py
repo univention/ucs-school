@@ -1503,7 +1503,10 @@ class OUCloner(object):
 
     @staticmethod
     def replace_case_sesitive_and_lower(s, ori, new):  # type: (str, str, str) -> str
-        """Replace the string `ori` in `s` with `new`. Do it both case-sensitive and with both lower-case."""
+        """
+        Replace the string `ori` in `s` with `new`.
+        Do it both case-sensitive and with both lower-case.
+        """
         try:
             new_s = s.replace(ori, new)
             return new_s.replace(ori.lower(), new.lower())

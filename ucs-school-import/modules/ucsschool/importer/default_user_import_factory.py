@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     import ucsschool.importer.utils.username_handler.UsernameHandler
     import ucsschool.importer.writer.csv_writer.CsvWriter
     import ucsschool.importer.writer.new_user_password_csv_exporter.NewUserPasswordCsvExporter
-    import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter  # noqa: F401
+    import ucsschool.importer.writer.user_import_csv_result_exporter.UserImportCsvResultExporter  # noqa: F401,E501
     import univention.config_registry.ConfigRegistry  # noqa: F401
 
     from .models.import_user import ImportUser

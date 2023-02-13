@@ -31,7 +31,10 @@ class Test(CLI_Import_v2_Tester):
     ou_C = None
 
     def test(self):  # formally test_delete_variants()
-        """Bug #53649: Test that deativating users doesn't fail, due to false positive validation errors"""
+        """
+        Bug #53649: Test that deactivating users doesn't fail
+        due to false positive validation errors
+        """
         self.log.info("*** delete later, deactivate now ***")
         exp_days = random.randint(1, 20)
         source_uid = "source_uid-%s" % (uts.random_string(),)
