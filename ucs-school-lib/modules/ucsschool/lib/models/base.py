@@ -31,16 +31,20 @@
 # <http://www.gnu.org/licenses/>.
 
 from copy import deepcopy
-from typing import Any  # noqa: F401
-from typing import Dict  # noqa: F401
-from typing import Iterable  # noqa: F401
-from typing import List  # noqa: F401
-from typing import Optional  # noqa: F401
-from typing import Sequence  # noqa: F401
-from typing import Set  # noqa: F401
-from typing import Tuple  # noqa: F401
-from typing import Type  # noqa: F401
-from typing import TYPE_CHECKING, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,  # noqa: F401
+    Dict,  # noqa: F401
+    Iterable,  # noqa: F401
+    List,  # noqa: F401
+    Optional,  # noqa: F401
+    Sequence,  # noqa: F401
+    Set,  # noqa: F401
+    Tuple,  # noqa: F401
+    Type,  # noqa: F401
+    TypeVar,
+    Union,
+)
 
 import lazy_object_proxy
 import ldap

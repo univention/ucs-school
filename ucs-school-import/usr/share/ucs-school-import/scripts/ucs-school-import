@@ -42,7 +42,7 @@ import traceback
 
 import ldap
 import ldap.filter
-from ldap.dn import escape_dn_chars, dn2str, str2dn
+from ldap.dn import dn2str, escape_dn_chars, str2dn
 from ldap.filter import filter_format
 
 import univention.admin.modules
@@ -51,6 +51,7 @@ import univention.admin.uexceptions
 import univention.admin.uldap
 import univention.config_registry
 import univention.debug as ud
+from ucsschool.importer.utils.utils import verify_school_ou
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib, create_passwd, stopped_notifier
 from ucsschool.lib.roles import (
     create_ucsschool_role_string,
@@ -60,7 +61,6 @@ from ucsschool.lib.roles import (
     role_school_class,
     role_school_class_share,
 )
-from ucsschool.importer.utils.utils import verify_school_ou
 
 # -> doesn't do:
 # check usernames for correct values (no spaces)
