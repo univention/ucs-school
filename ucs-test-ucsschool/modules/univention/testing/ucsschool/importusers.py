@@ -95,9 +95,7 @@ class Person(object):
         if configRegistry.is_true("ucsschool/import/roleshare", True):
             if self.is_student():
                 subdir = os.path.join(self.school, "schueler")
-            elif self.is_teacher():
-                subdir = os.path.join(self.school, "lehrer")
-            elif self.is_teacher_staff():
+            elif self.is_teacher() or self.is_teacher_staff():
                 subdir = os.path.join(self.school, "lehrer")
             elif self.is_staff():
                 subdir = os.path.join(self.school, "mitarbeiter")

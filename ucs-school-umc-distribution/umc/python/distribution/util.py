@@ -869,9 +869,7 @@ class Project(_Dict):
                     only_distributed
                     and "isDistributed" in project.dict
                     and project.dict["isDistributed"]
-                ):
-                    projectlist.append(project)
-                elif not only_distributed:
+                ) or not only_distributed:
                     projectlist.append(project)
 
         # sort final result
