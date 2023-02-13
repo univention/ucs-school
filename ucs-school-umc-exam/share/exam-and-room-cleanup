@@ -257,7 +257,7 @@ class ExamCleanupHelper(object):
                 "cups/printmode/hosts/all",
             ):
                 remove_list.append(key)
-            elif key.startswith("proxy/filter/room/") and (key.endswith("/ip") or key.endswith("/rule")):
+            elif key.startswith("proxy/filter/room/") and key.endswith(("/ip", "/rule")):
                 remove_list.append(key)
             elif key.startswith("samba/share/") and key.endswith("/hosts/deny"):
                 remove_list.append(key)

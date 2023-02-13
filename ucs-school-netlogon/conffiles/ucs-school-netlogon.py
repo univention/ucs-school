@@ -171,7 +171,7 @@ def handler(configRegistry, changes):
             printHeader(fn)
             for key in sorted(scripts.keys(), key=int):
                 for script in scripts[key]:
-                    if script.endswith(".cmd") or script.endswith(".bat"):
+                    if script.endswith((".cmd", ".bat")):
                         runCmd(script, fn, windowStyle, checkReturn)
                     elif script.endswith(".vbs"):
                         runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)

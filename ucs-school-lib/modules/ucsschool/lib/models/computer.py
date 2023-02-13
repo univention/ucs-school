@@ -201,7 +201,7 @@ class SchoolDCSlave(RoleSupportMixin, SchoolDC):
         self.ucsschool_roles = [
             role
             for role in self.ucsschool_roles
-            if not (role.startswith(role_dc_slave_admin) or role.startswith(role_dc_slave_edu))
+            if not role.startswith((role_dc_slave_admin, role_dc_slave_edu))
         ]
         for group in groups:
             matches = re.match(r"OU(?P<ou>.+)-DC-(?P<type>.+)", group.name)

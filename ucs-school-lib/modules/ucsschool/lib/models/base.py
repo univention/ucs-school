@@ -812,7 +812,7 @@ class UCSSchoolHelperAbstractClass(object):
             msg_str = ""
             for error in msg:
                 msg_str += error
-                if not (error.endswith("!") or error.endswith(".")):
+                if not error.endswith(("!", ".")):
                     msg_str += "."
                 msg_str += " "
             validation_msg += "%s: %s" % (label, msg_str)
