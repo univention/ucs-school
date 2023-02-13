@@ -281,7 +281,6 @@ class UserImportJobViewPermission(BasePermission):
 class UserImportJobViewSet(
     mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
-    # fmt: off
     """
     Manage Import jobs.
 
@@ -294,7 +293,6 @@ class UserImportJobViewSet(
     * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
     """
 
-    # fmt: on
     queryset = UserImportJob.objects.all()
     serializer_class = UserImportJobSerializer
     filter_backends = (
@@ -433,46 +431,38 @@ class SubResourceMixin(object):
 
 
 class LogFileViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
-    # fmt: off
     """
     Log file of import job.
 
     * Only GET is allowed.
     """
 
-    # fmt: on
     serializer_class = LogFileSerializer
 
 
 class PasswordsViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
-    # fmt: off
     """
     New users password file of import job.
 
     * Only GET is allowed.
     """
 
-    # fmt: on
     serializer_class = PasswordFileSerializer
 
 
 class SummaryViewSet(SubResourceMixin, viewsets.ReadOnlyModelViewSet):
-    # fmt: off
     """
     Summary file of import job.
 
     * Only GET is allowed.
     """
 
-    # fmt: on
     serializer_class = SummarySerializer
 
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
-    # fmt: off
     """Read-only list of Roles."""
 
-    # fmt: on
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     filter_backends = (RoleFilterBackend, DjangoFilterBackend, OrderingFilter)
@@ -498,7 +488,6 @@ class RoleViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
-    # fmt: off
     """
     Read-only list of Schools (OUs).
 
@@ -507,7 +496,6 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     * `user_imports` provides navigation to start an import for the respective school.
     """
 
-    # fmt: on
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filter_backends = (SchoolFilterBackend, DjangoFilterBackend, OrderingFilter)
