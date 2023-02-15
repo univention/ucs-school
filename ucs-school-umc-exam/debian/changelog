@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-57) unstable; urgency=medium
+
+  * Bug #55745: Prevent exam-exam- users from being created.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Wed, 15 Feb 2023 07:54:29 +0100
+
 ucs-school-umc-exam (9.0.1-56) unstable; urgency=medium
 
   * Bug 54908: The directory name validation now detects all incorrect names
