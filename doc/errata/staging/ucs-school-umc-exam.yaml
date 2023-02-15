@@ -6,4 +6,5 @@ src: ucs-school-umc-exam
 fix:
 desc: |
  * The coding style has been improved (Bug #31771).
-bug: [31771]
+ * Prevent exam-exam- users from being created. (Bug #55619).
+bug: [31771, 55619]
