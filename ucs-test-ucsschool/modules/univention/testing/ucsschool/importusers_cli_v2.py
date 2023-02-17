@@ -82,7 +82,7 @@ class ConfigDict(dict):
 
 class PyHooks(object):
     def __init__(self, hook_basedir=None):
-        self.hook_basedir = hook_basedir if hook_basedir else "/usr/share/ucs-school-import/pyhooks"
+        self.hook_basedir = hook_basedir or "/usr/share/ucs-school-import/pyhooks"
         self.tmpdir = tempfile.mkdtemp(prefix="pyhook.", dir="/tmp")
         self.cleanup_files = set()
         self.log = get_ucsschool_logger()

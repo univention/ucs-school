@@ -46,28 +46,22 @@ class Workgroup(object):
         create_share=True,
         create_email=False,
         email="",
-        allowed_email_senders_groups=[],
-        allowed_email_senders_users=[],
+        allowed_email_senders_groups=None,
+        allowed_email_senders_users=None,
     ):
         self.school = school
-        self.name = name if name else uts.random_string()
+        self.name = name or uts.random_string()
         self.create_share = create_share
         self.email = email
         self.create_email = create_email
-        self.allowed_email_senders_groups = allowed_email_senders_groups
-        self.allowed_email_senders_users = allowed_email_senders_users
-        self.description = description if description else uts.random_string()
-        self.members = members if members else []
-        self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
+        self.allowed_email_senders_groups = allowed_email_senders_groups or []
+        self.allowed_email_senders_users = allowed_email_senders_users or []
+        self.description = description or uts.random_string()
+        self.members = members or []
+        self.ucr = ucr or ucr_test.UCSTestConfigRegistry()
         self.ucr.load()
-        if ulConnection:
-            self.ulConnection = ulConnection
-        else:
-            self.ulConnection = uu.getMachineConnection(ldap_master=False)
-        if connection:
-            self.client = connection
-        else:
-            self.client = Client.get_test_connection()
+        self.ulConnection = ulConnection or uu.getMachineConnection(ldap_master=False)
+        self.client = connection or Client.get_test_connection()
 
     def __enter__(self):
         return self

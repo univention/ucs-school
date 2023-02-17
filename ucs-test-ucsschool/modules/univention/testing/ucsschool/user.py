@@ -4,7 +4,11 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from __future__ import print_function
+
+import contextlib
+from typing import Any, Dict  # noqa: F401
 
 import univention.testing.ucr as ucr_test
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
@@ -63,18 +67,15 @@ class User(Person):
         self.typ = "teachersAndStaff" if self.role == "teacher_staff" else self.role
         self.mode = mode
         self.birthday = birthday
-        self.workgroups = workgroups if workgroups else {}
+        self.workgroups = workgroups or {}
 
         utils.wait_for_replication()
         self.ucr = ucr_test.UCSTestConfigRegistry()
         self.ucr.load()
-        if connection:
-            self.client = connection
-        else:
-            self.client = Client.get_test_connection(self.ucr.get("ldap/master"))
+        self.client = connection or Client.get_test_connection(self.ucr.get("ldap/master"))
         account = utils.UCSTestDomainAdminCredentials()
         passwd = account.bindpw
-        self.password = password if password else passwd
+        self.password = password or passwd
 
     def append_random_groups(self):
         pass
@@ -112,7 +113,7 @@ class User(Person):
         assert reqResult[0] is True, "Unable to create user (%r): %r" % (param, reqResult[0])
         utils.wait_for_replication()
 
-    def get(self):
+    def get(self):  # type: () -> Dict[str, Any]
         """Get user"""
         flavor = "schoolwizards/users"
         param = [{"object": {"$dn$": self.dn, "school": self.school}}]
@@ -126,7 +127,7 @@ class User(Person):
         assert reqResult[0], "Unable to get user (%s): %r" % (self.username, reqResult[0])
         return reqResult[0]
 
-    def check_get(self, expected_attrs={}):
+    def check_get(self, expected_attrs=None):
         info = {
             "$dn$": self.dn,
             "display_name": " ".join([self.firstname, self.lastname]),
@@ -148,7 +149,7 @@ class User(Person):
             "ucsschool_roles": set(self.ucsschool_roles),
         }
         if self.is_student() or self.is_teacher() or self.is_teacher_staff():
-            info.update({"school_classes": self.school_classes})
+            info["school_classes"] = self.school_classes
 
         if expected_attrs:
             info.update(expected_attrs)
@@ -199,8 +200,7 @@ class User(Person):
         """get the list of existing users in the school"""
         flavor = "schoolwizards/users"
         param = {"school": self.school, "type": "all", "filter": ""}
-        reqResult = self.client.umc_command("schoolwizards/users/query", param, flavor).result
-        return reqResult
+        return self.client.umc_command("schoolwizards/users/query", param, flavor).result
 
     def check_query(self, users_dn):
         q = self.query()
@@ -230,14 +230,10 @@ class User(Person):
             self.set_mode_to_delete()
         else:
             self.update(school=sorted(schools)[0], schools=schools, mode="M")
-            try:
+            with contextlib.suppress(KeyError):
                 del self.school_classes[remove_from_school]
-            except KeyError:
-                pass
-            try:
+            with contextlib.suppress(KeyError):
                 del self.workgroups[remove_from_school]
-            except KeyError:
-                pass
 
     def edit(self, new_attributes):
         """Edit object user"""
@@ -245,25 +241,15 @@ class User(Person):
         object_props = {
             "school": self.school,
             "schools": self.schools,
-            "email": new_attributes.get("email") if new_attributes.get("email") else self.mail,
-            "expiration_date": new_attributes.get("expiration_date")
-            if new_attributes.get("expiration_date")
-            else self.expiration_date,
+            "email": new_attributes.get("email") or self.mail,
+            "expiration_date": new_attributes.get("expiration_date") or self.expiration_date,
             "name": self.username,
             "type": self.typ,
-            "firstname": new_attributes.get("firstname")
-            if new_attributes.get("firstname")
-            else self.firstname,
-            "lastname": new_attributes.get("lastname")
-            if new_attributes.get("lastname")
-            else self.lastname,
-            "password": new_attributes.get("password")
-            if new_attributes.get("password")
-            else self.password,
+            "firstname": new_attributes.get("firstname") or self.firstname,
+            "lastname": new_attributes.get("lastname") or self.lastname,
+            "password": new_attributes.get("password") or self.password,
             "$dn$": self.dn,
-            "workgroups": new_attributes.get("workgroups")
-            if new_attributes.get("workgroups")
-            else self.workgroups,
+            "workgroups": new_attributes.get("workgroups") or self.workgroups,
         }
         if self.typ not in ("teacher", "staff", "teacherAndStaff"):
             object_props["school_classes"] = new_attributes.get("school_classes", self.school_classes)
@@ -280,18 +266,8 @@ class User(Person):
         self.set_mode_to_modify()
         self.school_classes = new_attributes.get("school_classes", self.school_classes)
         self.workgroups = new_attributes.get("workgroups", self.workgroups)
-        self.mail = new_attributes.get("email") if new_attributes.get("email") else self.mail
-        self.expiration_date = (
-            new_attributes.get("expiration_date")
-            if new_attributes.get("expiration_date")
-            else self.expiration_date
-        )
-        self.firstname = (
-            new_attributes.get("firstname") if new_attributes.get("firstname") else self.firstname
-        )
-        self.lastname = (
-            new_attributes.get("lastname") if new_attributes.get("lastname") else self.lastname
-        )
-        self.password = (
-            new_attributes.get("password") if new_attributes.get("password") else self.password
-        )
+        self.mail = new_attributes.get("email") or self.mail
+        self.expiration_date = new_attributes.get("expiration_date") or self.expiration_date
+        self.firstname = new_attributes.get("firstname") or self.firstname
+        self.lastname = new_attributes.get("lastname") or self.lastname
+        self.password = new_attributes.get("password") or self.password

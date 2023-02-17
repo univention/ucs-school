@@ -24,13 +24,13 @@ class ComputerRoom(object):
         connection=None,
     ):
         self.school = school
-        self.name = name if name else uts.random_name()
-        self.description = description if description else uts.random_name()
-        self.host_members = host_members if host_members else []
+        self.name = name or uts.random_name()
+        self.description = description or uts.random_name()
+        self.host_members = host_members or []
         self.teacher_computers = teacher_computers
         self.ucr = ucr_test.UCSTestConfigRegistry()
         self.ucr.load()
-        self.client = connection if connection else Client.get_test_connection()
+        self.client = connection or Client.get_test_connection()
 
     def dn(self):
         return "cn=%s-%s,cn=raeume,cn=groups,%s" % (
@@ -129,7 +129,7 @@ class ComputerRoom(object):
         :param new_attributes:
         :type new_attributes: dict
         """
-        new_name = new_attributes.get("name") if new_attributes.get("name") else self.name
+        new_name = new_attributes.get("name") or self.name
         new_description = (
             new_attributes.get("description") if new_attributes.get("description") else self.description
         )

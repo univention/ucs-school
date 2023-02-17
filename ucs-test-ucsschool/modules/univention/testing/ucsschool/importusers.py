@@ -60,16 +60,16 @@ class Person(object):
         self.username = kwargs.get("username", uts.random_name())
         self.legacy_v2 = kwargs.get("legacy_v2", False)
         self.schools = kwargs.get("schools", [school])
-        self.record_uid = kwargs.get("record_uid", None)
-        self.source_uid = kwargs.get("source_uid", None)
-        self.description = kwargs.get("description", None)
+        self.record_uid = kwargs.get("record_uid")
+        self.source_uid = kwargs.get("source_uid")
+        self.description = kwargs.get("description")
         self.mail = kwargs.get("mail", "{}@{}".format(self.username, get_mail_domain()))
         self.school_classes = kwargs.get("school_classes", {})
         self.mode = kwargs.get("mode", "A")
         self.active = kwargs.get("active", True)
-        self.password = kwargs.get("password", None)
-        self.birthday = kwargs.get("birthday", None)
-        self.expiration_date = kwargs.get("expiration_date", None)
+        self.password = kwargs.get("password")
+        self.birthday = kwargs.get("birthday")
+        self.expiration_date = kwargs.get("expiration_date")
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
@@ -199,7 +199,7 @@ class Person(object):
             value_map.get("birthday", "__EMPTY__"): self.birthday,
             value_map.get("expiration_date", "__EMPTY__"): self.expiration_date,
         }
-        if "__EMPTY__" in result.keys():
+        if "__EMPTY__" in result:
             del result["__EMPTY__"]
         return result
 
@@ -587,45 +587,27 @@ class UserImport:
 
         self.school = school_name
 
-        self.students = []
-        for _i in range(0, nr_students):
-            self.students.append(Student(self.school))
+        self.students = [Student(self.school) for _i in range(nr_students)]
         self.students[2].set_inactive()
         self.students[0].password = uts.random_name()
 
-        self.teachers = []
-        for _i in range(0, nr_teachers):
-            self.teachers.append(Teacher(self.school))
+        self.teachers = [Teacher(self.school) for _i in range(nr_teachers)]
         self.teachers[1].set_inactive()
         self.teachers[1].password = uts.random_name()
 
-        self.staff = []
-        for _i in range(0, nr_staff):
-            self.staff.append(Staff(self.school))
+        self.staff = [Staff(self.school) for _i in range(nr_staff)]
         self.staff[2].set_inactive()
         self.staff[1].password = uts.random_name()
 
-        self.teacher_staff = []
-        for _i in range(0, nr_teacher_staff):
-            self.teacher_staff.append(TeacherStaff(self.school))
+        self.teacher_staff = [TeacherStaff(self.school) for _i in range(nr_teacher_staff)]
         self.teacher_staff[1].set_inactive()
         self.teacher_staff[2].password = uts.random_name()
 
     def __str__(self):
-        lines = []
-
-        for student in self.students:
-            lines.append(str(student))
-
-        for teacher in self.teachers:
-            lines.append(str(teacher))
-
-        for staff in self.staff:
-            lines.append(str(staff))
-
-        for teacher_staff in self.teacher_staff:
-            lines.append(str(teacher_staff))
-
+        lines = [str(student) for student in self.students]
+        lines.extend(str(teacher) for teacher in self.teachers)
+        lines.extend(str(staff) for staff in self.staff)
+        lines.extend(str(teacher_staff) for teacher_staff in self.teacher_staff)
         return "\n".join(lines)
 
     def verify(self):

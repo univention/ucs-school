@@ -94,14 +94,15 @@ class Network:
         return line
 
     def expected_attributes(self):
-        attr = {}
-        attr["cn"] = [self.name]
-        attr["univentionNetmask"] = [str(self._net.network.prefixlen)]
-        attr["univentionNetwork"] = [str(self._net.network.network_address)]
+        attr = {
+            "cn": [self.name],
+            "univentionNetmask": [str(self._net.network.prefixlen)],
+            "univentionNetwork": [str(self._net.network.network_address)],
+            "univentionDnsForwardZone": [self.dns_forward_zone],
+            "univentionDnsReverseZone": [self.dns_reverse_zone],
+        }
         if self.iprange:
             attr["univentionIpRange"] = [self.iprange.replace("-", " ")]
-        attr["univentionDnsForwardZone"] = [self.dns_forward_zone]
-        attr["univentionDnsReverseZone"] = [self.dns_reverse_zone]
         return attr
 
     def verify(self):
@@ -222,17 +223,13 @@ class NetworkImport:
 
         self.school = ou_name
 
-        self.networks = []
-        for _i in range(0, nr_networks):
-            self.networks.append(Network(self.school, prefixlen=random.randint(8, 24)))
+        self.networks = [
+            Network(self.school, prefixlen=random.randint(8, 24)) for _i in range(nr_networks)
+        ]
         self.networks[1].iprange = None
 
     def __str__(self):
-        lines = []
-
-        for network in self.networks:
-            lines.append(str(network))
-
+        lines = [str(network) for network in self.networks]
         return "\n".join(lines)
 
     def verify(self):

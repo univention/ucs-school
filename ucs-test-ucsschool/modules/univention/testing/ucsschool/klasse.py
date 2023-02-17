@@ -33,14 +33,11 @@ class Klasse(object):
     def __init__(self, school, connection=None, ucr=None, name=None, users=None, description=None):
         self.school = school
         self.users = users or []
-        self.name = name if name else uts.random_string()
-        self.description = description if description else uts.random_string()
-        self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
+        self.name = name or uts.random_string()
+        self.description = description or uts.random_string()
+        self.ucr = ucr or ucr_test.UCSTestConfigRegistry()
         self.ucr.load()
-        if connection:
-            self.client = connection
-        else:
-            self.client = Client.get_test_connection(self.ucr.get("ldap/master"))
+        self.client = connection or Client.get_test_connection(self.ucr.get("ldap/master"))
 
     def __enter__(self):
         return self

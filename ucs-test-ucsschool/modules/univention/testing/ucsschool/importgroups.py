@@ -140,16 +140,10 @@ class GroupImport:
 
         self.school = ou_name
 
-        self.groups = []
-        for _i in range(0, nr_groups):
-            self.groups.append(Group(self.school))
+        self.groups = [Group(self.school) for _i in range(nr_groups)]
 
     def __str__(self):
-        lines = []
-
-        for group in self.groups:
-            lines.append(str(group))
-
+        lines = [str(group) for group in self.groups]
         return "\n".join(lines)
 
     def verify(self):

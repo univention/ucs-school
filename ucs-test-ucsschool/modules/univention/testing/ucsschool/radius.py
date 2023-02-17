@@ -28,8 +28,7 @@ def peap_auth(username, password, radius_secret):
     result = run_commands(
         [peap_auth_cmd], {"peap_conf_file": peap_conf_file.name, "radius_secret": radius_secret}
     )
-    return_value = True if result[0] == 0 else False
-    return return_value
+    return result[0] == 0
 
 
 def test_peap_auth(username, password, radius_secret, should_succeed=True):

@@ -119,8 +119,7 @@ class Computer(object):
         _ip = self.ip[0] if self.ip else self.network[0]
         _inventory_numbers = ",".join(self.inventory_numbers)
         return "\t".join(
-            el
-            for el in (
+            (
                 self.ctype,
                 self.name,
                 self.mac[0],
@@ -168,7 +167,7 @@ def create_test_computers(
 ):  # type: (LoType, Optional[str], int, int, int, int, int) -> list[Computer]
     """Utility function to create test computers (~ python import)"""
     created_computers = []
-    school = school if school else uts.random_name()
+    school = school or uts.random_name()
     for _i in range(nr_windows):
         computer = Computer(school=school, ctype="windows")
         WindowsComputerLib(**computer.get_args()).create(lo)
@@ -216,7 +215,7 @@ class Computers(object):
     def create(self):  # type: () -> list[Computer]
         print("********** Create computers")
         created_computers = []
-        school = self.school if self.school else uts.random_name()
+        school = self.school or uts.random_name()
         for _i in range(self.nr_windows):
             computer = Computer(school=school, ctype="windows")
             WindowsComputerLib(**computer.get_args()).create(self.lo)

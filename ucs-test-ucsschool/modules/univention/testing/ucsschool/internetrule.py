@@ -48,24 +48,18 @@ class InternetRule(object):
     def __init__(
         self, connection=None, ucr=None, name=None, typ=None, domains=None, wlan=None, priority=None
     ):
-        self.name = name if name else uts.random_string()
-        self.typ = typ if typ else random.choice(["whitelist", "blacklist"])
+        self.name = name or uts.random_string()
+        self.typ = typ or random.choice(["whitelist", "blacklist"])
         if domains:
             self.domains = domains
         else:
             dom = RandomDomain()
             domains = dom.getDomainList(random.randint(1, 10))
             self.domains = sorted(domains)
-        if isinstance(wlan, bool):
-            self.wlan = wlan
-        else:
-            self.wlan = random.choice([True, False])
+        self.wlan = wlan if isinstance(wlan, bool) else random.choice([True, False])
         self.priority = priority if priority is not None else random.randint(0, 10)
-        self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
-        if connection:
-            self.client = connection
-        else:
-            self.client = Client.get_test_connection()
+        self.ucr = ucr or ucr_test.UCSTestConfigRegistry()
+        self.client = connection or Client.get_test_connection()
 
     def __enter__(self):
         return self
@@ -119,10 +113,10 @@ class InternetRule(object):
         :param new_priority:
         :type new_priority: int [0,10]
         """
-        new_name = new_name if new_name else self.name
-        new_type = new_type if new_type else self.typ
-        new_domains = new_domains if new_domains else self.domains
-        new_wlan = new_wlan if new_wlan else self.wlan
+        new_name = new_name or self.name
+        new_type = new_type or self.typ
+        new_domains = new_domains or self.domains
+        new_wlan = new_wlan or self.wlan
         new_priority = new_priority if new_priority is not None else self.priority
 
         param = [
@@ -217,10 +211,7 @@ class InternetRule(object):
         elif groupType == "class":
             groupdn = "cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s" % (school, groupName, school_basedn)
 
-        if default:
-            name = "$default$"
-        else:
-            name = self.name
+        name = "$default$" if default else self.name
         param = [{"group": groupdn, "rule": name}]
         print("Assigning rule %s to %s: %s" % (self.name, groupType, groupName))
         print("param = %r" % (param,))
@@ -258,7 +249,7 @@ class Check(object):
     def __init__(self, school, groupRuleCouples, connection=None, ucr=None):
         self.school = school
         self.groupRuleCouples = groupRuleCouples
-        self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
+        self.ucr = ucr or ucr_test.UCSTestConfigRegistry()
         if connection:
             self.client = connection
         else:

@@ -52,16 +52,14 @@ class Printer:
         return line
 
     def expected_attributes(self):
-        attr = {}
-        attr["cn"] = [self.name]
-        attr["univentionPrinterSpoolHost"] = [
-            "%s.%s" % (self.spool_host, configRegistry.get("domainname"))
-        ]
+        attr = {
+            "cn": [self.name],
+            "univentionPrinterSpoolHost": [
+                "%s.%s" % (self.spool_host, configRegistry.get("domainname"))
+            ],
+        }
         attr["univentionPrinterURI"] = [self.uri]
-        if self.model:
-            attr["univentionPrinterModel"] = [self.model]
-        else:
-            attr["univentionPrinterModel"] = ["None"]
+        attr["univentionPrinterModel"] = [self.model] if self.model else ["None"]
         attr["univentionPrinterACLtype"] = ["allow all"]
         attr["univentionObjectType"] = ["shares/printer"]
         return attr
@@ -115,18 +113,12 @@ class PrinterImport:
 
         self.school = ou_name
 
-        self.printers = []
-        for _i in range(0, nr_printers):
-            self.printers.append(Printer(self.school))
+        self.printers = [Printer(self.school) for _i in range(nr_printers)]
         self.printers[0].model = None
         self.printers[1].uri = "file:/dev/null"
 
     def __str__(self):
-        lines = []
-
-        for printer in self.printers:
-            lines.append(str(printer))
-
+        lines = [str(printer) for printer in self.printers]
         return "\n".join(lines)
 
     def verify(self):

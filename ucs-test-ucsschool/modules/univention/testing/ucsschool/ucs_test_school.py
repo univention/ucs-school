@@ -2,6 +2,7 @@
 #
 # UCS test
 """API for testing UCS@school and cleaning up after performed tests"""
+
 # Copyright 2014-2023 Univention GmbH
 #
 # http://www.univention.de/
@@ -34,6 +35,7 @@
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
+import contextlib
 import datetime
 import json
 import logging
@@ -418,11 +420,8 @@ class UCSTestSchool(object):
         )
 
         for ou_list in self._test_ous.values():
-            try:
+            with contextlib.suppress(ValueError):
                 ou_list.remove((ou_name, oudn))
-            except ValueError:
-                pass
-
         if district_ou_dn:
             logger.info("*** Deleting district OU %s (%s)...", ou_name[0:2], district_ou_dn)
             self._remove_udm_object("container/ou", district_ou_dn)
@@ -1177,7 +1176,7 @@ class UCSTestSchool(object):
 
     @classmethod
     def load_test_ous(cls):
-        cls._test_ous = {}
+        cls._test_ous = {}  # type: Dict[str, List[Tuple[str, str]]]
         try:
             with open(TEST_OU_CACHE_FILE) as fp:
                 loaded = json.load(fp)
@@ -1532,16 +1531,12 @@ class OUCloner(object):
             "(&(|(objectClass=posixAccount)(objectClass=posixGroup))(|(gidNumber=*)(uidNumber=*)))",
             attr=["gidNumber", "uidNumber"],
         ):
-            try:
+            with contextlib.suppress(KeyError):
                 gid = int(v["gidNumber"][0].decode("ASCII"))
                 max_gid = max(gid, max_gid)
-            except KeyError:
-                pass
-            try:
+            with contextlib.suppress(KeyError):
                 uid = int(v["uidNumber"][0].decode("ASCII"))
                 max_uid = max(uid, max_uid)
-            except KeyError:
-                pass
         return max_gid, max_uid
 
     def new_username(self, old_username, ori_ou, new_ou):  # type: (str, str, str) -> str
@@ -1724,14 +1719,10 @@ class OUCloner(object):
         for global_grp_dn, ou_grp_dn in zip(global_group_dns, ou_group_dns):
             ou_grp_attrs = self.lo.get(ou_grp_dn, attr=["memberUid", "uniqueMember"])
             new_attrs = {}
-            try:
+            with contextlib.suppress(KeyError):
                 new_attrs["memberUid"] = ou_grp_attrs["memberUid"]
-            except KeyError:
-                pass
-            try:
+            with contextlib.suppress(KeyError):
                 new_attrs["uniqueMember"] = ou_grp_attrs["uniqueMember"]
-            except KeyError:
-                pass
             if new_attrs:
                 print("Updating members of {!r}...".format(global_grp_dn))
                 global_grp_attrs = self.lo.get(global_grp_dn, attr=["memberUid", "uniqueMember"])

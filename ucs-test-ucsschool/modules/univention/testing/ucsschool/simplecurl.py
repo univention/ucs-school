@@ -60,8 +60,8 @@ class SimpleCurl(object):
         self.curl.setopt(pycurl.PROXYPORT, port)
         self.curl.setopt(pycurl.PROXYAUTH, auth)
         account = utils.UCSTestDomainAdminCredentials()
-        username = username if username else account.username
-        password = password if password else account.bindpw
+        username = username or account.username
+        password = password or account.bindpw
         self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
         with tempfile.NamedTemporaryFile() as tmp:
             self.cookieFilename = tmp.name

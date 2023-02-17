@@ -97,7 +97,7 @@ class Exam(object):
         recipients,  # list of classes dns
         name=None,
         directory=None,
-        files=[],
+        files=None,
         shareMode="home",
         internetRule="none",
         customRule="",
@@ -110,7 +110,7 @@ class Exam(object):
 
         self.name = name if name else uts.random_name()
         self.directory = directory if directory else self.name
-        self.files = files
+        self.files = files or []
         self.shareMode = shareMode
         self.internetRule = internetRule
         self.customRule = customRule
