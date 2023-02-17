@@ -160,13 +160,16 @@ class User(Person):
         # ignore order
         get_result["schools"] = set(get_result["schools"])
         get_result["ucsschool_roles"] = set(get_result["ucsschool_roles"])
+        diff = []
         if get_result != info:
-            diff = []
             for key in set(get_result.keys()) | set(info.keys()):
-                if get_result.get(key) != info.get(key):
-                    diff.append(
-                        "%s: Got:\n%r; expected:\n%r" % (key, get_result.get(key), info.get(key))
-                    )
+                result_value = get_result.get(key)
+                info_value = info.get(key)
+                if key in ("school_classes", "workgroups"):
+                    result_value = {k: set(v) for k, v in result_value.items()}
+                    info_value = {k: set(v) for k, v in info_value.items()}
+                if result_value != info_value:
+                    diff.append("%s: Got:\n%r; expected:\n%r" % (key, result_value, info_value))
         assert get_result == info, "Failed get request for user %s:\n%s" % (
             self.username,
             "\n".join(diff),
