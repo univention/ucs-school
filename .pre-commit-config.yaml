@@ -6,28 +6,39 @@ repos:
     rev: v4.3.0
     hooks:
       - id: check-added-large-files
+        language_version: python3.7
       - id: check-json
+        language_version: python3.7
       - id: check-xml
+        language_version: python3.7
       - id: check-yaml
+        language_version: python3.7
       - id: trailing-whitespace
+        language_version: python3.7
   - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
     rev: '0.0.9'
     hooks:
       - id: ucr-flake8
         additional_dependencies: ["flake8==5.0.4"]
+        language_version: python3.7
       - id: ucr-ruff
         additional_dependencies: ["ruff==0.0.252"]
+        language_version: python3.7
       - id: ucr-autopep8
         additional_dependencies: ["autopep8<=2.0.2"]
+        language_version: python3.7
         stages: [ manual ]
       - id: ucr-ruff-fix
         additional_dependencies: ["ruff==0.0.252"]
+        language_version: python3.7
         stages: [ manual ]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: 'v0.0.252'
     hooks:
       - id: ruff
+        language_version: python3.7
       - id: ruff
+        language_version: python3.7
         alias: "ruff-edit"
         stages: [ manual ]
         args: ["--fix"]
@@ -38,9 +49,11 @@ repos:
     rev: 21.9b0
     hooks:
       - id: black
+        language_version: python3.7
         additional_dependencies: ['click>8.0,<8.1']
         entry: black --check --diff --config .black
       - id: black
+        language_version: python3.7
         additional_dependencies: ['click>8.0,<8.1']
         alias: black-edit
         stages: [ manual ]
@@ -53,6 +66,7 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.9.0
     hooks:
+      # pygrep does not install an environment, so cannot use a language version.
       - id: python-check-blanket-noqa
       - id: python-no-eval
       - id: rst-backticks
@@ -60,11 +74,15 @@ repos:
     rev: 1.7.4
     hooks:
       - id: bandit
+        language_version: python3.7
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
   - repo: https://github.com/jackdewinter/pymarkdown
     rev: v0.9.7
     hooks:
       - id: pymarkdown
+        # Pymarkdown only supports python >= 3.8.
+        # Let's be explicit about which version we're testing with.
+        language_version: python3.8
         # TODO: clean those up:
         exclude: "^doc/devel/README.*.md$\
                  |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\

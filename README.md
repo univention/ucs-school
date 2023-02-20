@@ -27,6 +27,13 @@ This project uses pre-commit to run checks on commits. The pipeline has a pre-co
 docker run -it --rm -v "$PWD:/project" -w /project --pull always gitregistry.knut.univention.de/univention/ucsschool:latest
 ```
 
+For running pre-commit outside of docker, you will need the following python versions installed:
+
+* python3.7
+* python3.8
+
+*Hint*: if you run into issues running pre-commit with multiple python versions installed, you may need to install pre-commit as a python library using pip, for each python version. Be sure to close and re-open your terminal before running pre-commit again.
+
 
 ## Documentation and Support
 
