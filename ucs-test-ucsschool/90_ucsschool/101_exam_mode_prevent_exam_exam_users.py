@@ -9,13 +9,10 @@
 
 from datetime import datetime, timedelta
 
-import univention.testing.strings as uts
-from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import Exam
-from univention.uldap import getMachineConnection
 
 
 def test_exam_mode_no_exam_exam_users(udm_session, schoolenv, ucr):
