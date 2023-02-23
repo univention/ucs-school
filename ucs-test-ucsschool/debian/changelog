@@ -19,7 +19,7 @@ ucs-test-ucsschool (7.3.110) unstable; urgency=low
 
 ucs-test-ucsschool (7.3.109) unstable; urgency=medium
 
-  * Bug #31771: refactor code using "ruff"
+  * Bug #55751: refactor code using "ruff"
 
  -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:34 +0100
 

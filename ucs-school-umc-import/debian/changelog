@@ -1,6 +1,6 @@
 ucs-school-umc-import (3.0.6) unstable; urgency=medium
 
-  * Bug #31771: refactor code using "ruff"
+  * Bug #55751: refactor code using "ruff"
 
  -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:33 +0100
 

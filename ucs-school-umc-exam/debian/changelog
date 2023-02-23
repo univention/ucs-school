@@ -6,7 +6,7 @@ ucs-school-umc-exam (10.0.8) unstable; urgency=medium
 
 ucs-school-umc-exam (10.0.7) unstable; urgency=medium
 
-  * Bug #31771: refactor code using "ruff"
+  * Bug #55751: refactor code using "ruff"
 
  -- Florian Best <best@univention.de>  Mon, 13 Feb 2023 11:52:33 +0100
 
