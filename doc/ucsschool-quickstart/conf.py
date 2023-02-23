@@ -128,3 +128,43 @@ intersphinx_mapping = {
 rst_epilog = """
 .. include:: /../substitutions-de.txt
 """
+
+
+def adapt_settings_to_translation(app, config):
+    """
+    Sets the document title correctly according to the target language.
+
+    See https://github.com/sphinx-doc/sphinx/issues/10282
+    """
+    if config.language == "en":
+        config.project = "Quickstart Guide for UCS@school"
+        config.html_title = config.project
+        config.tokenizer_lang = "en_US"
+
+        config.intersphinx_mapping = {
+            "uv-manual": ("https://docs.software-univention.de/manual/5.0/en", None),
+            "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
+            "uv-inst": ("https://docs.software-univention.de/ext-installation/5.0/en/", None),
+            "uv-ucsschool-manual": (
+                "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+                None,
+            ),
+        }
+
+        config.bibtex_bibfiles = ["../bibliography-en.bib"]
+
+        config.templates_path = ["../_templates-all-docs"]
+
+        config.html_sidebars = {
+            "**": ["sidebar-logo.html", "search-field.html", "sidebar-disclaimer.html"],
+        }
+        config.rst_epilog = """
+.. include:: /../substitutions-en.txt
+"""
+
+
+def setup(app):
+    app.connect(
+        "config-inited",
+        adapt_settings_to_translation,
+    )
