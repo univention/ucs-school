@@ -4,6 +4,15 @@
 Changelog
 *********
 
+Released on 2023-02-23
+======================
+
+Source package *ucs-school-umc-exam* in version ``10.0.8A~5.0.0.202302211433``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Prevent ``exam-exam-`` users from being created. (:uv:bug:`55619`).
+
 .. _changelog-ucsschool-2023-01-19:
 
 Released on 2023-01-19
