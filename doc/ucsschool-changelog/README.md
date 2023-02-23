@@ -53,6 +53,8 @@ do not do step 1.
 
    For example: `sphinx-build -b changelog . _build/changelog ../errata/published/2022-08*`
 
+   Note: If the automatic generation of the changelog modifies past entries or if you just generate the changelog for a subset of files, please manually modify `changelog.rst` and add the contents from `_build/changelog/changelog.rst` instead of copying it over.
+
 4. Review the content of `_build/changelog/changelog.rst` and add reST semantics to the advisories where it is sensible. Check the style with the
    [Univention Documentation
    Styleguide](https://univention.gitpages.knut.univention.de/documentation/styleguide/).
