@@ -91,6 +91,19 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
+				<section id="changelog:ucsschool:2023-02-24" lang="en">
+					<title>Released on 2023-02-24:</title>
+					<!-- START ucs-school-umc-exam 9.0.1-57A~4.4.0.202302221651 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-57A~4.4.0.202302221651</emphasis>:
+						<itemizedlist>
+							<listitem><para>Prevent exam-exam- users from being created. (<u:bug>55745</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-57A~4.4.0.202302221651 -->
+<!-- CHANGELOG:2023-02-24:APPEND -->
+				</section>
 				<section id="changelog:ucsschool:2021-03-24" lang="en">
 					<title>Released on 2021-03-24:</title>
 					<!-- START ucs-school-import 17.0.52A~4.4.0.202103100936 -->
