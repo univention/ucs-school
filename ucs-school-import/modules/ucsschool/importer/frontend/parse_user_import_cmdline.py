@@ -171,7 +171,11 @@ class ParseUserImportCmdline(object):
                     k = start
                     v = {end: v}
                     start, symb, end = start.rpartition(":")
-                settings[k] = v
+                if k not in settings:
+                    settings[k] = v
+                else:
+                    for nk, nv in v.items():
+                        settings[k][nk] = nv
         self.args.settings = self.apply_quirks(settings)
 
         # only set shortcuts if they were set by the user
