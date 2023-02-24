@@ -3,7 +3,7 @@ release: "4.4"
 version: [0]
 scope: ucs_4.4-0-ucs-school-4.4
 src: ucs-school-umc-exam
-fix:
+fix: 9.0.1-57A~4.4.0.202302221651
 desc: |
  * Prevent exam-exam- users from being created. (Bug #55745).
 bug: [55745]
