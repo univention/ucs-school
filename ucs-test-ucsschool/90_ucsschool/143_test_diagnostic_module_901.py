@@ -38,7 +38,7 @@ class Test(UniqueObjectTester):
         role = "student"
         source_uid = "source_uid-%s" % (uts.random_string(),)
         config.update_entry("source_uid", source_uid)
-        self.log.info("*** Importing a user of each role and email scheme ", scheme)
+        self.log.info("*** Importing a user of each role and email scheme %s", scheme)
         config.update_entry(
             "scheme:email", "<:umlauts><firstname>[0].<lastname>[{}]@{}".format(scheme, self.maildomain)
         )

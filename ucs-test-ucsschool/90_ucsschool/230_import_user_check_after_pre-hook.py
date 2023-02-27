@@ -171,7 +171,8 @@ class Test(CLI_Import_v2_Tester):
         )
         self.log.info(
             '*** 6/6 pre_move hook will rewrite user.school to "NoSchool" instead of %r, so error is '
-            "found in move()-checks, not in the following modify()-checks"
+            "found in move()-checks, not in the following modify()-checks",
+            self.ou_B.name,
         )
         self.create_pyhook("move", 'user.school = "NoSchool"')
         for person in person_list:

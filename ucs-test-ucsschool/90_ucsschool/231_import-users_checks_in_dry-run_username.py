@@ -65,8 +65,8 @@ class Test(CLI_Import_v2_Tester):
         person.verify()
 
         self.log.info(
-            "*** Importing (modify) same user (%r) but changing its username to %r in dry-run (should "
-            "fail)...",
+            "*** Importing (modify) same user (%r %r) but changing its username to %r in dry-run"
+            "(should fail)...",
             person.username,
             role,
             username,

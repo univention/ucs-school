@@ -299,7 +299,7 @@ class TestPythonHooks(TestCase):
             self.model = getattr(ucsschool.lib.models.user, klass)
             obj = getattr(self, "_create_{}".format(klass))()
             words = klass, obj.name, obj.school
-            logger.debug("** Creating %s object with name %r in school %r...", *words)
+            logger.debug("** Creating %s object with name %r in school %r...", *words)  # noqa: PLE1206
             obj.create(self.lo)
             if klass not in ("Staff", "Student"):
                 patterns_and_words.extend([(r"^pre_create", words), (r"^post_create", words)])
