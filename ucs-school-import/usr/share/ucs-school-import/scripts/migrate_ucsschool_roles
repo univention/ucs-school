@@ -457,7 +457,7 @@ class UcsSchoolRolesMigration(object):
 
         self.logger.info("---------------------------------------------------------------")
         self.logger.info("Finished.")
-        self.logger.info(
+        self.logger.info(  # noqa: PLE1205
             "Considered LDAP objects: %(objects)d modifications: %(modifications)d errors: %(errors)d",
             self.stats,
         )

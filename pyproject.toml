@@ -1,5 +1,5 @@
 [tool.ruff]
-# ruff 0.0.241
+# ruff 0.0.252
 external = ["W601", "F812", "E403", "E704"]
 line-length = 105
 update-check = false
@@ -46,6 +46,7 @@ ignore = [
  "PLR0912",  # too-many-branches
  "PLR0913",  # too-many-args
  "PLR0915",  # too-many-statements
+ "PLW2901",  # redefined-loop-name
 
  # current violations
  "B007",  # unused-loop-control-variable

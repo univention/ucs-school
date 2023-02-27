@@ -1178,9 +1178,9 @@ class UCSSchoolHelperAbstractClass(object):
         return memo[id_self]
 
     def _map_func_name_to_code(self, func_name):  # type: (str) -> str
-        if func_name == "create":
+        if func_name == "create":  # noqa: SIM116
             return "A"
-        elif func_name == "modify":
+        elif func_name == "modify":  # noqa: SIM116
             return "M"
         elif func_name == "remove":
             return "D"
