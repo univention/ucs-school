@@ -1,0 +1,12 @@
+<div class="navbar_extra_footer">
+    {% if pdf_download_filename %}<p><a href='{{ pathto(pdf_download_filename, 1)|e }}' target='_blank'><i class='far fa-file-pdf'></i> {{ _('Download PDF') }}</a></p>{% endif %}
+    {% if repository_link %}<p><a href='{{ repository_link }}' target='_blank'><i class='fas fa-code'></i> {{ _('Source Repository') }}</a></p>{% endif %}
+
+    <p style="text-align: left; margin-top: 4em"><b>Disclaimer</b></p>
+    <p style="text-align: left; margin-left: 1em">
+      Please note that in the event of any discrepancy between the German and
+      English versions of this documentation, the <a
+      href="https://docs.software-univention.de/{{ doc_base_name }}/{{ release
+  }}/de/{{ pagename }}.html">German version</a> prevails.
+    </p>
+</div>
