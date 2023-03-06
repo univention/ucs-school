@@ -148,6 +148,7 @@ def create_ucsschool_role_string(
         if school:
             context = school
 
+    context = context.replace(":", "&&&")
     return "{}:{}:{}".format(role, context_type, context)
 
 
