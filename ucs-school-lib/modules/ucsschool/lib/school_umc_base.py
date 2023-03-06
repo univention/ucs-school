@@ -300,7 +300,7 @@ class SchoolBaseModule(Base):
             # all available users ==> high LDAP load! (Bug #42167)
 
             user_dns = [
-                group.decode("utf-8") for group in ldap_connection.get(group).get("uniqueMember", [])
+                member.decode("utf-8") for member in ldap_connection.get(group).get("uniqueMember", [])
             ]
 
             for userdn in set(user_dns):
