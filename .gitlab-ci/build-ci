@@ -49,7 +49,7 @@ merge_one_artifact () {
     echo '      when: manual'
 }
 
-crete_production_merge_request () {
+create_production_merge_request () {
     echo
     echo 'docs-create-production-merge-request:'
     echo '  extends: .sphinx-docs-merge-request-template'
@@ -90,4 +90,4 @@ do
     fi
 done
 merge_one_artifact
-crete_production_merge_request
+create_production_merge_request
