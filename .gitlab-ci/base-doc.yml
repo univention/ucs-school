@@ -60,7 +60,7 @@ stages:
 # The child pipeline needs at minimum one job to run - otherwise the sub-pipeline fails
 webframe:
   stage: build
-  image: $DOC
+  image: docker-registry.knut.univention.de/docbook
   script:
     - cp -rTu /DocBook/webframe public
   artifacts:
