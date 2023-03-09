@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.113) unstable; urgency=medium
+
+  * Bug #53632: add test for multiple output arguments in import
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 09 Mar 2023 15:29:09 +0100
+
 ucs-test-ucsschool (7.3.112) unstable; urgency=medium
 
   * Bug #55619: test for skipping already exam users

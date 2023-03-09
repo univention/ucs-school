@@ -1,3 +1,9 @@
+ucs-school-import (18.0.30) unstable; urgency=medium
+
+  * Bug #53632: passing multiple output arguments in import is fixed
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 09 Mar 2023 15:30:45 +0100
+
 ucs-school-import (18.0.29) unstable; urgency=medium
 
   * Bug #55751: refactor code using "ruff"
