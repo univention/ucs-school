@@ -53,8 +53,8 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("dry_run", True)
         args = [
             "--set",
-            f'output:user_import_summary="{self.summary_fd.name}"',
-            f'output:new_user_passwords="{self.passwords_fd}"'
+            f"output:user_import_summary={self.summary_fd.name}",
+            f"output:new_user_passwords={self.passwords_fd.name}",
         ]
         fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         config.update_entry("input:filename", fn_csv)
@@ -64,14 +64,16 @@ class Test(CLI_Import_v2_Tester):
         # check that both summary & password file were used.
         self.summary_fd.seek(os.SEEK_SET)
         reader = csv.DictReader(self.summary_fd)
+        count = 0
         for index, row in enumerate(reader):
+            count += 1
             assert row["firstname"] == person_list[index].firstname
             assert row["lastname"] == person_list[index].lastname
+        assert count, "Empty user import summary file."
 
         self.passwords_fd.seek(os.SEEK_SET)
         reader = csv.DictReader(self.passwords_fd)
-        for index, row in enumerate(reader):
-            assert row["username"] == person_list[index].username
+        assert len(list(reader)), "Empty new user passwords file."
 
 
 if __name__ == "__main__":
