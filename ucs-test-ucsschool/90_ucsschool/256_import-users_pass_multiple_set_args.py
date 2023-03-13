@@ -73,7 +73,7 @@ class Test(CLI_Import_v2_Tester):
 
         self.passwords_fd.seek(os.SEEK_SET)
         reader = csv.DictReader(self.passwords_fd)
-        assert len(list(reader)), "Empty new user passwords file."
+        assert list(reader), "Empty new user passwords file."
 
 
 if __name__ == "__main__":
