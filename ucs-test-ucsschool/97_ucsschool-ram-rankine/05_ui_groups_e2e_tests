@@ -1,0 +1,64 @@
+#!/usr/share/ucs-test/runner bash
+## desc: e2e tests of the frontend module agains production setup
+## exposure: dangerous
+## tags: [ucsschool-bff-groups]
+## external-junit: /tmp/ui_groups_e2e_tests.xml
+
+
+set -e
+
+# install node
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+apt-get install -y nodejs
+
+# install yarn
+npm install --global yarn
+
+
+HOSTNAME=$(ucr get hostname)
+DOMAIN=$(ucr get domainname)
+
+rm -r ui-users || true
+git clone --single-branch --branch "jkeiser/e2e-tests" --depth 1 -c http.sslVerify=false https://git.knut.univention.de/univention/ucsschool-components/ui-groups.git
+
+cd ui-groups/frontend
+yarn install
+cat > public/config.json <<EOF
+{
+  "backendURL": "http://${HOSTNAME}.${DOMAIN}",
+  "ssoURI": "https://ucs-sso-ng.${DOMAIN}",
+  "ucsWebTheme": "light"
+}
+EOF
+cat > cypress.env.json <<EOF
+{
+  "SIMPLESAML_DOMAIN": "ucs-sso.${DOMAIN}",
+  "KEYCLOAK_DOMAIN": "ucs-sso-ng.${DOMAIN}",
+  "DEFAULT_USER_NAME": "admin",
+  "DEFAULT_USER_PASSWORD": "univention",
+
+  "SCHOOL": "school1",
+  "SCHOOL_CLASSES": [
+    {
+      "name": "class-1",
+      "displayName": "class 1"
+    },
+    {
+      "name": "class-2",
+      "displayName": "class 2"
+    },
+    {
+      "name": "class-3",
+      "displayName": "class 3"
+    },
+    {
+      "name": "class-4",
+      "displayName": "class 4"
+    }
+  ]
+}
+EOF
+
+yarn test:e2e:ci:junit
+cp test_results/e2e-test-results.xml /tmp/ui_groups_e2e_tests.xml
+

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.115) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    add e2e tests
+
+ -- Johannes Keiser <keiser@univention.de>  Mon, 13 Mar 2023 13:29:35 +0100
+
 ucs-test-ucsschool (7.3.114) unstable; urgency=medium
 
   * Bug #53632: fix test for multiple output arguments in import
