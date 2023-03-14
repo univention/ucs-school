@@ -7,44 +7,24 @@
 
 set -e
 
-# install node
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
-apt-get install -y nodejs
-
-# install yarn
-npm install --global yarn
-
-
 HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
-rm -r ui-users || true
-git clone --single-branch --branch "jkeiser/e2e-tests" --depth 1 -c http.sslVerify=false https://git.knut.univention.de/univention/ucsschool-components/ui-users.git
+mkdir -p ui_users_e2e_tests/test_results
+mkdir -p ui_users_e2e_tests/screenshots
 
-cd ui-users/frontend
-yarn install
-cat > public/config.json <<EOF
-{
-  "backendURL": "http://${HOSTNAME}.${DOMAIN}",
-  "ssoURI": "https://ucs-sso-ng.${DOMAIN}",
-  "ucsWebTheme": "light"
-}
-EOF
-cat > cypress.env.json <<EOF
-{
-  "SIMPLESAML_DOMAIN": "ucs-sso.${DOMAIN}",
-  "KEYCLOAK_DOMAIN": "ucs-sso-ng.${DOMAIN}",
-  "DEFAULT_USER_NAME": "admin",
-  "DEFAULT_USER_PASSWORD": "univention"
-}
-EOF
-
-if yarn test:e2e:live
-then
-	FAILED=0
+if docker run -ti --rm \
+    --env CYPRESS_SIMPLESAML_DOMAIN=ucs-sso."$DOMAIN" \
+    --env CYPRESS_KEYCLOAK_DOMAIN=ucs-sso-ng."$DOMAIN" \
+    --env CYPRESS_DEFAULT_USER_NAME=admin \
+    --env CYPRESS_DEFAULT_USER_PASSWORD=univention \
+    --env FRONTEND_DOMAIN="$HOSTNAME"."$DOMAIN" \
+    -v "$PWD"/ui_users_e2e_tests/test_results:/e2e-test/test_results \
+    -v "$PWD"/ui_users_e2e_tests/screenshots:/e2e-test/cypress/screenshots \
+    gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:branch-juern-e2e-docker; then
+    FAILED=0
 else
-	FAILED=1
+    FAILED=1
 fi
-cp test_results/e2e-test-results.xml /tmp/ui_users_e2e_tests.xml
+cp ui_users_e2e_tests/test_results/e2e-test-results.xml /tmp/ui_users_e2e_tests.xml
 exit "$FAILED"
-
