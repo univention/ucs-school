@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.117) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    remove unneeded config
+
+ -- Johannes Keiser <keiser@univention.de>  Tue, 14 Mar 2023 06:18:04 +0100
+
 ucs-test-ucsschool (7.3.116) unstable; urgency=medium
 
   * Bug #53632: Improve Python code in test.
