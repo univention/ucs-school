@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix:
+fix: 13.0.33A~5.0.0.202303141409
 desc: |
  * The coding style has been improved (Bug #55751).
  * Colons can now be used in exam names (Bug #55768).
