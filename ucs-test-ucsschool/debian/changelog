@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.120) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    run tests in docker
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 14 Mar 2023 23:24:14 +0100
+
 ucs-test-ucsschool (7.3.119) unstable; urgency=medium
 
   * Issue univention/ucsschool-components/ui-common#36
