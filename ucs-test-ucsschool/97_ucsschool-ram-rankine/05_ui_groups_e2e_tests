@@ -18,7 +18,7 @@ npm install --global yarn
 HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
-rm -r ui-users || true
+rm -r ui-groups || true
 git clone --single-branch --branch "jkeiser/e2e-tests" --depth 1 -c http.sslVerify=false https://git.knut.univention.de/univention/ucsschool-components/ui-groups.git
 
 cd ui-groups/frontend
@@ -39,6 +39,12 @@ cat > cypress.env.json <<EOF
 }
 EOF
 
-yarn test:e2e:ci:junit
+if yarn test:e2e:live
+then
+	FAILED=0
+else
+	FAILED=1
+fi
 cp test_results/e2e-test-results.xml /tmp/ui_groups_e2e_tests.xml
+exit "$FAILED"
 

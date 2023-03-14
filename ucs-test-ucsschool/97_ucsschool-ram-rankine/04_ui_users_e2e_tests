@@ -39,6 +39,12 @@ cat > cypress.env.json <<EOF
 }
 EOF
 
-yarn test:e2e:ci:junit
+if yarn test:e2e:live
+then
+	FAILED=0
+else
+	FAILED=1
+fi
 cp test_results/e2e-test-results.xml /tmp/ui_users_e2e_tests.xml
+exit "$FAILED"
 

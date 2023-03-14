@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.119) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    fix tests
+
+ -- Johannes Keiser <keiser@univention.de>  Tue, 14 Mar 2023 12:23:38 +0100
+
 ucs-test-ucsschool (7.3.118) unstable; urgency=medium
 
   * Issue univention/ucsschool-components/ui-common#36
