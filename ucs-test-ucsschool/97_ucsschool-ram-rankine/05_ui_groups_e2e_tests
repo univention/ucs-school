@@ -35,7 +35,7 @@ cat > cypress.env.json <<EOF
   "SIMPLESAML_DOMAIN": "ucs-sso.${DOMAIN}",
   "KEYCLOAK_DOMAIN": "ucs-sso-ng.${DOMAIN}",
   "DEFAULT_USER_NAME": "admin",
-  "DEFAULT_USER_PASSWORD": "univention",
+  "DEFAULT_USER_PASSWORD": "univention"
 }
 EOF
 
