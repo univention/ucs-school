@@ -2,29 +2,23 @@
 ## desc: e2e tests of the frontend module agains production setup
 ## exposure: dangerous
 ## tags: [ucsschool-bff-users]
-## external-junit: /tmp/ui_users_e2e_tests.xml
-
+## external-junit: /tmp/ui_users_e2e_tests/e2e-test-results.xml
 
 set -e
 
 HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
-mkdir -p ui_users_e2e_tests/test_results
-mkdir -p ui_users_e2e_tests/screenshots
+RESULT_FOLDER="/tmp/ui_users_e2e_tests"
+mkdir -p "$RESULT_FOLDER/test_results"
+mkdir -p "$RESULT_FOLDER/screenshots"
 
-if docker run -ti --rm \
+docker run --rm \
     --env CYPRESS_SIMPLESAML_DOMAIN=ucs-sso."$DOMAIN" \
     --env CYPRESS_KEYCLOAK_DOMAIN=ucs-sso-ng."$DOMAIN" \
     --env CYPRESS_DEFAULT_USER_NAME=admin \
     --env CYPRESS_DEFAULT_USER_PASSWORD=univention \
     --env FRONTEND_DOMAIN="$HOSTNAME"."$DOMAIN" \
-    -v "$PWD"/ui_users_e2e_tests/test_results:/e2e-test/test_results \
-    -v "$PWD"/ui_users_e2e_tests/screenshots:/e2e-test/cypress/screenshots \
-    gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:branch-juern-e2e-docker; then
-    FAILED=0
-else
-    FAILED=1
-fi
-cp ui_users_e2e_tests/test_results/e2e-test-results.xml /tmp/ui_users_e2e_tests.xml
-exit "$FAILED"
+    -v "$RESULT_FOLDER"/test_results:/e2e-test/test_results \
+    -v "$RESULT_FOLDER"/screenshots:/e2e-test/cypress/screenshots \
+    gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:branch-juern-e2e-docker
