@@ -2,49 +2,24 @@
 ## desc: e2e tests of the frontend module agains production setup
 ## exposure: dangerous
 ## tags: [ucsschool-bff-groups]
-## external-junit: /tmp/ui_groups_e2e_tests.xml
-
+## external-junit: /tmp/ui_groups_e2e_tests/results/test_e2e_live-combined-report.xml
 
 set -e
-
-# install node
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
-apt-get install -y nodejs
-
-# install yarn
-npm install --global yarn
-
 
 HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
-rm -r ui-groups || true
-git clone --single-branch --branch "jkeiser/e2e-tests" --depth 1 -c http.sslVerify=false https://git.knut.univention.de/univention/ucsschool-components/ui-groups.git
+RESULT_FOLDER="/tmp/ui_groups_e2e_tests"
+mkdir -p "$RESULT_FOLDER/results"
+mkdir -p "$RESULT_FOLDER/screenshots"
 
-cd ui-groups/frontend
-yarn install
-cat > public/config.json <<EOF
-{
-  "backendURL": "http://${HOSTNAME}.${DOMAIN}",
-  "ssoURI": "https://ucs-sso-ng.${DOMAIN}",
-  "ucsWebTheme": "light"
-}
-EOF
-cat > cypress.env.json <<EOF
-{
-  "SIMPLESAML_DOMAIN": "ucs-sso.${DOMAIN}",
-  "KEYCLOAK_DOMAIN": "ucs-sso-ng.${DOMAIN}",
-  "DEFAULT_USER_NAME": "admin",
-  "DEFAULT_USER_PASSWORD": "univention"
-}
-EOF
-
-if yarn test:e2e:live
-then
-	FAILED=0
-else
-	FAILED=1
-fi
-cp test_results/e2e-test-results.xml /tmp/ui_groups_e2e_tests.xml
-exit "$FAILED"
-
+docker run --rm \
+    --env CYPRESS_SIMPLESAML_DOMAIN=ucs-sso."$DOMAIN" \
+    --env CYPRESS_KEYCLOAK_DOMAIN=ucs-sso-ng."$DOMAIN" \
+    --env CYPRESS_DEFAULT_USER_NAME=admin \
+    --env CYPRESS_DEFAULT_USER_PASSWORD=univention \
+    --env FRONTEND_DOMAIN="$HOSTNAME"."$DOMAIN" \
+    --env TEST_PREFIX="97_ucsschool-ram-rankine.04_ui_groups_e2e_tests" \
+    -v "$RESULT_FOLDER"/results:/e2e-test/cypress/results \
+    -v "$RESULT_FOLDER"/screenshots:/e2e-test/cypress/screenshots \
+    gitregistry.knut.univention.de/univention/ucsschool-components/ui-groups/cypress-tests:branch-jkeiser-e2e-tests

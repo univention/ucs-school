@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.125) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    use docker for ui-groups test
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 15 Mar 2023 15:04:12 +0100
+
 ucs-test-ucsschool (7.3.124) unstable; urgency=medium
 
   * Issue univention/ucsschool-components/ui-common#36
