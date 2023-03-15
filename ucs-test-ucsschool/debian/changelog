@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.124) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    adjust docker container
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 15 Mar 2023 13:07:01 +0100
+
 ucs-test-ucsschool (7.3.123) unstable; urgency=medium
 
   * Issue univention/ucsschool-components/ui-common#36
