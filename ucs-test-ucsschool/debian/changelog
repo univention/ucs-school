@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.122) unstable; urgency=medium
+
+  * Issue univention/ucsschool-components/ui-common#36
+    set prefix for junit file
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 15 Mar 2023 11:00:10 +0100
+
 ucs-test-ucsschool (7.3.121) unstable; urgency=medium
 
   * Issue univention/ucsschool-components/ui-common#36
