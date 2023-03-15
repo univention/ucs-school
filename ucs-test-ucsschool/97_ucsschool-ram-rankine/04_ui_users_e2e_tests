@@ -2,7 +2,7 @@
 ## desc: e2e tests of the frontend module agains production setup
 ## exposure: dangerous
 ## tags: [ucsschool-bff-users]
-## external-junit: /tmp/ui_users_e2e_tests/e2e-test-results.xml
+## external-junit: /tmp/ui_users_e2e_tests/results/test_e2e_live-combined-report.xml
 
 set -e
 
@@ -10,7 +10,7 @@ HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
 RESULT_FOLDER="/tmp/ui_users_e2e_tests"
-mkdir -p "$RESULT_FOLDER/test_results"
+mkdir -p "$RESULT_FOLDER/results"
 mkdir -p "$RESULT_FOLDER/screenshots"
 
 docker run --rm \
@@ -20,6 +20,6 @@ docker run --rm \
     --env CYPRESS_DEFAULT_USER_PASSWORD=univention \
     --env FRONTEND_DOMAIN="$HOSTNAME"."$DOMAIN" \
     --env TEST_PREFIX="97_ucsschool-ram-rankine.04_ui_users_e2e_tests" \
-    -v "$RESULT_FOLDER"/test_results:/e2e-test/test_results \
+    -v "$RESULT_FOLDER"/results:/e2e-test/cypress/results \
     -v "$RESULT_FOLDER"/screenshots:/e2e-test/cypress/screenshots \
     gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:branch-juern-e2e-docker
