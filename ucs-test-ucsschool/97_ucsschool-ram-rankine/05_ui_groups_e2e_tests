@@ -19,7 +19,7 @@ docker run --rm \
     --env CYPRESS_DEFAULT_USER_NAME=admin \
     --env CYPRESS_DEFAULT_USER_PASSWORD=univention \
     --env FRONTEND_DOMAIN="$HOSTNAME"."$DOMAIN" \
-    --env TEST_PREFIX="97_ucsschool-ram-rankine.04_ui_groups_e2e_tests" \
+    --env TEST_PREFIX="97_ucsschool-ram-rankine.05_ui_groups_e2e_tests" \
     -v "$RESULT_FOLDER"/results:/e2e-test/cypress/results \
     -v "$RESULT_FOLDER"/screenshots:/e2e-test/cypress/screenshots \
-    gitregistry.knut.univention.de/univention/ucsschool-components/ui-groups/cypress-tests:branch-jkeiser-e2e-tests
+    gitregistry.knut.univention.de/univention/ucsschool-components/ui-groups/cypress-tests:latest

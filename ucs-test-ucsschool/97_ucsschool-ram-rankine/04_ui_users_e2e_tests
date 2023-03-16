@@ -22,4 +22,4 @@ docker run --rm \
     --env TEST_PREFIX="97_ucsschool-ram-rankine.04_ui_users_e2e_tests" \
     -v "$RESULT_FOLDER"/results:/e2e-test/cypress/results \
     -v "$RESULT_FOLDER"/screenshots:/e2e-test/cypress/screenshots \
-    gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:branch-jkeiser-e2e-tests
+    gitregistry.knut.univention.de/univention/ucsschool-components/ui-users/cypress-tests:latest
