@@ -27,3 +27,13 @@ Additional points:
 
 - [ ]
 - [ ]
+
+- [ ] All changed lines are covered by a unit test, if possible.
+  - [ ] Happy case.
+  - [ ] Unhappy case (errors and edge cases).
+- [ ] There is at least one end to end test that covers the changed lines.
+- [ ] If necessary, performance tests exist. See https://git.knut.univention.de/univention/internal/research-library/-/merge_requests/5/diffs
+
+If the changes affect security features such as authentication or authorization:
+
+- [ ] The affected security feature has a dedicated end to end integration test.
