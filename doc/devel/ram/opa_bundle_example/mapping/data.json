@@ -1,0 +1,54 @@
+{
+  "roleCapabilityMapping": {
+    "ucsschool:ucsschool:teacher": [
+      {
+        "appId": "ucsschool",
+        "namespace": "ucsschool",
+        "capabilities": [
+          {
+            "conditions": [],
+            "relation": "AND",
+            "permissions": [
+              "read:firstName",
+              "read:lastName"
+            ]
+          },
+          {
+            "conditions": [
+              {
+                "name": "ucsschool_ucsschool_targetHasSameSchool",
+                "data": {}
+              },
+              {
+                "name": "targetHasRole",
+                "data": {
+                  "role": "ucsschool:ucsschool:student"
+                }
+              }
+            ],
+            "relation": "AND",
+            "permissions": [
+              "read:firstName",
+              "write:password",
+              "export"
+            ]
+          }
+        ]
+      },
+      {
+        "appId": "OX",
+        "namespace": "mail",
+        "capabilities": [
+          {
+            "conditions": [],
+            "relation": "AND",
+            "permissions": [
+              "editSpamFilter",
+              "export"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
