@@ -6,5 +6,5 @@ src: ucs-school-import
 fix: 18.0.30A~5.0.0.202303091544
 desc: |
  * The coding style has been improved (Bug #55751).
- * When passing nested command line arguments like <code>output</code> for <code>ucs-school-user-import</code>, only the last one was used. This has been fixed (Bug #53632).
+ * When passing nested command line arguments like ``output`` for ``ucs-school-user-import``, only the last one was used. This has been fixed (Bug #53632).
 bug: [55751, 53632]

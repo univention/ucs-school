@@ -4,6 +4,27 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-03-27:
+
+Released on 2023-03-27
+======================
+
+Source package *ucs-school-lib* in version ``13.0.33A~5.0.0.202303141409``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Colons can now be used in exam names (:uv:bug:`55768`).
+
+Source package *ucs-school-import* in version ``18.0.30A~5.0.0.202303091544``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* When passing nested command line arguments like ``output`` for ``ucs-school-
+  user-import``, only the last one was used. This has been fixed
+  (:uv:bug:`53632`).
+
+.. _changelog-ucsschool-2023-02-23:
+
 Released on 2023-02-23
 ======================
 
