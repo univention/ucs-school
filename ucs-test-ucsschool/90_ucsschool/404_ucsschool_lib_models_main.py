@@ -9,6 +9,7 @@
 
 import sys
 from typing import Dict, List, Tuple  # noqa: F401
+from subprocess import CalledProcessError
 
 import pytest
 
@@ -220,6 +221,56 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
                 strict=False,
                 should_exist=True,
             )
+
+
+def test_create_user_windows_reserved_name(cmd_line_role, ucr_hostname, ucr_ldap_base):
+    with utu.UCSTestSchool() as schoolenv:
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
+        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+            person = Person(ou_name, role)
+            person.set_random_birthday()
+            cmd = [
+                sys.executable,
+                "-m",
+                "ucsschool.lib.models",
+                "--debug",
+                "create",
+                cmd_line_role(role),
+                "--name",
+                "com1",
+                "--school",
+                person.school,
+                "--set",
+                "firstname",
+                person.firstname,
+                "--set",
+                "lastname",
+                person.lastname,
+                "--set",
+                "email",
+                person.mail,
+                "--set",
+                "birthday",
+                person.birthday,
+            ]
+            with pytest.raises(CalledProcessError):
+                rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
+                assert "ValueError" in stderr
+                assert "May not be a Windows reserved name" in stderr
+                container = {
+                    "student": "schueler",
+                    "teacher": "lehrer",
+                    "staff": "mitarbeiter",
+                    "teacher_and_staff": "lehrer und mitarbeiter",
+                }[role]
+                dn = "uid={},cn={},cn=users,ou={},{}".format(
+                    person.username, container, ou_name, ucr_ldap_base
+                )
+                assert dn in stdout
+                utils.verify_ldap_object(
+                    dn,
+                    should_exist=False,
+                )
 
 
 def test_create_school_class(ucr_hostname, ucr_ldap_base):

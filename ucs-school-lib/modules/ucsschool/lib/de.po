@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-lib\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2022-07-19 15:50+0200\n"
+"POT-Creation-Date: 2023-04-10 10:48+0200\n"
 "PO-Revision-Date: 2016-05-17 11:20+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -22,7 +22,7 @@ msgstr "\"%(label)s\" muss vom Typ %(type)s sein"
 msgid "\"%s\" is required. Please provide this information."
 msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#: modules/ucsschool/lib/models/attributes.py:194
+#: modules/ucsschool/lib/models/attributes.py:257
 msgid "A valid NetBIOS hostname can not be longer than 13 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 13 Zeichen sein."
@@ -31,7 +31,7 @@ msgstr ""
 msgid "Administrative servers"
 msgstr "Verwaltungsserver"
 
-#: modules/ucsschool/lib/models/user.py:90
+#: modules/ucsschool/lib/models/user.py:87
 msgid "Birthday"
 msgstr "Geburtstag"
 
@@ -40,11 +40,11 @@ msgstr "Geburtstag"
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: modules/ucsschool/lib/models/user.py:99
+#: modules/ucsschool/lib/models/user.py:96
 msgid "Class"
 msgstr "Klasse"
 
-#: modules/ucsschool/lib/models/computer.py:222
+#: modules/ucsschool/lib/models/computer.py:227
 msgid "Computer"
 msgstr "Rechner"
 
@@ -56,7 +56,7 @@ msgstr "Pfad für Rechner"
 msgid "Container"
 msgstr "Container"
 
-#: modules/ucsschool/lib/models/base.py:1280
+#: modules/ucsschool/lib/models/base.py:1294
 #, python-brace-format
 msgid ""
 "Context {role}:{context_type}:{context} is not allowed for {dn}. Object is "
@@ -65,7 +65,7 @@ msgstr ""
 "Kontext {role}:{context_type}:{context} ist für {dn} nicht erlaubt. Objekt "
 "ist nicht an dieser Schule."
 
-#: modules/ucsschool/lib/school_umc_base.py:127
+#: modules/ucsschool/lib/school_umc_base.py:128
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the \"Schools\" UMC module to create one."
@@ -94,11 +94,11 @@ msgstr "DHCP-Dienst"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: modules/ucsschool/lib/models/computer.py:465
+#: modules/ucsschool/lib/models/computer.py:474
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
-#: modules/ucsschool/lib/models/user.py:97
+#: modules/ucsschool/lib/models/user.py:94
 msgid "Disabled"
 msgstr "Deaktiviert"
 
@@ -114,7 +114,7 @@ msgstr "Domäne"
 msgid "Educational servers"
 msgstr "Edukative Schulserver"
 
-#: modules/ucsschool/lib/models/user.py:95
+#: modules/ucsschool/lib/models/user.py:92
 #: modules/ucsschool/lib/models/group.py:91
 msgid "Email"
 msgstr "E-Mail"
@@ -123,15 +123,15 @@ msgstr "E-Mail"
 msgid "Empty attributes"
 msgstr "Leere Attribute"
 
-#: modules/ucsschool/lib/models/user.py:877
+#: modules/ucsschool/lib/models/user.py:939
 msgid "Exam student"
 msgstr "Klassenarbeit-Schüler"
 
-#: modules/ucsschool/lib/models/user.py:93
+#: modules/ucsschool/lib/models/user.py:90
 msgid "Expiration date"
 msgstr "Ablaufdatum"
 
-#: modules/ucsschool/lib/models/user.py:84
+#: modules/ucsschool/lib/models/user.py:75
 msgid "First name"
 msgstr "Vorname"
 
@@ -139,7 +139,7 @@ msgstr "Vorname"
 msgid "Group path"
 msgstr "Pfad für Gruppen"
 
-#: modules/ucsschool/lib/models/computer.py:97
+#: modules/ucsschool/lib/models/computer.py:99
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -162,24 +162,24 @@ msgstr ""
 msgid "Hosts"
 msgstr "Hosts"
 
-#: modules/ucsschool/lib/models/computer.py:216
+#: modules/ucsschool/lib/models/computer.py:221
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: modules/ucsschool/lib/models/attributes.py:191
+#: modules/ucsschool/lib/models/attributes.py:254
 msgid "Invalid Domain Controller name"
 msgstr "Ungültiger Domänencontrollername"
 
-#: modules/ucsschool/lib/models/attributes.py:182
+#: modules/ucsschool/lib/models/attributes.py:245
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: modules/ucsschool/lib/models/computer.py:219
+#: modules/ucsschool/lib/models/computer.py:224
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: modules/ucsschool/lib/models/user.py:451
-#: modules/ucsschool/lib/models/user.py:462
+#: modules/ucsschool/lib/models/user.py:477
+#: modules/ucsschool/lib/models/user.py:492
 #, python-format
 msgid ""
 "It is not supported to change the role of a user. %(old_role)s %(name)s "
@@ -188,25 +188,25 @@ msgstr ""
 "Ein Wechsel der Benutzerrolle wird nicht unterstützt. %(old_role)s %(name)s "
 "kann kein %(new_role)s werden."
 
-#: modules/ucsschool/lib/models/user.py:87
+#: modules/ucsschool/lib/models/user.py:81
 msgid "Last name"
 msgstr "Nachname"
 
-#: modules/ucsschool/lib/models/computer.py:218
+#: modules/ucsschool/lib/models/computer.py:492
+msgid "Linux system"
+msgstr "Linux-System"
+
+#: modules/ucsschool/lib/models/computer.py:223
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: modules/ucsschool/lib/models/computer.py:456
+#: modules/ucsschool/lib/models/computer.py:465
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
-#: modules/ucsschool/lib/models/computer.py:476
-msgid "Ubuntu system"
-msgstr "Ubuntu-System"
-
-#: modules/ucsschool/lib/models/computer.py:485
-msgid "Linux system"
-msgstr "Linux-System"
+#: modules/ucsschool/lib/models/attributes.py:201
+msgid "May not be a Windows reserved name"
+msgstr "Darf kein reservierter Windows-Name sein"
 
 #: modules/ucsschool/lib/models/attributes.py:133
 msgid "May not contain special characters"
@@ -237,7 +237,7 @@ msgstr "Pfad für Netzwerk"
 msgid "Overlapping lessons are not allowed"
 msgstr "Überlappende Schulstunden sind nicht erlaubt"
 
-#: modules/ucsschool/lib/models/user.py:96
+#: modules/ucsschool/lib/models/user.py:93
 msgid "Password"
 msgstr "Passwort"
 
@@ -249,11 +249,11 @@ msgstr "Pfad für Richtlinien"
 msgid "Printer path"
 msgstr "Pfad für Drucker"
 
-#: modules/ucsschool/lib/models/attributes.py:384
+#: modules/ucsschool/lib/models/attributes.py:448
 msgid "Role has bad format"
 msgstr "Rolle hat falsches Format"
 
-#: modules/ucsschool/lib/models/base.py:1193
+#: modules/ucsschool/lib/models/base.py:1197
 msgid "Roles"
 msgstr "Rollen"
 
@@ -261,7 +261,7 @@ msgstr "Rollen"
 msgid "School"
 msgstr "Schule"
 
-#: modules/ucsschool/lib/models/user.py:802
+#: modules/ucsschool/lib/models/user.py:864
 msgid "School Administrator"
 msgstr "Schuladministrator"
 
@@ -274,7 +274,7 @@ msgstr "Schulklasse"
 msgid "School name"
 msgstr "Schulname"
 
-#: modules/ucsschool/lib/models/user.py:503
+#: modules/ucsschool/lib/models/user.py:534
 msgid ""
 "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
 "attribute."
@@ -282,7 +282,7 @@ msgstr ""
 "Schule {school!r} in 'school_classes' fehlt im 'school(s)' Attribut des "
 "Benutzers."
 
-#: modules/ucsschool/lib/models/user.py:529
+#: modules/ucsschool/lib/models/user.py:560
 msgid ""
 "School {school!r} in 'workgroups' is missing in the users 'school(s)' "
 "attributes."
@@ -290,7 +290,7 @@ msgstr ""
 "Schule {school!r} in 'workgroups' fehlt im 'school(s)' Attribut des "
 "Benutzers."
 
-#: modules/ucsschool/lib/models/user.py:82
+#: modules/ucsschool/lib/models/user.py:73
 msgid "Schools"
 msgstr "Schulen"
 
@@ -314,11 +314,11 @@ msgstr "Dienst"
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: modules/ucsschool/lib/models/user.py:820
+#: modules/ucsschool/lib/models/user.py:882
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: modules/ucsschool/lib/models/user.py:753
+#: modules/ucsschool/lib/models/user.py:815
 msgid "Student"
 msgstr "Schüler"
 
@@ -330,19 +330,19 @@ msgstr "Subnetz"
 msgid "Subnet address"
 msgstr "Subnetz-Adresse"
 
-#: modules/ucsschool/lib/models/computer.py:217
+#: modules/ucsschool/lib/models/computer.py:222
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: modules/ucsschool/lib/models/user.py:785
+#: modules/ucsschool/lib/models/user.py:847
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: modules/ucsschool/lib/models/user.py:860
+#: modules/ucsschool/lib/models/user.py:922
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: modules/ucsschool/lib/models/user.py:478
+#: modules/ucsschool/lib/models/user.py:509
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -350,7 +350,7 @@ msgstr ""
 "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. Bitte "
 "ändern Sie die E-Mail-Adresse."
 
-#: modules/ucsschool/lib/models/computer.py:349
+#: modules/ucsschool/lib/models/computer.py:354
 msgid ""
 "The ip address is already taken by another computer. Please change the ip "
 "address."
@@ -358,12 +358,12 @@ msgstr ""
 "Die IP-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die IP-Adresse."
 
-#: modules/ucsschool/lib/models/attributes.py:197
+#: modules/ucsschool/lib/models/attributes.py:260
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: modules/ucsschool/lib/models/computer.py:360
+#: modules/ucsschool/lib/models/computer.py:365
 msgid ""
 "The mac address is already taken by another computer. Please change the mac "
 "address."
@@ -371,7 +371,7 @@ msgstr ""
 "Die MAC-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die MAC-Adresse."
 
-#: modules/ucsschool/lib/models/base.py:395
+#: modules/ucsschool/lib/models/base.py:400
 msgid ""
 "The name is already used somewhere outside the school. It may not be taken "
 "twice and has to be changed."
@@ -379,7 +379,7 @@ msgstr ""
 "Der Name wird bereits außerhalb dieser Schule genutzt. Er darf nicht zweimal"
 " vorkommen und muss verändert werden."
 
-#: modules/ucsschool/lib/models/computer.py:395
+#: modules/ucsschool/lib/models/computer.py:400
 msgid "The newly created network would overlap with the existing network {}"
 msgstr ""
 "Das neu zu erstellende Netzwerk würde mit dem bereits existierenden Netzwerk"
@@ -393,7 +393,7 @@ msgstr ""
 "Die Anfrage enthält keine Schule. Um Fortzufahren, muss zuerst eine Schule "
 "erstellt werden, dazu kann das \"Schulen\"-Modul verwendet werden."
 
-#: modules/ucsschool/lib/models/base.py:403
+#: modules/ucsschool/lib/models/base.py:408
 #, python-format
 msgid ""
 "The school \"%s\" does not exist. Please choose an existing one or create "
@@ -402,7 +402,7 @@ msgstr ""
 "Die Schule \"%s\" existiert nicht. Bitte wählen Sie eine existierende oder "
 "erstellen Sie sie."
 
-#: modules/ucsschool/lib/models/computer.py:370
+#: modules/ucsschool/lib/models/computer.py:375
 msgid ""
 "The specified IP and subnet mask will cause the creation of a new network "
 "during the creation of the computer object."
@@ -410,28 +410,28 @@ msgstr ""
 "Die festgelegte IP-Adresse und Netzmaske werden bei Erstellung des Computers"
 " dazu führen, dass auch ein neues Netz angelegt wird."
 
-#: modules/ucsschool/lib/models/base.py:423
+#: modules/ucsschool/lib/models/base.py:428
 #, python-format
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
-#: modules/ucsschool/lib/models/computer.py:286
+#: modules/ucsschool/lib/models/computer.py:291
 msgid "There are no free addresses left in the subnet!"
 msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
 
-#: modules/ucsschool/lib/models/user.py:492
+#: modules/ucsschool/lib/models/user.py:523
 msgid "Type of 'school_classes' is {type!r}, but must be dictionary."
 msgstr ""
 
-#: modules/ucsschool/lib/models/user.py:518
+#: modules/ucsschool/lib/models/user.py:549
 msgid "Type of 'workgroups' is {type!r}, but must be dictionary."
 msgstr ""
 
-#: modules/ucsschool/lib/models/attributes.py:386
-msgid "Unknown context type"
-msgstr "Unbekannter Kontexttyp"
+#: modules/ucsschool/lib/models/computer.py:483
+msgid "Ubuntu system"
+msgstr "Ubuntu-System"
 
-#: modules/ucsschool/lib/models/attributes.py:388
+#: modules/ucsschool/lib/models/attributes.py:450
 msgid "Unknown role"
 msgstr "Unbekannte Rolle"
 
@@ -439,7 +439,7 @@ msgstr "Unbekannte Rolle"
 msgid "User path"
 msgstr "Pfad für Benutzer"
 
-#: modules/ucsschool/lib/models/user.py:81
+#: modules/ucsschool/lib/models/user.py:72
 msgid "Username"
 msgstr "Benutzername"
 
@@ -451,7 +451,7 @@ msgstr "Benutzer"
 msgid "Users that are allowed to send e-mails to the group"
 msgstr ""
 
-#: modules/ucsschool/lib/models/computer.py:447
+#: modules/ucsschool/lib/models/computer.py:456
 msgid "Windows system"
 msgstr "Windows-System"
 
@@ -459,11 +459,11 @@ msgstr "Windows-System"
 msgid "Work group"
 msgstr "Arbeitsgruppe"
 
-#: modules/ucsschool/lib/models/user.py:102
+#: modules/ucsschool/lib/models/user.py:99
 msgid "WorkGroup"
 msgstr "Arbeitsgruppe"
 
-#: modules/ucsschool/lib/models/computer.py:220
+#: modules/ucsschool/lib/models/computer.py:225
 msgid "Zone"
 msgstr "Zone"
 
@@ -473,3 +473,6 @@ msgstr "Zone"
 
 #~ msgid "Univention Corporate Client"
 #~ msgstr "Univention Corporate Client"
+
+#~ msgid "Unknown context type"
+#~ msgstr "Unbekannter Kontexttyp"

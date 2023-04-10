@@ -133,9 +133,70 @@ class CommonName(Attribute):
             raise ValueError(_("May not contain special characters"))
 
 
+def is_valid_win_directory_name(name):  # type: (str) -> bool
+    """
+    Check that a string is a valid Windows directory name.
+
+    Needed to prevent bug when a user with a reserved name tries to log in to a
+    Windows computer.
+
+    :param name: The name to check.
+
+    :returns: True if the name is valid, False otherwise.
+    """
+    # Check if name contains any invalid characters
+    if re.search(r'[<>:"/\\|?*\x00-\x1F]', name):
+        return False
+
+    # Check if name is a reserved name
+    reserved_names = [
+        "CON",
+        "PRN",
+        "AUX",
+        "NUL",
+        "COM0",
+        "COM1",
+        "COM2",
+        "COM3",
+        "COM4",
+        "COM5",
+        "COM6",
+        "COM7",
+        "COM8",
+        "COM9",
+        "LPT0",
+        "LPT1",
+        "LPT2",
+        "LPT3",
+        "LPT4",
+        "LPT5",
+        "LPT6",
+        "LPT7",
+        "LPT8",
+        "LPT9",
+    ]
+    name_without_extension = name.split(".")[0].upper()
+    if name_without_extension in reserved_names:
+        return False
+
+    # Check if name ends with a space or period
+    if len(name) > 0 and name[-1] in [" ", "."]:
+        return False
+
+    if len(name) > 255:
+        return False
+
+    return True
+
+
 class Username(CommonName):
     udm_name = "username"
     syntax = uid_umlauts
+
+    def validate(self, value):
+        super(Username, self).validate(value)
+        if not is_valid_win_directory_name(value):
+            raise ValueError(_("May not be a Windows reserved name"))
 
 
 class DHCPServerName(CommonName):
