@@ -90,6 +90,12 @@ des UMC-Moduls.
    ist nicht möglich, den gleichen Benutzernamen an zwei
    unterschiedlichen Schulen zu verwenden.
 
+.. important::
+
+   Benutzernamen dürfen keine von Windows reservierten Namen enthalten. Siehe
+   `Microsoft Dokumentation <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file>`
+   für weitere Informationen.
+
 .. note::
 
    Über die |UCSUCRV|
