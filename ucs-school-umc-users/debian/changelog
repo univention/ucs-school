@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.7) unstable; urgency=medium
+
+  * Bug #55773: fix typo in german translation of "name" field description
+
+ -- J Leadbetter <j.leadbetter@univention.de>  Mon, 24 Apr 2023 08:56:45 +0200
+
 ucs-school-umc-users (16.0.6) unstable; urgency=medium
 
   * Bug #55751: refactor code using "ruff"
