@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-lists
-fix:
+fix: 3.0.7A~5.0.0.202304251352
 desc: |
  * Class lists can be downloaded in Firefox again while the module is opened in an iframe (UCS portal) (Bug #55102).
 bug: [55102]
