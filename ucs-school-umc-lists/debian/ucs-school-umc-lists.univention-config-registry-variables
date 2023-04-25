@@ -3,3 +3,10 @@ Description[de]=Eine komma-separierte Liste von UDM-Attributen und Spaltennamen,
 Description[en]=A comma-separated list of udm-attributes and column-names, which are used to create class lists (Default: firstname Firstname,lastname Lastname,Class Class,username Username)
 Type=str
 Categories=management-umc
+
+[ucsschool/umc/lists/cleanup/cron]
+Description[de]=Diese UCR variable definiert den Cron-Job, der die erstellten Klassenlisten wieder von der Festplatte löscht.
+Description[en]=This UCR variable defines the cron job that deletes the created class lists from the hard drive.
+Type=str
+Categories=management-umc
+Default=0 0 * * * root find /usr/share/ucs-school-umc-lists/classlists/ -type f -atime +2 -delete

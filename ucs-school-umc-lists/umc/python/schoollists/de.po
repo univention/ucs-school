@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lists\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2022-03-09 16:29+0100\n"
+"POT-Creation-Date: 2023-04-04 09:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: packages@univention.de\n"
 "Language-Team: Univention\n"
@@ -12,7 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoollists/__init__.py:102
+#: umc/python/schoollists/__init__.py:82
+msgid "The class list does not exists. Please create a new one."
+msgstr "Die Klassenliste existiert nicht. Bitte erstellen Sie eine neue."
+
+#: umc/python/schoollists/__init__.py:113
 msgid ""
 "{!r} is not a valid UDM-property. Please change the value of the UCR "
 "variable ucsschool/umc/lists/class/attributes."

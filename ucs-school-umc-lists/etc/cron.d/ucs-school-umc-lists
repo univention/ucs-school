@@ -1,0 +1,8 @@
+@%@UCRWARNING=# @%@
+
+@!@
+print("# delete created class lists")
+cron = configRegistry.get("ucsschool/umc/lists/cleanup/cron")
+if cron:
+    print(cron)
+@!@

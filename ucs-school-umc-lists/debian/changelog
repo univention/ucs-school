@@ -1,3 +1,10 @@
+ucs-school-umc-lists (3.0.7) unstable; urgency=medium
+
+  * Bug #55102: Class lists can be downloaded in Firefox again
+    while the module is opened in an iframe
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 12 Apr 2023 09:43:47 +0200
+
 ucs-school-umc-lists (3.0.6) unstable; urgency=medium
 
   * Bug #54030: adjusted the wording of some descriptions shown in UMC

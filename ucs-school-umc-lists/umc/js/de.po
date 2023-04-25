@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lists\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2022-01-11 15:58+0100\n"
+"POT-Creation-Date: 2023-04-04 09:35+0200\n"
 "PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: package@univention.de\n"
 "Language-Team: Univention\n"
@@ -12,48 +12,56 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoollists.js:120
+#: umc/js/schoollists.js:83
+msgid "Class list was successfully created"
+msgstr "Klassenliste wurde erfolgreich erstellt"
+
+#: umc/js/schoollists.js:124
 msgid "Class or workgroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-#: umc/js/schoollists.js:137
+#: umc/js/schoollists.js:141
 msgid "Download a list of group members"
 msgstr "Liste der Gruppenmitglieder herunterladen"
 
-#: umc/js/schoollists.js:153
+#: umc/js/schoollists.js:157
 msgid "Download a list of group members (in an alternative format)"
 msgstr ""
 "Liste der Gruppenmitglieder herunterladen (in einem alternativen Format)"
 
-#: umc/js/schoollists.js:131
+#: umc/js/schoollists.js:135
 msgid "Exclude deactivated students"
 msgstr "Deaktivierte Schüler ausschließen"
 
-#: umc/js/schoollists.js:154
+#: umc/js/schoollists.js:158
 msgid "Export (Alternative format)"
 msgstr "Export (Alternatives Format)"
 
-#: umc/js/schoollists.js:138
+#: umc/js/schoollists.js:142
 msgid "Export (Recommended)"
 msgstr "Export (Empfohlen)"
 
-#: umc/js/schoollists.js:147 umc/js/schoollists.js:162
+#: umc/js/schoollists.js:78
+msgid "If the download did not start automatically you can click %s."
+msgstr "Falls der download nicht automatisch gestartet hat können Sie %s klicken."
+
+#: umc/js/schoollists.js:151 umc/js/schoollists.js:166
 msgid "Please select a class or workgroup."
 msgstr "Bitte eine Klasse oder Arbeitsgruppe auswählen."
 
-#: umc/js/schoollists.js:109
+#: umc/js/schoollists.js:113
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoollists.js:119
+#: umc/js/schoollists.js:123
 msgid "Select a class or workgroup."
 msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
 
-#: umc/js/schoollists.js:108
+#: umc/js/schoollists.js:112
 msgid "Select the school."
 msgstr "Auswahl der Schule."
 
-#: umc/js/schoollists.js:94
+#: umc/js/schoollists.js:98
 msgid ""
 "This module lets you export class and workgroup lists. The lists are in the "
 "CSV format. If you have problems opening the exported file, ensure the "
@@ -71,8 +79,13 @@ msgstr ""
 "alternativen Format. Dieser ist UTF-8-kodiert und nutzt Kommas als "
 "Feldtrenner.</p>"
 
-#: umc/js/schoollists.js:130
+#: umc/js/schoollists.js:134
 msgid ""
 "When this check box is selected, deactivated students will not be exported."
 msgstr ""
-"Wenn dieses Kontrollkästchen aktiviert ist, werden deaktivierte Schüler nicht exportiert."
+"Wenn dieses Kontrollkästchen aktiviert ist, werden deaktivierte Schüler "
+"nicht exportiert."
+
+#: umc/js/schoollists.js:76
+msgid "here"
+msgstr "hier"

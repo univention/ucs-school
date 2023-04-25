@@ -9,5 +9,6 @@
 	<command name="schoollists/schools" function="schools"></command>
 	<command name="schoollists/groups" function="groups"></command>
 	<command name="schoollists/csvlist" function="csv_list"></command>
+	<command name="schoollists/csvlistget" function="csv_get"></command>
 	</module>
 </umc>

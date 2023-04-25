@@ -68,21 +68,20 @@ define([
 			return new Blob([csv], {type: 'text/csv'});
 		},
 
-		openDownload: function(result) {
-			var blob = this.getCsvBlob(this._csvFormat === 'excel' ? 'utf16le' : 'utf8', result);
-			var url = URL.createObjectURL(blob);
-			if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-				// IE doesn't open objectURLs directly
-				window.navigator.msSaveOrOpenBlob(blob, result.result.filename);
-				return;
-			}
+		openDownload: function(response) {
 			var link = document.createElement('a');
-			link.style = "display: none";
-			document.body.appendChild(link);
-			link.href = url;
-			link.download = result.result.filename;
+			link.target = '_blank';
+			link.href = response.result.url;
+			link.download = response.result.filename;
+			link.innerHTML = _("here");
 			link.click();
-			link.remove();
+
+			dialog.confirm(_('If the download did not start automatically you can click %s.', link.outerHTML), [
+				{
+					label: 'OK',
+					default: true,
+				}
+			], _('Class list was successfully created'));
 		},
 
 		buildRendering: function() {

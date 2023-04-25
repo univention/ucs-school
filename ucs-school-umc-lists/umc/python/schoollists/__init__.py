@@ -32,46 +32,52 @@
 # <http://www.gnu.org/licenses/>.
 
 import csv
+import os
+from datetime import datetime
 from io import StringIO
 
 from ldap.dn import explode_rdn
 
 from ucsschool.lib.models.user import User
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_base import SchoolBaseModule
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.decorators import allow_get_request, sanitize
 from univention.management.console.modules.sanitizers import (
-    BooleanSanitizer,
-    DNSanitizer,
     StringSanitizer,
 )
 
 _ = Translation("ucs-school-umc-lists").translate
 
 
-def write_classlist_csv(fieldnames, students, filename, separator):
-    csvfile = StringIO()
-    writer = csv.writer(csvfile, delimiter=str(separator))
-    writer.writerow(fieldnames)
-    for row in students:
-        writer.writerow(row)
-    csvfile.seek(0)
-    result = {"filename": filename, "csv": csvfile.read()}
-    csvfile.close()
-    return result
+def write_classlist_csv(fieldnames, students, separator):
+    with StringIO() as csvfile:
+        writer = csv.writer(csvfile, delimiter=str(separator))
+        writer.writerow(fieldnames)
+        for row in students:
+            writer.writerow(row)
+        return csvfile.getvalue()
 
 
 class Instance(SchoolBaseModule):
-    @sanitize(
-        school=SchoolSanitizer(required=True),
-        group=DNSanitizer(required=True, minimum=1),
-        separator=StringSanitizer(required=True),
-        exclude_deactivated=BooleanSanitizer(required=True),
-    )
+    @allow_get_request
+    @sanitize(classlist=StringSanitizer(required=True))
+    def csv_get(self, request):
+        classlist = request.options["classlist"]
+        path = "/usr/share/ucs-school-umc-lists/classlists/"
+        filename = os.path.join(path, classlist)
+        try:
+            with open(filename, "rb") as fd:
+                self.finished(request.id, fd.read(), mimetype="text/csv")
+        except EnvironmentError:
+            raise UMC_Error(
+                _("The class list does not exists. Please create a new one."),
+                status=404,
+            )
+
     @LDAP_Connection()
     def csv_list(self, request, ldap_user_read=None, ldap_position=None):
         school = request.options["school"]
@@ -110,9 +116,22 @@ class Instance(SchoolBaseModule):
                     row.append(value)
             rows.append(row)
 
-        filename = explode_rdn(group, True)[0] + ".csv"
-        result = write_classlist_csv(fieldnames, rows, filename, separator)
-        self.finished(request.id, result)
+        classlistname = explode_rdn(group, True)[0]
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+        filename = "%s_%s.csv" % (classlistname, timestamp)
+        path = os.path.join("/usr/share/ucs-school-umc-lists/classlists/", filename)
+        with open(path, "w") as fd:
+            os.chmod(path, 0o600)
+            fd.write(write_classlist_csv(fieldnames, rows, separator))
+
+        url = "/univention/command/schoollists/csvlistget?classlist=%s" % (filename,)
+        self.finished(
+            request.id,
+            {
+                "url": url,
+                "filename": filename,
+            },
+        )
 
     def students(self, lo, school, group):
         for user in self._users(lo, school, group=group, user_type="student"):
