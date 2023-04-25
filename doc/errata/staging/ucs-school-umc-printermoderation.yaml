@@ -3,8 +3,8 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-printermoderation
-fix:
+fix: 17.1.3A~5.0.0.202304250916
 desc: |
  * The coding style has been improved (Bug #55751).
  * Typos in name field description for German have been fixed (Bug #55773).
-bug: [55751,55773]
+bug: [55751, 55773]
