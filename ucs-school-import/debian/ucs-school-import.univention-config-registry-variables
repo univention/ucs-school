@@ -165,3 +165,17 @@ Description[de]=Maximale Länge eines Benutzernamens. Benutzerkonten mit Benutze
 Description[en]=Maximum length of usernames. User accounts with usernames above 20 are excluded from the support regarding Samba, Samba4 connector app and Active Directory connector app. If Window clients before 8.1 are in use, the maximum username lenght must not exceed 20, or logging into them will not be possible. Default: 20
 Type=int
 Categories=ucsschool-base
+
+[ucsschool/import/log_stats/columns]
+Description[de]=Anzahl der Namen pro Zeile der "Created"/"Modified"/"Deleted" Benutzer im "User import statistics" Teil des UCS@School-Import-Logs (Standard: 4). Die Anzahl der Zeilen wird in der UCR-Variable `ucsschool/import/log_stats/lines` definiert.
+Description[en]=Number of names per line of "Created"/"Modified"/"Deleted" users in the "User import statistics" part of the log output of the UCS@School import (default: 4) The number of lines is defined in the `ucsschool/import/log_stats/lines` UCR variable.
+Type=pint
+Default=4
+Categories=ucsschool-base
+
+[ucsschool/import/log_stats/lines]
+Description[de]=Maximale Anzahl der Zeilen, in denen die Namen der "Created"/"Modified"/"Deleted" Benutzer im "User import statistics" Teil des UCS@School-Import-Logs angezeigt werden dürfen (Standard: 2). Die Anzahl der Zeilen wird mit dem Wert der UCR-Variable `ucsschool/import/log_stats/columns` multipliziert; übersteigt dieser Wert die Anzahl der "Created"/"Modified"/"Deleted" Benutzer, werden keine Namen protokolliert. Die maximale Zeilenzahl gilt für die "Created"/"Modified"/"Deleted" Benutzer individuell. Setzen Sie sie auf "0", um die Protokollierung von Namen zu deaktivieren.
+Description[en]=Maximum number of lines that are allowed to show the names of the "Created"/"Modified"/"Deleted" users in the "User import statistics" part of the log output of the UCS@School import (default: 2). The number of lines is multiplied with the value of the `ucsschool/import/log_stats/columns` UCR variable; if that value exceeds the number of "Created"/"Modified"/"Deleted" users then no names are logged. The maximum number of lines applies to the "Created"/"Modified"/"Deleted" users individually. Set to `0` to disable the logging of names.
+Type=uint
+Default=2
+Categories=ucsschool-base

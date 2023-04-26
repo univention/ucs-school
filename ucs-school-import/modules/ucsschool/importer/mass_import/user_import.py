@@ -92,6 +92,7 @@ class UserImport(object):
         self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
         self.factory = Factory()
         self.reader = self.factory.make_reader()
+        self.ucr = self.factory.make_ucr()
         self.imported_users_len = 0
 
     def read_input(self):  # type: () -> List[ImportUser]
@@ -191,7 +192,9 @@ class UserImport(object):
                         store = self.added_users[cls_name]  # type: List[Dict[str, Any]]
                         if self.dry_run:
                             user.validate(
-                                self.connection, validate_unlikely_changes=True, check_username=True
+                                self.connection,
+                                validate_unlikely_changes=True,
+                                check_username=True,
                             )
                             if user.errors:
                                 raise ValidationError(user.errors.copy())
@@ -228,7 +231,11 @@ class UserImport(object):
                         UserValidationError(
                             "ValidationError when {} {} "
                             "(source_uid:{} record_uid: {}): {}".format(
-                                action_str.lower(), user, user.source_uid, user.record_uid, exc
+                                action_str.lower(),
+                                user,
+                                user.source_uid,
+                                user.record_uid,
+                                exc,
                             ),
                             validation_error=exc,
                             import_user=user,
@@ -273,7 +280,9 @@ class UserImport(object):
         num_added_users = sum(map(len, self.added_users.values()))
         num_modified_users = sum(map(len, self.modified_users.values()))
         self.logger.info(
-            "------ Created %d users, modified %d users. ------", num_added_users, num_modified_users
+            "------ Created %d users, modified %d users. ------",
+            num_added_users,
+            num_modified_users,
         )
         return self.errors, self.added_users, self.modified_users
 
@@ -294,7 +303,11 @@ class UserImport(object):
         except WrongObjectType as exc:
             six.reraise(
                 WrongUserType,
-                WrongUserType(str(exc), entry_count=import_user.entry_count, import_user=import_user),
+                WrongUserType(
+                    str(exc),
+                    entry_count=import_user.entry_count,
+                    import_user=import_user,
+                ),
                 sys.exc_info()[2],
             )
 
@@ -464,7 +477,10 @@ class UserImport(object):
                 # udm_properties are set by the reader class.
                 additional_udm_properties = self.reader.get_imported_udm_property_names(a_user)
                 user = a_user.get_by_import_id(
-                    self.connection, source_uid, record_uid, udm_properties=additional_udm_properties
+                    self.connection,
+                    source_uid,
+                    record_uid,
+                    udm_properties=additional_udm_properties,
                 )
                 user.action = "D"  # mark for logging/csv-output purposes
                 user.input_data = input_data  # most likely empty list
@@ -500,7 +516,10 @@ class UserImport(object):
             except UcsSchoolImportError as exc:
                 self.logger.exception("Error in entry #%d: %s", exc.entry_count, exc)
                 self._add_error(exc)
-        self.logger.info("------ Deleted %d users. ------", sum(map(len, self.deleted_users.values())))
+        self.logger.info(
+            "------ Deleted %d users. ------",
+            sum(map(len, self.deleted_users.values())),
+        )
         return self.errors, self.deleted_users
 
     def school_move(self, imported_user, user):  # type: (ImportUser, ImportUser) -> ImportUser
@@ -538,7 +557,10 @@ class UserImport(object):
                 )
             user.call_hooks("pre", "move", self.connection)
             self.logger.info(
-                "Dry-run: would move %s from %r to %r.", user, user.school, imported_user.school
+                "Dry-run: would move %s from %r to %r.",
+                user,
+                user.school,
+                imported_user.school,
             )
             user._unique_ids_replace_dn(user.dn, imported_user.dn)
             res = True
@@ -602,7 +624,8 @@ class UserImport(object):
         elif self.dry_run:
             user.call_hooks("pre", "remove", self.connection)
             self.logger.info(
-                "Dry-run: not expiring, deactivating or setting the purge timestamp for %s.", user
+                "Dry-run: not expiring, deactivating or setting the purge timestamp for %s.",
+                user,
             )
             user.validate(self.connection, validate_unlikely_changes=True, check_username=False)
             if self.errors:
@@ -693,7 +716,8 @@ class UserImport(object):
         """
         if user.has_purge_timestamp(self.connection):
             self.logger.info(
-                "User %s is already scheduled for deletion. The entry remains unchanged.", user
+                "User %s is already scheduled for deletion. The entry remains unchanged.",
+                user,
             )
             return False
         else:
@@ -711,8 +735,14 @@ class UserImport(object):
         cls_names.extend(self.modified_users)
         cls_names.extend(self.deleted_users)
         cls_names = set(cls_names)
-        columns = 4
-        lines_allowed = 2
+        columns_default = 4
+        columns = self.ucr.get_int("ucsschool/import/log_stats/columns", columns_default)
+        if columns < 1:  # validate the `pint` type of `ucsschool/import/log_stats/columns`
+            columns = columns_default
+        lines_allowed_default = 2
+        lines_allowed = self.ucr.get_int("ucsschool/import/log_stats/lines", lines_allowed_default)
+        if lines_allowed < 0:  # validate the `uint` type of `ucsschool/import/log_stats/lines`
+            lines_allowed = lines_allowed_default
         allowed_user_print_cnt = columns * lines_allowed
         for cls_name in sorted(cls_names):
             lines.append("Created {}: {}".format(cls_name, len(self.added_users.get(cls_name, []))))
@@ -778,7 +808,8 @@ class UserImport(object):
         self.errors.append(exc)
         if -1 < self.config["tolerate_errors"] < len([x for x in self.errors if x.is_countable]):
             raise TooManyErrors(
-                "More than {} errors.".format(self.config["tolerate_errors"]), self.errors
+                "More than {} errors.".format(self.config["tolerate_errors"]),
+                self.errors,
             )
 
     def progress_report(self, description, percentage=0, done=0, total=0, **kwargs):
