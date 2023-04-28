@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.128) unstable; urgency=medium
+
+  * Issue #948: fix test for schoollist CSV
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Fri, 28 Apr 2023 11:57:07 +0200
+
 ucs-test-ucsschool (7.3.127) unstable; urgency=medium
 
   * Bug #53519: added tests for windows reserved names

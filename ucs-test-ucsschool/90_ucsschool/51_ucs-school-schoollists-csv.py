@@ -43,10 +43,8 @@ def test_write_csv(ucr_value, separator, group):
     attributes, fieldnames = list(attributes), list(fieldnames)
     fieldnames.append("Class")
     attributes.append("Class")
-    filename = "{}.csv".format(group)
-    result = write_classlist_csv(fieldnames, students, filename, separator)
-    assert result["filename"] == filename
-    lines = result["csv"].strip().split("\n")
+    result = write_classlist_csv(fieldnames, students, separator)
+    lines = result.strip().split("\n")
     header = lines[0]
     assert separator.join(fieldnames) == header.strip()
     body = lines[1:]
