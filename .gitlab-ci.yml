@@ -54,30 +54,6 @@ doc-pipeline:
     forward:
       pipeline_variables: true
 
-build pre-commit:
-  stage: prepare
-  rules:
-    - changes:
-      - .gitlab-ci/Dockerfile.pre-commit
-      - .bandit
-      - .black
-      - .dockerignore
-      - .flake8
-      - pyproject.toml
-      - .pre-commit-config.yaml
-  extends: .kaniko
-  variables:
-    DOCKERFILE_PATH: .gitlab-ci/Dockerfile.pre-commit
-    KANIKO_ARGS: --cache=true
-
 run pre-commit:
   stage: lint
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE
-    PRE_COMMIT_IMAGE: $IMAGE_TAG
-  needs:
-    - job: build pre-commit
-      optional: true
   extends: .pre-commit
-  script:
-    git config --global --add safe.directory /builds/univention/ucsschool
