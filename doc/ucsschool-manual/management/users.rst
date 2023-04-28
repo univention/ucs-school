@@ -93,7 +93,7 @@ des UMC-Moduls.
 .. important::
 
    Benutzernamen dürfen keine von Windows reservierten Namen enthalten. Siehe
-   `Microsoft Dokumentation <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file>`
+   `Microsoft Dokumentation <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file>`_
    für weitere Informationen.
 
 .. note::
