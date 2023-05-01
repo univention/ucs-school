@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix:
+fix: 13.0.34A~5.0.0.202305010748
 desc: |
  * Validate usernames to avoid Windows reserved names (Bug #53519).
 bug: [53519]
