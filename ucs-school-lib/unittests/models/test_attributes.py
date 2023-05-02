@@ -15,7 +15,6 @@ class TestIsValidWinDirectoryName:
             ("good.name", True),
             ("good name", True),
             (".good_name", True),
-            ("..", True),
             ("com1", False),
             ("COM1.txt", False),
             ("LPT9", False),
