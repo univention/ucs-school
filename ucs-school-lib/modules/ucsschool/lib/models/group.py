@@ -207,6 +207,28 @@ class BasicGroup(Group):
     def get_container(cls, school=None):  # type: (Optional[str]) -> str
         return ucr.get("ldap/base")
 
+    def update_ucsschool_roles(self, lo):  # type: (LoType) -> None
+        # Bug 55986: BasicGroup doesn't have a school,
+        # which means that all school roles get removed from this object when saving
+        # (see models.base.RoleSupportMixin).
+        # However, some administrative groups get the `school_admin_group` role,
+        # which should not be removed.
+        # If a BasicGroup has a role, don't remove it.
+        # We don't update these after creation, so the roles should be correct.
+        pass
+
+    def validate_roles(self, lo):  # type: (LoType) -> None
+        # Bug 55986: Related to update_ucsschool_roles fix above.
+        # If we keep the `school_admin_group` role when updating,
+        # the RoleSupportMixin complains that this BasicGroup
+        # is not in the school where the role is present, based on the OU.
+        # However, BasicGroups are not in the school OU;
+        # the role is correct, and we want to allow it regardless.
+        # We may want to create some better validation when we redo this library;
+        # for now we'll just allow it.
+        # We don't update these after creation, so the roles should be correct.
+        pass
+
 
 class BasicSchoolGroup(BasicGroup):
     school = Group.school  # type: str

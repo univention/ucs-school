@@ -23,7 +23,7 @@ from ucsschool.lib.models.user import Student
         ("my:school:not_allowed", False),
     ],
 )
-def test_create_arbitrary_extra_roles(schoolenv, extra_role, allowed):
+def test_create_arbitrary_extra_roles(extra_role, allowed, schoolenv):
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
     if extra_role == "duplicate_role":
         extra_role = "student:school:{}".format(ou_name)

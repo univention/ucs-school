@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.36) unstable; urgency=medium
+
+  * Bug #55986: fix admin removal from wrong group during school import
+
+ -- J Leadbetter <j.leadbetter@univention.de>  Tue, 02 May 2023 14:07:43 +0200
+
 ucs-school-lib (13.0.35) unstable; urgency=medium
 
   * Bug #53519: fix unit test.
