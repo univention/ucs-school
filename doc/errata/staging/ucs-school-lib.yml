@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
-fix: 13.0.34A~5.0.0.202305010748
+fix: 13.0.36A~5.0.0.202305021757
 desc: |
  * Validate usernames to avoid Windows reserved names (Bug #53519).
  * Removing admin from a school removes them from the correct admin group (Bug #55986).
