@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021-2023 Univention GmbH
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -89,7 +93,7 @@ if "spelling" in sys.argv:
     tokenizer_lang = "de_DE"
     spelling_show_suggestions = True
     spelling_warning = True
-    spelling_word_list_filename = ["spelling-word-list.txt"]
+    spelling_word_list_filename = ["spelling_wordlist.txt"]
 
 root_doc = "index"
 
