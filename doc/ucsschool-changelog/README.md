@@ -1,5 +1,11 @@
 # Changelog for UCS@school
 
+<!--
+SPDX-FileCopyrightText: 2021-2023 Univention GmbH
+
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 This directory contains the release notes and changelog document for
 UCS@school. It's a distinct document that lists all the changes for the
 respective version since the last version.
