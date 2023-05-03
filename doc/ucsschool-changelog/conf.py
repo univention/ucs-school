@@ -99,8 +99,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 pdf_doc_base = os.path.basename(os.path.dirname(__file__))
 
 html_theme = "univention_sphinx_book_theme"
-html_context = {
+html_theme_options = {
     "pdf_download_filename": f"{pdf_doc_base}.pdf",
+    "show_source_license": True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -165,7 +166,9 @@ linkcheck_allowed_redirects = {
 univention_changelog_previous_release = "5.0 v3"
 univention_changelog_builder = "ucsschool"
 
-# See Univention Sphinx Extension for its options and information about the
-# feedback link.
+# See Univention Sphinx Extension for its options.
 # https://git.knut.univention.de/univention/documentation/univention_sphinx_extension
+# Information about the feedback link.
 univention_feedback = True
+# Information about the license statement for the source files
+univention_pdf_show_source_license = True
