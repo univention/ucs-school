@@ -1,3 +1,7 @@
+.. SPDX-FileCopyrightText: 2021-2023 Univention GmbH
+..
+.. SPDX-License-Identifier: AGPL-3.0-only
+
 .. _gh-ucsschool-hook-example1: https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example1.py
 .. _gh-ucsschool-hook-example2: https://github.com/univention/ucs-school/blob/5.0/ucs-school-lib/usr/share/doc/ucs-school-lib-common/hook_example2.py
 .. _uv-wiki-migration-s3-s4: https://wiki.univention.de/index.php?title=UCS%40school_Samba_3_to_Samba_4_Migration
