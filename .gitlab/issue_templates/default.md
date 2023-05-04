@@ -32,7 +32,11 @@ Additional points:
   - [ ] Happy case.
   - [ ] Unhappy case (errors and edge cases).
 - [ ] There is at least one end to end test that covers the changed lines.
-- [ ] If necessary, performance tests exist. See https://git.knut.univention.de/univention/internal/research-library/-/merge_requests/5/diffs
+- [ ] Evaluate performance of the change.
+  - [ ] Read the parent epic and verify performance requirements.
+  - [ ] If necessary, performance tests exist. See https://git.knut.univention.de/univention/internal/research-library/-/merge_requests/5/diffs
+  - [ ] If there are no specific performance requirements, improve or at least avoid worsening existing performance, if possible.
+  - [ ] Document reasons for worse performance in the code and on the ticket, if applicable.
 
 If the changes affect security features such as authentication or authorization:
 
