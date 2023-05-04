@@ -89,7 +89,6 @@ html_style = "custom.css"
 html_static_path = [
     "_static",
 ]  # value usually is ['_static']
-html_last_updated_fmt = "%a, %d. %b %Y at %H:%M (UTC%z)"
 
 # https://github.com/mgeier/sphinx-last-updated-by-git
 git_last_updated_timezone = "Europe/Berlin"
