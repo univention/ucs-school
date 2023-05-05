@@ -9,6 +9,8 @@ from __future__ import print_function
 
 import random
 
+import requests
+
 import univention.config_registry
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -65,12 +67,9 @@ def test_ucs_school_configurable_schoollists():
             account = utils.UCSTestDomainAdminCredentials()
             connection = Client(host, language="en_US")
             connection.authenticate(account.username, account.bindpw)
-            expected_class_list = {
-                u"csv": u"{fieldnames_string}\r\n{expected_values}\r\n".format(
-                    fieldnames_string=",".join(column_names), expected_values=",".join(expected_values)
-                ),
-                u"filename": u"{}.csv".format(class_name),
-            }
+            expected_class_list = u"{fieldnames_string}\r\n{expected_values}\r\n".format(
+                fieldnames_string=",".join(column_names), expected_values=",".join(expected_values)
+            )
             options = {
                 "school": school_name,
                 "group": class_dn,
@@ -78,13 +77,26 @@ def test_ucs_school_configurable_schoollists():
                 "exclude_deactivated": False,
             }
             try:
-                class_list = connection.umc_command("schoollists/csvlist", options).result
+                umc_response = connection.umc_command("schoollists/csvlist", options).result
+                file_url = umc_response["url"]
+
+                response = requests.get(
+                    "https://{host}/{file_url}".format(host=host, file_url=file_url),
+                )
+                assert response.status_code == 401
+
+                response = requests.get(
+                    "https://{host}/{file_url}".format(host=host, file_url=file_url),
+                    cookies=connection.cookies,
+                )
+                received_class_list = response.content.decode("latin-1")
+
             except HTTPError as exc:
                 assert expected_error in exc.message
                 print("The failed UMC request failed was expected.")
                 continue
             print("Expected: {}".format(expected_class_list))
-            print("Received: {}".format(class_list))
+            print("Received: {}".format(received_class_list))
             # Multi-values are returned in "", replacing them was the easiest way.
-            class_list["csv"] = class_list["csv"].replace('"', "")
-            assert class_list == expected_class_list
+            received_class_list = received_class_list.replace('"', "")
+            assert received_class_list == expected_class_list

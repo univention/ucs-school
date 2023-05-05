@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.130) unstable; urgency=medium
+
+  * Issue #1027: Fix tests for ucs-school-umc-lists
+
+ -- Johannes Königer <koeniger@univention.de>  Fri, 05 May 2023 14:32:19 +0200
+
 ucs-test-ucsschool (7.3.129) unstable; urgency=medium
 
   * Bug #55986: test removal of admin user from school group
