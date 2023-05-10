@@ -10,7 +10,7 @@ PLUGIN_DIR="/var/lib/univention-appcenter/apps/ucsschool-apis/data/plugins/id-br
 TEST_DIR="tests/unittests"
 CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-prefix=96_ucsschool-id-broker.01_in_container_unittests_provisioning $TEST_DIR"
 
-if ! univention-app shell ucsschool-apis pytest --help >/dev/null; then
+if ! univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; test -f requirements.txt && test requirements.txt -nt pyproject.toml" >/dev/null; then
   echo "Installing testing packages..."
   univention-app shell "$APP" python3 -m pip install -U pip wheel
   univention-app shell "$APP" python3 -m pip install poetry
