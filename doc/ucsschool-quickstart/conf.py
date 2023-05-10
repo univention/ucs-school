@@ -97,7 +97,7 @@ if "spelling" in sys.argv:
 root_doc = "contents"
 
 html_sidebars = {
-    "**": ["sidebar-logo.html", "search-field.html", "_templates/sidebar-links.html"],
+    "**": ["navbar-logo.html", "icon-links.html", "sections/sidebar-links.html"],
 }
 
 latex_engine = "lualatex"
@@ -162,7 +162,12 @@ def adapt_settings_to_translation(app, config):
         config.templates_path = ["../_templates-all-docs"]
 
         config.html_sidebars = {
-            "**": ["sidebar-logo.html", "search-field.html", "sidebar-disclaimer.html"],
+            "**": [
+                "navbar-logo.html",
+                "icon-links.html",
+                "sections/sidebar-links.html",
+                "sidebar-disclaimer.html",
+            ],
         }
         config.rst_epilog = """
 .. include:: /../substitutions-en.txt
