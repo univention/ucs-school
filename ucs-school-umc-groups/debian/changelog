@@ -1,3 +1,9 @@
+ucs-school-umc-groups (10.0.9) unstable; urgency=medium
+
+  * Bug #55990: sync 'school' in MultiObjectSelct with DetailPage correctly
+
+ -- Johannes Keiser <keiser@univention.de>  Mon, 08 May 2023 16:01:08 +0200
+
 ucs-school-umc-groups (10.0.8) unstable; urgency=medium
 
   * Bug #55751: refactor code using "ruff"

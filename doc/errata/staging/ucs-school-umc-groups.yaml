@@ -6,4 +6,7 @@ src: ucs-school-umc-groups
 fix:
 desc: |
  * The coding style has been improved (Bug #55751).
-bug: [55751]
+ * Fixed a problem where the modal to add "Members", "Teachers" and "Classes"
+   in the "Administrate workgroups", "Administrate teachers" and "Administrate classes" UCS@school UMC modules respectively
+   would show objects of a different school than selected (Bug #55990).
+bug: [55751, 55990]

@@ -81,14 +81,12 @@ define([
 			this._form.getWidget(this.multiWidgetName).on('ShowDialog', lang.hitch(this, function(_dialog) {
 				// if the school changed in the WorkgroupDetailPage, change it also in the dialog and
 				// remove all cached users from the store
-				if (_dialog._form.getWidget('school').get('value') != this._form.getWidget('school').get('value')) {
-					_dialog._form.getWidget('school').set('value', this._form.getWidget('school').get('value'));
-					_dialog._multiSelect.store.fetch({
-							onItem: function(item) {
-								_dialog._multiSelect.store.deleteItem(item);
-							}
-					});
+				var dialogSchool = _dialog._form.getWidget('school');
+				var detailPageSchool = this._form.getWidget('school');
+				if (dialogSchool.get('value') !== detailPageSchool.get('value')) {
+					_dialog._multiSelect._clearValues();
 				}
+				dialogSchool.setInitialValue(detailPageSchool.get('value'));
 			}));
 
 			this._form.on('submit', lang.hitch(this, '_save'));
@@ -131,6 +129,7 @@ define([
 				name: 'group',
 				label: _('User group or class'),
 				depends: 'school',
+				selectFirstValueInListIfValueIsInvalidAfterLoadingValues: true,
 				dynamicValues: 'schoolgroups/classes',
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			};
