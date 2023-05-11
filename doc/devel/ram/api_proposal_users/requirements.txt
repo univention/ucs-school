@@ -1,0 +1,5 @@
+fastapi
+-i https://git.knut.univention.de/api/v4/projects/657/packages/pypi/simple fastapi-dynamic-auth
+pydantic[email]
+python-multipart
+uvicorn
