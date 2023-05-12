@@ -1,0 +1,3532 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Guardian Management REST API",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/apps/register": {
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Register App",
+                "operationId": "register_app",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppsPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/apps": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Apps",
+                "operationId": "get_all_apps",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppsGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create App",
+                "operationId": "create_app",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppsPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/apps/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get App",
+                "operationId": "get_app",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update App",
+                "operationId": "update_app",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppsPatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/namespaces": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Namespaces",
+                "description": "Get information about all namespace",
+                "operationId": "get_all_namespaces",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NamespacesGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Namespace",
+                "description": "Register a namespace",
+                "operationId": "create_namespace",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NamespacesPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NamespacePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Status code 409 is returned when the namespace already exist.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/namespaces/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Namespace",
+                "description": "Get information about a namespace",
+                "operationId": "get_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NamespacesGetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Namespace",
+                "description": "Update a namespace. Only the displayname can be updated.",
+                "operationId": "update_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NamespacesPatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NamespacePatchResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/namespaces/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Namespaces By App Name",
+                "description": "Get information about all namespace",
+                "operationId": "get_namespaces_by_app_name",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NamespacesGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/roles": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Roles",
+                "operationId": "get_roles",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Role",
+                "description": "Register a role within a namespace",
+                "operationId": "create_role",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RolesPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Status code 409 is returned when the role within the namespace already exists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/roles/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Roles By Namespace",
+                "operationId": "get_roles_by_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/roles/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Roles By App Name",
+                "operationId": "get_roles_by_app_name",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/roles/{app_name}/{namespace_name}/{role_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Role",
+                "operationId": "get_role",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Role Name",
+                            "type": "string"
+                        },
+                        "name": "role_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Role",
+                "operationId": "update_role",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Role Name",
+                            "type": "string"
+                        },
+                        "name": "role_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RolesPatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RolesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/contexts": {
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Context",
+                "operationId": "create_context",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ContextPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Status code 409 is returned when the context within the namespace already exists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/contexts/{app_name}/{namespace_name}/{context_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Context",
+                "operationId": "get_context",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Context Name",
+                            "type": "string"
+                        },
+                        "name": "context_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Context",
+                "operationId": "update_context",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Context Name",
+                            "type": "string"
+                        },
+                        "name": "context_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/contexts/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Contexts By Namespace",
+                "operationId": "get_all_contexts_by_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/contexts/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Contexts By App Name",
+                "operationId": "get_all_contexts_by_app_name",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/contexts/": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Contexts",
+                "operationId": "get_all_contexts",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContextGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Permissions",
+                "operationId": "get_all_permissions",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionsGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Permission",
+                "operationId": "create_permission",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PermissionPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Status code 409 is returned when the permission within the namespace already exists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenericError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{app_name}/{namespace_name}/{permission}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Permission",
+                "operationId": "get_permission",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Permission",
+                            "type": "string"
+                        },
+                        "name": "permission",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionsGetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Permissions By Namespace",
+                "operationId": "get_all_permissions_by_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionsGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get All Permissions By App Name",
+                "operationId": "get_all_permissions_by_app_name",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PermissionsGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/role-capability-mapping": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Role Capability Mapping",
+                "operationId": "get_role_capability_mapping",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleCapabilityMapping"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Role Capability Mapping",
+                "operationId": "update_role_capability_mapping",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleCapabilityMapping"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/role-capability-mapping/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Role Capability Mapping For Namespace",
+                "operationId": "get_role_capability_mapping_for_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleCapabilityMappingNamespaced"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Role Capability Mapping For Namespace",
+                "operationId": "update_role_capability_mapping_for_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleCapabilityMapping"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Delete Role Capability Mapping For Namespace",
+                "operationId": "delete_role_capability_mapping_for_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleCapabilityMappingNamespaced"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/conditions": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Conditions",
+                "operationId": "get_conditions",
+                "parameters": [
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Condition",
+                "operationId": "create_condition",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConditionPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/conditions/{app_name}/{namespace_name}/{condition_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Condition",
+                "operationId": "get_condition",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Condition Name",
+                            "type": "string"
+                        },
+                        "name": "condition_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Condition",
+                "operationId": "update_condition",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Condition Name",
+                            "type": "string"
+                        },
+                        "name": "condition_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConditionPatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/conditions/{app_name}/{namespace_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Condition By Namespace",
+                "operationId": "get_condition_by_namespace",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/conditions/{app_name}": {
+            "get": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Get Condition By App Name",
+                "operationId": "get_condition_by_app_name",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Offset",
+                            "type": "integer",
+                            "default": 0
+                        },
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "type": "integer",
+                            "default": 1000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConditionGetAllResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/custom-endpoints": {
+            "post": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Create Custom Endpoint",
+                "operationId": "create_custom_endpoint",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CustomEndpointPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomEndpointResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/custom-endpoints/{app_name}/{namespace_name}/{endpoint_name}": {
+            "patch": {
+                "tags": [
+                    "Guardian Data Management"
+                ],
+                "summary": "Update Custom Endpoint",
+                "operationId": "update_custom_endpoint",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Endpoint Name",
+                            "type": "string"
+                        },
+                        "name": "endpoint_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CustomEndpointPatchRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomEndpointResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AppDisplayname": {
+                "title": "AppDisplayname",
+                "minLength": 1,
+                "type": "string",
+                "description": "User-friendly display name",
+                "example": "UCS@school"
+            },
+            "AppName": {
+                "title": "AppName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9\\-]*",
+                "type": "string",
+                "description": "Name of an application",
+                "example": "ucsschool-kelvin-rest-api"
+            },
+            "AppResponse": {
+                "title": "AppResponse",
+                "required": [
+                    "app"
+                ],
+                "type": "object",
+                "properties": {
+                    "app": {
+                        "$ref": "#/components/schemas/AppResponseObject"
+                    }
+                }
+            },
+            "AppResponseObject": {
+                "title": "AppResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "appDisplayname": {
+                        "$ref": "#/components/schemas/AppDisplayname"
+                    },
+                    "appAdmin": {
+                        "$ref": "#/components/schemas/Role"
+                    }
+                },
+                "description": "A specific application that will interact with the Guardian"
+            },
+            "AppsGetAllResponse": {
+                "title": "AppsGetAllResponse",
+                "required": [
+                    "pagination",
+                    "apps"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "apps": {
+                        "title": "Apps",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AppResponseObject"
+                        }
+                    }
+                }
+            },
+            "AppsPatchRequest": {
+                "title": "AppsPatchRequest",
+                "required": [
+                    "appDisplayname"
+                ],
+                "type": "object",
+                "properties": {
+                    "appDisplayname": {
+                        "$ref": "#/components/schemas/AppDisplayname"
+                    }
+                }
+            },
+            "AppsPostRequest": {
+                "title": "AppsPostRequest",
+                "required": [
+                    "appName",
+                    "appDisplayname"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "appDisplayname": {
+                        "$ref": "#/components/schemas/AppDisplayname"
+                    }
+                }
+            },
+            "Capability": {
+                "title": "Capability",
+                "required": [
+                    "role",
+                    "conditions",
+                    "relation",
+                    "permissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "title": "Role",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        ],
+                        "example": {
+                            "appName": "ucsschool-kelvin-rest-api",
+                            "namespaceName": "kelvin-rest-api",
+                            "roleName": "kelvin_admin",
+                            "roleDisplayname": "Kelvin Administrator"
+                        }
+                    },
+                    "conditions": {
+                        "title": "Conditions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ConditionMinimal"
+                        },
+                        "example": [
+                            {
+                                "conditionName": "kelvin_kelvin_condition1",
+                                "parameters": {
+                                    "parameter1": "value1"
+                                }
+                            }
+                        ]
+                    },
+                    "relation": {
+                        "title": "Relation",
+                        "enum": [
+                            "AND",
+                            "OR"
+                        ],
+                        "type": "string",
+                        "example": "AND"
+                    },
+                    "permissions": {
+                        "title": "Permissions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        },
+                        "example": [
+                            {
+                                "appName": "ucsschool-kelvin-rest-api",
+                                "namespaceName": "kelvin-rest-api",
+                                "permissionName": "reset_password"
+                            }
+                        ]
+                    }
+                }
+            },
+            "ConditionDisplayName": {
+                "title": "ConditionDisplayName",
+                "type": "string",
+                "example": "Kelvin Condition 1"
+            },
+            "ConditionGetAllResponse": {
+                "title": "ConditionGetAllResponse",
+                "required": [
+                    "pagination",
+                    "conditions"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "conditions": {
+                        "title": "Conditions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ConditionResponseObject"
+                        }
+                    }
+                }
+            },
+            "ConditionGetResponse": {
+                "title": "ConditionGetResponse",
+                "required": [
+                    "condition"
+                ],
+                "type": "object",
+                "properties": {
+                    "condition": {
+                        "$ref": "#/components/schemas/ConditionResponseObject"
+                    }
+                }
+            },
+            "ConditionMinimal": {
+                "title": "ConditionMinimal",
+                "required": [
+                    "conditionName",
+                    "parameters"
+                ],
+                "type": "object",
+                "properties": {
+                    "conditionName": {
+                        "$ref": "#/components/schemas/ConditionName"
+                    },
+                    "parameters": {
+                        "title": "Parameters",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "example": {
+                            "parameter1": "value1"
+                        }
+                    }
+                },
+                "description": "A condition as it is used in the role-capability-mapping"
+            },
+            "ConditionName": {
+                "title": "ConditionName",
+                "minLength": 8,
+                "pattern": "[a-zA-Z][a-zA-Z0-9_]*",
+                "type": "string",
+                "description": "The name of a condition. This name is used as a function name and has therefore naming requirements (see regex in schema).",
+                "example": "kelvin_kelvin_condition1"
+            },
+            "ConditionPatchRequest": {
+                "title": "ConditionPatchRequest",
+                "type": "object",
+                "properties": {
+                    "conditionDisplayname": {
+                        "$ref": "#/components/schemas/ConditionDisplayName"
+                    },
+                    "regoCode": {
+                        "$ref": "#/components/schemas/RegoCode"
+                    },
+                    "parameterNames": {
+                        "title": "Parameternames",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ParameterName"
+                        }
+                    },
+                    "documentationString": {
+                        "title": "Documentationstring",
+                        "type": "string",
+                        "description": "Optional documentation string for the custom condition."
+                    }
+                }
+            },
+            "ConditionPostRequest": {
+                "title": "ConditionPostRequest",
+                "required": [
+                    "conditionDisplayname",
+                    "regoCode",
+                    "parameterNames"
+                ],
+                "type": "object",
+                "properties": {
+                    "conditionDisplayname": {
+                        "$ref": "#/components/schemas/ConditionDisplayName"
+                    },
+                    "regoCode": {
+                        "$ref": "#/components/schemas/RegoCode"
+                    },
+                    "parameterNames": {
+                        "title": "Parameternames",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ParameterName"
+                        }
+                    },
+                    "documentationString": {
+                        "title": "Documentationstring",
+                        "type": "string",
+                        "description": "Optional documentation string for the custom condition."
+                    }
+                }
+            },
+            "ConditionResponseObject": {
+                "title": "ConditionResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName",
+                    "namespaceName",
+                    "conditionName",
+                    "conditionDisplayname",
+                    "parameterNames"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "conditionName": {
+                        "$ref": "#/components/schemas/ConditionName"
+                    },
+                    "conditionDisplayname": {
+                        "$ref": "#/components/schemas/ConditionDisplayName"
+                    },
+                    "documentationString": {
+                        "title": "Documentationstring",
+                        "type": "string",
+                        "example": "This is the documentation string for this condition."
+                    },
+                    "parameterNames": {
+                        "title": "Parameternames",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ParameterName"
+                        }
+                    }
+                },
+                "description": "A condition without the Rego code, which we don't want to expose"
+            },
+            "ContextDisplayName": {
+                "title": "ContextDisplayName",
+                "type": "string",
+                "example": "School A"
+            },
+            "ContextGetAllResponse": {
+                "title": "ContextGetAllResponse",
+                "required": [
+                    "pagination",
+                    "contexts"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "contexts": {
+                        "title": "Contexts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ContextResponseObject"
+                        }
+                    }
+                }
+            },
+            "ContextIdentifier": {
+                "title": "ContextIdentifier",
+                "pattern": "[a-z][a-z0-9\\-]:[a-z][a-z0-9\\-]:[a-z][a-z0-9\\-]",
+                "type": "string",
+                "description": "context composite string\n\nThe 'context composite string' identifies a specific Context globally by\nincluding appName and namespaceName.",
+                "example": "appName:namespaceName:contextName"
+            },
+            "ContextName": {
+                "title": "ContextName",
+                "type": "string",
+                "example": "school_a"
+            },
+            "ContextPostRequest": {
+                "title": "ContextPostRequest",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "contextName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "contextName": {
+                        "$ref": "#/components/schemas/ContextName"
+                    },
+                    "contextDisplayname": {
+                        "$ref": "#/components/schemas/ContextDisplayName"
+                    }
+                }
+            },
+            "ContextResponse": {
+                "title": "ContextResponse",
+                "required": [
+                    "context"
+                ],
+                "type": "object",
+                "properties": {
+                    "context": {
+                        "$ref": "#/components/schemas/ContextResponseObject"
+                    }
+                }
+            },
+            "ContextResponseObject": {
+                "title": "ContextResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName",
+                    "namespaceName",
+                    "contextName",
+                    "contextDisplayname",
+                    "contextIdentifier"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "contextName": {
+                        "$ref": "#/components/schemas/ContextName"
+                    },
+                    "contextDisplayname": {
+                        "$ref": "#/components/schemas/ContextDisplayName"
+                    },
+                    "contextIdentifier": {
+                        "$ref": "#/components/schemas/ContextIdentifier"
+                    }
+                }
+            },
+            "CustomEndpointMinimal": {
+                "title": "CustomEndpointMinimal",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "endpointName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "endpointName": {
+                        "$ref": "#/components/schemas/CustomEndpointName"
+                    }
+                }
+            },
+            "CustomEndpointName": {
+                "title": "CustomEndpointName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9\\-]*",
+                "type": "string",
+                "description": "Name of a namespace",
+                "example": "my-custom-endpoint"
+            },
+            "CustomEndpointPatchRequest": {
+                "title": "CustomEndpointPatchRequest",
+                "required": [
+                    "regoCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "regoCode": {
+                        "$ref": "#/components/schemas/RegoCode"
+                    }
+                }
+            },
+            "CustomEndpointPostRequest": {
+                "title": "CustomEndpointPostRequest",
+                "required": [
+                    "customEndpoint"
+                ],
+                "type": "object",
+                "properties": {
+                    "customEndpoint": {
+                        "$ref": "#/components/schemas/CustomEndpointMinimal"
+                    }
+                }
+            },
+            "CustomEndpointResponse": {
+                "title": "CustomEndpointResponse",
+                "required": [
+                    "customEndpoint"
+                ],
+                "type": "object",
+                "properties": {
+                    "customEndpoint": {
+                        "$ref": "#/components/schemas/CustomEndpointMinimal"
+                    }
+                }
+            },
+            "GenericError": {
+                "title": "GenericError",
+                "required": [
+                    "detail"
+                ],
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "string"
+                    }
+                }
+            },
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "Namespace": {
+                "title": "Namespace",
+                "required": [
+                    "appName",
+                    "namespaceName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "namespaceDisplayname": {
+                        "$ref": "#/components/schemas/NamespaceDisplayname"
+                    }
+                },
+                "description": "A distinct namespace related to a specific application"
+            },
+            "NamespaceDisplayname": {
+                "title": "NamespaceDisplayname",
+                "minLength": 1,
+                "type": "string",
+                "description": "User-friendly display name",
+                "example": "UCS@school Kelvin REST API"
+            },
+            "NamespaceName": {
+                "title": "NamespaceName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9\\-]*",
+                "type": "string",
+                "description": "Name of a namespace",
+                "example": "kelvin-rest-api"
+            },
+            "NamespacePatchResponse": {
+                "title": "NamespacePatchResponse",
+                "required": [
+                    "namespace"
+                ],
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/components/schemas/NamespaceResponseObject"
+                    }
+                }
+            },
+            "NamespacePostResponse": {
+                "title": "NamespacePostResponse",
+                "required": [
+                    "namespace"
+                ],
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/components/schemas/NamespaceResponseObject"
+                    }
+                }
+            },
+            "NamespaceResponseObject": {
+                "title": "NamespaceResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName",
+                    "namespaceName"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "namespaceDisplayname": {
+                        "$ref": "#/components/schemas/NamespaceDisplayname"
+                    }
+                },
+                "description": "A distinct namespace related to a specific application"
+            },
+            "NamespacesGetAllResponse": {
+                "title": "NamespacesGetAllResponse",
+                "required": [
+                    "pagination",
+                    "namespaces"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "namespaces": {
+                        "title": "Namespaces",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/NamespaceResponseObject"
+                        }
+                    }
+                }
+            },
+            "NamespacesGetResponse": {
+                "title": "NamespacesGetResponse",
+                "required": [
+                    "namespace"
+                ],
+                "type": "object",
+                "properties": {
+                    "namespace": {
+                        "$ref": "#/components/schemas/NamespaceResponseObject"
+                    }
+                }
+            },
+            "NamespacesPatchRequest": {
+                "title": "NamespacesPatchRequest",
+                "type": "object",
+                "properties": {
+                    "namespace_displayname": {
+                        "$ref": "#/components/schemas/NamespaceDisplayname"
+                    }
+                }
+            },
+            "NamespacesPostRequest": {
+                "title": "NamespacesPostRequest",
+                "required": [
+                    "appName",
+                    "namespaceName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "namespaceDisplayname": {
+                        "$ref": "#/components/schemas/NamespaceDisplayname"
+                    }
+                }
+            },
+            "PaginationMetaData": {
+                "title": "PaginationMetaData",
+                "required": [
+                    "offset",
+                    "limit",
+                    "totalCount"
+                ],
+                "type": "object",
+                "properties": {
+                    "offset": {
+                        "title": "Offset",
+                        "type": "integer"
+                    },
+                    "limit": {
+                        "title": "Limit",
+                        "type": "integer"
+                    },
+                    "totalCount": {
+                        "title": "Totalcount",
+                        "type": "integer"
+                    }
+                }
+            },
+            "ParameterName": {
+                "title": "ParameterName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9_]*",
+                "type": "string",
+                "description": "Name of an application",
+                "example": "roleName"
+            },
+            "Permission": {
+                "title": "Permission",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "permissionName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionName": {
+                        "$ref": "#/components/schemas/PermissionName"
+                    }
+                }
+            },
+            "PermissionName": {
+                "title": "PermissionName",
+                "type": "string",
+                "example": "reset_password"
+            },
+            "PermissionPostRequest": {
+                "title": "PermissionPostRequest",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "permissionName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionName": {
+                        "$ref": "#/components/schemas/PermissionName"
+                    }
+                }
+            },
+            "PermissionPostResponse": {
+                "title": "PermissionPostResponse",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "permissionName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionName": {
+                        "$ref": "#/components/schemas/PermissionName"
+                    }
+                }
+            },
+            "PermissionResponseObject": {
+                "title": "PermissionResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName",
+                    "namespaceName",
+                    "permissionName"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionName": {
+                        "$ref": "#/components/schemas/PermissionName"
+                    }
+                }
+            },
+            "PermissionsGetAllResponse": {
+                "title": "PermissionsGetAllResponse",
+                "required": [
+                    "pagination",
+                    "permissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "permissions": {
+                        "title": "Permissions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionResponseObject"
+                        }
+                    }
+                }
+            },
+            "PermissionsGetResponse": {
+                "title": "PermissionsGetResponse",
+                "required": [
+                    "permission"
+                ],
+                "type": "object",
+                "properties": {
+                    "permission": {
+                        "$ref": "#/components/schemas/PermissionResponseObject"
+                    }
+                }
+            },
+            "RegoCode": {
+                "title": "RegoCode",
+                "type": "string",
+                "description": "Base64 encoded rego code",
+                "format": "binary",
+                "example": "Y2FwX2NvbmRpdGlvbigidGFyZ2V0SGFzUm9sZSIsIGNvbmRpdGlvbl9kYXRhKSBpZiB7Cgljb25kaXRpb25fZGF0YS5wYXJhbWV0ZXJzLnJvbGUgaW4ge2Uucm9sZSB8CgkJZSA6PSBjb25kaXRpb25fZGF0YS50YXJnZXRfb2xkLnJvbGVzW19dCgl9Cn0K"
+            },
+            "Role": {
+                "title": "Role",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "roleName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "roleName": {
+                        "$ref": "#/components/schemas/RoleName"
+                    },
+                    "roleDisplayname": {
+                        "$ref": "#/components/schemas/RoleDisplayName"
+                    }
+                },
+                "description": "Minimal role object for use with requests (e.g., role-capability-mapping)"
+            },
+            "RoleCapabilityMapping": {
+                "title": "RoleCapabilityMapping",
+                "required": [
+                    "mappings"
+                ],
+                "type": "object",
+                "properties": {
+                    "mappings": {
+                        "title": "Mappings",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Capability"
+                        },
+                        "example": [
+                            {
+                                "role": {
+                                    "appName": "ucsschool-kelvin-rest-api",
+                                    "namespaceName": "kelvin-rest-api",
+                                    "roleName": "kelvin_admin",
+                                    "roleDisplayname": "Kelvin Administrator"
+                                },
+                                "conditions": [
+                                    {
+                                        "conditionName": "kelvin_kelvin_condition1",
+                                        "parameters": {
+                                            "parameter1": "value1"
+                                        }
+                                    }
+                                ],
+                                "relation": "AND",
+                                "permissions": [
+                                    {
+                                        "appName": "ucsschool-kelvin-rest-api",
+                                        "namespaceName": "kelvin-rest-api",
+                                        "permissionName": "reset_password"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            "RoleCapabilityMappingNamespaced": {
+                "title": "RoleCapabilityMappingNamespaced",
+                "required": [
+                    "mappings",
+                    "namespace"
+                ],
+                "type": "object",
+                "properties": {
+                    "mappings": {
+                        "title": "Mappings",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Capability"
+                        },
+                        "example": [
+                            {
+                                "role": {
+                                    "appName": "ucsschool-kelvin-rest-api",
+                                    "namespaceName": "kelvin-rest-api",
+                                    "roleName": "kelvin_admin",
+                                    "roleDisplayname": "Kelvin Administrator"
+                                },
+                                "conditions": [
+                                    {
+                                        "conditionName": "kelvin_kelvin_condition1",
+                                        "parameters": {
+                                            "parameter1": "value1"
+                                        }
+                                    }
+                                ],
+                                "relation": "AND",
+                                "permissions": [
+                                    {
+                                        "appName": "ucsschool-kelvin-rest-api",
+                                        "namespaceName": "kelvin-rest-api",
+                                        "permissionName": "reset_password"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "namespace": {
+                        "$ref": "#/components/schemas/Namespace"
+                    }
+                }
+            },
+            "RoleDisplayName": {
+                "title": "RoleDisplayName",
+                "type": "string",
+                "example": "Kelvin Administrator"
+            },
+            "RoleIdentifier": {
+                "title": "RoleIdentifier",
+                "pattern": "[a-z][a-z0-9\\-]:[a-z][a-z0-9\\-]:[a-z][a-z0-9\\-]",
+                "type": "string",
+                "description": "role composite string\n\nThe 'role composite string' identifies a specific Role globally by including\nappName and namespaceName.",
+                "example": "appName:namespaceName:roleName"
+            },
+            "RoleName": {
+                "title": "RoleName",
+                "type": "string",
+                "example": "kelvin_admin"
+            },
+            "RoleResponseObject": {
+                "title": "RoleResponseObject",
+                "required": [
+                    "resourceUrl",
+                    "appName",
+                    "namespaceName",
+                    "roleName",
+                    "roleIdentifier"
+                ],
+                "type": "object",
+                "properties": {
+                    "resourceUrl": {
+                        "title": "Resourceurl",
+                        "type": "string",
+                        "description": "URL to the Guardian Object",
+                        "example": "https://fqdn/resource_url"
+                    },
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "roleName": {
+                        "$ref": "#/components/schemas/RoleName"
+                    },
+                    "roleDisplayname": {
+                        "$ref": "#/components/schemas/RoleDisplayName"
+                    },
+                    "roleIdentifier": {
+                        "$ref": "#/components/schemas/RoleIdentifier"
+                    }
+                },
+                "description": "Minimal role object for use with requests (e.g., role-capability-mapping)"
+            },
+            "RolesGetAllResponse": {
+                "title": "RolesGetAllResponse",
+                "required": [
+                    "pagination",
+                    "roles"
+                ],
+                "type": "object",
+                "properties": {
+                    "pagination": {
+                        "$ref": "#/components/schemas/PaginationMetaData"
+                    },
+                    "roles": {
+                        "title": "Roles",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RoleResponseObject"
+                        }
+                    }
+                }
+            },
+            "RolesPatchRequest": {
+                "title": "RolesPatchRequest",
+                "type": "object",
+                "properties": {
+                    "roleDisplayname": {
+                        "$ref": "#/components/schemas/RoleDisplayName"
+                    }
+                }
+            },
+            "RolesPostRequest": {
+                "title": "RolesPostRequest",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "roleName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "roleName": {
+                        "$ref": "#/components/schemas/RoleName"
+                    },
+                    "roleDisplayname": {
+                        "$ref": "#/components/schemas/RoleDisplayName"
+                    }
+                }
+            },
+            "RolesResponse": {
+                "title": "RolesResponse",
+                "required": [
+                    "role"
+                ],
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "$ref": "#/components/schemas/RoleResponseObject"
+                    }
+                }
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "HTTPBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

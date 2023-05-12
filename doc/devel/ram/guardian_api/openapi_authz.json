@@ -1,0 +1,635 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Guardian Authorization REST API",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/permissions/check": {
+            "post": {
+                "tags": [
+                    "Authorization"
+                ],
+                "summary": "Check Permissions",
+                "description": "Check one or more permissions for an actor",
+                "operationId": "check_permissions",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthzPermissionsCheckPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthzPermissionsCheckPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions": {
+            "post": {
+                "tags": [
+                    "Authorization"
+                ],
+                "summary": "Get Permissions",
+                "operationId": "get_permissions",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthzPermissionsPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthzPermissionsPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/permissions/check/with-lookup": {
+            "post": {
+                "tags": [
+                    "Authorization"
+                ],
+                "summary": "Get Permissions With Information Retrieval",
+                "operationId": "get_permissions_with_information_retrieval",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthzPermissionsPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthzPermissionsCheckPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions/with-lookup": {
+            "post": {
+                "tags": [
+                    "Authorization"
+                ],
+                "summary": "Check Permissions With Information Retrieval",
+                "description": "Check permissions",
+                "operationId": "check_permissions_with_information_retrieval",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthzPermissionsPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthzPermissionsPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/permissions/custom/{app_name}/{namespace_name}/{endpoint_name}": {
+            "post": {
+                "tags": [
+                    "Authorization"
+                ],
+                "summary": "Custom Permissions Endpoint",
+                "operationId": "custom_permissions_endpoint",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "App Name",
+                            "type": "string"
+                        },
+                        "name": "app_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Namespace Name",
+                            "type": "string"
+                        },
+                        "name": "namespace_name",
+                        "in": "path"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Endpoint Name",
+                            "type": "string"
+                        },
+                        "name": "endpoint_name",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GuardianBaseModel"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseModel"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Actor": {
+                "title": "Actor",
+                "required": [
+                    "id",
+                    "attributes"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/ObjectIdentifier"
+                    },
+                    "attributes": {
+                        "title": "Attributes",
+                        "type": "object"
+                    }
+                },
+                "description": "Representation of an actor. An actor must contain a roles attribute."
+            },
+            "AppName": {
+                "title": "AppName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9\\-]*",
+                "type": "string",
+                "description": "Name of an application",
+                "example": "ucsschool-kelvin-rest-api"
+            },
+            "AuthzPermissionsCheckPostRequest": {
+                "title": "AuthzPermissionsCheckPostRequest",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "actor",
+                    "permissionsToCheck",
+                    "extraRequestData"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "actor": {
+                        "$ref": "#/components/schemas/Actor"
+                    },
+                    "targets": {
+                        "title": "Targets",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Target"
+                        }
+                    },
+                    "permissionsToCheck": {
+                        "title": "Permissionstocheck",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    },
+                    "contexts": {
+                        "title": "Contexts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Context"
+                        }
+                    },
+                    "extraRequestData": {
+                        "title": "Extrarequestdata",
+                        "type": "object"
+                    }
+                }
+            },
+            "AuthzPermissionsCheckPostResponse": {
+                "title": "AuthzPermissionsCheckPostResponse",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "permissionCheckResults",
+                    "actorHasAllPermissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionCheckResults": {
+                        "title": "Permissioncheckresults",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionCheckResult"
+                        }
+                    },
+                    "actorHasAllPermissions": {
+                        "title": "Actorhasallpermissions",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AuthzPermissionsPostRequest": {
+                "title": "AuthzPermissionsPostRequest",
+                "required": [
+                    "actor"
+                ],
+                "type": "object",
+                "properties": {
+                    "namespaces": {
+                        "title": "Namespaces",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/NamespaceMinimal"
+                        }
+                    },
+                    "actor": {
+                        "$ref": "#/components/schemas/Actor"
+                    },
+                    "targets": {
+                        "title": "Targets",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Target"
+                        }
+                    },
+                    "contexts": {
+                        "title": "Contexts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Context"
+                        }
+                    }
+                }
+            },
+            "AuthzPermissionsPostResponse": {
+                "title": "AuthzPermissionsPostResponse",
+                "required": [
+                    "actorId",
+                    "generalPermissions",
+                    "targetPermissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "actorId": {
+                        "$ref": "#/components/schemas/ObjectIdentifier"
+                    },
+                    "generalPermissions": {
+                        "title": "Generalpermissions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    },
+                    "targetPermissions": {
+                        "title": "Targetpermissions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PermissionResult"
+                        }
+                    }
+                }
+            },
+            "BaseModel": {
+                "title": "BaseModel",
+                "type": "object",
+                "properties": {}
+            },
+            "Context": {
+                "title": "Context",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "contextName",
+                    "contextDisplayname"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "contextName": {
+                        "$ref": "#/components/schemas/ContextName"
+                    },
+                    "contextDisplayname": {
+                        "$ref": "#/components/schemas/ContextDisplayName"
+                    }
+                }
+            },
+            "ContextDisplayName": {
+                "title": "ContextDisplayName",
+                "type": "string",
+                "example": "School A"
+            },
+            "ContextName": {
+                "title": "ContextName",
+                "type": "string",
+                "example": "school_a"
+            },
+            "GuardianBaseModel": {
+                "title": "GuardianBaseModel",
+                "type": "object",
+                "properties": {}
+            },
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "NamespaceMinimal": {
+                "title": "NamespaceMinimal",
+                "required": [
+                    "appName",
+                    "namespaceName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    }
+                },
+                "description": "A minimal namespace object for requests (e.g. role-capability-mapping)"
+            },
+            "NamespaceName": {
+                "title": "NamespaceName",
+                "minLength": 1,
+                "pattern": "[a-z][a-z0-9\\-]*",
+                "type": "string",
+                "description": "Name of a namespace",
+                "example": "kelvin-rest-api"
+            },
+            "ObjectIdentifier": {
+                "title": "ObjectIdentifier",
+                "minLength": 1,
+                "type": "string",
+                "description": "Identifies an object in an authz check",
+                "example": "6f8be20a-d463-454d-8ccf-bf6227437473"
+            },
+            "Permission": {
+                "title": "Permission",
+                "required": [
+                    "appName",
+                    "namespaceName",
+                    "permissionName"
+                ],
+                "type": "object",
+                "properties": {
+                    "appName": {
+                        "$ref": "#/components/schemas/AppName"
+                    },
+                    "namespaceName": {
+                        "$ref": "#/components/schemas/NamespaceName"
+                    },
+                    "permissionName": {
+                        "$ref": "#/components/schemas/PermissionName"
+                    }
+                }
+            },
+            "PermissionCheckResult": {
+                "title": "PermissionCheckResult",
+                "required": [
+                    "targetId",
+                    "actorHasPermissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "targetId": {
+                        "title": "Targetid",
+                        "type": "string"
+                    },
+                    "actorHasPermissions": {
+                        "title": "Actorhaspermissions",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PermissionName": {
+                "title": "PermissionName",
+                "type": "string",
+                "example": "reset_password"
+            },
+            "PermissionResult": {
+                "title": "PermissionResult",
+                "required": [
+                    "targetId",
+                    "permissions"
+                ],
+                "type": "object",
+                "properties": {
+                    "targetId": {
+                        "$ref": "#/components/schemas/ObjectIdentifier"
+                    },
+                    "permissions": {
+                        "title": "Permissions",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    }
+                },
+                "description": "Represents the answer to the question:\nWhat permissions are available for 'actor' with respect to 'target'"
+            },
+            "Target": {
+                "title": "Target",
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/ObjectIdentifier"
+                    },
+                    "currentState": {
+                        "title": "Currentstate",
+                        "type": "object"
+                    },
+                    "updatedState": {
+                        "title": "Updatedstate",
+                        "type": "object"
+                    }
+                },
+                "description": "A target has a current state and an updated state and field which identify the object"
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "HTTPBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
