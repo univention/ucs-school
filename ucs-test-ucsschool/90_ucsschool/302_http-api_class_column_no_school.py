@@ -51,9 +51,20 @@ class Test(HttpApiImportTester):
         password = uts.random_name() + "§$!*"  # see bug #48137
         username, user_dn = self.schoolenv.create_teacher(self.ou_A.name, password=password)
 
-        self.log.info("------ Creating import security group... ------")
+        # Issue #1031
+        self.log.info("------ Creating identifiable OU for error logging ------")
+        ou_name_302, ou_dn_302 = self.schoolenv.create_ou(
+            ou_name="302_http_api_no_school",
+            name_edudc=self.schoolenv.ucr["hostname"],
+            use_cache=False,
+        )
+
+        self.log.info("------ Creating import security groups... ------")
         self.create_import_security_group(
             ou_dn=self.ou_A.dn, allowed_ou_names=[self.ou_A.name], roles=roles, user_dns=[user_dn]
+        )
+        self.create_import_security_group(
+            ou_dn=ou_dn_302, allowed_ou_names=[ou_name_302], roles=roles, user_dns=[user_dn]
         )
 
         self.log.info("------ Restarting service ucs-school-import-http-api... ------")
@@ -184,11 +195,11 @@ class Test(HttpApiImportTester):
                             )
             self.log.info("*** OK: all school class names are as expected.")
 
-        self.log.info("------ 3/3 with disallowed OU (%r) in the class column ------", self.ou_B.name)
+        self.log.info("------ 3/3 with disallowed OU (%r) in the class column ------", ou_name_302)
 
         self.log.info("------ Creating user information... ------")
         test_user_creator = TestUserCreator(
-            [self.ou_B.name], students=3, teachers=3, staffteachers=2, classes=2, schools=1, email=False
+            [self.ou_A.name], students=3, teachers=3, staffteachers=2, classes=2, schools=1, email=False
         )
         test_user_creator.make_classes()
 
@@ -201,7 +212,7 @@ class Test(HttpApiImportTester):
                 writer = None  # need the field names, will get them with the first line below
                 for row in reader:
                     row["Klassen"] = ",".join(
-                        ["{}-{}".format(self.ou_B.name, kl) for kl in row["Klassen"].split(",")]
+                        ["{}-{}".format(self.ou_A.name, kl) for kl in row["Klassen"].split(",")]
                     )
                     if not writer:
                         writer = DictWriter(fp_out, fieldnames=list(row.keys()), dialect=csv_dialect)
@@ -213,7 +224,7 @@ class Test(HttpApiImportTester):
             self.log.info("------ Starting import through HTTP-API Python client... ------")
             role = random.choice(roles)
             import_job = self.run_http_import_through_python_client(
-                client, tmpfile2.name, self.ou_A.name, role, False, config=self.default_config
+                client, tmpfile2.name, ou_name_302, role, False, config=self.default_config
             )
             self.log.debug("import_job=%r", import_job)
             if import_job.status == "Aborted":
