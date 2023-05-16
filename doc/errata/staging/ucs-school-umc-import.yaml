@@ -6,4 +6,5 @@ src: ucs-school-umc-import
 fix:
 desc: |
  * The coding style has been improved (Bug #55751).
-bug: [55751]
+ * Make columns and lines configurable in log output (Bug #53734).
+bug: [55751, 53734]
