@@ -1,3 +1,10 @@
+ucs-school-selfservice-support (4.0.3) unstable; urgency=medium
+
+  * Bug #55684: Automatic visibility of password
+    change option for new ous
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 30 Mar 2023 07:26:12 +0200
+
 ucs-school-selfservice-support (4.0.2) unstable; urgency=medium
 
   * Bug #52602: change server role terminology

@@ -12,6 +12,7 @@
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.utils import ucr as lib_ucr
+from univention.udm import UDM
 
 ucrv = "umc/self-service/passwordreset/whitelist/groups"
 delimiter = ","
@@ -34,3 +35,8 @@ def test_school_creation():
     lib_ucr.load()
     ucr_value = lib_ucr.get(ucrv, "")
     assert value not in ucr_value
+
+    portals = UDM.machine().version(2).get("portals/entry")
+    entry = next(portals.search("cn=self-service-password-change"), None)
+    assert entry is not None
+    assert all([value not in group for group in entry.props.allowedGroups])
