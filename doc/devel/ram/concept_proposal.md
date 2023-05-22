@@ -516,6 +516,12 @@ Here is a list of some conditions that we want defined in the Guardian (list may
 * `target_has_role`
   * Returns true if target has the specified role, regardless of context.
   * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
+* `target_does_not_have_role`
+  * Returns true if the target does not have the specified role, regardless of context.
+  * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
+* `actor_does_not_have_role`
+  * Returns true if the actor does not have an additional specified role, regardless of context.
+  * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
 * `target_has_context`
   * Returns true if target has any of the specified contexts appended to any of its roles (see **Context** for definition of a match).
   * Takes 1 argument from `extra_request_data` in the request, "contexts".
@@ -537,6 +543,12 @@ Here is a list of some conditions that we want defined in the Guardian (list may
   * Takes 2 arguments from `parameters`, "target_field" and "actor_field".
 * `target_has_role_in_same_context`
   * Returns true if the target has the role specified by the `parameters` in the same context that the actor has the role specified by the role-capability-mapping (see **Context** for definition of a match).
+  * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
+* `target_does_not_have_role_in_same_context`
+  * Returns true if the target does not have the role specified by the `parameters` in the same context that the actor has the role specified by the role-capability-mapping (see **Context** for definition of a match).
+  * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
+* `actor_does_not_have_role_in_same_context`
+  * Returns true if the actor does not have an additional specified role in the same context as the target (see **Context** for definition of a match).
   * Takes 1 argument from `parameters`, "role" (role includes app name and namespace).
 
   Example pseudocode:
@@ -562,14 +574,15 @@ Some helper functions we know that we need (list may be expanded later):
   * Returns a list of all permissions that the actor has, given the target.
   * Takes 2 additional parameters, the actor and the target.
 
-##### B3: Policies for roles are defined in an additive way
+##### B3: Policies for roles are only implemented for ALLOW, not DENY
 
 When evaluating the Rego code, any matching policy is sufficient to return `true`.
-Roles cannot remove capabilities, only add them.
+We do not evaluate any subtractive DENY rules in the first release of Guardian.
 
 Example: If UserA is both an administrator and a staff, then UserA gets the highest privilege (e.g., administrator).
 
-*NOTE:* The Guardian is not intended to be a complete replacement for ACLs; some ACLs will still be necessary (e.g., to provide DENY capabilities).
+*NOTE:* We may consider implementing DENY rules in a future release; however, for the first release of the Guardian, please use one of the `does_not_have_role` conditions to simulate DENY rules.
+The first release of the Guardian is not intended to completely replace ACLs; some ACLs will still be necessary.
 
 ##### B4: Conditions can have additional parameters in a role-capability-mapping
 
@@ -753,8 +766,8 @@ We use namespacing primarily to ensure that conditions from namespaces don't cla
 
 The response includes whether the condition was created or updated.
 
-We strongly suggest that, consistent with **B3**, custom conditions should be compatible with an additive permissions system.
-For example, avoid creating a `user_doesnt_have_role(teacher)` conditions that could remove permissions from an admin user if they're also a teacher.
+We strongly suggest that custom conditions should be compatible with an additive permissions system.
+For example, avoid creating `actor_doesnt_have_attribute` conditions that could remove permissions from an admin user if they have a flag set; just remove the admin role from the user.
 
 *NOTE:* Outside of validating that custom conditions are valid Rego code, any other safeguards or validation for custom conditions are outside the scope of the first Guardian release.
 
