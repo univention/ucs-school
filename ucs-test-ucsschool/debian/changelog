@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.133) unstable; urgency=medium
+
+  * Bug #55864: test the "Password change" tile configuration.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Tue, 23 May 2023 16:12:57 +0200
+
 ucs-test-ucsschool (7.3.132) unstable; urgency=medium
 
   * Bug #53734: test columns and lines configuration in import summary.
