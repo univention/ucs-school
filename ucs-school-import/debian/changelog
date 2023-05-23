@@ -1,3 +1,9 @@
+ucs-school-import (18.0.32) unstable; urgency=medium
+
+  * Bug #56041: support setting multiple nested settings for the importer.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Fri, 12 May 2023 11:50:38 +0200
+
 ucs-school-import (18.0.31) unstable; urgency=medium
 
   * Bug #53734: make columns and lines configurable in log output
