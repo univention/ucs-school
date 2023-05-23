@@ -33,10 +33,12 @@
 
 import csv
 import os
+import uuid
 from datetime import datetime
 from io import StringIO
 
 from ldap.dn import explode_rdn
+from six.moves.urllib_parse import quote
 
 from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import SchoolBaseModule
@@ -68,7 +70,7 @@ class Instance(SchoolBaseModule):
     def csv_get(self, request):
         classlist = request.options["classlist"]
         path = "/usr/share/ucs-school-umc-lists/classlists/"
-        filename = os.path.join(path, classlist)
+        filename = os.path.join(path, os.path.basename(classlist))
         try:
             with open(filename, "rb") as fd:
                 self.finished(request.id, fd.read(), mimetype="text/csv")
@@ -117,14 +119,14 @@ class Instance(SchoolBaseModule):
             rows.append(row)
 
         classlistname = explode_rdn(group, True)[0]
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-        filename = "%s_%s.csv" % (classlistname, timestamp)
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
+        filename = "%s_%s-%s.csv" % (classlistname.replace("/", "_"), timestamp, uuid.uuid4())
         path = os.path.join("/usr/share/ucs-school-umc-lists/classlists/", filename)
         with open(path, "w") as fd:
             os.chmod(path, 0o600)
             fd.write(write_classlist_csv(fieldnames, rows, separator))
 
-        url = "/univention/command/schoollists/csvlistget?classlist=%s" % (filename,)
+        url = "/univention/command/schoollists/csvlistget?classlist=%s" % (quote(filename),)
         self.finished(
             request.id,
             {
