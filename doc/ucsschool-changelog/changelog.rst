@@ -8,6 +8,50 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-05-24:
+
+Released on 2023-05-24
+======================
+
+Source package *ucs-school-umc-users* in version ``16.0.7A~5.0.0.202304250918``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Typos in name field description for German have been fixed (:uv:bug:`55773`).
+
+Source package *ucs-school-umc-printermoderation* in version ``17.1.3A~5.0.0.202304250916``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Typos in name field description for German have been fixed (:uv:bug:`55773`).
+
+Source package *ucs-school-umc-lists* in version ``3.0.8``:
+
+* Class lists can be downloaded in Firefox again while the module is opened in
+  an iframe (UCS portal) (:uv:bug:`55102`).
+
+Source package *ucs-school-umc-groups* in version ``10.0.9A~5.0.0.202305111046``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Fixed a problem where the modal to add "Members", "Teachers" and "Classes" in
+  the "Administrate workgroups", "Administrate teachers" and "Administrate
+  classes" UCS@school UMC modules respectively would show objects of a
+  different school than selected (:uv:bug:`55990`).
+
+Source package *ucs-school-lib* in version ``13.0.36A~5.0.0.202305031536``:
+
+* Validate usernames to avoid Windows reserved names (:uv:bug:`53519`).
+
+* Removing admin from a school removes them from the correct admin group
+  (:uv:bug:`55986`).
+
+Source package *ucs-school-import* in version ``18.0.32``:
+
+* Support setting multiple nested settings for the importer (:uv:bug:`56041`).
+
+* Make columns and lines configurable in log output (:uv:bug:`53734`).
+
 .. _changelog-ucsschool-2023-03-27:
 
 Released on 2023-03-27
