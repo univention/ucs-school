@@ -60,8 +60,8 @@ msgid ""
 "Class lists can be downloaded in Firefox again while the module is opened"
 " in an iframe (UCS portal) (:uv:bug:`55102`)."
 msgstr ""
-"Klassenlisten können in Firefox wieder heruntergeladen werden, während das Modul geöffnet ist"
-" in einem iframe (UCS-Portal) (:uv:bug:`55102`)."
+"Klassenlisten können in Firefox wieder heruntergeladen werden, während das"
+" Modul in einem iframe geöffnet ist (UCS-Portal) (:uv:bug:`55102`)."
 
 #: ../../changelog.rst:33
 msgid ""
@@ -81,7 +81,7 @@ msgstr ""
 "Es wurde ein Problem behoben, bei dem das Modal zum Hinzufügen von "
 "\"Mitgliedern\", \"Lehrern\" und \"Klassen\" in den UMC-Modulen "
 "\"Arbeitsgruppen verwalten\", \"Lehrer verwalten\" und \"Klassen verwalten\" "
-"von UCS@school Objekte einer anderen als der ausgewählten Schule anzeigt "
+"von UCS@school Objekten eine andere als der ausgewählten Schule anzeigt "
 "wurde (:uv:bug:`55990`)."
 
 #: ../../changelog.rst:42
@@ -93,7 +93,7 @@ msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.36A~5.0.0.202305031536``:"
 #: ../../changelog.rst:44
 msgid "Validate usernames to avoid Windows reserved names (:uv:bug:`53519`)."
 msgstr ""
-"Nutzernamen validieren, um reservierte Windows-Namen zu vermeiden "
+"Nutzernamen werden validiert um reservierte Windows-Namen zu vermeiden "
 "(:uv:bug:`53519`)."
 
 #: ../../changelog.rst:46
@@ -113,7 +113,7 @@ msgid ""
 "Support setting multiple nested settings for the importer "
 "(:uv:bug:`56041`)."
 msgstr ""
-"Unterstützung der Einstellung mehrerer verschachtelter Einstellungen für den "
+"Unterstützung verschachtelter Einstellungen für den "
 "Importer (:uv:bug:`56041`)."
 
 #: ../../changelog.rst:53
