@@ -6,4 +6,5 @@ src: ucs-school-import
 fix: 18.0.32
 desc: |
  * Support setting multiple nested settings for the importer (Bug #56041).
-bug: [56041]
+ * Make columns and lines configurable in log output (Bug #53734).
+bug: [56041, 53734]
