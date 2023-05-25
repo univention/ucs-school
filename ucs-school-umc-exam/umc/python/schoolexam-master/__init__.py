@@ -340,7 +340,11 @@ class Instance(SchoolBaseModule):
                     userSid = univention.admin.allocators.requestUserSid(
                         ldap_admin_write, ldap_position, uidNum
                     )
-                except (ldap.LDAPError, univention.admin.uexceptions.ldapError):
+                except (
+                    ldap.LDAPError,
+                    univention.admin.uexceptions.ldapError,
+                    univention.admin.uexceptions.noLock,
+                ):
                     pass
             if not userSid or userSid == "None":
                 num = uidNum

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.135) unstable; urgency=medium
+
+  * Bug #54848: Add test for the  schoolexam-master/create-exam-user endpoint
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 24 May 2023 13:08:14 +0200
+
 ucs-test-ucsschool (7.3.134) unstable; urgency=medium
 
   * Bug #56041: test multiple nested arguments in the importer.
