@@ -1,3 +1,10 @@
+ucs-school-lib (13.0.37) unstable; urgency=medium
+
+  * Bug #54228: add a UCR variable `ucsschool/stop_notifier` to disable
+    stopping the notifier during imports.
+
+ -- Carlos García-Mauriño <garcia-maurino.extern@univention.de>  Mon, 29 May 2023 15:29:11 +0200
+
 ucs-school-lib (13.0.36) unstable; urgency=medium
 
   * Bug #55986: fix admin removal from wrong group during school import
