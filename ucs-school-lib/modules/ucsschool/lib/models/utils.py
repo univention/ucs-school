@@ -84,7 +84,9 @@ class ValidationDataFilter(logging.Filter):
         return record.name != "UCSSchool-Validation"
 
 
-def _load_logging_config(path=LOGGING_CONFIG_PATH):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
+def _load_logging_config(
+    path=LOGGING_CONFIG_PATH,
+):  # type: (Optional[str]) -> Dict[str, Dict[str, str]]
     with open(path) as fp:
         config = ruamel.yaml.load(fp, ruamel.yaml.RoundTripLoader)
     return config
@@ -142,7 +144,9 @@ def mkdir_p(dir_name, user, group, mode):
         os.chown(dir_name, uid, gid)
 
 
-def _remove_password_from_log_record(record):  # type: (logging.LogRecord) -> logging.LogRecord
+def _remove_password_from_log_record(
+    record,
+):  # type: (logging.LogRecord) -> logging.LogRecord
     def replace_password(obj, attr):
         ori = getattr(obj, attr)
         if isinstance(ori, collections.Mapping) and isinstance(ori.get("password"), string_types):
@@ -468,7 +472,15 @@ def get_stream_handler(level, stream=None, fmt=None, datefmt=None, fmt_cls=None)
 
 
 def get_file_handler(
-    level, filename, fmt=None, datefmt=None, uid=None, gid=None, mode=None, backupCount=10000, when="D"
+    level,
+    filename,
+    fmt=None,
+    datefmt=None,
+    uid=None,
+    gid=None,
+    mode=None,
+    backupCount=10000,
+    when="D",
 ):
     # type: (Union[int, str], str, Optional[str], Optional[str], Optional[int], Optional[int], Optional[int], Optional[int],Optional[str]) -> logging.Handler  # noqa: E501
     """
@@ -665,6 +677,11 @@ def stopped_notifier(strict=True):  # type: (Optional[bool]) -> None
     """
     service_name = "univention-directory-notifier"
     logger = logging.getLogger(__name__)
+
+    if not ucr.is_true("ucsschool/stop_notifier", True):
+        logger.info("UCR variable ucsschool/stop_notifier is set to False, not stopping the notifier.")
+        yield
+        return
 
     def _run(args):
         returncode, stdout, stderr = exec_cmd(args, log=True)

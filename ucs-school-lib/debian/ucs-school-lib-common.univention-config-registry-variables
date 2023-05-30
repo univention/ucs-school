@@ -15,3 +15,10 @@ Description[de]=Diese Variable steuert, ob beim Validieren von UCS@school Objekt
 Description[en]=This variable controls whether errors from the validation are written to the log files when validating UCS@school objects. This affects both the logfile that can only be read by root and the logfile of the calling module. (Standard: yes)
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/stop_notifier]
+Description[de] = Ob der Melder bei Vorgängen, wie z. B. Importen, die zu Konflikten mit bidirektionalen Synchronisationskonnektoren führen können, angehalten werden soll. (Standard: yes)
+Description[en] = Whether to stop the notifier during operations, such as imports, that might create conflicts with two-way synchronization connectors. (Default: yes)
+Type=bool
+Categories=ucsschool-base
+Default=yes
