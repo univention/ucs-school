@@ -255,6 +255,27 @@ und das Einschalten einer Option zu Schuladministratoren umgewandelt werden.
 * Im |UCSUMC|-Modul *Benutzer* muss außerdem im Reiter *Optionen* die Option
   *UCS@school-Administrator* eingeschaltet werden.
 
+.. warning::
+
+   Es ist nicht möglich, ein Benutzerkonto einzurichten, das mit der Rolle
+   *Schuladministrator* an einer Schule und mit der Rolle *Lehrer* an einer
+   anderen Schule agiert.
+
+   Ein Benutzerkonto mit der Option *UCS@school-Administrator* verfügt
+   standardmäßig über einige Schuladministrator-Berechtigungen für alle Schulen,
+   an denen es Mitglied ist. Das gilt auch, wenn das Benutzerkonto kein Mitglied
+   der Gruppe :samp:`admins-{OU}` für die jeweilige Schule ist. Die
+   Gruppenmitgliedschaft des Benutzerkontos in :samp:`admins-{OU}` fügt für die
+   jeweilige Schule weitere Schuladministrator-Berechtigungen hinzu.
+
+   Ein Benutzerkonto mit aktivierter *UCS@school-Administrator*-Option muss für
+   alle Schulen, in denen das Benutzerkonto Mitglied ist, auch zu den Gruppen
+   :samp:`admins-{OU}` hinzugefügt werden. Auf diese Weise finden
+   Schuladministratoren an allen Schulen das gleiche, konsistente Verhalten für
+   administrative Tätigkeiten im Rahmen ihrer Schuladministrator-Berechtigungen
+   vor. Systemadministratoren erkennen besser, welche Benutzerkonten die
+   Schuladministrator-Berechtigung haben.
+
 Fungiert das Benutzerkonto nicht mehr als Lehrer, sondern nur noch als
 Schuladministrator, so kann im Reiter *Optionen* die Option *UCS@school-Lehrer*
 deaktiviert und dem Benutzer die Gruppe :samp:`lehrer-{OU}` entzogen werden.
