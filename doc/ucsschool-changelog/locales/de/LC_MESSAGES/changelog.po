@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-24 16:06+0000\n"
+"POT-Creation-Date: 2023-06-07 06:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -19,10 +19,26 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2023-06-07"
+msgstr "Veröffentlicht am 7. Juni 2023"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-umc-exam* in version ``10.0.9``:"
+msgstr "Quellpaket *ucs-school-umc-lists* in Version ``10.0.9``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"Fix: The process of creating exam users could fail due to an unsuccessful"
+" SID acquisition (:uv:bug:`54848`)."
+msgstr "Fix: Der Prozess der Erstellung von Klassenarbeitsbenutzern konnte"
+" aufgrund einer fehlgeschlagenen ``SID acquisition`` fehlschlagen"
+" (:uv:bug:`54848`)."
+
+#: ../../changelog.rst:24
 msgid "Released on 2023-05-24"
 msgstr "Veröffentlicht am 24. Mai 2023"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:26
 msgid ""
 "Source package *ucs-school-umc-users* in version "
 "``16.0.7A~5.0.0.202304250918``:"
@@ -30,20 +46,20 @@ msgstr ""
 "Quellpaket *ucs-school-umc-users* in Version "
 "``16.0.7A~5.0.0.202304250918``:"
 
-#: ../../changelog.rst:18 ../../changelog.rst:24 ../../changelog.rst:35
-#: ../../changelog.rst:62 ../../changelog.rst:68 ../../changelog.rst:81
+#: ../../changelog.rst:28 ../../changelog.rst:34 ../../changelog.rst:45
+#: ../../changelog.rst:72 ../../changelog.rst:78 ../../changelog.rst:91
 msgid "The coding style has been improved (:uv:bug:`55751`)."
 msgstr "Der Formatierungsstil wurde verbessert (:uv:bug:`55751`)."
 
-#: ../../changelog.rst:20 ../../changelog.rst:26
+#: ../../changelog.rst:30 ../../changelog.rst:36
 msgid ""
 "Typos in name field description for German have been fixed "
 "(:uv:bug:`55773`)."
 msgstr ""
-"Tippfehler in der Beschreibung des Namensfeldes für Deutsch wurden behoben "
-"(:uv:bug:`55773`)."
+"Tippfehler in der Beschreibung des Namensfeldes für Deutsch wurden "
+"behoben (:uv:bug:`55773`)."
 
-#: ../../changelog.rst:22
+#: ../../changelog.rst:32
 msgid ""
 "Source package *ucs-school-umc-printermoderation* in version "
 "``17.1.3A~5.0.0.202304250916``:"
@@ -51,19 +67,19 @@ msgstr ""
 "Quellpaket *ucs-school-printermoderation* in Version "
 "``17.1.3A~5.0.0.202304250916``:"
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:38
 msgid "Source package *ucs-school-umc-lists* in version ``3.0.8``:"
 msgstr "Quellpaket *ucs-school-umc-lists* in Version ``3.0.8``:"
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:40
 msgid ""
 "Class lists can be downloaded in Firefox again while the module is opened"
 " in an iframe (UCS portal) (:uv:bug:`55102`)."
 msgstr ""
-"Klassenlisten können in Firefox wieder heruntergeladen werden, während das"
-" Modul in einem iframe geöffnet ist (UCS-Portal) (:uv:bug:`55102`)."
+"Klassenlisten können in Firefox wieder heruntergeladen werden, während "
+"das Modul in einem iframe geöffnet ist (UCS-Portal) (:uv:bug:`55102`)."
 
-#: ../../changelog.rst:33
+#: ../../changelog.rst:43
 msgid ""
 "Source package *ucs-school-umc-groups* in version "
 "``10.0.9A~5.0.0.202305111046``:"
@@ -71,7 +87,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-groups* in Version "
 "``10.0.9A~5.0.0.202305111046``:"
 
-#: ../../changelog.rst:37
+#: ../../changelog.rst:47
 msgid ""
 "Fixed a problem where the modal to add \"Members\", \"Teachers\" and "
 "\"Classes\" in the \"Administrate workgroups\", \"Administrate teachers\""
@@ -80,23 +96,23 @@ msgid ""
 msgstr ""
 "Es wurde ein Problem behoben, bei dem das Modal zum Hinzufügen von "
 "\"Mitgliedern\", \"Lehrern\" und \"Klassen\" in den UMC-Modulen "
-"\"Arbeitsgruppen verwalten\", \"Lehrer verwalten\" und \"Klassen verwalten\" "
-"von UCS@school Objekten eine andere als der ausgewählten Schule anzeigt "
-"wurde (:uv:bug:`55990`)."
+"\"Arbeitsgruppen verwalten\", \"Lehrer verwalten\" und \"Klassen "
+"verwalten\" von UCS@school Objekten eine andere als der ausgewählten "
+"Schule anzeigt wurde (:uv:bug:`55990`)."
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:52
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.36A~5.0.0.202305031536``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.36A~5.0.0.202305031536``:"
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:54
 msgid "Validate usernames to avoid Windows reserved names (:uv:bug:`53519`)."
 msgstr ""
 "Nutzernamen werden validiert um reservierte Windows-Namen zu vermeiden "
 "(:uv:bug:`53519`)."
 
-#: ../../changelog.rst:46
+#: ../../changelog.rst:56
 msgid ""
 "Removing admin from a school removes them from the correct admin group "
 "(:uv:bug:`55986`)."
@@ -104,47 +120,47 @@ msgstr ""
 "Wenn ein Administrator aus einer Schule entfernt wird, wird er aus der "
 "richtigen Administratorgruppe entfernt (:uv:bug:`55986`)."
 
-#: ../../changelog.rst:49
+#: ../../changelog.rst:59
 msgid "Source package *ucs-school-import* in version ``18.0.32``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.32``:"
 
-#: ../../changelog.rst:51
+#: ../../changelog.rst:61
 msgid ""
 "Support setting multiple nested settings for the importer "
 "(:uv:bug:`56041`)."
 msgstr ""
-"Unterstützung verschachtelter Einstellungen für den "
-"Importer (:uv:bug:`56041`)."
+"Unterstützung verschachtelter Einstellungen für den Importer "
+"(:uv:bug:`56041`)."
 
-#: ../../changelog.rst:53
+#: ../../changelog.rst:63
 msgid "Make columns and lines configurable in log output (:uv:bug:`53734`)."
 msgstr ""
 "Spalten und Zeilen in der Protokollausgabe konfigurierbar machen "
 "(:uv:bug:`53734`)."
 
-#: ../../changelog.rst:58
+#: ../../changelog.rst:68
 msgid "Released on 2023-03-27"
 msgstr "Veröffentlicht am 27. März 2023"
 
-#: ../../changelog.rst:60
+#: ../../changelog.rst:70
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.33A~5.0.0.202303141409``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.33A~5.0.0.202303141409``:"
 
-#: ../../changelog.rst:64
+#: ../../changelog.rst:74
 msgid "Colons can now be used in exam names (:uv:bug:`55768`)."
 msgstr ""
 "Doppelpunkte können nun für Klassenarbeitsnamen verwendet werden "
 "(:uv:bug:`55768`)."
 
-#: ../../changelog.rst:66
+#: ../../changelog.rst:76
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.30A~5.0.0.202303091544``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.30A~5.0.0.202303091544``:"
 
-#: ../../changelog.rst:70
+#: ../../changelog.rst:80
 msgid ""
 "When passing nested command line arguments like ``output`` for ``ucs-"
 "school- user-import``, only the last one was used. This has been fixed "
@@ -154,11 +170,11 @@ msgstr ""
 "``output`` für ``ucs-school-user-import`` wurde nur das letzte verwendet."
 " Dies wurde nun behoben (:uv:bug:`53632`)."
 
-#: ../../changelog.rst:77
+#: ../../changelog.rst:87
 msgid "Released on 2023-02-23"
 msgstr "Veröffentlicht am 23. Februar 2023"
 
-#: ../../changelog.rst:79
+#: ../../changelog.rst:89
 msgid ""
 "Source package *ucs-school-umc-exam* in version "
 "``10.0.8A~5.0.0.202302211433``:"
@@ -166,15 +182,15 @@ msgstr ""
 "Quellpaket *ucs-school-umc-exam* in Version "
 "``10.0.8A~5.0.0.202302211433``:"
 
-#: ../../changelog.rst:83
+#: ../../changelog.rst:93
 msgid "Prevent ``exam-exam-`` users from being created. (:uv:bug:`55619`)."
 msgstr "Verhindere die Erstellung von ``exam-exam-`` Benutzern. (:uv:bug:`55619`)."
 
-#: ../../changelog.rst:88
+#: ../../changelog.rst:98
 msgid "Released on 2023-01-19"
 msgstr "Veröffentlicht am 19. Januar 2023"
 
-#: ../../changelog.rst:90
+#: ../../changelog.rst:100
 msgid ""
 "Source package *ucs-school-umc-diagnostic* in version "
 "``2.0.12A~5.0.0.202301161803``:"
@@ -182,7 +198,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-diagnostic* in Version "
 "``2.0.12A~5.0.0.202301161803``:"
 
-#: ../../changelog.rst:92
+#: ../../changelog.rst:102
 msgid ""
 "Updated the terminology to replication and primary directory node "
 "(:uv:bug:`55557`)."
@@ -190,13 +206,13 @@ msgstr ""
 "Die Terminologie wurde an Replication und Primary Directory Node "
 "angepasst (:uv:bug:`55557`)."
 
-#: ../../changelog.rst:95
+#: ../../changelog.rst:105
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.31A~5.0.0.202212070852``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.31A~5.0.0.202212070852``:"
 
-#: ../../changelog.rst:97
+#: ../../changelog.rst:107
 msgid ""
 "Internal bug fix: More DNs are now compared case insensitive "
 "(:uv:bug:`55455`)."
@@ -204,13 +220,13 @@ msgstr ""
 "Intern: Mehr DNs werden ohne Berücksichtigung der Groß- und "
 "Kleinschreibung verglichen (:uv:bug:`55455`)."
 
-#: ../../changelog.rst:99
+#: ../../changelog.rst:109
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.28A~5.0.0.202301121201``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.28A~5.0.0.202301121201``:"
 
-#: ../../changelog.rst:101
+#: ../../changelog.rst:111
 msgid ""
 "Allow executing python import hooks during the script "
 "``import_computer``. Learn more about the implementation of this type of "
@@ -224,7 +240,7 @@ msgstr ""
 "<https://docs.software-univention.de/ucsschool- manual/5.0/de/manage-"
 "school-imports.html#skriptbasierter-import-von-pcs>`_ (:uv:bug:`55014`)."
 
-#: ../../changelog.rst:107
+#: ../../changelog.rst:117
 msgid ""
 "Internal bug fix: More OU names are now compared case insensitive "
 "(:uv:bug:`55455`)."
@@ -232,11 +248,11 @@ msgstr ""
 "Intern: Mehr Schulnamen werden ohne Berücksichtigung der Groß- und "
 "Kleinschreibung verglichen (:uv:bug:`55455`)."
 
-#: ../../changelog.rst:113
+#: ../../changelog.rst:123
 msgid "Released on 2022-11-17"
 msgstr "Veröffentlicht am 17. November 2022"
 
-#: ../../changelog.rst:115
+#: ../../changelog.rst:125
 msgid ""
 "Source package *ucs-school-umc-wizards* in version "
 "``12.0.12A~5.0.0.202211150913``:"
@@ -244,7 +260,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-wizards* in Version "
 "``12.0.12A~5.0.0.202211150913``:"
 
-#: ../../changelog.rst:117
+#: ../../changelog.rst:127
 msgid ""
 "The evaluation of password policies during the creation of new users in "
 "the UMC can now be enabled by setting the UCR Variable "
@@ -256,13 +272,13 @@ msgstr ""
 "``ucsschool/wizards/schoolwizards/users/check-password-policies`` "
 "aktiviert werden. Sie ist standardmäßig deaktiviert (:uv:bug:`55415`)."
 
-#: ../../changelog.rst:122
+#: ../../changelog.rst:132
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.30A~5.0.0.202211151535``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.30A~5.0.0.202211151535``:"
 
-#: ../../changelog.rst:124
+#: ../../changelog.rst:134
 msgid ""
 "|UCSUAS| users now might be created with context types, which are unknown"
 " to the |UCSUAS| library (:uv:bug:`55355`)."
@@ -270,7 +286,7 @@ msgstr ""
 "|UCSUAS| Benutzer können jetzt mit Kontexttypen erstellt werden, die "
 "nicht von der |UCSUAS| Bibliothek gesetzt werden (:uv:bug:`55355`)."
 
-#: ../../changelog.rst:127
+#: ../../changelog.rst:137
 msgid ""
 "Internal: Added an option to evaluate password policies when creating or "
 "modifying |UCSUAS| users (:uv:bug:`55392`)."
@@ -279,7 +295,7 @@ msgstr ""
 "Passwort Richtlinien während des Erstellens und Bearbeitens von |UCSUAS| "
 "Benutzern aktiviert (:uv:bug:`55392`)."
 
-#: ../../changelog.rst:130
+#: ../../changelog.rst:140
 msgid ""
 "Internal: Add classes UbuntuComputer and LinuxComputer to |UCSUAS| "
 "library (:uv:bug:`55119`)."
@@ -287,13 +303,13 @@ msgstr ""
 "Intern: Die |UCSUAS| Bibliothek wurde um die Klassen UbuntuComputer und "
 "LinuxComputer erweitert (:uv:bug:`55119`)"
 
-#: ../../changelog.rst:133
+#: ../../changelog.rst:143
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.26A~5.0.0.202211151540``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.26A~5.0.0.202211151540``:"
 
-#: ../../changelog.rst:135
+#: ../../changelog.rst:145
 msgid ""
 "The evaluation of password policies during the import of new users can "
 "now be enabled by setting the configuration option "
@@ -305,7 +321,7 @@ msgstr ""
 "``evaluate_password_policies`` eingeschaltet werden. Sie ist "
 "standardmäßig deaktiviert (:uv:bug:`55400`)."
 
-#: ../../changelog.rst:139
+#: ../../changelog.rst:149
 msgid ""
 "Regression: The script ``import_computers`` supports computers of type "
 "``linux`` and ``ubuntu`` again (:uv:bug:`55119`)."
@@ -314,17 +330,17 @@ msgstr ""
 "Import von Computern der Typen ``linux`` und ``ubuntu`` "
 "(:uv:bug:`55119`)."
 
-#: ../../changelog.rst:143
+#: ../../changelog.rst:153
 msgid "Released on 2022-11-02"
 msgstr "Veröffentlicht am 2. November 2022"
 
-#: ../../changelog.rst:145
+#: ../../changelog.rst:155
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.24A~5.0.0.202210061204``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.24A~5.0.0.202210061204``:"
 
-#: ../../changelog.rst:147
+#: ../../changelog.rst:157
 msgid ""
 "|UCSUAS| validation errors are logged with level ``WARNING`` instead of "
 "log level ``ERROR`` (:uv:bug:`55233`)."
@@ -332,13 +348,13 @@ msgstr ""
 "Fehler in der |UCSUAS| Validierung werden mit Debuglevel ``WARNING`` "
 "statt mit Debuglevel ``ERROR`` geloggt (:uv:bug:`55233`)."
 
-#: ../../changelog.rst:150
+#: ../../changelog.rst:160
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.24A~5.0.0.202211011527``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.24A~5.0.0.202211011527``:"
 
-#: ../../changelog.rst:152
+#: ../../changelog.rst:162
 msgid ""
 "Fix: Creating large data sets of test users sometimes failed due to non "
 "unique ``record_uids`` (:uv:bug:`55134`)."
@@ -346,7 +362,7 @@ msgstr ""
 "Fix: Das Erstellen von großen Datensets an Test Benutzers schlug fehl, da"
 " die ``record_uids`` nicht eindeutig waren (:uv:bug:`55134`)."
 
-#: ../../changelog.rst:155
+#: ../../changelog.rst:165
 msgid ""
 "Fix: When importing computers with a specified network instead of "
 "specific IP address, the import failed (:uv:bug:`55130`)."
@@ -354,23 +370,23 @@ msgstr ""
 "Fix: Wenn Computer importiert wurden und ein Netzwerk angegeben wurde, "
 "schlug der Import fehl (:uv:bug:`55130`)."
 
-#: ../../changelog.rst:162
+#: ../../changelog.rst:172
 msgid "Released on 2022-08-25:"
 msgstr "Veröffentlicht am 25. August 2022"
 
-#: ../../changelog.rst:164
+#: ../../changelog.rst:174
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.21A~5.0.0.202208241614``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.21A~5.0.0.202208241614``:"
 
-#: ../../changelog.rst:166
+#: ../../changelog.rst:176
 msgid "Fix user validation in mass import with *dry-run* (:uv:bug:`55016`)."
 msgstr ""
 "Korrektur der Benutzerüberprüfung beim Massenimport mit *dry-run* "
 "(:uv:bug:`55016`)."
 
-#: ../../changelog.rst:168 ../../changelog.rst:177
+#: ../../changelog.rst:178 ../../changelog.rst:187
 msgid ""
 "Underscores are now allowed in OU names, when the hostname of the school "
 "server is also passed (:uv:bug:`55125`)."
@@ -378,13 +394,13 @@ msgstr ""
 "Unterstriche sind jetzt in OU-Namen erlaubt, wenn der Hostname des "
 "Schulservers mit übergeben wird (:uv:bug:`55125`)."
 
-#: ../../changelog.rst:171
+#: ../../changelog.rst:181
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.23A~5.0.0.202208241612``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.23A~5.0.0.202208241612``:"
 
-#: ../../changelog.rst:173
+#: ../../changelog.rst:183
 msgid ""
 "Internal: Add ``check_name`` parameter to the :py:meth:`validate` method "
 "of multiple classes which allows disabling name checks such as checking "
@@ -397,17 +413,17 @@ msgstr ""
 "mit demselben Benutzernamen bereits in einer anderen Schule existiert "
 "(:uv:bug:`55016`)."
 
-#: ../../changelog.rst:183
+#: ../../changelog.rst:193
 msgid "Released on 2022-08-17:"
 msgstr "Veröffentlicht am 17. August 2022"
 
-#: ../../changelog.rst:185
+#: ../../changelog.rst:195
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.19A~5.0.0.202208171134``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.19A~5.0.0.202208171134``:"
 
-#: ../../changelog.rst:187
+#: ../../changelog.rst:197
 msgid ""
 "A validation error causing an infinite recursion error was fixed "
 "(:uv:bug:`55083`)."
@@ -415,7 +431,7 @@ msgstr ""
 "Ein Überprüfungsfehler, der eine unendliche Rekursion verursachte, wurde "
 "behoben (:uv:bug:`55083`)."
 
-#: ../../changelog.rst:190
+#: ../../changelog.rst:200
 msgid ""
 "Source package *ucs-school-umc-internetrules* in version "
 "``16.0.4A~5.0.0.202208110901``:"
@@ -423,7 +439,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-internetrules* in Version "
 "``16.0.4A~5.0.0.202208110901``:"
 
-#: ../../changelog.rst:193
+#: ../../changelog.rst:203
 msgid ""
 "A bug was fixed which caused groups not being displayed in the *Assign "
 "internet rules* module when group prefixes were set via an UCR variable "
@@ -433,17 +449,17 @@ msgstr ""
 "*Internetregeln zuweisen* nicht angezeigt wurden, wenn Gruppenpräfixe "
 "über eine UCR-Variable gesetzt wurden (:uv:bug:`55034`)."
 
-#: ../../changelog.rst:200
+#: ../../changelog.rst:210
 msgid "Released on 2022-08-04:"
 msgstr "Veröffentlicht am 4. August 2022"
 
-#: ../../changelog.rst:202
+#: ../../changelog.rst:212
 msgid ""
 "Source package *ucs-school-import* in version "
 "``18.0.18A~5.0.0.202207191615``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.18A~5.0.0.202207191615``:"
 
-#: ../../changelog.rst:204
+#: ../../changelog.rst:214
 msgid ""
 "The |UCSUAS| import *dry-run* does not raise *ValidationErrors* for all "
 "subsequent users after an error (:uv:bug:`54118`)."
@@ -451,7 +467,7 @@ msgstr ""
 "Der |UCSUAS| Import *dry-run* löst nach einem Fehler keine "
 "*ValidationErrors* für alle nachfolgenden Benutzer aus (:uv:bug:`54118`)."
 
-#: ../../changelog.rst:207
+#: ../../changelog.rst:217
 msgid ""
 "Internal change: preserve workgroups during import, to avoid a behavior "
 "change (:uv:bug:`54943`)."
@@ -459,17 +475,17 @@ msgstr ""
 "Interne Änderung: Beibehaltung von Arbeitsgruppen beim Import, um eine "
 "Verhaltensänderung zu vermeiden (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:210
+#: ../../changelog.rst:220
 msgid ""
 "Source package *ucs-school-lib* in version "
 "``13.0.21A~5.0.0.202207281220``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.21A~5.0.0.202207281220``:"
 
-#: ../../changelog.rst:212
+#: ../../changelog.rst:222
 msgid "User objects now have the ``workgroups`` attribute (:uv:bug:`54943`)."
 msgstr "Benutzerobjekte haben jetzt das Attribut ``workgroups`` (:uv:bug:`54943`)."
 
-#: ../../changelog.rst:214
+#: ../../changelog.rst:224
 msgid ""
 "School admins are removed from ``admins-OU`` group when "
 ":py:meth:`remove_from_groups_of_school` is called (:uv:bug:`54368`)."
@@ -478,7 +494,7 @@ msgstr ""
 ":py:meth:`remove_from_groups_of_school` aufgerufen wird "
 "(:uv:bug:`54368`)."
 
-#: ../../changelog.rst:217
+#: ../../changelog.rst:227
 msgid ""
 "Source package *ucs-school-umc-distribution* in version "
 "``18.0.6A~5.0.0.202207201625``:"
@@ -486,7 +502,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-distribution* in Version "
 "``18.0.6A~5.0.0.202207201625``:"
 
-#: ../../changelog.rst:220
+#: ../../changelog.rst:230
 msgid ""
 "Invalid project directories named ``.`` or ``..`` are now handled "
 "correctly (:uv:bug:`52719`)."
@@ -494,7 +510,7 @@ msgstr ""
 "Ungültige Projektverzeichnisse mit dem Namen ``.`` oder ``..`` werden nun"
 " korrekt behandelt (:uv:bug:`52719`)."
 
-#: ../../changelog.rst:223
+#: ../../changelog.rst:233
 msgid ""
 "Source package *ucs-school-umc-exam* in version "
 "``10.0.6A~5.0.0.202207201619``:"
@@ -502,7 +518,7 @@ msgstr ""
 "Quellpaket *ucs-school-umc-exam* in Version "
 "``10.0.6A~5.0.0.202207201619``:"
 
-#: ../../changelog.rst:225
+#: ../../changelog.rst:235
 msgid ""
 "The directory name validation now detects all incorrect names. "
 "Additionally, the exam directory name description has been improved "
@@ -512,7 +528,7 @@ msgstr ""
 " außerdem wurde die Beschreibung des Prüfungs-Verzeichnisnamens "
 "verbessert (:uv:bug:`52719`)."
 
-#: ../../changelog.rst:228
+#: ../../changelog.rst:238
 msgid ""
 "Source package *ucs-school-veyon-windows* in version "
 "``4.7.4.0-ucs5.0-1A~5.0.0.202208021248``:"
@@ -520,7 +536,7 @@ msgstr ""
 "Quellpaket *ucs-school-veyon-windows* in Version "
 "``4.7.4.0-ucs5.0-1A~5.0.0.202208021248``:"
 
-#: ../../changelog.rst:231
+#: ../../changelog.rst:241
 msgid ""
 "The *Veyon* windows installer has been updated from 4.5.2 to 4.7.4 "
 "(:uv:bug:`55029`)."

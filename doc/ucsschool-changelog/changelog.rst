@@ -8,6 +8,16 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-06-07:
+
+Released on 2023-06-07
+======================
+
+Source package *ucs-school-umc-exam* in version ``10.0.9``:
+
+* Fix: The process of creating exam users could fail due to an unsuccessful SID
+  acquisition (:uv:bug:`54848`).
+
 .. _changelog-ucsschool-2023-05-24:
 
 Released on 2023-05-24
