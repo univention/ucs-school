@@ -42,8 +42,8 @@ def check_nt_acls(filename):  # type: (str) -> None
         ["samba-tool", "ntacl", "get", "--as-sddl", filename], log=False, raise_exc=True
     )
     assert re.match(
-        r"O:([^:]+).*?(D;OICI.*?;.*?WOWD[^)]+\1).*\(A;OICI.*?;0x001301bf;;;S-1-3-4\)"
-        r".*?\(A;OICI.*?;0x001301bf;;;\1\)",
+        r"O:(.+)G:.*\(D;OICI[^;]*;.*?WOWD[^)]+;\1\).*\(A;OICI[^;]*;0x001301bf;;;(S-1-3-4|OW)\)"
+        r".*\(A;OICI[^;]*;0x001301bf;;;\1\)",
         stdout,
     ), "The permissions of share {} can be changed {}".format(filename, stdout)
 
