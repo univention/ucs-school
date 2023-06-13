@@ -183,7 +183,7 @@ def test_available_umc_modules(schoolenv, udm_session, ucr):
     for user, userType in users:
         client = Client(host, user, "univention")
         print("usertype={!r}".format(userType))
-        modules = client.umc_get("modules/list").data["modules"]
+        modules = client.umc_get("modules").data["modules"]
         modules = [(x["id"], x.get("flavor")) for x in modules]
         print("modules = {!r}".format(modules))
         checkModules(modules, userType, serverRole, singleMaster)
