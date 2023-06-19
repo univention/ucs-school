@@ -91,6 +91,7 @@ Informationen zum Benutzerimport gibt es unter
 .. toctree::
 
    command-line
+   ucr
    format
    default-keys
    mapping
