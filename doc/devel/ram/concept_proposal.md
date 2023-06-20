@@ -629,6 +629,15 @@ When evaluating which permissions the actor has, only the role `student` must be
 
 If anything is ever undefined (a condition, a role, a permission, etc.), the response for evaluating the Rego code should always be "false", and not "undefined".
 
+##### B7: All responses from conditions are cast to booleans
+
+Conditions, custom or default, should always return a boolean.
+We want to prevent a scenario where a custom condition could return an object or string, that could then somehow be used to expose internal data.
+
+For this reason, all output of conditions should be cast to a boolean using `cast_boolean`.
+This has the effect of keeping booleans as they are, and converting everything else to `undefined`.
+As explained in **B6**, "undefined" should then always evaluate as false, the actor/target does not meet the condition.
+
 #### Guardian API
 
 ##### Preconditions
@@ -729,6 +738,7 @@ As a UCS app developer, I want to register custom code that defines conditions, 
 
 * The code provided is a Rego blob, and the name of the condition should be stored in such a way that it can be retrieved (see **D7**) and used in compiled Rego.
 * The code may include additional functions to assist with the condition; only the supplied condition name needs to be available in **D7**.
+* The condition must return a boolean. If it returns anything other than a boolean, it will be treated as "undefined" (see **B7**).
 * The function names should be namespaced, so they can't overwrite other conditions in the system.
 * If the condition name already exists for a given namespace, it can be treated as an update for that namespace+condition.
 * For updates to the condition, the new Rego code should replace the existing code.
@@ -1524,7 +1534,7 @@ One possible usability-friendly way to work around this problem could be to allo
 This would be a temporary workaround to get contexts working for all actors/objects, until the administrator can set contexts on all objects.
 We will need to discuss this further, if this turns out to be a normal use case.
 
-## Extended Rego Validation
+### Extended Rego Validation
 
 In the first version of Guardian, for the endpoints that allow custom Rego code (**C6** and **C7**) will only validate that the code submitted is valid Rego code.
 This validation will be done synchronously, so we can return a quick response to the app or administrator who is trying to create/update it.
@@ -1534,7 +1544,7 @@ We might even want to run a full test suite before allowing the custom Rego to b
 This most likely should be done async, to prevent the client from timing out.
 We can then provide a link in the custom Rego endpoint response, which points to a healthcheck or other indicator of whether the code passed all tests, or whether it needs to be modified before it can be accepted.
 
-## Exposing Rego in the API
+### Exposing Rego in the API
 
 We have two endpoints that allow an app or admin user to create custom Rego code:
 
@@ -1547,7 +1557,7 @@ The reason for this is that management UIs for writing custom Rego are not in sc
 When we do implement read functionality for the custom Rego, we need to limit the accessibility of reading code to superusers, for security reasons.
 Additionally, code in the `guardian` internal namespace should never be editable from API, even if the user is a Domain Admin, so we'll need to lock those down with a more complex set of permissions that we will need to design.
 
-## Different Views on the Role-Capability-Mapping
+### Different Views on the Role-Capability-Mapping
 
 In the first version of the Guardian, we will offer two views for updating the role-capability-mapping:
 
