@@ -8,6 +8,22 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-06-21:
+
+Released on 2023-06-21
+======================
+
+Source package *ucs-school-selfservice-support* in version ``4.0.3``:
+
+* The "Change password" option is now automatically available for every school
+  user (:uv:bug:`55864`).
+
+Source package *ucs-school-lib* in version ``13.0.37``:
+
+* Added a UCR variable ``ucsschool/stop_notifier`` to configure stopping the
+  notifier during imports (:uv:bug:`54228`).
+
+
 .. _changelog-ucsschool-2023-06-07:
 
 Released on 2023-06-07
