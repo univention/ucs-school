@@ -94,27 +94,28 @@ class SchoolBaseModule(Base):
             # ... custom code
     """
 
-    def init(self):
-        set_bind_function(self.bind_user_connection)
+    def prepare(self, request):
+        def bind_user_connection(lo):  # type: (LoType) -> None
+            if not request.user_dn:  # ... backwards compatibility
+                # the DN is None if we have a local user (e.g., root)
+                # FIXME: above statement is not completely true, user_dn is also None if the UMC server +
+                # could not detect it (for whatever reason) therefore this workaround is a security hole
+                # which allows to execute ldap operations as machine account
+                try:  # to get machine account password
+                    MODULE.warn("Using machine account for local user: %s" % request.username)
+                    with open("/etc/machine.secret") as fd:
+                        password = fd.read().strip()
+                    user_dn = ucr.get("ldap/hostdn")
+                except IOError as exc:
+                    password = None
+                    user_dn = None
+                    MODULE.warn("Cannot read /etc/machine.secret: %s" % (exc,))
+                lo.lo.bind(user_dn, password)
+                return
+            request.bind_user_connection(lo)
 
-    def bind_user_connection(self, lo):  # type: (LoType) -> None
-        if not self.user_dn:  # ... backwards compatibility
-            # the DN is None if we have a local user (e.g., root)
-            # FIXME: the statement above is not completely true, user_dn is None also if the UMC server +
-            # could not detect it (for whatever reason) therefore this workaround is a security hole
-            # which allows to execute ldap operations as machine account
-            try:  # to get machine account password
-                MODULE.warn("Using machine account for local user: %s" % self.username)
-                with open("/etc/machine.secret") as fd:
-                    password = fd.read().strip()
-                user_dn = ucr.get("ldap/hostdn")
-            except IOError as exc:
-                password = None
-                user_dn = None
-                MODULE.warn("Cannot read /etc/machine.secret: %s" % (exc,))
-            lo.lo.bind(user_dn, password)
-            return
-        return super(SchoolBaseModule, self).bind_user_connection(lo)
+        set_bind_function(bind_user_connection)
+        super(SchoolBaseModule, self).prepare(request)
 
     @LDAP_Connection()
     def schools(self, request, ldap_user_read=None):

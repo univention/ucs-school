@@ -157,13 +157,13 @@ def LDAP_Connection(*connection_types):
 
         return wraps(func)(wrapper_func)
 
-    # 		def decorated(*args, **kwargs):
-    # 			try:
-    # 				return wrapper_func(*args, **kwargs)
-    # 			except ldap.INVALID_CREDENTIALS:
-    # 				reset_connection_cache()
-    # 				return wrapper_func(*args, **kwargs)
-    # 		return wraps(func)(decorated)
+    #       def decorated(*args, **kwargs):
+    #           try:
+    #               return wrapper_func(*args, **kwargs)
+    #           except ldap.INVALID_CREDENTIALS:
+    #               reset_connection_cache()
+    #               return wrapper_func(*args, **kwargs)
+    #       return wraps(func)(decorated)
     return inner_wrapper
 
 

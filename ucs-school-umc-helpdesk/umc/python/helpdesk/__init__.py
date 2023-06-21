@@ -86,12 +86,12 @@ class Instance(SchoolBaseModule):
         subject = u"%s (%s: %s)" % (category, _("School"), school)
 
         try:
-            user = User(None, ldap_user_read, ldap_position, self.user_dn)
+            user = User(None, ldap_user_read, ldap_position, request.user_dn)
             user.open()
         except ldap.LDAPError:
             MODULE.error("Error receiving user information: %s" % (traceback.format_exception(),))
             user = {
-                "displayName": self.username,
+                "displayName": request.username,
                 "mailPrimaryAddress": "",
                 "mailAlternativeAddress": [],
                 "e-mail": [],
@@ -107,7 +107,7 @@ class Instance(SchoolBaseModule):
                 sender = "ucsschool-helpdesk@localhost"
 
         data = [
-            (_("Sender"), u"%s (%s)" % (user["displayName"], self.username)),
+            (_("Sender"), u"%s (%s)" % (user["displayName"], request.username)),
             (_("School"), school),
             (_("Mail address"), u", ".join(mails)),
             (_("Phone number"), u", ".join(user["phone"])),

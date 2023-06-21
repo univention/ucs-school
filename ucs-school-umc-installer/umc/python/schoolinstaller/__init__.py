@@ -464,8 +464,8 @@ class Instance(Base):
             self._installation_started = False
         return self.progress_state.poll()
 
-    @simple_response
-    def get_metainfo(self):
+    @simple_response(with_request=True)
+    def get_metainfo(self, request):
         """
         Queries the specified Primary Directory Node
         for metainformation about the UCS@school environment
@@ -474,7 +474,7 @@ class Instance(Base):
         if not master:
             return
         return self._umc_master(
-            self.username, self.password, master, "schoolinstaller/get/metainfo/master"
+            request.username, request.password, master, "schoolinstaller/get/metainfo/master"
         )
 
     @sanitize(
@@ -594,8 +594,8 @@ class Instance(Base):
             # use the credentials of the currently authenticated user on a Primary Directory Node/Backup
             # Directory Node
             self.require_password()
-            username = self.username
-            password = self.password
+            username = request.username
+            password = request.password
             master = "%s.%s" % (ucr.get("hostname"), ucr.get("domainname"))
         if server_role == "domaincontroller_backup":
             master = ucr.get("ldap/master")
@@ -783,14 +783,14 @@ class Instance(Base):
                     "/var/log/univention/appcenter.log"
                 )
                 with tempfile.NamedTemporaryFile("w+") as pw_file:
-                    pw_file.write(self.password)
+                    pw_file.write(request.password)
                     pw_file.flush()
                     cmd = [
                         "univention-app",
                         "install",
                         "ucsschool-veyon-proxy",
                         "--username",
-                        self.username,
+                        request.username,
                         "--pwdfile",
                         pw_file.name,
                         "--noninteractive",

@@ -66,19 +66,26 @@ CACHE_IMPORT_FILES = "/var/cache/ucs-school-umc-import/"
 class Instance(SchoolBaseModule, ProgressMixin):
     def init(self):
         self._progress_objs = {}
-        self.require_password()
+        self.client = None
+
+    def get_client(self, request):
+        if self.client is not None:
+            return self.client
+
         server = ucr.get("ucsschool/import/http_api/client/server") or "{}.{}".format(
             ucr["hostname"], ucr["domainname"]
         )
         ssl_verify = ucr.is_true("ucsschool/import/http_api/client/ssl_verify", True)
         try:
+            request.require_password()
             self.client = Client(
-                name=self.username,
-                password=self.password,
+                name=request.username,
+                password=request.password,
                 server=server,
                 log_level=Client.LOG_RESPONSE,
                 ssl_verify=ssl_verify,
             )
+            return self.client
         except ObjectNotFound:
             raise UMC_Error(
                 _(
@@ -98,22 +105,24 @@ class Instance(SchoolBaseModule, ProgressMixin):
         return True
 
     @require_password
-    @simple_response
-    def schools(self):
+    @simple_response(with_request=True)
+    def schools(self, request):
         schools = [
-            {"id": school.name, "label": school.displayName} for school in self.client.school.list()
+            {"id": school.name, "label": school.displayName}
+            for school in self.get_client(request).school.list()
         ]
         if not schools:
             raise UMC_Error(_("No permissions for running an import for any school."))
         return schools
 
     @require_password
-    @simple_response
-    def userroles(self, school):
+    @simple_response(with_request=True)
+    def userroles(self, request, school):
         if not school:
             return []
         userroles = [
-            {"id": role.name, "label": role.displayName} for role in self.client.school.get(school).roles
+            {"id": role.name, "label": role.displayName}
+            for role in self.get_client(request).school.get(school).roles
         ]
         if not userroles:
             raise UMC_Error(_("No permissions for running an import for any user role."))
@@ -135,26 +144,30 @@ class Instance(SchoolBaseModule, ProgressMixin):
         school=StringSanitizer(required=True),
     )
     @require_password
-    @simple_response
-    def dry_run(self, filename, userrole, school):
+    @simple_response(with_request=True)
+    def dry_run(self, request, filename, userrole, school):
         progress = self.new_progress(total=100)
         thread = SimpleThread(
             "dry run",
             self._dry_run,
             lambda t, r: self.thread_progress_finished_callback(t, r, request, progress),
         )
-        thread.run(filename, userrole, school, progress)
+        thread.run(request, filename, userrole, school, progress)
         return dict(progress.poll(), id=progress.id)
 
-    def _dry_run(self, filename, userrole, school, progress):
+    def _dry_run(self, request, filename, userrole, school, progress):
         progress.progress(True, _("Please wait until the examination of the data is complete."))
         progress.current = 25.0
         progress.job = None
         import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
         try:
-            jobid = self.client.userimportjob.create(
-                filename=import_file, school=school, user_role=userrole, dryrun=True
-            ).id
+            jobid = (
+                self.get_client(request)
+                .userimportjob.create(
+                    filename=import_file, school=school, user_role=userrole, dryrun=True
+                )
+                .id
+            )
         except ConnectionError as exc:
             MODULE.error("ConnectionError during dry-run: %s" % (exc,))
             raise UMC_Error(_("The connection to the import server could not be established."))
@@ -177,7 +190,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
             time.sleep(SLEEP_TIME)
 
             try:
-                job = self.client.userimportjob.get(jobid)
+                job = self.get_client(request).userimportjob.get(jobid)
             except ConnectionError:
                 continue
             finished = job.status in (JOB_FINISHED, JOB_ABORTED)
@@ -209,7 +222,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
         userrole = request.options["userrole"]
         import_file = os.path.join(CACHE_IMPORT_FILES, os.path.basename(filename))
         try:
-            job = self.client.userimportjob.create(
+            job = self.get_client(request).userimportjob.create(
                 filename=import_file, school=school, user_role=userrole, dryrun=False
             )
         except ConnectionError as exc:
@@ -235,8 +248,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
         return self._progress_objs[progress_id]
 
     @require_password
-    @simple_response
-    def jobs(self):
+    @simple_response(with_request=True)
+    def jobs(self, request):
         return [
             {
                 "id": job.id,
@@ -246,12 +259,14 @@ class Instance(SchoolBaseModule, ProgressMixin):
                 "date": job.date_created.isoformat(),
                 "status": self._parse_status(job.status),
             }
-            for job in self._jobs()
+            for job in self._jobs(request)
         ]
 
-    def _jobs(self):
+    def _jobs(self, request):
         try:
-            return self.client.userimportjob.list(limit=20, dryrun=False, ordering="date_created")
+            return self.get_client(request).userimportjob.list(
+                limit=20, dryrun=False, ordering="date_created"
+            )
         except ServerError as exc:
             raise UMC_Error(
                 _("The UCS@school Import API HTTP server is not reachable: %s") % (exc,), status=500
@@ -278,7 +293,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @sanitize(job=StringSanitizer(required=True))
     @require_password
     def get_password(self, request):
-        password_file = self.client.userimportjob.get(request.options["job"]).password_file
+        password_file = self.get_client(request).userimportjob.get(request.options["job"]).password_file
         if password_file is not None:
             password_file = password_file.encode("UTF-8")
         self.finished(request.id, password_file, mimetype="text/csv")
@@ -287,7 +302,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @sanitize(job=StringSanitizer(required=True))
     @require_password
     def get_summary(self, request):
-        summary_file = self.client.userimportjob.get(request.options["job"]).summary_file
+        summary_file = self.get_client(request).userimportjob.get(request.options["job"]).summary_file
         if summary_file is not None:
             summary_file = summary_file.encode("UTF-8")
         self.finished(request.id, summary_file, mimetype="text/csv")
