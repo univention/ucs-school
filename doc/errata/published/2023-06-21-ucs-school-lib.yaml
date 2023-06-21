@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-lib
 fix: 13.0.37
 desc: |
- * Added a UCR variable `ucsschool/stop_notifier` to configure stopping the notifier during imports (Bug #54228).
+ * Added a UCR variable ``ucsschool/stop_notifier`` to configure stopping the notifier during imports (Bug #54228).
 bug: [54228]
