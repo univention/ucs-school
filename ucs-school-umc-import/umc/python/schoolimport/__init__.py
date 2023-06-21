@@ -34,8 +34,6 @@ import os.path
 import shutil
 import time
 
-import notifier.threads
-
 from ucsschool.http_api.client import (
     Client,
     ConnectionError,
@@ -50,11 +48,13 @@ from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import (
+    SimpleThread,
     allow_get_request,
     file_upload,
     require_password,
     sanitize,
     simple_response,
+    threaded,
 )
 from univention.management.console.modules.mixins import ProgressMixin
 from univention.management.console.modules.sanitizers import StringSanitizer
@@ -138,12 +138,12 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @simple_response
     def dry_run(self, filename, userrole, school):
         progress = self.new_progress(total=100)
-        thread = notifier.threads.Simple(
+        thread = SimpleThread(
             "dry run",
-            notifier.Callback(self._dry_run, filename, userrole, school, progress),
-            notifier.Callback(self.__thread_error_handling, progress),
+            self._dry_run,
+            lambda t, r: self.thread_progress_finished_callback(t, r, request, progress),
         )
-        thread.run()
+        thread.run(filename, userrole, school, progress)
         return dict(progress.poll(), id=progress.id)
 
     def _dry_run(self, filename, userrole, school, progress):
@@ -196,32 +196,14 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
         return {"summary": job.result.result and job.result.result.get("description")}
 
-    def __thread_error_handling(self, thread, result, progress):
-        # caution! if an exception happens in this function the module process will die!
-        MODULE.error("Thread result: %s" % (result,))
-        if isinstance(result, BaseException):
-            MODULE.error(
-                "Thread result: Traceback (most recent call last):\n%s" % ("".join(thread.trace),)
-            )
-            progress.exception(thread.exc_info)  # FIXME: broken since Bug #47114
-            return
-        progress.finish_with_result(result)
-
     @sanitize(
         filename=StringSanitizer(required=True),
         userrole=StringSanitizer(required=True),
         school=StringSanitizer(required=True),
     )
     @require_password
+    @threaded
     def start_import(self, request):
-        thread = notifier.threads.Simple(
-            "import",
-            notifier.Callback(self._start_import, request),
-            notifier.Callback(self.thread_finished_callback, request),
-        )
-        thread.run()
-
-    def _start_import(self, request):
         school = request.options["school"]
         filename = request.options["filename"]
         userrole = request.options["userrole"]

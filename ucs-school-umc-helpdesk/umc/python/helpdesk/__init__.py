@@ -35,8 +35,6 @@ import smtplib
 import traceback
 
 import ldap
-import notifier
-import notifier.popen
 
 from ucsschool.lib.models.school import School
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
@@ -46,7 +44,7 @@ from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.decorators import sanitize, threaded
 from univention.management.console.modules.sanitizers import StringSanitizer
 
 _ = Translation("ucs-school-umc-helpdesk").translate
@@ -64,6 +62,7 @@ class Instance(SchoolBaseModule):
         message=StringSanitizer(required=True),
         category=StringSanitizer(required=True),
     )
+    @threaded
     @LDAP_Connection()
     def send(self, request, ldap_user_read=None, ldap_position=None):
         ucr.load()
@@ -76,26 +75,6 @@ class Instance(SchoolBaseModule):
                 ),
                 status=500,
             )
-
-        def _send_thread(sender, recipients, subject, message):
-            MODULE.info("sending mail: thread running")
-
-            msg = u"From: %s\r\n" % (sanitize_header(sender),)
-            msg += u"To: %s\r\n" % (sanitize_header(", ".join(recipients)),)
-            msg += u"Subject: =?UTF-8?Q?%s?=\r\n" % (
-                codecs.encode(sanitize_header(subject).encode("utf-8"), "quopri")
-            ).decode("ASCII")
-            msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
-            msg += u"\r\n"
-            msg += message
-            msg += u"\r\n"
-            msg = msg.encode("UTF-8")
-
-            server = smtplib.SMTP("localhost")
-            server.set_debuglevel(0)
-            server.sendmail(sender, recipients, msg)
-            server.quit()
-            return True
 
         recipients = ucr["ucsschool/helpdesk/recipient"].split(" ")
         school = School.from_dn(
@@ -135,18 +114,28 @@ class Instance(SchoolBaseModule):
             (_("Category"), category),
             (_("Message"), u"\r\n%s" % (message,)),
         ]
-        msg = u"\r\n".join(u"%s: %s" % (key, value) for key, value in data)
+        message = u"\r\n".join(u"%s: %s" % (key, value) for key, value in data)
 
         MODULE.info(
-            "sending message: %s" % ("\n".join(repr(x.strip()) for x in msg.splitlines())),
+            "sending message: %s" % ("\n".join(repr(x.strip()) for x in message.splitlines())),
         )
 
-        func = notifier.Callback(_send_thread, sender, recipients, subject, msg)
-        MODULE.info("sending mail: starting thread")
-        thread = notifier.threads.Simple(
-            "HelpdeskMessage", func, notifier.Callback(self.thread_finished_callback, request)
-        )
-        thread.run()
+        msg = u"From: %s\r\n" % (sanitize_header(sender),)
+        msg += u"To: %s\r\n" % (sanitize_header(", ".join(recipients)),)
+        msg += u"Subject: =?UTF-8?Q?%s?=\r\n" % (
+            codecs.encode(sanitize_header(subject).encode("utf-8"), "quopri")
+        ).decode("ASCII")
+        msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
+        msg += u"\r\n"
+        msg += message
+        msg += u"\r\n"
+        msg = msg.encode("UTF-8")
+
+        server = smtplib.SMTP("localhost")
+        server.set_debuglevel(0)
+        server.sendmail(sender, recipients, msg)
+        server.quit()
+        return True
 
     @LDAP_Connection()
     def categories(self, request, ldap_user_read=None, ldap_position=None):

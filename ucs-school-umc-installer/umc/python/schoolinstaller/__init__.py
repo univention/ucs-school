@@ -47,8 +47,6 @@ import threading
 import dns.exception
 import dns.resolver
 import ldap
-import notifier
-import notifier.threads
 from six.moves.urllib_request import urlretrieve
 
 from ucsschool.lib.models.computer import SchoolDCSlave
@@ -62,7 +60,7 @@ from univention.management.console.base import Base, UMC_Error
 from univention.management.console.config import ucr
 from univention.management.console.ldap import get_machine_connection
 from univention.management.console.log import MODULE
-from univention.management.console.modules.decorators import sanitize, simple_response
+from univention.management.console.modules.decorators import SimpleThread, sanitize, simple_response
 from univention.management.console.modules.sanitizers import (
     BooleanSanitizer,
     ChoicesSanitizer,
@@ -923,12 +921,12 @@ class Instance(Base):
                     _("An unexpected error occurred during installation: %s") % result
                 )
 
-        thread = notifier.threads.Simple(
+        thread = SimpleThread(
             "ucsschool-install",
-            notifier.Callback(_thread, self, packages_to_install),
-            notifier.Callback(_finished),
+            _thread,
+            _finished,
         )
-        thread.run()
+        thread.run(self, packages_to_install)
         self.finished(request.id, None)
 
     def retrieve_root_certificate(self, master):

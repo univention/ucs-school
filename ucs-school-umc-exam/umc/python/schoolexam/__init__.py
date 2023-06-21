@@ -44,7 +44,6 @@ from itertools import chain
 from typing import TYPE_CHECKING, List  # noqa: F401
 
 import ldap
-import notifier
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 from samba.auth_util import system_session_unix
@@ -80,7 +79,12 @@ from univention.lib.misc import custom_groupname
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error, computerroom
-from univention.management.console.modules.decorators import file_upload, sanitize, simple_response
+from univention.management.console.modules.decorators import (
+    SimpleThread,
+    file_upload,
+    sanitize,
+    simple_response,
+)
 from univention.management.console.modules.distribution import compare_dn
 from univention.management.console.modules.sanitizers import (
     ChoicesSanitizer,
@@ -823,7 +827,7 @@ class Instance(SchoolBaseModule):
 
             self.thread_finished_callback(thread, response, request)
 
-        thread = notifier.threads.Simple("start_exam", _thread, notifier.Callback(_finished, request))
+        thread = SimpleThread("start_exam", _thread, lambda t, r: _finished(t, r, request))
         thread.run()
 
     @sanitize(exam=StringSanitizer(required=True))
@@ -1041,7 +1045,7 @@ class Instance(SchoolBaseModule):
             progress.finish()
             self.thread_finished_callback(thread, response, request)
 
-        thread = notifier.threads.Simple("start_exam", _thread, _finished)
+        thread = SimpleThread("start_exam", _thread, _finished)
         thread.run()
 
     @sanitize(
