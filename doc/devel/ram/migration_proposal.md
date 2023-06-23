@@ -27,6 +27,11 @@ update required since two major Debian release upgrades will take place.
   alongside the new way. It's OK to limit the creation of custom roles or
   changes to the existing ones from the Guardian until all nodes are in 5.2.
 * There should be an option to rollback the changes to the objects.
+* There has to be a decision regarding the handling of roles within the ID
+  Connector as the connected domains can have their own roles.
+  A possible option could be "Require at least version x for all connected
+  domains, require a mapping for roles of both sides, unmapped roles will be
+  ignored."
 
 ## Migration
 
@@ -48,6 +53,7 @@ Supported version combinations within a domain:
 
 * UCS@school lib
 * Kelvin
+* UCS@school ID Connector
 
 This changes can be added as an errata release to 5.0.
 
