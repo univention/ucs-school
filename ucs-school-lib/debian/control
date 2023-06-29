@@ -10,6 +10,7 @@ Build-Depends:
  ucslint,
  univention-unittests,
  univention-config-dev,
+ univention-join-dev,
  univention-l10n-dev,
  python-univention-directory-manager (>=14.0.15-4),
  python3-univention-directory-manager (>=14.0.15-4),
