@@ -98,7 +98,8 @@ des UMC-Moduls.
 
    Benutzernamen dürfen keine von Windows reservierten Namen enthalten. Siehe
    `Microsoft Dokumentation <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file>`_
-   für weitere Informationen.
+   für weitere Informationen. Benutzernamen, die diesen Regeln nicht entsprechen, sind als veraltet anzusehen.
+   Ab UCS 5.2 sind diese Benutzernamen nicht mehr unterstützt und müssen geändert werden.
 
 .. note::
 
