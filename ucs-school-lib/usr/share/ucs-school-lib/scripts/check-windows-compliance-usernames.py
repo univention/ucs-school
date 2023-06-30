@@ -35,38 +35,79 @@ and GitLab Issue https://git.knut.univention.de/univention/ucsschool/-/issues/10
 """
 import sys
 from argparse import ArgumentParser
+from typing import Dict, List, Tuple
 
 from ucsschool.lib.models.attributes import is_valid_win_directory_name
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.user import User
 from univention.admin.uldap import getAdminConnection
-
-parser = ArgumentParser(
-    description=f"{__file__} checks all present UCS@School user names for compliance with the "
-    f"Windows naming conventions. The script is silent by default and only writes the "
-    f"number of invalid user names to stdout upon completion."
-)
-parser.add_argument(
-    "-v", "--verbose", action="store_true", required=False, help="Prints invalid usernames."
-)
-args = parser.parse_args()
+from univention.udm import UDM
 
 
-def get_number_of_invalid_usernames() -> int:
+def get_number_of_invalid_usernames(silent=False, show_dn=False) -> int:
     """Get the number of invalid usernames which do not comply with Windows naming conventions"""
     lo, _ = getAdminConnection()
+    UDM.admin().version(2).get("users/user")
     all_schools = School.get_all(lo)
     number_of_invalid_usernames = 0
     for school in all_schools:
-        all_users = User.get_all(lo, school.name)
-        for user in all_users:
-            if not is_valid_win_directory_name(user.name):
-                if args.verbose:
-                    print(f"Username {user.name} is not a valid Windows directory name.")
+
+        # Use ldap directly to fetch usernames for a school
+        # for large systems, this might take multiple minutes otherwise
+        all_users: List[Tuple[str, Dict]] = lo.search(
+            filter="(&(objectClass=ucsschoolType)(objectClass=organizationalPerson))",
+            attr=["uid"],
+            base=f"cn=users,{school.dn}",
+        )
+
+        for user_data in all_users:
+            dn, attrs = user_data
+            username = attrs["uid"][0].decode("utf-8")
+            if not is_valid_win_directory_name(username):
+                if not silent:
+                    if show_dn:
+                        print(f"{dn}")
+                    else:
+                        print(
+                            f"Username {username} in school {school.name}"
+                            f" is not a valid Windows directory name."
+                        )
                 number_of_invalid_usernames += 1
 
     return number_of_invalid_usernames
 
 
-sys.stdout.write(f"{get_number_of_invalid_usernames()}")
-sys.stdout.flush()
+def main():
+
+    parser = ArgumentParser(
+        description=f"{__file__} checks all present UCS@School user names for compliance with the "
+        f"Windows naming conventions. Without any options,"
+        f" it lists invalid usernames together with the associated school."
+    )
+    parser.add_argument(
+        "-s",
+        "--silent",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Only writes the number of invalid usernames to"
+        " the standard output upon script completion.",
+    )
+    parser.add_argument(
+        "--dn",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Alternative output: List distinguished names of all users with invalid usernames.",
+    )
+    args = parser.parse_args()
+
+    number_of_invalid_usernames = get_number_of_invalid_usernames(silent=args.silent, show_dn=args.dn)
+    if args.silent:
+        sys.stdout.write(f"{number_of_invalid_usernames}")
+        sys.stdout.flush()
+    else:
+        print(f"Total number of invalid usernames: {number_of_invalid_usernames}")
+
+
+if __name__ == "__main__":
+    main()
