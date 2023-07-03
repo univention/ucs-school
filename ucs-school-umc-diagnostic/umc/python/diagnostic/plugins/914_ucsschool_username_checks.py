@@ -12,10 +12,10 @@ check_windows_compliance_tool_path = (
 )
 
 run_descr = ["This can be checked by running {}".format(check_windows_compliance_tool_path)]
-title = _("Check if all UCS@School usernames are supported.")
+title = _("Check if all present UCS@school usernames are supported.")
 description = "\n".join(
     (
-        _("This diagnostic check reviews all UCS@School usernames for compliance username rules."),
+        _("This diagnostic check reviews all UCS@school usernames for compliance username rules."),
         _("A warning is issued if a username is no longer supported or deprecated."),
     ),
 )
@@ -29,14 +29,14 @@ def run(_umc_instance):
                 (
                     _("The diagnostic tool is not available at the following path: "),
                     check_windows_compliance_tool_path,
-                    _(" Please update your UCS@School installation."),
+                    _(" Please update your UCS@school installation."),
                 )
             )
         )
 
     try:
         number_of_non_compliant_usernames = subprocess.check_output(  # nosec
-            [check_windows_compliance_tool_path]
+            [check_windows_compliance_tool_path, "--silent"]
         )
     except subprocess.CalledProcessError:
         raise Critical(

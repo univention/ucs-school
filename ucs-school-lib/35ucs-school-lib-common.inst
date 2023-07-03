@@ -39,10 +39,10 @@ VERSION=1
 
 joinscript_init
 
-NUMBER_OF_INVALID_USERNAMES=$(/usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py)
+NUMBER_OF_INVALID_USERNAMES=$(/usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py --silent)
 
 if [ "$NUMBER_OF_INVALID_USERNAMES" -gt 0 ]; then
-  echo "Usernames which are not compliant to Windows naming conventions are present."
+  echo "UCS@school usernames which are not compliant to Windows naming conventions are present."
   echo "Usage of usernames which are not compliant with Windows naming conventions is deprecated "
   echo "and support will be removed with UCS 5.2."
   echo "This specific validation can be manually enabled and disabled with the UCR variable "
