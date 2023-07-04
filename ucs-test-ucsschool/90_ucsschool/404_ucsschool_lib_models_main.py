@@ -8,7 +8,6 @@
 ##   - python3-ucsschool-lib
 
 import sys
-from subprocess import CalledProcessError
 from typing import Dict, List, Tuple  # noqa: F401
 
 import pytest
@@ -17,6 +16,7 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing import utils
+from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing.ucsschool.importusers import Person
 
 
@@ -223,11 +223,28 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
             )
 
 
-def test_create_user_windows_reserved_name(cmd_line_role, ucr_hostname, ucr_ldap_base):
-    with utu.UCSTestSchool() as schoolenv:
+@pytest.mark.parametrize(
+    "windows_check_enabled",
+    ["", "true", "false"],
+    ids=lambda v: "ucsschool/validation/username/windows-check={}".format(v),
+)
+def test_create_user_windows_reserved_name(
+    cmd_line_role, ucr_hostname, ucr_ldap_base, windows_check_enabled
+):
+    with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry() as ucr_test:
+        ucr_test.handler_set(
+            ["ucsschool/validation/username/windows-check={}".format(windows_check_enabled)]
+        )
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
         for role in ("student", "teacher", "staff", "teacher_and_staff"):
-            person = Person(ou_name, role)
+            container = {
+                "student": "schueler",
+                "teacher": "lehrer",
+                "staff": "mitarbeiter",
+                "teacher_and_staff": "lehrer und mitarbeiter",
+            }[role]
+            username = "com1.{}".format(uts.random_username())
+            person = Person(ou_name, role, username=username)
             person.set_random_birthday()
             cmd = [
                 sys.executable,
@@ -237,7 +254,7 @@ def test_create_user_windows_reserved_name(cmd_line_role, ucr_hostname, ucr_ldap
                 "create",
                 cmd_line_role(role),
                 "--name",
-                "com1",
+                person.username,
                 "--school",
                 person.school,
                 "--set",
@@ -253,24 +270,25 @@ def test_create_user_windows_reserved_name(cmd_line_role, ucr_hostname, ucr_ldap
                 "birthday",
                 person.birthday,
             ]
-            with pytest.raises(CalledProcessError):
-                rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
-                assert "ValueError" in stderr
+            dn = "uid={},cn={},cn=users,ou={},{}".format(
+                person.username, container, ou_name, ucr_ldap_base
+            )
+            rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False)
+            if windows_check_enabled in ["", "false"]:
+                # creating users which do not adhere to the windows naming conventions
+                # is deprecated and with 5.2 this test should be adjusted accordingly
+                assert rv == 0
+                assert person.username in stdout
+
+                utils.verify_ldap_object(dn, should_exist=True, retry_count=3, delay=5)
+            else:
+                assert rv != 0
+                assert "ucsschool.lib.models.attributes.ValidationError" in stderr
                 assert "May not be a Windows reserved name" in stderr
-                container = {
-                    "student": "schueler",
-                    "teacher": "lehrer",
-                    "staff": "mitarbeiter",
-                    "teacher_and_staff": "lehrer und mitarbeiter",
-                }[role]
-                dn = "uid={},cn={},cn=users,ou={},{}".format(
-                    person.username, container, ou_name, ucr_ldap_base
-                )
-                assert dn in stdout
-                utils.verify_ldap_object(
-                    dn,
-                    should_exist=False,
-                )
+
+                assert person.username in stdout
+
+                utils.verify_ldap_object(dn, should_exist=False, retry_count=3, delay=5)
 
 
 def test_create_school_class(ucr_hostname, ucr_ldap_base):
