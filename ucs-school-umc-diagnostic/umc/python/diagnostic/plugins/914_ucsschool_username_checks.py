@@ -5,7 +5,7 @@ import subprocess
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Critical, Warning, main
 
-_ = Translation("univention-management-console-module-diagnostic").translate
+_ = Translation("ucs-school-umc-diagnostic").translate
 
 check_windows_compliance_tool_path = (
     "/usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py"

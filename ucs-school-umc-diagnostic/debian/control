@@ -14,6 +14,7 @@ Package: ucs-school-umc-diagnostic
 Architecture: all
 Depends:
  univention-management-console-module-diagnostic (>= 5.0.1-21),
+ ucs-school-lib (>= 13.0.38),
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},
