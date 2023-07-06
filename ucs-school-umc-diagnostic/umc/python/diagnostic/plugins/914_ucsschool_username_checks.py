@@ -7,9 +7,7 @@ from univention.management.console.modules.diagnostic import Critical, Warning, 
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 
-check_windows_compliance_tool_path = (
-    "/usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py"
-)
+check_windows_compliance_tool_path = "/usr/share/ucs-school-lib/scripts/ucs-school-validate-usernames"
 
 run_descr = ["This can be checked by running {}".format(check_windows_compliance_tool_path)]
 title = _("Check if all present UCS@school usernames are supported.")

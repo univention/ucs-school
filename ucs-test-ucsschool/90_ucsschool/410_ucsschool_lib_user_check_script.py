@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
-## desc: test /usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py
+## desc: test /usr/share/ucs-school-lib/scripts/ucs-school-validate-usernames
 ## roles: [domaincontroller_master]
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: dangerous
@@ -16,9 +16,7 @@ from univention.admin.uldap import getAdminConnection
 from univention.testing import utils
 from univention.testing.ucr import UCSTestConfigRegistry
 
-WINDOWS_COMPLIANCE_SCRIPT_PATH = (
-    "/usr/share/ucs-school-lib/scripts/check-windows-compliance-usernames.py"
-)
+WINDOWS_COMPLIANCE_SCRIPT_PATH = "/usr/share/ucs-school-lib/scripts/ucs-school-validate-usernames"
 
 
 def test_windows_compliance_username_script(ucr_hostname):

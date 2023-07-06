@@ -47,7 +47,7 @@ from univention.admin.uldap import getAdminConnection
 
 
 class InvalidUsernameReasons(enum.Enum):
-    WIN_DIRECTORY = "Is not a valid Windows directory name."
+    WIN_NAMING_CONVENTIONS = "Username does not conform to Windows naming conventions."
 
 
 @dataclass(frozen=True)
@@ -104,7 +104,7 @@ def get_all_invalid_users() -> List[InvalidUser]:
                         username=username,
                         school_name=school.name,
                         dn=dn,
-                        reason=InvalidUsernameReasons.WIN_DIRECTORY,
+                        reason=InvalidUsernameReasons.WIN_NAMING_CONVENTIONS,
                     )
                 )
 
@@ -115,22 +115,27 @@ def report_invalid_users(all_invalid_users: List[InvalidUser], silent=False) -> 
 
     number_of_invalid_usernames = len(all_invalid_users)
     if silent:
+
         sys.stdout.write(f"{number_of_invalid_usernames}")
         sys.stdout.flush()
     else:
-        if len(all_invalid_users) > 0:
-            print('"Username" "School Name" "Distinguished Name" "Reason"')
-        for invalid_user in all_invalid_users:
-            print(
-                f"{invalid_user.username} {invalid_user.school_name}"
-                f' {invalid_user.dn} "{invalid_user.reason.value}"'
-            )
 
-        print(f"\nTotal number of invalid usernames: {number_of_invalid_usernames}")
-        print(
-            "To list more details for the 'Reason' column "
-            "use the option '-l' or '--list-reason-details'"
-        )
+        if len(all_invalid_users) > 0:
+
+            print('"Username" "School Name" "Distinguished Name" "Reason"')
+            for invalid_user in all_invalid_users:
+                print(
+                    f"{invalid_user.username} {invalid_user.school_name}"
+                    f' {invalid_user.dn} "{invalid_user.reason.value}"'
+                )
+
+            print(f"\nTotal number of invalid usernames: {number_of_invalid_usernames}")
+            print(
+                "To list more details for the 'Reason' column "
+                "use the option '-l' or '--list-reason-details'"
+            )
+        else:
+            print("No invalid usernames found.")
 
 
 def write_output_file(all_invalid_users: List[InvalidUser], output_path: pathlib.Path) -> None:
@@ -201,11 +206,11 @@ def main() -> None:
     if args.output is not None:
         output_path = output_path.resolve()
         if output_path.exists():
-            print(f"Path {output_path} already exists, aborting...")
+            print(f"Path {output_path} already exists, aborting ...")
             sys.exit(1)
 
     if not args.silent:
-        print("Checking all UCS@school users for invalid usernames...")
+        print("Checking all UCS@school users for invalid usernames ...")
     all_invalid_users = get_all_invalid_users()
 
     report_invalid_users(all_invalid_users, silent=args.silent)
