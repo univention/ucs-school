@@ -13,7 +13,7 @@ run_descr = ["This can be checked by running {}".format(check_windows_compliance
 title = _("Check if all present UCS@school usernames are supported.")
 description = "\n".join(
     (
-        _("This diagnostic check reviews all UCS@school usernames for compliance username rules."),
+        _("This diagnostic check reviews all UCS@school usernames for compliance to username rules."),
         _("A warning is issued if a username is no longer supported or deprecated."),
     ),
 )
@@ -22,7 +22,7 @@ description = "\n".join(
 def run(_umc_instance):
     """Required: Main entry point for UMC diagnostics plugin."""
     if not os.path.exists(check_windows_compliance_tool_path):
-        raise Warning(
+        raise Critical(
             description="".join(
                 (
                     _("The diagnostic tool is not available at the following path: "),
@@ -48,17 +48,19 @@ def run(_umc_instance):
 
     if number_of_non_compliant_usernames > 0:
         raise Warning(
-            description="{} {} {} {}\n{} {} {}".format(
+            description="{} {} {} {}\n{} {}".format(
                 number_of_non_compliant_usernames,
-                _("usernames have been detected which do not comply to Windows naming conventions."),
-                _("Support for these names is deprecated, and will be removed with UCS 5.2."),
+                _("usernames have been detected which do not comply to user naming rules."),
                 _(
                     "To fix this, change the usernames to a supported form. "
                     "Refer to the administrators manual for rules regarding usernames."
                 ),
-                _("To retrieve a list of all offending usernames, use the tool"),
+                _(
+                    "Important: Support for names which do not comply to Windows naming conventions"
+                    " is deprecated, and will be removed with UCS 5.2."
+                ),
+                _("To retrieve a list of all offending usernames, use the tool "),
                 check_windows_compliance_tool_path,
-                _(" with the verbose mode option (-v)."),
             )
         )
 
