@@ -108,7 +108,7 @@ def get_all_invalid_users() -> List[InvalidUser]:
                     )
                 )
 
-        return all_invalid_users
+    return all_invalid_users
 
 
 def report_invalid_users(all_invalid_users: List[InvalidUser], silent=False) -> None:
