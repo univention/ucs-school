@@ -3,7 +3,7 @@
 
 ---
 
-- status: accepted
+- status: superseded by [ADR 0014](0014-component-deployments.md)
 - deciders: UCS@school development team
 - consulted: UCS@school development team
 - informed: Ingo, Marie
