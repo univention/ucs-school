@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.139) unstable; urgency=medium
+
+  * Issue #1037: Fix `pwalreadyused` exception in 4 tests
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 17 Jul 2023 14:19:41 +0200
+
 ucs-test-ucsschool (7.3.138) unstable; urgency=medium
 
   * Bug #54228: Add test for running an exam during an import.

@@ -43,6 +43,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("csv:mapping:record_uid", "record_uid")
         config.update_entry("csv:mapping:password", "password")
         config.update_entry("csv:mapping:description", "description")
+        config.update_entry("csv:mapping:override_pw_history", "overridePWHistory")
         config.update_entry("source_uid", source_uid)
         config.update_entry("csv:mapping:role", "__role")
         config.update_entry("user_role", None)
@@ -61,6 +62,7 @@ class Test(CLI_Import_v2_Tester):
                 source_uid=source_uid,
                 password=uts.random_string(20),
                 description="test description",
+                override_pw_history="1",
             )
             person_list.append(person)
 

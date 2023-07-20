@@ -70,6 +70,7 @@ class Person(object):
         self.password = kwargs.get("password")
         self.birthday = kwargs.get("birthday")
         self.expiration_date = kwargs.get("expiration_date")
+        self.override_pw_history = kwargs.get("override_pw_history", "0")
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
@@ -189,6 +190,7 @@ class Person(object):
             value_map.get("record_uid", "__EMPTY__"): self.record_uid,
             value_map.get("source_uid", "__EMPTY__"): self.source_uid,
             value_map.get("description", "__EMPTY__"): self.description,
+            value_map.get("overridePWHistory", "__EMPTY__"): self.override_pw_history,
             value_map.get("school_classes", "__EMPTY__"): ",".join(
                 [x for school_, classes in self.school_classes.items() for x in classes]
             ),

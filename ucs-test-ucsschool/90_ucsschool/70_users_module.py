@@ -80,9 +80,13 @@ def _test(student_classes, teacher_classes, schools, ucr, remove_from_school=Non
             "email": "%s@%s" % (uts.random_name(), get_mail_domain()),
             "firstname": "first_name%d" % num,
             "lastname": "last_name%d" % num,
+            "password": uts.random_string(20),
         }
         user.edit(new_attrs)
         wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
+
+        # Passwords are not returned via the get request, so it is not expected
+        new_attrs["password"] = None
         user.check_get(expected_attrs=new_attrs)
         user.verify()
         school_classes = deepcopy(user.school_classes)
