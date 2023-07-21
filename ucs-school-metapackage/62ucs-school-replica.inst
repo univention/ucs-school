@@ -164,7 +164,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 8 ] ; then
 	fi
 fi
 
-# trust Replica Directory Node KRB tickets on Primary Directory Node (Bug #51418)
+# trust Replica Directory Node KRB tickets on Primary Directory Node (Bug #51078)
 if [ $JS_LAST_EXECUTED_VERSION -lt 9 ]; then
 	if samba-tool spn list "ucs-sso" | grep -q 'no servicePrincipalName'; then
 		samba-tool spn add "HTTP/ucs-sso.$(hostname -d)" "ucs-sso" || die
