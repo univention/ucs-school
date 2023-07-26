@@ -39,6 +39,13 @@ VERSION=1
 
 joinscript_init
 
+eval "$(ucr shell)"
+
+if [ ! "$server_role" = "domaincontroller_master" ] && [ ! "$server_role" = "domaincontroller_backup" ]; then
+  joinscript_save_current_version
+  exit 0
+fi
+
 SCRIPT_PATH="/usr/share/ucs-school-lib/scripts/ucs-school-validate-usernames"
 
 NUMBER_OF_INVALID_USERNAMES=$("$SCRIPT_PATH" --silent)

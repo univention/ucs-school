@@ -66,7 +66,7 @@ def print_reason_details():
         "user that contain their username. One consequence can be,"
         " that users with an invalid username can't sign in to a Windows system. "
         "The use of usernames which aren't compliant with Windows naming conventions"
-        " is deprecated, and support will be removed with UCS 5.2."
+        " is deprecated, and support will be removed with UCS 5.2. "
         "See the manual"
         " https://docs.software-univention.de/ucsschool-manual/5.0/de/management/users.html "
         "(Chapter 3) and the relevant Microsoft documentation about naming conventions"
@@ -122,7 +122,8 @@ def report_invalid_users(all_invalid_users: List[InvalidUser], silent=False) -> 
 
         if len(all_invalid_users) > 0:
 
-            print('"Username" "School Name" "Distinguished Name" "Reason"')
+            print("\nTable with invalid usernames:")
+            print('\n"Username" "School Name" "Distinguished Name" "Reason"')
             for invalid_user in all_invalid_users:
                 print(
                     f"{invalid_user.username} {invalid_user.school_name}"

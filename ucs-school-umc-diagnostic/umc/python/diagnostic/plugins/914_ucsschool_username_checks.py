@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os.path
 import subprocess
+from html import escape
 
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Critical, Warning, main
@@ -33,34 +34,33 @@ def run(_umc_instance):
         )
 
     try:
-        number_of_non_compliant_usernames = subprocess.check_output(  # nosec
-            [check_windows_compliance_tool_path, "--silent"]
+        check_username_validity_output = subprocess.check_output(  # nosec
+            [check_windows_compliance_tool_path]
         )
     except subprocess.CalledProcessError:
         raise Critical(
             description=_("Diagnostic tool %s exited unexpectedly.") % check_windows_compliance_tool_path
         )
+    check_username_validity_output = check_username_validity_output.decode("utf-8")
+    check_username_validity_output_escaped = escape(check_username_validity_output)
 
-    try:
-        number_of_non_compliant_usernames = int(number_of_non_compliant_usernames)
-    except ValueError:
-        raise Critical(description=_("Unexpected problem during output conversion."))
-
-    if number_of_non_compliant_usernames > 0:
+    if _("Total number of invalid usernames:") in check_username_validity_output_escaped:
         raise Warning(
-            description="{} {} {} {}\n{} {}".format(
-                number_of_non_compliant_usernames,
-                _("usernames have been detected which do not comply to user naming rules."),
+            description="{} {} {}\n{} {}:\n\n<pre>{}</pre>".format(
+                _("Usernames have been detected which do not comply to user naming rules."),
                 _(
                     "To fix this, change the usernames to a supported form. "
-                    "Refer to the administrators manual for rules regarding usernames."
+                    'Refer to the <a href="http://docs.software-univention.de/ucsschool-manual/5.0/de/'
+                    'management/users.html" target="_blank" rel="noopener noreferrer">'
+                    "administrators manual</a> for rules regarding usernames."
                 ),
                 _(
                     "Important: Support for names which do not comply to Windows naming conventions"
                     " is deprecated, and will be removed with UCS 5.2."
                 ),
-                _("To retrieve a list of all offending usernames, use the tool "),
+                _("The following is a list of all offending usernames, as retrieved by the tool "),
                 check_windows_compliance_tool_path,
+                check_username_validity_output_escaped,
             )
         )
 

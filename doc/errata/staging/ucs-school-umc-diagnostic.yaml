@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-diagnostic
-fix: 2.0.14
+fix: 2.0.15
 desc: |
  * The coding style has been improved (Bug #55751).
  * Added a new system diagnostic feature: Existing UCS@school usernames will be checked for validity. Warnings are issued if deprecated or unsupported usernames have been found. (Bug #56152).

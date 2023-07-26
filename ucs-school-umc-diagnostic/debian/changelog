@@ -1,3 +1,10 @@
+ucs-school-umc-diagnostic (2.0.15) unstable; urgency=medium
+
+  * Bug #56152: Add complete output of script to diagnostic module
+    914_ucsschool_username_checks
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 26 Jul 2023 11:15:36 +0200
+
 ucs-school-umc-diagnostic (2.0.14) unstable; urgency=medium
 
   * Bug #56152: Add diagnostic module for checking validity of usernames.
