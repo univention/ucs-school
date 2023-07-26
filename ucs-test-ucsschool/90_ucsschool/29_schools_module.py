@@ -14,7 +14,8 @@ from univention.lib.umc import BadRequest
 from univention.testing.ucsschool.school import School, create_dc_slave
 
 
-def test_schools_module(udm_session):
+# Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+def test_FLAKY_schools_module(udm_session):
     udm = udm_session
     schools = []
     try:

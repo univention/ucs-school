@@ -72,7 +72,8 @@ def check_ldap(school, computers, should_exist):
                 raise AssertionError(ex)
 
 
-def test_delete_computers_delete_related_objects(schoolenv):
+# Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+def test_FLAKY_delete_computers_delete_related_objects(schoolenv):
     school, oudn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
 
     computers = []

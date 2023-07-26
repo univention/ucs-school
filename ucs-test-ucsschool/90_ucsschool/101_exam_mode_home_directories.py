@@ -41,7 +41,8 @@ def check_homedirs(member_dn_list, lo, should_exist=True):
             assert os.path.exists(homedir) == should_exist
 
 
-def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
+# Flakes when UMC server can't be reached
+def test_FLAKY_exam_mode_home_directories(udm_session, schoolenv, ucr):
     udm = udm_session
     lo = schoolenv.open_ldap_connection()
 

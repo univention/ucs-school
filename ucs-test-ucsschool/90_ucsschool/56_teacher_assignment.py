@@ -77,19 +77,22 @@ class TestSchoolTeacherAssignmentDomainAdmin(object):
         schoolClass = SchoolClass.from_dn(school_class_dn, school, self.schoolenv.lo)
         assert set(self.__school_class_teachers(schoolClass)) == set(original_teachers)
 
-    def test_teacher_from_primary_school(self, schoolenv, client):
+    # Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+    def test_FLAKY_teacher_from_primary_school(self, schoolenv, client):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client
         self.__test_teacher_assignment([schoolenv.teachers[schools[0][0]]])
 
-    def test_teacher_from_secondary_school(self, schoolenv, client):
+    # Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+    def test_FLAKY_teacher_from_secondary_school(self, schoolenv, client):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client
         self.__test_teacher_assignment([schoolenv.teachers[schools[1][0]]])
 
-    def test_teachers_from_two_schools(self, schoolenv, client):
+    # Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+    def test_FLAKY_teachers_from_two_schools(self, schoolenv, client):
         schools = schoolenv.schools
         self.schoolenv = schoolenv
         self.client = client

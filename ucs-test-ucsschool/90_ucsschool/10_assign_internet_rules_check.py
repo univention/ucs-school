@@ -25,7 +25,8 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
     return assignedGroups
 
 
-def test_assign_internet_rules(schoolenv, ucr):
+# Test flakes when AsyncHTTPClient.fetch is called on a closed connection
+def test_FLAKY_assign_internet_rules(schoolenv, ucr):
     umc_connection = Client.get_test_connection()
     if ucr.get("server/role") == "domaincontroller_master":
         umc_connection_master = umc_connection

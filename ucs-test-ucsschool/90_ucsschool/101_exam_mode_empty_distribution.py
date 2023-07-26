@@ -26,7 +26,8 @@ from univention.testing.ucsschool.exam import (
 )
 
 
-def test_exam_mode_empty_distribution(udm_session, schoolenv, ucr):
+# Flakes when UMC server can't be reached
+def test_FLAKY_exam_mode_empty_distribution(udm_session, schoolenv, ucr):
     udm = udm_session
     lo = schoolenv.open_ldap_connection()
 

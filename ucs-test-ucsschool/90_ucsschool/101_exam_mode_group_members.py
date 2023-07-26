@@ -18,7 +18,8 @@ from univention.testing.ucsschool.exam import Exam
 from univention.uldap import getMachineConnection
 
 
-def test_exam_mode_group_members(udm_session, schoolenv, ucr):
+# Flakes when UMC server can't be reached
+def test_FLAKY_exam_mode_group_members(udm_session, schoolenv, ucr):
     udm = udm_session
     open_ldap_co = schoolenv.open_ldap_connection()
 
