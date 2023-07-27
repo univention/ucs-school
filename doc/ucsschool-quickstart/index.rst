@@ -382,9 +382,6 @@ Weiterführende Informationen
   :cite:t:`ucsschool-teacher`, das die Verwendung der webbasierten
   Administrationsschnittstellen beschreibt.
 
-* Im `Univention Wiki <https://wiki.univention.de/index.php/Main_Page>`_ finden sich u.a.
-  verschiedene HOWTOs und Praxis-Tipps.
-
 * Antworten auf häufig gestellte Fragen gibt es in der `Support und Knowledge
   Base zu finden <https://help.univention.com/>`_.
 

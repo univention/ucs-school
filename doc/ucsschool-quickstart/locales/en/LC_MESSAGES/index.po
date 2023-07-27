@@ -1,25 +1,24 @@
 # SPDX-FileCopyrightText: 2021-2023 Univention GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-only
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Quickstart Guide für UCS@school 5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-14 17:52+0100\n"
-"PO-Revision-Date: 2023-02-23 13:20+0100\n"
+"POT-Creation-Date: 2023-07-27 16:50+0200\n"
+"PO-Revision-Date: 2023-07-27 16:51+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.12.1\n"
 
-#: ../../index.rst:5
+#: ../../index.rst:9
 msgid "Einleitung"
 msgstr "Introduction"
 
-#: ../../index.rst:7
+#: ../../index.rst:11
 msgid ""
 "|UCSUAS| ist eine Erweiterung für Univention Corporate Server (UCS). Die "
 "Installation besteht aus zwei Schritten:"
@@ -27,58 +26,56 @@ msgstr ""
 "|UCSUAS| is an extension for Univention Corporate Server (UCS). The "
 "installation consists of two steps:"
 
-#: ../../index.rst:10 ../../index.rst:21
+#: ../../index.rst:14 ../../index.rst:25
 msgid "Installation von UCS"
 msgstr "UCS installation"
 
-#: ../../index.rst:12
+#: ../../index.rst:16
 msgid "Installation der Erweiterung |UCSUAS|"
 msgstr "Installation of the extension |UCSUAS|"
 
-#: ../../index.rst:14
+#: ../../index.rst:18
 msgid ""
 "Dieser Quickstart Guide beschreibt die Installation und Einrichtung von "
 "|UCSUAS| in einer Schritt-für-Schritt-Anleitung."
 msgstr ""
-"This quickstart guide describes the installation and setup of |UCSUAS| in a "
-"step-by-step guide."
+"This quickstart guide describes the installation and setup of |UCSUAS| in"
+" a step-by-step guide."
 
-#: ../../index.rst:23
+#: ../../index.rst:27
 msgid "|UCSUAS| kann in zwei Varianten installiert werden:"
 msgstr "|UCSUAS| can be installed in two variants:"
 
-#: ../../index.rst:25
-msgid "Als *Single-Server-Umgebung* für Installationen an einzelnen Schulen"
-msgstr ""
-"As a *single server environment* for installations at individual schools"
-
-#: ../../index.rst:27
-msgid "Als *Multi-Server-Umgebung* für Umgebungen mit mehreren Schulen"
-msgstr ""
-"As a *multi-server environment* for environments with multiple schools"
-
 #: ../../index.rst:29
+msgid "Als *Single-Server-Umgebung* für Installationen an einzelnen Schulen"
+msgstr "As a *single server environment* for installations at individual schools"
+
+#: ../../index.rst:31
+msgid "Als *Multi-Server-Umgebung* für Umgebungen mit mehreren Schulen"
+msgstr "As a *multi-server environment* for environments with multiple schools"
+
+#: ../../index.rst:33
 msgid ""
 "Dieser Quickstart Guide beschreibt die Installation als Single-Server-"
-"Umgebung. Weiterführende Hinweise zu Multi-Server-Umgebungen finden sich in "
-":ref:`quickstart-ucsschool-multi-server` sowie in :ref:`school-installation-"
-"primary-directory-node2` in :cite:t:`ucsschool-admin`."
+"Umgebung. Weiterführende Hinweise zu Multi-Server-Umgebungen finden sich "
+"in :ref:`quickstart-ucsschool-multi-server` sowie in :ref:`school-"
+"installation-primary-directory-node2` in :cite:t:`ucsschool-admin`."
 msgstr ""
 "This quickstart guide describes the installation as a single-server "
 "environment. For more information about multi-server environments, see "
 ":ref:`quickstart-ucsschool-multi-server` and :ref:`school-installation-"
 "primary-directory-node2` in :cite:t:`ucsschool-admin`."
 
-#: ../../index.rst:35
+#: ../../index.rst:39
 msgid ""
 "UCS steht als 64 Bit-Variante (*amd64*) kostenlos im `Download-Bereich "
 "<https://www.univention.de/download/download-ucs/>`_ zur Verfügung. "
-"Alternativ kann UCS auch in der Amazon EC2 Cloud installiert (siehe "
-":ref:`installation-amazon-ec2` in :cite:t:`ucs-manual`) und für |UCSUAS| "
-"verwendet werden. Des Weiteren kann für die Installation von |UCSUAS| auch "
-"das VMware-Image für UCS verwendet (siehe :ref:`installation-vmware` in "
-":cite:t:`ucs-manual`) und darin die Erweiterung |UCSUASp| installiert "
-"werden. Auch hierfür gelten die als nächstes beschriebenen abweichenden "
+"Alternativ kann UCS auch in der Amazon EC2 Cloud installiert (siehe :ref"
+":`installation-amazon-ec2` in :cite:t:`ucs-manual`) und für |UCSUAS| "
+"verwendet werden. Des Weiteren kann für die Installation von |UCSUAS| "
+"auch das VMware-Image für UCS verwendet (siehe :ref:`installation-vmware`"
+" in :cite:t:`ucs-manual`) und darin die Erweiterung |UCSUASp| installiert"
+" werden. Auch hierfür gelten die als nächstes beschriebenen abweichenden "
 "Einstellungen."
 msgstr ""
 "UCS is available as a 64 bit variant (*amd64*) free of charge in the "
@@ -87,232 +84,236 @@ msgstr ""
 ":ref:`installation-amazon-ec2` in :cite:t:`ucs-manual`) and used for "
 "|UCSUAS|. Furthermore, the VMware image for UCS can also be used for the "
 "installation of |UCSUAS| (see :ref:`installation-vmware` in :cite:t:`ucs-"
-"manual`) and the extension |UCSUASp| can be installed in it. The different "
-"settings described next also apply here."
+"manual`) and the extension |UCSUASp| can be installed in it. The "
+"different settings described next also apply here."
 
-#: ../../index.rst:44
+#: ../../index.rst:48
 msgid ""
-"Wählen Sie für die Installation folgende abweichende Einstellungen vom UCS "
-"Quickstart Guide :cite:t:`ucs-quickstart`, um |UCSUAS| zu installieren:"
+"Wählen Sie für die Installation folgende abweichende Einstellungen vom "
+"UCS Quickstart Guide :cite:t:`ucs-quickstart`, um |UCSUAS| zu "
+"installieren:"
 msgstr ""
 "For installation, choose the following different settings from the UCS "
 "Quickstart Guide :cite:t:`ucs-quickstart` to install |UCSUAS|:"
 
-#: ../../index.rst:48
+#: ../../index.rst:52
 msgid "Systemrolle"
 msgstr "System role"
 
-#: ../../index.rst:48
+#: ../../index.rst:52
 msgid "|UCSPRIMARYDN|"
 msgstr "|UCSPRIMARYDN|"
 
-#: ../../index.rst:53
+#: ../../index.rst:57
 msgid "Software-Auswahl"
 msgstr "Software selection"
 
-#: ../../index.rst:51
+#: ../../index.rst:55
 msgid ""
 "Hier können alle Auswahlkomponenten entfernt werden. Die spätere "
 "Installation der |UCSUAS|-Erweiterung installiert alle notwendigen "
 "Abhängigkeiten automatisch mit."
 msgstr ""
-"All selection components can be removed here. The later installation of the "
-"|UCSUAS| extension will install all necessary dependencies automatically."
+"All selection components can be removed here. The later installation of "
+"the |UCSUAS| extension will install all necessary dependencies "
+"automatically."
 
-#: ../../index.rst:57
+#: ../../index.rst:61
 msgid ""
-"Achten Sie darauf, dass der Hostname nur aus Kleinbuchstaben, Ziffern sowie "
-"dem Bindestrich bestehen (``a-z``, ``0-9`` und ``-``) und zur Trennung nur "
-"einzelne Punkte enthalten darf. Der Hostname darf außerdem nur mit einem "
-"Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden "
-"und ist auf eine Länge von 13 Zeichen beschränkt."
+"Achten Sie darauf, dass der Hostname nur aus Kleinbuchstaben, Ziffern "
+"sowie dem Bindestrich bestehen (``a-z``, ``0-9`` und ``-``) und zur "
+"Trennung nur einzelne Punkte enthalten darf. Der Hostname darf außerdem "
+"nur mit einem Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder "
+"einer Ziffer enden und ist auf eine Länge von 13 Zeichen beschränkt."
 msgstr ""
-"Make sure that the hostname consists only of lowercase letters, digits, and"
-" the hyphen (``a-z``, ``0-9``, and ``-``), and may contain only single "
-"periods to separate them. The hostname may also only begin with a lowercase"
-" letter, end with a lowercase letter or a digit, and is limited to a length "
-"of 13 characters."
+"Make sure that the hostname consists only of lowercase letters, digits, "
+"and the hyphen (``a-z``, ``0-9``, and ``-``), and may contain only single"
+" periods to separate them. The hostname may also only begin with a "
+"lowercase letter, end with a lowercase letter or a digit, and is limited "
+"to a length of 13 characters."
 
-#: ../../index.rst:67
+#: ../../index.rst:71
 msgid "Installation der |UCSUAS|-Erweiterung"
 msgstr "Installing the |UCSUAS| extension"
 
-#: ../../index.rst:69
+#: ../../index.rst:73
 msgid ""
-"Der folgende Abschnitt beschreibt die Installation der Erweiterung |UCSUAS| "
-"auf einem UCS-System über Univention App Center. Dazu muss eine Anmeldung "
-"mit dem Administrator-Konto (Benutzername: ``Administrator``) an der "
-"Univention Management Console (:samp:`https://{server_ip}/umc` oder "
-":samp:`http://{server_ip}/umc`) erfolgen."
+"Der folgende Abschnitt beschreibt die Installation der Erweiterung "
+"|UCSUAS| auf einem UCS-System über Univention App Center. Dazu muss eine "
+"Anmeldung mit dem Administrator-Konto (Benutzername: ``Administrator``) "
+"an der Univention Management Console (:samp:`https://{server_ip}/umc` "
+"oder :samp:`http://{server_ip}/umc`) erfolgen."
 msgstr ""
-"The following section describes the installation of the extension |UCSUAS| "
-"on a UCS system through Univention App Center. For this purpose, a login with "
-"the administrator account (username: ``Administrator``) to the Univention "
-"Management Console (:samp:`https://{server_ip}/umc` or "
+"The following section describes the installation of the extension "
+"|UCSUAS| on a UCS system through Univention App Center. For this purpose,"
+" a login with the administrator account (username: ``Administrator``) to "
+"the Univention Management Console (:samp:`https://{server_ip}/umc` or "
 ":samp:`http://{server_ip}/umc`) must take place."
 
-#: ../../index.rst:75
+#: ../../index.rst:79
 msgid ""
-"Bei der ersten Anmeldung muss im UMC-Modul *Willkommen!* eine UCS-Lizenz für"
-" das Univention App Center freigeschaltet werden. Im Dialog, der über "
+"Bei der ersten Anmeldung muss im UMC-Modul *Willkommen!* eine UCS-Lizenz "
+"für das Univention App Center freigeschaltet werden. Im Dialog, der über "
 ":guilabel:`Neue Lizenz anfordern` geöffnet wird, muss dazu eine E-Mail-"
-"Adresse angegeben werden, an die der freigeschaltete Lizenzschlüssel dann "
-"geschickt wird."
+"Adresse angegeben werden, an die der freigeschaltete Lizenzschlüssel dann"
+" geschickt wird."
 msgstr ""
 "When signing in for the first time, a UCS license for the Univention App "
-"Center must be activated in the UMC module *Welcome!* In the dialog opened "
-"through :guilabel:`Request new license`, an email address must be provided for "
-"this purpose, to which the license key will be sent."
+"Center must be activated in the UMC module *Welcome!* In the dialog "
+"opened through :guilabel:`Request new license`, an email address must be "
+"provided for this purpose, to which the license key will be sent."
 
-#: ../../index.rst:80
+#: ../../index.rst:84
 msgid ""
-"Der Lizenzschlüssel kann über das UMC-Modul *Willkommen!* importiert werden."
-" Es muss der Menüpunkt :guilabel:`Neue Lizenz importieren` ausgewählt "
-"werden. Nach dem Import des Lizenzschlüssels kann das Univention App Center "
-"verwendet werden."
+"Der Lizenzschlüssel kann über das UMC-Modul *Willkommen!* importiert "
+"werden. Es muss der Menüpunkt :guilabel:`Neue Lizenz importieren` "
+"ausgewählt werden. Nach dem Import des Lizenzschlüssels kann das "
+"Univention App Center verwendet werden."
 msgstr ""
-"The license key can be imported through the UMC module *Welcome!* The menu item"
-" :guilabel:`Import new license` must be selected. After importing the "
-"license key, the Univention App Center can be used."
+"The license key can be imported through the UMC module *Welcome!* The "
+"menu item :guilabel:`Import new license` must be selected. After "
+"importing the license key, the Univention App Center can be used."
 
-#: ../../index.rst:88
+#: ../../index.rst:92
 msgid ""
 "Im UMC-Modul App Center ist die Applikation |UCSUASp| auszuwählen und "
 "anschließend auf :guilabel:`Installieren` zu klicken. Nach Abschluss der "
-"Installation von |UCSUAS| kann in der Univention Management Console das neue"
-" Modul *UCS\\@school-Konfigurationsassistent* aufgerufen werden."
+"Installation von |UCSUAS| kann in der Univention Management Console das "
+"neue Modul *UCS\\@school-Konfigurationsassistent* aufgerufen werden."
 msgstr ""
 "In the UMC App Center module, select the |UCSUASp| application and then "
-"click :guilabel:`Install`. After completing the installation of |UCSUAS|, "
-"the new module *UCS\\@school configuration wizard* can be selected in the "
-"Univention Management Console."
+"click :guilabel:`Install`. After completing the installation of |UCSUAS|,"
+" the new module *UCS\\@school configuration wizard* can be selected in "
+"the Univention Management Console."
 
-#: ../../index.rst:93
+#: ../../index.rst:97
 msgid ""
 "Standardmäßig wird bei der Erstinstallation von |UCSUAS| auf dem "
-"|UCSPRIMARYDN| eine Demonstrationsschule inklusive Testnutzern konfiguriert."
-" Die Schule trägt den Namen *DEMOSCHOOL* und kann für eigene Tests verwendet"
-" werden. Das Passwort für die automatisch angelegten Nutzer "
-"``demo_student``, ``demo_teacher`` und ``demo_admin`` befindet sich in der "
-"Datei :file:`/etc/ucsschool/demoschool.secret`. Um das Anlegen der "
-"Demonstrationsschule zu verhindern, muss die UCR-Variable "
+"|UCSPRIMARYDN| eine Demonstrationsschule inklusive Testnutzern "
+"konfiguriert. Die Schule trägt den Namen *DEMOSCHOOL* und kann für eigene"
+" Tests verwendet werden. Das Passwort für die automatisch angelegten "
+"Nutzer ``demo_student``, ``demo_teacher`` und ``demo_admin`` befindet "
+"sich in der Datei :file:`/etc/ucsschool/demoschool.secret`. Um das "
+"Anlegen der Demonstrationsschule zu verhindern, muss die UCR-Variable "
 ":envvar:`ucsschool/join/create_demo` auf den Wert ``no`` gesetzt werden, "
-"bevor der |UCSUAS|-Konfigurations-Assistent durchlaufen wird. Das Setzen der"
-" UCR-Variable ist entweder über das UMC-Modul *Univention Configuration "
-"Registry* oder auf der Kommandozeile mit dem Befehl :command:`ucr set "
-"ucsschool/join/create_demo=no` möglich."
+"bevor der |UCSUAS|-Konfigurations-Assistent durchlaufen wird. Das Setzen "
+"der UCR-Variable ist entweder über das UMC-Modul *Univention "
+"Configuration Registry* oder auf der Kommandozeile mit dem Befehl "
+":command:`ucr set ucsschool/join/create_demo=no` möglich."
 msgstr ""
-"By default, a demonstration school including test users is configured on the"
-" |UCSPRIMARYDN| during the initial installation of |UCSUAS|. The school is "
-"named *DEMOSCHOOL* and can be used for testing purposes. The password for the "
-"automatically created users ``demo_student``, ``demo_teacher`` and "
-"``demo_admin`` is located in the file "
+"By default, a demonstration school including test users is configured on "
+"the |UCSPRIMARYDN| during the initial installation of |UCSUAS|. The "
+"school is named *DEMOSCHOOL* and can be used for testing purposes. The "
+"password for the automatically created users ``demo_student``, "
+"``demo_teacher`` and ``demo_admin`` is located in the file "
 ":file:`/etc/ucsschool/demoschool.secret`. To prevent the creation of the "
-"demonstration school, the UCR variable :envvar:`ucsschool/join/create_demo` "
-"must be set to the value ``no`` before going through the |UCSUAS| "
-"configuration wizard. Setting the UCR variable is possible either through the "
-"UMC module *Univention Configuration Registry* or on the command line with "
-"the command :command:`ucr set ucsschool/join/create_demo=no`."
+"demonstration school, the UCR variable "
+":envvar:`ucsschool/join/create_demo` must be set to the value ``no`` "
+"before going through the |UCSUAS| configuration wizard. Setting the UCR "
+"variable is possible either through the UMC module *Univention "
+"Configuration Registry* or on the command line with the command "
+":command:`ucr set ucsschool/join/create_demo=no`."
 
-#: ../../index.rst:106
+#: ../../index.rst:110
 msgid ""
-"Der Assistent begleitet die notwendigen Konfigurationsschritte für |UCSUAS|:"
-msgstr ""
-"The wizard accompanies the necessary configuration steps for |UCSUAS|:"
+"Der Assistent begleitet die notwendigen Konfigurationsschritte für "
+"|UCSUAS|:"
+msgstr "The wizard accompanies the necessary configuration steps for |UCSUAS|:"
 
-#: ../../index.rst:108
+#: ../../index.rst:112
 msgid "Im ersten Schritt wird die Option *Single-Server-Umgebung* ausgewählt."
 msgstr "In the first step the option *Single server environment* is selected."
 
-#: ../../index.rst:110
+#: ../../index.rst:114
 msgid ""
 "Dann wird der Name der Schule und ein Schulkürzel festgelegt (z.B. "
 "*Gesamtschule Nord* und *gsnord*)."
 msgstr ""
-"Then the name of the school and a school abbreviation are defined, for example "
-"*Gesamtschule Nord* and *gsnord*."
+"Then the name of the school and a school abbreviation are defined, for "
+"example *Gesamtschule Nord* and *gsnord*."
 
-#: ../../index.rst:113
+#: ../../index.rst:117
 msgid ""
 "Mit der Bestätigung der Einstellungen wird das System konfiguriert und "
-"benötigte Pakete automatisch mitinstalliert. Der Frage nach dem Neustart der"
-" UMC sollte zugestimmt werden, damit die |UCSUAS|-Module sofort verfügbar "
-"sind. Nach Abschluss der Konfiguration ist die Installation von |UCSUAS| "
-"abgeschlossen."
+"benötigte Pakete automatisch mitinstalliert. Der Frage nach dem Neustart "
+"der UMC sollte zugestimmt werden, damit die |UCSUAS|-Module sofort "
+"verfügbar sind. Nach Abschluss der Konfiguration ist die Installation von"
+" |UCSUAS| abgeschlossen."
 msgstr ""
-"With the confirmation of the settings, the system is configured and required"
-" packages are installed automatically. The question about restarting the UMC"
-" should be agreed to so that the |UCSUAS| modules are immediately available."
-" After completing the configuration, the installation of |UCSUAS| is "
-"finished."
+"With the confirmation of the settings, the system is configured and "
+"required packages are installed automatically. The question about "
+"restarting the UMC should be agreed to so that the |UCSUAS| modules are "
+"immediately available. After completing the configuration, the "
+"installation of |UCSUAS| is finished."
 
-#: ../../index.rst:122
+#: ../../index.rst:126
 msgid "Verwaltung der Schüler- und Lehrerdaten"
 msgstr "Management of student and teacher account data"
 
-#: ../../index.rst:124
+#: ../../index.rst:128
 msgid ""
-"In einer Standard-UCS-Installation sind alle Benutzerkonten vom selben Typ "
-"und unterscheiden sich nur anhand ihrer Gruppenmitgliedschaften. In einer "
-"|UCSUAS|-Umgebung ist jeder Benutzer einer Rolle zugeordnet, aus der sich "
-"Berechtigungen in der |UCSUAS|-Verwaltung ergeben:"
+"In einer Standard-UCS-Installation sind alle Benutzerkonten vom selben "
+"Typ und unterscheiden sich nur anhand ihrer Gruppenmitgliedschaften. In "
+"einer |UCSUAS|-Umgebung ist jeder Benutzer einer Rolle zugeordnet, aus "
+"der sich Berechtigungen in der |UCSUAS|-Verwaltung ergeben:"
 msgstr ""
-"In a standard UCS installation, all user accounts are of the same type and "
-"differ only by their group memberships. In a |UCSUAS| environment, each user"
-" is assigned to a role, from which permissions in the |UCSUAS| "
+"In a standard UCS installation, all user accounts are of the same type "
+"and differ only by their group memberships. In a |UCSUAS| environment, "
+"each user is assigned to a role, from which permissions in the |UCSUAS| "
 "administration are derived:"
 
-#: ../../index.rst:134
+#: ../../index.rst:138
 msgid "Schüler"
 msgstr "Students"
 
-#: ../../index.rst:131
+#: ../../index.rst:135
 msgid ""
 "*Schülern* wird in der Standardeinstellung kein Zugriff auf die "
-"Administrationsoberflächen gewährt. Sie können sich mit ihren Benutzerkonten"
-" nur an Windows-Clients anmelden und die für sie freigegebenen "
-"Dateifreigaben und Drucker verwenden."
+"Administrationsoberflächen gewährt. Sie können sich mit ihren "
+"Benutzerkonten nur an Windows-Clients anmelden und die für sie "
+"freigegebenen Dateifreigaben und Drucker verwenden."
 msgstr ""
 "*Students* are not granted access to the administration interfaces by "
-"default. They can only sign-in to Windows clients with their user accounts "
-"and use the file shares and printers shared with them."
+"default. They can only sign-in to Windows clients with their user "
+"accounts and use the file shares and printers shared with them."
 
-#: ../../index.rst:142
+#: ../../index.rst:146
 msgid "Lehrer"
 msgstr "Teacher"
 
-#: ../../index.rst:137
+#: ../../index.rst:141
 msgid ""
 "*Lehrer* erhalten gegenüber Schülern zusätzliche Rechte, um z.B. auf UMC-"
-"Module zugreifen zu können, die das Zurücksetzen von Schülerpasswörtern oder"
-" das Auswählen von Internetfiltern ermöglichen. Die für Lehrer freigegebenen"
-" Module können individuell definiert werden. Lehrer erhalten in der Regel "
-"aber nur Zugriff auf einen Teil der von der Univention Management Console "
-"bereitgestellten Funktionen."
+"Module zugreifen zu können, die das Zurücksetzen von Schülerpasswörtern "
+"oder das Auswählen von Internetfiltern ermöglichen. Die für Lehrer "
+"freigegebenen Module können individuell definiert werden. Lehrer erhalten"
+" in der Regel aber nur Zugriff auf einen Teil der von der Univention "
+"Management Console bereitgestellten Funktionen."
 msgstr ""
-"*Teachers* are granted additional rights compared to students, for example to "
-"access UMC modules that allow resetting student passwords or selecting "
-"internet filters. The modules that are available to teachers can be defined "
-"individually. However, teachers are usually only given access to a part of "
-"the functions provided by the Univention Management Console."
+"*Teachers* are granted additional rights compared to students, for "
+"example to access UMC modules that allow resetting student passwords or "
+"selecting internet filters. The modules that are available to teachers "
+"can be defined individually. However, teachers are usually only given "
+"access to a part of the functions provided by the Univention Management "
+"Console."
 
-#: ../../index.rst:148
+#: ../../index.rst:152
 msgid "Schuladministrator"
 msgstr "School Administrator"
 
-#: ../../index.rst:145
+#: ../../index.rst:149
 msgid ""
-"Vollen Zugriff auf die Schulverwaltungsfunktionen von |UCSUAS| erhalten die "
-"*Schuladministratoren*. Sie können z.B. Computer zu Rechnergruppen "
-"zusammenfassen, neue Internetfilter definieren oder auch Lehrerpasswörter "
-"zurücksetzen."
+"Vollen Zugriff auf die Schulverwaltungsfunktionen von |UCSUAS| erhalten "
+"die *Schuladministratoren*. Sie können z.B. Computer zu Rechnergruppen "
+"zusammenfassen, neue Internetfilter definieren oder auch Lehrerpasswörter"
+" zurücksetzen."
 msgstr ""
-"Full access to the school administration functions of |UCSUAS| is given to "
-"*school administrators*. They can, for example, combine computers into "
-"computer groups, define new internet filters or even reset teacher "
+"Full access to the school administration functions of |UCSUAS| is given "
+"to *school administrators*. They can, for example, combine computers into"
+" computer groups, define new internet filters or even reset teacher "
 "passwords."
 
-#: ../../index.rst:150
+#: ../../index.rst:154
 msgid ""
 "Bei der Konfiguration über den Assistenten wurde bereits ein Schulname "
 "konfiguriert."
@@ -320,82 +321,86 @@ msgstr ""
 "During configuration through the wizard, a school name has already been "
 "configured."
 
-#: ../../index.rst:153
+#: ../../index.rst:157
 msgid ""
 "Als nächstes muss eine Schulklasse erstellt werden. In der Univention "
 "Management Console kann mit *Klassen (Schulen)* aus dem Abschnitt "
 "Schuladministration eine Schulklasse definiert werden, z.B. *1a*."
 msgstr ""
-"Next, a school class must be created. In the Univention Management Console, "
-"a school class can be defined with *Classes (Schools)* from the School "
-"Administration section, for example *1a*."
+"Next, a school class must be created. In the Univention Management "
+"Console, a school class can be defined with *Classes (Schools)* from the "
+"School Administration section, for example *1a*."
 
-#: ../../index.rst:157
+#: ../../index.rst:161
 msgid ""
 "Nun werden über das Modul *Benutzer (Schulen)* zwei Schüler und ein "
 "Lehrerkonto angelegt. Beiden Schülerkonten sollte die gerade angelegte "
-"Klasse zugewiesen werden. Abschließend wird das angelegte Lehrerkonto mit "
-"*Lehrer Klassen zuordnen* der Klasse zugeordnet."
+"Klasse zugewiesen werden. Abschließend wird das angelegte Lehrerkonto mit"
+" *Lehrer Klassen zuordnen* der Klasse zugeordnet."
 msgstr ""
 "Now two students and one teacher account are created through the *Users "
-"(Schools)* module. Both student accounts should be assigned the class just "
-"created. Finally, the created teacher account is assigned to the class with "
-"*Assign teacher classes*."
+"(Schools)* module. Both student accounts should be assigned the class "
+"just created. Finally, the created teacher account is assigned to the "
+"class with *Assign teacher classes*."
 
-#: ../../index.rst:166
+#: ../../index.rst:170
 msgid ""
 "Das oben beschriebene Anlegen der Benutzer erfolgt in den meisten "
 "|UCSUAS|-Installationen z.B. durch automatisierte Import-Skripte. Die "
-"primäre Verwaltung der Schülerdaten erfolgt üblicherweise weiterhin in der "
-"vom jeweiligen Schulträger eingesetzten Schulverwaltungssoftware. "
+"primäre Verwaltung der Schülerdaten erfolgt üblicherweise weiterhin in "
+"der vom jeweiligen Schulträger eingesetzten Schulverwaltungssoftware. "
 "Benutzerdaten der Schüler und Lehrer werden dabei aus der "
-"Schulverwaltungssoftware exportiert und über mitgelieferte Import-Skripte in"
-" |UCSUAS| importiert (typischerweise zum Schuljahreswechsel). Über diese "
-"Import-Skripte lassen sich auch Rechnerkonten und Drucker importieren."
+"Schulverwaltungssoftware exportiert und über mitgelieferte Import-Skripte"
+" in |UCSUAS| importiert (typischerweise zum Schuljahreswechsel). Über "
+"diese Import-Skripte lassen sich auch Rechnerkonten und Drucker "
+"importieren."
 msgstr ""
-"The creation of users described above is done in most |UCSUAS| installations,"
-" for example by automated import scripts. The primary administration of student "
-"account data is usually still done in the school administration software used by the"
-" respective school administration. User account data of students and teachers are exported "
-"from the school administration software and imported into |UCSUAS| through "
-"supplied import scripts (typically at the change of school year). Computer "
-"accounts and printers can also be imported through these import scripts."
+"The creation of users described above is done in most |UCSUAS| "
+"installations, for example by automated import scripts. The primary "
+"administration of student account data is usually still done in the "
+"school administration software used by the respective school "
+"administration. User account data of students and teachers are exported "
+"from the school administration software and imported into |UCSUAS| "
+"through supplied import scripts (typically at the change of school year)."
+" Computer accounts and printers can also be imported through these import"
+" scripts."
 
-#: ../../index.rst:179
+#: ../../index.rst:183
 msgid "Module"
 msgstr "Modules"
 
-#: ../../index.rst:181
+#: ../../index.rst:185
 msgid ""
-"|UCSUAS| stellt eine Reihe von Modulen für die Univention Management Console"
-" bereit, die für den IT-gestützten Unterricht verwendet werden können. Im "
-"Folgenden werden die Module kurz beschrieben. Eine ausführliche Beschreibung"
-" der Verwendung der Module findet sich im Handbuch für Lehrer "
-":cite:t:`ucsschool-teacher`."
+"|UCSUAS| stellt eine Reihe von Modulen für die Univention Management "
+"Console bereit, die für den IT-gestützten Unterricht verwendet werden "
+"können. Im Folgenden werden die Module kurz beschrieben. Eine "
+"ausführliche Beschreibung der Verwendung der Module findet sich im "
+"Handbuch für Lehrer :cite:t:`ucsschool-teacher`."
 msgstr ""
-"|UCSUAS| provides a number of modules for the Univention Management Console "
-"that can be used for IT-supported teaching. The modules are briefly "
-"described below. A detailed description of how to use the modules can be "
-"found in :cite:t:`ucsschool-teacher`."
+"|UCSUAS| provides a number of modules for the Univention Management "
+"Console that can be used for IT-supported teaching. The modules are "
+"briefly described below. A detailed description of how to use the modules"
+" can be found in :cite:t:`ucsschool-teacher`."
 
-#: ../../index.rst:187
+#: ../../index.rst:191
 msgid ""
 "Einige Module stehen Lehrern und Schuladministratoren zur Verfügung und "
 "einige Module nur Schuladministratoren. Je nachdem, ob die Anmeldung mit "
-"einem der oben angelegten Lehrer oder dem Administrator erfolgt, erscheint "
-"nur eine Auswahl der Module. Schüler erhalten keinen Zugriff auf die Module."
+"einem der oben angelegten Lehrer oder dem Administrator erfolgt, "
+"erscheint nur eine Auswahl der Module. Schüler erhalten keinen Zugriff "
+"auf die Module."
 msgstr ""
-"Some modules are available to teachers and school administrators and some "
-"modules are only available to school administrators. Depending on whether "
-"the login is with one of the teachers created above or the administrator, "
-"only a selection of modules will appear. Students don't get access to the "
-"modules."
+"Some modules are available to teachers and school administrators and some"
+" modules are only available to school administrators. Depending on "
+"whether the login is with one of the teachers created above or the "
+"administrator, only a selection of modules will appear. Students don't "
+"get access to the modules."
 
-#: ../../index.rst:201
+#: ../../index.rst:205
 msgid "Passwörter (Schüler)"
 msgstr "Passwords (students)"
 
-#: ../../index.rst:197
+#: ../../index.rst:201
 msgid ""
 "*Passwörter (Schüler)* erlaubt Lehrern das Zurücksetzen von Schüler-"
 "Passwörtern. Die bestehenden Schüler-Passwörter können aus "
@@ -404,401 +409,404 @@ msgid ""
 "dürfen außerdem die Passwörter von Lehrern zurücksetzen."
 msgstr ""
 "*Passwords (students)* allows teachers to reset student passwords. The "
-"existing student passwords cannot be read for security reasons; if students "
-"forget their password, a new password must be assigned. School "
+"existing student passwords cannot be read for security reasons; if "
+"students forget their password, a new password must be assigned. School "
 "administrators are also allowed to reset teacher passwords."
 
-#: ../../index.rst:213
+#: ../../index.rst:217
 msgid "Computerraum"
 msgstr "Computer room"
 
-#: ../../index.rst:204
+#: ../../index.rst:208
 msgid ""
 "Das Modul *Computerraum* erlaubt die Kontrolle der Schüler-PCs und des "
 "Internetzugangs während einer Unterrichtsstunde. Der Internetzugang kann "
-"gesperrt und freigegeben werden und einzelne Internetseiten können gezielt "
-"freigegeben werden. Wenn eine entsprechende Software (Veyon) auf den "
-"Schüler-PCs installiert ist, besteht auch die Möglichkeit diese PCs zu "
-"steuern. So kann der Bildschirm gesperrt werden, so dass beispielweise in "
-"einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein Experiment gelenkt"
-" werden kann. Außerdem kann der Bildschiminhalt eines PCs auf andere Systeme"
-" übertragen werden. Dies erlaubt es Lehrern, auch ohne einen Beamer "
-"Präsentationen durchzuführen."
+"gesperrt und freigegeben werden und einzelne Internetseiten können "
+"gezielt freigegeben werden. Wenn eine entsprechende Software (Veyon) auf "
+"den Schüler-PCs installiert ist, besteht auch die Möglichkeit diese PCs "
+"zu steuern. So kann der Bildschirm gesperrt werden, so dass beispielweise"
+" in einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein Experiment "
+"gelenkt werden kann. Außerdem kann der Bildschiminhalt eines PCs auf "
+"andere Systeme übertragen werden. Dies erlaubt es Lehrern, auch ohne "
+"einen Beamer Präsentationen durchzuführen."
 msgstr ""
-"The module *Computer room* allows the control of student PCs and internet "
-"access during a lesson. Internet access can be blocked and allowed and "
-"individual internet pages can be specifically allowed. If the appropriate "
-"software (Veyon) is installed on the student PCs, it's also possible to "
-"control these PCs. For example, the screen can be locked so that undivided "
-"attention can be focused on an experiment during a chemistry lesson. In "
-"addition, a PC's screen content can be transferred to other systems. This "
-"allows teachers to give presentations even without a video projector."
+"The module *Computer room* allows the control of student PCs and internet"
+" access during a lesson. Internet access can be blocked and allowed and "
+"individual internet pages can be specifically allowed. If the appropriate"
+" software (Veyon) is installed on the student PCs, it's also possible to "
+"control these PCs. For example, the screen can be locked so that "
+"undivided attention can be focused on an experiment during a chemistry "
+"lesson. In addition, a PC's screen content can be transferred to other "
+"systems. This allows teachers to give presentations even without a video "
+"projector."
 
-#: ../../index.rst:218
+#: ../../index.rst:222
 msgid "Computerräume verwalten"
 msgstr "Manage computer rooms"
 
-#: ../../index.rst:216
+#: ../../index.rst:220
 msgid ""
-"Mit dem Modul *Computerräume verwalten* werden Computer einer Schule einem "
-"Computerraum zugeordnet. Diese Computerräume können von den Lehrern dann "
-"zentral verwaltet werden, etwa in dem der Internetzugang freigegeben wird."
+"Mit dem Modul *Computerräume verwalten* werden Computer einer Schule "
+"einem Computerraum zugeordnet. Diese Computerräume können von den Lehrern"
+" dann zentral verwaltet werden, etwa in dem der Internetzugang "
+"freigegeben wird."
 msgstr ""
-"With the module *Manage computer rooms* computers of a school are assigned "
-"to a computer room. These computer rooms can then be managed centrally by "
-"the teachers, for example by enabling internet access."
+"With the module *Manage computer rooms* computers of a school are "
+"assigned to a computer room. These computer rooms can then be managed "
+"centrally by the teachers, for example by enabling internet access."
 
-#: ../../index.rst:223
+#: ../../index.rst:227
 msgid "Helpdesk kontaktieren"
 msgstr "Contact helpdesk"
 
-#: ../../index.rst:221
+#: ../../index.rst:225
 msgid ""
 "Jede Schule wird durch einen Helpdesk betreut, der in der Regel vom "
 "Schulträger bereitgestellt wird. Über das Modul *Helpdesk kontaktieren* "
 "können Lehrer und Schuladministratoren eine Anfrage stellen."
 msgstr ""
 "Each school is supported by a helpdesk, which is usually provided by the "
-"school administration. Using the module *Contact helpdesk*, teachers and school "
-"administrators can submit a request."
+"school administration. Using the module *Contact helpdesk*, teachers and "
+"school administrators can submit a request."
 
-#: ../../index.rst:234
+#: ../../index.rst:238
 msgid "Arbeitsgruppen bearbeiten"
 msgstr "Edit workgroups"
 
-#: ../../index.rst:226
+#: ../../index.rst:230
 msgid ""
 "Jeder Schüler ist Mitglied seiner Klasse. Darüber hinaus gibt es die "
 "Möglichkeit mit dem Modul *Arbeitsgruppen bearbeiten* Schüler in "
 "klassenübergreifende Arbeitsgruppen einzuordnen. Das Anlegen einer "
-"Arbeitsgruppe legt automatisch einen Datenbereich auf dem Schulserver an, "
-"auf den alle Mitglieder der Arbeitsgruppe Zugriff haben. Lehrer können "
+"Arbeitsgruppe legt automatisch einen Datenbereich auf dem Schulserver an,"
+" auf den alle Mitglieder der Arbeitsgruppe Zugriff haben. Lehrer können "
 "Schüler zu Arbeitsgruppen hinzufügen oder entfernen, aber keine neuen "
-"Arbeitsgruppen anlegen. Dies muss von einem Schuladministrator vorgenommen "
-"werden. Das Modul *Arbeitsgruppen bearbeiten* erlaubt Schuladministratoren "
-"neue Arbeitsgruppen anzulegen und diesen neben Schülern auch Lehrer "
-"zuzuweisen."
+"Arbeitsgruppen anlegen. Dies muss von einem Schuladministrator "
+"vorgenommen werden. Das Modul *Arbeitsgruppen bearbeiten* erlaubt "
+"Schuladministratoren neue Arbeitsgruppen anzulegen und diesen neben "
+"Schülern auch Lehrer zuzuweisen."
 msgstr ""
 "Each student is a member of his or her class. In addition, there is the "
-"possibility with the module *Edit workgroups* to assign students to cross-"
-"class workgroups. Creating a workgroup automatically creates a data area on "
-"the school server to which all members of the workgroup have access. "
-"Teachers can add or remove students from workgroups, but cannot create new "
-"workgroups. This must be done by a school administrator. The *Edit "
-"Workgroups* module allows school administrators to create new workgroups and"
-" assign teachers to them in addition to students."
+"possibility with the module *Edit workgroups* to assign students to "
+"cross-class workgroups. Creating a workgroup automatically creates a data"
+" area on the school server to which all members of the workgroup have "
+"access. Teachers can add or remove students from workgroups, but cannot "
+"create new workgroups. This must be done by a school administrator. The "
+"*Edit Workgroups* module allows school administrators to create new "
+"workgroups and assign teachers to them in addition to students."
 
-#: ../../index.rst:240
+#: ../../index.rst:244
 msgid "Drucker moderieren"
 msgstr "Moderate printer"
 
-#: ../../index.rst:237
+#: ../../index.rst:241
 msgid ""
 "Mit dem Modul *Drucker moderieren* können Ausdrucke der Schüler geprüft "
 "werden. Die anstehenden Druckaufträge können vom Lehrer betrachtet und "
-"entweder verworfen oder an den Drucker weitergereicht werden. Dadurch werden"
-" unnötige oder fehlerhafte Ausdrucke vermieden."
+"entweder verworfen oder an den Drucker weitergereicht werden. Dadurch "
+"werden unnötige oder fehlerhafte Ausdrucke vermieden."
 msgstr ""
-"With the module *Moderate printer* printouts of the students can be checked."
-" The pending print jobs can be viewed by the teacher and either discarded or"
-" forwarded to the printer. This avoids unnecessary or incorrect printouts."
+"With the module *Moderate printer* printouts of the students can be "
+"checked. The pending print jobs can be viewed by the teacher and either "
+"discarded or forwarded to the printer. This avoids unnecessary or "
+"incorrect printouts."
 
-#: ../../index.rst:248
+#: ../../index.rst:252
 msgid "Materialien verteilen"
 msgstr "Distribute materials"
 
-#: ../../index.rst:243
+#: ../../index.rst:247
 msgid ""
-"Das Modul *Materialien verteilen* vereinfacht das Verteilen und Einsammeln "
-"von Unterrichtsmaterial an einzelne Schüler, Klassen oder Arbeitsgruppen. "
-"Optional kann eine Frist festgelegt werden. So ist es möglich, Aufgaben zu "
-"verteilen, die bis zum Ende der Unterrichtsstunde zu bearbeiten sind. Nach "
-"Ablauf der Frist werden die verteilten Materialien dann automatisch wieder "
-"eingesammelt und im Heimatverzeichnis des Lehrers abgelegt."
+"Das Modul *Materialien verteilen* vereinfacht das Verteilen und "
+"Einsammeln von Unterrichtsmaterial an einzelne Schüler, Klassen oder "
+"Arbeitsgruppen. Optional kann eine Frist festgelegt werden. So ist es "
+"möglich, Aufgaben zu verteilen, die bis zum Ende der Unterrichtsstunde zu"
+" bearbeiten sind. Nach Ablauf der Frist werden die verteilten Materialien"
+" dann automatisch wieder eingesammelt und im Heimatverzeichnis des "
+"Lehrers abgelegt."
 msgstr ""
-"The module *Distribute materials* simplifies the distribution and collection"
-" of teaching materials to individual students, classes or working groups. "
-"Optionally, a deadline can be set. This makes it possible to distribute "
-"tasks that have to be completed by the end of the lesson. After the "
-"deadline, the distributed materials are then automatically collected again "
-"and stored in the teacher's home directory."
+"The module *Distribute materials* simplifies the distribution and "
+"collection of teaching materials to individual students, classes or "
+"working groups. Optionally, a deadline can be set. This makes it possible"
+" to distribute tasks that have to be completed by the end of the lesson. "
+"After the deadline, the distributed materials are then automatically "
+"collected again and stored in the teacher's home directory."
 
-#: ../../index.rst:252
+#: ../../index.rst:256
 msgid "Unterrichtszeiten"
 msgstr "Lesson times"
 
-#: ../../index.rst:251
+#: ../../index.rst:255
 msgid ""
-"Das Modul *Unterrichtszeiten* erlaubt es Schuladministratoren, die Zeiträume"
-" der jeweiligen Unterrichtsstunde pro Schule zu definieren."
+"Das Modul *Unterrichtszeiten* erlaubt es Schuladministratoren, die "
+"Zeiträume der jeweiligen Unterrichtsstunde pro Schule zu definieren."
 msgstr ""
-"The *Lesson times* module allows school administrators to define the time "
-"periods of each teaching hour per school."
+"The *Lesson times* module allows school administrators to define the time"
+" periods of each teaching hour per school."
 
-#: ../../index.rst:257
+#: ../../index.rst:261
 msgid "Lehrer Klassen zuordnen"
 msgstr "Assign teacher classes"
 
-#: ../../index.rst:255
+#: ../../index.rst:259
 msgid ""
 "Für jede Klasse gibt es einen gemeinsamen Datenbereich. Damit Lehrer auf "
 "diesen Datenbereich zugreifen können, müssen sie mit dem Modul *Lehrer "
 "Klassen zuordnen* der Klasse zugewiesen werden."
 msgstr ""
-"There is a common file share for each class. In order for teachers to access "
-"this file share, they must be assigned to the class using the *Assign "
-"teachers to classes* module."
+"There is a common file share for each class. In order for teachers to "
+"access this file share, they must be assigned to the class using the "
+"*Assign teachers to classes* module."
 
-#: ../../index.rst:267
+#: ../../index.rst:271
 msgid "Internetregeln definieren"
 msgstr "Define Internet rules"
 
-#: ../../index.rst:260
+#: ../../index.rst:264
 msgid ""
-"Für die Filterung des Internetzugriffs wird ein Proxy-Server eingesetzt, der"
-" bei dem Abruf einer Internetseite prüft, ob der Zugriff auf diese Seite "
-"erlaubt ist. Ist das nicht der Fall, wird eine Informationsseite angezeigt. "
-"Wenn Schüler beispielsweise in einer Unterrichtsstunde in der Wikipedia "
-"recherchieren sollen, kann eine Regelliste definiert werden, die Zugriffe "
-"auf alle anderen Internetseiten unterbindet. Diese Regelliste kann dann vom "
-"Lehrer zugewiesen werden. Mit der Funktion *Internetregeln definieren* "
-"können die Regeln verwaltet werden."
+"Für die Filterung des Internetzugriffs wird ein Proxy-Server eingesetzt, "
+"der bei dem Abruf einer Internetseite prüft, ob der Zugriff auf diese "
+"Seite erlaubt ist. Ist das nicht der Fall, wird eine Informationsseite "
+"angezeigt. Wenn Schüler beispielsweise in einer Unterrichtsstunde in der "
+"Wikipedia recherchieren sollen, kann eine Regelliste definiert werden, "
+"die Zugriffe auf alle anderen Internetseiten unterbindet. Diese "
+"Regelliste kann dann vom Lehrer zugewiesen werden. Mit der Funktion "
+"*Internetregeln definieren* können die Regeln verwaltet werden."
 msgstr ""
-"A proxy server is used to filter internet access. When an internet page is "
-"called up, it checks whether access to this page is permitted. If this is "
-"not the case, an information page is displayed. For example, if students are"
-" to research Wikipedia during a lesson, a rule list can be defined that "
-"prevents access to all other internet pages. This rule list can then be "
-"assigned by the teacher. With the function *Define Internet rules* the rules"
-" can be managed."
+"A proxy server is used to filter internet access. When an internet page "
+"is called up, it checks whether access to this page is permitted. If this"
+" is not the case, an information page is displayed. For example, if "
+"students are to research Wikipedia during a lesson, a rule list can be "
+"defined that prevents access to all other internet pages. This rule list "
+"can then be assigned by the teacher. With the function *Define Internet "
+"rules* the rules can be managed."
 
-#: ../../index.rst:273
+#: ../../index.rst:277
 msgid "Domänenbeitritt eines Microsoft Windows 7-Clients"
 msgstr "Domain joining of a Microsoft Windows 7 client"
 
-#: ../../index.rst:275
+#: ../../index.rst:279
 msgid ""
 "Microsoft Windows-Clients werden mithilfe von Samba integriert und "
-"verwaltet. Die Windows-Clients authentifizieren sich dabei gegen den Samba-"
-"Server. Auch Datei- und Druckdienste werden für die Windows-Clients über "
-"Samba bereitgestellt. |UCSUAS| integriert Samba 4, die nächste Generation "
-"der Samba-Suite. Es unterstützt Domänen-, Verzeichnis- und "
+"verwaltet. Die Windows-Clients authentifizieren sich dabei gegen den "
+"Samba-Server. Auch Datei- und Druckdienste werden für die Windows-Clients"
+" über Samba bereitgestellt. |UCSUAS| integriert Samba 4, die nächste "
+"Generation der Samba-Suite. Es unterstützt Domänen-, Verzeichnis- und "
 "Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory "
 "sind. Dies ermöglicht die Verwendung der von Microsoft bereit gestellten "
-"Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs)."
+"Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien "
+"(GPOs)."
 msgstr ""
 "Microsoft Windows clients are integrated and managed using Samba. The "
-"Windows clients authenticate themselves against the Samba server. File and "
-"print services are also provided for the Windows clients through Samba. |UCSUAS|"
-" integrates Samba 4, the next generation of the Samba suite. It supports "
-"domain, directory and authentication services compatible with Microsoft "
-"Active Directory. This enables the use of user management tools or group "
-"policies (GPOs) provided by Microsoft."
+"Windows clients authenticate themselves against the Samba server. File "
+"and print services are also provided for the Windows clients through "
+"Samba. |UCSUAS| integrates Samba 4, the next generation of the Samba "
+"suite. It supports domain, directory and authentication services "
+"compatible with Microsoft Active Directory. This enables the use of user "
+"management tools or group policies (GPOs) provided by Microsoft."
 
-#: ../../index.rst:284
+#: ../../index.rst:288
 msgid ""
-"Zuerst muss der PC in der Univention Management Console registriert werden. "
-"Dort muss in der Modulgruppe *UCS\\@school Administration* das Modul "
-"*Computer hinzufügen* aufgerufen werden. Als *Computer-Typ* ist ``Windows-"
-"System`` auszuwählen. Die Angabe von *Name*, *IP-Adresse* und *MAC-Adresse* "
-"ist verpflichtend. Die *Subnetzmaske* kann in den meisten Fällen auf der "
-"Voreinstellung belassen werden."
+"Zuerst muss der PC in der Univention Management Console registriert "
+"werden. Dort muss in der Modulgruppe *UCS\\@school Administration* das "
+"Modul *Computer hinzufügen* aufgerufen werden. Als *Computer-Typ* ist "
+"``Windows-System`` auszuwählen. Die Angabe von *Name*, *IP-Adresse* und "
+"*MAC-Adresse* ist verpflichtend. Die *Subnetzmaske* kann in den meisten "
+"Fällen auf der Voreinstellung belassen werden."
 msgstr ""
 "First, the PC must be registered in the Univention Management Console. "
 "There, the module *Add computer* must be used in the module group "
-"*UCS\\@school Administration*. As *computer type*, ``Windows system`` must "
-"be selected. The specification of *name*, *IP address* and *MAC address* is "
-"mandatory. The *Subnet mask* can be left at the default in most cases."
+"*UCS\\@school Administration*. As *computer type*, ``Windows system`` "
+"must be selected. The specification of *name*, *IP address* and *MAC "
+"address* is mandatory. The *Subnet mask* can be left at the default in "
+"most cases."
 
-#: ../../index.rst:291
+#: ../../index.rst:295
 msgid ""
-"Nun tritt der Microsoft Windows-Client der Domäne bei (in diesem Quickstart "
-"Guide auf Basis von Windows 7). Der Beitritt kann nur mit einer Windows-"
-"Version mit Domänenunterstützung durchgeführt werden, d.h. nicht mit "
-"Microsoft Windows 7 Home. Die Vorgehensweise gilt analog auch für Microsoft "
-"Windows 8."
+"Nun tritt der Microsoft Windows-Client der Domäne bei (in diesem "
+"Quickstart Guide auf Basis von Windows 7). Der Beitritt kann nur mit "
+"einer Windows-Version mit Domänenunterstützung durchgeführt werden, d.h. "
+"nicht mit Microsoft Windows 7 Home. Die Vorgehensweise gilt analog auch "
+"für Microsoft Windows 8."
 msgstr ""
-"Now the Microsoft Windows client joins the domain (in this quickstart guide "
-"based on Windows 7). The joining can only be done with a Windows version "
-"with domain support, that means Microsoft Windows 7 Home is not suitable. The same procedure "
-"applies to Microsoft Windows 8 as well."
-
-#: ../../index.rst:296
-msgid ""
-"Der Windows-Client muss DNS-Einträge aus der DNS-Zone der UCS-Domäne "
-"auflösen können, d.h. der Schulserver sollte in den Netzwerkeinstellungen "
-"des Windows-Clients als DNS-Server eingetragen werden."
-msgstr ""
-"The Windows client must be able to resolve DNS entries from the DNS zone of "
-"the UCS domain, that means the school server should be entered as DNS server in "
-"the network settings of the Windows client."
+"Now the Microsoft Windows client joins the domain (in this quickstart "
+"guide based on Windows 7). The joining can only be done with a Windows "
+"version with domain support, that means Microsoft Windows 7 Home is not "
+"suitable. The same procedure applies to Microsoft Windows 8 as well."
 
 #: ../../index.rst:300
 msgid ""
-"Auf dem Windows-System muss die aktuelle Zeit konfiguriert werden. Wenn mit "
-"Virtualisierung gearbeitet wird, muss beachtet werden, dass Suspend/Resume-"
-"Zyklen zu inkorrekten Systemuhren führen können."
+"Der Windows-Client muss DNS-Einträge aus der DNS-Zone der UCS-Domäne "
+"auflösen können, d.h. der Schulserver sollte in den Netzwerkeinstellungen"
+" des Windows-Clients als DNS-Server eingetragen werden."
 msgstr ""
-"The current time must be configured on the Windows system. When working with"
-" virtualization, it must be noted that suspend/resume cycles can lead to "
-"incorrect system clocks."
+"The Windows client must be able to resolve DNS entries from the DNS zone "
+"of the UCS domain, that means the school server should be entered as DNS "
+"server in the network settings of the Windows client."
 
 #: ../../index.rst:304
 msgid ""
-"Über :menuselection:`Start --> Systemsteuerung --> System und Sicherheit -->"
-" System` kann der Basiskonfigurationsdialog erreicht werden. Nun muss "
-"*Einstellungen ändern* gewählt und auf :guilabel:`Ändern` geklickt werden."
+"Auf dem Windows-System muss die aktuelle Zeit konfiguriert werden. Wenn "
+"mit Virtualisierung gearbeitet wird, muss beachtet werden, dass Suspend"
+"/Resume-Zyklen zu inkorrekten Systemuhren führen können."
+msgstr ""
+"The current time must be configured on the Windows system. When working "
+"with virtualization, it must be noted that suspend/resume cycles can lead"
+" to incorrect system clocks."
+
+#: ../../index.rst:308
+msgid ""
+"Über :menuselection:`Start --> Systemsteuerung --> System und Sicherheit "
+"--> System` kann der Basiskonfigurationsdialog erreicht werden. Nun muss "
+"*Einstellungen ändern* gewählt und auf :guilabel:`Ändern` geklickt "
+"werden."
 msgstr ""
 "Via :menuselection:`Start --> Control Panel --> System and Security --> "
-"System` the basic configuration dialog can be reached. Now *Change settings*"
-" must be selected and :guilabel:`Change` must be clicked."
+"System` the basic configuration dialog can be reached. Now *Change "
+"settings* must be selected and :guilabel:`Change` must be clicked."
 
-#: ../../index.rst:312
+#: ../../index.rst:316
 msgid ""
 "Für den Domänenbeitritt muss unter *Domäne* der Domänenname der Schule "
-"verwendet werden, der bei der Installation gewählt wurde. Nach einem Klick "
-"auf die Schaltfläche :guilabel:`OK` muss in das Eingabefeld *Ändern des "
-"Computernamens, bzw. der Domäne* unter *Name* der ``Administrator`` und in "
-"das Eingabefeld *Kennwort* das bei der Einrichtung des |UCSPRIMARYDN| "
-"verwendete Administrator-Kennwort eingetragen werden. Nun kann der "
-"Domänenbeitritt mit einem Klick auf :guilabel:`OK` gestartet werden."
+"verwendet werden, der bei der Installation gewählt wurde. Nach einem "
+"Klick auf die Schaltfläche :guilabel:`OK` muss in das Eingabefeld *Ändern"
+" des Computernamens, bzw. der Domäne* unter *Name* der ``Administrator`` "
+"und in das Eingabefeld *Kennwort* das bei der Einrichtung des "
+"|UCSPRIMARYDN| verwendete Administrator-Kennwort eingetragen werden. Nun "
+"kann der Domänenbeitritt mit einem Klick auf :guilabel:`OK` gestartet "
+"werden."
 msgstr ""
 "To join the domain, the domain name of the school selected during "
 "installation must be used under *Domain*. After clicking on the "
-":guilabel:`OK` button, the ``Administrator`` must be entered in the *Change "
-"computer name, or domain* input field under *Name* and the administrator "
-"password used when setting up the |UCSPRIMARYDN| must be entered in the "
-"*Password* input field. Now the domain joining can be started with a click "
-"on :guilabel:`OK`."
+":guilabel:`OK` button, the ``Administrator`` must be entered in the "
+"*Change computer name, or domain* input field under *Name* and the "
+"administrator password used when setting up the |UCSPRIMARYDN| must be "
+"entered in the *Password* input field. Now the domain joining can be "
+"started with a click on :guilabel:`OK`."
 
-#: ../../index.rst:320
+#: ../../index.rst:324
 msgid "Abschließend sollte der Client neu gestartet werden."
 msgstr "Finally, the client should be restarted."
 
-#: ../../index.rst:322
+#: ../../index.rst:326
 msgid ""
-"Durch den Domänenbeitritt wird für den Microsoft Windows-Client automatisch "
-"ein Eintrag in der Rechnerverwaltung und DNS-Einträge angelegt. Weitere "
-"Hinweise finden sich in :ref:`computers-general` in :cite:t:`ucs-manual`."
+"Durch den Domänenbeitritt wird für den Microsoft Windows-Client "
+"automatisch ein Eintrag in der Rechnerverwaltung und DNS-Einträge "
+"angelegt. Weitere Hinweise finden sich in :ref:`computers-general` in "
+":cite:t:`ucs-manual`."
 msgstr ""
 "Joining the domain automatically creates an entry in the computer "
 "administration and DNS records for the Microsoft Windows client. Further "
 "notes can be found in :ref:`computers-general` in :cite:t:`ucs-manual`."
 
-#: ../../index.rst:330
+#: ../../index.rst:334
 msgid "Management von Microsoft Windows-Clients"
 msgstr "Management of Microsoft Windows clients"
 
-#: ../../index.rst:332
+#: ../../index.rst:336
 msgid ""
 "Die Netzkonfiguration der Microsoft Windows-Clients wird über in UCS "
 "integrierte DNS- und DHCP-Dienste durchgeführt. Die MAC- und IP-Adressen "
-"werden beim Import direkt zugewiesen. Weiterführende Hinweise finden sich in"
+"werden beim Import direkt zugewiesen. Weiterführende Hinweise finden sich"
+" in :ref:`school-schoolcreate-computers` in :cite:t:`ucsschool-admin`."
+msgstr ""
+"The network configuration of the Microsoft Windows clients is performed "
+"through DNS and DHCP services integrated in UCS. The MAC and IP addresses"
+" are assigned directly during import. Further information can be found in"
 " :ref:`school-schoolcreate-computers` in :cite:t:`ucsschool-admin`."
-msgstr ""
-"The network configuration of the Microsoft Windows clients is performed through "
-"DNS and DHCP services integrated in UCS. The MAC and IP addresses are "
-"assigned directly during import. Further information can be found in "
-":ref:`school-schoolcreate-computers` in :cite:t:`ucsschool-admin`."
-
-#: ../../index.rst:337
-msgid ""
-"Die Windows-PCs der Schüler und Lehrer können über Gruppenrichtlinien "
-"konfiguriert werden und ist in :ref:`windows-samba4-desktopmanagement` in "
-":cite:t:`ucs-manual` beschrieben."
-msgstr ""
-"Student and teacher Windows PCs can be configured through group policies and is "
-"described in :ref:`windows-samba4-desktopmanagement` in :cite:t:`ucs-"
-"manual`."
 
 #: ../../index.rst:341
 msgid ""
-"Auf den Windows-Clients der Schüler kann die Software Veyon installiert "
-"werden. Sie wird vom UMC-Modul Computerraumverwaltung verwendet und erlaubt "
-"Lehrern den Desktop der Schüler einzuschränken und z.B. Bildschirme und "
-"Eingabegeräte zu sperren. Außerdem kann ein Übertragungsmodus aktiviert "
-"werden, der die Bildschirmausgabe des Desktops des Lehrers auf die "
-"Schülerbildschirme überträgt. Veyon ist in :ref:`school-windows-veyon` in "
-":cite:t:`ucsschool-admin` dokumentiert."
+"Die Windows-PCs der Schüler und Lehrer können über Gruppenrichtlinien "
+"konfiguriert werden und ist in :ref:`windows-samba4-desktopmanagement` in"
+" :cite:t:`ucs-manual` beschrieben."
 msgstr ""
-"The Veyon software can be installed on the students' Windows clients. It is "
-"used by the UMC Computer Room Management module and allows teachers to "
-"restrict the students' desktop and, for example, lock screens and input "
-"devices. Also, a presentation mode can be enabled that transfers the screen "
-"output of the teacher's desktop to the student screens. Veyon is documented "
-"in :ref:`school-windows-veyon` in :cite:t:`ucsschool-admin`."
+"Student and teacher Windows PCs can be configured through group policies "
+"and is described in :ref:`windows-samba4-desktopmanagement` in :cite:t"
+":`ucs-manual`."
 
-#: ../../index.rst:353
+#: ../../index.rst:345
+msgid ""
+"Auf den Windows-Clients der Schüler kann die Software Veyon installiert "
+"werden. Sie wird vom UMC-Modul Computerraumverwaltung verwendet und "
+"erlaubt Lehrern den Desktop der Schüler einzuschränken und z.B. "
+"Bildschirme und Eingabegeräte zu sperren. Außerdem kann ein "
+"Übertragungsmodus aktiviert werden, der die Bildschirmausgabe des "
+"Desktops des Lehrers auf die Schülerbildschirme überträgt. Veyon ist in "
+":ref:`school-windows-veyon` in :cite:t:`ucsschool-admin` dokumentiert."
+msgstr ""
+"The Veyon software can be installed on the students' Windows clients. It "
+"is used by the UMC Computer Room Management module and allows teachers to"
+" restrict the students' desktop and, for example, lock screens and input "
+"devices. Also, a presentation mode can be enabled that transfers the "
+"screen output of the teacher's desktop to the student screens. Veyon is "
+"documented in :ref:`school-windows-veyon` in :cite:t:`ucsschool-admin`."
+
+#: ../../index.rst:357
 msgid "Installation von |UCSUAS| in einer Multi-Server-Umgebung"
 msgstr "Installation of |UCSUAS| in a multi-server environment"
 
-#: ../../index.rst:355
+#: ../../index.rst:359
 msgid ""
 "Bei der Installation von |UCSUAS| in einer Multi-Server-Umgebung gibt es "
 "einen zentralen Server in der Schulverwaltung und an jeder Schule einen "
-"lokalen Schulserver. Auf diesem Schulserver laufen alle Dienste wie z.B. die"
-" Freigaben für die Heimatverzeichnisse der Schüler, der Proxyserver oder die"
-" Druckdienste. Es erfolgt dabei eine selektive Replikation der LDAP-Daten, "
-"d.h. auf den einzelnen Schulservern sind nur die Daten der jeweiligen Schule"
-" gespeichert."
+"lokalen Schulserver. Auf diesem Schulserver laufen alle Dienste wie z.B. "
+"die Freigaben für die Heimatverzeichnisse der Schüler, der Proxyserver "
+"oder die Druckdienste. Es erfolgt dabei eine selektive Replikation der "
+"LDAP-Daten, d.h. auf den einzelnen Schulservern sind nur die Daten der "
+"jeweiligen Schule gespeichert."
 msgstr ""
-"When installing |UCSUAS| in a multi-server environment, there is a central "
-"server in the school administration and a local school server at each "
-"school. This school server runs all services such as the shares for the "
-"students' home directories, the proxy server or the print services. The LDAP"
-" data is replicated selectively, that means only the data for the respective "
-"school is stored on the individual school servers."
+"When installing |UCSUAS| in a multi-server environment, there is a "
+"central server in the school administration and a local school server at "
+"each school. This school server runs all services such as the shares for "
+"the students' home directories, the proxy server or the print services. "
+"The LDAP data is replicated selectively, that means only the data for the"
+" respective school is stored on the individual school servers."
 
-#: ../../index.rst:362
+#: ../../index.rst:366
 msgid ""
 "Die in diesem Quickstart Guide beschriebene Installation kann durch die "
-"Installation weiterer Schulserver zu einer Multi-Server-Umgebung ausgebaut "
-"werden. Die dazu nötigen Schritte sind in :ref:`school-installation-primary-"
-"directory-node2` in :cite:t:`ucsschool-admin` beschrieben."
+"Installation weiterer Schulserver zu einer Multi-Server-Umgebung "
+"ausgebaut werden. Die dazu nötigen Schritte sind in :ref:`school-"
+"installation-primary-directory-node2` in :cite:t:`ucsschool-admin` "
+"beschrieben."
 msgstr ""
 "The installation described in this quickstart guide can be extended to a "
-"multi-server environment by installing additional school servers. The steps "
-"required to do this are described in :ref:`school-installation-primary-"
-"directory-node2` in :cite:t:`ucsschool-admin`."
+"multi-server environment by installing additional school servers. The "
+"steps required to do this are described in :ref:`school-installation-"
+"primary-directory-node2` in :cite:t:`ucsschool-admin`."
 
-#: ../../index.rst:372
+#: ../../index.rst:376
 msgid "Weiterführende Informationen"
 msgstr "Further information"
 
-#: ../../index.rst:374
+#: ../../index.rst:378
 msgid ""
-"Ausführliche Beschreibungen zum Konzept und zur Administration von |UCSUAS| "
-"können dem :cite:t:`ucsschool-admin` entnommen werden."
+"Ausführliche Beschreibungen zum Konzept und zur Administration von "
+"|UCSUAS| können dem :cite:t:`ucsschool-admin` entnommen werden."
 msgstr ""
-"Detailed descriptions of the concept and administration of |UCSUAS| can be "
-"found in :cite:t:`ucsschool-admin`."
-
-#: ../../index.rst:377
-msgid ""
-"Für Lehrer existiert darüber hinaus das gesonderte Dokument "
-":cite:t:`ucsschool-teacher`, das die Verwendung der webbasierten "
-"Administrationsschnittstellen beschreibt."
-msgstr ""
-"For teachers there is also a separate document :cite:t:`ucsschool-teacher`, "
-"which describes how to use the web-based administration interfaces."
+"Detailed descriptions of the concept and administration of |UCSUAS| can "
+"be found in :cite:t:`ucsschool-admin`."
 
 #: ../../index.rst:381
 msgid ""
-"Im `Univention Wiki <https://wiki.univention.de/index.php/Main_Page>`_ "
-"finden sich u.a. verschiedene HOWTOs und Praxis-Tipps."
+"Für Lehrer existiert darüber hinaus das gesonderte Dokument :cite:t"
+":`ucsschool-teacher`, das die Verwendung der webbasierten "
+"Administrationsschnittstellen beschreibt."
 msgstr ""
-"In the `Univention Wiki <https://wiki.univention.de/index.php/Main_Page>`_ "
-"you can find, among other things, various HOWTOs and practical tips."
+"For teachers there is also a separate document :cite:t:`ucsschool-"
+"teacher`, which describes how to use the web-based administration "
+"interfaces."
 
-#: ../../index.rst:384
+#: ../../index.rst:385
 msgid ""
-"Antworten auf häufig gestellte Fragen gibt es in der `Support und Knowledge "
-"Base zu finden <https://help.univention.com/>`_."
+"Antworten auf häufig gestellte Fragen gibt es in der `Support und "
+"Knowledge Base zu finden <https://help.univention.com/>`_."
 msgstr ""
 "Answers to frequently asked questions can be found in the `Support and "
 "Knowledge Base <https://help.univention.com/>`_."
 
-#: ../../index.rst:387
+#: ../../index.rst:388
 msgid ""
 "Fragen zu UCS können auch im `Univention-Forum "
 "<https://help.univention.com/>`_ gestellt werden."
@@ -806,10 +814,10 @@ msgstr ""
 "Questions about UCS can also be asked in the `Univention forum "
 "<https://help.univention.com/>`_."
 
-#: ../../index.rst:390
+#: ../../index.rst:391
 msgid ":cite:t:`ucs-quickstart`."
 msgstr ":cite:t:`ucs-quickstart`."
 
-#: ../../index.rst:396
+#: ../../index.rst:397
 msgid "Bibliographie"
 msgstr "Bibliography"
