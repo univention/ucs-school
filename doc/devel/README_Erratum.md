@@ -23,6 +23,15 @@ Before starting, ensure that there is an errata release issue. The issue must
 include as blocking issues, all updates to `ucsschool` since the last errata
 release. Use this errata release issue for all steps in this section.
 
+### Check if packages can be released as an errata
+
+Not every package should be released as an errata but needs to be released within a full [UCS@school App release](README_Releases.md). Consider the [ucs rules](https://univention.gitpages.knut.univention.de/internal/dev-onboarding/guidelines/stability.html#errata-updates) as a guideline to help you decide if a package can be released as an errata.
+Basically you should ensure an administrator doesn't need to take manual steps during the update.
+
+For example:
+* No join script updates
+* No backwards-incompatible API changes
+
 ### Verify tests
 
 Check the following Jenkins jobs for any unusual failures that might be connected to the release:
