@@ -87,8 +87,8 @@ Zusammenarbeit mit dem Samba-Team in UCS integriert.
 Bei Neuinstallationen von |UCSUAS| wird standardmäßig Samba 4 installiert.
 Umgebungen, die von einer Vorversion aktualisiert werden, müssen von Samba 3 auf
 Samba 4 migriert werden. Das dafür notwendige Vorgehen ist unter der folgenden
-URI dokumentiert: `UCS\@school Samba 3 to Samba 4 Migration
-<uv-wiki-migration-s3-s4_>`_.
+URI dokumentiert: :uv:help:`UCS\@school Samba 3 to Samba 4 Migration
+<21846>`.
 
 Weiterführende Hinweise zur Konfiguration von Samba finden sich in
 :ref:`windows-services-for-windows` in :cite:t:`ucs-manual`.

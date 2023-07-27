@@ -85,12 +85,9 @@ mit den folgenden Parametern konfigurieren:
 
 * ``PEAP`` und ``MSCHAPv2`` als Authentifizierungsprotokoll
 
-Die Konfiguration unterscheidet sich je nach Betriebssystem des Clients. Im
-Univention Wiki findet sich eine exemplarische Schritt-für-Schritt-Anleitung:
-
-* Einrichtung unter `Windows 7 <uv-wiki-radius-win7_>`_
-
-* Einrichtung unter `Windows 10 <uv-wiki-radius-win10_>`_
+Die Konfiguration unterscheidet sich je nach Betriebssystem des Clients. Eine
+exemplarische Schritt-für-Schritt-Anleitung findet sich unter
+:uv:help:`Einrichtung des WLAN-Zugriffs über RADIUS für Windows 10 <21827>`.
 
 .. _radius-wlan:
 
