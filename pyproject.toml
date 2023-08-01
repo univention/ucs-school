@@ -2,7 +2,6 @@
 # ruff 0.0.252
 external = ["W601", "F812", "E403", "E704"]
 line-length = 105
-update-check = false
 ignore-init-module-imports = true
 
 select = ["ALL"]
