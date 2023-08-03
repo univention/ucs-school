@@ -21,6 +21,8 @@ if ! univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; test -f requirements.txt
   univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; poetry export -f requirements.txt --output requirements.txt --dev --without-hashes"
   univention-app shell "$APP" python3 -m pip uninstall --yes poetry
   univention-app shell "$APP" python3 -m pip install -r $PLUGIN_DIR/requirements.txt
+  # Avoid glitches in case pip just update a package
+  univention-app restart "$APP"
 fi
 
 echo "Running in container of app '$APP': sh -c \"$CMD\""
