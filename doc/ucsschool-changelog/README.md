@@ -36,8 +36,12 @@ UCS@school 5.0 v4 release version.
 Update configuration settings in `conf.py`:
 
 * Set `univention_changelog_previous_release` to `"5.0 v3"`.
-* Set `release` to `5.0 v4`.
+* Set `release` to `5.0 v4`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
 * Keep `version` at `5.0`.
+
+Remove the advisories for the previous release. (?)
+
+Add additional update information in the `*.rst` files. It might help to run `make clean` inside the docker container when your are doing a release.
 
 ### Build the changelog
 
@@ -105,7 +109,7 @@ Update configuration settings in `conf.py`:
 9. Still **inside** of docker, build the `.mo` files.
 
    ```console
-   make -C . -e SPHINXOPTS="-D language='de'" -e BUILDDIR="./_build/$language" livehtml
+   make -C . -e SPHINXOPTS="-D language='de'" -e BUILDDIR="./_build/de" livehtml
    ```
 
    Proofread the changes in [your browser](http://127.0.0.1:8000).

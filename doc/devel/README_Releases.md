@@ -14,49 +14,31 @@ Last step for preparations is to create a Bug for the release commits.
 
 - Collect the YAML files for all packages that are to be released in the new app version.
 - Check errata texts for mistakes and unclear content. Correct if need be.
-- Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.
+- TODO: does not exist anymore ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
+  to verify that all selected packages are ready for release.~~
 
 ## Create new version in Test AppCenter and push new packages
 
+The following commands can be run on `omar`:
+
 ```shell
-univention-appcenter-control new-version "5.0/ucsschool=5.0 v4" "5.0/ucsschool=5.0 v4"
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v3" "5.0/ucsschool=5.0 v4"
 univention-appcenter-control status ucsschool  # Determine component_id for next step
 # appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v4" # does not exist (?)
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
 # For example:
 cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 5.0 -v "5.0 v4" -u ucs-school-radius-802.1x.yaml ucs-school-umc-wizards.yaml
+copy_app_binaries -r 5.0 -v "5.0 v4" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
 # Upload current ucs-test-ucsschool package to Testappcenter
 univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v4' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## Create new changelog
-The following code should be executed on your machine to create the XML from advisories:
-    (on your PC) create XML from advisories (YAML files):
-```shell
-cd ucsschool/doc/errata/staging
-create_app_changelog -r <ucs-major-minor> -v <app-version> <yaml-datei> ...
-```
 
-For example:
-```shell
-create_app_changelog -r 5.0 -v "5.0 v4" ucs-school-umc-wizards.yaml ucs-school-radius-802.1x.yaml
-```
-
-Update git/ucsschool/doc/changelog/Makefile and add the new changelog XML filename:
+Follow the instructions in the changelog [README](../../doc/ucsschool-changelog/README.md).
 
 ```shell
-vi ../../changelog/Makefile
-```
-
-<pre>
-- MAIN := changelog-ucsschool-5.0-de
-+ MAIN := changelog-ucsschool-5.0v4-de
-</pre>
-
-```shell
-git add ../../changelog/changelog-ucsschool-5.0v4-de.xml ../../changelog/Makefile
+git add -u
 git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
 git push
 ```

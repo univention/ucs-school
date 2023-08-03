@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-import
-fix: 3.0.5A~5.0.0.202207131524
-desc: |
- * The wording of some descriptions shown in UMC modules was adjusted (Bug #54030).
-bug: [54030]

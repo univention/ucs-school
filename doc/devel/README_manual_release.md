@@ -2,7 +2,7 @@
 
 ## Preparations
 
-The manual release process needs access to some commands. The easiest way is to set up an environment like this on ``dimma``:
+The manual release process needs access to some commands. The easiest way is to set up an environment like this on ``omar``:
 
 The instructions expect the following directories in your home directory (but feel free to adapt the instructions if you prefer different directories):
 
@@ -17,7 +17,7 @@ You may also want to update your `PATH` variable:
 echo "export PATH=\$PATH:\$HOME/bin" >> ~/.bashrc
 ```
 
-Check out the git repositories (may require an `scp` of your gitlab SSH key to `dimma`):
+Check out the git repositories (may require an `scp` of your gitlab SSH key to `omar`):
 
 ```shell
 cd git

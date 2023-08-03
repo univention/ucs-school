@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-selfservice-support
-fix: 4.0.3
-desc: |
- * The "Change password" option is now automatically available for every school user (Bug #55864).
-bug: [55864]

@@ -1,48 +1,47 @@
 # SPDX-FileCopyrightText: 2021-2023 Univention GmbH
 #
 # SPDX-License-Identifier: AGPL-3.0-only
-
 msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-02 14:18+0100\n"
+"POT-Creation-Date: 2023-08-03 11:52+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.12.1\n"
 
-#: ../../index.rst:5
+#: ../../index.rst:9
 msgid "|UCSUAS|-Update"
 msgstr "|UCSUAS|-Update"
 
-#: ../../index.rst:7
+#: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.0 v2 to 5.0 v3."
+"information for the update of |UCSUAS| from version 5.0 v3 to 5.0 v4."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.0 v2 nach "
-"5.0 v3."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.0 v3 nach "
+"5.0 v4."
 
-#: ../../index.rst:10
+#: ../../index.rst:14
 msgid ""
 "If necessary, important notes about the update are covered in a separate "
 "section. The change information for previous version jumps can be found "
 "at https://docs.software-univention.de/."
 msgstr ""
 "Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten "
-"Abschnitt behandelt. Die Änderungsinformationen für vorherige Versionssprünge "
-"finden sich unter https://docs.software-univention.de/."
+"Abschnitt behandelt. Die Änderungsinformationen für vorherige "
+"Versionssprünge finden sich unter https://docs.software-univention.de/."
 
-#: ../../index.rst:17
+#: ../../index.rst:21
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:19
+#: ../../index.rst:23
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -51,79 +50,123 @@ msgid ""
 "production environment."
 msgstr ""
 "Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb "
-"der Domäne kommen. Aus diesem Grund sollte das Update innerhalb "
-"eines Wartungsfensters erfolgen. Grundsätzlich wird empfohlen das "
-"Update zunächst in einer Testumgebung einzuspielen und zu testen. "
-"Die Testumgebung sollte dabei identisch zur Produktivumgebung "
-"sein."
+"der Domäne kommen. Aus diesem Grund sollte das Update innerhalb eines "
+"Wartungsfensters erfolgen. Grundsätzlich wird empfohlen das Update "
+"zunächst in einer Testumgebung einzuspielen und zu testen. Die "
+"Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:27
-msgid "Update of the software for control and monitoring of computer rooms"
-msgstr "Update der Software zur Kontrolle und Überwachung von Computerräumen"
+#: ../../index.rst:31
+msgid "Change in the Windows naming conventions"
+msgstr "Änderung der Windows Namenskonventionen"
 
-#: ../../index.rst:29
+#: ../../index.rst:33
 msgid ""
-"The performance and stability of computer room monitoring has been "
-"improved with |UCSUAS| 5.0 v3."
+"In Windows there are some usernames that are reserved for `special use "
+"<https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity"
+"/naming-conventions-for-computer-domain-site-ou>`_. Using a `username "
+"schema <https://docs.software-univention.de/ucsschool-"
+"import/latest/de/configuration/scheme-formatting.html>`_ for the import "
+"can lead to invalid usernames in Windows. If this happens, this can lead "
+"to errors in Windows environments, such as users being unable to login."
 msgstr ""
-"Die Leistung und Stabilität der Computerraumüberwachung ist mit |UCSUAS| "
-"5.0 v3 verbessert worden."
+"In Windows gibt es Benutzernamen, die für `spezielle Verwendungszwecke "
+"<https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity"
+"/naming-conventions-for-computer-domain-site-ou>`_ reserviert sind. "
+"Wenn Sie für die `Generierung von Benutzernamen <https://docs.software-univention.de/"
+"ucsschool-import/latest/de/configuration/scheme-formatting.html>`_ "
+"ein Schema verwenden, kann dies zu ungültigen Benutzernamen in Windows führen. "
+"Dies kann zu Fehlern in Windows Umgebungen führen, z.B. Benutzer die sich nicht einloggen können."
 
-#: ../../index.rst:34
-msgid ""
-"The application :program:`UCS\\@school Veyon Proxy` from the App Center "
-"must be updated to ``4.7.4.6``. In addition, the Windows computers must "
-"be equipped with the suitable *Veyon* application. A suitable version is "
-"supplied with |UCSUAS| (4.7.4), and can be installed as described in "
-":external+uv-ucsschool-admin:ref:`school-windows-veyon`."
-msgstr ""
-"Die Applikation :program:`UCS\\@school Veyon Proxy` aus dem App Center "
-"muss auf ``4.7.4.6`` aktualisiert werden. Zudem müssen die Windows-"
-"Rechner mit der passenden *Veyon* Applikation ausgestattet werden. Eine "
-"passende Version wird mit |UCSUAS| mitgeliefert (``4.7.4``), und kann wie"
-" in :external+uv-ucsschool-admin:ref:`school-windows-veyon` beschrieben "
-"installiert werden."
 
 #: ../../index.rst:40
 msgid ""
-"The status indicators of the computer room module page can be updated "
-"with a delay of up to one minute. This is a known issue and will be "
-"corrected soon with an errata update."
+"We have added username validation when importing users, to prevent such "
+"invalid usernames from occurring. However, administrators can disable "
+"this check using the ``ucsschool/validation/username/windows-check`` UCR "
+"variable. When the variable is set to ``true``, the import will check if "
+"usernames are valid for Windows. If you have only Linux systems, you may "
+"choose to disable this check."
 msgstr ""
-"Die Statusindikatoren der Computerraum-Modul-Seite können mit bis zu "
-"einer Minute Verzögerung aktualisiert werden. Dies ist ein bekanntes "
-"Problem und wird bald mit einem Errata-Update korrigiert."
+"Wir eine Validierung während des Imports von Benutzern hinzugefügt, um "
+"diese ungültigen Benutzernamen zu verhindern. Administratoren können "
+"diese Validierung mit der UCR Variable ``ucsschool/validation/username"
+"/windows-check`` deaktivieren. Wenn die Variable auf ``true`` gesetzt "
+"ist, validiert der Import die Benutzernamen. Wenn Sie nur Linux "
+"Systeme haben, können sie diese Überprüfung deaktivieren."
 
-#: ../../index.rst:44
+#: ../../index.rst:47
 msgid ""
-"Depending on the available hardware, bandwidth, and number of PCs in the "
-"computer room, it may be necessary to make fine adjustments to "
-"Presentation Mode if performance is not satisfactory. See the "
-":uv:help:`Quick Start Guide: Improving Presentation Mode Performance "
-"<20264>`."
+"The join script for this release will scan your usernames for invalid "
+"usernames. If none are found, it will set the "
+"``ucsschool/validation/username/windows-check`` UCR variable to ``true``,"
+" so you can start getting the benefit of the checks right away."
 msgstr ""
-"Je nach vorhandener Hardware, Bandbreite und Anzahl der PCs im "
-"Computerraum ist es möglich, dass Feineinstellungen am Präsentationsmodus"
-" vorgenommen werden müssen, wenn die Performance nicht zufriedenstellend "
-"ist. Siehe hierzu die :uv:help:`Kurzanleitung: Performance des "
-"Präsentationsmodus verbessern <20264>`. "
+"Das mit diesem Release ausgelieferte Join-Skript überprüft, ob alle im "
+"System verwendeten Benutzernamen unterstützt werden. Wenn keine ungültigen "
+"Benutzernamen gefunden wurden, wird die UCR Variable "
+"``ucsschool/validation/username/windows-check`` UCR variable auf ``true``"
+" gesetzt, sodass die neue Validierung sofort eingesetzt wird."
 
-#: ../../index.rst:49
+#: ../../index.rst:52
 msgid ""
-"This release also removes the update lock for systems with computer "
-"rooms. Thus, systems can be updated from UCS 4.4 to UCS 5.0 if all "
-"computer rooms on the system have been migrated to *Veyon*."
+"If you have any invalid usernames, the join script will leave the UCR "
+"variable unset. You may choose to do one of the following:"
 msgstr ""
-"Mit diesem Release wird zudem die Update-Sperre für Systeme mit "
-"Computerräumen aufgehoben. Somit können Systeme von UCS 4.4 auf UCS 5.0 "
-"aktualisiert werden, wenn auf dem System alle Computerräume auf *Veyon* "
-"migriert wurden."
+"Wenn Sie ungültige Benutzernamen haben, wird das Join-Skript die UCR "
+"Variable nicht setzen. Sie haben dann folgende Optionen: "
+
+#: ../../index.rst:55
+msgid ""
+"Use the System Diagnostic UMC module to see a list of invalid usernames "
+"and correct them, then set the ``ucsschool/validation/username/windows-"
+"check`` UCR variable to ``true``."
+msgstr ""
+"Benutzen Sie das UMC Modul \"System Diagnose\", um eine Liste der ungültigen"
+" Benutzernamen zu bekommen. Nach der Korrektur der Benutzernamen können "
+"Sie die UCR Variable ``ucsschool/validation/username/windows-check`` auf "
+"``true`` setzen."
 
 #: ../../index.rst:56
+msgid ""
+"Set the ``ucsschool/validation/username/windows-check`` UCR variable to "
+"``false``, to temporarily ignore invalid usernames for this minor "
+"release."
+msgstr ""
+"Sie können die UCR Variable ``ucsschool/validation/username/windows-"
+"check`` auf ``false`` setzen, um die Validierung temporär für dieses "
+"Minor Release auszuschalten."
+
+#: ../../index.rst:58
+msgid ""
+"After the join script runs, you may update the UCR variable at any time "
+"before running a user import. You may also run the diagnostic for invalid"
+" usernames at any time using the System Diagnostic UMC module."
+msgstr ""
+"Nachdem das Join-Skript durchgelaufen ist, kann die UCR Variable "
+"jederzeit vor dem Import gesetzt werden. Sie können ebenfalls "
+"die Diagnose für ungültige Benutzernamen über das UMC Modul \"System "
+"Diagnose\" starten."
+
+#: ../../index.rst:64
+msgid ""
+"In UCS 5.2, which will be the next minor release, invalid Windows "
+"usernames will no longer be allowed in any UCS\\@school system, including"
+" domains that only have Linux machines. Please check your usernames with "
+"the System Diagnostic UMC module and fix any that are invalid, before "
+"doing the upgrade."
+msgstr ""
+"In UCS 5.2, dem nächsten Minor Release, werden ungültige "
+"Windows Benutzernamen in UCS\\@school Systemen nicht länger unterstützt. "
+"Dies gilt auch für Domänen, die nur Linux Systeme beinhalten. "
+"Bitte überprüfen Sie ihre Benutzernamen mit dem UMC Modul \"System "
+"Diagnose\" und ändern Sie die Benutzernamen, die ungültig sind, bevor Sie "
+"das Upgrade durchführen."
+
+#: ../../index.rst:72
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:58
+#: ../../index.rst:74
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"

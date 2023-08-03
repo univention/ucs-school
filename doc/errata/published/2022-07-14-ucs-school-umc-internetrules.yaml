@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-internetrules
-fix: 16.0.3A~5.0.0.202207071448
-desc: |
- * Searches in the UMC now handle asterisks consistently (Bug #50797).
-bug: [50797]

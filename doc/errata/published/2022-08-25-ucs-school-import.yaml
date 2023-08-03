@@ -1,8 +1,0 @@
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-import
-fix: 18.0.21A~5.0.0.202208241614
-desc: |
- * Fix user validation in mass import with dry-run (Bug #55016).
- * Underscores are now allowed in OU names, when the hostname of the school server is also passed (Bug #55125).
-bug: [55016, 55125]
