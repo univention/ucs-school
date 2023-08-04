@@ -1,104 +1,205 @@
 # Release instructions for a UCS@school App Release
 
-This document describes how to prepare and execute a full Release for the UCS@school App.
+<!--
+SPDX-FileCopyrightText: 2020-2023 Univention GmbH
 
-Before starting the release, check if there are any tests failing connected with the to be released changes.
+SPDX-License-Identifier: AGPL-3.0-only
+-->
 
+This document describes how to prepare and execute a full release for the UCS@school App.
 
-## Preparations
-See Preparation section in [Manual release to Test Appcenter](README_manual_release.md).
+**Overview Checklist:** (Can be copied into gitlab release issue)
 
-Last step for preparations is to create a Bug for the release commits.
+- [ ] Prepare a VM for testing
+- [ ] Check packages for readiness
+  - [ ] Create release issue (if not created)
+  - [ ] Create Bugzilla bug
+  - [ ] Verify Jenkins tests
+  - [ ] Verify YAML advisories
+- [ ] Create new changelog
+  - [ ] Create a new link on the UCS changelog pages
+- [ ] Create new version in Test Appcenter
+- [ ] Publish to Test Appcenter
+- [ ] Verify release in Selfservice Center
+- [ ] Publish to production Appcenter
+- [ ] Publish manual
+- [ ] Update public documentation
+  - [ ] Update release wiki
+  - [ ] Send announcement email
+  - [ ] Update bugzilla bugs
+- [ ] QA the release
+- [ ] Create new target milestone in self-service center
+- [ ] Create next errata release issue
+- [ ] Update README release documentation (both full and errata) so that bash commands and html links point to the correct versions of UCS@school.
 
-## Check packages for readiness
+**NOTE:** If you are a new developer doing the release for the first time,
+you should also follow the [First Time Preparation](README_manual_release.md#first-time-preparations)
+section in the manual release documentation.
 
-- Collect the YAML files for all packages that are to be released in the new app version.
-- Check errata texts for mistakes and unclear content. Correct if need be.
-- TODO: does not exist anymore ~~Run [Errata Checks](https://jenkins.knut.univention.de:8181/job/Mitarbeiter/job/schwardt/job/UCSschool%20CheckErrataForRelease)
-  to verify that all selected packages are ready for release.~~
+### Prepare a VM for testing
 
-## Create new version in Test AppCenter and push new packages
+If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing when [doing QA](README_qa_for_release.md).
 
-The following commands can be run on `omar`:
+## Before you begin
 
-```shell
-univention-appcenter-control new-version "5.0/ucsschool=5.0 v3" "5.0/ucsschool=5.0 v4"
-univention-appcenter-control status ucsschool  # Determine component_id for next step
-# appcenter-modify-README -a ucsschool -r 5.0 -v "5.0 v4" # does not exist (?)
-# copy_app_binaries -r <ucs-major-minor> -v <app-version> --upload <yaml-datei> ...
-# For example:
-cd git/ucsschool/doc/errata/staging
-copy_app_binaries -r 5.0 -v "5.0 v4" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
-# Upload current ucs-test-ucsschool package to Testappcenter
-univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v4' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
-```
+### Check the minimum required UCS errata version
+
+If needed for any package/feature, the minimum required UCS errata version can
+be set in the UCS@school App Center App configuration.
+
+Keep in mind that the required errata level must not exceed the latest patch
+level release of UCS. This is due to the fact that customers should be able to
+join secondary nodes without updating them first. More info at
+https://help.univention.com/t/release-modalities-of-ucs-school/21861
+
+### Check packages for readiness
+
+Before doing a release, [check packages for readiness](README_check_release_packages.md).
 
 ## Create new changelog
 
+### Remove old advisories
+
+The new changelog should not include any of the advisories from previous releases.
+To remove them:
+
+```shell
+cd ~/git/ucsschool/doc/errata/published
+git rm *
+```
+
+### Move the advisories to published
+
+You will need the list of YAML files you edited in the [Verify YAML Advisories](README_check_release_packages.md#verify-yaml-advisories) step.
+
+In your local `ucsschool` repository, move the YAML advisories into the `doc/errata/published` folder, renamed with the current date:
+
+```shell
+cd ~/git/ucsschool/doc/errata/staging
+release_files=( "ucs-school-lib.yaml" "ucs-school-umc-users.yaml" )
+for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
+```
+
+Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
+
+### Generate the changelog
+
+Open up a second terminal for running docker commands.
 Follow the instructions in the changelog [README](../../doc/ucsschool-changelog/README.md).
 
 ```shell
 git add -u
-git commit -m "Bug #${BUGNUMBER}: preliminary changelog"
-git push
-```
-
-- Create a PDF from the XML with [Release Notes Job](https://jenkins.knut.univention.de:8181/job/UCSschool-4.3/job/ReleaseNotes/)
-- upload PDF & HTML to docs.univention.de
-    - checkout `git@git.knut.univention.de:univention/docs.univention.de.git`
-    - copy content of `doc-common/webframe/` to working copy of `docs.univention.de/`
-    - fetch the new PDF and HTML files created by the above jenkins job (ReleaseNotes) and place them in working copy of `docs.univention.de/`
-    - commit new index files and new HTML and PDF files
-    - push to repo (be aware that another coworker may now push the current repo state to the public web server!)
-- generate docs.u.de overview pages:
-```shell
-git clone git@git.knut.univention.de:documentation/ucs-doc-overview-pages.git
-apt install python3-jinja2 python3-yaml python3-pycountry
-vi src/content.yaml
-python3 src/model.py src/content.yaml .../docs.software-univention.de
-git add src/content.yaml
-git commit -m 'Bug #xxxxx: Added xxxx'
-git push
-cd ~/git/docs.software-univention.de
-git add release-notes_5.0.html.*
-git commit -m 'Bug #xxxxx: Added xxxx'
+git commit -m "Bug #${BUGNUMBER}: ucsschool 5.0v5 changelog"
 git push
 ```
 
 Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
 commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
 
-If everything is in order run the deploy job to publish the new documentation.
+Then add a link to the new `docs.univention.de` overview page:
 
-## Publish packages from TestAppCenter
+```shell
+git clone git@git.knut.univention.de:documentation/ucs-doc-overview-pages.git
+cd ~/git/ucs-doc-overview-pages
+vi documentation/ucs-doc-overview-pages/src/content.yaml
+```
 
-The correct version string, for example `ucsschool_20180112151618` can be found here
-https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/ by navigating to the last (published) version.
+Search for `v4` and create similar entries for `v5`. Then commit and create an MR.
 
-This code should be run **on dimma or omar**:
+After merging the MR, follow the [doc pipeline](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages/-/pipelines),
+and then check that the links appear under the [UCS@school changelogs](https://docs.software-univention.de/release-notes_5.0.html.en).
+
+Finally, you should update [docs.univention.de](https://git.knut.univention.de/univention/docs.univention.de/-/blob/master/ucsschool-changelog/latest) to point to the latest version.
+
+## Create new version in Test AppCenter and publish new packages
+
+The following commands can be run on `omar` to create a new release version:
+
+```shell
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v4" "5.0/ucsschool=5.0 v5"
+```
+
+Then publish the packages to Test Appcenter:
+
+```shell
+# copy_app_binaries -r <ucs-major-minor> -v <app-version> -u <yaml-datei> ...
+# For example:
+cd ~/git/ucsschool/doc/errata/staging
+copy_app_binaries -r 5.0 -v "5.0 v5" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
+```
+
+The `ucs-test-ucsschool` package should also be released, if it is safe to do so.
+Please see the instructions in the [manual release](README_manual_release.md#ucs-test-ucsschool-updates), being sure to use `v5` instead of `v4` in the commands.
+
+## Verify information in the Selfservice Center
+
+**NOTE:** You will want to do this step before publishing to production.
+If you need to make any changes after publishing, you will need to re-run the publishing steps again.
+
+Go to the [Selfservice Center](https://selfservice.software-univention.de/univention/management/#module=appcenter-selfservice) and search for the UCS@school app.
+
+Click on the UCS@school app and look for the current "unpublished" version.
+The "unpublished" version should match your expected release target.
+(If it does not exist, go back to the search screen, right click on the UCS@school
+icon, and select "New app version" to create one).
+
+Choose "Additional texts" from the menu on the left side. Read all of the texts
+and verify that the links/texts are correct and they point to the correct
+version of the release (and not the previous version).
+
+## Publish packages to production AppCenter
+
+This code should be run `dimma` or `omar`.
+First, determine the `COMPONENT` id for the next step:
+
+```shell
+univention-appcenter-control status ucsschool
+```
+
+Then publish to the production Appcenter:
+
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 5.0 ucsschool_20180112151618  # copies the given version to public app center on local mirror!
-sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
+# copy the given version to public app center on local mirror. Use the COMPONENT id.
+./copy_from_appcenter.test.sh 5.0 ucsschool_20230804115933
+# syncs the local mirror to the public download server
+sudo update_mirror.sh -v appcenter
 ```
+
+## Publish UCS@school manual
+
+**TODO:** this section is most likely wrong. Please update this and the
+[errata documentation](README_Erratum.md) next time we release.
+
+The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
+that is triggered by a merge from `ucsschool`.
+Follow the pipeline to be sure it completes correctly, and then check the
+[published documentation](http://univention-repository.knut.univention.de/download/docs/).
 
 ## Update public information
 
-Update [Release Ankündigungen für UCS@school 5.0](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-4-4-stand-12-10-2020/12064)
-by adding a new section **above** the existing ones.
+### Update the release announcement wiki
+
+Update [Release Ankündigungen für UCS@school 5.0](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-5-0-stand-17-11-2022/20184)
+by adding a new section below the existing ones and updating the change date in
+the headline.
+
+### Send the release announcement email
 
 Send an internal announcement mail with the following text (**Adapt version and name**):
 <pre>
 To: app-announcement@univention.de
-Subject: App Center: UCS@school aktualisiert
+Subject: App Center: UCS@school 5.0 v5 released
 
 Hello all,
 
 the following app update has just been released:
-- UCS@school 5.0 v4
+- UCS@school 5.0 v5
 
 The changelog is available here:
-http://docs.software-univention.de/changelog-ucsschool-5.0v4-de.html
+
+- https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html
 
 Excerpts from the changelog:
 - ...
@@ -109,10 +210,13 @@ Greetings,
  $NAME
 </pre>
 
-Set all Bugs published with this Erratum to *CLOSED*.
+### Close Bugzilla bugs
+
+Set all Bugs published with this release to *CLOSED*.
 You can get the bug numbers with this snippet:
+
 ```shell
-cd doc/errata/published/
+cd ~/git/doc/errata/published/
 grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
 ```
 List the bugs in Bugzilla in the extended search by pasting the list in *Bugs numbered*.
@@ -122,9 +226,20 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 5.0 v4 has been released.
+UCS@school 5.0 v5 has been released.
 
-https://docs.software-univention.de/changelog-ucsschool-5.0v4-de.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html
 
 If this error occurs again, please clone this bug.
 </pre>
+
+### Make an announcement in chat
+
+Drop a message in `#ucsschool` in RocketChat, to let people know who might be
+waiting for the release to finish.
+
+
+## QA Release
+
+Follow the steps for [QAing the release](README_qa_for_release.md).

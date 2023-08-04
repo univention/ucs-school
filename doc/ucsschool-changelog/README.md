@@ -121,7 +121,6 @@ Add additional update information in the `*.rst` files. It might help to run `ma
 1. Follow the `ucsschool` CI/CD pipeline for the changelog and translations until it pauses at the `doc-pipeline`.
 2. Manually approve the `doc-pipeline`, then follow the downstream pipeline until it gets to `docs-merge-to-one-artifact`.
 3. Manually approve `docs-merge-to-one-artifact`, then follow the `docs.univention.de` pipeline.
-4. You will receive an email for the merge request in `docs.univention.de`; follow the pipeline until the docs are merged.
 
 Once all pipelines are complete, you should visit the changelog pages and verify that the changes are there:
 
