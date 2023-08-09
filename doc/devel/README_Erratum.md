@@ -17,7 +17,19 @@ If you are unable to access it, please contact [helpdesk](mailto:helpdesk@univen
 
 If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing in the **Verify production apps** section.
 
-## Check packages for readiness
+## Prerquisites
+
+### Check the minimum reqquired UCS errata version
+
+If needed for any package/feature, the minimum required UCS errata version can
+be set in the UCS@school App Center App configuration.
+
+Keep in mind that the required errata level must not exceed the latest patch
+level release of UCS. This is due to the fact that customers should be able to
+join secondary nodes without updating them first. More info at
+https://help.univention.com/t/release-modalities-of-ucs-school/21861
+
+### Check packages for readiness
 
 Before starting, ensure that there is an errata release issue. The issue must
 include as blocking issues, all updates to `ucsschool` since the last errata
