@@ -47,6 +47,8 @@ def read_version_from_ci() -> str:
 
 # The full version, including alpha/beta/rc tags
 release = read_version_from_ci()
+# Need the exact version as it is part of the URL for the search
+version_for_search = release
 
 # insert space before "v" in release string
 position_v = release.find("v")
@@ -108,7 +110,7 @@ html_theme_options = {
     "show_source_license": True,
     "typesense_search": True,
     "typesense_document": pdf_doc_base,
-    "typesense_document_version": release,
+    "typesense_document_version": version_for_search,
     "univention_matomo_tracking": True,
 }
 
