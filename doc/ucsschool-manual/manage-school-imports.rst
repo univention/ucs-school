@@ -166,22 +166,50 @@ Ein Schuljahreswechsel erfolgt in vier Schritten:
 Skriptbasierter Import von Netzwerken
 =====================================
 
-Durch den Import von Netzwerken können IP-Subnetze im LDAP angelegt werden und
-diverse Voreinstellungen wie Adressen von Router, DNS-Server etc. für diese
-Subnetze konfiguriert werden. Darunter fällt z.B. auch ein Adressbereich aus dem
-für neuangelegte Systeme automatisch IP-Adressen vergeben werden können.
+Der skriptbasierte Import von Netzwerken legt IP-Subnetze im LDAP an und
+konfiguriert diverse Voreinstellungen wie zum Beispiel Adressen von Routern
+(Gateways), DNS-Server und WINS-Server für diese Subnetze. Darunter fällt zum
+Beispiel auch ein Adressbereich, aus dem für neuangelegte Systeme automatisch
+IP-Adressen vergeben werden können.
 
-Das Importieren von Subnetzen empfiehlt sich in größeren |UCSUAS|-Umgebungen.
-Kleinere Umgebungen können diesen Schritt häufig überspringen, da fehlende
-Netzwerke beim Import von Rechnerkonten automatisch angelegt werden.
+Der skriptbasierte Import ist insbesondere in Szenarien empfehlenswert, wo UCS
+für die Verteilung der Netzwerkkonfiguration über DHCP zum Einsatz kommt und
+damit die Netzwerkkonfiguration von Clients übernimmt. Insbesondere größere
+|UCSUAS|-Umgebungen profitieren vom skriptbasierten Import von Netzwerken.
 
-Netzwerke können derzeit nur auf der Kommandozeile über das Skript
-:command:`/usr/share/ucs-school-import/scripts/import_networks` importiert
-werden. Das Skript muss auf dem |UCSPRIMARYDN| als Benutzer ``root`` aufgerufen
-werden. In der Import-Datei sind die einzelnen Felder durch ein Tabulatorzeichen
-zu trennen. Das Format der Import-Datei ist wie folgt aufgebaut:
+In kleineren Umgebungen kann es flexibler sein, wenn Administratoren die
+Netzwerkeinstellungen über die |UCSUMC| vornehmen. UCS erstellt automatisch
+entsprechende Netzwerkobjekte für das Netzwerk eines Rechnerkontos. Bei der
+Verwendung von DHCP über UCS und im Unterschied zum skriptbasierten Import
+müssen Administratoren über die |UCSUMC| die DHCP-Richtlinie für Rechnerkonten
+mit Vorgaben zu Gateway, DNS-Server oder WINS-Server manuell anlegen.
 
-.. list-table::
+.. seealso::
+
+   :cite:t:`ucs-manual`:
+
+   :ref:`networks-dhcp-policies`
+      zum Anlegen einer DHCP Richtlinie mit Vorgaben zu Gateway, DNS-Server
+      oder WINS-Server
+
+   :ref:`computers-hostaccounts`
+      zum Anlegen von Rechnerkonten
+
+Administratoren können Netzwerke auf der Kommandozeile über das Skript
+:command:`/usr/share/ucs-school-import/scripts/import_networks` aus einer
+CSV Datei importieren, indem sie es auf dem |UCSPRIMARYDN| als Benutzer ``root``
+starten. Das Skript erstellt Netzwerkobjekte **inklusive** einer DHCP-Richtlinie
+mit Vorgaben zu Gateway, DNS-Server und WINS-Server.
+
+:numref:`school-schoolcreate-network-import-format` zeigt das Format der
+Import-Datei. Das Skript :command:`import_networks` erwartet Tabulatorzeichen
+zur Trennung der einzelnen Felder. Optionale Felder stehen in Klammern, zum
+Beispiel *(IP-Adressbereich)*.
+:numref:`school-schoolcreate-network-import-example` zeigt ein Beispiel.
+
+.. _school-schoolcreate-network-import-format:
+
+.. list-table:: Format der Import-Datei für :command:`import_networks`
    :header-rows: 1
    :widths: 3 5 4
 
@@ -214,17 +242,26 @@ zu trennen. Das Format der Import-Datei ist wie folgt aufgebaut:
      - IP-Adresse des WINS-Servers
      - ``10.0.5.2``
 
-Beispiel für eine Importdatei:
+.. note::
 
-.. code-block::
+   :numref:`school-schoolcreate-network-import-example` verwendet
+   Tabulatorzeichen zur Trennung der Felder. Nutzen Sie den Link zum
+   Herunterladen der :download:`Importdatei <example-import.csv>` für die
+   weitere Verwendung.
 
-   g123m  10.0.5.0                          10.0.5.1  10.0.5.2  10.0.5.2
-   g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
+.. literalinclude:: example-import.csv
+   :caption: Beispiel für eine :download:`Importdatei <example-import.csv>`
+   :tab-width: 4
+   :name: school-schoolcreate-network-import-example
 
+Das Skript :command:`import_networks` verwendet Voreinstellungen, wenn folgende
+Angaben in der CSV Datei für den Netzwerkimport fehlen:
 
-Wird für das Feld *Netzwerk* keine Netzmaske angegeben, so wird automatisch die
-Netzmaske ``255.255.255.0`` verwendet. Sollte der *IP-Adressbereich* nicht
-explizit angegeben worden sein, wird der Bereich X.Y.Z.20-X.Y.Z.250 verwendet.
+* Netzmaske ``255.255.255.0``, wenn im Feld *Netzwerk* keine Angabe über die
+  Netzmaske vorliegt.
+
+* IP Adressbereich ``X.Y.Z.20-X.Y.Z.250``, wenn im Feld *IP-Adressbereich* keine
+  Angabe über den Adressbereich vorliegt.
 
 Zur Vereinfachung der Administration der Netzwerke steht zusätzlich das Skript
 :command:`import_router` zur Verfügung, das nur den Default-Router für das
