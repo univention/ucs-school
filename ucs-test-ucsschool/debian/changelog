@@ -1,3 +1,10 @@
+ucs-test-ucsschool (6.0.271) unstable; urgency=low
+
+  * Issue univention/components/ucsschool-id-connector#32: skip tests not
+    compatible with 4.4
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 21 Aug 2023 10:15:18 +0200
+
 ucs-test-ucsschool (6.0.270) unstable; urgency=medium
 
   * Issue #30: fix id connector integration test
