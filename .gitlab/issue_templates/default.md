@@ -34,7 +34,7 @@ Additional points:
 - [ ] There is at least one end to end test that covers the changed lines.
 - [ ] Evaluate performance of the change.
   - [ ] Read the parent epic and verify performance requirements.
-  - [ ] If necessary, performance tests exist. See https://git.knut.univention.de/univention/internal/research-library/-/merge_requests/5/diffs
+  - [ ] If necessary, performance tests exist. See [Performance commitment](https://git.knut.univention.de/univention/internal/decision-records/-/blob/main/ucsschool/0008-performance-commitment.md)
   - [ ] If there are no specific performance requirements, improve or at least avoid worsening existing performance, if possible.
   - [ ] Document reasons for worse performance in the code and on the ticket, if applicable.
 
