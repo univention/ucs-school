@@ -26,8 +26,8 @@ from univention.testing.ucsschool.workgroup import Workgroup
 
 
 class PersonWithSchool(Person):
-    def map_to_dict(self, value_map):
-        result = super(PersonWithSchool, self).map_to_dict(value_map)
+    def map_to_dict(self, value_map, prefix_schools=True):
+        result = super(PersonWithSchool, self).map_to_dict(value_map, prefix_schools=prefix_schools)
         result[value_map.get("school", "__EMPTY__")] = self.school
         try:
             del result["__EMPTY__"]

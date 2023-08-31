@@ -5,3 +5,4 @@ Subclassing
 UTF
 inkl
 Konnektoren
+Dictionaries

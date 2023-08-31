@@ -150,6 +150,9 @@ class SingleSourcePartialUserImport(UserImport):
                 imported_user.schools = old_user.schools
                 if self.config["school"] not in old_user.schools:
                     imported_user.schools.append(self.config["school"])
+                new_classes = copy.deepcopy(old_user.school_classes)
+                new_classes.update(imported_user.school_classes)
+                imported_user.school_classes = new_classes
 
         return super(SingleSourcePartialUserImport, self).prepare_imported_user(imported_user, old_user)
 

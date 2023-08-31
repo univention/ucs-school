@@ -29,8 +29,8 @@ class MultiPerson(Person):
             mail_domain,
         )
 
-    def map_to_dict(self, value_map):
-        result = Person.map_to_dict(self, value_map)
+    def map_to_dict(self, value_map, prefix_schools=True):
+        result = Person.map_to_dict(self, value_map, prefix_schools=prefix_schools)
         result[value_map.get("mailAlternativeAddress", "__EMPTY__")] = self.mailAlternativeAddress
         return result
 

@@ -95,7 +95,22 @@ Die :py:class:`ImportUser` Klasse
       Klassen in denen der Benutzer ist.
 
       Als String im Format ``schule1-1A,schule1-2B,schule2-1A`` oder als Python
-      Dictionary: ``{"schule1": ["1A", "2B"], "schule2": ["1A"]}``.
+      Dictionary: ``{"schule1": ["1A", "2B"], "schule2": ["1A"]}``. Bei Nutzung des
+      Python Dictionaries wird der Präfix implizit durch die Struktur übernommen.
+
+      .. hint::
+
+         Geben Sie **immer** den Schul-Präfix für Schulklassen an, auch wenn
+         der Import Schulklassen ohne den Schul-Präfix in einer CSV-Datei
+         erfolgreich importieren kann. Der Import ohne Schul-Präfix kann zu
+         undefiniertem Verhalten und erhöhten Support-Aufwänden führen.
+
+      .. warning::
+
+         Wenn Schulklassen keinen Schul-Präfix in der CSV-Datei angeben, dürfen
+         die Namen für die Schulklassen **keine** Bindestriche enthalten, weil
+         der Import sonst fehlschlägt.
+
 
       Es können Klassen aus mehreren Schulen aufgelistet werden; diese Schulen
       müssen alle in :py:attr:`ImportUser.schools` auftauchen.

@@ -23,8 +23,8 @@ class ExtAttrPerson(Person):
         self.extattr = time.strftime("%Y-%m-%d")
         self.ext_attr_name = ext_attr_name
 
-    def map_to_dict(self, value_map):
-        result = super(ExtAttrPerson, self).map_to_dict(value_map)
+    def map_to_dict(self, value_map, prefix_schools=True):
+        result = super(ExtAttrPerson, self).map_to_dict(value_map, prefix_schools=prefix_schools)
         result[value_map.get(self.ext_attr_name, "__EMPTY__")] = self.extattr
         return result
 

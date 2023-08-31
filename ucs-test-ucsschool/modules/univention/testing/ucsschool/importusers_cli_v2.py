@@ -432,7 +432,9 @@ class CLI_Import_v2_Tester(ImportTestbase):
 
         return fn
 
-    def create_csv_file(self, person_list, mapping=None, fn_csv=None):
+    def create_csv_file(
+        self, person_list, sisopi_school=None, mapping=None, fn_csv=None, prefix_schools=True
+    ):
         """
         Create CSV file for given persons
         >>> from univention.testing.ucsschool.importusers import Person
@@ -462,7 +464,16 @@ class CLI_Import_v2_Tester(ImportTestbase):
         )
         writer.writeheader()
         for person in person_list:
-            person_dict = person.map_to_dict(properties2headers)
+            if sisopi_school:
+                tmp = copy.deepcopy(person)
+                tmp.school = sisopi_school
+                tmp.schools = [sisopi_school]
+                if tmp.role != "staff":
+                    tmp.school_classes = {}
+                    tmp.school_classes[sisopi_school] = person.school_classes[sisopi_school]
+                person_dict = tmp.map_to_dict(properties2headers, prefix_schools=prefix_schools)
+            else:
+                person_dict = person.map_to_dict(properties2headers, prefix_schools=prefix_schools)
             self.log.info("Person data = %r", person_dict)
             writer.writerow(person_dict)
         return fn

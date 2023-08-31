@@ -25,8 +25,8 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
 
 class PersonWithSchool(Person):
-    def map_to_dict(self, value_map):
-        result = super(PersonWithSchool, self).map_to_dict(value_map)
+    def map_to_dict(self, value_map, prefix_schools=True):
+        result = super(PersonWithSchool, self).map_to_dict(value_map, prefix_schools=prefix_schools)
         result[value_map.get("school", "__EMPTY__")] = self.school
         try:
             del result["__EMPTY__"]

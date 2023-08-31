@@ -23,8 +23,11 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 class Test(CLI_Import_v2_Tester):
     def _import_and_verify(self, config, person, delete=False):
         person_list = [] if delete else [person]
-        fn_csv = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
         fn_config = self.create_config_json(config=config)
+
+        fn_csv = self.create_csv_file(
+            person_list=person_list, mapping=config["csv"]["mapping"], sisopi_school=config["school"]
+        )
         self.run_import(["-c", fn_config, "-i", fn_csv])
         wait_for_drs_replication("cn={}".format(escape_filter_chars(person.username)))
         # wait for the connector to do its job, wait_for_drs_replication just checks if dn exists

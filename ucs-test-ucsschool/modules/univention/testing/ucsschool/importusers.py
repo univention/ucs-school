@@ -180,7 +180,7 @@ class Person(object):
 
         self.school_classes.pop(old_school, None)
 
-    def map_to_dict(self, value_map):
+    def map_to_dict(self, value_map, prefix_schools=True):
         result = {
             value_map.get("firstname", "__EMPTY__"): self.firstname,
             value_map.get("lastname", "__EMPTY__"): self.lastname,
@@ -192,7 +192,13 @@ class Person(object):
             value_map.get("description", "__EMPTY__"): self.description,
             value_map.get("overridePWHistory", "__EMPTY__"): self.override_pw_history,
             value_map.get("school_classes", "__EMPTY__"): ",".join(
-                [x for school_, classes in self.school_classes.items() for x in classes]
+                [
+                    x
+                    if not prefix_schools or x.startswith("{school}-".format(school=school))
+                    else "{school}-{x}".format(school=school, x=x)
+                    for school, classes in self.school_classes.items()
+                    for x in classes
+                ]
             ),
             value_map.get("email", "__EMPTY__"): self.mail,
             value_map.get("__action", "__EMPTY__"): self.mode,
@@ -388,7 +394,7 @@ class Person(object):
         for school, classes in self.school_classes.items():
             for cl in classes:
                 cl_group_dn = "cn=%s,cn=klassen,cn=%s,cn=groups,%s" % (
-                    cl,
+                    cl if cl.startswith("%s-" % school) else "%s-%s" % (school, cl),
                     cn_pupils,
                     get_school_base(school),
                 )
@@ -421,8 +427,6 @@ class Person(object):
         """
         assert source_uid or self.source_uid
         assert record_uid or self.record_uid
-        for attr in attrs:
-            assert hasattr(self, attr)
 
         ldap2person = {
             "dn": "dn",
@@ -803,3 +807,18 @@ def get_mail_domain():  # type: () -> str
             name=mail_domain,
         )
     return mail_domain
+
+
+class NonPrefixPerson(Person):
+    def append_random_class(self, schools=None):
+        if not schools:
+            schools = [self.school]
+        for school in schools:
+            self.school_classes.setdefault(school, []).append(
+                "%s%s%s"
+                % (
+                    uts.random_int(),
+                    uts.random_int(),
+                    uts.random_string(length=2, alpha=True, numeric=False),
+                )
+            )
