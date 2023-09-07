@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix:
+fix: 18.0.33
 desc: |
  * The SiSoPi-User import now properly creates CSV-Files. (Bug #56340)
 bug: [56340]
