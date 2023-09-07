@@ -1,3 +1,9 @@
+ucs-school-import (18.0.33) unstable; urgency=medium
+
+  * Bug #56340: SiSoPi properly distributes class memberships.
+
+ -- Alexander Steffen<steffen@univention.de>  Wed, 7 Sep 2023 12:04:38 +0200
+
 ucs-school-import (18.0.32) unstable; urgency=medium
 
   * Bug #56041: support setting multiple nested settings for the importer.
