@@ -74,7 +74,7 @@ Keep in mind:
 
 ## Publish to production App Center
 
-The following code can be executed on `ladda` or `omar`.
+The following code can be executed on `omar`.
 
 The correct version string, for example `ucsschool_20230802094418`, can be found in the [Test AppCenter](https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/) by navigating to the last (published) version.
 
