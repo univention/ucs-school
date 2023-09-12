@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v4 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-02 07:49+0000\n"
+"POT-Creation-Date: 2023-09-12 11:10+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,18 +22,34 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2023-09-12"
+msgstr "Veröffentlicht am 12. September 2023"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-import* in version ``18.0.33``:"
+msgstr "Quellpaket *ucs-school-import* in Version ``18.0.33``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"The SiSoPi user import now keeps class memberships for other schools. "
+"(:uv:bug:`56340`)"
+msgstr ""
+"Der SiSoPi-Benutzerimport behält nun die Klassenmitgliedschaften für andere Schulen bei. "
+"(:uv:bug:`56340`)"
+
+#: ../../changelog.rst:24
 msgid "Released on 2023-08-02"
 msgstr "Veröffentlicht am 2. August 2023"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:26
 msgid "Source package *ucs-school-umc-diagnostic* in version ``2.0.15``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``2.0.15``:"
 
-#: ../../changelog.rst:18
+#: ../../changelog.rst:28
 msgid "The coding style has been improved (:uv:bug:`55751`)."
 msgstr "Der Formatierungsstil wurde verbessert (:uv:bug:`55751`)."
 
-#: ../../changelog.rst:20
+#: ../../changelog.rst:30
 msgid ""
 "Added a new system diagnostic feature: Existing UCS@school usernames will"
 " be checked for validity. Warnings are issued if deprecated or "
@@ -45,11 +61,11 @@ msgstr ""
 "nicht unterstützte Benutzernamen ausgegeben.(:uv:bug:`56152`, "
 ":uv:bug:`55751`)"
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:34
 msgid "Source package *ucs-school-lib* in version ``13.0.39``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.39``:"
 
-#: ../../changelog.rst:26
+#: ../../changelog.rst:36
 msgid ""
 "The UCR variable ``ucsschool/validation/username/windows-check`` has been"
 " added and can be used to control the username validation with respect to"

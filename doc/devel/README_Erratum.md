@@ -35,7 +35,7 @@ section in the manual release documentation.
 
 If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing when [doing QA](README_qa_for_release.md).
 
-## Prerquisites
+## Prerequisites
 
 ### Check packages for readiness
 

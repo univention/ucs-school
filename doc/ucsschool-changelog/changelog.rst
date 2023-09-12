@@ -8,6 +8,16 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-09-12:
+
+Released on 2023-09-12
+======================
+
+Source package *ucs-school-import* in version ``18.0.33``:
+
+* The SiSoPi user import now keeps class memberships for other schools.
+  (:uv:bug:`56340`)
+
 .. _changelog-ucsschool-2023-08-02:
 
 Released on 2023-08-02
