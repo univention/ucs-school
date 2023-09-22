@@ -5,7 +5,6 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- python-all,
  python3-all,
  ucslint,
  univention-join-dev,
@@ -17,7 +16,6 @@ Breaks:
  ucs-school-import (<< 17.0.63),
  ucs-school-lib (<< 12.2.28),
 Depends:
- python-ucs-school (>= 12.1.9),
  univention-config-registry,
  ${misc:Depends},
  ${python3:Depends},

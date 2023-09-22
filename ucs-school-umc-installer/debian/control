@@ -5,7 +5,6 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- python-all,
  python3-all,
  ucslint,
  univention-management-console-dev (>= 11.0.4-37),
@@ -14,12 +13,6 @@ Standards-Version: 3.8.2
 Package: ucs-school-umc-installer
 Architecture: all
 Depends:
- python-dnspython,
- python-ldap,
- python-six,
- python-ucs-school,
- python-univention-directory-manager,
- python-univention-lib (>= 2.0.17-1.116),
  python3-dnspython,
  python3-ldap,
  python3-six,

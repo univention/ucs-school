@@ -13,9 +13,6 @@ Standards-Version: 3.8.2
 Package: ucs-school-umc-internetrules
 Architecture: all
 Depends:
- python-six,
- python-ucs-school (>= 12.1.9),
- python-univention-directory-manager,
  python3-six,
  python3-ucsschool-lib,
  python3-univention-directory-manager,
