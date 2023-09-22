@@ -10,7 +10,7 @@ Build-Depends:
  python-all,
  python3-sphinx,
  python3-sphinx-rtd-theme,
- python3.7-doc,
+ python3.9-doc,
  python3-all,
  ucslint,
  univention-config-dev,
