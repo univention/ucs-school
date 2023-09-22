@@ -32,7 +32,7 @@
 export LC_ALL=C.UTF-8
 
 %:
-	dh $@ --with python2,python3,ucr,univention-join
+	dh $@ --with python3,ucr,univention-join
 
 build:
 	convert univention-management-console.png -define icon:auto-resize=256,64,48,32,16 univention-management-console.ico
