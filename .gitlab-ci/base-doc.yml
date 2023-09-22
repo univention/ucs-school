@@ -11,8 +11,8 @@ stages:
   stage: build
   image: $SPHINX_BASE
   variables:
-    DOC_TARGET_VERSION: "5.0"
-    CHANGELOG_TARGET_VERSION: "5.0v6"
+    DOC_TARGET_VERSION: "5.2"
+    CHANGELOG_TARGET_VERSION: "5.2v1"
     language: "de"
 
 .sphinx-html:
