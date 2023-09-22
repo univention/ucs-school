@@ -38,7 +38,7 @@ APIDOCSRC_FILES := $(shell find $(APIDOCSRC_DIR) -name '*.rst' -o -name '*.png')
 PYMODULESRC_FILES := $(shell find modules/ -name '*.py')
 
 %:
-	dh $@ --with python2,python3,univention-l10n,ucr,univention-join
+	dh $@ --with python3,univention-l10n,ucr,univention-join
 
 plantuml:
 	$(MAKE) -C $(PLANTUML_DIR)
