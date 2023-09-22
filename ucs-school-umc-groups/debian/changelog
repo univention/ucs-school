@@ -1,3 +1,9 @@
+ucs-school-umc-groups (10.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:11 +0200
+
 ucs-school-umc-groups (10.0.9) unstable; urgency=medium
 
   * Bug #55990: sync 'school' in MultiObjectSelct with DetailPage correctly

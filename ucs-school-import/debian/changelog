@@ -1,3 +1,9 @@
+ucs-school-import (18.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:10 +0200
+
 ucs-school-import (18.0.36) unstable; urgency=medium
 
   * Bug #52167: Added UCR variables to registry script.

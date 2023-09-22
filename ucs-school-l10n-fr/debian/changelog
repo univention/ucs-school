@@ -1,3 +1,9 @@
+ucs-school-l10n-fr (5.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:09 +0200
+
 ucs-school-l10n-fr (5.0.4) unstable; urgency=medium
 
   * Bug #49533: update translation of schoolinstaller

@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (18.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:08 +0200
+
 ucs-school-ldap-acls-master (18.0.4) unstable; urgency=medium
 
   * Bug #51279:  Replication works if users reside in non-school ou (e.g. global admin group)
