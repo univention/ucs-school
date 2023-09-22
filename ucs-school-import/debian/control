@@ -47,25 +47,6 @@ Description: UCS@school: Importing objects like users and computers
  refer to: https://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
 
-Package: python-ucsschool-importer
-Architecture: all
-Depends:
- ${python:Depends},
-Provides:
- ${python:Provides},
-Breaks:
- ucs-school-import (<< 17.0.65),
-Replaces:
- ucs-school-import (<< 17.0.65),
-Description: UCS@school: Python Library for importing objects
- This package provides Python libraries for importing objects.
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: https://www.univention.de/
-Homepage: https://www.univention.de/produkte/ucsschool/
-
 Package: python3-ucsschool-importer
 Architecture: all
 Depends:
@@ -127,23 +108,6 @@ Description: UCS@school: RESTful API for importing users
  refer to: https://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
 
-Package: python-ucsschool-importer-http-api
-Architecture: all
-Depends:
- ${misc:Depends},
-Breaks:
- ucs-school-import-http-api (<< 17.0.65),
-Replaces:
- ucs-school-import-http-api (<< 17.0.65),
-Description: UCS@school: RESTful API for importing users
- This package provides a service for importing users using a RESTful HTTP API.
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: https://www.univention.de/
-Homepage: https://www.univention.de/produkte/ucsschool/
-
 Package: python3-ucsschool-importer-http-api
 Architecture: all
 Depends:
@@ -179,27 +143,6 @@ Description: UCS@school: Python client library for the US@school API
  refer to: https://www.univention.de/
 Homepage: https://www.univention.de/produkte/ucsschool/
 
-Package: python-ucsschool-importer-http-api-client
-Architecture: all
-Depends:
- python3-magic,
- python3-requests,
- python3-univention-config-registry,
- ucs-school-import-http-api-common (= ${source:Version}),
- ${misc:Depends},
-Breaks:
- ucs-school-import-http-api-client (<< 17.0.65),
-Replaces:
- ucs-school-import-http-api-client (<< 17.0.65),
-Description: UCS@school: Python client library for the US@school API
- This package provides a Python client for accessing the RESTful HTTP API.
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: https://www.univention.de/
-Homepage: https://www.univention.de/produkte/ucsschool/
-
 Package: python3-ucsschool-importer-http-api-client
 Architecture: all
 Depends:
@@ -226,23 +169,6 @@ Replaces:
  ucs-school-import-http-api (<< 17.0.6-15),
 Breaks:
  ucs-school-import-http-api (<< 17.0.6-15),
-Description: UCS@school: Common files for UCS@school API client and server
- This package provides common files of the RESTful HTTP API client and server.
- .
- This package is part of Univention Corporate Server (UCS),
- an integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: https://www.univention.de/
-Homepage: https://www.univention.de/produkte/ucsschool/
-
-Package: python-ucsschool-importer-http-api-common
-Architecture: all
-Depends:
- ${misc:Depends},
-Replaces:
- ucs-school-import-http-api-common (<< 17.0.65),
-Breaks:
- ucs-school-import-http-api-common (<< 17.0.65),
 Description: UCS@school: Common files for UCS@school API client and server
  This package provides common files of the RESTful HTTP API client and server.
  .
