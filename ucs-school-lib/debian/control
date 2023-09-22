@@ -17,42 +17,6 @@ Build-Depends:
  univention-policy-tools
 Standards-Version: 3.8.2
 
-Package: python-ucs-school
-Architecture: all
-Depends:
- ${misc:Depends},
- ${python:Depends},
-Breaks:
- ucs-school-import (<< 17.0.64),
-Provides:
- ${python:Provides},
-Description: UCS@school - common Python modules
- This package contains Python modules used by various
- components of UCS@school.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
-Package: python-ucsschool
-Architecture: all
-Depends:
- ${misc:Depends},
- ${python:Depends},
-Replaces:
-Breaks:
-Provides:
- ${python:Provides},
-Description: UCS@school - common Python modules
- This package contains Python modules used by various
- components of UCS@school.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
 Package: python3-ucsschool
 Architecture: all
 Depends:
@@ -60,28 +24,6 @@ Depends:
  ${python3:Depends},
 Provides:
  ${python3:Provides},
-Description: UCS@school - common Python modules
- This package contains Python modules used by various
- components of UCS@school.
- .
- It is part of Univention Corporate Server (UCS), an
- integrated, directory driven solution for managing
- corporate environments. For more information about UCS,
- refer to: http://www.univention.de/
-
-Package: python-ucsschool-lib
-Architecture: all
-Depends:
- ucs-school-lib-common,
- univention-management-console (>= 12.0.31-10),
- ${misc:Depends},
- ${python:Depends},
-Breaks:
- ucs-school-import (<< 17.0.66),
-Replaces:
- ucs-school-import (<< 17.0.66),
-Provides:
- ${python:Provides},
 Description: UCS@school - common Python modules
  This package contains Python modules used by various
  components of UCS@school.
