@@ -5,7 +5,6 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- python-all,
  python3-all,
  ucslint,
 Standards-Version: 3.6.1
@@ -17,14 +16,6 @@ Breaks:
  ucs-school-lib (<< 12.2.28),
 Depends:
  eapol,
- python-attr,
- python-ipaddress,
- python-mock,
- python-passlib,
- python-pycurl,
- python-pytest,
- python-requests,
- python-ucs-school (>= 12.1.9),
  python3-attr,
  python3-mock,
  python3-passlib,

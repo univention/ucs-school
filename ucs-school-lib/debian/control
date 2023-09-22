@@ -5,18 +5,14 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- python-all,
  python3-all,
  ucslint,
  univention-unittests,
  univention-config-dev,
  univention-join-dev,
  univention-l10n-dev,
- python-univention-directory-manager (>=14.0.15-4),
  python3-univention-directory-manager (>=14.0.15-4),
- python-colorlog,
  python3-colorlog,
- python-ruamel.yaml,
  python3-ruamel.yaml,
  univention-policy-tools
 Standards-Version: 3.8.2
@@ -24,8 +20,6 @@ Standards-Version: 3.8.2
 Package: python-ucs-school
 Architecture: all
 Depends:
- python-ucsschool-lib (>= 12.2.29),
- python-ucsschool (>= 13.0.2),
  ${misc:Depends},
  ${python:Depends},
 Breaks:
@@ -47,9 +41,7 @@ Depends:
  ${misc:Depends},
  ${python:Depends},
 Replaces:
- python-ucs-school (<< 13.0.2),
 Breaks:
- python-ucs-school (<< 13.0.2),
 Provides:
  ${python:Provides},
 Description: UCS@school - common Python modules
@@ -80,27 +72,13 @@ Description: UCS@school - common Python modules
 Package: python-ucsschool-lib
 Architecture: all
 Depends:
- python-apt,
- python-click,
- python-colorlog,
- python-lazy-object-proxy,
- python-ldap,
- python-psutil,
- python-ruamel.yaml,
- python-six,
- python-univention-debug,
- python-univention-directory-manager (>=14.0.15-4),
- python-univention-lib,
- python-univention-management-console,
  ucs-school-lib-common,
  univention-management-console (>= 12.0.31-10),
  ${misc:Depends},
  ${python:Depends},
 Breaks:
- python-ucs-school (<< 12.2.29),
  ucs-school-import (<< 17.0.66),
 Replaces:
- python-ucs-school (<< 12.2.29),
  ucs-school-import (<< 17.0.66),
 Provides:
  ${python:Provides},
@@ -161,7 +139,6 @@ Architecture: all
 Depends:
  ${misc:Depends},
 Breaks:
- python-ucs-school (<< 12.2.28),
 Description: UCS@school - common files of ucs-school-lib
  This package contains files used by multiple ucs-school-lib
  packages.

@@ -17,8 +17,6 @@ Replaces:
 Breaks:
  ucs-school-umc-roomadmin (<< 8.0.0),
 Depends:
- python-ucs-school (>= 12.1.9),
- python-univention-directory-manager,
  python3-ucsschool-lib,
  python3-univention-directory-manager,
  shell-ucs-school,

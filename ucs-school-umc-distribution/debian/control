@@ -16,8 +16,6 @@ Breaks:
  ucs-school-import (<< 17.0.63),
  ucs-school-lib (<< 12.2.28),
 Depends:
- python-ucs-school (>= 12.1.9),
- python-univention-lib,
  python3-pam,
  python3-ucsschool-lib,
  python3-univention-lib,

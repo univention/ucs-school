@@ -13,8 +13,6 @@ Standards-Version: 3.7.2
 Package: ucs-school-umc-users
 Architecture: all
 Depends:
- python-ucs-school (>= 12.1.9),
- python-univention-directory-manager,
  python3-ucsschool-lib,
  python3-univention-directory-manager,
  shell-ucs-school,
