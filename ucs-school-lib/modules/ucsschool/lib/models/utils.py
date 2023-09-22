@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import collections
+import collections.abc
 import copy
 import grp
 import logging
@@ -149,7 +149,7 @@ def _remove_password_from_log_record(
 ):  # type: (logging.LogRecord) -> logging.LogRecord
     def replace_password(obj, attr):
         ori = getattr(obj, attr)
-        if isinstance(ori, collections.Mapping) and isinstance(ori.get("password"), string_types):
+        if isinstance(ori, collections.abc.Mapping) and isinstance(ori.get("password"), string_types):
             # don't change original record arguments as it would change the objects being logged
             new_dict = copy.deepcopy(ori)
             new_dict["password"] = "*" * 8
@@ -161,7 +161,9 @@ def _remove_password_from_log_record(
         for index, arg in enumerate(record.args):
             # cannot call replace_password() to replace single arg, because a tuple is not mutable,
             # -> have to replace all of record.args
-            if isinstance(arg, collections.Mapping) and isinstance(arg.get("password"), string_types):
+            if isinstance(arg, collections.abc.Mapping) and isinstance(
+                arg.get("password"), string_types
+            ):
                 # don't change original record arguments as it would change the objects being logged
                 args = copy.deepcopy(record.args)
                 args[index]["password"] = "*" * 8
