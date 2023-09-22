@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.100.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:53:35 +0200
+
 ucs-school-webproxy (16.99.1) unstable; urgency=medium
 
   * UCS@school 5.1
