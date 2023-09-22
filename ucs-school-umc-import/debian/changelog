@@ -1,3 +1,9 @@
+ucs-school-umc-import (4.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-umc-import (3.0.8) unstable; urgency=medium
 
   * Bug #56519: Added missing localization.

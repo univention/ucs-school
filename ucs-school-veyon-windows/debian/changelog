@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (5.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-veyon-windows (4.9.1.0-ucs5.0-0) unstable; urgency=medium
 
   * Bug #57837: update veyon windows installer

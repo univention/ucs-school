@@ -1,3 +1,9 @@
+ucs-school-lib (14.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-lib (13.0.45) unstable; urgency=medium
 
   * Issue #1198: Changes due to ruff rule activation.

@@ -1,3 +1,9 @@
+ucs-school-import (19.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-import (18.0.55) unstable; urgency=medium
 
   * Bug #57607: Ensure unhandled exceptions in the http api are shown in the logs.

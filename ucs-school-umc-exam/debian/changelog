@@ -1,3 +1,9 @@
+ucs-school-umc-exam (11.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-umc-exam (10.0.15) unstable; urgency=medium
 
   * Bug #57667: Fixed duplicated aces in NT acls.

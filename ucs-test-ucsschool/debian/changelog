@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-test-ucsschool (7.3.199) unstable; urgency=medium
 
   * Issue #1277: Fix 303_http-api_auth_test.

@@ -1,3 +1,9 @@
+ucs-school-webproxy (16.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:11 +0200
+
 ucs-school-webproxy (16.0.8) unstable; urgency=medium
 
   * Bug #55751: refactor code using "ruff"

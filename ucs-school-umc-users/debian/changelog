@@ -1,3 +1,9 @@
+ucs-school-umc-users (17.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-umc-users (16.0.10) unstable; urgency=medium
 
   * Bug #55740: Preventing failure on UnknownPropertyError.

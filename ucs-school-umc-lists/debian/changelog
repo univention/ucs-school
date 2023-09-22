@@ -1,3 +1,9 @@
+ucs-school-umc-lists (4.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2025 08:09:00 +0200
+
 ucs-school-umc-lists (3.0.10) unstable; urgency=medium
 
   * Bug #57018: Fixed response header and extra newline characters.

@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (15.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:10 +0200
+
 ucs-school-old-homedirs (15.0.1) unstable; urgency=medium
 
   * Bug #52578: UCS@school 5.0 version bump
