@@ -12,7 +12,7 @@ import subprocess
 import sys
 import tempfile
 import traceback
-from collections import Mapping
+from collections.abc import Mapping
 
 from ldap.dn import escape_dn_chars
 from ldap.filter import escape_filter_chars, filter_format

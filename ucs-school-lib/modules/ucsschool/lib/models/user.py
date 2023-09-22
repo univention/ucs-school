@@ -31,7 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-from collections import Mapping
+from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
 
 from ldap.dn import escape_dn_chars, explode_rdn

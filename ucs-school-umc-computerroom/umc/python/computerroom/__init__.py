@@ -42,7 +42,7 @@ import subprocess
 import time
 import traceback
 from ipaddress import ip_address
-from pipes import quote
+from shlex import quote
 from random import Random
 
 import ldap

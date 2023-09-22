@@ -39,7 +39,7 @@ import re
 import shutil
 import traceback
 from datetime import datetime
-from pipes import quote
+from shlex import quote
 
 import PAM
 from six import iteritems, string_types
