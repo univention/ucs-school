@@ -9,7 +9,7 @@ Build-Depends:
  make,
  python3-sphinx,
  python3-sphinx-rtd-theme,
- python3.9-doc,
+ python3.11-doc,
  python3-all,
  ucslint,
  univention-config-dev,
