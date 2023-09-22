@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 #
 # UCS@school join hook
 #
@@ -28,8 +28,6 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
-# As long as we support mixed environments with 4.4 we must provide this join hook as Python 2.7
 
 import argparse
 import json
