@@ -11,8 +11,8 @@ stages:
   stage: build
   image: $SPHINX_BASE
   variables:
-    DOC_TARGET_VERSION: "5.0"
-    CHANGELOG_TARGET_VERSION: "5.0v4"
+    DOC_TARGET_VERSION: "5.1"
+    CHANGELOG_TARGET_VERSION: "5.1v1"
   artifacts:
     paths:
       - $DOCS_DIR/_build
