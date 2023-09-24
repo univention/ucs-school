@@ -5,8 +5,8 @@ import copy
 import datetime
 import itertools
 import os
-import pipes
 import re
+import shlex
 import subprocess
 import tempfile
 import time
@@ -888,10 +888,10 @@ def check_create_share_folder(
 ):  # type: (str, str, str, str) -> None
     """test if a user can create folders inside a given share, i.e. they have edit rights."""
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(
-        pipes.quote(username), pipes.quote(share), dir_name
+        shlex.quote(username), shlex.quote(share), dir_name
     )
     if samba_workstation:
-        cmd += " --netbiosname={}".format(pipes.quote(samba_workstation))
+        cmd += " --netbiosname={}".format(shlex.quote(samba_workstation))
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)  # noqa: S604
     assert (
         "NT_STATUS_ACCESS_DENIED" not in stdout
