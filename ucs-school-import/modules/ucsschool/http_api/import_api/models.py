@@ -322,12 +322,12 @@ class SummaryFile(TextArtifact):
 
 class UserImportJob(models.Model):
     dryrun = models.BooleanField(default=True)
-    principal = models.ForeignKey(settings.AUTH_USER_MODEL)
-    school = models.ForeignKey(School, blank=True)
+    principal = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    school = models.ForeignKey(School, blank=True, on_delete=models.DO_NOTHING)
     source_uid = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=10, default=JOB_NEW, choices=JOB_CHOICES)
     user_role = models.CharField(max_length=20, choices=USER_ROLES_CHOICES, blank=True)
-    # TODO: user_role = models.ForeignKey(Role, blank=True)
+    # TODO: user_role = models.ForeignKey(Role, blank=True, on_delete=models.DO_NOTHING)
 
     task_id = models.CharField(max_length=40, blank=True)
     result = models.OneToOneField(TaskResult, on_delete=models.SET_NULL, null=True, blank=True)
