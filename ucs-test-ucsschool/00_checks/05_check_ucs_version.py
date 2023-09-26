@@ -8,7 +8,7 @@ import subprocess
 
 import univention.config_registry
 
-EXPECTED_VERSION = "5.1"
+EXPECTED_VERSION = "5.2"
 
 
 def test_ucs_version():
