@@ -617,13 +617,13 @@ class VeyonComputer(threading.Thread):
             self.teacher.set(self.isTeacher)
             self._demo_server.set(demo_server)
             self._demo_client.set(demo_client)
-        except Exception as exc:
+        except Exception:
             MODULE.error(
-                "{}: Error updating information (raise loglevel for full traceback): {}".format(
-                    self.name, exc
+                "Error updating information for {}: {}".format(
+                    self.name,
+                    traceback.format_exc(),
                 )
             )
-            MODULE.info("\n".join(traceback.format_stack()))
             self.reset_state()
 
     def stop(self):
