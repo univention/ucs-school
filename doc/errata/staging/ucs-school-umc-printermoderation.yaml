@@ -2,9 +2,8 @@ product: ucsschool
 release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-lib
+src: ucs-school-umc-printermoderation
 fix:
 desc: |
- * Added missing UCR-Variable descriptions (Bug #52844).
  * Deprecated UMC APIs have been replaced with public UMC APIs (Bug #56390).
-bug: [52844, 56390]
+bug: [56390]
