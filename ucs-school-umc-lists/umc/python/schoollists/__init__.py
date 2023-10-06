@@ -73,7 +73,7 @@ class Instance(SchoolBaseModule):
         filename = os.path.join(path, os.path.basename(classlist))
         try:
             with open(filename, "rb") as fd:
-                self.finished(request.id, fd.read(), mimetype="text/csv")
+                self.finished(request.id, fd.read(), mimetype='text/csv; charset="utf-16"')
         except EnvironmentError:
             raise UMC_Error(
                 _("The class list does not exists. Please create a new one."),
@@ -122,7 +122,8 @@ class Instance(SchoolBaseModule):
         timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
         filename = "%s_%s-%s.csv" % (classlistname.replace("/", "_"), timestamp, uuid.uuid4())
         path = os.path.join("/usr/share/ucs-school-umc-lists/classlists/", filename)
-        with open(path, "w") as fd:
+        enc = "utf16" if separator == "\t" else "utf8"
+        with open(path, "w", encoding=enc) as fd:
             os.chmod(path, 0o600)
             fd.write(write_classlist_csv(fieldnames, rows, separator))
 
