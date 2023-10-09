@@ -322,6 +322,11 @@ Durch den Domänenbeitritt wird für den Microsoft Windows-Client automatisch ei
 Eintrag in der Rechnerverwaltung und DNS-Einträge angelegt. Weitere Hinweise
 finden sich in :ref:`computers-general` in :cite:t:`ucs-manual`.
 
+.. seealso::
+
+   :ref:`windows-domain-join`
+      für detaillierte Schritte in :cite:t:`ucs-manual`.
+
 .. _quickstart-manage-win-clients:
 
 ****************************************
