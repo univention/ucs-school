@@ -272,30 +272,29 @@ Internetregeln definieren
 
 .. _quickstart-domain-join:
 
-*************************************************
-Domänenbeitritt eines Microsoft Windows 7-Clients
-*************************************************
+***********************************************
+Domänenbeitritt eines Microsoft Windows Clients
+***********************************************
 
 Microsoft Windows-Clients werden mithilfe von Samba integriert und verwaltet.
 Die Windows-Clients authentifizieren sich dabei gegen den Samba-Server. Auch
 Datei- und Druckdienste werden für die Windows-Clients über Samba
-bereitgestellt. |UCSUAS| integriert Samba 4, die nächste Generation der
-Samba-Suite. Es unterstützt Domänen-, Verzeichnis- und
-Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory sind.
-Dies ermöglicht die Verwendung der von Microsoft bereit gestellten Werkzeuge für
-die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs).
+bereitgestellt. |UCSUAS| integriert Samba 4. Es unterstützt Domänen-,
+Verzeichnis- und Authentifizierungsdiensten, die kompatibel zu Microsoft Active
+Directory sind. Dies ermöglicht die Verwendung der von Microsoft bereit
+gestellten Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien
+(GPOs).
 
 Zuerst muss der PC in der Univention Management Console registriert werden. Dort
 muss in der Modulgruppe *UCS\@school Administration* das Modul *Computer
-hinzufügen* aufgerufen werden. Als *Computer-Typ* ist ``Windows-System``
-auszuwählen. Die Angabe von *Name*, *IP-Adresse* und *MAC-Adresse* ist
-verpflichtend. Die *Subnetzmaske* kann in den meisten Fällen auf der
+hinzufügen* aufgerufen werden. Wählen Sie als *Computer-Typ* den Eintrag
+``Windows-System`` aus. Die Angabe von *Name*, *IP-Adresse* und *MAC-Adresse*
+ist verpflichtend. Die *Subnetzmaske* kann in den meisten Fällen auf der
 Voreinstellung belassen werden.
 
-Nun tritt der Microsoft Windows-Client der Domäne bei (in diesem Quickstart
-Guide auf Basis von Windows 7). Der Beitritt kann nur mit einer Windows-Version
-mit Domänenunterstützung durchgeführt werden, d.h. nicht mit Microsoft Windows 7
-Home. Die Vorgehensweise gilt analog auch für Microsoft Windows 8.
+Nun tritt der Microsoft Windows-Client der Domäne bei. Der Beitritt kann nur mit
+einer Windows-Version mit Domänenunterstützung durchgeführt werden, d.h. zum
+Beispiel nicht mit der Home Edition von Microsoft Windows.
 
 Der Windows-Client muss DNS-Einträge aus der DNS-Zone der UCS-Domäne auflösen
 können, d.h. der Schulserver sollte in den Netzwerkeinstellungen des
@@ -309,17 +308,13 @@ Suspend/Resume-Zyklen zu inkorrekten Systemuhren führen können.
 System` kann der Basiskonfigurationsdialog erreicht werden. Nun muss
 *Einstellungen ändern* gewählt und auf :guilabel:`Ändern` geklickt werden.
 
-.. _join-windows:
-
-.. figure:: /images/join-win7-de.png
-
-Für den Domänenbeitritt muss unter *Domäne* der Domänenname der Schule
-verwendet werden, der bei der Installation gewählt wurde. Nach einem Klick auf
-die Schaltfläche :guilabel:`OK` muss in das Eingabefeld *Ändern des
-Computernamens, bzw. der Domäne* unter *Name* der ``Administrator``
-und in das Eingabefeld *Kennwort* das bei der Einrichtung des |UCSPRIMARYDN|
-verwendete Administrator-Kennwort eingetragen werden. Nun kann der
-Domänenbeitritt mit einem Klick auf :guilabel:`OK` gestartet werden.
+Für den Domänenbeitritt muss unter *Domäne* der Domänenname der Schule verwendet
+werden, der bei der Installation gewählt wurde. Nach einem Klick auf
+:guilabel:`OK` muss in das Eingabefeld *Ändern des Computernamens, bzw. der
+Domäne* unter *Name* der ``Administrator`` und in das Eingabefeld *Kennwort* das
+bei der Einrichtung des |UCSPRIMARYDN| verwendete Administrator-Kennwort
+eingetragen werden. Nun kann der Domänenbeitritt mit einem Klick auf
+:guilabel:`OK` gestartet werden.
 
 Abschließend sollte der Client neu gestartet werden.
 
