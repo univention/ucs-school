@@ -2,8 +2,8 @@ product: ucsschool
 release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-import
+src: ucs-school-import
 fix:
 desc: |
- * The coding style has been improved (Bug #55751).
-bug: [55751]
+ * Added rotation for worker logs (Bug #52167).
+bug: [52167]
