@@ -10,3 +10,6 @@ File: etc/default/celery-worker-ucsschool-import
 
 Type: file
 File: etc/gunicorn.d/ucs-school-import
+
+Type: file
+File: etc/logrotate.d/ucs-school-import-worker-logscripts

@@ -1,3 +1,9 @@
+ucs-school-import (18.0.34) unstable; urgency=medium
+
+  * Bug #52167: Logrotation for worker logs.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 04 Oct 2023 13:11:30 +0200
+
 ucs-school-import (18.0.33) unstable; urgency=medium
 
   * Bug #56340: SiSoPi properly distributes class memberships.

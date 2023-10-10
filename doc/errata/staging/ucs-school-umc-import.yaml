@@ -6,4 +6,5 @@ src: ucs-school-umc-import
 fix:
 desc: |
  * The coding style has been improved (Bug #55751).
-bug: [55751]
+ * Added rotation for worker logs (Bug #52167).
+bug: [55751, 52167]

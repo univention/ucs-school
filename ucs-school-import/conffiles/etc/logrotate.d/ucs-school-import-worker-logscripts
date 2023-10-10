@@ -1,0 +1,24 @@
+@%@UCRWARNING=# @%@
+
+@!@
+try:
+    import univention.lib.ucrLogrotate
+except ImportError:
+    pass
+else:
+
+    basename = "ucs-school-import/workers-"
+    for log_file in ["dryrun", "import"]:
+        name = basename + log_file
+        settings = univention.lib.ucrLogrotate.getLogrotateConfig(name, configRegistry)
+
+        print("/var/log/univention/%s.log {" % name)
+        for setting in sorted(settings):
+            print("\t%s" % settings[setting])
+
+        # Add additional entry to trigger a daemon restart for reloading of logfiles
+        print('\tlastaction')
+        print('\t\tsystemctl try-restart ucs-school-import-http-api.service')
+        print('\tendscript')
+        print("}")
+@!@
