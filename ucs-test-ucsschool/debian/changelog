@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.143) unstable; urgency=medium
+
+  * Bug #56403: Fixed recommended export format for CSV files in umc-lists.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 11 Oct 2023 11:23:57 +0200
+
 ucs-test-ucsschool (7.3.142) unstable; urgency=medium
 
   * Bug #56340: SiSoPi properly distributes class memberships.
