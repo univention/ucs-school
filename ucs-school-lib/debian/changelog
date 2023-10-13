@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.40) unstable; urgency=medium
+
+  * Bug #52844: Add missing UCR-V descriptions
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 10 Oct 2023 10:49:15 +0200
+
 ucs-school-lib (13.0.39) unstable; urgency=medium
 
   * Bug #56152: Fix documentation bug and joinscript.

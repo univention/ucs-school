@@ -28,3 +28,21 @@ Description[en] = Whether to stop the notifier during operations, such as import
 Type=bool
 Categories=ucsschool-base
 Default=yes
+
+[ucsschool/import/generate/import/group]
+Description[de] = Beim Erstellen einer Schule wird eine Gruppe '$OU-import-all' erzeugt, mit dieser Gruppe können die Import-Berechtigungen festgelegt werden. Um das Erzeugen dieser Gruppe zu unterbinden muss diese Variable auf false gesetzt werden. (Standard: true)
+Description[en] = During the creation of a school, a group named '$OU-import-all' is by default automatically created. With this group, one can set the permissions for the import. To disable the creation of this group, set this variable to false. (Default: true)
+Type=bool
+Categories=ucsschool-base
+
+[ucsschool/import/generate/mail/domain]
+Description[de] = Diese Variable kontrolliert, ob beim Modifizieren oder Erstellen eines Benutzers automatisch die Email-Domain generiert wird, wenn die Email-Domain noch nicht existiert. (Standard: no)
+Description[en] = This variable controls the automatic generation of an email-domain when a user is created or modified, if that domain does not yet exist. (Default: no)
+Type=bool
+Categories=ucsschool-base
+
+[ucsschool/import/generate/policy/dhcp/dns/set_per_ou]
+Description[de] = Diese Variable kontrolliert, ob beim Erstellen einer Schule automatisch DHCP-DNS-Richtlinien erzeugt werden. (Standard: true)
+Description[en] = This variable controls the automatic generation of DHCP-DNS-Policies during the creation of a school. (Default: true)
+Type=bool
+Categories=ucsschool-base

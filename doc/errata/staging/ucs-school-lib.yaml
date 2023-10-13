@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-lib
+fix: 13.0.40
+desc: |
+ * Added missing UCR-Variable descriptions (Bug #52844).
+bug: [52844]
