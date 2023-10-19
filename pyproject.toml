@@ -171,7 +171,7 @@ combine-as-imports = true
 #filter-files = true
 #force-grid-wrap = false
 known-first-party = ["ucsschool", "univention"]
-known-third-party = ["ConfigParser", "PyQt4", "StringIO", "apt", "cStringIO", "celery", "colorlog", "commands", "cups", "dateutil", "django", "django_filters", "dns", "ipaddr", "lazy_object_proxy", "ldap", "ldif", "listener", "magic", "mock", "netifaces", "notifier", "psutil", "pycurl", "pytest", "requests", "rest_framework", "ruamel", "samba", "sip", "six", "smbpasswd", "urllib3", "urlparse", "utils", "wakeonlan"]
+known-third-party = ["ConfigParser", "PyQt4", "StringIO", "apt", "cStringIO", "celery", "colorlog", "commands", "cups", "dateutil", "django", "django_filters", "dns", "ipaddr", "lazy_object_proxy", "ldap", "ldif", "listener", "magic", "mock", "netifaces", "psutil", "pycurl", "pytest", "requests", "rest_framework", "ruamel", "samba", "sip", "six", "smbpasswd", "urllib3", "urlparse", "utils", "wakeonlan"]
 #multi-line-output = 3
 #include-trailing-comma = true
 

@@ -22,7 +22,7 @@ Depends:
  python3-ucsschool-lib,
  shell-ucs-school,
  shell-univention-lib,
- univention-management-console-server (>= 11.0.4-37),
+ univention-management-console-server (>= 12.0.31-10),
  univention-printserver-pdf,
  ${misc:Depends},
  ${python3:Depends},

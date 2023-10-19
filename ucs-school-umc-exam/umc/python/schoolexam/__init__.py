@@ -44,7 +44,6 @@ from itertools import chain
 from typing import TYPE_CHECKING, List  # noqa: F401
 
 import ldap
-import notifier
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 from samba.auth_util import system_session_unix
@@ -80,7 +79,12 @@ from univention.lib.misc import custom_groupname
 from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error, computerroom
-from univention.management.console.modules.decorators import file_upload, sanitize, simple_response
+from univention.management.console.modules.decorators import (
+    SimpleThread,
+    file_upload,
+    sanitize,
+    simple_response,
+)
 from univention.management.console.modules.distribution import compare_dn
 from univention.management.console.modules.sanitizers import (
     ChoicesSanitizer,
@@ -182,13 +186,9 @@ class Instance(SchoolBaseModule):
             shutil.rmtree(self._tmpDir, ignore_errors=True)
             self._tmpDir = None
 
-    def _get_computerroom_module(self):
+    def _get_computerroom_module(self, request):
         room_module = computerroom.Instance()
-        room_module.init()
-        room_module.user_dn = self.user_dn
-        room_module.username = self.username
-        room_module.password = self.password
-        room_module.auth_type = self.auth_type
+        room_module.prepare(request)
         return room_module
 
     @staticmethod
@@ -363,7 +363,7 @@ class Instance(SchoolBaseModule):
         """
         logger.info("request.options=%r update=%r", request.options, update)
         # create a User object for the teacher
-        sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
+        sender = util.distribution.openRecipients(request.user_dn, ldap_user_read)
         recipients = [
             util.distribution.openRecipients(i_dn, ldap_user_read)
             for i_dn in request.options.get("recipients", [])
@@ -379,7 +379,7 @@ class Instance(SchoolBaseModule):
             "deadline": request.options["examEndTime"],
         }
         if not sender:
-            raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
+            raise UMC_Error(_('Could not authenticate user "%s"!') % request.user_dn)
         project = util.distribution.Project.load(request.options.get("name", ""))
         logger.info("loaded project=%r", project)
         orig_files = []
@@ -389,7 +389,7 @@ class Instance(SchoolBaseModule):
                     _("The specified exam does not exist: %s") % request.options.get("name", "")
                 )
             # make sure that the project owner himself is modifying the project
-            if not compare_dn(project.sender.dn, self.user_dn):
+            if not compare_dn(project.sender.dn, request.user_dn):
                 raise UMC_Error(_("The exam can only be modified by the owner himself."))
             if project.isDistributed:
                 raise UMC_Error(_("The exam was already started and can not be modified anymore!"))
@@ -464,7 +464,7 @@ class Instance(SchoolBaseModule):
             logger.info("loaded project=%r", project)  # .dict)
             # make sure that only the project owner himself (or an admin) is able
             # to see the content of a project
-            if not compare_dn(project.sender.dn, self.user_dn):
+            if not compare_dn(project.sender.dn, request.user_dn):
                 raise UMC_Error(
                     _("Exam details are only visible to the exam owner himself."), status=403
                 )
@@ -557,9 +557,9 @@ class Instance(SchoolBaseModule):
         # create a User object for the teacher
         # perform this LDAP operation outside the thread, to avoid tracebacks
         # in case of an LDAP timeout
-        sender = util.distribution.openRecipients(self.user_dn, ldap_user_read)
+        sender = util.distribution.openRecipients(request.user_dn, ldap_user_read)
         if not sender:
-            raise UMC_Error(_('Could not authenticate user "%s"!') % self.user_dn)
+            raise UMC_Error(_('Could not authenticate user "%s"!') % request.user_dn)
 
         def _thread():
             project = util.distribution.Project.load(request.options.get("name", ""))
@@ -760,18 +760,19 @@ class Instance(SchoolBaseModule):
 
             room = request.options["room"]
             logger.info("Acquire room: %s", room)
-            room_module = self._get_computerroom_module()
-            room_module._room_acquire(request.options["room"], ldap_user_read)
+            room_module = self._get_computerroom_module(request)
+            room_module._room_acquire(request, request.options["room"], ldap_user_read)
             progress.add_steps(1)
             logger.info(
                 "Adjust room settings:\n%s",
                 "\n".join(f"  {k}={v}" for k, v in request.options.items()),
             )
             room_module._start_exam(
-                room, directory, request.options["name"], request.options.get("examEndTime")
+                request, room, directory, request.options["name"], request.options.get("examEndTime")
             )
             progress.add_steps(4)
             room_module._settings_set(
+                request,
                 "default",
                 request.options["internetRule"],
                 request.options["shareMode"],
@@ -823,7 +824,7 @@ class Instance(SchoolBaseModule):
 
             self.thread_finished_callback(thread, response, request)
 
-        thread = notifier.threads.Simple("start_exam", _thread, notifier.Callback(_finished, request))
+        thread = SimpleThread("start_exam", _thread, lambda t, r: _finished(t, r, request))
         thread.run()
 
     @sanitize(exam=StringSanitizer(required=True))
@@ -1041,7 +1042,7 @@ class Instance(SchoolBaseModule):
             progress.finish()
             self.thread_finished_callback(thread, response, request)
 
-        thread = notifier.threads.Simple("start_exam", _thread, _finished)
+        thread = SimpleThread("start_exam", _thread, _finished)
         thread.run()
 
     @sanitize(
@@ -1080,7 +1081,7 @@ class Instance(SchoolBaseModule):
             }
             for project in util.distribution.Project.list()
             if pattern.match(project.name)
-            and (filter == "all" or compare_dn(project.sender.dn, self.user_dn))
+            and (filter == "all" or compare_dn(project.sender.dn, request.user_dn))
         ]
         self.finished(request.id, result)  # cannot use @simple_response with @LDAP_Connection :/
 

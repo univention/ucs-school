@@ -126,11 +126,11 @@ def LDAP_Connection(*connection_types):
             if add_search_base:
                 MODULE.warn("Using deprecated LDAP_Connection.search_base parameter.")
                 from ucsschool.lib.models.school import School
-                from univention.management.console.protocol.message import Message
+                from univention.management.console.message import Request
 
                 if (
                     len(args) > 1
-                    and isinstance(args[1], Message)
+                    and isinstance(args[1], Request)
                     and isinstance(args[1].options, dict)
                     and args[1].options.get("school")
                 ):
@@ -157,13 +157,13 @@ def LDAP_Connection(*connection_types):
 
         return wraps(func)(wrapper_func)
 
-    # 		def decorated(*args, **kwargs):
-    # 			try:
-    # 				return wrapper_func(*args, **kwargs)
-    # 			except ldap.INVALID_CREDENTIALS:
-    # 				reset_connection_cache()
-    # 				return wrapper_func(*args, **kwargs)
-    # 		return wraps(func)(decorated)
+    #       def decorated(*args, **kwargs):
+    #           try:
+    #               return wrapper_func(*args, **kwargs)
+    #           except ldap.INVALID_CREDENTIALS:
+    #               reset_connection_cache()
+    #               return wrapper_func(*args, **kwargs)
+    #       return wraps(func)(decorated)
     return inner_wrapper
 
 
