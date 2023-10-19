@@ -7,6 +7,9 @@
 ## packages: [squidguard]
 ## versions:
 ##  4.2-0: skip
+##  5.0-0: skip
+
+# This test should remain disabled until univention/ucsschool#1137 is fixed.
 
 from __future__ import print_function
 

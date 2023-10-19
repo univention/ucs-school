@@ -4,9 +4,13 @@
 ## roles: [domaincontroller_master]
 ## versions:
 ##  4.0-0: skip
+##  5.0-0: skip
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
+
+# This test is disabled because it takes 4+ hours to run.
+# See univention/ucsschool#1136 for the issue to re-enable it.
 
 from __future__ import print_function
 

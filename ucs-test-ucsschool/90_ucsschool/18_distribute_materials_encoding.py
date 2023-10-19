@@ -5,8 +5,12 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## versions:
 ##  4.0-0: skip
+##  5.0-0: skip
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
+
+# This test should be disabled until
+# https://forge.univention.org/bugzilla/show_bug.cgi?id=37694 is fixed.
 
 import univention.testing.strings as uts
 from univention.testing import utils
@@ -33,14 +37,15 @@ def test_distribute_materials_encoding(schoolenv, ucr):
         u"\u2192".encode("UTF-8"),  # →
         uts.random_name_special_characters(3).encode("UTF-8"),
     )
-    filename2 = b"%s%s" % (
-        u"\xc4".encode("UTF-8"),
-        uts.random_name_special_characters(6).encode("UTF-8"),
+    filename2 = b"%s%s%s" % (
+        u"\xc4".encode("UTF-8"),  # Ä
+        uts.random_name_special_characters(3).encode("UTF-8"),
+        uts.random_name_special_characters(3).encode("UTF-8"),
     )
     filename3 = b"%s%s%s" % (
-        uts.random_name_special_characters(3).encode("ASCII"),
-        u"\xc4".encode("ISO8859-1"),
-        uts.random_name_special_characters(3).encode("ASCII"),
+        uts.random_string(length=3, alpha=True, numeric=True).encode("ASCII"),
+        u"\xc4".encode("ISO8859-1"),  # Ä
+        uts.random_string(length=3, alpha=True, numeric=True).encode("ASCII"),
     )
     filename4 = uts.random_name()
 

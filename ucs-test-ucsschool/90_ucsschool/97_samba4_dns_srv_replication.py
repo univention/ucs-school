@@ -11,7 +11,9 @@
 ##  3.2-5: skip
 ##  4.0-1: fixed
 ##  4.1-2: skip
-# The test should be re-enabled after the reason for the failure is resolved.
+##  5.0-0: skip
+
+# This should remain disabled until univention/ucsschool#1138 is fixed.
 
 from __future__ import print_function
 
@@ -155,8 +157,7 @@ class TestS4DNSSRVReplication(TestSamba4):
             "-H",
             self.sam_ldb_path,
             "--user=" + self.admin_username + "%" + self.admin_password,
-            "-k",
-            "no",  # do not use kerberos
+            "--use-kerberos=off",  # do not use kerberos
         )
 
         stdout, stderr = self.create_and_run_process(cmd, PIPE, LDIFRecord.getvalue())

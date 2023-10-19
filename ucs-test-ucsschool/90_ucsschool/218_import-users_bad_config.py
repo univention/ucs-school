@@ -8,8 +8,12 @@
 ##   - ucs-school-import
 ## bugs: [42373]
 ## versions:
-##  "4.1-0": skip
-##  "4.2-0": skip
+##  4.1-0: skip
+##  4.2-0: skip
+##  5.0-0: skip
+
+# This test should be disabled until
+# https://forge.univention.org/bugzilla/show_bug.cgi?id=42373 is fixed.
 
 import copy
 import os
@@ -36,7 +40,8 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(config=config)
         with open(fn_config, "r+") as fp:
-            fp.seek(-3, os.SEEK_END)
+            fp.seek(0, os.SEEK_END)
+            fp.seek(fp.tell() - 3, os.SEEK_SET)
             fp.write("foo")
         self.log.info("*** Running import with broken configuration file...\n*")
         with pytest.raises(ImportException) as exc:
@@ -44,7 +49,7 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** OK - error was expected: %r", exc.value)
         # look for error message in logfile
         msg = r"InitialisationError.*Error in configuration file '{}'".format(fn_config)
-        for line in open("/var/log/univention/ucs-school-import.log"):
+        for line in open("/var/log/univention/ucs-school-import/workers-import.log"):
             found = re.findall(msg, line)
             if found:
                 self.log.info("Found in logfile: %r", found[0])
