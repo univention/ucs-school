@@ -21,7 +21,7 @@ Depends:
  python3-ucsschool-lib,
  ucs-school-import-http-api-client (>= 17.0.6-15),
  ucs-school-import-http-api-common (>= 17.0.6-15),
- univention-management-console-server (>= 12.0.31-10),
+ univention-management-console-server (>= 11.0.4-37),
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},

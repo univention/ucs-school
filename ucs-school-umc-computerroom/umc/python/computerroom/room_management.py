@@ -575,6 +575,9 @@ class VeyonComputer(threading.Thread):
     def update(self):
         MODULE.info("{}: updating information.".format(self.name))
         try:
+            # Big try-except block, as python-notifier silently eats exceptions.
+            # Additionally python-notifier will not remove the timer if the function does not return,
+            # resulting in a fast growing number of timer threads!
             veyon_user = None
             input_lock = None
             screen_lock = None
@@ -614,13 +617,13 @@ class VeyonComputer(threading.Thread):
             self.teacher.set(self.isTeacher)
             self._demo_server.set(demo_server)
             self._demo_client.set(demo_client)
-        except Exception:
+        except Exception as exc:
             MODULE.error(
-                "Error updating information for {}: {}".format(
-                    self.name,
-                    traceback.format_exc(),
+                "{}: Error updating information (raise loglevel for full traceback): {}".format(
+                    self.name, exc
                 )
             )
+            MODULE.info("\n".join(traceback.format_stack()))
             self.reset_state()
 
     def stop(self):

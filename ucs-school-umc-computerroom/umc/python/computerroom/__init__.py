@@ -203,9 +203,9 @@ def _freeRoom(roomDN, userDN):
 def check_room_access(func):
     """Block access to session from other users"""
 
-    def _decorated(self, request, *args, **kwargs):
-        self._checkRoomAccess(request)
-        return func(self, request, *args, **kwargs)
+    def _decorated(self, *args, **kwargs):
+        self._checkRoomAccess()
+        return func(self, *args, **kwargs)
 
     return _decorated
 
@@ -318,10 +318,6 @@ class Plugin(object):
 class Instance(SchoolBaseModule):
     ATJOB_KEY = "UMC-computerroom"
 
-    def prepare(self, request):
-        super(Instance, self).prepare(request)
-        self.__init_user_dn = request.user_dn
-
     def init(self):
         SchoolBaseModule.init(self)
         ComputerSanitizer.instance = self
@@ -364,7 +360,7 @@ class Instance(SchoolBaseModule):
                     "Removing lock file for room %s (%s)"
                     % (self._computerroom.room, self._computerroom.roomDN)
                 )
-                _freeRoom(self._computerroom.roomDN, self.__init_user_dn)
+                _freeRoom(self._computerroom.roomDN, self.user_dn)
             for comp in self._computerroom.values():
                 comp.should_run = False
             while any(comp.is_alive() for comp in self._computerroom.values()):
@@ -387,7 +383,7 @@ class Instance(SchoolBaseModule):
         """Returns a list of available internet rules"""
         self.finished(request.id, [x.name for x in internetrules.list()])
 
-    def _room_acquire(self, request, roomDN, ldap_user_read):
+    def _room_acquire(self, roomDN, ldap_user_read):
         """Acquires the specified computerroom"""
         success = True
         message = "OK"
@@ -435,8 +431,8 @@ class Instance(SchoolBaseModule):
 
         # update the room info file
         if success:
-            _updateRoomInfo(roomDN, user=request.user_dn)
-            if not compare_dn(_getRoomOwner(roomDN), request.user_dn):
+            _updateRoomInfo(roomDN, user=self.user_dn)
+            if not compare_dn(_getRoomOwner(roomDN), self.user_dn):
                 success = False
                 message = "ALREADY_LOCKED"
 
@@ -451,7 +447,7 @@ class Instance(SchoolBaseModule):
         """Acquires the specified computerroom"""
         roomDN = request.options["room"]
 
-        success, message, info = self._room_acquire(request, roomDN, ldap_user_read)
+        success, message, info = self._room_acquire(roomDN, ldap_user_read)
 
         self.finished(
             request.id,
@@ -489,7 +485,7 @@ class Instance(SchoolBaseModule):
 
             locked = (
                 user_dn
-                and not compare_dn(user_dn, request.user_dn)
+                and not compare_dn(user_dn, self.user_dn)
                 and ("pid" in room_info or "exam" in room_info)
             )
             if locked:
@@ -545,13 +541,13 @@ class Instance(SchoolBaseModule):
             filter_format(records[ipaddress.version], (ipaddress.exploded,)) for ipaddress in ipaddresses
         )
 
-    def _checkRoomAccess(self, request):
+    def _checkRoomAccess(self):
         if not self._computerroom.room:
             return  # no room has been selected so far
 
         # make sure that we run the current room session
         userDN = _getRoomOwner(self._computerroom.roomDN)
-        if userDN and not compare_dn(userDN, request.user_dn):
+        if userDN and not compare_dn(userDN, self.user_dn):
             raise UMC_Error(_("A different user is already running a computer room session."))
 
     @LDAP_Connection()
@@ -584,8 +580,8 @@ class Instance(SchoolBaseModule):
         result = {
             "computers": computers,
             "room_info": info,
-            "locked": info.get("user", request.user_dn) != request.user_dn,
-            "user": request.user_dn,
+            "locked": info.get("user", self.user_dn) != self.user_dn,
+            "user": self.user_dn,
         }
 
         if result["locked"] and "pid" in info:
@@ -686,19 +682,19 @@ class Instance(SchoolBaseModule):
                     break
         return rule_end_at
 
-    @simple_response(with_request=True)
-    def settings_get(self, request):
+    @simple_response
+    def settings_get(self):
         """Return the current settings for a room"""
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
 
         ucr.load()
         rule = ucr.get("proxy/filter/room/%s/rule" % self._computerroom.room, "none")
-        if rule == request.username:
+        if rule == self._username:
             rule = "custom"
         shareMode = ucr.get("samba/sharemode/room/%s" % self._computerroom.room, "all")
         # load custom rule:
-        key_prefix = "proxy/filter/setting-user/%s/domain/whitelisted/" % request.username
+        key_prefix = "proxy/filter/setting-user/%s/domain/whitelisted/" % self.username
         custom_rules = []
         for key in ucr:
             if key.startswith(key_prefix):
@@ -738,16 +734,14 @@ class Instance(SchoolBaseModule):
         }
 
     @check_room_access
-    @simple_response(with_request=True)
-    def finish_exam(self, request):
+    @simple_response
+    def finish_exam(self):
         """Finish the exam in the current room"""
-        self._settings_set(
-            request, printMode="default", internetRule="none", shareMode="all", customRule=""
-        )
+        self._settings_set(printMode="default", internetRule="none", shareMode="all", customRule="")
         _updateRoomInfo(self._computerroom.roomDN, exam=None, examDescription=None, examEndTime=None)
 
     @check_room_access
-    def _start_exam(self, request, room, exam, examDescription, examEndTime):
+    def _start_exam(self, room, exam, examDescription, examEndTime):
         """Start an exam in the current room"""
         info = _readRoomInfo(room)
         if info.get("exam"):
@@ -768,10 +762,10 @@ class Instance(SchoolBaseModule):
         examDescription=StringSanitizer(required=True),
         examEndTime=StringSanitizer(required=True),
     )
-    @simple_response(with_request=True)
-    def start_exam(self, request, room, exam, examDescription, examEndTime):
+    @simple_response
+    def start_exam(self, room, exam, examDescription, examEndTime):
         """Start an exam in the current room"""
-        self._start_exam(request, room, exam, examDescription, examEndTime)
+        self._start_exam(room, exam, examDescription, examEndTime)
 
     @sanitize(
         printMode=ChoicesSanitizer(["none", "default"], required=True),
@@ -780,12 +774,12 @@ class Instance(SchoolBaseModule):
         period=PeriodSanitizer(default="00:00", required=False),
         customRule=StringSanitizer(allow_none=True, required=False),
     )
-    @simple_response(with_request=True)
-    def settings_set(self, request, printMode, internetRule, shareMode, period=None, customRule=None):
-        return self._settings_set(request, printMode, internetRule, shareMode, period, customRule)
+    @simple_response
+    def settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
+        return self._settings_set(printMode, internetRule, shareMode, period, customRule)
 
     @check_room_access
-    def _settings_set(self, request, printMode, internetRule, shareMode, period=None, customRule=None):
+    def _settings_set(self, printMode, internetRule, shareMode, period=None, customRule=None):
         """Defines settings for a room"""
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
@@ -846,14 +840,14 @@ class Instance(SchoolBaseModule):
                 # remove old rules
                 i = 1
                 while True:
-                    var = "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (request.username, i)
+                    var = "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                     if var in ucr:
                         vunset_now.append(var)
                         i += 1
                     else:
                         break
-                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = request.username
-                vset["proxy/filter/setting-user/%s/filtertype" % request.username] = "whitelist-block"
+                vset["proxy/filter/room/%s/rule" % self._computerroom.room] = self.username
+                vset["proxy/filter/setting-user/%s/filtertype" % self.username] = "whitelist-block"
                 i = 1
                 for domain in (customRule or "").split("\n"):
                     MODULE.info("Setting whitelist entry for domain %s" % domain)
@@ -863,12 +857,12 @@ class Instance(SchoolBaseModule):
                     MODULE.info("Setting whitelist entry for domain %s" % str(parsed))
                     if parsed.netloc:
                         vset[
-                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (request.username, i)
+                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                         ] = parsed.netloc
                         i += 1
                     elif parsed.path:
                         vset[
-                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (request.username, i)
+                            "proxy/filter/setting-user/%s/domain/whitelisted/%d" % (self.username, i)
                         ] = parsed.path
                         i += 1
             else:

@@ -274,11 +274,11 @@ class Instance(SchoolBaseModule, SchoolImport):
         return ucr.is_true("ucsschool/wizards/schoolwizards/users/check-password-policies", False)
 
     @LDAP_Connection(ADMIN_WRITE)
-    def own_schools(self, request, ldap_admin_write=None):  # type: (Optional[LoType]) -> Set[str]
+    def own_schools(self, ldap_admin_write=None):  # type: (Optional[LoType]) -> Set[str]
         """Returns a set of all schools the current user has."""
         if self._own_schools is None:
             try:
-                current_user = User.from_dn(request.user_dn, None, ldap_admin_write)  # type: User
+                current_user = User.from_dn(self.user_dn, None, ldap_admin_write)  # type: User
                 self._own_schools = ({current_user.school} if current_user.school else set()) | set(
                     current_user.schools
                 )
@@ -287,12 +287,12 @@ class Instance(SchoolBaseModule, SchoolImport):
                 self._own_schools = set()
         return self._own_schools
 
-    def is_domain_admin(self, request):  # type: () -> bool
+    def is_domain_admin(self):  # type: () -> bool
         """Returns if the currently logged in user is a domain admin or not."""
         if self._user_is_domain_admin is None:
             self._user_is_domain_admin = (
                 "cn=Domain Admins,cn=groups,{}".format(ucr.get("ldap/base"))
-                in UDM.admin().version(0).obj_by_dn(request.user_dn).props.groups
+                in UDM.admin().version(0).obj_by_dn(self.user_dn).props.groups
             )
         return self._user_is_domain_admin
 
@@ -351,11 +351,7 @@ class Instance(SchoolBaseModule, SchoolImport):
     def _get_obj(self, request, ldap_user_read=None):
         ret = []
         for obj in iter_objects_in_request(
-            request,
-            ldap_user_read,
-            OperationType.GET,
-            self.own_schools(request),
-            self.is_domain_admin(request),
+            request, ldap_user_read, OperationType.GET, self.own_schools(), self.is_domain_admin()
         ):
             MODULE.process("Getting %r" % (obj))
             obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
@@ -370,11 +366,7 @@ class Instance(SchoolBaseModule, SchoolImport):
             ldap_user_write = ldap_admin_write
         ret = []
         for obj in iter_objects_in_request(
-            request,
-            ldap_user_write,
-            OperationType.CREATE,
-            self.own_schools(request),
-            self.is_domain_admin(request),
+            request, ldap_user_write, OperationType.CREATE, self.own_schools(), self.is_domain_admin()
         ):
             MODULE.process("Creating %r" % (obj,))
             obj.validate(ldap_user_read)
@@ -405,11 +397,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
         ret = []
         for obj in iter_objects_in_request(
-            request,
-            ldap_user_write,
-            OperationType.MODIFY,
-            self.own_schools(request),
-            self.is_domain_admin(request),
+            request, ldap_user_write, OperationType.MODIFY, self.own_schools(), self.is_domain_admin()
         ):
             MODULE.process("Modifying %r" % (obj))
             obj.validate(ldap_user_read)
@@ -437,11 +425,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
         ret = []
         for obj in iter_objects_in_request(
-            request,
-            ldap_user_write,
-            OperationType.DELETE,
-            self.own_schools(request),
-            self.is_domain_admin(request),
+            request, ldap_user_write, OperationType.DELETE, self.own_schools(), self.is_domain_admin()
         ):
             obj.name = obj.get_name_from_dn(obj.old_dn)
             MODULE.process("Deleting %r" % (obj))
@@ -533,8 +517,8 @@ class Instance(SchoolBaseModule, SchoolImport):
                 )
             school = obj_props["remove_from_school"]
             user_schools = ({obj.school} if obj.school else set()) | set(obj.schools)
-            if (self.admin_workaround_active and not self.is_domain_admin(request)) and (
-                school not in self.own_schools(request) or school not in user_schools
+            if (self.admin_workaround_active and not self.is_domain_admin()) and (
+                school not in self.own_schools() or school not in user_schools
             ):
                 raise UMC_Error(
                     _(
@@ -585,11 +569,7 @@ class Instance(SchoolBaseModule, SchoolImport):
         ignore_warnings.reverse()
         ret = {}
         for obj in iter_objects_in_request(
-            request,
-            ldap_user_write,
-            OperationType.CREATE,
-            self.own_schools(request),
-            self.is_domain_admin(request),
+            request, ldap_user_write, OperationType.CREATE, self.own_schools(), self.is_domain_admin()
         ):
             ignore_warning = ignore_warnings.pop()
             obj.validate(ldap_user_read)

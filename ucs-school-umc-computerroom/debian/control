@@ -43,7 +43,7 @@ Depends:
  ucs-school-veyon-client,
  ucs-school-veyon-windows,
  univention-config,
- univention-management-console (>= 12.0.31-10),
+ univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},

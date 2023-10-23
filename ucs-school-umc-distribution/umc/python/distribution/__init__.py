@@ -152,8 +152,8 @@ class Instance(SchoolBaseModule):
         pattern=PatternSanitizer(required=False, default=".*"),
         filter=ChoicesSanitizer(["all", "private"], default="private"),
     )
-    @simple_response(with_request=True)
-    def query(self, request, pattern, filter):
+    @simple_response
+    def query(self, pattern, filter):
         result = [
             {
                 # only show necessary information
@@ -166,15 +166,15 @@ class Instance(SchoolBaseModule):
             }
             for i in util.Project.list()
             if (pattern.match(i.name) or pattern.match(i.description))
-            and (filter == "all" or compare_dn(i.sender.dn, request.user_dn))
+            and (filter == "all" or compare_dn(i.sender.dn, self.user_dn))
         ]
         return result
 
     @LDAP_Connection()
-    def _get_sender(self, request, ldap_user_read=None, ldap_position=None):
+    def _get_sender(self, ldap_user_read=None, ldap_position=None):
         """Return a User instance of the currently logged in user."""
         try:
-            user = User.from_dn(request.user_dn, None, ldap_user_read)
+            user = User.from_dn(self.user_dn, None, ldap_user_read)
             obj = user.get_udm_object(ldap_user_read)
             return util.User(obj.info, dn=obj.dn)
         except udm_exceptions.base as exc:
@@ -183,19 +183,19 @@ class Instance(SchoolBaseModule):
     @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}, required=True))
     def put(self, request):
         """Modify an existing project"""
-        result = [self._save(request, entry["object"], True) for entry in request.options]
+        result = [self._save(entry["object"], True) for entry in request.options]
         self.finished(request.id, result)
 
     @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}, required=True))
     def add(self, request):
         """Add a new project"""
-        result = [self._save(request, entry["object"], False) for entry in request.options]
+        result = [self._save(entry["object"], False) for entry in request.options]
         self.finished(request.id, result)
 
     @LDAP_Connection()
-    def _save(self, request, iprops, doUpdate=True, ldap_user_read=None, ldap_position=None):
+    def _save(self, iprops, doUpdate=True, ldap_user_read=None, ldap_position=None):
         # try to open the UDM user object of the current user
-        sender = self._get_sender(request)
+        sender = self._get_sender()
 
         try:
             # remove keys that may not be set from outside
@@ -219,7 +219,7 @@ class Instance(SchoolBaseModule):
                 project = util.Project(iprops)
 
             # make sure that the project owner himself is modifying the project
-            if doUpdate and not compare_dn(project.sender.dn, request.user_dn):
+            if doUpdate and not compare_dn(project.sender.dn, self.user_dn):
                 raise UMC_Error(_("The project can only be modified by the owner himself"))
 
             # handle time settings for distribution/collection of project files
@@ -363,7 +363,7 @@ class Instance(SchoolBaseModule):
 
             # make sure that only the project owner himself (or an admin) is able
             # to see the content of a project
-            if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, request.user_dn):
+            if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, self.user_dn):
                 raise UMC_Error(
                     _(
                         "Project details are only visible to the project owner himself or an "
@@ -424,7 +424,7 @@ class Instance(SchoolBaseModule):
 
                 # make sure that only the project owner himself (or an admin) is able
                 # to distribute a project
-                if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, request.user_dn):
+                if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, self.user_dn):
                     raise ValueError(
                         _("Only the owner himself or an administrator may distribute a project.")
                     )
@@ -452,7 +452,7 @@ class Instance(SchoolBaseModule):
     @sanitize(StringSanitizer(required=True))
     def collect(self, request):
         # try to open the UDM user object of the current user
-        sender = self._get_sender(request)
+        sender = self._get_sender()
 
         # update the sender information of the selected projects
         result = []
@@ -490,7 +490,7 @@ class Instance(SchoolBaseModule):
     @sanitize(StringSanitizer(required=True))
     def adopt(self, request):
         # try to open the UDM user object of the current user
-        sender = self._get_sender(request)
+        sender = self._get_sender()
 
         # update the sender information of the selected projects
         result = []
@@ -519,7 +519,7 @@ class Instance(SchoolBaseModule):
 
             # make sure that only the project owner himself (or an admin) is able
             # to see the content of a project
-            if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, request.user_dn):
+            if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, self.user_dn):
                 raise UMC_Error(
                     _("Only the owner himself or an administrator may delete a project."), status=403
                 )

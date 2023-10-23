@@ -24,7 +24,7 @@ Depends:
  ucs-school-umc-helpdesk-schema (>= 16.0.4),
  univention-config-registry,
  univention-directory-manager-tools,
- univention-management-console (>= 12.0.31-10),
+ univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},

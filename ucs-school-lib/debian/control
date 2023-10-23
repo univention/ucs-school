@@ -93,7 +93,7 @@ Depends:
  python-univention-lib,
  python-univention-management-console,
  ucs-school-lib-common,
- univention-management-console (>= 12.0.31-10),
+ univention-management-console,
  ${misc:Depends},
  ${python:Depends},
 Breaks:
@@ -127,9 +127,8 @@ Depends:
  python3-univention-debug,
  python3-univention-directory-manager,
  python3-univention-lib,
- python3-univention-management-console (>= 12.0.31-10),
  ucs-school-lib-common,
- univention-management-console (>= 12.0.31-10),
+ univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
 Provides:

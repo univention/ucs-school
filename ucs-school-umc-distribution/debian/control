@@ -24,7 +24,7 @@ Depends:
  shell-ucs-school,
  ucs-school-umc-common,
  univention-config-registry,
- univention-management-console (>= 12.0.31-10),
+ univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
  ${python:Depends},

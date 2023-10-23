@@ -37,6 +37,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import notifier
 import pytest
 import requests
 from requests import Response
@@ -79,6 +80,7 @@ def monkey_get(*args, **kwargs):
 
 
 def get_dummy_veyon_computer(ips=None, auth_method=None):
+    notifier.init(notifier.GENERIC)
     client = veyon_client_module.VeyonClient(
         "http://localhost:11080/api/v1",
         credentials={"username": "user", "password": "secret"},
@@ -146,6 +148,7 @@ def test_no_valid_ip_veyon(monkeypatch):
 
 
 def test_no_ips_veyon(monkeypatch):
+    notifier.init(notifier.GENERIC)
     monkeypatch.setattr(requests, "get", monkey_get)
     client = veyon_client_module.VeyonClient(
         "http://localhost:11080/api/v1",

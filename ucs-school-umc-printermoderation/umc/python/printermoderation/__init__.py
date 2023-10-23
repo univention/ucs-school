@@ -163,11 +163,11 @@ class Instance(SchoolBaseModule):
 
         try:
             students.append(
-                User.from_dn(request.user_dn, None, ldap_user_read).get_udm_object(ldap_user_read)
+                User.from_dn(self.user_dn, None, ldap_user_read).get_udm_object(ldap_user_read)
             )
         except udm_errors.noObject:
             MODULE.warn(
-                "Could not get user object of teacher %r. Is it a UCS@school user?" % (request.user_dn,)
+                "Could not get user object of teacher %r. Is it a UCS@school user?" % (self.user_dn,)
             )
 
         printjoblist = []
@@ -244,8 +244,8 @@ class Instance(SchoolBaseModule):
         printjob=StringSanitizer(required=True),
         printer=StringSanitizer(required=True),
     )
-    @simple_response(with_request=True)
-    def printit(self, request, username, printjob, printer):
+    @simple_response
+    def printit(self, username, printjob, printer):
         """
         Print a given document on the given printer
 
@@ -271,7 +271,7 @@ class Instance(SchoolBaseModule):
         MODULE.process("Printing: %s" % path)
         self.pw_callback_bad_password = False
         try:
-            cups.setUser(request.username)
+            cups.setUser(self.username)
             cups.setEncryption(cups.HTTP_ENCRYPT_ALWAYS)
             cups.setPasswordCB(self.pw_callback)
             conn = cups.Connection(spoolhost)
