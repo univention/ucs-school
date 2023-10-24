@@ -8,48 +8,124 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v4 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-12 11:10+0000\n"
+"POT-Creation-Date: 2023-10-25 13:24+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.13.0\n"
 
 #: ../../changelog.rst:9
 msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2023-10-25"
+msgstr "Veröffentlicht am 25. Oktober 2023"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-umc-wizards* in version ``12.0.14``:"
+msgstr "Quellpaket *ucs-school-umc-wizards* in Version ``12.0.14``:"
+
+#: ../../changelog.rst:18 ../../changelog.rst:33 ../../changelog.rst:39
+#: ../../changelog.rst:45 ../../changelog.rst:55 ../../changelog.rst:61
+#: ../../changelog.rst:92
+msgid "The coding style has been improved (:uv:bug:`55751`)."
+msgstr "Der Formatierungsstil wurde verbessert (:uv:bug:`55751`)."
+
+#: ../../changelog.rst:20 ../../changelog.rst:24 ../../changelog.rst:35
+#: ../../changelog.rst:41 ../../changelog.rst:47 ../../changelog.rst:51
+#: ../../changelog.rst:57 ../../changelog.rst:63 ../../changelog.rst:69
+msgid ""
+"Deprecated UMC APIs have been replaced with public UMC APIs "
+"(:uv:bug:`56390`)."
+msgstr ""
+"Veraltete UMC APIs wurden mit öffentlichen UMC APIs "
+"ersetzt (:uv:bug:`56390`)."
+
+#: ../../changelog.rst:22
+msgid "Source package *ucs-school-umc-printermoderation* in version ``17.1.4``:"
+msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``17.1.4``:"
+
+#: ../../changelog.rst:26
+msgid "Source package *ucs-school-umc-lists* in version ``3.0.9``:"
+msgstr "Quellpaket *ucs-school-umc-lists* in Version ``3.0.9``:"
+
+#: ../../changelog.rst:28
+msgid ""
+"The CSV files for the recommended export function are now properly "
+"formatted (:uv:bug:`56403`)."
+msgstr ""
+"Die CSV Dateien der empfohlenen Exportfunktion werden jetzt korrekt "
+"formatiert (:uv:bug:`56403`)."
+
+#: ../../changelog.rst:31
+msgid "Source package *ucs-school-umc-installer* in version ``8.0.10``:"
+msgstr "Quellpaket *ucs-school-umc-installer* in Version ``8.0.10``:"
+
+#: ../../changelog.rst:37
+msgid "Source package *ucs-school-umc-import* in version ``3.0.7``:"
+msgstr "Quellpaket *ucs-school-umc-import* in Version ``3.0.7``:"
+
+#: ../../changelog.rst:43
+msgid "Source package *ucs-school-umc-helpdesk* in version ``16.0.7``:"
+msgstr "Quellpaket *ucs-school-umc-helpdesk* in Version ``16.0.7``:"
+
+#: ../../changelog.rst:49
+msgid "Source package *ucs-school-umc-exam* in version ``10.0.10``:"
+msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.10``:"
+
+#: ../../changelog.rst:53
+msgid "Source package *ucs-school-umc-distribution* in version ``18.0.8``:"
+msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.8``:"
+
+#: ../../changelog.rst:59
+msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.13``:"
+msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.13``:"
+
+#: ../../changelog.rst:65
+msgid "Source package *ucs-school-lib* in version ``13.0.41``:"
+msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.41``:"
+
+#: ../../changelog.rst:67
+msgid "Added missing UCR variable descriptions (:uv:bug:`52844`)."
+msgstr "Fehlende UCR Variable Beschreibungen wurden hinzugefügt (:uv:bug:`52844`)."
+
+#: ../../changelog.rst:71
+msgid "Source package *ucs-school-import* in version ``18.0.36``:"
+msgstr "Quellpaket *ucs-school-import* in Version ``18.0.36``:"
+
+#: ../../changelog.rst:73
+msgid "Added rotation for importer worker logs (:uv:bug:`52167`)."
+msgstr "Log Rotation wurde für Importer `worker` hinzugefügt (:uv:bug:`52167`)."
+
+#: ../../changelog.rst:78
 msgid "Released on 2023-09-12"
 msgstr "Veröffentlicht am 12. September 2023"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:80
 msgid "Source package *ucs-school-import* in version ``18.0.33``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.33``:"
 
-#: ../../changelog.rst:18
+#: ../../changelog.rst:82
 msgid ""
 "The SiSoPi user import now keeps class memberships for other schools. "
 "(:uv:bug:`56340`)"
 msgstr ""
-"Der SiSoPi-Benutzerimport behält nun die Klassenmitgliedschaften für andere Schulen bei. "
-"(:uv:bug:`56340`)"
+"Der SiSoPi-Benutzerimport behält nun die Klassenmitgliedschaften für "
+"andere Schulen bei. (:uv:bug:`56340`)"
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:88
 msgid "Released on 2023-08-02"
 msgstr "Veröffentlicht am 2. August 2023"
 
-#: ../../changelog.rst:26
+#: ../../changelog.rst:90
 msgid "Source package *ucs-school-umc-diagnostic* in version ``2.0.15``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``2.0.15``:"
 
-#: ../../changelog.rst:28
-msgid "The coding style has been improved (:uv:bug:`55751`)."
-msgstr "Der Formatierungsstil wurde verbessert (:uv:bug:`55751`)."
-
-#: ../../changelog.rst:30
+#: ../../changelog.rst:94
 msgid ""
 "Added a new system diagnostic feature: Existing UCS@school usernames will"
 " be checked for validity. Warnings are issued if deprecated or "
@@ -58,14 +134,14 @@ msgid ""
 msgstr ""
 "Ein neues Diagnose Modul wurde hinzugefügt: Existierende UCS@school "
 "Benutzernamen werden validiert. Es werden Warnungen für veraltete oder "
-"nicht unterstützte Benutzernamen ausgegeben.(:uv:bug:`56152`, "
+"nicht unterstützte Benutzernamen ausgegeben. (:uv:bug:`56152`, "
 ":uv:bug:`55751`)"
 
-#: ../../changelog.rst:34
+#: ../../changelog.rst:98
 msgid "Source package *ucs-school-lib* in version ``13.0.39``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.39``:"
 
-#: ../../changelog.rst:36
+#: ../../changelog.rst:100
 msgid ""
 "The UCR variable ``ucsschool/validation/username/windows-check`` has been"
 " added and can be used to control the username validation with respect to"

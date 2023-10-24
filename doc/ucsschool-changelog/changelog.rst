@@ -8,6 +8,70 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-10-25:
+
+Released on 2023-10-25
+======================
+
+Source package *ucs-school-umc-wizards* in version ``12.0.14``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-printermoderation* in version ``17.1.4``:
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-lists* in version ``3.0.9``:
+
+* The CSV files for the recommended export function are now properly formatted
+  (:uv:bug:`56403`).
+
+Source package *ucs-school-umc-installer* in version ``8.0.10``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-import* in version ``3.0.7``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-helpdesk* in version ``16.0.7``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-exam* in version ``10.0.10``:
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-distribution* in version ``18.0.8``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-umc-computerroom* in version ``12.0.13``:
+
+* The coding style has been improved (:uv:bug:`55751`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-lib* in version ``13.0.41``:
+
+* Added missing UCR variable descriptions (:uv:bug:`52844`).
+
+* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+
+Source package *ucs-school-import* in version ``18.0.36``:
+
+* Added rotation for importer worker logs (:uv:bug:`52167`).
+
 .. _changelog-ucsschool-2023-09-12:
 
 Released on 2023-09-12
