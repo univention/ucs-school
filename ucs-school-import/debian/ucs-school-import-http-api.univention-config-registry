@@ -13,3 +13,15 @@ File: etc/gunicorn.d/ucs-school-import
 
 Type: file
 File: etc/logrotate.d/ucs-school-import-worker-logscripts
+Variables: logrotate/ucs-school-import/workers-dryrun/.*
+Variables: logrotate/ucs-school-import/workers-import/.*
+Variables: logrotate/ucs-school-import/gunicorn_access/.*
+Variables: logrotate/ucs-school-import/gunicorn_error/.*
+Variables: logrotate/compress
+Variables: logrotate/rotate/weeks
+Variables: logrotate/rotates
+Variables: logrotate/rotate/count
+Variables: logrotate/rotate
+Variables: logrotate/rotate/create
+Variables: logrotate/rotate/missingok
+Variables: logrotate/rotate/notifempty
