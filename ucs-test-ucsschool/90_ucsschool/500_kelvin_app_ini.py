@@ -1,8 +1,8 @@
-#!/usr/share/ucs-test/runner pytest -s -l -v
+#!/usr/share/ucs-test/runner pytest -slv
 ## -*- coding: utf-8 -*-
 ## desc: test settings in kelvin app ini file
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [ucs_school_kelvin]
 ## exposure: safe
 
 import itertools
@@ -88,16 +88,19 @@ def test_ini_settings(ini_url):
     if version >= 20210902124852:
         exp.add("/etc/ucsschool/kelvin:/etc/ucsschool/kelvin")
     assert {v.strip() for v in config.get("Application", "DockerVolumes").split(",")} == exp
-    if version <= 20200804122304:
+    if version <= 20200804122304 or version >= 20230824114906:
         assert config.get("Application", "RequiredApps") == "ucsschool"
     else:
         assert config.get("Application", "RequiredApps") == ""
     assert config.get("Application", "WebInterfacePortHttp") == "8911"
     assert config.get("Application", "WebInterfaceProxyScheme") == "http"
     assert config.get("Application", "DockerImage").startswith(
-        "docker.software-univention.de/ucsschool-kelvin-rest-api:"
+        (
+            "docker.software-univention.de/ucsschool-kelvin-rest-api:",
+            "gitregistry.knut.univention.de/univention/components/ucsschool-kelvin-rest-api:",
+        )
     )
-    if 20200827122150 <= int(version) < 20220107154847:
+    if 20200827122150 <= version < 20220107154847:
         exp = {"domaincontroller_master"}
     else:
         exp = {"domaincontroller_master", "domaincontroller_backup"}
@@ -105,7 +108,9 @@ def test_ini_settings(ini_url):
     assert config.get("Application", "WebInterfacePortHttps") == "8911"
     assert config.get("Application", "DockerShellCommand") == "/bin/ash"
     assert config.get("Application", "WebInterface") == "/ucsschool/kelvin"
-    assert config.get("Application", "DockerScriptConfigure") == "/tmp/ucsschool-kelvin-configure"
+    assert (
+        config.get("Application", "DockerScriptConfigure") == "/tmp/ucsschool-kelvin-configure"  # nosec
+    )
     if version == 20210223082023:
         exp = {"groups/group", "users/user"}
     else:
