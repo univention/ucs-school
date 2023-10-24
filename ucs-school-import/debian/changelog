@@ -1,3 +1,9 @@
+ucs-school-import (18.0.36) unstable; urgency=medium
+
+  * Bug #52167: Added UCR variables to registry script.
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 24 Oct 2023 14:53:21 +0200
+
 ucs-school-import (18.0.35) unstable; urgency=medium
 
   * Bug #52167: Added gunicorn logs to logrotation.
