@@ -554,6 +554,14 @@ class Instance(SchoolBaseModule):
         if userDN and not compare_dn(userDN, request.user_dn):
             raise UMC_Error(_("A different user is already running a computer room session."))
 
+    def _get_computers(self, only_changed=False):
+        result = []
+        for computer in self._computerroom.values():
+            if only_changed and not computer.hasChanged:
+                continue
+            result.append(computer.dict)
+        return result
+
     @LDAP_Connection()
     def query(self, request, ldap_user_read=None):
         """Searches for entries. This is not allowed if the room could not be acquired."""
@@ -562,10 +570,8 @@ class Instance(SchoolBaseModule):
 
         if request.options.get("reload", False):
             self._computerroom.room = self._computerroom.room  # believe me that makes sense :)
-
-        result = [computer.dict for computer in self._computerroom.values()]
+        result = self._get_computers()
         result.sort(key=lambda c: c["id"])
-
         MODULE.info("computerroom.query: result: %s" % (result,))
         self.finished(request.id, result)
 
@@ -578,8 +584,7 @@ class Instance(SchoolBaseModule):
         """
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
-
-        computers = [computer.dict for computer in self._computerroom.values() if computer.hasChanged]
+        computers = self._get_computers(only_changed=True)
         info = _readRoomInfo(self._computerroom.roomDN)
         result = {
             "computers": computers,

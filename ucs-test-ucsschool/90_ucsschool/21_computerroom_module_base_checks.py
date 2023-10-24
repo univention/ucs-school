@@ -4,12 +4,50 @@
 ## tags: [apptest,ucsschool,ucsschool_base1]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
-
 from __future__ import print_function
 
-from univention.testing.ucsschool.computer import Computers
+import pytest
+
+from ucsschool.lib.models.computer import (
+    IPComputer,
+    LinuxComputer,
+    MacComputer,
+    UbuntuComputer,
+    WindowsComputer,
+)
+from univention.testing.ucsschool.computer import Computer, Computers
 from univention.testing.ucsschool.computerroom import Room
 from univention.testing.umc import Client
+
+
+@pytest.mark.parametrize(
+    "computer_class,computer_type",
+    [
+        (WindowsComputer, "windows"),
+        (UbuntuComputer, "ubuntu"),
+        (LinuxComputer, "linux"),
+        (MacComputer, "mac"),
+        (IPComputer, "ipmanagedclient"),
+    ],
+)
+def test_computer_without_ip_is_ignored(schoolenv, computer_class, computer_type):
+    school, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
+    tea, _ = schoolenv.create_user(school, is_teacher=True)
+    lo = schoolenv.open_ldap_connection()
+
+    computer = Computer(school=school, ctype=computer_type)
+    computer.ip = []
+    # Uncomment when bug #53571 is fixed.
+    # computer.mac = []
+    computer_class(**computer.get_args()).create(lo)
+
+    room = Room(school, host_members=[computer.dn])
+    schoolenv.create_computerroom(
+        school, name=room.name, description=room.description, host_members=room.host_members
+    )
+    client = Client(None, tea, "univention")
+    room.checK_room_aquire(client, "OK")
+    room.check_room_computers(client, [computer.dn])
 
 
 def test_computerroom_module_base_checks(schoolenv, ucr):

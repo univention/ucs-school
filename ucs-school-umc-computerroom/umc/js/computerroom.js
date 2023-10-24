@@ -625,22 +625,27 @@ define([
 				formatter: lang.hitch(this, function(value, item) {
 					var icon = 'offline';
 					var status_ = _('The computer is not running');
+					if (item.configurationOK) {
+						if (isConnected(item)) {
+							icon = 'demo-offline';
+							status_ = _('Monitoring is activated');
+						} else if (item.connection === 'autherror') {
+							status_ = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
+						} else if (item.connection === 'error') {
+							status_ = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
+						}
+						if (item.DemoServer === true) {
+							icon = 'demo-server';
+							status_ = _('The computer is currently showing a presentation');
+						} else if (item.DemoClient === true) {
+							icon = 'demo-client';
+							status_ = _('The computer is currently participating in a presentation');
+						}
+					} else {
+						icon = "disconnected";
+						status_ = _("The computer is unreachable because no IP address has been assigned to the computer object.");
+					}
 
-					if (isConnected(item)) {
-						icon = 'demo-offline';
-						status_ = _('Monitoring is activated');
-					} else if (item.connection === 'autherror') {
-						status_ = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
-					} else if (item.connection === 'error') {
-						status_ = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
-					}
-					if (item.DemoServer === true) {
-						icon = 'demo-server';
-						status_ = _('The computer is currently showing a presentation');
-					} else if (item.DemoClient === true) {
-						icon = 'demo-client';
-						status_ = _('The computer is currently participating in a presentation');
-					}
 					var widget = new Text({});
 					widget.set('content', lang.replace('<img src="{src}" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
 						src: require.toUrl(lang.replace('dijit/themes/umc/icons/16x16/computerroom-{0}.png', [icon])),
