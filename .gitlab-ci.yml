@@ -2,6 +2,7 @@ stages:
   - prepare
   - lint
   - build
+  - release
 
 workflow:
   rules:
@@ -19,13 +20,19 @@ include:
 variables:
   pipeline:
     value: ""
-    description: "Skip jobs: '(skip-doc)'."
+    description: "Skip jobs: 'skip-doc'; Run release pipeline: 'release'"
+  release_bugs:
+    value: ""
+    description: "Space-separated list of bugs to be released. Used with `release` pipeline. E.g.: '56550 52443 43345'"
 
 generate-config:
   stage: prepare
   image:
     name: docker-registry.knut.univention.de/knut/deb-builder
     entrypoint: [""]
+  rules:
+    - if: "$pipeline == 'release'"
+      when: never
   script:
     - .gitlab-ci/build-ci
   artifacts:
@@ -35,7 +42,7 @@ generate-config:
 doc-pipeline:
   stage: build
   rules:
-    - if: "$CI_COMMIT_MESSAGE =~ /skip-doc/ || $pipeline =~ /skip-doc/"
+    - if: "$CI_COMMIT_MESSAGE =~ /skip-doc/ || $pipeline =~ /skip-doc/ || $pipeline == 'release'"
       when: never
     - changes:
       - "doc/ucsschool-import/**/*"
@@ -57,3 +64,56 @@ doc-pipeline:
 run pre-commit:
   stage: lint
   extends: .pre-commit
+  rules:
+    - if: "$pipeline == 'release'"
+      when: never
+
+check-advisory-files-end-in-yaml:
+  stage: release
+  rules:
+    - if: "$pipeline == 'release'"
+  script:
+    - non_yaml_files=( $(find doc/errata/staging -type f -not -name "*.yaml") )
+    - |-
+      if [ -z "$non_yaml_files" ]; then
+        echo "All files correctly named with '.yaml' extension"
+        exit 0
+      else
+        echo "Files found without a .yaml extension. Please correct this error:"
+        for filename in "${non_yaml_files[@]}"; do
+          echo $filename
+        done
+        exit 1
+      fi
+
+check-bugzilla-bugs:
+  stage: release
+  rules:
+    - if: "$pipeline == 'release'"
+  script:
+    - apt update && apt install -y curl jq
+    - ./.gitlab-ci/check-bugzilla-bugs "$release_bugs"
+
+find-advisories:
+  stage: release
+  rules:
+    - if: "$pipeline == 'release'"
+  needs:
+    - check-advisory-files-end-in-yaml
+  script:
+    - ./.gitlab-ci/find-advisories "$release_bugs"
+  artifacts:
+    paths:
+      - release_advisories.txt
+
+validate-advisories:
+  stage: release
+  rules:
+    - if: "$pipeline == 'release'"
+  needs:
+    - find-advisories
+  script:
+    - apt update && apt install -y python3 python3-pip
+    - pip3 install packaging pyyaml --break-system-packages
+    - advisories=$(cat release_advisories.txt)
+    - ./.gitlab-ci/validate-advisories $advisories

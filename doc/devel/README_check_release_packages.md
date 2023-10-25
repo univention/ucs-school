@@ -45,10 +45,25 @@ Check the following Jenkins jobs for any unusual failures that might be connecte
 * [Install U@S 5.0 Singleserver](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Daily%20Tests/job/Install%20Singleserver/)
 * [Install U@S 5.0 Multiserver](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Daily%20Tests/job/Install%20Multiserver/)
 
-## Verify Gitlab Issues and Bugzilla Bugs
+## Verify Gitlab Issues, Bugzilla Bugs, and YAML Advisories
 
 On the gitlab errata release issue, there should be a list of issues blocking the errata release.
 Every issue should be in a closed status; if it isn't, it needs to be removed from the current release and put into the next release.
+
+There is a [gitlab pipeline](https://git.knut.univention.de/univention/ucsschool/-/pipelines) that you can run manually to verify Bugzilla and the YAML advisories.
+
+1. Choose "Run pipeline".
+2. Set the following variables:
+
+   ```
+   pipeline: release
+   release_bugs: 12345 12346  # Bugzilla bug numbers
+   ```
+3. The YAML advisories that were discovered and validated can be found in the `find-advisories` job. These need to be moved from the `staging` to the `published` folder.
+
+### Manual Verification
+
+**NOTE: Ignore this section if you are able to run the pipeline.**
 
 Log into [Bugzilla](https://forge.univention.org/bugzilla/index.cgi), and do a comma-separated search for each of the bugs in the release (e.g. `55986,55751,50841`).
 For each bug:
@@ -56,8 +71,6 @@ For each bug:
 - Status should be "VERIFIED FIXED".
 - Should have an assignee + QA person listed.
 - Target milestone should be set (e.g., UCS@school 5.0 v4 errata).
-
-## Verify YAML advisories
 
 For each bug in the errata release, you need to verify the YAML advisories in the `ucsschool` repository.
 In your local `ucsschool` repository:
@@ -81,11 +94,10 @@ In order to release a package, you have to verify that:
 
 1. The advisory does not contain other bugs that are not part of the release.
 
-   You can use [this script](https://git.knut.univention.de/univention/internal/research-library/-/blob/main/personal/jleadbetter/scripts/find_advisories) to automatically check which bugs are safe to release, and to find all advisory files you need to include in the release. Pass the bug numbers to the script:
+   You can use [this script](../../.gitlab-ci/find-advisories) to automatically check which bugs are safe to release, and to find all advisory files you need to include in the release. Pass the bug numbers to the script:
 
    ```
-   cd ~/git/ucsschool/doc/errata/staging
-   ./find_advisories 12345 23456 34567
+   ./.gitlab-ci/find-advisories "12345 23456 34567"
    ```
 
    Make a note of the advisory files found for the release.
@@ -96,11 +108,10 @@ In order to release a package, you have to verify that:
 
 2. The advisory is in the correct format.
 
-   Use [this script](https://git.knut.univention.de/univention/internal/research-library/-/blob/main/personal/twenzel/scripts/check_yamls.py) to verify mistakes.
+   Use [this script](../../.gitlab-ci/validate-advisories) to verify mistakes.
 
    ```
-   cd ~/git/ucsschool/doc/errata/staging
-   python3 check_yamls.py --folder .
+   ./.gitlab-ci/validate-advisories "doc/errata/staging/ucs-school-lib.yaml ..."
    ```
 
 3. In your editor of choice, do a manual inspection of each of the advisories:

@@ -1,0 +1,102 @@
+#!/bin/bash
+
+###############################################################################
+#                                                                             #
+#  Find advisories based on the specified Bugzilla bugs.                      #
+#                                                                             #
+#  If there are any additional bugs in the advisories that are not part of    #
+#  the release, the script will exit with an error.                           #
+#  The script will also error if advisories are missing for a bug.            #
+#                                                                             #
+#  This script takes the number of the bugs to validate, as a space-          #
+#  separated list:                                                            #
+#                                                                             #
+#      find-advisories "56403 56390 52167 52844"                              #
+#                                                                             #
+###############################################################################
+
+ERRATA_STAGING_DIR=doc/errata/staging
+TEMPLATE_FILE=doc/errata/staging/0template.yaml
+OUTPUT_FILE=release_advisories.txt
+IGNORE_BUGS=( 55751 )  # Python formatting bug; always safe to release
+
+release_bugs=( $1 )
+
+readarray -t errata < <(grep "bug:" $ERRATA_STAGING_DIR/*.y*ml)
+maybe_release=( )
+dont_release_advisories=( )
+seen_bugs=( )
+for line in "${errata[@]}"; do
+    file=$(echo $line | cut -d ":" -f 1)
+    if [ "$file" == "TEMPLATE_FILE" ]; then
+        continue
+    fi
+
+    readarray -t bugs < <(echo $line | cut -d ":" -f 2- | tr -d 'bug: []' | tr ',' '\n')
+    if [[ -z "${bugs[@]}" ]]; then
+        continue
+    fi
+
+    for bug in "${bugs[@]}"; do
+        if [[ "${release_bugs[*]}" =~ "${bug}" ]]; then
+            maybe_release+=( "$file $bug" )
+            seen_bugs+=( "$bug" )
+        else
+            dont_release_advisories+=( $file )
+        fi
+    done
+done
+
+can_release=( )
+advisories_with_other_bugs=( )
+for line in "${maybe_release[@]}"; do
+    file=$(echo $line | cut -d " " -f 1)
+    bug=$(echo $line | cut -d " " -f 2)
+    if [[ ! "${dont_release_advisories[*]}" =~ "$file" ]]; then
+        if [[ ! "${can_release[*]}" =~ "$file" ]]; then
+            can_release+=( $file )
+        fi
+    else
+        advisories_with_other_bugs+=( "$file $bug" )
+    fi
+done
+
+missing_errata=( )
+for bug in "${release_bugs[@]}"; do
+    if [[ ! "${seen_bugs[*]}" =~ "${bug}" ]]; then
+        missing_errata+=( "$bug" )
+    fi
+done
+
+echo "----------"
+if [[ -n "${advisories_with_other_bugs[@]}" ]] || [[ -n "${missing_errata[@]}" ]]; then
+    if [[ -n "${advisories_with_other_bugs[@]}" ]]; then
+        for line in "${advisories_with_other_bugs}"; do
+            file=$(echo $line | cut -d " " -f 1)
+            bug=$(echo $line | cut -d " " -f 2)
+            echo "DON'T RELEASE: Bug #$bug: other bugs found in $file that should not be released"
+        done
+    fi
+
+    if [[ -n "${missing_errata[@]}" ]]; then
+        for bug in "${missing_errata[@]}"; do
+            echo "MISSING ADVISORY: Bug#$bug"
+        done
+    fi
+
+    echo "Please remove these bugs from the release or correct errors and rerun the script"
+    exit 1
+else
+    if [[ -n "${can_release[@]}" ]]; then
+        echo "Advisory files found:"
+        echo -n > $OUTPUT_FILE
+        for file in "${can_release[@]}"; do
+            echo $file
+            echo $file >> $OUTPUT_FILE
+        done
+        exit 0
+    else
+        echo 'ERROR: No advisory files found. Did you forget to supply bug numbers?'
+        exit 1
+    fi
+fi

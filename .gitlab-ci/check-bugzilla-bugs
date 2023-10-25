@@ -1,0 +1,58 @@
+#!/bin/bash
+
+###############################################################################
+#                                                                             #
+#  Validate the fields of Bugzilla bugs for the ucs@school release.           #
+#                                                                             #
+#  This script takes the number of the bugs to validate, as a space-          #
+#  separated list:                                                            #
+#                                                                             #
+#      check-bugzilla-bugs "56403 56390 52167 52844"                          #
+#                                                                             #
+###############################################################################
+
+BUGZILLA_BASE_URL="https://forge.univention.org/bugzilla"
+NOT_ASSIGNED_EMAIL_ADDRESS_REGEX=maintainers
+EXPECTED_TARGET_MILESTONE="UCS@school 5.0 v4-errata"
+
+bugs_query=$(echo "$1" | sed -e "s/[[:space:]]\+/,/g")
+echo "Querying for bugs: $bugs_query"
+
+response=$(curl -s -g $BUGZILLA_BASE_URL'/jsonrpc.cgi?method=Bug.get&params=[{"ids":['$bugs_query']}]')
+
+bugs=( $(echo $response | jq -r '.result.bugs[] | @base64') )
+
+errors=( )
+for bug in "${bugs[@]}"; do
+    decoded=$(echo $bug | base64 --decode)
+    bug_id=$(echo $decoded | jq -r '.id')
+    assigned_to=$(echo $decoded | jq -r '.assigned_to')
+    qa_contact=$(echo $decoded | jq -r '.qa_contact')
+    bug_status=$(echo $decoded | jq -r '.status')
+    bug_resolution=$(echo $decoded | jq -r '.resolution')
+    target_milestone=$(echo $decoded | jq -r '.target_milestone')
+
+    echo "Validating Bug #$bug_id"
+    if [ -z "$assigned_to" ] || [ "$assigned_to" == "null" ] || [[ $assigned_to =~ $NOT_ASSIGNED_EMAIL_ADDRESS_REGEX ]]; then
+        errors+=( "Bug #$bug_id: 'assigned to' is not set" )
+    fi
+    if [ -z "$qa_contact" ] || [ "$qa_contact" == "null" ] || [[ $qa_contact =~ $NOT_ASSIGNED_EMAIL_ADDRESS_REGEX ]]; then
+        errors+=( "Bug #$bug_id: 'qa contact' is not set" )
+    fi
+    if [ "$bug_status" != "VERIFIED" ] || [ "$bug_resolution" != "FIXED" ]; then
+        errors+=( "Bug #$bug_id: wrong status: $bug_status $bug_resolution" )
+    fi
+    if [ "$target_milestone" != "$EXPECTED_TARGET_MILESTONE" ]; then
+        errors+=( "Bug #$bug_id: wrong target milestone: $target_milestone" )
+    fi
+done
+
+if [[ -n "$errors" ]]; then
+    for err in "${errors[@]}"; do
+        echo $err
+    done
+    exit 1
+else
+    echo "No errors found for bugs: $bugs_query"
+    exit 0
+fi
