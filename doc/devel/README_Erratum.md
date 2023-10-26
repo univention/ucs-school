@@ -86,11 +86,9 @@ sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public downl
 
 ## Publish UCS@school manual
 
-**TODO:** this section is most likely wrong. Please update this and the
-[full release documentation](README_Releases.md) next time we release.
-
 The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
 that is triggered by a merge from `ucsschool`.
+Follow the steps cf. the Build the documentation steps in [ucsschool-changelog](../ucsschool-changelog/README.md).
 Follow the pipeline to be sure it completes correctly, and then check the
 [published documentation](http://univention-repository.knut.univention.de/download/docs/).
 
