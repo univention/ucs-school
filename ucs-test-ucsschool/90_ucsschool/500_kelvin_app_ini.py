@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: test settings in kelvin app ini file
 ## roles: [domaincontroller_master]
-## tags: [ucs_school_kelvin]
+## tags: [apptest,ucsschool,ucsschool_import1]
 ## exposure: safe
 
 import itertools
