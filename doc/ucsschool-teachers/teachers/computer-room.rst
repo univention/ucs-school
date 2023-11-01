@@ -43,7 +43,7 @@ Helpdesk abgefragt, haben aber für die Computerverwaltung keine weitergehende
 Bedeutung. Neben jedem PC wird ein Kreis angezeigt. Ist dieser dunkelgrau, ist
 auf den PCs die Software *Veyon* installiert (siehe
 :ref:`computer-room-veyon`), ist der Kreis hellgrau, fehlt *Veyon* oder der
-Rechner ist abgeschaltet.
+Rechner ist abgeschaltet. Ist der Kreis orange, ist das Computer-Objekt unvollständig.
 
 Ist *Veyon* installiert, wird unter *Benutzer* der Name des gerade angemeldeten
 Schülers/Lehrers angezeigt.
