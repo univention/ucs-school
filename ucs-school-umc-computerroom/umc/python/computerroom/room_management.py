@@ -456,8 +456,7 @@ class VeyonComputer(threading.Thread):
 
     @property
     def macAddress(self):
-        ip_addresses = self._computer.info.get("mac", [""])
-        return ip_addresses[0]
+        return (self._computer.info.get("mac") or [""])[0]
 
     @property
     def objectType(self):

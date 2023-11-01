@@ -30,15 +30,14 @@ from univention.testing.umc import Client
         (IPComputer, "ipmanagedclient"),
     ],
 )
-def test_computer_without_ip_is_ignored(schoolenv, computer_class, computer_type):
+def test_computer_without_ip_and_mac_is_ignored(schoolenv, computer_class, computer_type):
     school, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
     tea, _ = schoolenv.create_user(school, is_teacher=True)
     lo = schoolenv.open_ldap_connection()
 
     computer = Computer(school=school, ctype=computer_type)
     computer.ip = []
-    # Uncomment when bug #53571 is fixed.
-    # computer.mac = []
+    computer.mac = []
     computer_class(**computer.get_args()).create(lo)
 
     room = Room(school, host_members=[computer.dn])
