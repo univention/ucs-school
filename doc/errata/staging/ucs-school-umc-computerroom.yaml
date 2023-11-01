@@ -6,4 +6,5 @@ src: ucs-school-umc-computerroom
 fix:
 desc: |
  * Instead of raising an error, a warning is displayed when computers inside of a computer room are missing an IP address and the computer icon is coloured orange (Bug #53624).
-bug: [53624]
+ * Computers without mac addresses don't raise an error when opening the computer room (Bug #53571).
+bug: [53624, 53571]
