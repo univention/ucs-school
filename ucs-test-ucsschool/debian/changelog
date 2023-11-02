@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.147) unstable; urgency=medium
+
+  * Issue #1056: fix to changelog to enable building on ladda
+
+ -- J Leadbetter <j.leadbetter@univention.de>  Thu, 02 Nov 2023 16:42:49 +0100
+
 ucs-test-ucsschool (7.3.146) unstable; urgency=medium
 
   * Issue #1056: renable/reskip previously skipped tests
