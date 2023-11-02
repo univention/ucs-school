@@ -397,7 +397,6 @@ class VeyonComputer(threading.Thread):
         self._user_map = user_map
         self._ip_addresses = self._computer.info.get("ip", [])  # type: List[str]
         self._reachable_ip = None
-        self._configuration_ok = True
         self._username = LockableAttribute()
         self._state = LockableAttribute(initial_value="disconnected")
         self._teacher = LockableAttribute(initial_value=False)
@@ -441,15 +440,19 @@ class VeyonComputer(threading.Thread):
         return self._computer.info.get("description", None)
 
     @property
-    def ipAddress(self):
+    def configuration_ok(self):
         if not self._ip_addresses:
-            self._configuration_ok = False
             MODULE.warn("Computer {} is missing an IP.".format(self.name))
+            return False
+        return True
+
+    @property
+    def ipAddress(self):
         if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
             self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
         if self._reachable_ip:
             return self._reachable_ip
-        if len(self._ip_addresses) > 0:
+        if self._ip_addresses:
             self._reachable_ip = self._find_reachable_ip()
             return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
         return ""
@@ -527,7 +530,7 @@ class VeyonComputer(threading.Thread):
             "ip": self.ipAddress,
             "mac": self.macAddress,
             "objectType": self.objectType,
-            "configurationOK": self._configuration_ok,
+            "configurationOK": self.configuration_ok,
         }
         result.update(self.flagsDict)
         if self.user.current:
