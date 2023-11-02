@@ -1,4 +1,4 @@
-ucs-test-ucsschool (7.3.145ubuntu1) UNRELEASED; urgency=medium
+ucs-test-ucsschool (7.3.146) UNRELEASED; urgency=medium
 
   * Issue #1056: renable/reskip previously skipped tests
 
