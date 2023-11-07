@@ -48,7 +48,6 @@ from univention.config_registry import handler_set, handler_unset
 from univention.management.console.config import ucr
 from univention.management.console.modules.computerroom.room_management import (
     VEYON_USER_REGEX,
-    ComputerRoomError,
     UserMap,
     VeyonComputer,
 )
@@ -152,15 +151,11 @@ def test_no_ips_veyon(monkeypatch):
         credentials={"username": "user", "password": "secret"},
         auth_method=AuthenticationMethod.AUTH_LOGON,
     )
-    with pytest.raises(ComputerRoomError) as exc:
-        computer = MockComputer()
-        computer.info = {
-            "ip": [],
-            "mac": [],
-        }
-        computer = VeyonComputer(
-            computer=computer, user_map=UserMap(VEYON_USER_REGEX), veyon_client=client
-        )
-        _ = computer.ipAddress
-        assert computer.connected() is False
-        assert exc == "Unknown IP address"
+    computer = MockComputer()
+    computer.info = {
+        "ip": [],
+        "mac": [],
+    }
+    computer = VeyonComputer(computer=computer, user_map=UserMap(VEYON_USER_REGEX), veyon_client=client)
+    _ = computer.ipAddress
+    assert computer.connected() is False
