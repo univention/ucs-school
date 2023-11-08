@@ -59,13 +59,13 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("csv:mapping:OUs", "schools")
         config.update_entry("csv:mapping:role", "__role")
         config.update_entry("scheme:birthday", "<source_uid>")
-        config.update_entry("scheme:record_uid", "<email>.<name>[0:4]"),
-        config.update_entry("scheme:email", "<firstname:lower>.<lastname:lower>@<maildomain><:strip>"),
-        config.update_entry("scheme:username:default", "<firstname:lower>.<phone>"),
-        config.update_entry("scheme:firstname", "fn-<email>[1:6]"),  # recursion!
-        config.update_entry("scheme:street", "<:lower><firstname>-<roomNumber>"),
-        config.update_entry("scheme:phone", "<birthday>"),
-        config.update_entry("scheme:roomNumber", "<street>-<email>[0:5]"),  # recursion!
+        config.update_entry("scheme:record_uid", "<email>.<name>[0:4]")
+        config.update_entry("scheme:email", "<firstname:lower>.<lastname:lower>@<maildomain><:strip>")
+        config.update_entry("scheme:username:default", "<firstname:lower>.<phone>")
+        config.update_entry("scheme:firstname", "fn-<email>[1:6]")  # recursion!
+        config.update_entry("scheme:street", "<:lower><firstname>-<roomNumber>")
+        config.update_entry("scheme:phone", "<birthday>")
+        config.update_entry("scheme:roomNumber", "<street>-<email>[0:5]")  # recursion!
         config.update_entry("source_uid", source_uid)
         config.update_entry("user_role", None)
 

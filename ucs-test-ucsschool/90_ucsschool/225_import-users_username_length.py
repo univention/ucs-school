@@ -31,7 +31,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("csv:mapping:Benutzername", "name")
         config.update_entry("csv:mapping:record_uid", "record_uid")
         config.update_entry("csv:mapping:role", "__role")
-        config.update_entry("scheme:username:default", "<:umlauts><firstname:lower><lastname:lower>"),
+        config.update_entry("scheme:username:default", "<:umlauts><firstname:lower><lastname:lower>")
         config.update_entry("source_uid", source_uid)
         config.update_entry("user_role", None)
         del config["csv"]["mapping"]["E-Mail"]

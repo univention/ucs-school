@@ -85,11 +85,11 @@ class Test(CLI_Import_v2_Tester):
             "scheme:street", "<:lower><firstname>-<lastname>"
         ),  # not a dependency of other prop, but
         # should be set on user obj anyway
-        config.update_entry("scheme:phone", "<birthday>"),  # UDM prop that depends on lib attr
+        config.update_entry("scheme:phone", "<birthday>")  # UDM prop that depends on lib attr
         config.update_entry(
             "scheme:roomNumber", "<phone>-<email>[0:5]"
         ),  # UDM prop that depends on other UDM prop
-        config.update_entry("scheme:city", "<birthday>"),  # UDM prop that depends on lib attr
+        config.update_entry("scheme:city", "<birthday>")  # UDM prop that depends on lib attr
         # not-lib-mapped extended attr that depends on lib attrs:
         config.update_entry("scheme:{}".format(ext_attr_name), "<firstname:lower>.<lastname:lower>")
         config.update_entry("source_uid", source_uid)
