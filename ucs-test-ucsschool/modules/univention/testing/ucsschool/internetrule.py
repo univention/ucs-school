@@ -19,11 +19,6 @@ from univention.testing.umc import Client
 
 from .randomdomain import RandomDomain
 
-try:
-    unicode = unicode
-except NameError:
-    unicode = str
-
 
 class InternetRule(object):
     """
@@ -176,7 +171,7 @@ class InternetRule(object):
             curtype = exItems["filtertype"]
             curWlan = exItems["wlan"]
             curPriority = int(exItems["priority"])
-            exDomains = {key: value for (key, value) in exItems.items() if unicode(key).isnumeric()}
+            exDomains = {key: value for (key, value) in exItems.items() if key.isnumeric()}
             curDomains = sorted(exDomains.values())
             currentState = (curtype, curPriority, curWlan, curDomains)
             assert currentState == (
