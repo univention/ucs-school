@@ -108,7 +108,7 @@ def get_portal_tile(driver: WebDriver, text: str) -> WebElement:
 
 def keycloak_auth_header(config: SimpleNamespace) -> dict:
     response = requests.post(config.token_url, data=config.login_data)
-    response.status_code == 204, response.text
+    assert response.status_code == 204, response.text
     return {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {response.json()['access_token']}",
@@ -117,7 +117,7 @@ def keycloak_auth_header(config: SimpleNamespace) -> dict:
 
 def keycloak_sessions(config: SimpleNamespace) -> dict:
     response = requests.get(config.client_session_stats_url, headers=keycloak_auth_header(config))
-    response.status_code == 204, response.text
+    assert response.status_code == 204, response.text
     return response.json()
 
 
@@ -127,7 +127,7 @@ def keycloak_logout_all(config: SimpleNamespace) -> None:
         headers=keycloak_auth_header(config),
         data=config.logout_all_data,
     )
-    response.status_code == 204, response.text
+    assert response.status_code == 204, response.text
 
 
 def test_portal_sso_slo_keycloak_sessions(portal, portal_config, keycloak_config):
