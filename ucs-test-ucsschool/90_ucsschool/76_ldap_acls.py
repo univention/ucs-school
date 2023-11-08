@@ -358,7 +358,7 @@ class LDAPACLTestMatrix(object):
             self.addDn(target_dn, attrs, access)
 
     def add_staff_target_dns(self, dn_access_list):
-        for (add_type, dn, attrs, access) in dn_access_list:
+        for add_type, dn, attrs, access in dn_access_list:
             if add_type == 0:
                 self.addDn(dn, attrs, access)
             else:

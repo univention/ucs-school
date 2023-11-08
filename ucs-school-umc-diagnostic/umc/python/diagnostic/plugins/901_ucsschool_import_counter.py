@@ -69,7 +69,7 @@ def run(_umc_instance):
         filter="(&(univentionObjectType=users/user)(ucsschoolRole=*))",
         attr=["uid", "mailPrimaryAddress"],
     )
-    for (_obj_dn, obj_attrs) in obj_list:
+    for _obj_dn, obj_attrs in obj_list:
         uid = obj_attrs.get("uid")[0].decode("UTF-8")
         prefix = uid.rstrip("0123456789")
         suffix = uid[len(prefix) :]
@@ -104,7 +104,7 @@ def run(_umc_instance):
             base="cn=unique-{},cn=ucsschool,cn=univention,{}".format(counter_type, ucr.get("ldap/base")),
             scope="one",
         )
-        for (obj_dn, obj_attrs) in obj_list:
+        for obj_dn, obj_attrs in obj_list:
             value = obj_attrs.get("ucsschoolUsernameNextNumber", [b""])[0].decode("UTF-8")
             try:
                 prefix_counter = int(value)

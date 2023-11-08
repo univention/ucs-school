@@ -67,7 +67,7 @@ def test_ucs_school_configurable_schoollists():
             account = utils.UCSTestDomainAdminCredentials()
             connection = Client(host, language="en_US")
             connection.authenticate(account.username, account.bindpw)
-            expected_class_list = u"{fieldnames_string}\r\n{expected_values}\r\n".format(
+            expected_class_list = "{fieldnames_string}\r\n{expected_values}\r\n".format(
                 fieldnames_string=",".join(column_names), expected_values=",".join(expected_values)
             )
             options = {

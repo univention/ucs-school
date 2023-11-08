@@ -134,7 +134,6 @@ class TestSamba4(object):
             "domaincontroller_backup",
             "domaincontroller_slave",
         ):
-
             print("\nThe given DC type '%s' is unknown" % dc_type)
             self.return_code_result_skip()
 

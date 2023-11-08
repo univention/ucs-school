@@ -227,7 +227,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
                 usergroupSetting.append((priority, usergroupname, default))
 
     # src usergroup
-    for (priority, usergroupname, _proxy_setting) in sorted(usergroupSetting, reverse=True):
+    for priority, usergroupname, _proxy_setting in sorted(usergroupSetting, reverse=True):
         f.write("src usergroup-%s {\n" % quote(usergroupname))
         f.write("        userlist usergroup-%s\n" % quote(usergroupname))
         f.write("}\n\n")

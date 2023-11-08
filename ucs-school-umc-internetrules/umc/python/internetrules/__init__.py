@@ -255,7 +255,6 @@ class Instance(SchoolBaseModule):
         for ientry in request.options:
             iprops = ientry["object"]
             try:
-
                 # make sure that the rule does not already exist
                 irule = rules.load(iprops["name"])
                 if irule:

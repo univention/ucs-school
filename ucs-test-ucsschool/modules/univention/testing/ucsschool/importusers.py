@@ -738,7 +738,6 @@ def _import_users_basics(udm):
             for profile_path_server in [None, "generate"]:
                 for home_server_at_ou in [None, "generate"]:
                     for windows_profile_server in [None, "generate"]:
-
                         if samba_home_server == "generate":
                             samba_home_server = uts.random_name()
 

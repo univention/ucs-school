@@ -16,7 +16,6 @@ MODULE_NAME = "902_ucsschool_ou_consistency"
 
 class UCSSchoolOuConsistencyCheck(AutoMultiSchoolEnv):
     def run_all_tests(self):  # type: () -> None
-
         ou_list = self.lo.search(
             filter="ou={}".format(self.schoolA.name), base=self.ucr.get("ldap/base"), scope="one"
         )

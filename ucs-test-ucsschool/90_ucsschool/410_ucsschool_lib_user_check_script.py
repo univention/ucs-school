@@ -20,9 +20,7 @@ WINDOWS_COMPLIANCE_SCRIPT_PATH = "/usr/share/ucs-school-lib/scripts/ucs-school-v
 
 
 def test_windows_compliance_username_script(ucr_hostname):
-
     with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry() as ucr_test:
-
         lo, _ = getAdminConnection()
 
         ucr_test.handler_set(["ucsschool/validation/username/windows-check=false"])

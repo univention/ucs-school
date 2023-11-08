@@ -44,8 +44,8 @@ def test_ucs_school_schoollists(ucr, schoolenv):
         file_url: str = umc_response["url"]
         filename = umc_response["filename"]
         expected_class_list = (
-            u"Firstname{sep}Lastname{sep}Class{sep}Username\r\n{first}{sep2}{last}{sep2}"
-            u"{cls_name}{sep2}{uid}{linebreak}".format(
+            "Firstname{sep}Lastname{sep}Class{sep}Username\r\n{first}{sep2}{last}{sep2}"
+            "{cls_name}{sep2}{uid}{linebreak}".format(
                 sep=separator,
                 sep2="" if exclude else separator,
                 first="" if exclude else stu_firstname,
@@ -117,7 +117,7 @@ def test_ucs_school_schoollists_student_without_class(ucr, schoolenv):
         umc_response = connection.umc_command("schoollists/csvlist", options).result
         file_url = umc_response["url"]
         filename = umc_response["filename"]
-        expected_class_list = u"Firstname{sep}Lastname{sep}Class{sep}Username\r\n".format(sep=separator)
+        expected_class_list = "Firstname{sep}Lastname{sep}Class{sep}Username\r\n".format(sep=separator)
 
         # check that file is not accessible while not authenticated
         response = requests.get("https://{host}/{file_url}".format(host=host, file_url=file_url))

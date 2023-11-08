@@ -283,7 +283,7 @@ class Project(_Dict):
     @staticmethod
     def _get_directory_size(src):
         needed_space = 0
-        for (path, _dirs, files) in os.walk(src):
+        for path, _dirs, files in os.walk(src):
             for file in files:
                 filename = os.path.join(path, file)
                 needed_space += os.path.getsize(filename)

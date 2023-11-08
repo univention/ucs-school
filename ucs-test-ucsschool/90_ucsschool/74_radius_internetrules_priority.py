@@ -32,7 +32,7 @@ def test_radius_internetrules_priority(schoolenv, ucr):
         (False, 10),
     ]
 
-    for (wlan, priority) in rules_attrs:
+    for wlan, priority in rules_attrs:
         rule = InternetRule(wlan=wlan, priority=priority, connection=umc_connection)
         rule.define()
         rules.append(rule)
@@ -57,7 +57,7 @@ def test_radius_internetrules_priority(schoolenv, ucr):
     utils.wait_for_replication_and_postrun()
     ucs_samba.wait_for_s4connector()
 
-    for (rule, group) in zip(rules, groups):
+    for rule, group in zip(rules, groups):
         rule.assign(school, group.name, "workgroup")
 
     utils.wait_for_replication_and_postrun()
@@ -69,6 +69,6 @@ def test_radius_internetrules_priority(schoolenv, ucr):
     test_couples = zip(users, allow_radius_access)
 
     # Testing loop
-    for (user_list, should_succeed) in test_couples:
+    for user_list, should_succeed in test_couples:
         for username in user_list:
             _test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)

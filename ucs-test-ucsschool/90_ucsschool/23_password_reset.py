@@ -255,8 +255,11 @@ class _TestPasswordReset(object):
             if not is_domaincontroller_slave:
                 # staff users are never replicated to educational school Replica Nodes - skip test
                 yield "%s-j" % i, expect, actor, schoolenv.create_staff(school, **kw)
-            yield "%s-k" % i, expect, actor, schoolenv.create_school_admin(
-                school, is_teacher=is_teacher, **kw
+            yield (
+                "%s-k" % i,
+                expect,
+                actor,
+                schoolenv.create_school_admin(school, is_teacher=is_teacher, **kw),
             )
             yield "%s-l" % i, expect, actor, schoolenv.create_domain_admin(school)
             yield "%s-m" % i, expect, actor, schoolenv.create_global_user()
@@ -270,7 +273,7 @@ class _TestPasswordReset(object):
         flavor,
         new_password,
         old_password,
-        **_
+        **_,
     ):
         try:
             password_reset = PasswordReset(self.host, flavor, actor[0])
@@ -302,7 +305,7 @@ class _TestPasswordReset(object):
         flavor,
         new_password,
         old_password,
-        **_
+        **_,
     ):
         # test login with the new password
         password_reset = PasswordReset(self.host, flavor, actor[0])

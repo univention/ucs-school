@@ -72,7 +72,7 @@ def run(_umc_instance):
         filter="(&(univentionObjectType=users/user)(ucsschoolRole=*))",
         attr=[UCSSCHOOLROLE, UCSSCHOOLSCHOOL],
     )
-    for (obj_dn, obj_attrs) in obj_list:
+    for obj_dn, obj_attrs in obj_list:
         ucsschool_roles = obj_attrs.get(UCSSCHOOLROLE, [])
         roles = {role.decode("UTF-8").split(":")[-1] for role in ucsschool_roles if b":school:" in role}
         school = {x.decode("UTF-8") for x in obj_attrs.get(UCSSCHOOLSCHOOL, [])}
@@ -90,7 +90,7 @@ def run(_umc_instance):
         ),
         attr=[UCSSCHOOLROLE, "uniqueMember"],
     )
-    for (obj_dn, obj_attrs) in obj_list:
+    for obj_dn, obj_attrs in obj_list:
         ums = obj_attrs.get("uniqueMember", [])
         grp_schools = {
             role.decode("UTF-8").split(":")[-1]

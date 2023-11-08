@@ -511,7 +511,7 @@ class Acl(object):
 
         attrs = ["sOARecord"]
         zoneName = lo.search(base="cn=dns,%s" % base_dn, scope="base+one", attr=["uid"])
-        for (target_dn, _d) in zoneName:
+        for target_dn, _d in zoneName:
             if "zoneName" in target_dn:
                 self.assert_acl(target_dn, access, attrs)
                 break

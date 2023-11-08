@@ -31,7 +31,7 @@ def removeListFromOther(big, small):
 
 def checkModules(modules, userType, serverRole, singleMaster):
     defaultList = []
-    ignoreList = [("lib", None), (u"passwordreset", None)]
+    ignoreList = [("lib", None), ("passwordreset", None)]
 
     # Lehrer auf dem Primary Directory Node
     dc_teacher = defaultList + [

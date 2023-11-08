@@ -197,7 +197,6 @@ def create_and_verify_ou(
     use_cli_api=True,
     use_python_api=False,
 ):
-
     assert use_cli_api != use_python_api
 
     print("******************************************************")
@@ -659,7 +658,7 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 
     utils.verify_ldap_object(dc_dn, should_exist=must_exist)
 
-    for (expected_membership, grpdn) in group_dn_list:
+    for expected_membership, grpdn in group_dn_list:
         if must_exist:
             utils.verify_ldap_object(
                 grpdn,

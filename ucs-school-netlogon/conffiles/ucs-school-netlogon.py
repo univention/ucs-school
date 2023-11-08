@@ -41,7 +41,6 @@ logging = r">> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1"
 
 
 def printHeader(fn):
-
     print('Set objShell = WScript.CreateObject("WScript.Shell")', file=fn)
     print('Set objFSO = CreateObject("Scripting.FileSystemObject")', file=fn)
     print(file=fn)
@@ -63,7 +62,6 @@ def printHeader(fn):
 
 
 def runCmd(script, fn, windowStyle, checkReturn):
-
     print('printToLog logfile, "running %s"' % script, file=fn)
     print('return = objShell.Run("%s %s", %s, true)' % (script, logging, windowStyle), file=fn)
 
@@ -77,7 +75,6 @@ def runCmd(script, fn, windowStyle, checkReturn):
 
 
 def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
-
     print('printToLog logfile, "running %s"' % script, file=fn)
     print('script = objFSO.BuildPath(baseName, "%s")' % script, file=fn)
     print(
@@ -101,7 +98,6 @@ def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
 
 def handler(configRegistry, changes):
-
     if not configRegistry.get("kerberos/realm"):
         return
 

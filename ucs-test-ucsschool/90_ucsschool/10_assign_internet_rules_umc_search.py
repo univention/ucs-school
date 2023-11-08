@@ -24,7 +24,6 @@ def test_search_with_wildcards_in_assign_internetrules(ucr):
 
     # Create a test school
     with utu.UCSTestSchool() as test_school:
-
         # use_cli=True, as UCSTestSchool does not seem to respect
         # the groupprefix setting otherwise
         ou_name, _ = test_school.create_ou(use_cache=False, use_cli=True)

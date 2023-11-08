@@ -274,7 +274,6 @@ def windows_check_gpo_report(gpo_name, identity_name, server=""):
 
     # find the 'TrusteePermissions' tags in xml:
     for trust_perm in gpo_root.iter("{%s/Security}TrusteePermissions" % gpo_types):
-
         # check name tag of the 'Trustee':
         for name in trust_perm.iter("{%s}Name" % gpo_types):
             trustee = name.text.split("\\", 1)[-1]  # cut off netbios domain prefix
@@ -614,7 +613,6 @@ def _test_exam_gpo(ucr, udm_session, schoolenv, windows_client):
     with GPO_Test(
         school_dn, student_name, student_pwd, windows_client["hostname"], exam_group_name
     ) as gpo_test:
-
         exam.start()
         try:
             Win.reboot_remote_win_host()

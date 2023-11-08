@@ -264,7 +264,8 @@ class Test(CLI_Import_v2_Tester):
         wait_for_drs_replication("cn={}".format(escape_filter_chars(person_list[-1].username)))
         for person in person_list:
             utils.verify_ldap_object(
-                person.dn, should_exist=True  # dry-run did'nt change LDAP, user must still exist
+                person.dn,
+                should_exist=True,  # dry-run did'nt change LDAP, user must still exist
             )
         self.check_hook_log_exists(
             with_support=True,

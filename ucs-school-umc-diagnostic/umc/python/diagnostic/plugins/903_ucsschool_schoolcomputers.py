@@ -83,7 +83,7 @@ def find_all_problematic_objects(lo):  # type: (access) -> Set[str]
     ):
         MODULE.process("Looking for {}...".format(obj_type))
         obj_list = lo.search(filter=filter_format("univentionObjectType=%s", (obj_type,)))
-        for (obj_dn, obj_attrs) in obj_list:
+        for obj_dn, obj_attrs in obj_list:
             MODULE.process("Found {}...".format(obj_dn))
             if b"ucsschoolComputer" not in obj_attrs.get("objectClass", []):
                 problematic_objects.add(obj_dn)
@@ -113,7 +113,6 @@ def run(_umc_instance):
 
 
 def fix_computers(_umc_instance):
-
     lo, po = getAdminConnection()
     problematic_objects = find_all_problematic_objects(lo)
     for dn in problematic_objects:

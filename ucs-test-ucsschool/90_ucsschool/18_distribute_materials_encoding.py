@@ -32,19 +32,19 @@ def test_distribute_materials_encoding(schoolenv, ucr):
     utils.wait_for_replication_and_postrun()
 
     filename1 = b"%s%s%s%s" % (
-        u"\xc4".encode("UTF-8"),  # Ä
+        "\xc4".encode("UTF-8"),  # Ä
         uts.random_name_special_characters(3).encode("UTF-8"),
-        u"\u2192".encode("UTF-8"),  # →
+        "\u2192".encode("UTF-8"),  # →
         uts.random_name_special_characters(3).encode("UTF-8"),
     )
     filename2 = b"%s%s%s" % (
-        u"\xc4".encode("UTF-8"),  # Ä
+        "\xc4".encode("UTF-8"),  # Ä
         uts.random_name_special_characters(3).encode("UTF-8"),
         uts.random_name_special_characters(3).encode("UTF-8"),
     )
     filename3 = b"%s%s%s" % (
         uts.random_string(length=3, alpha=True, numeric=True).encode("ASCII"),
-        u"\xc4".encode("ISO8859-1"),  # Ä
+        "\xc4".encode("ISO8859-1"),  # Ä
         uts.random_string(length=3, alpha=True, numeric=True).encode("ASCII"),
     )
     filename4 = uts.random_name()

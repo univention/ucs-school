@@ -73,7 +73,7 @@ def run(_umc_instance):
     lo = getAdminConnection()
 
     ou_list = lo.search(filter="ou=*", base=ucr.get("ldap/base"), scope="one")
-    for (ou_dn, ou_attrs) in ou_list:
+    for ou_dn, ou_attrs in ou_list:
         if b"ucsschoolOrganizationalUnit" not in ou_attrs.get("objectClass", []):
             continue
 

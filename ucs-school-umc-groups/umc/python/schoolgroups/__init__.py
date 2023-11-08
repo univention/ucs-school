@@ -447,7 +447,6 @@ class Instance(SchoolBaseModule):
         """Deletes a workgroup"""
         errors = []
         for group_dn in request.options[0]["object"]:
-
             group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
             if not group.school:
                 errors.append("Group must within the scope of a school OU: %s" % group_dn)

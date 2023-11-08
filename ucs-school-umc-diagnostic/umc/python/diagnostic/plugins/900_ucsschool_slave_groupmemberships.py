@@ -81,7 +81,7 @@ def run(_umc_instance):
         ")",
         attr=["univentionObjectType"],
     )
-    for (obj_dn, obj_attrs) in obj_list:
+    for obj_dn, obj_attrs in obj_list:
         result = {
             "slave": {
                 "edu": {"global_grp": False, "ou_grp": False},

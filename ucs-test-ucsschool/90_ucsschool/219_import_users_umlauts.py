@@ -39,8 +39,8 @@ class Test(CLI_Import_v2_Tester):
         roles = ("student", "teacher", "staff", "teacher_and_staff")
         names = [
             {
-                "firstname": u"Ýlang",
-                "lastname": u"Müstèrmánn",
+                "firstname": "Ýlang",
+                "lastname": "Müstèrmánn",
                 "expected": {
                     "username": "y.muestermann",
                     "firstname": "Ýlang",
@@ -48,13 +48,13 @@ class Test(CLI_Import_v2_Tester):
                 },
             },
             {
-                "firstname": u"Öle",
-                "lastname": u"Mästèrmànn",
+                "firstname": "Öle",
+                "lastname": "Mästèrmànn",
                 "expected": {"username": "oe.maestermann", "firstname": "Öle", "lastname": "Mästèrmànn"},
             },
             {
-                "firstname": u"Nînä",
-                "lastname": u"Müstèrfräú",
+                "firstname": "Nînä",
+                "lastname": "Müstèrfräú",
                 "expected": {
                     "username": "n.muesterfraeu",
                     "firstname": "Nînä",
@@ -62,8 +62,8 @@ class Test(CLI_Import_v2_Tester):
                 },
             },
             {
-                "firstname": u"Ǹanâ",
-                "lastname": u"Mästérfrâü",
+                "firstname": "Ǹanâ",
+                "lastname": "Mästérfrâü",
                 "expected": {
                     "username": "n.maesterfraue",
                     "firstname": "Ǹanâ",

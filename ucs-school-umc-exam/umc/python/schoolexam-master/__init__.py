@@ -383,7 +383,7 @@ class Instance(SchoolBaseModule):
             # Now create the addlist, fixing up attributes as we go
             al = []
             foundUniventionObjectFlag = False
-            for (key, value) in user_orig.oldattr.items():
+            for key, value in user_orig.oldattr.items():
                 # ignore blacklisted attributes
                 if key in blacklisted_attributes:
                     continue

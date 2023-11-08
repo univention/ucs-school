@@ -46,7 +46,7 @@ class Network:
         assert prefixlen > 7
         assert prefixlen < 25
 
-        self._net = ipaddress.IPv4Interface(u"%s/%s" % (random_ip(), prefixlen))
+        self._net = ipaddress.IPv4Interface("%s/%s" % (random_ip(), prefixlen))
         self.network = str(self._net.network)
         self.iprange = "%s-%s" % (
             self._net.network.network_address + 1,

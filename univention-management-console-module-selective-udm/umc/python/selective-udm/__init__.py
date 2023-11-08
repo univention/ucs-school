@@ -87,7 +87,6 @@ class Instance(SchoolBaseModule):
     def create_windows_computer(
         self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None
     ):
-
         if not search_base.school:
             raise UMC_Error(_("Could not determine schoolOU."))
 
