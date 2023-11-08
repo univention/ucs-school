@@ -1,8 +1,7 @@
 [tool.ruff]
-# ruff 0.0.252
+# ruff 0.1.4
 external = ["W601", "F812", "E403", "E704"]
 line-length = 105
-update-check = false
 ignore-init-module-imports = true
 
 select = ["ALL"]
@@ -49,6 +48,16 @@ ignore = [
  "PLW2901",  # redefined-loop-name
 
  # current violations
+ "FIX001",  #
+ "FIX002",  #
+ "TD001",
+ "TD002",
+ "TD003",
+ "S311",  # suspicious-non-cryptographic-random-usage
+ "S603",  # subprocess-without-shell-equals-true
+ "S607",  # start-process-with-partial-path
+ "RUF012",  # mutable-class-default
+ "FLY002",  #
  "B007",  # unused-loop-control-variable
  "PLR1701",  # Merge these isinstance calls: `isinstance(pk, (int, string_types))`
  "PLW0120",  # Else clause on loop without a break statement, remove the else and de-indent all the code inside it
@@ -119,9 +128,9 @@ ignore = [
  "PT004", "PT007", "PT011", "PT012", "PT017", "PT018",  # pytest
 # "PGH003",  # blanket-type-ignore
  "UP014",  # convert-named-tuple-functional-to-class
- "RET504",  # unnecessary-assign, https://github.com/charliermarsh/ruff/issues/2263
- "SIM108",  # use-ternary-operator: hm, sometimes great, sometimes not
+ "RET504",  # unnecessary-assign, https://github.com/astral-sh/ruff/issues/2263
  "SIM117",  # multiple-with-statements
+ "SIM108",  # use-ternary-operator: hm, sometimes great, sometimes not
  "D205",  # 1 blank line required between summary line and description
  "D300",  # Use """triple double quotes"""
  "D301",  # Use r""" if any backslashes in a docstring
@@ -129,11 +138,26 @@ ignore = [
  "D402",  # First line should not be the function's signature
  "D403",  # First word of the first line should be properly capitalized
  "D404",  # First word of the docstring should not be "This"
+ "PLW0603", # global-statement to update identifiers
  "PIE804",  # no-unnecessary-dict-kwargs
+ "PLR5501",  # collapsible-else-if
+ "PYI033", # type-comment-in-stub
+ "PYI024",  #
+ "PYI048",  #
+ "TD004",  #
+ "TD005",  #
+ "FA100",  #
+ "FA102",  # future-required-type-annotation
+ "PLC1901",  #
+ "FIX004",
+ "SIM112",  #
+ "PERF203",  # try-except-in-loop
+ "PERF401",  # manual-list-comprehension
 
  "SIM118",  # unsure if everything is a dict, let's select each individually somewhen
 
- "RUF100",  # https://github.com/charliermarsh/ruff/issues/2406, https://github.com/charliermarsh/ruff/issues/2407
+ # issues in ruff:
+ "RUF100",  # https://github.com/astral-sh/ruff/issues/2406, https://github.com/astral-sh/ruff/issues/2407
 ]
 
 unfixable = ["RUF100", "T20"]
@@ -155,6 +179,9 @@ builtins-ignorelist = ["copyright", "license", "object", "exit", "quit", "credit
 [tool.ruff.mccabe]
 max-complexity = 72
 
+[tool.ruff.format]
+quote-style = "double"
+
 [tool.ruff.flake8-quotes]
 docstring-quotes = "double"
 multiline-quotes = "double"
@@ -165,6 +192,9 @@ ignore-variadic-names = true
 
 [tool.ruff.flake8-pytest-style]
 parametrize-names-type = "csv"
+
+[tool.ruff.flake8-annotations]
+ignore-fully-untyped = true
 
 [tool.ruff.isort]
 combine-as-imports = true

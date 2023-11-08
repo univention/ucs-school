@@ -11,26 +11,39 @@ repos:
       - id: check-yaml
       - id: trailing-whitespace
   - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
-    rev: '0.0.9'
+    rev: '0.0.10'
     hooks:
       - id: ucr-flake8
         additional_dependencies: ["flake8==5.0.4"]
       - id: ucr-ruff
-        additional_dependencies: ["ruff==0.0.252"]
+        additional_dependencies: ["ruff==0.1.4"]
       - id: ucr-autopep8
         additional_dependencies: ["autopep8<=2.0.2"]
         stages: [ manual ]
       - id: ucr-ruff-fix
-        additional_dependencies: ["ruff==0.0.252"]
+        additional_dependencies: ["ruff==0.1.4"]
+        stages: [ manual ]
+      - id: ucr-ruff-format-check
+        additional_dependencies: ["ruff==0.1.4"]
+        stages: [ manual ]
+      - id: ucr-ruff-format
+        additional_dependencies: ["ruff==0.1.4"]
         stages: [ manual ]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.252'
+    rev: 'v0.1.4'
     hooks:
       - id: ruff
       - id: ruff
         alias: "ruff-edit"
         stages: [ manual ]
-        args: ["--fix"]
+        args: ["--fix", "--unsafe-fixes"]
+      - id: ruff-format
+        alias: "ruff-format"
+        stages: [ manual ]
+      - id: ruff-format
+        alias: "ruff-format-check"
+        stages: [ manual ]
+        args: ["--check"]
   - repo: https://github.com/psf/black
     # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
     # Version 21.11b0 adds super annoying Python 2 deprecation notice.
