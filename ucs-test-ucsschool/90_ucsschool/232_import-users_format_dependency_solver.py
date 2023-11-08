@@ -70,25 +70,25 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("scheme:birthday", "<source_uid>")  # lib attr that depends on lib attr
         config.update_entry(
             "scheme:record_uid", "<email>.<city>[0:4]"
-        ),  # lib attr that depends on UDM prop & lib attr
+        )  # lib attr that depends on UDM prop & lib attr
         config.update_entry(
             "scheme:email", "<{}>@<maildomain><:strip>".format(ext_attr_name)
-        ),  # lib attr that
+        )  # lib attr that
         # depends on lib attr, not-lib-mapped extended attr and kwargs (maildomain)
         config.update_entry(
             "scheme:username:default", "<firstname:lower>.<birthday>"
-        ),  # lib attr that depends on lib attrs
+        )  # lib attr that depends on lib attrs
         config.update_entry(
             "scheme:firstname", "fn-<lastname>[1:6]"
-        ),  # lib attr that depends on lib attr
+        )  # lib attr that depends on lib attr
         config.update_entry(
             "scheme:street", "<:lower><firstname>-<lastname>"
-        ),  # not a dependency of other prop, but
+        )  # not a dependency of other prop, but
         # should be set on user obj anyway
         config.update_entry("scheme:phone", "<birthday>")  # UDM prop that depends on lib attr
         config.update_entry(
             "scheme:roomNumber", "<phone>-<email>[0:5]"
-        ),  # UDM prop that depends on other UDM prop
+        )  # UDM prop that depends on other UDM prop
         config.update_entry("scheme:city", "<birthday>")  # UDM prop that depends on lib attr
         # not-lib-mapped extended attr that depends on lib attrs:
         config.update_entry("scheme:{}".format(ext_attr_name), "<firstname:lower>.<lastname:lower>")
