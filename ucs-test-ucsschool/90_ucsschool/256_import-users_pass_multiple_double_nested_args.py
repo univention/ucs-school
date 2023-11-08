@@ -40,7 +40,7 @@ class Test(CLI_Import_v2_Tester):
             "csv:mapping:name=name",
         ]
         cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-v", "--dry-run"] + args
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510
 
         csv_mapping = re.search(
             "        'mapping': {([^\n]*)}},\n",

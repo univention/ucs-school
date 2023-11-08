@@ -89,7 +89,7 @@ def get_forbidden_group_dns(admin, groups):
 
 def make_warning_message(problem_dict, problem_desc):
     # type: (Dict[str, List[str]], str) -> str
-    details = "\n\n" + _("The following {} problems were detected:".format(problem_desc))
+    details = "\n\n" + _("The following {} problems were detected:".format(problem_desc))  # noqa: INT002
     for dn, problems in problem_dict.items():
         details += "\n\n  {}".format(dn)
         for problem in problems:
@@ -156,7 +156,7 @@ def record_non_admin_group_members(admin_dns, groups):
             if member not in admin_dns:
                 detected_non_admin_group_members.setdefault(member, []).append(
                     _(
-                        "is member of group {} but is not registered as a "
+                        "is member of group {} but is not registered as a "  # noqa: INT002
                         "ucsschoolAdministrator.".format(dn)
                     )
                 )
@@ -177,7 +177,7 @@ def run(_umc_instance):
         if missing_group_dns:
             detected_missing_group_dns.setdefault(admin["dn"], []).append(
                 _(
-                    "is registered as admin but no member of the following groups: {}".format(
+                    "is registered as admin but no member of the following groups: {}".format(  # noqa: INT002
                         missing_group_dns
                     )
                 )
@@ -185,7 +185,7 @@ def run(_umc_instance):
         if forbidden_group_dns:
             detected_forbidden_group_dns.setdefault(admin["dn"], []).append(
                 _(
-                    "should not be member of the following groups "
+                    "should not be member of the following groups "  # noqa: INT002
                     "(missing {} role): {}".format(role_school_admin, forbidden_group_dns)
                 )
             )

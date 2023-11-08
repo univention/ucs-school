@@ -52,7 +52,7 @@ _ = Translation("ucs-school-umc-diagnostic").translate
 
 title = _("UCS@school Veyon Proxy app")
 description = _(
-    "Verify that the {!r} app is installed on singleserver system and school server system "
+    "Verify that the {!r} app is installed on singleserver system and school server system "  # noqa: INT002
     "roles.".format(VEYON_APP_NAME)
 )
 
@@ -90,7 +90,7 @@ def run(_umc_instance):
 
     raise Warning(
         _(
-            "The {0!r} app is not installed. Try installing it through the 'Install {0!r} app' button. "
+            "The {0!r} app is not installed. Try installing it through the 'Install {0!r} app' button. "  # noqa: INT002
             "If that fails, install it manually using the Appcenter module: {{link_appcenter}}.".format(
                 VEYON_APP_NAME
             )
@@ -98,7 +98,7 @@ def run(_umc_instance):
         buttons=[
             {
                 "action": "install_veyon_proxy_app",
-                "label": _("Install {!r} app".format(VEYON_APP_NAME)),
+                "label": _("Install {!r} app".format(VEYON_APP_NAME)),  # noqa: INT002
             }
         ],
     )
@@ -139,7 +139,7 @@ links = [
     {
         "name": "link_appcenter",
         "href": "/univention/management/#module=appcenter:appcenter:0:id:ucsschool-veyon-proxy",
-        "label": _("Appcenter page for {!r} app.".format(VEYON_APP_NAME)),
+        "label": _("Appcenter page for {!r} app.".format(VEYON_APP_NAME)),  # noqa: INT002
     }
 ]
 

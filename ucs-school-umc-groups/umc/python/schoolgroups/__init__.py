@@ -423,7 +423,11 @@ class Instance(SchoolBaseModule):
                 success = grp.create(ldap_user_write)
             except ValidationError as exc:
                 raise UMC_Error(
-                    _("One or more errors during validation of the group occured:\n{}".format(exc))
+                    _(
+                        "One or more errors during validation of the group occured:\n{}".format(  # noqa: INT002
+                            exc
+                        )
+                    )
                 )
             if not success and grp.exists(ldap_user_read):
                 raise UMC_Error(_("The workgroup %r already exists!") % grp.name)

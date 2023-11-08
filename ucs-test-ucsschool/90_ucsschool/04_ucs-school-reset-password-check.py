@@ -179,7 +179,7 @@ def test_password_reset(
     teachers, teachersDn, students, studentsDn, admins, adminsDn = school_environment
     users = {"teachers": teachers, "students": students, "admins": admins}
     dns = {"teachers": teachersDn, "students": studentsDn, "admins": adminsDn}
-    ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401)
+    ("teachers", "teacher", "teachers", 1, True, Forbidden, 200, 401)  # noqa: B018
     _test_pwd_reset(
         host,
         users[acting_user][0],

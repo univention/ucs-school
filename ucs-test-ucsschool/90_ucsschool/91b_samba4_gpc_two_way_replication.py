@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python3
-## desc: Test the Samba4 GPC objects and links replication from Primary Directory Node to Replica Directory Node or vice versa.  # noqa: 501
+## desc: Test the Samba4 GPC objects and links replication from Primary Directory Node to Replica Directory Node or vice versa.  # noqa: E501
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## packages: [univention-samba4, ucs-school-replica|ucs-school-multiserver]

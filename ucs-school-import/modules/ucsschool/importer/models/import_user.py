@@ -471,7 +471,7 @@ class ImportUser(User):
             Use `user.self.expiration_date = expiry` instead.
         """
         self.expiration_date = expiry
-        warnings.warn(
+        warnings.warn(  # noqa: B028
             "The method User.expire(expiry) is deprecated. Set the expiration date with "
             "'user.expiration_date = expiry'.",
             PendingDeprecationWarning,
@@ -1435,7 +1435,7 @@ class ImportUser(User):
         :rtype: str
         """
         try:
-            unicode = unicode
+            unicode = unicode  # noqa: PLW0127
         except NameError:
             unicode = str
         try:

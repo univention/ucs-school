@@ -346,7 +346,7 @@ class DictReader(object):
     def __next__(self):
         if self.line_num == 0:
             # Used only for its side effect.
-            self.fieldnames
+            self.fieldnames  # noqa: B018
         self.row = next(self.reader)
         self.line_num = self.reader.line_num
 

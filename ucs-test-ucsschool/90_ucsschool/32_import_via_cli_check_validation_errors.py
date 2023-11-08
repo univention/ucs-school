@@ -70,7 +70,7 @@ def create_import_csv(err: bool) -> str:
 def run_import(args: List[str], valid: bool = True):
     cmd = import_cmd + args
 
-    proc = subprocess.run(cmd, capture_output=True, text=True)
+    proc = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510
 
     print("\nOUT:\n", proc.stdout, "\n")
     print("\nERROR:\n", proc.stderr, "\n")

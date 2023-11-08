@@ -120,7 +120,7 @@ def check_source_dir(prefixlist, directory):
 
 def check_filesystem(directory):
     """make sure that we are dealing with a known filesystem"""
-    ret, out = getstatusoutput("LC_ALL=C stat -f %s" % pipes.quote(directory))  # nosec
+    ret, out = getstatusoutput("LC_ALL=C stat -f %s" % pipes.quote(directory))  # nosec  # noqa: S605
     myFs = ""
     for line in out.splitlines():
         tmp = line.split("Type: ", 1)

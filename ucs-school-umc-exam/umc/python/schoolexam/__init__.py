@@ -584,7 +584,7 @@ class Instance(SchoolBaseModule):
 
             # mark the computer room for exam mode
             progress.component(_("Preparing the computer room for exam mode..."))
-            client.umc_command(
+            client.umc_command(  # noqa: B018
                 "schoolexam-master/set-computerroom-exammode",
                 {"school": request.options["school"], "roomdn": request.options["room"]},
             ).result  # FIXME: no error handling
@@ -901,7 +901,7 @@ class Instance(SchoolBaseModule):
 
             # unset exam mode for the given computer room
             progress.component(_("Configuring the computer room..."))
-            client.umc_command(
+            client.umc_command(  # noqa: B018
                 "schoolexam-master/unset-computerroom-exammode",
                 {"roomdn": request.options["room"], "school": school},
             ).result
@@ -973,7 +973,7 @@ class Instance(SchoolBaseModule):
                     )
                     umc_cmd = "schoolexam-master/remove-users-from-non-primary-groups"
                     try:
-                        client.umc_command(
+                        client.umc_command(  # noqa: B018
                             umc_cmd, {"userdns": users_to_reduce, "exam": request.options["exam"]}
                         ).result
                     except Forbidden as exc:
@@ -997,7 +997,7 @@ class Instance(SchoolBaseModule):
                     try:
                         if exam_roles_exist or iuser.dn not in parallel_users_local:
                             # remove LDAP user entry
-                            client.umc_command(
+                            client.umc_command(  # noqa: B018
                                 "schoolexam-master/remove-exam-user",
                                 {"userdn": iuser.dn, "school": school, "exam": request.options["exam"]},
                             ).result

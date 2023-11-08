@@ -57,7 +57,7 @@ class Test(CLI_Import_v2_Tester):
         self.save_ldap_status()
         args = ["-c", fn_config]
         cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-v"] + args
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510
 
         stats = re.search(
             "------ User import statistics ------\n(.*)------ End of user import statistics ------",

@@ -201,7 +201,9 @@ html5
             file_name, content_type, boundary, self.flavor, override_file_name=override_file_name
         )
         header_content = {"Content-Type": "multipart/form-data; boundary=%s" % (boundary,)}
-        self.client.request("POST", "upload/distribution/upload", data, headers=header_content).result
+        self.client.request(  # noqa: B018
+            "POST", "upload/distribution/upload", data, headers=header_content
+        ).result
 
     def add(self):
         """

@@ -892,7 +892,7 @@ def check_create_share_folder(
     )
     if samba_workstation:
         cmd += " --netbiosname={}".format(pipes.quote(samba_workstation))
-    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)  # noqa: S604
     assert (
         "NT_STATUS_ACCESS_DENIED" not in stdout
     ), "Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout)
@@ -906,7 +906,7 @@ def check_change_permissions(
     cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)
     if samba_workstation:
         cmd += " --netbiosname='{}'".format(samba_workstation)
-    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)
+    rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False, shell=True)  # noqa: S604
     if not allowed and "NT_STATUS_ACCESS_DENIED" not in stdout:
         utils.fail(
             "Expected NT_STATUS_ACCESS_DENIED, user could change the permissions: {}".format(stdout)

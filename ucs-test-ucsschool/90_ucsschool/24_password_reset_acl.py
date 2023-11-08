@@ -143,7 +143,7 @@ class _TestCases(object):
             if expected_result == RESULT_OK:
                 lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [val]]])
             else:
-                with pytest.raises(Exception):
+                with pytest.raises(Exception):  # noqa: B017
                     lo.modify(target.dn, [[attr_name, old_values.get(attr_name), [val]]])
         print("OK: result as expected")
 

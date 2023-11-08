@@ -95,7 +95,7 @@ class Role(models.Model):
         # delete unknown roles
         cls.objects.exclude(name__in=names).delete()
 
-    class Meta:
+    class Meta:  # noqa: DJ012
         ordering = ("name",)
 
 
@@ -261,7 +261,7 @@ class School(models.Model):
             # delete OUs not in LDAP (anymore)
             cls.objects.exclude(name__in=names).delete()
 
-    class Meta:
+    class Meta:  # noqa: DJ012
         ordering = ("name",)
 
 

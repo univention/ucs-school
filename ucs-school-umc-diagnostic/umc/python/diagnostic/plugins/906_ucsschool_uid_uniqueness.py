@@ -83,7 +83,7 @@ def run(_umc_instance):
             # if this line is reached, a suid-ruid duplicate was found
             problematic_objects.setdefault(dn, []).append(
                 _(
-                    "has same ucsschoolSourceUID and ucsschoolRecordUID as {!r}: {!r}{!r}".format(
+                    "has same ucsschoolSourceUID and ucsschoolRecordUID as {!r}: {!r}{!r}".format(  # noqa: INT002
                         other_dn, source_uid, record_uid
                     )
                 )
