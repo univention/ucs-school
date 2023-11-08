@@ -9,7 +9,9 @@ set -e
 HOSTNAME=$(ucr get hostname)
 DOMAIN=$(ucr get domainname)
 
-RESULT_FOLDER="/tmp/ui_users_e2e_tests"
+TEST_DIR="$(basename $(readlink -f $(dirname $0)))"
+TEST_NAME="$(basename $0)"
+RESULT_FOLDER="$HOME/artifacts/$TEST_DIR/$TEST_NAME/cypress"
 mkdir -p "$RESULT_FOLDER/results"
 mkdir -p "$RESULT_FOLDER/screenshots"
 
