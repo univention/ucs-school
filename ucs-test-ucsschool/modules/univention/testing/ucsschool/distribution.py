@@ -288,17 +288,11 @@ html5
         """
         print("Editing Project %s" % (self.name))
         description = description if description else self.description
-        if distributeType:
-            distributeType = distributeType
-        else:
+        if not distributeType:
             distributeType = self.distributeType
-        if distributeTime:
-            distributeTime = distributeTime
-        else:
+        if not distributeTime:
             distributeTime = self.distributeTime
-        if distributeDate:
-            distributeDate = distributeDate
-        else:
+        if not distributeDate:
             distributeDate = self.distributeDate
         collectType = collectType if collectType else self.collectType
         collectTime = collectTime if collectTime else self.collectTime

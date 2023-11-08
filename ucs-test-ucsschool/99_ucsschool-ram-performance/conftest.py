@@ -3,7 +3,7 @@ import os
 import os.path
 import subprocess
 import time
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional
 
 import psutil
 import pytest
@@ -134,7 +134,7 @@ def execute_test():
         locust_user_class: str,
         result_file_base_path: str,
         host: str,
-        loglevel: str = None,
+        loglevel: Optional[str] = None,
     ) -> None:
         for k, v in ENV_LOCUST_DEFAULTS.items():
             if k not in os.environ:

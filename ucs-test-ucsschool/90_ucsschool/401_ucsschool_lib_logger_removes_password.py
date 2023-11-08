@@ -105,10 +105,10 @@ def test_password_in_multiple_args_is_not_logged(random_logger):
     assert "bar" in txt
     assert "password" in txt
     assert dict_with_pw["bar"] in txt
-    assert list(random_dict2)[0] in txt
-    assert list(random_dict3)[0] in txt
-    assert list(random_dict2.values())[0] in txt
-    assert list(random_dict3.values())[0] in txt
+    assert next(iter(random_dict2)) in txt
+    assert next(iter(random_dict3)) in txt
+    assert next(iter(random_dict2.values())) in txt
+    assert next(iter(random_dict3.values())) in txt
     os.remove(logger.handlers[-1].baseFilename)
 
 

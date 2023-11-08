@@ -150,17 +150,15 @@ def parse_cmdline():
     if args.staff + args.students + args.teachers + args.staffteachers == 0:
         parser.error("Please supply number and type of users to create.")
     if any(
-        [
-            num < 0
-            for num in [
-                args.staff,
-                args.students,
-                args.teachers,
-                args.staffteachers,
-                args.classes,
-                args.inclasses,
-                args.schools,
-            ]
+        num < 0
+        for num in [
+            args.staff,
+            args.students,
+            args.teachers,
+            args.staffteachers,
+            args.classes,
+            args.inclasses,
+            args.schools,
         ]
     ):
         parser.error("Negative numbers are not allowed.")

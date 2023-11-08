@@ -2451,8 +2451,6 @@ def rename_class():
 
     ud.debug(ud.MAIN, ud.PROCESS, "rename_class finished")
 
-    return
-
 
 def move_domaincontroller_to_ou(co, lo, baseDN, options):
     """Move specified domaincontroller (options.dcname) to specified OU (options.ou)."""

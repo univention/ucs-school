@@ -83,7 +83,7 @@ class TestCleaner:
             if response.status_code != 204:
                 logger.warning(
                     f"Deleting user {username} failed with"
-                    f" {response.status_code} / {str(response.content)}"
+                    f" {response.status_code} / {response.content!s}"
                 )
             else:
                 logger.info(f"Removed user {username}")

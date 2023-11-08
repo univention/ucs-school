@@ -141,7 +141,7 @@ class Acl(object):
             out, err = run_commands([cmd], argdict)[0]
             assert err, "command %r was not executed successfully" % cmd
             try:
-                result = [x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x)][0]
+                result = next(x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x))
             except IndexError:
                 result = None
                 print("Failed to parse slapacl output:", attr, err)

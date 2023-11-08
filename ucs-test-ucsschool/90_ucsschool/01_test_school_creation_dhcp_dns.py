@@ -45,7 +45,7 @@ def test_dhcp_dns_policy():
             ucr.is_true("ucsschool/singlemaster", False)
             and ucr.get("server/role") == "domaincontroller_master"
         ):
-            # todo: when creating schools with ucs_test the ip is left blank in school.py
+            # TODO: when creating schools with ucs_test the ip is left blank in school.py
             # but not here.
             # expected_attr["univentionDhcpDomainNameServers"] = [
             #     str(Interfaces().get_default_ip_address().ip)

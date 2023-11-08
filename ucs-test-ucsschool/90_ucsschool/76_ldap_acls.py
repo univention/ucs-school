@@ -283,7 +283,7 @@ class LDAPACLTestMatrix(object):
         argdict = {"auth_dn": self.auth_dn, "target_dn": target_dn, "access": access, "attr": attr}
         out, err = run_commands([cmd], argdict)[0]
         if err:
-            result = [x for x in err.split("\n") if (Access.Allowed in x or Access.Denied in x)][0]
+            result = next(x for x in err.split("\n") if (Access.Allowed in x or Access.Denied in x))
             if result:
                 if access_allowance not in result:
                     return False

@@ -78,7 +78,7 @@ class HttpApiTestUserCsvExporter(TestUserCsvExporter):
             if len(user["Klassen"]) > 1:
                 raise Exception("Not more than one OU allowed in HTTP API CSV.")
             sc = ""
-            for _school, classes in user["Klassen"].items():
+            for classes in user["Klassen"].values():
                 sc = ",".join([sc, ",".join(classes)])
             user["Klassen"] = sc.strip(",")
         else:

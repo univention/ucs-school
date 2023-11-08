@@ -33,7 +33,7 @@ from uuid import uuid4
 
 def create_group(self):
     school = self.test_data.random_school()
-    name = f"testgroup-{str(uuid4())}"
+    name = f"testgroup-{uuid4()!s}"
     description = f"Randomly generated group for {school} created by locust, group name: {name}"
     with self.client.rename_request("/ucsschool/bff-groups/v1/workgroup"):
         url = f"{self.group_base_url}/workgroup"

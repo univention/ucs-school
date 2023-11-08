@@ -204,9 +204,8 @@ def _test_rename_class(schoolenv, school, old_name, new_name, should_fail=False)
         # the renamed group object should use the same gidNumber
         # the renamed group should still include the same users as before
         new_ldap_info = ldap_info(new_name)
-        assert old_ldap_info == new_ldap_info, (
-            "%s has changed after renaming the class"
-            % [x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0]
+        assert old_ldap_info == new_ldap_info, "%s has changed after renaming the class" % next(
+            x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]
         )
 
         # the renamed share object should be still accessible

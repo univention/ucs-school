@@ -66,7 +66,7 @@ DC_BACKUP = "domaincontroller_backup"
 
 def run(_umc_instance):
     server_role = ucr.get("server/role")
-    if server_role != DC_MASTER and server_role != DC_BACKUP:
+    if server_role not in (DC_MASTER, DC_BACKUP):
         return
 
     problematic_objects = {}  # type: Dict[str, Set[str]]
