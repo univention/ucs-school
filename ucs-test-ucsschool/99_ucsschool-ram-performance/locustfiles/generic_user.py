@@ -17,7 +17,7 @@ def clean_test_env(*args, **kwargs):
 
 class GenericUser(UiUserClient):
     abstract = True
-    wait_time = constant_pacing(float(os.getenv("LOCUST_WAIT_TIME", 1)))
+    wait_time = constant_pacing(float(os.getenv("LOCUST_WAIT_TIME", "1")))
 
     def __init__(self, *args, **kwargs):
         self.settings = get_settings()
