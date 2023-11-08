@@ -59,7 +59,7 @@ def get_local_ip_addresses(blacklisted_interfaces=None, blacklisted_interface_pr
         if blacklisted_interfaces is not None and interface_name in blacklisted_interfaces:
             continue
         if blacklisted_interface_prefixes is not None and any(
-            [interface_name.startswith(prefix) for prefix in blacklisted_interface_prefixes]
+            interface_name.startswith(prefix) for prefix in blacklisted_interface_prefixes
         ):
             continue
         iface_info = netifaces.ifaddresses(interface_name)

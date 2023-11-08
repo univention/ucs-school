@@ -1302,7 +1302,7 @@ class RoleSupportMixin(object):
         (and thus before py:meth:`do_create()`).
         """
         roles = self.roles_as_dicts
-        if self.default_roles and not any([role["context"] for role in roles if role["context"] != "-"]):
+        if self.default_roles and not any(role["context"] for role in roles if role["context"] != "-"):
             schools = self.get_schools()
             self.ucsschool_roles += [
                 create_ucsschool_role_string(role, school)

@@ -345,7 +345,7 @@ class Test_FactoryConf(object):
         new_users = [x for x in ldap_diff.new if x.startswith("uid=")]
         self.logger.debug("new_users=%r", new_users)
         assert all(
-            [explodeDn(user)[0].endswith("foo") for user in new_users]
+            explodeDn(user)[0].endswith("foo") for user in new_users
         ), "Not all usernames end with 'foo': %r" % (new_users,)
         self.logger.info("\n\n*** OK: all usernames end with 'foo'.\n\n")
 

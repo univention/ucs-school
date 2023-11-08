@@ -50,7 +50,7 @@ def check_nt_acls(filename):  # type: (str) -> None
 
 @retry_cmd
 def wait_for_files_to_exist(files):  # type: (List[str]) -> None
-    if not all([os.path.exists(folder) for folder in files]):
+    if not all(os.path.exists(folder) for folder in files):
         raise CmdCheckFail("Expected files %r" % (files,))
 
 

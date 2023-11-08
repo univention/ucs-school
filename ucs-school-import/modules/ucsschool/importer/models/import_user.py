@@ -691,10 +691,8 @@ class ImportUser(User):
             except ValueError:
                 self.logger.error("Could not parse expiration date.")
         elif all(
-            [
-                self._schema_write_check("expiration_date", "userexpiry", ldap_attr)
-                for ldap_attr in ["krb5ValidEnd", "shadowExpire", "sambaKickoffTime"]
-            ]
+            self._schema_write_check("expiration_date", "userexpiry", ldap_attr)
+            for ldap_attr in ["krb5ValidEnd", "shadowExpire", "sambaKickoffTime"]
         ):
             self.expiration_date = self.format_from_scheme(
                 "expiration_date", self.config["scheme"]["expiration_date"]

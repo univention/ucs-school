@@ -42,7 +42,7 @@ def test_admin_in_correct_groups(schoolenv):
         plugin908.run(None)
     except plugin908.Warning as exc:
         assert not all(
-            [s in str(exc.message) for s in [school2_admin_dn, plugin908.FORBIDDEN_GROUPS_WARN_STR]]
+            s in str(exc.message) for s in [school2_admin_dn, plugin908.FORBIDDEN_GROUPS_WARN_STR]
         ), (
             "The diagnostics module 908_ucsschool_school_admin_accounts.py expected "
             "not to raise any warning for {}!".format(school2_admin_dn)

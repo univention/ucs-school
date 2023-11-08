@@ -85,7 +85,7 @@ def test_computerroom_test_printmode_ucr_variables(schoolenv, ucr):
 
         try:
             # if everything is on default, then no variable is set
-            if all([(setting.printmode == "default") for setting in settings]) and (
+            if all((setting.printmode == "default") for setting in settings) and (
                 ucr.get("samba/printmode/hosts/all") or ucr.get("samba/printmode/hosts/none")
             ):
                 raise NotOk()

@@ -513,10 +513,8 @@ class UCSTestSchool(object):
                 )
                 name_edudc = None
             elif any(
-                [
-                    name_edudc.lower() == backup.split(".", 1)[0].lower()
-                    for backup in cls.ucr.get("ldap/backup", "").split(" ")
-                ]
+                name_edudc.lower() == backup.split(".", 1)[0].lower()
+                for backup in cls.ucr.get("ldap/backup", "").split(" ")
             ):
                 logger.info(
                     "*** It is not allowed to set any Backup Directory Node as name_edudc ==> resetting "

@@ -169,7 +169,7 @@ class LDAPDiffCheck(AutoMultiSchoolEnv):
             for dn in self.lo.searchDn()
             if (
                 (not dn.startswith("ou=") and (",ou=" not in dn))
-                or (any([x in dn for x in valid_ous]))  # accept all NON-OU objects
+                or (any(x in dn for x in valid_ous))  # accept all NON-OU objects
             )
         ]  # and all objects of "valid" OUs to get comparable results
 

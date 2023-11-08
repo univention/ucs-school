@@ -91,7 +91,7 @@ def test_user_restore_after_exam(udm_session, schoolenv):
     samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)[0]
     samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
     assert samba_user_workstations_user1.startswith("$")
-    assert all([s.startswith("$") for s in samba_user_workstations_user2])
+    assert all(s.startswith("$") for s in samba_user_workstations_user2)
 
     exec_cmd(
         ["/usr/share/ucs-school-exam/exam-and-room-cleanup", "--skip-exam-shutdown"],
@@ -101,7 +101,7 @@ def test_user_restore_after_exam(udm_session, schoolenv):
     samba_user_workstations_user1 = get_user_work_stations(mod_user, stu)
     samba_user_workstations_user2 = get_user_work_stations(mod_user, stu2)
     assert not samba_user_workstations_user1
-    assert not any([s.startswith("$") for s in samba_user_workstations_user2])
+    assert not any(s.startswith("$") for s in samba_user_workstations_user2)
     assert samba_user_workstations_user2 == orig_value_user2
     exam.finish()
 

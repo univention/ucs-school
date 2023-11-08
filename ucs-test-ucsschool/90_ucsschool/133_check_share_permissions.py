@@ -26,7 +26,7 @@ from univention.testing.ucsschool.computerroom import check_change_permissions, 
 def wait_for_folders_to_exist(folders):  # type: (List[str]) -> None
     ready = False
     for _i in range(50):
-        ready = all([os.path.isdir(folder) for folder in folders])
+        ready = all(os.path.isdir(folder) for folder in folders)
         if not ready:
             time.sleep(1)
     assert ready

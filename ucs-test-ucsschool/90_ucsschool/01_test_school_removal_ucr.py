@@ -39,4 +39,4 @@ def test_school_creation():
     portals = UDM.machine().version(2).get("portals/entry")
     entry = next(portals.search("cn=self-service-password-change"), None)
     assert entry is not None
-    assert all([value not in group for group in entry.props.allowedGroups])
+    assert all(value not in group for group in entry.props.allowedGroups)
