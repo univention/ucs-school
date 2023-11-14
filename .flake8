@@ -1,6 +1,7 @@
 [flake8]
 exclude = doc/doc-common/,venv,ucs-school-import/usr/share/ucs-school-import/scripts/ucs-school-import
-max-line-length = 105
+max-line-length = 183
+max-doc-length = 291
 
 # https://www.flake8rules.com/
 #
