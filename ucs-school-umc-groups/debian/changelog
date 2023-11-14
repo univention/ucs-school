@@ -1,3 +1,10 @@
+ucs-school-umc-groups (10.0.10) unstable; urgency=medium
+
+  * Bug #56589: fix existing email address being set to empty when editing
+    group.
+
+ -- Johannes Keiser <keiser@univention.de>  Mon, 30 Oct 2023 07:10:30 +0100
+
 ucs-school-umc-groups (10.0.9) unstable; urgency=medium
 
   * Bug #55990: sync 'school' in MultiObjectSelct with DetailPage correctly

@@ -68,10 +68,10 @@ class UMCTester(object):
             lo, po = getAdminConnection()
             handler_set(["ucsschool/workgroups/autosearch=no"])
             school_name, schooldn = schoolenv.create_ou()
+            self.selenium.do_login()
 
             #  Test that mailaddress checkbox is not visible if UCR empty
             handler_unset(["ucsschool/workgroups/mailaddress"])
-            self.selenium.do_login()
             self.open_wg_module()
             assert not self.selenium.elements_visible("//label[text() = 'Activate Email Address']")
 
@@ -107,6 +107,13 @@ class UMCTester(object):
             self.check_wg(
                 lo, school_name, wg_name2, True, "{}-{}@test.de".format(school_name, wg_name2), [], []
             )
+            self.open_wg_module(False)
+            self.selenium.enter_input_combobox("school", school_name)
+            self.selenium.submit_input("pattern")
+            self.selenium.click_text(wg_name2)
+            time.sleep(5)
+            elem = self.selenium.driver.find_element_by_css_selector("input[name='email']")
+            assert elem.get_property("value") == "{}-{}@test.de".format(school_name, wg_name2)
 
             #  Test that email is still shown if UCR is deactivated, but toggle is gone
             handler_unset(["ucsschool/workgroups/mailaddress"])
@@ -115,7 +122,8 @@ class UMCTester(object):
             self.selenium.submit_input("pattern")
             self.selenium.click_text(wg_name2)
             time.sleep(5)
-            assert self.selenium.elements_visible("//input[@name = 'email']")
+            elem = self.selenium.driver.find_element_by_css_selector("input[name='email']")
+            assert elem.get_property("value") == "{}-{}@test.de".format(school_name, wg_name2)
             assert not self.selenium.elements_visible("//label[text() = 'Activate Email Address']")
 
 

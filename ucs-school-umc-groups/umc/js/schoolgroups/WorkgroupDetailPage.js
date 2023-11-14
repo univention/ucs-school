@@ -32,13 +32,14 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/when",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/CheckBox",
 	"umc/modules/schoolgroups/DetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, array, MultiObjectSelect, TextBox, ComboBox, CheckBox, DetailPage, _) {
+], function(declare, lang, array, when, MultiObjectSelect, TextBox, ComboBox, CheckBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolgroups.WorkgroupDetailPage", [DetailPage], {
 		mailAddressPattern: '',
@@ -50,13 +51,14 @@ define([
 				label: _('School'),
 				staticValues: [],
 				onChange: lang.hitch(this, function() {
-					if (this._form.getWidget('create_email').value && !this._form.getWidget('email_exists').value) {
-						this._form.getWidget('email').set('value', this.calculateEmail());
-					}
-					this._form.getWidget(this.multiWidgetName).set('value', []);
+					when(this.loadDeferred, lang.hitch(this, function() {
+						if (this._form.getWidget('create_email').value && !this._form.getWidget('email_exists').value) {
+							this._form.getWidget('email').set('value', this.calculateEmail());
+						}
+						this._form.getWidget(this.multiWidgetName).set('value', []);
+					}));
 				}),
-			},
-				{
+			}, {
 				type: TextBox,
 				name: 'name',
 				label: _('Workgroup'),
@@ -64,9 +66,11 @@ define([
 				regExp: '^[a-zA-Z0-9]([a-zA-Z0-9 _.-]*[a-zA-Z0-9])?$',
 				invalidMessage: _('May only consist of letters, digits, spaces, dots, hyphens, underscore. Has to start and to end with a letter or a digit.'),
 				onChange: lang.hitch(this, function() {
-					if (this._form.getWidget('create_email').value && !this._form.getWidget('email_exists').value) {
-						this._form.getWidget('email').set('value', this.calculateEmail());
-					}
+					when(this.loadDeferred, lang.hitch(this, function() {
+						if (this._form.getWidget('create_email').value && !this._form.getWidget('email_exists').value) {
+							this._form.getWidget('email').set('value', this.calculateEmail());
+						}
+					}));
 				}),
 				required: true
 			}, {
@@ -75,22 +79,22 @@ define([
 				label: _('Description'),
 				description: _('Verbose description of the group'),
 				disabled: this.moduleFlavor != 'workgroup-admin'
-			}, this.getMultiSelectWidget(),
-				{
+			},
+			this.getMultiSelectWidget(),
+			{
 				type: CheckBox,
 				name: 'create_share',
 				label: _('Create share'),
 				description: _('If checked, a share is created for the new group'),
 				disabled: this.moduleFlavor != 'workgroup-admin',
 				value: true
-				},
-				{ // This widget only exists to hold the information if an email was delivered by the backend in editMode
+			}, {
+				// This widget only exists to hold the information if an email was delivered by the backend in editMode
 				type: CheckBox,
 				name: 'email_exists',
 				visible: false,
 				value: false
-				},
-				{
+			}, {
 				type: CheckBox,
 				name: 'create_email',
 				label: _('Activate Email Address'),
@@ -99,22 +103,22 @@ define([
 				disabled: false,
 				value: false,
 				onChange: lang.hitch(this, function(newValue) {
-					if (newValue && !this._form.getWidget('email_exists').value) {
-						this._form.getWidget('email').set('value', this.calculateEmail());
-					}
-					this._form.getWidget('email').set('visible', newValue);
-					this._form.getWidget('allowed_email_senders_users').set('visible', newValue);
-					this._form.getWidget('allowed_email_senders_groups').set('visible', newValue);
+					when(this.loadDeferred, lang.hitch(this, function() {
+						if (newValue && !this._form.getWidget('email_exists').value) {
+							this._form.getWidget('email').set('value', this.calculateEmail());
+						}
+						this._form.getWidget('email').set('visible', newValue);
+						this._form.getWidget('allowed_email_senders_users').set('visible', newValue);
+						this._form.getWidget('allowed_email_senders_groups').set('visible', newValue);
+					}));
 				})
-				},
-				{
+			}, {
 				type: TextBox,
 				name: 'email',
 				label: _('Email address'),
 				visible: false,
 				disabled: true,
-				},
-				{
+			}, {
 				type: MultiObjectSelect,
 				name: 'allowed_email_senders_users',
 				label: _('Restrict permission to send emails to this group to the following users'),
@@ -138,8 +142,7 @@ define([
 				}),
 				queryOptions: function() { return {}; },
 				autoSearch: false
-				},
-				{
+			}, {
 				type: MultiObjectSelect,
 				name: 'allowed_email_senders_groups',
 				label: _('Restrict permission to send emails to this group to the following groups'),
@@ -163,8 +166,7 @@ define([
 				}),
 				queryOptions: function() { return {}; },
 				autoSearch: false
-			}
-			];
+			}];
 		},
 
 		setupEditMode: function() {
@@ -209,6 +211,5 @@ define([
 				staticValues: groups
 			});
 		}
-
 	});
 });

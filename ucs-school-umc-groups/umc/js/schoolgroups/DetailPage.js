@@ -175,9 +175,11 @@ define([
 			school.set('visible', schools.length > 1);
 		},
 
+		loadDeferred: null,
 		load: function(id) {
 			// this._form.getWidget('name').setValid(null);
-			return this.standbyDuring(this._form.load(id));
+			this.loadDeferred = this._form.load(id);
+			return this.standbyDuring(this.loadDeferred);
 		},
 
 		onClose: function(dn, objectType) {
