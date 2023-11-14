@@ -1,4 +1,4 @@
-#!/usr/share/ucs-test/runner pytest-3 -s -l -v
+#!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Imported users found using record_uid
 ## tags: [apptest,ucsschool,ucsschool_import1,logging]
@@ -116,10 +116,10 @@ class Test(CLI_Import_v2_Tester):
             self.assert_and_print(False, fn)
 
         self.log.info("*** Remove users %r...", person_list[::2])
-        # mark first person as removed
-        for person_a, person_b in person_list_pairs:
+        # marking every first person as removed (n mod m == 0)
+        for person_a in person_list[::2]:
             person_a.set_mode_to_delete()
-        # import only second person
+        # import only every second person (n mod m == 1)
         self.create_csv_file(
             person_list=person_list[1::2], mapping=config["csv"]["mapping"], fn_csv=fn_csv
         )
@@ -128,8 +128,17 @@ class Test(CLI_Import_v2_Tester):
         self.run_import(["-c", fn_config, "-i", fn_csv], fail_on_preexisting_pyhook=False)
         self.check_new_and_removed_users(0, 4)
 
-        for person in person_list:
-            person.verify()
+        for i, person in enumerate(person_list):
+            if i % 2 != 0:
+                person.verify()
+            else:
+                utils.verify_ldap_object(
+                    person.dn,
+                    expected_attr=None,
+                    strict=True,
+                    should_exist=False,
+                )
+
         for fn in (
             "pre-create",
             "post-create",
