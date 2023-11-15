@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (12.0.15) unstable; urgency=medium
+
+  * Bug #53624: Change icon for computers with no IP
+
+ -- Johannes Keiser <keiser@univention.de>  Wed, 15 Nov 2023 15:38:19 +0100
+
 ucs-school-umc-computerroom (12.0.14) unstable; urgency=medium
 
   * Bug #53624: empty ip address does not raise error
