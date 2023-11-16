@@ -8,6 +8,26 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-11-16:
+
+Released on 2023-11-16
+======================
+
+Source package *ucs-school-umc-groups* in version ``10.0.10``:
+
+* Fixed a bug where the email of a group in the UMC module "Administrate
+  workgroups" was incorrectly displayed as empty. This could lead to the email
+  being deleted when changes were saved (:uv:bug:`56589`).
+
+Source package *ucs-school-umc-computerroom* in version ``12.0.15``:
+
+* Instead of raising an error, a warning is displayed when computers inside of a
+  computer room are missing an IP address and the computer icon is colored
+  orange (:uv:bug:`53624`).
+
+* Computers without MAC addresses don't raise an error when opening the computer
+  room (:uv:bug:`53571`).
+
 .. _changelog-ucsschool-2023-10-25:
 
 Released on 2023-10-25
