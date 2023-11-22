@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.152) unstable; urgency=medium
+
+  * Bug 42373: Re-enabled and fixed 218_import-users_bad_config.py.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 22 Nov 2023 13:30:47 +0100
+
 ucs-test-ucsschool (7.3.151) unstable; urgency=medium
 
   * Bug 56589: Adjust 04_workgroups_with_email_addresses.py

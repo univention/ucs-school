@@ -1,3 +1,9 @@
+ucs-school-import (18.0.37) unstable; urgency=medium
+
+  * Bug #42373: Rerouting configuration errors to log file.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 08 Nov 2023 09:15:47 +0100
+
 ucs-school-import (18.0.36) unstable; urgency=medium
 
   * Bug #52167: Added UCR variables to registry script.

@@ -34,6 +34,7 @@
 
 import json
 import logging
+import os
 from typing import Any, Dict, List, Optional, Type  # noqa: F401
 
 from jsonschema import ValidationError, validate
@@ -47,6 +48,7 @@ from .utils.configuration_checks import run_configuration_checks
 from .utils.import_pyhook import run_import_pyhooks
 
 USER_IMPORT_SCHEMA_FILE = "/usr/share/ucs-school-import/schema/user_import_configuration_schema.json"
+CONFIGURATION_ERROR_LOG = "/var/log/univention/ucs-school-import/import-configuration-error.log"
 
 
 def setup_configuration(conffiles, **kwargs):  # type: (List[str], **str) -> ReadOnlyDict
@@ -97,6 +99,14 @@ class ConfigurationFile(object):
     def __init__(self, filename):  # type: (str) -> None
         self.filename = filename
         self.logger = logging.getLogger(__name__)
+        if not os.path.exists(CONFIGURATION_ERROR_LOG):
+            os.mknod(CONFIGURATION_ERROR_LOG)
+
+        err_handler = logging.FileHandler(CONFIGURATION_ERROR_LOG)
+        err_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+        self.err_logger = logging.getLogger("ConfigurationErrorLogger")
+        self.err_logger.setLevel(logging.INFO)
+        self.err_logger.addHandler(err_handler)
 
     def read(self):  # type: () -> Dict[str, Any]
         """
@@ -107,16 +117,21 @@ class ConfigurationFile(object):
         try:
             with open(self.filename, "rb") as fp:
                 return json.load(fp)
+
         except ValueError as ve:
-            raise InitialisationError(
+
+            error = InitialisationError(
                 "Error in configuration file {!r}: {}.".format(self.filename, ve),
                 log_traceback=False,
             )
+            self.err_logger.error("InitialisationError: {}".format(error))
         except IOError as exc:
-            raise InitialisationError(
-                "Error reading configuration file {!r} {}.".format(self.filename, exc),
+
+            error = InitialisationError(
+                "Error in configuration file {!r}: {}.".format(self.filename, exc),
                 log_traceback=False,
             )
+            self.err_logger.error("InitialisationError: {}".format(error))
 
     def write(self, conf):  # type: (str) -> None
         self.logger.info("Writing configuration to %r...", self.filename)

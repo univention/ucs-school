@@ -10,10 +10,7 @@
 ## versions:
 ##  4.1-0: skip
 ##  4.2-0: skip
-##  5.0-0: skip
-
-# This test should be disabled until
-# https://forge.univention.org/bugzilla/show_bug.cgi?id=42373 is fixed.
+##  5.0-0: fixed
 
 import copy
 import os
@@ -49,7 +46,7 @@ class Test(CLI_Import_v2_Tester):
         self.log.info("*** OK - error was expected: %r", exc.value)
         # look for error message in logfile
         msg = r"InitialisationError.*Error in configuration file '{}'".format(fn_config)
-        for line in open("/var/log/univention/ucs-school-import/workers-import.log"):
+        for line in open("/var/log/univention/ucs-school-import/import-configuration-error.log"):
             found = re.findall(msg, line)
             if found:
                 self.log.info("Found in logfile: %r", found[0])

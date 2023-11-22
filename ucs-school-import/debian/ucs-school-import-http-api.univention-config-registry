@@ -17,6 +17,7 @@ Variables: logrotate/ucs-school-import/workers-dryrun/.*
 Variables: logrotate/ucs-school-import/workers-import/.*
 Variables: logrotate/ucs-school-import/gunicorn_access/.*
 Variables: logrotate/ucs-school-import/gunicorn_error/.*
+Variables: logrotate/ucs-school-import/import-configuration-error/.*
 Variables: logrotate/compress
 Variables: logrotate/rotate/weeks
 Variables: logrotate/rotates
