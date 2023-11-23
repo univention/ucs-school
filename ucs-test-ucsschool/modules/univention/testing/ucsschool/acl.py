@@ -142,7 +142,7 @@ class Acl(object):
             assert err, "command %r was not executed successfully" % cmd
             try:
                 result = next(x for x in err.split("\n") if ("ALLOWED" in x or "DENIED" in x))
-            except IndexError:
+            except StopIteration:
                 result = None
                 print("Failed to parse slapacl output:", attr, err)
             if result:
