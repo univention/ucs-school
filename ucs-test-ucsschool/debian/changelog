@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.154) unstable; urgency=medium
+
+  * Issue id-broker-plugin#89: install test dependencies
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 29 Nov 2023 13:43:54 +0100
+
 ucs-test-ucsschool (7.3.153) unstable; urgency=medium
 
   * Issue #1161: fix test_ldap_acls_password_data
