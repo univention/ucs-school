@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.274) unstable; urgency=medium
+
+  * Issue #89: install test dependencies
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 29 Nov 2023 13:56:04 +0100
+
 ucs-test-ucsschool (6.0.273) unstable; urgency=low
 
  * Issue univention/ucsschool#1111: change tags to not skip test
