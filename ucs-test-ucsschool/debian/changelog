@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.155) unstable; urgency=medium
+
+  * Issue #89: remove pip install from id connector test
+
+ -- Tobias Wenzel <wenzel@univention.de>  Thu, 30 Nov 2023 19:27:24 +0100
+
 ucs-test-ucsschool (7.3.154) unstable; urgency=medium
 
   * Issue id-broker-plugin#89: install test dependencies
