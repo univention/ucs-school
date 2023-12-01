@@ -279,6 +279,31 @@ class SchoolBaseModule(Base):
         Returns a list of LDAP query result tuples (dn, attr) of all users
         given  `pattern`, `school` (search base) and `group`.
         """
+        users = []
+        # Bug #50231 prevent crashing
+        # Restore original behavior
+        for entry in self._users_ldap_no_exc(ldap_connection, school, group, user_type, pattern, attr):
+            userdn = entry["dn"]
+            attrs = entry["attrs"]
+            if isinstance(attrs, noObject):
+                raise noObject(
+                    "User with DN: {} was not found in the group {}."
+                    " Please make sure it is a valid UCS@school user and is member of all "
+                    "necessary groups. For more information visit https://help.univention.com"
+                    "/t/how-an-ucs-school-user-should-look-like/15630".format(userdn, group)
+                )
+            else:
+                users.append((userdn, attrs))
+        return users
+
+    def _users_ldap_no_exc(
+        self, ldap_connection, school, group=None, user_type=None, pattern="", attr=None
+    ):
+        # type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Dict[str,any]|any]  # noqa: E501
+        """
+        Returns a list of LDAP query result tuples (dn, attr) of all users
+        given  `pattern`, `school` (search base) and `group`.
+        """
         import ucsschool.lib.models
 
         if not user_type:
@@ -316,17 +341,27 @@ class SchoolBaseModule(Base):
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
                     )
+
                     try:
                         ldap_objs = ldap_connection.search(search_filter, base=userdn, attr=attr)
                     except noObject:
-                        raise noObject(
-                            "User with DN: {} was not found in the group {}."
-                            " Please make sure it is a valid UCS@school user and is member of all "
-                            "necessary groups. For more information visit https://help.univention.com"
-                            "/t/how-an-ucs-school-user-should-look-like/15630".format(userdn, group)
-                        )
+                        # Bug #50231 prevent crashing
+                        ldap_objs = [
+                            (
+                                userdn,
+                                noObject(
+                                    "User with DN: {} was not found in the group {}."
+                                    " Please make sure it is a valid UCS@school user"
+                                    " and is member of all "
+                                    "necessary groups. For more information visit https://help.univention.com"
+                                    "/t/how-an-ucs-school-user-should-look-like/15630".format(
+                                        userdn, group
+                                    )
+                                ),
+                            )
+                        ]
                     if len(ldap_objs) == 1:
-                        users.append(ldap_objs[0])
+                        users.append({"dn": ldap_objs[0][0], "attrs": ldap_objs[0][1]})
                     # else:
                     # either: 'Possible group inconsistency detected: %r contains member %r but member
                     # was not found in LDAP' % (group, userdn))
@@ -346,7 +381,10 @@ class SchoolBaseModule(Base):
                         )
                     )
                 )
-                users.extend(ldap_connection.search(filter=filter_s, attr=attr))
+                # Bug #50231 prevent crashing
+                # previous list extend needs to be reformatted
+                for dn, attr in ldap_connection.search(filter=filter_s, attr=attr):
+                    users.append({"dn": dn, "attrs": attr})
         return users
 
 

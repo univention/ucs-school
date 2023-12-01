@@ -76,21 +76,28 @@ class Instance(SchoolBaseModule):
         klass = request.options.get("class")
         if klass in (None, "None"):
             klass = None
-        result = [
-            {
-                "id": dn,
-                "name": Display.user_ldap(attr),
-                "passwordexpiry": self.passwordexpiry_to_days(unmapPasswordExpiry(attr)),
-            }
-            for dn, attr in self._users_ldap(
-                ldap_user_read,
-                request.options["school"],
-                group=klass,
-                user_type=request.flavor,
-                pattern=request.options.get("pattern", ""),
-                attr=["givenName", "sn", "shadowLastChange", "shadowMax", "uid"],
-            )
-        ]
+        result = []
+        # Bug 50231 prevent crashing
+        for entry in self._users_ldap_no_exc(
+            ldap_user_read,
+            request.options["school"],
+            group=klass,
+            user_type=request.flavor,
+            pattern=request.options.get("pattern", ""),
+            attr=["givenName", "sn", "shadowLastChange", "shadowMax", "uid"],
+        ):
+            dn = entry["dn"]
+            attrs = entry["attrs"]
+            # internally skipping the passed exception
+            if not isinstance(attrs, udm_exceptions.noObject):
+                result.append(
+                    {
+                        "id": dn,
+                        "name": Display.user_ldap(attrs),
+                        "passwordexpiry": self.passwordexpiry_to_days(unmapPasswordExpiry(attrs)),
+                    }
+                )
+
         self.finished(request.id, result)
 
     @sanitize(

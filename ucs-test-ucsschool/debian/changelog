@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.156) unstable; urgency=medium
+
+  * Bug #50231: Prevent crashing of module when reading non-school member.
+
+ -- Alexander Steffen <steffen@univention.de>  Fri, 01 Dec 2023 09:25:22 +0100
+
 ucs-test-ucsschool (7.3.155) unstable; urgency=medium
 
   * Issue #89: remove pip install from id connector test

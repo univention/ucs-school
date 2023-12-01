@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.42) unstable; urgency=medium
+
+  * Bug #50231: Prevent crashing of password module.
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 30 Nov 2023 14:01:23 +0100
+
 ucs-school-lib (13.0.41) unstable; urgency=medium
 
   * Bug #56390: replace deprecated UMC/python-notifier APIs with public

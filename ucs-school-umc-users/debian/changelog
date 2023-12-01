@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.8) unstable; urgency=medium
+
+  * Bug #50231: Prevent crashing of password module.
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 30 Nov 2023 14:03:19 +0100
+
 ucs-school-umc-users (16.0.7) unstable; urgency=medium
 
   * Bug #55773: fix typo in german translation of "name" field description
