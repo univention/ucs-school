@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix: 18.0.37
+fix: 18.0.38
 desc: |
  * Errors which occur during the configuration of ucs-school-import are now properly written to a logfile (Bug #42373).
 bug: [42373]
