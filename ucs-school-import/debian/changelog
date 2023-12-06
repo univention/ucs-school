@@ -1,3 +1,9 @@
+ucs-school-import (18.0.38) unstable; urgency=medium
+
+  * Bug #42373: Fixing configuration reroute.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 06 Dec 2023 14:21:51 +0100
+
 ucs-school-import (18.0.37) unstable; urgency=medium
 
   * Bug #42373: Rerouting configuration errors to log file.

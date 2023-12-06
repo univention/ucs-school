@@ -34,7 +34,6 @@
 
 import json
 import logging
-import os
 from typing import Any, Dict, List, Optional, Type  # noqa: F401
 
 from jsonschema import ValidationError, validate
@@ -99,8 +98,6 @@ class ConfigurationFile(object):
     def __init__(self, filename):  # type: (str) -> None
         self.filename = filename
         self.logger = logging.getLogger(__name__)
-        if not os.path.exists(CONFIGURATION_ERROR_LOG):
-            os.mknod(CONFIGURATION_ERROR_LOG)
 
         err_handler = logging.FileHandler(CONFIGURATION_ERROR_LOG)
         err_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
