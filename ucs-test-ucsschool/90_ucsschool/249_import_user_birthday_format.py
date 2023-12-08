@@ -2,6 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: test acceptence/conversion of birthday formats
 ## tags: [apptest,ucsschool,ucsschool_import1, unit-test]
+## roles: [domaincontroller_master]
 ## exposure: safe
 ## packages:
 ##   - ucs-school-import

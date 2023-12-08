@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.157) unstable; urgency=medium
+
+  * Bug #42373: Write configuration errors to logfile.
+
+ -- Alexander Steffen <steffen@univention.de>  Fri, 08 Dec 2023 08:56:29 +0100
+
 ucs-test-ucsschool (7.3.156) unstable; urgency=medium
 
   * Bug #50231: Prevent crashing of module when reading non-school member.
