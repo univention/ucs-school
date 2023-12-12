@@ -51,6 +51,7 @@ from ucsschool.lib.models.utils import (
 from ..configuration import Configuration, setup_configuration
 from ..exceptions import InitialisationError
 from ..factory import setup_factory
+from ..reader.csv_reader import CsvReader
 from .parse_user_import_cmdline import ParseUserImportCmdline
 
 CENTRAL_LOG_DIR = "/var/log/univention/ucs-school-import"
@@ -199,9 +200,23 @@ class CommandLine(object):
             "Import started by %s (class %r).", self.import_initiator, self.__class__.__name__
         )
 
-        with open(self.config["input"]["filename"]) as fin:
-            line = fin.readline()
-            self.logger.info("First line of %r:\n%r", self.config["input"]["filename"], line)
+        filename = self.config["input"]["filename"]
+        encoding = CsvReader.get_encoding(filename)
+        if encoding == "binary":
+            self.logger.warning(
+                f"File {filename} is in a binary format. A custom reader class will be needed."
+            )
+        else:
+            try:
+                with open(filename, encoding=encoding) as fin:
+                    line = fin.readline()
+                    self.logger.info("First line of %r:\n%r", self.config["input"]["filename"], line)
+            except (LookupError, UnicodeDecodeError):
+                self.logger.warning(
+                    f"Detected encoding {encoding} is not a valid default encoding."
+                    f" If no compatible custom reader class is used,"
+                    f" the program will fail in subsequent steps."
+                )
 
         self.logger.info("------ UCS@school import tool configured ------")
         self.logger.info("Used configuration files: %s.", self.config.conffiles)

@@ -16,7 +16,7 @@ In ihm stehen Schlüssel-Wert-Paare: CSV-Spalte → Benutzerattribut.
 Folgendes Beispiel zeigt, wie der Import von drei Schülern an zwei Schulen
 konfiguriert werden kann. Die Schulverwaltungssoftware hat folgendes CSV
 produziert (anderes Beispiel :download:`hier zum Download
-</user_new_example.csv>`, UTF-16, Tabulator getrennt):
+</user_new_example.csv>`, UTF-8, Tabulator getrennt):
 
 .. code-block::
 

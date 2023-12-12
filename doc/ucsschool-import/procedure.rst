@@ -95,6 +95,18 @@ Die Importsoftware kann gegenwärtig Daten nur aus
 einlesen. Wie eine Unterstützung für weitere Dateiformate (z.B. JSON,
 XML etc.) hinzugefügt werden kann, kann :ref:`extending` entnommen werden.
 
+Kodierung
+=========
+
+Momentan sind die folgenden Kodierungen unterstützt:
+
+* UTF-8
+* ISO-8859-1
+* ASCII
+
+Wie für die Datenformate gilt auch hier:
+Unterstützung für weitere Kodierungen kann hinzugefügt werden, siehe :ref:`extending`.
+
 .. _procedure-assignment:
 
 Zuordnung von Benutzern des Quellverzeichnisses zu |UCSUAS|-Benutzern

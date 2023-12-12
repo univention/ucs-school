@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.158) unstable; urgency=medium
+
+  * Issue #1142: Importer: Test impact of input file encodings.
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 12 Dec 2023 14:23:32 +0100
+
 ucs-test-ucsschool (7.3.157) unstable; urgency=medium
 
   * Bug #42373: Write configuration errors to logfile.
