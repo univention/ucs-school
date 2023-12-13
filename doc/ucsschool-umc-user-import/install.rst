@@ -135,11 +135,16 @@ Beispieldaten für Testläufe können mit Hilfe eines Skripts erzeugt werden:
 .. code-block::
 
    $ /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
-     --httpapi \                 # Format passend zu user_import_http-api.json erzeugen
-     --students 20 \             # Anzahl Benutzer, alternativ: --staff --teachers --staffteachers
-     --classes 2 \               # Anzahl zu erzeugender Klassen
-     --create-email-addresses \  # E-Mail-Adressen erzeugen
-     SchuleEins                  # Schule (OU) in die importiert werden soll
+     # Format passend zu user_import_http-api.json erzeugen \
+     --httpapi \
+     # Anzahl Benutzer, alternativ: --staff --teachers --staffteachers \
+     --students 20 \
+     # Anzahl zu erzeugender Klassen \
+     --classes 2 \
+     # E-Mail-Adressen erzeugen \
+     --create-email-addresses \
+     # Schule (OU) in die importiert werden soll \
+       SchuleEins
 
 
 Die erzeugte Datei heißt :samp:`test_users_{$DATUM_$UHRZEIT}.csv` und passt zur
