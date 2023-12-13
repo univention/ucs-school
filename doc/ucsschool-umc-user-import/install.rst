@@ -103,7 +103,6 @@ Das Format der CSV-Datei ist anpassbar. Generell gilt aber folgendes:
 
      "Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"
 
-
 * Daten in Spalten sind in doppelten Anführungszeichen eingeschlossen.
 
 * Die Spalten sind durch Komma voneinander getrennt.
@@ -130,22 +129,41 @@ Das Format der CSV-Datei ist anpassbar. Generell gilt aber folgendes:
    unterschieden, finden sich im :uv:kb:`Knowledge Base Artikel "How a
    UCS@school user should look like" <15630>`.
 
+.. program:: /usr/share/ucs-school-import/scripts/ucs-school-testuser-import
+
 Beispieldaten für Testläufe können mit Hilfe eines Skripts erzeugt werden:
 
 .. code-block::
 
    $ /usr/share/ucs-school-import/scripts/ucs-school-testuser-import \
-     # Format passend zu user_import_http-api.json erzeugen \
      --httpapi \
-     # Anzahl Benutzer, alternativ: --staff --teachers --staffteachers \
      --students 20 \
-     # Anzahl zu erzeugender Klassen \
      --classes 2 \
-     # E-Mail-Adressen erzeugen \
      --create-email-addresses \
-     # Schule (OU) in die importiert werden soll \
-       SchuleEins
+     SchuleEins
 
+Die Optionen für :file:`ucs-school-testuser-import` haben folgende Bedeutungen:
+
+.. option:: --httpapi
+
+   Erzeugt das Format passend zu :file:`user_import_http-api.json`.
+
+.. option:: --students
+
+   Gibt die Anzahl der Benutzer an.
+   Alternativ können die Optionen ``--staff``, ``--teachers``, oder ``--staffteachers`` verwendet werden.
+
+.. option:: --classes
+
+   Gibt die Anzahl der zu erzeugenden Klassen an.
+
+.. option:: --create-email-addresses
+
+   Gibt an, ob E-Mailadressen für die Benutzer erzeugt werden sollen.
+
+``SchuleEins``
+   Das Argument gibt die Schule über ihre OU an,
+   für die Daten importiert werden sollen.
 
 Die erzeugte Datei heißt :samp:`test_users_{$DATUM_$UHRZEIT}.csv` und passt zur
 Konfiguration in
