@@ -3,7 +3,7 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-import
-fix: 18.0.39
+fix: 18.0.40
 desc: |
  * Errors which occur during the configuration of ucs-school-import are now properly written to a logfile (Bug #42373).
  * Import does no longer fail if a binary input file is provided and a compatible reader class exists (Bug #56728).

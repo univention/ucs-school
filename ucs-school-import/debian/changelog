@@ -1,3 +1,9 @@
+ucs-school-import (18.0.40) unstable; urgency=medium
+
+  * Bug #56728: Remove Python 2 incompatible f-strings
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 13 Dec 2023 14:21:28 +0100
+
 ucs-school-import (18.0.39) unstable; urgency=medium
 
   * Bug #56728: Fix logging of CSV header for non-utf-8 files
