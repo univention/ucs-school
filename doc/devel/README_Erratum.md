@@ -16,10 +16,10 @@ This document describes how to prepare and execute an Errata Release for the UCS
   - [ ] Verify you can do an errata release, not a full release
   - [ ] Verify Jenkins tests
   - [ ] Verify YAML advisories
-- [ ] Update the changelog
 - [ ] Update Test Appcenter
 - [ ] Publish to production App Center
-- [ ] Publish manual
+- [ ] Update the changelog
+- [ ] Publish changelog and manual
 - [ ] Update public documentation
   - [ ] Update release wiki
   - [ ] Send announcement email
@@ -40,27 +40,6 @@ If you don't have one already, create a [UCS@school multi-server env](https://je
 ### Check packages for readiness
 
 Before starting the release, [check packages for readiness](README_check_release_packages.md).
-
-## Update Changelog
-
-### Move the advisories to published
-
-You will need the list of YAML files you edited in the [Verify YAML Advisories](README_check_release_packages.md#verify-yaml-advisories) step.
-
-In your local `ucsschool` repository, move the YAML advisories into the `doc/errata/published` folder, renamed with the current date:
-
-```shell
-cd doc/errata/staging
-release_files=( "ucs-school-lib.yaml" "ucs-school-umc-users.yaml" )
-for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
-```
-
-Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
-
-### Generate the changelog
-
-Open up a second terminal for running docker commands.
-Then follow the instructions in the [changelog README](../ucsschool-changelog/README.md).
 
 ## Update Test AppCenter
 
@@ -83,6 +62,27 @@ cd /mnt/omar/vmwares/mirror/appcenter
 ./copy_from_appcenter.test.sh 5.0 ucsschool_20230802094418  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
+
+## Update Changelog
+
+### Move the advisories to published
+
+You will need the list of YAML files you edited in the [Verify YAML Advisories](README_check_release_packages.md#verify-yaml-advisories) step.
+
+In your local `ucsschool` repository, move the YAML advisories into the `doc/errata/published` folder, renamed with the current date:
+
+```shell
+cd doc/errata/staging
+release_files=( "ucs-school-lib.yaml" "ucs-school-umc-users.yaml" )
+for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
+```
+
+Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
+
+### Generate the changelog
+
+Open up a second terminal for running docker commands.
+Then follow the instructions in the [changelog README](../ucsschool-changelog/README.md).
 
 ## Publish UCS@school manual
 
