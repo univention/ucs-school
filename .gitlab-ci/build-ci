@@ -22,6 +22,10 @@ doc_job () { # <extends> [<suffix> [<language>]]
     echo '  rules:'
     echo '    - changes:'
     echo "      - ${path}/**/*"
+    if [ "$pkg" != "ucsschool-changelog" ]
+    then
+        echo '      - doc/ucsschool-changelog/**/*'
+    fi
     echo '      - doc/bibliography-de.bib'
     echo '      - doc/substitutions-de.txt'
 }
