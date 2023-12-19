@@ -8,6 +8,31 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2023-12-19:
+
+Released on 2023-12-19
+======================
+
+Source package *ucs-school-lib* in version ``13.0.42``:
+
+* Fixed a bug that would crash the password reset module within the UMC when a
+  teacher tries to read a class, in which there exists a member that is not a
+  member of the teachers school (:uv:bug:`50231`).
+
+Source package *ucs-school-import* in version ``18.0.40``:
+
+* Errors which occur during the configuration of ``ucs-school-import`` are now
+  properly written to a log file (:uv:bug:`42373`).
+
+* Import no longer fails if a binary input file is provided and a compatible
+  reader class exists (:uv:bug:`56728`).
+
+Source package *ucs-school-umc-users* in version ``16.0.8``:
+
+* Fixed a bug that would crash the password reset module within the UMC when a teacher tries to read a class, in which there exists a member that is not a
+  member of the teachers school (:uv:bug:`50231`).
+
+
 .. _changelog-ucsschool-2023-11-16:
 
 Released on 2023-11-16
