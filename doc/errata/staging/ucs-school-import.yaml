@@ -1,0 +1,9 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-import
+fix: 18.0.41
+desc: |
+ * When importing a computer with an IP address starting with "255.", the user gets a warning that is logged to the console (Bug #55376).
+bug: [55376]

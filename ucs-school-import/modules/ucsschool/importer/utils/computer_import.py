@@ -33,18 +33,29 @@ def call_hook(lo, meth_name, obj, line):  # type: (LoType, str, SchoolComputer, 
 
 
 def get_ip_iface(ip_address):  # type: (str) -> IPv4Interface
+    ip_address = ip_address.strip()
     try:
         ip_iface = IPv4Interface("%s" % ip_address)
     except AddressValueError as exc:
-        raise ComputerImportError("%s is not a valid ip address" % (exc,))
+        raise ComputerImportError("%s is not a valid IP address" % (exc,))
     except NetmaskValueError as exc:
         raise ComputerImportError("%s is not a valid netmask" % (exc,))
+
+    if ip_address.startswith("255"):
+        if ip_address == "255.255.255.255":
+            print(
+                "WARNING: The IP address %s is the local broadcast address and can not be used as an IP"
+                " address." % ip_address
+            )
+        print(
+            "WARNING: The IP address %s starting with '255.' indicates a subnet mask and should not be"
+            " used as an IP address." % ip_address
+        )
 
     if "/" not in ip_address:
         ip_iface = IPv4Interface("%s/%s" % (ip_address, get_default_prefixlen()))
         print(
-            "WARNING: no netmask specified for ip address %s using %s"
-            % (ip_iface.with_prefixlen, ip_iface.netmask)
+            "WARNING: no netmask specified for IP address %s using %s" % (ip_address, ip_iface.netmask)
         )
     return ip_iface
 
