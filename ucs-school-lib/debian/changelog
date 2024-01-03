@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.43) unstable; urgency=medium
+
+  * Bug #56938: Fix variable overwrite in function _users_ldap_no_exc
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 02 Jan 2024 11:03:24 +0100
+
 ucs-school-lib (13.0.42) unstable; urgency=medium
 
   * Bug #50231: Prevent crashing of password module.

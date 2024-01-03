@@ -383,8 +383,8 @@ class SchoolBaseModule(Base):
                 )
                 # Bug #50231 prevent crashing
                 # previous list extend needs to be reformatted
-                for dn, attr in ldap_connection.search(filter=filter_s, attr=attr):
-                    users.append({"dn": dn, "attrs": attr})
+                for dn, _attr in ldap_connection.search(filter=filter_s, attr=attr):
+                    users.append({"dn": dn, "attrs": _attr})
         return users
 
 
