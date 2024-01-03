@@ -3,7 +3,7 @@
 # Univention Management Console
 #  Automatic UCS@school user import
 #
-# Copyright 2017-2023 Univention GmbH
+# Copyright 2017-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

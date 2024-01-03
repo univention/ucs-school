@@ -2,7 +2,7 @@
 #
 # UCS@school join hook
 #
-# Copyright 2018-2023 Univention GmbH
+# Copyright 2018-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

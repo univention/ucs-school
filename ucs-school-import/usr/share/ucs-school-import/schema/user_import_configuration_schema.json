@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"$comment": "Univention UCS@school Import configuration schema. License: GNU AGPL v3, Copyright 2021-2023 Univention GmbH",
+	"$comment": "Univention UCS@school Import configuration schema. License: GNU AGPL v3, Copyright 2021-2024 Univention GmbH",
 	"title": "user-import",
 	"description": "Configuration of a user-import",
 	"type": "object",

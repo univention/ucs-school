@@ -4,7 +4,7 @@
 # Univention Management Console
 #  Starts a new exam for a specified computer room
 #
-# Copyright 2013-2023 Univention GmbH
+# Copyright 2013-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

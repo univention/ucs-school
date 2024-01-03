@@ -3,7 +3,7 @@
 # UCS test
 """API for testing UCS@school and cleaning up after performed tests"""
 
-# Copyright 2014-2023 Univention GmbH
+# Copyright 2014-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

@@ -3,7 +3,7 @@
 # Univention Directory Listener Module Pupilgroups
 #  listener module: pupilgroups
 #
-# Copyright 2008-2023 Univention GmbH
+# Copyright 2008-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

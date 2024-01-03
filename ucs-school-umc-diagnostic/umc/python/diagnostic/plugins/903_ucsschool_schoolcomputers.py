@@ -3,7 +3,7 @@
 #
 # UCS@school Diagnosis Module
 #
-# Copyright 2019-2023 Univention GmbH
+# Copyright 2019-2024 Univention GmbH
 #
 # http://www.univention.de/
 #

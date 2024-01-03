@@ -3,7 +3,7 @@
 #
 # UCS@school python lib
 #
-# Copyright 2012-2023 Univention GmbH
+# Copyright 2012-2024 Univention GmbH
 #
 # http://www.univention.de/
 #
