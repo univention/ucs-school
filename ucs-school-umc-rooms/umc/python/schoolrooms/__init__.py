@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Manage room and their associated computers
 #
-# Copyright 2012-2021 Univention GmbH
+# Copyright 2012-2024 Univention GmbH
 #
 # http://www.univention.de/
 #
