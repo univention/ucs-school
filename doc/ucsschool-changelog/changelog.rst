@@ -8,6 +8,17 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-01-04:
+
+Released on 2024-01-04
+======================
+
+Source package *ucs-school-lib* in version ``13.0.43``:
+
+* Fixed a bug which lead to an erroneous LDAP search during usage of the
+  password reset module (:uv:bug:`56938`).
+
+
 .. _changelog-ucsschool-2023-12-19:
 
 Released on 2023-12-19

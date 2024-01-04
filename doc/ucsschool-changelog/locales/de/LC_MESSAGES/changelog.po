@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v4 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 14:00+0000\n"
+"POT-Creation-Date: 2024-01-04 12:44+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,14 +22,30 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2024-01-04"
+msgstr "Veröffentlicht am 4. Januar 2024"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-lib* in version ``13.0.43``:"
+msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.43``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"Fixed a bug which lead to an erroneous LDAP search during usage of the "
+"password reset module (:uv:bug:`56938`)."
+msgstr ""
+"Es wurde ein Fehler behoben, der zu einer fehlerhaften LDAP-Suche"
+" bei der Verwendung des UMC Passwörter Moduls führte. (:uv:bug:`56938`)."
+
+#: ../../changelog.rst:25
 msgid "Released on 2023-12-19"
 msgstr "Veröffentlicht am 19. Dezember 2023"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:27
 msgid "Source package *ucs-school-lib* in version ``13.0.42``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.42``:"
 
-#: ../../changelog.rst:18 ../../changelog.rst:32
+#: ../../changelog.rst:29 ../../changelog.rst:43
 msgid ""
 "Fixed a bug that would crash the password reset module within the UMC "
 "when a teacher tries to read a class, in which there exists a member that"
@@ -40,11 +56,11 @@ msgstr ""
 "es ein Mitglied gibt, das nicht Mitglied der Schule des Lehrers ist "
 "(:uv:bug:`50231`)."
 
-#: ../../changelog.rst:22
+#: ../../changelog.rst:33
 msgid "Source package *ucs-school-import* in version ``18.0.40``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.40``:"
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:35
 msgid ""
 "Errors which occur during the configuration of ``ucs-school-import`` are "
 "now properly written to a log file (:uv:bug:`42373`)."
@@ -52,7 +68,7 @@ msgstr ""
 "Fehler, die bei der Konfiguration von ``ucs-school-import`` auftreten, "
 "werden nun korrekt in eine Logdatei geschrieben (:uv:bug:`42373`)."
 
-#: ../../changelog.rst:27
+#: ../../changelog.rst:38
 msgid ""
 "Import no longer fails if a binary input file is provided and a "
 "compatible reader class exists (:uv:bug:`56728`)."
@@ -61,19 +77,19 @@ msgstr ""
 "verwendet wird und eine kompatible benutzerdefinierte ``Reader``-Klasse "
 "existiert (:uv:bug:`56728`)."
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:41
 msgid "Source package *ucs-school-umc-users* in version ``16.0.8``:"
 msgstr "Quellpaket *ucs-school-umc-helpdesk* in Version ``16.0.8``:"
 
-#: ../../changelog.rst:39
+#: ../../changelog.rst:50
 msgid "Released on 2023-11-16"
 msgstr "Veröffentlicht am 16. November 2023"
 
-#: ../../changelog.rst:41
+#: ../../changelog.rst:52
 msgid "Source package *ucs-school-umc-groups* in version ``10.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-groups* in Version ``10.0.10``:"
 
-#: ../../changelog.rst:43
+#: ../../changelog.rst:54
 msgid ""
 "Fixed a bug where the email of a group in the UMC module \"Administrate "
 "workgroups\" was incorrectly displayed as empty. This could lead to the "
@@ -84,11 +100,11 @@ msgstr ""
 " Dies konnte dazu führen, dass die E-Mail beim Speichern von Änderungen "
 "gelöscht wurde (:uv:bug:`56589`)."
 
-#: ../../changelog.rst:47
+#: ../../changelog.rst:58
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.15``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.15``:"
 
-#: ../../changelog.rst:49
+#: ../../changelog.rst:60
 msgid ""
 "Instead of raising an error, a warning is displayed when computers inside"
 " of a computer room are missing an IP address and the computer icon is "
@@ -98,7 +114,7 @@ msgstr ""
 "in einem Computerraum eine IP-Adresse fehlt, und das Computersymbol wird "
 "orange gefärbt (:uv:bug:`53624`)."
 
-#: ../../changelog.rst:53
+#: ../../changelog.rst:64
 msgid ""
 "Computers without MAC addresses don't raise an error when opening the "
 "computer room (:uv:bug:`53571`)."
@@ -106,23 +122,23 @@ msgstr ""
 "Computer ohne MAC-Adresse führen zu keiner Fehlermeldung beim Öffnen des "
 "Computerraums (:uv:bug:`53571`)."
 
-#: ../../changelog.rst:59
+#: ../../changelog.rst:70
 msgid "Released on 2023-10-25"
 msgstr "Veröffentlicht am 25. Oktober 2023"
 
-#: ../../changelog.rst:61
+#: ../../changelog.rst:72
 msgid "Source package *ucs-school-umc-wizards* in version ``12.0.14``:"
 msgstr "Quellpaket *ucs-school-umc-wizards* in Version ``12.0.14``:"
 
-#: ../../changelog.rst:63 ../../changelog.rst:78 ../../changelog.rst:84
-#: ../../changelog.rst:90 ../../changelog.rst:100 ../../changelog.rst:106
-#: ../../changelog.rst:137
+#: ../../changelog.rst:74 ../../changelog.rst:89 ../../changelog.rst:95
+#: ../../changelog.rst:101 ../../changelog.rst:111 ../../changelog.rst:117
+#: ../../changelog.rst:148
 msgid "The coding style has been improved (:uv:bug:`55751`)."
 msgstr "Der Formatierungsstil wurde verbessert (:uv:bug:`55751`)."
 
-#: ../../changelog.rst:65 ../../changelog.rst:69 ../../changelog.rst:80
-#: ../../changelog.rst:86 ../../changelog.rst:92 ../../changelog.rst:96
-#: ../../changelog.rst:102 ../../changelog.rst:108 ../../changelog.rst:114
+#: ../../changelog.rst:76 ../../changelog.rst:80 ../../changelog.rst:91
+#: ../../changelog.rst:97 ../../changelog.rst:103 ../../changelog.rst:107
+#: ../../changelog.rst:113 ../../changelog.rst:119 ../../changelog.rst:125
 msgid ""
 "Deprecated UMC APIs have been replaced with public UMC APIs "
 "(:uv:bug:`56390`)."
@@ -130,15 +146,15 @@ msgstr ""
 "Veraltete UMC APIs wurden mit öffentlichen UMC APIs ersetzt "
 "(:uv:bug:`56390`)."
 
-#: ../../changelog.rst:67
+#: ../../changelog.rst:78
 msgid "Source package *ucs-school-umc-printermoderation* in version ``17.1.4``:"
 msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``17.1.4``:"
 
-#: ../../changelog.rst:71
+#: ../../changelog.rst:82
 msgid "Source package *ucs-school-umc-lists* in version ``3.0.9``:"
 msgstr "Quellpaket *ucs-school-umc-lists* in Version ``3.0.9``:"
 
-#: ../../changelog.rst:73
+#: ../../changelog.rst:84
 msgid ""
 "The CSV files for the recommended export function are now properly "
 "formatted (:uv:bug:`56403`)."
@@ -146,55 +162,55 @@ msgstr ""
 "Die CSV Dateien der empfohlenen Exportfunktion werden jetzt korrekt "
 "formatiert (:uv:bug:`56403`)."
 
-#: ../../changelog.rst:76
+#: ../../changelog.rst:87
 msgid "Source package *ucs-school-umc-installer* in version ``8.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-installer* in Version ``8.0.10``:"
 
-#: ../../changelog.rst:82
+#: ../../changelog.rst:93
 msgid "Source package *ucs-school-umc-import* in version ``3.0.7``:"
 msgstr "Quellpaket *ucs-school-umc-import* in Version ``3.0.7``:"
 
-#: ../../changelog.rst:88
+#: ../../changelog.rst:99
 msgid "Source package *ucs-school-umc-helpdesk* in version ``16.0.7``:"
 msgstr "Quellpaket *ucs-school-umc-helpdesk* in Version ``16.0.7``:"
 
-#: ../../changelog.rst:94
+#: ../../changelog.rst:105
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.10``:"
 
-#: ../../changelog.rst:98
+#: ../../changelog.rst:109
 msgid "Source package *ucs-school-umc-distribution* in version ``18.0.8``:"
 msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.8``:"
 
-#: ../../changelog.rst:104
+#: ../../changelog.rst:115
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.13``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.13``:"
 
-#: ../../changelog.rst:110
+#: ../../changelog.rst:121
 msgid "Source package *ucs-school-lib* in version ``13.0.41``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.41``:"
 
-#: ../../changelog.rst:112
+#: ../../changelog.rst:123
 msgid "Added missing UCR variable descriptions (:uv:bug:`52844`)."
 msgstr "Fehlende UCR Variable Beschreibungen wurden hinzugefügt (:uv:bug:`52844`)."
 
-#: ../../changelog.rst:116
+#: ../../changelog.rst:127
 msgid "Source package *ucs-school-import* in version ``18.0.36``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.36``:"
 
-#: ../../changelog.rst:118
+#: ../../changelog.rst:129
 msgid "Added rotation for importer worker logs (:uv:bug:`52167`)."
 msgstr "Log Rotation wurde für Importer `worker` hinzugefügt (:uv:bug:`52167`)."
 
-#: ../../changelog.rst:123
+#: ../../changelog.rst:134
 msgid "Released on 2023-09-12"
 msgstr "Veröffentlicht am 12. September 2023"
 
-#: ../../changelog.rst:125
+#: ../../changelog.rst:136
 msgid "Source package *ucs-school-import* in version ``18.0.33``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.33``:"
 
-#: ../../changelog.rst:127
+#: ../../changelog.rst:138
 msgid ""
 "The SiSoPi user import now keeps class memberships for other schools. "
 "(:uv:bug:`56340`)"
@@ -202,15 +218,15 @@ msgstr ""
 "Der SiSoPi-Benutzerimport behält nun die Klassenmitgliedschaften für "
 "andere Schulen bei. (:uv:bug:`56340`)"
 
-#: ../../changelog.rst:133
+#: ../../changelog.rst:144
 msgid "Released on 2023-08-02"
 msgstr "Veröffentlicht am 2. August 2023"
 
-#: ../../changelog.rst:135
+#: ../../changelog.rst:146
 msgid "Source package *ucs-school-umc-diagnostic* in version ``2.0.15``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``2.0.15``:"
 
-#: ../../changelog.rst:139
+#: ../../changelog.rst:150
 msgid ""
 "Added a new system diagnostic feature: Existing UCS@school usernames will"
 " be checked for validity. Warnings are issued if deprecated or "
@@ -222,11 +238,11 @@ msgstr ""
 "nicht unterstützte Benutzernamen ausgegeben. (:uv:bug:`56152`, "
 ":uv:bug:`55751`)"
 
-#: ../../changelog.rst:143
+#: ../../changelog.rst:154
 msgid "Source package *ucs-school-lib* in version ``13.0.39``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.39``:"
 
-#: ../../changelog.rst:145
+#: ../../changelog.rst:156
 msgid ""
 "The UCR variable ``ucsschool/validation/username/windows-check`` has been"
 " added and can be used to control the username validation with respect to"
