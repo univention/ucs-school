@@ -338,7 +338,7 @@ def check_mandatory_groups_exist(school=None):  # type: (str) -> Dict[str, List[
                 escape_dn_chars(ou), ldap_base
             ),
             "cn=OU{}-Klassenarbeit,cn=ucsschool,cn=groups,{}".format(escape_dn_chars(ou), ldap_base),
-            "cn=admins-{},cn=ouadmins,cn=groups,{}".format(escape_dn_chars(ou), ldap_base),
+            search_base.admins_group,
         ]
         for mandatory_group in mandatory_groups:
             try:

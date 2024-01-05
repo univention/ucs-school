@@ -1,3 +1,9 @@
+ucs-school-lib (13.0.44) unstable; urgency=medium
+
+  * Bug #55884: Fix consistency check for non default admins group prefix
+
+ -- Julian Helms <helms@univention.de>  Tue, 30 Jan 2024 12:49:38 +0100
+
 ucs-school-lib (13.0.43) unstable; urgency=medium
 
   * Bug #56938: Fix variable overwrite in function _users_ldap_no_exc
