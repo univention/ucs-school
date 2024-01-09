@@ -359,15 +359,18 @@ class UCSTestSchool(object):
             # Otherwise the s4 connector can get confused.
             utils.wait_for_replication()
         # remove OU specific groups
+        # Ensure the actual admins group prefix gets loaded
+        self.ucr.load()
+        admin_group_prefix = self.ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
         group_dns = [
-            grpdn % {"ou": ou_name, "basedn": self.ucr["ldap/base"]}
+            grpdn % {"ou": ou_name, "basedn": self.ucr["ldap/base"], "agp": admin_group_prefix}
             for grpdn in (
                 "cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
                 "cn=OU%(ou)s-Member-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
                 "cn=OU%(ou)s-Klassenarbeit,cn=ucsschool,cn=groups,%(basedn)s",
                 "cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
                 "cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s",
-                "cn=admins-%(ou)s,cn=ouadmins,cn=groups,%(basedn)s",
+                "cn=%(agp)s%(ou)s,cn=ouadmins,cn=groups,%(basedn)s",
             )
         ]
         # remove OU recursively
@@ -929,8 +932,10 @@ class UCSTestSchool(object):
         """Accepts same arguments as :py:func:`create_user()`."""
         schools = schools if schools else [ou_name]
         assert ou_name in schools
+        admin_group_prefix = lib_ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
         groups = [
-            u"cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, self.LDAP_BASE) for school in schools
+            "cn=%s%s,cn=ouadmins,cn=groups,%s" % (admin_group_prefix, school, self.LDAP_BASE)
+            for school in schools
         ]
         if is_staff is None:
             is_staff = random.choice((True, False))
@@ -997,7 +1002,7 @@ class UCSTestSchool(object):
         password="univention",  # type: Optional[str]
     ):  # type: (...) -> Tuple[str, str]
         position = "cn=admins,cn=users,%s" % (self.get_ou_base_dn(ou_name))
-        groups = [u"cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
+        groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
         if username is None:
             username = uts.random_username()
         kwargs = {
@@ -1685,9 +1690,10 @@ class OUCloner(object):
             )
         ]
         # 00_inconsistent_naming: cn=admins-$ou <- "ou" lowercase
+        admin_group_prefix = self.ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
         group_dns.append(
-            "cn=admins-{ou},cn=ouadmins,cn=groups,{basedn}".format(
-                ou=ori_ou.lower(), basedn=self.lo.base
+            "cn={admin_group_prefix}{ou},cn=ouadmins,cn=groups,{basedn}".format(
+                admin_group_prefix=admin_group_prefix, ou=ori_ou.lower(), basedn=self.lo.base
             )
         )
         for dn_ori in group_dns:

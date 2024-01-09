@@ -11,9 +11,10 @@ from typing import Tuple  # noqa: F401
 
 import pytest
 
+import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 from ucsschool.lib.models.user import Student
-from ucsschool.lib.models.utils import exec_cmd
+from ucsschool.lib.models.utils import exec_cmd, ucr as lib_ucr
 from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing import utils
@@ -21,10 +22,10 @@ from univention.udm import UDM
 
 with ucr_test.UCSTestConfigRegistry() as ucr:
     ucr.load()
-    container_admins = ucr.get("ucsschool/ldap/default/containers/admins", "admins")
-    container_teachers = ucr.get("ucsschool/ldap/default/containers/teachers", "lehrer")
-    container_staff = ucr.get("ucsschool/ldap/default/containers/staff", "mitarbeiter")
-    container_students = ucr.get("ucsschool/ldap/default/containers/pupils", "schueler")
+    groupprefix_admins = ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
+    groupprefix_teachers = ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
+    groupprefix_staff = ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
+    groupprefix_students = ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
     ldap_base = ucr.get("ldap/base")
 
 
@@ -62,7 +63,21 @@ def assert_error_msg_not_in_script_output(script_output, dn, error_msg):
 
 
 def test_no_errors_exec_script(schoolenv, ucr_hostname):
-    ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
+    ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname, use_cache=False)
+    stdout, stderr = exec_script(ou_name)
+    assert stdout == ""
+
+
+def test_no_errors_exec_script_no_default_group_prefix(schoolenv, ucr_hostname, ucr):
+    ucr.handler_set(
+        [
+            "ucsschool/ldap/default/groupprefix/admins={groupprefix_admins}-".format(
+                groupprefix_admins=uts.random_string()
+            )
+        ]
+    )
+    lib_ucr.load()
+    ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
     stdout, stderr = exec_script(ou_name)
     assert stdout == ""
 
@@ -137,28 +152,32 @@ def test_wrong_school_role_for_each_school(schoolenv, ucr_hostname, udm_instance
     assert_error_msg_in_script_output(stdout, student_dn, expected_error)
 
 
-def input_ids_wrong_group_membership(role_and_container):  # type: (Tuple[str, str, str]) -> str
-    role_str, container, expected = role_and_container
+def input_ids_wrong_group_membership(role_and_prefix):  # type: (Tuple[str, str, str]) -> str
+    role_str, prefix, expected = role_and_prefix
     return role_str
 
 
 @pytest.mark.parametrize(
-    "role_and_container",
+    "role_and_prefix",
     (
-        ("student", container_students, "Not member of group cn={}".format(container_students)),
-        ("teacher", container_teachers, "Not member of group cn={}".format(container_teachers)),
-        ("staff", container_staff, "Not member of group cn={}".format(container_staff)),
-        ("teacher_and_staff", container_staff, "Not member of group cn={}".format(container_staff)),
+        ("student", groupprefix_students, "Not member of group cn={}".format(groupprefix_students)),
+        ("teacher", groupprefix_teachers, "Not member of group cn={}".format(groupprefix_teachers)),
+        ("staff", groupprefix_staff, "Not member of group cn={}".format(groupprefix_staff)),
+        ("teacher_and_staff", groupprefix_staff, "Not member of group cn={}".format(groupprefix_staff)),
+        ("school_admin", groupprefix_admins, "Not member of group cn={}".format(groupprefix_admins)),
     ),
     ids=input_ids_wrong_group_membership,
 )
-def test_wrong_group_membership(create_ou, schoolenv, udm_instance, ucr_hostname, role_and_container):
-    role_str, container, expected_error = role_and_container
+def test_wrong_group_membership(create_ou, schoolenv, udm_instance, ucr_hostname, role_and_prefix):
+    role_str, prefix, expected_error = role_and_prefix
     ou_name, ou_dn = create_ou(name_edudc=ucr_hostname)
     create_func = getattr(schoolenv, "create_{}".format(role_str))
     name, user_dn = create_func(ou_name, wait_for_replication=False)
 
-    group_dn = "cn={0}-{1},cn=groups,ou={1},{2}".format(container, ou_name, ldap_base)
+    if role_str == "school_admin":
+        group_dn = "cn={0}{1},cn=ouadmins,cn=groups,{2}".format(prefix, ou_name, ldap_base)
+    else:
+        group_dn = "cn={0}{1},cn=groups,ou={1},{2}".format(prefix, ou_name, ldap_base)
 
     group_mod = udm_instance("groups/group")
     obj = group_mod.get(group_dn)
@@ -170,19 +189,19 @@ def test_wrong_group_membership(create_ou, schoolenv, udm_instance, ucr_hostname
 
 
 @pytest.mark.parametrize(
-    "role_and_container",
+    "role_and_prefix",
     (
-        ("student", container_students, "Not member of group cn={}".format(container_students)),
-        ("teacher", container_teachers, "Not member of group cn={}".format(container_teachers)),
-        ("staff", container_staff, "Not member of group cn={}".format(container_staff)),
-        ("teacher_and_staff", container_staff, "Not member of group cn={}".format(container_staff)),
+        ("student", groupprefix_students, "Not member of group cn={}".format(groupprefix_students)),
+        ("teacher", groupprefix_teachers, "Not member of group cn={}".format(groupprefix_teachers)),
+        ("staff", groupprefix_staff, "Not member of group cn={}".format(groupprefix_staff)),
+        ("teacher_and_staff", groupprefix_staff, "Not member of group cn={}".format(groupprefix_staff)),
     ),
     ids=input_ids_wrong_group_membership,
 )
 def test_case_insensitive_group_membership(
-    create_ou, schoolenv, udm_instance, ucr_hostname, role_and_container
+    create_ou, schoolenv, udm_instance, ucr_hostname, role_and_prefix
 ):
-    role_str, container, expected_error = role_and_container
+    role_str, prefix, expected_error = role_and_prefix
     ou_name, ou_dn = create_ou(name_edudc=ucr_hostname)
     create_func = getattr(schoolenv, "create_{}".format(role_str))
     name, user_dn = create_func(ou_name, wait_for_replication=False)
