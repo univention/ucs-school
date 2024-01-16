@@ -36,16 +36,35 @@ klicken.
 
 Technisch basiert der grafische Benutzer-Import auf Komponenten der Software die
 im :external+uv-ucsschool-import:doc:`Handbuch Import-Schnittstelle <index>`
-beschrieben sind. Deren Konfiguration erfolgt in einer JSON Datei. Die Datei
-:file:`/usr/share/ucs-school-import/configs/user_import_http-api.json` sollte
-als Ausgangsbasis für eigene, angepasste Konfigurationen verwendet werden. Die
-Konfiguration wird aktiviert, indem sie an die richtige Position kopiert wird:
+beschrieben sind.
+Ihre Konfiguration erfolgt über JSON-Dateien,
+die im Verzeichnis :file:`/var/lib/ucs-school-import/configs` abgelegt werden.
+Im Ausgangszustand sind die Konfigurationsdateien leer:
 
 .. code-block::
 
-   $ cp /usr/share/ucs-school-import/configs/user_import_http-api.json \
+   {}
+
+Um den grafischen Benutzer-Import zu aktivieren,
+muss eine Konfiguration in die JSON-Dateien eingefügt werden,
+die den Kriterien des jeweiligen Anwendungsfalls entspricht.
+
+Das Verzeichnis :file:`/usr/share/ucs-school-import/configs/` enthält Beispielkonfigurationen im JSON-Format.
+Für einen Testlauf in Abschnitt :ref:`file-format` kann der Inhalt der JSON-Datei
+:file:`/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json`
+in eine der bereits angelegten JSON-Dateien
+im Verzeichnis :file:`/var/lib/ucs-school-import/configs` kopiert werden:
+
+.. code-block::
+
+   $ cp /usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json \
      /var/lib/ucs-school-import/configs/user_import.json
 
+Diese Konfiguration ist auf das Format des Beispieldatensatzes angepasst,
+der mit Hilfe des Skripts in :ref:`file-format` erzeugt wird. Für weitere Informationen
+zum JSON-Konfigurationsformat sei auf das Kapitel :external+uv-ucsschool-import:ref:`configuration-json-format`
+verwiesen.
+     
 Das Sicherheitskonzept ermöglicht es Benutzern Rechte zu erteilen, um Importe
 nur an bestimmten Schulen und nur für bestimmte Benutzertypen durchzuführen,
 sowie die Ergebnisse dieser Import-Jobs einzusehen. Während der Installation
