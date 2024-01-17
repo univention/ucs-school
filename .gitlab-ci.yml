@@ -33,6 +33,7 @@ generate-config:
   rules:
     - if: "$pipeline == 'release'"
       when: never
+    - if: "$pipeline == ''"
   script:
     - .gitlab-ci/build-ci
   artifacts:
