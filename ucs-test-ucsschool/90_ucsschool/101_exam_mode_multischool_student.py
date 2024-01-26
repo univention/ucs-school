@@ -142,8 +142,8 @@ def test_exam_mode_multischool_student(udm_session, schoolenv, ucr):
     exam_student2 = ExamStudent.get_all(
         open_ldap_co, school2, filter_format("uid=exam-%s", (student2.name,))
     )[0]
-    for school in (school, school2):
-        assert school in exam_student2.schools
+    for _school in (school, school2):
+        assert _school in exam_student2.schools
     assert all(r in exam_student2.ucsschool_roles for r in (exam_role_str, exam2_role_str))
     exam.finish()
     exam_student2 = ExamStudent.get_all(

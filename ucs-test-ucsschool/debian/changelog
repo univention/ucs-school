@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.160) unstable; urgency=medium
+
+  * Bug #56991: Enable ruff rule B020
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 18 Jan 2024 12:20:04 +0100
+
 ucs-test-ucsschool (7.3.159) unstable; urgency=medium
 
   * Bug #56938: Add tests for all flavors of the password reset module

@@ -39,7 +39,6 @@ ignore = [
  "A001", "A002", "A003",  # allow builtin-variable-shadowing
  "B006",  # allow mutable-argument-default
  "B008",  # allow function-call-argument-default
- "B020",  # allow loop-variable-overrides-iterator
  "BLE001",  # allow catching Exception (blind-except)
  "PLR0911",  # too-many-return-statements
  "PLR0912",  # too-many-branches

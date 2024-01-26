@@ -310,8 +310,8 @@ def system_join(username, password, info_handler, error_handler, step_handler):
                 unfinished_line = (
                     "" if line.endswith("\n") else "%s%s" % (unfinished_line, line.rsplit("\n", 1)[-1])
                 )
-                for line in line.splitlines():
-                    parse(line)
+                for _line in line.splitlines():
+                    parse(_line)
                 if unfinished_line:
                     parse(unfinished_line)
 
