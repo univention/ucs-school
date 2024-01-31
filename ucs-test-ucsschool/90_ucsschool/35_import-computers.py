@@ -23,7 +23,13 @@ import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.importer.exceptions import ComputerImportError
 from ucsschool.importer.utils.computer_import import get_ip_iface, mac_address_is_used
-from ucsschool.lib.models.computer import WindowsComputer
+from ucsschool.lib.models.computer import (
+    IPComputer,
+    LinuxComputer,
+    MacComputer,
+    UbuntuComputer,
+    WindowsComputer,
+)
 from univention.testing.ucsschool.computer import Computer, SupportedComputer, random_ip, random_mac
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/pyhooks"
@@ -221,13 +227,23 @@ def test_get_ip_iface(ip_address, message):
         get_ip_iface(ip_address)
 
 
-def test_mac_address_is_used():
+@pytest.mark.parametrize(
+    "computer_model",
+    [
+        WindowsComputer,
+        MacComputer,
+        IPComputer,
+        UbuntuComputer,
+        LinuxComputer,
+    ],
+)
+def test_mac_address_is_used(computer_model):
     with utu.UCSTestSchool() as schoolenv:
         ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
         mac = random_mac().lower()
         assert mac_address_is_used(lo=schoolenv.lo, mac_address=mac) is False
         assert mac_address_is_used(lo=schoolenv.lo, mac_address=mac.upper()) is False
-        computer = WindowsComputer(
+        computer = computer_model(
             school=ou_name,
             name=uts.random_name(),
             ip_address=[random_ip()],

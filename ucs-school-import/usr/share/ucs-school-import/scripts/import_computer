@@ -40,7 +40,11 @@ from ipaddress import AddressValueError, IPv4Interface, NetmaskValueError  # noq
 
 import univention.debug as ud
 from ucsschool.importer.exceptions import ComputerImportError
-from ucsschool.importer.utils.computer_import import call_hook, get_ip_iface, mac_address_is_used
+from ucsschool.importer.utils.computer_import import (
+    call_hook,
+    get_ip_iface,
+    mac_address_is_used,
+)
 from ucsschool.importer.utils.constants import get_sep_char
 from ucsschool.importer.utils.utils import verify_school_ou
 from ucsschool.lib.models.attributes import ValidationError
@@ -84,7 +88,7 @@ def import_computers(input_file):  # type: (str) -> None
                 continue
             computer_type = row[0]
             computer_name = row[1].lower()
-            mac_address = row[2]
+            mac_address = row[2].replace("-", ":").replace(".", ":").lower()
             school_id = row[3]
             ip_address = row[4]
             inventory_numbers = None
@@ -97,11 +101,11 @@ def import_computers(input_file):  # type: (str) -> None
                 _cls = computer_to_class_mapping[computer_type]
                 computer = _cls(school=school_id, name=computer_name)
                 if computer.exists(lo):
-                    print("computer %s already exists (school %s)" % (computer_name, school_id))
+                    print("WARNING: computer %s already exists (school %s)" % (computer_name, school_id))
                     continue
                 elif mac_address_is_used(mac_address, lo):
                     print(
-                        "mac_address %s for computer %s already used (school %s)"
+                        "WARNING: mac_address %s for computer %s already used (school %s)"
                         % (
                             mac_address,
                             computer_name,

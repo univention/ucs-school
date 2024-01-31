@@ -1,3 +1,9 @@
+ucs-school-import (18.0.42) unstable; urgency=medium
+
+  * Bug #55015: Improve search filter for mac addresses for importing a computer
+
+ -- Julian Helms <helms@univention.de>  Wed, 14 Feb 2024 19:47:04 +0100
+
 ucs-school-import (18.0.41) unstable; urgency=medium
 
   * Bug #55376: Print warning to console for IP addresses starting with

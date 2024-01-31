@@ -65,7 +65,10 @@ def mac_address_is_used(mac_address, lo):  # type: (str, LoType) -> bool
         lo.search(
             base=ucr["ldap/base"],
             scope="sub",
-            filter=filter_format("(&(macAddress=%s)(objectClass=univentionHost))", [mac_address]),
+            filter=filter_format(
+                "(&(macAddress=%s)(objectClass=univentionHost))",
+                [mac_address],
+            ),
             attr=["macAddress"],
         )
     )
