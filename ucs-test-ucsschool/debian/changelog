@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.162) unstable; urgency=medium
+
+  * #Issue 1157: Implemented skipped test wrapper.
+
+ -- Alexander Steffen <steffen@univention.de>  Tue, 06 Feb 2024 13:18:46 +0100
+
 ucs-test-ucsschool (7.3.161) unstable; urgency=medium
 
   * Bug #55884: Add test for non default admins group prefix
