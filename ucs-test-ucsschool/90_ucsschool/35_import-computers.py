@@ -207,7 +207,7 @@ def test_import_computer():
 @pytest.mark.parametrize(
     "ip_address,message",
     [
-        ("10.200.0", r"'10.200.0' is not a valid ip address"),
+        ("10.200.0", r"'10.200.0' is not a valid IP address"),
         ("10.200.47.11/99", "'99' is not a valid netmask"),
         ("10.200.47.11", ""),
         ("10.200.47.11/255.255.255.0", ""),

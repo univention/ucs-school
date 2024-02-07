@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.164) unstable; urgency=medium
+
+  * Bug #55376: Fix typo in test 35_import-computers
+
+ -- Julian Helms <helms@univention.de>  Wed, 07 Feb 2024 14:18:15 +0100
+
 ucs-test-ucsschool (7.3.163) unstable; urgency=medium
 
   * Issue #1157: Merged skipped test wrapper.
