@@ -68,20 +68,6 @@ def test_no_errors_exec_script(schoolenv, ucr_hostname):
     assert stdout == ""
 
 
-def test_no_errors_exec_script_no_default_group_prefix(schoolenv, ucr_hostname, ucr):
-    ucr.handler_set(
-        [
-            "ucsschool/ldap/default/groupprefix/admins={groupprefix_admins}-".format(
-                groupprefix_admins=uts.random_string()
-            )
-        ]
-    )
-    lib_ucr.load()
-    ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
-    stdout, stderr = exec_script(ou_name)
-    assert stdout == ""
-
-
 def input_ids_wrong_school_role(role_and_bad_value):  # type: (Tuple[str, str, str]) -> str
     role_str, bad_value, expected = role_and_bad_value
     return role_str
@@ -349,3 +335,17 @@ def test_not_existing_martkplatz_share(create_ou, udm_instance, ucr_hostname):
 
     stdout, stderr = exec_script(ou_name)
     assert_error_msg_in_script_output(stdout, marktplatz_share, "does not exist")
+
+
+def test_no_errors_exec_script_no_default_group_prefix(schoolenv, ucr_hostname, ucr):
+    ucr.handler_set(
+        [
+            "ucsschool/ldap/default/groupprefix/admins={groupprefix_admins}-".format(
+                groupprefix_admins=uts.random_string()
+            )
+        ]
+    )
+    lib_ucr.load()
+    ou_name, ou_dn = schoolenv.create_ou(use_cache=False, name_edudc=ucr_hostname)
+    stdout, stderr = exec_script(ou_name)
+    assert stdout == ""
