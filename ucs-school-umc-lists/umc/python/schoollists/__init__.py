@@ -71,9 +71,11 @@ class Instance(SchoolBaseModule):
         classlist = request.options["classlist"]
         path = "/usr/share/ucs-school-umc-lists/classlists/"
         filename = os.path.join(path, os.path.basename(classlist))
+        # Bug #57018 - retrieve charset from filename
+        charset = "utf-16" if "UTF-16" in filename else "utf-8"
         try:
             with open(filename, "rb") as fd:
-                self.finished(request.id, fd.read(), mimetype='text/csv; charset="utf-16"')
+                self.finished(request.id, fd.read(), mimetype=('text/csv; charset="%s"' % charset))
         except EnvironmentError:
             raise UMC_Error(
                 _("The class list does not exists. Please create a new one."),
@@ -120,9 +122,10 @@ class Instance(SchoolBaseModule):
 
         classlistname = explode_rdn(group, True)[0]
         timestamp = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
-        filename = "%s_%s-%s.csv" % (classlistname.replace("/", "_"), timestamp, uuid.uuid4())
+        # Bug #57018 - workaround to pass used encoding in filename
+        enc = "UTF-16" if separator == "\t" else "UTF-8"
+        filename = "%s_%s_%s-%s.csv" % (classlistname.replace("/", "_"), enc, timestamp, uuid.uuid4())
         path = os.path.join("/usr/share/ucs-school-umc-lists/classlists/", filename)
-        enc = "utf16" if separator == "\t" else "utf8"
         with open(path, "w", encoding=enc) as fd:
             os.chmod(path, 0o600)
             fd.write(write_classlist_csv(fieldnames, rows, separator))
@@ -132,7 +135,7 @@ class Instance(SchoolBaseModule):
             request.id,
             {
                 "url": url,
-                "filename": filename,
+                "filename": "{}_{}.csv".format(classlistname.replace("/", "_"), timestamp),
             },
         )
 

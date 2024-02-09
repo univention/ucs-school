@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.166) unstable; urgency=medium
+
+  * Bug #57018: Parametrized and adopted tests to verify new behavior.
+
+ -- Alexander Steffen <steffen@univention.de>  Fri, 09 Feb 2024 13:28:13 +0100
+
 ucs-test-ucsschool (7.3.165) unstable; urgency=medium
 
   * Bug #55884: Fix test wrong_group_membership
