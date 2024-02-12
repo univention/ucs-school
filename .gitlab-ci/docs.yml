@@ -1,0 +1,22 @@
+generate-config:
+  stage: prepare
+  image:
+    name: docker-registry.knut.univention.de/knut/deb-builder
+    entrypoint: [""]
+  script:
+    - .gitlab-ci/build-ci
+  artifacts:
+    paths:
+      - generated-config-doc.yml
+
+doc-pipeline:
+  stage: build
+  needs:
+    - job: generate-config
+  trigger:
+    include:
+      - artifact: generated-config-doc.yml
+        job: generate-config
+    strategy: depend
+    forward:
+      pipeline_variables: true

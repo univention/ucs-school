@@ -1,0 +1,48 @@
+stages:
+  - release
+
+check-advisory-files-end-in-yaml:
+  stage: release
+  script:
+    - non_yaml_files=( $(find doc/errata/staging -type f -not -name "*.yaml") )
+    - |-
+      if [ -z "$non_yaml_files" ]; then
+        echo "All files correctly named with '.yaml' extension"
+        exit 0
+      else
+        echo "Files found without a .yaml extension. Please correct this error:"
+        for filename in "${non_yaml_files[@]}"; do
+          echo $filename
+        done
+        exit 1
+      fi
+
+check-bugzilla-bugs:
+  stage: release
+  before_script:
+    - apt update && apt install -y curl jq
+  script:
+    - ./.gitlab-ci/check-bugzilla-bugs "$release_bugs"
+
+find-advisories:
+  stage: release
+  needs:
+    - check-advisory-files-end-in-yaml
+  script:
+    - ./.gitlab-ci/find-advisories "$release_bugs"
+  artifacts:
+    paths:
+      - release_advisories.txt
+
+validate-advisories:
+  stage: release
+  rules:
+    - if: "$pipeline == 'release'"
+  needs:
+    - find-advisories
+  before_script:
+    - apt update && apt install -y python3 python3-pip
+    - pip3 install packaging pyyaml --break-system-packages
+  script:
+    - advisories=$(cat release_advisories.txt)
+    - ./.gitlab-ci/validate-advisories $advisories

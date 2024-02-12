@@ -1,9 +1,3 @@
-stages:
-  - prepare
-  - lint
-  - build
-  - release
-
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
@@ -11,110 +5,27 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_OPEN_MERGE_REQUESTS
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true"
 
-include:
-  - project: univention/dist/docker-services
-    file:
-    - kaniko.yml
-    - pre-commit.yml
-
 variables:
-  pipeline:
-    value: ""
-    description: "Skip jobs: 'skip-doc'; Run release pipeline: 'release'"
+  RUN_RELEASE:
+    value: "no"
+    options:
+      - "yes"
+      - "no"
+    description: "Run release check pipeline"
+  RUN_DOCS:
+    value: "yes"
+    options:
+      - "yes"
+      - "no"
+    description: "Run docs pipeline"
   release_bugs:
     value: ""
     description: "Space-separated list of bugs to be released. Used with `release` pipeline. E.g.: '56550 52443 43345'"
 
-generate-config:
-  stage: prepare
-  image:
-    name: docker-registry.knut.univention.de/knut/deb-builder
-    entrypoint: [""]
-  rules:
-    - if: "$pipeline == 'release'"
-      when: never
-    - if: "$pipeline == ''"
-  script:
-    - .gitlab-ci/build-ci
-  artifacts:
-    paths:
-      - generated-config-doc.yml
-
-doc-pipeline:
-  stage: build
-  rules:
-    - if: "$CI_COMMIT_MESSAGE =~ /skip-doc/ || $pipeline =~ /skip-doc/ || $pipeline == 'release'"
-      when: never
-    - changes:
-      - "doc/ucsschool-import/**/*"
-      - "doc/ucsschool-manual/**/*"
-      - "doc/ucsschool-quickstart/**/*"
-      - "doc/ucsschool-scenarios/**/*"
-      - "doc/ucsschool-umc-user-import/**/*"
-      - "doc/ucsschool-changelog/**/*"
-  needs:
-    - job: generate-config
-  trigger:
-    include:
-      - artifact: generated-config-doc.yml
-        job: generate-config
-    strategy: depend
-    forward:
-      pipeline_variables: true
-
-run pre-commit:
-  stage: lint
-  extends: .pre-commit
-  rules:
-    - if: "$pipeline == 'release'"
-      when: never
-
-check-advisory-files-end-in-yaml:
-  stage: release
-  rules:
-    - if: "$pipeline == 'release'"
-  script:
-    - non_yaml_files=( $(find doc/errata/staging -type f -not -name "*.yaml") )
-    - |-
-      if [ -z "$non_yaml_files" ]; then
-        echo "All files correctly named with '.yaml' extension"
-        exit 0
-      else
-        echo "Files found without a .yaml extension. Please correct this error:"
-        for filename in "${non_yaml_files[@]}"; do
-          echo $filename
-        done
-        exit 1
-      fi
-
-check-bugzilla-bugs:
-  stage: release
-  rules:
-    - if: "$pipeline == 'release'"
-  script:
-    - apt update && apt install -y curl jq
-    - ./.gitlab-ci/check-bugzilla-bugs "$release_bugs"
-
-find-advisories:
-  stage: release
-  rules:
-    - if: "$pipeline == 'release'"
-  needs:
-    - check-advisory-files-end-in-yaml
-  script:
-    - ./.gitlab-ci/find-advisories "$release_bugs"
-  artifacts:
-    paths:
-      - release_advisories.txt
-
-validate-advisories:
-  stage: release
-  rules:
-    - if: "$pipeline == 'release'"
-  needs:
-    - find-advisories
-  script:
-    - apt update && apt install -y python3 python3-pip
-    - pip3 install packaging pyyaml --break-system-packages
-    - advisories=$(cat release_advisories.txt)
-    - ./.gitlab-ci/validate-advisories $advisories
+include:
+  - local: .gitlab-ci/gitlab-ci.yml
+    rules:
+      - if: $RUN_RELEASE != "yes"
+  - local: .gitlab-ci/release.yml
+    rules:
+      - if: $RUN_RELEASE == "yes"

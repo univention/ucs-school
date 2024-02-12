@@ -1,0 +1,26 @@
+stages:
+  - prepare
+  - lint
+  - build
+
+include:
+  - project: univention/dist/docker-services
+    file:
+    - pre-commit.yml
+  - local: .gitlab-ci/docs.yml
+    rules:
+      - if: $CI_COMMIT_MESSAGE =~ /skip-doc/ || $RUN_DOCS == "no"
+        when: never
+      - changes:
+          paths:
+            - "doc/ucsschool-import/**/*"
+            - "doc/ucsschool-manual/**/*"
+            - "doc/ucsschool-quickstart/**/*"
+            - "doc/ucsschool-scenarios/**/*"
+            - "doc/ucsschool-umc-user-import/**/*"
+            - "doc/ucsschool-changelog/**/*"
+        when: always
+
+run pre-commit:
+  stage: lint
+  extends: .pre-commit
