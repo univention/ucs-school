@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.167) unstable; urgency=medium
+
+  * Bug #55015: Parametrized tests for computer import
+
+ -- Julian Helms <helms@univention.de>  Thu, 15 Feb 2024 13:14:42 +0100
+
 ucs-test-ucsschool (7.3.166) unstable; urgency=medium
 
   * Bug #57018: Parametrized and adopted tests to verify new behavior.
