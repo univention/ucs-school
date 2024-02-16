@@ -58,7 +58,6 @@ class Test(CLI_Import_v2_Tester):
         args = ["-c", fn_config]
         cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-user-import", "-v"] + args
         proc = subprocess.run(cmd, capture_output=True, text=True)  # noqa: PLW1510
-
         stats = re.search(
             "------ User import statistics ------\n(.*)------ End of user import statistics ------",
             proc.stderr,
@@ -70,19 +69,23 @@ class Test(CLI_Import_v2_Tester):
         ), "No statistics found in stderr, probably the import failed for another reason"
         assert " Errors: 0" in stats.group(1), "Errors found in statistics: %s" % (stats.group(1),)
 
-        count = 0
+        usernames = set()
         max_users_in_line = 0
         for line in stats.group(1).split("\n"):
             match = re.search(r"\[(.*)\]", line)
             if match:
-                usernames = match.group(1).count("', '") + 1
-                count += usernames
-                if usernames > max_users_in_line:
-                    max_users_in_line = usernames
+                group = match.group(1)
+                usernames.update(set(group.split(",")))
+                num_current_usernames = group.count("', '") + 1
+
+                if num_current_usernames > max_users_in_line:
+                    max_users_in_line = num_current_usernames
                 assert (
-                    usernames <= columns
-                ), f"Too many usernames in one line: {usernames} (should be {columns})"
-        assert count == number_of_users, f"Not all users were shown: {count} out of {number_of_users}"
+                    num_current_usernames <= columns
+                ), f"Too many usernames in one line: {num_current_usernames} (should be {columns})"
+        assert (
+            len(usernames) == number_of_users
+        ), f"Not all users were shown: {len(usernames)} out of {number_of_users}"
         if number_of_users > columns:
             assert (
                 max_users_in_line == columns
