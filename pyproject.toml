@@ -1,7 +1,13 @@
 [tool.ruff]
-# ruff 0.1.4
-external = ["W601", "F812", "E403", "E704"]
+# ruff 0.2.2
 line-length = 105
+
+target-version = "py37"
+
+extend-exclude = ["django-pam"]
+
+[tool.ruff.lint]
+external = ["W601", "F812", "E403", "E704"]
 ignore-init-module-imports = true
 
 select = ["ALL"]
@@ -84,7 +90,7 @@ ignore = [
  "COM818",  # Trailing comma on bare tuple prohibited
  "EXE002",  # The file is executable but no shebang is present
  "EXE003",  # Shebang should contain "python"
- "RUF004",  # Keyword argument `request` must come after starred arguments
+ "B026",  # Keyword argument `request` must come after starred arguments
 
 # # not py2 compatible
  "UP004", "UP008", "UP009", "UP010", "UP025", "UP029",  # be Python 2 compatible
@@ -152,6 +158,7 @@ ignore = [
  "SIM112",  #
  "PERF203",  # try-except-in-loop
  "PERF401",  # manual-list-comprehension
+ "DJ012",  # django-unordered-body-content-in-model
 
  "SIM118",  # unsure if everything is a dict, let's select each individually somewhen
 
@@ -166,36 +173,32 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 allowed-confusables = ["’", "`", "´"]
 
-target-version = "py37"
-
-extend-exclude = ["django-pam"]
-
 task-tags = ["TODO", "FIXME"]
 
-[tool.ruff.flake8-builtins]
+[tool.ruff.lint.flake8-builtins]
 builtins-ignorelist = ["copyright", "license", "object", "exit", "quit", "credits"]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 72
 
 [tool.ruff.format]
 quote-style = "double"
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 multiline-quotes = "double"
-inline-quotes = "single"
+inline-quotes = "double"
 
-[tool.ruff.flake8-unused-arguments]
+[tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
 
-[tool.ruff.flake8-pytest-style]
+[tool.ruff.lint.flake8-pytest-style]
 parametrize-names-type = "csv"
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 ignore-fully-untyped = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 combine-as-imports = true
 #filter-files = true
 #force-grid-wrap = false

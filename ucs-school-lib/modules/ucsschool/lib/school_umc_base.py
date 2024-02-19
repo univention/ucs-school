@@ -464,7 +464,7 @@ class Display:
     @staticmethod
     def user(udm_object):  # type: (UdmObject) -> str
         fullname = udm_object["lastname"]
-        if "firstname" in udm_object and udm_object["firstname"]:
+        if "firstname" in udm_object and udm_object["firstname"]:  # noqa: RUF019
             fullname += ", %(firstname)s" % udm_object
 
         return fullname + " (%(username)s)" % udm_object

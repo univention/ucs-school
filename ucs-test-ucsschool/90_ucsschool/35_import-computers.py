@@ -51,7 +51,7 @@ class ComputerImport:
         self._test_computers[ctype][j].set_network_address()
 
     def _computers(self):  # type: () -> List[Computer]
-        return sum(self._test_computers.values(), [])
+        return sum(self._test_computers.values(), [])  # noqa: RUF017
 
     def verify(self):
         for computer in self._computers():

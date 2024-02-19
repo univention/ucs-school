@@ -64,7 +64,9 @@ from .serializers import (
     UserImportJobSerializer,
 )
 
-logger = lazy_object_proxy.Proxy(lambda: logging.Logger(__name__))  # type: logging.Logger
+logger = lazy_object_proxy.Proxy(
+    lambda: logging.Logger(__name__)
+)  # type: logging.Logger  # noqa: LOG001
 
 
 class UserImportJobFilter(FilterSet):
