@@ -64,7 +64,7 @@ Diese Konfiguration ist auf das Format des Beispieldatensatzes angepasst,
 der mit Hilfe des Skripts in :ref:`file-format` erzeugt wird. Für weitere Informationen
 zum JSON-Konfigurationsformat sei auf das Kapitel :external+uv-ucsschool-import:ref:`configuration-json-format`
 verwiesen.
-     
+
 Das Sicherheitskonzept ermöglicht es Benutzern Rechte zu erteilen, um Importe
 nur an bestimmten Schulen und nur für bestimmte Benutzertypen durchzuführen,
 sowie die Ergebnisse dieser Import-Jobs einzusehen. Während der Installation
