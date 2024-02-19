@@ -467,7 +467,7 @@ def main():  # type: () -> None
 
     options.bindpw = open(options.bindpwdfile).read().strip()
 
-    LEVELS = [logging.FATAL, logging.ERROR, logging.WARN, logging.INFO, logging.DEBUG]
+    LEVELS = [logging.FATAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
     try:
         level = LEVELS[options.verbose]
     except IndexError:
