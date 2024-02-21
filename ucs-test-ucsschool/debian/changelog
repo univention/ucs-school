@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.170) unstable; urgency=medium
+
+  * Issue univention/components/ucsschool-api-plugins/id-broker-plugin#109: fix test
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 21 Feb 2024 21:19:13 +0100
+
 ucs-test-ucsschool (7.3.169) unstable; urgency=medium
 
   * Bug #56846: Re-enabled support for UTF-16.
