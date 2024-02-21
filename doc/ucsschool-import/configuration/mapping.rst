@@ -15,8 +15,7 @@ In ihm stehen Schlüssel-Wert-Paare: CSV-Spalte → Benutzerattribut.
 
 Folgendes Beispiel zeigt, wie der Import von drei Schülern an zwei Schulen
 konfiguriert werden kann. Die Schulverwaltungssoftware hat folgendes CSV
-produziert (anderes Beispiel :download:`hier zum Download
-</user_new_example.csv>`, UTF-8, Tabulator getrennt):
+produziert (Kodierung: UTF-8, Trennzeichen: ","):
 
 .. code-block::
 
@@ -24,6 +23,10 @@ produziert (anderes Beispiel :download:`hier zum Download
    "schule1,schule2","Anton","Meyer","schule1-1A,schule2-2B","anton@schule.local",""
    "schule1,schule2","Bea","Schmidt","schule1-2B,schule2-1A","bea@schule.local","0421-1234567890"
    "schule2","Daniel","Krause","schule2-1A","daniel@schule.local",""
+
+
+Ein Beispiel für ein UTF-16 kodiertes CSV, welche mittels Tabulator getrennt werden, steht
+:download:`hier zum Download </user_new_example.csv>` bereit.
 
 
 .. versionadded:: 4.1R2v1

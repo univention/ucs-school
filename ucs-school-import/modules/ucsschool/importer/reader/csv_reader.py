@@ -68,6 +68,11 @@ if TYPE_CHECKING:
     from ..models.import_user import ImportUser  # noqa: F401
 
 
+class UnsupportedEncodingError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 def py3_decode(data, encoding):  # type: (Union[str, bytes], str) -> str
     return data.decode(encoding) if PY3 and isinstance(data, bytes) else data
 
@@ -101,7 +106,7 @@ class CsvReader(BaseReader):
         univention.admin.modules.init(self.lo, self.position, usersmod)
 
     @staticmethod
-    def get_encoding(filename_or_file):  # type: (Union[str, BinaryIO]) -> str
+    def get_encoding(filename_or_file, logger=None):  # type: (Union[str, BinaryIO]) -> str
         """
         Get encoding of file ``filename_or_file``.
 
@@ -135,9 +140,42 @@ class CsvReader(BaseReader):
             encoding = magic.detect_from_content(txt).encoding
         else:
             raise RuntimeError('Unknown version or type of "magic" library.')
+
+        if not any(
+            encoding.startswith(enc)
+            for enc in ["binary", "utf-8", "utf-16", "iso-8859-1", "latin-1", "ascii", "us-ascii"]
+        ):
+            raise UnsupportedEncodingError(
+                "Unsupported encoding '{}' detected, "
+                "please check the manual for supported encodings.".format(encoding)
+            )
+
+        if logger:
+            logger.debug(
+                (
+                    "magic.Magic detected {}\n"
+                    "BOM characters present in content:\n"
+                    "\tBOM_UTF8:{}\n"
+                    "\tBOM_UTF16_LE:{}\n"
+                    "\tBOM_UTF16_BE:{}"
+                ).format(
+                    encoding,
+                    txt.startswith(codecs.BOM_UTF8),
+                    txt.startswith(codecs.BOM_UTF16_LE),
+                    txt.startswith(codecs.BOM_UTF16_BE),
+                )
+            )
         # auto detect utf-8 with BOM
         if encoding == "utf-8" and txt.startswith(codecs.BOM_UTF8):
             encoding = "utf-8-sig"
+
+        # Bug #56746
+        elif encoding.startswith("utf-16"):
+            encoding = "utf-16"
+
+        elif encoding == "us-ascii":
+            encoding = "ascii"
+
         return encoding
 
     def get_dialect(self, fp, encoding):  # type: (BinaryIO, str) -> Type[Dialect]
@@ -150,8 +188,7 @@ class CsvReader(BaseReader):
         :rtype: csv.Dialect
         """
         delimiter = self.config.get("csv", {}).get("delimiter")
-        line = fp.readline()
-        return Sniffer().sniff(py3_decode(line, encoding), delimiters=delimiter)
+        return Sniffer().sniff(py3_decode(fp.read(), encoding), delimiters=delimiter)
 
     def read(self, *args, **kwargs):  # type: (*Any, **Any) -> Iterator[Dict[Text, Text]]
         """
@@ -163,8 +200,16 @@ class CsvReader(BaseReader):
         :return: iterator over list of dicts
         :rtype: Iterator
         """
+        encoding = None
         with open(self.filename, "rb") as fp:
-            encoding = self.get_encoding(fp)
+            encoding = self.get_encoding(fp, self.logger)
+        if encoding == "binary":
+            raise UnsupportedEncodingError(
+                "Unsupported encoding 'binary' detected, "
+                "please check the manual for supported encodings."
+            )
+
+        with open(self.filename, encoding=encoding) as fp:
             self.logger.debug("Reading %r with encoding %r.", self.filename, encoding)
             fp.seek(0)
             try:
@@ -175,6 +220,16 @@ class CsvReader(BaseReader):
                     InitialisationError(
                         "Could not determine CSV dialect. Try setting the csv:delimiter configuration. "
                         "Error: {}".format(exc)
+                    ),
+                    sys.exc_info()[2],
+                )
+            except (UnicodeDecodeError, LookupError) as exc:
+                reraise(
+                    InitialisationError,
+                    InitialisationError(
+                        "Could not determine correct encoding. Detected '{}', "
+                        "please check the manual for supported encodings."
+                        "Error: {}".format(encoding, exc)
                     ),
                     sys.exc_info()[2],
                 )
@@ -189,15 +244,13 @@ class CsvReader(BaseReader):
                 start = fp.tell()
                 # no header names, detect number of rows
 
-                fpu = UTF8Recoder(fp, encoding)
-                _reader = csv_reader(fpu, dialect=dialect)
+                _reader = csv_reader(fp, dialect=dialect)
                 line = next(_reader)
                 fp.seek(start)
                 header = [str(x) for x in range(len(line))]
             csv_reader_args = {"fieldnames": header, "dialect": dialect}
             csv_reader_args.update(kwargs.get("csv_reader_args", {}))
-            fpu = UTF8Recoder(fp, encoding)
-            reader = DictReader(fpu, **csv_reader_args)
+            reader = DictReader(fp, **csv_reader_args)
             self.fieldnames = reader.fieldnames
             missing_columns = self._get_missing_columns()
             if missing_columns:

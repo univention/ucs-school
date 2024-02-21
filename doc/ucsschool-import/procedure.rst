@@ -100,12 +100,20 @@ Kodierung
 
 Momentan sind die folgenden Kodierungen unterstützt:
 
-* UTF-8
 * ISO-8859-1
 * ASCII
+* UTF-8
+* UTF-16
 
-Wie für die Datenformate gilt auch hier:
-Unterstützung für weitere Kodierungen kann hinzugefügt werden, siehe :ref:`extending`.
+.. hint::
+   Im Fall von UTF-16 werden ausschließlich solche Kodierungen unterstützt, welche
+   eine Byte-Reihenfolge-Markierung (BOM) beinhalten. Wird eine UTF-16 Datei ohne BOM
+   eingegeben bricht der Import ab.
+
+Falls eine nicht unterstütze Kodierung erkannt wird, schlägt der Import mit einem
+:code:`UnsupportedEncodingError` fehl.  Andere Kodierungen können
+mit einer benutzerdefinierten Implementierung eines CsvReaders unterstützt werden, siehe
+:ref:`extending`.
 
 .. _procedure-assignment:
 

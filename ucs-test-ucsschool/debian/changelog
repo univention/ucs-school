@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.169) unstable; urgency=medium
+
+  * Bug #56846: Re-enabled support for UTF-16.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 21 Feb 2024 07:58:40 +0100
+
 ucs-test-ucsschool (7.3.168) unstable; urgency=medium
 
   * Issue #1190: Fixed test. Usernames now captured as set.

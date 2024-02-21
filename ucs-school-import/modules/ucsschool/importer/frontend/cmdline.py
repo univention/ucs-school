@@ -202,23 +202,18 @@ class CommandLine(object):
 
         filename = self.config["input"]["filename"]
         encoding = CsvReader.get_encoding(filename)
-        if encoding == "binary":
+        try:
+            with open(filename, encoding=encoding) as fin:
+                line = fin.readline()
+                self.logger.info("First line of %r:\n%r", self.config["input"]["filename"], line)
+        except (LookupError, UnicodeDecodeError):
             self.logger.warning(
-                "File {0} is in a binary format. A custom reader class will be needed.".format(filename)
+                (
+                    "Detected encoding {0} is not a valid default encoding."
+                    " If no compatible custom reader class is used,"
+                    " the program will fail in subsequent steps."
+                ).format(encoding)
             )
-        else:
-            try:
-                with open(filename, encoding=encoding) as fin:
-                    line = fin.readline()
-                    self.logger.info("First line of %r:\n%r", self.config["input"]["filename"], line)
-            except (LookupError, UnicodeDecodeError):
-                self.logger.warning(
-                    (
-                        "Detected encoding {0} is not a valid default encoding."
-                        " If no compatible custom reader class is used,"
-                        " the program will fail in subsequent steps."
-                    ).format(encoding)
-                )
 
         self.logger.info("------ UCS@school import tool configured ------")
         self.logger.info("Used configuration files: %s.", self.config.conffiles)

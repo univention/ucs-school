@@ -6,3 +6,4 @@ UTF
 inkl
 Konnektoren
 Dictionaries
+UnsupportedEncodingError

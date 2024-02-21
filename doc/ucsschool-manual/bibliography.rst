@@ -4,7 +4,7 @@
 
 .. _biblio:
 
-.. only:: html
+.. only:: html or spelling or linkcheck
 
    ********************
    Literaturverzeichnis

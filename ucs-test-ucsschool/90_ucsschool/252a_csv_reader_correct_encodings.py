@@ -1,12 +1,12 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
-## desc: The importer can handle CSV files with different encodings.
+## desc: The CsvReader does correctly detect defined encodings
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-## bugs: [53203, 56846]
+## bugs: [56846]
 
 
 import copy
@@ -15,6 +15,7 @@ import tempfile
 import pytest
 
 import univention.testing.strings as uts
+from ucsschool.importer.reader.csv_reader import CsvReader
 from univention.testing.ucsschool.csv_test_helper import get_test_chars, write_formatted_csv
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester, ImportException
@@ -26,18 +27,17 @@ from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 #       usual Python specifiers. In this instance, we are
 #       adding the related BOM, which would not exist when
 #       using the specifier as per normal.
-
-encodings = [
-    "binary",
-    "ascii",
-    "latin-1",
-    "utf-8",
-    "utf-8-sig",
-    "utf-16",
-    "utf-16-le",
-    "utf-16-be",
-    "utf-16-no-bom",
-]
+encodings = {
+    "binary": "binary",
+    "ascii": "us-ascii",
+    "latin-1": "iso-8859-1",
+    "utf-8": "utf-8",
+    "utf-8-sig": "utf-8-sig",
+    "utf-16": "utf-16-be",
+    "utf-16-le": "utf-16le",
+    "utf-16-be": "utf-16be",
+    "utf-16-no-bom": "utf-16-be",
+}
 
 import_logfile = "/var/log/univention/ucs-school-import.log"
 
@@ -68,8 +68,8 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("user_role", None)
         fn_config = self.create_config_json(config=config)
 
-        for input_encoding in encodings:
-            self.log.info(f"Testing import with encoding {input_encoding}")
+        for input_encoding, magic_encoding_repr in encodings.items():
+            self.log.info(f"Testing encoding {input_encoding}")
 
             person_list = []
             person = Person(
@@ -81,34 +81,39 @@ class Test(CLI_Import_v2_Tester):
             fn_csv_utf8 = self.create_csv_file(person_list=person_list, mapping=config["csv"]["mapping"])
             fn_csv = tempfile.mkstemp(prefix="users.", dir=self.tmpdir)[1]
 
-            # prepare csv
             with open(fn_csv_utf8) as f:
                 content = f.read()
 
             if input_encoding == "binary":
-
-                # overwrite csv with binary data
                 with open(fn_csv, "wb") as g:
                     g.write(bytes(range(256)))
                 # Expecting logfile error due to binary encoding
                 self.check_logfile_error(fn_config, fn_csv)
-                self.log.info("OK: Expected failure with encoding 'binary'.")
-
-            elif input_encoding == "utf-16-no-bom":
-
-                # run import with expected failure due to missing BOM
-                write_formatted_csv(fn_csv, input_encoding, content)
-                self.check_logfile_error(fn_config, fn_csv)
-
-                self.log.info("OK: Expected failure with encoding 'binary' (caused by missing BOM).")
 
             else:
                 write_formatted_csv(fn_csv, input_encoding, content)
-                self.run_import(["-c", fn_config, "-i", fn_csv])
 
-                for person in person_list:
-                    person.verify()
-                self.log.info("OK: import (create) succeeded.")
+                if input_encoding == "utf-16-no-bom":
+                    # No BOM here. Data has to be interpreted as binary.
+                    assert "binary" == CsvReader.get_encoding(fn_csv)
+                    # Expecting logfile error due to binary encoding
+                    self.check_logfile_error(fn_config, fn_csv)
+
+                    self.log.info("OK: Detected correct encoding: binary (caused by missing BOM).")
+
+                else:
+                    detected_encoding = CsvReader.get_encoding(fn_csv)
+
+                    assert (detected_encoding == input_encoding) or (
+                        # special case: only used for "utf-16" encodings
+                        detected_encoding
+                        in magic_encoding_repr
+                    ), "Expected encoding: %s Detected encoding: %s MagicPackageEncodingRepr: %s" % (
+                        input_encoding,
+                        detected_encoding,
+                        magic_encoding_repr,
+                    )
+                    self.log.info("OK: Detected correct encoding: %s." % detected_encoding)
 
 
 if __name__ == "__main__":

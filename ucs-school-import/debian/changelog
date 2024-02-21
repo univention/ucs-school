@@ -1,3 +1,9 @@
+ucs-school-import (18.0.43) unstable; urgency=medium
+
+  * Bug #56846: Re-enabled support for UTF-16.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 21 Feb 2024 07:59:18 +0100
+
 ucs-school-import (18.0.42) unstable; urgency=medium
 
   * Bug #55015: Improve search filter for mac addresses for importing a computer

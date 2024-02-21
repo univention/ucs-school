@@ -390,10 +390,12 @@ Weiterführende Informationen
 
 * :cite:t:`ucs-quickstart`.
 
-.. _biblio:
+.. only:: html or linkcheck or spelling
 
-*************
-Bibliographie
-*************
+   .. _biblio:
+
+   *************
+   Bibliographie
+   *************
 
 .. bibliography::
