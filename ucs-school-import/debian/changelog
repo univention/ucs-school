@@ -1,3 +1,9 @@
+ucs-school-import (18.0.44) unstable; urgency=medium
+
+  * Bug #56846: version bump
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 22 Feb 2024 08:52:02 +0100
+
 ucs-school-import (18.0.43) unstable; urgency=medium
 
   * Bug #56846: Re-enabled support for UTF-16.
