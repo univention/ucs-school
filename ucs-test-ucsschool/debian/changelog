@@ -1,3 +1,9 @@
+ucs-test-ucsschool (6.0.276) unstable; urgency=medium
+
+  * Issue id-broker-plugin#109: fix IP file name
+
+ -- Tobias Wenzel <wenzel@univention.de>  Tue, 27 Feb 2024 08:27:55 +0100
+
 ucs-test-ucsschool (6.0.275) unstable; urgency=medium
 
   * Issue #89: remove pip install from id connector test
