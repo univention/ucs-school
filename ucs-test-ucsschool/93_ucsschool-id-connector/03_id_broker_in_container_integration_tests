@@ -2,6 +2,7 @@
 ## desc: In-container integration tests for ID Broker (Provisioning API) plugin
 ## exposure: dangerous
 ## tags: [id-broker]
+## timeout: 7200
 ## external-junit: /tmp/id_broker_id_connector_in_container_integration_tests.xml
 
 
