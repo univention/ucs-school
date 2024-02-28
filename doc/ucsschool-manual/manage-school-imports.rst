@@ -203,8 +203,8 @@ mit Vorgaben zu Gateway, DNS-Server und WINS-Server.
 
 :numref:`school-schoolcreate-network-import-format` zeigt das Format der
 Import-Datei. Das Skript :command:`import_networks` erwartet Tabulatorzeichen
-zur Trennung der einzelnen Felder. Optionale Felder stehen in Klammern, zum
-Beispiel *(IP-Adressbereich)*.
+zur Trennung der einzelnen Felder. Optionale Felder stehen in Klammern und
+dürfen in der Import-Datei leer bleiben, zum Beispiel *(IP-Adressbereich)*.
 :numref:`school-schoolcreate-network-import-example` zeigt ein Beispiel.
 
 .. _school-schoolcreate-network-import-format:
