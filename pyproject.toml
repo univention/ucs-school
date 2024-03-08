@@ -71,8 +71,6 @@ ignore = [
  "B026",  # Star-arg unpacking after a keyword argument is strongly discouraged
  "ISC001",  # Implicitly concatenated string literals on one line
  "SIM101",  # Multiple `isinstance` calls for `pk`, merge into a single call
- "SIM103",  # Return the condition `access_allowance not in result` directly
- "SIM110",  # Use `return any(regex.match(line) and all(str(word) in line for word in words) for line in lines)` instead of `for` loop
  "SIM114",  # if-with-same-arms
  "SIM201",  # Use `command != "r"` instead of `not command == "r"`
  "SIM210",  # Use `bool(reg and reg.groupdict()['context_type'] == 'school')` instead of `True if reg and reg.groupdict()['context_type'] == 'school' else False`
@@ -80,16 +78,10 @@ ignore = [
  "UP030",  # Use implicit references for positional format fields
  "UP034",  # Avoid extraneous parentheses
  "D417",  # Missing argument descriptions in the docstring: `base_dn`, `must_exist`, `ou`
- "S501",  # Probable use of `requests` call with `verify=False` disabling SSL certificate checks
- "PT009",  # Use a regular `assert` instead of unittest-style `assertSequenceEqual`
- "PT013",  # Found incorrect import of pytest, use simple `import pytest` instead
  "PT015",  # Assertion always fails, replace with `pytest.fail()`
  "PIE790",  # Unnecessary `pass` statement
- "PIE800",  # Unnecessary spread `**`
  "COM812",  # Trailing comma missing
- "COM818",  # Trailing comma on bare tuple prohibited
  "EXE002",  # The file is executable but no shebang is present
- "EXE003",  # Shebang should contain "python"
  "B026",  # Keyword argument `request` must come after starred arguments
 
 # # not py2 compatible

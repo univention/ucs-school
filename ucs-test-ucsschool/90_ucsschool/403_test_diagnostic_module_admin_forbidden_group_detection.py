@@ -10,7 +10,7 @@
 
 import importlib
 
-from pytest import raises
+import pytest
 
 from ucsschool.lib.models.school import School
 from univention.udm import UDM
@@ -58,7 +58,7 @@ def test_admin_in_wrong_groups(schoolenv):
     udm_obj = UDM.admin().version(2).obj_by_dn(school2_admins_group_dn)
     udm_obj.props.users.append(school1_admin_dn)
     udm_obj.save()
-    with raises(plugin908.Warning) as exc:
+    with pytest.raises(plugin908.Warning) as exc:
         plugin908.run(None)
         assert plugin908.FORBIDDEN_GROUPS_WARN_STR in str(exc.message)
         assert school2_admins_group_dn in str(exc.message)

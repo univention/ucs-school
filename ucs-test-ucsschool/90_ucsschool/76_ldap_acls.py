@@ -285,10 +285,7 @@ class LDAPACLTestMatrix(object):
         if err:
             result = next(x for x in err.split("\n") if (Access.Allowed in x or Access.Denied in x))
             if result:
-                if access_allowance not in result:
-                    return False
-                else:
-                    return True
+                return access_allowance in result
         else:
             raise AssertionError("command %r was not executed successfully" % cmd)
 

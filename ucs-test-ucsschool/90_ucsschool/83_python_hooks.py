@@ -128,10 +128,7 @@ def get_ucsschool_model_classes():
 
 def check_lines_for_pattern_and_words(lines, pattern, *words):
     regex = re.compile(pattern)
-    for line in lines:
-        if regex.match(line) and all(str(word) in line for word in words):
-            return True
-    return False
+    return any(regex.match(line) and all(str(word) in line for word in words) for line in lines)
 
 
 class TestPythonHooksMeta(type):
@@ -282,12 +279,10 @@ class TestPythonHooks(TestCase):
     def test_001_all_known_classes(self):
         model_names = sorted([m.__name__ for m in self.models] + self.ignored_classes)
         diff = set(model_names).symmetric_difference(set(EXPECTED_CLASSES.keys()))
-        self.assertSequenceEqual(
-            model_names,
-            sorted(EXPECTED_CLASSES.keys()),
+        assert model_names == sorted(EXPECTED_CLASSES.keys()), (
             "=====> Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}\n"
-            "Diff: {!r}".format(list(EXPECTED_CLASSES.keys()), model_names, sorted(diff)),
-        )
+            "Diff: {!r}"
+        ).format(list(EXPECTED_CLASSES.keys()), model_names, sorted(diff))
 
     def test_002_subclassing(self):
         # setUp() has created a hook for "Teacher"
