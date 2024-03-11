@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.173) unstable; urgency=medium
+
+  * Issue #1198: Changes due to ruff rule activation.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 11 Mar 2024 11:06:15 +0100
+
 ucs-test-ucsschool (7.3.172) unstable; urgency=medium
 
   * Issue univention/components/ucsschool-api-plugins/id-broker-plugin#109: timeout
