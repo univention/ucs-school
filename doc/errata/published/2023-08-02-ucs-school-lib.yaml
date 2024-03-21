@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-lib
-fix: 13.0.39
-desc: |
- * The UCR variable ``ucsschool/validation/username/windows-check`` has been added and can be used to control the username validation with respect to Windows naming conventions (Bug #56152).
-bug: [56152]

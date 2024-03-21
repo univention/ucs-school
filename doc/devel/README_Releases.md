@@ -19,6 +19,7 @@ This document describes how to prepare and execute a full release for the UCS@sc
 - [ ] Create new changelog
   - [ ] Create a new link on the UCS changelog pages
 - [ ] Create new version in Test Appcenter
+  - [ ] Adjust the version in the README files in the test appcenter
 - [ ] Publish to Test Appcenter
 - [ ] Verify release in Selfservice Center
 - [ ] Publish to production Appcenter
@@ -89,7 +90,7 @@ Follow the instructions in the changelog [README](../../doc/ucsschool-changelog/
 
 ```shell
 git add -u
-git commit -m "Bug #${BUGNUMBER}: ucsschool 5.0v5 changelog"
+git commit -m "Bug #${BUGNUMBER}: ucsschool 5.0v6 changelog"
 git push
 ```
 
@@ -101,10 +102,10 @@ Then add a link to the new `docs.univention.de` overview page:
 ```shell
 git clone git@git.knut.univention.de:documentation/ucs-doc-overview-pages.git
 cd ~/git/ucs-doc-overview-pages
-vi documentation/ucs-doc-overview-pages/src/content.yaml
+vi documentation/ucs-doc-overview-pages/navigation/docs/ucsschool-changelog.rst
 ```
 
-Search for `v4` and create similar entries for `v5`. Then commit and create an MR.
+Search for `v5` and create similar entries for `v6`. Then commit and create an MR.
 
 After merging the MR, follow the [doc pipeline](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages/-/pipelines),
 and then check that the links appear under the [UCS@school changelogs](https://docs.software-univention.de/release-notes_5.0.html.en).
@@ -226,10 +227,10 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-UCS@school 5.0 v5 has been released.
+UCS@school 5.0 v6 has been released.
 
-- https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html
-- https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html
 
 If this error occurs again, please clone this bug.
 </pre>

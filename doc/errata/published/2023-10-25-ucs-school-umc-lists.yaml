@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-lists
-fix: 3.0.9
-desc: |
- * The CSV files for the recommended export function are now properly formatted (Bug #56403).
-bug: [56403]

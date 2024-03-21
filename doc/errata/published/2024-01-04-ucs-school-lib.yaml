@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-lib
-fix: 13.0.43
-desc: |
- * Fixed a bug which lead to an erroneous ldap search during usage of the password reset module (Bug #56938).
-bug: [56938]

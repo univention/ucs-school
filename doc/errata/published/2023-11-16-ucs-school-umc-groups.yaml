@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-groups
-fix: 10.0.10
-desc: |
- * Fixed a bug where the email of a group in the UMC module "Administrate workgroups" was incorrectly displayed as empty. This could lead to the email being deleted when changes were saved (Bug #56589).
-bug: [56589]

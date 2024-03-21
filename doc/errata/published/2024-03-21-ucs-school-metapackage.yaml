@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-metapackage
 fix: 13.0.17
 desc: |
- * The coding style has been improved (Bug #55751).
+ * Internal Change: Reformatted source code for better readability and maintainability. (Bug #55751).
 bug: [55751]

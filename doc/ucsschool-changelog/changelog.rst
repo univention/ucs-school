@@ -8,152 +8,89 @@
 Changelog
 *********
 
-.. _changelog-ucsschool-2024-01-04:
+.. _changelog-ucsschool-2024-03-21:
 
-Released on 2024-01-04
+Released on 2024-03-21
 ======================
 
-Source package *ucs-school-lib* in version ``13.0.43``:
+Source package *ucs-school-import* in version ``18.0.45``:
 
-* Fixed a bug which lead to an erroneous LDAP search during usage of the
-  password reset module (:uv:bug:`56938`).
+* When importing a computer with an IP address starting with "255.", the user
+  gets a warning that is logged to the console (:uv:bug:`55376`).
 
+* Internal change: Improve search filter for mac addresses for importing a
+  computer. (:uv:bug:`55015`).
 
-.. _changelog-ucsschool-2023-12-19:
+* Fixed an issue that caused the user importer to not properly detect the
+  encoding of a given CSV file (:uv:bug:`56846`).
 
-Released on 2023-12-19
-======================
+Source package *ucs-school-info* in version ``10.0.3``:
 
-Source package *ucs-school-lib* in version ``13.0.42``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* Fixed a bug that would crash the password reset module within the UMC when a
-  teacher tries to read a class, in which there exists a member that is not a
-  member of the teachers school (:uv:bug:`50231`).
+Source package *ucs-school-lib* in version ``13.0.45``:
 
-Source package *ucs-school-import* in version ``18.0.40``:
+* Fixed a consistency check for non default admins group prefix. See UCRV
+  ``ucsschool/ldap/default/groupprefix/admins``. (:uv:bug:`55884`).
 
-* Errors which occur during the configuration of ``ucs-school-import`` are now
-  properly written to a log file (:uv:bug:`42373`).
+Source package *ucs-school-metapackage* in version ``13.0.17``:
 
-* Import no longer fails if a binary input file is provided and a compatible
-  reader class exists (:uv:bug:`56728`).
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-Source package *ucs-school-umc-users* in version ``16.0.8``:
+Source package *ucs-school-netlogon-user-logonscripts* in version ``16.0.5``:
 
-* Fixed a bug that would crash the password reset module within the UMC when a teacher tries to read a class, in which there exists a member that is not a
-  member of the teachers school (:uv:bug:`50231`).
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
+Source package *ucs-school-netlogon* in version ``10.0.3``:
 
-.. _changelog-ucsschool-2023-11-16:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-Released on 2023-11-16
-======================
+Source package *ucs-school-old-sharedirs* in version ``15.0.4``:
 
-Source package *ucs-school-umc-groups* in version ``10.0.10``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* Fixed a bug where the email of a group in the UMC module "Administrate
-  workgroups" was incorrectly displayed as empty. This could lead to the email
-  being deleted when changes were saved (:uv:bug:`56589`).
+Source package *ucs-school-ox-support* in version ``4.0.4``:
 
-Source package *ucs-school-umc-computerroom* in version ``12.0.15``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* Instead of raising an error, a warning is displayed when computers inside of a
-  computer room are missing an IP address and the computer icon is colored
-  orange (:uv:bug:`53624`).
+Source package *ucs-school-roleshares* in version ``8.0.4``:
 
-* Computers without MAC addresses don't raise an error when opening the computer
-  room (:uv:bug:`53571`).
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-.. _changelog-ucsschool-2023-10-25:
+Source package *ucs-school-umc-internetrules* in version ``16.0.5``:
 
-Released on 2023-10-25
-======================
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-Source package *ucs-school-umc-wizards* in version ``12.0.14``:
+Source package *ucs-school-umc-lists* in version ``3.0.10``:
 
-* The coding style has been improved (:uv:bug:`55751`).
+* Fixed issues that would lead to unexpected behavior while exporting class
+  lists (:uv:bug:`57018`).
 
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+Source package *ucs-school-umc-rooms* in version ``17.0.10``:
 
-Source package *ucs-school-umc-printermoderation* in version ``17.1.4``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
+Source package *ucs-school-veyon-client* in version ``2.0.5``:
 
-Source package *ucs-school-umc-lists* in version ``3.0.9``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* The CSV files for the recommended export function are now properly formatted
-  (:uv:bug:`56403`).
+Source package *ucs-school-webproxy* in version ``16.0.8``:
 
-Source package *ucs-school-umc-installer* in version ``8.0.10``:
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 
-* The coding style has been improved (:uv:bug:`55751`).
+Source package *univention-management-console-module-selective-udm* in version ``9.0.4``:
 
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-umc-import* in version ``3.0.7``:
-
-* The coding style has been improved (:uv:bug:`55751`).
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-umc-helpdesk* in version ``16.0.7``:
-
-* The coding style has been improved (:uv:bug:`55751`).
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-umc-exam* in version ``10.0.10``:
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-umc-distribution* in version ``18.0.8``:
-
-* The coding style has been improved (:uv:bug:`55751`).
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-umc-computerroom* in version ``12.0.13``:
-
-* The coding style has been improved (:uv:bug:`55751`).
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-lib* in version ``13.0.41``:
-
-* Added missing UCR variable descriptions (:uv:bug:`52844`).
-
-* Deprecated UMC APIs have been replaced with public UMC APIs (:uv:bug:`56390`).
-
-Source package *ucs-school-import* in version ``18.0.36``:
-
-* Added rotation for importer worker logs (:uv:bug:`52167`).
-
-.. _changelog-ucsschool-2023-09-12:
-
-Released on 2023-09-12
-======================
-
-Source package *ucs-school-import* in version ``18.0.33``:
-
-* The SiSoPi user import now keeps class memberships for other schools.
-  (:uv:bug:`56340`)
-
-.. _changelog-ucsschool-2023-08-02:
-
-Released on 2023-08-02
-======================
-
-Source package *ucs-school-umc-diagnostic* in version ``2.0.15``:
-
-* The coding style has been improved (:uv:bug:`55751`).
-
-* Added a new system diagnostic feature: Existing UCS@school usernames will be
-  checked for validity. Warnings are issued if deprecated or unsupported
-  usernames have been found. (:uv:bug:`56152`, :uv:bug:`55751`).
-
-Source package *ucs-school-lib* in version ``13.0.39``:
-
-* The UCR variable ``ucsschool/validation/username/windows-check`` has been added
-  and can be used to control the username validation with respect to Windows
-  naming conventions (:uv:bug:`56152`).
+* Internal Change: Reformatted source code for better readability and
+  maintainability. (:uv:bug:`55751`).
 

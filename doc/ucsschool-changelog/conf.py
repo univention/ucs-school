@@ -40,7 +40,7 @@ def read_version_from_ci() -> str:
 
     with open("../../.gitlab-ci/base-doc.yml") as f:
         ci = yaml.safe_load(f)
-        return ci.get(".sphinx-doc").get("variables").get("CHANGELOG_TARGET_VERSION", "5.0v4")
+        return ci.get(".sphinx-doc").get("variables").get("CHANGELOG_TARGET_VERSION")
 
 
 # -- Project information -----------------------------------------------------
@@ -173,7 +173,7 @@ linkcheck_allowed_redirects = {
     r"https://help\.univention\.com/t/\d+": r"https://help\.univention\.com/t/[\w-]+/\d+",
 }
 
-univention_changelog_previous_release = "5.0 v3"
+univention_changelog_previous_release = "5.0 v4"
 univention_changelog_builder = "ucsschool"
 
 # See Univention Sphinx Extension for its options.

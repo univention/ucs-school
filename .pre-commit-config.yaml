@@ -11,7 +11,7 @@ repos:
       - id: check-yaml
       - id: trailing-whitespace
   - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
-    rev: '0.0.10'
+    rev: "0.0.10"
     hooks:
       - id: ucr-flake8
         additional_dependencies: ["flake8==5.0.4"]
@@ -19,30 +19,30 @@ repos:
         additional_dependencies: ["ruff==0.2.2"]
       - id: ucr-autopep8
         additional_dependencies: ["autopep8<=2.0.2"]
-        stages: [ manual ]
+        stages: [manual]
       - id: ucr-ruff-fix
         additional_dependencies: ["ruff==0.2.2"]
-        stages: [ manual ]
+        stages: [manual]
       - id: ucr-ruff-format-check
         additional_dependencies: ["ruff==0.2.2"]
-        stages: [ manual ]
+        stages: [manual]
       - id: ucr-ruff-format
         additional_dependencies: ["ruff==0.2.2"]
-        stages: [ manual ]
+        stages: [manual]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.2.2'
+    rev: "v0.2.2"
     hooks:
       - id: ruff
       - id: ruff
         alias: "ruff-edit"
-        stages: [ manual ]
+        stages: [manual]
         args: ["--fix", "--unsafe-fixes"]
       - id: ruff-format
         alias: "ruff-format"
-        stages: [ manual ]
+        stages: [manual]
       - id: ruff-format
         alias: "ruff-format-check"
-        stages: [ manual ]
+        stages: [manual]
         args: ["--check"]
   - repo: https://github.com/psf/black
     # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
@@ -51,12 +51,12 @@ repos:
     rev: 21.9b0
     hooks:
       - id: black
-        additional_dependencies: ['click>8.0,<8.1']
+        additional_dependencies: ["click>8.0,<8.1"]
         entry: black --check --diff --config .black
       - id: black
-        additional_dependencies: ['click>8.0,<8.1']
+        additional_dependencies: ["click>8.0,<8.1"]
         alias: black-edit
-        stages: [ manual ]
+        stages: [manual]
         entry: black --config .black
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
@@ -74,6 +74,18 @@ repos:
     hooks:
       - id: bandit
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
+  - repo: local
+    hooks:
+      - id: advisorycheck
+        name: Check YAML errata advisories
+        entry: ./.gitlab-ci/validate-advisories
+        language: python
+        types: ["yaml"]
+        files: doc/errata/staging/.*
+        exclude: doc/errata/staging/0template.yaml
+        additional_dependencies:
+          - pyyaml==6.0
+
   - repo: https://github.com/jackdewinter/pymarkdown
     rev: v0.9.7
     hooks:
@@ -83,10 +95,10 @@ repos:
         language_version: python3.8
         # TODO: clean those up:
         exclude: "^doc/devel/README.*.md$\
-                 |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\
-                 |^ucs-school-import/.*.md$\
-                 |^.gitlab/issue_templates/default.md$\
-                 "
+          |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\
+          |^ucs-school-import/.*.md$\
+          |^.gitlab/issue_templates/default.md$\
+          "
         args:
           - --disable-rules
           - MD013,MD024,MD034
@@ -97,4 +109,4 @@ repos:
           # MD024: Allow duplicate headings
           # MD034: Allow bare URLs
 default_language_version:
-    python: python3.7
+  python: python3.7

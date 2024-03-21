@@ -7,5 +7,5 @@ fix: 18.0.45
 desc: |
  * When importing a computer with an IP address starting with "255.", the user gets a warning that is logged to the console (Bug #55376).
  * Internal change: Improve search filter for mac addresses for importing a computer. (Bug #55015).
- * Fixed an issue that caused the importer to not properly detect the encoding of a given CSV file (Bug #56846).
+ * Fixed an issue that caused the user importer to not properly detect the encoding of a given CSV file (Bug #56846).
 bug: [55376,55015, 56846]
