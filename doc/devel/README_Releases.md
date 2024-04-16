@@ -26,12 +26,15 @@ This document describes how to prepare and execute a full release for the UCS@sc
 - [ ] Publish manual
 - [ ] Update public documentation
   - [ ] Update release wiki
-  - [ ] Send announcement email
   - [ ] Update bugzilla bugs
 - [ ] QA the release
-- [ ] Create new target milestone in self-service center
+- [ ] Create new target milestone in bugzilla
 - [ ] Create next errata release issue
 - [ ] Update README release documentation (both full and errata) so that bash commands and html links point to the correct versions of UCS@school.
+- [ ] Check if the maintenance information has to be updated (https://docs.software-univention.de/n/en/maintenance/ucsschool.html#maintenance-ucsschool)
+    - See READMEs on https://git.knut.univention.de/univention/dist/release-dates and https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages
+    - [ ] If a new document has been added, add it to `docsearch.config.json` in repository https://git.knut.univention.de/univention/documentation/docsearch/
+- [ ] Send announcement email
 
 **NOTE:** If you are a new developer doing the release for the first time,
 you should also follow the [First Time Preparation](README_manual_release.md#first-time-preparations)
@@ -168,9 +171,6 @@ sudo update_mirror.sh -v appcenter
 ```
 
 ## Publish UCS@school manual
-
-**TODO:** this section is most likely wrong. Please update this and the
-[errata documentation](README_Erratum.md) next time we release.
 
 The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
 that is triggered by a merge from `ucsschool`.

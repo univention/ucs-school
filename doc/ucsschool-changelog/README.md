@@ -31,15 +31,15 @@ Changelog](https://git.knut.univention.de/univention/documentation/univention_sp
 **NOTE:** If you are doing an errata release, skip this step.
 
 The following example illustrates the procedure on the example for the
-UCS@school 5.0 v4 release version.
+UCS@school 5.0 v6 release version.
 
 Update configuration settings in `conf.py`:
 
-* Set `univention_changelog_previous_release` to `"5.0 v3"`.
-* Set `release` to `5.0 v4`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
+* Set `univention_changelog_previous_release` to `"5.0 v5"`.
+* Set `release` to `5.0 v6`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
 * Keep `version` at `5.0`.
 
-Remove the advisories for the previous release. (?)
+If there are still advisories in `published` from the previous app release, remove them with `git rm`.
 
 Add additional update information in the `*.rst` files. It might help to run `make clean` inside the docker container when your are doing a release.
 
@@ -106,6 +106,8 @@ Add additional update information in the `*.rst` files. It might help to run `ma
    make -C . -e SPHINXOPTS="-W --keep-going -D language='de'" -e BUILDDIR="_build/de" spelling
    ```
 
+   If the spell check fails, aside from actual spelling errors, you might also still have `fuzzy` or empty strings in the `.po` files.
+
 9. Still **inside** of docker, build the `.mo` files.
 
    ```console
@@ -124,5 +126,5 @@ Add additional update information in the `*.rst` files. It might help to run `ma
 
 Once all pipelines are complete, you should visit the changelog pages and verify that the changes are there:
 
-* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v3/en/changelog.html)
-* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v3/de/changelog.html)
+* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html)
+* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html)
