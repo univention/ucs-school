@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.8.3.0-ucs5.0-0) unstable; urgency=medium
+
+  * Bug #53907: update veyon windows installer
+
+ -- Tobias Wenzel <wenzel@univention.de>  Wed, 24 Apr 2024 08:54:23 +0200
+
 ucs-school-veyon-windows (4.7.4.0-ucs5.0-1) unstable; urgency=medium
 
   * Bug #55029: update veyon windows installer

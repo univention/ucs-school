@@ -8,6 +8,7 @@
 
         cd /var/univention/buildsystem2/mirror/ftp/download/large-build-files/ucsschool
         wget https://github.com/veyon/veyon/releases/download/v4.7.3/veyon-4.7.3.0-win64-setup.exe
+        sha512sum veyon-4.7.3.0-win64-setup.exe > veyon-4.7.3.0-win64-setup.SHA512
 
 3. Test the mirror update in a dry-run mode:
 
