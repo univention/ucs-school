@@ -89,7 +89,6 @@ do
             doc_job '.sphinx-pdf' pdf "$language"
             doc_job '.sphinx-linkcheck' linkcheck "$language"
             doc_job '.sphinx-spelling' spelling "$language"
-            doc_job '.sphinx-warnings' warnings "$language"
         done
     fi
 done

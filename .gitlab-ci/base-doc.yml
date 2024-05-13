@@ -52,11 +52,6 @@ stages:
   script:
     - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" spelling
 
-.sphinx-warnings:
-  extends: .sphinx-warnings-template
-  script:
-    - make -C "$DOCS_DIR" -e FORCE_COLOR="TRUE" -e SPHINXOPTS="-v -W --keep-going -D language='$language'" -e BUILDDIR="_build/$language" html
-
 # The child pipeline needs at minimum one job to run - otherwise the sub-pipeline fails
 webframe:
   stage: build
