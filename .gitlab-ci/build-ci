@@ -11,13 +11,14 @@ doc_job () { # <extends> [<suffix> [<language>]]
     echo "build ${pkg}${3:+ "$3"}${2:+ "$2"}:"
     echo '  variables:'
     echo "    DOCS_DIR: $path"
-    echo "    DOC_NAME: ${path##*/}"
+    echo "    DOC_TARGET_NAME: ${path##*/}"
     [ -n "${3+empty}" ] && echo "    language: $3"
 
     if [ "$pkg" = "ucsschool-changelog" ] && ( [ "$2" = "html" ] || [ "$2" = "pdf" ] )
     then
         echo '    DOC_TARGET_VERSION: $CHANGELOG_TARGET_VERSION'
     fi
+    echo '    DOC_TARGET_PATH: $DOC_TARGET_NAME/$DOC_TARGET_VERSION/$language'
     echo "  extends: ${1:?extends}"
     echo '  rules:'
     echo '    - changes:'
