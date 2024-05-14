@@ -155,6 +155,10 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 5 ]; then
 	fi
 fi
 
+if samba-tool spn list "krbkeycloak" | grep -q 'no servicePrincipalName'; then
+	samba-tool spn add "HTTP/${keycloak_server_sso_fqdn:-ucs-sso-ng.$domainname}" "krbkeycloak" || die
+fi
+
 ignore_user ()
 {
 	# Add $1 to the ignore list
