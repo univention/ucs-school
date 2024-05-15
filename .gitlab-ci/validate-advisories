@@ -26,10 +26,16 @@ def get_latest_package(package_name: str) -> str:
         with open(filename) as changelog_file:
             changelog = changelog_file.readlines()
             for line in changelog:
-                version = re.match(f"{package_name} \\((\\d+\\.\\d+\\.\\d+)\\)", line)
+                if package_name == "ucs-school-veyon-windows":
+                    version = re.match(
+                        f"{package_name} \\((\\d+\\.\\d+\\.\\d+.\\d+-ucs\\d+\\.\\d+-\\d+)\\)", line
+                    )
+                else:
+                    version = re.match(f"{package_name} \\((\\d+\\.\\d+\\.\\d+)\\)", line)
                 if version:
                     package_version = version.groups()[0]
                     break
+
     except FileNotFoundError:
         print(f"ERROR: changelog missing for {package_name}")
 
