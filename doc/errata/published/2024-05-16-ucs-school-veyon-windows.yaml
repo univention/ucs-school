@@ -5,5 +5,5 @@ scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-veyon-windows
 fix: 4.8.3.0-ucs5.0-0
 desc: |
- * Update veyon windows client to version 4.8.3.0 (Bug #53907).
+ * Update Veyon windows client to version 4.8.3.0 (Bug #53907).
 bug: [53907]

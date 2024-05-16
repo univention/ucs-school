@@ -8,6 +8,15 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-05-16:
+
+Released on 2024-05-16
+======================
+
+Source package *ucs-school-veyon-windows* in version ``4.8.3.0-ucs5.0-0``:
+
+* Update Veyon windows client to version 4.8.3.0 (:uv:bug:`53907`).
+
 .. _changelog-ucsschool-2024-03-21:
 
 Released on 2024-03-21
