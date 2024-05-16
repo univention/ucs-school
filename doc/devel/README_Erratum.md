@@ -59,7 +59,7 @@ The correct version string, for example `ucsschool_20230802094418`, can be found
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 5.0 ucsschool_20230802094418  # copies the given version to public app center on local mirror!
+./copy_from_appcenter.test.sh 5.0 ucsschool_20240318112841  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
@@ -141,10 +141,10 @@ This will enable you to select and modify the bugs you need.
 
 Use this text as the comment for closing the mentioned bugs:
 <pre>
-Errata updates for UCS@school 5.0 v4 have been released.
+Errata updates for UCS@school 5.0 v5 have been released.
 
-https://docs.software-univention.de/ucsschool-changelog/5.0v4/en/changelog.html
-https://docs.software-univention.de/ucsschool-changelog/5.0v4/de/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html
 
 If this error occurs again, please clone this bug.
 </pre>

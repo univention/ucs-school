@@ -26,7 +26,7 @@ For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs
 
 ```shell
 cd ~/git/ucsschool/doc/errata/staging
-copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v4" -u \
+copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v5" -u \
     ucs-school-import.yaml \
     ucs-school-umc-internetrules.yaml
 ```
