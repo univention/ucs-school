@@ -149,6 +149,7 @@ intersphinx_mapping = {
         None,
     ),
     "python-docs": ("https://docs.python.org/3.7/", None),
+    "veyon-docs": ("https://docs.veyon.io/de/latest", None),
 }
 
 linkcheck_allowed_redirects = {
