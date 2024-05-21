@@ -420,11 +420,11 @@ Kommandozeile.
    :name: school-windows-veyon-master-create-user-cli
 
    VEYON_PASSWORD="veyon-user-account-password"  # Passen Sie dieses Passwort an!
-   SCHOOL_NAME="school-name"
+   SCHOOL_NAME="school1"
 
    udm users/ldap create --position "cn=users,ou="$SCHOOL_NAME",$(ucr get ldap/base)" \
-      --set username='veyon-school1' \
-      --set lastname='veyon-school1' \
+      --set username="veyon-$SCHOOL_NAME" \
+      --set lastname="veyon-$SCHOOL_NAME" \
       --set password="$VEYON_PASSWORD"
 
 LDAP-Basiseinstellungen
