@@ -121,7 +121,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
         if not school:
             return []
         userroles = [
-            {"id": role.name, "label": role.displayName}
+            {"id": role.name, "label": self._parse_user_role(role.name)}
             for role in self.get_client(request).school.get(school).roles
         ]
         if not userroles:

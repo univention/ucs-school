@@ -1,3 +1,9 @@
+ucs-school-umc-import (3.0.8) unstable; urgency=medium
+
+  * Bug #56519: Added missing localization.
+
+ -- Alexander Steffen <steffen@univention.de>  Fri, 17 May 2024 08:26:03 +0200
+
 ucs-school-umc-import (3.0.7) unstable; urgency=medium
 
   * Bug #56390: replace deprecated UMC/python-notifier APIs with public

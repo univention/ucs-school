@@ -1,0 +1,10 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-umc-import
+fix: 3.0.8
+desc: |
+ * The selection in the UCS@school umc import is no properly localized. An updated image is placed
+  in the documentation (Bug #56519).
+bug: [56519]
