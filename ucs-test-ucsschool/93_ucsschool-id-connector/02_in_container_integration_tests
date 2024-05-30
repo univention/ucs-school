@@ -9,8 +9,8 @@ APP="ucsschool-id-connector"
 CMD1="apk add --no-cache openssh-client sshpass"
 CMD2="cd /$APP/src; /usr/bin/python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.02_in_container_integration_tests tests/integration_tests"
 
-echo "IP of Traeger 1: $(</var/www/IP_traeger1.txt)"
-echo "IP of Traeger 2: $(</var/www/IP_traeger2.txt)"
+echo "Traeger 1: $(</var/www/traeger1.txt)"
+echo "Traeger 2: $(</var/www/traeger2.txt)"
 
 echo "Running in container: $CMD1"
 univention-app shell "$APP" $CMD1
