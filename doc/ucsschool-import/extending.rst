@@ -69,6 +69,9 @@ Die :py:class:`ImportUser` Klasse
 
       Geburtstag im Format ``JJJJ-MM-TT``
 
+   .. py:attribute:: expiration_date
+
+      Ablaufdatum für das Benutzerkonto im Format ``JJJJ-MM-TT``
 
    .. py:attribute:: email
       :type: str
