@@ -6,18 +6,13 @@
 
 
 APP="ucsschool-id-connector"
-CMD1="apk add --no-cache openssh-client sshpass"
-CMD2="cd /$APP/src; /usr/bin/python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.02_in_container_integration_tests tests/integration_tests"
+CMD="cd /$APP/src; python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.02_in_container_integration_tests tests/integration_tests"
 
 echo "Traeger 1: $(</var/www/traeger1.txt)"
 echo "Traeger 2: $(</var/www/traeger2.txt)"
 
-echo "Running in container: $CMD1"
-univention-app shell "$APP" $CMD1
-
-
-echo "Running in container: sh -c \"$CMD2\""
-univention-app shell "$APP" sh -c "$CMD2"
+echo "Running in container: sh -c \"$CMD\""
+univention-app shell "$APP" sh -c "$CMD"
 rm -f /tmp/id_connector_in_container_integration_tests.xml
 
 univention-app shell "$APP" cat /tmp/junit.xml > /tmp/id_connector_in_container_integration_tests.xml
