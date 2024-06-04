@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.175) unstable; urgency=medium
+
+  * Issue univention/components/ucsschool-id-connector#52: test update
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 04 Jun 2024 15:15:01 +0200
+
 ucs-test-ucsschool (7.3.174) unstable; urgency=medium
 
   * Issue univention/components/ucsschool-id-connector#59: switch to hostname
