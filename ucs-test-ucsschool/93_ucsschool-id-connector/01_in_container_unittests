@@ -5,7 +5,7 @@
 ## external-junit: /tmp/id_connector_in_container_unittests.xml
 
 APP="ucsschool-id-connector"
-CMD="cd /$APP/src; python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.01_in_container_unittests tests/unittests"
+CMD="cd /$APP/src; apt update; apt install -y build-essential python3-dev; poetry install --with test; python3 -m pytest -m 'not id_broker' -l -v --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.01_in_container_unittests tests/unittests"
 
 echo "Running in container: sh -c \"$CMD\""
 
