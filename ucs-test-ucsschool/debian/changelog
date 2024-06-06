@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.177) unstable; urgency=medium
+
+  * Issue univention/components/ucsschool-id-connector#52: tests update
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 06 Jun 2024 11:04:28 +0200
+
 ucs-test-ucsschool (7.3.176) unstable; urgency=medium
 
   * Issue univention/components/ucsschool-id-connector#52: test update
