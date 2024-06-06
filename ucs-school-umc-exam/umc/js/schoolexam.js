@@ -218,7 +218,7 @@ define([
 					autoSearch: true,
 					onChange: lang.hitch(this, function(newValue) {
 						var groups = newValue.map(function(obj) {return obj['id']});
-						this._recipientsGrid.setGroups(groups);
+                        this._recipientsGrid.setGroups(groups, this);
 					})
 				}, {
 					type: Text,

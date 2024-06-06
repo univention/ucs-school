@@ -1,3 +1,9 @@
+ucs-school-umc-exam (10.0.11) unstable; urgency=medium
+
+  * Bug #57319: Add validation for students on addition to the exam
+
+ -- Johannes Königer <koeniger@univention.de>  Fri, 07 Jun 2024 13:43:23 +0200
+
 ucs-school-umc-exam (10.0.10) unstable; urgency=medium
 
   * Bug #56390: replace deprecated UMC/python-notifier APIs with public

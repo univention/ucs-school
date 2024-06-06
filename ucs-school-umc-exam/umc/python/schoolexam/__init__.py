@@ -55,7 +55,7 @@ import univention.debug as ud
 from ucsschool.lib import internetrules
 from ucsschool.lib.models.base import WrongObjectType
 from ucsschool.lib.models.group import ComputerRoom, Group
-from ucsschool.lib.models.user import User
+from ucsschool.lib.models.user import Student, User
 from ucsschool.lib.models.utils import (
     ModuleHandler,
     NotInstalled,
@@ -1155,5 +1155,39 @@ class Instance(SchoolBaseModule):
                             "lastname": user_obj.lastname,
                             "school_classes": [school_class_name],
                         }
+
+        # Validate students
+        # Bug #57319
+        students_with_validation_errors = []
+        for student_vals in students.values():
+            logger.info("Validating student {}".format(student_vals["dn"]))
+            student_obj = Student.from_dn(student_vals["dn"], None, ldap_user_read)
+            student_obj.validate(ldap_user_read)
+            if student_obj.errors:
+                logger.error(
+                    "Student {} has validation errors: \n{}".format(student_obj.dn, student_obj.errors)
+                )
+                students_with_validation_errors.append(student_obj)
+
+        if students_with_validation_errors:
+            formatted_errors = ""
+            for student in students_with_validation_errors:
+                formatted_errors += "{}\n".format(student.dn)
+                for error_key, error_descriptions in student.errors.items():
+                    for error_description in error_descriptions:
+                        formatted_errors += "{}: {}\n".format(error_key, error_description)
+
+            error_msg = "".join(
+                [
+                    _("The following students have validation errors:\n\n"),
+                    formatted_errors,
+                    _(
+                        "\nThe student data must be corrected by an "
+                        "Administrator before the students can be added to the exam."
+                    ),
+                ]
+            )
+            raise UMC_Error(error_msg)
+
         res = sorted(students.values(), key=lambda x: x["dn"])
         self.finished(request.id, res)  # cannot use @simple_response with @LDAP_Connection :/

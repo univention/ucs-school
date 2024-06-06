@@ -64,7 +64,7 @@ define([
 				}
 			]
 		},
-		setGroups: function(groups) {
+		setGroups: function(groups, examwizard) {
 			/**
 			 * Updates the grid with a new set of groups and thus a new set of students to display. This function
 			 * fetches data via an umc call.
@@ -91,7 +91,13 @@ define([
 						this.moduleStore.add(newUsers[dn])
 					}));
 					this.update();
-				}))
+				}), lang.hitch(
+                    this,
+                    function(error) {
+                        vals = examwizard._pages.advanced._form.value
+                        vals.recipients = []
+                        examwizard._pages.advanced._form.set("value", vals);
+                }))
 			}
 		}
 	})

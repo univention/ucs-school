@@ -1,0 +1,10 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-umc-exam
+fix: 10.0.11
+desc: |
+ * Added validation for students when they are added to an exam.
+ This helps to detect validation errors before the exam is started. (Bug #57319).
+bug: [57319]

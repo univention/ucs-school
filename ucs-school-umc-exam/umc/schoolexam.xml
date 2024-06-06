@@ -10,6 +10,7 @@
 	<command name="schoolexam/schools" function="schools"/>
 	<command name="schoolexam/upload" function="upload"/>
 	<command name="schoolexam/internetrules" function="internetrules"/>
+    <command name="schoolexam/groups/validate" function="validate_groups"/>
 	<command name="schoolexam/room/validate" function="validate_room"/>
 	<command name="schoolexam/exam/add" function="add"/>
 	<command name="schoolexam/exam/delete" function="delete"/>
