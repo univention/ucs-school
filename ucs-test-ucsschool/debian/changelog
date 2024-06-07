@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.179) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1217: Add test for endpoint groups2student
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 17 Jun 2024 10:49:16 +0200
+
 ucs-test-ucsschool (7.3.178) unstable; urgency=medium
 
   * Issue univention/components/ucsschool-id-connector#52: tests update
