@@ -6,7 +6,7 @@
 
 APP="ucsschool-id-connector"
 TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
-CMD="cd $TEST_PATH; pytest -lv --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.03_id_broker_in_container_unit_tests unittests"
+CMD="cd $TEST_PATH; pip3 install -r /ucsschool-id-connector/requirements-test.txt; python3 -m pytest -lv --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.03_id_broker_in_container_unit_tests unittests"
 
 echo "Running in container: sh -c \"$CMD\""
 univention-app shell "$APP" sh -c "$CMD"
