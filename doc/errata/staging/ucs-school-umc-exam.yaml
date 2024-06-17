@@ -3,8 +3,8 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-umc-exam
-fix: 10.0.11
+fix: 10.0.12
 desc: |
- * Added validation for students when they are added to an exam.
- This helps to detect validation errors before the exam is started. (Bug #57319).
-bug: [57319]
+ * Added validation for students when they are added to an exam. This helps to detect validation errors before the exam is started. (Bug #57319).
+ * If errors occur due to incorrect samba share configuration files, they are displayed during the preparation and not during the exam (Bug #57367).
+bug: [57319, 57367]

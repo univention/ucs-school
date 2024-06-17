@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2024-06-07 13:20+0200\n"
+"POT-Creation-Date: 2024-06-17 11:24+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolexam/__init__.py:1183
+#: umc/python/schoolexam/__init__.py:1213
 msgid ""
 "\n"
 "The student data must be corrected by an Administrator before the students "
@@ -22,7 +22,7 @@ msgstr ""
 "Die Schülerdaten müssen von einem Administrator korrigiert werden bevor die "
 "Schüler zu der Klassenarbeit hinzugefügt werden können."
 
-#: umc/python/schoolexam/__init__.py:404
+#: umc/python/schoolexam/__init__.py:431
 #, python-format
 msgid ""
 "An exam with the name \"%s\" already exists. Please choose a different name "
@@ -31,78 +31,92 @@ msgstr ""
 "Eine Klassenarbeit unter dem Namen \"%s\" existiert bereits. Bitte wählen "
 "Sie einen anderen Namen."
 
-#: umc/python/schoolexam/__init__.py:1028
+#: umc/python/schoolexam/__init__.py:1055
 #, python-format
 msgid "An unexpected error occurred during the preparation: %s"
 msgstr "Ein unerwarteter Fehler trat währende der Vorbereitung auf: %s"
 
-#: umc/python/schoolexam/__init__.py:886
+#: umc/python/schoolexam/__init__.py:913
 msgid "Collecting exam files..."
 msgstr "Einsammeln der Klassenarbeitsdateien..."
 
-#: umc/python/schoolexam/__init__.py:904
+#: umc/python/schoolexam/__init__.py:931
 msgid "Configuring the computer room..."
 msgstr "Einrichtung des Computerraumes..."
 
-#: umc/python/schoolexam/__init__.py:383 umc/python/schoolexam/__init__.py:563
+#: umc/python/schoolexam/__init__.py:410 umc/python/schoolexam/__init__.py:590
 #, python-format
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Der Benutzer \"%s\" konnte nicht authentifiziert werden!"
 
-#: umc/python/schoolexam/__init__.py:583 umc/python/schoolexam/__init__.py:899
+#: umc/python/schoolexam/__init__.py:610 umc/python/schoolexam/__init__.py:926
 #, python-format
 msgid "Could not connect to Primary Directory Node %s."
 msgstr ""
 "Die Verbindung zum Primary Directory Node %s konnte nicht aufgebaut werden."
 
-#: umc/python/schoolexam/__init__.py:750
+#: umc/python/schoolexam/__init__.py:777
 msgid "Distributing exam files"
 msgstr "Verteilung der Klassenarbeitsdateien"
 
-#: umc/python/schoolexam/__init__.py:1136
+#: umc/python/schoolexam/__init__.py:1163
 msgid "Error loading group DN {!r}."
 msgstr "Fehler beim Laden der Gruppen DN {!r}."
 
-#: umc/python/schoolexam/__init__.py:470
+#: umc/python/schoolexam/__init__.py:497
 msgid "Exam details are only visible to the exam owner himself."
 msgstr ""
 "Die Details einer Klassenarbeit können nur von ihrem Eigentümer eingesehen "
 "werden."
 
-#: umc/python/schoolexam/__init__.py:552 umc/python/schoolexam/__init__.py:871
+#: umc/python/schoolexam/__init__.py:579 umc/python/schoolexam/__init__.py:898
 msgid "Initializing"
 msgstr "Einrichtung"
 
-#: umc/python/schoolexam/__init__.py:837
+#: umc/python/schoolexam/__init__.py:864
 msgid "No files have been distributed"
 msgstr "Keine Dateien wurden verteilt"
 
-#: umc/python/schoolexam/__init__.py:760
+#: umc/python/schoolexam/__init__.py:139
+msgid ""
+"Please contact an administrator.\n"
+"An error occurred while loading one of the samba share configuration files "
+"(see configuration file /etc/samba/shares.conf and configuration files "
+"below /etc/samba/shares.conf.d/). Known causes for this are wrong file "
+"permissions and typos in the configuration files."
+msgstr ""
+"Bitte wenden Sie sich an einen Administrator.\n"
+"Beim Laden einer der Samba-Freigabekonfigurationsdateien ist ein Fehler aufgetreten "
+"(siehe Konfigurationsdatei /etc/samba/shares.conf und Konfigurationsdateien "
+"unterhalb von /etc/samba/shares.conf.d/). Bekannte Ursachen dafür sind falsche "
+"Dateiberechtigungen und Tippfehler in den Konfigurationsdateien."
+
+#: umc/python/schoolexam/__init__.py:787
 msgid "Prepare room settings"
 msgstr "Vorbereiten der Raumeinstellungen"
 
-#: umc/python/schoolexam/__init__.py:613
+#: umc/python/schoolexam/__init__.py:640
 msgid "Preparing exam accounts"
 msgstr "Vorbereitung der Klassenarbeitskonten"
 
-#: umc/python/schoolexam/__init__.py:587
+#: umc/python/schoolexam/__init__.py:614
 msgid "Preparing the computer room for exam mode..."
 msgstr "Einrichtung des Computerraumes für den Klassenarbeitsmodus..."
 
-#: umc/python/schoolexam/__init__.py:663
+#: umc/python/schoolexam/__init__.py:690
 msgid "Preparing user home directories"
 msgstr "Einrichten der Heimatverzeichnisse"
 
-#: umc/python/schoolexam/__init__.py:949
+#: umc/python/schoolexam/__init__.py:976
 msgid "Removing exam accounts"
 msgstr "Entfernen der Klassenarbeitskonten"
 
-#: umc/python/schoolexam/__init__.py:731
+#: umc/python/schoolexam/__init__.py:758
 msgid "Replication timeout: could not create all exam users"
 msgstr ""
 "Replikations-Timeout: Nicht alle Klassenarbeitskonten konnten erstellt werden"
 
-#: umc/python/schoolexam/__init__.py:853
+#: umc/python/schoolexam/__init__.py:880
 #, python-format
 msgid ""
 "Room \"%s\" does not contain any computers. Empty rooms may not be used to "
@@ -111,17 +125,17 @@ msgstr ""
 "Raum \"%s\" enthält keine Rechner. Klassenarbeiten können nicht in leeren "
 "Räumen gestartet werden."
 
-#: umc/python/schoolexam/__init__.py:394
+#: umc/python/schoolexam/__init__.py:421
 msgid "The exam can only be modified by the owner himself."
 msgstr "Die Klassenarbeit kann nur von ihrem Eigentümer bearbeitet werden."
 
-#: umc/python/schoolexam/__init__.py:396
+#: umc/python/schoolexam/__init__.py:423
 msgid "The exam was already started and can not be modified anymore!"
 msgstr ""
 "Die Klassenarbeit wurde schon gestarted und kann nicht mehr bearbeitet "
 "werden!"
 
-#: umc/python/schoolexam/__init__.py:1181
+#: umc/python/schoolexam/__init__.py:1210
 msgid ""
 "The following students have validation errors:\n"
 "\n"
@@ -129,12 +143,12 @@ msgstr ""
 "Die folgenden Schüler haben Validierungsfehler:\n"
 "\n"
 
-#: umc/python/schoolexam/__init__.py:390
+#: umc/python/schoolexam/__init__.py:417
 #, python-format
 msgid "The specified exam does not exist: %s"
 msgstr "Die spezifizierte Klassenarbeit existiert nicht: %s"
 
-#: umc/python/schoolexam/__init__.py:793 umc/python/schoolexam/__init__.py:1023
+#: umc/python/schoolexam/__init__.py:820 umc/python/schoolexam/__init__.py:1050
 msgid "finished..."
 msgstr "beendet..."
 

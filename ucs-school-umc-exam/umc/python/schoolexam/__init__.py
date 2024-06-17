@@ -41,7 +41,7 @@ import tempfile
 import time
 import traceback
 from itertools import chain
-from typing import TYPE_CHECKING, List  # noqa: F401
+from typing import TYPE_CHECKING, List, Optional  # noqa: F401
 
 import ldap
 from ldap.dn import escape_dn_chars
@@ -112,44 +112,37 @@ if "schoolexam" not in list(logger.handlers):
     logger.addHandler(_module_handler)
 
 
-def deny_owner_change_permissions(filename):  # type: (str) -> None
+def load_smb_default_file() -> Optional[LoadParm]:
     """
-    A user gets full control over her permissions by default.
-    The SDDL string of the home dir is extended by
-    - forbid exam-users to change the permissions and owner
-    - overrides standard behavior, i. e. full control, with 'edit' for owners.
+    Try to load the default samba shares.conf and retry if this fails.
+    Bug 57367
 
-    :param filename:
+    :raises: UMC_Error
     """
     lp = LoadParm()
-    lp.load_default()
-    s3conf = param.get_context()
-    s3conf.load(lp.configfile)
-    dacl = getntacl(lp, filename, system_session_unix(), direct_db_access=False)
-    old_sddl = dacl.as_sddl()
-    owner_sid = dacl.owner_sid
-    res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
-    if res:
-        owner = res.group(1)
-        old_aces = res.group(2)
-        old_aces = re.findall(r"\(.+?\)", old_aces)
-        allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
-        deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
-        # deny user change of permissions and owner
-        new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
-        new_allow_ace = [
-            "(A;OICI;0x001301BF;;;S-1-3-4)",  # change default behaviour for owners to modify
-            "(A;OICI;0x001301BF;;;{})".format(owner_sid),  # add modify ace for owner
-        ]
-        if new_deny_aces not in deny_aces:
-            deny_aces += new_deny_aces
-        for ace in new_allow_ace:
-            if ace not in allow_aces:
-                allow_aces += ace
-        new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
-        if new_sddl != old_sddl:
-            logger.debug("set nt acls {} on {}".format(new_sddl, filename))
-            setntacl(lp, filename, new_sddl, owner_sid, system_session_unix())
+    attempts = 5
+    for i in range(attempts):
+        try:
+            lp.load_default()
+            return lp
+        except RuntimeError:
+            logger.warning(
+                "Failed to load samba config. "
+                "Please check /etc/samba/shares.conf and linked file. "
+                "Retrying in a couple of seconds."
+            )
+            time.sleep(2)
+    else:
+        logger.error(f"Failed to load the samba config {attempts} times.")
+        raise UMC_Error(
+            _(
+                "Please contact an administrator.\n"
+                "An error occurred while loading one of the samba share configuration files "
+                "(see configuration file /etc/samba/shares.conf and configuration files"
+                " below /etc/samba/shares.conf.d/). "
+                "Known causes for this are wrong file permissions and typos in the configuration files."
+            )
+        )
 
 
 class Instance(SchoolBaseModule):
@@ -159,11 +152,13 @@ class Instance(SchoolBaseModule):
         self._tmpDir = None
         self._progress_state = util.Progress(logger=logger)  # TODO: replace with mixins.Progress
         self._lessons = SchoolLessons()
+        self.lp = None
 
     def init(self):
         SchoolBaseModule.init(self)
         # initiate paths for data distribution
         util.distribution.initPaths()
+        self.lp = load_smb_default_file()
 
     def destroy(self):
         # clean temporary data
@@ -243,8 +238,42 @@ class Instance(SchoolBaseModule):
                     f" {stdout!r}"
                 )
 
-    @staticmethod
-    def set_nt_acls_on_exam_folders(exam_users):  # type: (List[User]) -> None
+    def deny_owner_change_permissions(self, filename: str) -> None:
+        """
+        A user gets full control over her permissions by default.
+        The SDDL string of the home dir is extended by
+        - forbid exam-users to change the permissions and owner
+        - overrides standard behavior, i.e. full control, with 'edit' for owners.
+        """
+        s3conf = param.get_context()
+        s3conf.load(self.lp.configfile)
+        dacl = getntacl(self.lp, filename, system_session_unix(), direct_db_access=False)
+        old_sddl = dacl.as_sddl()
+        owner_sid = dacl.owner_sid
+        res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
+        if res:
+            owner = res.group(1)
+            old_aces = res.group(2)
+            old_aces = re.findall(r"\(.+?\)", old_aces)
+            allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
+            deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
+            # deny user change of permissions and owner
+            new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
+            new_allow_ace = [
+                "(A;OICI;0x001301BF;;;S-1-3-4)",  # change default behaviour for owners to modify
+                "(A;OICI;0x001301BF;;;{})".format(owner_sid),  # add modify ace for owner
+            ]
+            if new_deny_aces not in deny_aces:
+                deny_aces += new_deny_aces
+            for ace in new_allow_ace:
+                if ace not in allow_aces:
+                    allow_aces += ace
+            new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
+            if new_sddl != old_sddl:
+                logger.debug("set nt acls {} on {}".format(new_sddl, filename))
+                setntacl(self.lp, filename, new_sddl, owner_sid, system_session_unix())
+
+    def set_nt_acls_on_exam_folders(self, exam_users: List[User]) -> None:
         """
         Sets NT ACLs for exam users home dirs
 
@@ -255,9 +284,9 @@ class Instance(SchoolBaseModule):
             folder = exam_user.unixhome
             Instance.init_windows_profiles(exam_user)
             for root, _sub, files in os.walk(folder):
-                deny_owner_change_permissions(root)
+                self.deny_owner_change_permissions(filename=root)
                 for f in files:
-                    deny_owner_change_permissions(os.path.join(root, f))
+                    self.deny_owner_change_permissions(filename=str(os.path.join(root, f)))
 
     @staticmethod
     def set_datadir_immutable_flag(users, project, flag=True):
@@ -781,7 +810,7 @@ class Instance(SchoolBaseModule):
             # wait for samba-replication
             progress.add_steps(5)
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
-            Instance.set_nt_acls_on_exam_folders(my.project.getRecipients())
+            self.set_nt_acls_on_exam_folders(my.project.getRecipients())
             Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(5)
 

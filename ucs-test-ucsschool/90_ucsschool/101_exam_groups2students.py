@@ -47,7 +47,7 @@ def test_groups2students_validation(udm_session, schoolenv, ucr):
 
     stu2.create(ldap_connection, validate=False)
 
-    client = Client.get_test_connection()
+    client = Client.get_test_connection(language="en-US")
     params = {
         "groups": [
             class_dn,
