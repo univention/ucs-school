@@ -1,0 +1,11 @@
+#!/usr/share/ucs-test/runner bash
+## desc: Product tests
+## exposure: safe
+## tags: [ucsschool-id-connector]
+## external-junit: /tmp/product_tests.xml
+
+APP="ucsschool-id-connector"
+
+curl --output product_tests.tar.gz -L https://git.knut.univention.de/api/v4/projects/191/packages/generic/product_tests/0.0.1/product_tests.tar.gz
+tar -xf product_tests.tar.gz
+python3 -m pytest -l -v --junit-xml=/tmp/product_tests.xml --junit-prefix=93_ucsschool-id-connector.05_product_tests product_tests

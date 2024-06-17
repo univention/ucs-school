@@ -8,7 +8,7 @@
 
 APP="ucsschool-id-connector"
 TEST_PATH="/var/lib/univention-appcenter/apps/$APP/conf/tests/id_broker/"
-CMD="cd $TEST_PATH; pip3 install -r /ucsschool-id-connector/requirements-test.txt; python3 -m pytest -lv -m 'not id_broker_compatibility' --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.03_id_broker_in_container_integration_tests integration_tests"
+CMD="cd $TEST_PATH; pip3 install -r /ucsschool-id-connector/requirements-test.txt; python3 -m pytest -lv -m 'not id_broker_compatibility' --junit-xml=/tmp/junit.xml --junit-prefix=93_ucsschool-id-connector.04_id_broker_in_container_integration_tests integration_tests"
 echo "IP of ID Broker: $(</var/www/IP_idbroker_primary.txt)"
 
 echo "Running in container: sh -c \"$CMD\""
