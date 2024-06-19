@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (16.0.6) unstable; urgency=medium
+
+  * Issue #1225: Replace UCS logo with Nubus logo.
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 19 Jun 2024 16:09:34 +0200
+
 ucs-school-netlogon-user-logonscripts (16.0.5) unstable; urgency=medium
 
   * Bug #55751: refactor code using "ruff"

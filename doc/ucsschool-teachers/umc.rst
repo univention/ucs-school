@@ -40,6 +40,7 @@ können Darstellungsprobleme auftreten.
 .. _login:
 
 .. figure:: /images/login.png
+   :width: 500px
    :alt: Anmeldung an der Univention Management Console
 
    Anmeldung an der Univention Management Console

@@ -11,6 +11,7 @@ Build-Depends:
  ucslint,
  univention-config-dev,
  univention-join-dev,
+ imagemagick
 Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon-user-logonscripts

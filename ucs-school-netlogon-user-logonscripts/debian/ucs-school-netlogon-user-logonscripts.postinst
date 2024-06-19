@@ -47,6 +47,44 @@ univention-config-registry set \
 # samba 3
 mkdir -p /var/lib/samba/netlogon/user
 
+# Copy product logos. This is a translation of the get_script_path method which is located
+# in `ucs-school-netlogon-user-logonscripts/ucs-school-user-logonscript-daemon`
+
+strip_path() {
+    echo $1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//;s/\/*$//' | sed 's/\/*$//'
+}
+
+install_icons() {
+    ucsschool_netlogon_path=$(strip_path $(univention-config-registry get "ucsschool/userlogon/netlogon/path"))
+    samba_netlogon_path=$(strip_path $(univention-config-registry get "samba/share/netlogon/path"))
+    logon_scripts_path="/usr/share/ucs-school-netlogon-user-logonscripts/"
+
+    script_paths=""
+
+    if [ -n "$ucsschool_netlogon_path" ]; then {
+        script_paths="$ucsschool_netlogon_path"
+    } elif [ -n "$samba_netlogon_path" ]; then {
+        script_paths="$samba_netlogon_path"
+    } else {
+        script_paths="/var/lib/samba/netlogon/user"
+        kerberos_realm=$(univention-config-registry get "kerberos/realm" | tr '[:upper:]' '[:lower:]')
+        script_paths="${script_paths} /var/lib/samba/sysvol/${kerberos_realm}/scripts/user"
+    }
+    fi
+
+    for path in "${script_paths}"; do
+        mkdir -p $path
+        cp "$logon_scripts_path""univention-management-console.ico" "$path""/univention-management-console.ico"
+        cp "$logon_scripts_path""/univention-portal.ico" "$path""/univention-portal.ico"
+    done
+}
+
+# Install icons only on fresh install or on upgrade from version 16.0.5
+if [ "$1" = configure ] || ( [ -z "$2" ] || dpkg --compare-versions "$2" lt-nl 16.0.6 ); then
+    install_icons
+fi
+
+
 # samba 4: 99ucs-school-netlogon-user-logonscripts.inst
 #DEBHELPER#
 
