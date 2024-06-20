@@ -68,7 +68,7 @@ Optionen konfiguriert werden:
 * Der Radius-Port ist ``1812``, sofern kein abweichender Port in *FreeRADIUS*
   konfiguriert wurde.
 
-* Das in der UMC bzw. in der Datei :file:`/etc/freeradius/clients.conf`
+* Das in der UMC bzw. in der Datei :file:`/etc/freeradius/3.0/clients.conf`
   hinterlegte Passwort.
 
 .. _radius-client:
