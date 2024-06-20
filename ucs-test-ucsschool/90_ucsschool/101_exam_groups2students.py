@@ -8,11 +8,13 @@
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 import pytest
+from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 from ucsschool.lib.models.user import Student
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.lib.umc import HTTPError
+from univention.testing import utils
 from univention.testing.umc import Client
 
 
@@ -46,6 +48,7 @@ def test_groups2students_validation(udm_session, schoolenv, ucr):
     stu2.position = search_base.students
 
     stu2.create(ldap_connection, validate=False)
+    utils.wait_for_drs_replication(filter_format("cn=%s", (stu2.name,)))
 
     client = Client.get_test_connection(language="en-US")
     params = {
@@ -62,4 +65,5 @@ def test_groups2students_validation(udm_session, schoolenv, ucr):
 
     stu2.firstname = "Testname"
     stu2.modify(ldap_connection)
+    utils.wait_for_drs_replication(filter_format("cn=%s", (stu2.name,)))
     client.umc_command("schoolexam/groups2students", params)

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.182) unstable; urgency=medium
+
+  * Issue #1217: Wait for drs replication when creating/modifying test users
+    during testing the schoolexam/groups2students endpoint.
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 20 Jun 2024 14:33:43 +0200
+
 ucs-test-ucsschool (7.3.181) unstable; urgency=medium
 
   * Issue univention/ucsschool#1229: Add tests for exam mode robustness
