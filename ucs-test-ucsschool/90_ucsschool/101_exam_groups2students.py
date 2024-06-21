@@ -33,7 +33,6 @@ def test_groups2students_validation(udm_session, schoolenv, ucr):
     school, oudn = schoolenv.create_ou(name_edudc=edudc)
     search_base = SchoolSearchBase([school])
 
-    school, oudn = schoolenv.create_ou(name_edudc=edudc)
     class_name, class_dn = schoolenv.create_school_class(school)
     tea, teadn = schoolenv.create_user(school, is_teacher=True, classes=class_name)
     stu0, studn0 = schoolenv.create_user(school, classes=class_name)

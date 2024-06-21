@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.183) unstable; urgency=medium
+
+  * Issue #1217: Only create one school env
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 21 Jun 2024 17:56:18 +0200
+
 ucs-test-ucsschool (7.3.182) unstable; urgency=medium
 
   * Issue #1217: Wait for drs replication when creating/modifying test users
