@@ -15,7 +15,7 @@ Hinweise zur Installation, insbesondere im Hinblick auf die Umsetzung der
 definierten Konzepte.
 
 * Zur Installation wird das `aktuellste UCS Installationsmedium
-  <https://www.univention.de/download/download-ucs/>`_
+  <https://www.univention.de/ucs-download/>`_
   empfohlen.
 
 * Der Pfad :file:`/var/log` sollte auf eine eigene Partition gelegt werden,
