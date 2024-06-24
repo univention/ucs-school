@@ -75,7 +75,7 @@ class ComputerRoomError(Exception):
 
 class UserInfo(object):
     def __init__(self, ldap_dn, username, isTeacher=False, hide_screenshot=False):
-        # type: (str, str, Optional[bool], Optional[bool]) -> None
+        # type: (str, str, Optional[bool], Optional[bool], Optional[bool]) -> None
         self.dn = ldap_dn
         self.isTeacher = isTeacher
         self.username = username
@@ -94,12 +94,18 @@ class UserMap(dict):
 
     def validate_userstr(self, userstr):  # type: (str) -> str
         match = self._user_regex.match(userstr)
-        if not match or not userstr:
-            raise AttributeError("invalid key {!r}".format(userstr))
-        username = match.groupdict()["username"]
-        if not username:
-            raise AttributeError("username missing: {!r}".format(userstr))
-        return username
+
+        if not userstr:
+            raise AttributeError("Received empty user string: {!r}".format(userstr))
+
+        if not match:
+            MODULE.warning("Invalid user string format: {!r}".format(userstr))
+            return userstr
+        else:
+            username = match.groupdict()["username"]
+            if not username:
+                raise AttributeError("username missing: {!r}".format(userstr))
+            return username
 
     @LDAP_Connection()
     def _read_user(self, userstr, ldap_user_read=None):  # type: (str, Optional[LoType]) -> None
@@ -111,8 +117,11 @@ class UserMap(dict):
                 raise noObject(username)
             user = User.from_udm_obj(userobj, None, lo)  # type: User
         except (noObject, MultipleObjectsError):
-            MODULE.info('Unknown user "%s"' % username)
-            dict.__setitem__(self, userstr, UserInfo("", ""))
+            MODULE.warning(
+                'Unknown user "%s". It is assumed the user is a local account, prepending LOCAL\\.'
+                % username
+            )
+            dict.__setitem__(self, userstr, UserInfo("", "LOCAL\\{}".format(username)))
             return
 
         blacklisted_groups = {
@@ -246,11 +255,13 @@ class ComputerRoomManager(dict):
 
     @property
     def users(self):
-        return [
-            self._user_map[x.user.current].username
-            for x in self.values()
-            if x.user.current and x.connected()
-        ]
+        """Return a list of valid domain users who are logged into the computers"""
+        valid_users = []
+        for computer in self.values():
+            if computer.user.current and computer.connected():
+                user_info = self._user_map[computer.user.current]
+                valid_users.append(user_info.username)
+        return valid_users
 
     @property
     def veyon_backend(self):  # type: () -> bool
@@ -537,7 +548,7 @@ class VeyonComputer(threading.Thread):
             try:
                 result["user"] = self._user_map[self.user.current].username
             except AttributeError:
-                result["user"] = self.user.current
+                result["user"] = "LOCAL\\" + self.user.current
         else:
             result["user"] = self.user.current
         return result
