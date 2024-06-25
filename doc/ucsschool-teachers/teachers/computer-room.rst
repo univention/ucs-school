@@ -61,6 +61,12 @@ erlaubter Webseiten definieren. Mit den Optionen *Freigabezugriff* und
 werden. Die benutzerdefinierten Einschränkungen werden über das Feld *Gültig
 bis* zeitlich eingeschränkt.
 
+.. note::
+
+   Falls ein Benutzer am Rechner des Computerraums mit einem lokalen Konto angemeldet ist,
+   wird dieser mit ``LOCAL\<Benutzername>`` angezeigt. Benutzer, die auf diese Weise angemeldet
+   sind, können z.B. nicht auf Freigaben bzw. Netzwerklaufwerke zugreifen.
+
 .. _computer-room-veyon:
 
 Kontrolle der Schüler-PCs bei Einsatz von Veyon
