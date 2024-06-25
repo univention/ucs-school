@@ -548,7 +548,7 @@ class VeyonComputer(threading.Thread):
             try:
                 result["user"] = self._user_map[self.user.current].username
             except AttributeError:
-                result["user"] = "LOCAL\\" + self.user.current
+                result["user"] = "LOCAL\\{}".format(self.user.current)
         else:
             result["user"] = self.user.current
         return result
