@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.185) unstable; urgency=medium
+
+  * Bug #55179: Test for purge-expired-users script for malformed users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 01 Jul 2024 07:54:00 +0200
+
 ucs-test-ucsschool (7.3.184) unstable; urgency=medium
 
   * Issue #1176: Add test to verify validation of the userstring which is sent
