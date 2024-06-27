@@ -98,7 +98,7 @@ def roles_from_ocs(ocs, a_user, school):  # type: (List[str], ImportUser, str) -
             self.oldattr = {"objectClass": [x.encode("UTF-8") for x in ocs]}
 
     kls = a_user.get_class_for_udm_obj(FakeUdmCls(ocs), school)
-    return kls.roles
+    return [] if kls is None else kls.roles
 
 
 def purge_timestamp2date(purge_timestamp):
@@ -181,6 +181,9 @@ def main():
         else:
             school = ""
         roles = roles_from_ocs([x.decode("UTF-8") for x in attr["objectClass"]], a_user, school)
+        if not roles:
+            logger.warning("Could not determine roles for %r. Deletion aborted.", dn)
+            continue
         # use specific ImportUser class to execute correct hooks
         user_obj = factory.make_import_user(roles)
         user = user_obj.from_dn(dn, None, lo)
