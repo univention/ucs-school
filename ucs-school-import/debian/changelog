@@ -1,3 +1,9 @@
+ucs-school-import (18.0.46) unstable; urgency=medium
+
+  * Bug #55179: Fix purge-expired-users script for malformed users
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 27 Jun 2024 10:00:00 +0100
+
 ucs-school-import (18.0.45) unstable; urgency=medium
 
   * Issue #1198: Changes due to activation of ruff rules.

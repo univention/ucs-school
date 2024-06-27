@@ -1,0 +1,10 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-import
+fix: 18.0.46
+desc: |
+ * The ucs-school-purge-expired-users now ignores users without an ucsschool role that is
+   recognized by the UCS@school Importer (Bug #55179).
+bug: [55179]
