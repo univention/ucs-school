@@ -56,10 +56,6 @@ def test_usermap_regex_veyon(user_str):
     user_map_veyon.validate_userstr(user_str)
 
 
-@pytest.mark.parametrize("user_str", veyon_random_user_str(1))
-@pytest.mark.parametrize("missing_username", [True, False])
-def test_username_missing_veyon(user_str, missing_username):
-    user_str = user_str.split("\\")
-    user_str = user_str[-1] if missing_username else user_str[0]
+def test_missing_username_veyon():
     with pytest.raises(AttributeError):
-        user_map_veyon.validate_userstr(user_str)
+        user_map_veyon.validate_userstr("")

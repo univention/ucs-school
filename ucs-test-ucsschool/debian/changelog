@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.186) unstable; urgency=medium
+
+  * Issue #1176: Adjust user map validation test: It should only fail when an
+    empty string is passed.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 01 Jul 2024 10:42:57 +0200
+
 ucs-test-ucsschool (7.3.185) unstable; urgency=medium
 
   * Bug #55179: Test for purge-expired-users script for malformed users
