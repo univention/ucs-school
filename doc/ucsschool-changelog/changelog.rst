@@ -8,6 +8,46 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-07-02:
+
+Released on 2024-07-02
+======================
+
+Source package *ucs-school-import* in version ``18.0.46``:
+
+* The ``ucs-school-purge-expired-users`` now ignores users without a UCS\@school
+  role that is recognized by the UCS\@school Importer (:uv:bug:`55179`).
+
+Source package *ucs-school-metapackage* in version ``13.0.18``:
+
+* Add the Keycloak Kerberos user SPN to the samba SPN list on replicas for new
+  joins (:uv:bug:`57348`).
+
+Source package *ucs-school-netlogon-user-logonscripts* in version ``16.0.6``:
+
+* The new Nubus logo replaces the UCS logo. Users who have the link for the UMC
+  on the desktop will see the new logo (:uv:bug:`57395`).
+
+Source package *ucs-school-umc-computerroom* in version ``12.0.16``:
+
+* If a local user is logged into a computer that is in a computer room, the
+  username is prefixed with ``LOCAL\`` in the computer room module instead of
+  showing an error message (:uv:bug:`56937`).
+
+Source package *ucs-school-umc-exam* in version ``10.0.12``:
+
+* Added validation for students when they are added to an exam. This helps to
+  detect validation errors before the exam is started (:uv:bug:`57319`).
+
+* If errors occur due to incorrect samba share configuration files, they are
+  displayed during the preparation and not during the exam (:uv:bug:`57367`).
+
+Source package *ucs-school-umc-import* in version ``3.0.8``:
+
+* The selection in the UCS\@school UMC import was not properly localized. An
+  updated image was placed in the documentation (:uv:bug:`56519`).
+
+
 .. _changelog-ucsschool-2024-05-16:
 
 Released on 2024-05-16
