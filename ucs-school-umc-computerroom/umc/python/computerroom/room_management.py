@@ -50,7 +50,13 @@ from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from ucsschool.veyon_client.client import VeyonClient
-from ucsschool.veyon_client.models import AuthenticationMethod, Feature, ScreenshotFormat, VeyonError
+from ucsschool.veyon_client.models import (
+    AuthenticationMethod,
+    Dimension,
+    Feature,
+    ScreenshotFormat,
+    VeyonError,
+)
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
@@ -230,6 +236,48 @@ class ComputerRoomManager(dict):
         dict.__init__(self)
         self._user_map = UserMap(VEYON_USER_REGEX)
         self._veyon_client = None  # type: Optional[VeyonClient]
+        self.screenshot_dimension = self.get_screenshot_dimension()
+
+    @staticmethod
+    def get_screenshot_dimension():
+        ucr_value = ucr.get("ucsschool/umc/computerroom/screenshot_dimension")
+
+        if not ucr_value:
+            return None
+
+        ucr_dim = re.match(r"(\d*)x(\d*)", ucr_value)
+
+        if ucr_dim:
+            LOWER_BOUND = 240
+            UPPER_BOUND = 8000
+            try:
+                width = int(ucr_dim.group(1))
+                if not (LOWER_BOUND <= width <= UPPER_BOUND):
+                    MODULE.warning(
+                        "Set width of screenshot is not within bounds "
+                        "{} and {}, falling back to native resolution.".format(LOWER_BOUND, UPPER_BOUND)
+                    )
+                    width = None
+            except ValueError:
+                width = None
+            try:
+                height = int(ucr_dim.group(2))
+                if not (LOWER_BOUND <= height <= UPPER_BOUND):
+                    MODULE.warning(
+                        "Set height of screenshot is not within bounds "
+                        "{} and {}, falling back to native resolution.".format(LOWER_BOUND, UPPER_BOUND)
+                    )
+                    height = None
+            except ValueError:
+                height = None
+
+            return Dimension(width, height)
+        else:
+            MODULE.warning(
+                "UCR variable 'ucsschool/umc/computerroom/screenshot_dimension' has "
+                "been set to a value with an incorrect format: {}".format(ucr_value)
+            )
+            return None
 
     @property
     def room(self):
@@ -336,7 +384,12 @@ class ComputerRoomManager(dict):
         self._user_map = UserMap(VEYON_USER_REGEX)
         for computer in computers:
             try:
-                comp = VeyonComputer(computer.get_udm_object(lo), self.veyon_client, self._user_map)
+                comp = VeyonComputer(
+                    computer.get_udm_object(lo),
+                    self.veyon_client,
+                    self._user_map,
+                    self.screenshot_dimension,
+                )
                 comp.start()
                 self.__setitem__(comp.name, comp)
             except ComputerRoomError as exc:
@@ -400,7 +453,7 @@ class ComputerRoomManager(dict):
 
 
 class VeyonComputer(threading.Thread):
-    def __init__(self, computer, veyon_client, user_map):
+    def __init__(self, computer, veyon_client, user_map, screenshot_dimension):
         # type: (Any, VeyonClient, UserMap) -> None
         super(VeyonComputer, self).__init__()
         self._computer = computer  # type: Any
@@ -417,6 +470,7 @@ class VeyonComputer(threading.Thread):
         self._demo_client = LockableAttribute(initial_value=None)
         self._timer = None
         self.should_run = True
+        self.screenshot_dimension = screenshot_dimension
 
     def run(self):
         while self.should_run:
@@ -499,9 +553,16 @@ class VeyonComputer(threading.Thread):
         image = None
         for ip_address in self._ip_addresses:
             try:
-                image = self._veyon_client.get_screenshot(
-                    host=ip_address, screenshot_format=ScreenshotFormat.JPEG
-                )
+                if self.screenshot_dimension:
+                    image = self._veyon_client.get_screenshot(
+                        host=ip_address,
+                        screenshot_format=ScreenshotFormat.JPEG,
+                        dimension=self.screenshot_dimension,
+                    )
+                else:
+                    image = self._veyon_client.get_screenshot(
+                        host=ip_address, screenshot_format=ScreenshotFormat.JPEG
+                    )
             except VeyonError:
                 pass  # might just be a non reachable IP. TODO: Catch errors other than 404
             if image:

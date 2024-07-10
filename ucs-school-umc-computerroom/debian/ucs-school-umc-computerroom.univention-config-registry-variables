@@ -1,3 +1,9 @@
+[ucsschool/umc/computerroom/screenshot_dimension]
+Description[de]=Die Auflösung für Screenshots von aktiven Computern im Computerraum. Das erkannte Format ist <Breite>x<Höhe>, zum Beispiel 1024x768. Wenn Höhe oder Breite nicht angegeben wurden, wird der andere Wert gemäß dem Seitenverhältnis des Desktops berechnet.
+Description[en]=The resolution for screenshots of active computers in the computer room. The recognized format is <width>x<height>, for example 1024x768. If height or width is omitted, the aspect ratio is kept and the other value is derived accordingly.
+Type=str
+Categories=management-umc
+
 [ucsschool/umc/computerroom/hide_screenshots/groups]
 Description[de]=Kommaseparierte Liste mit Gruppennamen, für deren Mitglieder keine Screenshots im Computerraum-Modul angezeigt werden sollen (Standard: Domain Admins)
 Description[en]=Comma separated list of group names, for whose group members no screenshots are shown in computer room module (Default: Domain Admins)

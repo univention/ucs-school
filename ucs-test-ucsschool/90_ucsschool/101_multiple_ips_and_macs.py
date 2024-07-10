@@ -43,7 +43,7 @@ from requests import Response
 
 import univention.testing.strings as uts
 from ucsschool.veyon_client import client as veyon_client_module
-from ucsschool.veyon_client.models import AuthenticationMethod
+from ucsschool.veyon_client.models import AuthenticationMethod, Dimension
 from univention.config_registry import handler_set, handler_unset
 from univention.management.console.config import ucr
 from univention.management.console.modules.computerroom.room_management import (
@@ -84,7 +84,10 @@ def get_dummy_veyon_computer(ips=None, auth_method=None):
         auth_method=auth_method or AuthenticationMethod.AUTH_LOGON,
     )
     return VeyonComputer(
-        computer=MockComputer(ips), user_map=UserMap(VEYON_USER_REGEX), veyon_client=client
+        computer=MockComputer(ips),
+        user_map=UserMap(VEYON_USER_REGEX),
+        veyon_client=client,
+        screenshot_dimension=Dimension(None, None),
     )
 
 
@@ -156,6 +159,11 @@ def test_no_ips_veyon(monkeypatch):
         "ip": [],
         "mac": [],
     }
-    computer = VeyonComputer(computer=computer, user_map=UserMap(VEYON_USER_REGEX), veyon_client=client)
+    computer = VeyonComputer(
+        computer=computer,
+        user_map=UserMap(VEYON_USER_REGEX),
+        veyon_client=client,
+        screenshot_dimension=Dimension(None, None),
+    )
     _ = computer.ipAddress
     assert computer.connected() is False
