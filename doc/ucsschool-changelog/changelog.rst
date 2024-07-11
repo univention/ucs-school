@@ -8,6 +8,22 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-07-11:
+
+Released on 2024-07-11
+======================
+
+Source package *ucs-school-import* in version ``18.0.47``:
+
+* Fixed a performance regression which could cause significant longer startup
+  times for the UCS\@school import (:uv:bug:`57408`).
+
+Source package *ucs-school-umc-computerroom* in version ``12.0.17``:
+
+* Added the UCR variable ``ucsschool/umc/computerroom/screenshot_dimension``, with
+  which you can set the base screenshot size in the computer room module. A lower
+  base screenshot size can help to improve performance (:uv:bug:`57443`).
+
 .. _changelog-ucsschool-2024-07-02:
 
 Released on 2024-07-02
