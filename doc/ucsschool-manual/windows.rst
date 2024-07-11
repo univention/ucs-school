@@ -342,6 +342,36 @@ Die korrekte Einrichtung kann im *Computerraum* Modul überprüft werden. Hier
 sollte sich der Punkt neben dem Namen des eingerichteten Windows Clients
 dunkelgrau färben.
 
+.. _school-windows-veyon-expert-config:
+
+Konfiguration der App :program:`UCS\@school Veyon Proxy`
+--------------------------------------------------------
+
+.. caution::
+   Dieser Abschnitt beschreibt ausschließlich Experteneinstellungen zur Optimierung und kann
+   bei einer regulären Installation übersprungen werden. Die weiter unten beschriebenen Einstellung werden
+   ohne Verifikation direkt an den im Docker-Container enthaltenen Veyon Master weitergereicht.
+
+
+Ab Version *4.8.3.8-ucs1* des :program:`UCS\@school Veyon Proxy` stehen drei neue App-Einstellungen
+zur Verfügung um Performance-Optimierungen für verschiedene Anwendungsfälle zu bieten:
+
+- :code:`veyon/Master/ComputerMonitoringInterval`
+- :code:`veyon/Master/ComputerMonitoringImageQuality`
+- :code:`veyon/WebAPI/ConnectionIdleTimeout`
+
+Die Einstellung :code:`veyon/Master/ComputerMonitoringInterval` erlaubt die Anpassung des
+Intervalls wie oft der :program:`UCS\@school Veyon Proxy` neue Screenshots von Zielrechnern abfragt und ist in Millisekunden angegeben.
+Hierbei beträgt der maximale Wert 10000.
+
+Die Einstellung :code:`veyon/Master/ComputerMonitoringImageQuality` bietet die Möglichkeit
+die Qualität der abgeholten Screenshots zu bestimmen. Der Wert ist von 0 (höchste Qualität)
+bis 4 (niedrigste Qualität) begrenzt.
+
+Die Einstellung :code:`veyon/WebAPI/ConnectionIdleTimeout` definiert die Zeit in Sekunden,
+nach der eine inaktive VNC-Verbindung zwischen dem :program:`UCS\@school Veyon Proxy` und einem Windows-Client
+geschlossen wird.
+
 
 .. _school-windows-veyon-clients-teachers:
 

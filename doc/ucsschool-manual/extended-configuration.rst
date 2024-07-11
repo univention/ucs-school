@@ -318,6 +318,22 @@ eingeführt. Wird in dieser Variable der Wert ``true`` hinterlegt, ist das
 Betrachten der Desktop-Ansicht von Rechnern, an denen Lehrer angemeldet sind,
 nicht mehr möglich.
 
+Über die |UCSUCR|-Variable
+:envvar:`ucsschool/umc/computerroom/screenshot_dimension` kann eine
+gewünschte Auflösung für Screenshots zur Überwachung der einzelnen Computer im
+Computerraum angegeben werden. Bei Benutzung der Standardeinstellung (nicht gesetzt)
+wird die Auflösung des Zielrechners verwendet. Soll eine andere Auflösung verwendet
+werden, muss die Variable gesetzt werden. Hierbei wird ein String des Formats
+:code:`<Breite>x<Höhe>` erwartet.
+
+.. caution::
+
+   Die Anpassung der |UCSUCR|-Variable :envvar:`ucsschool/umc/computerroom/screenshot_dimension` erlaubt die Optimierung
+   der Bandbreiten und CPU-Auslastung. Die Auflösung wird an die Veyon WebAPI weitergereicht, es werden aber nicht alle
+   Auflösungen unterstützt. Im Falle einer nicht unterstützten Auflösung wird kein Screenshot als Antwort ausgegeben.
+   Daher ist die Verwendung von Standardauflösungen empfohlen. Die geringste, funktionstüchtige Auflösung ist *240p* (320x240 Pixel).
+
+
 Über die Aktion *Computer einschalten* können *WakeOnLAN*-Pakete an die
 betreffenden Rechner verschickt werden, um diese einzuschalten. Ab UCS@school
 4.4v4 werden diese *WakeOnLAN*-Pakete über alle Netzwerkschnittstellen des
