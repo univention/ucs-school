@@ -2,9 +2,11 @@
 ## -*- coding: utf-8 -*-
 ## desc: Users(schools) module
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,skip_in_large_schoolenv]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
+
+# Test is skipped in large schoolenv, see univention/ucsschool#1235
 
 from __future__ import print_function
 

@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 ## desc: Check if auth via HTTP-API works with non-ASCII passwords (gunicorns log is checked)
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool_base1]
+## tags: [apptest,ucsschool_base1,skip_in_large_schoolenv]
 ## exposure: dangerous
 ## packages: [ucs-school-import-http-api]
+
+# This test is skipped in the large env (skip_in_large_schoolenv)
+# as it fails with an ucsschool.http_api.client.PermissionError on Client instantiation
+# see univention/ucsschool#1235
 
 from ldap.filter import filter_format
 

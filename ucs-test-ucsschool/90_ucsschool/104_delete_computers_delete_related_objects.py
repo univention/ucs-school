@@ -1,9 +1,11 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: Delete computer deletes all related objects
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,skip_in_large_schoolenv]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
+
+# Skipped with Issue univention/ucsschool#1235 in large schoolenv because of flakyness
 
 from ldap import NO_SUCH_OBJECT
 
