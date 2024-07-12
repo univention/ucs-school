@@ -1,12 +1,14 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test no-overwrite-attributes
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1,skip_in_upgrade_singleserver]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
 ## bugs: [45679]
+
+# skipped in upgrade singleserver scenario, see Issue #1234
 
 import copy
 
