@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.188) unstable; urgency=medium
+
+  * Issue #1234: Skip certain tests
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 15 Jul 2024 11:29:00 +0200
+
 ucs-test-ucsschool (7.3.187) unstable; urgency=medium
 
   * Issue #1240: Add new argument screenshot_dimension to VeyonComputer
