@@ -18,7 +18,6 @@ This document describes how to prepare and execute an Errata Release for the UCS
   - [ ] Verify YAML advisories
 - [ ] Update Test Appcenter
 - [ ] Publish to production App Center
-- [ ] Update the changelog
 - [ ] Publish changelog and manual
 - [ ] Update public documentation
   - [ ] Update release wiki
@@ -63,12 +62,9 @@ cd /mnt/omar/vmwares/mirror/appcenter
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
-## Update Changelog
-
-### Move the advisories to published
+## Move the advisories to published
 
 You will need the list of YAML files you edited in the [Verify YAML Advisories](README_check_release_packages.md#verify-yaml-advisories) step.
-
 In your local `ucsschool` repository, move the YAML advisories into the `doc/errata/published` folder, renamed with the current date:
 
 ```shell
@@ -79,16 +75,13 @@ for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..
 
 Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
 
-### Generate the changelog
+## Publish UCS@school documentation
 
-Open up a second terminal for running docker commands.
-Then follow the instructions in the [changelog README](../ucsschool-changelog/README.md).
-
-## Publish UCS@school manual
+Note: If you want to publish only a subset of the debian packages, you will need to edit the changelog manually and store the entries
+for the packages which are not published somewhere.
 
 The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
 that is triggered by a merge from `ucsschool`.
-Follow the steps cf. the Build the documentation steps in [ucsschool-changelog](../ucsschool-changelog/README.md).
 Follow the pipeline to be sure it completes correctly, and then check the
 [published documentation](http://univention-repository.knut.univention.de/download/docs/).
 

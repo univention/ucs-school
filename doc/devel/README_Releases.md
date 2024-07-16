@@ -16,6 +16,7 @@ This document describes how to prepare and execute a full release for the UCS@sc
   - [ ] Create Bugzilla bug
   - [ ] Verify Jenkins tests
   - [ ] Verify YAML advisories
+  - [ ] Tag an appropriate commit with the `release-<version>` tag
 - [ ] Create new changelog
   - [ ] Create a new link on the UCS changelog pages
 - [ ] Create new version in Test Appcenter

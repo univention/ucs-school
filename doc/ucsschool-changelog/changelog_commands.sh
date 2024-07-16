@@ -1,0 +1,8 @@
+# command aliases for working with changelog.rst editing
+# see README doc/ucsschool-changelog/README.md
+alias clean='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make clean'
+alias livehtml_en='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make livehtml'
+alias livehtml_de='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make -e SPHINXOPTS="-W -D language=de" livehtml'
+alias spelling_en='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make -e SPHINXOPTS="-W --keep-going -D language=en" spelling'
+alias spelling_de='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make -e SPHINXOPTS="-W --keep-going -D language=de" spelling'
+alias translate='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make gettext; docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog sphinx-intl update -p _build/gettext/ -l "de"'

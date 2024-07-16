@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+
+# Checks which are run when a changelog is changed
+
+import pathlib
+import re
+import sys
+from functools import lru_cache
+from typing import List
+
+import git
+import yaml
+
+
+def get_latest_package(package_name: str) -> str:
+    filename = f"{package_name}/debian/changelog"
+    package_version = "Unknown"
+    try:
+        with open(filename) as changelog_file:
+            changelog = changelog_file.readlines()
+            for line in changelog:
+                if package_name == "ucs-school-veyon-windows":
+                    version = re.match(
+                        f"{package_name} \\((\\d+\\.\\d+\\.\\d+.\\d+-ucs\\d+\\.\\d+-\\d+)\\)", line
+                    )
+                else:
+                    version = re.match(f"{package_name} \\((\\d+\\.\\d+\\.\\d+)\\)", line)
+                if version:
+                    package_version = version.groups()[0]
+                    break
+
+    except FileNotFoundError:
+        print(f"ERROR: changelog missing for {package_name}")
+
+    return package_version
+
+
+@lru_cache(maxsize=1)
+def last_release_date(repo: git.Repo):
+    tags: List[git.Tag]
+    tags = sorted(
+        [tag for tag in repo.tags if tag.name.startswith("release-")],
+        key=lambda x: x.commit.committed_datetime,
+    )
+    tag = tags[-1]
+    print(
+        f"Fetched latest commit with a release tag: {tag.commit} "
+        f"/ {tag.name} / {tag.commit.committed_datetime}"
+    )
+    return tag.commit.committed_datetime
+
+
+def check_for_advisories(changelogs: List[str]):
+    """Check that an acompanying advisory exists for a changed changelog"""
+    advisory_staged_path = pathlib.Path("doc/errata/staging/")
+    advisory_published_path = pathlib.Path("doc/errata/published/")
+    repository = git.Repo()
+    changelog_paths = (pathlib.Path(c) for c in changelogs)
+    staged_files = [pathlib.Path(item.a_path) for item in repository.index.diff("HEAD")]
+
+    errors = []
+    for path in changelog_paths:
+        last_commit = next(repository.iter_commits(paths=path))
+        if last_commit.committed_datetime < last_release_date(repository) and path not in staged_files:
+            continue
+
+        package_name = path.parts[0]
+        lastest_package_version = get_latest_package(package_name)
+        filename = f"{package_name}.yaml"
+        yaml_found = False
+
+        for published_advisory in advisory_published_path.glob(f"*{filename}"):
+            with open(published_advisory) as f:
+                data = yaml.safe_load(f)
+            version = data["fix"]
+            yaml_found |= version == lastest_package_version
+
+        filepath = advisory_staged_path.joinpath(filename)
+        yaml_found |= filepath.exists()
+
+        if not yaml_found:
+            errors.append(
+                f"ERROR: Changelog {path} has been changed, but no YAML *{filepath.name} "
+                f"exists in {advisory_published_path} or {advisory_staged_path}."
+            )
+
+    return errors
+
+
+if __name__ == "__main__":
+    errors = check_for_advisories(sys.argv[1:])
+    if errors:
+        for e in errors:
+            print(e)
+        sys.exit(1)

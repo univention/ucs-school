@@ -42,6 +42,16 @@ def get_latest_package(package_name: str) -> str:
     return package_version
 
 
+def get_changelog() -> str:
+    filename = "doc/ucsschool-changelog/changelog.rst"
+    try:
+        with open(filename) as changelog_file:
+            return changelog_file.read()
+    except FileNotFoundError:
+        print("ERROR: changelog.rst missing.")
+    return ""
+
+
 def check_yaml_content(filename: str) -> List[str]:
     """
     :param filename: path to the advisory file
@@ -89,15 +99,9 @@ def check_yaml_content(filename: str) -> List[str]:
     elif fix != expected_fix_version:
         errors.append(f"fix version is {fix}, expected {expected_fix_version}")
 
-    desc = advisory.get("desc")
-    desc_bugs = []
-    if desc is None:
-        errors.append("desc is missing")
-    else:
-        changes = desc.split("\n")
-        for change in changes:
-            for bug in re.finditer(r"[Bb]ug\s*#(\d+)", change):
-                desc_bugs.append(bug.group(1))
+    changelog = get_changelog()
+    if f"Source package *{src}* in version ``{fix}``" not in changelog:
+        errors.append(f"version {fix} is missing in changelog.rst")
 
     raw_bugs = advisory.get("bug")
     if not raw_bugs:
@@ -106,14 +110,17 @@ def check_yaml_content(filename: str) -> List[str]:
         errors.append("bug should be an array")
     else:
         bugs = [str(bug) for bug in raw_bugs]
+        changelog = get_changelog()
         for bug in bugs:
             if not re.match(r"^\d+$", bug):
                 errors.append(
                     "format of bug listing is not correct, field is a comma-separated "
                     f"array of numbers: {bug}"
                 )
-        if not set(desc_bugs) == set(bugs):
-            errors.append("bugs in description do not match bugs in bug field")
+            else:
+                expected_string = f":uv:bug:`{bug}`"
+                if expected_string not in changelog:
+                    errors.append(f"{expected_string} not found in changelog.rst")
 
     return errors
 

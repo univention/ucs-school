@@ -85,6 +85,17 @@ repos:
         exclude: doc/errata/staging/0template.yaml
         additional_dependencies:
           - pyyaml==6.0
+  - repo: local
+    hooks:
+      - id: changelogchecks
+        name: Checks on changelog modification
+        entry: ./.gitlab-ci/changelog-checks
+        language: python
+        files: ucs-.*/debian/changelog
+        exclude: ucs-test-ucsschool/debian/changelog
+        additional_dependencies:
+          - pyyaml==6.0
+          - gitpython==3.1.43
 
   - repo: https://github.com/jackdewinter/pymarkdown
     rev: v0.9.7

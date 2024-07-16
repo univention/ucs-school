@@ -4,7 +4,4 @@ version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src:
 fix:
-desc: |
- * May contain docbook tags like <package>package</package> or <envar>foo/bar/ding=dong</envar> (Bug #00000).
- * The line length is *NOT* limited to 80 columns! (Bug #00000).
 bug: []

@@ -76,7 +76,6 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
-    "univention_sphinx_changelog",
 ]
 
 bibtex_bibfiles = ["../bibliography-de.bib"]
