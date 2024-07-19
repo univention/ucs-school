@@ -314,7 +314,7 @@ abweichende kommaseparierte Liste mit Gruppennamen konfiguriert werden, z.B.
 ``Domain Admins,Helpdesk``. Da |UCSUAS| für jede Schule für die dort agierenden
 Lehrer eine eigene Benutzergruppe anlegt, wurde zur Vereinfachung eine weitere
 |UCSUCR|-Variable :envvar:`ucsschool/umc/computerroom/hide_screenshots/teachers`
-eingeführt. Wird in dieser Variable der Wert ``true`` hinterlegt, ist das
+eingeführt. Wird in dieser Variable der Wert ``yes`` hinterlegt, ist das
 Betrachten der Desktop-Ansicht von Rechnern, an denen Lehrer angemeldet sind,
 nicht mehr möglich.
 
