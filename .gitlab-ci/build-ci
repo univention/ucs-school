@@ -68,7 +68,6 @@ create_production_merge_request () {
     echo '      when: manual'
     echo '    - if: $FORCE_DOCS == "yes"'
     echo '      when: manual'
-    document_paths
 }
 
 for make in doc/*/Makefile
