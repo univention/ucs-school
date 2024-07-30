@@ -18,6 +18,12 @@ variables:
       - "yes"
       - "no"
     description: "Run docs pipeline"
+  FORCE_DOCS:
+    value: "no"
+    options:
+      - "yes"
+      - "no"
+    description: "Force docs pipeline"
   release_bugs:
     value: ""
     description: "Space-separated list of bugs to be released. Used with `release` pipeline. E.g.: '56550 52443 43345'"
