@@ -45,14 +45,8 @@ merge_one_artifact () {
     echo 'docs-merge-to-one-artifact:'
     echo '  extends: .sphinx-merge-template'
     echo '  rules:'
-    echo '    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
-    echo '      changes:'
+    echo '    - changes:'
     document_paths
-    echo '    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-    echo '      changes:'
-    document_paths
-    echo '    - if: $FORCE_DOCS == "yes"'
-    echo '      when: always'
 }
 
 create_production_merge_request () {
