@@ -9,7 +9,6 @@ from datetime import datetime
 from functools import lru_cache
 from typing import List
 
-import git
 import yaml
 from debian.changelog import Changelog
 
@@ -44,31 +43,27 @@ def get_latest_package(package_name: str) -> str:
 
 
 @lru_cache(maxsize=1)
-def last_release_date(repo: git.Repo):
-    tags: List[git.Tag]
-    tags = sorted(
-        [tag for tag in repo.tags if tag.name.startswith("release-")],
-        key=lambda x: x.commit.committed_datetime,
-    )
-    tag = tags[-1]
-    print(
-        f"Fetched latest commit with a release tag: {tag.commit} "
-        f"/ {tag.name} / {tag.commit.committed_datetime}"
-    )
-    return tag.commit.committed_datetime
+def get_last_release_date():
+    with open("doc/ucsschool-changelog/changelog.rst") as f:
+        change_log = f.readlines()
+    pattern = re.compile(r"Released on (?P<release_date>\d{4}-\d{2}-\d{2})")
+    last_release_date = "1980-01-01"
+    for line in change_log:
+        m = pattern.match(line)
+        if m:
+            last_release_date = m["release_date"]
+    return datetime.strptime(last_release_date + " +0000", "%Y-%m-%d %z")
 
 
 def check_for_advisories(changelogs: List[str]):
     """Check that an acompanying advisory exists for a changed changelog"""
     advisory_staged_path = pathlib.Path("doc/errata/staging/")
     advisory_published_path = pathlib.Path("doc/errata/published/")
-    repository = git.Repo()
     changelog_paths = (pathlib.Path(c) for c in changelogs)
-    staged_files = [pathlib.Path(item.a_path) for item in repository.index.diff("HEAD")]
 
     errors = []
     for path in changelog_paths:
-        if get_last_version_date(path) < last_release_date(repository) and path not in staged_files:
+        if get_last_version_date(path) < get_last_release_date():
             continue
 
         package_name = path.parts[0]
