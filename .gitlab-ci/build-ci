@@ -56,7 +56,7 @@ create_production_merge_request () {
     echo '  needs:'
     echo '    - job: docs-merge-to-one-artifact'
     echo '  rules:'
-    echo '    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
+    echo '    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $PARENT_CI_PIPELINE_SOURCE == "push"'
     echo '      changes:'
     document_paths
     echo '      when: manual'

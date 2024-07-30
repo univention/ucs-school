@@ -11,6 +11,8 @@ generate-config:
 
 doc-pipeline:
   stage: build
+  variables:
+    PARENT_CI_PIPELINE_SOURCE: $CI_PIPELINE_SOURCE
   needs:
     - job: generate-config
   trigger:
