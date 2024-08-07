@@ -8,6 +8,17 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-08-01:
+
+Released on 2024-08-01
+======================
+
+Source package *ucs-school-umc-exam* in version ``10.0.13``:
+
+* Fixed a bug that lead to skips in the cron controlled cleanup jobs on
+  single server installations (:uv:bug:`53232`).
+
+
 .. _changelog-ucsschool-2024-07-11:
 
 Released on 2024-07-11

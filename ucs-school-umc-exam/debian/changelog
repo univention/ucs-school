@@ -1,3 +1,9 @@
+ucs-school-umc-exam (10.0.13) unstable; urgency=medium
+
+  * Bug #53232: Prevent cleanup skips on singleserver installations.
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 01 Aug 2024 07:29:08 +0200
+
 ucs-school-umc-exam (10.0.12) unstable; urgency=medium
 
   * Bug #57367: Validate samba configuration file on module load
