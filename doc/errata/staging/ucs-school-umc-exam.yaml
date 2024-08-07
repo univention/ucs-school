@@ -1,0 +1,9 @@
+product: ucsschool
+release: "4.4"
+version: [0]
+scope: ucs_4.4-0-ucs-school-4.4
+src: ucs-school-umc-exam
+fix: 9.0.1-58
+desc: |
+ * Prevent cleanup skips on singleserver installations (Bug #53232).
+bug: [53232]

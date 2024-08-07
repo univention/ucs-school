@@ -3,7 +3,7 @@
 # if enabled, all running exams are stopped and exam/room settings are cleaned up
 @!@
 timestamp = configRegistry.get('ucsschool/exam/cron/cleanup-master', '# 30 3 * * *')
-options = configRegistry.get('ucsschool/exam/cron/cleanup-master/options', '')
+options = "" if configRegistry.is_true('ucsschool/singlemaster',False) else configRegistry.get('ucsschool/exam/cron/cleanup-master/options', '')
 if configRegistry.get('server/role') == 'domaincontroller_master':
 	print('%s root /usr/share/ucs-school-exam-master/exam-and-room-cleanup %s' % (timestamp, options))
 else:
