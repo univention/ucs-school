@@ -70,6 +70,23 @@ werden sollen. In einem Testlauf kann dies überprüft werden. Mit der Option
 für Benutzernamen zurück gesetzt. Um Zähler für E-Mailadressen zu löschen, muss
 ``--email`` verwendet werden.
 
+.. warning::
+
+    Um einen aussagekräftigen Benutzernamen zu gewährleisten, geht die Logik von maximal
+    drei Zeichen für die Zählervariablen aus, wenn ein Benutzername unter Berücksichtigung
+    der :ref:`maximalen Länge <configuration-json-format-userimport-option-username-max_length>` generiert wird.
+    Dies bedeutet, dass davon ausgegangen wird, dass der Zähler maximal bis 999 zählen muss.
+
+    Technisch wird es allerdings nicht verhindert, dass der Zähler über 999 hinausgeht und somit vierstellig wird.
+    Sollte dieser Fall eintreten, werden Benutzernamen generiert, die ein Zeichen länger als das konfigurierte Maximum sein können.
+
+    Wird in der Umgebung keine Unterstützung für :program:`Samba`, :program:`Samba 4 Connector` und :program:`Active Directory Connector`
+    benötigt, hat dies keine negativen Auswirkungen.
+
+    Muss allerdings eine maximale Länge für Benutzernamen eingehalten werden, so wird empfohlen ein alternatives
+    Schema zu entwickeln, welches weniger doppelte Benutzernamen erzeugt.
+
+
 .. _configuration-unique-usernames-and-email-extending:
 
 Programmierung neuer Zählervariablen

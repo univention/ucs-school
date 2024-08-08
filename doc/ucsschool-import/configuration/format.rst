@@ -533,6 +533,8 @@ Konfiguration des Benutzerimports
       ``{"max_length": {..}``
 
 
+.. _configuration-json-format-userimport-option-username-max_length:
+
 .. option:: username:max_length
 
    Enthält Informationen über die Länge von Benutzernamen.
