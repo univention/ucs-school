@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-01 05:48+0000\n"
+"POT-Creation-Date: 2024-08-15 06:15+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,8 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
-msgid "Released on 2024-08-01"
-msgstr "Veröffentlicht am 01. August 2024"
+msgid "Released on 2024-08-15"
+msgstr "Veröffentlicht am 15. August 2024"
 
 #: ../../changelog.rst:16
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.13``:"
@@ -33,18 +33,32 @@ msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.13``:"
 msgid ""
 "Fixed a bug that lead to skips in the cron controlled cleanup jobs on "
 "single server installations (:uv:bug:`53232`)."
-msgstr "Es wurde ein Fehler behoben, der zum Überspringen in von Cron gesteuerten "
-"Aufräumarbeiten bei Einzelserver Installationen führte (:uv:bug:`53232`)."
+msgstr ""
+"Es wurde ein Fehler behoben, der zum Überspringen in von Cron gesteuerten"
+" Aufräumarbeiten bei Einzelserver Installationen führte "
+"(:uv:bug:`53232`)."
 
-#: ../../changelog.rst:25
+#: ../../changelog.rst:21
+msgid "Source package *ucs-school-umc-users* in version ``16.0.9``:"
+msgstr "Quellpaket *ucs-school-umc-rooms* in Version ``17.0.10``:"
+
+#: ../../changelog.rst:23
+msgid ""
+"Fixed a bug which would prevent teachers to reset passwords of students "
+"when they have unset extended attributes (:uv:bug:`55740`)."
+msgstr ""
+"Es wurde ein Fehler behoben, der Lehrer daran hinderte, Passwörter von Schülern zurückzusetzen, "
+"wenn sie nicht gesetzte erweiterte Attribute haben (:uv:bug:`55740`)."
+
+#: ../../changelog.rst:29
 msgid "Released on 2024-07-11"
 msgstr "Veröffentlicht am 11. Juli 2024"
 
-#: ../../changelog.rst:27
+#: ../../changelog.rst:31
 msgid "Source package *ucs-school-import* in version ``18.0.47``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.47``:"
 
-#: ../../changelog.rst:29
+#: ../../changelog.rst:33
 msgid ""
 "Fixed a performance regression which could cause significant longer "
 "startup times for the UCS\\@school import (:uv:bug:`57408`)."
@@ -52,11 +66,11 @@ msgstr ""
 "Es wurde eine Performance Regression behoben, die zu deutlich längeren "
 "Startzeiten für den UCS\\@school Import führen konnte (:uv:bug:`57408`)."
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:36
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.17``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.17``:"
 
-#: ../../changelog.rst:34
+#: ../../changelog.rst:38
 msgid ""
 "Added the UCR variable "
 "``ucsschool/umc/computerroom/screenshot_dimension``, with which you can "
@@ -68,15 +82,15 @@ msgstr ""
 "Computerraum-Modul einstellen können. Eine niedrigere Basisgröße für "
 "Screenshots kann die Performance verbessern (:uv:bug:`57443`)."
 
-#: ../../changelog.rst:41
+#: ../../changelog.rst:45
 msgid "Released on 2024-07-02"
 msgstr "Veröffentlicht am 02. Juli 2024"
 
-#: ../../changelog.rst:43
+#: ../../changelog.rst:47
 msgid "Source package *ucs-school-import* in version ``18.0.46``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.46``:"
 
-#: ../../changelog.rst:45
+#: ../../changelog.rst:49
 msgid ""
 "The ``ucs-school-purge-expired-users`` now ignores users without a "
 "UCS\\@school role that is recognized by the UCS\\@school Importer "
@@ -86,11 +100,11 @@ msgstr ""
 "mit UCS\\@school Rollen, die nicht vom UCS\\@school Importer erkannt "
 "werden (:uv:bug:`55179`)."
 
-#: ../../changelog.rst:48
+#: ../../changelog.rst:52
 msgid "Source package *ucs-school-metapackage* in version ``13.0.18``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``13.0.18``:"
 
-#: ../../changelog.rst:50
+#: ../../changelog.rst:54
 msgid ""
 "Add the Keycloak Kerberos user SPN to the samba SPN list on replicas for "
 "new joins (:uv:bug:`57348`)."
@@ -98,13 +112,13 @@ msgstr ""
 "Die Keycloak-Kerberos-Benutzer-SPN ist zur Samba-SPN-Liste auf Replicas "
 "für neue Joins hinzugefügt worden (:uv:bug:`57348`)."
 
-#: ../../changelog.rst:53
+#: ../../changelog.rst:57
 msgid ""
 "Source package *ucs-school-netlogon-user-logonscripts* in version "
 "``16.0.6``:"
 msgstr "Quellpaket *ucs-school-netlogon-user-logonscripts* in Version ``16.0.6``:"
 
-#: ../../changelog.rst:55
+#: ../../changelog.rst:59
 msgid ""
 "The new Nubus logo replaces the UCS logo. Users who have the link for the"
 " UMC on the desktop will see the new logo (:uv:bug:`57395`)."
@@ -112,11 +126,11 @@ msgstr ""
 "Das neue Nubus-Logo ersetzt das UCS-Logo. Benutzer, die den Link für die "
 "UMC auf dem Desktop haben, werden das neue Logo sehen (:uv:bug:`57395`)."
 
-#: ../../changelog.rst:58
+#: ../../changelog.rst:62
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.16``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.16``:"
 
-#: ../../changelog.rst:60
+#: ../../changelog.rst:64
 msgid ""
 "If a local user is logged into a computer that is in a computer room, the"
 " username is prefixed with ``LOCAL\\`` in the computer room module "
@@ -127,11 +141,11 @@ msgstr ""
 "``LOCAL\\`` vorangestellt, anstatt eine Fehlermeldung anzuzeigen "
 "(:uv:bug:`56937`)"
 
-#: ../../changelog.rst:64
+#: ../../changelog.rst:68
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.12``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.12``:"
 
-#: ../../changelog.rst:66
+#: ../../changelog.rst:70
 msgid ""
 "Added validation for students when they are added to an exam. This helps "
 "to detect validation errors before the exam is started (:uv:bug:`57319`)."
@@ -140,7 +154,7 @@ msgstr ""
 "Prüfung hinzugefügt werden. Dies hilft, Validierungsfehler zu erkennen, "
 "bevor die Prüfung gestartet wird (:uv:bug:`57319`)."
 
-#: ../../changelog.rst:69
+#: ../../changelog.rst:73
 msgid ""
 "If errors occur due to incorrect samba share configuration files, they "
 "are displayed during the preparation and not during the exam "
@@ -150,11 +164,11 @@ msgstr ""
 "auftreten, werden sie während der Vorbereitung und nicht während der "
 "Prüfung angezeigt (:uv:bug:`57367`)."
 
-#: ../../changelog.rst:72
+#: ../../changelog.rst:76
 msgid "Source package *ucs-school-umc-import* in version ``3.0.8``:"
 msgstr "Quellpaket *ucs-school-umc-import* in Version ``3.0.8``:"
 
-#: ../../changelog.rst:74
+#: ../../changelog.rst:78
 msgid ""
 "The selection in the UCS\\@school UMC import was not properly localized. "
 "An updated image was placed in the documentation (:uv:bug:`56519`)."
@@ -162,29 +176,29 @@ msgstr ""
 "Die Auswahl im UCS\\@school UMC-Import ist nun korrekt lokalisiert. Ein "
 "aktualisiertes Bild ist in der Dokumentation enthalten (:uv:bug:`56519`)."
 
-#: ../../changelog.rst:81
+#: ../../changelog.rst:85
 msgid "Released on 2024-05-16"
 msgstr "Veröffentlicht am 16. Mai 2024"
 
-#: ../../changelog.rst:83
+#: ../../changelog.rst:87
 msgid "Source package *ucs-school-veyon-windows* in version ``4.8.3.0-ucs5.0-0``:"
 msgstr "Quellpaket *ucs-school-veyon-windows* in Version ``4.8.3.0-ucs5.0-0``:"
 
-#: ../../changelog.rst:85
+#: ../../changelog.rst:89
 msgid "Update Veyon windows client to version 4.8.3.0 (:uv:bug:`53907`)."
 msgstr ""
 "Aktualisierung des Veyon Windows Clients auf Version 4.8.3.0 "
 "(:uv:bug:`53907`)."
 
-#: ../../changelog.rst:90
+#: ../../changelog.rst:94
 msgid "Released on 2024-03-21"
 msgstr "Veröffentlicht am 21. März 2024"
 
-#: ../../changelog.rst:92
+#: ../../changelog.rst:96
 msgid "Source package *ucs-school-import* in version ``18.0.45``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.45``:"
 
-#: ../../changelog.rst:94
+#: ../../changelog.rst:98
 msgid ""
 "When importing a computer with an IP address starting with \"255.\", the "
 "user gets a warning that is logged to the console (:uv:bug:`55376`)."
@@ -193,7 +207,7 @@ msgstr ""
 "beginnt, erhält der Benutzer eine Warnung, die auf der Konsole "
 "protokolliert wird (:uv:bug:`55376`)."
 
-#: ../../changelog.rst:97
+#: ../../changelog.rst:101
 msgid ""
 "Internal change: Improve search filter for mac addresses for importing a "
 "computer. (:uv:bug:`55015`)."
@@ -201,7 +215,7 @@ msgstr ""
 "Interne Änderung: Verbesserter Suchfilter für Mac-Adressen beim "
 "Importieren eines Computers (:uv:bug:`55015`)."
 
-#: ../../changelog.rst:100
+#: ../../changelog.rst:104
 msgid ""
 "Fixed an issue that caused the user importer to not properly detect the "
 "encoding of a given CSV file (:uv:bug:`56846`)."
@@ -209,14 +223,14 @@ msgstr ""
 "Ein Problem wurde behoben, das dazu führte, dass der Benutzer Importer "
 "die Kodierung einer CSV-Datei nicht richtig erkennt. (:uv:bug:`56846`)"
 
-#: ../../changelog.rst:103
+#: ../../changelog.rst:107
 msgid "Source package *ucs-school-info* in version ``10.0.3``:"
 msgstr "Quellpaket *ucs-school-info* in Version ``10.0.3``:"
 
-#: ../../changelog.rst:105 ../../changelog.rst:115 ../../changelog.rst:120
-#: ../../changelog.rst:125 ../../changelog.rst:130 ../../changelog.rst:135
-#: ../../changelog.rst:140 ../../changelog.rst:145 ../../changelog.rst:155
-#: ../../changelog.rst:160 ../../changelog.rst:165 ../../changelog.rst:170
+#: ../../changelog.rst:109 ../../changelog.rst:119 ../../changelog.rst:124
+#: ../../changelog.rst:129 ../../changelog.rst:134 ../../changelog.rst:139
+#: ../../changelog.rst:144 ../../changelog.rst:149 ../../changelog.rst:159
+#: ../../changelog.rst:164 ../../changelog.rst:169 ../../changelog.rst:174
 msgid ""
 "Internal Change: Reformatted source code for better readability and "
 "maintainability. (:uv:bug:`55751`)."
@@ -224,11 +238,11 @@ msgstr ""
 "Interne Änderung: Umformatierung des Quellcodes zur besseren Lesbarkeit "
 "und Wartbarkeit. (:uv:bug:`55751`)."
 
-#: ../../changelog.rst:108
+#: ../../changelog.rst:112
 msgid "Source package *ucs-school-lib* in version ``13.0.45``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``13.0.45``:"
 
-#: ../../changelog.rst:110
+#: ../../changelog.rst:114
 msgid ""
 "Fixed a consistency check for non default admins group prefix. See UCRV "
 "``ucsschool/ldap/default/groupprefix/admins``. (:uv:bug:`55884`)."
@@ -237,41 +251,41 @@ msgstr ""
 "Gruppenpräfixe von Schuladministratoren wurde behoben. Siehe UCRV "
 "``ucsschool/ldap/default/groupprefix/admins``. (:uv:bug:`55884`)."
 
-#: ../../changelog.rst:113
+#: ../../changelog.rst:117
 msgid "Source package *ucs-school-metapackage* in version ``13.0.17``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``13.0.17``:"
 
-#: ../../changelog.rst:118
+#: ../../changelog.rst:122
 msgid ""
 "Source package *ucs-school-netlogon-user-logonscripts* in version "
 "``16.0.5``:"
 msgstr "Quellpaket *ucs-school-netlogon-user-logonscripts* in Version ``16.0.5``:"
 
-#: ../../changelog.rst:123
+#: ../../changelog.rst:127
 msgid "Source package *ucs-school-netlogon* in version ``10.0.3``:"
 msgstr "Quellpaket *ucs-school-netlogon* in Version ``10.0.3``:"
 
-#: ../../changelog.rst:128
+#: ../../changelog.rst:132
 msgid "Source package *ucs-school-old-sharedirs* in version ``15.0.4``:"
 msgstr "Quellpaket *ucs-school-old-sharedirs* in Version ``15.0.4``:"
 
-#: ../../changelog.rst:133
+#: ../../changelog.rst:137
 msgid "Source package *ucs-school-ox-support* in version ``4.0.4``:"
 msgstr "Quellpaket *ucs-school-ox-support* in Version ``4.0.4``:"
 
-#: ../../changelog.rst:138
+#: ../../changelog.rst:142
 msgid "Source package *ucs-school-roleshares* in version ``8.0.4``:"
 msgstr "Quellpaket *ucs-school-roleshares* in Version ``8.0.4``:"
 
-#: ../../changelog.rst:143
+#: ../../changelog.rst:147
 msgid "Source package *ucs-school-umc-internetrules* in version ``16.0.5``:"
 msgstr "Quellpaket *ucs-school-umc-internetrules* in Version ``16.0.5``:"
 
-#: ../../changelog.rst:148
+#: ../../changelog.rst:152
 msgid "Source package *ucs-school-umc-lists* in version ``3.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-lists* in Version ``3.0.10``:"
 
-#: ../../changelog.rst:150
+#: ../../changelog.rst:154
 msgid ""
 "Fixed issues that would lead to unexpected behavior while exporting class"
 " lists (:uv:bug:`57018`)."
@@ -279,19 +293,19 @@ msgstr ""
 "Probleme behoben, die zu unerwartetem Verhalten beim Exportieren von "
 "Klassenlisten führen konnten (:uv:bug:`57018`)"
 
-#: ../../changelog.rst:153
+#: ../../changelog.rst:157
 msgid "Source package *ucs-school-umc-rooms* in version ``17.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-rooms* in Version ``17.0.10``:"
 
-#: ../../changelog.rst:158
+#: ../../changelog.rst:162
 msgid "Source package *ucs-school-veyon-client* in version ``2.0.5``:"
 msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.5``:"
 
-#: ../../changelog.rst:163
+#: ../../changelog.rst:167
 msgid "Source package *ucs-school-webproxy* in version ``16.0.8``:"
 msgstr "Quellpaket *ucs-school-webproxy* in Version ``16.0.8``:"
 
-#: ../../changelog.rst:168
+#: ../../changelog.rst:172
 msgid ""
 "Source package *univention-management-console-module-selective-udm* in "
 "version ``9.0.4``:"

@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from calendar import timegm
+from functools import lru_cache
 from math import ceil
 from time import strptime, time
 
@@ -39,6 +40,7 @@ from ucsschool.lib.models.user import User
 from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import USER_WRITE, LDAP_Connection
 from univention.admin.handlers.users.user import unmapPasswordExpiry
+from univention.config_registry import ucr
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
@@ -48,8 +50,26 @@ from univention.management.console.modules.sanitizers import (
     LDAPSearchSanitizer,
     StringSanitizer,
 )
+from univention.udm import UDM
 
 _ = Translation("ucs-school-umc-schoolusers").translate
+
+
+@lru_cache(maxsize=1)
+def get_udm_user_mod():
+    return UDM.admin().version(2).get("users/user")
+
+
+@lru_cache(maxsize=None)
+def get_extended_attributes():
+    EXT_ATTR_MOD = UDM.admin().version(2).get("settings/extended_attribute")
+    return [
+        (attribute.props.name, attribute.props.default)
+        for attribute in EXT_ATTR_MOD.search(
+            filter_s="(univentionUDMPropertyModule=users/user)",
+            base="cn=custom attributes,cn=univention,%s" % ucr.get("ldap/base"),
+        )
+    ]
 
 
 def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089, 30088
@@ -58,6 +78,20 @@ def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089,
         if str(arg) not in msg:
             msg = "%s %s" % (msg, arg)
     return msg
+
+
+def udm_admin_save_user_with_extended_attributes(dn: str):
+    user = get_udm_user_mod().get(dn)
+    try:
+        for (name, default_value) in get_extended_attributes():
+            if hasattr(user.props, name):
+                if getattr(user.props, name) != default_value:
+                    pass
+            else:
+                setattr(user.props, name, default_value)
+        user.save()
+    except udm_exceptions.base as exc:
+        raise UMC_Error("%s" % (get_exception_msg(exc)))
 
 
 class Instance(SchoolBaseModule):
@@ -108,11 +142,12 @@ class Instance(SchoolBaseModule):
     @LDAP_Connection(USER_WRITE)
     def password_reset(self, request, ldap_user_write=None):
         """Reset the password of the user"""
-        userdn = request.options["userDN"]
-        pwdChangeNextLogin = request.options["nextLogin"]
-        newPassword = request.options["newPassword"]
 
-        try:
+        def _password_reset(request, ldap_user_write=None):
+            userdn = request.options["userDN"]
+            pwdChangeNextLogin = request.options["nextLogin"]
+            newPassword = request.options["newPassword"]
+
             user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
             user["password"] = newPassword
             user["overridePWHistory"] = "1"
@@ -125,13 +160,22 @@ class Instance(SchoolBaseModule):
             # workaround bug #46067 (end)
             user["pwdChangeNextLogin"] = "1" if pwdChangeNextLogin else "0"
             user.modify()
+
+        try:
+            _password_reset(request, ldap_user_write)
+            self.finished(request.id, True)
+        except:  # noqa: F841, E722
+            udm_admin_save_user_with_extended_attributes(request.options["userDN"])
+
+        try:
+            _password_reset(request, ldap_user_write)
             self.finished(request.id, True)
         except udm_exceptions.permissionDenied as exc:
-            MODULE.process("dn=%r" % (userdn,))
+            MODULE.process("dn=%r" % (request.options["userDN"],))
             MODULE.process("exception=%s" % (type(exc),))
             raise UMC_Error(_("permission denied"))
         except udm_exceptions.base as exc:
-            MODULE.process("dn=%r" % (userdn,))
+            MODULE.process("dn=%r" % (request.options["userDN"],))
             MODULE.process("exception=%s" % (exc,))
             raise UMC_Error("%s" % (get_exception_msg(exc)))
 

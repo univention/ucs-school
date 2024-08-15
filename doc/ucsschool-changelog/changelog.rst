@@ -8,9 +8,9 @@
 Changelog
 *********
 
-.. _changelog-ucsschool-2024-08-01:
+.. _changelog-ucsschool-2024-08-15:
 
-Released on 2024-08-01
+Released on 2024-08-15
 ======================
 
 Source package *ucs-school-umc-exam* in version ``10.0.13``:
@@ -18,6 +18,10 @@ Source package *ucs-school-umc-exam* in version ``10.0.13``:
 * Fixed a bug that lead to skips in the cron controlled cleanup jobs on
   single server installations (:uv:bug:`53232`).
 
+Source package *ucs-school-umc-users* in version ``16.0.9``:
+
+* Fixed a bug which would prevent teachers to reset passwords of students
+  when they have unset extended attributes (:uv:bug:`55740`).
 
 .. _changelog-ucsschool-2024-07-11:
 

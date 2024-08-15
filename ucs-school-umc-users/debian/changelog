@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.9) unstable; urgency=medium
+
+  * Bug #55740: Enable password reset with unsaved extended attributes.
+
+ -- Alexander Steffen <steffen@univention.de>  Tue, 06 Aug 2024 09:43:11 +0200
+
 ucs-school-umc-users (16.0.8) unstable; urgency=medium
 
   * Bug #50231: Prevent crashing of password module.
