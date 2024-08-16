@@ -356,19 +356,19 @@ Konfiguration der App :program:`UCS\@school Veyon Proxy`
 Ab Version *4.8.3.8-ucs1* des :program:`UCS\@school Veyon Proxy` stehen drei neue App-Einstellungen
 zur Verfügung um Performance-Optimierungen für verschiedene Anwendungsfälle zu bieten:
 
-- :code:`veyon/Master/ComputerMonitoringInterval`
-- :code:`veyon/Master/ComputerMonitoringImageQuality`
-- :code:`veyon/WebAPI/ConnectionIdleTimeout`
+- :envvar:`veyon/Master/ComputerMonitoringUpdateInterval`
+- :envvar:`veyon/Master/ComputerMonitoringImageQuality`
+- :envvar:`veyon/WebAPI/ConnectionIdleTimeout`
 
-Die Einstellung :code:`veyon/Master/ComputerMonitoringInterval` erlaubt die Anpassung des
+Die Einstellung :envvar:`veyon/Master/ComputerMonitoringUpdateInterval` erlaubt die Anpassung des
 Intervalls wie oft der :program:`UCS\@school Veyon Proxy` neue Screenshots von Zielrechnern abfragt und ist in Millisekunden angegeben.
 Hierbei beträgt der maximale Wert 10000.
 
-Die Einstellung :code:`veyon/Master/ComputerMonitoringImageQuality` bietet die Möglichkeit
+Die Einstellung :envvar:`veyon/Master/ComputerMonitoringImageQuality` bietet die Möglichkeit
 die Qualität der abgeholten Screenshots zu bestimmen. Der Wert ist von 0 (höchste Qualität)
 bis 4 (niedrigste Qualität) begrenzt.
 
-Die Einstellung :code:`veyon/WebAPI/ConnectionIdleTimeout` definiert die Zeit in Sekunden,
+Die Einstellung :envvar:`veyon/WebAPI/ConnectionIdleTimeout` definiert die Zeit in Sekunden,
 nach der eine inaktive VNC-Verbindung zwischen dem :program:`UCS\@school Veyon Proxy` und einem Windows-Client
 geschlossen wird.
 
