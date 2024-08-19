@@ -1,3 +1,9 @@
+ucs-school-import (18.0.48) unstable; urgency=medium
+
+  * Bug #57208: Fixed extended configuration hook.
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 15 Aug 2024 07:43:15 +0200
+
 ucs-school-import (18.0.47) unstable; urgency=medium
 
   * Issue #1235: Fix performance regression

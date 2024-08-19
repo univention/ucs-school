@@ -123,7 +123,7 @@ class ExtendConfigByRole(ConfigPyHook):
         if config.get("user_role") is None:
             self.logger.error('Exiting hook: hook requires a fixed role but "user_role" is None.')
             return False
-        if config["user_role"] not in list(supported_roles) + ["student"]:
+        if config["user_role"] not in list(supported_roles) + ["student", "teacher_and_staff"]:
             self.logger.error("Exiting hook: unknown role %r.", config["user_role"])
             return False
         if config["user_role"] not in config["include"]["by_role"]:

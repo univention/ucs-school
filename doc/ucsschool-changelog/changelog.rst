@@ -13,6 +13,11 @@ Changelog
 Released on 2024-08-15
 ======================
 
+Source package *ucs-school-import* in version ``18.0.48``:
+
+* Fixed a bug that would lead to a faulty configuration if there
+  was a user with the role ``teacher_and_staff`` (:uv:bug:`57208`).
+
 Source package *ucs-school-umc-exam* in version ``10.0.13``:
 
 * Fixed a bug that lead to skips in the cron controlled cleanup jobs on
