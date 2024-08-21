@@ -1,3 +1,9 @@
+ucs-school-umc-exam (9.0.1-59) unstable; urgency=medium
+
+  * Bug #53232: Fixed backport of solution. Explicit load of configuration.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 21 Aug 2024 15:43:15 +0200
+
 ucs-school-umc-exam (9.0.1-58) unstable; urgency=medium
 
   * Bug #53232: Prevent cleanup skips on singleserver installations.
