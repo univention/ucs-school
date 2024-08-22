@@ -91,6 +91,19 @@ feedback@univention.de
 
 		<section id="changelog:changelogs" lang="en">
 			<title>Changelog</title>
+				<section id="changelog:ucsschool:2024-08-22" lang="en">
+					<title>Released on 2024-08-22:</title>
+					<!-- START ucs-school-umc-exam 9.0.1-59 -->
+					<para>
+						Source package <emphasis>ucs-school-umc-exam</emphasis> in version <emphasis>9.0.1-59</emphasis>:
+						<itemizedlist>
+							<listitem><para>Prevent cleanup skips on singleserver installations (<u:bug>53232</u:bug>).</para></listitem>
+
+						</itemizedlist>
+					</para>
+					<!-- END ucs-school-umc-exam 9.0.1-59 -->
+<!-- CHANGELOG:2024-08-22:APPEND -->
+				</section>
 				<section id="changelog:ucsschool:2023-02-24" lang="en">
 					<title>Released on 2023-02-24:</title>
 					<!-- START ucs-school-umc-exam 9.0.1-57A~4.4.0.202302221651 -->
