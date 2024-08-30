@@ -33,17 +33,14 @@ repos:
     rev: "v0.2.2"
     hooks:
       - id: ruff
+        args: ["--fix"]
       - id: ruff
-        alias: "ruff-edit"
+        alias: "ruff-unsafe"
         stages: [manual]
         args: ["--fix", "--unsafe-fixes"]
       - id: ruff-format
         alias: "ruff-format"
         stages: [manual]
-      - id: ruff-format
-        alias: "ruff-format-check"
-        stages: [manual]
-        args: ["--check"]
   - repo: https://github.com/psf/black
     # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
     # Version 21.11b0 adds super annoying Python 2 deprecation notice.
@@ -52,11 +49,6 @@ repos:
     hooks:
       - id: black
         additional_dependencies: ["click>8.0,<8.1"]
-        entry: black --check --diff --config .black
-      - id: black
-        additional_dependencies: ["click>8.0,<8.1"]
-        alias: black-edit
-        stages: [manual]
         entry: black --config .black
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
