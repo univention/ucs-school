@@ -60,11 +60,16 @@ def get_udm_user_mod():
     return UDM.admin().version(2).get("users/user")
 
 
+def get_user_from_request(user_dn, access, as_udm_object=False):
+    user = User.from_dn(user_dn, None, access)
+    return user.get_udm_object(access) if as_udm_object else user
+
+
 @lru_cache(maxsize=None)
 def get_extended_attributes():
     EXT_ATTR_MOD = UDM.admin().version(2).get("settings/extended_attribute")
     return [
-        (attribute.props.name, attribute.props.default)
+        (attribute.props.CLIName, attribute.props.default)
         for attribute in EXT_ATTR_MOD.search(
             filter_s="(univentionUDMPropertyModule=users/user)",
             base="cn=custom attributes,cn=univention,%s" % ucr.get("ldap/base"),
@@ -80,14 +85,11 @@ def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089,
     return msg
 
 
-def udm_admin_save_user_with_extended_attributes(dn: str):
+def udm_admin_save_user_with_extended_attributes(dn):
     user = get_udm_user_mod().get(dn)
     try:
         for (name, default_value) in get_extended_attributes():
-            if hasattr(user.props, name):
-                if getattr(user.props, name) != default_value:
-                    pass
-            else:
+            if not hasattr(user.props, name):
                 setattr(user.props, name, default_value)
         user.save()
     except udm_exceptions.base as exc:
@@ -148,7 +150,7 @@ class Instance(SchoolBaseModule):
             pwdChangeNextLogin = request.options["nextLogin"]
             newPassword = request.options["newPassword"]
 
-            user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
+            user = get_user_from_request(userdn, ldap_user_write, as_udm_object=True)
             user["password"] = newPassword
             user["overridePWHistory"] = "1"
             # Bug #46175: reset locked state, do not set disabled=0 since this would enable the whole
@@ -156,7 +158,7 @@ class Instance(SchoolBaseModule):
             user["locked"] = "0"
             # workaround bug #46067 (start)
             user.modify()
-            user = User.from_dn(userdn, None, ldap_user_write).get_udm_object(ldap_user_write)
+            user = get_user_from_request(userdn, ldap_user_write, as_udm_object=True)
             # workaround bug #46067 (end)
             user["pwdChangeNextLogin"] = "1" if pwdChangeNextLogin else "0"
             user.modify()
@@ -164,6 +166,9 @@ class Instance(SchoolBaseModule):
         try:
             _password_reset(request, ldap_user_write)
             self.finished(request.id, True)
+            #  This is needed here to properly finish the request without continuation if everyting
+            #  worked well.
+            return
         except:  # noqa: F841, E722
             udm_admin_save_user_with_extended_attributes(request.options["userDN"])
 

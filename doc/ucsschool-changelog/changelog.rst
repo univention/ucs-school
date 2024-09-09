@@ -23,6 +23,12 @@ Source package *ucs-school-umc-exam* in version ``10.0.13``:
 * Fixed a bug that lead to skips in the cron controlled cleanup jobs on
   single server installations (:uv:bug:`53232`).
 
+Source package *ucs-school-umc-users* in version ``16.0.10``:
+
+* Fixed an issue that would lead to an :code:`UnknownPropertyError` when
+  mapping extended attributes from :code:`LDAP` to :code:`UDM` and leads
+  to crashes of the module (:uv:bug:`55740`).
+
 Source package *ucs-school-umc-users* in version ``16.0.9``:
 
 * Fixed a bug which would prevent teachers to reset passwords of students

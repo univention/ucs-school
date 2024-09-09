@@ -1,3 +1,9 @@
+ucs-school-umc-users (16.0.10) unstable; urgency=medium
+
+  * Bug #55740: Preventing failure on UnknownPropertyError.
+
+ -- Alexander Steffen <steffen@univention.de>  Thu, 29 Aug 2024 07:34:14 +0200
+
 ucs-school-umc-users (16.0.9) unstable; urgency=medium
 
   * Bug #55740: Enable password reset with unsaved extended attributes.
