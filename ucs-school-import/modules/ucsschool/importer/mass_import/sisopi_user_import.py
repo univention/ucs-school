@@ -187,6 +187,7 @@ class SingleSourcePartialUserImport(UserImport):
         :return: whether the deletion worked
         :rtype: bool
         """
+        deletion_grace = max(0, int(self.config.get("deletion_grace_period", {}).get("deletion", 0)))
         modified = False
 
         self.logger.info("Removing %r from school %r...", user, self.config["school"])
@@ -214,6 +215,7 @@ class SingleSourcePartialUserImport(UserImport):
             imported_user.school_classes = {}
             user = self.school_move(imported_user, user)
             user.update(imported_user)  # user is freshly fetched from LDAP, readd import data
+            modified |= self.set_deletion_grace(user, deletion_grace)
             modified |= self.deactivate_user_now(user)
 
         if self.dry_run:
