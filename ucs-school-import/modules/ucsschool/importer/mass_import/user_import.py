@@ -91,7 +91,7 @@ class UserImport(object):
         self.logger = logging.getLogger(__name__)
         self.connection, self.position = get_readonly_connection() if dry_run else get_admin_connection()
         self.factory = Factory()
-        self.reader = self.factory.make_reader()
+        self.reader = self.factory.make_reader(filename=self.config["input"]["filename"])
         self.ucr = self.factory.make_ucr()
         self.imported_users_len = 0
 

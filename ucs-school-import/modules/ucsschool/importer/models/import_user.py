@@ -135,7 +135,7 @@ class ImportUser(User):
     _unique_ids = defaultdict(dict)  # type: Dict[str, Dict[str, str]]
     factory = lazy_object_proxy.Proxy(lambda: Factory())  # type: DefaultUserImportFactory
     ucr = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_ucr())  # type: ConfigRegistry
-    reader = lazy_object_proxy.Proxy(lambda: ImportUser.factory.make_reader())  # type: BaseReader
+    _reader = None
     _username_handler_cache = {}  # type: Dict[Tuple[int, bool], UsernameHandler]
     _unique_email_handler_cache = {}  # type: Dict[bool, UsernameHandler]
     # non-Attribute attributes (not in self._attributes) that can also be used
@@ -580,6 +580,12 @@ class ImportUser(User):
         :rtype: bool
         """
         return bool(self.expiration_date)
+
+    @property
+    def reader(self):
+        if ImportUser._reader is None:
+            ImportUser._reader = self.factory.make_reader(filename=self.config["input"]["filename"])
+        return ImportUser._reader
 
     @property
     def lo(self):  # type: () -> LoType
