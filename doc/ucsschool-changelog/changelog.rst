@@ -8,6 +8,22 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-9999-99-99:
+
+Released on 9999-99-99
+======================
+
+Source package *ucs-school-import* in version ``18.0.50``:
+
+* Fix for LUSD import (:uv:bug:`57547`).
+
+* Fix SiSoPi missing :code:`ucsschoolPurgeTimestamp` for "deleted" users (:uv:bug:`50848`).
+
+Source package *ucs-school-import-lusd* in version ``1.0.0``:
+
+* New package for LUSD import (:uv:bug:`57547`).
+
+
 .. _changelog-ucsschool-2024-08-15:
 
 Released on 2024-08-15

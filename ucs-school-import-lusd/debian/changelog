@@ -1,0 +1,9 @@
+ucs-school-import-lusd (1.0.0) unstable; urgency=medium
+
+  * The ucs-school-import-lusd debian package is created in the context of the
+    epic univention&629 "LUSD Importer" a project to import user data from the
+    LUSD JSON API into UCS@school within the UCS@school Importer framework.
+
+    Issue univention/ucsschool#1259
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 18 Jul 2024 15:21:04 +0200

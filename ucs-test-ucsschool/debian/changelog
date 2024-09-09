@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.189) unstable; urgency=medium
+
+  * Issue #1254: Add tests for the LUSDReader class
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 25 Jul 2024 15:18:49 +0200
+
 ucs-test-ucsschool (7.3.188) unstable; urgency=medium
 
   * Issue #1234: Skip certain tests
