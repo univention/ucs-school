@@ -1,0 +1,72 @@
+{
+  "activate_new_users": {
+    "default": true
+  },
+  "classes": {
+    "reader": "ucsschool.import_lusd.reader.LUSDReader",
+    "user_importer": "ucsschool.importer.mass_import.sisopi_user_import.SingleSourcePartialUserImport"
+  },
+  "configuration_checks": [
+    "defaults",
+    "sisopi"
+  ],
+  "deletion_grace_period": {
+    "deactivation": 0,
+    "deletion": 60
+  },
+  "dry_run": false,
+  "evaluate_password_policies": false,
+  "factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+  "input": {
+    "type": "lusd"
+  },
+  "limbo_ou": "lusd-limbo",
+  "lusd": {
+    "allowed_missing_columns": [],
+    "header_lines": 0,
+    "incell-delimiter": {
+      "default": ","
+    },
+    "lusd_user_type": "personal",
+    "mapping": {
+      "dienststellennummer": "__ignore",
+      "klassenlehrerKlassen": "__append_school_classes",
+      "klassenlehrerVertreterKlassen": "__append_school_classes",
+      "klassenname": "__ignore",
+      "nachname": "lastname",
+      "personalUID": "record_uid",
+      "vorname": "firstname"
+    }
+  },
+  "maildomain": "",
+  "mandatory_attributes": [
+    "firstname",
+    "lastname",
+    "name",
+    "record_uid"
+  ],
+  "no_delete": false,
+  "normalize": {
+    "firstname": false,
+    "lastname": false
+  },
+  "output": {
+    "new_user_passwords": "",
+    "user_import_summary": "/var/lib/ucs-school-import/summary/%Y/%m/user_import_summary_%Y-%m-%d_%H:%M:%S.csv"
+  },
+  "password_length": 15,
+  "scheme": {
+    "username": {
+      "default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
+    }
+  },
+  "school": "",
+  "school_classes_invalid_character_replacement": "-",
+  "school_classes_keep_if_empty": false,
+  "source_uid": "LUSD_JSON_API",
+  "tolerate_errors": 0,
+  "user_role": "",
+  "username": {
+    "allowed_special_chars": "."
+  }
+}

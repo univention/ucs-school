@@ -1,0 +1,10 @@
+Type: file
+File: etc/ucs-school-import-lusd/config.ini
+Variables: ucsschool/import/lusd/log_level
+Variables: ucsschool/import/lusd/student_import_config_path
+Variables: ucsschool/import/lusd/teacher_import_config_path
+Variables: ^ucsschool/import/lusd/schools/.*
+
+Type: file
+File: etc/logrotate.d/ucs-school-import-lusd
+Variables: logrotate/.*

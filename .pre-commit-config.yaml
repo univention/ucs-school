@@ -9,7 +9,14 @@ repos:
       - id: check-json
       - id: check-xml
       - id: check-yaml
+      - id: check-shebang-scripts-are-executable
+        files: ^ucs-school-import-lusd/.*
+      - id: check-executables-have-shebangs
+        files: ^ucs-school-import-lusd/.*
       - id: trailing-whitespace
+      - id: pretty-format-json
+        args: [--autofix]
+        files: ^ucs-school-import-lusd/.*
   - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
     rev: "0.0.10"
     hooks:
@@ -66,6 +73,29 @@ repos:
     hooks:
       - id: bandit
         entry: bandit -c .bandit --exclude ucs-test-ucsschool
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        files: ^ucs-school-import-lusd/.*
+        language_version: python3.8
+        additional_dependencies:
+          - types-requests==2.32.0.20240712
+          - pytest==8.3.2
+        args: ["--strict", "--ignore-missing-imports"]
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        files: ^ucs-school-import-lusd/.*
+        language_version: python3.8
+  - repo: https://git.knut.univention.de/univention/dist/pre-commit-debian.git
+    rev: v1.1.0
+    hooks:
+      - id: debian-control
+        exclude: ^(?!ucs-school-import-lusd\/).*$
+      - id: debian-changelog
+        exclude: ^(?!ucs-school-import-lusd\/).*$
   - repo: local
     hooks:
       - id: advisorycheck

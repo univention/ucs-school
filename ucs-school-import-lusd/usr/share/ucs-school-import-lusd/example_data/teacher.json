@@ -1,0 +1,74 @@
+[
+  {
+    "antwort": {
+      "personal": [
+        {
+          "dienststellennummer": "627000",
+          "dienststellennummerStammschule": "515400",
+          "klassenlehrerKlassen": [
+            {
+              "klassenname": "11KB1"
+            },
+            {
+              "klassenname": "11KB2"
+            }
+          ],
+          "klassenlehrerVertreterKlassen": [
+            {
+              "klassenname": "12KB1"
+            }
+          ],
+          "lehrerIdEsz": "lusd.test08@preschule.hessen.de",
+          "nachname": "Rosebrock",
+          "personalKuerzel": "Y276",
+          "personalUID": "20e8d2af-9863-479f-b327-51546c807099",
+          "vorname": "Kerime"
+        },
+        {
+          "dienststellennummer": "627000",
+          "dienststellennummerStammschule": "515400",
+          "klassenlehrerKlassen": [
+            {
+              "klassenname": "10KB1"
+            },
+            {
+              "klassenname": "10KB2"
+            }
+          ],
+          "klassenlehrerVertreterKlassen": [
+            {
+              "klassenname": "13KB1"
+            }
+          ],
+          "lehrerIdEsz": "lusd.test10@preschule.hessen.de",
+          "nachname": "Muster",
+          "personalKuerzel": "Y246",
+          "personalUID": "bfe21c8b-ed35-4c6c-9de8-a6d938b2a59e",
+          "vorname": "Erika"
+        },
+        {
+          "dienststellennummer": "627000",
+          "dienststellennummerStammschule": "515400",
+          "klassenlehrerKlassen": [
+            {
+              "klassenname": "9KB1"
+            },
+            {
+              "klassenname": "9KB2"
+            }
+          ],
+          "klassenlehrerVertreterKlassen": [
+            {
+              "klassenname": "9KB3"
+            }
+          ],
+          "lehrerIdEsz": "lusd.test09@preschule.hessen.de",
+          "nachname": "Kaboom",
+          "personalKuerzel": "Y236",
+          "personalUID": "a0e8d2af-9863-479f-b327-51546c807099",
+          "vorname": "Heloise"
+        }
+      ]
+    }
+  }
+]

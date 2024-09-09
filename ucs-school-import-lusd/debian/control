@@ -1,0 +1,57 @@
+Source: ucs-school-import-lusd
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends:
+ debhelper-compat (= 12),
+ dh-python,
+ python-typing,
+ ucslint,
+ univention-config-dev,
+ univention-join-dev,
+ univention-unittests,
+Standards-Version: 3.8.2
+
+Package: ucs-school-import-lusd
+Architecture: all
+Depends:
+ ucs-school-import,
+ ${misc:Depends},
+Description: The UCS@school LUSD importer package
+ This package provides a UCS@school Importer class, configuration and
+ command line tool to import user data from the LUSD JSON API into
+ a UCS@school system.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: python3-ucsschool-importer-lusd
+Architecture: all
+Depends:
+ python3-cryptography,
+ python3-jwt,
+ python3-requests,
+ python3-ucsschool-importer,
+ ${python3:Depends},
+Provides:
+ ${python3:Provides},
+Description: UCS@school: Python 3 Library for importing objects
+ This package provides Python 3 libraries for importing user data
+ from the LUSD JSON API.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: https://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/
+
+Package: ucs-test-ucsschool-importer-lusd
+Architecture: all
+Depends:
+ ucs-test-ucsschool,
+Provides:
+ ucs-test-module,
+Description: UCS@school LUSD tests for ucs-test
+ This package includes LUSD import tests for ucs-test.

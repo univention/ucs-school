@@ -1,0 +1,26 @@
+[ucsschool/import/lusd/log_level]
+Description[en]=Sets the log level. Allowed values are "DEBUG", "INFO", "WARNING", "ERROR" and "CRITICAL". Default: "INFO"
+Description[de]=Bestimmt das Log Level. Erlaubte Werte sind: "DEBUG", "INFO", "WARNING", "ERROR" und "CRITICAL". Default: "INFO"
+Type=str
+Categories=ucsschool-base
+Default=INFO
+
+[ucsschool/import/lusd/student_import_config_path]
+Description[en]=Path to the configuration file for the student import. Default: /usr/share/ucs-school-import-lusd/import-config/user_import_lusd_student.json
+Description[de]=Dateipfad zu der Konfigurationsdatei für den Import von Schülern. Default: /usr/share/ucs-school-import-lusd/import-config/user_import_lusd_student.json
+Type=str
+Categories=ucsschool-base
+Default=/usr/share/ucs-school-import-lusd/import-config/user_import_lusd_student.json
+
+[ucsschool/import/lusd/teacher_import_config_path]
+Description[en]=Path to the configuration file for the student import. Default: /usr/share/ucs-school-import-lusd/import-config/user_import_lusd_teacher.json
+Description[de]=Dateipfad zu der Konfigurationsdatei für den Import von Schülern. Default: /usr/share/ucs-school-import-lusd/import-config/user_import_lusd_teacher.json
+Type=str
+Categories=ucsschool-base
+Default=/usr/share/ucs-school-import-lusd/import-config/user_import_lusd_teacher.json
+
+[ucsschool/import/lusd/schools/.*]
+Description[en]=Mapping of ou school names in UCS (set in place of the placeholder) to "Dienststellennummer" in LUSD (set as the value), use a comma to separate multiple values.
+Description[de]=Zuordnung des ou Schulnames in UCS (anstelle des Platzhalters einzusetzen) zu "Dienststellennummer" in LUSD (als Wert einzusetzen), mehrere Werte können Komma separiert angegeben werden.
+Type=str
+Categories=ucsschool-base
