@@ -8,30 +8,27 @@
 Changelog
 *********
 
-.. _changelog-ucsschool-9999-99-99:
+..
+  Source package *ucs-school-import* in version ``18.0.50``:
 
-Released on 9999-99-99
+  * Fix for LUSD import (:uv:bug:`57547`).
+
+  * Fix SiSoPi missing :code:`ucsschoolPurgeTimestamp` for "deleted" users (:uv:bug:`50848`).
+
+  Source package *ucs-school-import-lusd* in version ``1.0.0``:
+
+  * New package for LUSD import (:uv:bug:`57547`).
+
+
+.. _changelog-ucsschool-2024-09-13:
+
+Released on 2024-09-13
 ======================
-
-Source package *ucs-school-import* in version ``18.0.50``:
-
-* Fix for LUSD import (:uv:bug:`57547`).
-
-* Fix SiSoPi missing :code:`ucsschoolPurgeTimestamp` for "deleted" users (:uv:bug:`50848`).
-
-Source package *ucs-school-import-lusd* in version ``1.0.0``:
-
-* New package for LUSD import (:uv:bug:`57547`).
 
 Source package *ucs-school-umc-distribution* in version ``18.0.9``:
 
 * Added an UCR variable to toggle the distribution to other teachers
   within the same class or workgroup (:uv:bug:`52712`).
-
-.. _changelog-ucsschool-2024-08-15:
-
-Released on 2024-08-15
-======================
 
 Source package *ucs-school-import* in version ``18.0.48``:
 
@@ -48,8 +45,6 @@ Source package *ucs-school-umc-users* in version ``16.0.10``:
 * Fixed an issue that would lead to an :code:`UnknownPropertyError` when
   mapping extended attributes from :code:`LDAP` to :code:`UDM` and leads
   to crashes of the module (:uv:bug:`55740`).
-
-Source package *ucs-school-umc-users* in version ``16.0.9``:
 
 * Fixed a bug which would prevent teachers to reset passwords of students
   when they have unset extended attributes (:uv:bug:`55740`).

@@ -62,8 +62,8 @@ msgstr "Es wurde eine UCR-Variable hinzugefügt, um die Verteilung an andere Leh
 
 
 #: ../../changelog.rst:34
-msgid "Released on 2024-08-15"
-msgstr "Veröffentlicht am 15. August 2024"
+msgid "Released on 2024-09-13"
+msgstr "Veröffentlicht am 13. September 2024"
 
 #: ../../changelog.rst:36
 msgid "Source package *ucs-school-import* in version ``18.0.48``:"
