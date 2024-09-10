@@ -24,3 +24,31 @@ include:
 run pre-commit:
   stage: lint
   extends: .pre-commit
+
+ucs_deb_lint:
+  stage: lint
+  image:
+    name: gitregistry.knut.univention.de/univention/ucs
+    entrypoint: [""]
+  script:
+    - packages=()
+    - for dir in ./*/; do if [ -f "$dir/debian/control" ] && [ "$dir" != ./django-pam/  ]; then packages+=($dir); fi; done
+    - ucslint --junit-xml ucslint.xml "${packages[@]}"
+  artifacts:
+    reports:
+      junit: ucslint.xml
+
+ucs_deb_lint_strict:
+  stage: lint
+  image:
+    name: gitregistry.knut.univention.de/univention/ucs
+    entrypoint: [""]
+  script:
+    - ucslint --exitcode-categories EWIS --junit-xml ucslint.xml ucs-school-import-lusd
+  rules:
+    - changes:
+        paths:
+          - "ucs-school-import-lusd/**/*"
+  artifacts:
+    reports:
+      junit: ucslint.xml
